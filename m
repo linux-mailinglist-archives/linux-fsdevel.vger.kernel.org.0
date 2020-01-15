@@ -2,153 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A168813B6A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 01:57:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6B413B7D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 03:39:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbgAOA53 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jan 2020 19:57:29 -0500
-Received: from mga09.intel.com ([134.134.136.24]:41193 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728795AbgAOA53 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jan 2020 19:57:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2020 16:57:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,320,1574150400"; 
-   d="scan'208";a="225393056"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga003.jf.intel.com with ESMTP; 14 Jan 2020 16:57:28 -0800
-Date:   Tue, 14 Jan 2020 16:57:28 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH V2 08/12] fs/xfs: Add lock/unlock mode to xfs
-Message-ID: <20200115005727.GB23311@iweiny-DESK2.sc.intel.com>
-References: <20200110192942.25021-1-ira.weiny@intel.com>
- <20200110192942.25021-9-ira.weiny@intel.com>
- <20200113221957.GN8247@magnolia>
- <20200114003521.GB29860@iweiny-DESK2.sc.intel.com>
+        id S1729026AbgAOCjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jan 2020 21:39:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40148 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728904AbgAOCjK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jan 2020 21:39:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dgVSjPiUW1SPVGvVVdOphNpP+4nkQOa7q3OECJziRBo=; b=etdc3dH2zGxPrx8fVOWxw3kEF
+        d4vTgZ7k/ntJ5a69XXQyRytwqzUFxwqSGLp++ckJsghZRNfNj35E8O3YjbO/HH79+bXmXIXp0eUvE
+        /J3UId9CWn++GN1Ee0wjKqPhfJWOceJIdhc6O+oEmmn/c1kcO3w+1Qof4AxrgUVWPOpN5tFzIX5q4
+        khVQ7u96RzM/WBezBgE/LeQ2p3g125Ll1vnX1aqXFOi/Bc3jvmIf0V+Mk4z4u9U1/PefbIC//cOrT
+        TJhzqgPZgjFaUQ+yVXstUIj663mmWV1/8ztF/THMsH7b+yrDSlr4L1fT6KRueW9uIm+GHT8Vt1VLY
+        ck7FjsewQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1irYZx-0008AB-L4; Wed, 15 Jan 2020 02:38:45 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>
+Subject: [RFC v2 0/9] Replacing the readpages a_op
+Date:   Tue, 14 Jan 2020 18:38:34 -0800
+Message-Id: <20200115023843.31325-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114003521.GB29860@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 04:35:21PM -0800, 'Ira Weiny' wrote:
-> On Mon, Jan 13, 2020 at 02:19:57PM -0800, Darrick J. Wong wrote:
-> > On Fri, Jan 10, 2020 at 11:29:38AM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> 
-> [snip]
-> 
-> > >  
-> > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > index 401da197f012..e8fd95b75e5b 100644
-> > > --- a/fs/xfs/xfs_inode.c
-> > > +++ b/fs/xfs/xfs_inode.c
-> > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-> > >   *
-> > >   * Basic locking order:
-> > >   *
-> > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > > + * i_rwsem -> i_dax_sem -> i_mmap_lock -> page_lock -> i_ilock
-> > 
-> > Mmmmmm, more locks.  Can we skip the extra lock if CONFIG_FSDAX=n or if
-> > the filesystem devices don't support DAX at all?
-> 
-> I'll look into it.
-> 
-> > 
-> > Also, I don't think we're actually following the i_rwsem -> i_daxsem
-> > order in fallocate, and possibly elsewhere too?
-> 
-> I'll have to verify.  It took a lot of iterations to get the order working so
-> I'm not going to claim perfection.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Yes this was inconsistent.  The code was right WRT i_rwsem.
+This is an attempt to add a ->readahead op to replace ->readpages.  I've
+converted two users, iomap/xfs and cifs.  The cifs conversion is lacking
+fscache support, and that's just because I didn't want to do that work;
+I don't believe there's anything fundamental to it.  But I wanted to do
+iomap because it is The Infrastructure Of The Future and cifs because it
+is the sole remaining user of add_to_page_cache_locked(), which enables
+the last two patches in the series.  By the way, that gives CIFS access
+to the workingset shadow infrastructure, which it had to ignore before
+because it couldn't put pages onto the lru list at the right time.
 
-mmap_sem may have issues:
+v2: Chris asked me to show what this would look like if we just have
+the implementation look up the pages in the page cache, and I managed
+to figure out some things I'd done wrong last time.  It's even simpler
+than v1 (net 104 lines deleted).
 
-What about this?
+Matthew Wilcox (Oracle) (9):
+  mm: Fix the return type of __do_page_cache_readahead
+  readahead: Ignore return value of ->readpages
+  XArray: Add xarray_for_each_range
+  readahead: Put pages in cache earlier
+  mm: Add readahead address space operation
+  iomap,xfs: Convert from readpages to readahead
+  cifs: Convert from readpages to readahead
+  mm: Remove add_to_page_cache_locked
+  mm: Unify all add_to_page_cache variants
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index c5d11b70d067..8808782a085e 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-  *
-  * Basic locking order:
-  *
-- * i_rwsem -> i_dax_sem -> i_mmap_lock -> page_lock -> i_ilock
-+ * i_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-  *
-  * mmap_sem locking order:
-  *
-  * i_rwsem -> page lock -> mmap_sem
-- * mmap_sem -> i_dax_sem -> i_mmap_lock -> page_lock
-+ * i_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
-  *
-  * The difference in mmap_sem locking order mean that we cannot hold the
-  * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-diff --git a/mm/mmap.c b/mm/mmap.c
-index e6b68924b7ca..b500aef30b27 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1547,18 +1547,12 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-                        vm_flags |= VM_NORESERVE;
-        }
- 
--       if (file)
--               lock_inode_mode(file_inode(file));
--
-        addr = mmap_region(file, addr, len, vm_flags, pgoff, uf);
-        if (!IS_ERR_VALUE(addr) &&
-            ((vm_flags & VM_LOCKED) ||
-             (flags & (MAP_POPULATE | MAP_NONBLOCK)) == MAP_POPULATE))
-                *populate = len;
- 
--       if (file)
--               unlock_inode_mode(file_inode(file));
--
-        return addr;
- }
- 
-diff --git a/mm/util.c b/mm/util.c
-index 988d11e6c17c..1cfead8cd1ce 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -501,11 +501,18 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 
-        ret = security_mmap_file(file, prot, flag);
-        if (!ret) {
--               if (down_write_killable(&mm->mmap_sem))
-+               if (file)
-+                       lock_inode_mode(file_inode(file));
-+               if (down_write_killable(&mm->mmap_sem)) {
-+                       if (file)
-+                               unlock_inode_mode(file_inode(file));
-                        return -EINTR;
-+               }
-                ret = do_mmap_pgoff(file, addr, len, prot, flag, pgoff,
-                                    &populate, &uf);
-                up_write(&mm->mmap_sem);
-+               if (file)
-+                       unlock_inode_mode(file_inode(file));
-                userfaultfd_unmap_complete(mm, &uf);
-                if (populate)
-                        mm_populate(ret, populate);
+ Documentation/core-api/xarray.rst     |  10 +-
+ Documentation/filesystems/locking.rst |   7 +-
+ Documentation/filesystems/vfs.rst     |  11 ++
+ fs/cifs/file.c                        | 143 +++++---------------------
+ fs/iomap/buffered-io.c                |  72 +++----------
+ fs/iomap/trace.h                      |   2 +-
+ fs/xfs/xfs_aops.c                     |  10 +-
+ include/linux/fs.h                    |   2 +
+ include/linux/iomap.h                 |   2 +-
+ include/linux/pagemap.h               |  25 ++---
+ include/linux/xarray.h                |  30 ++++++
+ mm/filemap.c                          |  72 ++++---------
+ mm/internal.h                         |   2 +-
+ mm/readahead.c                        |  76 +++++++++-----
+ 14 files changed, 180 insertions(+), 284 deletions(-)
+
+-- 
+2.24.1
 
