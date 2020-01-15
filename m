@@ -2,70 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB1713BA0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 08:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 128D713BA3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 08:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgAOHAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 02:00:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40006 "EHLO
+        id S1726075AbgAOHQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 02:16:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50866 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgAOHAQ (ORCPT
+        with ESMTP id S1725999AbgAOHQ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 02:00:16 -0500
+        Wed, 15 Jan 2020 02:16:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=e/HwDJPULoIYF73mp6McqVlqD1raV4CY1J/pokd3Z88=; b=RnWCULGz0F8WwEcYsM4hO5v1K
-        +uB4kKjW6Ai37YFOoFp3+ik9b1pQQXl+VRmlQd5MW+129Ay98QE8ZMFX8HkX0s8djw5e0Phox9l3t
-        QjZk1IKDfoG25eNE+fgpvu9L1vnAkKhaz4ZJOcRC+8IIE6vMJHNbi08C8UziSO7G4aQ9S44qW6aIa
-        wWJ5mTMlAZSYQe9J4XE5RqOyBBeikZS8O3TlXHQaKh7rFnBkP3Po4p/6IpHwvkajrE4y0IdmPvrxU
-        2YZJrcjfpOd0ODa4CcUdGClpg6u7+bxgL3p3f/QSCbBvRuT3dg+JtKdD1/b52bcad3IBI+UfqkCKO
-        ZTQ6paXPw==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ircew-0002Af-G2; Wed, 15 Jan 2020 07:00:10 +0000
-Subject: Re: [PATCH v7 2/2] zonefs: Add documentation
-To:     Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>
-References: <20200115062859.1389827-1-damien.lemoal@wdc.com>
- <20200115062859.1389827-3-damien.lemoal@wdc.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <072a051e-4fbb-e662-c136-f9f27157169f@infradead.org>
-Date:   Tue, 14 Jan 2020 23:00:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+         bh=ZA7aSJRjUkKNXdsi7RFinpN7JG4VTFMCW87jm3aI7ec=; b=rq1x+uA6PcOARY9hmPbjqCwFd
+        gavBZBkHnr5F5ysyBa+tFubM4qgrsJpVURzhGus5HFZBWSf/eO8p7nWgHNsZs6ym8n84dhKhsS8ao
+        AkG3un+KGEC7Gv9TOcEppEBz2An4a1zg5duAzJiYQgXEh8yKauqpi1etzl1RE00HHilAd98fg74HC
+        5MBzlqPS+UpWS4bW4J/U59Y3MbPTGXJfavWFR4RPmc+oOFRB0bXsLdi/v5wTLTbSjAnbHGjJ9ufr1
+        dDu3Lfx+Q2KeusipZTMx4ah84hvISR3ME2KYiuhijLPz3MRV084RMG0qGKiAvJhnixbVqdV3JvWDb
+        xmYof6Djw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ircui-0000Vw-LY; Wed, 15 Jan 2020 07:16:28 +0000
+Date:   Tue, 14 Jan 2020 23:16:28 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Jeff Layton <jlayton@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>
+Subject: Re: [PATCH v2 6/9] iomap,xfs: Convert from readpages to readahead
+Message-ID: <20200115071628.GA3460@infradead.org>
+References: <20200115023843.31325-1-willy@infradead.org>
+ <20200115023843.31325-7-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200115062859.1389827-3-damien.lemoal@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115023843.31325-7-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/14/20 10:28 PM, Damien Le Moal wrote:
-> Add the new file Documentation/filesystems/zonefs.txt to document
-> zonefs principles and user-space tool usage.
-> 
-> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-> ---
->  Documentation/filesystems/zonefs.txt | 241 +++++++++++++++++++++++++++
->  MAINTAINERS                          |   1 +
->  2 files changed, 242 insertions(+)
->  create mode 100644 Documentation/filesystems/zonefs.txt
+On Tue, Jan 14, 2020 at 06:38:40PM -0800, Matthew Wilcox wrote:
+>  static loff_t
+> +iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		void *data, struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	struct iomap_readpage_ctx *ctx = data;
+> @@ -410,10 +381,8 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+>  			ctx->cur_page = NULL;
+>  		}
+>  		if (!ctx->cur_page) {
+> -			ctx->cur_page = iomap_next_page(inode, ctx->pages,
+> -					pos, length, &done);
+> -			if (!ctx->cur_page)
+> -				break;
+> +			ctx->cur_page = readahead_page(inode->i_mapping,
+> +					pos / PAGE_SIZE);
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Don't we at least need a sanity check for a NULL cur_page here?
+Also the readahead_page version in your previous patch seems to expect
+a byte offset, so the division above would not be required. (and should
+probably be replaced with a right shift anyway no matter where it ends
+up)
 
-thanks.
--- 
-~Randy
+> +unsigned
+> +iomap_readahead(struct address_space *mapping, pgoff_t start,
+>  		unsigned nr_pages, const struct iomap_ops *ops)
+>  {
+>  	struct iomap_readpage_ctx ctx = {
+> -		.pages		= pages,
+>  		.is_readahead	= true,
+>  	};
+> -	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
+> -	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+> -	loff_t length = last - pos + PAGE_SIZE, ret = 0;
+> +	loff_t pos = start * PAGE_SIZE;
+> +	loff_t length = nr_pages * PAGE_SIZE;
+
+Any good reason not to pass byte offsets for start and length?
+
+> +	return length / PAGE_SIZE;
+
+Same for the return value?
+
+For the file systems that would usually be a more natural interface than
+a page index and number of pages.
