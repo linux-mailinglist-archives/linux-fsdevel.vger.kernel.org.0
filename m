@@ -2,61 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F2513BB45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 09:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5FAC13BB9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 09:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbgAOIi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 03:38:58 -0500
-Received: from verein.lst.de ([213.95.11.211]:49605 "EHLO verein.lst.de"
+        id S1729080AbgAOI5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 03:57:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgAOIi6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:38:58 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9E17968B05; Wed, 15 Jan 2020 09:38:54 +0100 (CET)
-Date:   Wed, 15 Jan 2020 09:38:54 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, hch@lst.de,
-        tytso@mit.edu, adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Problems with determining data presence by examining extents?
-Message-ID: <20200115083854.GB23039@lst.de>
-References: <4467.1579020509@warthog.procyon.org.uk>
+        id S1729016AbgAOI5C (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 03:57:02 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 192B32187F;
+        Wed, 15 Jan 2020 08:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579078621;
+        bh=3WyxfmsLcZdvCzfHJIln9D0EDXYaykJoZ9k/zJOeSB8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e3SIvNz7CwaoCb5Yj3vfmJTDPIopA/8P8ESTsDX1eqkWf0EN4sYhs5/BzaHi7Rn/x
+         Mn/alJUvEWJNULn/47olE6wc4Qc/cBJy/WJSgdsQCajDvfqGOgbm8ZkQzu/3cihk75
+         8P145i3DzJtqQvk5pb7BjVVqcaEgdgMdtYRaUKSU=
+Date:   Wed, 15 Jan 2020 09:56:58 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        valdis.kletnieks@vt.edu, hch@lst.de, sj1557.seo@samsung.com,
+        linkinjeon@gmail.com, pali.rohar@gmail.com, arnd@arndb.de
+Subject: Re: [PATCH v10 14/14] staging: exfat: make staging/exfat and
+ fs/exfat mutually exclusive
+Message-ID: <20200115085658.GA3045123@kroah.com>
+References: <20200115082447.19520-1-namjae.jeon@samsung.com>
+ <CGME20200115082826epcas1p3475ce2b4d03234dc96ced428be582eb3@epcas1p3.samsung.com>
+ <20200115082447.19520-15-namjae.jeon@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4467.1579020509@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200115082447.19520-15-namjae.jeon@samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 04:48:29PM +0000, David Howells wrote:
-> Again with regard to my rewrite of fscache and cachefiles:
+On Wed, Jan 15, 2020 at 05:24:47PM +0900, Namjae Jeon wrote:
+> Make staging/exfat and fs/exfat mutually exclusive to select the one
+> between two same filesystem.
 > 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
-> 
-> I've got rid of my use of bmap()!  Hooray!
-> 
-> However, I'm informed that I can't trust the extent map of a backing file to
-> tell me accurately whether content exists in a file because:
-> 
->  (a) Not-quite-contiguous extents may be joined by insertion of blocks of
->      zeros by the filesystem optimising itself.  This would give me a false
->      positive when trying to detect the presence of data.
-> 
->  (b) Blocks of zeros that I write into the file may get punched out by
->      filesystem optimisation since a read back would be expected to read zeros
->      there anyway, provided it's below the EOF.  This would give me a false
->      negative.
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-The whole idea of an out of band interface is going to be racy and suffer
-from implementation loss.  I think what you want is something similar to
-the NFSv4.2 READ_PLUS operation - give me that if there is any and
-otherwise tell me that there is a hole.  I think this could be a new
-RWF_NOHOLE or similar flag, just how to return the hole size would be
-a little awkward.  Maybe return a specific negative error code (ENODATA?)
-and advance the iov anyway.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
