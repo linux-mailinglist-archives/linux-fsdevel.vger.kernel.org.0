@@ -2,151 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0997913CBF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 19:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7AF313CC09
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jan 2020 19:24:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbgAOSTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 13:19:24 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44806 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728904AbgAOSTY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:19:24 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9ABDE8EE191;
-        Wed, 15 Jan 2020 10:19:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1579112363;
-        bh=pAkgSM4XCYD08LoXMWLR6CnpdLgNyvNulobz8SsQjH8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZYXf+jTipAKnRUKfAbQNFo/tQgw3IZ7emGiHZFZZxyqt5L9XHas7o+UYe+BefKEbU
-         jgSAOcd7NwBKsgd4YI1wD7qSZtj5z4wAHES5YEu4RlBhuajUJLxm1GAsyl60SnkzEd
-         VucvKTqkyZXGTgq8mW8xSXRj32tIcMHfZNOS7lCg=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NjZXcexcsQRZ; Wed, 15 Jan 2020 10:19:23 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 542148EE0D4;
-        Wed, 15 Jan 2020 10:19:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1579112363;
-        bh=pAkgSM4XCYD08LoXMWLR6CnpdLgNyvNulobz8SsQjH8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ZYXf+jTipAKnRUKfAbQNFo/tQgw3IZ7emGiHZFZZxyqt5L9XHas7o+UYe+BefKEbU
-         jgSAOcd7NwBKsgd4YI1wD7qSZtj5z4wAHES5YEu4RlBhuajUJLxm1GAsyl60SnkzEd
-         VucvKTqkyZXGTgq8mW8xSXRj32tIcMHfZNOS7lCg=
-Message-ID: <1579112360.3249.17.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        containers@lists.linux-foundation.org,
-        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>
-Date:   Wed, 15 Jan 2020 10:19:20 -0800
-In-Reply-To: <20200113034149.GA27228@mail.hallyn.com>
-References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
-         <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
-         <20200113034149.GA27228@mail.hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729184AbgAOSYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jan 2020 13:24:47 -0500
+Received: from mga01.intel.com ([192.55.52.88]:40076 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729014AbgAOSYr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jan 2020 13:24:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2020 10:24:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,323,1574150400"; 
+   d="scan'208";a="248498688"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jan 2020 10:24:46 -0800
+Date:   Wed, 15 Jan 2020 10:24:46 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 09/12] fs: Prevent mode change if file is mmap'ed
+Message-ID: <20200115182446.GD23311@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-10-ira.weiny@intel.com>
+ <20200113222212.GO8247@magnolia>
+ <20200114004610.GD29860@iweiny-DESK2.sc.intel.com>
+ <20200114013004.GU8247@magnolia>
+ <20200114175353.GA7871@iweiny-DESK2.sc.intel.com>
+ <20200115113455.GA2595@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115113455.GA2595@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-01-12 at 21:41 -0600, Serge E. Hallyn wrote:
-> On Sat, Jan 04, 2020 at 12:39:45PM -0800, James Bottomley wrote:
-> > This implementation reverse shifts according to the user_ns
-> > belonging to the mnt_ns.  So if the vfsmount has the newly
-> > introduced flag MNT_SHIFT and the current user_ns is the same as
-> > the mount_ns->user_ns then we shift back using the user_ns before
-> > committing to the underlying filesystem.
+On Wed, Jan 15, 2020 at 12:34:55PM +0100, Jan Kara wrote:
+> On Tue 14-01-20 09:53:54, Ira Weiny wrote:
+> > On Mon, Jan 13, 2020 at 05:30:04PM -0800, Darrick J. Wong wrote:
+> > > > > > +		error = -EBUSY;
+> > > > > > +		goto out_unlock;
+> > > > > > +	}
+> > > > > > +
+> > > > > >  	error = filemap_write_and_wait(inode->i_mapping);
+> > > > > >  	if (error)
+> > > > > >  		goto out_unlock;
+> > > > > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > > > > index 631f11d6246e..6e7dc626b657 100644
+> > > > > > --- a/include/linux/fs.h
+> > > > > > +++ b/include/linux/fs.h
+> > > > > > @@ -740,6 +740,7 @@ struct inode {
+> > > > > >  #endif
+> > > > > >  
+> > > > > >  	void			*i_private; /* fs or device private pointer */
+> > > > > > +	atomic64_t               i_mapped;
+> > > > > 
+> > > > > I would have expected to find this in struct address_space since the
+> > > > > mapping count is a function of the address space, right?
+> > > > 
+> > > > I suppose but the only external call (above) would be passing an inode.  So to
+> > > > me it seemed better here.
+> > > 
+> > > But the number of memory mappings reflects the state of the address
+> > > space, not the inode.  Or maybe put another way, if I were an mm
+> > > developer I would not expect to look in struct inode for mm state.
 > > 
-> > For example, if a user_ns is created where interior (fake root, uid
-> > 0) is mapped to kernel uid 100000 then writes from interior root
-> > normally go to the filesystem at the kernel uid.  However, if
-> > MNT_SHIFT is set, they will be shifted back to write at uid 0,
-> > meaning we can bind mount real image filesystems to user_ns
-> > protected faker root.
+> > This is a good point...
+> > 
+> > > 
+> > > static inline bool inode_has_mappings(struct inode *inode)
+> > > {
+> > > 	return atomic64_read(&inode->i_mapping->mapcount) > 0;
+> > > }
+> > > 
+> > > OTOH if there exist other mm developers who /do/ find that storing the
+> > > mmap count in struct inode is more logical, please let me know. :)
+> > 
+> > ...  My thinking was that the number of mappings does not matters to the mm
+> > system...  However, I'm starting to think you are correct...  ;-)
+> > 
+> > I've made a note of it and we will see what others think.
 > 
-> Thanks, James, I definately would like to see shifting in the VFS
-> api.
-> 
-> I have a few practical concerns about this implementation, but my
-> biggest concern is more fundemental:  this again by design leaves
-> littered about the filesystem uid-0 owned files which were written by
-> an untrusted user.
+> Well, more importantly mapping != inode. There can be multiple inodes
+> pointing to the same mapping (struct address_space) as is the case for
+> example for block devices. So this counter definitely belongs into struct
+> address_space.
 
-Well, I think that's a consequence of my use case: using unmodified
-container images with the user namespace.  We're starting to do IMA/EVM
-signatures in our images, so shifted UID images aren't an option for us
-.  Therefore I have to figure out a way of allowing an untrusted user
-to write safely at UID zero.  For me that safety comes from strictly
-corralling where they can write and making sure the container
-orchestration system sets it up correctly.
+Ah Yes, great point.  Done.
 
-> I would feel much better if you institutionalized having the origin
-> shifted.  For instance, take a squashfs for a container fs, shift it
-> so that fsuid 0 == hostuid 100000.  Mount that, with a marker saying
-> how it is shifted, then set 'shiftable'.  Now use that as a base for
-> allowing an unpriv user to shift.  If that user has subuid 200000 as
-> container uid 0, then its root will write files as uid 100000 in the
-> fs.  This isn't perfect, but I think something along these lines
-> would be far safer.
-
-OK, so I fully agree that if you're not doing integrity in the
-container, then this is an option for you and whatever API gets
-upstreamed should cope with that case.
-
-So to push on the API a bit, what do you want?  The reverse along the
-user_ns one I implemented is easy: a single flag tells you to map back
-or not.  However, the implementation is phrased in terms of shifted
-credentials, so as long as we know how to map, it can work for both our
-use cases.  I think in plumbers you expressed interest in simply
-passing the map to the mount rather than doing it via a user_ns; is
-that still the case?
-
-> Two namespaces with different uid maps can share the filesystem as
-> though they both had the same uidmap.  (This currently is to me the
-> most interesting use case for shifing bind mounts)
-> 
-> If the user wants to tar up the result, they can do do in their own
-> namespace, resulting in uid 0 shown as uid 0.  If host root wants to
-> do so, they can umount it everywhere and use something like
-> fuidshift. Or, they can also create a namespace to do the shifting to
-> uid 0 in tar.
-> 
-> My more practical concerns include: (1) once a userns has set a
-> shiftable bind mount to shift, if it then creates a new child userns,
-> that ns will not see (iiuc) see the fs as shifted.
-
-Actually, it will.  The shift is a property of the vfsmount (or
-underlying struct mount), so if you create a new user_ns then a
-mount_ns, the new mount_ns inherits the shift flag and you go back
-along your new user_ns.  If you don't create a new mount_ns, you still
-get the shift flag, but you're still being shifted along the parent
-user_ns, not your new one.
-
->   (2) there seems to be no good reason to stick to caching the cred
-> for only one mnt, versus having a per-userns hashtable of creds for
-> shifted mnts.  Was that just a temporary shortcut or did you intend
-> it to stay that way?
-
-Well, it was a demo of mechanism, but remember this cache is per thread
-of execution.  Is there really going to be a use case where one thread
-of execution traverses multiple user_ns's and so would need multiple
-shifted credentials?  The current implementation could be backed by a
-hashtable, but I really think it would only make sense if the creds
-could be global, but they're not they're strictly thread specific
-entities.
-
-James
-
+Ira
 
