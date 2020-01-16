@@ -2,260 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF1F13D463
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 07:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9CE13D47A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 07:44:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgAPGg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 01:36:57 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36964 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726369AbgAPGg5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 01:36:57 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A929DF09DF9202DD1280;
-        Thu, 16 Jan 2020 14:36:54 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 16 Jan 2020
- 14:36:45 +0800
-From:   yu kuai <yukuai3@huawei.com>
-To:     <hch@infradead.org>, <darrick.wong@oracle.com>
-CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
-        <houtao1@huawei.com>, <zhengbin13@huawei.com>,
-        <yi.zhang@huawei.com>
-Subject: [RFC] iomap: fix race between readahead and direct write
-Date:   Thu, 16 Jan 2020 14:36:01 +0800
-Message-ID: <20200116063601.39201-1-yukuai3@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1729210AbgAPGoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 01:44:34 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:40684 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbgAPGod (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 01:44:33 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 5DD449C2; Thu, 16 Jan 2020 00:44:30 -0600 (CST)
+Date:   Thu, 16 Jan 2020 00:44:30 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        containers@lists.linux-foundation.org,
+        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
+Message-ID: <20200116064430.GA32763@mail.hallyn.com>
+References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
+ <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
+ <20200113034149.GA27228@mail.hallyn.com>
+ <1579112360.3249.17.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1579112360.3249.17.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I noticed that generic/418 test may fail with small probability. And with
-futher investiation, it can be reproduced with:
+On Wed, Jan 15, 2020 at 10:19:20AM -0800, James Bottomley wrote:
+> On Sun, 2020-01-12 at 21:41 -0600, Serge E. Hallyn wrote:
+> > On Sat, Jan 04, 2020 at 12:39:45PM -0800, James Bottomley wrote:
+> > > This implementation reverse shifts according to the user_ns
+> > > belonging to the mnt_ns.  So if the vfsmount has the newly
+> > > introduced flag MNT_SHIFT and the current user_ns is the same as
+> > > the mount_ns->user_ns then we shift back using the user_ns before
+> > > committing to the underlying filesystem.
+> > > 
+> > > For example, if a user_ns is created where interior (fake root, uid
+> > > 0) is mapped to kernel uid 100000 then writes from interior root
+> > > normally go to the filesystem at the kernel uid.  However, if
+> > > MNT_SHIFT is set, they will be shifted back to write at uid 0,
+> > > meaning we can bind mount real image filesystems to user_ns
+> > > protected faker root.
+> > 
+> > Thanks, James, I definately would like to see shifting in the VFS
+> > api.
+> > 
+> > I have a few practical concerns about this implementation, but my
+> > biggest concern is more fundemental:  this again by design leaves
+> > littered about the filesystem uid-0 owned files which were written by
+> > an untrusted user.
+> 
+> Well, I think that's a consequence of my use case: using unmodified
+> container images with the user namespace.  We're starting to do IMA/EVM
+> signatures in our images, so shifted UID images aren't an option for us
+> .  Therefore I have to figure out a way of allowing an untrusted user
+> to write safely at UID zero.  For me that safety comes from strictly
+> corralling where they can write and making sure the container
+> orchestration system sets it up correctly.
 
-./src/dio-invalidate-cache -wp -b 4096 -n 8 -i 1 -f filename
-./src/dio-invalidate-cache -wt -b 4096-n 8 -i 1 -f filename
+Isn't that a matter of convention?  You could ship, store, and measure
+the files already shifted.  An OCI annotation could show the offset,
+say 100000.
 
-The failure is because direct write wrote none-zero but buffer read got
-zero.
+Now if any admin runs across this device noone will be tricked by the root
+owned files.
 
-In the process of buffer read, if the page do not exist, readahead will
-be triggered.  __do_page_cache_readahead() will allocate page first. Next,
-if the file block is unwritten(or hole), iomap_begin() will set iomap->type
-to IOMAP_UNWRITTEN(or IOMAP_HOLE). Then, iomap_readpages_actor() will add
-page to page cache. Finally, iomap_readpage_actor() will zero the page.
+Mount could conceivably look like:
 
-However, there is no lock or serialization between initializing iomap and
-adding page to page cache against direct write. If direct write happen to
-fininsh between them, the type of iomap should be IOMAP_MAPPED instead of
-IOMAP_UNWRITTEN or IOMAP_HOLE. And the page will end up zeroed out in page
-cache, while on-disk page hold the data of direct write.
+	mount --bind --origin-uid 100000 --shift /proc/50/ns/user /src /dest
 
-| thread 1                    | thread 2                   |
-| --------------------------  | -------------------------- |
-| generic_file_buffered_read  |                            |
-|  ondemand_readahead         |                            |
-|   read_pages                |                            |
-|    iomap_readpages          |                            |
-|     iomap_apply             |                            |
-|      xfs_read_iomap_begin   |                            |
-|                             | xfs_file_dio_aio_write     |
-|                             |  iomap_dio_rw              |
-|                             |   ioamp_apply              |
-|     ioamp_readpages_actor   |                            |
-|      iomap_next_page        |                            |
-|       add_to_page_cache_lru |                            |
-|      iomap_readpage_actor   |                            |
-|       zero_user             |                            |
-|    iomap_set_range_uptodate |                            |
-|                             | generic_file_buffered_read |
-|                             |  copy_page_to_iter        |
+(the --shift idea coming from Tycho).  I'd prefer --origin to be another
+user namespace fd, which I suppose some tool could easily set up, for
+instance:
 
-For consequences, the content in the page is zero while the content in the
-disk is not.
+	pid1=`setup-userns-fd -m b:0:100000:65536`
+	pid2=$(prepare a container userns)
+	mount --bind --shift-origin=/proc/$pid1/ns/user \
+		--shift-target=/proc/$pid2/ns/user /src /dest
 
-I tried to fix the problem by moving "add to page cache" before
-iomap_begin(). However, performance might be worse since iomap_begin()
-will be called for each page. I tested the performance for sequential
-read with fio:
+You could presumably always skip the shift-origin to achieve what you're
+doing now.
 
-kernel version: v5.5-rc6
-platform: arm64, 96 cpu
-fio version: fio-3.15-2
-test cmd:
-fio -filename=/mnt/testfile -rw=read -bs=4k -size=20g -direct=0 -fsync=0
--numjobs=1 / 32 -ioengine=libaio -name=test -ramp_time=10 -runtime=120
-test result:
-|                  | without patch MiB/s | with patch MiB/s |
-| ---------------- | ------------------- | ---------------- |
-| ssd, numjobs=1   | 512                 | 512              |
-| ssd, numjobs=32  | 3615                | 3714             |
-| nvme, numjobs=1  | 1167                | 1118             |
-| nvme, numjobs=32 | 3679                | 3606             |
+> > I would feel much better if you institutionalized having the origin
+> > shifted.  For instance, take a squashfs for a container fs, shift it
+> > so that fsuid 0 == hostuid 100000.  Mount that, with a marker saying
+> > how it is shifted, then set 'shiftable'.  Now use that as a base for
+> > allowing an unpriv user to shift.  If that user has subuid 200000 as
+> > container uid 0, then its root will write files as uid 100000 in the
+> > fs.  This isn't perfect, but I think something along these lines
+> > would be far safer.
+> 
+> OK, so I fully agree that if you're not doing integrity in the
+> container, then this is an option for you and whatever API gets
+> upstreamed should cope with that case.
+> 
+> So to push on the API a bit, what do you want?  The reverse along the
+> user_ns one I implemented is easy: a single flag tells you to map back
+> or not.  However, the implementation is phrased in terms of shifted
+> credentials, so as long as we know how to map, it can work for both our
+> use cases.  I think in plumbers you expressed interest in simply
+> passing the map to the mount rather than doing it via a user_ns; is
+> that still the case?
 
-Test result shows that the impact on performance is minimal.
+Oh I think I'm fine either way - I can always create a user_ns to match
+the map I want.
 
-Signed-off-by: yu kuai <yukuai3@huawei.com>
----
- fs/iomap/buffered-io.c | 104 ++++++++++++++++++++---------------------
- 1 file changed, 52 insertions(+), 52 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 828444e14d09..ccfa1a52d966 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -329,26 +329,44 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 	return pos - orig_pos + plen;
- }
- 
--int
--iomap_readpage(struct page *page, const struct iomap_ops *ops)
-+static int
-+do_iomap_readpage_apply(
-+	loff_t				offset,
-+	int				flag,
-+	const struct iomap_ops		*ops,
-+	struct iomap_readpage_ctx	*ctx,
-+	iomap_actor_t			actor,
-+	bool				fatal)
- {
--	struct iomap_readpage_ctx ctx = { .cur_page = page };
--	struct inode *inode = page->mapping->host;
--	unsigned poff;
--	loff_t ret;
--
--	trace_iomap_readpage(page->mapping->host, 1);
-+	unsigned int			poff;
-+	loff_t				ret;
-+	struct page			*page = ctx->cur_page;
-+	struct inode			*inode = page->mapping->host;
- 
- 	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
--		ret = iomap_apply(inode, page_offset(page) + poff,
--				PAGE_SIZE - poff, 0, ops, &ctx,
--				iomap_readpage_actor);
-+		ret = iomap_apply(inode, offset + poff, PAGE_SIZE - poff,
-+				  flag, ops, ctx, actor);
- 		if (ret <= 0) {
- 			WARN_ON_ONCE(ret == 0);
-+			if (fatal)
-+				return ret;
- 			SetPageError(page);
--			break;
-+			return 0;
- 		}
- 	}
-+	return ret;
-+}
-+
-+
-+int
-+iomap_readpage(struct page *page, const struct iomap_ops *ops)
-+{
-+	struct iomap_readpage_ctx ctx = { .cur_page = page };
-+
-+	trace_iomap_readpage(page->mapping->host, 1);
-+
-+	do_iomap_readpage_apply(page_offset(page), 0, ops, &ctx,
-+				iomap_readpage_actor, false);
- 
- 	if (ctx.bio) {
- 		submit_bio(ctx.bio);
-@@ -395,34 +413,6 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
- 	return NULL;
- }
- 
--static loff_t
--iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
--		void *data, struct iomap *iomap, struct iomap *srcmap)
--{
--	struct iomap_readpage_ctx *ctx = data;
--	loff_t done, ret;
--
--	for (done = 0; done < length; done += ret) {
--		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
--			if (!ctx->cur_page_in_bio)
--				unlock_page(ctx->cur_page);
--			put_page(ctx->cur_page);
--			ctx->cur_page = NULL;
--		}
--		if (!ctx->cur_page) {
--			ctx->cur_page = iomap_next_page(inode, ctx->pages,
--					pos, length, &done);
--			if (!ctx->cur_page)
--				break;
--			ctx->cur_page_in_bio = false;
--		}
--		ret = iomap_readpage_actor(inode, pos + done, length - done,
--				ctx, iomap, srcmap);
--	}
--
--	return done;
--}
--
- int
- iomap_readpages(struct address_space *mapping, struct list_head *pages,
- 		unsigned nr_pages, const struct iomap_ops *ops)
-@@ -433,22 +423,32 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
- 	};
- 	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
- 	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
--	loff_t length = last - pos + PAGE_SIZE, ret = 0;
-+	loff_t length = last - pos + PAGE_SIZE, ret = 0, done;
- 
- 	trace_iomap_readpages(mapping->host, nr_pages);
- 
--	while (length > 0) {
--		ret = iomap_apply(mapping->host, pos, length, 0, ops,
--				&ctx, iomap_readpages_actor);
-+	for (done = 0; done < length; done += PAGE_SIZE) {
-+		if (ctx.cur_page) {
-+			if (!ctx.cur_page_in_bio)
-+				unlock_page(ctx.cur_page);
-+			put_page(ctx.cur_page);
-+			ctx.cur_page = NULL;
-+		}
-+		ctx.cur_page = iomap_next_page(mapping->host, ctx.pages,
-+					       pos, length, &done);
-+		if (!ctx.cur_page)
-+			break;
-+		ctx.cur_page_in_bio = false;
-+
-+		ret = do_iomap_readpage_apply(pos+done, 0, ops, &ctx,
-+					      iomap_readpage_actor, true);
- 		if (ret <= 0) {
--			WARN_ON_ONCE(ret == 0);
--			goto done;
-+			done = ret;
-+			break;
- 		}
--		pos += ret;
--		length -= ret;
-+
- 	}
--	ret = 0;
--done:
-+
- 	if (ctx.bio)
- 		submit_bio(ctx.bio);
- 	if (ctx.cur_page) {
-@@ -461,8 +461,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
- 	 * Check that we didn't lose a page due to the arcance calling
- 	 * conventions..
- 	 */
--	WARN_ON_ONCE(!ret && !list_empty(ctx.pages));
--	return ret;
-+	WARN_ON_ONCE((done == length) && !list_empty(ctx.pages));
-+	return done;
- }
- EXPORT_SYMBOL_GPL(iomap_readpages);
- 
--- 
-2.17.2
-
+-serge
