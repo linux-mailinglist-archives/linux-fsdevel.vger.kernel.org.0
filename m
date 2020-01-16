@@ -2,121 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A795613DF78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 17:01:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C62913E007
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 17:26:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbgAPQAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 11:00:55 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38580 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgAPQAz (ORCPT
+        id S1726903AbgAPQ0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 11:26:37 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:60788 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726887AbgAPQ0h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:00:55 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u2so4368099wmc.3;
-        Thu, 16 Jan 2020 08:00:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Qes5lqTpMZNbHD18QpVEHmgxWIqC3UwSuESKVsX72FE=;
-        b=gdJbrNwdSuD/lvrwJ+3fpsgkxvDd6PxZ5jdXHxxFu/eilWk//S1GI0gBerZequfBEj
-         326Y8S+FlQEFWKuxDy9lZQugKLnfV4JoHULipF5ws+4XsNU8Sqc6ewx62CRqFL84MGp8
-         qv9dxn5oq7nP57h2XPv18cQqQn9pkYxmxH/PvkOeVJ1s21/FwAHuZCzzH6EjlWqmQ3y6
-         vZOqeJS/0QO7EYpjKhSFkRXflmExCP3OympCZzie+J8heuKYvrlbzNpeyx3R8CdUWknm
-         gNj5I32G/uDMcheI4wyIDMWdNXeiNFuPR0jp1S49Zfa3UBnDA4NFCbqn3WIPvYWJAWQ4
-         lGBQ==
+        Thu, 16 Jan 2020 11:26:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579191996;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=G6RNGzjUW843+AgIaDtl8qCHGuApw8Cu8ZmlHAq9RaQ=;
+        b=SVxAUh98rP5ybdTpel0kaXdzL/gJDg0alW01oJAdh5ESptSMDT0CmRPG+9qpRyE3WzQFUz
+        /9C3I9KUl+4HlDpl2j8cFZKtaAGa7cyRbPaxA7XTtDp+IWcqqLFB2SdBuKcFvcDa/tXx7U
+        99Z+eBpma+cnca64lXGOse2bD5mEazU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-110-rT6YYmwoPgiLnMrhvJLi-A-1; Thu, 16 Jan 2020 11:26:35 -0500
+X-MC-Unique: rT6YYmwoPgiLnMrhvJLi-A-1
+Received: by mail-wr1-f71.google.com with SMTP id y7so9474353wrm.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 08:26:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Qes5lqTpMZNbHD18QpVEHmgxWIqC3UwSuESKVsX72FE=;
-        b=SLMPPYJVQpiDAcGQ5eayUMV6jE7o/Nsg51Hi4dPcq43v++NxXCJAI2vekK7FleSNdW
-         XtC/gWEiSKW8ZAEyXyqv3O9vMcoayBZau5ke1ibgC/Dmiy17sAp7/h1jjWwnJ6jNQiYR
-         kVbsUg8dp0C62zhW3KWSDieYm9H4bPRm2MQ0w2WwgAwgGftDtnJ6cmRonIDc/Derljsu
-         X5nGcRYQfVRDjKTga93EmBQpwb+ZteXkUz7vmFRVDhKjCIxtAkeQVsgYslIMkYemKagR
-         TsLHy1G+3uYnl11q2Mi/riu2yLZ3fkNQQGNwTyT1n2DskKoKuf6fHlhyxiI0YmARWOy1
-         Ohvg==
-X-Gm-Message-State: APjAAAVrKfbyfVT/qGQXxrC5olLM1rAnjI/xmlTNXjRSr2M/6Bg5Hm6w
-        9Ktd300IGTcS7Y/z6mwnl18=
-X-Google-Smtp-Source: APXvYqxCKtH+zs0uDEdCBM/xP9ElsKv0y4WnMKlghvorw44FNmlHzSJdTk80Pt4IhCwFHxbeFidbEQ==
-X-Received: by 2002:a7b:cf12:: with SMTP id l18mr7276001wmg.66.1579190453136;
-        Thu, 16 Jan 2020 08:00:53 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id 25sm4961535wmi.32.2020.01.16.08.00.51
+         :mime-version:content-disposition:in-reply-to;
+        bh=G6RNGzjUW843+AgIaDtl8qCHGuApw8Cu8ZmlHAq9RaQ=;
+        b=BsMTJKxmst7Iv/Y+ciEm6vqB2WxAqI+wRwcjWUOlUg0p+3P9n321OcmvXWxnWst5bE
+         W9apZVqcMFS+lTATwaRkjFL/y5v5OfF7UXQfMD/MqoCCpWHZFAA+fmytmZjdrPkpBQfQ
+         S3iD5mFsJ7kpmRtXKEGrCrlHG75uwRTvN8zvI3jSASWd9sRrFCf/wfRkihJ1tB0lQjC8
+         NoUYkxnbZgJCRsZUJH2rPFPsQiHkTzkU2auklcwLrzIHRzFbcHRF7HRv9HlhzAHy8Nns
+         o+LP6rrr73IcPWyJHpqK7WC2CO6jtDouBhL3mxb0MFIm8Ejd+7InwT3HBamsTQ+bpioQ
+         /pSw==
+X-Gm-Message-State: APjAAAVren6Bb7PWNtgNMIwmYGeRJpDD3Qw0KL7FipJMopLhOWivX5G5
+        je5L+/O7t77/aMJsli6HTPWMgcqLF9qqyvFlRqxCRney6cZ1+AxymG8uOrXW9U5V9NVyghnIyAe
+        UCXfWJdWc3XLMAe4jxptculL5Ow==
+X-Received: by 2002:a7b:c38c:: with SMTP id s12mr179127wmj.96.1579191993843;
+        Thu, 16 Jan 2020 08:26:33 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyVNkRUOY54Y/ZYMQW77kBEaygl5YC6rGuaZPyaPFrmI7SCRCZD7H/YaLgWR5CAcTzkjJR9eg==
+X-Received: by 2002:a7b:c38c:: with SMTP id s12mr179105wmj.96.1579191993610;
+        Thu, 16 Jan 2020 08:26:33 -0800 (PST)
+Received: from steredhat (host84-49-dynamic.31-79-r.retail.telecomitalia.it. [79.31.49.84])
+        by smtp.gmail.com with ESMTPSA id p18sm5370071wmb.8.2020.01.16.08.26.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 08:00:52 -0800 (PST)
-Date:   Thu, 16 Jan 2020 17:00:51 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Namjae Jeon <linkinjeon@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        sj1557.seo@samsung.com
-Subject: Re: [PATCH v10 09/14] exfat: add misc operations
-Message-ID: <20200116160051.adn7j7y5oshoe7qt@pali>
-References: <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
- <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
- <20200115133838.q33p5riihsinp6c4@pali>
- <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
- <20200115142428.ugsp3binf2vuiarq@pali>
- <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com>
- <20200115153943.qw35ya37ws6ftlnt@pali>
- <CAK8P3a1iYPA9MrXORiWmy1vQGoazwHs7OfPdoHLZLJDWqu9jqA@mail.gmail.com>
- <20200116101947.4szdyfwpyasv5vpe@pali>
- <20200116102307.GA16662@lst.de>
+        Thu, 16 Jan 2020 08:26:32 -0800 (PST)
+Date:   Thu, 16 Jan 2020 17:26:30 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
+Message-ID: <20200116162630.6r3xc55kdyyq5tvz@steredhat>
+References: <20200116134946.184711-1-sgarzare@redhat.com>
+ <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
+ <20200116155557.mwjc7vu33xespiag@steredhat>
+ <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200116102307.GA16662@lst.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 16 January 2020 11:23:07 Christoph Hellwig wrote:
-> On Thu, Jan 16, 2020 at 11:19:47AM +0100, Pali Rohár wrote:
-> >   However, implementations should only record the value 00h for this
-> >   field when:
+On Thu, Jan 16, 2020 at 09:00:24AM -0700, Jens Axboe wrote:
+> On 1/16/20 8:55 AM, Stefano Garzarella wrote:
+> > On Thu, Jan 16, 2020 at 08:29:07AM -0700, Jens Axboe wrote:
+> >> On 1/16/20 6:49 AM, Stefano Garzarella wrote:
+> >>> io_uring_poll() sets EPOLLOUT flag if there is space in the
+> >>> SQ ring, then we should wakeup threads waiting for EPOLLOUT
+> >>> events when we expose the new SQ head to the userspace.
+> >>>
+> >>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> >>> ---
+> >>>
+> >>> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+> >>
+> >> I honestly think it'd be better to have separate waits for in/out poll,
+> >> the below patch will introduce some unfortunate cacheline traffic
+> >> between the submitter and completer side.
 > > 
-> >     1. Local date and time are actually the same as UTC, in which case
-> >        the value of the OffsetValid field shall be 1
+> > Agree, make sense. I'll send a v2 with a new 'sq_wait'.
 > > 
-> >     2. Local date and time are not known, in which case the value of the
-> >        OffsetValid field shall be 1 and implementations shall consider
-> >        UTC to be local date and time
+> > About fasync, do you think could be useful the POLL_OUT support?
+> > In this case, maybe is not simple to have two separate fasync_struct,
+> > do you have any advice?
 > 
-> Given time zones in Linux are per session I think our situation is
-> somewhat similar to 2.
+> The fasync should not matter, it's all in the checking of whether the sq
+> side has any sleepers. This is rarely going to be the case, so as long
+> as we can keep the check cheap, then I think we're fine.
 
-Seems that 2. is really similar. Ok, storing by default in UTC make
-sense, but still I'm thinking if there should be (or not) a mount option
-which override default UTC timezone.
+Right.
 
-> > > Here I would just convert to UTC, which is what we store in the
-> > > in-memory struct inode anyway.
-> > 
-> > Ok. If inode timestamp is always in UTC, we should do same thing also
-> > for exFAT.
 > 
-> > Hm... both UTC and sys_tz have positives and negatives. And I'm not
-> > sure which option is better.
-> 
-> The one big argument for always UTC is simplicity.  Always using UTC
-> kills some arcane an unusual (for Linux file systems) code, and given
-> how exfat implementations deal with the time zone on reading should
-> always interoperate fine with other implementations.
+> Since the use case is mostly single submitter, unless you're doing
+> something funky or unusual, you're not going to be needing POLLOUT ever.
 
-Now I think that using UTC by default is the better option as sys_tz.
-Simplicity and "no surprise" (container may use UTC, but kernel has
-sys_tz in not in UTC) seems like a good arguments.
+The case that I had in mind was with kernel side polling enabled and
+a single submitter that can use epoll() to wait free slots in the SQ
+ring. (I don't have a test, maybe I can write one...)
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> Hence I don't want to add any cost for it, I'd even advocate just doing
+> waitqueue_active() perhaps, if we can safely pull it off.
+
+I'll try!
+
+Thanks,
+Stefano
+
