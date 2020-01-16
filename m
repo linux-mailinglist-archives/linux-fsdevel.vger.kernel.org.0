@@ -2,107 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3608F13F716
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 20:09:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B77D13F77C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 20:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437354AbgAPTJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 14:09:15 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44007 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388043AbgAPTJM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:09:12 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p125so19845355oif.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 11:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
-        b=J79PjTiwui87Gtdaft875ciI4awf5xIZ2OlEVeWr6PK1j7HDrzdets/eOiB9gFbjxU
-         N8a+VDYTOh/zAoGUZWE4w1cYgXKFMyIY5mxDDqaoQWFa6T9HxfH2fP9PLUP1uKEVP7xo
-         SFvhifCBTkknEhBzZWrz1h+yDcMOzcy1CAiSWM1LLzIaCNgg2JOGV1Bsk6VwLRFyGzsl
-         3oI19Df8dP3bwMD1fbOXbUBm44Ixpu94cRB2oRYOQ/+C0gKdgTy/EpALksKs5ue92Nlt
-         bvnoL/8n6PK1nwQDhUpD7aFZSXwTnAcIEDKECZAVt2HboWTI3XccHsyHaJHIW0AO8xHe
-         C2gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6nsG4OiSI74VDUNjgH/EGPUC6QzQOOzMAIB017xQliU=;
-        b=ryMrIxl8hgX+UAe11rYKyXurBmg/7292/kVNplMsukYVNnmFX2fzGwSnGFnh1I6gDK
-         70GNY7+TuyS/tMqQzzptGthmDZDYi4JykPQaaGQP3mPLCDRb3sKX3h+aw+1MKPmJfCJO
-         4RQ/QNNvZpuHMI6jw347YhwRppWw5P8mxWPXvi/gqXnBZju3DiL3Kk2MaTELL79Pub0f
-         a/YvT/8krwPkjaRasRqexQDikrywPWzFLe94yglGZoKa3UmOsc+jO+30locQd53t2xUV
-         1FgNZ7/Uvp8nFpRLU/VubUGYDTmBcuFpjFXFM2xTaD9iqOGa2hYFZFLdoCFkf/D8M+J3
-         O7VA==
-X-Gm-Message-State: APjAAAXO7gdEdgy/u1MZgaRqGax0mRcMu0KHrYjvb+YFMX8cpKYG/vMN
-        0K8Q43pwVLNJ1VOqD5Bner7963Y8q4E0QBpX2QGt1g==
-X-Google-Smtp-Source: APXvYqxWT+/8vZf0zWr1Yl/badv1TRvP/1k5BqWSq6/+HNdAxAD63JMtXrBctEvUY7L00GT1BthDGiNYcFZ4grHpWxY=
-X-Received: by 2002:aca:3f54:: with SMTP id m81mr427008oia.73.1579201751684;
- Thu, 16 Jan 2020 11:09:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20200109112447.GG27035@quack2.suse.cz> <CAPcyv4j5Mra8qeLO3=+BYZMeXNAxFXv7Ex7tL9gra1TbhOgiqg@mail.gmail.com>
- <20200114203138.GA3145@redhat.com> <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com> <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com> <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
- <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com> <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
- <20200116183900.GC25291@redhat.com>
-In-Reply-To: <20200116183900.GC25291@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 16 Jan 2020 11:09:00 -0800
-Message-ID: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
+        id S2388792AbgAPTMO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 14:12:14 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25859 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387645AbgAPTML (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 14:12:11 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 11:12:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="424162125"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Jan 2020 11:12:11 -0800
+Date:   Thu, 16 Jan 2020 11:12:10 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH V2 08/12] fs/xfs: Add lock/unlock mode to xfs
+Message-ID: <20200116191210.GG24522@iweiny-DESK2.sc.intel.com>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-9-ira.weiny@intel.com>
+ <20200116092446.GA8446@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116092446.GA8446@quack2.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 10:39 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Thu, Jan 16, 2020 at 10:09:46AM -0800, Dan Williams wrote:
-> > On Wed, Jan 15, 2020 at 1:08 PM Jeff Moyer <jmoyer@redhat.com> wrote:
-> > >
-> > > Hi, Dan,
-> > >
-> > > Dan Williams <dan.j.williams@intel.com> writes:
-> > >
-> > > > I'm going to take a look at how hard it would be to develop a kpartx
-> > > > fallback in udev. If that can live across the driver transition then
-> > > > maybe this can be a non-event for end users that already have that
-> > > > udev update deployed.
-> > >
-> > > I just wanted to remind you that label-less dimms still exist, and are
-> > > still being shipped.  For those devices, the only way to subdivide the
-> > > storage is via partitioning.
-> >
-> > True, but if kpartx + udev can make this transparent then I don't
-> > think users lose any functionality. They just gain a device-mapper
-> > dependency.
->
-> So udev rules will trigger when a /dev/pmemX device shows up and run
-> kpartx which in turn will create dm-linear devices and device nodes
-> will show up in /dev/mapper/pmemXpY.
->
-> IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
-> systemd unit files are depenent on /dev/pmemXpY, these will still be
-> broken out of the box and will have to be modified to use device nodes
-> in /dev/mapper/ directory instead. Do I understand it right, Or I missed
-> the idea completely.
+On Thu, Jan 16, 2020 at 10:24:46AM +0100, Jan Kara wrote:
+> On Fri 10-01-20 11:29:38, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > XFS requires regular files to be locked while changing to/from DAX mode.
+> > 
+> > Define a new DAX lock type and implement the [un]lock_mode() inode
+> > operation callbacks.
+> > 
+> > We define a new XFS_DAX_* lock type to carry the lock through the
+> > transaction because we don't want to use IOLOCK as that would cause
+> > performance issues with locking of the inode itself.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ...
+> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > index 492e53992fa9..693ca66bd89b 100644
+> > --- a/fs/xfs/xfs_inode.h
+> > +++ b/fs/xfs/xfs_inode.h
+> > @@ -67,6 +67,9 @@ typedef struct xfs_inode {
+> >  	spinlock_t		i_ioend_lock;
+> >  	struct work_struct	i_ioend_work;
+> >  	struct list_head	i_ioend_list;
+> > +
+> > +	/* protect changing the mode to/from DAX */
+> > +	struct percpu_rw_semaphore i_dax_sem;
+> >  } xfs_inode_t;
+> 
+> This adds overhead of ~32k per inode for typical distro kernel.
 
-No, I'd write the udev rule to create links from /dev/pmemXpY to the
-/dev/mapper device, and that rule would be gated by a new pmem device
-attribute to trigger when kpartx needs to run vs the kernel native
-partitions.
+Wow!
+
+> That's not
+> going to fly.
+
+Probably not...
+
+> That's why ext4 has similar kind of lock in the superblock
+> shared by all inodes. For read side it does not matter because that's
+> per-cpu and shared lock. For write side we don't care as changing inode
+> access mode should be rare.
+
+Sounds reasonable to me.  I'll convert it.
+
+Thanks for pointing this out, that would have been bad indeed.
+Ira
+
