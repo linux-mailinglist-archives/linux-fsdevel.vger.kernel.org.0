@@ -2,103 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A062813DF74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 17:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A795613DF78
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 17:01:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbgAPQA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 11:00:27 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41118 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgAPQA0 (ORCPT
+        id S1726688AbgAPQAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 11:00:55 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38580 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgAPQAz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:00:26 -0500
-Received: by mail-io1-f66.google.com with SMTP id m25so6750126ioo.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 08:00:26 -0800 (PST)
+        Thu, 16 Jan 2020 11:00:55 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u2so4368099wmc.3;
+        Thu, 16 Jan 2020 08:00:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9JA64lSSGZhM2+AlaRyGX22gJ8cKrvAPGqj8KNteWAA=;
-        b=eBfQSPTl2scwswbOFhSakwoAF8PgLkNlYnC3C6QeLqCeox/H7wcY+SIlR+lNSUw42o
-         WOIT5oBuVgYd+Y1OGGrbGJNKNmktZTmNXZ16cIQuyAPm4YWbbgoXZnpe06HrfjhZe4wh
-         Jvjp4VXvd7d0e1EMKTINBcMvDAv1ptgp5VdEi5x2MQSm3xy5BAWpnG4nDc8SWGvlFXF0
-         09mWFcUSVHjoTgkHypCGBi7RfnLUUYN7U9ZoE3UVeSBmMhUBAUqOMOwjHSseREsHpuz5
-         yEpQvoDQq9aZOqAgUm/bE5JmNmhYThEmhhBzTgBD2xFEjKfYh2Rhaz0m+v9VGIkXZF7p
-         qPRQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Qes5lqTpMZNbHD18QpVEHmgxWIqC3UwSuESKVsX72FE=;
+        b=gdJbrNwdSuD/lvrwJ+3fpsgkxvDd6PxZ5jdXHxxFu/eilWk//S1GI0gBerZequfBEj
+         326Y8S+FlQEFWKuxDy9lZQugKLnfV4JoHULipF5ws+4XsNU8Sqc6ewx62CRqFL84MGp8
+         qv9dxn5oq7nP57h2XPv18cQqQn9pkYxmxH/PvkOeVJ1s21/FwAHuZCzzH6EjlWqmQ3y6
+         vZOqeJS/0QO7EYpjKhSFkRXflmExCP3OympCZzie+J8heuKYvrlbzNpeyx3R8CdUWknm
+         gNj5I32G/uDMcheI4wyIDMWdNXeiNFuPR0jp1S49Zfa3UBnDA4NFCbqn3WIPvYWJAWQ4
+         lGBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9JA64lSSGZhM2+AlaRyGX22gJ8cKrvAPGqj8KNteWAA=;
-        b=BAukbAVHlL5+yYYBvwtz874DycK0oQ9moK0i1ivxQMjusyQUZWa/bxMZK0eAW/xYJ+
-         uqrpORIzhG3y/BQiL/w3+ahwgAwoVgsWcO/Pqh+4TloC+DGqsOo+WRakHuuPdakp5Bf3
-         M44EmVYnBOauhIN9M9UfsEMWUguO33XaVbXS/a7YZQkgOboL7YZ7o1L6oLX4CgcHLGLt
-         HqSW5cs6paDhv6cBtAZ8IV70TlVarm8/7A/IEr15AbAdNO/cffWyD6qqVQy8rX4KjubU
-         /VHFC+F6mFNYfitLmInrDzWpDU1qc6LWbvfSpHJBOLbGDfnoVC5FHsHj7fQm43Z8kmKB
-         mieg==
-X-Gm-Message-State: APjAAAXr1mEkweK4gGuvzsw3vOf1IfqWIxOXHNY+VxoHBVtyI0BgDfXQ
-        qQtOo+v4rcd5Ul3Rhseo/RUQ5zjAQhU=
-X-Google-Smtp-Source: APXvYqyeh93woLPz87vdCJmNQys9BCZFkfr63nCTiExdwxydYs0bn+NUXt5EfOG2vH3juJG/+gxrNQ==
-X-Received: by 2002:a6b:740c:: with SMTP id s12mr28568449iog.108.1579190425642;
-        Thu, 16 Jan 2020 08:00:25 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y14sm2002012ioa.12.2020.01.16.08.00.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 08:00:25 -0800 (PST)
-Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200116134946.184711-1-sgarzare@redhat.com>
- <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
- <20200116155557.mwjc7vu33xespiag@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
-Date:   Thu, 16 Jan 2020 09:00:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Qes5lqTpMZNbHD18QpVEHmgxWIqC3UwSuESKVsX72FE=;
+        b=SLMPPYJVQpiDAcGQ5eayUMV6jE7o/Nsg51Hi4dPcq43v++NxXCJAI2vekK7FleSNdW
+         XtC/gWEiSKW8ZAEyXyqv3O9vMcoayBZau5ke1ibgC/Dmiy17sAp7/h1jjWwnJ6jNQiYR
+         kVbsUg8dp0C62zhW3KWSDieYm9H4bPRm2MQ0w2WwgAwgGftDtnJ6cmRonIDc/Derljsu
+         X5nGcRYQfVRDjKTga93EmBQpwb+ZteXkUz7vmFRVDhKjCIxtAkeQVsgYslIMkYemKagR
+         TsLHy1G+3uYnl11q2Mi/riu2yLZ3fkNQQGNwTyT1n2DskKoKuf6fHlhyxiI0YmARWOy1
+         Ohvg==
+X-Gm-Message-State: APjAAAVrKfbyfVT/qGQXxrC5olLM1rAnjI/xmlTNXjRSr2M/6Bg5Hm6w
+        9Ktd300IGTcS7Y/z6mwnl18=
+X-Google-Smtp-Source: APXvYqxCKtH+zs0uDEdCBM/xP9ElsKv0y4WnMKlghvorw44FNmlHzSJdTk80Pt4IhCwFHxbeFidbEQ==
+X-Received: by 2002:a7b:cf12:: with SMTP id l18mr7276001wmg.66.1579190453136;
+        Thu, 16 Jan 2020 08:00:53 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id 25sm4961535wmi.32.2020.01.16.08.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 08:00:52 -0800 (PST)
+Date:   Thu, 16 Jan 2020 17:00:51 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Namjae Jeon <linkinjeon@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        sj1557.seo@samsung.com
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+Message-ID: <20200116160051.adn7j7y5oshoe7qt@pali>
+References: <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+ <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
+ <20200115133838.q33p5riihsinp6c4@pali>
+ <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+ <20200115142428.ugsp3binf2vuiarq@pali>
+ <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com>
+ <20200115153943.qw35ya37ws6ftlnt@pali>
+ <CAK8P3a1iYPA9MrXORiWmy1vQGoazwHs7OfPdoHLZLJDWqu9jqA@mail.gmail.com>
+ <20200116101947.4szdyfwpyasv5vpe@pali>
+ <20200116102307.GA16662@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200116155557.mwjc7vu33xespiag@steredhat>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200116102307.GA16662@lst.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/16/20 8:55 AM, Stefano Garzarella wrote:
-> On Thu, Jan 16, 2020 at 08:29:07AM -0700, Jens Axboe wrote:
->> On 1/16/20 6:49 AM, Stefano Garzarella wrote:
->>> io_uring_poll() sets EPOLLOUT flag if there is space in the
->>> SQ ring, then we should wakeup threads waiting for EPOLLOUT
->>> events when we expose the new SQ head to the userspace.
->>>
->>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->>> ---
->>>
->>> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
->>
->> I honestly think it'd be better to have separate waits for in/out poll,
->> the below patch will introduce some unfortunate cacheline traffic
->> between the submitter and completer side.
+On Thursday 16 January 2020 11:23:07 Christoph Hellwig wrote:
+> On Thu, Jan 16, 2020 at 11:19:47AM +0100, Pali Rohár wrote:
+> >   However, implementations should only record the value 00h for this
+> >   field when:
+> > 
+> >     1. Local date and time are actually the same as UTC, in which case
+> >        the value of the OffsetValid field shall be 1
+> > 
+> >     2. Local date and time are not known, in which case the value of the
+> >        OffsetValid field shall be 1 and implementations shall consider
+> >        UTC to be local date and time
 > 
-> Agree, make sense. I'll send a v2 with a new 'sq_wait'.
+> Given time zones in Linux are per session I think our situation is
+> somewhat similar to 2.
+
+Seems that 2. is really similar. Ok, storing by default in UTC make
+sense, but still I'm thinking if there should be (or not) a mount option
+which override default UTC timezone.
+
+> > > Here I would just convert to UTC, which is what we store in the
+> > > in-memory struct inode anyway.
+> > 
+> > Ok. If inode timestamp is always in UTC, we should do same thing also
+> > for exFAT.
 > 
-> About fasync, do you think could be useful the POLL_OUT support?
-> In this case, maybe is not simple to have two separate fasync_struct,
-> do you have any advice?
+> > Hm... both UTC and sys_tz have positives and negatives. And I'm not
+> > sure which option is better.
+> 
+> The one big argument for always UTC is simplicity.  Always using UTC
+> kills some arcane an unusual (for Linux file systems) code, and given
+> how exfat implementations deal with the time zone on reading should
+> always interoperate fine with other implementations.
 
-The fasync should not matter, it's all in the checking of whether the sq
-side has any sleepers. This is rarely going to be the case, so as long
-as we can keep the check cheap, then I think we're fine.
-
-Since the use case is mostly single submitter, unless you're doing
-something funky or unusual, you're not going to be needing POLLOUT ever.
-Hence I don't want to add any cost for it, I'd even advocate just doing
-waitqueue_active() perhaps, if we can safely pull it off.
+Now I think that using UTC by default is the better option as sys_tz.
+Simplicity and "no surprise" (container may use UTC, but kernel has
+sys_tz in not in UTC) seems like a good arguments.
 
 -- 
-Jens Axboe
-
+Pali Rohár
+pali.rohar@gmail.com
