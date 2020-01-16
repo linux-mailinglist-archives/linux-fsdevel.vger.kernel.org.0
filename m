@@ -2,98 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1431813F949
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 20:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D7A513FAB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 21:33:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389580AbgAPTYG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 14:24:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51890 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731007AbgAPTYF (ORCPT
+        id S1730885AbgAPUdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 15:33:24 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3910 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729067AbgAPUdY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 14:24:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579202644;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e8HBHJP/uq6LLcUiW9DMmgfjF72wvEE4C0oRW83XDZw=;
-        b=VcEOirFKhZ/qGMHCRLahr+bltd2l1gTxwfk5EDwDmKEoDSyWqgJEWy7o1n6L7SEvhvykxz
-        hE6uzNQaU+jZx3E9qOdEBE1+E1NV4ECevJvap0VSJnxtEuADcPMLB5NyAcL/q8EG4JOPuC
-        FWwffG4wDRPc+hjx2L9hdGdZ7pPsrdQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-Wpe1cMcoOoGBY_oRiv4oYg-1; Thu, 16 Jan 2020 14:24:00 -0500
-X-MC-Unique: Wpe1cMcoOoGBY_oRiv4oYg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 119012F2E;
-        Thu, 16 Jan 2020 19:23:59 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC035D9C9;
-        Thu, 16 Jan 2020 19:23:54 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id C1B6B220A24; Thu, 16 Jan 2020 14:23:53 -0500 (EST)
-Date:   Thu, 16 Jan 2020 14:23:53 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        Thu, 16 Jan 2020 15:33:24 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e20c8570000>; Thu, 16 Jan 2020 12:32:23 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 16 Jan 2020 12:33:20 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 16 Jan 2020 12:33:20 -0800
+Received: from [10.2.160.8] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Jan
+ 2020 20:33:19 +0000
+Subject: Re: [PATCH v12 04/22] mm: devmap: refactor 1-based refcounting for
+ ZONE_DEVICE pages
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20200116192353.GD25291@redhat.com>
-References: <20200114203138.GA3145@redhat.com>
- <CAPcyv4iXKFt207Pen+E1CnqCFtC1G85fxw5EXFVx+jtykGWMXA@mail.gmail.com>
- <20200114212805.GB3145@redhat.com>
- <CAPcyv4igrs40uWuCB163PPBLqyGVaVbaNfE=kCfHRPRuvZdxQA@mail.gmail.com>
- <20200115195617.GA4133@redhat.com>
- <CAPcyv4iEoN9SnBveG7-Mhvd+wQApi1XKVnuYpyYxDybrFv_YYw@mail.gmail.com>
- <x49wo9smnqc.fsf@segfault.boston.devel.redhat.com>
- <CAPcyv4hCR9NV+2MF0iAJ5rHS2uiOgTnu=+yQRfpieDJQpQz22w@mail.gmail.com>
- <20200116183900.GC25291@redhat.com>
- <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20200107224558.2362728-1-jhubbard@nvidia.com>
+ <20200107224558.2362728-5-jhubbard@nvidia.com>
+ <20200115152306.GA19546@infradead.org>
+ <4707f191-86f8-db4a-c3de-0a84b415b658@nvidia.com>
+ <20200116093712.GA11011@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <ccf2723a-dcce-57d3-f63d-ee96dbf6653a@nvidia.com>
+Date:   Thu, 16 Jan 2020 12:30:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4irezimk8m4hysrd0rst_f0Rr+iiNxeFesqbxQnWYA2Xw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200116093712.GA11011@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579206743; bh=EQpRDmAadXrYPrWI0G8MSYR7uqZas3jC8zZTGB2Hfnk=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=B3a+nJMY1e/PvYKAT7LBGlwa/kugx+AfoqbMvj/EyT3hxrpeJ7sQMsWMdJQlxzKho
+         jy2YJ47pzKLca9QqrMI2qpXvMA46wU1dfzb3yzBY8NTIGraOJl+bg0Pq/59xdUBLNS
+         /bnG7fSxkcGgsGNzlzCgQWOOUXWSDOgkuZxsp+8IlbnfinKUcliv6MqWXSulEsNyXv
+         EIh2GmNEud9hkIp72ZuHMkWrhgwhMDnw4xjgxdJ2+W90cT6UoDxxzOl8PDPrjhQ9p0
+         IklTRq4Mlrg+UVduRNOxi7jCeWI/98S5JYFUwVk8qaaNzULyUj0q2zlHy86g76FXcR
+         ZxTytDejWJDcw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:09:00AM -0800, Dan Williams wrote:
-
-[..]
-> > > True, but if kpartx + udev can make this transparent then I don't
-> > > think users lose any functionality. They just gain a device-mapper
-> > > dependency.
-> >
-> > So udev rules will trigger when a /dev/pmemX device shows up and run
-> > kpartx which in turn will create dm-linear devices and device nodes
-> > will show up in /dev/mapper/pmemXpY.
-> >
-> > IOW, /dev/pmemXpY device nodes will be gone. So if any of the scripts or
-> > systemd unit files are depenent on /dev/pmemXpY, these will still be
-> > broken out of the box and will have to be modified to use device nodes
-> > in /dev/mapper/ directory instead. Do I understand it right, Or I missed
-> > the idea completely.
+On 1/16/20 1:37 AM, Christoph Hellwig wrote:
+> On Wed, Jan 15, 2020 at 01:19:41PM -0800, John Hubbard wrote:
+>> On 1/15/20 7:23 AM, Christoph Hellwig wrote:
+>> ...
+>>>
+>>> I'm really not sold on this scheme.  Note that I think it is
+>>> particularly bad, but it also doesn't seem any better than what
+>>> we had before, and it introduced quite a bit more code.
+>>>
+>>
+>> Hi Christoph,
+>>
+>> All by itself, yes. But the very next patch (which needs a little
+>> rework for other reasons, so not included here) needs to reuse some of
+>> these functions within __unpin_devmap_managed_user_page():
 > 
-> No, I'd write the udev rule to create links from /dev/pmemXpY to the
-> /dev/mapper device, and that rule would be gated by a new pmem device
-> attribute to trigger when kpartx needs to run vs the kernel native
-> partitions.
+> Well, then combine it with the series that actually does the change.
 
-Got it. This sounds much better.
 
-Vivek
+OK, that makes sense. I just double-checked with a quick test run, that it
+doesn't have dependencies with the rest of this series, and it came out clean,
+so:
 
+Andrew, could you please remove just this one patch from mmotm and linux-next?
+
+
+> 
+> Also my vaguely recollection is that we had some idea on how to get rid
+> of the off by one refcounting for the zone device pages, which would be
+> a much better outcome.
+> 
+
+Yes, I recall that Dan Williams mentioned it, but I don't think he provided
+any details yet.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
