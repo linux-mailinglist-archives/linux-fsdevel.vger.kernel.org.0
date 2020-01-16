@@ -2,59 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4401C13DAFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 14:02:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5C213DC5B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 14:50:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgAPNBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 08:01:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbgAPNBl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:01:41 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726343AbgAPNtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 08:49:52 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29193 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726084AbgAPNtw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 08:49:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579182591;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tW8QepJVzZQv/Ygdvwl07xvaRaFmGC5EBwa4NFuhNeM=;
+        b=RZe26A8s2scI2oGnKkHVHBdsYZVypQ6QvwYI0Pte1PRbd58FOBycLPYf77WHk/LaCdFBC0
+        jQo3kqg9+XIgKcDn1Nl8vZPkozUOqhOcnlL0E8cF3tZeQSuOkhKs1/Q9bins3fR5ljLES/
+        tiiT5dNFF4yIlG2wIlA20Sm7q7onwBI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-jzdK0iVEON-09vfB4a5Ciw-1; Thu, 16 Jan 2020 08:49:50 -0500
+X-MC-Unique: jzdK0iVEON-09vfB4a5Ciw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7122E20730;
-        Thu, 16 Jan 2020 13:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579179700;
-        bh=v9Po416KwW4s4njLFElwLgFMcq7ajvjcLbyC7QhnKjU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KjnAAyILSY9QT+fId0MJTQK4p5sFJh7R8BwyUjVFuQ4uYLqn/Qt1ya/wlcmxGWz0n
-         5V1ZBtnG45rGUvmvxivu63LyXTLoCOAwgH9TDNFSqpm5G5t6Prwku5zyRAJUgpR/Kv
-         //YUfK1h38QnH9bIHVLtgEXjrnALcG8FDd+2w2DA=
-Date:   Thu, 16 Jan 2020 14:01:38 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        valdis.kletnieks@vt.edu, sj1557.seo@samsung.com,
-        linkinjeon@gmail.com, arnd@arndb.de
-Subject: Re: [PATCH v10 00/14] add the latest exfat driver
-Message-ID: <20200116130138.GA214226@kroah.com>
-References: <CGME20200115082818epcas1p4892a99345626188afd111ee263132458@epcas1p4.samsung.com>
- <20200115082447.19520-1-namjae.jeon@samsung.com>
- <20200115094732.bou23s3bduxpnr4k@pali>
- <20200116105108.GA16924@lst.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E9EC8DF704;
+        Thu, 16 Jan 2020 13:49:49 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-242.ams2.redhat.com [10.36.117.242])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF7AA860DA;
+        Thu, 16 Jan 2020 13:49:47 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
+Date:   Thu, 16 Jan 2020 14:49:46 +0100
+Message-Id: <20200116134946.184711-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116105108.GA16924@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:51:08AM +0100, Christoph Hellwig wrote:
-> > * After applying this patch series, remote staging exfat implementation.
-> 
-> I think Greg wants to do that separately.  I still hope we can do that
-> in the same merge window, though.
+io_uring_poll() sets EPOLLOUT flag if there is space in the
+SQ ring, then we should wakeup threads waiting for EPOLLOUT
+events when we expose the new SQ head to the userspace.
 
-I will be glad to do it in the same merge window, just let me know when
-this gets accepted and I'll drop the staging version.
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
 
-thanks,
+Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
 
-greg k-h
+Thanks,
+Stefano
+---
+ fs/io_uring.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 38b54051facd..5c6ff5f9e741 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3687,6 +3687,11 @@ static void io_commit_sqring(struct io_ring_ctx *c=
+tx)
+ 		 * write new data to them.
+ 		 */
+ 		smp_store_release(&rings->sq.head, ctx->cached_sq_head);
++
++		if (wq_has_sleeper(&ctx->cq_wait)) {
++			wake_up_interruptible(&ctx->cq_wait);
++			kill_fasync(&ctx->cq_fasync, SIGIO, POLL_OUT);
++		}
+ 	}
+ }
+=20
+--=20
+2.24.1
+
