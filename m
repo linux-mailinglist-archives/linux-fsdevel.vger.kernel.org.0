@@ -2,93 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A44513DF50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 16:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A062813DF74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 17:00:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbgAPP4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 10:56:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54710 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726406AbgAPP4E (ORCPT
+        id S1726965AbgAPQA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 11:00:27 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41118 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbgAPQA0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:56:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579190162;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=59rSP/4nG5ysgfDP2nwJUgUTFNS/i6M0+YH8HiBE7YE=;
-        b=YgRc+Xj7Rt/JUG6I4BYZmVq980H5Bncrw7tj5qhDmB4gjNEUvoLyjGJ80I8ihk9UWuNjJ7
-        cXSM0oHYjNgs3+B/nzWLImD2GhH3KzGz6oUxkEmizGhdccsr+FK36eTTww/wIcBNk3xwEN
-        pl8BdgOQzcX19LX7rIIUMGnSpWcrkvM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-22-bz-fVULFPj6uDY0aTFgfhA-1; Thu, 16 Jan 2020 10:56:01 -0500
-X-MC-Unique: bz-fVULFPj6uDY0aTFgfhA-1
-Received: by mail-wm1-f72.google.com with SMTP id l11so2450225wmi.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 07:56:01 -0800 (PST)
+        Thu, 16 Jan 2020 11:00:26 -0500
+Received: by mail-io1-f66.google.com with SMTP id m25so6750126ioo.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 08:00:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9JA64lSSGZhM2+AlaRyGX22gJ8cKrvAPGqj8KNteWAA=;
+        b=eBfQSPTl2scwswbOFhSakwoAF8PgLkNlYnC3C6QeLqCeox/H7wcY+SIlR+lNSUw42o
+         WOIT5oBuVgYd+Y1OGGrbGJNKNmktZTmNXZ16cIQuyAPm4YWbbgoXZnpe06HrfjhZe4wh
+         Jvjp4VXvd7d0e1EMKTINBcMvDAv1ptgp5VdEi5x2MQSm3xy5BAWpnG4nDc8SWGvlFXF0
+         09mWFcUSVHjoTgkHypCGBi7RfnLUUYN7U9ZoE3UVeSBmMhUBAUqOMOwjHSseREsHpuz5
+         yEpQvoDQq9aZOqAgUm/bE5JmNmhYThEmhhBzTgBD2xFEjKfYh2Rhaz0m+v9VGIkXZF7p
+         qPRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=59rSP/4nG5ysgfDP2nwJUgUTFNS/i6M0+YH8HiBE7YE=;
-        b=lpxhzWvtrGR06+i4rhGOh0VdMy0d+nBJ7o8i/nWBWbDHUqjh6tqxITdbxB13/A399D
-         Hw1+6BaJHYB3GFGsytg3qIyVgBQ3rRPEyyJxmIETsqhw8XqNVHGnhoRd6GpzhUdr3c9B
-         rSLRyynuTV1bp5NBXO/8ImWG1k6j3Sk8eN8zGSUQEubOwuSBUy9DOVXEG251FyJANRgt
-         /tGClLoKkqcMEpyD36HgwNkdoKMFDzux+VIcZV+dIXqCPAA8Suc9ku0es5nfc8cNR4jc
-         VMqLewW/S8XxxeMrczuOMMkWVPghxEISlUukomkQCTNp5Yofcf971amJR06kad4cn+2V
-         I5Dw==
-X-Gm-Message-State: APjAAAUIztNUeNms6RSzzGbqJ+IfFEWJ83NEbHaNmf5iZ0RpHaICSWHz
-        aZuo0ULXbM8aENTbsdIQspEO+lIg+2PQHmscGnVnO496NgRjuHlLg6q3OstX7dJ8qb6pkxbaxcF
-        jYqA+7S5nzXifb96h+64dMzWtBA==
-X-Received: by 2002:a1c:488a:: with SMTP id v132mr4004wma.153.1579190160200;
-        Thu, 16 Jan 2020 07:56:00 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyARJugJk6ZQ7MpUK2INr7v0S3I+70oMKj69iGSMkRzx4xa29/fG8xCm60wqugTUISWTMXsWQ==
-X-Received: by 2002:a1c:488a:: with SMTP id v132mr3985wma.153.1579190159959;
-        Thu, 16 Jan 2020 07:55:59 -0800 (PST)
-Received: from steredhat (host84-49-dynamic.31-79-r.retail.telecomitalia.it. [79.31.49.84])
-        by smtp.gmail.com with ESMTPSA id n67sm5422048wmf.46.2020.01.16.07.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 07:55:59 -0800 (PST)
-Date:   Thu, 16 Jan 2020 16:55:57 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9JA64lSSGZhM2+AlaRyGX22gJ8cKrvAPGqj8KNteWAA=;
+        b=BAukbAVHlL5+yYYBvwtz874DycK0oQ9moK0i1ivxQMjusyQUZWa/bxMZK0eAW/xYJ+
+         uqrpORIzhG3y/BQiL/w3+ahwgAwoVgsWcO/Pqh+4TloC+DGqsOo+WRakHuuPdakp5Bf3
+         M44EmVYnBOauhIN9M9UfsEMWUguO33XaVbXS/a7YZQkgOboL7YZ7o1L6oLX4CgcHLGLt
+         HqSW5cs6paDhv6cBtAZ8IV70TlVarm8/7A/IEr15AbAdNO/cffWyD6qqVQy8rX4KjubU
+         /VHFC+F6mFNYfitLmInrDzWpDU1qc6LWbvfSpHJBOLbGDfnoVC5FHsHj7fQm43Z8kmKB
+         mieg==
+X-Gm-Message-State: APjAAAXr1mEkweK4gGuvzsw3vOf1IfqWIxOXHNY+VxoHBVtyI0BgDfXQ
+        qQtOo+v4rcd5Ul3Rhseo/RUQ5zjAQhU=
+X-Google-Smtp-Source: APXvYqyeh93woLPz87vdCJmNQys9BCZFkfr63nCTiExdwxydYs0bn+NUXt5EfOG2vH3juJG/+gxrNQ==
+X-Received: by 2002:a6b:740c:: with SMTP id s12mr28568449iog.108.1579190425642;
+        Thu, 16 Jan 2020 08:00:25 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id y14sm2002012ioa.12.2020.01.16.08.00.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 08:00:25 -0800 (PST)
+Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
+To:     Stefano Garzarella <sgarzare@redhat.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-Message-ID: <20200116155557.mwjc7vu33xespiag@steredhat>
 References: <20200116134946.184711-1-sgarzare@redhat.com>
  <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
+ <20200116155557.mwjc7vu33xespiag@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
+Date:   Thu, 16 Jan 2020 09:00:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
+In-Reply-To: <20200116155557.mwjc7vu33xespiag@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 08:29:07AM -0700, Jens Axboe wrote:
-> On 1/16/20 6:49 AM, Stefano Garzarella wrote:
-> > io_uring_poll() sets EPOLLOUT flag if there is space in the
-> > SQ ring, then we should wakeup threads waiting for EPOLLOUT
-> > events when we expose the new SQ head to the userspace.
-> > 
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > ---
-> > 
-> > Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+On 1/16/20 8:55 AM, Stefano Garzarella wrote:
+> On Thu, Jan 16, 2020 at 08:29:07AM -0700, Jens Axboe wrote:
+>> On 1/16/20 6:49 AM, Stefano Garzarella wrote:
+>>> io_uring_poll() sets EPOLLOUT flag if there is space in the
+>>> SQ ring, then we should wakeup threads waiting for EPOLLOUT
+>>> events when we expose the new SQ head to the userspace.
+>>>
+>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>> ---
+>>>
+>>> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+>>
+>> I honestly think it'd be better to have separate waits for in/out poll,
+>> the below patch will introduce some unfortunate cacheline traffic
+>> between the submitter and completer side.
 > 
-> I honestly think it'd be better to have separate waits for in/out poll,
-> the below patch will introduce some unfortunate cacheline traffic
-> between the submitter and completer side.
+> Agree, make sense. I'll send a v2 with a new 'sq_wait'.
+> 
+> About fasync, do you think could be useful the POLL_OUT support?
+> In this case, maybe is not simple to have two separate fasync_struct,
+> do you have any advice?
 
-Agree, make sense. I'll send a v2 with a new 'sq_wait'.
+The fasync should not matter, it's all in the checking of whether the sq
+side has any sleepers. This is rarely going to be the case, so as long
+as we can keep the check cheap, then I think we're fine.
 
-About fasync, do you think could be useful the POLL_OUT support?
-In this case, maybe is not simple to have two separate fasync_struct,
-do you have any advice?
+Since the use case is mostly single submitter, unless you're doing
+something funky or unusual, you're not going to be needing POLLOUT ever.
+Hence I don't want to add any cost for it, I'd even advocate just doing
+waitqueue_active() perhaps, if we can safely pull it off.
 
-Thanks,
-Stefano
+-- 
+Jens Axboe
 
