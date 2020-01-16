@@ -2,103 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F306113D43F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 07:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF1F13D463
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 07:37:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbgAPGZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 01:25:53 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36287 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730461AbgAPGZw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 01:25:52 -0500
-Received: by mail-ot1-f66.google.com with SMTP id m2so13547234otq.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jan 2020 22:25:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Q2Zze5PAbfGbIfzFdliXA62Y52BTomvMStI7KfWGBk=;
-        b=u5kIlz7dq16rp2yrD78FB1VQ+w1Zq+JiSjBNilh5DRi9ac08AhhG0XDF9+gWsQ0qpy
-         nPrmueWrxcoVKW2xQHkgjSCC/HAtaGq0F6o9mZiYIGXE2M+/oHKLChi/3SET+h2/jMge
-         gdHRJFQskIPzuAAr2erbVkd1Vqf7B2Y9TpzL0K6Y09YJPlyumzeQ6+QXVQIqUZGH0KdP
-         Ry+UfAL5nFVEdgiEYfWttB5EMFSnUtR7TlsE7HcXkBVw6yjtV1mebrsumkUQFFqveDNT
-         BtjNugC2mm6DAp/slfvOUwzsk8q08hJISlAspgP1j4TZN69MyuzNRRaGYp0xWsEvnCkM
-         XPig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Q2Zze5PAbfGbIfzFdliXA62Y52BTomvMStI7KfWGBk=;
-        b=iXkIIm8tv6K2HUeTN6rcu6SOJ+uWGJgjoTVU3qDJG5TfK+53GpPXfOAo9yu0vhtgZG
-         sspc9FdUUUwEtxlLvXQPx285qRyelJISHo7DU7h3CC4X67zptzly4sYcSRLm9mqnWtD/
-         bqwQqqFSV3fZbyN6WbuwqQRHuAlWVuzLTWIDC7NUaPaeZHBdCgLAyU8pGI+8pVoiP4Ib
-         P9mCJMNcIjBS3EqJDxHrFwibjgeBkDQIy3qyifl/0cQakhJ9ADC/UeSpX/ywnm+N82pD
-         qOYpYGSt89uB7QvA7K986M3ZoO5amKT3JKJ155QyPB2wOs2Nxi2AaRpjXRv6rIdbsuza
-         +mYg==
-X-Gm-Message-State: APjAAAWOUlSzg8RLYW1zluzoF0zhSo7XJsoOQLlI8gldJhJ3LGuNpzxs
-        7qsjX4HJg9Xg/CQllqxuuAubhWVcV3EBcOUNeewp/A==
-X-Google-Smtp-Source: APXvYqwxrSywPSe+bSWTFb7guE1CCafYs03qvFymeop4ETyO8OyklXF9wh2bDlRNzFN+MYAZpycyHsRnLkWFEZhvIJE=
-X-Received: by 2002:a9d:6f11:: with SMTP id n17mr838191otq.126.1579155952021;
- Wed, 15 Jan 2020 22:25:52 -0800 (PST)
+        id S1726864AbgAPGg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 01:36:57 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36964 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726369AbgAPGg5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 01:36:57 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A929DF09DF9202DD1280;
+        Thu, 16 Jan 2020 14:36:54 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 16 Jan 2020
+ 14:36:45 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <hch@infradead.org>, <darrick.wong@oracle.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <houtao1@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [RFC] iomap: fix race between readahead and direct write
+Date:   Thu, 16 Jan 2020 14:36:01 +0800
+Message-ID: <20200116063601.39201-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-References: <20200110192942.25021-1-ira.weiny@intel.com> <20200110192942.25021-2-ira.weiny@intel.com>
- <20200115113715.GB2595@quack2.suse.cz> <20200115173834.GD8247@magnolia>
- <20200115194512.GF23311@iweiny-DESK2.sc.intel.com> <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
- <20200115223821.GG23311@iweiny-DESK2.sc.intel.com> <20200116053935.GB8235@magnolia>
- <CAPcyv4jDMsPj_vZwDOgPkfHLELZWqeJugKgKNVKbpiZ9th683g@mail.gmail.com> <20200116061804.GI8257@magnolia>
-In-Reply-To: <20200116061804.GI8257@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 15 Jan 2020 22:25:41 -0800
-Message-ID: <CAPcyv4gy7wkxCgmDtFjiS=abcRFUY77A4mcyCbMGuheqEV755w@mail.gmail.com>
-Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 15, 2020 at 10:18 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
->
-> On Wed, Jan 15, 2020 at 10:05:00PM -0800, Dan Williams wrote:
-> > On Wed, Jan 15, 2020 at 9:39 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> > [..]
-> > > >         attempts to minimize software cache effects for both I/O and
-> > > >         memory mappings of this file.  It requires a file system which
-> > > >         has been configured to support DAX.
-> > > >
-> > > >         DAX generally assumes all accesses are via cpu load / store
-> > > >         instructions which can minimize overhead for small accesses, but
-> > > >         may adversely affect cpu utilization for large transfers.
-> > > >
-> > > >         File I/O is done directly to/from user-space buffers and memory
-> > > >         mapped I/O may be performed with direct memory mappings that
-> > > >         bypass kernel page cache.
-> > > >
-> > > >         While the DAX property tends to result in data being transferred
-> > > >         synchronously, it does not give the same guarantees of
-> > > >         synchronous I/O where data and the necessary metadata are
-> > > >         transferred together.
-> > >
-> > > (I'm frankly not sure that synchronous I/O actually guarantees that the
-> > > metadata has hit stable storage...)
-> >
-> > Oh? That text was motivated by the open(2) man page description of O_SYNC.
->
-> Eh, that's just me being cynical about software.  Yes, the O_SYNC docs
-> say that data+metadata are supposed to happen; that's good enough for
-> another section in the man pages. :)
->
+I noticed that generic/418 test may fail with small probability. And with
+futher investiation, it can be reproduced with:
 
-Ah ok, yes, "all storage is a lie".
+./src/dio-invalidate-cache -wp -b 4096 -n 8 -i 1 -f filename
+./src/dio-invalidate-cache -wt -b 4096-n 8 -i 1 -f filename
+
+The failure is because direct write wrote none-zero but buffer read got
+zero.
+
+In the process of buffer read, if the page do not exist, readahead will
+be triggered.  __do_page_cache_readahead() will allocate page first. Next,
+if the file block is unwritten(or hole), iomap_begin() will set iomap->type
+to IOMAP_UNWRITTEN(or IOMAP_HOLE). Then, iomap_readpages_actor() will add
+page to page cache. Finally, iomap_readpage_actor() will zero the page.
+
+However, there is no lock or serialization between initializing iomap and
+adding page to page cache against direct write. If direct write happen to
+fininsh between them, the type of iomap should be IOMAP_MAPPED instead of
+IOMAP_UNWRITTEN or IOMAP_HOLE. And the page will end up zeroed out in page
+cache, while on-disk page hold the data of direct write.
+
+| thread 1                    | thread 2                   |
+| --------------------------  | -------------------------- |
+| generic_file_buffered_read  |                            |
+|  ondemand_readahead         |                            |
+|   read_pages                |                            |
+|    iomap_readpages          |                            |
+|     iomap_apply             |                            |
+|      xfs_read_iomap_begin   |                            |
+|                             | xfs_file_dio_aio_write     |
+|                             |  iomap_dio_rw              |
+|                             |   ioamp_apply              |
+|     ioamp_readpages_actor   |                            |
+|      iomap_next_page        |                            |
+|       add_to_page_cache_lru |                            |
+|      iomap_readpage_actor   |                            |
+|       zero_user             |                            |
+|    iomap_set_range_uptodate |                            |
+|                             | generic_file_buffered_read |
+|                             |  copy_page_to_iter        |
+
+For consequences, the content in the page is zero while the content in the
+disk is not.
+
+I tried to fix the problem by moving "add to page cache" before
+iomap_begin(). However, performance might be worse since iomap_begin()
+will be called for each page. I tested the performance for sequential
+read with fio:
+
+kernel version: v5.5-rc6
+platform: arm64, 96 cpu
+fio version: fio-3.15-2
+test cmd:
+fio -filename=/mnt/testfile -rw=read -bs=4k -size=20g -direct=0 -fsync=0
+-numjobs=1 / 32 -ioengine=libaio -name=test -ramp_time=10 -runtime=120
+test result:
+|                  | without patch MiB/s | with patch MiB/s |
+| ---------------- | ------------------- | ---------------- |
+| ssd, numjobs=1   | 512                 | 512              |
+| ssd, numjobs=32  | 3615                | 3714             |
+| nvme, numjobs=1  | 1167                | 1118             |
+| nvme, numjobs=32 | 3679                | 3606             |
+
+Test result shows that the impact on performance is minimal.
+
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ fs/iomap/buffered-io.c | 104 ++++++++++++++++++++---------------------
+ 1 file changed, 52 insertions(+), 52 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 828444e14d09..ccfa1a52d966 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -329,26 +329,44 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	return pos - orig_pos + plen;
+ }
+ 
+-int
+-iomap_readpage(struct page *page, const struct iomap_ops *ops)
++static int
++do_iomap_readpage_apply(
++	loff_t				offset,
++	int				flag,
++	const struct iomap_ops		*ops,
++	struct iomap_readpage_ctx	*ctx,
++	iomap_actor_t			actor,
++	bool				fatal)
+ {
+-	struct iomap_readpage_ctx ctx = { .cur_page = page };
+-	struct inode *inode = page->mapping->host;
+-	unsigned poff;
+-	loff_t ret;
+-
+-	trace_iomap_readpage(page->mapping->host, 1);
++	unsigned int			poff;
++	loff_t				ret;
++	struct page			*page = ctx->cur_page;
++	struct inode			*inode = page->mapping->host;
+ 
+ 	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+-		ret = iomap_apply(inode, page_offset(page) + poff,
+-				PAGE_SIZE - poff, 0, ops, &ctx,
+-				iomap_readpage_actor);
++		ret = iomap_apply(inode, offset + poff, PAGE_SIZE - poff,
++				  flag, ops, ctx, actor);
+ 		if (ret <= 0) {
+ 			WARN_ON_ONCE(ret == 0);
++			if (fatal)
++				return ret;
+ 			SetPageError(page);
+-			break;
++			return 0;
+ 		}
+ 	}
++	return ret;
++}
++
++
++int
++iomap_readpage(struct page *page, const struct iomap_ops *ops)
++{
++	struct iomap_readpage_ctx ctx = { .cur_page = page };
++
++	trace_iomap_readpage(page->mapping->host, 1);
++
++	do_iomap_readpage_apply(page_offset(page), 0, ops, &ctx,
++				iomap_readpage_actor, false);
+ 
+ 	if (ctx.bio) {
+ 		submit_bio(ctx.bio);
+@@ -395,34 +413,6 @@ iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
+ 	return NULL;
+ }
+ 
+-static loff_t
+-iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
+-		void *data, struct iomap *iomap, struct iomap *srcmap)
+-{
+-	struct iomap_readpage_ctx *ctx = data;
+-	loff_t done, ret;
+-
+-	for (done = 0; done < length; done += ret) {
+-		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
+-			if (!ctx->cur_page_in_bio)
+-				unlock_page(ctx->cur_page);
+-			put_page(ctx->cur_page);
+-			ctx->cur_page = NULL;
+-		}
+-		if (!ctx->cur_page) {
+-			ctx->cur_page = iomap_next_page(inode, ctx->pages,
+-					pos, length, &done);
+-			if (!ctx->cur_page)
+-				break;
+-			ctx->cur_page_in_bio = false;
+-		}
+-		ret = iomap_readpage_actor(inode, pos + done, length - done,
+-				ctx, iomap, srcmap);
+-	}
+-
+-	return done;
+-}
+-
+ int
+ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+ 		unsigned nr_pages, const struct iomap_ops *ops)
+@@ -433,22 +423,32 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+ 	};
+ 	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
+ 	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
+-	loff_t length = last - pos + PAGE_SIZE, ret = 0;
++	loff_t length = last - pos + PAGE_SIZE, ret = 0, done;
+ 
+ 	trace_iomap_readpages(mapping->host, nr_pages);
+ 
+-	while (length > 0) {
+-		ret = iomap_apply(mapping->host, pos, length, 0, ops,
+-				&ctx, iomap_readpages_actor);
++	for (done = 0; done < length; done += PAGE_SIZE) {
++		if (ctx.cur_page) {
++			if (!ctx.cur_page_in_bio)
++				unlock_page(ctx.cur_page);
++			put_page(ctx.cur_page);
++			ctx.cur_page = NULL;
++		}
++		ctx.cur_page = iomap_next_page(mapping->host, ctx.pages,
++					       pos, length, &done);
++		if (!ctx.cur_page)
++			break;
++		ctx.cur_page_in_bio = false;
++
++		ret = do_iomap_readpage_apply(pos+done, 0, ops, &ctx,
++					      iomap_readpage_actor, true);
+ 		if (ret <= 0) {
+-			WARN_ON_ONCE(ret == 0);
+-			goto done;
++			done = ret;
++			break;
+ 		}
+-		pos += ret;
+-		length -= ret;
++
+ 	}
+-	ret = 0;
+-done:
++
+ 	if (ctx.bio)
+ 		submit_bio(ctx.bio);
+ 	if (ctx.cur_page) {
+@@ -461,8 +461,8 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+ 	 * Check that we didn't lose a page due to the arcance calling
+ 	 * conventions..
+ 	 */
+-	WARN_ON_ONCE(!ret && !list_empty(ctx.pages));
+-	return ret;
++	WARN_ON_ONCE((done == length) && !list_empty(ctx.pages));
++	return done;
+ }
+ EXPORT_SYMBOL_GPL(iomap_readpages);
+ 
+-- 
+2.17.2
+
