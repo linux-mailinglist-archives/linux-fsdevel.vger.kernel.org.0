@@ -2,84 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5C213DC5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 14:50:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C9A13DCCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 15:00:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgAPNtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 08:49:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29193 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726084AbgAPNtw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 08:49:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579182591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=tW8QepJVzZQv/Ygdvwl07xvaRaFmGC5EBwa4NFuhNeM=;
-        b=RZe26A8s2scI2oGnKkHVHBdsYZVypQ6QvwYI0Pte1PRbd58FOBycLPYf77WHk/LaCdFBC0
-        jQo3kqg9+XIgKcDn1Nl8vZPkozUOqhOcnlL0E8cF3tZeQSuOkhKs1/Q9bins3fR5ljLES/
-        tiiT5dNFF4yIlG2wIlA20Sm7q7onwBI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-92-jzdK0iVEON-09vfB4a5Ciw-1; Thu, 16 Jan 2020 08:49:50 -0500
-X-MC-Unique: jzdK0iVEON-09vfB4a5Ciw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E9EC8DF704;
-        Thu, 16 Jan 2020 13:49:49 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-117-242.ams2.redhat.com [10.36.117.242])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF7AA860DA;
-        Thu, 16 Jan 2020 13:49:47 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-Date:   Thu, 16 Jan 2020 14:49:46 +0100
-Message-Id: <20200116134946.184711-1-sgarzare@redhat.com>
+        id S1728895AbgAPOAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 09:00:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42742 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbgAPOAH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 09:00:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 1341EAD5E;
+        Thu, 16 Jan 2020 14:00:04 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 62CD91E06F1; Thu, 16 Jan 2020 15:00:04 +0100 (CET)
+Date:   Thu, 16 Jan 2020 15:00:04 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: RFC: hold i_rwsem until aio completes
+Message-ID: <20200116140004.GE8446@quack2.suse.cz>
+References: <20200114161225.309792-1-hch@lst.de>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200114161225.309792-1-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-io_uring_poll() sets EPOLLOUT flag if there is space in the
-SQ ring, then we should wakeup threads waiting for EPOLLOUT
-events when we expose the new SQ head to the userspace.
+Hello!
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
+On Tue 14-01-20 17:12:13, Christoph Hellwig wrote:
+> Asynchronous read/write operations currently use a rather magic locking
+> scheme, were access to file data is normally protected using a rw_semaphore,
+> but if we are doing aio where the syscall returns to userspace before the
+> I/O has completed we also use an atomic_t to track the outstanding aio
+> ops.  This scheme has lead to lots of subtle bugs in file systems where
+> didn't wait to the count to reach zero, and due to its adhoc nature also
+> means we have to serialize direct I/O writes that are smaller than the
+> file system block size.
+> 
+> All this is solved by releasing i_rwsem only when the I/O has actually
+> completed, but doings so is against to mantras of Linux locking primites:
+> 
+>  (1) no unlocking by another process than the one that acquired it
+>  (2) no return to userspace with locks held
 
-Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+I'd like to note that using i_dio_count has also one advantage you didn't
+mention. For AIO case, if you need to hold i_rwsem in exclusive mode,
+holding the i_rwsem just for submission part is a significant performance
+advantage (shorter lock hold times allow for higher IO parallelism). I
+guess this could be mitigated by downgrading the lock to shared mode
+once the IO is submitted. But there will be still some degradation visible
+for the cases of mixed exclusive and shared acquisitions because shared
+holders will be blocking exclusive ones for longer time.
 
-Thanks,
-Stefano
----
- fs/io_uring.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This may be especially painful for filesystems that don't implement DIO
+overwrites with i_rwsem in shared mode...
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 38b54051facd..5c6ff5f9e741 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3687,6 +3687,11 @@ static void io_commit_sqring(struct io_ring_ctx *c=
-tx)
- 		 * write new data to them.
- 		 */
- 		smp_store_release(&rings->sq.head, ctx->cached_sq_head);
-+
-+		if (wq_has_sleeper(&ctx->cq_wait)) {
-+			wake_up_interruptible(&ctx->cq_wait);
-+			kill_fasync(&ctx->cq_fasync, SIGIO, POLL_OUT);
-+		}
- 	}
- }
-=20
---=20
-2.24.1
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
