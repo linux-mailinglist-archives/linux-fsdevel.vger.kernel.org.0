@@ -2,77 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C9A13DCCC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 15:00:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F0EE13DDE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 15:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbgAPOAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 09:00:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42742 "EHLO mx2.suse.de"
+        id S1726885AbgAPOph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 09:45:37 -0500
+Received: from mout.web.de ([212.227.15.3]:59889 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbgAPOAH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 09:00:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1341EAD5E;
-        Thu, 16 Jan 2020 14:00:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 62CD91E06F1; Thu, 16 Jan 2020 15:00:04 +0100 (CET)
-Date:   Thu, 16 Jan 2020 15:00:04 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: RFC: hold i_rwsem until aio completes
-Message-ID: <20200116140004.GE8446@quack2.suse.cz>
-References: <20200114161225.309792-1-hch@lst.de>
+        id S1726370AbgAPOph (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 09:45:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1579185922;
+        bh=BrCEZBbCAlCJ6Zr3PlMt7E/ZtpQfWtm6efY/aQWbWZo=;
+        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
+        b=n7aw89CPE2vbKRG0DG4Hu4tSNCAGaSpnYCuLjtgbbO9BxlnaxtJUpO1/1U5LDVJFi
+         S6I0AJ8UfB5hWRSMBR256wq9jmD+zrlpw/G1MXr0QZHv8d3CqHlLbTFpBNjTdED0LD
+         F/3oytkfSwG4PSbkXuFd+mnaw94hOb55Iz6yhkKw=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.6.163]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0M2dt7-1jkL0m3nGv-00sN2m; Thu, 16
+ Jan 2020 15:45:22 +0100
+Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+Subject: Re: [PATCH v10 00/14] add the latest exfat driver
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <33ec9b62-c93a-f87e-3391-ae9afeff0e9e@web.de>
+Date:   Thu, 16 Jan 2020 15:45:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200114161225.309792-1-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GxoRtMF+A/gG4f/kSInaHNp30b8Yabf8eXIfHfqpZkQrLHHo0+G
+ JJRqmFWlm7E73+jVKIahwnXY9hSY9oeHuxhncyGbXr99M+pU52kxcJpLB6mkqL7cYf8GUXr
+ DqL+AD8Fqu/3H5LEPz7XJUDZggNceWXwiHSN//otjGVhzcSIpW4v17Nr9VJmJ5TTqurwJA+
+ SgMm5Iu3JJEWucZmFSxeg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uEPG6TdKvK0=:G8wzjNOqb3RWFr7JeEW+Gv
+ +HbA8WFFZXqG86y1uLijyY9EGQ+aUO4oyzhIdOraV31ihwdq7q5Ic7g1E2swFc/tkwG9lBAqb
+ A3LPr8w/HLp07lK+Js9XCpVhC7X2rN/75UhDzX+NUQp721Nz0Er6ZhMeQuIdsr9tUlttjgfKq
+ zaZAzDmbDcueWLuDEtM11MG1t0lOe0qDwKxtB41e2Du0sX53kFyL6tEzRjyh8CfiuVsi7tz5/
+ MnOmJ2xlOkM15BhECQOYlhXtjtcUJuEgTRAH1FrkREV0uqaVhBznwjtXAcfAuETCW6HH1olOH
+ x+QMSv5ZxgBh2ENiPuG/Pz4V/JvK9T//xk2MPimoZ/4FISMcrlMqvNnB4724Ihr7mp+DxG47h
+ mu1HV9sIeZWziOp+XlfHpiWzJYjerslly0yspoTEKFnD39nQFY676GKwkMzyDXIk7Rc8jQBGK
+ bHP+/GjpDPA0PAzHjcEmtSv5cgcFIzdFO4KvedXX/uCkjGcOhYBD/rcTWM9eucgele9lMS6X2
+ GRA/OHQOv86E2WL4FpVRw6w9NNVPRoZJ0Qk/s8770/eKe2QxGo+1EIcB8HFLRLlh5Po0xVeI2
+ mREPiBqShdC1f/Le4GlZ9U8c/uP9c1eCTT/NKk6laEogOUkWd/90/pEsvLkCFOonxhrc/lq7p
+ oOPSvFWEbw5cqTIOKjaRs6q75FgwFJRIDPZo4Vd3wUfcbQCUPFJmZAzuli/Xw0Vo5Ati7aIQB
+ 9lnBqbqsWW8niWbiy+wpUV122hoanaogdsET19rYvuYpRb1sby8uCiTd0NeH/bQeuyjD7rSLx
+ LFd+sIPzLpTNhbqO/14+XRbOVzMANQiUC/v3YwKy/GL/1Ud77A26rFEHGpviU+oZr1elPBgXa
+ iIJ1zTxWmW7qqjv2lDEaTVOXsGDeOTpY+/H2nJlBj4jpsGVHGQ5zk+1EJnl2x6QhTtNZb296V
+ V2F8tZ7Vou6HyREW55/UmtET1dwvVOB8xOTaL/njdY5JFmXZlnlWmW2xXYqpykdLlTmiAcZIA
+ q9H8Q24C2wlS3zI8TmcaIkcrbVqrPAv73KXe3IfJQcxqyeGc0mNpE1WzE9nX4Y2fSxC4of9v0
+ CKhgydc7hyiTvCDiAbSdESTHSZK14hWT1fJRLQtJuHrys7TN5YNw6uJ+fy2BRUC82e4wXk/D9
+ t3jGzgkyyFt/3TXND/faLANWgcnNUXN6fHj2ssNGgnJGUGIKTw4MA/A0hUh/SB/R7ScgIx3jY
+ pcPUxy/kMEqtkv8dT+A6t6O7IatCkVeOK4lHQLEfQjZ6Dxp0B2GaBa/9ITPk=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
+>  - Process utf16 surroage pair as one character.
 
-On Tue 14-01-20 17:12:13, Christoph Hellwig wrote:
-> Asynchronous read/write operations currently use a rather magic locking
-> scheme, were access to file data is normally protected using a rw_semaphore,
-> but if we are doing aio where the syscall returns to userspace before the
-> I/O has completed we also use an atomic_t to track the outstanding aio
-> ops.  This scheme has lead to lots of subtle bugs in file systems where
-> didn't wait to the count to reach zero, and due to its adhoc nature also
-> means we have to serialize direct I/O writes that are smaller than the
-> file system block size.
-> 
-> All this is solved by releasing i_rwsem only when the I/O has actually
-> completed, but doings so is against to mantras of Linux locking primites:
-> 
->  (1) no unlocking by another process than the one that acquired it
->  (2) no return to userspace with locks held
+Would you like to mention =E2=80=9Csurrogates=E2=80=9D by this wording?
 
-I'd like to note that using i_dio_count has also one advantage you didn't
-mention. For AIO case, if you need to hold i_rwsem in exclusive mode,
-holding the i_rwsem just for submission part is a significant performance
-advantage (shorter lock hold times allow for higher IO parallelism). I
-guess this could be mitigated by downgrading the lock to shared mode
-once the IO is submitted. But there will be still some degradation visible
-for the cases of mixed exclusive and shared acquisitions because shared
-holders will be blocking exclusive ones for longer time.
-
-This may be especially painful for filesystems that don't implement DIO
-overwrites with i_rwsem in shared mode...
-
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Markus
