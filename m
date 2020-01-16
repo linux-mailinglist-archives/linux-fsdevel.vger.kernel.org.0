@@ -2,84 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A2413DEC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 16:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B5313DEC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 16:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgAPP3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 10:29:10 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38672 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgAPP3K (ORCPT
+        id S1726410AbgAPPaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 10:30:24 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34229 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgAPPaY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 10:29:10 -0500
-Received: by mail-io1-f66.google.com with SMTP id i7so13799249ioo.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 07:29:09 -0800 (PST)
+        Thu, 16 Jan 2020 10:30:24 -0500
+Received: by mail-wm1-f65.google.com with SMTP id w5so7404857wmi.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 07:30:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
-        b=0s0D+UFaDYK6xrnqFY4RWZ85Cw7sAB42ZD2xHfNT4EsZ8JKtak1k8ZZJkGlzDu2xjs
-         vtiRoN3kZV35k2FNoji6lV3M3AXln6xx0pK6i1QWFcPPwk1zFP66wOQBx2kK/zDvHhqP
-         wJKpoeJBgZaKuLE3NQoKBI0Nk21N+Yda0ZXBE+ftxkdvzkhdDxnsYvHDhVcVMtfwf80A
-         SEMW5nm1fVcomadiPkmyRAoAMT58nuqIKsSvI7sj6dzPm7wkj89fWecNSQETVuwX1Psw
-         NH6k2NcvHyJJsBxf2A49ORcsV5O0eI1qiKcVaQUi+E8RIdKbSMzTsZWgLuZfgE4h8HjD
-         EV2Q==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=O2z4n8RO8/tzUwxriTyw0M9sRnVtCTjAscvkNdepNLw=;
+        b=RhVwzne/xdCamnA3jCcDoOS9ABTbj+EwOCjuwBQ78Vcbh2VPhnq2ce7m4/rt2w/Sbg
+         fCc1JWfOTUXpFfJLN80uDA+qKcDKmDIqQre6HMIIUMN0GrYnlIkYCRwQKQ6VFhc7CluY
+         QTcxkeQMoIPJKswXDLLTL9czMWf2lrTBjAcltQXNwCxt8kHSD3kZ5hgnpQrg6K+jsh/9
+         BVocYK89pmnKFGaeUdBOscWjGMHmkW5X9hq47MZK0FiEWYOk531eY6XHYxtSbTJxngOO
+         AwCoSJsmLRqip6zvj4fN0WZvCmhM1p1Gb6+EhJrtNxJKG+dK5Z8ExknXN99TUNSzcWJA
+         UqDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JJcFvW8HJdilHnnCk22v1SBtvRGSSS8XKcSjVtOnrIo=;
-        b=Thq6P2p+OKJjYZKyHUyBgnGdkmoeoJEix4H+JR/II/fcAfskyXrU3L/Y2FjC5E7Zaw
-         fhnEsgg9gK0e/BA+wUeZvb5i1z3tyhEVkeCeU5c6J0fLFmxfzT55JzYkZAmg5TgzydvY
-         dqzhoZUH/ssKcSTiaS7wApOEeTy+BPnXeg+465ZCyA4DTVZKdbW1oK9imWMyXNJBZE8e
-         sdAge/dGQoxe84C444Vata+dBbUgvdw0CYHc58opg4lRdARLW7D37wCc6sfZ2jvRZMXQ
-         TyUbtEPgu0ogCSrdBtC/Nni3hYDlp10mzUV/TgZGHPNQe5MJjYTNSWy97W3hiuiKCczT
-         EZNw==
-X-Gm-Message-State: APjAAAUiOeZMjQtiM/XXVr/4ijD4VQlV3+//WXkESXHTUO+TCtuBPcLn
-        BTFQhfNQCxBTmcWo2edviptIngZkbqI=
-X-Google-Smtp-Source: APXvYqyq+mjlgPuHivk2+TNQ161jCn6GCai4KGnDmwom0xMohe+U1BAqMlNQy9ae2riH2dgDMe5KUQ==
-X-Received: by 2002:a02:8587:: with SMTP id d7mr28917545jai.39.1579188548882;
-        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id b7sm2870279ioq.39.2020.01.16.07.29.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 07:29:08 -0800 (PST)
-Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20200116134946.184711-1-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
-Date:   Thu, 16 Jan 2020 08:29:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=O2z4n8RO8/tzUwxriTyw0M9sRnVtCTjAscvkNdepNLw=;
+        b=HWM3lD2Y7q4dXMslIcidcrdNlk0y7oRw5SvHZifwzYq9M/iYsguq6MqzHDWfKvKtzm
+         xYX2JbY0Aw81CzL7eOssCPDhNJIet3I5e9RomLel2su7Jdb9WY6tuVIfN+yrK83SS+uq
+         8P7kfoGW8P+IIOJjBbQsDFM1VxZaCethVdTI3shUun+w/9JH/PCEAz0zLQ7YtMMPxudj
+         +qAF6JTQDQ3Ky0LvAqYQM3Tb1d2giXQBIPifeCrM65rPQmQHHXWmNwVpgmopnxdF4B3G
+         w8Z8Y1YvWrLHrMnSRliX3dpPb0orWh+vlhVzsjA+9FFxE/9xqrgjpNGye3mY6egKuxiN
+         dgYA==
+X-Gm-Message-State: APjAAAWAnjETs2AgTT7Wdkn0vLO8xHUnyPKeMRkDRq9SfEkxz7i3i03I
+        LXHK/u9NvNl/X0+VuD7jfbw=
+X-Google-Smtp-Source: APXvYqz2MnsiLTzlarD712BGQKPgzhqE05fejS2znb0Iq4a6EEQd5zx3ZmCauVWOy/sQ9phzcpG2vA==
+X-Received: by 2002:a05:600c:48a:: with SMTP id d10mr6654356wme.87.1579188621611;
+        Thu, 16 Jan 2020 07:30:21 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id i11sm30498438wrs.10.2020.01.16.07.30.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 07:30:20 -0800 (PST)
+Date:   Thu, 16 Jan 2020 16:30:19 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: udf: Suspicious values in udf_statfs()
+Message-ID: <20200116153019.5awize7ufnxtjagf@pali>
+References: <20200112162311.khkvcu2u6y4gbbr7@pali>
+ <20200113120851.GG23642@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200116134946.184711-1-sgarzare@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200113120851.GG23642@quack2.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/16/20 6:49 AM, Stefano Garzarella wrote:
-> io_uring_poll() sets EPOLLOUT flag if there is space in the
-> SQ ring, then we should wakeup threads waiting for EPOLLOUT
-> events when we expose the new SQ head to the userspace.
+On Monday 13 January 2020 13:08:51 Jan Kara wrote:
+> Hello,
 > 
-> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> ---
+> On Sun 12-01-20 17:23:11, Pali Rohár wrote:
+> > I looked at udf_statfs() implementation and I see there two things which
+> > are probably incorrect:
+> > 
+> > First one:
+> > 
+> > 	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
+> > 
+> > If sbi->s_partition points to Metadata partition then reported number
+> > of blocks seems to be incorrect. Similar like in udf_count_free().
 > 
-> Do you think is better to change the name of 'cq_wait' and 'cq_fasync'?
+> Oh, right. This needs similar treatment like udf_count_free(). I'll fix it.
+> Thanks for spotting.
 
-I honestly think it'd be better to have separate waits for in/out poll,
-the below patch will introduce some unfortunate cacheline traffic
-between the submitter and completer side.
+Ok.
+
+> > Second one:
+> > 
+> > 	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
+> > 					  le32_to_cpu(lvidiu->numDirs)) : 0)
+> > 			+ buf->f_bfree;
+> > 
+> > What f_files entry should report? Because result of sum of free blocks
+> > and number of files+directories does not make sense for me.
+> 
+> This is related to the fact that we return 'f_bfree' as the number of 'free
+> file nodes' in 'f_ffree'. And tools generally display f_files-f_ffree as
+> number of used inodes. In other words we treat every free block also as a
+> free 'inode' and report it in total amount of 'inodes'. I know this is not
+> very obvious but IMHO it causes the least confusion to users reading df(1)
+> output.
+
+So current code which returns sum of free blocks and number of
+files+directories is correct. Could be this information about statvfs
+f_files somewhere documented? Because this is not really obvious nor for
+userspace applications which use statvfs() nor for kernel filesystem
+drivers.
 
 -- 
-Jens Axboe
-
+Pali Rohár
+pali.rohar@gmail.com
