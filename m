@@ -2,239 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A251F13EE25
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 19:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EAE313EDC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 19:05:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393565AbgAPRj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 12:39:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387950AbgAPRj6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:39:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B93012470B;
-        Thu, 16 Jan 2020 17:39:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196397;
-        bh=k9k1upsn1p+uXZi8guLsNkJjkMkBN4Xwc9p6+wuw4Qc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V9hUym4NhuhOg69Ntci9sYN/tE2ZCN4vZOoNSKqnW8vntuF9jfShqZHARKvFKGDKv
-         0rXTDPcn3le4ay896UoGj0pg3FqCn56M6LA27f4FbBX61wd/c481cTss1XI59ZKcWW
-         1xKV6wiiK8bQF+7rcPMJEgOWP8RftHovwBrIXavc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 175/251] coredump: split pipe command whitespace before expanding template
-Date:   Thu, 16 Jan 2020 12:35:24 -0500
-Message-Id: <20200116173641.22137-135-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+        id S2406940AbgAPSE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 13:04:57 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:37778 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406927AbgAPSEv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:04:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI3d2x032053;
+        Thu, 16 Jan 2020 18:04:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=Wz0bfYpv6qVBxaaDhPfuHMj6fRJ3/Ll2i4XCWCEkzKU=;
+ b=P/xpYMzsQBE5bSIf2S5Rqg1imFhX6WSs+gM+2vlJjnEuX8CqmY+cnCyTLYqeL+nk6jJK
+ JhEyImmV4seyD2OKgOsPG9vPvMbtqliB0wCrQgMlRgaia8zGn55X8/0qBAKoBu+tFf/j
+ EGCnwUI/eE/YKnzFFyDulMHUTfZBKon5j4hwvQZpbRp71xa/v95DvKjA3dPwvf3XGxFd
+ rdWyTXu+2UuJcb0UfglLCJOhdZzBbBKLnX9GeUDxxH5VU5aj6MxUK+putiEf6vO+Uu+v
+ fmhY9Mnhg6L481saVULx+u4dmOsR2ydOneEQXD7B26uNZk595wXKPoG9TCeTUZtuGT0h yA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2xf73yv695-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 18:04:29 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00GI46wZ100800;
+        Thu, 16 Jan 2020 18:04:28 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2xj61n0etc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 18:04:28 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00GI4NWO015447;
+        Thu, 16 Jan 2020 18:04:23 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 16 Jan 2020 10:04:22 -0800
+Date:   Thu, 16 Jan 2020 10:04:21 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200116180421.GD8235@magnolia>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+ <20200116053935.GB8235@magnolia>
+ <20200116175501.GC24522@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200116175501.GC24522@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9502 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160146
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Paul Wise <pabs3@bonedaddy.net>
+On Thu, Jan 16, 2020 at 09:55:02AM -0800, Ira Weiny wrote:
+> On Wed, Jan 15, 2020 at 09:39:35PM -0800, Darrick J. Wong wrote:
+> > On Wed, Jan 15, 2020 at 02:38:21PM -0800, Ira Weiny wrote:
+> > > On Wed, Jan 15, 2020 at 12:10:50PM -0800, Dan Williams wrote:
+> > > > On Wed, Jan 15, 2020 at 11:45 AM Ira Weiny <ira.weiny@intel.com> wrote:
+> > > > >
+> > > > > On Wed, Jan 15, 2020 at 09:38:34AM -0800, Darrick J. Wong wrote:
+> > > > > > On Wed, Jan 15, 2020 at 12:37:15PM +0100, Jan Kara wrote:
+> > > > > > > On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
+> > > > > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > > > >
+> > > 
+> 
+> [snip]
+> 
+> > > 
+> > > Sure, but for now I think referencing mmap for details on MAP_SYNC works.
+> > > 
+> > > I suspect that we may have some word smithing once I get this series in and we
+> > > submit a change to the statx man page itself.  Can I move forward with the
+> > > following for this patch?
+> > > 
+> > > <quote>
+> > > STATX_ATTR_DAX
+> > > 
+> > >         The file is in the DAX (cpu direct access) state.  DAX state
+> > 
+> > Hmm, now that I see it written out, I <cough> kind of like "DAX mode"
+> > better now. :/
+> > 
+> > "The file is in DAX (CPU direct access) mode.  DAX mode attempts..."
+> 
+> Sure...  now you tell me...  ;-)
+> 
+> Seriously, we could use mode here in the man page as this is less confusing to
+> say "DAX mode".
+> 
+> But I think the code should still use 'state' because mode is just too
+> overloaded.  You were not the only one who was thrown by my use of mode and I
+> don't want that confusion when we look at this code 2 weeks from now...
+> 
+> https://www.reddit.com/r/ProgrammerHumor/comments/852og2/only_god_knows/
+> 
+> ;-)
 
-[ Upstream commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03 ]
+Ok, let's leave it alone for now then.
 
-Save the offsets of the start of each argument to avoid having to update
-pointers to each argument after every corename krealloc and to avoid
-having to duplicate the memory for the dump command.
+I'm not even sure what 'DAX' stands for.  Direct Access to ...
+Professor Xavier? 8-)
 
-Executable names containing spaces were previously being expanded from
-%e or %E and then split in the middle of the filename.  This is
-incorrect behaviour since an argument list can represent arguments with
-spaces.
+> > 
+> > >         attempts to minimize software cache effects for both I/O and
+> > >         memory mappings of this file.  It requires a file system which
+> > >         has been configured to support DAX.
+> > > 
+> > >         DAX generally assumes all accesses are via cpu load / store
+> > >         instructions which can minimize overhead for small accesses, but
+> > >         may adversely affect cpu utilization for large transfers.
+> > > 
+> > >         File I/O is done directly to/from user-space buffers and memory
+> > >         mapped I/O may be performed with direct memory mappings that
+> > >         bypass kernel page cache.
+> > > 
+> > >         While the DAX property tends to result in data being transferred
+> > >         synchronously, it does not give the same guarantees of
+> > >         synchronous I/O where data and the necessary metadata are
+> > >         transferred together.
+> > 
+> > (I'm frankly not sure that synchronous I/O actually guarantees that the
+> > metadata has hit stable storage...)
+> 
+> I'll let you and Dan work this one out...  ;-)
 
-The splitting could lead to extra arguments being passed to the core
-dump handler that it might have interpreted as options or ignored
-completely.
+Hehe.  I think the wording here is fine.
 
-Core dump handlers that are not aware of this Linux kernel issue will be
-using %e or %E without considering that it may be split and so they will
-be vulnerable to processes with spaces in their names breaking their
-argument list.  If their internals are otherwise well written, such as
-if they are written in shell but quote arguments, they will work better
-after this change than before.  If they are not well written, then there
-is a slight chance of breakage depending on the details of the code but
-they will already be fairly broken by the split filenames.
+--D
 
-Core dump handlers that are aware of this Linux kernel issue will be
-placing %e or %E as the last item in their core_pattern and then
-aggregating all of the remaining arguments into one, separated by
-spaces.  Alternatively they will be obtaining the filename via other
-methods.  Both of these will be compatible with the new arrangement.
-
-A side effect from this change is that unknown template types (for
-example %z) result in an empty argument to the dump handler instead of
-the argument being dropped.  This is a desired change as:
-
-It is easier for dump handlers to process empty arguments than dropped
-ones, especially if they are written in shell or don't pass each
-template item with a preceding command-line option in order to
-differentiate between individual template types.  Most core_patterns in
-the wild do not use options so they can confuse different template types
-(especially numeric ones) if an earlier one gets dropped in old kernels.
-If the kernel introduces a new template type and a core_pattern uses it,
-the core dump handler might not expect that the argument can be dropped
-in old kernels.
-
-For example, this can result in security issues when %d is dropped in
-old kernels.  This happened with the corekeeper package in Debian and
-resulted in the interface between corekeeper and Linux having to be
-rewritten to use command-line options to differentiate between template
-types.
-
-The core_pattern for most core dump handlers is written by the handler
-author who would generally not insert unknown template types so this
-change should be compatible with all the core dump handlers that exist.
-
-Link: http://lkml.kernel.org/r/20190528051142.24939-1-pabs3@bonedaddy.net
-Fixes: 74aadce98605 ("core_pattern: allow passing of arguments to user mode helper when core_pattern is a pipe")
-Signed-off-by: Paul Wise <pabs3@bonedaddy.net>
-Reported-by: Jakub Wilk <jwilk@jwilk.net> [https://bugs.debian.org/924398]
-Reported-by: Paul Wise <pabs3@bonedaddy.net> [https://lore.kernel.org/linux-fsdevel/c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net/]
-Suggested-by: Jakub Wilk <jwilk@jwilk.net>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/coredump.c | 44 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 39 insertions(+), 5 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 4407e27beca9..98a45a727eb8 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -6,6 +6,7 @@
- #include <linux/stat.h>
- #include <linux/fcntl.h>
- #include <linux/swap.h>
-+#include <linux/ctype.h>
- #include <linux/string.h>
- #include <linux/init.h>
- #include <linux/pagemap.h>
-@@ -184,11 +185,13 @@ static int cn_print_exe_file(struct core_name *cn)
-  * name into corename, which must have space for at least
-  * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
-  */
--static int format_corename(struct core_name *cn, struct coredump_params *cprm)
-+static int format_corename(struct core_name *cn, struct coredump_params *cprm,
-+			   size_t **argv, int *argc)
- {
- 	const struct cred *cred = current_cred();
- 	const char *pat_ptr = core_pattern;
- 	int ispipe = (*pat_ptr == '|');
-+	bool was_space = false;
- 	int pid_in_pattern = 0;
- 	int err = 0;
- 
-@@ -198,12 +201,35 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (ispipe)
-+	if (ispipe) {
-+		int argvs = sizeof(core_pattern) / 2;
-+		(*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
-+		if (!(*argv))
-+			return -ENOMEM;
-+		(*argv)[(*argc)++] = 0;
- 		++pat_ptr;
-+	}
- 
- 	/* Repeat as long as we have more pattern to process and more output
- 	   space */
- 	while (*pat_ptr) {
-+		/*
-+		 * Split on spaces before doing template expansion so that
-+		 * %e and %E don't get split if they have spaces in them
-+		 */
-+		if (ispipe) {
-+			if (isspace(*pat_ptr)) {
-+				was_space = true;
-+				pat_ptr++;
-+				continue;
-+			} else if (was_space) {
-+				was_space = false;
-+				err = cn_printf(cn, "%c", '\0');
-+				if (err)
-+					return err;
-+				(*argv)[(*argc)++] = cn->used;
-+			}
-+		}
- 		if (*pat_ptr != '%') {
- 			err = cn_printf(cn, "%c", *pat_ptr++);
- 		} else {
-@@ -543,6 +569,8 @@ void do_coredump(const siginfo_t *siginfo)
- 	struct cred *cred;
- 	int retval = 0;
- 	int ispipe;
-+	size_t *argv = NULL;
-+	int argc = 0;
- 	struct files_struct *displaced;
- 	/* require nonrelative corefile path and be extra careful */
- 	bool need_suid_safe = false;
-@@ -589,9 +617,10 @@ void do_coredump(const siginfo_t *siginfo)
- 
- 	old_cred = override_creds(cred);
- 
--	ispipe = format_corename(&cn, &cprm);
-+	ispipe = format_corename(&cn, &cprm, &argv, &argc);
- 
- 	if (ispipe) {
-+		int argi;
- 		int dump_count;
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
-@@ -634,12 +663,16 @@ void do_coredump(const siginfo_t *siginfo)
- 			goto fail_dropcount;
- 		}
- 
--		helper_argv = argv_split(GFP_KERNEL, cn.corename, NULL);
-+		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
-+					    GFP_KERNEL);
- 		if (!helper_argv) {
- 			printk(KERN_WARNING "%s failed to allocate memory\n",
- 			       __func__);
- 			goto fail_dropcount;
- 		}
-+		for (argi = 0; argi < argc; argi++)
-+			helper_argv[argi] = cn.corename + argv[argi];
-+		helper_argv[argi] = NULL;
- 
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
-@@ -649,7 +682,7 @@ void do_coredump(const siginfo_t *siginfo)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
- 
--		argv_free(helper_argv);
-+		kfree(helper_argv);
- 		if (retval) {
- 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
- 			       cn.corename);
-@@ -768,6 +801,7 @@ void do_coredump(const siginfo_t *siginfo)
- 	if (ispipe)
- 		atomic_dec(&core_dump_count);
- fail_unlock:
-+	kfree(argv);
- 	kfree(cn.corename);
- 	coredump_finish(mm, core_dumped);
- 	revert_creds(old_cred);
--- 
-2.20.1
-
+> Ira
+> 
