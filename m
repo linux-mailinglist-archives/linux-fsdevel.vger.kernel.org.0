@@ -2,162 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D4D140024
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 00:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB0AF13FE6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 00:35:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390537AbgAPXUB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 18:20:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390520AbgAPXUA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:20:00 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CF4D2072B;
-        Thu, 16 Jan 2020 23:19:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579216799;
-        bh=VHDMOVKY2KfdkiAkN5SrQec/XY+J+CAactGKTcT7Y2w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JhK+Z5ipUJLe3hUYTVSf+msQ2QQ225WCaEevYJUMjPKPEJ2VJGOd+ltalh9cA+jbs
-         K8aSfnap/0f+HeI90bE12uWh0ocKbWJjoqUkUd+Z16w1Wc1NB2VRZyi4shP78tdaOE
-         093AC3WZwm2nU1gDVmmkRCF779NALgq66jkRDULw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.4 024/203] fs: move guard_bio_eod() after bio_set_op_attrs
-Date:   Fri, 17 Jan 2020 00:15:41 +0100
-Message-Id: <20200116231746.615182367@linuxfoundation.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200116231745.218684830@linuxfoundation.org>
-References: <20200116231745.218684830@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2404070AbgAPXc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 18:32:28 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41899 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391539AbgAPXcY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 18:32:24 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so20926441wrw.8;
+        Thu, 16 Jan 2020 15:32:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=YDWLm6XpqMI02rMFx3Yb45aze/71UxlSxD1MYyNVKss=;
+        b=d95X4kB3aWSrf5EvGU4uzYYHZZbih5nZwN0V97zERE4yecu7yDy8A8+o7MOMZhrPgs
+         /rPBKOGLIFY7ls4zfxHALS7VNK9jM2Nwjtag9b0DpaDEprrzTJxh5NLei1GRuZYXR169
+         p/tmWDgXSPFu0bdauwtEXYSL2k+V1vn7tFidCiOEbR6/PAk+EKbVpZjvM1WAuskg1qQr
+         89TTB5sZH+lRkQHlkuLd3/l7XZfWvj2hFYhXdOw1Mor7z9TwHC9jUzvH8gZH0dAqnBae
+         UfabZpNgiT4LVL83N6F5MVDCZz9dU70ilxuerH+jnjuceu7G+/XzVqInobQz12XRk40t
+         mydg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YDWLm6XpqMI02rMFx3Yb45aze/71UxlSxD1MYyNVKss=;
+        b=UM0xvtwvbtHBCsuKfTDh5iOf0EdsbblRrbrXErregSCXIrGQHTA4s0WFU2R6v0bGIl
+         sGdzm4mJcNjO6MRLgqecedOy47dmYC1xva63OZixRl0MZ52+4bZm6U5Vr1bjXNGDWANg
+         lC0XJLKvOFOyDMOH2ofHpOqzf0qT8xhmnoy0nlTNI8cUb9+2MoGF9XzviDtSnHD5X99l
+         WbTA3rH+y7nIY2CZtiQahlhzdj6jJJe2aqMptn9TMzTyAEfzTjJYaRYsn5OecUPOxQM/
+         gnNngFdBCIRpYSTKYASYYcDpLAwTTchPbwKFtZflTyUFYfv58sSEEomiu11rBTTRiQpL
+         Zmdw==
+X-Gm-Message-State: APjAAAXkrCG1lvjUFXj8xEHYnPEIxAI7I9y/+/iyuyqUJT1OPzpBXfpY
+        qnChXk66BYNdp7sEmnMJKv2aMN+qfeiLXg3t+uDuwA==
+X-Google-Smtp-Source: APXvYqwLX0lrkZdJFe5t0zpO2tuKs8Y79hcNs/Gk+HUAJGy8yctH8b/KG5My1MY/0dBlSpc+VFll6ki0vfP1JpdRDMs=
+X-Received: by 2002:adf:f606:: with SMTP id t6mr5590987wrp.85.1579217542497;
+ Thu, 16 Jan 2020 15:32:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191209222325.95656-1-ebiggers@kernel.org> <20200114220016.GL41220@gmail.com>
+ <1925918130.21041.1579039436354.JavaMail.zimbra@nod.at>
+In-Reply-To: <1925918130.21041.1579039436354.JavaMail.zimbra@nod.at>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Fri, 17 Jan 2020 00:32:11 +0100
+Message-ID: <CAFLxGvz8mjUdh67aw1vKoxJnQBHixrPUC8CTJYMbQG2CqZQrwQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] ubifs: fixes for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-fscrypt <linux-fscrypt@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+On Tue, Jan 14, 2020 at 11:04 PM Richard Weinberger <richard@nod.at> wrote:
+>
+> ----- Urspr=C3=BCngliche Mail -----
+> > Von: "Eric Biggers" <ebiggers@kernel.org>
+> > An: "richard" <richard@nod.at>
+> > CC: "linux-mtd" <linux-mtd@lists.infradead.org>, "linux-fscrypt" <linux=
+-fscrypt@vger.kernel.org>, "linux-fsdevel"
+> > <linux-fsdevel@vger.kernel.org>
+> > Gesendet: Dienstag, 14. Januar 2020 23:00:17
+> > Betreff: Re: [PATCH 0/2] ubifs: fixes for FS_IOC_GETFLAGS and FS_IOC_SE=
+TFLAGS
+>
+> > On Mon, Dec 09, 2019 at 02:23:23PM -0800, Eric Biggers wrote:
+> >> On ubifs, fix FS_IOC_SETFLAGS to not clear the encrypt flag, and updat=
+e
+> >> FS_IOC_GETFLAGS to return the encrypt flag like ext4 and f2fs do.
+> >>
+> >> Eric Biggers (2):
+> >>   ubifs: fix FS_IOC_SETFLAGS unexpectedly clearing encrypt flag
+> >>   ubifs: add support for FS_ENCRYPT_FL
+> >>
+> >>  fs/ubifs/ioctl.c | 14 +++++++++++---
+> >>  1 file changed, 11 insertions(+), 3 deletions(-)
+> >
+> > Richard, have you had a chance to review these?  I'm intending that the=
+se be
+> > taken through the UBIFS tree too.
 
-commit 83c9c547168e8b914ea6398430473a4de68c52cc upstream.
-
-Commit 85a8ce62c2ea ("block: add bio_truncate to fix guard_bio_eod")
-adds bio_truncate() for handling bio EOD. However, bio_truncate()
-doesn't use the passed 'op' parameter from guard_bio_eod's callers.
-
-So bio_trunacate() may retrieve wrong 'op', and zering pages may
-not be done for READ bio.
-
-Fixes this issue by moving guard_bio_eod() after bio_set_op_attrs()
-in submit_bh_wbc() so that bio_truncate() can always retrieve correct
-op info.
-
-Meantime remove the 'op' parameter from guard_bio_eod() because it isn't
-used any more.
-
-Cc: Carlos Maiolino <cmaiolino@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Fixes: 85a8ce62c2ea ("block: add bio_truncate to fix guard_bio_eod")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Fold in kerneldoc and bio_op() change.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
- block/bio.c   |   12 +++++++++++-
- fs/buffer.c   |    8 ++++----
- fs/internal.h |    2 +-
- fs/mpage.c    |    2 +-
- 4 files changed, 17 insertions(+), 7 deletions(-)
-
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -535,6 +535,16 @@ void zero_fill_bio_iter(struct bio *bio,
- }
- EXPORT_SYMBOL(zero_fill_bio_iter);
- 
-+/**
-+ * bio_truncate - truncate the bio to small size of @new_size
-+ * @bio:	the bio to be truncated
-+ * @new_size:	new size for truncating the bio
-+ *
-+ * Description:
-+ *   Truncate the bio to new size of @new_size. If bio_op(bio) is
-+ *   REQ_OP_READ, zero the truncated part. This function should only
-+ *   be used for handling corner cases, such as bio eod.
-+ */
- void bio_truncate(struct bio *bio, unsigned new_size)
- {
- 	struct bio_vec bv;
-@@ -545,7 +555,7 @@ void bio_truncate(struct bio *bio, unsig
- 	if (new_size >= bio->bi_iter.bi_size)
- 		return;
- 
--	if (bio_data_dir(bio) != READ)
-+	if (bio_op(bio) != REQ_OP_READ)
- 		goto exit;
- 
- 	bio_for_each_segment(bv, bio, iter) {
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2991,7 +2991,7 @@ static void end_bio_bh_io_sync(struct bi
-  * errors, this only handles the "we need to be able to
-  * do IO at the final sector" case.
-  */
--void guard_bio_eod(int op, struct bio *bio)
-+void guard_bio_eod(struct bio *bio)
- {
- 	sector_t maxsector;
- 	struct hd_struct *part;
-@@ -3055,15 +3055,15 @@ static int submit_bh_wbc(int op, int op_
- 	bio->bi_end_io = end_bio_bh_io_sync;
- 	bio->bi_private = bh;
- 
--	/* Take care of bh's that straddle the end of the device */
--	guard_bio_eod(op, bio);
--
- 	if (buffer_meta(bh))
- 		op_flags |= REQ_META;
- 	if (buffer_prio(bh))
- 		op_flags |= REQ_PRIO;
- 	bio_set_op_attrs(bio, op, op_flags);
- 
-+	/* Take care of bh's that straddle the end of the device */
-+	guard_bio_eod(bio);
-+
- 	if (wbc) {
- 		wbc_init_bio(wbc, bio);
- 		wbc_account_cgroup_owner(wbc, bh->b_page, bh->b_size);
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -38,7 +38,7 @@ static inline int __sync_blockdev(struct
- /*
-  * buffer.c
-  */
--extern void guard_bio_eod(int rw, struct bio *bio);
-+extern void guard_bio_eod(struct bio *bio);
- extern int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
- 		get_block_t *get_block, struct iomap *iomap);
- 
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -62,7 +62,7 @@ static struct bio *mpage_bio_submit(int
- {
- 	bio->bi_end_io = mpage_end_io;
- 	bio_set_op_attrs(bio, op, op_flags);
--	guard_bio_eod(op, bio);
-+	guard_bio_eod(bio);
- 	submit_bio(bio);
- 	return NULL;
- }
-
-
+Both applied. Thanks a lot for addressing this, Eric.
+--=20
+Thanks,
+//richard
