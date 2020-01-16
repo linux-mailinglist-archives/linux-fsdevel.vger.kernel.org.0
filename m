@@ -2,85 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B115E13D7CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 11:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 529CA13D7D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 11:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbgAPKUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 05:20:44 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50522 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbgAPKUo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 05:20:44 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so3144762wmb.0;
-        Thu, 16 Jan 2020 02:20:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=cffBxyxsROM+/0/ZJcbGa9AlfvTIPNPDZ4yww6KPzdw=;
-        b=UleU/xOSK8N7u43DrHLzWMUiGKBUVmvf4NG3BW+j2E902pFM20MmTqvRVWznv3zZcd
-         k1A9P2UypTarIy+8hdymW01NGoZ45lXhFtHilxlfl5u2FkjC2lkRMhkffAhsJhHFdLH8
-         gyTGFncmCKxUqnteVaKEsLWsDVTSuOOiyA6GQdg6rbxKHDKEE9VD+munR1341Y6rH6hg
-         f23xuUJJMBlV/IgeRfNWqWH3O5cTXdJRkiC8709E9eLmEIjGlqwmw/TALnIjAAgsY38t
-         Fdvx6OqHNMw886eR2VeQMTBnw2eVvYzRSAOk3L8ldCfoWdebqBm91G0bMEbrX1y/QPx9
-         I9oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cffBxyxsROM+/0/ZJcbGa9AlfvTIPNPDZ4yww6KPzdw=;
-        b=QSYkdQFFBUZrFN7PrvQjYOYn1XsF7bZ0uc0xs29MnlAL51/2/0Ap2dg4kH9hcz5Nch
-         iUFweAlI4V+DDnNJRHGUtOW6eSV0SRTE45r3E7EFR5fcdgVFx7VtegIqctotEkIbDqnT
-         AjC+QjbSrpsoiGUO712ZrsLlQHpEU3dkpKh4sxnr8ZpGUAMFh74r8VLSBpUQlNd5kVH6
-         7MHWmUDWrn3nZ22GCuR21biPqY/un3jO75fnIhR3cPTr22tAwRjBDnGcZUobPTID5XKp
-         wdjIq1cqMWEe9/Yp/687c9NMko7xiM/9ypl42LTZvpPruXbGbJZpg9kGqBO6apJE66fS
-         K8Zg==
-X-Gm-Message-State: APjAAAWaX+e6ygu3DQVUbUI5o14tC83O3SKKZiPZjsQXHfo2U23RQPem
-        ZDF9qTiSeU6+wOaz6dix2PA=
-X-Google-Smtp-Source: APXvYqyixnzNHxNve8mkVqZMFcLxgbWmryQ2qrm6OIpnl/mdReSrpHA8uozzfJf5EPuvskHUD2fo8g==
-X-Received: by 2002:a7b:c759:: with SMTP id w25mr5484979wmk.15.1579170042923;
-        Thu, 16 Jan 2020 02:20:42 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id 16sm3825698wmi.0.2020.01.16.02.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 02:20:42 -0800 (PST)
-Date:   Thu, 16 Jan 2020 11:20:41 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: Re: [v10 00/14] add the latest exfat driver
-Message-ID: <20200116102041.i52l3eoas7xrhlxv@pali>
-References: <c4fdc6af-04c2-81a5-891d-5a3db4778caa@web.de>
+        id S1726861AbgAPKXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 05:23:10 -0500
+Received: from verein.lst.de ([213.95.11.211]:55239 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726220AbgAPKXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jan 2020 05:23:10 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 860F468B20; Thu, 16 Jan 2020 11:23:07 +0100 (CET)
+Date:   Thu, 16 Jan 2020 11:23:07 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Namjae Jeon <linkinjeon@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+Message-ID: <20200116102307.GA16662@lst.de>
+References: <20200115082447.19520-10-namjae.jeon@samsung.com> <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com> <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com> <20200115133838.q33p5riihsinp6c4@pali> <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com> <20200115142428.ugsp3binf2vuiarq@pali> <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com> <20200115153943.qw35ya37ws6ftlnt@pali> <CAK8P3a1iYPA9MrXORiWmy1vQGoazwHs7OfPdoHLZLJDWqu9jqA@mail.gmail.com> <20200116101947.4szdyfwpyasv5vpe@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4fdc6af-04c2-81a5-891d-5a3db4778caa@web.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20200116101947.4szdyfwpyasv5vpe@pali>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 16 January 2020 10:43:50 Markus Elfring wrote:
-> > Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
-> >
-> > Next steps for future:
+On Thu, Jan 16, 2020 at 11:19:47AM +0100, Pali Roh�r wrote:
+>   However, implementations should only record the value 00h for this
+>   field when:
 > 
-> How does this tag fit to known open issues?
+>     1. Local date and time are actually the same as UTC, in which case
+>        the value of the OffsetValid field shall be 1
+> 
+>     2. Local date and time are not known, in which case the value of the
+>        OffsetValid field shall be 1 and implementations shall consider
+>        UTC to be local date and time
 
-Is there any list of known open issues? Or what do you mean by known
-open issues?
+Given time zones in Linux are per session I think our situation is
+somewhat similar to 2.
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+> > Here I would just convert to UTC, which is what we store in the
+> > in-memory struct inode anyway.
+> 
+> Ok. If inode timestamp is always in UTC, we should do same thing also
+> for exFAT.
+
+> Hm... both UTC and sys_tz have positives and negatives. And I'm not
+> sure which option is better.
+
+The one big argument for always UTC is simplicity.  Always using UTC
+kills some arcane an unusual (for Linux file systems) code, and given
+how exfat implementations deal with the time zone on reading should
+always interoperate fine with other implementations.
