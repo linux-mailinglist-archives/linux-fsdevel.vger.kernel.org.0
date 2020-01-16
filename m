@@ -2,173 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21A0C13D21F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 03:21:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0004B13D3D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jan 2020 06:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgAPCVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jan 2020 21:21:15 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37348 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgAPCVP (ORCPT
+        id S1726688AbgAPFkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 00:40:04 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:37862 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726082AbgAPFkE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jan 2020 21:21:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id q127so9104901pga.4;
-        Wed, 15 Jan 2020 18:21:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=I18TcJc5J/5NVytSTHAB8Z9j/dAkt1uAP5HlQjHDlpo=;
-        b=m5mxi5gDBbNGkmrb4O4cBeW9Wp+NHvF04ZoWB+ieyGTqgESvip6ncAgsQZ5cdUZw6d
-         rlV6q8TorGLfvXU/Oc7rY787vQ9/ssHVfut7bUP3sjeCmuyae2xNbeYZ1n1bjV4tM0kr
-         oS4R4rdx1U5OyY9QnFDQd5miR6V+oH79ZozOp0rvMFBweo3NtjQTzKZHt1LcnXDFUw5c
-         xRC6XjSZX23xwBNN6LFlspUepSgHw8zj9G8w7MEzRm0GG3Ip0nm3bLfAl9jmdwGMbzAM
-         L6UST2VxC70IzZrqN5HFJaaHuPzyuDD7OP++qhhgtsc1zielD0rQQR+1roSyjJ7KPnJq
-         oc5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=I18TcJc5J/5NVytSTHAB8Z9j/dAkt1uAP5HlQjHDlpo=;
-        b=A//fMBacV5MAmVL9rJfqsfJ8I416AHiomhfuHKAino9B9yQHx84UxwlUMtgqHOIp6A
-         kV168u6VtDQWG1RS+/URF1hrejdh488+UY0KvpgqSPrssa7U9ZftsTfUxRhUOWkocBjs
-         GautP/bYV49XCH8gGN6R/9rDhJHr3Pa9UlAJzAEi1h6EFLBHNYKg50yMVmdbN3hJHw8x
-         IAyjtsH6JjU225Mi6m14mcjzjOFlrN6WN8z4NsF1g1R3CRL4TS5TxqjenMUqoC1K4QKS
-         WnH/BFKchnqgdwKv9wEWJBvltaPbB8Z0WdUKyoHFUnLcQGfBOwTpaql59IPi7PJPBAI8
-         eEag==
-X-Gm-Message-State: APjAAAW+l32fiGL7yrGsgv0W/6nlQogTAF0Baqi2fYY4oIkCRiZaQLZG
-        jIjpFJ13/CyK3duTd0sq8qXb5ofC6OJ2pA==
-X-Google-Smtp-Source: APXvYqw1qJ4Hp/CIKT/m4U/3NgQfylWNU9Vs05nDBK6X5UEO087z+6bsU4xUIQXXciGQQdj+ipOvLA==
-X-Received: by 2002:a62:e80b:: with SMTP id c11mr35222354pfi.28.1579141274223;
-        Wed, 15 Jan 2020 18:21:14 -0800 (PST)
-Received: from xps.lan ([103.125.232.133])
-        by smtp.gmail.com with ESMTPSA id u23sm23073232pfm.29.2020.01.15.18.21.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 18:21:13 -0800 (PST)
-From:   YunQiang Su <syq@debian.org>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Laurent Vivier <laurent@vivier.eu>
-Cc:     YunQiang Su <ysu@wavecomp.com>
-Subject: [PATCH v2] binfmt_misc: pass info about P flag by AT_FLAGS
-Date:   Thu, 16 Jan 2020 10:20:49 +0800
-Message-Id: <20200116022049.164659-1-syq@debian.org>
-X-Mailer: git-send-email 2.25.0.rc1
+        Thu, 16 Jan 2020 00:40:04 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00G5d5VM174531;
+        Thu, 16 Jan 2020 05:39:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ZvhUMad29Q7lSqgVCA5o0Rvkn84v5bmJgkpac83lhOw=;
+ b=Xwz8WLjsjRYhW7x+YlXoHgXJ1rLTWNix812/W9nXlfXTwm/gMJoMyfoO0hO0pe+sOQea
+ 3yjMk2iw+MVORoBxt30KWwzlMr7bqH0hmoo9vyvC1SWnRbW9pB3kXcAiEgbix1Yu65HR
+ xLLd+Z30bDonOev13PvgbLHzqy9/Iwv5nSTcCpVVo/QAX/oGRPyvHsbYu0daPGI+/9su
+ PzAWtRJ/bGr9Pt77spupAQ5FjBYqtPyyI82xZ2FS8H47+mmo6l5zRJq+mklQ/o9b3J4k
+ F06qGYgtdT8PquY+zR3x4S3qluI9Lv1BJQg2Z5Q9vrdRq1FeDuVhz7tysitrbgo9i/AU rQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2xf73u0706-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 05:39:42 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00G5d1te153489;
+        Thu, 16 Jan 2020 05:39:42 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2xhy22nqg1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Jan 2020 05:39:41 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00G5dbMg027086;
+        Thu, 16 Jan 2020 05:39:37 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Jan 2020 21:39:37 -0800
+Date:   Wed, 15 Jan 2020 21:39:35 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200116053935.GB8235@magnolia>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001160047
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9501 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001160047
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: YunQiang Su <ysu@wavecomp.com>
+On Wed, Jan 15, 2020 at 02:38:21PM -0800, Ira Weiny wrote:
+> On Wed, Jan 15, 2020 at 12:10:50PM -0800, Dan Williams wrote:
+> > On Wed, Jan 15, 2020 at 11:45 AM Ira Weiny <ira.weiny@intel.com> wrote:
+> > >
+> > > On Wed, Jan 15, 2020 at 09:38:34AM -0800, Darrick J. Wong wrote:
+> > > > On Wed, Jan 15, 2020 at 12:37:15PM +0100, Jan Kara wrote:
+> > > > > On Fri 10-01-20 11:29:31, ira.weiny@intel.com wrote:
+> > > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > >
+> 
+> [snip]
+> 
+> > > Ok I changed a couple of things as well.  How does this sound?
+> > >
+> > >
+> > > STATX_ATTR_DAX
+> > >
+> > >         DAX (cpu direct access) is a file mode that attempts to minimize
+> > 
+> > s/mode/state/?
+> 
+> DOH!  yes state...  ;-)
+> 
+> > 
+> > >         software cache effects for both I/O and memory mappings of this
+> > >         file.  It requires a block device and file system which have
+> > >         been configured to support DAX.
+> > 
+> > It may not require a block device in the future.
+> 
+> Ok:
+> 
+> "It requires a file system which has been configured to support DAX." ?
+> 
+> I'm trying to separate the user of the individual STATX DAX flag from the Admin
+> details of configuring the file system and/or devices which supports it.
+> 
+> Also, I just realized that we should follow the format of the other STATX_*
+> attributes.  They all read something like "the file is..."
+> 
+> So I'm adding that text as well.
+> 
+> > 
+> > >
+> > >         DAX generally assumes all accesses are via cpu load / store
+> > >         instructions which can minimize overhead for small accesses, but
+> > >         may adversely affect cpu utilization for large transfers.
+> > >
+> > >         File I/O is done directly to/from user-space buffers and memory
+> > >         mapped I/O may be performed with direct memory mappings that
+> > >         bypass kernel page cache.
+> > >
+> > >         While the DAX property tends to result in data being transferred
+> > >         synchronously, it does not give the same guarantees of
+> > >         synchronous I/O where data and the necessary metadata are
+> > 
+> > Maybe use "O_SYNC I/O" explicitly to further differentiate the 2
+> > meanings of "synchronous" in this sentence?
+> 
+> Done.
+> 
+> > 
+> > >         transferred together.
+> > >
+> > >         A DAX file may support being mapped with the MAP_SYNC flag,
+> > >         which enables a program to use CPU cache flush operations to
+> > 
+> > s/operations/instructions/
+> 
+> Done.
+> 
+> > 
+> > >         persist CPU store operations without an explicit fsync(2).  See
+> > >         mmap(2) for more information.
+> > 
+> > I think this also wants a reference to the Linux interpretation of
+> > platform "persistence domains" we were discussing that here [1], but
+> > maybe it should be part of a "pmem" manpage that can be referenced
+> > from this man page.
+> 
+> Sure, but for now I think referencing mmap for details on MAP_SYNC works.
+> 
+> I suspect that we may have some word smithing once I get this series in and we
+> submit a change to the statx man page itself.  Can I move forward with the
+> following for this patch?
+> 
+> <quote>
+> STATX_ATTR_DAX
+> 
+>         The file is in the DAX (cpu direct access) state.  DAX state
 
-Currently program invoked by binfmt_misc cannot be aware about whether
-P flag, aka preserve path is enabled.
+Hmm, now that I see it written out, I <cough> kind of like "DAX mode"
+better now. :/
 
-Some applications like qemu need to know since it has 2 use case:
-  1. call by hand, like: qemu-mipsel-static test.app OPTION
-     so, qemu have to assume that P option is not enabled.
-  2. call by binfmt_misc. If qemu cannot know about whether P flag is
-     enabled, distribution's have to set qemu without P flag, and
-     binfmt_misc call qemu like:
-       qemu-mipsel-static /absolute/path/to/test.app OPTION
-     even test.app is not called by absoulute path, like
-       ./relative/path/to/test.app
+"The file is in DAX (CPU direct access) mode.  DAX mode attempts..."
 
-This patch passes this information by the 3rd bits of unused AT_FLAGS.
-Then, in qemu, we can get this info by:
-   getauxval(AT_FLAGS) & (1<<3)
+>         attempts to minimize software cache effects for both I/O and
+>         memory mappings of this file.  It requires a file system which
+>         has been configured to support DAX.
+> 
+>         DAX generally assumes all accesses are via cpu load / store
+>         instructions which can minimize overhead for small accesses, but
+>         may adversely affect cpu utilization for large transfers.
+> 
+>         File I/O is done directly to/from user-space buffers and memory
+>         mapped I/O may be performed with direct memory mappings that
+>         bypass kernel page cache.
+> 
+>         While the DAX property tends to result in data being transferred
+>         synchronously, it does not give the same guarantees of
+>         synchronous I/O where data and the necessary metadata are
+>         transferred together.
 
-v1->v2:
-  not enable kdebug
+(I'm frankly not sure that synchronous I/O actually guarantees that the
+metadata has hit stable storage...)
 
-See: https://bugs.launchpad.net/qemu/+bug/1818483
-Signed-off-by: YunQiang Su <ysu@wavecomp.com>
----
- fs/binfmt_elf.c         | 6 +++++-
- fs/binfmt_elf_fdpic.c   | 6 +++++-
- fs/binfmt_misc.c        | 2 ++
- include/linux/binfmts.h | 4 ++++
- 4 files changed, 16 insertions(+), 2 deletions(-)
+--D
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index f4713ea76e82..d33ee07d7f57 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -178,6 +178,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	unsigned char k_rand_bytes[16];
- 	int items;
- 	elf_addr_t *elf_info;
-+	elf_addr_t flags = 0;
- 	int ei_index;
- 	const struct cred *cred = current_cred();
- 	struct vm_area_struct *vma;
-@@ -252,7 +253,10 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
- 	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
- 	NEW_AUX_ENT(AT_BASE, interp_load_addr);
--	NEW_AUX_ENT(AT_FLAGS, 0);
-+	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
-+		flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
-+	}
-+	NEW_AUX_ENT(AT_FLAGS, flags);
- 	NEW_AUX_ENT(AT_ENTRY, e_entry);
- 	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index 240f66663543..5ad8fdb3babe 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	char __user *u_platform, *u_base_platform, *p;
- 	int loop;
- 	int nr;	/* reset for each csp adjustment */
-+	unsigned long flags = 0;
- 
- #ifdef CONFIG_MMU
- 	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
-@@ -647,7 +648,10 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
- 	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
- 	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
- 	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
--	NEW_AUX_ENT(AT_FLAGS,	0);
-+	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0) {
-+		flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
-+	}
-+	NEW_AUX_ENT(AT_FLAGS,	flags);
- 	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
- 	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
- 	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index cdb45829354d..3f41b667b241 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -158,6 +158,8 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		retval = remove_arg_zero(bprm);
- 		if (retval)
- 			goto ret;
-+	} else {
-+		bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
- 	}
- 
- 	if (fmt->flags & MISC_FMT_OPEN_BINARY) {
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index b40fc633f3be..265b80d5fd6f 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -78,6 +78,10 @@ struct linux_binprm {
- #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
- #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
- 
-+/* if preserve the argv0 for the interpreter  */
-+#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
-+#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 << BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
-+
- /* Function parameter for binfmt->coredump */
- struct coredump_params {
- 	const kernel_siginfo_t *siginfo;
--- 
-2.25.0.rc1
-
+>         A DAX file may support being mapped with the MAP_SYNC flag,
+>         which enables a program to use CPU cache flush instructions to
+>         persist CPU store operations without an explicit fsync(2).  See
+>         mmap(2) for more information.
+> </quote>
+> 
+> Ira
+> 
+> > 
+> > [1]: http://lore.kernel.org/r/20200108064905.170394-1-aneesh.kumar@linux.ibm.com
