@@ -2,83 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C41140820
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 11:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E83E514085D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 11:51:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbgAQKjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 05:39:04 -0500
-Received: from mail-io1-f54.google.com ([209.85.166.54]:41724 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbgAQKjE (ORCPT
+        id S1726688AbgAQKvK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 05:51:10 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44824 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbgAQKvK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:39:04 -0500
-Received: by mail-io1-f54.google.com with SMTP id m25so9858414ioo.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 02:39:03 -0800 (PST)
+        Fri, 17 Jan 2020 05:51:10 -0500
+Received: by mail-io1-f67.google.com with SMTP id b10so25460153iof.11;
+        Fri, 17 Jan 2020 02:51:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=GXjqTiCPhVILgOmuUkCGMWxO2hhV3TEv9ctgmQ7IcjQ=;
-        b=NA5lAv/jVzYYvuYe2mVlsRwP5uFYyCZSfqPJ6nN8nKrRrHv1ANCmG2vW/IqCD0Ghzr
-         76xfgUGsQ6w2nuG+Ur/WHv5O8VwVaEI2rcjOXg4g5QJLr5gel1tsbQQssRALaHWL67Kh
-         L/ZqMD5kDRS7qmWYC7jRjl7Oxc8ND2dHhMGXg=
+        bh=zPZgl/q3vIfnV2rf1MzWjb5AG5EqjQJkR1tLQ7+HViE=;
+        b=UcD7lZoqdCKmmyidin5ILgMNLGITtnWVYg5U6qgBN3OKJX9tnuHAfbgsm8JJqgjRhx
+         zocBJnxCLiRNbzmMpNQkCA9HZmsA65yWUcLaPWycg3x6g/HQQplFsvlb3N92Gj+D391I
+         saehgHhAJBVNwhrQzHQsn6UL2Hro4bjML1DZsWY7Q5CDRgV9YbjLOI0ZkEaCngGQ0KPD
+         CpDX4S3btG+Nbu6WAZTJEH5O409++Wycn/hxUG+a+ifCjIg/M6S7fd60qWGKcNwghhEc
+         WZ5PUXt2oGFCQFKzcDvY8KhZvdmim0nBgYyEz/R2OKHh+mwN1TvhPaaBnMFXVs5ti/CH
+         J0+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GXjqTiCPhVILgOmuUkCGMWxO2hhV3TEv9ctgmQ7IcjQ=;
-        b=NyIVYl23fERAQQUp4dHF5AcAWWDKKW9625Erb+C6ZekkTNhWLrugYb3ct2ESZLBS0v
-         2GNSqewMt1VEq89XvNNeLSGl6Kg58KBdF9zKX/G2QSJJGXR7lL9RDRkNOn0azbb7naiw
-         fxut3XqB1bVeVcY5SPHMFTZl/GWsx0RWcwkD4Vtt/V5RcixGopbd4hAl/0nukQfYYkRe
-         YaQqndadaMgG0JG2e87gZaX2mbigHkwMDczpM5wni7tDJHkH5w7U2OsOMlZc4KrAiWLn
-         O5RXqfx/0eV3GCOUHznsR/3N8Gzb5jS66oxSLUf2JYnhCaMlkRrdhzSUf45+s0LzsgsB
-         6omw==
-X-Gm-Message-State: APjAAAXhTjsONI2fl/ckK8/78N0E/HJ8YdjTRcfAKmSitRHY9snE/JU/
-        B7Uty8MBiOeE5Q/YEIQQj/TUS4SCSjnksksKNcwtD1ZcRys=
-X-Google-Smtp-Source: APXvYqzwbnDcvwh8Y/I7rBbTJ3E0lT2AOOVZ9kLZZWKg4kHpeoMGALeUJD/OJGBI4+mgskXNyKTDGRKWMqydMRNtGKY=
-X-Received: by 2002:a6b:6f07:: with SMTP id k7mr30639320ioc.174.1579257543391;
- Fri, 17 Jan 2020 02:39:03 -0800 (PST)
+        bh=zPZgl/q3vIfnV2rf1MzWjb5AG5EqjQJkR1tLQ7+HViE=;
+        b=DjPO5M655c3REglHsgTKTRI/TXU6Poi7LoCcPa6oIDt8INzCZErnIcNeVWyr3EHzmY
+         vcuacI5k1mdxe5EoUVuKOA5kFo3x2QwUSjT8B8Mc7pjJ4UVAohPZthueH6Z/H2rnTB+i
+         KoUWvU4N2Jb0/s7YRHx/FXzg25uQkFnQ58PQOgOAvZxf6Oid6YLpAcsWrcpHump0t8Ij
+         aApiZT5K67rTqR3lqdDxs9qJydP3KxdzkDbUEJVOj87nCxOFrGroPHM5UaTAvrNYCyim
+         o6W989sYoLsup0NKYwsXFE6t3ygW+bZ+kVhpKv3kTvn/VFEJibk6hDfFqJZb5lwWOcwc
+         feaQ==
+X-Gm-Message-State: APjAAAVjo6gATj3gpMVF754Izb0EVr8z284OxCI11tW2C1olJ0exlWgD
+        74Qyjdcmyhi3Uhc5zaUK5o94JZMXS4q5bPzKUno=
+X-Google-Smtp-Source: APXvYqysK2eTf49GiafHKvgR56da2irbgyCZ+FgusY/y8P/HNItR2DbQCVbsqL5oLa8EtQK2WbVUzonQKs1oPXlLUkU=
+X-Received: by 2002:a5e:9907:: with SMTP id t7mr30947541ioj.72.1579258269524;
+ Fri, 17 Jan 2020 02:51:09 -0800 (PST)
 MIME-Version: 1.0
-References: <c137b88f142d5e13c80d7689513e2da9.squirrel@emailmg.dotster.com>
-In-Reply-To: <c137b88f142d5e13c80d7689513e2da9.squirrel@emailmg.dotster.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 17 Jan 2020 11:38:52 +0100
-Message-ID: <CAJfpegtzzkYaDDM7uRKbARB4eV_5SCw42-a+3Xhtuh2q9TAhog@mail.gmail.com>
-Subject: Re: [fuse-devel] avoiding atime invalidation with mount -o noatime
- (instead of just -o ro)
-To:     Robert Byrnes <byrnes@wildpumpkin.net>
-Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org
+References: <20190829131034.10563-1-jack@suse.cz>
+In-Reply-To: <20190829131034.10563-1-jack@suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 17 Jan 2020 12:50:58 +0200
+Message-ID: <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 16, 2020 at 11:56 PM Robert Byrnes <byrnes@wildpumpkin.net> wrote:
+On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
 >
-> The fuse module invalidates the atime after any operation (like readlink)
-> that might change it, using this function (in fs/fuse/dir.c) ...
+> Hello,
 >
-> /**
->  * Mark the attributes as stale due to an atime change.  Avoid the
-> invalidate if
->  * atime is not used.
->  */
-> void fuse_invalidate_atime(struct inode *inode)
-> {
->         if (!IS_RDONLY(inode))
->                 WRITE_ONCE(get_fuse_inode(inode)->inval_atime, 1);
-> }
+> this is a patch series that addresses a possible race between readahead and
+> hole punching Amir has discovered [1]. The first patch makes madvise(2) to
+> handle readahead requests through fadvise infrastructure, the third patch
+> then adds necessary locking to XFS to protect against the race. Note that
+> other filesystems need similar protections but e.g. in case of ext4 it isn't
+> so simple without seriously regressing mixed rw workload performance so
+> I'm pushing just xfs fix at this moment which is simple.
 >
-> Shouldn't that be IS_NOATIME instead of IS_RDONLY?
 
-It would work if we also added an INIT flag (e.g. FUSE_NOATIME) which
-would set SB_NOATIME on the fuse superblock.
+Jan,
 
-The current per-mount "noatime" option doesn't work exactly because
-it's per-mount and we cannot determine if all mounts of a given
-superblock have this flag set.
+Could you give a quick status update about the state of this issue for
+ext4 and other fs. I remember some solutions were discussed.
+Perhaps this could be a good topic for a cross track session in LSF/MM?
+Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
 
 Thanks,
-Miklos
+Amir.
