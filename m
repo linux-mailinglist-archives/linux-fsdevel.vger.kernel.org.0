@@ -2,111 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569F7140D1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 15:56:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D97C1140DB6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 16:21:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbgAQO4I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 09:56:08 -0500
-Received: from mail-co1nam11on2103.outbound.protection.outlook.com ([40.107.220.103]:1856
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726827AbgAQO4I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 09:56:08 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RJogqPtJXSPwlVvhByb0tqRMAdGvBa4UCS04KIZNrX1GUV8yvDpCBcgXajVhjBdpQ2HQuD3i0MTlIJgcs7w1WaD9YepLWrIEXi7gMWjAbQMt7Fv9zHsphttMW9OfvTlhRuucv7nVfxMu/muVn4IQ/J7ezafVMJVLiRdC5ghi+eLXGaNn5lRBYzhdYlYwFpG4Xvy2k14K6QyWE0YQYW0I5G9vXbfDdagQzGtwIUxrR2N1xMqkN3gRNComE+tQsWKD/pEBvdSC8BTB3d7GfuiDkESPqIBB8nNwcJjWoKusJ3xzaeQsZkkrh6ntcSYOn8DXXUt04ttTPVG+u7rElnJfKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UrogP8SzkYb/v0ssbw+mEszAU7StZbwG/OvhsEIDqI8=;
- b=oLH7DquCZ4Arld6h9u7Qvr5QF9EwlCsfMRaJ4gD5x4iXw4DtXkNdrKkCHcEjD15uqfX8GU/B8dlrLEqPc2eVF3ZfUznTqTLZnleZSjG1glIdBB0oHctKdSJE7pDNfmRHbMMZ1Eaae00CQ+bRYNxoCMgdFYE/0j8OLcMFeXXQqM3AG/obZdLGimE3UVnwpVnUQodmCVdcfdVA9jb7YYrcmUELe3TtNhoGKRKYS/mACUmInauwAOM9mZaOUjf4xd0Vm5rfVMUYOGBvRZTX9eTnvW9qRO31hCjNoVgCK2HtODZg8hbMInzq8RY0Pyc4Kqoi51g+9UoV6pdGS95zWF/XpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UrogP8SzkYb/v0ssbw+mEszAU7StZbwG/OvhsEIDqI8=;
- b=SCeQYUugGzuX55yjJ3qqG1EYtskGPZfjva+jwGpodz1xibMQeEeUwhJ0kCWhQK90fliGdBEvFo35kTT2M+YDcfBTRjE1/B5lQ8PT5b1DoxOtV9WGjJINFmbhofQMXMPd5QeEVruYsop0uwtrWHanpt/rXMYsCwf9+HowCE7vNwc=
-Received: from DM5PR1301MB2108.namprd13.prod.outlook.com (10.174.186.34) by
- DM5PR1301MB1930.namprd13.prod.outlook.com (10.174.187.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2644.12; Fri, 17 Jan 2020 14:56:06 +0000
-Received: from DM5PR1301MB2108.namprd13.prod.outlook.com
- ([fe80::2d32:cf4b:1b58:16ce]) by DM5PR1301MB2108.namprd13.prod.outlook.com
- ([fe80::2d32:cf4b:1b58:16ce%7]) with mapi id 15.20.2644.023; Fri, 17 Jan 2020
- 14:56:06 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "dhowells@redhat.com" <dhowells@redhat.com>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "osandov@osandov.com" <osandov@osandov.com>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
-Thread-Topic: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
-Thread-Index: AQHVzTSO+0pwcPyVr0iwCBUjAesfDKfu658AgAAECICAAAJqAA==
-Date:   Fri, 17 Jan 2020 14:56:05 +0000
-Message-ID: <18dad9903c4f5c63300048e9ed2a8706ad31bc73.camel@hammerspace.com>
-References: <d2730b78cf0eac685c3719909df34d8d1b0bc347.camel@hammerspace.com>
-         <364531.1579265357@warthog.procyon.org.uk>
-         <448106.1579272445@warthog.procyon.org.uk>
-In-Reply-To: <448106.1579272445@warthog.procyon.org.uk>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [68.40.189.247]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 41ca83d9-d560-441b-191d-08d79b5d6128
-x-ms-traffictypediagnostic: DM5PR1301MB1930:
-x-microsoft-antispam-prvs: <DM5PR1301MB19308AAD1530DCDF9494FF22B8310@DM5PR1301MB1930.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0285201563
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(366004)(376002)(346002)(136003)(396003)(199004)(189003)(81156014)(186003)(5660300002)(4744005)(8676002)(2906002)(6506007)(6916009)(8936002)(6512007)(26005)(6486002)(86362001)(36756003)(54906003)(2616005)(316002)(4326008)(91956017)(478600001)(76116006)(66446008)(66556008)(66476007)(81166006)(66946007)(71200400001)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR1301MB1930;H:DM5PR1301MB2108.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XVX0iQEUkhf3OBc1hZoaFsTT92C1MdTlRmRuRVXs2T0zrfZ3kOJNDSIST4uuqCMYcad9BSmFkQG/GuOe5vuYvm3sCte/nKR+WzKrqUKVGY7x9klpkhWvpVcg3frEphY8hu7w50bqjMmL4lHJ+TranFm9DdL7An3diMsdU+MTncrilTC25obORmPyCK3bKxz888l6hJT39wd7qhNyOtNtKGuoabsI+UOBrP8MEkwR7FrZExcKV9HNrwjx7DYh8AqPdBoKYSQaL5ti/qv3g4/qMbKpeiH0BFHPe5BIQJdxNXXwvCY6PaBITCJyqBvgPrMlk/29Op3q7jyGU/DbAiLpngkDmmTF7++hqFy0VwuNk1vIIbb4hln89TgxgaOcPzV4CCnPy+IbrUSvqKl+AdawyWttUKIHqMTunaIuoNoCV7CwDQ4hqO0/2TlOEpBj53Wf
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A1EC784496C72347A925247B68F09E80@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728981AbgAQPVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 10:21:03 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42459 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728951AbgAQPVD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jan 2020 10:21:03 -0500
+Received: by mail-io1-f68.google.com with SMTP id n11so26372319iom.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 07:21:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lV41RpA2QhEA5rHH6ZyOIv8ERiJPbYKFmYjuUSaG+xY=;
+        b=b0LSOflu7YITfOb8w5wi0kKgHuwAAYbt8QhYhVXfdHzo6JF5FBQMQ/andumpi0YUYg
+         N7pZyOhFoH9UOwBkIoLvHc4ft7vLlAf4n2RuRbFRMW+B71ipf5wcO7wCSFkVVLHkO5jI
+         3K+n8FE27awtwWIdLKVOXTTCYsCR1knctOe4COEYGMl2D1Qf4FsICFacb/2OHmiAN87A
+         yUKNszWjYYQQmfIsktyb3QGim0W77+mQShRvXvCNxplZqMe/TRPpiC6su1QfbuWXjZZJ
+         AlZ4N54EMBE1getHFCe7JiEjLmKRGbkGevpTj2GpVyKdzJEKUL5nl2BNtnWpmM6D9sqi
+         hpIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lV41RpA2QhEA5rHH6ZyOIv8ERiJPbYKFmYjuUSaG+xY=;
+        b=bm0okB7Xue9DrJOFw1gyUG9gdcMhIrQyo+6B/zSVClMv6z7PTYRdzCNr/tyjub+ljD
+         ragRRitEivUeN/kr5e0TJV6aQc177LNVoIFq1T25K4YAPUNUXvCWjU9LB11ZF3FBfrmT
+         wLnTAWH5mJPmG+HAYEWD5L3M/XG31cwU+0bMJx4VEb8gF5NXyAoiPAtVu0KpOZUsq1C0
+         lpQNEw5DIZnwLkx/r/kORJmUaxQKGyLip2Ff9mZT2EZvFIHDc6rP7yfzcrhhXeaouT9A
+         fCgP9gI7nQ5QZ7k+/dOXGyxFRJcm5zeW9SgAggTMl6khkcpg45ArwPsRhx2oRKumWDs2
+         jucQ==
+X-Gm-Message-State: APjAAAVVlFsSw8ct8ytybr3Qu8TB6y6k+u9XQQV+hSj2K0dbGd0XxK9G
+        iY1mxSFJXpz5Un7RRmwZicPQsoNWi2U=
+X-Google-Smtp-Source: APXvYqxNdfKQ23cTwPqlKSciggsxkHP5nNwk+VgMM0sAWv9fvINW/lRRXEihWek+ZKUh4pmgWY7zeA==
+X-Received: by 2002:a6b:1443:: with SMTP id 64mr30082191iou.116.1579274462723;
+        Fri, 17 Jan 2020 07:21:02 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p69sm8016553ilb.48.2020.01.17.07.21.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 07:21:01 -0800 (PST)
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Colin Walters <walters@verbum.org>,
+        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20200107170034.16165-1-axboe@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+ <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+ <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+ <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
+ <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
+ <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cbdb0621-3bc8-fc41-a365-56b2639e39a0@kernel.dk>
+Date:   Fri, 17 Jan 2020 08:21:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41ca83d9-d560-441b-191d-08d79b5d6128
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2020 14:56:05.9036
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GxoW1YiCltBpl16ojnGtkAcg5y+qRk7wm2gUpPo3E7kvdUO989ZCcFZAFYFe8rMG+42eAvH4zToO/DL1JNxIoQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1301MB1930
+In-Reply-To: <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gRnJpLCAyMDIwLTAxLTE3IGF0IDE0OjQ3ICswMDAwLCBEYXZpZCBIb3dlbGxzIHdyb3RlOg0K
-PiBUcm9uZCBNeWtsZWJ1c3QgPHRyb25kbXlAaGFtbWVyc3BhY2UuY29tPiB3cm90ZToNCj4gDQo+
-ID4gVGhhdCBzZWVtcyB0byBtZSBsaWtlIGEgImp1c3QgZ28gYWhlYWQgYW5kIGRvIGl0IGlmIHlv
-dSBjYW4ganVzdGlmeQ0KPiA+IGl0Ig0KPiA+IGtpbmQgb2YgdGhpbmcuIEl0IGhhcyBwbGVudHkg
-b2YgcHJlY2VkZW50LCBhbmQgZml0cyBlYXNpbHkgaW50byB0aGUNCj4gPiBleGlzdGluZyBzeXNj
-YWxsLCBzbyB3aHkgZG8gd2UgbmVlZCBhIGZhY2UtdG8tZmFjZSBkaXNjdXNzaW9uPw0KPiANCj4g
-QW1pciBzYWlkICJUaGlzIHNvdW5kcyBsaWtlIGEgZ29vZCB0b3BpYyB0byBiZSBkaXNjdXNzZWQg
-YXQgTFNGL01NDQo+IChoaW50DQo+IGhpbnQpIg0KPiANCj4gQWxzbyBDaHJpc3RvcGggSCBpcyBv
-a2F5IHdpdGggdGhlIGlkZWEsIGJ1dCBzdWdnZXN0ZWQgaXQgc2hvdWxkIGJlIGENCj4gc2VwYXJh
-dGUNCj4gc3lzY2FsbCBhbmQgQWwgZG9lc24ndCBzZWVtIHRvIGxpa2UgaXQuICBPbWFyIHBvc3Rl
-ZCBwYXRjaGVzIHRvIGRvDQo+IHRoaXMsIGJ1dA0KPiB0aGV5IGRpZG4ndCBzZWVtIHRvIGdldCBh
-bnl3aGVyZS4NCj4gDQoNCkl0IHNvdW5kcyB0byBtZSBsaWtlIHdlIHJhdGhlciBuZWVkIGEgbWV0
-YS10b3BpYyBhYm91dCAiSG93IGRvIHdlIGdldA0Kc2ltcGxlIHRoaW5ncyBkb25lIGluIHRoZSBM
-aW51eCBmcyBjb21tdW5pdHk/Ig0KDQpJdCBzaG91bGRuJ3QgdGFrZSBhIHRpY2tldCB0byBQYWxt
-IFNwcmluZ3MgdG8gcGVyZm9ybSBzb21ldGhpbmcgc2ltcGxlDQpsaWtlIGFkZGluZyBhIG5ldyBm
-bGFnIHRvIGEgc3lzY2FsbC4NCg0KLS0gDQpUcm9uZCBNeWtsZWJ1c3QNCkxpbnV4IE5GUyBjbGll
-bnQgbWFpbnRhaW5lciwgSGFtbWVyc3BhY2UNCnRyb25kLm15a2xlYnVzdEBoYW1tZXJzcGFjZS5j
-b20NCg0KDQo=
+On 1/17/20 2:32 AM, Pavel Begunkov wrote:
+> On 1/17/2020 3:44 AM, Colin Walters wrote:
+>> On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
+>>> The client can compound a chain with open, getinfo, read, close
+>>> getinfo, read and close get an file handle of -1 and implicitly
+>>> get the fd generated/used in the previous request.
+>>
+>> Sounds similar to  https://capnproto.org/rpc.html too.
+>>
+> Looks like just grouping a pack of operations for RPC.
+> With io_uring we could implement more interesting stuff. I've been
+> thinking about eBPF in io_uring for a while as well, and apparently it
+> could be _really_ powerful, and would allow almost zero-context-switches
+> for some usecases.
+> 
+> 1. full flow control with eBPF
+> - dropping requests (links)
+> - emitting reqs/links (e.g. after completions of another req)
+> - chaining/redirecting
+> of course, all of that with fast intermediate computations in between
+> 
+> 2. do long eBPF programs by introducing a new opcode (punted to async).
+> (though, there would be problems with that)
+> 
+> Could even allow to dynamically register new opcodes within the kernel
+> and extend it to eBPF, if there will be demand for such things.
+
+We're also looking into exactly that at Facebook, nothing concrete yet
+though. But it's clear we need it to take full advantage of links at
+least, and it's also clear that it would unlock a lot of really cool
+functionality once we do.
+
+Pavel, I'd strongly urge you to submit a talk to LSF/MM/BPF about this.
+It's the perfect venue to have some concrete planning around this topic
+and get things rolling.
+
+https://lore.kernel.org/bpf/20191122172502.vffyfxlqejthjib6@macbook-pro-91.dhcp.thefacebook.com/
+
+-- 
+Jens Axboe
+
