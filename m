@@ -2,104 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA8B140983
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1BC140987
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:13:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgAQMM2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 07:12:28 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40322 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbgAQMM2 (ORCPT
+        id S1727032AbgAQMNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 07:13:25 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38447 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbgAQMNY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 07:12:28 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w21so22308496otj.7;
-        Fri, 17 Jan 2020 04:12:27 -0800 (PST)
+        Fri, 17 Jan 2020 07:13:24 -0500
+Received: by mail-oi1-f195.google.com with SMTP id l9so21959395oii.5;
+        Fri, 17 Jan 2020 04:13:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9SipFQDZMfh5nN61PgcRgYvn1abFwxa06FXqcHxDhSs=;
-        b=BB7df+OmFFliSMdJToQQh1paKBtINwz5yQyS7lMeyXt0vtnk0DTfMwkXg8IIZp7Bpt
-         0OXEgqPFqtMvnKqHs0RwfT1i9qLMU4hNNDRzkI9r9w0uQJdfKHXQTNM6+HcbU+LodvO/
-         efbKGDpDsol5dsVVCG9aLHzGfWVMDo2R1JskIiZiT8dNh1Y5Rx9YUcnJ73Pf3QsYMe1z
-         NSy8ovFh/vpf8tsEV4BkCQBdL+DBRnvPr2N0fqL8Bw1A2e/k4mODx01CfGCu4Zo3LsIw
-         vGs8JaSND88CE7nBBIrpGV9rZpO893zB2gMdD7zGUbSR18gj40QIl8J4Cv3LyZjpjnVf
-         QOTQ==
+         :cc;
+        bh=j9LdKm6yNd5aXn+rN0edQ8Jaz0F5s+sFTFnF9WgkgBY=;
+        b=hwT52K1dJOOsr+O6qALLUpZhk9Jfylg2E/jmuJiqovVYnNtANFj8pHkWHPd3kCTSwT
+         XTVloVKx+xw0fFVM1eIOmElCJ0ZEUKai+JyYq0m2cZ7G83TtZABDckiQgwL35PkuaO16
+         m5xpG+cjJAr99XFuLFK5gzilba4QRN8ZYKOqbsoGYa/BfDsGTCAWJ+D+bKj0Y6orJQGY
+         ebQisqQHEilstcz2sOsCqnWbyu0ptJOMtss3i7917tMQq6wy7R0iL1wjsLfQFCpCb6gL
+         jgod+mlBxJfVhbp3APRYAoI7AM/hK2KTU/12HDo5qvrHzTHO79z012kCG5kvyWMS5WN2
+         4tOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9SipFQDZMfh5nN61PgcRgYvn1abFwxa06FXqcHxDhSs=;
-        b=bqjijnxFv8kOfF5SdMIBPiDqva8ArByv0ZyA7SYyQPs3ATMM9mBVgu4YdmCJfXxwaC
-         AKGfuEjMLy0zXttV5NRic11a2nb4pMz96YAtQxW65DtEOmlrccH4qAkjYS0vARxhmqpJ
-         5BgJH423X06w1rwKoXsMkxBOVNhjgYyaIjam4FvsVDsdB/wtkOiFNJzkjOV4NYmntHHb
-         tt1Cnh0j6XeLlh8b2F2RCzaP5nDaDWGFcb7FGtL9s6QQ+gxgSMetLFgSQpU7oDOPpiqP
-         AdZlLkrKzGRsd8QgpZ/IOal1271YXEIfWcfFxKKTailS8PIOPUFQAEulm/u6FnQXeplF
-         ypKA==
-X-Gm-Message-State: APjAAAUM42ZM1KRdJDQ/IgYFinFZdMZYqlcvHvy9HjZ03uJjPUV5TPvx
-        pHEHvW1PlCxOulUnJ6KvCRWP1zGaV2nDvOMhKMq1lA==
-X-Google-Smtp-Source: APXvYqyzalqLo5MUDFV8PCj3/5VknpA5M9FAIJVuSJdTdhIEmaFBni96SkZGxff4yw5BvxxaXnCzOIGTHpBpKbVhkpQ=
-X-Received: by 2002:a05:6830:145:: with SMTP id j5mr5618327otp.242.1579263147096;
- Fri, 17 Jan 2020 04:12:27 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=j9LdKm6yNd5aXn+rN0edQ8Jaz0F5s+sFTFnF9WgkgBY=;
+        b=UH5QBDQrxl0Rr+J/QFW2M9cXUgDe7QDeQ/fGUjmRkDPl67N2VkaEtMd6j7gEEcK+3V
+         vDwSY9brRvAo9mPfAeZ9GSujlgTurHNBkP38rv6gvRm0ljgseIK3gVUlIS0m5lpi4/pP
+         H9fqvc82jX9vgDlVTPSwcCKOb0b5kihspMp+MqEV+oC29od2/ejp3gTlgAZd/Su+BfLd
+         pe/DHABhguStekRfbOOQNfxEE5GZQmipUNUghXT1u/rOFuzPBFPUfC00iBoHzOxRr3Wn
+         FKd3ucYp1iiy6Ac2rXxqGzY9QPMbB9Mc6NMI9VYR28T/wOlA6IJWSKxIlLJGZclq9/cI
+         3erg==
+X-Gm-Message-State: APjAAAV2IOlDOXsWtdZwcUoMQQK1r4Cj5O+LxqE56ixx42aJ1Z6iZfgn
+        452yK3SvFjOGcaqY1w6qrWRV66tT8o1Pn4Ds1Nc=
+X-Google-Smtp-Source: APXvYqyK2sogu8+jyU3vGsF46DTDsA765vsyTHqA+AkGu0AcxB7pNmzp2BD3vbnNDBFAMn6+P87/6TH46HulpscBxmw=
+X-Received: by 2002:aca:1b08:: with SMTP id b8mr3245485oib.62.1579263203997;
+ Fri, 17 Jan 2020 04:13:23 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Fri, 17 Jan 2020 04:12:26 -0800 (PST)
-In-Reply-To: <20200117091813.wiksrz5khmtoocbj@pali>
-References: <20200115082447.19520-1-namjae.jeon@samsung.com>
- <CGME20200115082821epcas1p4d76d8668dfac70ae3e3889d4ccb6c3ee@epcas1p4.samsung.com>
- <20200115082447.19520-6-namjae.jeon@samsung.com> <20200117091813.wiksrz5khmtoocbj@pali>
+Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Fri, 17 Jan 2020 04:13:23 -0800 (PST)
+In-Reply-To: <CAK8P3a28NRp+SGr44=DTYqL0+ZqtamHwn+WYNTxVRJOJ3HtLSg@mail.gmail.com>
+References: <CGME20200115082824epcas1p4eb45d088c2f88149acb94563c4a9b276@epcas1p4.samsung.com>
+ <20200115082447.19520-1-namjae.jeon@samsung.com> <20200115082447.19520-10-namjae.jeon@samsung.com>
+ <CAK8P3a3Vqz=T_=sFwBBPa2_Hi_dA=BwWod=L9JkLxUgi=aKNWw@mail.gmail.com>
+ <CAKYAXd9_qmanQCcrdpScFWvPXuZvk4jhv7Gc=t_vRL9zqWNSjA@mail.gmail.com>
+ <20200115133838.q33p5riihsinp6c4@pali> <CAK8P3a1ozgLYpDtveU0CtLj5fEFG8i=_QrnEAtoVFt-yC=Dc0g@mail.gmail.com>
+ <20200115142428.ugsp3binf2vuiarq@pali> <CAK8P3a0_sotmv40qHkhE5M=PwEYLuJfX+uRFZvh9iGzhv6R6vw@mail.gmail.com>
+ <20200115153943.qw35ya37ws6ftlnt@pali> <CAK8P3a1iYPA9MrXORiWmy1vQGoazwHs7OfPdoHLZLJDWqu9jqA@mail.gmail.com>
+ <002801d5cce2$228d79f0$67a86dd0$@samsung.com> <CAK8P3a28NRp+SGr44=DTYqL0+ZqtamHwn+WYNTxVRJOJ3HtLSg@mail.gmail.com>
 From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Fri, 17 Jan 2020 20:12:26 +0800
-Message-ID: <CAKYAXd9mcsZYp_EuPx_5KACW7oPvtTmWmxHgCsy1PgOZskJjyg@mail.gmail.com>
-Subject: Re: [PATCH v10 05/14] exfat: add file operations
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
+Date:   Fri, 17 Jan 2020 20:13:23 +0800
+Message-ID: <CAKYAXd-eYLvduvnJhkF6my_XVpZSudnss0Qp35+-CUx_F_TUCA@mail.gmail.com>
+Subject: Re: [PATCH v10 09/14] exfat: add misc operations
+To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, arnd@arndb.de
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Christoph Hellwig <hch@lst.de>, sj1557.seo@samsung.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-01-17 17:18 GMT+08:00, Pali Roh=C3=A1r <pali.rohar@gmail.com>:
-> On Wednesday 15 January 2020 17:24:38 Namjae Jeon wrote:
->> This adds the implementation of file operations for exfat.
+2020-01-17 18:13 GMT+08:00, Arnd Bergmann <arnd@arndb.de>:
+> On Fri, Jan 17, 2020 at 3:59 AM Namjae Jeon <namjae.jeon@samsung.com>
+> wrote:
 >>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
->> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
->> ---
->>  fs/exfat/file.c | 355 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 355 insertions(+)
->>  create mode 100644 fs/exfat/file.c
 >>
->> diff --git a/fs/exfat/file.c b/fs/exfat/file.c
->> new file mode 100644
->> index 000000000000..b4b8af0cae0a
->> --- /dev/null
->> +++ b/fs/exfat/file.c
+>> > This is what I think the timezone mount option should be used
+>> > for: if we don't know what the timezone was for the on-disk timestamp,
+>> > use
+>> > the one provided by the user. However, if none was specified, it should
+>> > be
+>> > either sys_tz or UTC (i.e. no conversion). I would prefer the use of
+>> > UTC
+>> > here given the problems with sys_tz, but sys_tz would be more
+>> > consistent
+>> > with how fs/fat works.
+>> Hi Arnd,
+>>
+>> Could you please review this change ?
 >
-> ...
->
->> +/* resize the file length */
->> +int __exfat_truncate(struct inode *inode, loff_t new_size)
->> +{
->
-> ...
->
->> +
->> +		ktime_get_real_ts64(&ts);
->> +		exfat_set_entry_time(sbi, &ts,
->> +				&ep->dentry.file.modify_time,
->> +				&ep->dentry.file.modify_date,
->> +				&ep->dentry.file.modify_tz);
->
-> Hello! Now I spotted that you forgot to update "modify_time_ms" entry.
-Good catch:)
->
-> To prevent this problem, maybe function modify_time_ms() could take
-> another (optional) parameter for specifying time_ms?
-Okay, I will change exfat_set/get_entry_time to take a time_ms argument.
+> Looks all good to me now.
 Thanks for your review!
