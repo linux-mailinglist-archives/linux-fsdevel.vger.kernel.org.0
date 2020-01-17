@@ -2,126 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94AD414041B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 07:43:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A857414041C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 07:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbgAQGns (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 01:43:48 -0500
-Received: from mout.web.de ([212.227.15.3]:60315 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727766AbgAQGns (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 01:43:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1579243413;
-        bh=W3xTZNyIcJFJet1srMw6HJ9rO3pWfMwV+2cdIGIMLTw=;
-        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
-        b=PdioLmsQTVqNHUxh/ojzkZuhX1Ql/SS/NY5qA0Qdwrs4oLwZbv0/BDFK5k3XYcXIF
-         BDYu2d+TiCZGdMg2bRKfT7DJ1WY8Ksx8vcUWfuOX8BdK+FnkNPnWR/V8vnRDjNCYYn
-         uIZM16XuxRGmUaAcpSmwaPV6rhScwDR4vzZmc3+o=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.243.146.240]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MCvVz-1ijqmE1Put-009ihG; Fri, 17
- Jan 2020 07:43:33 +0100
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: RE: [PATCH v10 11/14] exfat: add Kconfig and Makefile
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <035cb0ee-50d6-06e4-2d97-e7b9d9c3ed38@web.de>
-Date:   Fri, 17 Jan 2020 07:43:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727804AbgAQGpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 01:45:11 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:47982 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbgAQGpK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jan 2020 01:45:10 -0500
+Received: by mail-il1-f199.google.com with SMTP id x69so18015514ill.14
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 22:45:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ALoOrIWozL+7PLCcGhdyW5y50eCbmJ6yl03zW3710zk=;
+        b=sstiiZ/1gYRZs+PTp+js6A+hdEYejfA2KleegXWAnHMR3ZL97M8yqQcD8+moL9xtxm
+         Db9cPZ19NgQjuyS7f7YmUHg2lr96uddVK4KzzBJLTNHM1V6lF2RX2K8OYdyUlp6McmiU
+         6bjuAw2NGJHh4xcbgSWIwDNAjPilQ4vLFt9MK1bI8NWB36jig0UtcHrN42wKSYPfHxYK
+         hQpDltwAT86m6BhyGBO7snQQpGCsnZRbYsdX7F5W5X471Fr02tgwCt2USeLlIfnrMRTI
+         U9qLHS60MqckbfShAAatNLrkIroKOHsVtl/6jG/raOM0J/a+DqtUIAvsYmKmGWCAJPog
+         wmbw==
+X-Gm-Message-State: APjAAAWvQfkUIXZ0w3dOwUvnnP6RlKVKuypgx5Brdgi9nm+8qZiHMAe2
+        PeRwfZDRsn3RsJ/+BaJASNvolzLZkwx76EuPtVeifuvov9kp
+X-Google-Smtp-Source: APXvYqx7cLsfbkr4tyHg0yBuh+Y7mfDrXeXDvyvI806pApG8VLr6QRUQBtIB1yUYwA6ZJYsma6GMsTQKy8JR2FZqPF/P2HbYS2Ht
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CflHRozTXJ43+lem+oXl+sVKDLPONe/LOtZhyKsTFstIfNjxzi0
- EN434X5AsDbBRkwz9gFsh9iwUf4nmpfRZ4GU+lf3cyG18U6KF8xmNmw0lIr9iJd7FKP1AGq
- jYcTTRsksGai+DFDWgFctPRx/S98XLOG2GTkqVVL/GF4Hqwdx14mAaq6sPARZusiHgKnz7l
- gAO7hZbqFSIspkNmjspaw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tO8ZaTAqnOg=:Vv9FvClsnpekuOxeHBC9yD
- lIg61WJZZhKAu4BPYlRsa79KhBffzz0LS2H1ZAnwT3WBcRciaxk4c4z+Cbks246ZDNXoRpuMI
- KV0YDPvqBFEEsDFuRM0aEjj4Iib3n2HFIaHTrZ29o04q6Gcb7jvQNcv8GNBnBvTXlxtDGEDoK
- ZHAhDmNPzQV/F1cF9WOBor2PoLIH8I4IN8JoCVyGaGzHeZx8SKVfMz4M9SgBgMb2EJMB8FqC/
- J28AyxTbLjD+aGvtk39GYxMaw1z1b4PXvQjgBzkwXN8KBmA7fJjpeqcp0/H54590IOU2lhDm+
- En/1TQBVDUjHCW7ooM9Um4FfTXUxTyC5gx6CEyO7ugc3rzDbCQFP7wWF+AUZAGChBRcI73kY3
- gx4VzfiIWhS0JU03Owtbd9ayHtZsLfG+UdYebM+ofGb6Ej2I7lr5v/zBcJUPY1innhWNiCkt4
- eoZHk2zJLmdLTjZ+2C2RzDdyr7ttjv/hVW5nCyGRZE3ZtGf++9q1uICOkoP/hliWzV7RHmtRF
- h5pJCk8ISFiYL6ouUSUNWunXOV73SG+UpbQ9YyVwk8SxZ9q5e+/ndSD5TtMEXor5fE3eMbCZH
- c1FmmO/YWDVwKfUF2Mlbq2IFz9WmuT6Fn+lOyi8qgt6661jpywE46nJFDcJLwJ0dm3bz85OH+
- 7twQAUIm+ZMZKQhgKFgQTmyFMct6ruwNxQguitz3aQNYgEUdY8h82wxA4lGXd9mecElTDF2Aj
- jWcGkcA8DL4PuF9ApUfCXMeIObo7gYfsu/ZyEkC3oh6sPqX51QZTcpC8zaP2LH7p4R6IITwx1
- ZBhksfVnPeT1fA5hPFH2Z7TBofHB/r+xdc4yGDKcICBsVZGZ5YTyXMewvUlsli6501IuiIV8t
- Lfhl+akKGyZey+azRZzX/y9KvcR98jwmCtjL1Z473z4LhKfu41OFUkDUB5j1hwi0lRIyzi7Ia
- XB4iwytJym3JIlCqTc0gT1SVpyc3HbsSOX/12L63Q7iuNXVdxf/cFAaKpau/O+l2zkaCJSAAo
- 21QGMAVKeDl+ZSZs/HdVjcLmBAYrSZUktlr0eSI3F2i5d32Mk74wP0AxqSOL+vhAkoWgUTQno
- 66zoe3Hc7uPHh5bibHZxGJlPchLGqGdEZoaUZwbH+bODZEoxfd4ZFvINtP0Q4cB159A+mGEWG
- FCw24+7y4cTALE3e1P9vtA4LkqsBGJ8FKHrHG0Ohs+D0NNhsGsYuEoRrwv5MYCIxmM7KhaFEu
- I5qsGvfoYaXj4ypUb+aXlC543bTl07bYwB/1C94QcuahOVwaSdt0xt7Qqkew=
+X-Received: by 2002:a02:2a08:: with SMTP id w8mr32302555jaw.86.1579243509817;
+ Thu, 16 Jan 2020 22:45:09 -0800 (PST)
+Date:   Thu, 16 Jan 2020 22:45:09 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006aa78f059c5048c1@google.com>
+Subject: KASAN: use-after-free Read in __locks_wake_up_blocks
+From:   syzbot <syzbot+922689db06e57b69c240@syzkaller.appspotmail.com>
+To:     bfields@fieldses.org, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Could you please review updated description ?
-=E2=80=A6
-> +++ b/fs/exfat/Kconfig
-> @@ -15,7 +15,7 @@ config EXFAT_DEFAULT_IOCHARSET
-=E2=80=A6
-> +         UTF-16 character that exfat filesystem use. and can be overrid=
-den with
+Hello,
 
-I suggest to improve this wording a bit more.
+syzbot found the following crash on:
 
-Regards,
-Markus
+HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c103aee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
+dashboard link: https://syzkaller.appspot.com/bug?extid=922689db06e57b69c240
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+922689db06e57b69c240@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __wake_up_common+0x5d7/0x610  
+kernel/sched/wait.c:81
+Read of size 8 at addr ffff88808e074888 by task syz-executor.0/20572
+
+CPU: 1 PID: 20572 Comm: syz-executor.0 Not tainted 5.5.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:639
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  __wake_up_common+0x5d7/0x610 kernel/sched/wait.c:81
+  __wake_up_common_lock+0xea/0x150 kernel/sched/wait.c:123
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  __locks_wake_up_blocks+0x120/0x180 fs/locks.c:742
+  locks_delete_block+0x73/0xf0 fs/locks.c:773
+  flock_lock_inode_wait fs/locks.c:2143 [inline]
+  locks_lock_inode_wait+0x16b/0x3f0 fs/locks.c:2162
+  locks_lock_file_wait include/linux/fs.h:1328 [inline]
+  __do_sys_flock fs/locks.c:2225 [inline]
+  __se_sys_flock fs/locks.c:2188 [inline]
+  __x64_sys_flock+0x30c/0x370 fs/locks.c:2188
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45aff9
+Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fb6469d4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000049
+RAX: ffffffffffffffda RBX: 00007fb6469d56d4 RCX: 000000000045aff9
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000004
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000000c6 R14: 00000000004c1bff R15: 000000000075bf2c
+
+Allocated by task 20575:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  __kasan_kmalloc mm/kasan/common.c:513 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:521
+  slab_post_alloc_hook mm/slab.h:584 [inline]
+  slab_alloc mm/slab.c:3320 [inline]
+  kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
+  kmem_cache_zalloc include/linux/slab.h:660 [inline]
+  locks_alloc_lock+0x1d/0x1d0 fs/locks.c:346
+  flock_make_lock+0x241/0x2b0 fs/locks.c:487
+  __do_sys_flock fs/locks.c:2207 [inline]
+  __se_sys_flock fs/locks.c:2188 [inline]
+  __x64_sys_flock+0xd5/0x370 fs/locks.c:2188
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 20575:
+  save_stack+0x23/0x90 mm/kasan/common.c:72
+  set_track mm/kasan/common.c:80 [inline]
+  kasan_set_free_info mm/kasan/common.c:335 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
+  __cache_free mm/slab.c:3426 [inline]
+  kmem_cache_free+0x86/0x320 mm/slab.c:3694
+  locks_free_lock fs/locks.c:383 [inline]
+  __do_sys_flock fs/locks.c:2228 [inline]
+  __se_sys_flock fs/locks.c:2188 [inline]
+  __x64_sys_flock+0x23b/0x370 fs/locks.c:2188
+  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88808e0747f0
+  which belongs to the cache file_lock_cache of size 264
+The buggy address is located 152 bytes inside of
+  264-byte region [ffff88808e0747f0, ffff88808e0748f8)
+The buggy address belongs to the page:
+page:ffffea0002381d00 refcount:1 mapcount:0 mapping:ffff8880a9932700  
+index:0xffff88808e074a80
+raw: 00fffe0000000200 ffffea00025f86c8 ffffea0002585ac8 ffff8880a9932700
+raw: ffff88808e074a80 ffff88808e074040 000000010000000a 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88808e074780: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fb fb
+  ffff88808e074800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88808e074880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc
+                       ^
+  ffff88808e074900: fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb fb
+  ffff88808e074980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
