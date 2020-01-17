@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B62014134A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 22:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A29D4141350
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 22:43:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbgAQVm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 16:42:58 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:55018 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729081AbgAQVm6 (ORCPT
+        id S1729279AbgAQVnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 16:43:01 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:43281 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729190AbgAQVnA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 16:42:58 -0500
-Received: by mail-pj1-f74.google.com with SMTP id a31so4812014pje.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 13:42:57 -0800 (PST)
+        Fri, 17 Jan 2020 16:43:00 -0500
+Received: by mail-pg1-f202.google.com with SMTP id d9so15158679pgd.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 13:43:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=oVzP1lZIn+a9St2ynepuCubjBDmFUsIeC3EfH/4msv0=;
-        b=RpJE0vRPtcFs+HwS/CjBwBybBr/6ggom40mvJvh3ijp1Iwn3zl70sBx/gr77hKICJW
-         Nn+3hy98ID7+xceD3nY1pqc5rDoxEghmYiE44KXjp1v7sduUZaJffqZjavDWKbbW1pj/
-         zvMqLu9v53P+kYkQf1EpgyOjfRf8tsQbfxmgAGShQ1s6rZFM4SwNE46oSlcAgkg3Svdr
-         ad7rWRKJhiWki92ARxOdBSMv6FVelFEk33fmbCruHpr2B6yfyyI10LPh0QAmz8hu4++A
-         65C7CE4mGfBlm9wXLVFLOmGV4Yze3r2BmuwbO/sz0YHYhTB8AqWnQ++5Hr4sN0Yqr88Z
-         QNXQ==
+        bh=ijaPqYX9QMZlgJNEqLIabbahqNoro6V7G/0uSLsc++o=;
+        b=WHQxC8Nh4cFd+mKz0Z5y8hCNfaRWaIIItg6rAD4vRRKh08n1rF1ROJp9bdNhKHjJEe
+         dB+QzSzQk+37KIA3xLEYSV5jYc4LXnUAkScu6uDLEfQxiLJhWSUqLkSk9o/lj3OGUOFv
+         x7d1El6VyYGxobDvLS1U1KrD73lJ1hHS4/+7B8qljX4+5zRjTKVAcKRaD+DQJ+DOSszS
+         Quz0IYsmfSMa9Ytm8SlgE4uCUjy38oOsimu9gdN9/5CWb0bp8uDvRUzsZv7KYdIVZQFk
+         3LnqAgjGyE/d2ro52ABbHg/HE7dIctRYBIsBeLkMsAqgNdPO0t9LQXQxfHUAMHwqtmvi
+         0wNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=oVzP1lZIn+a9St2ynepuCubjBDmFUsIeC3EfH/4msv0=;
-        b=LSXJHZ2xJM9fNhypGItP93XFFHFeAmYc2Heiz4w0OLEZlgLm8ofiGCzpWwwsSXf2fR
-         1hQxRUs9VsMLP8yqETYDFCqLHgyesDgMjV0Z1eY92zgsYCxpFYWUquDg/12jRnN/sNdk
-         B/QQwAErjuS2FEt33TMmvxfqoBaMlrr3tLRJwA/tulkVMqFue6cDq8FLhxcHohYmfosO
-         eM9HpRGcYhAeKiqxi1TtlG1M7JlgI0klLbNVjsDInsGOCJhTazBnjjGdg2LvLT1wOSTp
-         SrJ5NDG5XV97phpgJ3pl/mItJpVcJ1a8G2WqFhTPFqj1GDm/2guMIBTpI9YMAQqPU4S2
-         GI1w==
-X-Gm-Message-State: APjAAAV/6DIGKjH6rPEPqp60HAke5Z04/usesAFMEJoN39kmOJkZFf2U
-        tXeqOUH70OFYY+XmhTFOJeBouLhzHg0=
-X-Google-Smtp-Source: APXvYqyIgLp3Uf69UUUDJ12oPBO4Pke5blxqDXg302lLv/U33gnMRHUKpFqg0f+AuwAB8CavAzgqN8TQNc0=
-X-Received: by 2002:a63:2fc4:: with SMTP id v187mr46768529pgv.55.1579297377257;
- Fri, 17 Jan 2020 13:42:57 -0800 (PST)
-Date:   Fri, 17 Jan 2020 13:42:38 -0800
+        bh=ijaPqYX9QMZlgJNEqLIabbahqNoro6V7G/0uSLsc++o=;
+        b=pIP8nwdDU4a5BM2C/A2tuQCuVZCjlfpOGqQl/mXW5dtqh06vSStqMDFvTgEwUPgox5
+         PZ8ysdIZkWgvl97Ge6DRaoeBFU849gG4J1lX8ql7CfE8aZaMVypqx60o8KYuBgnghn0B
+         QqBFwtQPuN9ltfB+oF+4sSEd6VQaefZo+l1Xfaj+2tpeVY8QzqEoWkCUdNaGF+IZpX8s
+         k2HHjzFIncHRvnNFup8QeCEWxGHjC3OTtkAgQgMRcBezPItlj4FyYU01H1CZj/W7SO72
+         RQzRsjHzBOEItSYX7ohrCncL4dRyZcmSNg1GVY1cl96WyYOegWXebNJO7gNIFdn7OQi5
+         NAoQ==
+X-Gm-Message-State: APjAAAV5FoUrqwtWVv9yTzlYjbwcXoz7Anb2kV65rgsyiPPG86e0KD7w
+        fKGwedl00OkIyfRK+k8yGteJsAPcvgA=
+X-Google-Smtp-Source: APXvYqzKuQnOCxtPcdxY/PuMxbANDvGzPhycQ/4MRG+yecKcHD6KYxDk5xX57ii8X1oM1NolqUYQnxR+7ug=
+X-Received: by 2002:a63:3756:: with SMTP id g22mr47225338pgn.375.1579297379818;
+ Fri, 17 Jan 2020 13:42:59 -0800 (PST)
+Date:   Fri, 17 Jan 2020 13:42:39 -0800
 In-Reply-To: <20200117214246.235591-1-drosen@google.com>
-Message-Id: <20200117214246.235591-2-drosen@google.com>
+Message-Id: <20200117214246.235591-3-drosen@google.com>
 Mime-Version: 1.0
 References: <20200117214246.235591-1-drosen@google.com>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v3 1/9] fscrypt: Add siphash and hash key for policy v2
+Subject: [PATCH v3 2/9] fscrypt: Don't allow v1 policies with casefolding
 From:   Daniel Rosenberg <drosen@google.com>
 To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -66,175 +66,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With encryption and casefolding, we cannot simply take the hash of the
-ciphertext because of case insensitivity, and we can't take the hash of
-the unencrypted name since that would leak information about the
-encrypted name. Instead we can use siphash to compute a keyed hash of
-the file names.
-
-When a v2 policy is used on a directory, we derive a key for use with
-siphash.
+Casefolding currently requires a derived key for computing the siphash.
+This is available for v2 policies, but not v1, so we disallow it for v1.
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 ---
- fs/crypto/fname.c           | 22 ++++++++++++++++++++++
- fs/crypto/fscrypt_private.h |  9 +++++++++
- fs/crypto/keysetup.c        | 35 +++++++++++++++++++++++++----------
- include/linux/fscrypt.h     |  9 +++++++++
- 4 files changed, 65 insertions(+), 10 deletions(-)
+ fs/crypto/policy.c      | 28 ++++++++++++++++++++++++++++
+ fs/inode.c              |  3 ++-
+ include/linux/fscrypt.h | 11 +++++++++++
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 3fd27e14ebdd6..371e8f01d1c8e 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -402,6 +402,28 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
- }
- EXPORT_SYMBOL(fscrypt_setup_filename);
+diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+index f1cff83c151ac..2cd9a940d8f46 100644
+--- a/fs/crypto/policy.c
++++ b/fs/crypto/policy.c
+@@ -124,6 +124,12 @@ static bool fscrypt_supported_v1_policy(const struct fscrypt_policy_v1 *policy,
+ 					policy->filenames_encryption_mode))
+ 		return false;
  
-+/**
-+ * fscrypt_fname_siphash() - Calculate the siphash for a file name
-+ * @dir: the parent directory
-+ * @name: the name of the file to get the siphash of
-+ *
-+ * Given a user-provided filename @name, this function calculates the siphash of
-+ * that name using the directory's hash key.
-+ *
-+ * This assumes the directory uses a v2 policy, and the key is available.
-+ *
-+ * Return: the siphash of @name using the hash key of @dir
-+ */
-+u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name)
-+{
-+	struct fscrypt_info *ci = dir->i_crypt_info;
-+
-+	WARN_ON(!ci->ci_hash_key_initialized);
-+
-+	return siphash(name->name, name->len, &ci->ci_hash_key);
-+}
-+EXPORT_SYMBOL(fscrypt_fname_siphash);
-+
- /*
-  * Validate dentries in encrypted directories to make sure we aren't potentially
-  * caching stale dentries after a key has been added.
-diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
-index b22e8decebedd..8b37a5eebb574 100644
---- a/fs/crypto/fscrypt_private.h
-+++ b/fs/crypto/fscrypt_private.h
-@@ -12,6 +12,7 @@
- #define _FSCRYPT_PRIVATE_H
- 
- #include <linux/fscrypt.h>
-+#include <linux/siphash.h>
- #include <crypto/hash.h>
- 
- #define CONST_STRLEN(str)	(sizeof(str) - 1)
-@@ -188,6 +189,13 @@ struct fscrypt_info {
- 	 */
- 	struct fscrypt_direct_key *ci_direct_key;
- 
-+	/*
-+	 * With v2 policies, this can be used with siphash
-+	 * When the key has been set, ci_hash_key_initialized is set to true
-+	 */
-+	siphash_key_t ci_hash_key;
-+	bool ci_hash_key_initialized;
-+
- 	/* The encryption policy used by this inode */
- 	union fscrypt_policy ci_policy;
- 
-@@ -262,6 +270,7 @@ extern int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
- #define HKDF_CONTEXT_PER_FILE_KEY	2
- #define HKDF_CONTEXT_DIRECT_KEY		3
- #define HKDF_CONTEXT_IV_INO_LBLK_64_KEY	4
-+#define HKDF_CONTEXT_FNAME_HASH_KEY     5
- 
- extern int fscrypt_hkdf_expand(const struct fscrypt_hkdf *hkdf, u8 context,
- 			       const u8 *info, unsigned int infolen,
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 96074054bdbc8..7445ab76e0b32 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -189,7 +189,7 @@ static int fscrypt_setup_v2_file_key(struct fscrypt_info *ci,
- 		 * This ensures that the master key is consistently used only
- 		 * for HKDF, avoiding key reuse issues.
- 		 */
--		return setup_per_mode_key(ci, mk, mk->mk_direct_tfms,
-+		err = setup_per_mode_key(ci, mk, mk->mk_direct_tfms,
- 					  HKDF_CONTEXT_DIRECT_KEY, false);
- 	} else if (ci->ci_policy.v2.flags &
- 		   FSCRYPT_POLICY_FLAG_IV_INO_LBLK_64) {
-@@ -199,21 +199,36 @@ static int fscrypt_setup_v2_file_key(struct fscrypt_info *ci,
- 		 * the IVs.  This format is optimized for use with inline
- 		 * encryption hardware compliant with the UFS or eMMC standards.
- 		 */
--		return setup_per_mode_key(ci, mk, mk->mk_iv_ino_lblk_64_tfms,
-+		err = setup_per_mode_key(ci, mk, mk->mk_iv_ino_lblk_64_tfms,
- 					  HKDF_CONTEXT_IV_INO_LBLK_64_KEY,
- 					  true);
-+	} else {
-+		err = fscrypt_hkdf_expand(&mk->mk_secret.hkdf,
-+					  HKDF_CONTEXT_PER_FILE_KEY,
-+					  ci->ci_nonce,
-+					  FS_KEY_DERIVATION_NONCE_SIZE,
-+					  derived_key, ci->ci_mode->keysize);
-+		if (err)
-+			return err;
-+
-+		err = fscrypt_set_derived_key(ci, derived_key);
-+		memzero_explicit(derived_key, ci->ci_mode->keysize);
- 	}
--
--	err = fscrypt_hkdf_expand(&mk->mk_secret.hkdf,
--				  HKDF_CONTEXT_PER_FILE_KEY,
--				  ci->ci_nonce, FS_KEY_DERIVATION_NONCE_SIZE,
--				  derived_key, ci->ci_mode->keysize);
- 	if (err)
- 		return err;
- 
--	err = fscrypt_set_derived_key(ci, derived_key);
--	memzero_explicit(derived_key, ci->ci_mode->keysize);
--	return err;
-+	if (S_ISDIR(ci->ci_inode->i_mode)) {
-+		err = fscrypt_hkdf_expand(&mk->mk_secret.hkdf,
-+					  HKDF_CONTEXT_FNAME_HASH_KEY,
-+					  ci->ci_nonce,
-+					  FS_KEY_DERIVATION_NONCE_SIZE,
-+					  (u8 *)&ci->ci_hash_key,
-+					  sizeof(ci->ci_hash_key));
-+		if (err)
-+			return err;
-+		ci->ci_hash_key_initialized = true;
++	if (IS_CASEFOLDED(inode)) {
++		fscrypt_warn(inode,
++			     "v1 policy does not support casefolded directories");
++		return false;
 +	}
-+	return 0;
++
+ 	return true;
  }
  
- /*
+@@ -579,3 +585,25 @@ int fscrypt_inherit_context(struct inode *parent, struct inode *child,
+ 	return preload ? fscrypt_get_encryption_info(child): 0;
+ }
+ EXPORT_SYMBOL(fscrypt_inherit_context);
++
++int fscrypt_ioc_setflags_prepare(struct inode *inode,
++				 unsigned int oldflags,
++				 unsigned int flags)
++{
++	union fscrypt_policy policy;
++	int err;
++
++	/*
++	 * When a directory is encrypted, the CASEFOLD flag can only be turned
++	 * on if the fscrypt policy supports it.
++	 */
++	if (IS_ENCRYPTED(inode) && (flags & ~oldflags & FS_CASEFOLD_FL)) {
++		err = fscrypt_get_policy(inode, &policy);
++		if (err)
++			return err;
++		if (policy.version != FSCRYPT_POLICY_V2)
++			return -EINVAL;
++	}
++
++	return 0;
++}
+diff --git a/fs/inode.c b/fs/inode.c
+index 96d62d97694ef..8f6267858d0c1 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -20,6 +20,7 @@
+ #include <linux/ratelimit.h>
+ #include <linux/list_lru.h>
+ #include <linux/iversion.h>
++#include <linux/fscrypt.h>
+ #include <trace/events/writeback.h>
+ #include "internal.h"
+ 
+@@ -2252,7 +2253,7 @@ int vfs_ioc_setflags_prepare(struct inode *inode, unsigned int oldflags,
+ 	    !capable(CAP_LINUX_IMMUTABLE))
+ 		return -EPERM;
+ 
+-	return 0;
++	return fscrypt_ioc_setflags_prepare(inode, oldflags, flags);
+ }
+ EXPORT_SYMBOL(vfs_ioc_setflags_prepare);
+ 
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 6fe8d0f96a4ac..1dfbed855beeb 100644
+index 1dfbed855beeb..2c292f19c6b94 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -172,6 +172,8 @@ extern int fscrypt_fname_disk_to_usr(const struct inode *inode,
- 				     u32 hash, u32 minor_hash,
- 				     const struct fscrypt_str *iname,
- 				     struct fscrypt_str *oname);
-+extern u64 fscrypt_fname_siphash(const struct inode *dir,
-+				 const struct qstr *name);
- 
- #define FSCRYPT_FNAME_MAX_UNDIGESTED_SIZE	32
- 
-@@ -468,6 +470,13 @@ static inline int fscrypt_fname_disk_to_usr(const struct inode *inode,
+@@ -142,6 +142,10 @@ extern int fscrypt_ioctl_get_policy_ex(struct file *, void __user *);
+ extern int fscrypt_has_permitted_context(struct inode *, struct inode *);
+ extern int fscrypt_inherit_context(struct inode *, struct inode *,
+ 					void *, bool);
++extern int fscrypt_ioc_setflags_prepare(struct inode *inode,
++					unsigned int oldflags,
++					unsigned int flags);
++
+ /* keyring.c */
+ extern void fscrypt_sb_free(struct super_block *sb);
+ extern int fscrypt_ioctl_add_key(struct file *filp, void __user *arg);
+@@ -383,6 +387,13 @@ static inline int fscrypt_inherit_context(struct inode *parent,
  	return -EOPNOTSUPP;
  }
  
-+static inline u64 fscrypt_fname_siphash(const struct inode *dir,
-+					const struct qstr *name)
++static inline int fscrypt_ioc_setflags_prepare(struct inode *inode,
++					       unsigned int oldflags,
++					       unsigned int flags)
 +{
-+	WARN_ON_ONCE(1);
 +	return 0;
 +}
 +
- static inline bool fscrypt_match_name(const struct fscrypt_name *fname,
- 				      const u8 *de_name, u32 de_name_len)
+ /* keyring.c */
+ static inline void fscrypt_sb_free(struct super_block *sb)
  {
 -- 
 2.25.0.341.g760bfbb309-goog
