@@ -2,71 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E2E140920
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 12:38:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4935140931
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 12:43:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgAQLii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 06:38:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56612 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbgAQLii (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:38:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1A825AED5;
-        Fri, 17 Jan 2020 11:38:37 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7586A1E0D53; Fri, 17 Jan 2020 12:38:33 +0100 (CET)
-Date:   Fri, 17 Jan 2020 12:38:33 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: udf: Suspicious values in udf_statfs()
-Message-ID: <20200117113833.GG17141@quack2.suse.cz>
-References: <20200112162311.khkvcu2u6y4gbbr7@pali>
- <20200113120851.GG23642@quack2.suse.cz>
- <20200116153019.5awize7ufnxtjagf@pali>
+        id S1728249AbgAQLnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 06:43:06 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54514 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726689AbgAQLnG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jan 2020 06:43:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579261385;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gd8m04MBeBFjlqqhoY1pGB2lRynPKyQkVinKGfYGuLE=;
+        b=Ro6qziJXNxPLuSws0aZLi8pWmdSQq1iuWy+uronljlXTvn3fo7wTUDUR+PYZPLfFypfLKf
+        jLYxbuEUdcdceW1ZtOhmVk/gBADym01GMgtreDsji9kCibUiWzuMml812mvP1t4do1PZYJ
+        dRWKE1C60cm6xGWQAlFSaEVOOrsVx0I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-144-3ZtNOC-EPnyeBRrPstvaeQ-1; Fri, 17 Jan 2020 06:43:02 -0500
+X-MC-Unique: 3ZtNOC-EPnyeBRrPstvaeQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90542108597A;
+        Fri, 17 Jan 2020 11:42:59 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F88910013A1;
+        Fri, 17 Jan 2020 11:42:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2397bb4a-2ca2-4b44-8c79-64efba9aa04d@www.fastmail.com>
+References: <2397bb4a-2ca2-4b44-8c79-64efba9aa04d@www.fastmail.com> <20200114170250.GA8904@ZenIV.linux.org.uk> <3326.1579019665@warthog.procyon.org.uk> <9351.1579025170@warthog.procyon.org.uk>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     dhowells@redhat.com, "Colin Walters" <walters@verbum.org>,
+        "Al Viro" <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        "Christoph Hellwig" <hch@lst.de>, "Theodore Ts'o" <tytso@mit.edu>,
+        adilger.kernel@dilger.ca,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Chris Mason" <clm@fb.com>, josef@toxicpanda.com, dsterba@suse.com,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Making linkat() able to overwrite the target
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200116153019.5awize7ufnxtjagf@pali>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <359590.1579261375.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 17 Jan 2020 11:42:55 +0000
+Message-ID: <359591.1579261375@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-01-20 16:30:19, Pali Rohár wrote:
-> On Monday 13 January 2020 13:08:51 Jan Kara wrote:
-> > > Second one:
-> > > 
-> > > 	buf->f_files = (lvidiu != NULL ? (le32_to_cpu(lvidiu->numFiles) +
-> > > 					  le32_to_cpu(lvidiu->numDirs)) : 0)
-> > > 			+ buf->f_bfree;
-> > > 
-> > > What f_files entry should report? Because result of sum of free blocks
-> > > and number of files+directories does not make sense for me.
-> > 
-> > This is related to the fact that we return 'f_bfree' as the number of 'free
-> > file nodes' in 'f_ffree'. And tools generally display f_files-f_ffree as
-> > number of used inodes. In other words we treat every free block also as a
-> > free 'inode' and report it in total amount of 'inodes'. I know this is not
-> > very obvious but IMHO it causes the least confusion to users reading df(1)
-> > output.
-> 
-> So current code which returns sum of free blocks and number of
-> files+directories is correct. Could be this information about statvfs
-> f_files somewhere documented? Because this is not really obvious nor for
-> userspace applications which use statvfs() nor for kernel filesystem
-> drivers.
+Hi Omar,
 
-Well, I can certainly add a comment to udf_statfs(). Documenting in some
-manpage might be worth it but I'm not 100% sure where - maybe directly in
-the statfs(2) to the NOTES section? Also note that this behavior is not
-unique to UDF - e.g. XFS also does the same.
+Do you still have your AT_REPLACE patches?  You said that you'd post a v4
+series, though I don't see it.  I could make use of such a feature in
+cachefiles inside the kernel.  For my original question, see:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
+/?h=3Dfscache-iter
+
+And do you have ext4 support for it?
+
+Colin Walters <walters@verbum.org> wrote:
+
+> On Tue, Jan 14, 2020, at 1:06 PM, David Howells wrote:
+> =
+
+> > Yes, I suggested AT_LINK_REPLACE as said magical flag.
+> =
+
+> This came up before right?
+> =
+
+> https://lore.kernel.org/linux-fsdevel/cover.1524549513.git.osandov@fb.co=
+m/
+
+David
+
