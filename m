@@ -2,92 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A841014014E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 02:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09950140162
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 02:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbgAQBFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 20:05:49 -0500
-Received: from smtp.bonedaddy.net ([45.33.94.42]:35588 "EHLO
-        smtp.bonedaddy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbgAQBFt (ORCPT
+        id S2387867AbgAQBR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 20:17:26 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35396 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387565AbgAQBR0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 20:05:49 -0500
-X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Thu, 16 Jan 2020 20:05:49 EST
-Received: from chianamo (n175-38-4-223.per2.wa.optusnet.com.au [175.38.4.223])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: pabs3@bonedaddy.net)
-        by smtp.bonedaddy.net (Postfix) with ESMTPSA id B8942180043;
-        Thu, 16 Jan 2020 19:57:43 -0500 (EST)
-Message-ID: <2479db5788a3c776d3c38d2e3b87c570f9a41ea8.camel@bonedaddy.net>
-Subject: Re: [PATCH AUTOSEL 4.4 116/174] coredump: split pipe command
- whitespace before expanding template
-From:   Paul Wise <pabs3@bonedaddy.net>
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Jakub Wilk <jwilk@jwilk.net>, Neil Horman <nhorman@tuxdriver.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-In-Reply-To: <20200116174251.24326-116-sashal@kernel.org>
-References: <20200116174251.24326-1-sashal@kernel.org>
-         <20200116174251.24326-116-sashal@kernel.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-GSXQFiNy98loWZ2QPEBN"
-Date:   Fri, 17 Jan 2020 08:57:35 +0800
+        Thu, 16 Jan 2020 20:17:26 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f8so20741952edv.2;
+        Thu, 16 Jan 2020 17:17:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fxuQNdhUIKCW/RVBHdhXEt9LGg/38SDYbVWcfsz1CNw=;
+        b=pMzXKC/HuXEOwWLI+FUq4Bw7PdFNk4oMMNUmi1a0l/l2pUaJ5RUbGG94w+Pu1cMpd7
+         FDrLcrRqWxDWgiLevnO/ILSSxnQQSx4MNxNG9Ezz3QSA+Yc0EyBFjkUg/18mkyA9NGtx
+         rSmLxH54ILzwuD04/iotzkSFjodmcej2oGdknXITFz7fTlQUKe9196TyujvuJpEhbp3a
+         8cU1oLQyuzPPNi3Np904voLAdHdxsBhQoPAF8yNNofuQlF150ivmXf6gxpktiwY3GDWD
+         toaN/w+oDa50cbEMX41DTPzbeoTtBaNYD0KyXiXDgD16iYQWQ3bmNYGBAFC6qbzvaq1G
+         F/+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fxuQNdhUIKCW/RVBHdhXEt9LGg/38SDYbVWcfsz1CNw=;
+        b=Qf3eLeclTm+S/VkCfN84/lWlw4TE3N+9KXdI09yST6t7xtuG9V0/kcVyZh1pCz9AaJ
+         446us0sfCLMse+9BzqwyBz4I6stD5cNl1C1oajTRg5+N/ORTfTsgm9xqNLjzzi1syeQc
+         c7rhAADk0FUlG1ND3xv2E8q0Umb4vJvEjAKK07B65M3B9AIfNYHenL7haeD3pCwE75Pr
+         cmr1vbM+zPufpen27LJLiCNTH1jFEo2RPKCsIPBCqlpMXrgFrv6r0PpI5iv500Z0uoPy
+         BZwQ5fMlbReN5WeRdHdyZw81YVtM6NvGOe8+c8DamEfKopmpzJyFJLoAFxOxKVGXf+VW
+         SXFQ==
+X-Gm-Message-State: APjAAAUyTpnMDoi+U1POwpacPRChOixmMcVA2URfvbzQUpOK5gDnVHuF
+        Nv8Jc1YxMWwVRbbBvBprjVeLcDdy
+X-Google-Smtp-Source: APXvYqxUZaSgBaiItsgPCnZzH7pdGOGqVP7fJkjIbrObr2b6LmOz/8V4ccKlKhdArxBCl3QcIlY3SQ==
+X-Received: by 2002:a05:6402:1596:: with SMTP id c22mr1253877edv.268.1579223844366;
+        Thu, 16 Jan 2020 17:17:24 -0800 (PST)
+Received: from localhost.localdomain ([109.126.145.157])
+        by smtp.gmail.com with ESMTPSA id m6sm821124ejb.51.2020.01.16.17.17.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2020 17:17:23 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: optimise kiocb_set_rw_flags()
+Date:   Fri, 17 Jan 2020 04:16:41 +0300
+Message-Id: <7d493d4872b75fc59556a63ee62c43b30c661ff9.1579223790.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-User-Agent: Evolution 3.34.1-2+b1 
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+kiocb_set_rw_flags() generates a poor code with several memory writes
+and a lot of jumps. Help compilers to optimise it.
 
---=-GSXQFiNy98loWZ2QPEBN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Tested with gcc 9.2 on x64-86, and as a result, it its output now is a
+plain code without jumps accumulating in a register before a memory
+write.
 
-On Thu, 2020-01-16 at 12:41 -0500, Sasha Levin wrote:
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ include/linux/fs.h | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-> From: Paul Wise <pabs3@bonedaddy.net>
->=20
-> [ Upstream commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03 ]
-
-Sasha, we already agreed in [1] and [2] that this patch should not get
-backported to earlier versions of Linux, would you mind teaching your
-patch autoselection about that so that it doesn't get backported?
-
-1. https://lore.kernel.org/lkml/c835c71b722c3df3d11e7b7f8fd65bbd7da0d482.ca=
-mel@bonedaddy.net/
-2. https://lore.kernel.org/lkml/20190818014841.GF1318@sasha-vm/
-
---=20
-bye,
-pabs
-
-https://bonedaddy.net/pabs3/
-
---=-GSXQFiNy98loWZ2QPEBN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEYQsotVz8/kXqG1Y7MRa6Xp/6aaMFAl4hBnkACgkQMRa6Xp/6
-aaPi0Q//cebVmScish+TwhHnq8zxYtq+fBQYrnLGDtKdSBDnfYalZgtOIi6qRni3
-GSvMUuclWoCCWSgWPvnjAhaEPdhg5YLOkc7rvqrBYkxbg2hjmZZ1xdaMOJX1Mgd1
-kCnS02u2Lm1BMPY7dtbiXBmrp7eFbL6Pkf/4wzqihGEJhUtZ9+EkbMbYJ0rSxEvP
-Z9qsQGoLk+Zfldv/Pn8yH4+HpIEMYB7WM76MjJJS3qmzR6fNvvK/W6ZVVh5N96iL
-HHpV33GQnQzl3t9xuh4ryxMTmovQY4D3V1k7DMNP7Akl8CdwZjYBsIJJuv46rMAm
-vmwQUpjMxA0xupQ1MOpW4SSvWQdvTM3Js0Q8tIj4tIEZZtQAOB9n3MtKuY2+qQdi
-qlqgaM4TgzACPNT4JC291tr7IdkQSQvoPMr+o6fzvmzYKjOxcjpVx3PEfay/BbsN
-dO0UJVRLJmG7IlX8ci8Xz8mwCvhiCVWyW5C6ULpSpB3ARgVxUGqndcIIIjUh0lYm
-T0aG7fU6FoAOSpAlLtbBS/lfOmmL0ismCqTDrL5+GraILkC24HatXLioHLemnp9s
-xmXk3LqOl6YzKKkF/3NH+riAspoweFKbVQKwp7ebUimAVRKjdnsVFeMtL0r96i5W
-c19Kn1Xc50RUP0MRo+pAFuhsnjweVV0s2GRbtsI9Q1uasT+rM/Q=
-=ShSX
------END PGP SIGNATURE-----
-
---=-GSXQFiNy98loWZ2QPEBN--
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 98e0349adb52..c3db8c80aed4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3402,22 +3402,27 @@ static inline int iocb_flags(struct file *file)
+ 
+ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+ {
++	int kiocb_flags = 0;
++
+ 	if (unlikely(flags & ~RWF_SUPPORTED))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (flags & RWF_NOWAIT) {
+ 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
+ 			return -EOPNOTSUPP;
+-		ki->ki_flags |= IOCB_NOWAIT;
++		kiocb_flags |= IOCB_NOWAIT;
+ 	}
+ 	if (flags & RWF_HIPRI)
+-		ki->ki_flags |= IOCB_HIPRI;
++		kiocb_flags |= IOCB_HIPRI;
+ 	if (flags & RWF_DSYNC)
+-		ki->ki_flags |= IOCB_DSYNC;
++		kiocb_flags |= IOCB_DSYNC;
+ 	if (flags & RWF_SYNC)
+-		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
++		kiocb_flags |= (IOCB_DSYNC | IOCB_SYNC);
+ 	if (flags & RWF_APPEND)
+-		ki->ki_flags |= IOCB_APPEND;
++		kiocb_flags |= IOCB_APPEND;
++
++	if (kiocb_flags)
++		ki->ki_flags |= kiocb_flags;
+ 	return 0;
+ }
+ 
+-- 
+2.24.0
 
