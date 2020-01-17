@@ -2,63 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 349C71409C0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:32:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C22491409CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbgAQMb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 07:31:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43268 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbgAQMb7 (ORCPT
+        id S1727040AbgAQMcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 07:32:51 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55250 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbgAQMcv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 07:31:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nZrBKTkYJeqcb/cXGamX396QKjxFmliww7OTt1Ylid8=; b=hiJtxfwjhqJa9nokZWYLYX7OI
-        JRfsiyJjs5tsU8pvG6Yh3cLx3vmXA729b5fQ7PMcI+nPi9x4rqNa1RRLmQdwmrZExc11yVHoGCGZj
-        +RzNKQoyfueuOTnuZvIoKfoThLiNl+srvy7F3ZZj5+ghKIL8zRRp8Du5Ka/vJgh8dBBj8ZL5MU4Rk
-        vPtJFort+fWwLuty8vXNdf4Ta2IobUr5txSUbfaiOwHkZDpF8RTymGAS+AcsWs88pxnTqiVUb9gHG
-        Ky4u+cjUGLIzLLBxSjwRvbkFpp5MUNbw01aXQ9cAV9uJGHAYL+a3Etebo8EUWilSvtc0IRIhFcwax
-        m34ReJbiw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1isQn7-0002E1-OF; Fri, 17 Jan 2020 12:31:57 +0000
-Date:   Fri, 17 Jan 2020 04:31:57 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 4/9] scsi: ufs: UFS driver v2.1 spec crypto additions
-Message-ID: <20200117123157.GA8481@infradead.org>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-5-satyat@google.com>
+        Fri, 17 Jan 2020 07:32:51 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b19so7258199wmj.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 04:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=g5DFCMAiBJapRLzTIsCMfZO3t3lSrKhZ+V4rKfulm64=;
+        b=eVoDV+dONYvQLQwiJwhekdTDxP4cfGNPdAjI9sDP6NRVAi86vANPOyWBWGUtx4yUL0
+         kvFW/1reL8Fs3sIFwEKDWm7kfpaYl9mYgLTo3ajA4aD9qeXLapZ+hrJ9lXApx7flYzAV
+         tntk/hHytxEH6LLjO0zR+V3zk6yIKeoEybock=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=g5DFCMAiBJapRLzTIsCMfZO3t3lSrKhZ+V4rKfulm64=;
+        b=NAjVB7whLkccIv1OW3TevIP5SpcIYSUfOKHULeStMMbyFTODIInKPv2rZud0+jSYcN
+         hlTLvn7ET//RhcG6HKImTWrwIlzGTay2FFxfTpoWhFCYKdj9ZbwEg+Efur2z3EG2NGPw
+         uHHoRuieomNfsPrf4/vk8BpA5VGajrRw2VINz10IyM/FU15N9pwfNVciDEjZQgPkpz7i
+         DC55PF/LY1jUu4sa9TI2QemKJPi+75NBu4MoPxurUQs6YvUTQ2ywdhn+Xh2w0hrY7bWN
+         zh0ys8wl/8A+AChXeYGGNEVyMmBpRdxZEx/e3pVipOI3s8AxC8ErGj2Dn5P6BriAIukf
+         08iQ==
+X-Gm-Message-State: APjAAAUvJGpcv0A9LC5d+KGmhwMK9DtesZcJJeKsu22VMnvDMoFRFVZ7
+        Aub6OSc7xwdC3siPliguLOVPR5G0EAJ6fA==
+X-Google-Smtp-Source: APXvYqyC+rZ4Viq9eim4+IsFLrhTPqo65VnAf2kQZ/bQmE3Vm176tHGpzexlo/I2jEFU3kT5NDWB3g==
+X-Received: by 2002:a1c:4b09:: with SMTP id y9mr4351730wma.103.1579264369055;
+        Fri, 17 Jan 2020 04:32:49 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (94-21-206-225.pool.digikabel.hu. [94.21.206.225])
+        by smtp.gmail.com with ESMTPSA id t125sm9755173wmf.17.2020.01.17.04.32.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2020 04:32:48 -0800 (PST)
+Date:   Fri, 17 Jan 2020 13:32:43 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fix for 5.5-rc7
+Message-ID: <20200117123243.GA14341@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191218145136.172774-5-satyat@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 06:51:31AM -0800, Satya Tangirala wrote:
-> Add the crypto registers and structs defined in v2.1 of the JEDEC UFSHCI
-> specification in preparation to add support for inline encryption to
-> UFS.
-> 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  drivers/scsi/ufs/ufshcd.c |  2 ++
->  drivers/scsi/ufs/ufshcd.h |  5 +++
->  drivers/scsi/ufs/ufshci.h | 67 +++++++++++++++++++++++++++++++++++++--
->  3 files changed, 72 insertions(+), 2 deletions(-)
+Hi Linus,
 
-I'd merge this into the next patch.
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.5-rc7
+
+Fix a regression in the last release affecting the ftp module of the gvfs
+filesystem.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Miklos Szeredi (1):
+      fuse: fix fuse_send_readpages() in the syncronous read case
+
+---
+ fs/fuse/file.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
