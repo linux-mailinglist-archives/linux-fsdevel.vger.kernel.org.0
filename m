@@ -2,125 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9AD141434
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 23:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97212141479
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 23:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728895AbgAQWgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 17:36:33 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41101 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbgAQWgc (ORCPT
+        id S1729134AbgAQWw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 17:52:58 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37210 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729099AbgAQWw6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:36:32 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t14so2482483plr.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 14:36:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XtWUfgleS7tWusH2llDzuITHbPBooY2G7TQrQIa4jbQ=;
-        b=c8kqtU/fuGtildlbXqGQuR5Wty5GpjcjjtOI37WDgpw0nOCDjDFdT7iFg5agkHyJ0L
-         bpZPbBfBhmbDJiJLAdonr93zhSUYWKhxrvX+MXQLhrzroOq2WOPVVXuc8AkxUvMPp2+b
-         ycw4AOtnE13AOxKsvpaxY4Ln+/TeFPqdicX+PO73cR7hODTjqkmp1Ku4Vj5//NEx5d/B
-         VmYSLLai5X33uLAJn9GI0KwWz5r+66lkEiPIjCuOTAJNfkwRN7qJFARK1ZehTAiXTSu9
-         LiUjTg2yKvTvPbMyFzeKClp/40RJt2OwwOcQtsQadkQ8LGEVuhVtSFF2Xjc+lgPVQd/5
-         Vdeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XtWUfgleS7tWusH2llDzuITHbPBooY2G7TQrQIa4jbQ=;
-        b=mdFJ5x+fV/WAreczWfnD3bZej4kd2/7cPbKWlrmPNFrGAleSHgTCd1g4HYv76GYPR0
-         jKRPgNic3huxIJukVCNXAQupihBE0gPwCYg8UwEdjDN4C8IvOL0TuziEtJsH6RBOR7uh
-         Xwc1dUfeLHgFXfUGKuDcmmiMhIuC/1a7H0RrV32MBIYn/kuHh6lnV6E9uMplYJWRc7VS
-         DinO+Bql5qzBgme1F7MXNKW4SeaKvgNlGgZ9gV4iS97W0BMd0yhaQNV84Rqoaovv2fjW
-         1vuLSoXz7STEv6xXjNOCYYWCaDV8eQJ5CuEiOxX6BJU3JGgMS1+E+hyR7y49crxnZ2RO
-         bpDg==
-X-Gm-Message-State: APjAAAUzDlVUHIzk3saqxzt2HnOrXctVdRFmDsPiRyN/44W4I9JQHu6x
-        /kQ+upwLMAkrdiq+OXiIDRGn9d00Ubs=
-X-Google-Smtp-Source: APXvYqxT3XzsFV+4p025Gs8B66GWmFGv8+/htgVfLtik+Fp+i+/sLR9wNBIVdgKY7t4SfAOGFbbiVA==
-X-Received: by 2002:a17:90a:300b:: with SMTP id g11mr8411307pjb.123.1579300592042;
-        Fri, 17 Jan 2020 14:36:32 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o7sm8434018pjs.28.2020.01.17.14.36.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2020 14:36:31 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Colin Walters <walters@verbum.org>,
-        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
- <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
- <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
- <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
- <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
- <cbdb0621-3bc8-fc41-a365-56b2639e39a0@kernel.dk>
- <991faae8-909c-0aed-a9ee-aab01f8db8e9@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8b3f182c-7c4b-da41-7ec8-bb4f22429ed1@kernel.dk>
-Date:   Fri, 17 Jan 2020 15:36:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <991faae8-909c-0aed-a9ee-aab01f8db8e9@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 17 Jan 2020 17:52:58 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4DCBB8EE2DB;
+        Fri, 17 Jan 2020 14:52:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579301577;
+        bh=Q7VL1pKI4g4VE6cEdgo6r0Zpe6ftIj8PtpTM3rqJu1c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tzGwcf2I6jixPwG3Z4HWRk08o99Z0rvi/RX/Vvk7pGafDnaownIJJ2wbf+lr1d6xm
+         /x54hjGl8EndVNU11LL3cQiGpoFLiOERKVjJLUOpDTC9fcO6bKd6NlY0bBiZ+wUpYK
+         czFjjCtcF0SvfL7hAZ8FJTewp4RWZSpTal65ylk8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id F2dMlBXkcM0N; Fri, 17 Jan 2020 14:52:56 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 30AFE8EE181;
+        Fri, 17 Jan 2020 14:52:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579301576;
+        bh=Q7VL1pKI4g4VE6cEdgo6r0Zpe6ftIj8PtpTM3rqJu1c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=eVYTn66fgPPeaBFmNF6KYEGrM+FdwjUf2MsHV9N9s/hZryV4AoJKbnOv33j7gZGxs
+         PqePEjBcsnH63bpVFYgR+fXqckYKoEoaAanC+uvLZm3UmJ8A87DT8GRnEYgUSaunX6
+         Xp8yr1gUcfN6XS7bucuEVi7oDceaYeHrL8Qkw3V0=
+Message-ID: <1579301572.13499.7.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        containers@lists.linux-foundation.org,
+        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
+Date:   Fri, 17 Jan 2020 14:52:52 -0800
+In-Reply-To: <20200117211940.GA22062@cisco>
+References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
+         <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
+         <20200113034149.GA27228@mail.hallyn.com>
+         <1579112360.3249.17.camel@HansenPartnership.com>
+         <20200116064430.GA32763@mail.hallyn.com>
+         <1579192173.3551.38.camel@HansenPartnership.com>
+         <20200117154402.GA16882@mail.hallyn.com>
+         <1579278342.3227.36.camel@HansenPartnership.com>
+         <20200117211940.GA22062@cisco>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/17/20 3:27 PM, Pavel Begunkov wrote:
-> On 17/01/2020 18:21, Jens Axboe wrote:
->> On 1/17/20 2:32 AM, Pavel Begunkov wrote:
->>> On 1/17/2020 3:44 AM, Colin Walters wrote:
->>>> On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
->>>>> The client can compound a chain with open, getinfo, read, close
->>>>> getinfo, read and close get an file handle of -1 and implicitly
->>>>> get the fd generated/used in the previous request.
->>>>
->>>> Sounds similar to  https://capnproto.org/rpc.html too.
->>>>
->>> Looks like just grouping a pack of operations for RPC.
->>> With io_uring we could implement more interesting stuff. I've been
->>> thinking about eBPF in io_uring for a while as well, and apparently it
->>> could be _really_ powerful, and would allow almost zero-context-switches
->>> for some usecases.
->>>
->>> 1. full flow control with eBPF
->>> - dropping requests (links)
->>> - emitting reqs/links (e.g. after completions of another req)
->>> - chaining/redirecting
->>> of course, all of that with fast intermediate computations in between
->>>
->>> 2. do long eBPF programs by introducing a new opcode (punted to async).
->>> (though, there would be problems with that)
->>>
->>> Could even allow to dynamically register new opcodes within the kernel
->>> and extend it to eBPF, if there will be demand for such things.
->>
->> We're also looking into exactly that at Facebook, nothing concrete yet
->> though. But it's clear we need it to take full advantage of links at
->> least, and it's also clear that it would unlock a lot of really cool
->> functionality once we do.
->>
->> Pavel, I'd strongly urge you to submit a talk to LSF/MM/BPF about this.
->> It's the perfect venue to have some concrete planning around this topic
->> and get things rolling.
+On Fri, 2020-01-17 at 13:19 -0800, Tycho Andersen wrote:
+> On Fri, Jan 17, 2020 at 08:25:42AM -0800, James Bottomley wrote:
+> > On Fri, 2020-01-17 at 09:44 -0600, Serge E. Hallyn wrote:
+> > > On Thu, Jan 16, 2020 at 08:29:33AM -0800, James Bottomley wrote:
+> > > I guess I figured we would have privileged task in the owning
+> > > namespace (presumably init_user_ns) mark a bind mount as
+> > > shiftable 
+> > 
+> > Yes, that's what I've got today in the prototype.  It mirrors the
+> > original shiftfs mechanism.  However, I have also heard people say
+> > they want a permanent mark, like an xattr for this.
 > 
-> Sounds interesting, I'll try this, but didn't you intend to do it
-> yourself?  And thanks for the tip!
+> Please, no. mount() failures are already hard to reason about, I
+> would rather not add another temporary (or worse, permanent) non-
+> obvious failure mode.
 
-Just trying to delegate a bit, and I think you'd be a great candidate to
-drive this. I'll likely do some other io_uring related topic there.
+I'm not particularly bothered either way ... although using xattrs
+always seems to end up biting us for nesting, so I wasn't wildly
+enthusiastic about it.
 
--- 
-Jens Axboe
+> What if we make shifted bind mounts always readonly? That will force
+> people to use an overlay (or something else) on top, but they
+> probably want to do that anyway so they can avoid tainting the
+> original container image with writes.
+
+That really causes problems for the mutable (non-docker) container use
+case which is pretty much the way I always use containers.  Who wants
+to bother with overlayfs when their image is expected to mutate: it's
+just a huge hassle.
+
+> > > Oh - I consider the detail of whether we pass a userid or userns
+> > > nsfd as more of an implementation detail which we can hash out
+> > > after the more general shift-mount api is decided upon.  Anyway,
+> > > passing nsfds just has a cool factor :)
+> > 
+> > Well, yes, won't aruge on the cool factor-ness.
+> 
+> It's not just the cool factor: if you're doing this, it's presumably
+> because you want to use it with a container in a user namespace.
+> Specifying the same parameters twice leaves room for error, causing
+> CVEs and more work.
+
+It depends.  For the offset, we agreed there's no extant user_ns, so
+you have to create one specifically.  That leads to a more error prone
+setup with no actual checking benefit.
+
+For the shift_ns, it depends whether you want one mount point per
+tenant, in which case the tenant user_ns might be a useful check, or
+one mount point with an ACL in which case you just backshift along the
+binding tenant user_ns.
+
+James
 
