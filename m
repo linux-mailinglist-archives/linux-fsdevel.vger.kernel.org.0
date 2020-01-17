@@ -2,106 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B58141070
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 19:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAD8E14109B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 19:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbgAQSLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 13:11:39 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40140 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729096AbgAQSLi (ORCPT
+        id S1727115AbgAQSRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 13:17:40 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:36616 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726970AbgAQSRk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 13:11:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579284697;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QsgYM2TGG8lRq9niu1aCEnMk5zwASxNohdIB47d0fPM=;
-        b=B14OnPZkA69YgOilBeX//8x/Dix1CZ9uWMyDqUmNl/dBaY1Bn3Y29rV3wIWS37qiZQ7tW2
-        2R79kzNdCQk6uOdiA9jTeNaUHItGbZ/Ajio07x8kN7TKwNikeGSdr43RXz9c3QYWJkNr9r
-        S3t353iC9DNYxgCowhjTGmxkHDYmT5k=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-9-cuZZlEvPPxqHNMDkMEDNpQ-1; Fri, 17 Jan 2020 13:11:28 -0500
-X-MC-Unique: cuZZlEvPPxqHNMDkMEDNpQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EAEBDDB20;
-        Fri, 17 Jan 2020 18:11:25 +0000 (UTC)
-Received: from treble (ovpn-123-54.rdu2.redhat.com [10.10.123.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ED0E95D9CD;
-        Fri, 17 Jan 2020 18:11:23 +0000 (UTC)
-Date:   Fri, 17 Jan 2020 12:11:21 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: mmotm 2019-12-10-19-14 uploaded (objtool: func() falls through)
-Message-ID: <20200117181121.3h72dajey7oticbf@treble>
-References: <20191211031432.iyKVQ6m9n%akpm@linux-foundation.org>
- <07777464-b9d8-ff1d-41d9-f62cc44f09f3@infradead.org>
- <20191212184859.zjj2ycfkvpcns5bk@treble>
- <042c6cd7-c983-03f1-6a79-5642549f57c4@infradead.org>
- <20191212205811.4vrrb4hou3tbiada@treble>
+        Fri, 17 Jan 2020 13:17:40 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isWBW-00AOYO-GI; Fri, 17 Jan 2020 18:17:30 +0000
+Date:   Fri, 17 Jan 2020 18:17:30 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>, "hch@lst.de" <hch@lst.de>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
+Message-ID: <20200117181730.GO8904@ZenIV.linux.org.uk>
+References: <364531.1579265357@warthog.procyon.org.uk>
+ <d2730b78cf0eac685c3719909df34d8d1b0bc347.camel@hammerspace.com>
+ <20200117154657.GK8904@ZenIV.linux.org.uk>
+ <20200117163616.GA282555@vader>
+ <20200117165904.GN8904@ZenIV.linux.org.uk>
+ <20200117172855.GA295250@vader>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191212205811.4vrrb4hou3tbiada@treble>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200117172855.GA295250@vader>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 02:58:11PM -0600, Josh Poimboeuf wrote:
-> On Thu, Dec 12, 2019 at 12:21:17PM -0800, Randy Dunlap wrote:
-> > On 12/12/19 10:48 AM, Josh Poimboeuf wrote:
-> > > On Wed, Dec 11, 2019 at 08:31:08AM -0800, Randy Dunlap wrote:
-> > >> On 12/10/19 7:14 PM, Andrew Morton wrote:
-> > >>> The mm-of-the-moment snapshot 2019-12-10-19-14 has been uploaded to
-> > >>>
-> > >>>    http://www.ozlabs.org/~akpm/mmotm/
-> > >>>
-> > >>> mmotm-readme.txt says
-> > >>>
-> > >>> README for mm-of-the-moment:
-> > >>>
-> > >>> http://www.ozlabs.org/~akpm/mmotm/
-> > >>>
-> > >>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > >>> more than once a week.
-> > >>>
-> > >>> You will need quilt to apply these patches to the latest Linus release (5.x
-> > >>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > >>> http://ozlabs.org/~akpm/mmotm/series
-> > >>>
-> > >>> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > >>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > >>> followed by the base kernel version against which this patch series is to
-> > >>> be applied.
-> > >>
-> > >> on x86_64:
-> > >>
-> > >> drivers/hwmon/f71882fg.o: warning: objtool: f71882fg_update_device() falls through to next function show_pwm_auto_point_temp_hyst()
-> > >> drivers/ide/ide-probe.o: warning: objtool: hwif_register_devices() falls through to next function hwif_release_dev()
-> > >> drivers/ide/ide-probe.o: warning: objtool: ide_host_remove() falls through to next function ide_disable_port()
-> > > 
-> > > Randy, can you share the .o files?
+On Fri, Jan 17, 2020 at 09:28:55AM -0800, Omar Sandoval wrote:
+> On Fri, Jan 17, 2020 at 04:59:04PM +0000, Al Viro wrote:
+> > On Fri, Jan 17, 2020 at 08:36:16AM -0800, Omar Sandoval wrote:
 > > 
-> > Sure. They are attached.
+> > > The semantics I implemented in my series were basically "linkat with
+> > > AT_REPLACE replaces the target iff rename would replace the target".
+> > > Therefore, symlinks are replaced, not followed, and mountpoints get
+> > > EXDEV. In my opinion that's both sane and unsurprising.
+> > 
+> > Umm...  EXDEV in rename() comes when _parents_ are on different mounts.
+> > rename() over a mountpoint is EBUSY if it has mounts in caller's
+> > namespace, but it succeeds (and detaches all mounts on the victim
+> > in any namespaces) otherwise.
+> > 
+> > When are you returning EXDEV?
 > 
-> These look like compiler bugs to me... execution is falling off the edge
-> of the functions for no apparent reason.  Could potentially be triggered
-> by the '#define if' trace code.
+> EXDEV was a thinko, the patch does what rename does:
+> 
+> 
+> +	if (is_local_mountpoint(new_dentry)) {
+> +		error = -EBUSY;
+> +		goto out;
+> +	}
+> 
+> ...
+> 
+> +	if (target) {
+> +		dont_mount(new_dentry);
+> +		detach_mounts(new_dentry);
+> +	}
+> 
+> Anyways, my point is that the rename semantics cover 90% of AT_REPLACE.
+> Before I resend the patches, I'll write up the documentation and we can
+> see what other corner cases I missed.
 
-Randy, do you happen to have a config which triggers the above bugs?  I
-can reduce the test cases and open a GCC bug.
+OK... rename() has a major difference from linkat(), though, in not
+following links (or allowing fd + empty path).  link() is deeply
+asymmetric in treatment of pathnames - the first argument is
+"pathname describes a filesystem object" and the second - "pathname
+descripes an entry in a directory" (the link to be).  rename() is
+not - both arguments are pathnames-as-link-specifiers.  And that
+affects what is and what is not allowed there, so that'll need
+a careful look into.
 
--- 
-Josh
+FWIW, currently linkat() semantics can be described simply enough
+	* oldfd/oldname specifies an fs object; symlink traversal is
+optional.
+	* newfd/newname specifies an entry in some directory.  Directory
+must be on the same mount as the object specified by oldname.
+Entry must be a normal component (no empty paths allowed, no . or ..
+either).  Trailing slashes are not allowed.  There must be no
+entry with that name (which automatically implies that trailing
+symlinks are not to be followed and there can't be anything
+mounted on it).
+	* the object specified by oldname must be a non-directory.
+	* if the object is not a never-linked-yet anonymous,
+it must still have some links.
+	* caller must have permission to create links in the
+affected directory.
+	* append-only and immutables are not allowed (rationale:
+they can't be unlinked)
+	* filesystem is allowed to fail for any reasons, as with
+any operation; a linkat()-specific one is having the link count
+overflow, but any generic error is possible (out of memory, IO
+error, EPERM-because-I-feel-like-that, etc.)
 
+All checks related to object in question are atomic wrt operations
+that add or remove links to that object.  Checks on parent are
+atomic wrt operations modifying the parent.  Neither group is
+atomic wrt operations modifying the _old_ parent (if there's
+any, in the first place).
