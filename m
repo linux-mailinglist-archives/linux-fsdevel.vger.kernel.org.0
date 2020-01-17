@@ -2,53 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9AA61400B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 01:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF0A14010F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 01:45:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbgAQAS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 19:18:57 -0500
-Received: from mail-pg1-f181.google.com ([209.85.215.181]:41106 "EHLO
-        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729225AbgAQAS4 (ORCPT
+        id S1730260AbgAQApN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 19:45:13 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:39089 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726378AbgAQApM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:18:56 -0500
-Received: by mail-pg1-f181.google.com with SMTP id x8so10749115pgk.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 16:18:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PP1y9t3+ZSXllNfB2ZNrGJev/DA1JlR1a7P3+3PKC1Q=;
-        b=OfUT64e3GF/PACUidZKM/Xn5oiBdwlpzzY5iUghx8DJz02xyINzabeAiBXfyXDBsVA
-         2q7sfpQrBK0zo4uv8HJND/WpSZ7hUto9nTep0Zj8aKkBJ8fwaepoSQG7yjTTCPzzE8/b
-         I0V6li4eY0BVGbThz6QVigBRJ/ToPEubcCLnqL/DuZ3GfqHgODfQpE+HHbcjdC+e/cAc
-         j/MnZRAHOi8AAzzh8ojE3waFtteU+IgEjG+sjepkTX5pBgLSztNT25sQndzZZXv89CP2
-         FyOTUEhu00Fx/okBu6Hnrh0PgRtYlm6iLnjgkea8wQ1u9z5Z7EWBqfV1US6cn0/uKq5B
-         pCzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PP1y9t3+ZSXllNfB2ZNrGJev/DA1JlR1a7P3+3PKC1Q=;
-        b=axDpUnSFZkfrF/V/jQT6m7a8ZhvIP4hwOiwx2yMHryBQEOlt55D/8gXP7QOOCrlkq5
-         +cDODLoto2GGCeSCxepfVsBRUUWmy6xB1D/ufL7ce4W3agyZVQKiz+Vt+3N/QZ/qQ+Hp
-         JjZ8V1JSAmbQdC4VlxEk+dtgVPCgegtylD8XOBniE3+RT+w9EydUwt2vOyfjtgbjdIq3
-         yYbg4KDqueYEQ8pI6SVrKt31OA3FipzHBeOj1wTFBEBl4Fk6XJ6D/Jj2qqepWfyGvPv8
-         OUixrbz/0yFoa7aCAee/ZH2YmEB9mv6SOlWhGFpwuFS3wxBn8H5gDdFD+dBo00MqipIR
-         NGlg==
-X-Gm-Message-State: APjAAAVLHBjey88Su/5dRkWFGo+UtAgx/hZ0w5DwhHs6XMGroyTfAqQd
-        hgugXW+K8cr6umYuN9heAAj+dXMrNnI=
-X-Google-Smtp-Source: APXvYqz20xu+mpR9kPehp8RNNgGI4s9ep3R6bzScWDSKJkGb3p0V6Ch6oXe6kAa7UT6WUkqYQWzjmw==
-X-Received: by 2002:a63:9d07:: with SMTP id i7mr44392413pgd.344.1579220336135;
-        Thu, 16 Jan 2020 16:18:56 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id q64sm4992312pjb.1.2020.01.16.16.18.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2020 16:18:55 -0800 (PST)
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
-To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+        Thu, 16 Jan 2020 19:45:12 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 9A797333;
+        Thu, 16 Jan 2020 19:45:11 -0500 (EST)
+Received: from imap21 ([10.202.2.71])
+  by compute3.internal (MEProxy); Thu, 16 Jan 2020 19:45:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=hZKYxd
+        lu8iUVwDGCPOiaxkgzSUeyQwWC0ibxsczROtc=; b=G8kHDlU0inkLaqUZnH+MHR
+        rqDK8PT0vfnpq9CUqyic6fPPBIwKM94WZHrNqFff1S/BLD3kiPj0W6vEFzlReL08
+        ynNRheuFL13tdHGVMidoDy2Uc92MMD+lgW5BQV/oTyrmcpBMAHaF4pMe+Qbw+7bQ
+        Z10yOHC6A4D7I9bgSp6HxPTIa1GGEG+5V+gMb5zHs2GZmOgZlXJREMbHkDblNejM
+        gh8GpN1To2ozm6Wr2wMyy1//wko7qPBjaEKq7RgwmdcVNxR83AW5g8qrvbeqdMow
+        pNlYXpKyiLr65JCBezU4udEZ7dSeFhJVbz+z67RCHPT+kebGi/3NX5+MjbpJq8qA
+        ==
+X-ME-Sender: <xms:lgMhXnN_5TUOb3pdZhCQyzYk0eOzXev9ZbtBDBargS5b4Fm2l4gWDw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedfveholhhi
+    nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucffoh
+    hmrghinheptggrphhnphhrohhtohdrohhrghenucfrrghrrghmpehmrghilhhfrhhomhep
+    figrlhhtvghrshesvhgvrhgsuhhmrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:lgMhXl-Gz52Pb9duq7gPIdD_wiyNML5kjvPK_n2ZaOKlJ9wsxNFyqA>
+    <xmx:lgMhXm7FWbkP0JyiNt-wctMPqaIy7PV6feE7blQ3Y__BvTWSd7BfKw>
+    <xmx:lgMhXrkxBY3SzdakBYcWw8ahTBAJN2S8m2Sod2hlvhHgaAwEGMjn-A>
+    <xmx:lwMhXviYz0cw5sdM0AnE5gN9O3JsqGIGWPOZijHTTlgIS6XBNUG-1Q>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9F5F4660061; Thu, 16 Jan 2020 19:45:10 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-754-g09d1619-fmstable-20200113v1
+Mime-Version: 1.0
+Message-Id: <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
+In-Reply-To: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
 References: <20200107170034.16165-1-axboe@kernel.dk>
  <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
  <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
@@ -56,71 +54,26 @@ References: <20200107170034.16165-1-axboe@kernel.dk>
  <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
  <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
  <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7324bbb7-8f7b-c0c6-6a45-48b8b77c4be8@kernel.dk>
-Date:   Thu, 16 Jan 2020 17:18:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date:   Thu, 16 Jan 2020 19:44:49 -0500
+From:   "Colin Walters" <walters@verbum.org>
+To:     "Stefan Metzmacher" <metze@samba.org>,
+        "Jens Axboe" <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/16/20 3:50 PM, Stefan Metzmacher wrote:
-> Am 09.01.20 um 03:03 schrieb Jens Axboe:
->> On 1/8/20 6:02 PM, Jens Axboe wrote:
->>> On 1/8/20 4:05 PM, Stefan Metzmacher wrote:
->>>> Am 08.01.20 um 23:57 schrieb Jens Axboe:
->>>>> On 1/8/20 2:17 PM, Stefan Metzmacher wrote:
->>>>>> Am 07.01.20 um 18:00 schrieb Jens Axboe:
->>>>>>> Sending this out separately, as I rebased it on top of the work.openat2
->>>>>>> branch from Al to resolve some of the conflicts with the differences in
->>>>>>> how open flags are built.
->>>>>>
->>>>>> Now that you rebased on top of openat2, wouldn't it be better to add
->>>>>> openat2 that to io_uring instead of the old openat call?
->>>>>
->>>>> The IORING_OP_OPENAT already exists, so it would probably make more sense
->>>>> to add IORING_OP_OPENAT2 alongside that. Or I could just change it. Don't
->>>>> really feel that strongly about it, I'll probably just add openat2 and
->>>>> leave openat alone, openat will just be a wrapper around openat2 anyway.
->>>>
->>>> Great, thanks!
->>>
->>> Here:
->>>
->>> https://git.kernel.dk/cgit/linux-block/log/?h=for-5.6/io_uring-vfs
->>>
->>> Not tested yet, will wire this up in liburing and write a test case
->>> as well.
->>
->> Wrote a basic test case, and used my openbench as well. Seems to work
->> fine for me. Pushed prep etc support to liburing.
-> 
-> Thanks!
-> 
-> Another great feature would the possibility to make use of the
-> generated fd in the following request.
-> 
-> This is a feature that's also available in the SMB3 protocol
-> called compound related requests.
-> 
+
+
+On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
+>
 > The client can compound a chain with open, getinfo, read, close
 > getinfo, read and close get an file handle of -1 and implicitly
 > get the fd generated/used in the previous request.
 
-Right, the "plan" there is to utilize BPF to make this programmable.
-We really need something more expressive to be able to pass information
-between SQEs that are linked, or even to decide which link to run
-depending on the outcome of the parent.
+Sounds similar to  https://capnproto.org/rpc.html too.
 
-There's a lot of potential there!
-
--- 
-Jens Axboe
-
+But that seems most valuable in a situation with nontrivial latency.
