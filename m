@@ -2,118 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E8D614017A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 02:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 984001401C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 03:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388359AbgAQBdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 20:33:24 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45155 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbgAQBdY (ORCPT
+        id S1732407AbgAQCTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 21:19:23 -0500
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:46516 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729730AbgAQCTX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 20:33:24 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 203so17067914lfa.12;
-        Thu, 16 Jan 2020 17:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=Vv41OytkG2lm8SDKlOhg/H6yihO/V8R0f5z4QUp0HiY=;
-        b=Ah4TFo6IAW4T2As4EOtGEwjyCC4a/sieRz+Y9ll6/X1YfVcWC45I32GbSnGbdYDCbA
-         PmwYVbh8mD6sH146gnqDd9pPR1E6Wq/Nq+0qVafy5jYXBBII88hwa9iBwTiZV7vqrRId
-         1Wrii4CzY7JPvxuGQgCME78phMA22NwqzOojZy+oSzxK2ADHsH9kRkkDpFjXeTZBm5zf
-         WF21SQmP/Gxcg9oxq7ylsx5S8xywWyAqoRb/aloJyaCiP1+z5T1+uaxRxL0c30rjTESI
-         4OyJorxOeoHIDMq1K0uow3O9+S8DnQ/2PY5qoNGc/ioUXKJ3s4FZHjgaA2QdicF47S1s
-         EFLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Vv41OytkG2lm8SDKlOhg/H6yihO/V8R0f5z4QUp0HiY=;
-        b=uOi99bAAaazzG0IL3qwUG7I/1PX17QvwtvsAWqV+cFx72PmTaQtrLm14oWTW/+REP3
-         UJfDDnWfOuJsqJHyDz5BK1SWQ35SolbWhd/d0WYv2P277XlbiJRhoFsT/qAKlssyJL7z
-         ekRoQ7bjprYT8YJXE9PZVGHU2JVnpXzZrW/0oouhhRnMBgNGhN2hS80X6caW0T6b7S0m
-         uRR6zoqujdUkBmDM4GgXmNN+PRHK5+k3CsyVVv46lqhqYsZy9s3CMfIlvXdnxWPsjd6j
-         lPjV0m821Nph+ZapwZfRvk9niqYRxC0kHHHVN28MA0OZcgCZRd1FK4OYTtSTcUx7/zz+
-         lydw==
-X-Gm-Message-State: APjAAAU1gzFLg5lnMN1vHF7RTF/zrT/uWNJk+f/edFWv4HwYG24VJ/wm
-        v9xXBAPyuTjS8i3gp+q/oQ4=
-X-Google-Smtp-Source: APXvYqxw8NkIQQimSy+3i2QsgTXNgXe3GdPb4+CIflp9GmK5A8gUyzNBZXzEBOPS4cO2XeJFaBceUQ==
-X-Received: by 2002:a19:c1c1:: with SMTP id r184mr4172932lff.128.1579224801780;
-        Thu, 16 Jan 2020 17:33:21 -0800 (PST)
-Received: from localhost.localdomain ([109.126.145.157])
-        by smtp.gmail.com with ESMTPSA id q10sm11608696ljj.60.2020.01.16.17.33.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2020 17:33:21 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs: optimise kiocb_set_rw_flags()
-Date:   Fri, 17 Jan 2020 04:32:37 +0300
-Message-Id: <5328b35d948ea2a3aa5df2b1d740c7cb1f38c846.1579224594.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <8cecd243-38aa-292d-15cd-49b485f9253f@gmail.com>
-References: <8cecd243-38aa-292d-15cd-49b485f9253f@gmail.com>
+        Thu, 16 Jan 2020 21:19:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TnwGlMv_1579227557;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TnwGlMv_1579227557)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 17 Jan 2020 10:19:18 +0800
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Subject: Re: [PATCH v6 0/2] sched/numa: introduce numa locality
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
+ <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Message-ID: <8edb83a2-9943-2954-0da6-f4d29e3df109@linux.alibaba.com>
+Date:   Fri, 17 Jan 2020 10:19:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
+In-Reply-To: <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kiocb_set_rw_flags() generates a poor code with several memory writes
-and a lot of jumps. Help compilers to optimise it.
+Dear folks,
 
-Tested with gcc 9.2 on x64-86, and as a result, it its output now is a
-plain code without jumps accumulating in a register before a memory
-write.
+During our testing, we found in some cases the NUMA Balancing
+is not helping improving locality, that is the memory writing
+inside a virtual machine.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
+The VM is created by docker kata-runtime, inside guest the
+container executed several tasks to malloc memory and keep
+writing in page size, then report the time cost after finished
+1G writing.
 
-v2: check for 0 flags in advance (Matthew Wilcox)
+The result is not as good as runc, and we found the locality
+is not growing in kata cases, with some debugging we located
+the reason.
 
- include/linux/fs.h | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Those vcpu threads created by VM is rarely exit into userspace
+in this case, they just stay in kernel after calling ioctl(KVM_RUN),
+while NUMA Balancing work is done with task_work_run(), which
+is handled together with signal handling before exit to usermode.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 98e0349adb52..22b46fc8fdfa 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3402,22 +3402,28 @@ static inline int iocb_flags(struct file *file)
- 
- static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- {
-+	int kiocb_flags = 0;
-+
-+	if (!flags)
-+		return 0;
- 	if (unlikely(flags & ~RWF_SUPPORTED))
- 		return -EOPNOTSUPP;
- 
- 	if (flags & RWF_NOWAIT) {
- 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
- 			return -EOPNOTSUPP;
--		ki->ki_flags |= IOCB_NOWAIT;
-+		kiocb_flags |= IOCB_NOWAIT;
- 	}
- 	if (flags & RWF_HIPRI)
--		ki->ki_flags |= IOCB_HIPRI;
-+		kiocb_flags |= IOCB_HIPRI;
- 	if (flags & RWF_DSYNC)
--		ki->ki_flags |= IOCB_DSYNC;
-+		kiocb_flags |= IOCB_DSYNC;
- 	if (flags & RWF_SYNC)
--		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
-+		kiocb_flags |= (IOCB_DSYNC | IOCB_SYNC);
- 	if (flags & RWF_APPEND)
--		ki->ki_flags |= IOCB_APPEND;
-+		kiocb_flags |= IOCB_APPEND;
-+
-+	ki->ki_flags |= kiocb_flags;
- 	return 0;
- }
- 
--- 
-2.24.0
+So the situation is, for these vcpu threads, NUMA Balancing work
+was queued with task_work_add(), but never got chance to finish.
 
+Now the question is, is this by designed or not?
+
+BTW, we also passed the NUMA topology into VM, but still the result
+is not as good as runc, seems like the effect of NUMA Balancing on
+host is far more better than inside guest.
+
+Regards,
+Michael Wang
+
+
+On 2019/12/13 上午9:43, 王贇 wrote:
+> Since v5:
+>   * fix compile failure when NUMA disabled
+> Since v4:
+>   * improved documentation
+> Since v3:
+>   * fix comments and improved documentation
+> Since v2:
+>   * simplified the locality concept & implementation
+> Since v1:
+>   * improved documentation
+> 
+> Modern production environment could use hundreds of cgroup to control
+> the resources for different workloads, along with the complicated
+> resource binding.
+> 
+> On NUMA platforms where we have multiple nodes, things become even more
+> complicated, we hope there are more local memory access to improve the
+> performance, and NUMA Balancing keep working hard to achieve that,
+> however, wrong memory policy or node binding could easily waste the
+> effort, result a lot of remote page accessing.
+> 
+> We need to notice such problems, then we got chance to fix it before
+> there are too much damages, however, there are no good monitoring
+> approach yet to help catch the mouse who introduced the remote access.
+> 
+> This patch set is trying to fill in the missing pieces， by introduce
+> the per-cgroup NUMA locality info, with this new statistics, we could
+> achieve the daily monitoring on NUMA efficiency, to give warning when
+> things going too wrong.
+> 
+> Please check the second patch for more details.
+> 
+> Michael Wang (2):
+>   sched/numa: introduce per-cgroup NUMA locality info
+>   sched/numa: documentation for per-cgroup numa statistics
+> 
+>  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+>  Documentation/admin-guide/index.rst             |   1 +
+>  Documentation/admin-guide/kernel-parameters.txt |   4 +
+>  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+>  include/linux/sched.h                           |  15 ++
+>  include/linux/sched/sysctl.h                    |   6 +
+>  init/Kconfig                                    |  11 ++
+>  kernel/sched/core.c                             |  75 ++++++++++
+>  kernel/sched/fair.c                             |  62 +++++++++
+>  kernel/sched/sched.h                            |  12 ++
+>  kernel/sysctl.c                                 |  11 ++
+>  11 files changed, 384 insertions(+)
+>  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+> 
