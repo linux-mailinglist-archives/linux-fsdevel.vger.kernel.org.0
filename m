@@ -2,162 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A857414041C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 07:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49FB414057F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 09:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbgAQGpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 01:45:11 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:47982 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbgAQGpK (ORCPT
+        id S1729410AbgAQIcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 03:32:25 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52620 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbgAQIcZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 01:45:10 -0500
-Received: by mail-il1-f199.google.com with SMTP id x69so18015514ill.14
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 22:45:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ALoOrIWozL+7PLCcGhdyW5y50eCbmJ6yl03zW3710zk=;
-        b=sstiiZ/1gYRZs+PTp+js6A+hdEYejfA2KleegXWAnHMR3ZL97M8yqQcD8+moL9xtxm
-         Db9cPZ19NgQjuyS7f7YmUHg2lr96uddVK4KzzBJLTNHM1V6lF2RX2K8OYdyUlp6McmiU
-         6bjuAw2NGJHh4xcbgSWIwDNAjPilQ4vLFt9MK1bI8NWB36jig0UtcHrN42wKSYPfHxYK
-         hQpDltwAT86m6BhyGBO7snQQpGCsnZRbYsdX7F5W5X471Fr02tgwCt2USeLlIfnrMRTI
-         U9qLHS60MqckbfShAAatNLrkIroKOHsVtl/6jG/raOM0J/a+DqtUIAvsYmKmGWCAJPog
-         wmbw==
-X-Gm-Message-State: APjAAAWvQfkUIXZ0w3dOwUvnnP6RlKVKuypgx5Brdgi9nm+8qZiHMAe2
-        PeRwfZDRsn3RsJ/+BaJASNvolzLZkwx76EuPtVeifuvov9kp
-X-Google-Smtp-Source: APXvYqx7cLsfbkr4tyHg0yBuh+Y7mfDrXeXDvyvI806pApG8VLr6QRUQBtIB1yUYwA6ZJYsma6GMsTQKy8JR2FZqPF/P2HbYS2Ht
+        Fri, 17 Jan 2020 03:32:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y9Ep/eeYbaIxxVmlhJEobd6cxmZ0LGEzXqlvP1MkkLE=; b=Tpb+CKn0VYnlSFFimCbPKAl7h
+        NZt0oWSreQSTUNdpWR/rpSkjPMbJwbLyrAXp0GXq85PtjBXoFw1Nb17SKs1nb5c+lJDtvebqaP6Nn
+        PJ3v9S6vdmcJ81DbbxbqxjY8815Mn4BGtmTDozpzMMRhnF1qTOr+AfAu59zqZPjRG2rgRvwDB1W3D
+        I35Kd62ZVVxFsEssqdYG5Ss2a9MA70WeqsGgU19KnbRkhtdLVkZ+munwtJYkhd/4VFVgZAJCn+Ed1
+        8mVPnJ5nfpCrYyOiUTPWXC88Fl42EawWl32m5908L829v3FaylM7QIRNMMmEaG0oa96IcftbBfqbS
+        vmrXSPRBA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isN3F-0004ZQ-RD; Fri, 17 Jan 2020 08:32:21 +0000
+Date:   Fri, 17 Jan 2020 00:32:21 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Satya Tangirala <satyat@google.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 2/9] block: Add encryption context to struct bio
+Message-ID: <20200117083221.GA324@infradead.org>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20191218145136.172774-3-satyat@google.com>
+ <20191218212116.GA7476@magnolia>
+ <yq1y2v9e37b.fsf@oracle.com>
+ <20191218222726.GC47399@gmail.com>
+ <yq1fthhdttv.fsf@oracle.com>
+ <20200108140730.GC2896@infradead.org>
+ <20200108172629.GA232722@sol.localdomain>
 MIME-Version: 1.0
-X-Received: by 2002:a02:2a08:: with SMTP id w8mr32302555jaw.86.1579243509817;
- Thu, 16 Jan 2020 22:45:09 -0800 (PST)
-Date:   Thu, 16 Jan 2020 22:45:09 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006aa78f059c5048c1@google.com>
-Subject: KASAN: use-after-free Read in __locks_wake_up_blocks
-From:   syzbot <syzbot+922689db06e57b69c240@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200108172629.GA232722@sol.localdomain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi Eric,
 
-syzbot found the following crash on:
+On Wed, Jan 08, 2020 at 09:26:29AM -0800, Eric Biggers wrote:
+> The NVMe "key per I/O" draft is heavily flawed, and I don't think it will be
+> useful at all in the Linux kernel context.  The problem is that, as far as I
+> can tell, it doesn't allow the encryption algorithm and IVs to be selected,
+> or even standardized or made discoverable in any way.  It does say that
+> AES-256 must be supported, but it doesn't say which mode of operation (i.e.
+> it could be something inappropriate for disk encryption, like ECB), nor
+> does it say whether AES-256 has to be the default or not, and if it's not
+> the default how to discover that and select AES-256.
 
-HEAD commit:    f5ae2ea6 Fix built-in early-load Intel microcode alignment
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c103aee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9290aeb7e6cf1c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=922689db06e57b69c240
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+I've talked to people involved with the TCG side of this spec, where
+all the interesting crypto happens.  Currently the plan is to support
+KMIP wrapper keys, which specify the exact algorithm and operation
+mode, and algorithms and modes for the initial version are planned to
+be AES 256/512 XTS.  I also had a chat with an involved person and
+they understand the principle that for the inline crypto to be trusted
+it needs to be interoperable with (trusted) software algorithms.  So
+I don't think it is all doom.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> IV generation is also unspecified, so it
+> could be something insecure like always using the same IV.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+922689db06e57b69c240@syzkaller.appspotmail.com
+From talking to one of the initiators of the spec, no it is not intended
+to be unspecified, but indeed tied to the LBA (see below).
 
-==================================================================
-BUG: KASAN: use-after-free in __wake_up_common+0x5d7/0x610  
-kernel/sched/wait.c:81
-Read of size 8 at addr ffff88808e074888 by task syz-executor.0/20572
+> Also, since "key per I/O" won't allow selecting IVs, all the encrypted data will
+> be tied to its physical location on-disk.  That will make "key per I/O" unusable
+> in any case where encrypted blocks are moved without the key, e.g.
+> filesystem-level encryption on many filesystems.
 
-CPU: 1 PID: 20572 Comm: syz-executor.0 Not tainted 5.5.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:639
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
-  __wake_up_common+0x5d7/0x610 kernel/sched/wait.c:81
-  __wake_up_common_lock+0xea/0x150 kernel/sched/wait.c:123
-  __wake_up+0xe/0x10 kernel/sched/wait.c:142
-  __locks_wake_up_blocks+0x120/0x180 fs/locks.c:742
-  locks_delete_block+0x73/0xf0 fs/locks.c:773
-  flock_lock_inode_wait fs/locks.c:2143 [inline]
-  locks_lock_inode_wait+0x16b/0x3f0 fs/locks.c:2162
-  locks_lock_file_wait include/linux/fs.h:1328 [inline]
-  __do_sys_flock fs/locks.c:2225 [inline]
-  __se_sys_flock fs/locks.c:2188 [inline]
-  __x64_sys_flock+0x30c/0x370 fs/locks.c:2188
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45aff9
-Code: ad b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fb6469d4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000049
-RAX: ffffffffffffffda RBX: 00007fb6469d56d4 RCX: 000000000045aff9
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000004
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000000c6 R14: 00000000004c1bff R15: 000000000075bf2c
+File systems don't move data around all that often (saying that with my
+fs developer hat on).  In traditional file systems only defragmentation
+will move data around, with extent refcounting it can also happen for
+dedup, and for file systems that write out of place data gets moved
+when parts of a block are rewritten, but in that case a read modify
+write cycle is perfomed in the Linux code anyway, so it will go through
+the inline encryption engined on the way and the way out.
 
-Allocated by task 20575:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  __kasan_kmalloc mm/kasan/common.c:513 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
-  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:521
-  slab_post_alloc_hook mm/slab.h:584 [inline]
-  slab_alloc mm/slab.c:3320 [inline]
-  kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
-  kmem_cache_zalloc include/linux/slab.h:660 [inline]
-  locks_alloc_lock+0x1d/0x1d0 fs/locks.c:346
-  flock_make_lock+0x241/0x2b0 fs/locks.c:487
-  __do_sys_flock fs/locks.c:2207 [inline]
-  __se_sys_flock fs/locks.c:2188 [inline]
-  __x64_sys_flock+0xd5/0x370 fs/locks.c:2188
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+So in other words - specifying an IV would be useful for some use cases,
+but I don't think it is a deal blocker. Even without that is is useful
+for block device level encryption, and could have some usefulness for
+file system encryption usage.
 
-Freed by task 20575:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  kasan_set_free_info mm/kasan/common.c:335 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
-  __cache_free mm/slab.c:3426 [inline]
-  kmem_cache_free+0x86/0x320 mm/slab.c:3694
-  locks_free_lock fs/locks.c:383 [inline]
-  __do_sys_flock fs/locks.c:2228 [inline]
-  __se_sys_flock fs/locks.c:2188 [inline]
-  __x64_sys_flock+0x23b/0x370 fs/locks.c:2188
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+I think that adding an IV would eventually be useful, but fitting that
+into NVMe won't be easy, as you'd need to find a way to specify the IV
+for each submission queue entry, which requires growing it, or finding
+some way to extend it out of band.
 
-The buggy address belongs to the object at ffff88808e0747f0
-  which belongs to the cache file_lock_cache of size 264
-The buggy address is located 152 bytes inside of
-  264-byte region [ffff88808e0747f0, ffff88808e0748f8)
-The buggy address belongs to the page:
-page:ffffea0002381d00 refcount:1 mapcount:0 mapping:ffff8880a9932700  
-index:0xffff88808e074a80
-raw: 00fffe0000000200 ffffea00025f86c8 ffffea0002585ac8 ffff8880a9932700
-raw: ffff88808e074a80 ffff88808e074040 000000010000000a 0000000000000000
-page dumped because: kasan: bad access detected
+> I've already raised these concerns in the NVMe and TCG Storage working groups,
+> and the people working on it refused to make any changes, as they consider "key
+> per I/O" to be more akin to the TCG Opal self-encrypting drive specification,
+> and not actually intended to be "inline encryption".
 
-Memory state around the buggy address:
-  ffff88808e074780: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fb fb
-  ffff88808e074800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88808e074880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fc
-                       ^
-  ffff88808e074900: fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb fb
-  ffff88808e074980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+While I have my fair share of issues how the spec is developed that
+isn't my impression, and at least for the verifyable part I heard
+contrary statements.  Feel free to contact me offline to make sure we
+can move this into the right direction.
 
+> So let's not over-engineer this kernel patchset to support some broken
+> vaporware, please.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Not sharing bio fields for integrity and encryption actually keeps
+the patchset simpler (although uses more memory if both options are
+enabled).  So my main point here is to not over engineer it for broken
+premise that won't be true soon.
