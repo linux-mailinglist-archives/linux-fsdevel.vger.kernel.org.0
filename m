@@ -2,75 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6F4140E35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 16:47:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C8EB140E82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 17:01:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbgAQPrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 10:47:08 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34442 "EHLO
+        id S1729238AbgAQQBP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 11:01:15 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34606 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728816AbgAQPrI (ORCPT
+        with ESMTP id S1727043AbgAQQBO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 10:47:08 -0500
+        Fri, 17 Jan 2020 11:01:14 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1isTpp-00AKy8-Aa; Fri, 17 Jan 2020 15:46:57 +0000
-Date:   Fri, 17 Jan 2020 15:46:57 +0000
+        id 1isU3Z-00ALHS-1l; Fri, 17 Jan 2020 16:01:09 +0000
+Date:   Fri, 17 Jan 2020 16:01:09 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "osandov@osandov.com" <osandov@osandov.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>, "hch@lst.de" <hch@lst.de>,
+Cc:     "dhowells@redhat.com" <dhowells@redhat.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "osandov@osandov.com" <osandov@osandov.com>,
         "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
 Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
-Message-ID: <20200117154657.GK8904@ZenIV.linux.org.uk>
-References: <364531.1579265357@warthog.procyon.org.uk>
- <d2730b78cf0eac685c3719909df34d8d1b0bc347.camel@hammerspace.com>
+Message-ID: <20200117160109.GL8904@ZenIV.linux.org.uk>
+References: <d2730b78cf0eac685c3719909df34d8d1b0bc347.camel@hammerspace.com>
+ <364531.1579265357@warthog.procyon.org.uk>
+ <448106.1579272445@warthog.procyon.org.uk>
+ <18dad9903c4f5c63300048e9ed2a8706ad31bc73.camel@hammerspace.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d2730b78cf0eac685c3719909df34d8d1b0bc347.camel@hammerspace.com>
+In-Reply-To: <18dad9903c4f5c63300048e9ed2a8706ad31bc73.camel@hammerspace.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 02:33:01PM +0000, Trond Myklebust wrote:
-> On Fri, 2020-01-17 at 12:49 +0000, David Howells wrote:
-> > It may be worth a discussion of whether linkat() could be given a
-> > flag to
-> > allow the destination to be replaced or if a new syscall should be
-> > made for
-> > this - or whether it should be disallowed entirely.
-> > 
-> > A set of patches has been posted by Omar Sandoval that makes this
-> > possible:
-> > 
-> >     
-> > https://lore.kernel.org/linux-fsdevel/cover.1524549513.git.osandov@fb.com/
-> > 
-> > though it only includes filesystem support for btrfs.
-> > 
-> > This could be useful for cachefiles:
-> > 
-> > 	
-> > https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
-> > 
-> > and overlayfs.
-> > 
+On Fri, Jan 17, 2020 at 02:56:05PM +0000, Trond Myklebust wrote:
+
+> It sounds to me like we rather need a meta-topic about "How do we get
+> simple things done in the Linux fs community?"
 > 
-> That seems to me like a "just go ahead and do it if you can justify it"
-> kind of thing. It has plenty of precedent, and fits easily into the
-> existing syscall, so why do we need a face-to-face discussion?
+> It shouldn't take a ticket to Palm Springs to perform something simple
+> like adding a new flag to a syscall.
 
-Unfortunately, it does *not* fit easily.  And IMO that's linux-abi fodder more
-than anything else.  The problem is in coming up with sane semantics - there's
-a plenty of corner cases with that one.  What to do when destination is
-a dangling symlink, for example?  Or has something mounted on it (no, saying
-"we'll just reject directories" is not enough).  What should happen when
-destination is already a hardlink to the same object?
+Sure - adding a new flag is trivial.  Coming up with sane semantics for
+it, OTOH, can be rather non-trivial and in this case it is, unfortunately.
+"something like link(2), only it tolerates the existing target and
+atomically replaces it" does _not_ specify the semantics.  Try to sit
+down for a few minutes and come up with the cases when behaviour is
+undefined by the above; it won't take longer than that.
 
-It's less of a horror than rename() would've been, but that's not saying
-much.
+We can do it by asking the proponent to come up with full description to
+be included into the proposal, then have at it on fsdevel/linux-abi (as
+well as security lists).  Doable, but not a small amount of PITA for
+original poster and dealing with questions/objections/etc. is certain
+to grow a large thread with many branches (and lots of bikeshedding
+thrown in) _and_ would include tons of roundtrips, so the latency
+(especially early on, while the proposal is still raw) will be a factor.
+
+It's not the question of how to implement it; it's what should it _do_.
+And "we'll tweak the behaviour in corner cases later on" is good in
+a lot of situations, but not for userland ABI.  I'd been guilty of
+such fuckups several times and they are not cheap to fix afterwards ;-/
