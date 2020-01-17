@@ -2,178 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640B3140614
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 10:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B60F140655
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 10:40:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726999AbgAQJd0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 04:33:26 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41638 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbgAQJdJ (ORCPT
+        id S1726950AbgAQJiK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 04:38:10 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37173 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbgAQJiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 04:33:09 -0500
-Received: by mail-ed1-f65.google.com with SMTP id c26so21622725eds.8;
-        Fri, 17 Jan 2020 01:33:08 -0800 (PST)
+        Fri, 17 Jan 2020 04:38:09 -0500
+Received: by mail-lj1-f195.google.com with SMTP id o13so25754414ljg.4;
+        Fri, 17 Jan 2020 01:38:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=jSBTkJwtcUerpe5D53vGoy3o8kE/mglpH/syhpG7qgc=;
-        b=Dae11mxXI7xzPj9oLj+8qe2n1K9uZRbfEULM8ZnQ8VthlUUa3g9WGpEutXAx75Dila
-         RzuEcvtPCbDSHztA3G6JJN+efdyBqbw5VUYD8noVZQklvaC2r3reAD696Wq5rmtr0VHR
-         C3cfehhQ8rl5VORtFPRQpnjkgqPqkcjvPu/WmqCIBwcfuKQ/PLrn0NExhoDrdGA67gZb
-         mlQ6VzxBzjsm5y+MLPoxu8pMpenZvTlPcyluAyS70IdZnkBw1BWvLIUzzNVx4B/r9wfA
-         bifmWiXV7o3MK8Jka9Nr1tvR6i2r9F59oOPOGNcn205jec2wmcqfJJOJylr2XSZ5Zl4J
-         DVJg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ABt+x9XFhNzr6FSZjAakBnTu+DOUpeXOGWTjIdDYz8w=;
+        b=QUjScw3v+doeKM/rEi6fU2VZ7+8e1CZxMWnW5Ao+WPuFmyffmJy4SoZAJOnkg4K5p9
+         NfWdOVfYVDY/ZnEkUtNdZ7HjLbEn1yw6T99vFNvUvoLLfLo4xMJjibKjuT1BkbBEfdJg
+         cmxL5haqvMR8K75z1cLF2CgHdIM9C+OFUMuLzW33yQKpSUarUd5JrxSjNZMYoTkKZfyq
+         ojrcpxGFB7TM608tybdrwsZhgdPz0x5NXMw7Vd4TPm8T+BKNwqrnu8c+j51jHbcQZ6P+
+         B+NyuCBrJuExH5Ti81I6hls0EusyDRklgeB5koGRbuk48N5nXnRmElnD+KD6Kwtqlgvp
+         rTXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jSBTkJwtcUerpe5D53vGoy3o8kE/mglpH/syhpG7qgc=;
-        b=iEprUu5xbtsJzy0X3zV/pA2Iq6lDbOHy0Z/FDq4DsAKF9wq88Ah3hp/P9b38eHE8W1
-         Hy4JlIJwfOmDTeS/hNrHr5kVVlLsbgC3E8ZVBaHnSbV7fYMS2/T7l2sw4OdTPLSiwTYf
-         Pj5XOEKNasPTC8U7pRFQnQuvSwfca78A3Ib9HyMYmZI69DcnV/Sfjf24x1kobzAAwMi3
-         EK4ISSVLNaA0tFkDp/p/e4eOPIas6kX2nN35EhBfsNivl15ukfXXE4/b2QMdozbCNmWc
-         TOMEb77c4tSHgzjhMCBGYM/LgYYyjTm65aX4ufs2JFvW8D1tdJL2ezZG+QQWHamqFJYV
-         uZ/A==
-X-Gm-Message-State: APjAAAUulZpBsICVLZKPVqTRAr3kcjwZwIeyFJ38+4ObyW8Kzpr+yegK
-        yb+RCHscOabjEw5G0afgSJPWONZM
-X-Google-Smtp-Source: APXvYqy3/PrY1adqexEo9QZ4ojVjDe/bPHeUwG0RJarlzo6SmgKei80eBsp7arJuV0Ogq5+Qyayptw==
-X-Received: by 2002:adf:e591:: with SMTP id l17mr2007406wrm.139.1579253128997;
-        Fri, 17 Jan 2020 01:25:28 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id x10sm32358781wrv.60.2020.01.17.01.25.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 01:25:28 -0800 (PST)
-Date:   Fri, 17 Jan 2020 10:25:27 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, linkinjeon@gmail.com, arnd@arndb.de
-Subject: Re: [PATCH v10 03/14] exfat: add inode operations
-Message-ID: <20200117092527.5m4i2fvo7mge7z37@pali>
-References: <20200115082447.19520-1-namjae.jeon@samsung.com>
- <CGME20200115082820epcas1p34ebebebaf610fd61c4e9882fca8ddbd5@epcas1p3.samsung.com>
- <20200115082447.19520-4-namjae.jeon@samsung.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ABt+x9XFhNzr6FSZjAakBnTu+DOUpeXOGWTjIdDYz8w=;
+        b=gGkjA7gtOYQ/Cv9TfCKXX9seraIvmndJZJ/1ZjFLeFK9eGfx60//cF0E5h6WMKXEhC
+         18lsOD8eO7izTb0LMxQ0zHdj2bRztVxzhz9Ww5/DZPZFoJp7Twmxr/V9hTrcZ/+riWto
+         LmlqO0Be9QL9L3X1I+9k1VzOYc7SG1v9S7DY2K8/Pfh7RiBVNyhPbYlpoEkaI9GMIoJ5
+         NtxchXG90UTeU5054h52M9IK71PWMGgJfmruOvb5OcKk6jCCju+LnuE4Mz0po1Qn9qGs
+         K4RhArKIGIZAJ/sO0gq0yQECOd9900fhD5igtiP7JzAEqhroFnq5RyhrIwALNSl+pHKM
+         GZxQ==
+X-Gm-Message-State: APjAAAWjRHchuZKovQbwTDVaq6c1OlrcdNEH9xrFNebRpFVILRQhu78M
+        MH1BnDf3UQfzl+Mur6B1NDx14psNkqk=
+X-Google-Smtp-Source: APXvYqzJk9dI9tG69ql74eKdM25KWItLaeoHjCkNR9poRDcy55Un/TQgJLHLRbTiRw3ryqrTp5akkw==
+X-Received: by 2002:a2e:a361:: with SMTP id i1mr4735445ljn.29.1579253540125;
+        Fri, 17 Jan 2020 01:32:20 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id u7sm11721501lfn.31.2020.01.17.01.32.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Jan 2020 01:32:19 -0800 (PST)
+Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+To:     Colin Walters <walters@verbum.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+References: <20200107170034.16165-1-axboe@kernel.dk>
+ <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
+ <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
+ <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
+ <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
+ <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
+ <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
+ <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <964c01cc-94f5-16b2-cc61-9ee5789b1f43@gmail.com>
+Date:   Fri, 17 Jan 2020 12:32:18 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
+In-Reply-To: <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200115082447.19520-4-namjae.jeon@samsung.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wednesday 15 January 2020 17:24:36 Namjae Jeon wrote:
-> This adds the implementation of inode operations for exfat.
+On 1/17/2020 3:44 AM, Colin Walters wrote:
+> On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
+>> The client can compound a chain with open, getinfo, read, close
+>> getinfo, read and close get an file handle of -1 and implicitly
+>> get the fd generated/used in the previous request.
 > 
-> Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-> ---
->  fs/exfat/inode.c |  667 +++++++++++++++++++++
->  fs/exfat/namei.c | 1442 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 2109 insertions(+)
->  create mode 100644 fs/exfat/inode.c
->  create mode 100644 fs/exfat/namei.c
+> Sounds similar to  https://capnproto.org/rpc.html too.
 > 
-> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-> new file mode 100644
-> index 000000000000..56cf09db1920
-> --- /dev/null
-> +++ b/fs/exfat/inode.c
-> @@ -0,0 +1,667 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/buffer_head.h>
-> +#include <linux/mpage.h>
-> +#include <linux/bio.h>
-> +#include <linux/blkdev.h>
-> +#include <linux/time.h>
-> +#include <linux/writeback.h>
-> +#include <linux/uio.h>
-> +#include <linux/random.h>
-> +#include <linux/iversion.h>
-> +
-> +#include "exfat_raw.h"
-> +#include "exfat_fs.h"
-> +
-> +static int __exfat_write_inode(struct inode *inode, int sync)
-> +{
-> +	int ret = -EIO;
-> +	unsigned long long on_disk_size;
-> +	struct exfat_dentry *ep, *ep2;
-> +	struct exfat_entry_set_cache *es = NULL;
-> +	struct super_block *sb = inode->i_sb;
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +	struct exfat_inode_info *ei = EXFAT_I(inode);
-> +	bool is_dir = (ei->type == TYPE_DIR) ? true : false;
-> +
-> +	if (inode->i_ino == EXFAT_ROOT_INO)
-> +		return 0;
-> +
-> +	/*
-> +	 * If the indode is already unlinked, there is no need for updating it.
-> +	 */
-> +	if (ei->dir.dir == DIR_DELETED)
-> +		return 0;
-> +
-> +	if (is_dir && ei->dir.dir == sbi->root_dir && ei->entry == -1)
-> +		return 0;
-> +
-> +	exfat_set_vol_flags(sb, VOL_DIRTY);
-> +
-> +	/* get the directory entry of given file or directory */
-> +	es = exfat_get_dentry_set(sb, &(ei->dir), ei->entry, ES_ALL_ENTRIES,
-> +		&ep);
-> +	if (!es)
-> +		return -EIO;
-> +	ep2 = ep + 1;
-> +
-> +	ep->dentry.file.attr = cpu_to_le16(exfat_make_attr(inode));
-> +
-> +	/* set FILE_INFO structure using the acquired struct exfat_dentry */
-> +	exfat_set_entry_time(sbi, &inode->i_ctime,
-> +			&ep->dentry.file.create_time,
-> +			&ep->dentry.file.create_date,
-> +			&ep->dentry.file.create_tz);
+Looks like just grouping a pack of operations for RPC.
+With io_uring we could implement more interesting stuff. I've been
+thinking about eBPF in io_uring for a while as well, and apparently it
+could be _really_ powerful, and would allow almost zero-context-switches
+for some usecases.
 
-And here is missing updating of create_time_ms entry too.
+1. full flow control with eBPF
+- dropping requests (links)
+- emitting reqs/links (e.g. after completions of another req)
+- chaining/redirecting
+of course, all of that with fast intermediate computations in between
 
-> +	exfat_set_entry_time(sbi, &inode->i_mtime,
-> +			&ep->dentry.file.modify_time,
-> +			&ep->dentry.file.modify_date,
-> +			&ep->dentry.file.modify_tz);
+2. do long eBPF programs by introducing a new opcode (punted to async).
+(though, there would be problems with that)
 
-And here modify_time_ms too.
-
-> +	exfat_set_entry_time(sbi, &inode->i_atime,
-> +			&ep->dentry.file.access_time,
-> +			&ep->dentry.file.access_date,
-> +			&ep->dentry.file.access_tz);
-> +
-> +	/* File size should be zero if there is no cluster allocated */
-> +	on_disk_size = i_size_read(inode);
-> +
-> +	if (ei->start_clu == EXFAT_EOF_CLUSTER)
-> +		on_disk_size = 0;
-> +
-> +	ep2->dentry.stream.valid_size = cpu_to_le64(on_disk_size);
-> +	ep2->dentry.stream.size = ep2->dentry.stream.valid_size;
-> +
-> +	ret = exfat_update_dir_chksum_with_entry_set(sb, es, sync);
-> +	kfree(es);
-> +	return ret;
-> +}
-
+Could even allow to dynamically register new opcodes within the kernel
+and extend it to eBPF, if there will be demand for such things.
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+Pavel Begunkov
