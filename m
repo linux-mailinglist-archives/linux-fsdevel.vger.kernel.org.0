@@ -2,95 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4708014096A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4CC3140974
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbgAQL7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 06:59:48 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46122 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbgAQL7s (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 06:59:48 -0500
-Received: by mail-oi1-f195.google.com with SMTP id 13so21907035oij.13;
-        Fri, 17 Jan 2020 03:59:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pEpbeENWmzxz4rGGPG2emBNNwpm/eUYhVctDWE6aqOA=;
-        b=ClagO6lmFYVU4PjTVkAjUeiFz/iZJDASj1yHyrmIbXHJIpW0xyGpdvPsSABrkqWEYD
-         U4Y60z60SdQg8EEUCx4/a9OobAGfsS3lM9W7NwaY5dOxvTYCxiKB9EJnclM2YQ+uD2un
-         DCBTpv+jVAYpbFoXE2q6icaCHLpAJt2kv+Ig7MhSBvLgxW/iKXalJqJ7M3PXJo4Xpa2H
-         bSOEePsokNBqXVlgrPUrrnmDu7bdyEPgphi8cWb9DTInRLIROAETn7fPAv9llKtNer4O
-         EvwHCHEiOV4TYnNhoBHSi+sHDtu/GPBIFt7QXqLNzhoR4nqvF+THkMVuC+nJfu2sVgXe
-         buHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pEpbeENWmzxz4rGGPG2emBNNwpm/eUYhVctDWE6aqOA=;
-        b=Z2NUM7u/PaKZU6Yjb4Il7p8fHmzLwHyw0wtqWBQaY0n5hfA7DAMnShGXmEi+Ekcu8g
-         1wB1C/HFp0wgNV1/au4dBeB0Gygvw+Z5cOB0He24xn1Jzu7bW9LaAhQGYRUyEbZF3ppg
-         6H+7R3m4fGliFGKuAp19yCsCzGjVbKiJuIjWsfgRE7h2SasRR0JY+PstroDIBOsvgaMp
-         cS9OV5XDvWPtwL1f26dmVdMGkuP0zKzOT4/heo52BYLlbDsEMYokFkIgTwMkfmRG1ZQm
-         zJD0MaeEzYyrCa3fWdgftLXardAVoMwghWFV5Kh5HZ91iveM8g9BcfwgQh4gXZaIpjY/
-         eGCA==
-X-Gm-Message-State: APjAAAUwFAF7DIi9i8zY9C/vNiNbke1LwBWce8GxjsR/ilMNx9fQ0Y4U
-        HGMt1skLJ/SoiNBxoh5CCQ4Mcz0iCouoV+dw6JA=
-X-Google-Smtp-Source: APXvYqwNPPeN5UZgmUnicJrQewCoV7WMpviMutktzeujCAP9/GQ1G6oTxNl2s9Rikfx5Lsn+VBGIu+OCrMIti+8Be44=
-X-Received: by 2002:aca:1b08:: with SMTP id b8mr3196649oib.62.1579262387623;
- Fri, 17 Jan 2020 03:59:47 -0800 (PST)
+        id S1726915AbgAQMFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 07:05:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40622 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726785AbgAQMFP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jan 2020 07:05:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DCCC3B2E2;
+        Fri, 17 Jan 2020 12:05:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C1AEA1E0D53; Fri, 17 Jan 2020 13:05:11 +0100 (CET)
+Date:   Fri, 17 Jan 2020 13:05:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: udf: Suspicious values in udf_statfs()
+Message-ID: <20200117120511.GI17141@quack2.suse.cz>
+References: <20200112162311.khkvcu2u6y4gbbr7@pali>
+ <20200113120851.GG23642@quack2.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a8a:87:0:0:0:0:0 with HTTP; Fri, 17 Jan 2020 03:59:47 -0800 (PST)
-In-Reply-To: <20200117091245.ginzffry7anqofju@pali>
-References: <20200115082447.19520-1-namjae.jeon@samsung.com>
- <CGME20200115082825epcas1p1f22ddca6dbf5d70e65d3b0e3c25c3a59@epcas1p1.samsung.com>
- <20200115082447.19520-12-namjae.jeon@samsung.com> <20200115093915.cjef2jadiwe2eul4@pali>
- <002f01d5cced$ba0828b0$2e187a10$@samsung.com> <20200117091245.ginzffry7anqofju@pali>
-From:   Namjae Jeon <linkinjeon@gmail.com>
-Date:   Fri, 17 Jan 2020 19:59:47 +0800
-Message-ID: <CAKYAXd9Gq33qxs=tQvg0v2qOUncDmM2wEeepeiC9Rv18ek56vQ@mail.gmail.com>
-Subject: Re: [PATCH v10 11/14] exfat: add Kconfig and Makefile
-To:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="QTprm0S8XgL7H0Dt"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200113120851.GG23642@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> Hi Pali,
->>
->> Could you please review updated description ?
->>
->> diff --git a/fs/exfat/Kconfig b/fs/exfat/Kconfig
->> index 9eeaa6d06..f2b0cf2c1 100644
->> --- a/fs/exfat/Kconfig
->> +++ b/fs/exfat/Kconfig
->> @@ -15,7 +15,7 @@ config EXFAT_DEFAULT_IOCHARSET
->>         default "utf8"
->>         depends on EXFAT_FS
->>         help
->> -         Set this to the default input/output character set you'd
->> -         like exFAT to use. It should probably match the character set
->> -         that most of your exFAT filesystems use, and can be overridden
->> -         with the "iocharset" mount option for exFAT filesystems.
->> +         Set this to the default input/output character set to use for
->> +         converting between the encoding is used for user visible
->> filename and
->> +         UTF-16 character that exfat filesystem use. and can be
->> overridden with
->> +         the "iocharset" mount option for exFAT filesystems.
->
-> Hello! This is much better. Fine for me.
-Thanks for your review!
->
-> --
-> Pali Roh=C3=A1r
-> pali.rohar@gmail.com
->
+
+--QTprm0S8XgL7H0Dt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+On Mon 13-01-20 13:08:51, Jan Kara wrote:
+> Hello,
+> 
+> On Sun 12-01-20 17:23:11, Pali Rohár wrote:
+> > I looked at udf_statfs() implementation and I see there two things which
+> > are probably incorrect:
+> > 
+> > First one:
+> > 
+> > 	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
+> > 
+> > If sbi->s_partition points to Metadata partition then reported number
+> > of blocks seems to be incorrect. Similar like in udf_count_free().
+> 
+> Oh, right. This needs similar treatment like udf_count_free(). I'll fix it.
+> Thanks for spotting.
+
+Patch for this is attached.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--QTprm0S8XgL7H0Dt
+Content-Type: text/x-patch; charset=iso-8859-1
+Content-Disposition: attachment; filename="0001-udf-Handle-metadata-partition-better-for-statfs-2.patch"
+Content-Transfer-Encoding: 8bit
+
+From 2e831a1fb4fa4a6843e154edb1d9e80a1c610803 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Fri, 17 Jan 2020 12:41:39 +0100
+Subject: [PATCH] udf: Handle metadata partition better for statfs(2)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When the filesystem uses Metadata partition, we need to look at the
+underlying partition to get real total number of blocks in the
+filesystem. Do the necessary remapping in udf_statfs().
+
+Reported-by: Pali Rohár <pali.rohar@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/udf/super.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/udf/super.c b/fs/udf/super.c
+index f747bf72edbe..3bb9793db3aa 100644
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -2395,11 +2395,17 @@ static int udf_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	struct logicalVolIntegrityDescImpUse *lvidiu;
+ 	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
++	unsigned int part = sbi->s_partition;
++	int ptype = sbi->s_partmaps[part].s_partition_type;
+ 
++	if (ptype == UDF_METADATA_MAP25) {
++		part = sbi->s_partmaps[part].s_type_specific.s_metadata.
++							s_phys_partition_ref;
++	}
+ 	lvidiu = udf_sb_lvidiu(sb);
+ 	buf->f_type = UDF_SUPER_MAGIC;
+ 	buf->f_bsize = sb->s_blocksize;
+-	buf->f_blocks = sbi->s_partmaps[sbi->s_partition].s_partition_len;
++	buf->f_blocks = sbi->s_partmaps[part].s_partition_len;
+ 	buf->f_bfree = udf_count_free(sb);
+ 	buf->f_bavail = buf->f_bfree;
+ 	/*
+-- 
+2.16.4
+
+
+--QTprm0S8XgL7H0Dt--
