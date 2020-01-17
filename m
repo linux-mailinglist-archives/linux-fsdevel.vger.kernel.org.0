@@ -2,122 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97212141479
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 23:52:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E38A314149B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2020 00:06:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgAQWw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 17:52:58 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37210 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729099AbgAQWw6 (ORCPT
+        id S1730004AbgAQXGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 18:06:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44810 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729099AbgAQXGd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 17:52:58 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4DCBB8EE2DB;
-        Fri, 17 Jan 2020 14:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1579301577;
-        bh=Q7VL1pKI4g4VE6cEdgo6r0Zpe6ftIj8PtpTM3rqJu1c=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=tzGwcf2I6jixPwG3Z4HWRk08o99Z0rvi/RX/Vvk7pGafDnaownIJJ2wbf+lr1d6xm
-         /x54hjGl8EndVNU11LL3cQiGpoFLiOERKVjJLUOpDTC9fcO6bKd6NlY0bBiZ+wUpYK
-         czFjjCtcF0SvfL7hAZ8FJTewp4RWZSpTal65ylk8=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id F2dMlBXkcM0N; Fri, 17 Jan 2020 14:52:56 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 30AFE8EE181;
-        Fri, 17 Jan 2020 14:52:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1579301576;
-        bh=Q7VL1pKI4g4VE6cEdgo6r0Zpe6ftIj8PtpTM3rqJu1c=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=eVYTn66fgPPeaBFmNF6KYEGrM+FdwjUf2MsHV9N9s/hZryV4AoJKbnOv33j7gZGxs
-         PqePEjBcsnH63bpVFYgR+fXqckYKoEoaAanC+uvLZm3UmJ8A87DT8GRnEYgUSaunX6
-         Xp8yr1gUcfN6XS7bucuEVi7oDceaYeHrL8Qkw3V0=
-Message-ID: <1579301572.13499.7.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        containers@lists.linux-foundation.org,
-        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-Date:   Fri, 17 Jan 2020 14:52:52 -0800
-In-Reply-To: <20200117211940.GA22062@cisco>
-References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
-         <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
-         <20200113034149.GA27228@mail.hallyn.com>
-         <1579112360.3249.17.camel@HansenPartnership.com>
-         <20200116064430.GA32763@mail.hallyn.com>
-         <1579192173.3551.38.camel@HansenPartnership.com>
-         <20200117154402.GA16882@mail.hallyn.com>
-         <1579278342.3227.36.camel@HansenPartnership.com>
-         <20200117211940.GA22062@cisco>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 17 Jan 2020 18:06:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9Jk4K6+zM/z+rUgtMCtvyK2a+37DJxesv3XUbh+Vyoo=; b=XsWkvrfrPz0fwoeslrk01HqaN
+        t/J0vEDVfCPa22NNKmK4ZrrBhMoLiWe8tPPcTQ+zP9giX4JwiDBim7yjYEMV1+xrWMwfwDoqzG1wO
+        WJwSh3Eyx2A/sqgTHute+MZ5pKxoUJvvizoOma6rwuLdGpw/kMabDGLzWGyi43U9YcG0RJnxZZNPR
+        Pmh1uFYH9HFCGk2aVmfzG7+5sPxtomLpMcFjn+Rs3yQCTCcr7pkiSkWM9aCtsBq7Rv3TvyBiCJTdo
+        47mGECZ4S/A3nZaMaXLWWsfyCTwPq/yzYIOiRlBJSQr5pYR2YVOFkFNWVkZ7uKw3Xu1Trr3SiR47G
+        0vu5vxycw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isagk-000647-Bu; Fri, 17 Jan 2020 23:06:02 +0000
+Date:   Fri, 17 Jan 2020 15:06:02 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
+        cyphar@cyphar.com, christian.brauner@ubuntu.com, oleg@redhat.com,
+        luto@amacapital.net, viro@zeniv.linux.org.uk,
+        gpascutto@mozilla.com, ealvarez@mozilla.com, fweimer@redhat.com,
+        jld@mozilla.com, arnd@arndb.de
+Subject: Re: [PATCH v8 2/3] pid: Introduce pidfd_getfd syscall
+Message-ID: <20200117230602.GA31944@bombadil.infradead.org>
+References: <20200103162928.5271-1-sargun@sargun.me>
+ <20200103162928.5271-3-sargun@sargun.me>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200103162928.5271-3-sargun@sargun.me>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-01-17 at 13:19 -0800, Tycho Andersen wrote:
-> On Fri, Jan 17, 2020 at 08:25:42AM -0800, James Bottomley wrote:
-> > On Fri, 2020-01-17 at 09:44 -0600, Serge E. Hallyn wrote:
-> > > On Thu, Jan 16, 2020 at 08:29:33AM -0800, James Bottomley wrote:
-> > > I guess I figured we would have privileged task in the owning
-> > > namespace (presumably init_user_ns) mark a bind mount as
-> > > shiftable 
-> > 
-> > Yes, that's what I've got today in the prototype.  It mirrors the
-> > original shiftfs mechanism.  However, I have also heard people say
-> > they want a permanent mark, like an xattr for this.
-> 
-> Please, no. mount() failures are already hard to reason about, I
-> would rather not add another temporary (or worse, permanent) non-
-> obvious failure mode.
+On Fri, Jan 03, 2020 at 08:29:27AM -0800, Sargun Dhillon wrote:
+> +++ b/kernel/pid.c
+> @@ -578,3 +578,93 @@ void __init pid_idr_init(void)
+>  	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
+>  			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
+>  }
+> +
+> +static struct file *__pidfd_fget(struct task_struct *task, int fd)
+> +{
+> +	struct file *file;
+> +	int ret;
+> +
+> +	ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	if (ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS))
+> +		file = fget_task(task, fd);
+> +	else
+> +		file = ERR_PTR(-EPERM);
+> +
+> +	mutex_unlock(&task->signal->cred_guard_mutex);
+> +
+> +	return file ?: ERR_PTR(-EBADF);
+> +}
+> +
+> +static int pidfd_getfd(struct pid *pid, int fd)
+> +{
+> +	struct task_struct *task;
+> +	struct file *file;
+> +	int ret;
+> +
+> +	task = get_pid_task(pid, PIDTYPE_PID);
+> +	if (!task)
+> +		return -ESRCH;
+> +
+> +	file = __pidfd_fget(task, fd);
+> +	put_task_struct(task);
+> +	if (IS_ERR(file))
+> +		return PTR_ERR(file);
+> +
+> +	ret = security_file_receive(file);
+> +	if (ret) {
+> +		fput(file);
+> +		return ret;
+> +	}
+> +
+> +	ret = get_unused_fd_flags(O_CLOEXEC);
+> +	if (ret < 0)
+> +		fput(file);
+> +	else
+> +		fd_install(ret, file);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * sys_pidfd_getfd() - Get a file descriptor from another process
+> + *
+> + * @pidfd:	the pidfd file descriptor of the process
+> + * @fd:		the file descriptor number to get
+> + * @flags:	flags on how to get the fd (reserved)
+> + *
+> + * This syscall gets a copy of a file descriptor from another process
+> + * based on the pidfd, and file descriptor number. It requires that
+> + * the calling process has the ability to ptrace the process represented
+> + * by the pidfd. The process which is having its file descriptor copied
+> + * is otherwise unaffected.
+> + *
+> + * Return: On success, a cloexec file descriptor is returned.
+> + *         On error, a negative errno number will be returned.
+> + */
 
-I'm not particularly bothered either way ... although using xattrs
-always seems to end up biting us for nesting, so I wasn't wildly
-enthusiastic about it.
+We don't usually kernel-doc syscalls.  They should have manpages instead.
 
-> What if we make shifted bind mounts always readonly? That will force
-> people to use an overlay (or something else) on top, but they
-> probably want to do that anyway so they can avoid tainting the
-> original container image with writes.
+> +SYSCALL_DEFINE3(pidfd_getfd, int, pidfd, int, fd,
+> +		unsigned int, flags)
+> +{
+> +	struct pid *pid;
+> +	struct fd f;
+> +	int ret;
+> +
+> +	/* flags is currently unused - make sure it's unset */
+> +	if (flags)
+> +		return -EINVAL;
 
-That really causes problems for the mutable (non-docker) container use
-case which is pretty much the way I always use containers.  Who wants
-to bother with overlayfs when their image is expected to mutate: it's
-just a huge hassle.
+Is EINVAL the right errno here?  Often we use ENOSYS for bad flags to
+syscalls.
 
-> > > Oh - I consider the detail of whether we pass a userid or userns
-> > > nsfd as more of an implementation detail which we can hash out
-> > > after the more general shift-mount api is decided upon.  Anyway,
-> > > passing nsfds just has a cool factor :)
-> > 
-> > Well, yes, won't aruge on the cool factor-ness.
-> 
-> It's not just the cool factor: if you're doing this, it's presumably
-> because you want to use it with a container in a user namespace.
-> Specifying the same parameters twice leaves room for error, causing
-> CVEs and more work.
+> +	f = fdget(pidfd);
+> +	if (!f.file)
+> +		return -EBADF;
+> +
+> +	pid = pidfd_pid(f.file);
+> +	if (IS_ERR(pid))
+> +		ret = PTR_ERR(pid);
+> +	else
+> +		ret = pidfd_getfd(pid, fd);
 
-It depends.  For the offset, we agreed there's no extant user_ns, so
-you have to create one specifically.  That leads to a more error prone
-setup with no actual checking benefit.
+You can simplify this by having pidfd_pid() return ERR_PTR(-EBADF) if
+!f.file, and having pidfd_getfd() return PTR_ERR() if IS_ERR(pid).  Then
+this function looks like:
 
-For the shift_ns, it depends whether you want one mount point per
-tenant, in which case the tenant user_ns might be a useful check, or
-one mount point with an ACL in which case you just backshift along the
-binding tenant user_ns.
+	if (flags)
+		return -EINVAL;
 
-James
+	f = fdget(pidfd);
+	pid = pidfd_pid(f.file);
+	ret = pidfd_getfd(pid, fd);
+	fdput(f);
+	return ret;
 
+You could even eliminate the 'pid' variable and just do:
+
+	ret = pidfd_getfd(pidfd_pid(f.file), fd);
+
+but that's a step too far for me.
+
+It's unfortunate that -EBADF might mean that either the first or second
+argument is a bad fd number.  I'm not sure I have a good alternative though.
