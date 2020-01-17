@@ -2,75 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AEB41409F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 13:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F11FF140B97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 14:51:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgAQMtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 07:49:25 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:20757 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726418AbgAQMtZ (ORCPT
+        id S1726956AbgAQNvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 08:51:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49394 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbgAQNvk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 07:49:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579265364;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=YZJEySeW4x60PWnXaTPYPXKUUGWLoo4eTenx7+ZFSLc=;
-        b=NDLsLZm/3AlPpZUIcqnAI6XzNxJkAVk0q1IX2qvKIaUY5yrPjgZQj9uKhqqdyLP65gzb8D
-        fiCCygCJ8PWzFDaJjLVGLkZ7U+gIOx6msBrqcZwd1vEEA6UJ/Gg0yhfpXYTpC+i0SA617J
-        uv11EhHGk5VjwzDGkixwZtDVB7bndRE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-naUjuSu3PR-IuY-PLpsC0g-1; Fri, 17 Jan 2020 07:49:21 -0500
-X-MC-Unique: naUjuSu3PR-IuY-PLpsC0g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 725A48017CC;
-        Fri, 17 Jan 2020 12:49:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E68341001925;
-        Fri, 17 Jan 2020 12:49:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     lsf-pc@lists.linux-foundation.org,
-        Amir Goldstein <amir73il@gmail.com>,
-        Omar Sandoval <osandov@osandov.com>
-cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
+        Fri, 17 Jan 2020 08:51:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ip2cTR5qN3djsZNZYzyPJtYHK3z2QBxzZGbtdMsXahg=; b=ildL1FlhnQrx29DWrPlZHvUES
+        rK9crFCvsQXHCu89JBYkQAl5c42QY6uBiUQ7RRk1HTWdheIAjvLF+LzFTI/qAgyD0hGGKXurOvGzf
+        1o/noQirka0NWuzuznNHsVqACY3NtphuDs/pDxSr70PTUyZbqv35os+wNOUnNpl+JDSygiZXQHYmI
+        uzAODVnXhj4lw/cp6seRriDbLUYoRU4EzW56MVsrhgG1LV7k+hQl95cT8057Kan0KjpXbBktjYs+z
+        Q4IGHWV1XsESFa30ShIfXEM46wB9V7WeGbmDF95GinkWAfXG9fQC/hfq8TUnoe5D25Zy7kWxcKlB+
+        /iwcnCvdA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isS2F-0003Cy-K0; Fri, 17 Jan 2020 13:51:39 +0000
+Date:   Fri, 17 Jan 2020 05:51:39 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 5/9] scsi: ufs: UFS crypto API
+Message-ID: <20200117135139.GA5670@infradead.org>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20191218145136.172774-6-satyat@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <364530.1579265357.1@warthog.procyon.org.uk>
-Date:   Fri, 17 Jan 2020 12:49:17 +0000
-Message-ID: <364531.1579265357@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218145136.172774-6-satyat@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It may be worth a discussion of whether linkat() could be given a flag to
-allow the destination to be replaced or if a new syscall should be made for
-this - or whether it should be disallowed entirely.
+> index 94c6c5d7334b..e88cdcde83fd 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -12,3 +12,4 @@ obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+>  obj-$(CONFIG_SCSI_UFS_HISI) += ufs-hisi.o
+>  obj-$(CONFIG_SCSI_UFS_MEDIATEK) += ufs-mediatek.o
+>  obj-$(CONFIG_SCSI_UFS_TI_J721E) += ti-j721e-ufs.o
+> +ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO) += ufshcd-crypto.o
 
-A set of patches has been posted by Omar Sandoval that makes this possible:
+This line should be moved up to just below the previous statement adding
+and object to fshcd-core-.
 
-    https://lore.kernel.org/linux-fsdevel/cover.1524549513.git.osandov@fb.com/
+> +static bool ufshcd_cap_idx_valid(struct ufs_hba *hba, unsigned int cap_idx)
+> +{
+> +	return cap_idx < hba->crypto_capabilities.num_crypto_cap;
+> +}
+> +
+> +static u8 get_data_unit_size_mask(unsigned int data_unit_size)
+> +{
+> +	if (data_unit_size < 512 || data_unit_size > 65536 ||
+> +	    !is_power_of_2(data_unit_size))
+> +		return 0;
+> +
+> +	return data_unit_size / 512;
+> +}
+> +
+> +static size_t get_keysize_bytes(enum ufs_crypto_key_size size)
 
-though it only includes filesystem support for btrfs.
+Please add ufshcd_ prefixes to all the helpers.
 
-This could be useful for cachefiles:
+> +	pm_runtime_get_sync(hba->dev);
+> +	ufshcd_hold(hba, false);
+> +	/* Clear the dword 16 */
+> +	ufshcd_writel(hba, 0, slot_offset + 16 * sizeof(cfg->reg_val[0]));
+> +	/* Ensure that CFGE is cleared before programming the key */
+> +	wmb();
+> +	for (i = 0; i < 16; i++) {
+> +		ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[i]),
+> +			      slot_offset + i * sizeof(cfg->reg_val[0]));
+> +		/* Spec says each dword in key must be written sequentially */
+> +		wmb();
+> +	}
+> +	/* Write dword 17 */
+> +	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[17]),
+> +		      slot_offset + 17 * sizeof(cfg->reg_val[0]));
+> +	/* Dword 16 must be written last */
+> +	wmb();
+> +	/* Write dword 16 */
+> +	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[16]),
+> +		      slot_offset + 16 * sizeof(cfg->reg_val[0]));
+> +	wmb();
 
-	https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
+All these wmb calls look bogus as writel itself orders mmio writes,
+while wmb is not guaranteed to have any effect on mmio space.
 
-and overlayfs.
+> +EXPORT_SYMBOL_GPL(ufshcd_crypto_enable);
 
-David
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_crypto_disable);
 
+None of the exported symbols in this file is used outside
+ufshcd-core.ko, so all the exports caan be dropped.
+
+> +	if (ufs_crypto_alg == UFS_CRYPTO_ALG_AES_XTS &&
+> +		key_size == UFS_CRYPTO_KEY_SIZE_256)
+> +		return BLK_ENCRYPTION_MODE_AES_256_XTS;
+
+Please don't indent continuation lines of conditional with a single tab.
+
+> +static inline int ufshcd_num_keyslots(struct ufs_hba *hba)
+
+> +static inline bool ufshcd_keyslot_valid(struct ufs_hba *hba, unsigned int slot)
+
+The two functions are only used in ufshcd-crypto.c and can be moved
+there.
+
+> +static inline bool ufshcd_is_crypto_enabled(struct ufs_hba *hba)
+> +{
+> +	return hba->caps & UFSHCD_CAP_CRYPTO;
+> +}
+
+I think this one would be clearer to just open code in the three callers.
