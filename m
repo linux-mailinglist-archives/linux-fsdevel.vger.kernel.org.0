@@ -2,108 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562BE1412B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 22:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4174914131A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 22:30:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgAQVTo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 16:19:44 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:32885 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbgAQVTo (ORCPT
+        id S1727243AbgAQVac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 16:30:32 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:39981 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbgAQVac (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 16:19:44 -0500
-Received: by mail-pj1-f68.google.com with SMTP id u63so4506795pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jan 2020 13:19:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JVtelnvC6J0Q34UGbqz15rhnZe3dDPULyussnAihjPY=;
-        b=JFqXovHwsNMhTxKmJnSHFJ+434Vzb+9ZGEzFA/wdIdwQ9oX6SSDbcwuD58/YUH6dxa
-         0vb072YtWACm3/dHkbrNTxl+9V7Fx53emSxzHMKWWhyR/t8dZB+1S069Y6GSnYvt242d
-         TyEaSnBfgi0ZtpyJcYRoEisz9+kkMpazSkgjpghUyKiYOBdFmVsUcpJ6QsY9NHkDT2g+
-         zcY/76NN8+nsr6c38s3kwDFS4jvs80cemUBNq9qlRCWCYlt7he165DlohSIEjeSS8nWg
-         JtU9RZUWYQYHu3pO8QCxV+pm733FSrHa18jgeijYGNK2JuQqucXFzK4RO2nDg9ehYMzm
-         aAAA==
+        Fri, 17 Jan 2020 16:30:32 -0500
+Received: by mail-yb1-f193.google.com with SMTP id l197so5158990ybf.7;
+        Fri, 17 Jan 2020 13:30:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JVtelnvC6J0Q34UGbqz15rhnZe3dDPULyussnAihjPY=;
-        b=Fz+ggXCYE1El6gnTzzRbkVKhHlpLS/QD4tU2KKw15oczGdrAoAtGOabF1sT13Kank9
-         SuyCymEJz05Apy9bKKWM6Enij5Sgh8pn0GdxOBLfVPy+h7iwmw72fyrqHPVl+1T2aR/t
-         Vl1IrdzlZR0jTrMCPKer2O+U+c34G4T4P//9GhUcQWpkh/UTjtBSLs2gM4lcPUb6ZjMn
-         /WaBm02tosmb3uIBbBOM+8lmw0xrxDzQWZcTMZHrAFuMIQ/H56A17LgS7njgPItLSANz
-         6HBsgPDXevTVoiVLtfDRmbKKXhZjK2c6aBMLzBE8plxfrOslLnSOflblX0//d80NGGy+
-         P1wQ==
-X-Gm-Message-State: APjAAAUiX88F7IO3hGA3KkGDAx3aancmKJOf/tDq1ugoYZmB7WwJ3Jri
-        EUP1pXXieHzuCh0zojZQhJOy+g==
-X-Google-Smtp-Source: APXvYqwad2dCoSnORgIV31f42OSU1Fj6QQ0q2N+/Tuo16KenyS5hmAzIWqespOnLlAeALJKV3/yhIw==
-X-Received: by 2002:a17:902:16b:: with SMTP id 98mr1286982plb.218.1579295983097;
-        Fri, 17 Jan 2020 13:19:43 -0800 (PST)
-Received: from cisco ([156.39.10.47])
-        by smtp.gmail.com with ESMTPSA id c18sm30045480pfr.40.2020.01.17.13.19.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 13:19:42 -0800 (PST)
-Date:   Fri, 17 Jan 2020 13:19:40 -0800
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        containers@lists.linux-foundation.org,
-        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH v2 2/3] fs: introduce uid/gid shifting bind mount
-Message-ID: <20200117211940.GA22062@cisco>
-References: <20200104203946.27914-1-James.Bottomley@HansenPartnership.com>
- <20200104203946.27914-3-James.Bottomley@HansenPartnership.com>
- <20200113034149.GA27228@mail.hallyn.com>
- <1579112360.3249.17.camel@HansenPartnership.com>
- <20200116064430.GA32763@mail.hallyn.com>
- <1579192173.3551.38.camel@HansenPartnership.com>
- <20200117154402.GA16882@mail.hallyn.com>
- <1579278342.3227.36.camel@HansenPartnership.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=StE2NY3HtsEMqXd4ZB/pMSObV0z3IPCkBkqgILuERJs=;
+        b=bukzU4gWyvcWbsHRtX9EFKOAS9LpRKz+Cxy+vdFOYfaSP+sodL+FfCiBz9COHKFG4f
+         7AjuvJJ6xwC1F9LRFNlSEy5EMnV4ob0ru5dFTSP+gfHCmSGIS/xOu4+sp9y5Z5zBYfz3
+         hK+K4WMzDV2Nx8Je5LY27QECnp9+nmaLgfqwRXP6eSd5uHxqJPFQzQWcml5UXKuXUjxN
+         NNXPm5DPUzIIGdGr02+V8M2Pl+9TK7yTldiZJmCE1rXXtIl4vYxcdgII1B+BUQRKrcJx
+         zKoQM4gNjIfHjUUmmqIZnJhhKCQ2Q5XPmtbD/qn2GEJrebMJOLhmZjYb93pUen15ixQk
+         sF9A==
+X-Gm-Message-State: APjAAAXB5pQqcdeqntcjOQL9EO1zarjrIkPscUWUhVrI5uI3vgou/ciA
+        fXfFS4Vi4SyasjA8+2gBR7+Ib4+5NrryZ6/ktwA=
+X-Google-Smtp-Source: APXvYqyydCcuBvXqI6tlUiplDf/E1iuWoEaUxAHjE4jekm6pKid2lg4rYKaCqMgIhDE5T7Z5+6c5101kFWsYqSx9pNk=
+X-Received: by 2002:a25:3604:: with SMTP id d4mr28915145yba.290.1579296631352;
+ Fri, 17 Jan 2020 13:30:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579278342.3227.36.camel@HansenPartnership.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <c6ed1ca0-3e39-714c-9590-54e13695b9b9@redhat.com>
+ <CAHk-=wink2z6EtvhKfhSvfC2hKBseVU8UWsM+HLsQP9x3mD7Xw@mail.gmail.com>
+ <5c184396-7cc8-ee72-2335-dce9a977c8d4@redhat.com> <b70a0334-63be-b3a5-6f8a-714fbe4637c7@redhat.com>
+In-Reply-To: <b70a0334-63be-b3a5-6f8a-714fbe4637c7@redhat.com>
+From:   Akemi Yagi <toracat@elrepo.org>
+Date:   Fri, 17 Jan 2020 13:30:20 -0800
+Message-ID: <CABA31DpOsnDxL8VcwRebU8RmAMqv9UAc5zRe8oz14f3-TeWSQA@mail.gmail.com>
+Subject: Re: Performance regression introduced by commit b667b8673443 ("pipe:
+ Advance tail pointer inside of wait spinlock in pipe_read()")
+To:     Waiman Long <longman@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 08:25:42AM -0800, James Bottomley wrote:
-> On Fri, 2020-01-17 at 09:44 -0600, Serge E. Hallyn wrote:
-> > On Thu, Jan 16, 2020 at 08:29:33AM -0800, James Bottomley wrote:
-> > I guess I figured we would have privileged task in the owning
-> > namespace (presumably init_user_ns) mark a bind mount as shiftable 
-> 
-> Yes, that's what I've got today in the prototype.  It mirrors the
-> original shiftfs mechanism.  However, I have also heard people say they
-> want a permanent mark, like an xattr for this.
+On Fri, Jan 17, 2020 at 10:11 AM Waiman Long <longman@redhat.com> wrote:
+>
+> On 1/17/20 12:29 PM, Waiman Long wrote:
+> > On 1/17/20 12:05 PM, Linus Torvalds wrote:
 
-Please, no. mount() failures are already hard to reason about, I would
-rather not add another temporary (or worse, permanent) non-obvious
-failure mode.
+> >> GNU make v4.2.1 is buggy. The fix was done over two years ago, but
+> >> there hasn't been a new release since then, so a lot of distributions
+> >> have the buggy version..
+> >>
+> >> The fix is commit b552b05 ("[SV 51159] Use a non-blocking read with
+> >> pselect to avoid hangs.") In the make the git tree.
+> >>      Linus
+> >
+> > Yes, I did use make v4.2.1 which is the version that is shipped in
+> > RHEL8. I will build new make and try it.
 
-What if we make shifted bind mounts always readonly? That will force
-people to use an overlay (or something else) on top, but they probably
-want to do that anyway so they can avoid tainting the original
-container image with writes.
+> > Longman
+> >
+> I built a make with the lastest make git tree and the problem was gone
+> with the new make. So it was a bug in make not the kernel. Sorry for the
+> noise.
+>
+> Longman
 
-> > Oh - I consider the detail of whether we pass a userid or userns nsfd
-> > as more of an implementation detail which we can hash out after the
-> > more general shift-mount api is decided upon.  Anyway, passing nsfds
-> > just has a cool factor :)
-> 
-> Well, yes, won't aruge on the cool factor-ness.
+If you are using RHEL8, building your own make is the only solution at
+this time. There is a bugzilla entry filed for this make bug but the
+progress is slow:
 
-It's not just the cool factor: if you're doing this, it's presumably
-because you want to use it with a container in a user namespace.
-Specifying the same parameters twice leaves room for error, causing
-CVEs and more work.
+https://bugzilla.redhat.com/show_bug.cgi?id=1774790
 
-Tycho
+The same bug in Fedora make was dealt with fairly quickly, thanks to
+the great "pressure" from Linus. ;-)
+
+Akemi
