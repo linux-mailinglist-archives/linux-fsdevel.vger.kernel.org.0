@@ -2,94 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB0AF13FE6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 00:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B7A1400B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 01:17:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404070AbgAPXc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 18:32:28 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41899 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391539AbgAPXcY (ORCPT
+        id S1730308AbgAQAQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 19:16:47 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33397 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729539AbgAQAQq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 18:32:24 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c9so20926441wrw.8;
-        Thu, 16 Jan 2020 15:32:23 -0800 (PST)
+        Thu, 16 Jan 2020 19:16:46 -0500
+Received: by mail-pl1-f195.google.com with SMTP id ay11so9086226plb.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jan 2020 16:16:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YDWLm6XpqMI02rMFx3Yb45aze/71UxlSxD1MYyNVKss=;
-        b=d95X4kB3aWSrf5EvGU4uzYYHZZbih5nZwN0V97zERE4yecu7yDy8A8+o7MOMZhrPgs
-         /rPBKOGLIFY7ls4zfxHALS7VNK9jM2Nwjtag9b0DpaDEprrzTJxh5NLei1GRuZYXR169
-         p/tmWDgXSPFu0bdauwtEXYSL2k+V1vn7tFidCiOEbR6/PAk+EKbVpZjvM1WAuskg1qQr
-         89TTB5sZH+lRkQHlkuLd3/l7XZfWvj2hFYhXdOw1Mor7z9TwHC9jUzvH8gZH0dAqnBae
-         UfabZpNgiT4LVL83N6F5MVDCZz9dU70ilxuerH+jnjuceu7G+/XzVqInobQz12XRk40t
-         mydg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=We+X+vIvTn3VnSo1BpMXBHpt3KILQFV1ZkuQwzzKTUM=;
+        b=u6+Q+vdSHEzkzK36tr0G9danJzdqCAJBQ0ETzYFrMcbn/t3XlBjn1Jk1C6EjfUaOb/
+         TPJ085yRpJSKTy049KHITcnFL4twlf3IR9T9XBaKW0Fj6bWzLSkmc1RzHz97+8e8CNUR
+         /r5aPeUX/9t328wa7OmG8hP8VoIkdZSBP1WDQFUgw9UyjMIBsWNyXoFthjwcPMcflpAN
+         vcNcj90F8262UuN5rZ2+taBRpxdNFxLAeTwEN82PKwIhdxMqK6ehmHt2pnDtTCMX9w9Y
+         E0EJizP4GCD5t9rrs4npEW69xz+xMR8S7ZHNGOQ6LmTUVtl98Curjp7Rv6R9zTHHPNYL
+         NTlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YDWLm6XpqMI02rMFx3Yb45aze/71UxlSxD1MYyNVKss=;
-        b=UM0xvtwvbtHBCsuKfTDh5iOf0EdsbblRrbrXErregSCXIrGQHTA4s0WFU2R6v0bGIl
-         sGdzm4mJcNjO6MRLgqecedOy47dmYC1xva63OZixRl0MZ52+4bZm6U5Vr1bjXNGDWANg
-         lC0XJLKvOFOyDMOH2ofHpOqzf0qT8xhmnoy0nlTNI8cUb9+2MoGF9XzviDtSnHD5X99l
-         WbTA3rH+y7nIY2CZtiQahlhzdj6jJJe2aqMptn9TMzTyAEfzTjJYaRYsn5OecUPOxQM/
-         gnNngFdBCIRpYSTKYASYYcDpLAwTTchPbwKFtZflTyUFYfv58sSEEomiu11rBTTRiQpL
-         Zmdw==
-X-Gm-Message-State: APjAAAXkrCG1lvjUFXj8xEHYnPEIxAI7I9y/+/iyuyqUJT1OPzpBXfpY
-        qnChXk66BYNdp7sEmnMJKv2aMN+qfeiLXg3t+uDuwA==
-X-Google-Smtp-Source: APXvYqwLX0lrkZdJFe5t0zpO2tuKs8Y79hcNs/Gk+HUAJGy8yctH8b/KG5My1MY/0dBlSpc+VFll6ki0vfP1JpdRDMs=
-X-Received: by 2002:adf:f606:: with SMTP id t6mr5590987wrp.85.1579217542497;
- Thu, 16 Jan 2020 15:32:22 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=We+X+vIvTn3VnSo1BpMXBHpt3KILQFV1ZkuQwzzKTUM=;
+        b=BVwb0BcMochPTR9l6xfa16M2JpRB1+BYcfhhbrqoxp/HZUhIAhEI03YiDNBnGWmnNQ
+         47oS0fw5n6+oo2ufw+HyzlCHOG3lvMNo3+sE17S6/eFlFmjSX7WPUQ959Q1HiLNnazeo
+         ilH85pyZJkEzTKf4I28OzUXX5wva5ZBX5laC7+CBQHL7kdoJVyTVmtCqnmYYCa705O9Z
+         QJtRM/j+MkTY6Ft2to60tSob7IPiU46NI00tYRu+/4MvAU9/CuQYdjuV7Rlw6Ztec/So
+         6WXARKFl76mi0Hfzf4KbRtdS0g1+1V53GACfV8ukm0JVXLePPiGjjr9AVTbSJR3D6nB9
+         Elrw==
+X-Gm-Message-State: APjAAAVtFzW8uXVJIkeowI5nv8dsqwg03tNyKwBbNIu+7QhZduKAUZNP
+        zdrFir4gmpWhIRPxYfXoZPKzAg==
+X-Google-Smtp-Source: APXvYqxzz1M/pk06Z7GJkM0c1x9sbutC0F5pqZEW9HvxA+T0gweRLJP5ZrUnzLLEb7tTNFANPHCU/A==
+X-Received: by 2002:a17:902:6bc3:: with SMTP id m3mr34054257plt.185.1579220205962;
+        Thu, 16 Jan 2020 16:16:45 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id y14sm26500574pfe.147.2020.01.16.16.16.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2020 16:16:45 -0800 (PST)
+Subject: Re: [PATCH 3/6] io_uring: add support for IORING_OP_OPENAT
+To:     Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20200107170034.16165-1-axboe@kernel.dk>
+ <20200107170034.16165-4-axboe@kernel.dk>
+ <82a015c4-f5b9-7c85-7d80-78964cb0d82e@samba.org>
+ <4ccb935c-7ff9-592f-8c27-0af3d38326d7@kernel.dk>
+ <2afdd5a5-0eb5-8fba-58d1-03001abbab7e@samba.org>
+ <9672da37-bf6f-ce2d-403c-5e2692c67782@kernel.dk>
+ <d0f0e726-8e6f-aa43-07b6-fdb3b49ce1bc@samba.org>
+ <d5a5dc20-7e11-8489-b9d5-c2cf8a4bdf4b@kernel.dk>
+ <a0f1b3a0-9827-b3e1-da0c-a2b71151fd4e@samba.org>
+ <0b8a0f70-c2de-1b1c-28d4-5c578a3534eb@kernel.dk>
+ <d42d5abd-c87b-1d97-00f3-95460a81c527@samba.org>
+ <7c97ddec-24b9-c88d-da7e-89aa161f1634@kernel.dk>
+ <cbbebc78-3e3d-b12a-c2dc-9018d4e99c17@samba.org>
+ <17dac99c-e3c5-0e50-c26d-c159c1e1724d@kernel.dk>
+ <7a91c0ee-ee1c-bec4-98fd-a25664839423@samba.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <38c19d02-ff10-c4a3-3d25-c59530ada19e@kernel.dk>
+Date:   Thu, 16 Jan 2020 17:16:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20191209222325.95656-1-ebiggers@kernel.org> <20200114220016.GL41220@gmail.com>
- <1925918130.21041.1579039436354.JavaMail.zimbra@nod.at>
-In-Reply-To: <1925918130.21041.1579039436354.JavaMail.zimbra@nod.at>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Fri, 17 Jan 2020 00:32:11 +0100
-Message-ID: <CAFLxGvz8mjUdh67aw1vKoxJnQBHixrPUC8CTJYMbQG2CqZQrwQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] ubifs: fixes for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-fscrypt <linux-fscrypt@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7a91c0ee-ee1c-bec4-98fd-a25664839423@samba.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 11:04 PM Richard Weinberger <richard@nod.at> wrote:
->
-> ----- Urspr=C3=BCngliche Mail -----
-> > Von: "Eric Biggers" <ebiggers@kernel.org>
-> > An: "richard" <richard@nod.at>
-> > CC: "linux-mtd" <linux-mtd@lists.infradead.org>, "linux-fscrypt" <linux=
--fscrypt@vger.kernel.org>, "linux-fsdevel"
-> > <linux-fsdevel@vger.kernel.org>
-> > Gesendet: Dienstag, 14. Januar 2020 23:00:17
-> > Betreff: Re: [PATCH 0/2] ubifs: fixes for FS_IOC_GETFLAGS and FS_IOC_SE=
-TFLAGS
->
-> > On Mon, Dec 09, 2019 at 02:23:23PM -0800, Eric Biggers wrote:
-> >> On ubifs, fix FS_IOC_SETFLAGS to not clear the encrypt flag, and updat=
-e
-> >> FS_IOC_GETFLAGS to return the encrypt flag like ext4 and f2fs do.
-> >>
-> >> Eric Biggers (2):
-> >>   ubifs: fix FS_IOC_SETFLAGS unexpectedly clearing encrypt flag
-> >>   ubifs: add support for FS_ENCRYPT_FL
-> >>
-> >>  fs/ubifs/ioctl.c | 14 +++++++++++---
-> >>  1 file changed, 11 insertions(+), 3 deletions(-)
-> >
-> > Richard, have you had a chance to review these?  I'm intending that the=
-se be
-> > taken through the UBIFS tree too.
+On 1/16/20 3:42 PM, Stefan Metzmacher wrote:
+>>> I'm not sure if current->mm is needed, I just added it for completeness
+>>> and as hint that io_op_defs[req->opcode].needs_mm is there and a
+>>> needs_creds could also be added (if it helps with performance)
+>>>
+>>> Is it possible to trigger a change of current->mm from userspace?
+>>>
+>>> An IORING_REGISTER_CREDS would only be useful if it's possible to
+>>> register a set of credentials and then use per io_uring_sqe credentials.
+>>> That would also be fine for me, but I'm not sure it's needed for now.
+>>
+>> I think it'd be a cleaner way of doing the same thing as your patch
+>> does. It seems a little odd to do this by default (having the ring
+>> change personalities depending on who's using it), but from an opt-in
+>> point of view, I think it makes more sense.
+>>
+>> That would make the IORING_REGISTER_ call something like
+>> IORING_REGISTER_ADOPT_OWNER or something like that, meaning that the
+>> ring would just assume the identify of the task that's calling
+>> io_uring_enter().
+>>
+>> Note that this also has to be passed through to the io-wq handler, as
+>> the mappings there are currently static as well.
+> 
+> What's the next step here?
 
-Both applied. Thanks a lot for addressing this, Eric.
---=20
-Thanks,
-//richard
+Not sure, need to find some time to work on this!
+
+> I think the current state is a security problem!
+> 
+> The inline execution either needs to change the creds temporary
+> or io_uring_enter() needs a general check that the current creds match
+> the creds of the ring and return -EPERM or something similar.
+
+Hmm, if you transfer the fd to someone else, you also give them access
+to your credentials etc. We could make that -EPERM, if the owner of the
+ring isn't the one invoking the submit. But that doesn't really help the
+SQPOLL case, which simply consumes SQE entries. There can be no checking
+there.
+
+-- 
+Jens Axboe
+
