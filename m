@@ -2,78 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF0A14010F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 01:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD08D140116
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 01:47:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbgAQApN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jan 2020 19:45:13 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:39089 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726378AbgAQApM (ORCPT
+        id S1731061AbgAQAqt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jan 2020 19:46:49 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:49139 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726378AbgAQAqt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jan 2020 19:45:12 -0500
+        Thu, 16 Jan 2020 19:46:49 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 9A797333;
-        Thu, 16 Jan 2020 19:45:11 -0500 (EST)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2C01D7539;
+        Thu, 16 Jan 2020 19:46:48 -0500 (EST)
 Received: from imap21 ([10.202.2.71])
-  by compute3.internal (MEProxy); Thu, 16 Jan 2020 19:45:11 -0500
+  by compute3.internal (MEProxy); Thu, 16 Jan 2020 19:46:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=hZKYxd
-        lu8iUVwDGCPOiaxkgzSUeyQwWC0ibxsczROtc=; b=G8kHDlU0inkLaqUZnH+MHR
-        rqDK8PT0vfnpq9CUqyic6fPPBIwKM94WZHrNqFff1S/BLD3kiPj0W6vEFzlReL08
-        ynNRheuFL13tdHGVMidoDy2Uc92MMD+lgW5BQV/oTyrmcpBMAHaF4pMe+Qbw+7bQ
-        Z10yOHC6A4D7I9bgSp6HxPTIa1GGEG+5V+gMb5zHs2GZmOgZlXJREMbHkDblNejM
-        gh8GpN1To2ozm6Wr2wMyy1//wko7qPBjaEKq7RgwmdcVNxR83AW5g8qrvbeqdMow
-        pNlYXpKyiLr65JCBezU4udEZ7dSeFhJVbz+z67RCHPT+kebGi/3NX5+MjbpJq8qA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Bj7tew
+        rLhTxxbIYjCh4rz27oO210/CiYYk7GplSzEy8=; b=qMwotpyqVTtZxaUuZvgUko
+        wa5sLBLFtrXwpDa6S8AFaeWgpPYxfYAWW4fNRTZYXnCOy4TM3qYvYXG7Oy2lNJ9w
+        k1GOrmd3u/FGA/hXXYRVFu/4gPZkGzSqJVl1eU9/otOiPQDIjaDEzTH1qG3z+YdY
+        aGteF1iysrJ4MP/y2OCAXMriq+kvEpaOykzzBguva1mpl9Z+p86NyvhiZ3QdnEU0
+        c8+CB8HAMkdSKMYrGZtehj8+WIjyjtI3koNoMhjNTTC+oJpMOaUkTOPCZIoh9TtT
+        xRfvG71B/j54TBy1OWgPfWH3eccrE31EZ+HGxxWTZL4yPVudnHlRLx4IZTJSpp2A
         ==
-X-ME-Sender: <xms:lgMhXnN_5TUOb3pdZhCQyzYk0eOzXev9ZbtBDBargS5b4Fm2l4gWDw>
+X-ME-Sender: <xms:9wMhXkU7VZX7XD8FoBgC0Xmb4M-AGRdq5c5NozFMLuiaOPGfVR2Ecw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrtdeigddvfecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedfveholhhi
     nhcuhggrlhhtvghrshdfuceofigrlhhtvghrshesvhgvrhgsuhhmrdhorhhgqeenucffoh
-    hmrghinheptggrphhnphhrohhtohdrohhrghenucfrrghrrghmpehmrghilhhfrhhomhep
-    figrlhhtvghrshesvhgvrhgsuhhmrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:lgMhXl-Gz52Pb9duq7gPIdD_wiyNML5kjvPK_n2ZaOKlJ9wsxNFyqA>
-    <xmx:lgMhXm7FWbkP0JyiNt-wctMPqaIy7PV6feE7blQ3Y__BvTWSd7BfKw>
-    <xmx:lgMhXrkxBY3SzdakBYcWw8ahTBAJN2S8m2Sod2hlvhHgaAwEGMjn-A>
-    <xmx:lwMhXviYz0cw5sdM0AnE5gN9O3JsqGIGWPOZijHTTlgIS6XBNUG-1Q>
+    hmrghinhepkhgvrhhnvghlrdhorhhgnecurfgrrhgrmhepmhgrihhlfhhrohhmpeifrghl
+    thgvrhhssehvvghrsghumhdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:9wMhXiqac_TG3DDoK0mUIthfFYVjFCbyUDTuPI4F_X3uxp_RZGtqgQ>
+    <xmx:9wMhXoS7TPA7XqiiOWlwjEC5EP6glsQt41-voAKHAipjpMF9yLd2Ww>
+    <xmx:9wMhXk1qPSX_LJ1olcICAhuImDgUJgs679uyS3tTsCqgvy3ios9aeQ>
+    <xmx:-AMhXi4NkJbWfDI6wfFdyhZMX_-weCeRVZYG87X59qU_RNY_xG7RKg>
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 9F5F4660061; Thu, 16 Jan 2020 19:45:10 -0500 (EST)
+        id DD1EE660061; Thu, 16 Jan 2020 19:46:46 -0500 (EST)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.1.7-754-g09d1619-fmstable-20200113v1
 Mime-Version: 1.0
-Message-Id: <1e8a9e98-67f8-4e2f-8185-040b9979bc1a@www.fastmail.com>
-In-Reply-To: <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-References: <20200107170034.16165-1-axboe@kernel.dk>
- <e4fb6287-8216-529e-9666-5ec855db02fb@samba.org>
- <4adb30f4-2ab3-6029-bc94-c72736b9004a@kernel.dk>
- <4dffd58e-5602-62d5-d1af-343c4a091ed9@samba.org>
- <eb99e387-f385-c36d-b1d9-f99ec470eba6@kernel.dk>
- <9a407238-5505-c446-80b7-086646dd15be@kernel.dk>
- <d4d3fa40-1c59-a48a-533b-c8b221e0f221@samba.org>
-Date:   Thu, 16 Jan 2020 19:44:49 -0500
+Message-Id: <2397bb4a-2ca2-4b44-8c79-64efba9aa04d@www.fastmail.com>
+In-Reply-To: <9351.1579025170@warthog.procyon.org.uk>
+References: <20200114170250.GA8904@ZenIV.linux.org.uk>
+ <3326.1579019665@warthog.procyon.org.uk>
+ <9351.1579025170@warthog.procyon.org.uk>
+Date:   Thu, 16 Jan 2020 19:46:25 -0500
 From:   "Colin Walters" <walters@verbum.org>
-To:     "Stefan Metzmacher" <metze@samba.org>,
-        "Jens Axboe" <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCHSET v2 0/6] io_uring: add support for open/close
+To:     "David Howells" <dhowells@redhat.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, "Christoph Hellwig" <hch@lst.de>,
+        "Theodore Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Chris Mason" <clm@fb.com>, josef@toxicpanda.com, dsterba@suse.com,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Making linkat() able to overwrite the target
 Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Jan 14, 2020, at 1:06 PM, David Howells wrote:
 
+> Yes, I suggested AT_LINK_REPLACE as said magical flag.
 
-On Thu, Jan 16, 2020, at 5:50 PM, Stefan Metzmacher wrote:
->
-> The client can compound a chain with open, getinfo, read, close
-> getinfo, read and close get an file handle of -1 and implicitly
-> get the fd generated/used in the previous request.
+This came up before right?
 
-Sounds similar to  https://capnproto.org/rpc.html too.
-
-But that seems most valuable in a situation with nontrivial latency.
+https://lore.kernel.org/linux-fsdevel/cover.1524549513.git.osandov@fb.com/
