@@ -2,91 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8890F140F1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 17:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C93D140F36
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jan 2020 17:44:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgAQQjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jan 2020 11:39:23 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27802 "EHLO
+        id S1727032AbgAQQn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jan 2020 11:43:57 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53758 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726631AbgAQQjX (ORCPT
+        with ESMTP id S1726970AbgAQQn4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:39:23 -0500
+        Fri, 17 Jan 2020 11:43:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579279162;
+        s=mimecast20190719; t=1579279435;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5m8tHXb1DlBkr0D20ikl66SMlJetA3DFtBUIb+crum8=;
-        b=TU1UVM4zqKNJMzDfhABdD93ZE5hpD9QkA/cfq/PqpP18BFh70KG4TfcxpPAatMx5Fcra0N
-        xziazrFu1zuCXzwZNGuPWv31sWq0CzA5c0cE+WCiqyOU0c7tper2icVGF1L0xRm6pGoiX8
-        U4wQgOclCtJEXhoqxN86R6i6KTxZi5s=
+        bh=7ywZah/acU88OdI0elxdfP2wlFAEGYbYZ2X9Wl0Y+ps=;
+        b=aPONDv90XNmbxI3XjQCdAGwZTtIDrtRA9Q0T72fYp+mdaEnn8imbL7tTgheeHPMfkJt2OT
+        s77r75OsSZkYkLphG+JFZ9Az5m3JWc/KcMMVMyxyJjYy8hriYMTh8802fxzF64aZ/u/dpS
+        aCfw7gMeKiYcC7nNmoJZoneHrxc/d3c=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-347-mdVlBjycMx6djPNIoMft3g-1; Fri, 17 Jan 2020 11:39:14 -0500
-X-MC-Unique: mdVlBjycMx6djPNIoMft3g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-363-LeC-d3cZMfmN1hLN6_W0bg-1; Fri, 17 Jan 2020 11:43:49 -0500
+X-MC-Unique: LeC-d3cZMfmN1hLN6_W0bg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 84C7B800D41;
-        Fri, 17 Jan 2020 16:39:11 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5DDF66125B;
+        Fri, 17 Jan 2020 16:43:42 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CB6E91001902;
-        Fri, 17 Jan 2020 16:39:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BDA115C54A;
+        Fri, 17 Jan 2020 16:43:39 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200117162201.GA282012@vader>
-References: <20200117162201.GA282012@vader> <2397bb4a-2ca2-4b44-8c79-64efba9aa04d@www.fastmail.com> <20200114170250.GA8904@ZenIV.linux.org.uk> <3326.1579019665@warthog.procyon.org.uk> <9351.1579025170@warthog.procyon.org.uk> <359591.1579261375@warthog.procyon.org.uk>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     dhowells@redhat.com, Colin Walters <walters@verbum.org>,
+In-Reply-To: <20200116101344.GA16435@lst.de>
+References: <20200116101344.GA16435@lst.de> <20200115144839.GA30301@lst.de> <20200115133101.GA28583@lst.de> <4467.1579020509@warthog.procyon.org.uk> <00fc7691-77d5-5947-5493-5c97f262da81@gmx.com> <27181AE2-C63F-4932-A022-8B0563C72539@dilger.ca> <afa71c13-4f99-747a-54ec-579f11f066a0@gmx.com> <26093.1579098922@warthog.procyon.org.uk> <28755.1579100378@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Chris Mason <clm@fb.com>, josef@toxicpanda.com,
-        dsterba@suse.com, linux-ext4 <linux-ext4@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Making linkat() able to overwrite the target
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Problems with determining data presence by examining extents?
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <469670.1579279148.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 17 Jan 2020 16:39:08 +0000
-Message-ID: <469671.1579279148@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-ID: <469987.1579279418.1@warthog.procyon.org.uk>
+Date:   Fri, 17 Jan 2020 16:43:38 +0000
+Message-ID: <469988.1579279418@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Omar Sandoval <osandov@osandov.com> wrote:
+Christoph Hellwig <hch@lst.de> wrote:
 
-> Yes I still have those patches lying around and I'd be happy to dust
-> them off and resend them.
+> File systems usually pad zeroes where they have to, typically for
+> sub-blocksize writes.   Disabling this would break data integrity.
 
-That would be great if you could.  I could use them here:
+I understand that.  I can, however, round up the netfs I/O granule size and
+alignment to a multiple of the cachefile I/O block size.  Also, I'm doing DIO,
+so I have to use block size multiples.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dfscache-iter
-
-I'm performing invalidation by creating a vfs_tmpfile() and then replacing=
- the
-on-disk file whilst letting ops resume on the temporary file.  Replacing t=
-he
-on-disk file currently, however, involves unlinking the old one before I c=
-an
-link in a new one - which leaves a window in which nothing is there.  I co=
-uld
-use one or more side dirs in which to create new files and rename them ove=
-r,
-but that has potential lock bottleneck issues - and is particularly fun if=
- an
-entire volume is invalidated (e.g. AFS vos release).
+But if the filesystem can avoid bridging large, appropriately sized and
+aligned blocks, then I can use it.
 
 David
 
