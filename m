@@ -2,56 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 064CA14181F
+	by mail.lfdr.de (Postfix) with ESMTP id 78A40141820
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2020 16:04:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgARPEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 10:04:09 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37044 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbgARPEJ (ORCPT
+        id S1726642AbgARPEP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jan 2020 10:04:15 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43842 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgARPEP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 10:04:09 -0500
-Received: by mail-pf1-f193.google.com with SMTP id p14so13448814pfn.4;
-        Sat, 18 Jan 2020 07:04:08 -0800 (PST)
+        Sat, 18 Jan 2020 10:04:15 -0500
+Received: by mail-pl1-f194.google.com with SMTP id p27so11147993pli.10;
+        Sat, 18 Jan 2020 07:04:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=dKIlMdPz90WBKervlmLu+EPWdbxwd774qmk/W0ADa10=;
-        b=UpsNHObHBAILGEi0dsIeFo37xdZVNCVr3HfFTdppJ9Zu8jT33owkjx9+bGRzdQjXYR
-         mt1q4i/tshg786ZvOFxdRVwEkge9m/NtkViqDaIkFy0pLRJcCoLo8h6FXEYh48aWkO1M
-         X98Sp/mA7FkT6fkeOWup+mO7ATyLzBFJ1vmy/vHAUyXENZZsbDmc59TL0Bzju/V34K3C
-         OJNkHQgUcsb0obk5sX4lmQnYGgQVAinQdzMJve1Od91q35N+/hH1WHbBiQjapD0wg05n
-         2Y/6wcTmKnaA1dvDPszbuzb184YK/RNfbYnw3bNJrUPtODNe+eyVjEQtXxmHWPOHJQ6k
-         u0ZA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=g++qByvhylslcY3cSh6UY/I6eSYlghjl9bLcpSm1J+U=;
+        b=UdAHF095YOXijgF9N4wcjpiay3Rz0GFUHgEf7ZpZGdPoJWjeB501znqde48X/qh7er
+         8njr0XjbKpt3vnbYCHSQjqBf4YDv7gcIEnh66c4+CmeJIJyMwK2qhCj5dBPcfaQ7XTem
+         Ywg7aDh85qkFgWLQ6Lw7nbAqS1e2yWGGsH07I83USBZOAyXenAXSC5/9VrZc3Gg121Q8
+         3hAoWAbMvEkqCzsHnPKUrM+UZpCm/RYwG6dWnuf606QLY+HsnMn02LslrUIxCwW0gY0E
+         fxoNjSGc9s+sUqUjCgGIfBQVKNLV6b7RL5vH/njoQXGSmyFCIrD8fd2/ewJQg6VDPlU1
+         JoFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dKIlMdPz90WBKervlmLu+EPWdbxwd774qmk/W0ADa10=;
-        b=mR8WkdBEvonrzqVkp04FsPo6qnQpkqn7b/dglqUBdYKy6oLy4Da8SE+fTrVPBEHk+G
-         Joah0hQm7PlF26p3wTq2++QailRciDLyFPIhvgQYT05Y/Y7rWV2SgIICerEPf4+Piq5Y
-         jM2XEJoGev1AZZaAfurWCymT3nUaBcsocihKuw+AsH3vbHghYxQer6SpaHS600ecWNWc
-         8pth1rWrkcuBt1w+TeK3P2TiSc9yu1/Vy86IC91VDNfjRJ/4QfOLuTSyf4wtA6Xgt/Di
-         O93tbz3raLOE+zIGhe1YtvQPmvH9Xj/2THX9IOHmk61MVJRJ8ZGSJ8Af6uVu0koqzy7M
-         DpBg==
-X-Gm-Message-State: APjAAAU0FJiwilG5PFcysbqEepxWExXpIAVtOHUw8xMXZirL+wP/FT1l
-        0gU1MK9NUoMOsLLsX6+tRosxKFJy
-X-Google-Smtp-Source: APXvYqweDHcwD7iPNENSPEhBIx97lgU+E5YjR6watM4u/IIIbTllxyJw5kxiT0l5DMerMK5rwFiwEA==
-X-Received: by 2002:a63:551a:: with SMTP id j26mr50556885pgb.370.1579359848241;
-        Sat, 18 Jan 2020 07:04:08 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=g++qByvhylslcY3cSh6UY/I6eSYlghjl9bLcpSm1J+U=;
+        b=RUqedeMt6dhWU1vVdpKAtyzqbIK5bkvtmhYYiLV/E4ncsaRXzAFg/fRoGp1/5pf3zG
+         DlROr5z++zk6YvYYzQoMbz+MSVAvKuosEGbnjdihhaRu8Q7qzZwBBFkqM44lRwUAAs3M
+         YiZ4TFA7IDzveSCpqkt3RMO10y2ArT/1RfjaWHi1KNtYOnT/1vvL0I6Kc3j9ibceyZvh
+         gGSAHEbdBIumtdNhhkJGuIYp1SoN+mLV7NrQTuBMWJ+vj17brg72/vNQKX3VgrQlooLD
+         xHUinCE0cJ50DFLgojUOZz+i3pzSU6BCcnH7W6Hz8dNuIo2eG8TSxNHOyS5rQrW01Uuo
+         gRTA==
+X-Gm-Message-State: APjAAAUKLWWKuPymBNrNNAFXEx4L2+bb0jBamBPGIc1v9TbxHlFO6eI9
+        WH/I2Php+aJCF1Wu3/dLvEhelOnH
+X-Google-Smtp-Source: APXvYqwA4kyWvULFFAjVoKZyGBXy9oPknhCEEg119i6dGEk0PEZ8v2M7gVHTrYkA+s2g3dhzlpAUwA==
+X-Received: by 2002:a17:90a:628c:: with SMTP id d12mr12735634pjj.59.1579359853794;
+        Sat, 18 Jan 2020 07:04:13 -0800 (PST)
 Received: from localhost.localdomain ([221.146.116.86])
-        by smtp.gmail.com with ESMTPSA id v10sm32072078pgk.24.2020.01.18.07.04.05
+        by smtp.gmail.com with ESMTPSA id v10sm32072078pgk.24.2020.01.18.07.04.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jan 2020 07:04:07 -0800 (PST)
+        Sat, 18 Jan 2020 07:04:13 -0800 (PST)
 From:   Namjae Jeon <linkinjeon@gmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
         sj1557.seo@samsung.com, pali.rohar@gmail.com, arnd@arndb.de,
         namjae.jeon@samsung.com, Namjae Jeon <linkinjeon@gmail.com>
-Subject: [PATCH v11 00/14] add the latest exfat driver
-Date:   Sun, 19 Jan 2020 00:03:34 +0900
-Message-Id: <20200118150348.9972-1-linkinjeon@gmail.com>
+Subject: [PATCH v11 01/14] exfat: add in-memory and on-disk structures and headers
+Date:   Sun, 19 Jan 2020 00:03:35 +0900
+Message-Id: <20200118150348.9972-2-linkinjeon@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200118150348.9972-1-linkinjeon@gmail.com>
+References: <20200118150348.9972-1-linkinjeon@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -59,192 +66,737 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Namjae Jeon <namjae.jeon@samsung.com>
 
-This adds the latest Samsung exfat driver to fs/exfat. This is an
-implementation of the Microsoft exFAT specification. Previous versions
-of this shipped with millions of Android phones, and a random previous
-snaphot has been merged in drivers/staging/.
+This adds in-memory and on-disk structures and headers.
 
-Compared to the sdfat driver shipped on the phones the following changes
-have been made:
-
- - the support for vfat has been removed as that is already supported
-   by fs/fat
- - driver has been renamed to exfat
- - the code has been refactored and clean up to fully integrate into
-   the upstream Linux version and follow the Linux coding style
- - metadata operations like create, lookup and readdir have been further
-   optimized
- - various major and minor bugs have been fixed
-
-We plan to treat this version as the future upstream for the code base
-once merged, and all new features and bug fixes will go upstream first.
-
-v11:
- - Use current_time instead of ktime_get_real_ts64.
- - Add i_crtime in exfat inode.
- - Drop the clamping min/max timestamp.
- - Merge exfat_init_file_entry into exfat_init_dir_entry.
- - Initialize the msec fields in exfat_init_dir_entry.
- - Change timestamps written to disk always get stored in UTC instead of
-   active timezone.
- - Update EXFAT_DEFAULT_IOCHARSET description in Kconfig.
- - exfat_get/set_entry_time() take a time_ms argument.
-
-v10:
- - Make PBR structures as packed structure.
- - Fix build error on 32 bit system.
- - Change L suffix of UNIX_SECS_2108 macro with LL suffix to work
-   on both 32/64bit system.
- - Rework exfat time handling.
- - Don't warp exfat specification URLs.
- - Add _FS suffix to config name.
- - Remove case_sensitive mount option.
- - iocharset=utf8 mount option work as utf8 option.
- - Rename the misleading nls names to corresponding ones.
- - Fix wrong header guard name of exfat_fs.h.
- - Remove the unneeded braces of macros in exfat_fs.h.
- - Move the ondisk values to exfat_raw.h
- - Put the operators at the previous line in exfat_cluster_to_sector().
- - Braces of EXFAT_DELETE macro would outside the ~.
- - Directly use exfat dentry field name.
- - Add EXFAT_CLUSTERS_UNTRACKED macro.
- - Remove both sets of inner braces in exfat_set_vol_flags().
- - Replace is_reserved_cluster() with an explicit check
-   for EXFAT_EOF_CLUSTER.
- - Initialize superblock s_time_gran/max/min.
- - Clean-up exfat_bmap and exfat_get_block().
- - Fix wrong boundlen to avoid potential buffer overflow
-   in exfat_convert_char_to_ucs2().
- - Process length value as 1 when conversion is failed.
- - Replace union exfat_timezone with masking the valid bit.
- - Change exfat_cmp_uniname() with exfat_uniname_ncmp().
- - Remove struct exfat_timestamp.
- - Add atime update support.
- - Add time_offset mount option.
- - Remove unneeded CLUSTER_32 macro.
- - Process utf16 surrogage pair as one character.
- - Rename MUST_ZERO_LEN to PBR64_RESERVED_LEN.
- - Simplify is_exfat function by just using memchr_inv().
- - Remove __exfat_init_name_hash.
- - Remove exfat_striptail_len.
- - Split dentry ops for the utf8 vs non-utf8 cases.
-
-v9:
- - Add support time zone.
- - Fix data past EOF resulting from fsx testsuite.
- - Remove obsolete comments in __exfat_resolve_path().
- - Remove unused file attributes macros.
- - Remove unneeded #if BITS_PER_LONG.
-
-v8:
- - Rearrange the function grouping in exfat_fs.h
-   (exfat_count_dir_entries, exfat_get_dentry, exfat_get_dentry_set,
-    exfat_find_location).
- - Mark exfat_extract_uni_name(), exfat_get_uniname_from_ext_entry() and
-   exfat_mirror_bh() as static.
-
-v7:
- - Add the helpers macros for bitmap and fat entry to improve readability.
- - Rename exfat_test_bitmap to exfat_find_free_bitmap.
- - Merge exfat_get_num_entries into exfat_calc_num_entries.
- - Add EXFAT_DATA_CLUSTERS and EXFAT_RESERVED_CLUSTERS macro.
- - Add the macros for EXFAT BIOS block(JUMP_BOOT_LEN, OEM_NAME_LEN,
-   MUST_BE_ZERO_LEN).
- - Add the macros for EXFAT entry type (IS_EXFAT_CRITICAL_PRI,
-   IS_EXFAT_BENIGN_PRI, IS_EXFAT_CRITICAL_SEC).
- - Add EXFAT_FILE_NAME_LEN macro.
- - Change the data type of is_dir with bool in __exfat_write_inode().
- - Change the data type of sync with bool in exfat_set_vol_flags().
- - Merge __exfat_set_vol_flags into exfat_set_vol_flags.
- - Fix wrong statfs->f_namelen.
-
-v6:
- - Fix always false comparison due to limited range of allow_utime's data
-   type.
- - Move bh into loop in exfat_find_dir_entry().
- - Move entry_uniname and unichar variables into
-   an if "entry_type == TYPE_EXTEND" branch.
-
-v5:
- - Remove a blank line between the message and the error code in
-   exfat_load_upcase_table.
- - Move brelse to the end of the while loop and rename release_bh label
-   to free_table in exfat_load_upcase_table.
- - Move an error code assignment after a failed function call.
- - Rename labels and directly return instead of goto.
- - Improve the exception handling in exfat_get_dentry_set().
- - Remove ->d_time leftover.
- - fix boolreturn.cocci warnings.
-
-v4:
- - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
- - Rename labels with proper name.
- - Remove blank lines.
- - Remove pointer check for bh.
- - Move ep into loop in exfat_load_bitmap().
- - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
- - Change exfat_allow_set_time return type with bool.
-
-v3:
- - fix wrong sbi->s_dirt set.
-
-v2:
- - Check the bitmap count up to the total clusters.
- - Rename goto labels in several places.
- - Change time mode type with enumeration.
- - Directly return error instead of goto at first error check.
- - Combine seq_printf calls into a single one.
-
-Namjae Jeon (14):
-  exfat: add in-memory and on-disk structures and headers
-  exfat: add super block operations
-  exfat: add inode operations
-  exfat: add directory operations
-  exfat: add file operations
-  exfat: add fat entry operations
-  exfat: add bitmap operations
-  exfat: add exfat cache
-  exfat: add misc operations
-  exfat: add nls operations
-  exfat: add Kconfig and Makefile
-  exfat: add exfat in fs/Kconfig and fs/Makefile
-  MAINTAINERS: add exfat filesystem
-  staging: exfat: make staging/exfat and fs/exfat mutually exclusive
-
- MAINTAINERS                   |    7 +
- drivers/staging/exfat/Kconfig |    2 +-
- fs/Kconfig                    |    3 +-
- fs/Makefile                   |    1 +
- fs/exfat/Kconfig              |   21 +
- fs/exfat/Makefile             |    8 +
- fs/exfat/balloc.c             |  282 +++++++
- fs/exfat/cache.c              |  325 ++++++++
- fs/exfat/dir.c                | 1238 ++++++++++++++++++++++++++++
- fs/exfat/exfat_fs.h           |  522 ++++++++++++
- fs/exfat/exfat_raw.h          |  184 +++++
- fs/exfat/fatent.c             |  463 +++++++++++
- fs/exfat/file.c               |  360 ++++++++
- fs/exfat/inode.c              |  671 +++++++++++++++
- fs/exfat/misc.c               |  163 ++++
- fs/exfat/namei.c              | 1448 +++++++++++++++++++++++++++++++++
- fs/exfat/nls.c                |  834 +++++++++++++++++++
- fs/exfat/super.c              |  725 +++++++++++++++++
- 18 files changed, 7255 insertions(+), 2 deletions(-)
- create mode 100644 fs/exfat/Kconfig
- create mode 100644 fs/exfat/Makefile
- create mode 100644 fs/exfat/balloc.c
- create mode 100644 fs/exfat/cache.c
- create mode 100644 fs/exfat/dir.c
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+---
+ fs/exfat/exfat_fs.h  | 522 +++++++++++++++++++++++++++++++++++++++++++
+ fs/exfat/exfat_raw.h | 184 +++++++++++++++
+ 2 files changed, 706 insertions(+)
  create mode 100644 fs/exfat/exfat_fs.h
  create mode 100644 fs/exfat/exfat_raw.h
- create mode 100644 fs/exfat/fatent.c
- create mode 100644 fs/exfat/file.c
- create mode 100644 fs/exfat/inode.c
- create mode 100644 fs/exfat/misc.c
- create mode 100644 fs/exfat/namei.c
- create mode 100644 fs/exfat/nls.c
- create mode 100644 fs/exfat/super.c
 
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+new file mode 100644
+index 000000000000..9ba9744850db
+--- /dev/null
++++ b/fs/exfat/exfat_fs.h
+@@ -0,0 +1,522 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
++ */
++
++#ifndef _EXFAT_FS_H
++#define _EXFAT_FS_H
++
++#include <linux/fs.h>
++#include <linux/ratelimit.h>
++#include <linux/nls.h>
++
++#define EXFAT_SUPER_MAGIC       0x2011BAB0UL
++#define EXFAT_ROOT_INO		1
++
++#define EXFAT_SB_DIRTY		0
++
++#define EXFAT_CLUSTERS_UNTRACKED (~0u)
++
++/*
++ * exfat error flags
++ */
++enum exfat_error_mode {
++	EXFAT_ERRORS_CONT,	/* ignore error and continue */
++	EXFAT_ERRORS_PANIC,	/* panic on error */
++	EXFAT_ERRORS_RO,	/* remount r/o on error */
++};
++
++/*
++ * exfat nls lossy flag
++ */
++enum {
++	NLS_NAME_NO_LOSSY,	/* no lossy */
++	NLS_NAME_LOSSY,		/* just detected incorrect filename(s) */
++	NLS_NAME_OVERLEN,	/* the length is over than its limit */
++};
++
++#define EXFAT_HASH_BITS		8
++#define EXFAT_HASH_SIZE		(1UL << EXFAT_HASH_BITS)
++
++/*
++ * Type Definitions
++ */
++#define ES_2_ENTRIES		2
++#define ES_ALL_ENTRIES		0
++
++#define DIR_DELETED		0xFFFF0321
++
++/* type values */
++#define TYPE_UNUSED		0x0000
++#define TYPE_DELETED		0x0001
++#define TYPE_INVALID		0x0002
++#define TYPE_CRITICAL_PRI	0x0100
++#define TYPE_BITMAP		0x0101
++#define TYPE_UPCASE		0x0102
++#define TYPE_VOLUME		0x0103
++#define TYPE_DIR		0x0104
++#define TYPE_FILE		0x011F
++#define TYPE_CRITICAL_SEC	0x0200
++#define TYPE_STREAM		0x0201
++#define TYPE_EXTEND		0x0202
++#define TYPE_ACL		0x0203
++#define TYPE_BENIGN_PRI		0x0400
++#define TYPE_GUID		0x0401
++#define TYPE_PADDING		0x0402
++#define TYPE_ACLTAB		0x0403
++#define TYPE_BENIGN_SEC		0x0800
++#define TYPE_ALL		0x0FFF
++
++#define MAX_CHARSET_SIZE	6 /* max size of multi-byte character */
++#define MAX_NAME_LENGTH		255 /* max len of file name excluding NULL */
++#define MAX_VFSNAME_BUF_SIZE	((MAX_NAME_LENGTH + 1) * MAX_CHARSET_SIZE)
++
++#define FAT_CACHE_SIZE		128
++#define FAT_CACHE_HASH_SIZE	64
++#define BUF_CACHE_SIZE		256
++#define BUF_CACHE_HASH_SIZE	64
++
++#define EXFAT_HINT_NONE		-1
++#define EXFAT_MIN_SUBDIR	2
++
++/*
++ * helpers for cluster size to byte conversion.
++ */
++#define EXFAT_CLU_TO_B(b, sbi)		((b) << (sbi)->cluster_size_bits)
++#define EXFAT_B_TO_CLU(b, sbi)		((b) >> (sbi)->cluster_size_bits)
++#define EXFAT_B_TO_CLU_ROUND_UP(b, sbi)	\
++	(((b - 1) >> (sbi)->cluster_size_bits) + 1)
++#define EXFAT_CLU_OFFSET(off, sbi)	((off) & ((sbi)->cluster_size - 1))
++
++/*
++ * helpers for block size to byte conversion.
++ */
++#define EXFAT_BLK_TO_B(b, sb)		((b) << (sb)->s_blocksize_bits)
++#define EXFAT_B_TO_BLK(b, sb)		((b) >> (sb)->s_blocksize_bits)
++#define EXFAT_B_TO_BLK_ROUND_UP(b, sb)	\
++	(((b - 1) >> (sb)->s_blocksize_bits) + 1)
++#define EXFAT_BLK_OFFSET(off, sb)	((off) & ((sb)->s_blocksize - 1))
++
++/*
++ * helpers for block size to dentry size conversion.
++ */
++#define EXFAT_B_TO_DEN_IDX(b, sbi)	\
++	((b) << ((sbi)->cluster_size_bits - DENTRY_SIZE_BITS))
++#define EXFAT_B_TO_DEN(b)		((b) >> DENTRY_SIZE_BITS)
++#define EXFAT_DEN_TO_B(b)		((b) << DENTRY_SIZE_BITS)
++
++/*
++ * helpers for fat entry.
++ */
++#define FAT_ENT_SIZE (4)
++#define FAT_ENT_SIZE_BITS (2)
++#define FAT_ENT_OFFSET_SECTOR(sb, loc) (EXFAT_SB(sb)->FAT1_start_sector + \
++	(((u64)loc << FAT_ENT_SIZE_BITS) >> sb->s_blocksize_bits))
++#define FAT_ENT_OFFSET_BYTE_IN_SECTOR(sb, loc)	\
++	((loc << FAT_ENT_SIZE_BITS) & (sb->s_blocksize - 1))
++
++/*
++ * helpers for bitmap.
++ */
++#define CLUSTER_TO_BITMAP_ENT(clu) ((clu) - EXFAT_RESERVED_CLUSTERS)
++#define BITMAP_ENT_TO_CLUSTER(ent) ((ent) + EXFAT_RESERVED_CLUSTERS)
++#define BITS_PER_SECTOR(sb) ((sb)->s_blocksize * BITS_PER_BYTE)
++#define BITS_PER_SECTOR_MASK(sb) (BITS_PER_SECTOR(sb) - 1)
++#define BITMAP_OFFSET_SECTOR_INDEX(sb, ent) \
++	((ent / BITS_PER_BYTE) >> (sb)->s_blocksize_bits)
++#define BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent) (ent & BITS_PER_SECTOR_MASK(sb))
++#define BITMAP_OFFSET_BYTE_IN_SECTOR(sb, ent) \
++	((ent / BITS_PER_BYTE) & ((sb)->s_blocksize - 1))
++#define BITS_PER_BYTE_MASK	0x7
++#define IGNORED_BITS_REMAINED(clu, clu_base) ((1 << ((clu) - (clu_base))) - 1)
++
++struct exfat_dentry_namebuf {
++	char *lfn;
++	int lfnbuf_len; /* usally MAX_UNINAME_BUF_SIZE */
++};
++
++/* unicode name structure */
++struct exfat_uni_name {
++	/* +3 for null and for converting */
++	unsigned short name[MAX_NAME_LENGTH + 3];
++	unsigned short name_hash;
++	unsigned char name_len;
++};
++
++/* directory structure */
++struct exfat_chain {
++	unsigned int dir;
++	unsigned int size;
++	unsigned char flags;
++};
++
++/* first empty entry hint information */
++struct exfat_hint_femp {
++	/* entry index of a directory */
++	int eidx;
++	/* count of continuous empty entry */
++	int count;
++	/* the cluster that first empty slot exists in */
++	struct exfat_chain cur;
++};
++
++/* hint structure */
++struct exfat_hint {
++	unsigned int clu;
++	union {
++		unsigned int off; /* cluster offset */
++		int eidx; /* entry index */
++	};
++};
++
++struct exfat_entry_set_cache {
++	/* sector number that contains file_entry */
++	sector_t sector;
++	/* byte offset in the sector */
++	unsigned int offset;
++	/* flag in stream entry. 01 for cluster chain, 03 for contig. */
++	int alloc_flag;
++	unsigned int num_entries;
++	struct exfat_dentry entries[];
++};
++
++struct exfat_dir_entry {
++	struct exfat_chain dir;
++	int entry;
++	unsigned int type;
++	unsigned int start_clu;
++	unsigned char flags;
++	unsigned short attr;
++	loff_t size;
++	unsigned int num_subdirs;
++	struct timespec64 atime;
++	struct timespec64 mtime;
++	struct timespec64 crtime;
++	struct exfat_dentry_namebuf namebuf;
++};
++
++/*
++ * exfat mount in-memory data
++ */
++struct exfat_mount_options {
++	kuid_t fs_uid;
++	kgid_t fs_gid;
++	unsigned short fs_fmask;
++	unsigned short fs_dmask;
++	/* permission for setting the [am]time */
++	unsigned short allow_utime;
++	/* charset for filename input/display */
++	char *iocharset;
++	/* on error: continue, panic, remount-ro */
++	enum exfat_error_mode errors;
++	unsigned utf8:1, /* Use of UTF-8 character set */
++		 discard:1; /* Issue discard requests on deletions */
++	int time_offset; /* Offset of timestamps from UTC (in minutes) */
++};
++
++/*
++ * EXFAT file system superblock in-memory data
++ */
++struct exfat_sb_info {
++	unsigned int vol_type; /* volume FAT type */
++	unsigned int vol_id; /* volume serial number */
++	unsigned long long num_sectors; /* num of sectors in volume */
++	unsigned int num_clusters; /* num of clusters in volume */
++	unsigned int cluster_size; /* cluster size in bytes */
++	unsigned int cluster_size_bits;
++	unsigned int sect_per_clus; /* cluster size in sectors */
++	unsigned int sect_per_clus_bits;
++	unsigned long long FAT1_start_sector; /* FAT1 start sector */
++	unsigned long long FAT2_start_sector; /* FAT2 start sector */
++	unsigned long long root_start_sector; /* root dir start sector */
++	unsigned long long data_start_sector; /* data area start sector */
++	unsigned int num_FAT_sectors; /* num of FAT sectors */
++	unsigned int root_dir; /* root dir cluster */
++	unsigned int dentries_in_root; /* num of dentries in root dir */
++	unsigned int dentries_per_clu; /* num of dentries per cluster */
++	unsigned int vol_flag; /* volume dirty flag */
++	struct buffer_head *pbr_bh; /* buffer_head of PBR sector */
++
++	unsigned int map_clu; /* allocation bitmap start cluster */
++	unsigned int map_sectors; /* num of allocation bitmap sectors */
++	struct buffer_head **vol_amap; /* allocation bitmap */
++
++	unsigned short *vol_utbl; /* upcase table */
++
++	unsigned int clu_srch_ptr; /* cluster search pointer */
++	unsigned int used_clusters; /* number of used clusters */
++
++	unsigned long s_state;
++	struct mutex s_lock; /* superblock lock */
++	struct super_block *host_sb; /* sb pointer */
++	struct exfat_mount_options options;
++	struct nls_table *nls_io; /* Charset used for input and display */
++	struct ratelimit_state ratelimit;
++
++	spinlock_t inode_hash_lock;
++	struct hlist_head inode_hashtable[EXFAT_HASH_SIZE];
++};
++
++/*
++ * EXFAT file system inode in-memory data
++ */
++struct exfat_inode_info {
++	struct exfat_chain dir;
++	int entry;
++	unsigned int type;
++	unsigned short attr;
++	unsigned int start_clu;
++	unsigned char flags;
++	/*
++	 * the copy of low 32bit of i_version to check
++	 * the validation of hint_stat.
++	 */
++	unsigned int version;
++	/* file offset or dentry index for readdir */
++	loff_t rwoffset;
++
++	/* hint for cluster last accessed */
++	struct exfat_hint hint_bmap;
++	/* hint for entry index we try to lookup next time */
++	struct exfat_hint hint_stat;
++	/* hint for first empty entry */
++	struct exfat_hint_femp hint_femp;
++
++	spinlock_t cache_lru_lock;
++	struct list_head cache_lru;
++	int nr_caches;
++	/* for avoiding the race between alloc and free */
++	unsigned int cache_valid_id;
++
++	/*
++	 * NOTE: i_size_ondisk is 64bits, so must hold ->inode_lock to access.
++	 * physically allocated size.
++	 */
++	loff_t i_size_ondisk;
++	/* block-aligned i_size (used in cont_write_begin) */
++	loff_t i_size_aligned;
++	/* on-disk position of directory entry or 0 */
++	loff_t i_pos;
++	/* hash by i_location */
++	struct hlist_node i_hash_fat;
++	/* protect bmap against truncate */
++	struct rw_semaphore truncate_lock;
++	struct inode vfs_inode;
++	/* File creation time */
++	struct timespec64 i_crtime;
++};
++
++static inline struct exfat_sb_info *EXFAT_SB(struct super_block *sb)
++{
++	return sb->s_fs_info;
++}
++
++static inline struct exfat_inode_info *EXFAT_I(struct inode *inode)
++{
++	return container_of(inode, struct exfat_inode_info, vfs_inode);
++}
++
++/*
++ * If ->i_mode can't hold 0222 (i.e. ATTR_RO), we use ->i_attrs to
++ * save ATTR_RO instead of ->i_mode.
++ *
++ * If it's directory and !sbi->options.rodir, ATTR_RO isn't read-only
++ * bit, it's just used as flag for app.
++ */
++static inline int exfat_mode_can_hold_ro(struct inode *inode)
++{
++	struct exfat_sb_info *sbi = EXFAT_SB(inode->i_sb);
++
++	if (S_ISDIR(inode->i_mode))
++		return 0;
++
++	if ((~sbi->options.fs_fmask) & 0222)
++		return 1;
++	return 0;
++}
++
++/* Convert attribute bits and a mask to the UNIX mode. */
++static inline mode_t exfat_make_mode(struct exfat_sb_info *sbi,
++		unsigned short attr, mode_t mode)
++{
++	if ((attr & ATTR_READONLY) && !(attr & ATTR_SUBDIR))
++		mode &= ~0222;
++
++	if (attr & ATTR_SUBDIR)
++		return (mode & ~sbi->options.fs_dmask) | S_IFDIR;
++
++	return (mode & ~sbi->options.fs_fmask) | S_IFREG;
++}
++
++/* Return the FAT attribute byte for this inode */
++static inline unsigned short exfat_make_attr(struct inode *inode)
++{
++	unsigned short attr = EXFAT_I(inode)->attr;
++
++	if (S_ISDIR(inode->i_mode))
++		attr |= ATTR_SUBDIR;
++	if (exfat_mode_can_hold_ro(inode) && !(inode->i_mode & 0222))
++		attr |= ATTR_READONLY;
++	return attr;
++}
++
++static inline void exfat_save_attr(struct inode *inode, unsigned short attr)
++{
++	if (exfat_mode_can_hold_ro(inode))
++		EXFAT_I(inode)->attr = attr & (ATTR_RWMASK | ATTR_READONLY);
++	else
++		EXFAT_I(inode)->attr = attr & ATTR_RWMASK;
++}
++
++static inline bool exfat_is_last_sector_in_cluster(struct exfat_sb_info *sbi,
++		sector_t sec)
++{
++	return ((sec - sbi->data_start_sector + 1) &
++		((1 << sbi->sect_per_clus_bits) - 1)) == 0;
++}
++
++static inline sector_t exfat_cluster_to_sector(struct exfat_sb_info *sbi,
++		unsigned int clus)
++{
++	return ((clus - EXFAT_RESERVED_CLUSTERS) << sbi->sect_per_clus_bits) +
++		sbi->data_start_sector;
++}
++
++static inline int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
++		sector_t sec)
++{
++	return ((sec - sbi->data_start_sector) >> sbi->sect_per_clus_bits) +
++		EXFAT_RESERVED_CLUSTERS;
++}
++
++/* super.c */
++int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag);
++
++/* fatent.c */
++#define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
++
++int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
++		struct exfat_chain *p_chain);
++int exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain);
++int exfat_ent_get(struct super_block *sb, unsigned int loc,
++		unsigned int *content);
++int exfat_ent_set(struct super_block *sb, unsigned int loc,
++		unsigned int content);
++int exfat_count_ext_entries(struct super_block *sb, struct exfat_chain *p_dir,
++		int entry, struct exfat_dentry *p_entry);
++int exfat_chain_cont_cluster(struct super_block *sb, unsigned int chain,
++		unsigned int len);
++int exfat_zeroed_cluster(struct inode *dir, unsigned int clu);
++int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
++		unsigned int *ret_clu);
++int exfat_count_num_clusters(struct super_block *sb,
++		struct exfat_chain *p_chain, unsigned int *ret_count);
++
++/* balloc.c */
++int exfat_load_bitmap(struct super_block *sb);
++void exfat_free_bitmap(struct super_block *sb);
++int exfat_set_bitmap(struct inode *inode, unsigned int clu);
++void exfat_clear_bitmap(struct inode *inode, unsigned int clu);
++unsigned int exfat_find_free_bitmap(struct super_block *sb, unsigned int clu);
++int exfat_count_used_clusters(struct super_block *sb, unsigned int *ret_count);
++
++/* file.c */
++extern const struct file_operations exfat_file_operations;
++int __exfat_truncate(struct inode *inode, loff_t new_size);
++void exfat_truncate(struct inode *inode, loff_t size);
++int exfat_setattr(struct dentry *dentry, struct iattr *attr);
++int exfat_getattr(const struct path *path, struct kstat *stat,
++		unsigned int request_mask, unsigned int query_flags);
++
++/* namei.c */
++extern const struct dentry_operations exfat_dentry_ops;
++extern const struct dentry_operations exfat_utf8_dentry_ops;
++
++/* cache.c */
++int exfat_cache_init(void);
++void exfat_cache_shutdown(void);
++void exfat_cache_init_inode(struct inode *inode);
++void exfat_cache_inval_inode(struct inode *inode);
++int exfat_get_cluster(struct inode *inode, unsigned int cluster,
++		unsigned int *fclus, unsigned int *dclus,
++		unsigned int *last_dclus, int allow_eof);
++
++/* dir.c */
++extern const struct inode_operations exfat_dir_inode_operations;
++extern const struct file_operations exfat_dir_operations;
++unsigned int exfat_get_entry_type(struct exfat_dentry *p_entry);
++int exfat_init_dir_entry(struct inode *inode, struct exfat_chain *p_dir,
++		int entry, unsigned int type, unsigned int start_clu,
++		unsigned long long size);
++int exfat_init_ext_entry(struct inode *inode, struct exfat_chain *p_dir,
++		int entry, int num_entries, struct exfat_uni_name *p_uniname);
++int exfat_remove_entries(struct inode *inode, struct exfat_chain *p_dir,
++		int entry, int order, int num_entries);
++int exfat_update_dir_chksum(struct inode *inode, struct exfat_chain *p_dir,
++		int entry);
++int exfat_update_dir_chksum_with_entry_set(struct super_block *sb,
++		struct exfat_entry_set_cache *es, int sync);
++int exfat_calc_num_entries(struct exfat_uni_name *p_uniname);
++int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
++		struct exfat_chain *p_dir, struct exfat_uni_name *p_uniname,
++		int num_entries, unsigned int type);
++int exfat_alloc_new_dir(struct inode *inode, struct exfat_chain *clu);
++int exfat_find_location(struct super_block *sb, struct exfat_chain *p_dir,
++		int entry, sector_t *sector, int *offset);
++struct exfat_dentry *exfat_get_dentry(struct super_block *sb,
++		struct exfat_chain *p_dir, int entry, struct buffer_head **bh,
++		sector_t *sector);
++struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
++		struct exfat_chain *p_dir, int entry, unsigned int type,
++		struct exfat_dentry **file_ep);
++int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir);
++
++/* inode.c */
++extern const struct inode_operations exfat_file_inode_operations;
++void exfat_sync_inode(struct inode *inode);
++struct inode *exfat_build_inode(struct super_block *sb,
++		struct exfat_dir_entry *info, loff_t i_pos);
++void exfat_hash_inode(struct inode *inode, loff_t i_pos);
++void exfat_unhash_inode(struct inode *inode);
++struct inode *exfat_iget(struct super_block *sb, loff_t i_pos);
++int exfat_write_inode(struct inode *inode, struct writeback_control *wbc);
++void exfat_evict_inode(struct inode *inode);
++int exfat_block_truncate_page(struct inode *inode, loff_t from);
++
++/* exfat/nls.c */
++unsigned short exfat_toupper(struct super_block *sb, unsigned short a);
++int exfat_uniname_ncmp(struct super_block *sb, unsigned short *a,
++		unsigned short *b, unsigned int len);
++int exfat_utf16_to_nls(struct super_block *sb,
++		struct exfat_uni_name *uniname, unsigned char *p_cstring,
++		int len);
++int exfat_nls_to_utf16(struct super_block *sb,
++		const unsigned char *p_cstring, const int len,
++		struct exfat_uni_name *uniname, int *p_lossy);
++int exfat_create_upcase_table(struct super_block *sb);
++void exfat_free_upcase_table(struct super_block *sb);
++unsigned short exfat_high_surrogate(unicode_t u);
++unsigned short exfat_low_surrogate(unicode_t u);
++
++/* exfat/misc.c */
++void __exfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
++		__printf(3, 4) __cold;
++#define exfat_fs_error(sb, fmt, args...)          \
++		__exfat_fs_error(sb, 1, fmt, ## args)
++#define exfat_fs_error_ratelimit(sb, fmt, args...) \
++		__exfat_fs_error(sb, __ratelimit(&EXFAT_SB(sb)->ratelimit), \
++		fmt, ## args)
++void exfat_msg(struct super_block *sb, const char *lv, const char *fmt, ...)
++		__printf(3, 4) __cold;
++void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
++		u8 tz, __le16 time, __le16 date, u8 time_ms);
++void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
++		u8 *tz, __le16 *time, __le16 *date, u8 *time_ms);
++unsigned short exfat_calc_chksum_2byte(void *data, int len,
++		unsigned short chksum, int type);
++void exfat_update_bh(struct super_block *sb, struct buffer_head *bh, int sync);
++void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
++		unsigned int size, unsigned char flags);
++void exfat_chain_dup(struct exfat_chain *dup, struct exfat_chain *ec);
++
++#endif /* !_EXFAT_FS_H */
+diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+new file mode 100644
+index 000000000000..2a841010e649
+--- /dev/null
++++ b/fs/exfat/exfat_raw.h
+@@ -0,0 +1,184 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2012-2013 Samsung Electronics Co., Ltd.
++ */
++
++#ifndef _EXFAT_RAW_H
++#define _EXFAT_RAW_H
++
++#include <linux/types.h>
++
++#define PBR_SIGNATURE		0xAA55
++
++#define EXFAT_MAX_FILE_LEN	255
++
++#define VOL_CLEAN		0x0000
++#define VOL_DIRTY		0x0002
++
++#define EXFAT_EOF_CLUSTER	0xFFFFFFFFu
++#define EXFAT_BAD_CLUSTER	0xFFFFFFF7u
++#define EXFAT_FREE_CLUSTER	0
++/* Cluster 0, 1 are reserved, the first cluster is 2 in the cluster heap. */
++#define EXFAT_RESERVED_CLUSTERS	2
++#define EXFAT_FIRST_CLUSTER	2
++#define EXFAT_DATA_CLUSTER_COUNT(sbi)	\
++	((sbi)->num_clusters - EXFAT_RESERVED_CLUSTERS)
++
++/* AllocationPossible and NoFatChain field in GeneralSecondaryFlags Field */
++#define ALLOC_FAT_CHAIN		0x01
++#define ALLOC_NO_FAT_CHAIN	0x03
++
++#define DENTRY_SIZE		32 /* directory entry size */
++#define DENTRY_SIZE_BITS	5
++/* exFAT allows 8388608(256MB) directory entries */
++#define MAX_EXFAT_DENTRIES	8388608
++
++/* dentry types */
++#define EXFAT_UNUSED		0x00	/* end of directory */
++#define EXFAT_DELETE		(~0x80)
++#define IS_EXFAT_DELETED(x)	((x) < 0x80) /* deleted file (0x01~0x7F) */
++#define EXFAT_INVAL		0x80	/* invalid value */
++#define EXFAT_BITMAP		0x81	/* allocation bitmap */
++#define EXFAT_UPCASE		0x82	/* upcase table */
++#define EXFAT_VOLUME		0x83	/* volume label */
++#define EXFAT_FILE		0x85	/* file or dir */
++#define EXFAT_GUID		0xA0
++#define EXFAT_PADDING		0xA1
++#define EXFAT_ACLTAB		0xA2
++#define EXFAT_STREAM		0xC0	/* stream entry */
++#define EXFAT_NAME		0xC1	/* file name entry */
++#define EXFAT_ACL		0xC2	/* stream entry */
++
++#define IS_EXFAT_CRITICAL_PRI(x)	(x < 0xA0)
++#define IS_EXFAT_BENIGN_PRI(x)		(x < 0xC0)
++#define IS_EXFAT_CRITICAL_SEC(x)	(x < 0xE0)
++
++/* checksum types */
++#define CS_DIR_ENTRY		0
++#define CS_PBR_SECTOR		1
++#define CS_DEFAULT		2
++
++/* file attributes */
++#define ATTR_READONLY		0x0001
++#define ATTR_HIDDEN		0x0002
++#define ATTR_SYSTEM		0x0004
++#define ATTR_VOLUME		0x0008
++#define ATTR_SUBDIR		0x0010
++#define ATTR_ARCHIVE		0x0020
++
++#define ATTR_RWMASK		(ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME | \
++				 ATTR_SUBDIR | ATTR_ARCHIVE)
++
++#define PBR64_JUMP_BOOT_LEN		3
++#define PBR64_OEM_NAME_LEN		8
++#define PBR64_RESERVED_LEN		53
++
++#define EXFAT_FILE_NAME_LEN		15
++
++/* EXFAT BIOS parameter block (64 bytes) */
++struct bpb64 {
++	__u8 jmp_boot[PBR64_JUMP_BOOT_LEN];
++	__u8 oem_name[PBR64_OEM_NAME_LEN];
++	__u8 res_zero[PBR64_RESERVED_LEN];
++} __packed;
++
++/* EXFAT EXTEND BIOS parameter block (56 bytes) */
++struct bsx64 {
++	__le64 vol_offset;
++	__le64 vol_length;
++	__le32 fat_offset;
++	__le32 fat_length;
++	__le32 clu_offset;
++	__le32 clu_count;
++	__le32 root_cluster;
++	__le32 vol_serial;
++	__u8 fs_version[2];
++	__le16 vol_flags;
++	__u8 sect_size_bits;
++	__u8 sect_per_clus_bits;
++	__u8 num_fats;
++	__u8 phy_drv_no;
++	__u8 perc_in_use;
++	__u8 reserved2[7];
++} __packed;
++
++/* EXFAT PBR[BPB+BSX] (120 bytes) */
++struct pbr64 {
++	struct bpb64 bpb;
++	struct bsx64 bsx;
++} __packed;
++
++/* Common PBR[Partition Boot Record] (512 bytes) */
++struct pbr {
++	union {
++		__u8 raw[64];
++		struct bpb64 f64;
++	} bpb;
++	union {
++		__u8 raw[56];
++		struct bsx64 f64;
++	} bsx;
++	__u8 boot_code[390];
++	__le16 signature;
++} __packed;
++
++struct exfat_dentry {
++	__u8 type;
++	union {
++		struct {
++			__u8 num_ext;
++			__le16 checksum;
++			__le16 attr;
++			__le16 reserved1;
++			__le16 create_time;
++			__le16 create_date;
++			__le16 modify_time;
++			__le16 modify_date;
++			__le16 access_time;
++			__le16 access_date;
++			__u8 create_time_ms;
++			__u8 modify_time_ms;
++			__u8 create_tz;
++			__u8 modify_tz;
++			__u8 access_tz;
++			__u8 reserved2[7];
++		} __packed file; /* file directory entry */
++		struct {
++			__u8 flags;
++			__u8 reserved1;
++			__u8 name_len;
++			__le16 name_hash;
++			__le16 reserved2;
++			__le64 valid_size;
++			__le32 reserved3;
++			__le32 start_clu;
++			__le64 size;
++		} __packed stream; /* stream extension directory entry */
++		struct {
++			__u8 flags;
++			__le16 unicode_0_14[EXFAT_FILE_NAME_LEN];
++		} __packed name; /* file name directory entry */
++		struct {
++			__u8 flags;
++			__u8 reserved[18];
++			__le32 start_clu;
++			__le64 size;
++		} __packed bitmap; /* allocation bitmap directory entry */
++		struct {
++			__u8 reserved1[3];
++			__le32 checksum;
++			__u8 reserved2[12];
++			__le32 start_clu;
++			__le64 size;
++		} __packed upcase; /* up-case table directory entry */
++	} __packed dentry;
++} __packed;
++
++#define EXFAT_TZ_VALID		(1 << 7)
++
++/* Jan 1 GMT 00:00:00 1980 */
++#define EXFAT_MIN_TIMESTAMP_SECS    315532800LL
++/* Dec 31 GMT 23:59:59 2107 */
++#define EXFAT_MAX_TIMESTAMP_SECS    4354819199LL
++
++#endif /* !_EXFAT_RAW_H */
 -- 
 2.17.1
 
