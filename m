@@ -2,66 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A53D14161C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2020 06:27:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2830B1416B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jan 2020 10:11:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbgARF11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 00:27:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725385AbgARF11 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 00:27:27 -0500
-Received: from sol.localdomain (unknown [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BAD820748;
-        Sat, 18 Jan 2020 05:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579325246;
-        bh=Su46dTvr6LjbK97+KpEmyjmd9MCvkLqGMyfTWsk56iA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MFIjHfQvc0kv0Ya/20xHIdfC6o2bof5u5eJqd9/VwJTPA9YcLj8x1k0vYihsxVLtW
-         t1a4NJrrFEzd69isqDax6lXJWaafYGXjS953uoZ94rGPWCAsJxRPKpvc74B6onf6sr
-         FOJFhvTtB6DdCiGovue/tD35DIjmdgbzT+VmQa00=
-Date:   Fri, 17 Jan 2020 21:27:20 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 6/9] scsi: ufs: Add inline encryption support to UFS
-Message-ID: <20200118052720.GD3290@sol.localdomain>
-References: <20191218145136.172774-1-satyat@google.com>
- <20191218145136.172774-7-satyat@google.com>
- <20200117135808.GB5670@infradead.org>
+        id S1726728AbgARJLM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jan 2020 04:11:12 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41699 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726628AbgARJLM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Jan 2020 04:11:12 -0500
+Received: from dread.disaster.area (pa49-181-172-170.pa.nsw.optusnet.com.au [49.181.172.170])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 17D1F7EB72C;
+        Sat, 18 Jan 2020 20:11:07 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1isk8H-0003Ey-Eq; Sat, 18 Jan 2020 20:11:05 +1100
+Date:   Sat, 18 Jan 2020 20:11:05 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH V2 01/12] fs/stat: Define DAX statx attribute
+Message-ID: <20200118091105.GA9407@dread.disaster.area>
+References: <20200110192942.25021-1-ira.weiny@intel.com>
+ <20200110192942.25021-2-ira.weiny@intel.com>
+ <20200115113715.GB2595@quack2.suse.cz>
+ <20200115173834.GD8247@magnolia>
+ <20200115194512.GF23311@iweiny-DESK2.sc.intel.com>
+ <CAPcyv4hwefzruFj02YHYiy8nOpHJFGLKksjiXoRUGpT3C2rDag@mail.gmail.com>
+ <20200115223821.GG23311@iweiny-DESK2.sc.intel.com>
+ <20200116053935.GB8235@magnolia>
+ <CAPcyv4jDMsPj_vZwDOgPkfHLELZWqeJugKgKNVKbpiZ9th683g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200117135808.GB5670@infradead.org>
+In-Reply-To: <CAPcyv4jDMsPj_vZwDOgPkfHLELZWqeJugKgKNVKbpiZ9th683g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=IIEU8dkfCNxGYurWsojP/w==:117 a=IIEU8dkfCNxGYurWsojP/w==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=yPCof4ZbAAAA:8 a=7-415B0cAAAA:8 a=Ei6hhWl3_lwP0hYN7Z4A:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 05:58:08AM -0800, Christoph Hellwig wrote:
-> On Wed, Dec 18, 2019 at 06:51:33AM -0800, Satya Tangirala wrote:
-> > Wire up ufshcd.c with the UFS Crypto API, the block layer inline
-> > encryption additions and the keyslot manager.
+On Wed, Jan 15, 2020 at 10:05:00PM -0800, Dan Williams wrote:
+> On Wed, Jan 15, 2020 at 9:39 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> [..]
+> > >         attempts to minimize software cache effects for both I/O and
+> > >         memory mappings of this file.  It requires a file system which
+> > >         has been configured to support DAX.
+> > >
+> > >         DAX generally assumes all accesses are via cpu load / store
+> > >         instructions which can minimize overhead for small accesses, but
+> > >         may adversely affect cpu utilization for large transfers.
+> > >
+> > >         File I/O is done directly to/from user-space buffers and memory
+> > >         mapped I/O may be performed with direct memory mappings that
+> > >         bypass kernel page cache.
+> > >
+> > >         While the DAX property tends to result in data being transferred
+> > >         synchronously, it does not give the same guarantees of
+> > >         synchronous I/O where data and the necessary metadata are
+> > >         transferred together.
+> >
+> > (I'm frankly not sure that synchronous I/O actually guarantees that the
+> > metadata has hit stable storage...)
 > 
-> I think this patch should be merged into the previous patch, as the
-> previous one isn't useful without wiring it up.
-> 
+> Oh? That text was motivated by the open(2) man page description of O_SYNC.
 
-Satya actually did this originally but then one of the UFS maintainers requested
-the separate patches for (1) new registers, (2) ufshcd-crypto, and (3) ufshcd.c:
-https://lore.kernel.org/linux-block/SN6PR04MB49259F70346E2055C9E0F401FC310@SN6PR04MB4925.namprd04.prod.outlook.com/
+Ugh. "synchronous I/O" means two different things, depending on
+context. In the AIO context, it means "process context waits for operation
+completion direct", but in the O_SYNC context, it means "we guarantee
+data integrity for each I/O submitted".
 
-So, he's not going to be able to make everyone happy :-)
+Indeed, O_SYNC AIO is a thing. i.e. we can do an "async sync
+write" to guarantee data integrity without directly waiting for
+it. Now try describing that only using the words "synchronous
+write" to describe both behaviours. :)
 
-I personally would be fine with either way.
+IOWs, if you are talking about data integrity, you need to
+explicitly say "O_SYNC semantics", not "synchronous write", because
+"synchronous write" is totally ambiguous without the O_SYNC context
+of the open(2) man page...
 
-- Eric
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
