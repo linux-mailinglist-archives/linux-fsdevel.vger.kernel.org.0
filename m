@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC024141E4B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 14:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88655141E76
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 15:16:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgASNg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 08:36:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54026 "EHLO mail.kernel.org"
+        id S1726982AbgASOPr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 09:15:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbgASNg2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 08:36:28 -0500
+        id S1726816AbgASOPr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Jan 2020 09:15:47 -0500
 Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D984320663;
-        Sun, 19 Jan 2020 13:36:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 321B9206D7;
+        Sun, 19 Jan 2020 14:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579440986;
-        bh=SU11H1UmSR3TB45hrBy9iIiOWcaXljmQ3ldAW+zGMvA=;
+        s=default; t=1579443345;
+        bh=g6W+x/faFHqWNP96zz8T9b7ZL6BY5dXLLnKV7Hf3XO8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fGgq1Wa32ISLwK7SovTBzxsCeHBQRpgDCwwdM9WN2/6c7BBAPL/Q5U+mJzFd/67Hd
-         ZRInT39DUOKoIUkwM7MHDjI+a9PQoySLCpTgAn/lVuAae/dhi/8GI64AQF4ZE1V6/e
-         MToGP2bE4dQlxObW8AyLqgc9L0jTfGxd0P6klDgk=
-Date:   Sun, 19 Jan 2020 22:36:20 +0900
+        b=HY1pepszUjHeQ7PAcS8Jl2iWG1LldgGGs0i5pq/mkN2LUjpK1pk4uq4KHR3O1btxo
+         Vta+93TAlQtTDnHppuZ4qoNbFTa+a2g/nH/Lr2Ud+U2TLuX721CnHa4sj0JqjEKwB+
+         k8LRmsrQ06qjSRtoR7kl6aJFvLaDAVM8oSRGsfD0=
+Date:   Sun, 19 Jan 2020 23:15:40 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Steven Rostedt <rostedt@goodmis.org>,
@@ -42,13 +42,13 @@ Cc:     Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/22] Documentation: bootconfig: Add a doc for
- extended boot config
-Message-Id: <20200119223620.059338427abadec036adc3fa@kernel.org>
-In-Reply-To: <7823298a-88e6-4625-ff10-94b00f7963cb@infradead.org>
+Subject: Re: [PATCH v6 22/22] Documentation: tracing: Add boot-time tracing
+ document
+Message-Id: <20200119231540.eaebef64f8a69bc97f4abf25@kernel.org>
+In-Reply-To: <da3c941a-f7a2-537e-9201-862450cb69d9@infradead.org>
 References: <157867220019.17873.13377985653744804396.stgit@devnote2>
-        <157867230658.17873.9309879174829924324.stgit@devnote2>
-        <7823298a-88e6-4625-ff10-94b00f7963cb@infradead.org>
+        <157867246028.17873.8047384554383977870.stgit@devnote2>
+        <da3c941a-f7a2-537e-9201-862450cb69d9@infradead.org>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -60,327 +60,265 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Randy,
 
-On Sat, 18 Jan 2020 10:28:40 -0800
+Thank you for your comments!
+
+On Sat, 18 Jan 2020 10:14:08 -0800
 Randy Dunlap <rdunlap@infradead.org> wrote:
 
 > Hi,
 > 
-> Editorial comments/corrections below...
-
-Thank you for your comments! This is very helpful for me.
-
+> Here are a few editorial comments for you...
 > 
-> On 1/10/20 8:05 AM, Masami Hiramatsu wrote:
-> > Add a documentation for extended boot config under
-> > admin-guide, since it is including the syntax of boot config.
+> 
+> On 1/10/20 8:07 AM, Masami Hiramatsu wrote:
+> > Add a documentation about boot-time tracing options in
+> > boot config.
 > > 
 > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > > ---
-> >  Changes in v6:
-> >   - Add a note about comment after value.
-> >  Changes in v5:
-> >   - Fix to insert bootconfig to TOC list alphabetically.
-> >   - Add notes about avaliable characters in values.
-> >   - Fix to use correct quotes (``) for .rst.
-> >  Changes in v4:
-> >   - Rename suppremental kernel command line to boot config.
-> 
->              supplemental
-> 
-> >   - Update document according to the recent changes.
-> >   - Add How to load it on boot.
-> >   - Style bugfix.
-> > ---
-> >  Documentation/admin-guide/bootconfig.rst |  184 ++++++++++++++++++++++++++++++
-> >  Documentation/admin-guide/index.rst      |    1 
-> >  MAINTAINERS                              |    1 
-> >  3 files changed, 186 insertions(+)
-> >  create mode 100644 Documentation/admin-guide/bootconfig.rst
+> >  Documentation/admin-guide/bootconfig.rst |    2 
+> >  Documentation/trace/boottime-trace.rst   |  184 ++++++++++++++++++++++++++++++
+> >  Documentation/trace/index.rst            |    1 
+> >  3 files changed, 187 insertions(+)
+> >  create mode 100644 Documentation/trace/boottime-trace.rst
 > > 
 > 
-> > diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+> > diff --git a/Documentation/trace/boottime-trace.rst b/Documentation/trace/boottime-trace.rst
 > > new file mode 100644
-> > index 000000000000..f7475df2a718
+> > index 000000000000..1d10fdebf1b2
 > > --- /dev/null
-> > +++ b/Documentation/admin-guide/bootconfig.rst
+> > +++ b/Documentation/trace/boottime-trace.rst
 > > @@ -0,0 +1,184 @@
 > > +.. SPDX-License-Identifier: GPL-2.0
 > > +
-> > +==================
-> > +Boot Configuration
-> > +==================
+> > +=================
+> > +Boot-time tracing
+> > +=================
 > > +
 > > +:Author: Masami Hiramatsu <mhiramat@kernel.org>
 > > +
 > > +Overview
 > > +========
 > > +
-> > +The boot configuration is expanding current kernel cmdline to support
-> 
->                           expands the current kernel command line to support
-
-OK.
-
-> 
-> > +additional key-value data when boot the kernel in an efficient way.
-> 
->                                   booting
-
-OK.
-
-> 
-> > +This allows adoministrators to pass a structured-Key config file.
-> 
->                administrators
-
-Oops. OK.
-
-> 
+> > +Boot-time tracing allows users to trace boot-time process including
+> > +device initialization with full features of ftrace including per-event
+> > +filter and actions, histograms, kprobe-events and synthetic-events,
+> > +and trace instances.
+> > +Since kernel cmdline is not enough to control these complex features,
+> > +this uses bootconfig file to describe tracing feature programming.
 > > +
-> > +Config File Syntax
-> > +==================
+> > +Options in the Boot Config
+> > +==========================
 > > +
-> > +The boot config syntax is a simple structured key-value. Each key consists
-> > +of dot-connected-words, and key and value are connected by "=". The value
-> > +has to be terminated by semi-colon (``;``) or newline (``\n``).
-> > +For array value, array entries are separated by comma (``,``). ::
-> > +
-> > +KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
+> > +Here is the list of available options list for boot time tracing in
+> > +boot config file [1]_. All options are under "ftrace." or "kernel."
+> > +refix. See kernel parameters for the options which starts
 > 
-> (just a note: spaces are OK here, unlike in kernel command line syntax [unless quoted].)
+>    prefix.
 
-Yes.
-
-> > +
-> > +Each key word must contain only alphabets, numbers, dash (``-``) or underscore
-> > +(``_``). And each value only contains printable characters or spaces except
-> > +for delimiters such as semi-colon (``;``), new-line (``\n``), comma (``,``),
-> > +hash (``#``) and closing brace (``}``).
-> 
-> what about opening brace '{'?
-
-Good question! Since the bootconfig doesn't support anonymous key-word block,
-opening brace doesn't become a delimiter. (So, the above explanation might better
-use "except for *some* delimiters"...)
-
-For example, following data should be wrong.
-
-key = value { key2 = value }
-
+Oops, OK.
 
 > 
+> > +with "kernel." prefix [2]_.
 > > +
-> > +If you want to use those delimiters in a value, you can use either double-
-> > +quotes (``"VALUE"``) or single-quotes (``'VALUE'``) to quote it. Note that
-> > +you can not escape these quotes.
+> > +.. [1] See :ref:`Documentation/admin-guide/bootconfig.rst <bootconfig>`
+> > +.. [2] See :ref:`Documentation/admin-guide/kernel-parameters.rst <kernelparameters>`
 > > +
-> > +There can be a key which doesn't have value or has an empty value. Those keys
-> > +are used for checking the key exists or not (like a boolean).
+> > +Ftrace Global Options
+> > +---------------------
+> > +
+> > +Ftrace global options have "kernel." prefix in boot config, which means
+> > +these options are passed as a part of kernel legacy command line.
+> > +
+> > +kernel.tp_printk
+> > +   Output trace-event data on printk buffer too.
+> > +
+> > +kernel.dump_on_oops [= MODE]
+> > +   Dump ftrace on Oops. If MODE = 1 or omitted, dump trace buffer
+> > +   on all CPUs. If MODE = 2, dump a buffer on a CPU which kicks Oops.
+> > +
+> > +kernel.traceoff_on_warning
+> > +   Stop tracing if WARN_ON() occurs.
+> > +
+> > +kernel.fgraph_max_depth = MAX_DEPTH
+> > +   Set MAX_DEPTH to maximum depth of fgraph tracer.
+> > +
+> > +kernel.fgraph_filters = FILTER[, FILTER2...]
+> > +   Add fgraph tracing function filters.
+> > +
+> > +kernel.fgraph_notraces = FILTER[, FILTER2...]
+> > +   Add fgraph non tracing function filters.
 > 
-> I would say:    checking if the key exists or not
+>                  non-tracing
 
 OK.
 
 > 
 > > +
-> > +Key-Value Syntax
-> > +----------------
 > > +
-> > +The boot config file syntax allows user to merge partially same word keys
-> > +by brace. For example::
+> > +Ftrace Per-instance Options
+> > +---------------------------
 > > +
-> > + foo.bar.baz = value1
-> > + foo.bar.qux.quux = value2
+> > +These options can be used for each instance including global ftrace node.
 > > +
-> > +These can be written also in::
+> > +ftrace.[instance.INSTANCE.]options = OPT1[, OPT2[...]]
+> > +   Enable given ftrace options.
 > > +
-> > + foo.bar {
-> > +    baz = value1
-> > +    qux.quux = value2
-> > + }
+> > +ftrace.[instance.INSTANCE.]trace_clock = CLOCK
+> > +   Set given CLOCK to ftrace's trace_clock.
 > > +
-> > +Or more shorter, written as following::
+> > +ftrace.[instance.INSTANCE.]buffer_size = SIZE
+> > +   Configure ftrace buffer size to SIZE. You can use "KB" or "MB"
+> > +   for that SIZE.
 > > +
-> > + foo.bar { baz = value1; qux.quux = value2 }
+> > +ftrace.[instance.INSTANCE.]alloc_snapshot
+> > +   Allocate snapshot buffer.
 > > +
-> > +In both styles, same key words are automatically merged when parsing it
-> > +at boot time. So you can append similar trees or key-values.
+> > +ftrace.[instance.INSTANCE.]cpumask = CPUMASK
+> > +   Set CPUMASK as trace cpu-mask.
 > > +
-> > +Comments
-> > +--------
+> > +ftrace.[instance.INSTANCE.]events = EVENT[, EVENT2[...]]
+> > +   Enable given events on boot. You can use a wild card in EVENT.
 > > +
-> > +The config syntax accepts shell-script style comments. The comments start
+> > +ftrace.[instance.INSTANCE.]tracer = TRACER
+> > +   Set TRACER to current tracer on boot. (e.g. function)
+> > +
+> > +ftrace.[instance.INSTANCE.]ftrace.filters
+> > +   This will take an array of tracing function filter rules
 > 
-> s/start/starting/
+> end with '.' as above descriptions.
+
+Yes, I missed it.
+
+> 
+> > +
+> > +ftrace.[instance.INSTANCE.]ftrace.notraces
+> > +   This will take an array of NON-tracing function filter rules
+> 
+> ditto
 
 OK.
 
 > 
-> > +with hash ("#") until newline ("\n") will be ignored.
-> > +
-> > +::
-> > +
-> > + # comment line
-> > + foo = value # value is set to foo.
-> > + bar = 1, # 1st element
-> > +       2, # 2nd element
-> > +       3  # 3rd element
-> > +
-> > +This is parsed as below::
-> > +
-> > + foo = value
-> > + bar = 1, 2, 3
-> > +
-> > +Note that you can not put a comment between value and delimiter(``,`` or
-> > +``;``). This means following config has a syntax error ::
-> > +
-> > + key = 1 # comment
-> > +       ,2
 > > +
 > > +
-> > +/proc/bootconfig
-> > +================
+> > +Ftrace Per-Event Options
+> > +------------------------
 > > +
-> > +/proc/bootconfig is a user-space interface of the boot config.
-> > +Unlike /proc/cmdline, this file shows the key-value style list.
-> > +Each key-value pair is shown in each line with following style::
+> > +These options are setting per-event options.
 > > +
-> > + KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...]
-> > +
-> > +
-> > +Boot Kernel With a Boot Config
-> > +==============================
-> > +
-> > +Since the boot configuration file is loaded with initrd, it will be added
-> > +to the end of the initrd (initramfs) image file. The Linux kernel decodes
-> > +the last part of the initrd image in memory to get the boot configuration
-> > +data.
-> > +Because of this "piggyback" method, there is no need to change or
-> > +update the boot loader and the kernel image itself.
-> > +
-> > +To do this operation, Linux kernel provides "bootconfig" command under
-> > +tools/bootconfig, which allows admin to apply or delete the config file
-> > +to/from initrd image. You can build it by follwoing command::
+> > +ftrace.[instance.INSTANCE.]event.GROUP.EVENT.enable
+> > +   Enables GROUP:EVENT tracing.
 > 
->                                           by the following
-
-Oops, a typo...
-
-> 
-> > +
-> > + # make -C tools/bootconfig
-> > +
-> > +To add your boot config file to initrd image, run bootconfig as below
-> > +(Old data is removed automatically if exists)::
-> > +
-> > + # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
-> > +
-> > +To remove the config from the image, you can use -d option as below::
-> > +
-> > + # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
-> > +
-> > +
-> > +C onfig File Limitation
-> 
->    Config
-
-Oops
-
-> 
-> > +======================
-> > +
-> > +Currently the maximum config size size is 32KB and the total key-words (not
-> > +key-value entries) must be under 1024 nodes.
-> > +Note: this is not the number of entries but nodes, an entry must consume
-> > +more than 2 nodes (a key-word and a value). So theoretically, it will be
-> > +up to 512 key-value pairs. If keys contains 3 words in average, it can
-> > +contain 256 key-value pairs. In most cases, the number of config items
-> > +will be under 100 entries and smaller than 8KB, so it would be enough.
-> > +If the node number exceeds 1024, parser returns an error even if the file
-> > +size is smaller than 32KB.
-> > +Anyway, since bootconfig command verifies it when appending a boot config
-> > +to initrd image, user can notice it before boot.
-> > +
-> > +
-> > +Bootconfig APIs
-> > +===============
-> > +
-> > +User can query or loop on key-value pairs, also it is possible to find
-> > +a root (prefix) key node and find key-values under that node.
-> > +
-> > +If you have a key string, you can query the value directly with the key
-> > +using xbc_find_value(). If you want to know what keys exist in the SKC
-> > +tree, you can use xbc_for_each_key_value() to iterate key-value pairs.
-> > +Note that you need to use xbc_array_for_each_value() for accessing
-> > +each arraies value, e.g.::
-> 
->         array's
-> (I think)
-
-Yes, OK. 
-
-> 
-> > +
-> > + vnode = NULL;
-> > + xbc_find_value("key.word", &vnode);
-> > + if (vnode && xbc_node_is_array(vnode))
-> > +    xbc_array_for_each_value(vnode, value) {
-> > +      printk("%s ", value);
-> > +    }
-> > +
-> > +If you want to focus on keys which has a prefix string, you can use
-> 
->                                       have
+>       Enable
 
 OK.
 
 > 
-> > +xbc_find_node() to find a node which prefix key words, and iterate
+> > +
+> > +ftrace.[instance.INSTANCE.]event.GROUP.EVENT.filter = FILTER
+> > +   Set FILTER rule to the GROUP:EVENT.
+> > +
+> > +ftrace.[instance.INSTANCE.]event.GROUP.EVENT.actions = ACTION[, ACTION2[...]]
+> > +   Set ACTIONs to the GROUP:EVENT.
+> > +
+> > +ftrace.[instance.INSTANCE.]event.kprobes.EVENT.probes = PROBE[, PROBE2[...]]
+> > +   Defines new kprobe event based on PROBEs. It is able to define
+> > +   multiple probes on one event, but those must have same type of
+> > +   arguments. This option is available only for the event which
+> > +   group name is "kprobes".
+> > +
+> > +ftrace.[instance.INSTANCE.]event.synthetic.EVENT.fields = FIELD[, FIELD2[...]]
+> > +   Defines new synthetic event with FIELDs. Each field should be
+> > +   "type varname".
+> > +
+> > +Note that kprobe and synthetic event definitions can be written under
+> > +instance node, but those are also visible from other instances. So please
+> > +take care for event name conflict.
+> > +
+> > +
+> > +Examples
+> > +========
+> > +
+> > +For example, to add filter and actions for each event, define kprobe
+> > +events, and synthetic events with histogram, write a boot config like
+> > +below::
+> > +
+> > +  ftrace.event {
+> > +        task.task_newtask {
+> > +                filter = "pid < 128"
+> > +                enable
+> > +        }
+> > +        kprobes.vfs_read {
+> > +                probes = "vfs_read $arg1 $arg2"
+> > +                filter = "common_pid < 200"
+> > +                enable
+> > +        }
+> > +        synthetic.initcall_latency {
+> > +                fields = "unsigned long func", "u64 lat"
+> > +                actions = "hist:keys=func.sym,lat:vals=lat:sort=lat"
+> > +        }
+> > +        initcall.initcall_start {
+> > +                actions = "hist:keys=func:ts0=common_timestamp.usecs"
+> > +        }
+> > +        initcall.initcall_finish {
+> > +                actions = "hist:keys=func:lat=common_timestamp.usecs-$ts0:onmatch(initcall.initcall_start).initcall_latency(func,$lat)"
+> > +        }
+> > +  }
+> > +
+> > +Also, boottime tracing supports "instance" node, which allows us to run
 > 
-> [confusing above]
-
-Ah, it should be "to find a node by the prefix string,"
-
-
-> 
-> > +keys under the prefix node with xbc_node_for_each_key_value().
-> > +
-> > +But the most typical usage is to get the named value under prefix
-> > +or get the named array under prefix as below::
-> > +
-> > + root = xbc_find_node("key.prefix");
-> > + value = xbc_node_find_value(root, "option", &vnode);
-> > + ...
-> > + xbc_node_for_each_array_value(root, "array-option", value, anode) {
-> > +    ...
-> > + }
-> > +
-> > +This accesses a value of "key.prefix.option" and an array of
-> > +"key.prefix.array-option".
-> > +
-> > +Locking is not needed, since after initialized, the config becomes readonly.
-> 
->                                 after initialization,
+>          boot-time  [for consistency]
 
 OK.
 
 > 
-> > +All data and keys must be copied if you need to modify it.
+> > +several tracers for different purpose at once. For example, one tracer
+> > +is for tracing functions start with "user\_", and others tracing "kernel\_"
+> 
+>                             starting
+
+OK.
+
+> 
+> > +functions, you can write boot config as below::
 > > +
+> > +  ftrace.instance {
+> > +        foo {
+> > +                tracer = "function"
+> > +                ftrace.filters = "user_*"
+> > +        }
+> > +        bar {
+> > +                tracer = "function"
+> > +                ftrace.filters = "kernel_*"
+> > +        }
+> > +  }
 > > +
-> > +Functions and structures
-> > +========================
+> > +The instance node also accepts event nodes so that each instance
+> > +can customize its event tracing.
 > > +
-> > +.. kernel-doc:: include/linux/bootconfig.h
-> > +.. kernel-doc:: lib/bootconfig.c
+> > +This boot-time tracing also supports ftrace kernel parameters via boot
+> > +config.
+> > +For example, following kernel parameters::
 > > +
+> > + trace_options=sym-addr trace_event=initcall:* tp_printk trace_buf_size=1M ftrace=function ftrace_filter="vfs*"
+> > +
+> > +This can be written in boot config like below::
+> > +
+> > +  kernel {
+> > +        trace_options = sym-addr
+> > +        trace_event = "initcall:*"
+> > +        tp_printk
+> > +        trace_buf_size = 1M
+> > +        ftrace = function
+> > +        ftrace_filter = "vfs*"
+> > +  }
+> > +
+> > +Note that parameters start with "kernel" prefix instead of "ftrace".
 > 
 > HTH.
 
-Thank you very much!
-
-> -- 
-> ~Randy
+Very helpful. Thanks!
 
 
 -- 
