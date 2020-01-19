@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C48141B82
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 04:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A46141B84
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 04:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgASDTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 22:19:47 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56730 "EHLO
+        id S1726765AbgASDUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jan 2020 22:20:03 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56742 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgASDTr (ORCPT
+        with ESMTP id S1725906AbgASDUD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 22:19:47 -0500
+        Sat, 18 Jan 2020 22:20:03 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it17N-00BFWd-Pe; Sun, 19 Jan 2020 03:19:22 +0000
+        id 1it17e-00BFXJ-12; Sun, 19 Jan 2020 03:19:41 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -22,9 +22,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Eric Biederman <ebiederm@xmission.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 06/17] handle_mounts(): start building a sane wrapper for follow_managed()
-Date:   Sun, 19 Jan 2020 03:17:18 +0000
-Message-Id: <20200119031738.2681033-6-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 07/17] atomic_open(): saner calling conventions (return dentry on success)
+Date:   Sun, 19 Jan 2020 03:17:19 +0000
+Message-Id: <20200119031738.2681033-7-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
 References: <20200119031423.GV8904@ZenIV.linux.org.uk>
@@ -38,107 +38,81 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-All callers of follow_managed() follow it on success with the same steps -
-d_backing_inode(path->dentry) is calculated and stored into some struct inode *
-variable and, in all but one case, an unsigned variable (nd->seq to be) is
-zeroed.  The single exception is lookup_fast() and there zeroing is correct
-thing to do - not doing it is a pointless microoptimization.
-
-	Add a wrapper for follow_managed() that would do that combination.
-It's mostly a vehicle for code massage - it will be changing quite a bit,
-and the current calling conventions are by no means final.  Right now it
-takes path, nameidata and (as out params) inode and seq, similar to
-__follow_mount_rcu().  Which will soon get folded into it...
+Currently it either returns -E... or puts (nd->path.mnt,dentry)
+into *path and returns 0.  Make it return ERR_PTR(-E...) or
+dentry; adjust the caller.  Fewer arguments and it's easier
+to keep track of *path contents that way.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/namei.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index c19b458f66da..4c867d0970d5 100644
+index 4c867d0970d5..9d8837432a7b 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1304,6 +1304,18 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
- 		!(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
- }
- 
-+static inline int handle_mounts(struct path *path, struct nameidata *nd,
-+			  struct inode **inode, unsigned int *seqp)
-+{
-+	int ret = follow_managed(path, nd);
-+
-+	if (likely(ret >= 0)) {
-+		*inode = d_backing_inode(path->dentry);
-+		*seqp = 0; /* out of RCU mode, so the value doesn't matter */
-+	}
-+	return ret;
-+}
-+
- static int follow_dotdot_rcu(struct nameidata *nd)
+@@ -2955,10 +2955,10 @@ static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t m
+  *
+  * Returns an error code otherwise.
+  */
+-static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+-			struct path *path, struct file *file,
+-			const struct open_flags *op,
+-			int open_flag, umode_t mode)
++static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
++				  struct file *file,
++				  const struct open_flags *op,
++				  int open_flag, umode_t mode)
  {
- 	struct inode *inode = nd->inode;
-@@ -1514,7 +1526,6 @@ static int lookup_fast(struct nameidata *nd,
- 	struct vfsmount *mnt = nd->path.mnt;
- 	struct dentry *dentry, *parent = nd->path.dentry;
- 	int status = 1;
--	int err;
- 
- 	/*
- 	 * Rename seqlock is not required here because in the off chance
-@@ -1584,10 +1595,7 @@ static int lookup_fast(struct nameidata *nd,
- 
- 	path->mnt = mnt;
- 	path->dentry = dentry;
--	err = follow_managed(path, nd);
--	if (likely(err > 0))
--		*inode = d_backing_inode(path->dentry);
--	return err;
-+	return handle_mounts(path, nd, inode, seqp);
+ 	struct dentry *const DENTRY_NOT_SET = (void *) -1UL;
+ 	struct inode *dir =  nd->path.dentry->d_inode;
+@@ -2999,17 +2999,15 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
+ 			}
+ 			if (file->f_mode & FMODE_CREATED)
+ 				fsnotify_create(dir, dentry);
+-			if (unlikely(d_is_negative(dentry))) {
++			if (unlikely(d_is_negative(dentry)))
+ 				error = -ENOENT;
+-			} else {
+-				path->dentry = dentry;
+-				path->mnt = nd->path.mnt;
+-				return 0;
+-			}
+ 		}
+ 	}
+-	dput(dentry);
+-	return error;
++	if (error) {
++		dput(dentry);
++		dentry = ERR_PTR(error);
++	}
++	return dentry;
  }
  
- /* Fast lookup failed, do it the slow way */
-@@ -1761,12 +1769,9 @@ static int walk_component(struct nameidata *nd, int flags)
- 			return PTR_ERR(path.dentry);
- 
- 		path.mnt = nd->path.mnt;
--		err = follow_managed(&path, nd);
-+		err = handle_mounts(&path, nd, &inode, &seq);
- 		if (unlikely(err < 0))
- 			return err;
--
--		seq = 0;	/* we are already out of RCU mode */
--		inode = d_backing_inode(path.dentry);
+ /*
+@@ -3104,11 +3102,16 @@ static int lookup_open(struct nameidata *nd, struct path *path,
  	}
  
- 	return step_into(nd, &path, flags, inode, seq);
-@@ -2233,11 +2238,9 @@ static int handle_lookup_down(struct nameidata *nd)
- 			return -ECHILD;
- 	} else {
- 		dget(path.dentry);
--		err = follow_managed(&path, nd);
-+		err = handle_mounts(&path, nd, &inode, &seq);
- 		if (unlikely(err < 0))
- 			return err;
--		inode = d_backing_inode(path.dentry);
--		seq = 0;
- 	}
- 	path_to_nameidata(&path, nd);
- 	nd->inode = inode;
-@@ -3258,12 +3261,9 @@ static int do_last(struct nameidata *nd,
- 		got_write = false;
+ 	if (dir_inode->i_op->atomic_open) {
+-		error = atomic_open(nd, dentry, path, file, op, open_flag,
+-				    mode);
+-		if (unlikely(error == -ENOENT) && create_error)
+-			error = create_error;
+-		return error;
++		dentry = atomic_open(nd, dentry, file, op, open_flag, mode);
++		if (IS_ERR(dentry)) {
++			error = PTR_ERR(dentry);
++			if (unlikely(error == -ENOENT) && create_error)
++				error = create_error;
++			return error;
++		}
++		path->mnt = nd->path.mnt;
++		path->dentry = dentry;
++		return 0;
  	}
  
--	error = follow_managed(&path, nd);
-+	error = handle_mounts(&path, nd, &inode, &seq);
- 	if (unlikely(error < 0))
- 		return error;
--
--	seq = 0;	/* out of RCU mode, so the value doesn't matter */
--	inode = d_backing_inode(path.dentry);
- finish_lookup:
- 	error = step_into(nd, &path, 0, inode, seq);
- 	if (unlikely(error))
+ no_open:
 -- 
 2.20.1
 
