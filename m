@@ -2,113 +2,386 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBEA141DD3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 13:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC024141E4B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 14:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbgASMts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 07:49:48 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51675 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgASMts (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 07:49:48 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d73so11700687wmd.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jan 2020 04:49:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=di4JEZljWWelDns1zpKZZpm57YnUPSQGJgKJK7XAGxU=;
-        b=kT0w6tmxdWzSycwzs7vNT64RgxsuglsknvAhksKGBnXnCGsNmKU8Kvpx85swKXaUEe
-         Pe9wS+b3DLEvqVOJnRZGi2FX5jLRYHpTdWy1O3OMmk4FbyK3skFptxn8nrjSTdlIMF27
-         6DhGdT5SpZlPbhB90HlpjBQe24or/EQijEaf5zPfiCjvIR6DjEkY7IjcV+WicvPBJsDt
-         PDvqqn5b3zgw1oDMi37WKfTNHC/ET3v1t2Kvs4ePvIvE1oveeo2ovir0gBMw+4IfPgYl
-         TWdjDzz7d0aCy9Jr2TxPzP78k5gECQPztLr2IHzRNcMKkI/BdGpADEDJs/mlQecG+g6k
-         uDtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=di4JEZljWWelDns1zpKZZpm57YnUPSQGJgKJK7XAGxU=;
-        b=Fi4pUzm3E8JapXlVmhwM1EWCaZK0QgdzWFoMvo6z9wq4thkkTaauBqsLrU41jKPmzb
-         aPb28n1l6fQARv6RGYMhzwXtjbBG1BJi8CNrOC0dQUVjnuUN1socV/fhk4emGHfkJcic
-         xdqqEe2icI0WaTAM2ObymD06K4ADV7vMpNntEYHAj2vh2Iu1N0pzEcGEjif1rCvJyxAj
-         fxRzWfqRBQeBZMFIeNb9tEXvIeRn/ffSblklBSXgqSzlPCrZvpyJhkZnTrDipMC/1+dK
-         pxqwpAnOTVR7oGaRirO5LbYp140bMTLKZVIvvMwn0fc0TiPQUMEeRF88DvcQPt2BTyHd
-         jr6g==
-X-Gm-Message-State: APjAAAUn/lmfKEC3yHXAzt8RbaN8GZvXDuUIF6ZBPG0gxLzdp9myy2xc
-        4nwWLi0+yBfDbypXXYHy+knEeYnI
-X-Google-Smtp-Source: APXvYqyK8MCTGkE94od8cYqYxvjuALrO7w0FsUSgt+lKeeQc/huj2X+DiTk+O3vbm+a3bdVyjivk1w==
-X-Received: by 2002:a1c:22c6:: with SMTP id i189mr14297293wmi.15.1579438186135;
-        Sun, 19 Jan 2020 04:49:46 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id s8sm41727691wrt.57.2020.01.19.04.49.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2020 04:49:45 -0800 (PST)
-Date:   Sun, 19 Jan 2020 13:49:44 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: udf: Incorrect handling of timezone
-Message-ID: <20200119124944.lf4vsqhwwbrxyibk@pali>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="cgxnvbadyusl35aw"
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+        id S1727107AbgASNg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 08:36:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726903AbgASNg2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Jan 2020 08:36:28 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D984320663;
+        Sun, 19 Jan 2020 13:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579440986;
+        bh=SU11H1UmSR3TB45hrBy9iIiOWcaXljmQ3ldAW+zGMvA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fGgq1Wa32ISLwK7SovTBzxsCeHBQRpgDCwwdM9WN2/6c7BBAPL/Q5U+mJzFd/67Hd
+         ZRInT39DUOKoIUkwM7MHDjI+a9PQoySLCpTgAn/lVuAae/dhi/8GI64AQF4ZE1V6/e
+         MToGP2bE4dQlxObW8AyLqgc9L0jTfGxd0P6klDgk=
+Date:   Sun, 19 Jan 2020 22:36:20 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/22] Documentation: bootconfig: Add a doc for
+ extended boot config
+Message-Id: <20200119223620.059338427abadec036adc3fa@kernel.org>
+In-Reply-To: <7823298a-88e6-4625-ff10-94b00f7963cb@infradead.org>
+References: <157867220019.17873.13377985653744804396.stgit@devnote2>
+        <157867230658.17873.9309879174829924324.stgit@devnote2>
+        <7823298a-88e6-4625-ff10-94b00f7963cb@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Randy,
 
---cgxnvbadyusl35aw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, 18 Jan 2020 10:28:40 -0800
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Hello! I looked at udf code which converts linux time to UDF time and I
-found out that conversion of timezone is incorrect.
+> Hi,
+> 
+> Editorial comments/corrections below...
 
-Relevant code from udf_time_to_disk_stamp() function:
+Thank you for your comments! This is very helpful for me.
 
-	int16_t offset;
+> 
+> On 1/10/20 8:05 AM, Masami Hiramatsu wrote:
+> > Add a documentation for extended boot config under
+> > admin-guide, since it is including the syntax of boot config.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  Changes in v6:
+> >   - Add a note about comment after value.
+> >  Changes in v5:
+> >   - Fix to insert bootconfig to TOC list alphabetically.
+> >   - Add notes about avaliable characters in values.
+> >   - Fix to use correct quotes (``) for .rst.
+> >  Changes in v4:
+> >   - Rename suppremental kernel command line to boot config.
+> 
+>              supplemental
+> 
+> >   - Update document according to the recent changes.
+> >   - Add How to load it on boot.
+> >   - Style bugfix.
+> > ---
+> >  Documentation/admin-guide/bootconfig.rst |  184 ++++++++++++++++++++++++++++++
+> >  Documentation/admin-guide/index.rst      |    1 
+> >  MAINTAINERS                              |    1 
+> >  3 files changed, 186 insertions(+)
+> >  create mode 100644 Documentation/admin-guide/bootconfig.rst
+> > 
+> 
+> > diff --git a/Documentation/admin-guide/bootconfig.rst b/Documentation/admin-guide/bootconfig.rst
+> > new file mode 100644
+> > index 000000000000..f7475df2a718
+> > --- /dev/null
+> > +++ b/Documentation/admin-guide/bootconfig.rst
+> > @@ -0,0 +1,184 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +==================
+> > +Boot Configuration
+> > +==================
+> > +
+> > +:Author: Masami Hiramatsu <mhiramat@kernel.org>
+> > +
+> > +Overview
+> > +========
+> > +
+> > +The boot configuration is expanding current kernel cmdline to support
+> 
+>                           expands the current kernel command line to support
 
-	offset =3D -sys_tz.tz_minuteswest;
+OK.
 
-	dest->typeAndTimezone =3D cpu_to_le16(0x1000 | (offset & 0x0FFF));
+> 
+> > +additional key-value data when boot the kernel in an efficient way.
+> 
+>                                   booting
 
-UDF 2.60 2.1.4.1 Uint16 TypeAndTimezone; says:
+OK.
 
-  For the following descriptions Type refers to the most significant 4 bits=
- of this
-  field, and TimeZone refers to the least significant 12 bits of this field=
-, which is
-  interpreted as a signed 12-bit number in two=E2=80=99s complement form.
+> 
+> > +This allows adoministrators to pass a structured-Key config file.
+> 
+>                administrators
 
-  TimeZone ... If this field contains -2047 then the time zone has not been=
- specified.
+Oops. OK.
 
-As offset is of signed 16bit integer, (offset & 0x0FFF) result always
-clears sign bit and therefore timezone is stored to UDF fs incorrectly.
+> 
+> > +
+> > +Config File Syntax
+> > +==================
+> > +
+> > +The boot config syntax is a simple structured key-value. Each key consists
+> > +of dot-connected-words, and key and value are connected by "=". The value
+> > +has to be terminated by semi-colon (``;``) or newline (``\n``).
+> > +For array value, array entries are separated by comma (``,``). ::
+> > +
+> > +KEY[.WORD[...]] = VALUE[, VALUE2[...]][;]
+> 
+> (just a note: spaces are OK here, unlike in kernel command line syntax [unless quoted].)
 
-This needs to be fixed, sign bit from tz_minuteswest needs to be
-propagated to 12th bit in typeAndTimezone member.
+Yes.
 
-Also tz_minuteswest is of int type, so conversion to int16_t (or more
-precisely int12_t) can be truncated. So this needs to be handled too.
+> > +
+> > +Each key word must contain only alphabets, numbers, dash (``-``) or underscore
+> > +(``_``). And each value only contains printable characters or spaces except
+> > +for delimiters such as semi-colon (``;``), new-line (``\n``), comma (``,``),
+> > +hash (``#``) and closing brace (``}``).
+> 
+> what about opening brace '{'?
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+Good question! Since the bootconfig doesn't support anonymous key-word block,
+opening brace doesn't become a delimiter. (So, the above explanation might better
+use "except for *some* delimiters"...)
 
---cgxnvbadyusl35aw
-Content-Type: application/pgp-signature; name="signature.asc"
+For example, following data should be wrong.
 
------BEGIN PGP SIGNATURE-----
+key = value { key2 = value }
 
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiRQZAAKCRCL8Mk9A+RD
-UmU5AJ4z5tYD1bApqJGszN0beSFJrg899gCfQsH9MytK7VbpjIhwvS4WdzLwQEY=
-=55SS
------END PGP SIGNATURE-----
 
---cgxnvbadyusl35aw--
+> 
+> > +
+> > +If you want to use those delimiters in a value, you can use either double-
+> > +quotes (``"VALUE"``) or single-quotes (``'VALUE'``) to quote it. Note that
+> > +you can not escape these quotes.
+> > +
+> > +There can be a key which doesn't have value or has an empty value. Those keys
+> > +are used for checking the key exists or not (like a boolean).
+> 
+> I would say:    checking if the key exists or not
+
+OK.
+
+> 
+> > +
+> > +Key-Value Syntax
+> > +----------------
+> > +
+> > +The boot config file syntax allows user to merge partially same word keys
+> > +by brace. For example::
+> > +
+> > + foo.bar.baz = value1
+> > + foo.bar.qux.quux = value2
+> > +
+> > +These can be written also in::
+> > +
+> > + foo.bar {
+> > +    baz = value1
+> > +    qux.quux = value2
+> > + }
+> > +
+> > +Or more shorter, written as following::
+> > +
+> > + foo.bar { baz = value1; qux.quux = value2 }
+> > +
+> > +In both styles, same key words are automatically merged when parsing it
+> > +at boot time. So you can append similar trees or key-values.
+> > +
+> > +Comments
+> > +--------
+> > +
+> > +The config syntax accepts shell-script style comments. The comments start
+> 
+> s/start/starting/
+
+OK.
+
+> 
+> > +with hash ("#") until newline ("\n") will be ignored.
+> > +
+> > +::
+> > +
+> > + # comment line
+> > + foo = value # value is set to foo.
+> > + bar = 1, # 1st element
+> > +       2, # 2nd element
+> > +       3  # 3rd element
+> > +
+> > +This is parsed as below::
+> > +
+> > + foo = value
+> > + bar = 1, 2, 3
+> > +
+> > +Note that you can not put a comment between value and delimiter(``,`` or
+> > +``;``). This means following config has a syntax error ::
+> > +
+> > + key = 1 # comment
+> > +       ,2
+> > +
+> > +
+> > +/proc/bootconfig
+> > +================
+> > +
+> > +/proc/bootconfig is a user-space interface of the boot config.
+> > +Unlike /proc/cmdline, this file shows the key-value style list.
+> > +Each key-value pair is shown in each line with following style::
+> > +
+> > + KEY[.WORDS...] = "[VALUE]"[,"VALUE2"...]
+> > +
+> > +
+> > +Boot Kernel With a Boot Config
+> > +==============================
+> > +
+> > +Since the boot configuration file is loaded with initrd, it will be added
+> > +to the end of the initrd (initramfs) image file. The Linux kernel decodes
+> > +the last part of the initrd image in memory to get the boot configuration
+> > +data.
+> > +Because of this "piggyback" method, there is no need to change or
+> > +update the boot loader and the kernel image itself.
+> > +
+> > +To do this operation, Linux kernel provides "bootconfig" command under
+> > +tools/bootconfig, which allows admin to apply or delete the config file
+> > +to/from initrd image. You can build it by follwoing command::
+> 
+>                                           by the following
+
+Oops, a typo...
+
+> 
+> > +
+> > + # make -C tools/bootconfig
+> > +
+> > +To add your boot config file to initrd image, run bootconfig as below
+> > +(Old data is removed automatically if exists)::
+> > +
+> > + # tools/bootconfig/bootconfig -a your-config /boot/initrd.img-X.Y.Z
+> > +
+> > +To remove the config from the image, you can use -d option as below::
+> > +
+> > + # tools/bootconfig/bootconfig -d /boot/initrd.img-X.Y.Z
+> > +
+> > +
+> > +C onfig File Limitation
+> 
+>    Config
+
+Oops
+
+> 
+> > +======================
+> > +
+> > +Currently the maximum config size size is 32KB and the total key-words (not
+> > +key-value entries) must be under 1024 nodes.
+> > +Note: this is not the number of entries but nodes, an entry must consume
+> > +more than 2 nodes (a key-word and a value). So theoretically, it will be
+> > +up to 512 key-value pairs. If keys contains 3 words in average, it can
+> > +contain 256 key-value pairs. In most cases, the number of config items
+> > +will be under 100 entries and smaller than 8KB, so it would be enough.
+> > +If the node number exceeds 1024, parser returns an error even if the file
+> > +size is smaller than 32KB.
+> > +Anyway, since bootconfig command verifies it when appending a boot config
+> > +to initrd image, user can notice it before boot.
+> > +
+> > +
+> > +Bootconfig APIs
+> > +===============
+> > +
+> > +User can query or loop on key-value pairs, also it is possible to find
+> > +a root (prefix) key node and find key-values under that node.
+> > +
+> > +If you have a key string, you can query the value directly with the key
+> > +using xbc_find_value(). If you want to know what keys exist in the SKC
+> > +tree, you can use xbc_for_each_key_value() to iterate key-value pairs.
+> > +Note that you need to use xbc_array_for_each_value() for accessing
+> > +each arraies value, e.g.::
+> 
+>         array's
+> (I think)
+
+Yes, OK. 
+
+> 
+> > +
+> > + vnode = NULL;
+> > + xbc_find_value("key.word", &vnode);
+> > + if (vnode && xbc_node_is_array(vnode))
+> > +    xbc_array_for_each_value(vnode, value) {
+> > +      printk("%s ", value);
+> > +    }
+> > +
+> > +If you want to focus on keys which has a prefix string, you can use
+> 
+>                                       have
+
+OK.
+
+> 
+> > +xbc_find_node() to find a node which prefix key words, and iterate
+> 
+> [confusing above]
+
+Ah, it should be "to find a node by the prefix string,"
+
+
+> 
+> > +keys under the prefix node with xbc_node_for_each_key_value().
+> > +
+> > +But the most typical usage is to get the named value under prefix
+> > +or get the named array under prefix as below::
+> > +
+> > + root = xbc_find_node("key.prefix");
+> > + value = xbc_node_find_value(root, "option", &vnode);
+> > + ...
+> > + xbc_node_for_each_array_value(root, "array-option", value, anode) {
+> > +    ...
+> > + }
+> > +
+> > +This accesses a value of "key.prefix.option" and an array of
+> > +"key.prefix.array-option".
+> > +
+> > +Locking is not needed, since after initialized, the config becomes readonly.
+> 
+>                                 after initialization,
+
+OK.
+
+> 
+> > +All data and keys must be copied if you need to modify it.
+> > +
+> > +
+> > +Functions and structures
+> > +========================
+> > +
+> > +.. kernel-doc:: include/linux/bootconfig.h
+> > +.. kernel-doc:: lib/bootconfig.c
+> > +
+> 
+> HTH.
+
+Thank you very much!
+
+> -- 
+> ~Randy
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
