@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC95B141B79
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 04:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E18E141B7D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 04:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgASDTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 22:19:00 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56662 "EHLO
+        id S1726958AbgASDTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jan 2020 22:19:22 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56700 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgASDTA (ORCPT
+        with ESMTP id S1725906AbgASDTW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 22:19:00 -0500
+        Sat, 18 Jan 2020 22:19:22 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it16X-00BFUT-CQ; Sun, 19 Jan 2020 03:18:34 +0000
+        id 1it16o-00BFVK-AH; Sun, 19 Jan 2020 03:18:47 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -22,9 +22,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Eric Biederman <ebiederm@xmission.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 03/17] follow_automount(): get rid of dead^Wstillborn code
-Date:   Sun, 19 Jan 2020 03:17:15 +0000
-Message-Id: <20200119031738.2681033-3-viro@ZenIV.linux.org.uk>
+Subject: [PATCH 04/17] follow_automount() doesn't need the entire nameidata
+Date:   Sun, 19 Jan 2020 03:17:16 +0000
+Message-Id: <20200119031738.2681033-4-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
 References: <20200119031423.GV8904@ZenIV.linux.org.uk>
@@ -38,96 +38,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-1) no instances of ->d_automount() have ever made use of the "return
-ERR_PTR(-EISDIR) if you don't feel like mounting anything" - that's
-a rudiment of plans that got superseded before the thing went into
-the tree.  Despite the comment in follow_automount(), autofs has
-never done that.
-
-2) if there's no ->d_automount() in dentry_operations, filesystems
-should not set DCACHE_NEED_AUTOMOUNT in the first place.  None have
-ever done so...
+only the address of ->total_link_count and the flags
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c     | 28 +++-------------------------
- fs/namespace.c |  9 ++++++++-
- 2 files changed, 11 insertions(+), 26 deletions(-)
+ fs/namei.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index bd036dfdb0d9..d30a74a18da9 100644
+index d30a74a18da9..3b6f60c02f8a 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1135,10 +1135,7 @@ EXPORT_SYMBOL(follow_up);
+@@ -1133,7 +1133,7 @@ EXPORT_SYMBOL(follow_up);
+  * - return -EISDIR to tell follow_managed() to stop and return the path we
+  *   were called with.
   */
- static int follow_automount(struct path *path, struct nameidata *nd)
- {
--	struct vfsmount *mnt;
--
--	if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
--		return -EREMOTE;
-+	struct dentry *dentry = path->dentry;
- 
- 	/* We don't want to mount if someone's just doing a stat -
- 	 * unless they're stat'ing a directory and appended a '/' to
-@@ -1153,33 +1150,14 @@ static int follow_automount(struct path *path, struct nameidata *nd)
- 	 */
- 	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
- 			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
--	    path->dentry->d_inode)
-+	    dentry->d_inode)
- 		return -EISDIR;
- 
- 	nd->total_link_count++;
- 	if (nd->total_link_count >= 40)
- 		return -ELOOP;
- 
--	mnt = path->dentry->d_op->d_automount(path);
--	if (IS_ERR(mnt)) {
--		/*
--		 * The filesystem is allowed to return -EISDIR here to indicate
--		 * it doesn't want to automount.  For instance, autofs would do
--		 * this so that its userspace daemon can mount on this dentry.
--		 *
--		 * However, we can only permit this if it's a terminal point in
--		 * the path being looked up; if it wasn't then the remainder of
--		 * the path is inaccessible and we should say so.
--		 */
--		if (PTR_ERR(mnt) == -EISDIR && (nd->flags & LOOKUP_PARENT))
--			return -EREMOTE;
--		return PTR_ERR(mnt);
--	}
--
--	if (!mnt)
--		return 0;
--
--	return finish_automount(mnt, path);
-+	return finish_automount(dentry->d_op->d_automount(path), path);
- }
- 
- /*
-diff --git a/fs/namespace.c b/fs/namespace.c
-index f1817eb5f87d..b37dc59bfa05 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2824,9 +2824,16 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- int finish_automount(struct vfsmount *m, struct path *path)
+-static int follow_automount(struct path *path, struct nameidata *nd)
++static int follow_automount(struct path *path, int *count, unsigned lookup_flags)
  {
  	struct dentry *dentry = path->dentry;
--	struct mount *mnt = real_mount(m);
- 	struct mountpoint *mp;
-+	struct mount *mnt;
- 	int err;
-+
-+	if (!m)
-+		return 0;
-+	if (IS_ERR(m))
-+		return PTR_ERR(m);
-+
-+	mnt = real_mount(m);
- 	/* The new mount record should have at least 2 refs to prevent it being
- 	 * expired before we get a chance to add it
+ 
+@@ -1148,13 +1148,12 @@ static int follow_automount(struct path *path, struct nameidata *nd)
+ 	 * as being automount points.  These will need the attentions
+ 	 * of the daemon to instantiate them before they can be used.
  	 */
+-	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
++	if (!(lookup_flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+ 			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
+ 	    dentry->d_inode)
+ 		return -EISDIR;
+ 
+-	nd->total_link_count++;
+-	if (nd->total_link_count >= 40)
++	if (count && *count++ >= 40)
+ 		return -ELOOP;
+ 
+ 	return finish_automount(dentry->d_op->d_automount(path), path);
+@@ -1215,7 +1214,8 @@ static int follow_managed(struct path *path, struct nameidata *nd)
+ 
+ 		/* Handle an automount point */
+ 		if (flags & DCACHE_NEED_AUTOMOUNT) {
+-			ret = follow_automount(path, nd);
++			ret = follow_automount(path, &nd->total_link_count,
++						nd->flags);
+ 			if (ret < 0)
+ 				break;
+ 			continue;
 -- 
 2.20.1
 
