@@ -2,309 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A991141BB5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 04:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C3C141C8A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 07:09:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgASD0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 22:26:34 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57042 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbgASD0e (ORCPT
+        id S1726060AbgASGJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 01:09:05 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:48262 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725809AbgASGJF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 22:26:34 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it1Dt-00BFmu-T8; Sun, 19 Jan 2020 03:26:10 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 9/9] new helper: traverse_mounts()
-Date:   Sun, 19 Jan 2020 03:17:38 +0000
-Message-Id: <20200119031738.2681033-26-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
-References: <20200119031423.GV8904@ZenIV.linux.org.uk>
- <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
+        Sun, 19 Jan 2020 01:09:05 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04427;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0To42lyA_1579414137;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0To42lyA_1579414137)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 19 Jan 2020 14:08:58 +0800
+Subject: [PATCH v7 0/2] sched/numa: introduce numa locality
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
+ <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Message-ID: <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
+Date:   Sun, 19 Jan 2020 14:08:57 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
+In-Reply-To: <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Since v6:
+  * rebased on latest linux-next
+Since v5:
+  * fix compile failure when NUMA disabled
+Since v4:
+  * improved documentation
+Since v3:
+  * fix comments and improved documentation
+Since v2:
+  * simplified the locality concept & implementation
+Since v1:
+  * improved documentation
 
-common guts of follow_down() and follow_managed() taken to a new
-helper - traverse_mounts().  The remnants of follow_managed()
-are folded into its sole remaining caller (handle_mounts()).
-Calling conventions of handle_mounts() slightly sanitized -
-instead of the weird "1 for success, -E... for failure" that used
-to be imposed by the calling conventions of walk_component() et.al.
-we can use the normal "0 for success, -E... for failure".
+Modern production environment could use hundreds of cgroup to control
+the resources for different workloads, along with the complicated
+resource binding.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 177 ++++++++++++++++++++++-------------------------------
- 1 file changed, 72 insertions(+), 105 deletions(-)
+On NUMA platforms where we have multiple nodes, things become even more
+complicated, we hope there are more local memory access to improve the
+performance, and NUMA Balancing keep working hard to achieve that,
+however, wrong memory policy or node binding could easily waste the
+effort, result a lot of remote page accessing.
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 310c5ccddf42..d3172e2c7f7f 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1167,91 +1167,79 @@ static int follow_automount(struct path *path, int *count, unsigned lookup_flags
- }
- 
- /*
-- * Handle a dentry that is managed in some way.
-- * - Flagged for transit management (autofs)
-- * - Flagged as mountpoint
-- * - Flagged as automount point
-- *
-- * This may only be called in refwalk mode.
-- * On success path->dentry is known positive.
-- *
-- * Serialization is taken care of in namespace.c
-+ * mount traversal - out-of-line part.  One note on ->d_flags accesses -
-+ * dentries are pinned but not locked here, so negative dentry can go
-+ * positive right under us.  Use of smp_load_acquire() provides a barrier
-+ * sufficient for ->d_inode and ->d_flags consistency.
-  */
--static int follow_managed(struct path *path, struct nameidata *nd)
-+static int __traverse_mounts(struct path *path, unsigned flags, bool *jumped,
-+			     int *count, unsigned lookup_flags)
- {
--	struct vfsmount *mnt = path->mnt; /* held by caller, must be left alone */
--	unsigned flags;
-+	struct vfsmount *mnt = path->mnt;
- 	bool need_mntput = false;
- 	int ret = 0;
- 
--	/* Given that we're not holding a lock here, we retain the value in a
--	 * local variable for each dentry as we look at it so that we don't see
--	 * the components of that value change under us */
--	while (flags = smp_load_acquire(&path->dentry->d_flags),
--	       unlikely(flags & DCACHE_MANAGED_DENTRY)) {
-+	while (flags & DCACHE_MANAGED_DENTRY) {
- 		/* Allow the filesystem to manage the transit without i_mutex
- 		 * being held. */
- 		if (flags & DCACHE_MANAGE_TRANSIT) {
--			BUG_ON(!path->dentry->d_op);
--			BUG_ON(!path->dentry->d_op->d_manage);
- 			ret = path->dentry->d_op->d_manage(path, false);
- 			flags = smp_load_acquire(&path->dentry->d_flags);
- 			if (ret < 0)
- 				break;
- 		}
- 
--		/* Transit to a mounted filesystem. */
--		if (flags & DCACHE_MOUNTED) {
-+		if (flags & DCACHE_MOUNTED) {	// something's mounted on it..
- 			struct vfsmount *mounted = lookup_mnt(path);
--			if (mounted) {
-+			if (mounted) {		// ... in our namespace
- 				dput(path->dentry);
- 				if (need_mntput)
- 					mntput(path->mnt);
- 				path->mnt = mounted;
- 				path->dentry = dget(mounted->mnt_root);
-+				// here we know it's positive
-+				flags = path->dentry->d_flags;
- 				need_mntput = true;
- 				continue;
- 			}
--
--			/* Something is mounted on this dentry in another
--			 * namespace and/or whatever was mounted there in this
--			 * namespace got unmounted before lookup_mnt() could
--			 * get it */
- 		}
- 
--		/* Handle an automount point */
--		if (flags & DCACHE_NEED_AUTOMOUNT) {
--			ret = follow_automount(path, &nd->total_link_count,
--						nd->flags);
--			if (ret < 0)
--				break;
--			continue;
--		}
-+		if (!(flags & DCACHE_NEED_AUTOMOUNT))
-+			break;
- 
--		/* We didn't change the current path point */
--		break;
-+		// uncovered automount point
-+		ret = follow_automount(path, count, lookup_flags);
-+		flags = smp_load_acquire(&path->dentry->d_flags);
-+		if (ret < 0)
-+			break;
- 	}
- 
--	if (need_mntput) {
--		if (path->mnt == mnt)
--			mntput(path->mnt);
--		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
--			ret = -EXDEV;
--		else
--			nd->flags |= LOOKUP_JUMPED;
--	}
--	if (ret == -EISDIR || !ret)
--		ret = 1;
--	if (ret > 0 && unlikely(d_flags_negative(flags)))
-+	if (ret == -EISDIR)
-+		ret = 0;
-+	// possible if you race with several mount --move
-+	if (need_mntput && path->mnt == mnt)
-+		mntput(path->mnt);
-+	if (!ret && unlikely(d_flags_negative(flags)))
- 		ret = -ENOENT;
--	if (unlikely(ret < 0)) {
--		dput(path->dentry);
--		if (path->mnt != nd->path.mnt)
--			mntput(path->mnt);
--	}
-+	*jumped = need_mntput;
- 	return ret;
- }
- 
-+static inline int traverse_mounts(struct path *path, bool *jumped,
-+				  int *count, unsigned lookup_flags)
-+{
-+	unsigned flags = smp_load_acquire(&path->dentry->d_flags);
-+
-+	/* fastpath */
-+	if (likely(!(flags & DCACHE_MANAGED_DENTRY))) {
-+		*jumped = false;
-+		if (unlikely(d_flags_negative(flags)))
-+			return -ENOENT;
-+		return 0;
-+	}
-+	return __traverse_mounts(path, flags, jumped, count, lookup_flags);
-+}
-+
- int follow_down_one(struct path *path)
- {
- 	struct vfsmount *mounted;
-@@ -1268,6 +1256,23 @@ int follow_down_one(struct path *path)
- }
- EXPORT_SYMBOL(follow_down_one);
- 
-+/*
-+ * Follow down to the covering mount currently visible to userspace.  At each
-+ * point, the filesystem owning that dentry may be queried as to whether the
-+ * caller is permitted to proceed or not.
-+ */
-+int follow_down(struct path *path)
-+{
-+	struct vfsmount *mnt = path->mnt;
-+	bool jumped;
-+	int ret = traverse_mounts(path, &jumped, NULL, 0);
-+
-+	if (path->mnt != mnt)
-+		mntput(mnt);
-+	return ret;
-+}
-+EXPORT_SYMBOL(follow_down);
-+
- /*
-  * Try to skip to top of mountpoint pile in rcuwalk mode.  Fail if
-  * we meet a managed dentry that would need blocking.
-@@ -1324,6 +1329,7 @@ static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
- 			  struct path *path, struct inode **inode,
- 			  unsigned int *seqp)
- {
-+	bool jumped;
- 	int ret;
- 
- 	path->mnt = nd->path.mnt;
-@@ -1333,15 +1339,25 @@ static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
- 		if (unlikely(!*inode))
- 			return -ENOENT;
- 		if (likely(__follow_mount_rcu(nd, path, inode, seqp)))
--			return 1;
-+			return 0;
- 		if (unlazy_child(nd, dentry, seq))
- 			return -ECHILD;
- 		// *path might've been clobbered by __follow_mount_rcu()
- 		path->mnt = nd->path.mnt;
- 		path->dentry = dentry;
- 	}
--	ret = follow_managed(path, nd);
--	if (likely(ret >= 0)) {
-+	ret = traverse_mounts(path, &jumped, &nd->total_link_count, nd->flags);
-+	if (jumped) {
-+		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
-+			ret = -EXDEV;
-+		else
-+			nd->flags |= LOOKUP_JUMPED;
-+	}
-+	if (unlikely(ret)) {
-+		dput(path->dentry);
-+		if (path->mnt != nd->path.mnt)
-+			mntput(path->mnt);
-+	} else {
- 		*inode = d_backing_inode(path->dentry);
- 		*seqp = 0; /* out of RCU mode, so the value doesn't matter */
- 	}
-@@ -1409,55 +1425,6 @@ static int follow_dotdot_rcu(struct nameidata *nd)
- 	return 0;
- }
- 
--/*
-- * Follow down to the covering mount currently visible to userspace.  At each
-- * point, the filesystem owning that dentry may be queried as to whether the
-- * caller is permitted to proceed or not.
-- */
--int follow_down(struct path *path)
--{
--	unsigned managed;
--	int ret;
--
--	while (managed = READ_ONCE(path->dentry->d_flags),
--	       unlikely(managed & DCACHE_MANAGED_DENTRY)) {
--		/* Allow the filesystem to manage the transit without i_mutex
--		 * being held.
--		 *
--		 * We indicate to the filesystem if someone is trying to mount
--		 * something here.  This gives autofs the chance to deny anyone
--		 * other than its daemon the right to mount on its
--		 * superstructure.
--		 *
--		 * The filesystem may sleep at this point.
--		 */
--		if (managed & DCACHE_MANAGE_TRANSIT) {
--			BUG_ON(!path->dentry->d_op);
--			BUG_ON(!path->dentry->d_op->d_manage);
--			ret = path->dentry->d_op->d_manage(path, false);
--			if (ret < 0)
--				return ret == -EISDIR ? 0 : ret;
--		}
--
--		/* Transit to a mounted filesystem. */
--		if (managed & DCACHE_MOUNTED) {
--			struct vfsmount *mounted = lookup_mnt(path);
--			if (!mounted)
--				break;
--			dput(path->dentry);
--			mntput(path->mnt);
--			path->mnt = mounted;
--			path->dentry = dget(mounted->mnt_root);
--			continue;
--		}
--
--		/* Don't handle automount points here */
--		break;
--	}
--	return 0;
--}
--EXPORT_SYMBOL(follow_down);
--
- /*
-  * Skip to top of mountpoint pile in refwalk mode for follow_dotdot()
-  */
+We need to notice such problems, then we got chance to fix it before
+there are too much damages, however, there are no good monitoring
+approach yet to help catch the mouse who introduced the remote access.
+
+This patch set is trying to fill in the missing pieces， by introduce
+the per-cgroup NUMA locality info, with this new statistics, we could
+achieve the daily monitoring on NUMA efficiency, to give warning when
+things going too wrong.
+
+Please check the second patch for more details.
+
+Michael Wang (2):
+  sched/numa: introduce per-cgroup NUMA locality info
+  sched/numa: documentation for per-cgroup numa statistics
+
+ Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst             |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+ include/linux/sched.h                           |  15 ++
+ include/linux/sched/sysctl.h                    |   6 +
+ init/Kconfig                                    |  11 ++
+ kernel/sched/core.c                             |  75 ++++++++++
+ kernel/sched/fair.c                             |  62 +++++++++
+ kernel/sched/sched.h                            |  12 ++
+ kernel/sysctl.c                                 |  11 ++
+ 11 files changed, 384 insertions(+)
+ create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+
 -- 
-2.20.1
+2.14.4.44.g2045bb6
 
