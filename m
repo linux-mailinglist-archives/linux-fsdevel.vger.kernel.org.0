@@ -2,77 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E53141A6F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 00:14:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F93141ACF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 02:13:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgARXOW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jan 2020 18:14:22 -0500
-Received: from [198.137.202.133] ([198.137.202.133]:45566 "EHLO
-        bombadil.infradead.org" rhost-flags-FAIL-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727012AbgARXOV (ORCPT
+        id S1728600AbgASBNz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jan 2020 20:13:55 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55418 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbgASBNz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jan 2020 18:14:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Iv6n9Q/k1eXFbCcvnuAFYhME6UiPb/gjtwI6FiGWHlY=; b=PbuQjafa6FNb0jf4Leo51n0ze
-        PRmlAVl5z1ZdMKXv7G8WzQDLeUx/NSuFGo+MqwXrG7HDkYae1p4oEnh9x7xaIytKodpSdON+QIXGk
-        9aB/4BmlrVDjiiodkKRX1BmVIQc9QLwaqHJn2icSGn22l1FGl8Jj41EPmXavE7FPgg2opgnWOUBdX
-        gIRaoh1MtoSVcJ90zGhhlZ5jYqyNLBFA4AgSEUM+NpmAvD5c7emnIgUgTOZWjNxrGl9yg7fNbj50A
-        p9IN4Rmv3GUcOq+C5+7YvaL/ykoedA+kmUKT74Jm2Ills78XY1DyZWKIYJn9p6h7CEpNwGp+IKDcT
-        tfYpGlzOQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1isxHm-0005Lx-Tp; Sat, 18 Jan 2020 23:13:46 +0000
-Date:   Sat, 18 Jan 2020 15:13:46 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
+        Sat, 18 Jan 2020 20:13:55 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1isz8j-00BC8q-D7; Sun, 19 Jan 2020 01:12:43 +0000
+Date:   Sun, 19 Jan 2020 01:12:33 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>
-Subject: Re: [RFC v2 0/9] Replacing the readpages a_op
-Message-ID: <20200118231346.GB5583@bombadil.infradead.org>
-References: <20200115023843.31325-1-willy@infradead.org>
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        David Laight <david.laight@aculab.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        quae@daurnimator.com, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, libc-alpha@sourceware.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] openat2: minor uapi cleanups
+Message-ID: <20200119011233.GU8904@ZenIV.linux.org.uk>
+References: <20200115144831.GJ8904@ZenIV.linux.org.uk>
+ <20200118120800.16358-1-cyphar@cyphar.com>
+ <20200118152833.GS8904@ZenIV.linux.org.uk>
+ <20200118180941.GT8904@ZenIV.linux.org.uk>
+ <20200118230313.y4a3s7elierw4wzw@yavin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200115023843.31325-1-willy@infradead.org>
+In-Reply-To: <20200118230313.y4a3s7elierw4wzw@yavin>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 14, 2020 at 06:38:34PM -0800, Matthew Wilcox wrote:
-> This is an attempt to add a ->readahead op to replace ->readpages.  I've
-> converted two users, iomap/xfs and cifs.  The cifs conversion is lacking
-> fscache support, and that's just because I didn't want to do that work;
-> I don't believe there's anything fundamental to it.  But I wanted to do
-> iomap because it is The Infrastructure Of The Future and cifs because it
-> is the sole remaining user of add_to_page_cache_locked(), which enables
-> the last two patches in the series.  By the way, that gives CIFS access
-> to the workingset shadow infrastructure, which it had to ignore before
-> because it couldn't put pages onto the lru list at the right time.
+On Sun, Jan 19, 2020 at 10:03:13AM +1100, Aleksa Sarai wrote:
+
+> > possibly trigger?  The only things that ever clean ->root.mnt are
 > 
-> v2: Chris asked me to show what this would look like if we just have
-> the implementation look up the pages in the page cache, and I managed
-> to figure out some things I'd done wrong last time.  It's even simpler
-> than v1 (net 104 lines deleted).
+> You're quite right -- the codepath I was worried about was pick_link()
+> failing (which *does* clear nd->path.mnt, and I must've misread it at
+> the time as nd->root.mnt).
 
-I want to discuss whether to change the page refcount guarantees while we're
-changing the API.  Currently,
+pick_link() (allocation failure of external stack in RCU case, followed
+by failure to legitimize the link) is, unfortunately, subtle and nasty.
+We *must* path_put() the link; if we'd managed to legitimize the mount
+and failed on dentry, the mount needs to be dropped.  No way around it.
+And while everything else there can be left for soon-to-be-reached
+terminate_walk(), this cannot.  We have no good way to pass what
+we need to drop to the place where that eventual terminate_walk()
+drops rcu_read_lock().  So we end up having to do what terminate_walk()
+would've done and do it right there, so we could do that path_put(link)
+before we bugger off.
 
-page is allocated with a refcount of 1
-page is locked, and inserted into page cache and refcount is bumped to 2
-->readahead is called
-callee is supposed to call put_page() after submitting I/O
-I/O completion will unlock the page after I/O completes, leaving the refcount at 1.
+I'm not happy about that, but I don't see cleaner solutions, more's the
+pity.  However, it doesn't mess with ->root - nor should it, since
+we don't have LOOKUP_ROOT_GRABBED (not in RCU mode), so it can and
+should be left alone.
+ 
+> We can drop this check, though now complete_walk()'s main defence
+> against a NULL nd->root.mnt is that path_is_under() will fail and
+> trigger -EXDEV (or set_root() will fail at some point in the future).
+> However, as you pointed out, a NULL nd->root.mnt won't happen with
+> things as they stand today -- I might be a little too paranoid. :P
 
-So, what if we leave the refcount at 1 throughout the submission process,
-saving ourselves two atomic ops per page?  We have to ensure that after
-the page is submitted for I/O, the submission path no longer touches
-the page.  So the process of converting a filesystem to ->readahead
-becomes slightly more complex, but there's a bugger win as a result.
+The only reason why complete_walk() zeroes nd->root in some cases is
+microoptimization - we *know* we won't be using it later, so we don't
+care whether it's stale or not and can spare unlazy_walk() a bit of
+work.  All there is to that one.
 
-Opinions?
+I don't see any reason for adding code that would clear nd->root in later
+work; if such thing does get added (again, I don't see what purpose
+could that possibly serve), we'll need to watch out for a lot of things.
+Starting with LOOKUP_ROOT case...  It's not something likely to slip
+in unnoticed.
