@@ -2,150 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1A7F1420F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 00:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B6181420FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 00:54:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbgASXdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 18:33:52 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39971 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728886AbgASXdw (ORCPT
+        id S1728895AbgASXyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 18:54:32 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:13317 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbgASXyc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 18:33:52 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so27715179wrn.7;
-        Sun, 19 Jan 2020 15:33:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z5DCatifX2BVNPC1+0wyDH7ruQayHqsz0MhpA+ub/OM=;
-        b=EcSvkV8LsiYMFdL2XCwVqf6v/aQYq82C7ZJX4zfeyIvZxDEP6BjZvD+hMxJ/K1uE7G
-         PIe40H8BWsSyR8y/TJiE1RHj2XO+ig/1ens37p62plwS3teO6pawbK/BYllJmbq1tIXi
-         0gfai2BufhgVfrMHgzA4SKDwHNnCLBzw6TCusgeKk/sX2NktpOQC3TRy6bC5GTCxuwvZ
-         d/UMfoDRpYP0xFFuF2T7C4IczItGE9YsCwaRcuLjdtnayABrr4yr61N4dMGoJol8dc6N
-         6AMvPGmesphf8xq/8fQhiTBSrXo0bbdLo6j9wi/ooNpnmX1rLL38RAWsPgwITRGPdtFh
-         JjwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z5DCatifX2BVNPC1+0wyDH7ruQayHqsz0MhpA+ub/OM=;
-        b=DMhxIExsaJuwgU02pqRjpfiiRXi9VCSKF+MmRkE3MBu2v67P1HJ+ujbL0GxJcA73/n
-         My+IrHh0Z8LTm6iFN1Gks6vCTMt2yFh32BN5kPqcEREZIYjalju9XR7XJwDRtRqiyOPJ
-         MDISvG3cSBh+/wh/eH+/mHJm1nP9372QG1AvzejI1E14qpDqJqlDFu4zMg4NxcYJFqFN
-         b6o8jYkMO8iRfGsCatuNVSf62stnJYRJVHZMWDmjoBqCoYn3F1ZRIwnIIJtV7wIBWcHL
-         pt8qDzzRtWADhuxybfjkKsLlRZadk5iJ6dt2XZuIJD/hymwOVF2sL/O12cKy+RyTpq9S
-         C6pQ==
-X-Gm-Message-State: APjAAAXVAlBDewk18oQi0tyoq1RiTuz4q1QO2aDhfkTqkV0zizcqENC+
-        OeuAbwRnfmj0ErEbgEkVINM=
-X-Google-Smtp-Source: APXvYqwlh1dMpJaYswZBjI8wQ5Z6NU1yhwVpK2GvZe/fmQoAogzXtIAXSFFOpI4mxMMF+ElN8BV9kg==
-X-Received: by 2002:a5d:4acb:: with SMTP id y11mr15241995wrs.106.1579476830223;
-        Sun, 19 Jan 2020 15:33:50 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id t12sm44916041wrs.96.2020.01.19.15.33.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Jan 2020 15:33:49 -0800 (PST)
-Date:   Mon, 20 Jan 2020 00:33:48 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-Message-ID: <20200119233348.es5m63kapdvyesal@pali>
-References: <20200119221455.bac7dc55g56q2l4r@pali>
- <20200119230809.GW8904@ZenIV.linux.org.uk>
+        Sun, 19 Jan 2020 18:54:32 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200119235430epoutp04d1618fc2c333a1b36e46fe50d00eb2c1~rbu_5uOc32535025350epoutp04s
+        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Jan 2020 23:54:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200119235430epoutp04d1618fc2c333a1b36e46fe50d00eb2c1~rbu_5uOc32535025350epoutp04s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579478070;
+        bh=6JSnqzl0EvdTU31qaFR96V0SipqLwPhqMod9gJdOwkY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=J7H6nIisdfpkKMorURU2XZLHQvAkvPvqZMRI/i2ZV5fHohftgHvp0Kvwc5kVZISlN
+         7o4FR3kBAWhzd/2GVOWy9OQkIokI5loonv7nHKGyz7fEeqPV8cDeVp1YuMfwzFPrAb
+         5GadEsqkru8x5gw9yn2KQrSwhYUtyQddTY4R4VF4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200119235429epcas1p4974acc4d054d1003f7327108f4c8f8ce~rbu_gDzry0198301983epcas1p4G;
+        Sun, 19 Jan 2020 23:54:29 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.160]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 481BVD57b3zMqYkV; Sun, 19 Jan
+        2020 23:54:28 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        74.94.48019.43CE42E5; Mon, 20 Jan 2020 08:54:28 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200119235428epcas1p39533727823a84621968a6ceae337c67e~rbu9DBAdv2284122841epcas1p35;
+        Sun, 19 Jan 2020 23:54:28 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200119235428epsmtrp29ba7048776effc36a4283c7961c77612~rbu9CDgft0811308113epsmtrp2R;
+        Sun, 19 Jan 2020 23:54:28 +0000 (GMT)
+X-AuditID: b6c32a38-23fff7000001bb93-a8-5e24ec3496f1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.25.06569.43CE42E5; Mon, 20 Jan 2020 08:54:28 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200119235428epsmtip2a86b257f32fa53f44737cf1572d13baa~rbu82_ass0720507205epsmtip2K;
+        Sun, 19 Jan 2020 23:54:28 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Christoph Hellwig'" <hch@lst.de>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
+        <sj1557.seo@samsung.com>, <pali.rohar@gmail.com>, <arnd@arndb.de>,
+        "'Namjae Jeon'" <linkinjeon@gmail.com>
+In-Reply-To: <20200119223436.GF4890@lst.de>
+Subject: RE: [PATCH v11 12/14] exfat: add exfat in fs/Kconfig and
+ fs/Makefile
+Date:   Mon, 20 Jan 2020 08:54:27 +0900
+Message-ID: <001901d5cf23$c9054b30$5b0fe190$@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lp2jkxbsd2wdqylt"
-Content-Disposition: inline
-In-Reply-To: <20200119230809.GW8904@ZenIV.linux.org.uk>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQE6+DxIhpF/kFPHCFxKjfJup9sXPQH+Y74vAmvezKUBN9/7cqj7RYaQ
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0hTYRjG+3a2sxlNTvPSm0HNQwZms61terosCq0GGUlWUJB20A9n7sbO
+        tBuUrHJmZWmZtBKNwsiK1FZeyozZ/aJm90ACKdDKbqJimrXtLNh/P773fb73eb6LhJC1kFGS
+        HLMd28yskSYnC2+0xyoVmq+z05UV/THMn7L7Ymbfuaskc/HSPQHzpuc9wdxqfSRkXrScIZnS
+        J2MCxj1xV8R0f/8hXBaiH/tdhvTNrh6xvq3yslh/810BqS9x1yL9YMNMvafxK5kq3mxcYsBs
+        FrbJsTnTkpVjztbRq9MykjK0CUqVQrWQSaTlZtaEdXRySqpiZY7Ra42W57PGPO9SKstx9Pyl
+        S2yWPDuWGyycXUdja5bRqlJa4znWxOWZs+MzLaZFKqVygdbbudVo6DhwibR2CXc0PW1EBei4
+        sBiFSIDSgPthl6AYTZbIqCYEjqFhka8go34hGD66jC8MIzj9qpj4rxh/OUHwhVYEz91uklf0
+        I+joXu5jklLAxHibfz2cmgNPRwvFPgFBDSB4/Kwa+QohVBxUDZUKfBxGrYWTwyP+CUIqBl73
+        Ofw2pNRCuH7eFeCp8OjUR79vgoqHt+UnSJ7joObsl4A7OYx+qhHxg1fCsxq3iO8Jh9MHC/2u
+        gXKK4WD9EzEvSAaHpzzAYfD5gTvAUTD4rdU7QOLl3fCzLbB/EYK+ER3Panh3tU7EczQ0j1Ui
+        flYofBs6LOKlUigqlPEtMVDS3S7geQYUO3+IjyHaFZTMFZTMFZTMFZSgGglrUSS2cqZszKms
+        muDbbkD+dzuXaUK3OlI8iJIgeoq0mpudLhOx+dxOkweBhKDDpT1HotNl0ix25y5ss2TY8oyY
+        8yCt9+RLiaiITIv3F5jtGSrtArVazWgSEhO0anqatCJZni6jslk7zsXYim3/dQJJSFQBepgU
+        sc4R6tj/oWzWrPaGKc47Ixuq8s+duVBeOdF7WzldcPj++kXXkgxkV+4WW82qvaL2eQOd5vEr
+        EYcWd/7t7dkzpHemaZ4P7nNeu4LRxtBJmu3V2wY8K74UycMNe89PI3pr1+Sqf8pbLm/E9Ttm
+        blo8Gqk71ZlcOBJ5t05apfgeu5UWcgZWNZewcew/6jz5Nc0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsWy7bCSvK7JG5U4g4/b2C3+TjrGbtG8eD2b
+        xcrVR5ksrt+9xWyxZ+9JFovLu+awWUw8/ZvJYsu/I6wWl95/YHHg9Pj9axKjx85Zd9k99s9d
+        w+6x+2YDm0ffllWMHp83yXkc2v6GLYA9issmJTUnsyy1SN8ugStj/ez9bAWfmSs+XehkamCc
+        zdzFyMkhIWAi8efKPyCbi0NIYDejxOHGl4wQCWmJYyfOACU4gGxhicOHiyFqnjNKfNrdxw5S
+        wyagK/Hvz342EFtEQE3izM82dpAiZoGvjBKN27pZIDquM0ps2zgLrINTQFti/teJTCC2sICv
+        xPlfvWBxFgFViWsvmlhBbF4BS4mtS2ZB2YISJ2c+YQGxmQUMJO4f6mCFsLUlli18DfWCgsTP
+        p8tYIa5wkzi7bAtUjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZwMiyilEytaA4Nz232LDAKC+1
+        XK84Mbe4NC9dLzk/dxMjOPK0tHYwnjgRf4hRgINRiYd3QbFKnBBrYllxZe4hRgkOZiUR3ru9
+        inFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeeXzj0UKCaQnlqRmp6YWpBbBZJk4OKUaGKcnR/GF
+        Luk+7Csnvfn4c7ZohVsnOiS2y/zY/4mrb9b/+l8OJnXs3G5VP3g2X362U2L7gYZih0kzru9d
+        JLMxdq6E+S5xTt+SQimmWbYMyQWdyYkxc/feX/Xz6d9vSr9invxPmaZXl812velRkKye7AOJ
+        I/E/JIzLuGyX874tDfXOWPrxa5buSyWW4oxEQy3mouJEAL5A1Ha4AgAA
+X-CMS-MailID: 20200119235428epcas1p39533727823a84621968a6ceae337c67e
+X-Msg-Generator: CA
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200119223441epcas1p46dff31055998493dba781f21dd6e9039
+References: <20200118150348.9972-1-linkinjeon@gmail.com>
+        <20200118150348.9972-13-linkinjeon@gmail.com>
+        <CGME20200119223441epcas1p46dff31055998493dba781f21dd6e9039@epcas1p4.samsung.com>
+        <20200119223436.GF4890@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---lp2jkxbsd2wdqylt
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sunday 19 January 2020 23:08:09 Al Viro wrote:
-> On Sun, Jan 19, 2020 at 11:14:55PM +0100, Pali Roh=C3=A1r wrote:
->=20
-> > So when UTF-8 on VFS for VFAT is enabled, then for VFS <--> VFAT
-> > conversion are used utf16s_to_utf8s() and utf8s_to_utf16s() functions.
-> > But in fat_name_match(), vfat_hashi() and vfat_cmpi() functions is used
-> > NLS table (default iso8859-1) with nls_strnicmp() and nls_tolower().
-> >=20
-> > Which means that fat_name_match(), vfat_hashi() and vfat_cmpi() are
-> > broken for vfat in UTF-8 mode.
-> >=20
-> > I was thinking how to fix it, and the only possible way is to write a
-> > uni_tolower() function which takes one Unicode code point and returns
-> > lowercase of input's Unicode code point. We cannot do any Unicode
-> > normalization as VFAT specification does not say anything about it and
-> > MS reference fastfat.sys implementation does not do it neither.
->=20
-> Then how can that possibly be broken?  If it matches the native behaviour,
-> that's it.
-
-VFAT is case insensitive.
-
-> > As you can see lowercase 'd' and uppercase 'D' are same, but lowercase
-> > '=C4=8D' and uppercase '=C4=8C' are not same. This is because '=C4=8D' =
-is two bytes
-> > 0xc4 0x8d sequence and comparing is done by Latin1 table. 0xc4 is in
-> > Latin '=C3=84' which is already in uppercase. 0x8d is control char so i=
-s not
-> > changed by tolower/toupper function.
->=20
-> Again, who the hell cares?
-
-All users who use also non-Linux fat implementations.
-
-> Does the behaviour match how Windows handles that thing?
-
-Linux behavior does not match Windows behavior.
-
-On Windows is FAT32 (fastfat.sys) case insensitive and file names "=C4=8D"
-and "=C4=8C" are treated as same file. Windows does not allow you to create
-both files. It says that file already exists.
-
-> "Case" is not something well-defined; the only definition
-> is "whatever weird crap does the native implementation choose to do".
-
-You are right that case sensitiveness is not well-defined, but in
-Unicode we have also language-independent and basically well-defined
-conversion.
-
-And because VFAT is Unicode fs (internally UTF-16) it make sense that
-well-defined Unicode folding should be used.
-
-> That's the only reason to support that garbage at all...
-
-What do you mean by garbage? Where? All filenames which I specified are
-valid UTF-8 sequences, valid Unicode code points and therefore have
-valid UTF-16 representation stored in VFAT fs.
-
-Sorry, but I did not understand your comment.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---lp2jkxbsd2wdqylt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiTnWgAKCRCL8Mk9A+RD
-UnD3AKC/BUng/hJ5a6c7TzJLVXLIgm70lwCghBL7vuR3nHniaBYhpuYQuQ32okg=
-=eo4j
------END PGP SIGNATURE-----
-
---lp2jkxbsd2wdqylt--
+> On Sun, Jan 19, 2020 at 12:03:46AM +0900, Namjae Jeon wrote:
+> > From: Namjae Jeon <namjae.jeon=40samsung.com>
+> >
+> > Add exfat in fs/Kconfig and fs/Makefile.
+> >
+> > Signed-off-by: Namjae Jeon <namjae.jeon=40samsung.com>
+> > Signed-off-by: Sungjong Seo <sj1557.seo=40samsung.com>
+> > Reviewed-by: Pali Roh=E1r=20<pali.rohar=40gmail.com>=0D=0A>=20=0D=0A>=
+=20I=20would=20have=20merged=20this=20into=20the=20previous=20one,=20but=20=
+otherwise:=0D=0AOkay:)=0D=0A>=20=0D=0A>=20Reviewed-by:=20Christoph=20Hellwi=
+g=20<hch=40lst.de>=0D=0AThanks=20for=20your=20review=21=0D=0A=0D=0A
