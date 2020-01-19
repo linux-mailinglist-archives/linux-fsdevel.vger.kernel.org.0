@@ -2,104 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E569141CE8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 08:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04682141CFF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 09:35:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgASH6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 02:58:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33792 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgASH6h (ORCPT
+        id S1726635AbgASIfV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 03:35:21 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:42157 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbgASIfU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 02:58:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N+YdFKhWavAVlRXTIVt/VMOYgs6+bw78jRCCgHPX49U=; b=cnpOgTxq6/Xz/M9FKSsXmVlV9
-        9zFCg83sM54zdtEz2Y58AHRa35UmzHkHnhBqaPr8CXR/O5hjWKMlGzLxG8RU1YbtTGQZ+udBVj6JO
-        0PJ6n64TQIyp2NpZ3duUtFWMQW10V9B51+EJCQw6D832tbnv9TUoXgAdWOYvvvMuPlfK1pl55OGcT
-        Bs4ODrDJ8hmz6Fltuc3w/xO9+cTUmtIGp1aqqmh1gawiikfXhU4IZK+4DpuB3nCzf+dOXcIVImvM2
-        BxHjTDdDk22xQKeFg1xqTlqhaIki3RTnsILGLSxvKZHof1cHGoe2C7bzlLZmzd84OMtjfSfMfF/DM
-        PMzpnfhBg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1it5TY-0007CL-Hv; Sun, 19 Jan 2020 07:58:28 +0000
-Date:   Sat, 18 Jan 2020 23:58:28 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "yukuai (C)" <yukuai3@huawei.com>
-Cc:     hch@infradead.org, darrick.wong@oracle.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, houtao1@huawei.com,
-        zhengbin13@huawei.com, yi.zhang@huawei.com
-Subject: Re: [RFC] iomap: fix race between readahead and direct write
-Message-ID: <20200119075828.GA4147@bombadil.infradead.org>
-References: <20200116063601.39201-1-yukuai3@huawei.com>
- <20200118230826.GA5583@bombadil.infradead.org>
- <f5328338-1a2d-38b4-283f-3fb97ad37133@huawei.com>
- <20200119014213.GA16943@bombadil.infradead.org>
- <64d617cc-e7fe-6848-03bb-aab3498c9a07@huawei.com>
- <20200119061402.GA7301@bombadil.infradead.org>
- <fafa0550-184c-e59c-9b79-bd5d716a20cc@huawei.com>
+        Sun, 19 Jan 2020 03:35:20 -0500
+Received: by mail-il1-f196.google.com with SMTP id t2so24834591ilq.9;
+        Sun, 19 Jan 2020 00:35:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WnvCnon0B2vZEtChKK2eAEB4AoqKysFBIa8g4lTbzqs=;
+        b=MICKMx0JRRKjGltjB7+mwIArqOPNrBi52HqBHbIC/HB4t4TdIOP/SYLkIFtT0HLvVG
+         tSDbPRAdaXSTlVN12U/SJSdlA7hKR8rI8PVJrfn7JvU3xZi2O/SjgHo4sP7bZ+nVfoKO
+         1pJ9NDQ7VCfATu4UcxLAGkBuY8maIv9yjW6OVwQ9lphaVD+BJ88DFDwmQf7nUMMiiepY
+         bY8A1caHiEY6dAQNvSCOO++S/Ov/t9InaB+zvkyWPKZMj87SqgBYptJ3ODw8rwnvTGAB
+         FF7gMujX0GT5MTdulwXvZje0OFRsJU3p+Bzoct9gGiOBvDTSFWCFomcGYXHUAfGZl+7E
+         HMsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WnvCnon0B2vZEtChKK2eAEB4AoqKysFBIa8g4lTbzqs=;
+        b=RaypSBwqKgbmyqYynmK6YegKi4/ZToOmfdEIBA7h9t2POjUkwsJRl3gYJYY9jcNwad
+         SBapuuHuLijhQGqoFbcqzZ5Rup8TgldwN+vOpFgV+ltArFOFB7wGdgRtyyzwpU2L873n
+         Nr0E1UFESNXLSoSmcLVQ2Y4WCcZlp7UYkMMp6Q0lO5R3DrF1rLWZySD2isKreTwyAg2T
+         k7cAGPFUf4XHgMtlpgM7RGBBfn3aCeuUyJZwQCOA15Gp/d7DOfsMLMKxKJ6SFw/Mn3gV
+         6sM9X7bacgof1w0LTXK72cbjERB2jKpFGoeVBxmxUCUkAmXgzx0n6Gq09qQ6llHBy2+t
+         0dRw==
+X-Gm-Message-State: APjAAAWEX8hSvBhnFIrU7xCHNpe4xKWTwTHLSW6+1HAcPoekkPXXGLJ9
+        3W9KOjvJhlwyHipWLFon3auxbHvUiBuTwcDlyx4=
+X-Google-Smtp-Source: APXvYqwZr4ZjR8ayJHlIXAe9Mu2fL/t/GmQP+UeWRJOzS1BF1xB3ciC2rHWyCUrxr286ENDotvVDU1t2Jngvyqsb2EQ=
+X-Received: by 2002:a92:88d0:: with SMTP id m77mr6344819ilh.9.1579422919785;
+ Sun, 19 Jan 2020 00:35:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fafa0550-184c-e59c-9b79-bd5d716a20cc@huawei.com>
+References: <20190829131034.10563-1-jack@suse.cz> <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 19 Jan 2020 10:35:08 +0200
+Message-ID: <CAOQ4uxgP_32c6QLh2cZXXs7yJ6e8MRR=yfEBjpv02FeC_HpKhg@mail.gmail.com>
+Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 19, 2020 at 02:55:14PM +0800, yukuai (C) wrote:
-> On 2020/1/19 14:14, Matthew Wilcox wrote:
-> > I don't understand your reasoning here.  If another process wants to
-> > access a page of the file which isn't currently in cache, it would have
-> > to first read the page in from storage.  If it's under readahead, it
-> > has to wait for the read to finish.  Why is the second case worse than
-> > the second?  It seems better to me.
-> 
-> Thanks for your response! My worries is that, for example:
-> 
-> We read page 0, and trigger readahead to read n pages(0 - n-1). While in
-> another thread, we read page n-1.
-> 
-> In the current implementation, if readahead is in the process of reading
-> page 0 - n-2,  later operation doesn't need to wait the former one to
-> finish. However, later operation will have to wait if we add all pages
-> to page cache first. And that is why I said it might cause problem for
-> performance overhead.
+On Fri, Jan 17, 2020 at 12:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hello,
+> >
+> > this is a patch series that addresses a possible race between readahead and
+> > hole punching Amir has discovered [1]. The first patch makes madvise(2) to
+> > handle readahead requests through fadvise infrastructure, the third patch
+> > then adds necessary locking to XFS to protect against the race. Note that
+> > other filesystems need similar protections but e.g. in case of ext4 it isn't
+> > so simple without seriously regressing mixed rw workload performance so
+> > I'm pushing just xfs fix at this moment which is simple.
+> >
+>
+> Jan,
+>
+> Could you give a quick status update about the state of this issue for
+> ext4 and other fs. I remember some solutions were discussed.
+> Perhaps this could be a good topic for a cross track session in LSF/MM?
+> Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
+>
 
-OK, but let's put some numbers on that.  Imagine that we're using high
-performance spinning rust so we have an access latency of 5ms (200
-IOPS), we're accessing 20 consecutive pages which happen to have their
-data contiguous on disk.  Our CPU is running at 2GHz and takes about
-100,000 cycles to submit an I/O, plus 1,000 cycles to add an extra page
-to the I/O.
+Maybe a silly question:
 
-Current implementation: Allocate 20 pages, place 19 of them in the cache,
-fail to place the last one in the cache.  The later thread actually gets
-to jump the queue and submit its bio first.  Its latency will be 100,000
-cycles (20us) plus the 5ms access time.  But it only has 20,000 cycles
-(4us) to hit this race, or it will end up behaving the same way as below.
+Can someone please explain to me why we even bother truncating pages on
+punch hole?
+Wouldn't it solve the race if instead we zeroed those pages and marked them
+readonly?
 
-New implementation: Allocate 20 pages, place them all in the cache,
-then takes 120,000 cycles to build & submit the I/O, and wait 5ms for
-the I/O to complete.
+The comment above trunacte_pagecache_range() says:
+ * This function should typically be called before the filesystem
+ * releases resources associated with the freed range (eg. deallocates
+ * blocks). This way, pagecache will always stay logically coherent
+ * with on-disk format, and the filesystem would not have to deal with
+ * situations such as writepage being called for a page that has already
+ * had its underlying blocks deallocated.
 
-But look how much more likely it is that it'll hit during the window
-where we're waiting for the I/O to complete -- 5ms is 1250 times longer
-than 4us.
+So in order to prevent writepage from being called on a punched hole,
+we need to make sure that page write fault will be called, which is the same
+state as if an exiting hole has been read into page cache but not written yet.
+Right? Wrong?
 
-If it _does_ get the latency benefit of jumping the queue, the readahead
-will create one or two I/Os.  If it hit page 18 instead of page 19, we'd
-end up doing three I/Os; the first for page 18, then one for pages 0-17,
-and one for page 19.  And that means the disk is going to be busy for
-15ms, delaying the next I/O for up to 10ms.  It's actually beneficial in
-the long term for the second thread to wait for the readahead to finish.
+What am I missing here?
 
-Oh, and the current ->readpages code has a race where if the page tagged
-with PageReadahead ends up not being inserted, we'll lose that bit,
-which means the readahead will just stop and have to restart (because
-it will look to the readahead code like it's not being effective).
-That's a far worse performance problem.
+Thanks,
+Amir.
