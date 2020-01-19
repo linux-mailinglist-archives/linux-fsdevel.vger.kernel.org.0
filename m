@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10644141E85
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 15:24:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4D44141E87
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jan 2020 15:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbgASOXz convert rfc822-to-8bit (ORCPT
+        id S1726982AbgASOY6 convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 09:23:55 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:41299 "EHLO
+        Sun, 19 Jan 2020 09:24:58 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:55743 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgASOXz (ORCPT
+        with ESMTP id S1726778AbgASOY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 09:23:55 -0500
-Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MFsIZ-1iqhAk1SWN-00HPIf; Sun, 19 Jan 2020 15:23:53 +0100
-Received: by mail-qt1-f179.google.com with SMTP id 5so25692014qtz.1;
-        Sun, 19 Jan 2020 06:23:53 -0800 (PST)
-X-Gm-Message-State: APjAAAW/QXalHU26BeBpslgf6nZkKqY6ZJt+Z+t6I4GtAKvpegukk1Wo
-        6n16geobE9dROMdvg3s7gLSRxdCrfsCMliRF/jg=
-X-Google-Smtp-Source: APXvYqzHCuGsp3rFT7YsZg9amyGvdjC3ojAJqlu4KS7WRv2xnidRsPe6DfCnS+7HdbXEpHmL6wgForilWoRhIJOklBc=
-X-Received: by 2002:ac8:47d3:: with SMTP id d19mr16000972qtr.142.1579443832175;
- Sun, 19 Jan 2020 06:23:52 -0800 (PST)
+        Sun, 19 Jan 2020 09:24:58 -0500
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mlvmv-1jKVdT32JP-00j5hM; Sun, 19 Jan 2020 15:24:56 +0100
+Received: by mail-qt1-f178.google.com with SMTP id e25so14335062qtr.13;
+        Sun, 19 Jan 2020 06:24:56 -0800 (PST)
+X-Gm-Message-State: APjAAAWXQxVXgBbdTogQkNgx/9pYq9a9Go2hC+sOa9VKOAo40ElHSwFs
+        GkEt/Ml8Nz6RG31pXLBij7bbmwXUyTJWhQJpMaM=
+X-Google-Smtp-Source: APXvYqxrafmnxNuzCwK3/36buZK4R4f8MDQ4Tt6/l87rNbHptsH4UaocIHxOaaZ4qwJSuQSOfdxLmevczkRbYXLFrrM=
+X-Received: by 2002:ac8:3a27:: with SMTP id w36mr16102286qte.204.1579443895598;
+ Sun, 19 Jan 2020 06:24:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20200118150348.9972-1-linkinjeon@gmail.com> <20200118150348.9972-6-linkinjeon@gmail.com>
-In-Reply-To: <20200118150348.9972-6-linkinjeon@gmail.com>
+References: <20200118150348.9972-1-linkinjeon@gmail.com> <20200118150348.9972-3-linkinjeon@gmail.com>
+In-Reply-To: <20200118150348.9972-3-linkinjeon@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 19 Jan 2020 15:23:36 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0eJKDYsrkHFxf=8fWpq26B1fXGgtth+ViLMXezx0SNUw@mail.gmail.com>
-Message-ID: <CAK8P3a0eJKDYsrkHFxf=8fWpq26B1fXGgtth+ViLMXezx0SNUw@mail.gmail.com>
-Subject: Re: [PATCH v11 05/14] exfat: add file operations
+Date:   Sun, 19 Jan 2020 15:24:39 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a15cMvfNe248CCePJ=zq1n7Ssdao5O2SVP2Aj+EBwSqnQ@mail.gmail.com>
+Message-ID: <CAK8P3a15cMvfNe248CCePJ=zq1n7Ssdao5O2SVP2Aj+EBwSqnQ@mail.gmail.com>
+Subject: Re: [PATCH v11 02/14] exfat: add super block operations
 To:     Namjae Jeon <linkinjeon@gmail.com>
 Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -41,25 +41,25 @@ Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Namjae Jeon <namjae.jeon@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:7wIDx2QmCezR6cAwvFMz2RvCzSut+0wI04wygMt6U4HC/g8jMiJ
- dNRAV0w6SIvVpYRs6i1ice+ACqbOgATwGuKyAPr3ynIL069rnhRsJGFcuymTG7R5McvCHla
- f1zLX8PW2RIBCVKF/CLwV0+yVYzKLXCe1NuCn1srENT+WBS283PZF2qDjECW4O6TAnoOBOp
- /Hx7vhjaedcW2RRd4fU1Q==
+X-Provags-ID: V03:K1:gfLNI3SdZ3NTejtkozKCmnWyuRcKkx7Dy1qXTeypL8mJNrMeKPW
+ ZMokDGhmVdef7SfQaGAdnehun8zqA1IF99R/tDms5U9UP45hfOFVwAkLfu8TmpaQLKA7NHB
+ zuRlzdm9ZMjhGJYpAsIKxocNzdYzQanzqP3L2Rm0e3NP80Y7axlTk4EMLcyzqg2Zt0vvQnH
+ PMS9gL15rs65+oFZmXU8Q==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:7ccO8KNwsag=:FvKzj/ERinJeHBV3t0/l0r
- PvfPeNSBypuAimotYLB6OryZ1y5SGjxcp4MwRMNY4KHhnEIyBpSgmAWHFl5NtRFFe9Qcx4q5F
- o41+imxcBPlVneOIVXrcXWQZ9/zKiSD4RGq2WZqxw8IKWXmpkxWW8Z47/u9/0FLDbVQvMzqLB
- 5Tq+7xHG7lQSFOwWD2uevhCP8ralB9f3eNZadzZ7ho8A/6P4Ft2OjkabnNjI/NekTZvrhO+35
- JXe+F5Ezv2kwuq7w9KsUoS23M8j1ngnXJNxhS3P/zB2D/Vr/hjNv50+J16UWU6+akO30/tBw+
- KVgtquS/vy2gnnnGklOjAwFzYOccKenlh49Kw+RBtaW0xTvHY+eBoz0WHb8X3wIyoZgQw/vng
- woSdOnqvKBl0M2cp1k14gTKoGeExT2hrQquS5zpbxdTtBfW6nyZGQhfgBhLVpyGDxLq4WvjsS
- SedZbgEb5u5VvvZ1b70PW9ehe9Bh4endLanMMJos0k0P+hM5XdgIIZbT+YbxHUnr1WPKJneda
- +oXfQjYN8Qy18/2XpBlGEskrpFidJZKX1tV2jx6+3jdGyXc/hIqtWH9e8OmYai5QP6xSVepCz
- hoJND0zkuW1NiL4+sn2BrUtqxNP325egNR/OfMrhjEiDPHKl8187O0hJTHAdXH22s1b0bSEa+
- aVaTTOiFLFyHJhlLvlUZf2Jbed/ig5dIPTugJ87GrRAPVNHGbcjeXCWitcTfTYH7iQtiXmHXK
- snAamy5fupL/X7Z0yIXcrBMtC6Flj81oH5NP9Kgml7480ownt7D38iO5l+PAqUfqlAXIZJd6A
- 6QOvDxTS+OoCiK6CuYB/3S5e8uK/JG5q14N25L61LlHMzavmru6pheISaA4FVVthvsWGEx7/y
- +TgtEr14JD/hM7ArB1OA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:rkAf1KRpzrI=:EUYADzAl3ivqSflyYS8j5S
+ xqO85sAMrEzH3PNTXLCcIOMvTzqoQ0//IBQBj86H1D1FcQDXJAwVaM3n8ruMWtfP/NJAaRhhA
+ QoPpfLqvskapq1+6Q3gRoF/wIVafYpOKO12FoBozKyaVSCNd/YMk44QA18Ij32P6CHkkLEg3e
+ jmZv9sLT8dyzvCEVLDLcm2TeZ6J9DD8AEXvq0zgvcPQF0UhNbBwnPG3ko8w4YipsSf5SGrFq+
+ WBKrzu7dGskeNzuvJaI3pR2fKBB5XU4w6b8uc2T/9ZwguSZHer8yJ0v2zC36bxqTD3gtVcsSR
+ YoKvnR6MufwkTh8pkiWg5qGmt6VwSyAMJzdUqb634OIvq5PgqvJvnUE6lhJOMPwfE/uaKvAOo
+ NM+espKfYl7gp5D7qS+vaggBrYbH86j2WyrDfwSEjdSmlxiZLsKEcDTudzSW5xKIB73kCDpQ8
+ 4znHnuMa6eVqndKxppLlSex2RD3Agyn2X+evy0+CxIz0ToEscf5yL76mENBfgbKZuYBXJQBjb
+ dDq6feB/f0GY7QF+dLu9mEMFk/9jyxZmKoHp9fSnjNO8S4hCQDrCefQrK4lzsu903lGWdRksm
+ ioq+zkjmwvnjS8ywX6VeE8OgFz4jsFCa1EZL1CE3QqwsB1+lniraUNoMbnIIZ/n5GdNFi1sNE
+ kG3rGp2WLzrsju6BdYjzFHbAweHLjuE2qrvypGc/Hmqv1f9n9KNBnFdIGaIEDPuibOAwQ2cEJ
+ TNITNeP8vQXQ+Q8GA0ZaZvb3Xe9HeqituquEsAy2gNzeJLNeILV5jZOsK1iiA1ozbD6XFt83H
+ OGGE7MohvDWBwPCZOzJFc6OU1+hQ6qvXgB1prtKAMBYsmoNjLS1bTw0OjZqfMjtyUNJEYX46h
+ V79d1TCQDMRwDhBF4rGg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -69,7 +69,7 @@ On Sat, Jan 18, 2020 at 4:04 PM Namjae Jeon <linkinjeon@gmail.com> wrote:
 >
 > From: Namjae Jeon <namjae.jeon@samsung.com>
 >
-> This adds the implementation of file operations for exfat.
+> This adds the implementation of superblock operations for exfat.
 >
 > Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
 > Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
