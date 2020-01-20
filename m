@@ -2,130 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F6F142289
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 05:52:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F87142441
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 08:30:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbgATEwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 23:52:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729043AbgATEwT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 23:52:19 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE82A2073A;
-        Mon, 20 Jan 2020 04:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579495938;
-        bh=DAtdwoWn08bxGri1PxDJ/LULe8Ktr8pcYIS21k28EN4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j0tf43nqBaHRTk8KvCSppcB0LKW557pYqYNlt49K3zTMGOJWI1C55cXqV6Sa+upBN
-         fe1G0uKWFmL5LwUIKfbU9zbeAHfL4x+4mO/ID01faHvm3joFX5AL1Kn8Zsh+bQ3+NM
-         w1eqcV5s+H8nFfeVbQ2zUJHWkDdHVGMQVksgVduE=
-Date:   Sun, 19 Jan 2020 20:52:16 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        id S1726635AbgATHas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 02:30:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:44652 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgATHas (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jan 2020 02:30:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itRWC-00BtNz-7S; Mon, 20 Jan 2020 07:30:40 +0000
+Date:   Mon, 20 Jan 2020 07:30:40 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v3 0/9] Support for Casefolding and Encryption
-Message-ID: <20200120045216.GB913@sol.localdomain>
-References: <20200117214246.235591-1-drosen@google.com>
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120073040.GZ8904@ZenIV.linux.org.uk>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200117214246.235591-1-drosen@google.com>
+In-Reply-To: <87sgkan57p.fsf@mail.parknet.co.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 01:42:37PM -0800, Daniel Rosenberg wrote:
-> These patches are all on top of fscrypt's developement branch
-> 
-> Ext4 and F2FS currently both support casefolding and encryption, but not at
-> the same time. These patches aim to rectify that.
-> 
-> Since directory names are stored case preserved, we cannot just take the hash
-> of the ciphertext. Instead we use the siphash of the casefolded name. With this
-> we no longer have a direct path from an encrypted name to the hash without the
-> key. To deal with this, fscrypt now always includes the hash in the name it
-> presents when the key is not present. There is a pre-existing bug where you can
-> change parts of the hash and still match the name so long as the disruption to
-> the hash does not happen to affect lookup on that filesystem. I'm not sure how
-> to fix that without making ext4 lookups slower in the more common case.
-> 
-> I moved the identical dcache operations for ext4 and f2fs into the VFS, as any
-> filesystem that uses casefolding will need the same code. This will also allow
-> further optimizations to that path, although my current changes don't take
-> advantage of that yet.
-> 
-> For Ext4, this also means that we need to store the hash on disk. We only do so
-> for encrypted and casefolded directories to avoid on disk format changes.
-> Previously encryption and casefolding could not live on the same filesystem,
-> and we're relaxing that requirement. F2fs is a bit more straightforward since
-> it already stores hashes on disk.
-> 
-> I've updated the related tools with just enough to enable the feature. I still
-> need to adjust ext4's fsck's, although without access to the keys,
-> neither fsck will be able to verify the hashes of casefolded and encrypted names.
-> 
-> v3 changes:
-> fscrypt patch only creates hash key if it will be needed.
-> Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
-> 
-> v2 changes:
-> fscrypt moved to separate thread to rebase on fscrypt dev branch
-> addressed feedback, plus some minor fixes
-> 
-> 
-> Daniel Rosenberg (9):
->   fscrypt: Add siphash and hash key for policy v2
->   fscrypt: Don't allow v1 policies with casefolding
->   fscrypt: Change format of no-key token
->   fscrypt: Only create hash key when needed
->   vfs: Fold casefolding into vfs
->   f2fs: Handle casefolding with Encryption
->   ext4: Use struct super_blocks' casefold data
->   ext4: Hande casefolding with encryption
->   ext4: Optimize match for casefolded encrypted dirs
+On Mon, Jan 20, 2020 at 01:04:42PM +0900, OGAWA Hirofumi wrote:
 
-Thanks for the new version of this patchset, Daniel!
+> Also, not directly same issue though. There is related issue for
+> case-insensitive. Even if we use some sort of internal wide char
+> (e.g. in nls, 16bits), dcache is holding name in user's encode
+> (e.g. utf8). So inefficient to convert cached name to wide char for each
+> access.
+> 
+> Relatively recent EXT4 case-insensitive may tackled this though, I'm not
+> checking it yet.
 
-I'd like to apply the first four patches (the fs/crypto/ part, to prepare for
-the new dirhash method) for 5.6, to get ready for the actual
-encrypted+casefolded support in filesystems later.
+What's more, comparisons in dcache lookups have to be very careful about
+the rename-related issues.  You can give false negatives if the name
+changes under you; it's not a problem.  You can even give a false positive
+in case of name change happening in the middle of comparison; ->d_seq
+mismatch will get caught and it will have the result discarded before it
+causes problems.  However, you can't e.g. assume that the string you are
+trying to convert from utf8 to 16bit won't be changing right under you.
+Again, the wrong result of comparison in such situation is not a problem;
+wrong return value is not the worst thing that can happen to a string
+function mistakenly assuming that the string is not changing under it.
 
-But we don't have much time left before the merge window, the more I look at the
-patches I'm still not very happy with them.  E.g., some comments I made haven't
-been addressed, it's missing updates to the documentation, and some of the code
-comments and commit messages are still confusing.  For one, there's still some
-ambiguity between the dirhash and the SHA-256 hash, and it's not really
-explained why the patch introduces the SHA-256 stuff, which actually has nothing
-to do with encrypted+casefold (other than it was a good opportunity to do it as
-the nokey name format had to be changed for encrypted+casefold anyway).
+And you very much need to be careful about the things you can access
+there.  E.g. something like "oh, I'll just look at the flags in the
+inode of the parent of potential match" (as in the recently posted
+series) is a bloody bad idea on many levels.  Starting with "your
+potential match is getting moved right now, and what used to be its
+parent becomes negative by the time you get around to fetching its
+->d_inode.  Dereferencing the resulting NULL to get inode flags
+is not pretty".
 
-I also found a bug where the return value of base64_decode() isn't being checked
-properly.  We should also keep fscrypt_match_name() simpler by setting disk_name
-for short names, like we were before.  There are also some places that count the
-padding in struct fscrypt_nokey_name and some that don't, which is confusing.
-We also no longer need to call fscrypt_get_policy() during setflags, as we call
-fscrypt_require_key() now anyway.  And there's now some ambiguity about what's
-meant by a "per-file key", since now there will be 2 types of per-file keys.
+<checks ext4>
+Yup, that bug is there as well, all right.  Look:
+#ifdef CONFIG_UNICODE
+static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
+                          const char *str, const struct qstr *name)
+{
+        struct qstr qstr = {.name = str, .len = len };
+        struct inode *inode = dentry->d_parent->d_inode;
 
-So I hope you don't mind, but to move things along I've had a go at cleaning up
-the fscrypt patches, and I've sent out an updated version of them.  Can you
-please take a look when you have a chance?:
-https://lkml.kernel.org/linux-fscrypt/20200120044401.325453-1-ebiggers@kernel.org/T/#u
+        if (!IS_CASEFOLDED(inode) || !EXT4_SB(inode->i_sb)->s_encoding) {
 
-Thanks!
+Guess what happens if your (lockless) call of ->d_compare() runs
+into the following sequence:
+CPU1:	ext4_d_compare() fetches ->d_parent
+CPU1:	takes a hardware interrupt
+CPU2:	dentry gets evicted by memory pressure; so is its parent, since
+it was the only thing that used to keep it pinned.  Eviction of the parent
+calls dentry_unlink_inode() on the parent, which zeroes its ->d_inode.
+CPU1:	comes back
+CPU1:	fetches parent's ->d_inode and gets NULL
+CPU1:	oopses on null pointer dereference.
 
-- Eric
+It's not impossible to hit.  Note that e.g. vfat_cmpi() is not vulnerable
+to that problem - ->d_sb is stable and both the superblock and ->nls_io
+freeing is RCU-delayed.
+
+I hadn't checked ->d_compare() instances for a while; somebody needs to
+do that again, by the look of it.  The above definitely is broken;
+no idea how many other instaces had grown such bugs...
