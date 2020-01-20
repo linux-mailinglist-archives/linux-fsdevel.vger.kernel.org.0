@@ -2,188 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF34143056
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 17:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7290B143067
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 18:04:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbgATQ4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 11:56:18 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40002 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729121AbgATQ4S (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:56:18 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t14so27117wmi.5;
-        Mon, 20 Jan 2020 08:56:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=l03WTNrKTQC5MGvzPNBY30UTO75BWr5Rgkv2u4ayoro=;
-        b=ROjySfoOvPa8OYjeITdb0qF+NXnHnNrwRo5wLjbwgErHa9tN1hls2IF7eIwmncLX09
-         fHL6mig8O69Inof4dLV7O0hDeFFbzpzuoCgnlV/yv5feWmxeIHo1JTJbTqtnsc9ZCdHm
-         40hwczJ9GX+mrI9J7AaYqpHVf+ue/h+iWK7QjC9pWTzMagowjnlm62maunfJ6GJmRuoc
-         ObFMyX64VnPUxuuvyNd4Ym+m7Dmd1bptNC76FDkPFyFwqUnh6sM5JsFhBj7+dfAJIM0m
-         iiJwu5dMw8neXQ5w9roxCREwTRhhOfKGL8MNTvr3ckpHfYCRcH//DZlrr/q4iGkYT8u8
-         h/Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l03WTNrKTQC5MGvzPNBY30UTO75BWr5Rgkv2u4ayoro=;
-        b=Q8ldlPdc1L5u/+y41q7FxQzV4waNRAMKg9hYHIJwWSz4UsOIBey5Ye/oGaEraVpdJD
-         kYAVEi2bbO+bZgoFA/dyvsIN056GgwHkeuQWwa575dmxXDUXQY2CA26EXniXYIueOb9D
-         BAVr9OzNzZf1cVPLVrDAh5tWQa98nDVvFHnOJaUFUkUcTvSWloaFvpKyQBl4Mbkb8nOd
-         Y9L5P+SJ9LFDkuH+Ou2rRywl/tBnp6DwVp3Cf7ayZWEeLJ2RS2StfL+Sqe4YbqXN+Hfm
-         8d++cKcpsrkDKoHKs+Q5CHqK9iiVfW0PV04nQfJOaTOutyE3FoiIVEgm+Vh4oTn0RB0p
-         Wfag==
-X-Gm-Message-State: APjAAAWNgPC92u18gz11q4huG8VKIAwHrsPx7AqVYp52dQzMcCbIwCAi
-        2GWFkUTDHyTIX+QpNXvpJcM=
-X-Google-Smtp-Source: APXvYqxVTGZ/hNNKU9GlL6hTSquhGMZWUbQgRUTLQdxRwE+BwRTJSFRBSKoRb9HfcB6IVux2m+T7Fg==
-X-Received: by 2002:a7b:cb97:: with SMTP id m23mr238030wmi.37.1579539375549;
-        Mon, 20 Jan 2020 08:56:15 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id x16sm305227wmk.35.2020.01.20.08.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 08:56:14 -0800 (PST)
-Date:   Mon, 20 Jan 2020 17:56:14 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-Message-ID: <20200120165614.yp3pukpj3ilq6nxp@pali>
-References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
- <20200120110438.ak7jpyy66clx5v6x@pali>
- <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
- <20200120152009.5vbemgmvhke4qupq@pali>
- <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
- <20200120162701.guxcrmqysejaqw6y@pali>
- <b42888a01c8847e48116873ebbbbb261@AcuMS.aculab.com>
+        id S1729190AbgATREM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 12:04:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58862 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbgATREM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jan 2020 12:04:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 594B1ABED;
+        Mon, 20 Jan 2020 17:04:09 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2A2191E0D08; Mon, 20 Jan 2020 17:58:30 +0100 (CET)
+Date:   Mon, 20 Jan 2020 17:58:30 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
+Message-ID: <20200120165830.GB28285@quack2.suse.cz>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+ <20200120120333.GG19861@quack2.suse.cz>
+ <CAOQ4uxhhsxaO61HwMvRGP=5duFsY6Nvv+vCutVZXWXWA2pu2KA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7vl3wb4i55lghd6k"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b42888a01c8847e48116873ebbbbb261@AcuMS.aculab.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAOQ4uxhhsxaO61HwMvRGP=5duFsY6Nvv+vCutVZXWXWA2pu2KA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---7vl3wb4i55lghd6k
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Monday 20 January 2020 16:43:21 David Laight wrote:
-> From: Pali Roh=C3=A1r
-> > Sent: 20 January 2020 16:27
-> ...
-> > > Unfortunately there is neither a 1:1 mapping of all possible byte seq=
-uences
-> > > to wchar_t (or unicode code points),
-> >=20
-> > I was talking about valid UTF-8 sequence (invalid, illformed is out of
-> > game and for sure would always cause problems).
->=20
-> Except that they are always likely to happen.
-
-As wrote before, Linux kernel does not allow such sequences. So
-userspace get error when is trying to store garbage.
-
-> I've been pissed off by programs crashing because they assume that
-> a input string (eg an email) is UTF-8 but happens to contain a single
-> 0xa3 byte in the otherwise 7-bit data.
->=20
-> The standard ought to have defined a translation for such sequences
-> and just a 'warning' from the function(s) that unexpected bytes were
-> processed.
-
-There is informative part, how to replace invalid part of sequence to
-Unicode code point U+FFFD. So if your need to to "process any byte
-sequence as UTF-8" there is standardized way to convert it into one
-exact sequence of Unicode code points. This is what email programs
-should do and non-broken are already doing it.
-
-> > > nor a 1:1 mapping of all possible wchar_t values to UTF-8.
-> >=20
-> > This is not truth. There is exactly only one way how to convert sequence
-> > of Unicode code points to UTF-8. UTF is Unicode Transformation Format
-> > and has exact definition how is Unicode Transformed.
->=20
-> But a wchar_t can hold lots of values that aren't Unicode code points.
-> Prior to the 2003 changes half of the 2^32 values could be converted.
-> Afterwards only a small fraction.
-
-wchar_t in kernel can hold only subset of Unicode code points, up to
-the U+FFFF (2^16-1).
-
-Halves of surrogate pairs are not valid Unicode code points but as
-stated they are used in MS FAT.
-
-So anything which can be put into kernel's wchar_t is valid for FAT.
-
->=20
-> > If you have valid UTF-8 sequence then it describe one exact sequence of
-> > Unicode code points. And if you have sequence (ordinals) of Unicode code
-> > points there is exactly one and only one its representation in UTF-8.
-> >=20
-> > I would suggest you to read Unicode standard, section 2.5 Encoding Form=
-s.
->=20
-> That all assumes everyone is playing the correct game
-
-And why should we not play correct game? On input we have UTF and
-internally we works with Unicode. Unicode codepoints does not leak from
-kernel, so we can play correct game and assume that our code in kernel
-is correct (and if not, we can fix it). Plus when communicating with
-outside word, just check that input data are valid (which we already do
-for UTF-8 user input).
-
-So I do not see any problem there.
-
-> > > Really both need to be defined - even for otherwise 'invalid' sequenc=
-es.
+On Mon 20-01-20 15:54:28, Amir Goldstein wrote:
+> On Mon, Jan 20, 2020 at 2:03 PM Jan Kara <jack@suse.cz> wrote:
+> > On Fri 17-01-20 12:50:58, Amir Goldstein wrote:
+> > > On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > this is a patch series that addresses a possible race between readahead and
+> > > > hole punching Amir has discovered [1]. The first patch makes madvise(2) to
+> > > > handle readahead requests through fadvise infrastructure, the third patch
+> > > > then adds necessary locking to XFS to protect against the race. Note that
+> > > > other filesystems need similar protections but e.g. in case of ext4 it isn't
+> > > > so simple without seriously regressing mixed rw workload performance so
+> > > > I'm pushing just xfs fix at this moment which is simple.
+> > > >
 > > >
-> > > Even the 16-bit values above 0xd000 can appear on their own in
-> > > windows filesystems (according to wikipedia).
-> >=20
-> > If you are talking about UTF-16 (which is _not_ 16-bit as you wrote),
-> > look at my previous email:
->=20
-> UFT-16 is a sequence of 16-bit values....
+> > > Could you give a quick status update about the state of this issue for
+> > > ext4 and other fs. I remember some solutions were discussed.
+> >
+> > Shortly: I didn't get to this. I'm sorry :-|. I'll bump up a priority but I
+> > can't promise anything at the moment.
+> >
+> > > Perhaps this could be a good topic for a cross track session in LSF/MM?
+> >
+> > Maybe although this is one of the cases where it's easy to chat about
+> > possible solutions but somewhat tedious to write one so I'm not sure how
+> > productive that would be. BTW my discussion with Kent [1] is in fact very
+> > related to this problem (the interval lock he has is to stop exactly races
+> > like this).
+> >
+> 
+> Well, I was mostly interested to know if there is an agreement on the way to
+> solve the problem. If we need to discuss it to reach consensus than it might
+> be a good topic for LSF/MM. If you already know what needs to be done,
+> there is no need for a discussion.
 
-No, this is not truth. UTF-16 is sequence either of 16-bit values or of
-32-bit values with other restrictions. UTF-16 is variable length enc.
+So I have an idea how it could be solved: Change calling convention for
+->readpage() so that it gets called without page locked and take
+i_mmap_sem there (and in ->readpages()) to protect from the race. But
+I wanted to present it in the form of patches as the devil here is in the
+details and it may prove to be too ugly to be bearable.
 
-> It can contain 0xd000 to 0xffff (usually in pairs) but they aren't UTF-8 =
-codepoints.
->=20
-> 	David
->=20
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
- 1PT, UK
-> Registration No: 1397386 (Wales)
+If I won't get to writing the patches, you're right it may be sensible to
+present the idea to people at LSF/MM what they think about it.
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+> > > Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
+> >
+> > Do you have anything particular in mind? I don't see how RWF_UNCACHED would
+> > make this any better or worse than DIO / readahead...
+> >
+> 
+> Not better nor worse. I meant that RFW_UNCACHED is another case that
+> would suffer the same races.
 
---7vl3wb4i55lghd6k
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, that's right.
 
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiXbrAAKCRCL8Mk9A+RD
-UgSWAJ4ktl8RuEWLboJtM53qzi+wvlI2UwCfWQmIzJHZ//yydpo769G/FVDYQSo=
-=9ZkE
------END PGP SIGNATURE-----
-
---7vl3wb4i55lghd6k--
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
