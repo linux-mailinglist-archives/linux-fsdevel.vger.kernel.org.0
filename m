@@ -2,152 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20216142E76
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 16:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F0F142EA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 16:20:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbgATPLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 10:11:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33663 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgATPLV (ORCPT
+        id S1728596AbgATPUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 10:20:13 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39968 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbgATPUN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 10:11:21 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b6so29996384wrq.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2020 07:11:19 -0800 (PST)
+        Mon, 20 Jan 2020 10:20:13 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t14so15081457wmi.5;
+        Mon, 20 Jan 2020 07:20:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fpFQ1fEPd0yd6/Fy18DraiEyPGTTtIbb9sRJOIkGs+o=;
-        b=MlG60/Pjxo9rE2vXGmlDoYw5RKWpmvGa+soqFJ7dW2eRzq+T9rENvcZmWbcZl6uzwh
-         z41+vpmQZ3IvNUtv0zeGZ1Beb9xhC7Hlphqnrho0nhPivDtyewP1yOx/zDB2UjoMUl5U
-         LT68YwyROGqrbxDvcCE7zmcicSS1FZ193iqTQ=
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RzNA/B1zWOp+s3c1S4KTFzaLREFyMoeK9blIPOWv0tg=;
+        b=qz2BL8DdvCQ0lG9BBDK/zr1PYABbh7SfEbmME2/1/QZ1ZMh9WlmjZ4N+kA7rFvKSQh
+         l6aObfsqeoS/IlgFFfkuQIa4wRYBB+PmcfUyo9GVawd4ItTj+uw5t9rYcpvUx10KAE5D
+         kI56+DFVH3sD28X+1FGa2YuSSvF6Rb5bWauAhaAJbAOqk/j7RCxWza4qxSDTKi1KH55Y
+         pIyjEvGRtZ5TEZK+SMK/lW2nkzuGrdPGjT/byPkhRa9z9e5uCQR2dfEWstcDDOT2TzA6
+         4drnG18gmIF4pYBqcLw68n81ibecINJ6ZxWR5kKVxkj4dIC/LyLqsq+KRcIW0uKgohyS
+         +VeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fpFQ1fEPd0yd6/Fy18DraiEyPGTTtIbb9sRJOIkGs+o=;
-        b=fpacaQ55ucR8eqdbcLWhnN1kgz4z8QaQh8oro87dvYsrls1bFAJoiUPrG9dYFJmsjl
-         pFo9ICBEYN7viHezmwMTofQIVGobztBPOp+NRKkrzv1Bt+xC6DGtFIt3CLwwb183jXtP
-         NrrlQfKraehvR1kbrFaDFTf+eBfYN9bWGEzYpHN2J/zKlczYfyKzfnzAcZL6SD6rlLDl
-         Zeyx/5tTmwypKaE8LBAFkUt1cGasUiE1cZ/NL0g0NoQqxfhsexwl+xvjcGjV/aEc0w/a
-         jcy8d+HepvzxJX3tCZ8xwE7joCf4257WqzflirfRFCeJNc0YDCZApyqRHrDuM9CK7GRx
-         eawA==
-X-Gm-Message-State: APjAAAVxU3EaaR2At80gfZCKZtK8Th9/My/0cmPblJvLy7Xbz5iQ83OI
-        PXkj93XFTkAO3QY7EP272Now0A==
-X-Google-Smtp-Source: APXvYqyWKGmCoy+9bvGRA2RniQZCgf4tZzcO38mWdEPr54brhtY82T71lmAyTZO6n140BPQ4R1vXQw==
-X-Received: by 2002:adf:ea05:: with SMTP id q5mr15043wrm.48.1579533079122;
-        Mon, 20 Jan 2020 07:11:19 -0800 (PST)
-Received: from localhost ([2620:10d:c092:180::1:251f])
-        by smtp.gmail.com with ESMTPSA id q15sm47977328wrr.11.2020.01.20.07.11.18
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=RzNA/B1zWOp+s3c1S4KTFzaLREFyMoeK9blIPOWv0tg=;
+        b=XSfzJv9ZF8ZIjH1YweZosLuJnkIqKRE7q0wKJs+nz6EhySeGauHAIfi6nQF70VyvuW
+         tb5dsGDWVeHZ+gO5fDJaBNWaUJqeZ6INqs1gpgYlWZwMmoOriDC9wPR3ua+6sG/IIMnX
+         xB73FohCpBTzu9irIw4BfaTuWMJUbWyPu2L4VN7YwVKHAiNpL6Pn7HlHV52r/pXjKE+7
+         Lz9FE7dr0tyY82/IzXCYYK3VynffVJCB4tf0aMUx4uP64fe5TM40w55u7F4/mBMjF9Kt
+         dplJ7xWQXq53Z7CigUGt/iy4oix9sgefa+ijpPk4kqeMuIpaRJr2nAYy29w8nhFN0rjp
+         8tvA==
+X-Gm-Message-State: APjAAAVSyPmFT/WOiAlSgi6ElH0FctRcGwWJoERSo1BtAQAye5S5buMW
+        6CyvTzHFOwKT9/eQwhVnsJs=
+X-Google-Smtp-Source: APXvYqxuTtfIMonsoUg4b+46IkEJGhK7vgKCjB4XTVegDc2CQzTQK2TeycP83DPFhew+ky1gbZw1IQ==
+X-Received: by 2002:a7b:c389:: with SMTP id s9mr18584278wmj.7.1579533611655;
+        Mon, 20 Jan 2020 07:20:11 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id a1sm23528152wmj.40.2020.01.20.07.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 07:11:18 -0800 (PST)
-Date:   Mon, 20 Jan 2020 15:11:17 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Mikael Magnusson <mikachu@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
-Message-ID: <20200120151117.GA81113@chrisdown.name>
-References: <20200107001643.GA485121@chrisdown.name>
- <20200107003944.GN23195@dread.disaster.area>
- <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com>
- <alpine.LSU.2.11.2001070002040.1496@eggly.anvils>
- <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
- <20200107210715.GQ23195@dread.disaster.area>
- <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com>
- <alpine.LSU.2.11.2001080259350.1884@eggly.anvils>
- <20200110164503.GA1697@chrisdown.name>
- <alpine.LSU.2.11.2001122259120.3471@eggly.anvils>
+        Mon, 20 Jan 2020 07:20:10 -0800 (PST)
+Date:   Mon, 20 Jan 2020 16:20:09 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120152009.5vbemgmvhke4qupq@pali>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120110438.ak7jpyy66clx5v6x@pali>
+ <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.2001122259120.3471@eggly.anvils>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hugh,
+On Monday 20 January 2020 15:07:20 David Laight wrote:
+> From: Pali Rohár
+> > Sent: 20 January 2020 11:05
+> > On Monday 20 January 2020 13:04:42 OGAWA Hirofumi wrote:
+> > > Pali Rohár <pali.rohar@gmail.com> writes:
+> > >
+> > > > Which means that fat_name_match(), vfat_hashi() and vfat_cmpi() are
+> > > > broken for vfat in UTF-8 mode.
+> > >
+> > > Right. It is a known issue.
+> > 
+> > Could be this issue better documented? E.g. in mount(8) manpage where
+> > are written mount options for vfat? I think that people should be aware
+> > of this issue when they use "utf8=1" mount option.
+> 
+> What happens if the filesystem has filenames that invalid UTF8 sequences
 
-Sorry this response took so long, I had some non-work issues that took a lot of 
-time last week.
+Could you please describe what you mean by this question?
 
-Hugh Dickins writes:
->On Fri, 10 Jan 2020, Chris Down wrote:
->> Hugh Dickins writes:
->> > Dave, Amir, Chris, many thanks for the info you've filled in -
->> > and absolutely no need to run any scan on your fleet for this,
->> > I think we can be confident that even if fb had some 15-year-old tool
->> > in use on its fleet of 2GB-file filesystems, it would not be the one
->> > to insist on a kernel revert of 64-bit tmpfs inos.
->> >
->> > The picture looks clear now: while ChrisD does need to hold on to his
->> > config option and inode32/inode64 mount option patch, it is much better
->> > left out of the kernel until (very unlikely) proved necessary.
->>
->> Based on Mikael's comment above about Steam binaries, and the lack of
->> likelihood that they can be rebuilt, I'm inclined to still keep inode{64,32},
->> but make legacy behaviour require explicit opt-in. That is:
->>
->> - Default it to inode64
->> - Remove the Kconfig option
->> - Only print it as an option if tmpfs was explicitly mounted with inode32
->>
->> The reason I suggest keeping this is that I'm mildly concerned that the kind
->> of users who might be impacted by this change due to 32-bit _FILE_OFFSET_BITS
->> -- like the not-too-uncommon case that Mikael brings up -- seem unlikely to
->> be the kind of people that would find it in an rc.
->
->Okay.  None of us are thrilled with it, but I agree that
->Mikael's observation should override our developer's preference.
->
->So the "inode64" option will be accepted but redundant on mounting,
->but exists for use as a remount option after mounting or remounting
->with "inode32": allowing the admin to switch temporarily to mask off
->the high ino bits with "inode32" when needing to run a limited binary.
->
->Documentation and commit message to alert Andrew and Linus and distros
->that we are risking some breakage with this, but supplying the antidote
->(not breakage of any distros themselves, no doubt they're all good;
->but breakage of what some users might run on them).
 
-Sounds good.
+VFAT filesystem stores file names in UTF-16. Therefore you cannot have
+UTF-8 on FS (and therefore also you cannot have invalid UTF-8).
 
->>
->> Other than that, the first patch could be similar to how it is now,
->> incorporating Hugh's improvements to the first patch to put everything under
->> the same stat_lock in shmem_reserve_inode.
->
->So, I persuaded Amir to the other aspects my version, but did not
->persuade you?  Well, I can live with that (or if not, can send mods
->on top of yours): but please read again why I was uncomfortable with
->yours, to check that you still prefer it (I agree that your patch is
->simpler, and none of my discomfort decisive).
+Ehm... UTF-16 is not fully truth, MS FAT32 implementations allows half
+of UTF-16 surrogate pair stored in FS.
 
-Hmm, which bit were you thinking of? The lack of batching, shmem_encode_fh(), 
-or the fact that nr_inodes can now be 0 on non-internal mounts?
+Therefore practically, on VFAT you can store any uint16_t[] sequence as
+filename, there is no invalid sequence (except those characters like
+:<>?... which are invalid in MS-DOS).
 
-For batching, I'm neutral. I'm happy to use the approach from your patch and 
-integrate it (and credit you, of course).
 
-For shmem_encode_fh, I'm not totally sure I understand the concern, if that's 
-what you mean.
 
-For nr_inodes, I agree that intentional or unintentional, we should at least 
-handle this case for now and can adjust later if the behaviour changes.
+If by "the filesystem has filenames" you do not mean filesystem file
+names, but rather Linux VFS file names (e.g. you call creat() call with
+invalid UTF-8 sequence) then function utf8s_to_utf16s() (called in
+namei_vfat.c) fails and returns error. Which should be propagated to
+open() / creat() call that it is not possible to create filename with
+such UTF-8 sequence.
 
-Thanks again,
+> or multiple filenames that decode from UTF8 to the same 'wchar' value.
 
-Chris
+This is not possible. There is 1:1 mapping between UTF-8 sequence and
+Unicode code point. wchar_t in kernel represent either one Unicode code
+point (limited up to U+FFFF in NLS framework functions) or 2bytes in
+UTF-16 sequence (only in utf8s_to_utf16s() and utf16s_to_utf8s()
+functions).
+
+> Never mind ones that are just case-differences for the same filename.
+> 
+> UTF8 is just so broken it should never have been allowed to become
+> a standard.
+
+Well, UTF-16 is worse then UTF-8... incompatible with ASCII, variable
+length and space consuming.
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
