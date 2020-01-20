@@ -2,67 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6A71429BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:43:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453F41429C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:45:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgATLmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 06:42:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56526 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726573AbgATLmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 06:42:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 372D1AD5C;
-        Mon, 20 Jan 2020 11:42:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5CD301E0CF1; Mon, 20 Jan 2020 12:42:07 +0100 (CET)
-Date:   Mon, 20 Jan 2020 12:42:07 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "yukuai (C)" <yukuai3@huawei.com>
-Cc:     Jan Kara <jack@suse.cz>, hch@infradead.org,
-        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        houtao1@huawei.com, zhengbin13@huawei.com, yi.zhang@huawei.com
-Subject: Re: [RFC] iomap: fix race between readahead and direct write
-Message-ID: <20200120114207.GE19861@quack2.suse.cz>
-References: <20200116063601.39201-1-yukuai3@huawei.com>
- <20200116153206.GF8446@quack2.suse.cz>
- <ce4bc2f3-a23e-f6ba-0ef1-66231cd1057d@huawei.com>
- <20200117110536.GE17141@quack2.suse.cz>
- <976d09e1-e3b5-a6a6-d159-9bdac3a7dc84@huawei.com>
+        id S1726780AbgATLpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 06:45:03 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49716 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726589AbgATLpC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jan 2020 06:45:02 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5F8E6EBFB9287DB8B0BD;
+        Mon, 20 Jan 2020 19:45:01 +0800 (CST)
+Received: from [127.0.0.1] (10.173.220.179) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 Jan 2020
+ 19:44:52 +0800
+Subject: Re: [PATCH] jffs2: move jffs2_init_inode_info() just after allocating
+ inode
+To:     <viro@zeniv.linux.org.uk>
+CC:     <ast@kernel.org>, <daniel@iogearbox.net>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <yihuaijie@huawei.com>,
+        <zhongguohua1@huawei.com>, <chenjie6@huawei.com>
+References: <20200106080411.41394-1-yi.zhang@huawei.com>
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+Message-ID: <1559fa23-525b-5dad-220e-2ab2821d33eb@huawei.com>
+Date:   Mon, 20 Jan 2020 19:44:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <976d09e1-e3b5-a6a6-d159-9bdac3a7dc84@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200106080411.41394-1-yi.zhang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.173.220.179]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 19-01-20 09:17:00, yukuai (C) wrote:
-> 
-> 
-> On 2020/1/17 19:05, Jan Kara wrote:
-> > provide
-> > allocation for each page separately
-> 
-> Thank you for your response!
-> 
-> I do understand there will be additional CPU overhead. But page is allocated
-> in __do_page_cache_readahead(), which is called before
-> iomap_begin(). And I did not change that.
+ping.
 
-Sorry, I didn't express myself clearly. In "...one of the big points of iomap
-infrastructure is that you call filesystem once to give you large extent
-instead of calling it to provide allocation for each page separately." I
-meant that with your patch, you call into filesystem to provide "block
-allocation information" for each page separately. And it seems we both
-agree this is going to cause additional CPU usage in the common case to
-improve mostly unsupported corner case.
+On 2020/1/6 16:04, zhangyi (F) wrote:
+> After commit 4fdcfab5b553 ("jffs2: fix use-after-free on symlink
+> traversal"), it expose a freeing uninitialized memory problem due to
+> this commit move the operaion of freeing f->target to
+> jffs2_i_callback(), which may not be initialized in some error path of
+> allocating jffs2 inode (eg: jffs2_iget()->iget_locked()->
+> destroy_inode()->..->jffs2_i_callback()->kfree(f->target)).
+> 
+> Fix this by initialize the jffs2_inode_info just after allocating it.
+> 
+> Reported-by: Guohua Zhong <zhongguohua1@huawei.com>
+> Reported-by: Huaijie Yi <yihuaijie@huawei.com>
+> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  fs/jffs2/fs.c    | 2 --
+>  fs/jffs2/super.c | 2 ++
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
+> index ab8cdd9e9325..50a9df7d43a5 100644
+> --- a/fs/jffs2/fs.c
+> +++ b/fs/jffs2/fs.c
+> @@ -270,7 +270,6 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
+>  	f = JFFS2_INODE_INFO(inode);
+>  	c = JFFS2_SB_INFO(inode->i_sb);
+>  
+> -	jffs2_init_inode_info(f);
+>  	mutex_lock(&f->sem);
+>  
+>  	ret = jffs2_do_read_inode(c, f, inode->i_ino, &latest_node);
+> @@ -438,7 +437,6 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	f = JFFS2_INODE_INFO(inode);
+> -	jffs2_init_inode_info(f);
+>  	mutex_lock(&f->sem);
+>  
+>  	memset(ri, 0, sizeof(*ri));
+> diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+> index 0e6406c4f362..90373898587f 100644
+> --- a/fs/jffs2/super.c
+> +++ b/fs/jffs2/super.c
+> @@ -42,6 +42,8 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+>  	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
+>  	if (!f)
+>  		return NULL;
+> +
+> +	jffs2_init_inode_info(f);
+>  	return &f->vfs_inode;
+>  }
+>  
+> 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
