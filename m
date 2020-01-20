@@ -2,146 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE021428CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:05:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7DD142919
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbgATLEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 06:04:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38078 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbgATLEm (ORCPT
+        id S1726889AbgATLTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 06:19:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45935 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726421AbgATLTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 06:04:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u2so14239463wmc.3;
-        Mon, 20 Jan 2020 03:04:41 -0800 (PST)
+        Mon, 20 Jan 2020 06:19:19 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j42so29078468wrj.12;
+        Mon, 20 Jan 2020 03:19:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=fMgA2IlKF4foqDDRTZWDuHqhdy+ZvLnJ5Qyt7SeTruM=;
-        b=dNQchdWMDUMBcm43vAZi9xHzgG48+QTzA5Yk4xkSraJNGabUPdFREFLNWGbZaNJTeb
-         YfLk+DqiBu6HZqrEPRYZPpI+Gq88KatexOKxR+juNKcYum72+M5JCYsQSKhG+rxOucfN
-         yKX2XLpMCeGtnxau/FBKVpwtC1KcjyMrBffPY95z57ToDV1rO2F6+Kgb8Apxfb9rM8v2
-         cyv+ofpb0hmmS+GAqDlLqWjIp7RxuvmZPE+UlM+M2OKlvzHEy8lv0V/ImZqq1KEs29lH
-         Pcl3gszfCU3GGbS29Kla3GfB6OPJYEVGSJeqSi7JFOpVOYw8KFWnE62E/DDIMi5nEJv7
-         GkqA==
+        bh=sAKBI8tLvGzr6UvLomua7UpEPoIAkM60jCOjbm0hIrQ=;
+        b=DmyWJdqghx6XRc275lGOaD/9JdK4XbHgV8V33ihri7Or9AYpu0acSKzt+aioLHFALE
+         vaDTdHM7uPeSlMFYFzmNrPQGflhokrHJwmd3AkUm6ru7oDv2j0TK+fLxwLd4UM34xgO8
+         RTa9TtzELAT9bm6JKpFUEhvsXBSPogxvZCrLo3LrSmKqhl+dOzABmGPirpqkqPKHo8c1
+         xr+jA+6KLH+Ycw6CRP/FsQNoogSw6Gd1lx2rD1eBsld/Ij9Is/3Jf6y7xYXVvt5ng5nB
+         2vflSU+B1/4+eXV7BhhbuOi3wb6rfQM/+FC5BUvVoNfT2Y/oceTXEoiId2V9erY0oIOl
+         CGKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=fMgA2IlKF4foqDDRTZWDuHqhdy+ZvLnJ5Qyt7SeTruM=;
-        b=tyUwMJppI3Y6pEWBHwHTAkPezHMNZnRltQPip7lfowiFcYoK2AavD0gXzR/zcNAIZv
-         GXRpM8+lWBwGNvUla4zEp62sl7+xLu1Nl/pCCcfBrpUovYYcpeiWOjB9tAm7S97e4Jk3
-         hzVnV3j7A+Y0F+SCh2eYrhGlIS+XnTg3mAGk1eQujM5yFYkRxmySbxjUrXvH8xiUPLRK
-         RJhzZLkMt3ZnnWFsl7RpglX3cEMTYHiQjYy3JZB5iJV+wobEZhU29xaJ52R7A6c/BgT9
-         OatCbyfdF4Vsb+OsRUPExXBi3R9/sf6PId4pIBlH23S8VM5P7/Pz9WAL2P9Eoz7Q12NX
-         v0ZA==
-X-Gm-Message-State: APjAAAU5gg1CDDgsMug7MmNTZfo9PM+/w+Qf95Onf1HIdyfyvMntN299
-        3UudZLlI7usM4cC3ZF1EENg=
-X-Google-Smtp-Source: APXvYqzCEwZgPjh2AuOswAnz+eK0J2sTtoJ4EKUpM50fjy57ge9GqU4FjN1ocoeV8Yh/rINzvYAaaw==
-X-Received: by 2002:a7b:cf12:: with SMTP id l18mr18967871wmg.66.1579518280431;
-        Mon, 20 Jan 2020 03:04:40 -0800 (PST)
+        bh=sAKBI8tLvGzr6UvLomua7UpEPoIAkM60jCOjbm0hIrQ=;
+        b=AoX7dS1E9W/FBml8jDB3WAvFRTxNOkka5tUVWgG4GwU3V4IVcZWE19hk2bcpGOPVZF
+         368ZeKBobwWkWBoC4kOfvh31CjaFgsx7rBwWSnJ4Jcg5oX9FL9heskDHf4h210r5roxv
+         QpI+4sd8xh38YLHEI+Ktxgkw3cOfBaJyY+cqJcI/g1c76/KpGql4s6tMF7NYp2zaccvi
+         84UPSHlqD+R6J0XFOGMEBjT+UsqVdGRdDY6AYRQfNEtdqa7vv7HAyPu47rDZvsxKLwjz
+         qm4rKkQeC+KsccnMMkskp2DwiEihrCSEjK4aAywmTML3XKUTQ/HhRXsqhsJaTalZGVRT
+         eZtw==
+X-Gm-Message-State: APjAAAV+UNHjwjtEnEXErV3JdUeId1KwHMXG0vlP8n5XLJlLy9aq0+/q
+        OxqINJNQC2LsxU/ulN9hIbDF5jOM
+X-Google-Smtp-Source: APXvYqyHiPSvBEx6WZ0DOYYYLyEIUDktPV86NCVVv1OSHvFMGWvNsohU8URtj259sSIh2bxFyNIMiQ==
+X-Received: by 2002:adf:bc87:: with SMTP id g7mr17959302wrh.121.1579519158079;
+        Mon, 20 Jan 2020 03:19:18 -0800 (PST)
 Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id t8sm47371962wrp.69.2020.01.20.03.04.39
+        by smtp.gmail.com with ESMTPSA id u1sm291600wmc.5.2020.01.20.03.19.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 03:04:39 -0800 (PST)
-Date:   Mon, 20 Jan 2020 12:04:38 +0100
+        Mon, 20 Jan 2020 03:19:17 -0800 (PST)
+Date:   Mon, 20 Jan 2020 12:19:16 +0100
 From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         Namjae Jeon <linkinjeon@gmail.com>,
         Gabriel Krisman Bertazi <krisman@collabora.com>
 Subject: Re: vfat: Broken case-insensitive support for UTF-8
-Message-ID: <20200120110438.ak7jpyy66clx5v6x@pali>
+Message-ID: <20200120111916.pc2ml2farnga3yen@pali>
 References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200119230809.GW8904@ZenIV.linux.org.uk>
+ <20200119233348.es5m63kapdvyesal@pali>
+ <20200120000931.GX8904@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87sgkan57p.fsf@mail.parknet.co.jp>
+In-Reply-To: <20200120000931.GX8904@ZenIV.linux.org.uk>
 User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Monday 20 January 2020 13:04:42 OGAWA Hirofumi wrote:
-> Pali Rohár <pali.rohar@gmail.com> writes:
+On Monday 20 January 2020 00:09:31 Al Viro wrote:
+> On Mon, Jan 20, 2020 at 12:33:48AM +0100, Pali Rohár wrote:
 > 
-> > Which means that fat_name_match(), vfat_hashi() and vfat_cmpi() are
-> > broken for vfat in UTF-8 mode.
+> > > Does the behaviour match how Windows handles that thing?
+> > 
+> > Linux behavior does not match Windows behavior.
+> > 
+> > On Windows is FAT32 (fastfat.sys) case insensitive and file names "č"
+> > and "Č" are treated as same file. Windows does not allow you to create
+> > both files. It says that file already exists.
 > 
-> Right. It is a known issue.
+> So how is the mapping specified in their implementation?  That's
+> obviously the mapping we have to match.
 
-Could be this issue better documented? E.g. in mount(8) manpage where
-are written mount options for vfat? I think that people should be aware
-of this issue when they use "utf8=1" mount option.
+FAT specification (fatgen103.doc) is just parody for specifications.
+E.g. it requires you to use pencil and paper during implementation...
 
-> > I was thinking how to fix it, and the only possible way is to write a
-> > uni_tolower() function which takes one Unicode code point and returns
-> > lowercase of input's Unicode code point. We cannot do any Unicode
-> > normalization as VFAT specification does not say anything about it and
-> > MS reference fastfat.sys implementation does not do it neither.
-> >
-> > So, what would be the best option for implementing that function?
-> >
-> >   unicode_t uni_tolower(unicode_t u);
-> >
-> > Could a new fs/unicode code help with it? Or it is too tied with NFD
-> > normalization and therefore cannot be easily used or extended?
+About case insensitivity I found in specification these parts:
+
+"The UNICODE name passed to the file system is converted to upper case."
+
+"UNICODE solves the case mapping problem prevalent in some OEM code
+pages by always providing a translation for lower case characters to a
+single, unique upper case character."
+
+Which basically says nothing... I can deduce from it that for mapping
+table should be used Unicode standard.
+
+But we already know that in that specifications are mistakes. And
+relevant is Microsoft FAT implementation (fastfat.sys). It is now open
+source on github, so we can inspect how it implements upper case
+conversion.
+
+> > > That's the only reason to support that garbage at all...
+> > 
+> > What do you mean by garbage?
 > 
-> To be perfect, the table would have to emulate what Windows use. It can
-> be unicode standard, or something other.
+> Case-insensitive anything... the only reason to have that crap at all
+> is that native implementations are basically forcing it as fs
+> image correctness issue.
 
-Windows FAT32 implementation (fastfat.sys) is opensource. So it should
-be possible to inspect code and figure out how it is working.
+You are right. But we need to deal with it.
 
-I will try to look at it.
+> It's worthless on its own merits, but
+> we can't do something that amounts to corrupting fs image when
+> we access it for write.
 
-> And other fs can use different what Windows use.
-> 
-> So the table would have to be switchable in perfect world (if there is
-> no consensus to use 1 table).  If we use switchable table, I think it
-> would be better to put in userspace, and loadable like firmware data.
-> 
-> Well, so then it would not be simple work (especially, to be perfect).
-
-Switchable table is not really simple and I think as a first step would
-be enough to have one (hardcoded) table for UTF-8. Like we have for all
-other encodings.
-
-> Also, not directly same issue though. There is related issue for
-> case-insensitive. Even if we use some sort of internal wide char
-> (e.g. in nls, 16bits), dcache is holding name in user's encode
-> (e.g. utf8). So inefficient to convert cached name to wide char for each
-> access.
-
-Yes, this is truth. But this conversion is already doing exFAT
-implementation. I think we do not have other choice if we want Windows
-compatible implementation.
-
-> Relatively recent EXT4 case-insensitive may tackled this though, I'm not
-> checking it yet.
-> 
-> > New exfat code which is under review and hopefully would be merged,
-> > contains own unicode upcase table (as defined by exfat specification) so
-> > as exfat is similar to FAT32, maybe reusing it would be a better option?
-> 
-> exfat just put a case conversion table in fs. So I don't think it helps
-> fatfs.
-
-exfat has fallback conversion table (hardcoded in driver) which is used
-when fs itself does not have conversion table. This is mandated by exfat
-specification. Part of exFAT specification is that default conversion
-table.
-
-I was thinking... as both VFAT and exFAT are MS standard and exFAT is
-just evolved FAT32 we could use that exFAT default conversion table
-(which is prevent in that exfat driver).
+If we implement same upper case conversion as in reference
+implementation (fastfat.sys) then we prevent "corrupting fs".
 
 -- 
 Pali Rohár
