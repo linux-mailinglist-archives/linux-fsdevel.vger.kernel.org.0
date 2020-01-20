@@ -2,114 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26069142C96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 14:54:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A04142E60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 16:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgATNyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 08:54:40 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34560 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgATNyk (ORCPT
+        id S1728913AbgATPHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 10:07:24 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:38763 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726626AbgATPHY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:54:40 -0500
-Received: by mail-io1-f68.google.com with SMTP id z193so33746575iof.1;
-        Mon, 20 Jan 2020 05:54:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A9BomRl8cOqD5J6VizMdaO4qtRV2qD8Sxz+xVA/FCwY=;
-        b=G/5kXvqRu1WxCz3g1HVe00s3Xff3vBvEvqpGz/eGT7WcOdxfQsr01Tnwu4vt9jApWy
-         nuSgta0xztw4dSoRI2mZFEHqyW0y5wEsRaQhdKbbPmv1ilZuPg75Z9DE4ZVanolNYjzi
-         Zcm9L7afSxsLPz+6ldqFYEaaNT1ioxglNJI6R/pIY6//qpaavBYlUOyZrtyvAkukg0Bo
-         NVlO3lASc5pCd7mP2WWe80vY/l+wAwtoBrz8VnZnFNXKU8nE3XboNJce7rMhXYskE8dk
-         xuaTwBUJQcqzQhSq3F0dtePOpn8bvY6DCDsjl8lAUK3myukdsMTYGePZp32rAhq4lZR+
-         a+Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A9BomRl8cOqD5J6VizMdaO4qtRV2qD8Sxz+xVA/FCwY=;
-        b=XzKIbHPGQs+t8gsjFsClrM3Mv9CjJDjRk1sItNzrraMmJDhAPY7QPXekCIsgOQ2JXc
-         Ftv9RhSCWTKUREQLvfNh1qhbH6IXmM5mXPb8uVUvujR+U7MQO37V2XuxLX+S2Qh7tAz1
-         HP6GMnCY+YATeBAgwqHGgYpAAWVgqIW5Gi+6HtRWifYE8kustA89aaUVXIXsx1knFZ3q
-         YEDx1+PbK9qAFTjcGf++8K4t5f35LFpQAMGk01cP/shBgQsDPdizES7V+xYKMFBZxnTG
-         qXu+xj4iPh6bQqHO5XUWbZClzaI3ObGZMMpsyrB5UE1G08aloMfQVJcml28IjsOrYddA
-         vfzw==
-X-Gm-Message-State: APjAAAWcafn4X9wclCHgIir7qFkYhUra7DqJLLuw/ZLQY4QwlWn+inc2
-        5oKqIBUrGEJ4rZyQ9L4rlk8C3yiPjcTOp0dRObE=
-X-Google-Smtp-Source: APXvYqzJYVTTnME9AcE53rOwW95R5jUMm4G5XkLB9kyPpoSSXoCZtLZqNzywfWbx31CI1a8KPWD3R6NlSsDblYCZr8Q=
-X-Received: by 2002:a6b:f214:: with SMTP id q20mr43607002ioh.137.1579528479611;
- Mon, 20 Jan 2020 05:54:39 -0800 (PST)
+        Mon, 20 Jan 2020 10:07:24 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-181-lviwv2PpPtqQgvwmkaJWJw-1; Mon, 20 Jan 2020 15:07:20 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 20 Jan 2020 15:07:20 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 20 Jan 2020 15:07:20 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     =?utf-8?B?J1BhbGkgUm9ow6FyJw==?= <pali.rohar@gmail.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        "Gabriel Krisman Bertazi" <krisman@collabora.com>
+Subject: RE: vfat: Broken case-insensitive support for UTF-8
+Thread-Topic: vfat: Broken case-insensitive support for UTF-8
+Thread-Index: AQHVz4FsiOVqsS4Qp0SucuDN4afIhKfzph4w
+Date:   Mon, 20 Jan 2020 15:07:20 +0000
+Message-ID: <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp> <20200120110438.ak7jpyy66clx5v6x@pali>
+In-Reply-To: <20200120110438.ak7jpyy66clx5v6x@pali>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20190829131034.10563-1-jack@suse.cz> <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
- <20200120120333.GG19861@quack2.suse.cz>
-In-Reply-To: <20200120120333.GG19861@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 20 Jan 2020 15:54:28 +0200
-Message-ID: <CAOQ4uxhhsxaO61HwMvRGP=5duFsY6Nvv+vCutVZXWXWA2pu2KA@mail.gmail.com>
-Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Boaz Harrosh <boaz@plexistor.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: lviwv2PpPtqQgvwmkaJWJw-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 2:03 PM Jan Kara <jack@suse.cz> wrote:
->
-> Hi Amir!
->
-> On Fri 17-01-20 12:50:58, Amir Goldstein wrote:
-> > On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > Hello,
-> > >
-> > > this is a patch series that addresses a possible race between readahead and
-> > > hole punching Amir has discovered [1]. The first patch makes madvise(2) to
-> > > handle readahead requests through fadvise infrastructure, the third patch
-> > > then adds necessary locking to XFS to protect against the race. Note that
-> > > other filesystems need similar protections but e.g. in case of ext4 it isn't
-> > > so simple without seriously regressing mixed rw workload performance so
-> > > I'm pushing just xfs fix at this moment which is simple.
-> > >
-> >
-> > Could you give a quick status update about the state of this issue for
-> > ext4 and other fs. I remember some solutions were discussed.
->
-> Shortly: I didn't get to this. I'm sorry :-|. I'll bump up a priority but I
-> can't promise anything at the moment.
->
-> > Perhaps this could be a good topic for a cross track session in LSF/MM?
->
-> Maybe although this is one of the cases where it's easy to chat about
-> possible solutions but somewhat tedious to write one so I'm not sure how
-> productive that would be. BTW my discussion with Kent [1] is in fact very
-> related to this problem (the interval lock he has is to stop exactly races
-> like this).
->
+RnJvbTogUGFsaSBSb2jDoXINCj4gU2VudDogMjAgSmFudWFyeSAyMDIwIDExOjA1DQo+IE9uIE1v
+bmRheSAyMCBKYW51YXJ5IDIwMjAgMTM6MDQ6NDIgT0dBV0EgSGlyb2Z1bWkgd3JvdGU6DQo+ID4g
+UGFsaSBSb2jDoXIgPHBhbGkucm9oYXJAZ21haWwuY29tPiB3cml0ZXM6DQo+ID4NCj4gPiA+IFdo
+aWNoIG1lYW5zIHRoYXQgZmF0X25hbWVfbWF0Y2goKSwgdmZhdF9oYXNoaSgpIGFuZCB2ZmF0X2Nt
+cGkoKSBhcmUNCj4gPiA+IGJyb2tlbiBmb3IgdmZhdCBpbiBVVEYtOCBtb2RlLg0KPiA+DQo+ID4g
+UmlnaHQuIEl0IGlzIGEga25vd24gaXNzdWUuDQo+IA0KPiBDb3VsZCBiZSB0aGlzIGlzc3VlIGJl
+dHRlciBkb2N1bWVudGVkPyBFLmcuIGluIG1vdW50KDgpIG1hbnBhZ2Ugd2hlcmUNCj4gYXJlIHdy
+aXR0ZW4gbW91bnQgb3B0aW9ucyBmb3IgdmZhdD8gSSB0aGluayB0aGF0IHBlb3BsZSBzaG91bGQg
+YmUgYXdhcmUNCj4gb2YgdGhpcyBpc3N1ZSB3aGVuIHRoZXkgdXNlICJ1dGY4PTEiIG1vdW50IG9w
+dGlvbi4NCg0KV2hhdCBoYXBwZW5zIGlmIHRoZSBmaWxlc3lzdGVtIGhhcyBmaWxlbmFtZXMgdGhh
+dCBpbnZhbGlkIFVURjggc2VxdWVuY2VzDQpvciBtdWx0aXBsZSBmaWxlbmFtZXMgdGhhdCBkZWNv
+ZGUgZnJvbSBVVEY4IHRvIHRoZSBzYW1lICd3Y2hhcicgdmFsdWUuDQpOZXZlciBtaW5kIG9uZXMg
+dGhhdCBhcmUganVzdCBjYXNlLWRpZmZlcmVuY2VzIGZvciB0aGUgc2FtZSBmaWxlbmFtZS4NCg0K
+VVRGOCBpcyBqdXN0IHNvIGJyb2tlbiBpdCBzaG91bGQgbmV2ZXIgaGF2ZSBiZWVuIGFsbG93ZWQg
+dG8gYmVjb21lDQphIHN0YW5kYXJkLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNz
+IExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAx
+UFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Well, I was mostly interested to know if there is an agreement on the way to
-solve the problem. If we need to discuss it to reach consensus than it might
-be a good topic for LSF/MM. If you already know what needs to be done,
-there is no need for a discussion.
-
-> > Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
->
-> Do you have anything particular in mind? I don't see how RWF_UNCACHED would
-> make this any better or worse than DIO / readahead...
->
-
-Not better nor worse. I meant that RFW_UNCACHED is another case that
-would suffer the same races.
-
-Thanks,
-Amir.
