@@ -2,77 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4147142C44
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 14:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26069142C96
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 14:54:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgATNja (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 08:39:30 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37097 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgATNja (ORCPT
+        id S1726876AbgATNyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 08:54:40 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34560 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgATNyk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 08:39:30 -0500
-Received: by mail-io1-f65.google.com with SMTP id k24so33676713ioc.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2020 05:39:30 -0800 (PST)
+        Mon, 20 Jan 2020 08:54:40 -0500
+Received: by mail-io1-f68.google.com with SMTP id z193so33746575iof.1;
+        Mon, 20 Jan 2020 05:54:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hIrVa5Zc0Y/8LAMmD5SZvjRBvVBDNVksOBYzGDIjeGU=;
-        b=IzFUeFd5PB/JBWIOe0W6aNsohUdczCpj/2A+NCFNQV1PCD4k8IiMCsj0y4medcFiod
-         UOdDI6kkDpko2uv5p9+mt2IJvULy5y994Np+zBxZNg9WXRR88FY5wCH5KdFXe8USsNaQ
-         qgFQgEvEAZaoC6Y/fUZvTvD6WnQQivrHL6ggA=
+        bh=A9BomRl8cOqD5J6VizMdaO4qtRV2qD8Sxz+xVA/FCwY=;
+        b=G/5kXvqRu1WxCz3g1HVe00s3Xff3vBvEvqpGz/eGT7WcOdxfQsr01Tnwu4vt9jApWy
+         nuSgta0xztw4dSoRI2mZFEHqyW0y5wEsRaQhdKbbPmv1ilZuPg75Z9DE4ZVanolNYjzi
+         Zcm9L7afSxsLPz+6ldqFYEaaNT1ioxglNJI6R/pIY6//qpaavBYlUOyZrtyvAkukg0Bo
+         NVlO3lASc5pCd7mP2WWe80vY/l+wAwtoBrz8VnZnFNXKU8nE3XboNJce7rMhXYskE8dk
+         xuaTwBUJQcqzQhSq3F0dtePOpn8bvY6DCDsjl8lAUK3myukdsMTYGePZp32rAhq4lZR+
+         a+Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hIrVa5Zc0Y/8LAMmD5SZvjRBvVBDNVksOBYzGDIjeGU=;
-        b=FQIaG7BKpxjXI+iRG1WY0raa78jG79/wqip0tQrdlprJyINwS2GY6V7jara6T2Saf4
-         062NF0AIrr0OUpTJEAbC6tVd/5/n5MKqnHV3e/WocvxN0Dghwg/ZP+RtbZPk9SzWDJ/m
-         ZrxYz5o8fmcVtp6nWC6tluNzpRobauHAhqGcLUSRMEyUV4EY4D6cjOHKEo52qf6JHuG4
-         M+cxz2HtjjyueknxAWFIuzWQaozV9K5nItuUun3lSj0D8jdkD96b/iIED3z1e8He2dH8
-         oX2G1lMx0RPe6RP9oeyNyzIFeLiQP1MP6RfPm1lub1nKH2cbcB1YiSq9gweKxVflz/d0
-         oJrw==
-X-Gm-Message-State: APjAAAUr0jJnzrf6QHiwAHD/tBiTJ6V8UPPw44/nEMRmmwqYg81p1b2T
-        e6ql5N8I3f7HzDL7XbqPXXyNVs3q8zFMsUw3A+1h0aSslQo=
-X-Google-Smtp-Source: APXvYqwEFZa85NxoMnRlOMhpXhYC2XLWu2JDUCN0jpUzaBvGuWPPt8kZnzhiKP0UadsI0kv6WYMCekP+h1yfdZL806Y=
-X-Received: by 2002:a6b:b74a:: with SMTP id h71mr18380016iof.212.1579527569452;
- Mon, 20 Jan 2020 05:39:29 -0800 (PST)
+        bh=A9BomRl8cOqD5J6VizMdaO4qtRV2qD8Sxz+xVA/FCwY=;
+        b=XzKIbHPGQs+t8gsjFsClrM3Mv9CjJDjRk1sItNzrraMmJDhAPY7QPXekCIsgOQ2JXc
+         Ftv9RhSCWTKUREQLvfNh1qhbH6IXmM5mXPb8uVUvujR+U7MQO37V2XuxLX+S2Qh7tAz1
+         HP6GMnCY+YATeBAgwqHGgYpAAWVgqIW5Gi+6HtRWifYE8kustA89aaUVXIXsx1knFZ3q
+         YEDx1+PbK9qAFTjcGf++8K4t5f35LFpQAMGk01cP/shBgQsDPdizES7V+xYKMFBZxnTG
+         qXu+xj4iPh6bQqHO5XUWbZClzaI3ObGZMMpsyrB5UE1G08aloMfQVJcml28IjsOrYddA
+         vfzw==
+X-Gm-Message-State: APjAAAWcafn4X9wclCHgIir7qFkYhUra7DqJLLuw/ZLQY4QwlWn+inc2
+        5oKqIBUrGEJ4rZyQ9L4rlk8C3yiPjcTOp0dRObE=
+X-Google-Smtp-Source: APXvYqzJYVTTnME9AcE53rOwW95R5jUMm4G5XkLB9kyPpoSSXoCZtLZqNzywfWbx31CI1a8KPWD3R6NlSsDblYCZr8Q=
+X-Received: by 2002:a6b:f214:: with SMTP id q20mr43607002ioh.137.1579528479611;
+ Mon, 20 Jan 2020 05:54:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20200120121310.17601-1-cengiz@kernel.wtf>
-In-Reply-To: <20200120121310.17601-1-cengiz@kernel.wtf>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 20 Jan 2020 14:39:18 +0100
-Message-ID: <CAJfpegtOOCVrNkSmpmMY0dVH-359jc3RqXJ7K6dzvUqxtCxBtg@mail.gmail.com>
-Subject: Re: [PATCH] fs: fuse: check return value of fuse_simple_request
-To:     Cengiz Can <cengiz@kernel.wtf>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190829131034.10563-1-jack@suse.cz> <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+ <20200120120333.GG19861@quack2.suse.cz>
+In-Reply-To: <20200120120333.GG19861@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 20 Jan 2020 15:54:28 +0200
+Message-ID: <CAOQ4uxhhsxaO61HwMvRGP=5duFsY6Nvv+vCutVZXWXWA2pu2KA@mail.gmail.com>
+Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kent Overstreet <kent.overstreet@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 1:13 PM Cengiz Can <cengiz@kernel.wtf> wrote:
+On Mon, Jan 20, 2020 at 2:03 PM Jan Kara <jack@suse.cz> wrote:
 >
-> In `fs/fuse/file.c` `fuse_simple_request` is used in multiple places,
-> with its return value properly checked for possible errors.
+> Hi Amir!
 >
-> However the usage on `fuse_file_put` ignores its return value. And the
-> following `fuse_release_end` call used hard-coded error value of `0`.
+> On Fri 17-01-20 12:50:58, Amir Goldstein wrote:
+> > On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Hello,
+> > >
+> > > this is a patch series that addresses a possible race between readahead and
+> > > hole punching Amir has discovered [1]. The first patch makes madvise(2) to
+> > > handle readahead requests through fadvise infrastructure, the third patch
+> > > then adds necessary locking to XFS to protect against the race. Note that
+> > > other filesystems need similar protections but e.g. in case of ext4 it isn't
+> > > so simple without seriously regressing mixed rw workload performance so
+> > > I'm pushing just xfs fix at this moment which is simple.
+> > >
+> >
+> > Could you give a quick status update about the state of this issue for
+> > ext4 and other fs. I remember some solutions were discussed.
 >
-> This triggers a warning in static analyzers and such.
+> Shortly: I didn't get to this. I'm sorry :-|. I'll bump up a priority but I
+> can't promise anything at the moment.
 >
-> I've added a variable to capture `fuse_simple_request` result and passed
-> that to `fuse_release_end` instead.
+> > Perhaps this could be a good topic for a cross track session in LSF/MM?
+>
+> Maybe although this is one of the cases where it's easy to chat about
+> possible solutions but somewhat tedious to write one so I'm not sure how
+> productive that would be. BTW my discussion with Kent [1] is in fact very
+> related to this problem (the interval lock he has is to stop exactly races
+> like this).
+>
 
-Which then goes on to ignore the error, so we are exactly where we
-were with some added obscurity, which will be noticed by the next
-generation of static analyzer, when you'd come up with an even more
-obscure way to ignore the error, etc...  This leads to nowhere.
+Well, I was mostly interested to know if there is an agreement on the way to
+solve the problem. If we need to discuss it to reach consensus than it might
+be a good topic for LSF/MM. If you already know what needs to be done,
+there is no need for a discussion.
 
-If this matters (not sure) then we'll need a notation to ignore the
-return value.  Does casting to (void) work?
+> > Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
+>
+> Do you have anything particular in mind? I don't see how RWF_UNCACHED would
+> make this any better or worse than DIO / readahead...
+>
+
+Not better nor worse. I meant that RFW_UNCACHED is another case that
+would suffer the same races.
 
 Thanks,
-Miklos
+Amir.
