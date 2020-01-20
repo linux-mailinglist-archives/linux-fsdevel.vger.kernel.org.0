@@ -2,75 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F29AA142F05
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 16:48:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74387142F5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 17:12:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbgATPst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 10:48:49 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:53635 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726642AbgATPst (ORCPT
+        id S1728712AbgATQMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 11:12:13 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51872 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbgATQMM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 10:48:49 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-14-pqMPwcNKP2ew_zdGmZYihw-1; Mon, 20 Jan 2020 15:48:46 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 20 Jan 2020 15:47:22 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 20 Jan 2020 15:47:22 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     =?utf-8?B?J1BhbGkgUm9ow6FyJw==?= <pali.rohar@gmail.com>
-CC:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Mon, 20 Jan 2020 11:12:12 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1itZeo-00C6v8-G5; Mon, 20 Jan 2020 16:12:06 +0000
+Date:   Mon, 20 Jan 2020 16:12:06 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Pali =?iso-8859-1?Q?Roh=E1r'?= <pali.rohar@gmail.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Namjae Jeon <linkinjeon@gmail.com>,
-        "Gabriel Krisman Bertazi" <krisman@collabora.com>
-Subject: RE: vfat: Broken case-insensitive support for UTF-8
-Thread-Topic: vfat: Broken case-insensitive support for UTF-8
-Thread-Index: AQHVz4FsiOVqsS4Qp0SucuDN4afIhKfzph4wgAAFE4CAAADOMA==
-Date:   Mon, 20 Jan 2020 15:47:22 +0000
-Message-ID: <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: vfat: Broken case-insensitive support for UTF-8
+Message-ID: <20200120161206.GC8904@ZenIV.linux.org.uk>
 References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp> <20200120110438.ak7jpyy66clx5v6x@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120110438.ak7jpyy66clx5v6x@pali>
  <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
  <20200120152009.5vbemgmvhke4qupq@pali>
-In-Reply-To: <20200120152009.5vbemgmvhke4qupq@pali>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
 MIME-Version: 1.0
-X-MC-Unique: pqMPwcNKP2ew_zdGmZYihw-1
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogUGFsaSBSb2jDoXINCj4gU2VudDogMjAgSmFudWFyeSAyMDIwIDE1OjIwDQouLi4NCj4g
-VGhpcyBpcyBub3QgcG9zc2libGUuIFRoZXJlIGlzIDE6MSBtYXBwaW5nIGJldHdlZW4gVVRGLTgg
-c2VxdWVuY2UgYW5kDQo+IFVuaWNvZGUgY29kZSBwb2ludC4gd2NoYXJfdCBpbiBrZXJuZWwgcmVw
-cmVzZW50IGVpdGhlciBvbmUgVW5pY29kZSBjb2RlDQo+IHBvaW50IChsaW1pdGVkIHVwIHRvIFUr
-RkZGRiBpbiBOTFMgZnJhbWV3b3JrIGZ1bmN0aW9ucykgb3IgMmJ5dGVzIGluDQo+IFVURi0xNiBz
-ZXF1ZW5jZSAob25seSBpbiB1dGY4c190b191dGYxNnMoKSBhbmQgdXRmMTZzX3RvX3V0ZjhzKCkN
-Cj4gZnVuY3Rpb25zKS4NCg0KVW5mb3J0dW5hdGVseSB0aGVyZSBpcyBuZWl0aGVyIGEgMToxIG1h
-cHBpbmcgb2YgYWxsIHBvc3NpYmxlIGJ5dGUgc2VxdWVuY2VzDQp0byB3Y2hhcl90IChvciB1bmlj
-b2RlIGNvZGUgcG9pbnRzKSwgbm9yIGEgMToxIG1hcHBpbmcgb2YgYWxsIHBvc3NpYmxlDQp3Y2hh
-cl90IHZhbHVlcyB0byBVVEYtOC4NClJlYWxseSBib3RoIG5lZWQgdG8gYmUgZGVmaW5lZCAtIGV2
-ZW4gZm9yIG90aGVyd2lzZSAnaW52YWxpZCcgc2VxdWVuY2VzLg0KDQpFdmVuIHRoZSAxNi1iaXQg
-dmFsdWVzIGFib3ZlIDB4ZDAwMCBjYW4gYXBwZWFyIG9uIHRoZWlyIG93biBpbg0Kd2luZG93cyBm
-aWxlc3lzdGVtcyAoYWNjb3JkaW5nIHRvIHdpa2lwZWRpYSkuDQoNCkl0IGlzIGFsbCB0byBlYXN5
-IHRvIGdldCBzZXF1ZW5jZXMgb2YgdmFsdWVzIHRoYXQgY2Fubm90IGJlIGNvbnZlcnRlZA0KdG8v
-ZnJvbSBVVEYtOC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
-QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
-aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Mon, Jan 20, 2020 at 03:47:22PM +0000, David Laight wrote:
+> From: Pali Rohár
+> > Sent: 20 January 2020 15:20
+> ...
+> > This is not possible. There is 1:1 mapping between UTF-8 sequence and
+> > Unicode code point. wchar_t in kernel represent either one Unicode code
+> > point (limited up to U+FFFF in NLS framework functions) or 2bytes in
+> > UTF-16 sequence (only in utf8s_to_utf16s() and utf16s_to_utf8s()
+> > functions).
+> 
+> Unfortunately there is neither a 1:1 mapping of all possible byte sequences
+> to wchar_t (or unicode code points), nor a 1:1 mapping of all possible
+> wchar_t values to UTF-8.
+> Really both need to be defined - even for otherwise 'invalid' sequences.
 
+Who.  Cares?
+
+Filename is a sequence of octets, not codepoints.  Its interpretation is
+entirely up to the userland.
+
+Same goes for the notion of "case" (locale-dependent, etc.); some
+filesystems impose their (arbitrary) restrictions on the possible
+octet sequences (and equally arbitrary equivalence relations between
+them) that can be approximated in terms of upper/lower case in some
+locale.  It does not matter how arbitrary those are, or what stands
+behind them:
+	* don't do that for any new filesystem designs
+	* for existing filesystem types, the actual behaviour of
+native implementation IS THE ONE AND ONLY AUTHORITY.  It does not
+matter from what misguided thought process it has come from;
+the absolute requirement is that if you mount a filesystem valid
+from the native implementation POV, you must leave it in a state
+that would be valid from the native implementation POV.  That's
+it.
+
+Any talk about normalization, etc. is completely pointless -
+for any sane uses it's an opaque stream of octets that filesystem
+and VFS should leave the fuck alone.  Codepoints, encodings, etc.
+come into the game only to an extent they are useful to describe
+the weird rules given filesystem might have.  And they are just
+that - tools to describe externally imposed mappings.
