@@ -2,135 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A8D14347E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 00:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC42014349A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 00:56:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbgATXfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 18:35:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54855 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbgATXfr (ORCPT
+        id S1727289AbgATX44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 18:56:56 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55550 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbgATX44 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 18:35:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b19so1085335wmj.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jan 2020 15:35:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+Ad7unWlOQu39sqyighNumSVGGhQVwTHsV7yT66ZzC4=;
-        b=iIcMMj6B5v9b0RAqgKw79h5LFRWqKsnJ7Hceux0SOqckJe40AvCR3GGESoGSYoFA9P
-         MW4T4d0oP4T/SkQBEaAG1yMSGIvQNoS/hBSn7UnkDdl92/FAj9HBJNwfpt20Y+m4Zwu3
-         MJggzr+07aYDJlcN/AEHu71Sq3s0Vka6xdkeVCzmehF+bgyIj3Nb99g2WeBrAOsxMQdR
-         RaOKVbhUkh7y0qiM+Aqhe5p3oAtiMvkre1BDyNcrHwrN/V+E723oQFuCssx0Ng4AP7wh
-         tVkWqNRxitqyWHXjwEjj5UpQ6cesc14k0QwU6YpQ70srYmM/T/EIH07uGzD9+lub//E2
-         MWgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+Ad7unWlOQu39sqyighNumSVGGhQVwTHsV7yT66ZzC4=;
-        b=lD3EebRRKYm4FaCe+b88/tAN/iGFiR2xu2vOiMj3CkDDweG/9gs1pKDxwY89CDkrLM
-         yeYc1kO2mYdEOaemfQGsXtD5qOW92rKoC4eI+6GF7f11ZDdjBBTX2Qa23c96iBbabHj1
-         YV1ate64JDFqWxr1szyv81vTWBPA/L3uJhOsipBadEmsHXyMhdNYDYAX7I7Q+2Wfp7qE
-         YkNuE7iijyKYcgAacAylGMSyMpE752QvMPykMBetvh6+bsCL7i7KpLZSBTLxxe/p5pAa
-         LT/nX9ElTNKgKEgsjggkRS9DIB6tkcQeSG2KCVc0PyIfOC/62j4GMLrOUBnpMZnhsaHY
-         g5Sg==
-X-Gm-Message-State: APjAAAWqbEpjCnahMgg7a4D/HTVIH1tDzfSp+e3HNlAEXSwr8tAJcMl0
-        S4Tm5QgKQz3Fm0wscL+fKUYvpFwX
-X-Google-Smtp-Source: APXvYqw9Z4utoFCuBbq5sAaqrsNEJSko/j1WirssTyywBt5P8JpzN5s6n+w0mtZHefsf6CL9whunBQ==
-X-Received: by 2002:a1c:964f:: with SMTP id y76mr1122699wmd.62.1579563345461;
-        Mon, 20 Jan 2020 15:35:45 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id n16sm50435949wro.88.2020.01.20.15.35.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 15:35:44 -0800 (PST)
-Date:   Tue, 21 Jan 2020 00:35:43 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: udf: Incorrect handling of timezone
-Message-ID: <20200120233543.3xsuwjlpoylq3jwe@pali>
-References: <20200119124944.lf4vsqhwwbrxyibk@pali>
- <20200120113116.GC19861@quack2.suse.cz>
+        Mon, 20 Jan 2020 18:56:56 -0500
+X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Jan 2020 18:56:55 EST
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id B565F72CC6C;
+        Tue, 21 Jan 2020 02:51:46 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 8A2B77CC68F; Tue, 21 Jan 2020 02:51:46 +0300 (MSK)
+Date:   Tue, 21 Jan 2020 02:51:46 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH] io_uring: fix compat for IORING_REGISTER_FILES_UPDATE
+Message-ID: <20200120235146.GA12351@altlinux.org>
+References: <20200115163538.GA13732@asgard.redhat.com>
+ <cce5ac48-641d-3051-d22c-dab7aaa5704c@kernel.dk>
+ <20200115165017.GI1333@asgard.redhat.com>
+ <a039f869-6377-b8b0-e170-0b5c17ebd4da@kernel.dk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rd46w3espna2d2vc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200120113116.GC19861@quack2.suse.cz>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <a039f869-6377-b8b0-e170-0b5c17ebd4da@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jan 15, 2020 at 09:53:27AM -0700, Jens Axboe wrote:
+> On 1/15/20 9:50 AM, Eugene Syromiatnikov wrote:
+> > On Wed, Jan 15, 2020 at 09:41:58AM -0700, Jens Axboe wrote:
+> >> On 1/15/20 9:35 AM, Eugene Syromiatnikov wrote:
+> >>> fds field of struct io_uring_files_update is problematic with regards
+> >>> to compat user space, as pointer size is different in 32-bit, 32-on-64-bit,
+> >>> and 64-bit user space.  In order to avoid custom handling of compat in
+> >>> the syscall implementation, make fds __u64 and use u64_to_user_ptr in
+> >>> order to retrieve it.  Also, align the field naturally and check that
+> >>> no garbage is passed there.
+> >>
+> >> Good point, it's an s32 pointer so won't align nicely. But how about
+> >> just having it be:
+> >>
+> >> struct io_uring_files_update {
+> >> 	__u32 offset;
+> >> 	__u32 resv;
+> >> 	__s32 *fds;
+> >> };
+> >>
+> >> which should align nicely on both 32 and 64-bit?
+> > 
+> > The issue is that 32-bit user space would pass a 12-byte structure with
+> > a 4-byte pointer in it to the 64-bit kernel, that, in turn, would treat it
+> > as a 8-byte value (which might sometimes work on little-endian architectures,
+> > if there are happen to be zeroes after the pointer, but will be always broken
+> > on big-endian ones). __u64 is used in order to avoid special compat wrapper;
+> > see, for example, __u64 usage in btrfs or BPF for similar purposes.
+> 
+> Ah yes, I'm an idiot, apparently not enough coffee yet. We'd need it in
+> a union for this to work. I'll just go with yours, it'll work just fine.
+> I will fold it in, I need to make some updates and rebase anyway.
 
---rd46w3espna2d2vc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I see the patch has missed v5.5-rc7.
+Jens, please make sure a fix is merged before v5.5 is out.
+Thanks,
 
-On Monday 20 January 2020 12:31:16 Jan Kara wrote:
-> On Sun 19-01-20 13:49:44, Pali Roh=C3=A1r wrote:
-> > Hello! I looked at udf code which converts linux time to UDF time and I
-> > found out that conversion of timezone is incorrect.
-> >=20
-> > Relevant code from udf_time_to_disk_stamp() function:
-> >=20
-> > 	int16_t offset;
-> >=20
-> > 	offset =3D -sys_tz.tz_minuteswest;
-> >=20
-> > 	dest->typeAndTimezone =3D cpu_to_le16(0x1000 | (offset & 0x0FFF));
-> >=20
-> > UDF 2.60 2.1.4.1 Uint16 TypeAndTimezone; says:
-> >=20
-> >   For the following descriptions Type refers to the most significant 4 =
-bits of this
-> >   field, and TimeZone refers to the least significant 12 bits of this f=
-ield, which is
-> >   interpreted as a signed 12-bit number in two=E2=80=99s complement for=
-m.
-> >=20
-> >   TimeZone ... If this field contains -2047 then the time zone has not =
-been specified.
-> >=20
-> > As offset is of signed 16bit integer, (offset & 0x0FFF) result always
-> > clears sign bit and therefore timezone is stored to UDF fs incorrectly.
->=20
-> I don't think the code is actually wrong. Two's complement has a nice
-> properly that changing type width can be done just by masking - as an
-> example -21 in s32 is 0xffffffeb, if you reduce to just 12-bits, you get
-> 0xfeb which is still proper two's complement encoding of -21 for 12-bit w=
-ide
-> numbers.
 
-Ou right, so it is really OK. Thank you for clarification.
-
-> > This needs to be fixed, sign bit from tz_minuteswest needs to be
-> > propagated to 12th bit in typeAndTimezone member.
-> >=20
-> > Also tz_minuteswest is of int type, so conversion to int16_t (or more
-> > precisely int12_t) can be truncated. So this needs to be handled too.
->=20
-> tz_minuteswest is limited to +-15 hours (i.e., 900 minutes) so we shouldn=
-'t
-> need to handle truncating explicitely.
-
-Fine, then code is correct.
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---rd46w3espna2d2vc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiY5TQAKCRCL8Mk9A+RD
-Uq2BAJ0R/ohIfKhMi/8WD32akFQ4mTZUHACffpZ8t24xCSw5jsHPnFc6RVoI5TI=
-=Ixar
------END PGP SIGNATURE-----
-
---rd46w3espna2d2vc--
+-- 
+ldv
