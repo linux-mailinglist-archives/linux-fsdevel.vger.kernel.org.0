@@ -2,99 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 453F41429C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 194F01429CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 12:48:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgATLpD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 06:45:03 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49716 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726589AbgATLpC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 06:45:02 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5F8E6EBFB9287DB8B0BD;
-        Mon, 20 Jan 2020 19:45:01 +0800 (CST)
-Received: from [127.0.0.1] (10.173.220.179) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 Jan 2020
- 19:44:52 +0800
-Subject: Re: [PATCH] jffs2: move jffs2_init_inode_info() just after allocating
- inode
-To:     <viro@zeniv.linux.org.uk>
-CC:     <ast@kernel.org>, <daniel@iogearbox.net>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <yihuaijie@huawei.com>,
-        <zhongguohua1@huawei.com>, <chenjie6@huawei.com>
-References: <20200106080411.41394-1-yi.zhang@huawei.com>
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-Message-ID: <1559fa23-525b-5dad-220e-2ab2821d33eb@huawei.com>
-Date:   Mon, 20 Jan 2020 19:44:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726860AbgATLsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 06:48:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59634 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726573AbgATLsA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jan 2020 06:48:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 74F4BB3CC;
+        Mon, 20 Jan 2020 11:47:58 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id BF0761E0CF1; Mon, 20 Jan 2020 12:47:57 +0100 (CET)
+Date:   Mon, 20 Jan 2020 12:47:57 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 0/3 v2] xfs: Fix races between readahead and hole punching
+Message-ID: <20200120114757.GF19861@quack2.suse.cz>
+References: <20190829131034.10563-1-jack@suse.cz>
+ <CAOQ4uxiDqtpsH_Ot5N+Avq0h5MBXsXwgDdNbdRC0QDZ-e+zefg@mail.gmail.com>
+ <CAOQ4uxgP_32c6QLh2cZXXs7yJ6e8MRR=yfEBjpv02FeC_HpKhg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200106080411.41394-1-yi.zhang@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.173.220.179]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgP_32c6QLh2cZXXs7yJ6e8MRR=yfEBjpv02FeC_HpKhg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping.
+On Sun 19-01-20 10:35:08, Amir Goldstein wrote:
+> On Fri, Jan 17, 2020 at 12:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Thu, Aug 29, 2019 at 4:10 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Hello,
+> > >
+> > > this is a patch series that addresses a possible race between readahead and
+> > > hole punching Amir has discovered [1]. The first patch makes madvise(2) to
+> > > handle readahead requests through fadvise infrastructure, the third patch
+> > > then adds necessary locking to XFS to protect against the race. Note that
+> > > other filesystems need similar protections but e.g. in case of ext4 it isn't
+> > > so simple without seriously regressing mixed rw workload performance so
+> > > I'm pushing just xfs fix at this moment which is simple.
+> > >
+> >
+> > Jan,
+> >
+> > Could you give a quick status update about the state of this issue for
+> > ext4 and other fs. I remember some solutions were discussed.
+> > Perhaps this could be a good topic for a cross track session in LSF/MM?
+> > Aren't the challenges posed by this race also relevant for RWF_UNCACHED?
+> >
+> 
+> Maybe a silly question:
+> 
+> Can someone please explain to me why we even bother truncating pages on
+> punch hole?
+> Wouldn't it solve the race if instead we zeroed those pages and marked them
+> readonly?
 
-On 2020/1/6 16:04, zhangyi (F) wrote:
-> After commit 4fdcfab5b553 ("jffs2: fix use-after-free on symlink
-> traversal"), it expose a freeing uninitialized memory problem due to
-> this commit move the operaion of freeing f->target to
-> jffs2_i_callback(), which may not be initialized in some error path of
-> allocating jffs2 inode (eg: jffs2_iget()->iget_locked()->
-> destroy_inode()->..->jffs2_i_callback()->kfree(f->target)).
-> 
-> Fix this by initialize the jffs2_inode_info just after allocating it.
-> 
-> Reported-by: Guohua Zhong <zhongguohua1@huawei.com>
-> Reported-by: Huaijie Yi <yihuaijie@huawei.com>
-> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-> Cc: stable@vger.kernel.org
-> ---
->  fs/jffs2/fs.c    | 2 --
->  fs/jffs2/super.c | 2 ++
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
-> index ab8cdd9e9325..50a9df7d43a5 100644
-> --- a/fs/jffs2/fs.c
-> +++ b/fs/jffs2/fs.c
-> @@ -270,7 +270,6 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
->  	f = JFFS2_INODE_INFO(inode);
->  	c = JFFS2_SB_INFO(inode->i_sb);
->  
-> -	jffs2_init_inode_info(f);
->  	mutex_lock(&f->sem);
->  
->  	ret = jffs2_do_read_inode(c, f, inode->i_ino, &latest_node);
-> @@ -438,7 +437,6 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
->  		return ERR_PTR(-ENOMEM);
->  
->  	f = JFFS2_INODE_INFO(inode);
-> -	jffs2_init_inode_info(f);
->  	mutex_lock(&f->sem);
->  
->  	memset(ri, 0, sizeof(*ri));
-> diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-> index 0e6406c4f362..90373898587f 100644
-> --- a/fs/jffs2/super.c
-> +++ b/fs/jffs2/super.c
-> @@ -42,6 +42,8 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
->  	f = kmem_cache_alloc(jffs2_inode_cachep, GFP_KERNEL);
->  	if (!f)
->  		return NULL;
-> +
-> +	jffs2_init_inode_info(f);
->  	return &f->vfs_inode;
->  }
->  
-> 
+Not if we also didn't keep them locked. Page reclaim can reclaim clean
+unlocked pages any time it wants... Plus the CPU overhead of zeroing
+potentially large ranges of pages would be significant.
 
+> The comment above trunacte_pagecache_range() says:
+>  * This function should typically be called before the filesystem
+>  * releases resources associated with the freed range (eg. deallocates
+>  * blocks). This way, pagecache will always stay logically coherent
+>  * with on-disk format, and the filesystem would not have to deal with
+>  * situations such as writepage being called for a page that has already
+>  * had its underlying blocks deallocated.
+> 
+> So in order to prevent writepage from being called on a punched hole,
+> we need to make sure that page write fault will be called, which is the same
+> state as if an exiting hole has been read into page cache but not written yet.
+> Right? Wrong?
+
+Also the writeback in the comment you mention above is just an example. As
+the race you've found shows, there is a problem with reading as well.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
