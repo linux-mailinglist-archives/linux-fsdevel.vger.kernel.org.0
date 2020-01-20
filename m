@@ -2,145 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC72142F8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 17:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9DE143022
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 17:43:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbgATQ1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 11:27:05 -0500
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:35565 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbgATQ1F (ORCPT
+        id S1727285AbgATQnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 11:43:25 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:29384 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726876AbgATQnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 11:27:05 -0500
-Received: by mail-wr1-f53.google.com with SMTP id g17so111165wro.2;
-        Mon, 20 Jan 2020 08:27:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=C43kfEsLFxRZy2sK+w1qIwr4+TCPdvXSm3RH+wVd5qU=;
-        b=mOBZLXtlqfsLVlIR51FbTNLAtsf8o72Td2ObDsLY0Xvk4B35HFcU0PGjNo42BCMnb7
-         DQ2ygZ+HOQFTyzmPJ2xwCZ5W+lVyYAOGDFeIfxjZG+jyJGsi9TljdlUHpm1Mz1Ed0BWP
-         4k3ukTI1O3iEuHCDFLb0oVX3m0Q5+m9ZxSrYltgb6+9KIjp60+WoRN0m/Txw5M0jF8E0
-         aSOVuApB0s+J72PL325fy97uhYnT3v18qkM2zrHFuTtWvIjagRhWvTqqGGB1ARaIRK8r
-         V3SVCXGCeWF1q6on5zWLJa0Dgxgma4DbLbtSZE8SYjk2NXaZRDAh1K4VA3mgEhxnrOEd
-         AXLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C43kfEsLFxRZy2sK+w1qIwr4+TCPdvXSm3RH+wVd5qU=;
-        b=jws0d4Peko9XZXBIOqpdPC5UEugHIgMb3G/OGdSLr1MtfJ2nqx5ifBkKuyEi+GRO8r
-         4CzBzDZUoky8cCZsXHTsIybUR++dv9fzIuopy23gqbiLhicIlvY6usUMLTbi1rwWITJ6
-         ezWrfxQEo2oFBcUSZqKQnDbW5LDSkgxiNaOeygn8BnXZhXDd8FAnu0hB1BG/J55H7041
-         w2VsvunntVg1+Hcakrt0afPYx28wzarO3SwSogOcg/ddxevw04fAZwTugvLpPgaB2bEp
-         OBbDhbalu+cv5jKoiEehJY091M2Ydvi+9lkaysyFKkqYnq/PmaAoLogfPXt3z3JIScbv
-         CvxA==
-X-Gm-Message-State: APjAAAUqLw9rv3O5roLIRpN1pJP7dxH6T14Gdnq+8H/M4QZI3lHOT2Mq
-        3WTq0epIMdysS8zNpPoa1iI=
-X-Google-Smtp-Source: APXvYqwcrRPnd5O+FjCmMVilD1cPlUDyEkN+L8g3frQ/hOzgsjRVTtow3OsdeXH80y8Ed+5KPrAWAQ==
-X-Received: by 2002:a05:6000:cb:: with SMTP id q11mr356257wrx.14.1579537623030;
-        Mon, 20 Jan 2020 08:27:03 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id r6sm49550041wrq.92.2020.01.20.08.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 08:27:02 -0800 (PST)
-Date:   Mon, 20 Jan 2020 17:27:01 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Mon, 20 Jan 2020 11:43:24 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-247-W8g1vLVvOyGkIi9z1W8g3w-1; Mon, 20 Jan 2020 16:43:21 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 20 Jan 2020 16:43:21 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 20 Jan 2020 16:43:21 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     =?utf-8?B?J1BhbGkgUm9ow6FyJw==?= <pali.rohar@gmail.com>
+CC:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-Message-ID: <20200120162701.guxcrmqysejaqw6y@pali>
+        "Gabriel Krisman Bertazi" <krisman@collabora.com>
+Subject: RE: vfat: Broken case-insensitive support for UTF-8
+Thread-Topic: vfat: Broken case-insensitive support for UTF-8
+Thread-Index: AQHVz4FsiOVqsS4Qp0SucuDN4afIhKfzph4wgAAFE4CAAADOMIAAEeCAgAAB5zA=
+Date:   Mon, 20 Jan 2020 16:43:21 +0000
+Message-ID: <b42888a01c8847e48116873ebbbbb261@AcuMS.aculab.com>
 References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
- <20200120110438.ak7jpyy66clx5v6x@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp> <20200120110438.ak7jpyy66clx5v6x@pali>
  <89eba9906011446f8441090f496278d2@AcuMS.aculab.com>
  <20200120152009.5vbemgmvhke4qupq@pali>
  <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
+ <20200120162701.guxcrmqysejaqw6y@pali>
+In-Reply-To: <20200120162701.guxcrmqysejaqw6y@pali>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rb3yd7yh2odisgq3"
-Content-Disposition: inline
-In-Reply-To: <1a4c545dc7f14e33b7e59321a0aab868@AcuMS.aculab.com>
-User-Agent: NeoMutt/20180716
+X-MC-Unique: W8g1vLVvOyGkIi9z1W8g3w-1
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+RnJvbTogUGFsaSBSb2jDoXINCj4gU2VudDogMjAgSmFudWFyeSAyMDIwIDE2OjI3DQouLi4NCj4g
+PiBVbmZvcnR1bmF0ZWx5IHRoZXJlIGlzIG5laXRoZXIgYSAxOjEgbWFwcGluZyBvZiBhbGwgcG9z
+c2libGUgYnl0ZSBzZXF1ZW5jZXMNCj4gPiB0byB3Y2hhcl90IChvciB1bmljb2RlIGNvZGUgcG9p
+bnRzKSwNCj4gDQo+IEkgd2FzIHRhbGtpbmcgYWJvdXQgdmFsaWQgVVRGLTggc2VxdWVuY2UgKGlu
+dmFsaWQsIGlsbGZvcm1lZCBpcyBvdXQgb2YNCj4gZ2FtZSBhbmQgZm9yIHN1cmUgd291bGQgYWx3
+YXlzIGNhdXNlIHByb2JsZW1zKS4NCg0KRXhjZXB0IHRoYXQgdGhleSBhcmUgYWx3YXlzIGxpa2Vs
+eSB0byBoYXBwZW4uDQpJJ3ZlIGJlZW4gcGlzc2VkIG9mZiBieSBwcm9ncmFtcyBjcmFzaGluZyBi
+ZWNhdXNlIHRoZXkgYXNzdW1lIHRoYXQNCmEgaW5wdXQgc3RyaW5nIChlZyBhbiBlbWFpbCkgaXMg
+VVRGLTggYnV0IGhhcHBlbnMgdG8gY29udGFpbiBhIHNpbmdsZQ0KMHhhMyBieXRlIGluIHRoZSBv
+dGhlcndpc2UgNy1iaXQgZGF0YS4NCg0KVGhlIHN0YW5kYXJkIG91Z2h0IHRvIGhhdmUgZGVmaW5l
+ZCBhIHRyYW5zbGF0aW9uIGZvciBzdWNoIHNlcXVlbmNlcw0KYW5kIGp1c3QgYSAnd2FybmluZycg
+ZnJvbSB0aGUgZnVuY3Rpb24ocykgdGhhdCB1bmV4cGVjdGVkIGJ5dGVzIHdlcmUNCnByb2Nlc3Nl
+ZC4NCg0KPiA+IG5vciBhIDE6MSBtYXBwaW5nIG9mIGFsbCBwb3NzaWJsZSB3Y2hhcl90IHZhbHVl
+cyB0byBVVEYtOC4NCj4gDQo+IFRoaXMgaXMgbm90IHRydXRoLiBUaGVyZSBpcyBleGFjdGx5IG9u
+bHkgb25lIHdheSBob3cgdG8gY29udmVydCBzZXF1ZW5jZQ0KPiBvZiBVbmljb2RlIGNvZGUgcG9p
+bnRzIHRvIFVURi04LiBVVEYgaXMgVW5pY29kZSBUcmFuc2Zvcm1hdGlvbiBGb3JtYXQNCj4gYW5k
+IGhhcyBleGFjdCBkZWZpbml0aW9uIGhvdyBpcyBVbmljb2RlIFRyYW5zZm9ybWVkLg0KDQpCdXQg
+YSB3Y2hhcl90IGNhbiBob2xkIGxvdHMgb2YgdmFsdWVzIHRoYXQgYXJlbid0IFVuaWNvZGUgY29k
+ZSBwb2ludHMuDQpQcmlvciB0byB0aGUgMjAwMyBjaGFuZ2VzIGhhbGYgb2YgdGhlIDJeMzIgdmFs
+dWVzIGNvdWxkIGJlIGNvbnZlcnRlZC4NCkFmdGVyd2FyZHMgb25seSBhIHNtYWxsIGZyYWN0aW9u
+Lg0KDQo+IElmIHlvdSBoYXZlIHZhbGlkIFVURi04IHNlcXVlbmNlIHRoZW4gaXQgZGVzY3JpYmUg
+b25lIGV4YWN0IHNlcXVlbmNlIG9mDQo+IFVuaWNvZGUgY29kZSBwb2ludHMuIEFuZCBpZiB5b3Ug
+aGF2ZSBzZXF1ZW5jZSAob3JkaW5hbHMpIG9mIFVuaWNvZGUgY29kZQ0KPiBwb2ludHMgdGhlcmUg
+aXMgZXhhY3RseSBvbmUgYW5kIG9ubHkgb25lIGl0cyByZXByZXNlbnRhdGlvbiBpbiBVVEYtOC4N
+Cj4gDQo+IEkgd291bGQgc3VnZ2VzdCB5b3UgdG8gcmVhZCBVbmljb2RlIHN0YW5kYXJkLCBzZWN0
+aW9uIDIuNSBFbmNvZGluZyBGb3Jtcy4NCg0KVGhhdCBhbGwgYXNzdW1lcyBldmVyeW9uZSBpcyBw
+bGF5aW5nIHRoZSBjb3JyZWN0IGdhbWUNCg0KPiA+IFJlYWxseSBib3RoIG5lZWQgdG8gYmUgZGVm
+aW5lZCAtIGV2ZW4gZm9yIG90aGVyd2lzZSAnaW52YWxpZCcgc2VxdWVuY2VzLg0KPiA+DQo+ID4g
+RXZlbiB0aGUgMTYtYml0IHZhbHVlcyBhYm92ZSAweGQwMDAgY2FuIGFwcGVhciBvbiB0aGVpciBv
+d24gaW4NCj4gPiB3aW5kb3dzIGZpbGVzeXN0ZW1zIChhY2NvcmRpbmcgdG8gd2lraXBlZGlhKS4N
+Cj4gDQo+IElmIHlvdSBhcmUgdGFsa2luZyBhYm91dCBVVEYtMTYgKHdoaWNoIGlzIF9ub3RfIDE2
+LWJpdCBhcyB5b3Ugd3JvdGUpLA0KPiBsb29rIGF0IG15IHByZXZpb3VzIGVtYWlsOg0KDQpVRlQt
+MTYgaXMgYSBzZXF1ZW5jZSBvZiAxNi1iaXQgdmFsdWVzLi4uLg0KSXQgY2FuIGNvbnRhaW4gMHhk
+MDAwIHRvIDB4ZmZmZiAodXN1YWxseSBpbiBwYWlycykgYnV0IHRoZXkgYXJlbid0IFVURi04IGNv
+ZGVwb2ludHMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJy
+YW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lz
+dHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
---rb3yd7yh2odisgq3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Monday 20 January 2020 15:47:22 David Laight wrote:
-> From: Pali Roh=C3=A1r
-> > Sent: 20 January 2020 15:20
-> ...
-> > This is not possible. There is 1:1 mapping between UTF-8 sequence and
-> > Unicode code point. wchar_t in kernel represent either one Unicode code
-> > point (limited up to U+FFFF in NLS framework functions) or 2bytes in
-> > UTF-16 sequence (only in utf8s_to_utf16s() and utf16s_to_utf8s()
-> > functions).
->=20
-> Unfortunately there is neither a 1:1 mapping of all possible byte sequenc=
-es
-> to wchar_t (or unicode code points),
-
-I was talking about valid UTF-8 sequence (invalid, illformed is out of
-game and for sure would always cause problems).
-
-> nor a 1:1 mapping of all possible wchar_t values to UTF-8.
-
-This is not truth. There is exactly only one way how to convert sequence
-of Unicode code points to UTF-8. UTF is Unicode Transformation Format
-and has exact definition how is Unicode Transformed.
-
-If you have valid UTF-8 sequence then it describe one exact sequence of
-Unicode code points. And if you have sequence (ordinals) of Unicode code
-points there is exactly one and only one its representation in UTF-8.
-
-I would suggest you to read Unicode standard, section 2.5 Encoding Forms.
-
-> Really both need to be defined - even for otherwise 'invalid' sequences.
->=20
-> Even the 16-bit values above 0xd000 can appear on their own in
-> windows filesystems (according to wikipedia).
-
-If you are talking about UTF-16 (which is _not_ 16-bit as you wrote),
-look at my previous email:
-
-"MS FAT32 implementations allows half of UTF-16 surrogate pair stored in FS=
-=2E"
-
-> It is all to easy to get sequences of values that cannot be converted
-> to/from UTF-8.
->=20
-> 	David
->=20
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
- 1PT, UK
-> Registration No: 1397386 (Wales)
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---rb3yd7yh2odisgq3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXiXU0wAKCRCL8Mk9A+RD
-UlffAJ0elMMTIUY0wtAoDO7B5Dqo/pfzcwCdFon3xWqzyaeLu9BTsknYE0wNmjE=
-=ZCx6
------END PGP SIGNATURE-----
-
---rb3yd7yh2odisgq3--
