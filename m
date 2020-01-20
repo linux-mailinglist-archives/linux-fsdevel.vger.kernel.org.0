@@ -2,110 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0CB614217F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 02:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96BC31421EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jan 2020 04:23:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgATBff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jan 2020 20:35:35 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41284 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728931AbgATBff (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jan 2020 20:35:35 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itLyS-00Bl2j-If; Mon, 20 Jan 2020 01:35:28 +0000
-Date:   Mon, 20 Jan 2020 01:35:28 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v3 5/9] vfs: Fold casefolding into vfs
-Message-ID: <20200120013528.GY8904@ZenIV.linux.org.uk>
-References: <20200117214246.235591-1-drosen@google.com>
- <20200117214246.235591-6-drosen@google.com>
+        id S1729017AbgATDWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jan 2020 22:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728949AbgATDWz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 19 Jan 2020 22:22:55 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 169FE20678;
+        Mon, 20 Jan 2020 03:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579490574;
+        bh=rwxJYZiONyiJT5R2boSa6GTk5OHlF/u2kz/yrQUtZ10=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PIa5pvw9AK9Vdk/st8sssUVHH69dz6Mr5WD4j+G6MtXc2yHl8aHdYvBRN0QPzJyZx
+         2lA6KO2tT+DFmCGG55T732OG9cy5A1/DV8r27o17QFNJHu2PBY7kzvtn7uhaUFvWeH
+         i5z5Wmo27JfakP7qAIYwTWG9sjynEZBgwGv/SQC4=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] bootconfig: tracing: Fix documentations of bootconfig and boot-time tracing
+Date:   Mon, 20 Jan 2020 12:22:48 +0900
+Message-Id: <157949056842.25888.12912764773767908046.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200117214246.235591-6-drosen@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 17, 2020 at 01:42:42PM -0800, Daniel Rosenberg wrote:
-> Ext4 and F2fs are both using casefolding, and they, along with any other
-> filesystem that adds the feature, will be using identical dentry_ops.
-> Additionally, those dentry ops interfere with the dentry_ops required
-> for fscrypt once we add support for casefolding and encryption.
-> Moving this into the vfs removes code duplication as well as the
-> complication with encryption.
-> 
-> Currently this is pretty close to just moving the existing f2fs/ext4
-> code up a level into the vfs,
+Hi,
 
-... buggering the filesystems (and boxen) that never planned to use
-that garbage.
+Here is the bootconfig and boot-time tracing documentation fix
+and updates. These can be applied on the latest tracing tree.
 
-> @@ -247,7 +248,19 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  	 * be no NUL in the ct/tcount data)
->  	 */
->  	const unsigned char *cs = READ_ONCE(dentry->d_name.name);
-> +#ifdef CONFIG_UNICODE
-> +	struct inode *parent = dentry->d_parent->d_inode;
+Thanks for Randy about reporting and suggesting these fixes!
 
-What happens if dentry gets moved under you?  And that's not mentioning the joy
-of extra cachelines to shit the cache with.  For every sodding dentry in the
-hashchain you are walking.
+Thank you,
 
-> +	if (unlikely(needs_casefold(parent))) {
-> +		const struct qstr n1 = QSTR_INIT(cs, tcount);
-> +		const struct qstr n2 = QSTR_INIT(ct, tcount);
-> +		int result = utf8_strncasecmp(dentry->d_sb->s_encoding,
-> +						&n1, &n2);
+---
 
-Is that safe in face of renames?  We are *NOT* guaranteed ->d_lock here;
-->d_name can change under you just fine.  False negatives are OK, but
-there's a lot more ways for the things to go wrong.
+Masami Hiramatsu (3):
+      bootconfig: Fix Kconfig help message for BOOT_CONFIG
+      Documentation: bootconfig: Fix typos in bootconfig documentation
+      Documentation: tracing: Fix typos in boot-time tracing documentation
 
->  static int link_path_walk(const char *name, struct nameidata *nd)
->  {
 
-> +#ifdef CONFIG_UNICODE
-> +		if (needs_casefold(nd->path.dentry->d_inode)) {
-> +			struct qstr str = QSTR_INIT(name, PATH_MAX);
-> +
-> +			hname = kmalloc(PATH_MAX, GFP_ATOMIC);
-> +			if (!hname)
-> +				return -ENOMEM;
-> +			hlen = utf8_casefold(nd->path.dentry->d_sb->s_encoding,
-> +						&str, hname, PATH_MAX);
-> +		}
-> +		hash_len = hash_name(nd->path.dentry, hname ?: name);
-> +		kfree(hname);
-> +		hname = NULL;
-> +#else
->  		hash_len = hash_name(nd->path.dentry, name);
-> -
-> +#endif
+ Documentation/admin-guide/bootconfig.rst |   32 ++++++++++++++++--------------
+ Documentation/trace/boottime-trace.rst   |   18 ++++++++---------
+ init/Kconfig                             |    4 +++-
+ 3 files changed, 29 insertions(+), 25 deletions(-)
 
-Are you serious?
-	1) who said that ->d_inode is stable here?  If we are in RCU mode,
-it won't be.
-	2) page-sized kmalloc/kfree *ON* *COMPONENT* *AFTER* *COMPONENT*?
-
-> +static inline bool needs_casefold(const struct inode *dir)
-> +{
-> +	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding &&
-> +			(!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir));
-
-... and again, you are pulling in a lot of cachelines.
-
-<understatement> IMO the whole thing is not a good idea. </understatement>
+--
+Masami Hiramatsu <mhiramat@kernel.org>
