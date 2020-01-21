@@ -2,69 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388821437DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 08:49:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B44314383E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 09:31:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbgAUHtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 02:49:21 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:43976 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgAUHtU (ORCPT
+        id S1727817AbgAUIa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 03:30:58 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:37329 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgAUIa6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 02:49:20 -0500
-Received: by mail-il1-f196.google.com with SMTP id v69so1600052ili.10;
-        Mon, 20 Jan 2020 23:49:20 -0800 (PST)
+        Tue, 21 Jan 2020 03:30:58 -0500
+Received: by mail-il1-f195.google.com with SMTP id t8so1714474iln.4;
+        Tue, 21 Jan 2020 00:30:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZADz/FNfyrk8GhdpCwj0XUkKM1g47IFDaAtucTO16qc=;
-        b=jNz9Ohc565qRzVXzSYzlKqNVNNEULA0EkVEYSEyawvPa0vDsLlZfWkDXzizX8wcb5D
-         oSAu0czMTxQG/8MECY8NjpkTUxA08oJM85rckS9SaxQxlj4AoxlHLUt7OTUmDselV/RV
-         C2e80KMbsAHEGULaI+Bz3M5CmLgRk1ECCKwOvC+lcWsbhRTh4XgrRqIdp5AKdTEHgnpH
-         x0lNSPczqLOeOZwj9wyzGS0yXt7zX+LYVmdncO5miJz6urpSgztp1zz43hPJpLAPoT7t
-         OINVyyd98RhIuAAsXVbm4b2LqDcSOJKbS3iVWZp2Let/bZ0peflKujWRhYEXgi0VvLWT
-         WKPw==
+        bh=lmYZA0xagCNpKIKxnr8C27kUmnLdAKn/OTbkn0CFX/U=;
+        b=Et9c6PWnnBiw+t3+vwjYJioRYKMX5K/LHeHA+QdUm6jwsMmxkx5DkoZpFvltAgckcK
+         5tLBpdreal7Sgh25xCh4o1j4J5GM32RFtbwWcZ+/Vk4nD4ozs3HpRajulGQhjbj1Vgmq
+         vCtDwDQr7H4Wg8eIZKxcE/7atF/Mh9IpjUZkRPU+kV4W5e4drzQzLUOubaRCtSqBEIZY
+         637vyUCzdNePQHmTEFzOxj0qEYISZ+mCYf5K+Mb/gkVozpS04GPETGm/1f/Py8UaOOFl
+         hqdj02wkV3PbKUPhttnNuTVWWc1Hk1L04gY1doushBJV0Q4s9MWTw9c16fJ7ICvvR+hU
+         gprg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZADz/FNfyrk8GhdpCwj0XUkKM1g47IFDaAtucTO16qc=;
-        b=i+Qx23UxVPceIg1bwWWS2BKyIp57kAaHBnq2l1R+uPklmvqfN5gcRkPEmjSl4ocbLu
-         KAVNR9+SnHK1gsTrSyPZF9V0dm0OrhshY0DbTd/rhHY0mfgdPhTgiTdBOPfItf8N0b75
-         TSJmKD7Au4MnMt0huispT1+u4aQ801xfSbYJ4XhtpQ3H7qKd9nujgSGc1F41c/biORxp
-         sOnyjaQZ2oIifOUOgwkng7JU6WfKpkIRh9nShp1XJJk5bATu5YKsp9xkCIY6FhJU7mwL
-         GGdMgkvvJqSVA0Vbo4xLK8hPDNuo3Ua6baBKO+mZPt+VTri08QIj1phDGtM9u5CzQ+jR
-         p9bA==
-X-Gm-Message-State: APjAAAWtRSHJMQGl6GO6GS56cvF+10/uGjcQhvXmy9ECTjo0dSHkiAhK
-        u9Gyhnodhlt2sL7qinYWCCH3IaRqWdcW/D1ehyImGA==
-X-Google-Smtp-Source: APXvYqyscUHi4/FZylWVcSxo7TKDBIOKpQNTLHgUP8nf1eAm36zAv5zDgQqMEvdHljx48bvDMaFT1Sg5ajsaBgYhLgM=
-X-Received: by 2002:a92:9f1a:: with SMTP id u26mr2696893ili.72.1579592960046;
- Mon, 20 Jan 2020 23:49:20 -0800 (PST)
+        bh=lmYZA0xagCNpKIKxnr8C27kUmnLdAKn/OTbkn0CFX/U=;
+        b=k/rfUAUP28bZm7yN/tPWAPnrTctzCYMNetNIdi9pJYei5zvF9G0Lr5pXe6EoQ7gP63
+         TCNsUU1pFmo7Bzon5pXuPazF/eL3unSjZ87V2I5eb4ssF8crbnYEN3m0NVawEa85C7vV
+         WQ3bpUhuTw7JQAIM247AbBquqerV+PpPYU7FmgwH+ROQG+iHp5tQgXhmYvpQyZriO4l4
+         Lsjfcff+Sjp1xm7ZMXZqU0N365ULCfAXmlcZCY4dWYiltoeg1h2jzj8GTG5k/JGYhGj6
+         3J2+P6AKW5rht6IUEYKdsmWUTjzzUPG7GSDea0Ftkr6SGZZnXkX1d+EhitTmJt4GGOUk
+         i3MQ==
+X-Gm-Message-State: APjAAAUPu4XNNuGAyVCmk0QKy5hFgTQOTwTSnmbiRU4GEmvJYBaALqmI
+        poSTN8Pj9S9BXwGttbdaVPiDJAIaJD6vGcmYvkjM5Q==
+X-Google-Smtp-Source: APXvYqwCqtWTPNjVv9vureQtYBXjkX/ot+vJ9y7f9T+ySw23uFSRbyKmenNIgO2Y5AOhIhUVoiktBF4yUgnseUzNU4E=
+X-Received: by 2002:a92:5b49:: with SMTP id p70mr454103ilb.209.1579595457634;
+ Tue, 21 Jan 2020 00:30:57 -0800 (PST)
 MIME-Version: 1.0
 References: <CAH2r5mvUmZca8TRVsyZvrB_Loeeo4Kd8T7rHw5s6iaN=yC+O_Q@mail.gmail.com>
  <CAOQ4uxipauh1UXHSFt=WsiaDexqecjm4eDkVfnQXN8eYofdg2A@mail.gmail.com>
 In-Reply-To: <CAOQ4uxipauh1UXHSFt=WsiaDexqecjm4eDkVfnQXN8eYofdg2A@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 21 Jan 2020 09:49:09 +0200
-Message-ID: <CAOQ4uxjFof3GWX3gncJgbaynsmQ2+4A3hGuSOhGDQsGguJu-Vw@mail.gmail.com>
+From:   ronnie sahlberg <ronniesahlberg@gmail.com>
+Date:   Tue, 21 Jan 2020 18:30:46 +1000
+Message-ID: <CAN05THQeUs1ksOv5sRTx7Dvr0=WKxSguw+gWpw2KpX3byEJagw@mail.gmail.com>
 Subject: Re: [LFS/MM TOPIC] Enabling file and directory change notification
  for network and cluster file systems
-To:     Steve French <smfrench@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Steve French <smfrench@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         CIFS <linux-cifs@vger.kernel.org>,
         samba-technical <samba-technical@lists.samba.org>,
-        Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>,
-        lsf-pc <lsf-pc@lists.linuxfoundation.org>
+        Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CC: lsf-pc
-
-On Tue, Jan 21, 2020 at 9:47 AM Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, Jan 21, 2020 at 5:48 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
 > On Tue, Jan 21, 2020 at 5:55 AM Steve French <smfrench@gmail.com> wrote:
 > >
@@ -114,6 +112,11 @@ On Tue, Jan 21, 2020 at 9:47 AM Amir Goldstein <amir73il@gmail.com> wrote:
 > You also did not answer Miklos' question:
 > does the smb protocol support whole filesystem (or subtree) notifications?
 > (or just per-directory notifications)?
+
+SMB can do both. There is a flag that specifies if you want to just
+get notified about the directory itself
+or whether  you want notifications from the whole subtree.
+
 >
 > Thanks,
 > Amir.
