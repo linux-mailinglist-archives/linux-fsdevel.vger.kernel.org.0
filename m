@@ -2,320 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A47281434AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 01:12:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6A0B1434FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 01:56:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbgAUAMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 19:12:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33960 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbgAUAMS (ORCPT
+        id S1728829AbgAUA4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 19:56:35 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:38220 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbgAUA4f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 19:12:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/xyBHgymRZRvhSHMvOWw7LfxJCtVwSQxHsdSyQIdU00=; b=rdcc+GT6zN4uITp6N+pSOpGnp
-        LJIvp5dhopJE6rtzO/ALvUWkZqEyigRk19UeQ6pM34gFQL3WeRsH8OJAQSqLc/JVzAndu97jg2+98
-        mlTQ7sOGryVdZrlCbgLyMiLEPyjaMH20DGOimX18q/uo/h+HwQJpQa1Iqo8DSd5oCCBXac1FIn6Ja
-        8vUnuAp7P021FExtoKraEEsw0RZg3/7b0KKq1jkesgSEd86dL4LfkByBVgU9gv36VmJqZ+fdaTPyS
-        /cXO9ElYnD72icGCm37V2KGng+976ZMi0yPv9tCKwRr1dDzFDJoKTaFK7Yzse//RIv5aV1Rw5rrSP
-        N3YZbMNbg==;
-Received: from [2603:3004:32:9a00::c7a3]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ith9R-0007ts-C6; Tue, 21 Jan 2020 00:12:13 +0000
-Subject: Re: [PATCH v7 2/2] sched/numa: documentation for per-cgroup numa,
- statistics
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
- <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
- <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
- <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
- <628ab349-af6e-10a5-af56-2e30ab178539@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6ece8405-650c-69a0-09eb-e7f1f84c0c3f@infradead.org>
-Date:   Mon, 20 Jan 2020 16:12:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Mon, 20 Jan 2020 19:56:35 -0500
+Received: by mail-il1-f196.google.com with SMTP id f5so996284ilq.5;
+        Mon, 20 Jan 2020 16:56:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DSU92DS/yk36ylsfrVTivyXxIB5DGgZzKoQw5FMazZY=;
+        b=lq3pSIbPrnnnlke+/4iOv3idDrtKaxngImB5W4zXOYg1EKO6Pp/w7whzo54rLNLeXD
+         +upd7lCyLeHSvzSyTGOEZ71HRLKodR6Vq6Y+YZDRrqxQY6FpB2JSqglWu3jYaue8ENEF
+         KVlRJxNOLvZvEVdMFQyQsqQsNkHhSowq+YUp9GmtW99GGM6pTonzZVhMoIzr0+I9PgT1
+         LHLkw3uXhT5pCCltzzyFk9YEGZuHNt0PgobNHpEXDqdkB9j9GIx1MFBmPfzi7lEZusgc
+         trp5oxFAdOiZz4/VNfWdeu6+/xXPge3HxZ120zDU1x/Tc0n5mhiGTxLpvL7KElejcARN
+         q7Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DSU92DS/yk36ylsfrVTivyXxIB5DGgZzKoQw5FMazZY=;
+        b=K/+h40DHTBmtVNg5FwebVBscKsXm8M3odUGi2HZUge8mxVsP6UmMaYiqC6Y9xVARgB
+         uoHpmO4FV2GjYGlZTgT+LUmEHWxYT9nlIjTDrv24MFOB7sMwzjCXLLHLLeFWRVjuRy5Q
+         NSJi6L/i9ljgF9D3epIScf8BZIe5s/dzKMeueLK4PlXO+8BH+i+ylkgqq2hJfaJ3F4yb
+         2JrNIqvzBFYKW8UeHj7btk3HWTx1mgVTXDqEkE29kZLBinY8waNc2Cqi7REgD4fZ+m8M
+         PjrLMAqMRmyTbULOHi6u8CLOEAHIm3UmuJk0Kqo6S1M6z1YYiGzyrN38QtxoP4FR5X0M
+         9wGw==
+X-Gm-Message-State: APjAAAXoen+CAgju1+EWWCUjRxJXEJllfVj3oBumGzTNoxRFtRmHq0xA
+        C0mY9fSE7tUor13fS9OP5Zk7wKedRyK93wbcn1A=
+X-Google-Smtp-Source: APXvYqw9x3JAIzpZdG5I877D51seRujGg/PdSB1zVxtbiLT765Kfy8muncBvKsCU7feAIIHxlvYj1DUTZ+EL8c5IAF4=
+X-Received: by 2002:a92:d642:: with SMTP id x2mr1533285ilp.169.1579568194666;
+ Mon, 20 Jan 2020 16:56:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <628ab349-af6e-10a5-af56-2e30ab178539@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+ <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
+ <20191001181659.GA5500@iweiny-DESK2.sc.intel.com> <2b42cf4ae669cedd061c937103674babad758712.camel@kernel.org>
+ <20191002192711.GA21386@fieldses.org> <df9022f0f5d18d71f37ed494a05eaa4509cf0a68.camel@kernel.org>
+ <20191003153743.GA24657@fieldses.org>
+In-Reply-To: <20191003153743.GA24657@fieldses.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 20 Jan 2020 18:56:24 -0600
+Message-ID: <CAH2r5msqzPnL=-Vm5F_MCc64pfCdMg0UXw8qkmp6zK1cph-_ZQ@mail.gmail.com>
+Subject: Re: Lease semantic proposal
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Jeff Layton <jlayton@kernel.org>, Ira Weiny <ira.weiny@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvdimm@lists.01.org,
+        linux-mm <linux-mm@kvack.org>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Two common complaints about the current lease API is that for some of the
+common protocols like SMB3 there is the need to be able to pass in
+the lease request on open itself, and also to
+upgrade and downgrade leases (in SMB3 lease keys can be
+passed over the wire) and of course it would be helpful if
+information about whether a lease was aquired were returned on open
+(and create) to minimize syscalls.
 
-Documentation edits below...
+On Thu, Oct 3, 2019 at 11:00 AM J. Bruce Fields <bfields@fieldses.org> wrot=
+e:
+>
+> On Wed, Oct 02, 2019 at 04:35:55PM -0400, Jeff Layton wrote:
+> > On Wed, 2019-10-02 at 15:27 -0400, J. Bruce Fields wrote:
+> > > On Wed, Oct 02, 2019 at 08:28:40AM -0400, Jeff Layton wrote:
+> > > > For the byte ranges, the catch there is that extending the userland
+> > > > interface for that later will be difficult.
+> > >
+> > > Why would it be difficult?
+> >
+> > Legacy userland code that wanted to use byte range enabled layouts woul=
+d
+> > have to be rebuilt to take advantage of them. If we require a range fro=
+m
+> > the get-go, then they will get the benefit of them once they're
+> > available.
+>
+> I can't see writing byte-range code for a kernel that doesn't support
+> that yet.  How would I test it?
+>
+> > > > What I'd probably suggest
+> > > > (and what would jive with the way pNFS works) would be to go ahead =
+and
+> > > > add an offset and length to the arguments and result (maybe also
+> > > > whence?).
+> > >
+> > > Why not add new commands with range arguments later if it turns out t=
+o
+> > > be necessary?
+> >
+> > We could do that. It'd be a little ugly, IMO, simply because then we'd
+> > end up with two interfaces that do almost the exact same thing.
+> >
+> > Should byte-range layouts at that point conflict with non-byte range
+> > layouts, or should they be in different "spaces" (a'la POSIX and flock
+> > locks)? When it's all one interface, those sorts of questions sort of
+> > answer themselves. When they aren't we'll have to document them clearly
+> > and I think the result will be more confusing for userland programmers.
+> I was hoping they'd be in the same space, with the old interface just
+> defined to deal in locks with range [0,=E2=88=9E).
+>
+> I'm just worried about getting the interface wrong if it's specified
+> without being implemented.  Maybe this is straightforward enough that
+> there's not a risk, I don't know.
 
-On 1/18/20 10:09 PM, 王贇 wrote:
-> Add the description for 'numa_locality', also a new doc to explain
-> the details on how to deal with the per-cgroup numa statistics.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Koutný <mkoutny@suse.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-> ---
->  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
->  Documentation/admin-guide/index.rst             |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  init/Kconfig                                    |   2 +
->  5 files changed, 194 insertions(+)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
-> 
-> diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-> new file mode 100644
-> index 000000000000..30ebe5d6404f
-> --- /dev/null
-> +++ b/Documentation/admin-guide/cg-numa-stat.rst
-> @@ -0,0 +1,178 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===============================
-> +Per-cgroup NUMA statistics
-> +===============================
-> +
-> +Background
-> +----------
-> +
-> +On NUMA platforms, remote memory accessing always has a performance penalty.
-> +Although we have NUMA balancing working hard to maximize the access locality,
-> +there are still situations it can't help.
-> +
-> +This could happen in modern production environment. When a large number of
-> +cgroups are used to classify and control resources, this creates a complex
-> +configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-> +balancing could end up with the wrong memory policy or exhausted local NUMA
-> +node, which would lead to low percentage of local page accesses.
-> +
-> +We need to detect such cases, figure out which workloads from which cgroup
-> +have introduced the issues, then we get chance to do adjustment to avoid
-> +performance degradation.
-> +
-> +However, there are no hardware counters for per-task local/remote accessing
-> +info, we don't know how many remote page accesses have occurred for a
-> +particular task.
-> +
-> +NUMA Locality
-> +-------------
-> +
-> +Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-> +page fault periodically, giving us the opportunity to record per-task page
-> +accessing info, when the CPU fall into PF is from the same node of pages, we
-> +consider task as doing local page accessing, otherwise the remote page
-> +accessing, we call these two counter the locality info.
-
-                                counters
-
-> +
-> +On each tick, we acquire the locality info of current task on that CPU, update
-> +the increments into its cgroup, becoming the group locality info.
-> +
-> +By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-> +'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-> +the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-> +
-> +  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-> +
-> +We define 'NUMA locality' as::
-> +
-> +  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-> +
-> +This per-cgroup percentage number helps to represent the NUMA Balancing behavior.
-> +
-> +Note that the accounting is hierarchical, which means the NUMA locality info for
-> +a given group represent not only the workload of this group, but also the
-
-                 represents
-
-> +workloads of all its descendants.
-> +
-> +For example the 'cpu.numa_stat' shows::
-> +
-> +  page_access local=129909383 remote=18265810
-> +
-> +The NUMA locality calculated as::
-> +
-> +  129909383 * 100 / (129909383 + 18265810) = 87.67
-> +
-> +Thus we know the workload of this group and its descendants have totally done
-> +129909383 times of local page accessing and 18265810 times of remotes, locality
-> +is 87.67% which imply most of the memory access are local.
-
-                   implies
-
-> +
-> +NUMA Consumption
-> +----------------
-> +
-> +There are also other cgroup entry help us to estimate NUMA efficiency, which is
-
-                               entries which help us to estimate NUMA efficiency. They are
-
-> +'cpuacct.usage_percpu' and 'memory.numa_stat'.
-> +
-> +By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-> +info (in hierarchy) as::
-> +
-> +  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-> +
-> +Combined with the info from::
-> +
-> +  cat /sys/devices/system/node/nodeX/cpulist
-> +
-> +We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-> +per-cgroup node runtime info.
-> +
-> +By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-> +info as::
-> +
-> +  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-> +
-> +Together we call these the per-cgroup NUMA consumption info, tell us how many
-
-                                                                telling us
-
-> +resources a particular workload has consumed, on a particular NUMA node.
-> +
-> +Monitoring
-> +----------
-> +
-> +By monitoring the increments of locality info, we can easily know whether NUMA
-> +Balancing is working well for a particular workload.
-> +
-> +For example we take a 5 seconds sample period, then on each sampling we have::
-> +
-> +  local_diff = last_nr_local_page_access - nr_local_page_access
-> +  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-> +
-> +and we get the locality in this period as::
-> +
-> +  locality = local_diff * 100 / (local_diff + remote_diff)
-> +
-> +We can plot a line for locality, when the line close to 100% things are good,
-
-                          locality. When the line is close to 100%, things are good;
-
-> +when getting close to 0% something is wrong, we can pick a proper watermark to
-
-                                         wrong. We can pick
-
-> +trigger warning message.
-> +
-> +You may want to drop the data if the local/remote_diff is too small, which
-> +implies there are not many available pages for NUMA Balancing to scan, ignoring
-> +would be fine since most likely the workload is insensitive to NUMA, or the
-> +memory topology is already good enough.
-> +
-> +Monitoring root group helps you control the overall situation, while you may
-> +also want to monitor all the leaf groups which contain the workloads, this
-> +helps to catch the mouse.
-> +
-> +Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-> +Balancing is disabled or locality becomes too small, we may want to monitor
-> +the per-node runtime & memory info to see if the node consumption meet the
-> +requirements.
-> +
-> +For NUMA node X on each sampling we have::
-> +
-> +  runtime_X_diff = runtime_X - last_runtime_X
-> +  runtime_all_diff = runtime_all - last_runtime_all
-> +
-> +  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-> +  memory_percent_X = memory_X * 100 / memory_all
-> +
-> +These two percentages are usually matched on each node, workload should execute
-> +mostly on the node that contains most of its memory, but it's not guaranteed.
-> +
-> +The workload may only access a small part of its memory, in such cases although
-> +the majority of memory are remotely, locality could still be good.
-
-                          are remote,
-
-> +
-> +Thus to tell if things are fine or not depends on the understanding of system
-> +resource deployment, however, if you find node X got 100% memory percent but 0%
-> +runtime percent, definitely something is wrong.
-> +
-> +Troubleshooting
-> +---------------
-> +
-> +After identifying which workload introduced the bad locality, check:
-> +
-> +1). Is the workload bound to a particular NUMA node?
-> +2). Has any NUMA node run out of resources?
-> +
-> +There are several ways to bind task's memory with a NUMA node, the strict way
-> +like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-> +node where to allocate pages. In this situation, admin should make sure the
-> +task is allowed to run on the CPUs of that NUMA node, and make sure there are
-> +available CPU resource there.
-
-                 resources
-
-> +
-> +There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-> +sched_setaffinity() syscall. In this situation, NUMA Balancing help to migrate
-
-                                                                  helps
-
-> +pages into that node, admin should make sure there are available memory there.
-
-                                                      is
-
-> +
-> +Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-> +change then observe the statistics to see if things get better until the
-> +situation is acceptable.
-> +
-> +Highlights
-> +----------
-> +
-> +For some tasks, NUMA Balancing may be found to be unnecessary to scan pages,
-> +and locality could always be 0 or small number, don't pay attention to them
-> +since they most likely insensitive to NUMA.
-> +
-> +There is no accounting until the option is turned on, so enable it in advance
-> +if you want to have the whole history.
-> +
-> +We have per-task migfailed counter to tell how many page migration has been
-
-                                                            migrations have   {drop: been}
-
-> +failed for a particular task, you will find it in /proc/PID/sched entry.
-
-                           task; you
+Yes
 
 
-HTH.
--- 
-~Randy
+--=20
+Thanks,
+
+Steve
