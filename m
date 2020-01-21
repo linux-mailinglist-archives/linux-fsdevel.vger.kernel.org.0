@@ -2,106 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5750144203
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 17:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A85E014423D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 17:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgAUQUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 11:20:51 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59042 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgAUQUv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 11:20:51 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00LGIW37090200;
-        Tue, 21 Jan 2020 16:18:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=uYOd+zHwSnCegpRyovimgiqkKiE/fLMFwlZb71GkrV0=;
- b=NlgALHKCbQnNULjVWBDPgXCetYybue2MFM8shQNzXgnuaBd8IhkucTrRD50jyEYSV4ab
- FMo/l9pPRRV39j7K3LUJlBcmjmKNkmneiYXdaKT+f0NGk/wM43Hp29KjFVdHNsGbZ+WH
- w9ryK8cWGt8Wd988iCGS/6McezTQzA715UJm1AqyEAAVeyeQoEOc7vYyWu1tcUAOBohK
- RWTHXlzAS2exahRDvZjZJidt3IVVnhWyfJtao7pO+nPpc3jVjwk/DOLmuGhxIJdKKPRc
- Lo0sWTlyukCDgx6ekEa4Crg9pQUO8JIY5QPnj8NObYSH/KjiZP/O4lEhYJSUfkU27hdj aA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2xkseue764-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Jan 2020 16:18:44 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00LGIU8F184360;
-        Tue, 21 Jan 2020 16:18:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 2xnpfp9wyw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Jan 2020 16:18:44 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id 00LGIhTt185837;
-        Tue, 21 Jan 2020 16:18:43 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2xnpfp9wyq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Jan 2020 16:18:43 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00LGIfPe029401;
-        Tue, 21 Jan 2020 16:18:41 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Jan 2020 08:18:41 -0800
-Date:   Tue, 21 Jan 2020 08:18:40 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Steve French <smfrench@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        xfs <xfs@e29208.dscx.akamaiedge.net>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [Lsf-pc] [LFS/MM TOPIC] fs reflink issues, fs online
- scrub/check, etc
-Message-ID: <20200121161840.GA8236@magnolia>
-References: <20160210191715.GB6339@birch.djwong.org>
- <20160210191848.GC6346@birch.djwong.org>
- <CAH2r5mtM2nCicTKGFAjYtOG92TKKQdTbZxaD-_-RsWYL=Tn2Nw@mail.gmail.com>
- <0089aff3-c4d3-214e-30d7-012abf70623a@gmx.com>
- <CAOQ4uxjd-YWe5uHqfSW9iSdw-hQyFCwo84cK8ebJVJSY_vda3Q@mail.gmail.com>
+        id S1729180AbgAUQdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 11:33:46 -0500
+Received: from mout.web.de ([212.227.15.3]:37675 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbgAUQdq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Jan 2020 11:33:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1579624409;
+        bh=vkUMqMpSzQWOv5pE1yPpsgTJ0TCaAleQhLOhszH9RKE=;
+        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
+        b=IG+eWre8/eVD3hdJl6Cm6n98ehw26rmR71cdSjAmLw50tqen4gJR4APHN6xo9NxEU
+         TuebV/NHdwOs7QuNImEfjFksN0EpsGG9ewQ27y2acRBWymr9yNeSWuaEYTrmkIG90o
+         3ppWDsdfK01E9HiUXrzGxXgSj82MeLNZdgDeOOXM=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.49.33.93]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0Mg7Zl-1jEe6v3ADV-00NT1v; Tue, 21
+ Jan 2020 17:33:28 +0100
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+Subject: Re: [PATCH v13 11/13] exfat: add Kconfig and Makefile
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Message-ID: <44d81272-60c9-72fa-60df-20282c370a7a@web.de>
+Date:   Tue, 21 Jan 2020 17:33:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjd-YWe5uHqfSW9iSdw-hQyFCwo84cK8ebJVJSY_vda3Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9506 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=986 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001210131
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:Y+PS0ccMxadJlzOXUYMJtQPr8NqZAA65HUWxMTCKqUKeZoA4HCS
+ fezep9iJ1B8CLt4oB1Rp4yGQlYbkorl444OTCoae/VF9hEkY1w7DV4a+llFarBI5h58VtPo
+ YcYnS5d3ZbAWKCLoTTmdFbgdn6IAjqHzYgRZWV9u44l1F7YvdToyn8hNjAZecFlolVrGyAt
+ 0uYpYI7x0herbiBML0dBQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:BW3bOvImGXU=:FPRnOMCeSaqMGlIAhwgQFF
+ ttgS6BlnPvH9iaZ5WW+qk9a9rNR+RJURqrc4RTa6ZUp9utxTMWn2mDXQN7kBmKHYp5r4aZLBS
+ CKbsxqAhJKi3f9E8Uxmh4c5ZnDq7lCnZv3t6jwW6XgAoNztRbrqLNe8qvIZxz7TgBi9N6xWCb
+ 8RrxU+p1rLmCQnalzsqMiuV/nBHdoQ5FoYBo1y2Ou7Tfu59xP2G8SRKIxJGlYUhj2r2mpwcF1
+ Q0XBSaDYSJDO8Mr3x4ZUOByZA7Dcmaq3uX31ApMZE8a28O1yYZKANq+94MqvKUw4s+mzLyQlM
+ EYM81IGABpxa+7zggDyTMT/TAM6Yy0sDF509OnPIYfbhUwrJFPKImUfwWLv7liehPLBmDRQcP
+ 6lqtzZDR8mK6r61Cczst8Q/00s/J63I1Onl3Cwg2Nr+F/BrJk02Kv9WXuNn/kkI5/OZeVbhga
+ DwZBC8Niq5J0Gru3Q+ioU3BnwJhcZ11YJG47rvKeZXvQudjjLTUoTAeFo8IIi30sYG05HI37V
+ o3yKJdYBR1YssnvaaRRtPVpoJH88nuvr4JT4/6lDhkM/CTxVcJA7Lsoa3MaqfepXBged7/bNb
+ 4B9gPQK2fvui/RqAy7ZbbvSUkZQ4M+zghjWB2fKNv4stVCKG8FVv7S03aRQ3lTcKXJ6zb0UPI
+ FPgewWr8fdW6nUXnvzpDP8BMCtLptla8AQQYfpuN0epznm0h3QBsqIF53rUCal0sNID7NozmP
+ /0vM1drcBuI0sLFhGP4kxAznV63fY7iZr2cdF//XSuGJsrN1M985bjuk4XOrNGLoS9wO5opNv
+ 24d8riQYxQIB+zbyBV4Y+DfEKRjmJ6j8qzljVDroQeFlTPrWbrKb9+5MdSZbbOhoZJpeFBxXv
+ u/uMTDPxi+QBcVr2G7VDiRvtFEgxOSKZ0TyAQSTHMPtXfnV668AbL3dNAHLScfb2GbFpGW+gL
+ 5HAXWcejzL1V6HnSZm8DtPbYfQR6YC5WDLJpdFbwC5ygw8SNVi/ZVCv7BvPEzFynJbVFIHiGy
+ 1y2W4aVCTpmMOWygO92uu+0JIBZmZdMl1KtqxMyrN2X2eCMDk5nLUh4nyyTbNFW9WtAQkTVqm
+ 87/gUcoi+0EiVSbOAPPVOMHhUbUNMUMUD8q+59F/he5T5AWMSIVplcexiJyx4bFfDpwH06M1r
+ VJ0P23rYw1WSncnvlNs/Ug4m7T2Cw3cI2mee77HmRy3m9b1lauqaItMR0dN3nkTX1Ag9W9WqR
+ omPKVcIR+FIcFmBCC
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 09:35:22AM +0200, Amir Goldstein wrote:
-> On Tue, Jan 21, 2020 at 3:19 AM Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
-> >
-> > Didn't see the original mail, so reply here.
-> 
-> Heh! Original email was from 2016, but most of Darrick's wish list is
-> still relevant in 2020 :)
+> +	  converting between the encoding is used for user visible filename and
+> +	  UTF-16 character that exfat filesystem use, and can be overridden with
 
-Grumble grumble stable behavior of clonerange/deduperange ioctls across
-filesystems grumble grumble.
+I would imagine an other wording fine-tuning here than the replacement of a dot
+by a comma.
 
-> I for one would be very interested in getting an update on the
-> progress of pagecache
-> page sharing if there is anyone working on it.
-
-Me too.  I guess it's the 21st, I should really send in a proposal for
-*this year's* LSFMMBPFLOLBBQ.
-
---D
-
-> Thanks,
-> Amir.
+Regards,
+Markus
