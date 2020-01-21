@@ -2,280 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94A7914358E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 03:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2829C1435B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 03:34:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbgAUCJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 21:09:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41208 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbgAUCJF (ORCPT
+        id S1729047AbgAUCeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 21:34:46 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:58497 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbgAUCep (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 21:09:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rXMrLf9/G2BXHIeWJSwrtnOkiG4UyCzSBXmzSIQzq4A=; b=EZgmCQgJYHsDxvUDK8yK7/g3o
-        +CX5b0H01VeUS7//LnlZySMfD05BfNplR8c0LfnHOVaYjD2bBJyhV3ZpiLMqAeUOyq7BAIej8rKj9
-        XLiuGN1xeO6Fqdaq1aB3r9CWpBRq4YyvZ2if5Cm6ax0VWPv3++YwJ49ES285wn9cxB9T4rtFfS12C
-        JsOC3nwU41t0Ldh4zyP6IXnoydtWUosWaquA1N1ip/cezLzGwSa/kDhvjV14uVzwePWXq099p4k+9
-        egShldfwZplbNuvSz2Jnyc15RQgNGOWKNSgEsBgNKGkrFy17kJvlqzG6YRTkRHu0SiEUEPuxRd8U/
-        do8lJ/PTw==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itiyQ-0000Lj-Co; Tue, 21 Jan 2020 02:08:58 +0000
-Subject: Re: [PATCH v8 2/2] sched/numa: documentation for per-cgroup numa,
- statistics
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
- <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
- <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
- <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
- <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
- <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
- <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
- <b9249375-fe8c-034e-c3bd-cacfe4e89658@linux.alibaba.com>
- <23fc0493-967c-d0e1-767b-89e8f7c85718@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5c299da6-762e-1d2d-dafb-cfe3a0082d56@infradead.org>
-Date:   Mon, 20 Jan 2020 18:08:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 20 Jan 2020 21:34:45 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200121023443epoutp0114f38ee08662f6f31d248257149a04b8~rxkKgKe8P0414804148epoutp01b
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2020 02:34:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200121023443epoutp0114f38ee08662f6f31d248257149a04b8~rxkKgKe8P0414804148epoutp01b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1579574083;
+        bh=ytyuKC3Vaj3EpWIHdeU7Z8cdnKoV6N5MeakWV4sXtIk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=VJIt6MyKso2pVx9TnGLfwBsCWnuMLWneCaZeDsj+BL4fC+B2BUjumA4lWKaUqSY9G
+         eN4rH/7ISf52qTzHj4FF3eyDf84hxqdbg7q2L6+XoYmEadmBaQKVksr/luqaSrVLGi
+         8JELOIkEbkxRRYYaa0tzAoTFeMrOBTm0vVbkYTBE=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200121023442epcas1p41268305eb429b9922c322b88fcd89f22~rxkJg5a-U0657906579epcas1p46;
+        Tue, 21 Jan 2020 02:34:42 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 481t0d5ll4zMqYkZ; Tue, 21 Jan
+        2020 02:34:41 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CB.9C.52419.143662E5; Tue, 21 Jan 2020 11:34:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200121023441epcas1p2d4bbc0d350fbb1f6cad140b932b1d917~rxkIEjHI30266402664epcas1p23;
+        Tue, 21 Jan 2020 02:34:41 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200121023441epsmtrp11d6e4ae4dfa611f73148564084643db0~rxkIDo2S31841618416epsmtrp1x;
+        Tue, 21 Jan 2020 02:34:41 +0000 (GMT)
+X-AuditID: b6c32a37-5b7ff7000001ccc3-c5-5e266341338e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        20.AB.06569.043662E5; Tue, 21 Jan 2020 11:34:41 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200121023440epsmtip11d8a475f58e79ed8dda32c196ed89aab~rxkH3LIIh1939219392epsmtip1X;
+        Tue, 21 Jan 2020 02:34:40 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Al Viro'" <viro@zeniv.linux.org.uk>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <valdis.kletnieks@vt.edu>,
+        <hch@lst.de>, <sj1557.seo@samsung.com>, <pali.rohar@gmail.com>,
+        <arnd@arndb.de>, "'Namjae Jeon'" <linkinjeon@gmail.com>
+In-Reply-To: <20200121014924.GI8904@ZenIV.linux.org.uk>
+Subject: RE: [PATCH v12 02/13] exfat: add super block operations
+Date:   Tue, 21 Jan 2020 11:34:40 +0900
+Message-ID: <005201d5d003$55325960$ff970c20$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <23fc0493-967c-d0e1-767b-89e8f7c85718@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGweyIxypJzru68cwvOK1cQ+ZOFYgKRp5m0AvjvcmoCRBuVtKgAmmug
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEJsWRmVeSWpSXmKPExsWy7bCmrq5jslqcQd8XfYu/k46xWzQvXs9m
+        sXL1USaL63dvMVvs2XuSxeLyrjlsFhNP/2ay2PLvCKvFpfcfWCzO/z3O6sDl8fvXJEaPnbPu
+        snvsn7uG3WP3zQY2j74tqxg9Pm+S8zi0/Q2bx6Ynb5kCOKJybDJSE1NSixRS85LzUzLz0m2V
+        vIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAjlRSKEvMKQUKBSQWFyvp29kU5ZeWpCpk
+        5BeX2CqlFqTkFBgaFOgVJ+YWl+al6yXn51oZGhgYmQJVJuRkLD+5lLngBG/F40s/mBoYm7m7
+        GDk5JARMJPbOucvaxcjFISSwg1HizNUNbF2MHEDOJ0aJlz4Q8W+MEtO/TWSEaZjRvoAFIrGX
+        UeLjyi9Q3S8ZJf79uccKUsUmoAtk72cDsUUENCX+z53ADFLELPCbUaJpcwMTSIJTwFxi+rpL
+        7CC2sICDxOSDt1lAbBYBVYlf+2aA1fAKWEpcnNDADGELSpyc+QSshllAXmL72znMECcpSPx8
+        uowVYpmbxNcnV9ghakQkZne2gS2WEFjELnFq5T4WiAYXiU/XN0P9Iyzx6vgWdghbSuJlfxs7
+        yP8SAtUSH/dDze9glHjx3RbCNpa4uX4DK0gJM9Bj63fpQ4QVJXb+nssIsZZP4t3XHlaIKbwS
+        HW1CECWqEn2XDjNB2NISXe0f2CcwKs1C8tgsJI/NQvLALIRlCxhZVjGKpRYU56anFhsWGCPH
+        9SZGcPrVMt/BuOGczyFGAQ5GJR5eh2mqcUKsiWXFlbmHGCU4mJVEeBc0AYV4UxIrq1KL8uOL
+        SnNSiw8xmgLDfSKzlGhyPjA35JXEG5oaGRsbW5iYmZuZGiuJ885wUYgTEkhPLEnNTk0tSC2C
+        6WPi4JRqYKw4b2oV1XLhnsnFq+KMTten/7lZpXHrjv3JPdPmxl3zmvR5Y/H2vjnvL+ystnl4
+        pOLrvVUMgucPZB+IiPG7ntj6ZVaf1p7/Hu3f31v8Tu25sustg/KB/C8L1p+uZGv0XMR6s/7A
+        j0usrfHppyUdfV/t9HB+LTWP4UOGXfxl2xSulx2bLeZl71msxFKckWioxVxUnAgA1AWn6tUD
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnK5jslqcwf2PTBZ/Jx1jt2hevJ7N
+        YuXqo0wW1+/eYrbYs/cki8XlXXPYLCae/s1kseXfEVaLS+8/sFic/3uc1YHL4/evSYweO2fd
+        ZffYP3cNu8fumw1sHn1bVjF6fN4k53Fo+xs2j01P3jIFcERx2aSk5mSWpRbp2yVwZSw/uZS5
+        4ARvxeNLP5gaGJu5uxg5OSQETCRmtC9g6WLk4hAS2M0osezWVlaIhLTEsRNnmLsYOYBsYYnD
+        h4shap4zSsxed4oFpIZNQFfi35/9bCC2iICmxP+5E5hBipgFWpkkPq5aATZISOAJo8T7TVwg
+        NqeAucT0dZfYQWxhAQeJyQdvgw1iEVCV+LVvBhOIzStgKXFxQgMzhC0ocXLmExaQI5gF9CTa
+        NjKChJkF5CW2v53DDHGngsTPp8tYIW5wk/j65Ao7RI2IxOzONuYJjMKzkEyahTBpFpJJs5B0
+        LGBkWcUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERyHWlo7GE+ciD/EKMDBqMTD6zBN
+        NU6INbGsuDL3EKMEB7OSCO+CJqAQb0piZVVqUX58UWlOavEhRmkOFiVxXvn8Y5FCAumJJanZ
+        qakFqUUwWSYOTqkGxrawL4s475l3amy+fXK54HKmdV/fTbhicvHuiW6mtwn9jisvieS5ZV+6
+        a/yi1vzivRf13/JeqtVbmjeG9doeMwphMJPv05rT03dk6fq/7UYRD84Z7ymdsXzWr6/B5vUT
+        ExcyCmr+k+bmu/pd+m6u5Y7Y4NV91naNb3ffXf5ZiX177WLeRhbl20osxRmJhlrMRcWJAAuI
+        uH2/AgAA
+X-CMS-MailID: 20200121023441epcas1p2d4bbc0d350fbb1f6cad140b932b1d917
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200121014933epcas1p22c54d6162bca6ebe14715542f034993b
+References: <20200120124428.17863-1-linkinjeon@gmail.com>
+        <20200120124428.17863-3-linkinjeon@gmail.com>
+        <CGME20200121014933epcas1p22c54d6162bca6ebe14715542f034993b@epcas1p2.samsung.com>
+        <20200121014924.GI8904@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/20/20 5:57 PM, 王贇 wrote:
-> Add the description for 'numa_locality', also a new doc to explain
-> the details on how to deal with the per-cgroup numa statistics.
+> > +static void exfat_put_super(struct super_block *sb) {
+> > +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+> > +
+> > +	mutex_lock(&sbi->s_lock);
+> > +	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state))
+> > +		sync_blockdev(sb->s_bdev);
+> > +	exfat_set_vol_flags(sb, VOL_CLEAN);
+> > +	exfat_free_upcase_table(sb);
+> > +	exfat_free_bitmap(sb);
+> > +	mutex_unlock(&sbi->s_lock);
+> > +
+> > +	if (sbi->nls_io) {
+> > +		unload_nls(sbi->nls_io);
+> > +		sbi->nls_io = NULL;
+> > +	}
+> > +	exfat_free_iocharset(sbi);
+> > +	sb->s_fs_info = NULL;
+> > +	kfree(sbi);
+> > +}
 > 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Koutný <mkoutny@suse.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-
-Thanks for the updates.
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-
-> ---
->  Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
->  Documentation/admin-guide/index.rst             |   1 +
->  Documentation/admin-guide/kernel-parameters.txt |   4 +
->  Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
->  init/Kconfig                                    |   2 +
->  5 files changed, 194 insertions(+)
->  create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+> You need to RCU-delay freeing sbi and zeroing ->nls_io.  *Everything* used
+> by ->d_compare() and ->d_hash() needs that treatment.  RCU-mode pathwalk
+> can stray into a filesystem that has already been lazy-umounted and is
+> just one close() away from shutdown.  It's OK, as long as you make sure
+> that all structures used in methods that could be called in RCU mode (-
+> >d_compare(), ->d_hash(), rcu-case ->d_revalidate(), rcu-case -
+> >permission()) have destruction RCU-delayed.  Look at what VFAT is doing;
+> that's precisely the reason for that delayed_free() thing in there.
+Okay.
 > 
-> diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
-> new file mode 100644
-> index 000000000000..1106eb1e4050
-> --- /dev/null
-> +++ b/Documentation/admin-guide/cg-numa-stat.rst
-> @@ -0,0 +1,178 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===============================
-> +Per-cgroup NUMA statistics
-> +===============================
-> +
-> +Background
-> +----------
-> +
-> +On NUMA platforms, remote memory accessing always has a performance penalty.
-> +Although we have NUMA balancing working hard to maximize the access locality,
-> +there are still situations it can't help.
-> +
-> +This could happen in modern production environment. When a large number of
-> +cgroups are used to classify and control resources, this creates a complex
-> +configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
-> +balancing could end up with the wrong memory policy or exhausted local NUMA
-> +node, which would lead to low percentage of local page accesses.
-> +
-> +We need to detect such cases, figure out which workloads from which cgroup
-> +have introduced the issues, then we get chance to do adjustment to avoid
-> +performance degradation.
-> +
-> +However, there are no hardware counters for per-task local/remote accessing
-> +info, we don't know how many remote page accesses have occurred for a
-> +particular task.
-> +
-> +NUMA Locality
-> +-------------
-> +
-> +Fortunately, we have NUMA Balancing which scans task's mapping and triggers
-> +page fault periodically, giving us the opportunity to record per-task page
-> +accessing info, when the CPU fall into PF is from the same node of pages, we
-> +consider task as doing local page accessing, otherwise the remote page
-> +accessing, we call these two counters the locality info.
-> +
-> +On each tick, we acquire the locality info of current task on that CPU, update
-> +the increments into its cgroup, becoming the group locality info.
-> +
-> +By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
-> +'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
-> +the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
-> +
-> +  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
-> +
-> +We define 'NUMA locality' as::
-> +
-> +  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
-> +
-> +This per-cgroup percentage number helps to represent the NUMA Balancing behavior.
-> +
-> +Note that the accounting is hierarchical, which means the NUMA locality info for
-> +a given group represents not only the workload of this group, but also the
-> +workloads of all its descendants.
-> +
-> +For example the 'cpu.numa_stat' shows::
-> +
-> +  page_access local=129909383 remote=18265810
-> +
-> +The NUMA locality calculated as::
-> +
-> +  129909383 * 100 / (129909383 + 18265810) = 87.67
-> +
-> +Thus we know the workload of this group and its descendants have totally done
-> +129909383 times of local page accessing and 18265810 times of remotes, locality
-> +is 87.67% which implies most of the memory access are local.
-> +
-> +NUMA Consumption
-> +----------------
-> +
-> +There are also other cgroup entries which help us to estimate NUMA efficiency.
-> +They are 'cpuacct.usage_percpu' and 'memory.numa_stat'.
-> +
-> +By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
-> +info (in hierarchy) as::
-> +
-> +  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
-> +
-> +Combined with the info from::
-> +
-> +  cat /sys/devices/system/node/nodeX/cpulist
-> +
-> +We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
-> +per-cgroup node runtime info.
-> +
-> +By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
-> +info as::
-> +
-> +  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
-> +
-> +Together we call these the per-cgroup NUMA consumption info, telling us how many
-> +resources a particular workload has consumed, on a particular NUMA node.
-> +
-> +Monitoring
-> +----------
-> +
-> +By monitoring the increments of locality info, we can easily know whether NUMA
-> +Balancing is working well for a particular workload.
-> +
-> +For example we take a 5 seconds sample period, then on each sampling we have::
-> +
-> +  local_diff = last_nr_local_page_access - nr_local_page_access
-> +  remote_diff = last_nr_remote_page_access - nr_remote_page_access
-> +
-> +and we get the locality in this period as::
-> +
-> +  locality = local_diff * 100 / (local_diff + remote_diff)
-> +
-> +We can plot a line for locality. When the line is close to 100%, things are
-> +good; when getting close to 0% something is wrong. We can pick a proper
-> +watermark to trigger warning message.
-> +
-> +You may want to drop the data if the local/remote_diff is too small, which
-> +implies there are not many available pages for NUMA Balancing to scan, ignoring
-> +would be fine since most likely the workload is insensitive to NUMA, or the
-> +memory topology is already good enough.
-> +
-> +Monitoring root group helps you control the overall situation, while you may
-> +also want to monitor all the leaf groups which contain the workloads, this
-> +helps to catch the mouse.
-> +
-> +Try to put your workload into also the cpuacct & memory cgroup, when NUMA
-> +Balancing is disabled or locality becomes too small, we may want to monitor
-> +the per-node runtime & memory info to see if the node consumption meet the
-> +requirements.
-> +
-> +For NUMA node X on each sampling we have::
-> +
-> +  runtime_X_diff = runtime_X - last_runtime_X
-> +  runtime_all_diff = runtime_all - last_runtime_all
-> +
-> +  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
-> +  memory_percent_X = memory_X * 100 / memory_all
-> +
-> +These two percentages are usually matched on each node, workload should execute
-> +mostly on the node that contains most of its memory, but it's not guaranteed.
-> +
-> +The workload may only access a small part of its memory, in such cases although
-> +the majority of memory are remote, locality could still be good.
-> +
-> +Thus to tell if things are fine or not depends on the understanding of system
-> +resource deployment, however, if you find node X got 100% memory percent but 0%
-> +runtime percent, definitely something is wrong.
-> +
-> +Troubleshooting
-> +---------------
-> +
-> +After identifying which workload introduced the bad locality, check:
-> +
-> +1). Is the workload bound to a particular NUMA node?
-> +2). Has any NUMA node run out of resources?
-> +
-> +There are several ways to bind task's memory with a NUMA node, the strict way
-> +like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
-> +node where to allocate pages. In this situation, admin should make sure the
-> +task is allowed to run on the CPUs of that NUMA node, and make sure there are
-> +available CPU resources there.
-> +
-> +There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
-> +sched_setaffinity() syscall. In this situation, NUMA Balancing helps to migrate
-> +pages into that node, admin should make sure there is available memory there.
-> +
-> +Admin could try to rebind or unbind the NUMA node to erase the damage, make a
-> +change then observe the statistics to see if things get better until the
-> +situation is acceptable.
-> +
-> +Highlights
-> +----------
-> +
-> +For some tasks, NUMA Balancing may be found to be unnecessary to scan pages,
-> +and locality could always be 0 or small number, don't pay attention to them
-> +since they most likely insensitive to NUMA.
-> +
-> +There is no accounting until the option is turned on, so enable it in advance
-> +if you want to have the whole history.
-> +
-> +We have per-task migfailed counter to tell how many page migrations have
-> +failed for a particular task; you will find it in /proc/PID/sched entry.
+> > +static void exfat_destroy_inode(struct inode *inode) {
+> > +	kmem_cache_free(exfat_inode_cachep, EXFAT_I(inode)); }
+> 
+> No.  Again, that MUST be RCU-delayed; either put an explicit
+> call_rcu() here, or leave as-is, but make that ->free_inode().
+Okay.
+> 
+> > +static void __exit exit_exfat_fs(void) {
+> > +	kmem_cache_destroy(exfat_inode_cachep);
+> > +	unregister_filesystem(&exfat_fs_type);
+> 
+> ... and add rcu_barrier() here.
+Okay, I will fix them on next version.
+Thanks for review!!
+> 
+> > +	exfat_cache_shutdown();
 
