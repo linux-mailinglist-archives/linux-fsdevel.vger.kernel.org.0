@@ -2,84 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 240D214355E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 02:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD84F14356F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 02:56:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgAUBt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 20:49:28 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57968 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbgAUBt1 (ORCPT
+        id S1728512AbgAUB4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 20:56:46 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:45722 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726935AbgAUB4q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 20:49:27 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1itifU-00CNBW-Pd; Tue, 21 Jan 2020 01:49:25 +0000
-Date:   Tue, 21 Jan 2020 01:49:24 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Namjae Jeon <linkinjeon@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu, hch@lst.de,
-        sj1557.seo@samsung.com, pali.rohar@gmail.com, arnd@arndb.de,
-        namjae.jeon@samsung.com
-Subject: Re: [PATCH v12 02/13] exfat: add super block operations
-Message-ID: <20200121014924.GI8904@ZenIV.linux.org.uk>
-References: <20200120124428.17863-1-linkinjeon@gmail.com>
- <20200120124428.17863-3-linkinjeon@gmail.com>
+        Mon, 20 Jan 2020 20:56:46 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0ToGEFrG_1579571799;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0ToGEFrG_1579571799)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 21 Jan 2020 09:56:40 +0800
+Subject: [PATCH v8 0/2] sched/numa: introduce numa locality
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <743eecad-9556-a241-546b-c8a66339840e@linux.alibaba.com>
+ <207ef46c-672c-27c8-2012-735bd692a6de@linux.alibaba.com>
+ <040def80-9c38-4bcc-e4a8-8a0d10f131ed@linux.alibaba.com>
+ <25cf7ef5-e37e-7578-eea7-29ad0b76c4ea@linux.alibaba.com>
+ <443641e7-f968-0954-5ff6-3b7e7fed0e83@linux.alibaba.com>
+ <d2c4cace-623a-9317-c957-807e3875aa4a@linux.alibaba.com>
+ <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
+Message-ID: <b9249375-fe8c-034e-c3bd-cacfe4e89658@linux.alibaba.com>
+Date:   Tue, 21 Jan 2020 09:56:39 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200120124428.17863-3-linkinjeon@gmail.com>
+In-Reply-To: <a95a7e05-ad60-b9ee-ca39-f46c8e08887d@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 20, 2020 at 09:44:17PM +0900, Namjae Jeon wrote:
+v8:
+  * document edited
+v7:
+  * rebased on latest linux-next
+v6:
+  * fix compile failure when NUMA disabled
+v5:
+  * improved documentation
+v4:
+  * fix comments and improved documentation
+v3:
+  * simplified the locality concept & implementation
+v2:
+  * improved documentation
 
-> +static void exfat_put_super(struct super_block *sb)
-> +{
-> +	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> +
-> +	mutex_lock(&sbi->s_lock);
-> +	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state))
-> +		sync_blockdev(sb->s_bdev);
-> +	exfat_set_vol_flags(sb, VOL_CLEAN);
-> +	exfat_free_upcase_table(sb);
-> +	exfat_free_bitmap(sb);
-> +	mutex_unlock(&sbi->s_lock);
-> +
-> +	if (sbi->nls_io) {
-> +		unload_nls(sbi->nls_io);
-> +		sbi->nls_io = NULL;
-> +	}
-> +	exfat_free_iocharset(sbi);
-> +	sb->s_fs_info = NULL;
-> +	kfree(sbi);
-> +}
+Modern production environment could use hundreds of cgroup to control
+the resources for different workloads, along with the complicated
+resource binding.
 
-You need to RCU-delay freeing sbi and zeroing ->nls_io.  *Everything* 
-used by ->d_compare() and ->d_hash() needs that treatment.  RCU-mode
-pathwalk can stray into a filesystem that has already been lazy-umounted
-and is just one close() away from shutdown.  It's OK, as long as you
-make sure that all structures used in methods that could be called
-in RCU mode (->d_compare(), ->d_hash(), rcu-case ->d_revalidate(),
-rcu-case ->permission()) have destruction RCU-delayed.  Look at
-what VFAT is doing; that's precisely the reason for that delayed_free()
-thing in there.
+On NUMA platforms where we have multiple nodes, things become even more
+complicated, we hope there are more local memory access to improve the
+performance, and NUMA Balancing keep working hard to achieve that,
+however, wrong memory policy or node binding could easily waste the
+effort, result a lot of remote page accessing.
 
-> +static void exfat_destroy_inode(struct inode *inode)
-> +{
-> +	kmem_cache_free(exfat_inode_cachep, EXFAT_I(inode));
-> +}
+We need to notice such problems, then we got chance to fix it before
+there are too much damages, however, there are no good monitoring
+approach yet to help catch the mouse who introduced the remote access.
 
-No.  Again, that MUST be RCU-delayed; either put an explicit
-call_rcu() here, or leave as-is, but make that ->free_inode().
+This patch set is trying to fill in the missing pieces， by introduce
+the per-cgroup NUMA locality info, with this new statistics, we could
+achieve the daily monitoring on NUMA efficiency, to give warning when
+things going too wrong.
 
-> +static void __exit exit_exfat_fs(void)
-> +{
-> +	kmem_cache_destroy(exfat_inode_cachep);
-> +	unregister_filesystem(&exfat_fs_type);
+Please check the second patch for more details.
 
-... and add rcu_barrier() here.
+Michael Wang (2):
+  sched/numa: introduce per-cgroup NUMA locality info
+  sched/numa: documentation for per-cgroup numa statistics
 
-> +	exfat_cache_shutdown();
+ Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst             |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+ include/linux/sched.h                           |  15 ++
+ include/linux/sched/sysctl.h                    |   6 +
+ init/Kconfig                                    |  11 ++
+ kernel/sched/core.c                             |  75 ++++++++++
+ kernel/sched/fair.c                             |  62 +++++++++
+ kernel/sched/sched.h                            |  12 ++
+ kernel/sysctl.c                                 |  11 ++
+ 11 files changed, 384 insertions(+)
+ create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
+
+-- 
+2.14.4.44.g2045bb6
+
