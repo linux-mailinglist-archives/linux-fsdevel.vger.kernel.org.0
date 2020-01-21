@@ -2,86 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 314A6143615
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 04:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CCF143617
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jan 2020 04:55:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbgAUDwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jan 2020 22:52:54 -0500
-Received: from mail.parknet.co.jp ([210.171.160.6]:52628 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbgAUDwy (ORCPT
+        id S1728205AbgAUDzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jan 2020 22:55:18 -0500
+Received: from mail-io1-f48.google.com ([209.85.166.48]:44153 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbgAUDzS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jan 2020 22:52:54 -0500
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 726CC129664;
-        Tue, 21 Jan 2020 12:52:53 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-16) with ESMTPS id 00L3qq9W045329
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Tue, 21 Jan 2020 12:52:53 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-16) with ESMTPS id 00L3qpbp049522
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Tue, 21 Jan 2020 12:52:51 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id 00L3qoc3049521;
-        Tue, 21 Jan 2020 12:52:50 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-References: <20200119221455.bac7dc55g56q2l4r@pali>
-        <87sgkan57p.fsf@mail.parknet.co.jp> <20200120173215.GF15860@mit.edu>
-Date:   Tue, 21 Jan 2020 12:52:50 +0900
-In-Reply-To: <20200120173215.GF15860@mit.edu> (Theodore Y. Ts'o's message of
-        "Mon, 20 Jan 2020 12:32:15 -0500")
-Message-ID: <87eevt4ga5.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
+        Mon, 20 Jan 2020 22:55:18 -0500
+Received: by mail-io1-f48.google.com with SMTP id b10so1314036iof.11;
+        Mon, 20 Jan 2020 19:55:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=A4tDUIGRmfMPIKlyexLTrGsvOihJxfhsquzCv2ViF0c=;
+        b=va2tkpi6L71ioWs27G3qEUMLYaraNLXkvXwkhtxBc/JRduz6BMOq6Loo0yRPvdoi7c
+         jqzsG2PGCrYlgh7lvNCf9tq2yVP9aT37U5AaZCcXIq0nNief8Hy8QP9xeV40YyZdc8Ah
+         O1WpvYwIXbYCtwCqwogr74LsvZgUqJYwluCvTgVIfFf+0MXbFZaJ+3JC+LhEzR4dWENr
+         WJU+TRv/w2pRPqIiwzMqKwpkPQzXxWZ1ZTovR0dZXWycpSKoksZHTOQ3HQB6DkRN86rb
+         cU35jHGRR+t28c73gKD2jxDhKrYOQDN3Y/KKhlAwH58il2cXOGjklOZyPedeM+BV9yxH
+         Ly0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=A4tDUIGRmfMPIKlyexLTrGsvOihJxfhsquzCv2ViF0c=;
+        b=saqdJv8AHl3tlCqLStvnlu7amxgtF8ghg0kBvWEp8OqdhcUYg3L6d42YxvQd8RZyhT
+         UF5fXfzLta96GFBFfAkMpSKgAYuuhHj5SFMwQ8jjpGaQDe14RPSW75YvkdHXVGixRTi/
+         B6fGANHyuPSALhjZCQNF6D4BxjxpZKl2MiLRQ9mEIYSgp6bw8BypY3gNvUhDXkf3K5h4
+         hS1boknonSqDstnxRmwUmPIf7Z5ssWu6CqMYmBGYpylG7ghSIlOQF3Hs73phouwXhde9
+         WhfzP4duXTimNTh9xmxXCKBnotsBgyTT0w9X8SjbDzXmpggtAxwlK3qA4if0BeMdTM92
+         zJQQ==
+X-Gm-Message-State: APjAAAUCRdVXCX6sG04sYqVGhcGzWTZipzikFFreGbV62FW0okP7KPK5
+        iiNYls5me7fkUIlON87s1/0gyJ7AgqT0YBsRLhvti/J+1VA=
+X-Google-Smtp-Source: APXvYqxcIn8DniNQJStIEFSLLJoSkZuZDAanME5mwJ0UM/0eRf98+lLJwHIXq8ODvZ36D2Yhj1f06vViWDC2c3KEn/s=
+X-Received: by 2002:a02:2446:: with SMTP id q6mr1779382jae.78.1579578917548;
+ Mon, 20 Jan 2020 19:55:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+From:   Steve French <smfrench@gmail.com>
+Date:   Mon, 20 Jan 2020 21:55:06 -0600
+Message-ID: <CAH2r5mvUmZca8TRVsyZvrB_Loeeo4Kd8T7rHw5s6iaN=yC+O_Q@mail.gmail.com>
+Subject: [LFS/MM TOPIC] Enabling file and directory change notification for
+ network and cluster file systems
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Y. Ts'o" <tytso@mit.edu> writes:
+Currently the inotify interface in the kernel can only be used for
+local file systems (unlike the previous change notify API used years
+ago, and the change notify interface in Windows and other OS which is
+primarily of interest for network file systems).
 
-> On Mon, Jan 20, 2020 at 01:04:42PM +0900, OGAWA Hirofumi wrote:
->> 
->> To be perfect, the table would have to emulate what Windows use. It can
->> be unicode standard, or something other. And other fs can use different
->> what Windows use.
->
-> The big question is *which* version of Windows.  vfat has been in use
-> for over two decades, and vfat predates Window starting to use Unicode
-> in 2001.  Before that, vfat would have been using whatever code page
-> its local Windows installation was set to sue; and I'm not sure if
-> there was space in the FAT headers to indicate the codepage in use.
->
-> It would be entertaining for someone with ancient versions of Windows
-> 9x to create some floppy images using codepage 437 and 450, and then
-> see what a modern Windows system does with those VFAT images --- would
-> it break horibbly when it tries to interpret them as UTF-16?  Or would
-> it figure it out?  And if so, how?  Inquiring minds want to know....
+I wanted to discuss the VFS changes needed to allow inotify requests
+to be passed into file systems so network and cluster file systems (as
+an example in the SMB3 case this simply means sending a
+SMB3_CHANGE_NOTIFY request to the server, whether Samba or Cloud
+(Azure) or Mac or Windows or Network Appliance - all support the API
+on the server side, the problem is that the network or cluster fs
+client isn't told about the request to wait on the inotify event).
+Although user space tools can use file system specific ioctls to wait
+on events, it is obviously preferable to allow network and cluster
+file systems to wait on events using the calls which current Linux
+GUIs use.
 
-Perfect encode converter have to support all versions if Windows changed
-the table.  However, right. Normal user would be ok with current unicode
-standard, and doesn't care subtle differences.  But strict custom system
-will care subtle differences, it is why I'm saying *perfect*.
+This would allow gnome file manager GUI for example to be
+automatically updated when a file is added to an open directory window
+from another remote client.
 
-I'm not against to use current unicode standard. Just a noting.
+It would also fix the embarrassing problem noted in the inotify man page:
+
+"Inotify  reports  only events that a user-space program triggers
+through the filesystem
+       API.  As a result, it does not catch remote events that occur
+on  network  filesystems."
+
+but that is precisely the types of notifications that are most useful
+... users often are aware of updates to local directories from the
+same system, but ... automatic notifications that allow GUIs to be
+updated on changes from **other** clients is of more value (and this
+is exactly what the equivalent API allows on other OS).
+
+The changes to the Linux VFS are small.
 
 
-BTW, VFAT has to store the both of shortname (codepage) and longname
-(UTF16), and using both names to open a file. So Windows should be using
-current locale codepage to make shortname even latest Windows for VFAT.
-
-And before vfat (in linux fs driver, msdos) is using shortname
-(codepage) only.
-
-Thanks.
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Thanks,
+
+Steve
