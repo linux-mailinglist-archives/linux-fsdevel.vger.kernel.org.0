@@ -2,126 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C3814504F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 10:45:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA5CD145156
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 10:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387836AbgAVJpd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 04:45:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38274 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388106AbgAVJou (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 04:44:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 30423BA2F;
-        Wed, 22 Jan 2020 09:44:15 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EBCEA1E0A4F; Wed, 22 Jan 2020 10:44:14 +0100 (CET)
-Date:   Wed, 22 Jan 2020 10:44:14 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>
-Subject: Re: [RFC v2 0/9] Replacing the readpages a_op
-Message-ID: <20200122094414.GC12845@quack2.suse.cz>
-References: <20200115023843.31325-1-willy@infradead.org>
- <20200121113627.GA1746@quack2.suse.cz>
- <20200121214845.GA14467@bombadil.infradead.org>
+        id S1731060AbgAVJxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 04:53:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:32163 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730135AbgAVJxd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 04:53:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579686812;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DNzYql10MRhGoEw8lSsU1VMTmUVLiv5bJngaz+sji8Y=;
+        b=crD1Wv24zK2DlbkbeIaNaVLSEJFLVhgCJTAIkE5P96QVFFfGS0ryvdcdmAdobLbVdXVAL7
+        qUvxFqhYy+1+v+z2VhTUImYSOzXKq1CPA1QVz1zmtVifD6Sol7jInT8a71TsMYDi8B5IPn
+        YBPmlcxSnVZlFPDQLkG482evzZEhoeg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-158-xR2SZy6fNgqCG5-ZqDO_Pw-1; Wed, 22 Jan 2020 04:53:29 -0500
+X-MC-Unique: xR2SZy6fNgqCG5-ZqDO_Pw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 538B2100550E;
+        Wed, 22 Jan 2020 09:53:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 32F9886432;
+        Wed, 22 Jan 2020 09:53:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200118022032.GR8904@ZenIV.linux.org.uk>
+References: <20200118022032.GR8904@ZenIV.linux.org.uk> <20200117154657.GK8904@ZenIV.linux.org.uk> <20200117163616.GA282555@vader> <20200117165904.GN8904@ZenIV.linux.org.uk> <20200117172855.GA295250@vader> <20200117181730.GO8904@ZenIV.linux.org.uk> <20200117202219.GB295250@vader> <20200117222212.GP8904@ZenIV.linux.org.uk> <20200117235444.GC295250@vader> <20200118004738.GQ8904@ZenIV.linux.org.uk> <20200118011734.GD295250@vader>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     dhowells@redhat.com, Omar Sandoval <osandov@osandov.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>, "hch@lst.de" <hch@lst.de>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200121214845.GA14467@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3395817.1579686804.1@warthog.procyon.org.uk>
+Date:   Wed, 22 Jan 2020 09:53:24 +0000
+Message-ID: <3395818.1579686804@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 21-01-20 13:48:45, Matthew Wilcox wrote:
-> On Tue, Jan 21, 2020 at 12:36:27PM +0100, Jan Kara wrote:
-> > > v2: Chris asked me to show what this would look like if we just have
-> > > the implementation look up the pages in the page cache, and I managed
-> > > to figure out some things I'd done wrong last time.  It's even simpler
-> > > than v1 (net 104 lines deleted).
-> > 
-> > I have an unfinished patch series laying around that pulls the ->readpage
-> > / ->readpages API in somewhat different direction so I'd like to discuss
-> > whether it's possible to solve my problem using your API. The problem I
-> > have is that currently some operations such as hole punching can race with
-> > ->readpage / ->readpages like:
-> > 
-> > CPU0						CPU1
-> > fallocate(fd, FALLOC_FL_PUNCH_HOLE, off, len)
-> >   filemap_write_and_wait_range()
-> >   down_write(inode->i_rwsem);
-> >   truncate_pagecache_range();
-> > 						readahead(fd, off, len)
-> > 						  creates pages in page cache
-> > 						  looks up block mapping
-> >   removes blocks from inode and frees them
-> > 						  issues bio
-> > 						    - reads stale data -
-> > 						      potential security
-> > 						      issue
-> > 
-> > Now how I wanted to address this is that I'd change the API convention for
-> > ->readpage() so that we call it with the page unlocked and the function
-> > would lock the page, check it's still OK, and do what it needs. And this
-> > will allow ->readpage() and also ->readpages() to grab lock
-> > (EXT4_I(inode)->i_mmap_sem in case of ext4) to synchronize with hole punching
-> > while we are adding pages to page cache and mapping underlying blocks.
-> > 
-> > Now your API makes even ->readpages() (actually ->readahead) called with
-> > pages locked so that makes this approach problematic because of lock
-> > inversions. So I'd prefer if we could keep the situation that ->readpages /
-> > ->readahead gets called without any pages in page cache locked...
-> 
-> I'm not a huge fan of that approach because it increases the number of
-> atomic ops (right now, we __SetPageLocked on the page before adding it
-> to i_pages).
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-Yeah, good point. The per-page cost of locking may be noticeable.
+> FWIW, that might be not so simple ;-/  Reason: NFS-like stuff.  Client
+> sees a negative in cache; the problem is how to decide whether to
+> tell the server "OK, I want normal link()" vs. "if it turns out that
+> someone has created it by the time you see the request, give do
+> a replacing link".  Sure, if could treat ->link() telling you -EEXIST
+> as "OK, repeat it with ->link_replace(), then", but that's an extra
+> roundtrip...
 
-> Holepunch is a rather rare operation while readpage and
-> readpages/readahead are extremely common, so can we make holepunch take a
-> lock that will prevent new readpage(s) succeeding?
+If someone asks for link_replace on a filesystem that doesn't support it or if
+it's a network filesystem in which the client does, but the server being
+accessed does not, then return an error (say EOPNOTSUPP) and let userspace (or
+cachefiles or whatever) handle the fallback?
 
-I'm not opposed - in fact my solution would do exactly that (with
-EXT4_I(inode)->i_mmap_sem), just the lock ordering wrt page lock and
-mmap_sem is causing troubles and that's why I need the change in the
-API for readpage and friends.
+David
 
-> I have an idea to move the lock entries from DAX to being a generic page
-> cache concept.  That way, holepunch could insert lock entries into the
-> pagecache to cover the range being punched, and readpage(s) would either
-> skip lock entries or block on them.
-
-Two notes on the entry locks:
-
-The additional traffic in the xarray creating locked entries and then
-removing them is going to cost as well. But if that's only for hole
-punching, it would be bearable I guess.
-
-This does not solve the problem with the lock ordering. There are quite
-some constraints on this synchronization scheme. Generally we want to
-prevent creation of pages in the page cache in a certain range. That means
-we need to block read(2), readahead(2), madvise(2) MADV_WILLNEED, page
-faults.  The page faults constrain us that the lock has to rank below
-mmap_sem. On the other hand hole punching needs to hold the lock while
-evicting pages so that mandates that the lock needs to rank above page
-lock. Also note that read(2) can cause page faults (to copy data to
-userspace) so to avoid lock inversion against mmap_sem, any protection must
-not cover that part of the read path which basically leaves us with
-->readpage()/->readpages() as the only place where we can grab the lock.
-Which nicely covers also all the other places creating pages in the page
-cache we need to block. Except that ->readpage has the unfortunate property
-of being called under page lock. But maybe we could create a new hook
-somewhere in the paths creating pages to acquire the lock early. But so far
-I don't have an idea for something nice.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
