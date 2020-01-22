@@ -2,211 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C8C14593E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 17:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B25A114598C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 17:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgAVQCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 11:02:37 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34429 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbgAVQCh (ORCPT
+        id S1726191AbgAVQNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 11:13:32 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45279 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbgAVQNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:02:37 -0500
-Received: by mail-io1-f66.google.com with SMTP id z193so7162282iof.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 08:02:37 -0800 (PST)
+        Wed, 22 Jan 2020 11:13:32 -0500
+Received: by mail-lj1-f195.google.com with SMTP id j26so7414661ljc.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 08:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KSosYJIVrzvlE5E1FMUdzMtoabtqfcuKGndm1BKLKA0=;
-        b=ScozufRVIjlbXUefOn+/TZ64qB1VAqwe5zD5MRgdNkGmITpEGnx4SgOsJEGzRwc/Lj
-         bboCL1oK+Sru83+Mra/dPjmwRIK2mzbb8BmKkCI5SXPnQ15ahYgCXt+7WLUu4nK3ocCk
-         wcfvKJApe8EJrHdluSj9/203sItgJ34DrqamFA31R41ISO7cbmG0CW1GNBvHMf58g0HD
-         Jcm71viljY4QW84Kaw9JPCYIfY+xrVI6PyzIM00OA/gqvKwMqbI3roXt6ZkB2cfCdI9H
-         cgHSCqIc2oi5ZcbIe3a9HguLPeGZJynGo2hoCIohyDz1jaIZgbF4T+gy5eMpXNCdQEeB
-         4ZfQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PxCSo2JcEGlTJhdmVOOHLpuyjFAWieC3FhzbX6ms3Bk=;
+        b=WVzg/4mZaQ3ubctvikpmoB2+8YZnmRK2+VSYiWGQ33nJZL1OeIGMyFE3sBcuqoQVbi
+         rwpNneTfpLB3RAwTWttAZsxz4mdwPNf2Y8+kgY4tYIeLbjPU7jrBtLrLWh4mnN0ddI2k
+         Y06yr95wD8GFqmmXgcgeinrku41v7nODIWRxw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KSosYJIVrzvlE5E1FMUdzMtoabtqfcuKGndm1BKLKA0=;
-        b=NmumAnfzHrUM+JDmEx2lOvARMRLNxtb8YemylUV5IFMa4Qc9BiUL36el6biamrXkSv
-         tJ1TM5bmEzRS2E/4nQxsq9T+LURRlqiV9OhdShIqh45bX2/kvuOHA8w5y4S1e9vggcsR
-         hoFdpFC/1MtTrYW1HKI5MWUGJPTIt5Bbia0pXrAo3DpSYy6SQTFzKeYSdHIrQknUcxJg
-         2mZ+Cp+EWEXCsyBUZ/2NB39Epu/u0ToPEXpdSENUMX55MATTAFnubRD1vyDaeisxYSEK
-         H8uPKs4Gwbm1/G/8y2RkD4wL9BipcEztCbAtAQGKH/sxA98xY2fpjSFZEZ5TU+E5GfTe
-         3BEQ==
-X-Gm-Message-State: APjAAAW2M6MtIBNBZ1chBI6UcZUeBbaGO+Z9Lz1QVgZeZpU4XZ2z8Xsu
-        97erJQ0z1uydvOQfzxgNhct1ew==
-X-Google-Smtp-Source: APXvYqwBWAalVw4FoWA7D+ackaiPP9lzbini3VNwpiBcVhocQfghO/eG5jRFPDsEYOCVHmvDRvve1Q==
-X-Received: by 2002:a6b:6311:: with SMTP id p17mr7160934iog.127.1579708956573;
-        Wed, 22 Jan 2020 08:02:36 -0800 (PST)
-Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v206sm796924iod.41.2020.01.22.08.02.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:02:36 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: add support for epoll_ctl(2)
-Date:   Wed, 22 Jan 2020 09:02:31 -0700
-Message-Id: <20200122160231.11876-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122160231.11876-1-axboe@kernel.dk>
-References: <20200122160231.11876-1-axboe@kernel.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PxCSo2JcEGlTJhdmVOOHLpuyjFAWieC3FhzbX6ms3Bk=;
+        b=CeMwYHb5NgkTFM9N22rlzrrr7PmcEL1cOPJ9aze0lPwwmIbohrxVmJ7GnOOZI+rbk8
+         3Iej8C79EK+X9sbKub55/wbsGSvtlOJ/9d6esn7Jk/S77UJOts5H0bN8GipZJu3VCWLS
+         4RtI8X1Bbpp2Jj+wDDZ17lcyHfHnD5vl+eNEwTjysvTeShcSXyUlZd/WrBotC+rLFe4c
+         lZ57umtLV9mHv8+vjRcVQuKxTrsdYfY9Zo+Z8v/MFYniTgNdJvvhk+ukFnIplz04qfrp
+         RXLelgOqa1rue9xoj8Pb+VrylbUsL1H5hE4kb2fxD32+42UIEIuZWLtJ34qfXaHJCzmH
+         TgiQ==
+X-Gm-Message-State: APjAAAXVa+I1XFnSded44XN2ve0BiyNzhceZe4IM0s5UZnTDCwo8i7gc
+        /NfcUFYFsJGoO0dliii/AbkXxYEmQpk=
+X-Google-Smtp-Source: APXvYqxZVrrouGpqlq/+aSQla2RuISGl8xNJzb6BZ76V4QLgLJP9CuE5VM9EraHrq2dDEZeD1wy6lQ==
+X-Received: by 2002:a2e:3504:: with SMTP id z4mr20332186ljz.273.1579709609937;
+        Wed, 22 Jan 2020 08:13:29 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id r12sm20388863ljh.105.2020.01.22.08.13.28
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 08:13:29 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id y6so7486052lji.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 08:13:28 -0800 (PST)
+X-Received: by 2002:a2e:9510:: with SMTP id f16mr19943444ljh.249.1579709608444;
+ Wed, 22 Jan 2020 08:13:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a02d3426f93f7eb04960a4d9140902d278cab0bb.1579697910.git.christophe.leroy@c-s.fr>
+In-Reply-To: <a02d3426f93f7eb04960a4d9140902d278cab0bb.1579697910.git.christophe.leroy@c-s.fr>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 22 Jan 2020 08:13:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whTzEu5=sMEVLzuf7uOnoCyUs8wbfw87njes9FyE=mj1w@mail.gmail.com>
+Message-ID: <CAHk-=whTzEu5=sMEVLzuf7uOnoCyUs8wbfw87njes9FyE=mj1w@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] fs/readdir: Fix filldir() and filldir64() use of user_access_begin()
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds IORING_OP_EPOLL_CTL, which can perform the same work as the
-epoll_ctl(2) system call.
+On Wed, Jan 22, 2020 at 5:00 AM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+> Modify filldir() and filldir64() to request the real area they need
+> to get access to.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 73 insertions(+)
+Not like this.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 09503d1e9e45..b3bff464d2e7 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -74,6 +74,7 @@
- #include <linux/namei.h>
- #include <linux/fsnotify.h>
- #include <linux/fadvise.h>
-+#include <linux/eventpoll.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -421,6 +422,14 @@ struct io_madvise {
- 	u32				advice;
- };
- 
-+struct io_epoll {
-+	struct file			*file;
-+	int				epfd;
-+	int				op;
-+	int				fd;
-+	struct epoll_event		event;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -534,6 +543,7 @@ struct io_kiocb {
- 		struct io_files_update	files_update;
- 		struct io_fadvise	fadvise;
- 		struct io_madvise	madvise;
-+		struct io_epoll		epoll;
- 	};
- 
- 	struct io_async_ctx		*io;
-@@ -719,6 +729,9 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.fd_non_neg		= 1,
- 	},
-+	[IORING_OP_EPOLL_CTL] = {
-+		.unbound_nonreg_file	= 1,
-+	},
- };
- 
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -2578,6 +2591,54 @@ static int io_openat(struct io_kiocb *req, struct io_kiocb **nxt,
- 	return io_openat2(req, nxt, force_nonblock);
- }
- 
-+static int io_epoll_ctl_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+#if defined(CONFIG_EPOLL)
-+	if (sqe->ioprio || sqe->buf_index || sqe->off)
-+		return -EINVAL;
-+
-+	req->epoll.epfd = READ_ONCE(sqe->fd);
-+	req->epoll.op = READ_ONCE(sqe->len);
-+	req->epoll.fd = READ_ONCE(sqe->off);
-+
-+	if (ep_op_has_event(req->epoll.op)) {
-+		struct epoll_event __user *ev;
-+
-+		ev = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+		if (copy_from_user(&req->epoll.event, ev, sizeof(*ev)))
-+			return -EFAULT;
-+	}
-+
-+	return 0;
-+#else
-+	return -EOPNOTSUPP;
-+#endif
-+}
-+
-+static int io_epoll_ctl(struct io_kiocb *req, struct io_kiocb **nxt,
-+			bool force_nonblock)
-+{
-+#if defined(CONFIG_EPOLL)
-+	struct io_epoll *ie = &req->epoll;
-+	int ret;
-+
-+	ret = do_epoll_ctl(ie->epfd, ie->op, ie->fd, &ie->event, force_nonblock);
-+	if (force_nonblock && ret == -EAGAIN) {
-+		req->work.flags |= IO_WQ_WORK_NEEDS_FILES;
-+		return -EAGAIN;
-+	}
-+
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_cqring_add_event(req, ret);
-+	io_put_req_find_next(req, nxt);
-+	return 0;
-+#else
-+	return -EOPNOTSUPP;
-+#endif
-+}
-+
- static int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
-@@ -4039,6 +4100,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_OPENAT2:
- 		ret = io_openat2_prep(req, sqe);
- 		break;
-+	case IORING_OP_EPOLL_CTL:
-+		ret = io_epoll_ctl_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -4267,6 +4331,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_openat2(req, nxt, force_nonblock);
- 		break;
-+	case IORING_OP_EPOLL_CTL:
-+		if (sqe) {
-+			ret = io_epoll_ctl_prep(req, sqe);
-+			if (ret)
-+				break;
-+		}
-+		ret = io_epoll_ctl(req, nxt, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 57d05cc5e271..cffa6fd33827 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -106,6 +106,7 @@ enum {
- 	IORING_OP_SEND,
- 	IORING_OP_RECV,
- 	IORING_OP_OPENAT2,
-+	IORING_OP_EPOLL_CTL,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.25.0
+This makes the situation for architectures like x86 much worse, since
+you now use "put_user()" for the previous dirent filling. Which does
+that expensive user access setup/teardown twice again.
 
+So either you need to cover both the dirent's with one call, or you
+just need to cover the whole (original) user buffer passed in. But not
+this unholy mixing of both unsafe_put_user() and regular put_user().
+
+              Linus
