@@ -2,202 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41F0145B8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 19:27:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6103145C81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 20:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgAVS1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 13:27:23 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5964 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgAVS1X (ORCPT
+        id S1725972AbgAVTdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 14:33:11 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41800 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVTdL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 13:27:23 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e2893d10001>; Wed, 22 Jan 2020 10:26:25 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 22 Jan 2020 10:27:09 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 22 Jan 2020 10:27:09 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 22 Jan
- 2020 18:27:09 +0000
-Subject: Re: [Lsf-pc][LSF/MM/BPF TOPIC] Generic page write protection
-To:     <jglisse@redhat.com>, <lsf-pc@lists.linux-foundation.org>
-CC:     Andrea Arcangeli <aarcange@redhat.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-mm@kvack.org>, lsf-pc <lsf-pc@lists.linux-foundation.org>
-References: <20200122023222.75347-1-jglisse@redhat.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <174cd3a0-43e5-d8bd-5cc3-d562f5727283@nvidia.com>
-Date:   Wed, 22 Jan 2020 10:27:08 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 22 Jan 2020 14:33:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kcpRCIsS+8zPHI9N27JqUU0XiwisZ8cI+0KOaDjpraE=; b=YRxBn3Rbvezdzr+TsmjTNiO/Q
+        tGEMNhUpWdydXTRrbh6/NlD7o6FOOKpo7CWlNb4M+OltymMa4moglgAvP96Y7V9BrGKYOhn8WBcg1
+        gDs4V24iN7Hc3LVZs0iv0Cw3O2ZH4SJxX9ewjH17PoYrOXEjZgAU9kAjzimYsfqnxW1vLeTlZGGOq
+        kYyBCUVbrLaxpbrMh5tWzkOIttVg8tGOeAlau2bM7b+o3Zv23e3ZqoIDCIxp166Paz2BwHhFbWeTA
+        FcO4tiMz4gM4HUmd1nVUwjfihan2fy7zx6x5CXGqGoEChKLHyxH97tcEHEhlrAQLgZAHUHZMbQ8Bj
+        C2Y5mitYw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iuLkQ-0003aF-Li; Wed, 22 Jan 2020 19:33:06 +0000
+Date:   Wed, 22 Jan 2020 11:33:06 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
+Message-ID: <20200122193306.GB4675@bombadil.infradead.org>
+References: <3577430.1579705075@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20200122023222.75347-1-jglisse@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579717585; bh=zM1GZj8JqKU2+u42J7V4E+rUU+HYAAUatSe9FzyeLvo=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=oKVuFui6iUjT/PoUawkl8P6jpwCGz3cOGcMmtlNAW93lnyegrDlC2dXTN+YzAmJih
-         dkOvkbW/KIykbkayZViIbe88ZvDAJ1A8VghOOEubR4K2ays+2YFnKzerEPeSVUutQX
-         hl5VJzFOAIbbyYJr2rylGxVQeQwCYhO7yWJS/4XfujGQ/8WKKCY+dcZgR13a4QneZA
-         iE1dzJtE11e7sd7C7MLxusF4V7Wo1ATcM6milQiEld3qrEV3QlDKPzKDHRqtDrdbta
-         o5Z1SswkBaKNoMw96ohNLDuadmEF4FwbKXBq21nCz9CAxKmHX44dIBN2ocNrVgwGwu
-         /WTJ88VrIMZfQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3577430.1579705075@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding: lsf-pc
+On Wed, Jan 22, 2020 at 02:57:55PM +0000, David Howells wrote:
+> An alternative could be to have an "ITER_ARRAY" that just has the page
+> pointers and not the offset/length info.  This decreases the redundancy and
+> increases the max payload-per-array-page to 2M.
 
-On 1/21/20 6:32 PM, jglisse@redhat.com wrote:
-> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
->=20
->=20
-> Provide a generic way to write protect page (=C3=A0 la KSM) to enable new=
- mm
-> optimization:
->     - KSM (kernel share memory) to deduplicate pages (for file
->       back pages too not only anonymous memory like today)
->     - page duplication NUMA (read only duplication) in multiple
->       different physical page. For instance share library code
->       having a copy on each NUMA node. Or in case like GPU/FPGA
->       duplicating memory read only inside the local device memory.
->     ...
->=20
-> Note that this write protection is intend to be broken at anytime in
-> reasonable time (like KSM today) so that we never block more than
-> necessary anything that need to write to the page.
->=20
->=20
-> The goal is to provide a mechanism that work for both anonymous and
-> file back memory. For this we need to a pointer inside struct page.
-> For anonymous memory KSM uses the anon_vma field which correspond
-> to mapping field for file back pages.
->=20
-> So to allow generic write protection for file back pages we need to
-> avoid relying on struct page mapping field in the various kernel code
-> path that do use it today.
->=20
-> The page->mapping fields is use in 5 different ways:
->  [1]- Functions operating on file, we can get the mapping from the file
->       (issue here is that we might need to pass the file down the call-
->       stack)
->=20
->  [2]- Core/arch mm functions, those do not care about the file (if they
->       do then it means they are vma related and we can get the mapping
->       from the vma). Those functions only want to be able to walk all
->       the pte point to the page (for instance memory compaction, memory
->       reclaim, ...). We can provide the exact same functionality for
->       write protected pages (like KSM does today).
->=20
->  [3]- Block layer when I/O fails. This depends on fs, for instance for
->       fs which uses buffer_head we can update buffer_head to store the
->       mapping instead of the block_device as we can get the block_device
->       from the mapping but not the mapping from the block_device.
->=20
->       So solving this is mostly filesystem specific but i have not seen
->       any fs that could not be updated properly so that block layer can
->       report I/O failures without relying on page->mapping
->=20
->  [4]- Debugging (mostly procfs/sysfs files to dump memory states). Those
->       do not need the mapping per say, we just need to report page states
->       (and thus write protection information if page is write protected).
->=20
->  [5]- GUP (get user page) if something calls GUP in write mode then we
->       need to break write protection (like KSM today). GUPed page should
->       not be write protected as we do not know what the GUPers is doing
->       with the page.
->=20
->=20
-> Most of the patchset deals with [1], [2] and [3] ([4] and [5] are mostly
-> trivial).
->=20
-> For [1] we only need to pass down the mapping to all fs and vfs callback
-> functions (this is mostly achieve with coccinelle). Roughly speaking the
-> patches are generated with following pseudo code:
->=20
-> add_mapping_parameter(func)
-> {
->     function_add_parameter(func, mapping);
->=20
->     for_each_function_calling (caller, func) {
->         calling_add_parameter(caller, func, mapping);
->=20
->         if (function_parameters_contains(caller, mapping|file))
->             continue;
->=20
->         add_mapping_parameter(caller);
->     }
-> }
->=20
-> passdown_mapping()
-> {
->     for_each_function_in_fs (func, fs_functions) {
->         if (!function_body_contains(func, page->mapping))
->             continue;
->=20
->         if (function_parameters_contains(func, mapping|file))
->             continue;
->=20
->         add_mapping_parameter(func);
->     }
-> }
->=20
-> For [2] KSM is generalized and extended so that both anonymous and file
-> back pages can be handled by a common write protected page case.
->=20
-> For [3] it depends on the filesystem (fs which uses buffer_head are
-> easily handled by storing mapping into the buffer_head struct).
->=20
->=20
-> To avoid any regression risks the page->mapping field is left intact as
-> today for non write protect pages. This means that if you do not use the
-> page write protection mechanism then it can not regress. This is achieve
-> by using an helper function that take the mapping from the context
-> (current function parameter, see above on how function are updated) and
-> the struct page. If the page is not write protected then it uses the
-> mapping from the struct page (just like today). The only difference
-> between before and after the patchset is that all fs functions that do
-> need the mapping for a page now also do get it as a parameter but only
-> use the parameter mapping pointer if the page is write protected.
->=20
-> Note also that i do not believe that once confidence is high that we
-> always passdown the correct mapping down each callstack, it does not
-> mean we will be able to get rid of the struct page mapping field.
->=20
-> I posted patchset before [*1] and i intend to post an updated patchset
-> before LSF/MM/BPF. I also talked about this at LSF/MM 2018. I still
-> believe this will a topic that warrent a discussion with FS/MM and
-> block device folks.
->=20
->=20
-> [*1] https://lwn.net/Articles/751050/
->      https://cgit.freedesktop.org/~glisse/linux/log/?h=3Dgeneric-write-pr=
-otection-rfc
-> [*2] https://lwn.net/Articles/752564/
->=20
->=20
-> To: lsf-pc@lists.linux-foundation.org
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-block@vger.kernel.org
-> Cc: linux-mm@kvack.org
->=20
->=20
+We could also have an ITER_XARRAY which you just pass &mapping->i_pages
+to.  I don't think you use any other part of the mapping, so that would
+be a more generic version that is equally efficient.
 
-thanks,
---=20
-John Hubbard
-NVIDIA
+> +	rcu_read_lock();						\
+> +	for (page = xas_load(&xas); page; page = xas_next(&xas)) {	\
+> +		if (xas_retry(&xas, page))				\
+> +			continue;					\
+> +		if (xa_is_value(page))					\
+> +			break;						\
+
+Do you also want to check for !page?  That would be a bug in the caller.
+
+> +		if (PageCompound(page))					\
+> +			break;						\
+
+It's perfectly legal to have compound pages in the page cache.  Call
+find_subpage(page, xas.xa_index) unconditionally.
+
+> +		if (page_to_pgoff(page) != xas.xa_index)		\
+> +			break;						\
+
+... and you can ditch this if the pages are pinned as find_subpage()
+will bug in this case.
+
+> +		__v.bv_page = page;					\
+> +		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
+> +		seg = PAGE_SIZE - offset;			\
+> +		__v.bv_offset = offset;				\
+> +		__v.bv_len = min(n, seg);			\
+> +		(void)(STEP);					\
+> +		n -= __v.bv_len;				\
+> +		skip += __v.bv_len;				\
+
+Do we want STEP to be called with PAGE_SIZE chunks, or if they have a
+THP, can we have it called with larger than a PAGE_SIZE chunk?
+
+> +#define iterate_all_kinds(i, n, v, I, B, K, M) {		\
+>  	if (likely(n)) {					\
+>  		size_t skip = i->iov_offset;			\
+>  		if (unlikely(i->type & ITER_BVEC)) {		\
+> @@ -86,6 +119,9 @@
+>  			struct kvec v;				\
+>  			iterate_kvec(i, n, v, kvec, skip, (K))	\
+>  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+> +		} else if (unlikely(i->type & ITER_MAPPING)) {	\
+> +			struct bio_vec v;			\
+> +			iterate_mapping(i, n, v, skip, (M));	\
+
+bio_vec?
+
+> -#define iterate_and_advance(i, n, v, I, B, K) {			\
+> +#define iterate_and_advance(i, n, v, I, B, K, M) {		\
+>  	if (unlikely(i->count < n))				\
+>  		n = i->count;					\
+>  	if (i->count) {						\
+> @@ -119,6 +155,9 @@
+>  			i->kvec = kvec;				\
+>  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+>  			skip += n;				\
+> +		} else if (unlikely(i->type & ITER_MAPPING)) {	\
+> +			struct bio_vec v;			\
+> +			iterate_mapping(i, n, v, skip, (M))	\
+
+again?
+
