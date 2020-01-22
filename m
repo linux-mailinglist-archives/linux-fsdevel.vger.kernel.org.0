@@ -2,100 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54CED144D56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 09:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A223B144E19
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 09:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbgAVIWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 03:22:00 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:51989 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725868AbgAVIWA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 03:22:00 -0500
-Received: from dread.disaster.area (pa49-181-218-253.pa.nsw.optusnet.com.au [49.181.218.253])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4087E82054C;
-        Wed, 22 Jan 2020 19:21:56 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iuBGt-0002mm-AC; Wed, 22 Jan 2020 19:21:55 +1100
-Date:   Wed, 22 Jan 2020 19:21:55 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        xfs <xfs@e29208.dscx.akamaiedge.net>,
-        Steve French <smfrench@gmail.com>, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [Lsf-pc] [LFS/MM TOPIC] fs reflink issues, fs online
- scrub/check, etc
-Message-ID: <20200122082155.GA9317@dread.disaster.area>
-References: <20160210191715.GB6339@birch.djwong.org>
- <20160210191848.GC6346@birch.djwong.org>
- <CAH2r5mtM2nCicTKGFAjYtOG92TKKQdTbZxaD-_-RsWYL=Tn2Nw@mail.gmail.com>
- <0089aff3-c4d3-214e-30d7-012abf70623a@gmx.com>
- <CAOQ4uxjd-YWe5uHqfSW9iSdw-hQyFCwo84cK8ebJVJSY_vda3Q@mail.gmail.com>
- <20200121161840.GA8236@magnolia>
- <20200121220112.GB14467@bombadil.infradead.org>
- <CAPcyv4iPX4fDZGFwCkJxMDc-+1DjOMVZYVqnE=XTZpis6ZLFww@mail.gmail.com>
+        id S1727141AbgAVI5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 03:57:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbgAVI5k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 03:57:40 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A58D2253D;
+        Wed, 22 Jan 2020 08:57:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579683460;
+        bh=BO71Ig/atLd53yrlotlahFJmi4U33jJcXrA6eU31LNI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=deLMlOvVGt6KXrxBOrsAoTZHWciDMV7Sz2wzzQJppb0jnvG7vHH+E0IzQD9Kbx22n
+         kgNN3WCX1AD0FMlNy7YxshX7m2I4nWnelN1/qT3vSyqhxNMKl9BOvQxghskC/9bBIK
+         MpW5chD0AJHbi+kSoOotLENcW3gOicEgOla/kSDk=
+Date:   Wed, 22 Jan 2020 09:57:37 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "T.Kohada" <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
+Cc:     Mori.Takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: exfat: remove fs_func struct.
+Message-ID: <20200122085737.GA2511011@kroah.com>
+References: <20200117062046.20491-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iPX4fDZGFwCkJxMDc-+1DjOMVZYVqnE=XTZpis6ZLFww@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=TU0PeEMO9XNyODJ+pEfdLw==:117 a=TU0PeEMO9XNyODJ+pEfdLw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=JfrnYn6hAAAA:8 a=7YfXLusrAAAA:8 a=7-415B0cAAAA:8 a=S4ei3vxw9mJ_NyWoTJ0A:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=SLz71HocmBbuEhFRYD3r:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200117062046.20491-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 21, 2020 at 04:47:27PM -0800, Dan Williams wrote:
-> On Tue, Jan 21, 2020 at 2:02 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Tue, Jan 21, 2020 at 08:18:40AM -0800, Darrick J. Wong wrote:
-> > > On Tue, Jan 21, 2020 at 09:35:22AM +0200, Amir Goldstein wrote:
-> > > > On Tue, Jan 21, 2020 at 3:19 AM Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
-> > > > >
-> > > > > Didn't see the original mail, so reply here.
-> > > >
-> > > > Heh! Original email was from 2016, but most of Darrick's wish list is
-> > > > still relevant in 2020 :)
-> > >
-> > > Grumble grumble stable behavior of clonerange/deduperange ioctls across
-> > > filesystems grumble grumble.
-> > >
-> > > > I for one would be very interested in getting an update on the
-> > > > progress of pagecache
-> > > > page sharing if there is anyone working on it.
-> > >
-> > > Me too.  I guess it's the 21st, I should really send in a proposal for
-> > > *this year's* LSFMMBPFLOLBBQ.
-> >
-> > I still have Strong Opinions on how pagecache page sharing should be done
-> > ... and half a dozen more important projects ahead of it in my queue.
-> > So I have no update on this.
+On Fri, Jan 17, 2020 at 03:20:46PM +0900, T.Kohada wrote:
+> Remove 'fs_func struct' and change indirect calls to direct calls.
 > 
-> We should plan to huddle on this especially if I don't get an RFC for
-> dax-reflink support out before the summit.
+> The following issues are described in exfat's TODO.
+> > Create helper function for exfat_set_entry_time () and
+> > exfat_set_entry_type () because it's sort of ugly to be calling the same functionn directly and other code calling through  the fs_func struc ponters ...
+> 
+> The fs_func struct was used for switching the helper functions of fat16/fat32/exfat.
+> Now, it has lost the role of switching, just making the code less readable.
+> 
+> Signed-off-by: T.Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 
-It would be a good idea to share your ideas about how you plan to
-solve this problem earlier rather than later so you don't waste time
-going down a path that is incompatible with what the filesystems
-need to/want to/can do.
+We need a "full" name here, not just an abbreviation, use what you would
+for a document.
 
-Cheers,
+Also the patch does not apply to the linux-next tree at all, so I can't
+take it.  Please rebase and resend.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+thanks,
+
+greg k-h
