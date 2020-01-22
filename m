@@ -2,172 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3DF7145B25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA96145B20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbgAVRwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 12:52:50 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:40401 "EHLO pegase1.c-s.fr"
+        id S1728792AbgAVRwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 12:52:51 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:50895 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbgAVRwu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:52:50 -0500
+        id S1725883AbgAVRwv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 12:52:51 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 482tKV6dfNz9vBdk;
-        Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 482tKW4Wzcz9vBf2;
+        Wed, 22 Jan 2020 18:52:47 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=EgAXh2JV; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=bbQ7ME9m; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id NrSstf2601YN; Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+        with ESMTP id 1eO3fMimFOm8; Wed, 22 Jan 2020 18:52:47 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 482tKV5Fq7z9vBf2;
-        Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 482tKW3TyWz9vBf1;
+        Wed, 22 Jan 2020 18:52:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579715566; bh=BFcMmG1gr6ZHjF96WJjeRbfRazxCfc8BsdIu1Gb0FaQ=;
-        h=From:Subject:To:Cc:Date:From;
-        b=EgAXh2JVdH1m4rMSYMLWOuTFsFapRVRquT4G0KSmacXFMtvAiZSQhAKhlLoOMGcKQ
-         OeUjFyYJdl/Bgobmxh/54lBo9S1Tl0oWUzvVH06axb1PXj3fnyvujIFHX86AFEgaVX
-         Qd+FLSTJKxRGI3RLTRHG+WlUUDXRQM6tzKBihnhE=
+        t=1579715567; bh=SDc6BztN7ZFU7ww6ttDdO56AmBNP91DmQBG7IpQjkDA=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=bbQ7ME9mTAiXv3DymC7DSzTQRkQ1GnxQ1BJNxyD/tFc3FzEyMdV53ZFAVpb922CM5
+         tDFds05A6Y//ChHTlTufVsQKLS4sMy7cFDqFJQd2+gpYDXpaenDb9Iczq2JXxuXhkR
+         BUgtzZ5LgQ0D66KMNfYRkdjayHwyAa+tB0WQPQeM=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A3478B811;
-        Wed, 22 Jan 2020 18:52:48 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 28DD78B810;
+        Wed, 22 Jan 2020 18:52:49 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gSUFGUjIatac; Wed, 22 Jan 2020 18:52:48 +0100 (CET)
+        with ESMTP id jWyDjOb5Alf3; Wed, 22 Jan 2020 18:52:49 +0100 (CET)
 Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E8EE78B812;
-        Wed, 22 Jan 2020 18:52:47 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CB7DB8B7FE;
+        Wed, 22 Jan 2020 18:52:48 +0100 (CET)
 Received: by localhost.localdomain (Postfix, from userid 0)
-        id A4622651E0; Wed, 22 Jan 2020 17:52:47 +0000 (UTC)
-Message-Id: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+        id A4115651E0; Wed, 22 Jan 2020 17:52:48 +0000 (UTC)
+Message-Id: <1e07c7de4ffdd9cda35d1ffe8258af75579d3e91.1579715466.git.christophe.leroy@c-s.fr>
+In-Reply-To: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 1/6] fs/readdir: Fix filldir() and filldir64() use of
- user_access_begin()
+Subject: [PATCH v2 2/6] powerpc/32s: Fix bad_kuap_fault()
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Date:   Wed, 22 Jan 2020 17:52:47 +0000 (UTC)
+Date:   Wed, 22 Jan 2020 17:52:48 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some architectures grand full access to userspace regardless of the
-address/len passed to user_access_begin(), but other architectures
-only grand access to the requested area.
+At the moment, bad_kuap_fault() reports a fault only if a bad access
+to userspace occurred while access to userspace was not granted.
 
-For exemple, on 32 bits powerpc (book3s/32), access is granted by
-segments of 256 Mbytes.
+But if a fault occurs for a write outside the allowed userspace
+segment(s) that have been unlocked, bad_kuap_fault() fails to
+detect it and the kernel loops forever in do_page_fault().
 
-Modify filldir() and filldir64() to request the real area they need
-to get access to, i.e. the area covering the parent dirent (if any)
-and the contiguous current dirent.
+Fix it by checking that the accessed address is within the allowed
+range.
 
-Fixes: 9f79b78ef744 ("Convert filldir[64]() from __put_user() to unsafe_put_user()")
+Fixes: a68c31fc01ef ("powerpc/32s: Implement Kernel Userspace Access Protection")
+Cc: stable@vger.kernel.org
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
-v2: have user_access_begin() cover both parent dirent (if any) and current dirent
+v2: added missing address parametre to bad_kuap_fault() in asm/kup.h
 ---
- fs/readdir.c | 50 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ arch/powerpc/include/asm/book3s/32/kup.h       | 9 +++++++--
+ arch/powerpc/include/asm/book3s/64/kup-radix.h | 3 ++-
+ arch/powerpc/include/asm/kup.h                 | 6 +++++-
+ arch/powerpc/include/asm/nohash/32/kup-8xx.h   | 3 ++-
+ arch/powerpc/mm/fault.c                        | 2 +-
+ 5 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/fs/readdir.c b/fs/readdir.c
-index d26d5ea4de7b..3f9b4488d9b7 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -214,7 +214,7 @@ struct getdents_callback {
- static int filldir(struct dir_context *ctx, const char *name, int namlen,
- 		   loff_t offset, u64 ino, unsigned int d_type)
- {
--	struct linux_dirent __user * dirent;
-+	struct linux_dirent __user * dirent, *dirent0;
- 	struct getdents_callback *buf =
- 		container_of(ctx, struct getdents_callback, ctx);
- 	unsigned long d_ino;
-@@ -232,19 +232,22 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
- 		buf->error = -EOVERFLOW;
- 		return -EOVERFLOW;
- 	}
--	dirent = buf->previous;
--	if (dirent && signal_pending(current))
-+	dirent0 = buf->previous;
-+	if (dirent0 && signal_pending(current))
- 		return -EINTR;
+diff --git a/arch/powerpc/include/asm/book3s/32/kup.h b/arch/powerpc/include/asm/book3s/32/kup.h
+index f9dc597b0b86..d88008c8eb85 100644
+--- a/arch/powerpc/include/asm/book3s/32/kup.h
++++ b/arch/powerpc/include/asm/book3s/32/kup.h
+@@ -131,12 +131,17 @@ static inline void prevent_user_access(void __user *to, const void __user *from,
+ 	kuap_update_sr(mfsrin(addr) | SR_KS, addr, end);	/* set Ks */
+ }
  
--	/*
--	 * Note! This range-checks 'previous' (which may be NULL).
--	 * The real range was checked in getdents
--	 */
--	if (!user_access_begin(dirent, sizeof(*dirent)))
--		goto efault;
--	if (dirent)
--		unsafe_put_user(offset, &dirent->d_off, efault_end);
- 	dirent = buf->current_dir;
-+	if (dirent0) {
-+		int sz = (void __user *)dirent + reclen -
-+			 (void __user *)dirent0;
-+
-+		if (!user_access_begin(dirent0, sz))
-+			goto efault;
-+		unsafe_put_user(offset, &dirent0->d_off, efault_end);
-+	} else {
-+		if (!user_access_begin(dirent, reclen))
-+			goto efault;
-+	}
- 	unsafe_put_user(d_ino, &dirent->d_ino, efault_end);
- 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
- 	unsafe_put_user(d_type, (char __user *) dirent + reclen - 1, efault_end);
-@@ -307,7 +310,7 @@ struct getdents_callback64 {
- static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 		     loff_t offset, u64 ino, unsigned int d_type)
+-static inline bool bad_kuap_fault(struct pt_regs *regs, bool is_write)
++static inline bool
++bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
  {
--	struct linux_dirent64 __user *dirent;
-+	struct linux_dirent64 __user *dirent, *dirent0;
- 	struct getdents_callback64 *buf =
- 		container_of(ctx, struct getdents_callback64, ctx);
- 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
-@@ -319,19 +322,22 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
--	dirent = buf->previous;
--	if (dirent && signal_pending(current))
-+	dirent0 = buf->previous;
-+	if (dirent0 && signal_pending(current))
- 		return -EINTR;
- 
--	/*
--	 * Note! This range-checks 'previous' (which may be NULL).
--	 * The real range was checked in getdents
--	 */
--	if (!user_access_begin(dirent, sizeof(*dirent)))
--		goto efault;
--	if (dirent)
--		unsafe_put_user(offset, &dirent->d_off, efault_end);
- 	dirent = buf->current_dir;
-+	if (dirent0) {
-+		int sz = (void __user *)dirent + reclen -
-+			 (void __user *)dirent0;
++	unsigned long begin = regs->kuap & 0xf0000000;
++	unsigned long end = regs->kuap << 28;
 +
-+		if (!user_access_begin(dirent0, sz))
-+			goto efault;
-+		unsafe_put_user(offset, &dirent0->d_off, efault_end);
-+	} else {
-+		if (!user_access_begin(dirent, reclen))
-+			goto efault;
-+	}
- 	unsafe_put_user(ino, &dirent->d_ino, efault_end);
- 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
- 	unsafe_put_user(d_type, &dirent->d_type, efault_end);
+ 	if (!is_write)
+ 		return false;
+ 
+-	return WARN(!regs->kuap, "Bug: write fault blocked by segment registers !");
++	return WARN(address < begin || address >= end,
++		    "Bug: write fault blocked by segment registers !");
+ }
+ 
+ #endif /* CONFIG_PPC_KUAP */
+diff --git a/arch/powerpc/include/asm/book3s/64/kup-radix.h b/arch/powerpc/include/asm/book3s/64/kup-radix.h
+index f254de956d6a..dbbd22cb80f5 100644
+--- a/arch/powerpc/include/asm/book3s/64/kup-radix.h
++++ b/arch/powerpc/include/asm/book3s/64/kup-radix.h
+@@ -95,7 +95,8 @@ static inline void prevent_user_access(void __user *to, const void __user *from,
+ 	set_kuap(AMR_KUAP_BLOCKED);
+ }
+ 
+-static inline bool bad_kuap_fault(struct pt_regs *regs, bool is_write)
++static inline bool
++bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
+ {
+ 	return WARN(mmu_has_feature(MMU_FTR_RADIX_KUAP) &&
+ 		    (regs->kuap & (is_write ? AMR_KUAP_BLOCK_WRITE : AMR_KUAP_BLOCK_READ)),
+diff --git a/arch/powerpc/include/asm/kup.h b/arch/powerpc/include/asm/kup.h
+index 5b5e39643a27..812e66f31934 100644
+--- a/arch/powerpc/include/asm/kup.h
++++ b/arch/powerpc/include/asm/kup.h
+@@ -45,7 +45,11 @@ static inline void allow_user_access(void __user *to, const void __user *from,
+ 				     unsigned long size) { }
+ static inline void prevent_user_access(void __user *to, const void __user *from,
+ 				       unsigned long size) { }
+-static inline bool bad_kuap_fault(struct pt_regs *regs, bool is_write) { return false; }
++static inline bool
++bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
++{
++	return false;
++}
+ #endif /* CONFIG_PPC_KUAP */
+ 
+ static inline void allow_read_from_user(const void __user *from, unsigned long size)
+diff --git a/arch/powerpc/include/asm/nohash/32/kup-8xx.h b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
+index 1006a427e99c..f2fea603b929 100644
+--- a/arch/powerpc/include/asm/nohash/32/kup-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/kup-8xx.h
+@@ -46,7 +46,8 @@ static inline void prevent_user_access(void __user *to, const void __user *from,
+ 	mtspr(SPRN_MD_AP, MD_APG_KUAP);
+ }
+ 
+-static inline bool bad_kuap_fault(struct pt_regs *regs, bool is_write)
++static inline bool
++bad_kuap_fault(struct pt_regs *regs, unsigned long address, bool is_write)
+ {
+ 	return WARN(!((regs->kuap ^ MD_APG_KUAP) & 0xf0000000),
+ 		    "Bug: fault blocked by AP register !");
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index b5047f9b5dec..1baeb045f7f4 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -233,7 +233,7 @@ static bool bad_kernel_fault(struct pt_regs *regs, unsigned long error_code,
+ 
+ 	// Read/write fault in a valid region (the exception table search passed
+ 	// above), but blocked by KUAP is bad, it can never succeed.
+-	if (bad_kuap_fault(regs, is_write))
++	if (bad_kuap_fault(regs, address, is_write))
+ 		return true;
+ 
+ 	// What's left? Kernel fault on user in well defined regions (extable
 -- 
 2.25.0
 
