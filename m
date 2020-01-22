@@ -2,260 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41092145E0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 22:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A70D9145E38
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 22:42:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbgAVV3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 16:29:55 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43808 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729431AbgAVV3y (ORCPT
+        id S1727893AbgAVVmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 16:42:35 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33596 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725924AbgAVVmf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 16:29:54 -0500
-Received: by mail-lf1-f67.google.com with SMTP id 9so708984lfq.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 13:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QtzDsuL2wxUZ5ywGO+m8auB4mvm7TddMdWO8k2uItsM=;
-        b=KbqShNWEjgiFyu/5p615XDnhjKT0jZHGFWQpOKnIJKJXmSWLcMLndJwYe8W2HBj6H0
-         sFS2xlDnSp0XL1KiHGn3m8Lum8rwkQjyq5MwiCxHxNRlo8b1OG7qwG4G9TnyW2m5LsSa
-         fFKpmjgQpyPe0OCJsMnh5d+hq7cbUTmwLfrETpTvCMbhZi9mgGgUb6qx5h6hm6B5+ZYn
-         vp6991kA33cRxkdb7IkPfjYCdbTz/D4btQ7Agf5tt0/kGsSDNhPH9U2foSYivHJ+xdt7
-         M2cUIrtb3K5GmWVE9CAm6LlgjZvSd8Errsk4aUhRiBWDQ31saOR7WC6O0Z6deGJw1OYN
-         r+1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QtzDsuL2wxUZ5ywGO+m8auB4mvm7TddMdWO8k2uItsM=;
-        b=XSCCt/eucFOZK3p1euwqVNNkG33gRi1wjcC7E0dcWq5oe3MwxDrBYEjB0DrgHpiYqw
-         2JZWOS+8BZT6zr/P3F/J8yZ7oQyXunkGOR8RplZ1vZIFVJiB/GjWI3hFZ3ABH38geU4X
-         ZXgRd9qco2x1EeauQvC3ypNlpZaGVvbMxb5mPWbVcMaHqFO9Xd4wbG3PcvEqjkRS55t0
-         /1y/fx0Y3ssUD/NrIkHJqz1oRjTYn1Y19yIxs4Ei+nmW9bAhnSoZP1IiZsO1oVMrwv2g
-         otHOXAFO6mlvLtbHj0syBLYeHm2PPKYOeNpUgnlVgkoHyhZYG8+N3jQacR8ow0Ihdu6T
-         2HkA==
-X-Gm-Message-State: APjAAAXAe2FXKNDRdph/PqrY9UelLz9SSeECoJsOej6OJvHl8926E6e+
-        NBSYYE24EFDtTcarjHLvbpkJ2seMV9dDgGKlFE/K
-X-Google-Smtp-Source: APXvYqy5NenDRP+GLKo9J8quNnfqfhyEzEl8NSpHCWF7mi5ljohn5db2MdvAsLqzUXcY1Lu1XrqhV/m/a9rdNNnHFD8=
-X-Received: by 2002:a19:7515:: with SMTP id y21mr2766879lfe.45.1579728591582;
- Wed, 22 Jan 2020 13:29:51 -0800 (PST)
+        Wed, 22 Jan 2020 16:42:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579729350;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9sq0QraWPDpkXsBf/Rma/gL22oexCpF9Izn7HjkCvoE=;
+        b=Nu8qszLTbEOgl/zsGpU/d32La/LFsij8iSx6K27EEpPyrQYFYnvv/XKQrdrVvpOWBPvD6i
+        IydPZ3WeeU30YmwTd6cEWBKEMsVQyhkIG1I7tfvcvPA6wMJv+cQjbk3FGofsNj2oIQX/Qs
+        JAV8H9xEJ6XxgsUESxHnaPf2pWIJDSY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-25-6Rm_4Rr4NsuN0Tp4M90w4g-1; Wed, 22 Jan 2020 16:42:26 -0500
+X-MC-Unique: 6Rm_4Rr4NsuN0Tp4M90w4g-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3694918C8C04;
+        Wed, 22 Jan 2020 21:42:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EE9F1001B11;
+        Wed, 22 Jan 2020 21:42:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200122193306.GB4675@bombadil.infradead.org>
+References: <20200122193306.GB4675@bombadil.infradead.org> <3577430.1579705075@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
-In-Reply-To: <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 22 Jan 2020 16:29:39 -0500
-Message-ID: <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
- outside init_user_ns
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3695538.1579729342.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 22 Jan 2020 21:42:22 +0000
+Message-ID: <3695539.1579729342@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> process in a non-init user namespace the capability to set audit
-> container identifiers.
->
-> Provide /proc/$PID/audit_capcontid interface to capcontid.
-> Valid values are: 1==enabled, 0==disabled
+Matthew Wilcox <willy@infradead.org> wrote:
 
-It would be good to be more explicit about "enabled" and "disabled" in
-the commit description.  For example, which setting allows the target
-task to set audit container IDs of it's children processes?
+> =
 
-> Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
-> opid= capcontid= old-capcontid=
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/audit.h      | 14 ++++++++++++
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
->  4 files changed, 105 insertions(+)
+> > +	rcu_read_lock();						\
+> > +	for (page =3D xas_load(&xas); page; page =3D xas_next(&xas)) {	\
+> > +		if (xas_retry(&xas, page))				\
+> > +			continue;					\
+> > +		if (xa_is_value(page))					\
+> > +			break;						\
+> =
 
-...
+> Do you also want to check for !page?  That would be a bug in the caller.
 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 26091800180c..283ef8e006e7 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1360,6 +1360,59 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
->         .write          = proc_contid_write,
->         .llseek         = generic_file_llseek,
->  };
-> +
-> +static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
-> +                                 size_t count, loff_t *ppos)
-> +{
-> +       struct inode *inode = file_inode(file);
-> +       struct task_struct *task = get_proc_task(inode);
-> +       ssize_t length;
-> +       char tmpbuf[TMPBUFLEN];
-> +
-> +       if (!task)
-> +               return -ESRCH;
-> +       /* if we don't have caps, reject */
-> +       if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-> +               return -EPERM;
-> +       length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(task));
-> +       put_task_struct(task);
-> +       return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-> +}
-> +
-> +static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
-> +                                  size_t count, loff_t *ppos)
-> +{
-> +       struct inode *inode = file_inode(file);
-> +       u32 capcontid;
-> +       int rv;
-> +       struct task_struct *task = get_proc_task(inode);
-> +
-> +       if (!task)
-> +               return -ESRCH;
-> +       if (*ppos != 0) {
-> +               /* No partial writes. */
-> +               put_task_struct(task);
-> +               return -EINVAL;
-> +       }
-> +
-> +       rv = kstrtou32_from_user(buf, count, 10, &capcontid);
-> +       if (rv < 0) {
-> +               put_task_struct(task);
-> +               return rv;
-> +       }
-> +
-> +       rv = audit_set_capcontid(task, capcontid);
-> +       put_task_struct(task);
-> +       if (rv < 0)
-> +               return rv;
-> +       return count;
-> +}
-> +
-> +static const struct file_operations proc_capcontid_operations = {
-> +       .read           = proc_capcontid_read,
-> +       .write          = proc_capcontid_write,
-> +       .llseek         = generic_file_llseek,
-> +};
->  #endif
->
->  #ifdef CONFIG_FAULT_INJECTION
-> @@ -3121,6 +3174,7 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
->         REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
->         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
->         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-> +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
->  #endif
->  #ifdef CONFIG_FAULT_INJECTION
->         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-> @@ -3522,6 +3576,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
->         REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
->         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
->         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-> +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
->  #endif
->  #ifdef CONFIG_FAULT_INJECTION
->         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 28b9c7cd86a6..62c453306c2a 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -116,6 +116,7 @@ struct audit_task_info {
->         kuid_t                  loginuid;
->         unsigned int            sessionid;
->         struct audit_contobj    *cont;
-> +       u32                     capcontid;
+Well, I stated that one of the preconditions for using this was that the
+caller made sure that segment of the mapping was fully populated, so the c=
+heck
+ought to be unnecessary.
 
-Where is the code change that actually uses this to enforce the
-described policy on setting an audit container ID?
+> > +		if (PageCompound(page))					\
+> > +			break;						\
+> =
 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 2844d78cd7af..01251e6dcec0 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -73,6 +73,7 @@
->  #define AUDIT_GET_FEATURE      1019    /* Get which features are enabled */
->  #define AUDIT_CONTAINER_OP     1020    /* Define the container id and info */
->  #define AUDIT_SIGNAL_INFO2     1021    /* Get info auditd signal sender */
-> +#define AUDIT_SET_CAPCONTID    1022    /* Set cap_contid of a task */
->
->  #define AUDIT_FIRST_USER_MSG   1100    /* Userspace messages mostly uninteresting to kernel */
->  #define AUDIT_USER_AVC         1107    /* We filter this differently */
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 1287f0b63757..1c22dd084ae8 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
->         return false;
->  }
->
-> +int audit_set_capcontid(struct task_struct *task, u32 enable)
-> +{
-> +       u32 oldcapcontid;
-> +       int rc = 0;
-> +       struct audit_buffer *ab;
-> +
-> +       if (!task->audit)
-> +               return -ENOPROTOOPT;
-> +       oldcapcontid = audit_get_capcontid(task);
-> +       /* if task is not descendant, block */
-> +       if (task == current)
-> +               rc = -EBADSLT;
-> +       else if (!task_is_descendant(current, task))
-> +               rc = -EXDEV;
+> It's perfectly legal to have compound pages in the page cache.  Call
+> find_subpage(page, xas.xa_index) unconditionally.
 
-See my previous comments about error code sanity.
+Yeah, I'm just not sure how to deal with them.
 
-> +       else if (current_user_ns() == &init_user_ns) {
-> +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-> +                       rc = -EPERM;
+> > +		if (page_to_pgoff(page) !=3D xas.xa_index)		\
+> > +			break;						\
+> =
 
-I think we just want to use ns_capable() in the context of the current
-userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
+> ... and you can ditch this if the pages are pinned as find_subpage()
+> will bug in this case.
 
-  if (current_user_ns() != &init_user_ns) {
-    if (!ns_capable(CAP_AUDIT_CONTROL) || !audit_get_capcontid())
-      rc = -EPERM;
-  } else if (!capable(CAP_AUDIT_CONTROL))
-    rc = -EPERM;
+Ok.
 
-> +       }
-> +       if (!rc)
-> +               task->audit->capcontid = enable;
-> +
-> +       if (!audit_enabled)
-> +               return rc;
-> +
-> +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
-> +       if (!ab)
-> +               return rc;
-> +
-> +       audit_log_format(ab,
-> +                        "opid=%d capcontid=%u old-capcontid=%u",
-> +                        task_tgid_nr(task), enable, oldcapcontid);
-> +       audit_log_end(ab);
+> > +		__v.bv_page =3D page;					\
+> > +		offset =3D (i->mapping_start + skip) & ~PAGE_MASK;	\
+> > +		seg =3D PAGE_SIZE - offset;			\
+> > +		__v.bv_offset =3D offset;				\
+> > +		__v.bv_len =3D min(n, seg);			\
+> > +		(void)(STEP);					\
+> > +		n -=3D __v.bv_len;				\
+> > +		skip +=3D __v.bv_len;				\
+> =
 
-My prior comments about recording the success/failure, or not emitting
-the record on failure, seem relevant here too.
+> Do we want STEP to be called with PAGE_SIZE chunks, or if they have a
+> THP, can we have it called with larger than a PAGE_SIZE chunk?
 
-> +       return rc;
-> +}
+It would mean that the STEP function would have to handle multiple pages, =
+some
+part(s) of which might need to be ignored and wouldn't be able to simply c=
+all
+memcpy_from/to_page().
 
---
-paul moore
-www.paul-moore.com
+> > +#define iterate_all_kinds(i, n, v, I, B, K, M) {		\
+> >  	if (likely(n)) {					\
+> >  		size_t skip =3D i->iov_offset;			\
+> >  		if (unlikely(i->type & ITER_BVEC)) {		\
+> > @@ -86,6 +119,9 @@
+> >  			struct kvec v;				\
+> >  			iterate_kvec(i, n, v, kvec, skip, (K))	\
+> >  		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+> > +		} else if (unlikely(i->type & ITER_MAPPING)) {	\
+> > +			struct bio_vec v;			\
+> > +			iterate_mapping(i, n, v, skip, (M));	\
+> =
+
+> bio_vec?
+
+Yes - as a strictly temporary thing.  I need a struct contains a page poin=
+ter,
+a start and a length, and constructing a struct bio_vec on the fly here al=
+lows
+the caller to potentially share code.  For example:
+
+    size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_it=
+er *i)
+    {
+	char *to =3D addr;
+	if (unlikely(iov_iter_is_pipe(i))) {
+		WARN_ON(1);
+		return 0;
+	}
+	iterate_and_advance(i, bytes, v,
+		__copy_from_user_inatomic_nocache((to +=3D v.iov_len) - v.iov_len,
+					 v.iov_base, v.iov_len),
+		memcpy_from_page((to +=3D v.bv_len) - v.bv_len, v.bv_page,
+				 v.bv_offset, v.bv_len),
+ITER_BVEC ^^^^
+		memcpy((to +=3D v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+		memcpy_from_page((to +=3D v.bv_len) - v.bv_len, v.bv_page,
+				 v.bv_offset, v.bv_len)
+ITER_MAPPING ^^^^
+	)
+
+	return bytes;
+    }
+
+David
+
