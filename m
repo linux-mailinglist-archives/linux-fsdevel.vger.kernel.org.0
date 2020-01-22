@@ -2,101 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 426E9145B32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D41F0145B8E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 19:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbgAVRyr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 12:54:47 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:48676 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbgAVRyr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:54:47 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 482tMm3lzRz9vBf2;
-        Wed, 22 Jan 2020 18:54:44 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=OcJlBYzu; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id g55D7HPV3Pwg; Wed, 22 Jan 2020 18:54:44 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 482tMm2SL9z9vBf1;
-        Wed, 22 Jan 2020 18:54:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1579715684; bh=nMZdRf5UsRj5KxQzwPP0NxCJ+9fa/JNI7E3shGKwtEs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OcJlBYzuayKTBlwDBdHG6QFeB0VoE/H+bzD9dU4M5bNP7OWUZKU4CVf0g6xmdG17n
-         aDVEV8uPTBOJLj3L7ro5dOR/K2G0KeM7H1aC/PuOC8xLvG2mvLfW1Nobjbnwkl2FQU
-         I6xJXWlceBU7CM1zDVJfem12s6jlYfllbGHsPocg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 029598B810;
-        Wed, 22 Jan 2020 18:54:46 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id fO2Q8JMqvBdc; Wed, 22 Jan 2020 18:54:45 +0100 (CET)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 565C88B7FE;
-        Wed, 22 Jan 2020 18:54:45 +0100 (CET)
-Subject: Re: [PATCH v1 1/6] fs/readdir: Fix filldir() and filldir64() use of
- user_access_begin()
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <a02d3426f93f7eb04960a4d9140902d278cab0bb.1579697910.git.christophe.leroy@c-s.fr>
- <CAHk-=whTzEu5=sMEVLzuf7uOnoCyUs8wbfw87njes9FyE=mj1w@mail.gmail.com>
- <20200122174129.GH23230@ZenIV.linux.org.uk>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e6423f62-c29a-1a67-fb75-1330f5ef1348@c-s.fr>
-Date:   Wed, 22 Jan 2020 18:54:45 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726204AbgAVS1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 13:27:23 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5964 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbgAVS1X (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 13:27:23 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e2893d10001>; Wed, 22 Jan 2020 10:26:25 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 22 Jan 2020 10:27:09 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 22 Jan 2020 10:27:09 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 22 Jan
+ 2020 18:27:09 +0000
+Subject: Re: [Lsf-pc][LSF/MM/BPF TOPIC] Generic page write protection
+To:     <jglisse@redhat.com>, <lsf-pc@lists.linux-foundation.org>
+CC:     Andrea Arcangeli <aarcange@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-mm@kvack.org>, lsf-pc <lsf-pc@lists.linux-foundation.org>
+References: <20200122023222.75347-1-jglisse@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <174cd3a0-43e5-d8bd-5cc3-d562f5727283@nvidia.com>
+Date:   Wed, 22 Jan 2020 10:27:08 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200122174129.GH23230@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200122023222.75347-1-jglisse@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579717585; bh=zM1GZj8JqKU2+u42J7V4E+rUU+HYAAUatSe9FzyeLvo=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oKVuFui6iUjT/PoUawkl8P6jpwCGz3cOGcMmtlNAW93lnyegrDlC2dXTN+YzAmJih
+         dkOvkbW/KIykbkayZViIbe88ZvDAJ1A8VghOOEubR4K2ays+2YFnKzerEPeSVUutQX
+         hl5VJzFOAIbbyYJr2rylGxVQeQwCYhO7yWJS/4XfujGQ/8WKKCY+dcZgR13a4QneZA
+         iE1dzJtE11e7sd7C7MLxusF4V7Wo1ATcM6milQiEld3qrEV3QlDKPzKDHRqtDrdbta
+         o5Z1SswkBaKNoMw96ohNLDuadmEF4FwbKXBq21nCz9CAxKmHX44dIBN2ocNrVgwGwu
+         /WTJ88VrIMZfQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Adding: lsf-pc
 
+On 1/21/20 6:32 PM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+>=20
+> Provide a generic way to write protect page (=C3=A0 la KSM) to enable new=
+ mm
+> optimization:
+>     - KSM (kernel share memory) to deduplicate pages (for file
+>       back pages too not only anonymous memory like today)
+>     - page duplication NUMA (read only duplication) in multiple
+>       different physical page. For instance share library code
+>       having a copy on each NUMA node. Or in case like GPU/FPGA
+>       duplicating memory read only inside the local device memory.
+>     ...
+>=20
+> Note that this write protection is intend to be broken at anytime in
+> reasonable time (like KSM today) so that we never block more than
+> necessary anything that need to write to the page.
+>=20
+>=20
+> The goal is to provide a mechanism that work for both anonymous and
+> file back memory. For this we need to a pointer inside struct page.
+> For anonymous memory KSM uses the anon_vma field which correspond
+> to mapping field for file back pages.
+>=20
+> So to allow generic write protection for file back pages we need to
+> avoid relying on struct page mapping field in the various kernel code
+> path that do use it today.
+>=20
+> The page->mapping fields is use in 5 different ways:
+>  [1]- Functions operating on file, we can get the mapping from the file
+>       (issue here is that we might need to pass the file down the call-
+>       stack)
+>=20
+>  [2]- Core/arch mm functions, those do not care about the file (if they
+>       do then it means they are vma related and we can get the mapping
+>       from the vma). Those functions only want to be able to walk all
+>       the pte point to the page (for instance memory compaction, memory
+>       reclaim, ...). We can provide the exact same functionality for
+>       write protected pages (like KSM does today).
+>=20
+>  [3]- Block layer when I/O fails. This depends on fs, for instance for
+>       fs which uses buffer_head we can update buffer_head to store the
+>       mapping instead of the block_device as we can get the block_device
+>       from the mapping but not the mapping from the block_device.
+>=20
+>       So solving this is mostly filesystem specific but i have not seen
+>       any fs that could not be updated properly so that block layer can
+>       report I/O failures without relying on page->mapping
+>=20
+>  [4]- Debugging (mostly procfs/sysfs files to dump memory states). Those
+>       do not need the mapping per say, we just need to report page states
+>       (and thus write protection information if page is write protected).
+>=20
+>  [5]- GUP (get user page) if something calls GUP in write mode then we
+>       need to break write protection (like KSM today). GUPed page should
+>       not be write protected as we do not know what the GUPers is doing
+>       with the page.
+>=20
+>=20
+> Most of the patchset deals with [1], [2] and [3] ([4] and [5] are mostly
+> trivial).
+>=20
+> For [1] we only need to pass down the mapping to all fs and vfs callback
+> functions (this is mostly achieve with coccinelle). Roughly speaking the
+> patches are generated with following pseudo code:
+>=20
+> add_mapping_parameter(func)
+> {
+>     function_add_parameter(func, mapping);
+>=20
+>     for_each_function_calling (caller, func) {
+>         calling_add_parameter(caller, func, mapping);
+>=20
+>         if (function_parameters_contains(caller, mapping|file))
+>             continue;
+>=20
+>         add_mapping_parameter(caller);
+>     }
+> }
+>=20
+> passdown_mapping()
+> {
+>     for_each_function_in_fs (func, fs_functions) {
+>         if (!function_body_contains(func, page->mapping))
+>             continue;
+>=20
+>         if (function_parameters_contains(func, mapping|file))
+>             continue;
+>=20
+>         add_mapping_parameter(func);
+>     }
+> }
+>=20
+> For [2] KSM is generalized and extended so that both anonymous and file
+> back pages can be handled by a common write protected page case.
+>=20
+> For [3] it depends on the filesystem (fs which uses buffer_head are
+> easily handled by storing mapping into the buffer_head struct).
+>=20
+>=20
+> To avoid any regression risks the page->mapping field is left intact as
+> today for non write protect pages. This means that if you do not use the
+> page write protection mechanism then it can not regress. This is achieve
+> by using an helper function that take the mapping from the context
+> (current function parameter, see above on how function are updated) and
+> the struct page. If the page is not write protected then it uses the
+> mapping from the struct page (just like today). The only difference
+> between before and after the patchset is that all fs functions that do
+> need the mapping for a page now also do get it as a parameter but only
+> use the parameter mapping pointer if the page is write protected.
+>=20
+> Note also that i do not believe that once confidence is high that we
+> always passdown the correct mapping down each callstack, it does not
+> mean we will be able to get rid of the struct page mapping field.
+>=20
+> I posted patchset before [*1] and i intend to post an updated patchset
+> before LSF/MM/BPF. I also talked about this at LSF/MM 2018. I still
+> believe this will a topic that warrent a discussion with FS/MM and
+> block device folks.
+>=20
+>=20
+> [*1] https://lwn.net/Articles/751050/
+>      https://cgit.freedesktop.org/~glisse/linux/log/?h=3Dgeneric-write-pr=
+otection-rfc
+> [*2] https://lwn.net/Articles/752564/
+>=20
+>=20
+> To: lsf-pc@lists.linux-foundation.org
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-block@vger.kernel.org
+> Cc: linux-mm@kvack.org
+>=20
+>=20
 
-Le 22/01/2020 à 18:41, Al Viro a écrit :
-> On Wed, Jan 22, 2020 at 08:13:12AM -0800, Linus Torvalds wrote:
->> On Wed, Jan 22, 2020 at 5:00 AM Christophe Leroy
->> <christophe.leroy@c-s.fr> wrote:
->>>
->>> Modify filldir() and filldir64() to request the real area they need
->>> to get access to.
->>
->> Not like this.
->>
->> This makes the situation for architectures like x86 much worse, since
->> you now use "put_user()" for the previous dirent filling. Which does
->> that expensive user access setup/teardown twice again.
->>
->> So either you need to cover both the dirent's with one call, or you
->> just need to cover the whole (original) user buffer passed in. But not
->> this unholy mixing of both unsafe_put_user() and regular put_user().
-> 
-> I would suggest simply covering the range from dirent->d_off to
-> buf->current_dir->d_name[namelen]; they are going to be close to
-> each other and we need those addresses anyway...
-> 
-
-In v2, I'm covering from the beginning of parent dirent to the end of 
-current dirent.
-
-Christophe
+thanks,
+--=20
+John Hubbard
+NVIDIA
