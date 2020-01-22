@@ -2,178 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 797A6145B1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3DF7145B25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:53:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbgAVRtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 12:49:14 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:45596 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgAVRtO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:49:14 -0500
-Received: by mail-il1-f196.google.com with SMTP id p8so49379iln.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 09:49:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ax0jdzS3yv65T0/5cDvrLsbUmZQIJbN7ZtKGhGW0j6A=;
-        b=GlcKuzS9fgzaII5dhRNL+C0pt5mdA3f0fPdlP+J0ieR1YB2uRzrMmyk9sGqpmwsnBI
-         jZbtO+wtpAMXsOdqpzSbjsyV/EbemzSqPHNMXtQhfHHRnJUV4iXNv5545Jm8PNRKj8OL
-         5CqbBpCivWgOdetqZOhRG81sj5zIVxFHJBntTNIJrPzeWgpbwHYM0bP0eet/+wyhTHRL
-         jHWPnKwmlf62fqbfuNULnXhC8u16njiSV8+bxFvUXuxfijTEFclsUslKbqTxV4jqoV+G
-         3iJW+I3oCkT35DZNj7/g+84JPBay3TAROO8Hmu8jE6kHfw1Foj25LFD47xLfy0hOsIvw
-         csXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ax0jdzS3yv65T0/5cDvrLsbUmZQIJbN7ZtKGhGW0j6A=;
-        b=Mv8opKmFedwE6A55ZpiBmm7ds+IJto0T0Ln6ObEOcrSYU3XZSLvdTcLUtyiIPm1t0s
-         BSY3xv2opbD9D+MC9dg852cUQLxeY8YZZ1HkIyZO4r2Aid28phyfrQ6yXBDZksrK2SIp
-         iNDxH8+FrOaPtSWdhHyA4vtEmIcJ20euSIaEdS3lKimSrNjc6Hv1ca2iAzK9R7dNCCIT
-         tqFdS1sftgNY0ZRlGkGpPFB8vs6axJLcMfZ0x26QFgRUbwDPfdTxjouT0eG3tnbCbLcV
-         njXrOEkWOmckRDwBJ2vQNGv8nqQCIY1XI7JZ+m5GybJFYbiqD6ayIP79WxFVg4ysnOo1
-         vtUw==
-X-Gm-Message-State: APjAAAXRtfzyDywY4ItTWKGmDqmgoM+G43+81nOt3+fiIrqRvDSI2BKM
-        tcPRDtxjiO2H8WM3dFWIfc5RaQ==
-X-Google-Smtp-Source: APXvYqw9U4ggrZoHMOpQMj19wQXi/wH22fXuerlFlxpyhATQGhw0kJo/6SQDBWdmanESvrHTITjMkA==
-X-Received: by 2002:a92:d151:: with SMTP id t17mr9221313ilg.175.1579715353190;
-        Wed, 22 Jan 2020 09:49:13 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id x10sm11006698ioh.11.2020.01.22.09.49.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2020 09:49:12 -0800 (PST)
-Subject: Re: [LSF/MM/BPF TOPIC] Do not pin pages for various direct-io scheme
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Benjamin LaHaise <bcrl@kvack.org>
-References: <20200122023100.75226-1-jglisse@redhat.com>
- <ba250f19-cc51-f1dc-3236-58be1f291db3@kernel.dk>
- <20200122045723.GC76712@redhat.com> <20200122115926.GW29276@dhcp22.suse.cz>
- <015647b0-360c-c9ac-ac20-405ae0ec4512@kernel.dk>
- <20200122165427.GA6009@redhat.com>
- <66027259-81c3-0bc4-a70b-74069e746058@kernel.dk>
- <20200122172842.GC6009@redhat.com>
- <00864312-13cc-daac-36e8-5f3f5b6dbeb8@kernel.dk>
- <20200122174059.GA7033@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0976dc63-dcb8-815b-7b2a-a0a5313f71ef@kernel.dk>
-Date:   Wed, 22 Jan 2020 10:49:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200122174059.GA7033@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726968AbgAVRwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 12:52:50 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:40401 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbgAVRwu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 12:52:50 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 482tKV6dfNz9vBdk;
+        Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=EgAXh2JV; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id NrSstf2601YN; Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 482tKV5Fq7z9vBf2;
+        Wed, 22 Jan 2020 18:52:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1579715566; bh=BFcMmG1gr6ZHjF96WJjeRbfRazxCfc8BsdIu1Gb0FaQ=;
+        h=From:Subject:To:Cc:Date:From;
+        b=EgAXh2JVdH1m4rMSYMLWOuTFsFapRVRquT4G0KSmacXFMtvAiZSQhAKhlLoOMGcKQ
+         OeUjFyYJdl/Bgobmxh/54lBo9S1Tl0oWUzvVH06axb1PXj3fnyvujIFHX86AFEgaVX
+         Qd+FLSTJKxRGI3RLTRHG+WlUUDXRQM6tzKBihnhE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A3478B811;
+        Wed, 22 Jan 2020 18:52:48 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id gSUFGUjIatac; Wed, 22 Jan 2020 18:52:48 +0100 (CET)
+Received: from po14934vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E8EE78B812;
+        Wed, 22 Jan 2020 18:52:47 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id A4622651E0; Wed, 22 Jan 2020 17:52:47 +0000 (UTC)
+Message-Id: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/6] fs/readdir: Fix filldir() and filldir64() use of
+ user_access_begin()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 22 Jan 2020 17:52:47 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/22/20 10:40 AM, Jerome Glisse wrote:
-> On Wed, Jan 22, 2020 at 10:38:56AM -0700, Jens Axboe wrote:
->> On 1/22/20 10:28 AM, Jerome Glisse wrote:
->>> On Wed, Jan 22, 2020 at 10:04:44AM -0700, Jens Axboe wrote:
->>>> On 1/22/20 9:54 AM, Jerome Glisse wrote:
->>>>> On Wed, Jan 22, 2020 at 08:12:51AM -0700, Jens Axboe wrote:
->>>>>> On 1/22/20 4:59 AM, Michal Hocko wrote:
->>>>>>> On Tue 21-01-20 20:57:23, Jerome Glisse wrote:
->>>>>>>> We can also discuss what kind of knobs we want to expose so that
->>>>>>>> people can decide to choose the tradeof themself (ie from i want low
->>>>>>>> latency io-uring and i don't care wether mm can not do its business; to
->>>>>>>> i want mm to never be impeded in its business and i accept the extra
->>>>>>>> latency burst i might face in io operations).
->>>>>>>
->>>>>>> I do not think it is a good idea to make this configurable. How can
->>>>>>> people sensibly choose between the two without deep understanding of
->>>>>>> internals?
->>>>>>
->>>>>> Fully agree, we can't just punt this to a knob and call it good, that's
->>>>>> a typical fallacy of core changes. And there is only one mode for
->>>>>> io_uring, and that's consistent low latency. If this change introduces
->>>>>> weird reclaim, compaction or migration latencies, then that's a
->>>>>> non-starter as far as I'm concerned.
->>>>>>
->>>>>> And what do those two settings even mean? I don't even know, and a user
->>>>>> sure as hell doesn't either.
->>>>>>
->>>>>> io_uring pins two types of pages - registered buffers, these are used
->>>>>> for actual IO, and the rings themselves. The rings are not used for IO,
->>>>>> just used to communicate between the application and the kernel.
->>>>>
->>>>> So, do we still want to solve file back pages write back if page in
->>>>> ubuffer are from a file ?
->>>>
->>>> That's not currently a concern for io_uring, as it disallows file backed
->>>> pages for the IO buffers that are being registered.
->>>>
->>>>> Also we can introduce a flag when registering buffer that allows to
->>>>> register buffer without pining and thus avoid the RLIMIT_MEMLOCK at
->>>>> the cost of possible latency spike. Then user registering the buffer
->>>>> knows what he gets.
->>>>
->>>> That may be fine for others users, but I don't think it'll apply
->>>> to io_uring. I can't see anyone selecting that flag, unless you're
->>>> doing something funky where you're registering a substantial amount
->>>> of the system memory for IO buffers. And I don't think that's going
->>>> to be a super valid use case...
->>>
->>> Given dataset are getting bigger and bigger i would assume that we
->>> will have people who want to use io-uring with large buffer.
->>>
->>>>
->>>>> Maybe it would be good to test, it might stay in the noise, then it
->>>>> might be a good thing to do. Also they are strategy to avoid latency
->>>>> spike for instance we can block/force skip mm invalidation if buffer
->>>>> has pending/running io in the ring ie only have buffer invalidation
->>>>> happens when there is no pending/running submission entry.
->>>>
->>>> Would that really work? The buffer could very well be idle right when
->>>> you check, but wanting to do IO the instant you decide you can do
->>>> background work on it. Additionally, that would require accounting
->>>> on when the buffers are inflight, which is exactly the kind of
->>>> overhead we're trying to avoid to begin with.
->>>>
->>>>> We can also pick what kind of invalidation we allow (compaction,
->>>>> migration, ...) and thus limit the scope and likelyhood of
->>>>> invalidation.
->>>>
->>>> I think it'd be useful to try and understand the use case first.
->>>> If we're pinning a small percentage of the system memory, do we
->>>> really care at all? Isn't it completely fine to just ignore?
->>>
->>> My main motivation is migration in NUMA system, if the process that
->>> did register buffer get migrated to a different node then it might
->>> actualy end up with bad performance because its io buffer are still
->>> on hold node. I am not sure we want to tell application developer to
->>> constantly monitor which node they are on and to re-register buffer
->>> after process migration to allow for memory migration.
->>
->> If the process truly cares, would it not have pinned itself to that
->> node?
-> 
-> Not necesarily, programmer can not thing of everything and also process
+Some architectures grand full access to userspace regardless of the
+address/len passed to user_access_begin(), but other architectures
+only grand access to the requested area.
 
-Node placement is generally the _first_ think you think of, though. It's
-not like it's some esoteric thing that application developers don't know
-anything about. Particularly if you're doing intensive IO, which you
-probably are if you register buffers for use with io_uring. That ties to
-a hardware device of some sort, or multiple ones. You would have placed
-you memory local to that device as well.
+For exemple, on 32 bits powerpc (book3s/32), access is granted by
+segments of 256 Mbytes.
 
-> pinning defeat load balancing. Moreover we now have to thing about deep
-> memory topology ie by the time you register the buffer the page backing
-> it might be from slower memory and then all your io and CPU access will
-> be stuck on using that.
+Modify filldir() and filldir64() to request the real area they need
+to get access to, i.e. the area covering the parent dirent (if any)
+and the contiguous current dirent.
 
-To me, this sounds like some sort of event the application will want to
-know about. And take appropriate measures.
+Fixes: 9f79b78ef744 ("Convert filldir[64]() from __put_user() to unsafe_put_user()")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+v2: have user_access_begin() cover both parent dirent (if any) and current dirent
+---
+ fs/readdir.c | 50 ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
 
+diff --git a/fs/readdir.c b/fs/readdir.c
+index d26d5ea4de7b..3f9b4488d9b7 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -214,7 +214,7 @@ struct getdents_callback {
+ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 		   loff_t offset, u64 ino, unsigned int d_type)
+ {
+-	struct linux_dirent __user * dirent;
++	struct linux_dirent __user * dirent, *dirent0;
+ 	struct getdents_callback *buf =
+ 		container_of(ctx, struct getdents_callback, ctx);
+ 	unsigned long d_ino;
+@@ -232,19 +232,22 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+ 		buf->error = -EOVERFLOW;
+ 		return -EOVERFLOW;
+ 	}
+-	dirent = buf->previous;
+-	if (dirent && signal_pending(current))
++	dirent0 = buf->previous;
++	if (dirent0 && signal_pending(current))
+ 		return -EINTR;
+ 
+-	/*
+-	 * Note! This range-checks 'previous' (which may be NULL).
+-	 * The real range was checked in getdents
+-	 */
+-	if (!user_access_begin(dirent, sizeof(*dirent)))
+-		goto efault;
+-	if (dirent)
+-		unsafe_put_user(offset, &dirent->d_off, efault_end);
+ 	dirent = buf->current_dir;
++	if (dirent0) {
++		int sz = (void __user *)dirent + reclen -
++			 (void __user *)dirent0;
++
++		if (!user_access_begin(dirent0, sz))
++			goto efault;
++		unsafe_put_user(offset, &dirent0->d_off, efault_end);
++	} else {
++		if (!user_access_begin(dirent, reclen))
++			goto efault;
++	}
+ 	unsafe_put_user(d_ino, &dirent->d_ino, efault_end);
+ 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+ 	unsafe_put_user(d_type, (char __user *) dirent + reclen - 1, efault_end);
+@@ -307,7 +310,7 @@ struct getdents_callback64 {
+ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 		     loff_t offset, u64 ino, unsigned int d_type)
+ {
+-	struct linux_dirent64 __user *dirent;
++	struct linux_dirent64 __user *dirent, *dirent0;
+ 	struct getdents_callback64 *buf =
+ 		container_of(ctx, struct getdents_callback64, ctx);
+ 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+@@ -319,19 +322,22 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	buf->error = -EINVAL;	/* only used if we fail.. */
+ 	if (reclen > buf->count)
+ 		return -EINVAL;
+-	dirent = buf->previous;
+-	if (dirent && signal_pending(current))
++	dirent0 = buf->previous;
++	if (dirent0 && signal_pending(current))
+ 		return -EINTR;
+ 
+-	/*
+-	 * Note! This range-checks 'previous' (which may be NULL).
+-	 * The real range was checked in getdents
+-	 */
+-	if (!user_access_begin(dirent, sizeof(*dirent)))
+-		goto efault;
+-	if (dirent)
+-		unsafe_put_user(offset, &dirent->d_off, efault_end);
+ 	dirent = buf->current_dir;
++	if (dirent0) {
++		int sz = (void __user *)dirent + reclen -
++			 (void __user *)dirent0;
++
++		if (!user_access_begin(dirent0, sz))
++			goto efault;
++		unsafe_put_user(offset, &dirent0->d_off, efault_end);
++	} else {
++		if (!user_access_begin(dirent, reclen))
++			goto efault;
++	}
+ 	unsafe_put_user(ino, &dirent->d_ino, efault_end);
+ 	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+ 	unsafe_put_user(d_type, &dirent->d_type, efault_end);
 -- 
-Jens Axboe
+2.25.0
 
