@@ -2,212 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D71145A14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 17:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92533145A67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 17:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbgAVQmv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 11:42:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41239 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgAVQmu (ORCPT
+        id S1729031AbgAVQ5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 11:57:39 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20516 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725989AbgAVQ5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 11:42:50 -0500
-Received: by mail-io1-f66.google.com with SMTP id m25so7259217ioo.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 08:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Lw+J2xi976wnKQAQkpo+sULjl/GCtrZo1kXXLVHWSQs=;
-        b=1x3paWK2Cfi6ijmuaglijsnNVNAqxSIjpplllPrVPkY3Scrwee1dttVJHBtV2sYQd8
-         CWevNHr2V4S+WaXcqVW8TpXi0GbnDKiDYDLBTpsItcvCOQnU7ZvG9GbPKOpZtqCQRNMU
-         +y3K6I7cF22TLpxW4BUldwFH0M19IJQVCywGb/vUWC3MAM2JgeMEwPwxIvpuBKtstzjB
-         yK/sTkmc/8xMYBqMfOcBvKZp6AZGHNzFwQYvUj9hNCnrdXeCvKFwAaJbkbfKc5JZwZV7
-         GwVsCHIcwrWeW1j5gLoD6TriWf48q0WR5KIozQ68H7IPk4arSZmAbG6dz9YwMDWW7q4i
-         gbjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Lw+J2xi976wnKQAQkpo+sULjl/GCtrZo1kXXLVHWSQs=;
-        b=Jh3KrRLkylG/HVAWkDl5+8H6zQA8OLtsdOvpe/kr3FjlbRR5ufj6KFlCtGKs9IenLL
-         85VTeKzHnYE/uLm7/jvxIsBj8Yw5hYx/jRU12xsD6RFBubk1QSpx/biyaImiWtbbU6Fy
-         4ZIJkRus3Oy1fZE+YaSkm8GHNz3bbYw0X2V6KQcY5tev85+y4zCZ62mfLFfaASr/Clrr
-         LEoxcU2wvsJU+Byej02KHOxAogADqkMA4MZSAFsvImT1E9kiyh3e17FnI4E5aEjlSkMp
-         J1AY/qyf5FkFJ/Ek9l30soKRcSoiJaXga76TradZ8yvOnhNU5oujlPjTUStQYNR3ARnI
-         oqYQ==
-X-Gm-Message-State: APjAAAXT3hVCTC/eEian7lN8h86FS+Ss6ohjkm5PDIpLh4J3hojMLTmm
-        6nEqhcqVY2XBabLOiaRg3DKU4g==
-X-Google-Smtp-Source: APXvYqwUIUrCuVXxIF1ib3EmjDf3/PUroHs1scSnugdzhBGw7PikBwAl7cB7Rkw0JRqEV44Pbwv1YA==
-X-Received: by 2002:a05:6638:24f:: with SMTP id w15mr8125624jaq.130.1579711369919;
-        Wed, 22 Jan 2020 08:42:49 -0800 (PST)
-Received: from x1.localdomain ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o6sm14599681ilc.76.2020.01.22.08.42.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:42:49 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, jannh@google.com,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] io_uring: add support for epoll_ctl(2)
-Date:   Wed, 22 Jan 2020 09:42:44 -0700
-Message-Id: <20200122164244.27799-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200122164244.27799-1-axboe@kernel.dk>
-References: <20200122164244.27799-1-axboe@kernel.dk>
+        Wed, 22 Jan 2020 11:57:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1579712258;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nCuK9gG+XzyBqAKZyvtcNiJmI9iChL+W/5OmSfkPvfQ=;
+        b=UJ/xYUyuL7HV+7uAN47JlFZh2jV6lu7xO4WN37ODW/BVPLB55dkzhiT9yE4rMRS7WyVhk+
+        GFibRE0wydD1ZFsu2udqmDeSCq82lr1f3SDKUQ9/YXeOfdHdZdbNbf8rksz9G4+jQ/QYn5
+        jGwpMS6hXZYI6kC930nD6lGhNteQBl4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-OsP4GJsXNx-3zmg_d1TIBg-1; Wed, 22 Jan 2020 11:57:32 -0500
+X-MC-Unique: OsP4GJsXNx-3zmg_d1TIBg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45AB71088381;
+        Wed, 22 Jan 2020 16:57:31 +0000 (UTC)
+Received: from redhat.com (ovpn-112-42.rdu2.redhat.com [10.10.112.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38D5D8BE31;
+        Wed, 22 Jan 2020 16:57:28 +0000 (UTC)
+Date:   Wed, 22 Jan 2020 08:54:27 -0800
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Benjamin LaHaise <bcrl@kvack.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Do not pin pages for various direct-io scheme
+Message-ID: <20200122165427.GA6009@redhat.com>
+References: <20200122023100.75226-1-jglisse@redhat.com>
+ <ba250f19-cc51-f1dc-3236-58be1f291db3@kernel.dk>
+ <20200122045723.GC76712@redhat.com>
+ <20200122115926.GW29276@dhcp22.suse.cz>
+ <015647b0-360c-c9ac-ac20-405ae0ec4512@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <015647b0-360c-c9ac-ac20-405ae0ec4512@kernel.dk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds IORING_OP_EPOLL_CTL, which can perform the same work as the
-epoll_ctl(2) system call.
+On Wed, Jan 22, 2020 at 08:12:51AM -0700, Jens Axboe wrote:
+> On 1/22/20 4:59 AM, Michal Hocko wrote:
+> > On Tue 21-01-20 20:57:23, Jerome Glisse wrote:
+> >> We can also discuss what kind of knobs we want to expose so that
+> >> people can decide to choose the tradeof themself (ie from i want low
+> >> latency io-uring and i don't care wether mm can not do its business;=
+ to
+> >> i want mm to never be impeded in its business and i accept the extra
+> >> latency burst i might face in io operations).
+> >=20
+> > I do not think it is a good idea to make this configurable. How can
+> > people sensibly choose between the two without deep understanding of
+> > internals?
+>=20
+> Fully agree, we can't just punt this to a knob and call it good, that's
+> a typical fallacy of core changes. And there is only one mode for
+> io_uring, and that's consistent low latency. If this change introduces
+> weird reclaim, compaction or migration latencies, then that's a
+> non-starter as far as I'm concerned.
+>=20
+> And what do those two settings even mean? I don't even know, and a user
+> sure as hell doesn't either.
+>=20
+> io_uring pins two types of pages - registered buffers, these are used
+> for actual IO, and the rings themselves. The rings are not used for IO,
+> just used to communicate between the application and the kernel.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/io_uring.c                 | 72 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 73 insertions(+)
+So, do we still want to solve file back pages write back if page in
+ubuffer are from a file ?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 09503d1e9e45..64dc9e5df6d4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -74,6 +74,7 @@
- #include <linux/namei.h>
- #include <linux/fsnotify.h>
- #include <linux/fadvise.h>
-+#include <linux/eventpoll.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/io_uring.h>
-@@ -421,6 +422,14 @@ struct io_madvise {
- 	u32				advice;
- };
- 
-+struct io_epoll {
-+	struct file			*file;
-+	int				epfd;
-+	int				op;
-+	int				fd;
-+	struct epoll_event		event;
-+};
-+
- struct io_async_connect {
- 	struct sockaddr_storage		address;
- };
-@@ -534,6 +543,7 @@ struct io_kiocb {
- 		struct io_files_update	files_update;
- 		struct io_fadvise	fadvise;
- 		struct io_madvise	madvise;
-+		struct io_epoll		epoll;
- 	};
- 
- 	struct io_async_ctx		*io;
-@@ -719,6 +729,9 @@ static const struct io_op_def io_op_defs[] = {
- 		.needs_file		= 1,
- 		.fd_non_neg		= 1,
- 	},
-+	[IORING_OP_EPOLL_CTL] = {
-+		.unbound_nonreg_file	= 1,
-+	},
- };
- 
- static void io_wq_submit_work(struct io_wq_work **workptr);
-@@ -2578,6 +2591,54 @@ static int io_openat(struct io_kiocb *req, struct io_kiocb **nxt,
- 	return io_openat2(req, nxt, force_nonblock);
- }
- 
-+static int io_epoll_ctl_prep(struct io_kiocb *req,
-+			     const struct io_uring_sqe *sqe)
-+{
-+#if defined(CONFIG_EPOLL)
-+	if (sqe->ioprio || sqe->buf_index)
-+		return -EINVAL;
-+
-+	req->epoll.epfd = READ_ONCE(sqe->fd);
-+	req->epoll.op = READ_ONCE(sqe->len);
-+	req->epoll.fd = READ_ONCE(sqe->off);
-+
-+	if (ep_op_has_event(req->epoll.op)) {
-+		struct epoll_event __user *ev;
-+
-+		ev = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+		if (copy_from_user(&req->epoll.event, ev, sizeof(*ev)))
-+			return -EFAULT;
-+	}
-+
-+	return 0;
-+#else
-+	return -EOPNOTSUPP;
-+#endif
-+}
-+
-+static int io_epoll_ctl(struct io_kiocb *req, struct io_kiocb **nxt,
-+			bool force_nonblock)
-+{
-+#if defined(CONFIG_EPOLL)
-+	struct io_epoll *ie = &req->epoll;
-+	int ret;
-+
-+	ret = do_epoll_ctl(ie->epfd, ie->op, ie->fd, &ie->event, force_nonblock);
-+	if (force_nonblock && ret == -EAGAIN) {
-+		req->work.flags |= IO_WQ_WORK_NEEDS_FILES;
-+		return -EAGAIN;
-+	}
-+
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_cqring_add_event(req, ret);
-+	io_put_req_find_next(req, nxt);
-+	return 0;
-+#else
-+	return -EOPNOTSUPP;
-+#endif
-+}
-+
- static int io_madvise_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- #if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_MMU)
-@@ -4039,6 +4100,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	case IORING_OP_OPENAT2:
- 		ret = io_openat2_prep(req, sqe);
- 		break;
-+	case IORING_OP_EPOLL_CTL:
-+		ret = io_epoll_ctl_prep(req, sqe);
-+		break;
- 	default:
- 		printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
- 				req->opcode);
-@@ -4267,6 +4331,14 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
- 		}
- 		ret = io_openat2(req, nxt, force_nonblock);
- 		break;
-+	case IORING_OP_EPOLL_CTL:
-+		if (sqe) {
-+			ret = io_epoll_ctl_prep(req, sqe);
-+			if (ret)
-+				break;
-+		}
-+		ret = io_epoll_ctl(req, nxt, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 57d05cc5e271..cffa6fd33827 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -106,6 +106,7 @@ enum {
- 	IORING_OP_SEND,
- 	IORING_OP_RECV,
- 	IORING_OP_OPENAT2,
-+	IORING_OP_EPOLL_CTL,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-2.25.0
+Also we can introduce a flag when registering buffer that allows to
+register buffer without pining and thus avoid the RLIMIT_MEMLOCK at
+the cost of possible latency spike. Then user registering the buffer
+knows what he gets.
+
+Maybe it would be good to test, it might stay in the noise, then it
+might be a good thing to do. Also they are strategy to avoid latency
+spike for instance we can block/force skip mm invalidation if buffer
+has pending/running io in the ring ie only have buffer invalidation
+happens when there is no pending/running submission entry.
+
+We can also pick what kind of invalidation we allow (compaction,
+migration, ...) and thus limit the scope and likelyhood of
+invalidation.
+
+Cheers,
+J=E9r=F4me
 
