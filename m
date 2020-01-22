@@ -2,72 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0465C144AC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 05:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D5E144AE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 05:41:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbgAVE2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 23:28:48 -0500
-Received: from sonic304-23.consmr.mail.gq1.yahoo.com ([98.137.68.204]:41189
-        "EHLO sonic304-23.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728921AbgAVE2s (ORCPT
+        id S1728992AbgAVElr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 23:41:47 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16855 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbgAVElr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 23:28:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1579667326; bh=nCHvtd0QNQ5io0gsWzbtEejjPWFblndOcTGFZxlrFWM=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=DJxW9d+sBpQVF6ztdCnLyOrcu1OXkJy+nWjBvqt4DV6MKp/MBvNhE5XUqTxKeMxJyzX1UAj2NqrDF68jh27fuWALFNvKQKtw8XXIiHEEbx6i/y/ojtXJcYhgWoOWmbPVgVrsEh3R2TvSjsaRobxbOpQ7PL4JjKm/mQRaQCY3vCK7nesdSpupmDNNIsrKyI2uAbRfLp1ZbRYoT7knPXofKt/5D1ai2Z81edpLSFkz9rKOt7ibwyISocYVTSNlAMr1xEmV9Cj14tMrtGxUO+J98cLxYbnj7oSEALSr4m3qW24eRcilEWlJY00yIiiTjOhB+dePbaA9uxw3mzJC+yt1ZQ==
-X-YMail-OSG: IUZIvBgVM1nVbhxyreLep8QS0s52.u33tis5mperd0q_t5s2nzaRj2mo7EMNI5_
- XZ1QwWidJ_0puiq0hpsl5mxq7TfzHBubQezvZnNceIqSkEDZbYgcSwLQUbr06B0oS2izuNkVvseF
- Vp2GmMAuRQjM5BvfUZq4Qc424n9PzP.wrsfK..EoXaUN.bJKdp.b8AzKZYrLVukwpScNxgGO.yQ_
- CKyuW.zrPvyczS7JDsB3kJXPAh5jsc3melfUV2l7KJQTz70fhIB9BMU4_5_elDKpIkm1h805JRfJ
- KVs4qsYef12.JC.KQ49yrl60FXi8nDv.tqnSeY..o8ksrDmWfWtUyoyvQ_ArpW6MpAW.Yv0VhbDs
- B.UuLD_uNUxC0BZ5ZrTZtjYxWyLwjWg_9DuXvF3kst7niVgksDkRlmpsqaSW7dzznMKyZwOvUTSY
- 2CFK9rq0_tzv5qBTdCJVSw9ZrbbcwVM1AcIfAS3sxOGpIGgWEDd4M5M2a_qqQXJGFNAHzNEF.43R
- ELL._nP5BmCXoQbahYHrw4.Tjgnsggw1PmlzkHpfXVBJYxZ.vaGgqO.kLkVlVOZl6tf_ThRJl8uG
- yZpp1OGMOEXe5OrVWS2Ye03zfTzcM8wptrUFBSYXJPswuD7_WNewkKzdD6wPIP.pxU807pdEb1SN
- 7la3v27THuqi_egxKxfmglMnrUJDsAEbInDHp.2JJ690GIh6vU9QCUtHCrZ08rnKwQEIjsX1iffO
- QoS6RtSx7VwwY9vEhaXnIAD0e0kycxJJW1DDjw9PtYPVcFLsmcigk38AaR.QEiLkIy7oUmeLNSTM
- py9WCemAMbjUJanajYKoUy5_Re92K.BZBcJUq23LnnC_GctyRImPQw92.Ee7uG3Wwq0m_7qD.vKn
- eheGE47oPtGEUSDc5HRfw.BCu9M65riJTBrWo.PX4iPuGVRbU0a1bwOtXkokDGGRHiGasUuoN3Lb
- 3rcl6yzAgfu.7lrxt_CE0Xg5Lu4bHOTqZHtWTkmg5KQnCRKtw3.gz7yv3Iov4wQYZSrDPnqLVnMX
- lBt8ckjX7fC.SCM8KpvPIjz16edCbx61piNScdnzbkdUP4Vs7TeCLS16a.nb6dHnSHABqtLyH_da
- 1Tvr82T0fw7pri.Pk.88QjE5Z62K5B3d7lQ.ptUl9Z6zv5ovkfyS5yA1HMu5aZnY8eo1rM8uOssW
- pD56KJ8ytm9ImlamVLE8H1krbHPMKVIPEPNm1NMOKR3X52U7kojBUBL6p8g1GsYWK5yKbyBbESGA
- osjLw6vTRFWTjoFUd3W_rlI8BQ8dHA7DyfVhqnX9VvAmPBnP_dHI2E.mzaIkpC7ifV2rm62Ofm4d
- vBZ798lpBR3OpRsJXM8FFTBEJXh0QbBkGz6pIPGCsEPTBIjpdxdMCYttlUMcnTTaBwA_qqESdJul
- 2Sngf3SssEU6YXC4PN1voI1lWoFAy4APUHGRg8mU-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Wed, 22 Jan 2020 04:28:46 +0000
-Received: by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e838eed65838f6b8e509d224d1633db0;
-          Wed, 22 Jan 2020 04:28:45 +0000 (UTC)
-Date:   Wed, 22 Jan 2020 12:28:39 +0800
-From:   Gao Xiang <hsiangkao@aol.com>
-To:     jglisse@redhat.com
-Cc:     lsf-pc@lists.linux-foundation.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org
+        Tue, 21 Jan 2020 23:41:47 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e27d2780000>; Tue, 21 Jan 2020 20:41:28 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 21 Jan 2020 20:41:43 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 21 Jan 2020 20:41:43 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 22 Jan
+ 2020 04:41:42 +0000
 Subject: Re: [LSF/MM/BPF TOPIC] Generic page write protection
-Message-ID: <20200122042832.GA6542@hsiangkao-HP-ZHAN-66-Pro-G1>
+To:     <jglisse@redhat.com>, <lsf-pc@lists.linux-foundation.org>
+CC:     Andrea Arcangeli <aarcange@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-mm@kvack.org>
 References: <20200122023222.75347-1-jglisse@redhat.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <3415c50e-1cda-4562-7c3e-2663aa531ff3@nvidia.com>
+Date:   Tue, 21 Jan 2020 20:41:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20200122023222.75347-1-jglisse@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Mailer: WebService/1.1.14873 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1579668088; bh=ylTs7FsP6rk+f1H+TrUrJkpghB5i+/oWPauYKJRAHro=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=o0vgxUUK8rYj27pWbpe1ev4EhNvJ3WcLE0uDJY+5VQWynoxPLnzUmbspLfR2A59mt
+         xlVLy4M7/FRuyJiHn8RNPL1QSkv2hkqcmXLdw8UyKCKxkBHwcj91aO1TdrbgfTP7xw
+         PvX9gJw9LPK77UP7bO1nCERRzVQcTareFCwECYNbhzZ5adeSVLXVrZXA6BSBovIlp2
+         FcJ+/Gv5skUY6im4YpuPHMBa8omzTnm4SnpHsHqcvokMu2uoWE1opbp2dpnNOe044i
+         I5zehV1FiRGwEH0+xiFxH/4B2gjTGXQ1ID8SxKRHhPSO0N6Gqb6c6rYiB51Bf1btTe
+         UBI9RqfNAEiXw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi J�r�me,
+On 1/21/20 6:32 PM, jglisse@redhat.com wrote:
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
+>=20
+> Provide a generic way to write protect page (=C3=A0 la KSM) to enable new=
+ mm
+> optimization:
 
-On Tue, Jan 21, 2020 at 06:32:22PM -0800, jglisse@redhat.com wrote:
-> From: J�r�me Glisse <jglisse@redhat.com>
-> 
-> 
+Hi Jerome,=20
 
-<snip>
+I am very interested in this feature and discussion. Thanks for posting
+this topic.
 
-> 
+
+>     - KSM (kernel share memory) to deduplicate pages (for file
+>       back pages too not only anonymous memory like today)
+>     - page duplication NUMA (read only duplication) in multiple
+>       different physical page. For instance share library code
+>       having a copy on each NUMA node. Or in case like GPU/FPGA
+>       duplicating memory read only inside the local device memory.
+
+
+And also, for the benefit of non-GPU-centric folks, let me add that
+something like this is required in order to do GPU atomic operations
+to system memory, in support of OpenCL Compute (as opposed to Graphics)
+atomic ops.
+
+GPUs can use both read duplication and atomics to great effect. It's=20
+something we've wanted for a while now.
+
+A bit more below:
+
+
+>     ...
+>=20
+> Note that this write protection is intend to be broken at anytime in
+> reasonable time (like KSM today) so that we never block more than
+> necessary anything that need to write to the page.
+>=20
+>=20
+> The goal is to provide a mechanism that work for both anonymous and
+> file back memory. For this we need to a pointer inside struct page.
+> For anonymous memory KSM uses the anon_vma field which correspond
+> to mapping field for file back pages.
+>=20
+> So to allow generic write protection for file back pages we need to
+> avoid relying on struct page mapping field in the various kernel code
+> path that do use it today.
+>=20
+> The page->mapping fields is use in 5 different ways:
+>  [1]- Functions operating on file, we can get the mapping from the file
+>       (issue here is that we might need to pass the file down the call-
+>       stack)
+>=20
+>  [2]- Core/arch mm functions, those do not care about the file (if they
+>       do then it means they are vma related and we can get the mapping
+>       from the vma). Those functions only want to be able to walk all
+>       the pte point to the page (for instance memory compaction, memory
+>       reclaim, ...). We can provide the exact same functionality for
+>       write protected pages (like KSM does today).
+>=20
+>  [3]- Block layer when I/O fails. This depends on fs, for instance for
+>       fs which uses buffer_head we can update buffer_head to store the
+>       mapping instead of the block_device as we can get the block_device
+>       from the mapping but not the mapping from the block_device.
+>=20
+>       So solving this is mostly filesystem specific but i have not seen
+>       any fs that could not be updated properly so that block layer can
+>       report I/O failures without relying on page->mapping
+>=20
+>  [4]- Debugging (mostly procfs/sysfs files to dump memory states). Those
+>       do not need the mapping per say, we just need to report page states
+>       (and thus write protection information if page is write protected).
+>=20
+>  [5]- GUP (get user page) if something calls GUP in write mode then we
+>       need to break write protection (like KSM today). GUPed page should
+>       not be write protected as we do not know what the GUPers is doing
+>       with the page.
+>=20
+
+Yes, this is a reasonable constraint. It's a lot harder to make the page
+globally write-protected against *everything* (physically-addressed pages
+from a non-CPU device included), and providing write protection at the
+virtual address level is not quite as difficult. And it will still provide
+most of what we'd want.
+
+If a programmer sets up memory to get gup-pinned, and also wants to do
+OpenCL atomics to it, we're going to have to say that's just not supported
+this year. But it's still a major new capability and the constraint is
+not hard to explain.
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
+
+>=20
+> Most of the patchset deals with [1], [2] and [3] ([4] and [5] are mostly
+> trivial).
+>=20
+> For [1] we only need to pass down the mapping to all fs and vfs callback
+> functions (this is mostly achieve with coccinelle). Roughly speaking the
+> patches are generated with following pseudo code:
+>=20
+> add_mapping_parameter(func)
+> {
+>     function_add_parameter(func, mapping);
+>=20
+>     for_each_function_calling (caller, func) {
+>         calling_add_parameter(caller, func, mapping);
+>=20
+>         if (function_parameters_contains(caller, mapping|file))
+>             continue;
+>=20
+>         add_mapping_parameter(caller);
+>     }
+> }
+>=20
+> passdown_mapping()
+> {
+>     for_each_function_in_fs (func, fs_functions) {
+>         if (!function_body_contains(func, page->mapping))
+>             continue;
+>=20
+>         if (function_parameters_contains(func, mapping|file))
+>             continue;
+>=20
+>         add_mapping_parameter(func);
+>     }
+> }
+>=20
+> For [2] KSM is generalized and extended so that both anonymous and file
+> back pages can be handled by a common write protected page case.
+>=20
+> For [3] it depends on the filesystem (fs which uses buffer_head are
+> easily handled by storing mapping into the buffer_head struct).
+>=20
+>=20
 > To avoid any regression risks the page->mapping field is left intact as
 > today for non write protect pages. This means that if you do not use the
 > page write protection mechanism then it can not regress. This is achieve
@@ -78,46 +208,28 @@ On Tue, Jan 21, 2020 at 06:32:22PM -0800, jglisse@redhat.com wrote:
 > between before and after the patchset is that all fs functions that do
 > need the mapping for a page now also do get it as a parameter but only
 > use the parameter mapping pointer if the page is write protected.
-> 
+>=20
 > Note also that i do not believe that once confidence is high that we
 > always passdown the correct mapping down each callstack, it does not
 > mean we will be able to get rid of the struct page mapping field.
-
-This feature is awesome and I might have some premature words here...
-
-In short, are you suggesting completely getting rid of all way to access
-mapping directly from struct page (other than by page->private or something
-else like calling trace)?
-
-I'm not sure if all cases can be handled without page->mapping easily (or
-handled effectively) since mapping field could also be used to indicate/judge
-truncated pages or some other filesystem specific states (okay, I think there
-could be some replacement, but it seems a huge project...)
-
-Currently, page->private is a per-page user-defined field, yet I don't think
-it could always be used as a pointer pointing to some structure. It can be
-simply used to store some unsigned long values for some kinds of filesystem
-pages as well...
-
-It might some ineffective to convert such above usage to individual per-page
-structure pointers --- from cacheline or extra memory overhead view...
-
-So I think at least there could be some another way to get its content
-source (inode or sub-inode granularity, a reverse way) effectively...
-by some field in struct page directly or indirectly...
-
-I agree that the usage of page->mapping field is complicated for now.
-I'm looking forward some unique way to mark the page type for a filesystem
-to use (inode or fs internal special pages) or even extend to analymous
-pages [1]. However, it seems a huge project to keep from some regression...
-
-I'm interested in related stuffs, some conclusion and I saw the article of
-LSF/MM 2018 although my English isn't good...
-
-If something wrong, please kindly point out...
-
-[1] https://lore.kernel.org/r/20191030172234.GA7018@hsiangkao-HP-ZHAN-66-Pro-G1
-
-Thanks,
-Gao Xiang
+>=20
+> I posted patchset before [*1] and i intend to post an updated patchset
+> before LSF/MM/BPF. I also talked about this at LSF/MM 2018. I still
+> believe this will a topic that warrent a discussion with FS/MM and
+> block device folks.
+>=20
+>=20
+> [*1] https://lwn.net/Articles/751050/
+>      https://cgit.freedesktop.org/~glisse/linux/log/?h=3Dgeneric-write-pr=
+otection-rfc
+> [*2] https://lwn.net/Articles/752564/
+>=20
+>=20
+> To: lsf-pc@lists.linux-foundation.org
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-block@vger.kernel.org
+> Cc: linux-mm@kvack.org
+>=20
+>=20
 
