@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D35A144A71
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 04:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B075144A9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 04:54:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbgAVDaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 22:30:17 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36719 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729050AbgAVDaR (ORCPT
+        id S1727022AbgAVDyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 22:54:25 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:40614 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbgAVDyZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 22:30:17 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k3so2693916pgc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2020 19:30:16 -0800 (PST)
+        Tue, 21 Jan 2020 22:54:25 -0500
+Received: by mail-pj1-f65.google.com with SMTP id bg7so2738122pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2020 19:54:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qC1RUoM3/NtlqUaitknsdL/RkF2RqwRcZGXGQrwHHKY=;
-        b=xDunS1JhkaFpBpNmrHHt1HfTnw54J9IC2Y88T+VYta/x5jNWG2RFv/N42ujfWUn24X
-         /+MzbTNjWhtC0f0tXymbdW8Tiy8IjKhTss9krg3EBu4FD4EM0IqAwYTJjR0mNLmGkqXj
-         WQa7SFucJDGaL0UIvLo3ChgkS5GrAfy1DBwJ2BOy6jAoSnlpnhwwJdIpX6av4koGEGKo
-         +hyNmi5GpLT+8Jfm0ao5ySi8TGkD2R16+zImwPMF8vDolNpH0P4KLt+4BrDKNs/yOVgL
-         EnjDEh7dTSvTkMpAptYyhPG5eIKoU/BCYAuIF/vs12hJWJs204Uy7AzMnU1x0/NY2tIM
-         4tnQ==
+        bh=tPnmRjn8rUepJ/m/lTDYE4fiV9urBFYj8TZ2cwtsXFs=;
+        b=KSpesqrGU/sSuhK+zAQJLJsqmx89sl5iclvzT2IK65oe+ZjRjveqivkcgyc6xXLAE0
+         Gf/qWWnkdcchnpxRbyL75OocYw0M7lcckQxf0maZKU0/nVyJTaGR3dsuM2qKMczjsBIc
+         ULFRb4+eU4SNt+Hyjc2lGP3MDgAoye2RMno+KvcyR9ygPi3L6NHNyVViIA7Rr5CN2gH7
+         7WzbyZQdd0N3CJUUVKxSDmiXVf442Lw5fChMDtGFBYpEU0Q4y3vjqoeWy3N3VoMaKdoN
+         b6NhczU6yMwj7hwllwt2/UhOi8Tt8ETnDMO86eqKSj8YVaDvIdAl7RI6Z+jo6Joz3iMe
+         eOoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=qC1RUoM3/NtlqUaitknsdL/RkF2RqwRcZGXGQrwHHKY=;
-        b=MCM9HnXibCEzJuvofEsuA76/jRix4jtUpLNahL6eO3O7/Hjn+OKgCm6Uf8hhLcq7Za
-         H8id/bdneUW6fpjdlI8nIqW9cqJzVgYL3Myu3hOpcqHyBbLFpAAJZuTz5mvyi/62FuQP
-         K1TkXCLx0517V8tB6cN47yUTjLdlXmGyvTsL9mm0+OnTRU8thN/+LRpKoAMVFLO79Akj
-         o+w4udYGANA+V4Fz+tFOCxQ6hZs2B0wKsxSAKTIZnimtabe6KdIr/Tcrj9QIwQhQXZWG
-         pBwoy89PLHFglqWDZfdDkwvO+vqgQXohzb4ujac9OjIb+SBw8kVM1qupFMNjWgGkE4Qu
-         QbAw==
-X-Gm-Message-State: APjAAAVzGlMw20LYNQdbQpC3ykA2htQj3XN6cIeIenTkbyII8OF/dtxf
-        XqaeZeLuWboPHDbuFfQQr2vdHA==
-X-Google-Smtp-Source: APXvYqxhcegRJt2QgKyEjpG1x8ZZM5y/oOMvXCQBhSqfFo0E7Xf/evJjiOwY0AZ2FWXYlfbRR99Lhg==
-X-Received: by 2002:a62:c541:: with SMTP id j62mr693157pfg.237.1579663816352;
-        Tue, 21 Jan 2020 19:30:16 -0800 (PST)
+        bh=tPnmRjn8rUepJ/m/lTDYE4fiV9urBFYj8TZ2cwtsXFs=;
+        b=Tk4dve3eILJjkP5qXW6D5hFEyAhWR4m6aFa6wSwPhxJS5tS6E3OED7wMBQ0XSElXrA
+         0cH5a7msFKXEXw5bU3vxbXzVKgUWXo1PnuRtdacpMU2sytwhmBuXLp59xj+ewvphf0Zs
+         GEiV3w5HI8QABXUlsx/h2Gz3M4IxseMPalfIl+mM5nbK18gatn5QYxghI1au0dCam45y
+         7aLXc9/vDicZk9MQL1MTj+a9xxWzxZDQBAROMzb1mrIjJflSir9Njle9OyPUvA5ubZ8B
+         R1bECVl6nAj05dRVyqgcfxizIMzDfdNPHhen75MHFWK3d7Q3deCcZNwH4iapioIkdQcT
+         N3VA==
+X-Gm-Message-State: APjAAAWgFnH8dGt9DhvPpGgg7egjbPBhy2dYm1OdSTRwLyEnCqrMwGeB
+        8JQee1e1sGkCTV4g3+kxisTSwA==
+X-Google-Smtp-Source: APXvYqz1ej/0UETLM0i3GpTnbpg6jU/Jhvxq4kyaua6Pk55bLtlskFqoOIKje0M5VplsB7SIZWO/vg==
+X-Received: by 2002:a17:902:302:: with SMTP id 2mr9076370pld.58.1579665264275;
+        Tue, 21 Jan 2020 19:54:24 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id k3sm43215290pgc.3.2020.01.21.19.30.15
+        by smtp.gmail.com with ESMTPSA id d3sm43468307pfn.113.2020.01.21.19.54.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 19:30:15 -0800 (PST)
-Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
-References: <cover.1579649589.git.asml.silence@gmail.com>
- <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
- <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
+        Tue, 21 Jan 2020 19:54:23 -0800 (PST)
+Subject: Re: [LSF/MM/BPF TOPIC] Do not pin pages for various direct-io scheme
+To:     jglisse@redhat.com, lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Benjamin LaHaise <bcrl@kvack.org>
+References: <20200122023100.75226-1-jglisse@redhat.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8316dfa9-9210-3402-a6c3-4889b6bbdb49@kernel.dk>
-Date:   Tue, 21 Jan 2020 20:30:13 -0700
+Message-ID: <ba250f19-cc51-f1dc-3236-58be1f291db3@kernel.dk>
+Date:   Tue, 21 Jan 2020 20:54:22 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
+In-Reply-To: <20200122023100.75226-1-jglisse@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/21/20 8:11 PM, Pavel Begunkov wrote:
-> On 22/01/2020 04:55, Jens Axboe wrote:
->> On 1/21/20 5:05 PM, Pavel Begunkov wrote:
->>> It works well for basic cases, but there is still work to be done. E.g.
->>> it misses @hash_reg_file checks for the second (output) file. Anyway,
->>> there are some questions I want to discuss:
->>>
->>> - why sqe->len is __u32? Splice uses size_t, and I think it's better
->>> to have something wider (e.g. u64) for fututre use. That's the story
->>> behind added sqe->splice_len.
->>
->> IO operations in Linux generally are INT_MAX, so the u32 is plenty big.
->> That's why I chose it. For this specifically, if you look at splice:
->>
->> 	if (unlikely(len > MAX_RW_COUNT))
->> 		len = MAX_RW_COUNT;
->>
->> so anything larger is truncated anyway.
+On 1/21/20 7:31 PM, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
 > 
-> Yeah, I saw this one, but that was rather an argument for the future.
-> It's pretty easy to transfer more than 4GB with sg list, but that
-> would be the case for splice.
-
-I don't see this changing, ever, basically. And probably not a big deal,
-if you want to do more than 2GB worth of IO, you simply splice them over
-multiple commands. At those sizes, the overhead there is negligible.
-
->>> - it requires 2 fds, and it's painful. Currently file managing is done
->>> by common path (e.g. io_req_set_file(), __io_req_aux_free()). I'm
->>> thinking to make each opcode function handle file grabbing/putting
->>> themself with some helpers, as it's done in the patch for splice's
->>> out-file.
->>>     1. Opcode handler knows, whether it have/needs a file, and thus
->>>        doesn't need extra checks done in common path.
->>>     2. It will be more consistent with splice.
->>> Objections? Ideas?
->>
->> Sounds reasonable to me, but always easier to judge in patch form :-)
->>
->>> - do we need offset pointers with fallback to file->f_pos? Or is it
->>> enough to have offset value. Jens, I remember you added the first
->>> option somewhere, could you tell the reasoning?
->>
->> I recently added support for -1/cur position, which splice also uses. So
->> you should be fine with that.
->>
+> Direct I/O does pin memory through GUP (get user page) this does
+> block several mm activities like:
+>     - compaction
+>     - numa
+>     - migration
+>     ...
 > 
-> I always have been thinking about it as a legacy from old days, and
-> one of the problems of posix. It's not hard to count it in the
-> userspace especially in C++ or high-level languages, and is just
-> another obstacle for having a performant API. So, I'd rather get rid
-> of it here. But is there any reasons against?
+> It is also troublesome if the pinned pages are actualy file back
+> pages that migth go under writeback. In which case the page can
+> not be write protected from direct-io point of view (see various
+> discussion about recent work on GUP [1]). This does happens for
+> instance if the virtual memory address use as buffer for read
+> operation is the outcome of an mmap of a regular file.
+> 
+> 
+> With direct-io or aio (asynchronous io) pages are pinned until
+> syscall completion (which depends on many factors: io size,
+> block device speed, ...). For io-uring pages can be pinned an
+> indifinite amount of time.
+> 
+> 
+> So i would like to convert direct io code (direct-io, aio and
+> io-uring) to obey mmu notifier and thus allow memory management
+> and writeback to work and behave like any other process memory.
+> 
+> For direct-io and aio this mostly gives a way to wait on syscall
+> completion. For io-uring this means that buffer might need to be
+> re-validated (ie looking up pages again to get the new set of
+> pages for the buffer). Impact for io-uring is the delay needed
+> to lookup new pages or wait on writeback (if necessary). This
+> would only happens _if_ an invalidation event happens, which it-
+> self should only happen under memory preissure or for NUMA
+> activities.
+> 
+> They are ways to minimize the impact (for instance by using the
+> mmu notifier type to ignore some invalidation cases).
+> 
+> 
+> So i would like to discuss all this during LSF, it is mostly a
+> filesystem discussion with strong tie to mm.
 
-It's not always trivial to do in libraries, or programming languages
-even. That's why it exists. I would not expect anyone to use it outside
-of that.
+I'd be interested in this topic, as it pertains to io_uring. The whole
+point of registered buffers is to avoid mapping overhead, and page
+references. If we add extra overhead per operation for that, well... I'm
+assuming the above is strictly for file mapped pages? Or also page
+migration?
 
 -- 
 Jens Axboe
