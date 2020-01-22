@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3627C145DA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 22:22:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B384145DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 22:22:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbgAVVWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 16:22:22 -0500
-Received: from foss.arm.com ([217.140.110.172]:32800 "EHLO foss.arm.com"
+        id S1729418AbgAVVWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 16:22:25 -0500
+Received: from foss.arm.com ([217.140.110.172]:32828 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729299AbgAVVWV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 16:22:21 -0500
+        id S1729299AbgAVVWY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jan 2020 16:22:24 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CD213FD;
-        Wed, 22 Jan 2020 13:22:20 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC23D1424;
+        Wed, 22 Jan 2020 13:22:23 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 659203F52E;
-        Wed, 22 Jan 2020 13:22:19 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F1183F52E;
+        Wed, 22 Jan 2020 13:22:23 -0800 (PST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Dave Martin <Dave.Martin@arm.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH v5 10/12] arm64: BTI: Reset BTYPE when skipping emulated instructions
-Date:   Wed, 22 Jan 2020 21:21:42 +0000
-Message-Id: <20200122212144.6409-11-broonie@kernel.org>
+Subject: [PATCH v5 11/12] KVM: arm64: BTI: Reset BTYPE when skipping emulated instructions
+Date:   Wed, 22 Jan 2020 21:21:43 +0000
+Message-Id: <20200122212144.6409-12-broonie@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200122212144.6409-1-broonie@kernel.org>
 References: <20200122212144.6409-1-broonie@kernel.org>
@@ -68,22 +68,28 @@ Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/arm64/kernel/traps.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/include/asm/kvm_emulate.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 4fa8b92b8624..be71e5ef9ae0 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -332,6 +332,8 @@ void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
+diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+index 5efe5ca8fecf..05fb1b4e0fa2 100644
+--- a/arch/arm64/include/asm/kvm_emulate.h
++++ b/arch/arm64/include/asm/kvm_emulate.h
+@@ -470,10 +470,12 @@ static inline unsigned long vcpu_data_host_to_guest(struct kvm_vcpu *vcpu,
  
- 	if (compat_user_mode(regs))
- 		advance_itstate(regs);
-+	else
-+		regs->pstate &= ~PSR_BTYPE_MASK;
- }
+ static inline void kvm_skip_instr(struct kvm_vcpu *vcpu, bool is_wide_instr)
+ {
+-	if (vcpu_mode_is_32bit(vcpu))
++	if (vcpu_mode_is_32bit(vcpu)) {
+ 		kvm_skip_instr32(vcpu, is_wide_instr);
+-	else
++	} else {
+ 		*vcpu_pc(vcpu) += 4;
++		*vcpu_cpsr(vcpu) &= ~PSR_BTYPE_MASK;
++	}
  
- static LIST_HEAD(undef_hook);
+ 	/* advance the singlestep state machine */
+ 	*vcpu_cpsr(vcpu) &= ~DBG_SPSR_SS;
 -- 
 2.20.1
 
