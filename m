@@ -2,101 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052A71448DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 01:25:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9DE21448EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 01:30:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbgAVAZX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 19:25:23 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53548 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbgAVAZX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:25:23 -0500
-Received: from localhost (unknown [IPv6:2610:98:8005::647])
+        id S1728760AbgAVAaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 19:30:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726876AbgAVAaR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Jan 2020 19:30:17 -0500
+Received: from gmail.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id ACEB8292E33;
-        Wed, 22 Jan 2020 00:25:21 +0000 (GMT)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali.rohar@gmail.com>
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: vfat: Broken case-insensitive support for UTF-8
-In-Reply-To: <20200120214046.f6uq7rlih7diqahz@pali> ("Pali =?utf-8?Q?Roh?=
- =?utf-8?Q?=C3=A1r=22's?= message of
-        "Mon, 20 Jan 2020 22:40:46 +0100")
-Organization: Collabora
-References: <20200119221455.bac7dc55g56q2l4r@pali>
-        <87sgkan57p.fsf@mail.parknet.co.jp>
-        <20200120110438.ak7jpyy66clx5v6x@pali>
-        <875zh6pc0f.fsf@mail.parknet.co.jp>
-        <20200120214046.f6uq7rlih7diqahz@pali>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Date:   Tue, 21 Jan 2020 19:25:18 -0500
-Message-ID: <85wo9knxqp.fsf@collabora.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D435217F4;
+        Wed, 22 Jan 2020 00:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579653016;
+        bh=H/qN5wQT4EZ5hYKWGp7yIkcoOLzjrk0gNanXBpiBRnI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qUmyGZfkQoEjSKG30mFMzVYmysM/ifNtNxjkA1RSMGQ7a09pMTLRQ51CbJ/WSqYbJ
+         3X6LIerTmDJS8K4r629U6pRTw5tK+OB60JON9E76MkrGSspGCJVKneBB0fF2UOY/z7
+         5i6O013odo5e0N2RxkVk+0bwfG0RbjP7IfDQNb50=
+Date:   Tue, 21 Jan 2020 16:30:15 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v5 4/6] ubifs: don't trigger assertion on invalid no-key
+ filename
+Message-ID: <20200122003014.GA180824@gmail.com>
+References: <20200120223201.241390-1-ebiggers@kernel.org>
+ <20200120223201.241390-5-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120223201.241390-5-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pali Rohár <pali.rohar@gmail.com> writes:
+On Mon, Jan 20, 2020 at 02:31:59PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> If userspace provides an invalid fscrypt no-key filename which encodes a
+> hash value with any of the UBIFS node type bits set (i.e. the high 3
+> bits), gracefully report ENOENT rather than triggering ubifs_assert().
+> 
+> Test case with kvm-xfstests shell:
+> 
+>     . fs/ubifs/config
+>     . ~/xfstests/common/encrypt
+>     dev=$(__blkdev_to_ubi_volume /dev/vdc)
+>     ubiupdatevol $dev -t
+>     mount $dev /mnt -t ubifs
+>     mkdir /mnt/edir
+>     xfs_io -c set_encpolicy /mnt/edir
+>     rm /mnt/edir/_,,,,,DAAAAAAAAAAAAAAAAAAAAAAAAAA
+> 
+> With the bug, the following assertion fails on the 'rm' command:
+> 
+>     [   19.066048] UBIFS error (ubi0:0 pid 379): ubifs_assert_failed: UBIFS assert failed: !(hash & ~UBIFS_S_KEY_HASH_MASK), in fs/ubifs/key.h:170
+> 
+> Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
+> Cc: <stable@vger.kernel.org> # v4.10+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-> On Monday 20 January 2020 21:07:12 OGAWA Hirofumi wrote:
->> Pali Rohár <pali.rohar@gmail.com> writes:
->> 
->> >> To be perfect, the table would have to emulate what Windows use. It can
->> >> be unicode standard, or something other.
->> >
->> > Windows FAT32 implementation (fastfat.sys) is opensource. So it should
->> > be possible to inspect code and figure out how it is working.
->> >
->> > I will try to look at it.
->> 
->> I don't think the conversion library is not in fs driver though,
->> checking implement itself would be good.
->
-> Ok, I did some research. It took me it longer as I thought as lot of
-> stuff is undocumented and hard to find all relevant information.
->
-> So... fastfat.sys is using ntos function RtlUpcaseUnicodeString() which
-> takes UTF-16 string and returns upper case UTF-16 string. There is no
-> mapping table in fastfat.sys driver itself.
->
-> RtlUpcaseUnicodeString() is a ntos kernel function and after my research
-> it seems that this function is using only conversion table stored in
-> file l_intl.nls (from c:\windows\system32).
->
-> Project wine describe this file as "unicode casing tables" and seems
-> that it can parse this file format. Even more it distributes its own
-> version of this file which looks like to be generated from official
-> Unicode UnicodeData.txt via Perl script make_unicode (part of wine).
->
-> So question is... how much is MS changing l_intl.nls file in their
-> released Windows versions?
->
-> I would try to decode what is format of that file l_intl.nls and try to
-> compare data in it from some Windows versions.
->
-> Can we reuse upper case mapping table from that file?
+Richard, can you review the two UBIFS patches in this series, and if you're okay
+with them, provide Acked-by's so that we can take them through the fscrypt tree?
+They don't conflict with anything currently in the UBIFS tree.
 
-Regarding fs/unicode, we have some infrastructure to parse UCD files,
-handle unicode versioning, and store the data in a more compact
-structure.  See the mkutf8data script.
+Thanks!
 
-Right now, we only store the mapping of the code-point to the NFD + full
-casefold, but it would be possible to extend the parsing script to store
-the un-normalized uppercase version in the data structure.  So, if
-l_intl.nls is generated from UnicodeData.txt, you might consider to
-extend fs/unicode to store it.  We store the code-points in an optimized
-format to decode utf-8, but the infrastructure is half way there
-already.
-
--- 
-Gabriel Krisman Bertazi
+- Eric
