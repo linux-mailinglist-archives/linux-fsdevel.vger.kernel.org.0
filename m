@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA170144A63
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 04:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D35A144A71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 04:30:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgAVDXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jan 2020 22:23:02 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:52075 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbgAVDXC (ORCPT
+        id S1729110AbgAVDaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jan 2020 22:30:17 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36719 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbgAVDaR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jan 2020 22:23:02 -0500
-Received: by mail-pj1-f66.google.com with SMTP id d15so2432343pjw.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2020 19:23:01 -0800 (PST)
+        Tue, 21 Jan 2020 22:30:17 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k3so2693916pgc.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jan 2020 19:30:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WzWlqSAwBUYEHp474vY25WNq5cVSn3o2GyR5izuQQ6I=;
-        b=WqqDeek7IOETWuK4uyhivNNdGgPsGTJ+LQ4rSmigeF5wvVloRRnW12aj64MLBWr6jj
-         /ESnNSbAnL/NKNkcNYKOUoj4VKBb/N2QWdU/ZQIHt89BWLB7lLagV1EMWo00XgtcP+Rm
-         0obLYR61L1gI1UB9v0WOJgixa+wrnRME/jorMM3AtfVfL1xLSVWLr5WUv4sbYuHwzKI0
-         5WOBxlpUzIWV2u26LJoUn/7WsbyEyY9HMt80MIOfexO/ibceakxxAGnNAoksNRFvmleF
-         ndamVdEYFdkDsEoPm26uKMK8EC+AvcwbvKiuI3PfcsgEeHM7dxRWrk7K05HgZ5y18Nn0
-         CBWQ==
+        bh=qC1RUoM3/NtlqUaitknsdL/RkF2RqwRcZGXGQrwHHKY=;
+        b=xDunS1JhkaFpBpNmrHHt1HfTnw54J9IC2Y88T+VYta/x5jNWG2RFv/N42ujfWUn24X
+         /+MzbTNjWhtC0f0tXymbdW8Tiy8IjKhTss9krg3EBu4FD4EM0IqAwYTJjR0mNLmGkqXj
+         WQa7SFucJDGaL0UIvLo3ChgkS5GrAfy1DBwJ2BOy6jAoSnlpnhwwJdIpX6av4koGEGKo
+         +hyNmi5GpLT+8Jfm0ao5ySi8TGkD2R16+zImwPMF8vDolNpH0P4KLt+4BrDKNs/yOVgL
+         EnjDEh7dTSvTkMpAptYyhPG5eIKoU/BCYAuIF/vs12hJWJs204Uy7AzMnU1x0/NY2tIM
+         4tnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=WzWlqSAwBUYEHp474vY25WNq5cVSn3o2GyR5izuQQ6I=;
-        b=Ldk2gNhlAvx61eKHU2dNKvhi0ErJJwP7pFXqM6pls8XepbuxjezPi/9SDAT2pC3LhF
-         sKweB8rU843xP+xMXgvScUy0FcP3845c5UhC/5X6jrN4TI6iWu3ZhNHLdos5dZGEa8tb
-         X8jKuklZAmTLQS+O5AoK+AKrJtJc6RKA+Peo1bYjQyz1lbcuJ0cbjV0Md8vleLeXkzqi
-         0+BTUMehA30oqzgAQwHR5/6+aIv/7+MSMRZNAq/lWnamalB0ArgbW69g0YKyVT912ojq
-         BcTB6+Kqh3EdSh1edAcGZVPCfHPyO48cdqnpSPHfSsX0ipmZ4YpbHKdMcBu8m2fnF8IJ
-         Fh3Q==
-X-Gm-Message-State: APjAAAUGrrPGVUHX3mReuPmn5AE6w3o2a/Ra0g7t0HEsKc1ksTqpgN+y
-        O8tp5GIgDZdIQ0TMuthABI8gaA==
-X-Google-Smtp-Source: APXvYqx45UJwpaZsGhTx3w8CdAdqEztpeY705Gedj+Y8kUrFvfcZfV4c4AtGUUhl24em2ZBh1jkXUw==
-X-Received: by 2002:a17:90b:8b:: with SMTP id bb11mr567939pjb.27.1579663381129;
-        Tue, 21 Jan 2020 19:23:01 -0800 (PST)
+        bh=qC1RUoM3/NtlqUaitknsdL/RkF2RqwRcZGXGQrwHHKY=;
+        b=MCM9HnXibCEzJuvofEsuA76/jRix4jtUpLNahL6eO3O7/Hjn+OKgCm6Uf8hhLcq7Za
+         H8id/bdneUW6fpjdlI8nIqW9cqJzVgYL3Myu3hOpcqHyBbLFpAAJZuTz5mvyi/62FuQP
+         K1TkXCLx0517V8tB6cN47yUTjLdlXmGyvTsL9mm0+OnTRU8thN/+LRpKoAMVFLO79Akj
+         o+w4udYGANA+V4Fz+tFOCxQ6hZs2B0wKsxSAKTIZnimtabe6KdIr/Tcrj9QIwQhQXZWG
+         pBwoy89PLHFglqWDZfdDkwvO+vqgQXohzb4ujac9OjIb+SBw8kVM1qupFMNjWgGkE4Qu
+         QbAw==
+X-Gm-Message-State: APjAAAVzGlMw20LYNQdbQpC3ykA2htQj3XN6cIeIenTkbyII8OF/dtxf
+        XqaeZeLuWboPHDbuFfQQr2vdHA==
+X-Google-Smtp-Source: APXvYqxhcegRJt2QgKyEjpG1x8ZZM5y/oOMvXCQBhSqfFo0E7Xf/evJjiOwY0AZ2FWXYlfbRR99Lhg==
+X-Received: by 2002:a62:c541:: with SMTP id j62mr693157pfg.237.1579663816352;
+        Tue, 21 Jan 2020 19:30:16 -0800 (PST)
 Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id w4sm830441pjt.23.2020.01.21.19.23.00
+        by smtp.gmail.com with ESMTPSA id k3sm43215290pgc.3.2020.01.21.19.30.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2020 19:23:00 -0800 (PST)
-Subject: Re: [PATCH 3/3] io_uring: add splice(2) support
+        Tue, 21 Jan 2020 19:30:15 -0800 (PST)
+Subject: Re: [POC RFC 0/3] splice(2) support for io_uring
 To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
 References: <cover.1579649589.git.asml.silence@gmail.com>
- <8bfd9a57bf42cfc10ee7195969058d6da277deed.1579649589.git.asml.silence@gmail.com>
- <6d43b9d7-209a-2bbf-e2c2-e125e84b46ab@kernel.dk>
- <14499431-0409-5d57-9b08-aff95b9d2160@gmail.com>
- <b20d33eb-fd88-418c-57b6-32feb84d2373@kernel.dk>
- <578003e9-1af2-4df6-d9e1-cdbbbb701bf7@gmail.com>
+ <63119dd6-7668-a7bc-ea24-1db4909762bb@kernel.dk>
+ <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <60459de4-3497-0226-127a-e748486852c6@kernel.dk>
-Date:   Tue, 21 Jan 2020 20:22:58 -0700
+Message-ID: <8316dfa9-9210-3402-a6c3-4889b6bbdb49@kernel.dk>
+Date:   Tue, 21 Jan 2020 20:30:13 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <578003e9-1af2-4df6-d9e1-cdbbbb701bf7@gmail.com>
+In-Reply-To: <45f0b63b-e3e7-ba71-d037-9af1db7bbd98@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,124 +68,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/21/20 8:16 PM, Pavel Begunkov wrote:
-> On 22/01/2020 05:47, Jens Axboe wrote:
->> On 1/21/20 7:40 PM, Pavel Begunkov wrote:
->>>>> @@ -719,6 +730,11 @@ static const struct io_op_def io_op_defs[] = {
->>>>>  		.needs_file		= 1,
->>>>>  		.fd_non_neg		= 1,
->>>>>  	},
->>>>> +	[IORING_OP_SPLICE] = {
->>>>> +		.needs_file		= 1,
->>>>> +		.hash_reg_file		= 1,
->>>>> +		.unbound_nonreg_file	= 1,
->>>>> +	}
->>>>>  };
->>>>>  
->>>>>  static void io_wq_submit_work(struct io_wq_work **workptr);
->>>>
->>>> I probably want to queue up a reservation for the EPOLL_CTL that I
->>>> haven't included yet, but which has been tested. But that's easily
->>>> manageable, so no biggy on my end.
+On 1/21/20 8:11 PM, Pavel Begunkov wrote:
+> On 22/01/2020 04:55, Jens Axboe wrote:
+>> On 1/21/20 5:05 PM, Pavel Begunkov wrote:
+>>> It works well for basic cases, but there is still work to be done. E.g.
+>>> it misses @hash_reg_file checks for the second (output) file. Anyway,
+>>> there are some questions I want to discuss:
 >>>
->>> I didn't quite get it. Do you mean collision of opcode numbers?
+>>> - why sqe->len is __u32? Splice uses size_t, and I think it's better
+>>> to have something wider (e.g. u64) for fututre use. That's the story
+>>> behind added sqe->splice_len.
 >>
->> Yeah that's all I meant, sorry wasn't too clear. But you can disregard,
->> I'll just pop a reservation in front if/when this is ready to go in if
->> it's before EPOLL_CTL op.
+>> IO operations in Linux generally are INT_MAX, so the u32 is plenty big.
+>> That's why I chose it. For this specifically, if you look at splice:
 >>
->>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>>>> index 57d05cc5e271..f234b13e7ed3 100644
->>>>> --- a/include/uapi/linux/io_uring.h
->>>>> +++ b/include/uapi/linux/io_uring.h
->>>>> @@ -23,8 +23,14 @@ struct io_uring_sqe {
->>>>>  		__u64	off;	/* offset into file */
->>>>>  		__u64	addr2;
->>>>>  	};
->>>>> -	__u64	addr;		/* pointer to buffer or iovecs */
->>>>> -	__u32	len;		/* buffer size or number of iovecs */
->>>>> +	union {
->>>>> +		__u64	addr;		/* pointer to buffer or iovecs */
->>>>> +		__u64	off_out;
->>>>> +	};
->>>>> +	union {
->>>>> +		__u32	len;	/* buffer size or number of iovecs */
->>>>> +		__s32	fd_out;
->>>>> +	};
->>>>>  	union {
->>>>>  		__kernel_rwf_t	rw_flags;
->>>>>  		__u32		fsync_flags;
->>>>> @@ -37,10 +43,12 @@ struct io_uring_sqe {
->>>>>  		__u32		open_flags;
->>>>>  		__u32		statx_flags;
->>>>>  		__u32		fadvise_advice;
->>>>> +		__u32		splice_flags;
->>>>>  	};
->>>>>  	__u64	user_data;	/* data to be passed back at completion time */
->>>>>  	union {
->>>>>  		__u16	buf_index;	/* index into fixed buffers, if used */
->>>>> +		__u64	splice_len;
->>>>>  		__u64	__pad2[3];
->>>>>  	};
->>>>>  };
->>>>
->>>> Not a huge fan of this, also mean splice can't ever used fixed buffers.
->>>> Hmm...
->>>
->>> But it's not like splice() ever uses user buffers. Isn't it? vmsplice
->>> does, but that's another opcode.
+>> 	if (unlikely(len > MAX_RW_COUNT))
+>> 		len = MAX_RW_COUNT;
 >>
->> I guess that's true, I had vmsplice on my mind for this as well. But
->> won't be a problem there, since it doesn't take 6 arguments like splice
->> does.
->>
->> Another option is to do an indirect for splice, stuff the arguments in a
->> struct that's passed in as a pointer in ->addr. A bit slower, but
->> probably not a huge deal.
->>
->>>>> @@ -67,6 +75,9 @@ enum {
->>>>>  /* always go async */
->>>>>  #define IOSQE_ASYNC		(1U << IOSQE_ASYNC_BIT)
->>>>>  
->>>>> +/* op custom flags */
->>>>> +#define IOSQE_SPLICE_FIXED_OUT	(1U << 16)
->>>>> +
->>>>
->>>> I don't think it's unreasonable to say that if you specify
->>>> IOSQE_FIXED_FILE, then both are fixed. If not, then none of them are.
->>>> What do you think?
->>>>
->>>
->>> It's plausible to register only one end for splicing, e.g. splice from
->>> short-lived sockets to pre-registered buffers-pipes. And it's clearer
->>> do it now.
->>
->> You're probably right, though it's a bit nasty to add an unrelated flag
->> in the splice flag space... We should probably reserve it in splice
->> instead, and just not have it available from the regular system call.
->>
-> Agree, it looks bad. I don't want to add it into sqe->splice_flags to
-> not clash with splice(2) in the future, but could have a separate
-> field in @sqe...  or can leave in in sqe->flags, as it's done in the
-> patch, but that's like a portion of bits would be opcode specific and
-> we would need to set rules for their use.
+>> so anything larger is truncated anyway.
+> 
+> Yeah, I saw this one, but that was rather an argument for the future.
+> It's pretty easy to transfer more than 4GB with sg list, but that
+> would be the case for splice.
 
-It won't clash with splice(2), just make that flag illegal if done
-through splice(2) directly. Honestly I think that's (by FAR) the best
-way to do it, having a private io_uring flag that acts as a splice flag
-is really confusing and prone to breakage. Not that it's a huge issue
-with splice as the flags have been stable for years, so don't really see
-a high risk of collision. But we should still do it right, which means
-adding SPLICE_F_OUT_FIXED or whatever you want to call it. Do that as a
-prep patch, make do_splice() into __do_splice(), and have io_uring call
-__do_splice(). Currently splice(2) is permissive in terms of flags, so
-maybe just mask it in do_splice() to be on the safe side. Then we know
-only internal users will set SPLICE_F_OUT_FIXED, and we'll never run
-into the risk of having a collision as it's part of the flag space
-anyway.
+I don't see this changing, ever, basically. And probably not a big deal,
+if you want to do more than 2GB worth of IO, you simply splice them over
+multiple commands. At those sizes, the overhead there is negligible.
 
-The sqe->flags space is very tight, so adding a splice specific opcode
-there would be bad.
+>>> - it requires 2 fds, and it's painful. Currently file managing is done
+>>> by common path (e.g. io_req_set_file(), __io_req_aux_free()). I'm
+>>> thinking to make each opcode function handle file grabbing/putting
+>>> themself with some helpers, as it's done in the patch for splice's
+>>> out-file.
+>>>     1. Opcode handler knows, whether it have/needs a file, and thus
+>>>        doesn't need extra checks done in common path.
+>>>     2. It will be more consistent with splice.
+>>> Objections? Ideas?
+>>
+>> Sounds reasonable to me, but always easier to judge in patch form :-)
+>>
+>>> - do we need offset pointers with fallback to file->f_pos? Or is it
+>>> enough to have offset value. Jens, I remember you added the first
+>>> option somewhere, could you tell the reasoning?
+>>
+>> I recently added support for -1/cur position, which splice also uses. So
+>> you should be fine with that.
+>>
+> 
+> I always have been thinking about it as a legacy from old days, and
+> one of the problems of posix. It's not hard to count it in the
+> userspace especially in C++ or high-level languages, and is just
+> another obstacle for having a performant API. So, I'd rather get rid
+> of it here. But is there any reasons against?
+
+It's not always trivial to do in libraries, or programming languages
+even. That's why it exists. I would not expect anyone to use it outside
+of that.
 
 -- 
 Jens Axboe
