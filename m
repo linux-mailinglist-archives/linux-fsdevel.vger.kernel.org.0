@@ -2,144 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2425F145A8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:05:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 282AA145A89
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jan 2020 18:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgAVRFf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jan 2020 12:05:35 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:25254 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725883AbgAVRFf (ORCPT
+        id S1726227AbgAVREr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jan 2020 12:04:47 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:41995 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgAVREr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jan 2020 12:05:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579712733;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oe4t0QNMK4mSJlWW/e/SjvjgPQxAt3dHe+iY7Ns6joI=;
-        b=QeBnOl9FFT8X5oltMpG2vFd1LI5tPq7yHcYAcQX+ZeueUi3z7fplVx3jHXJYctSD7RPDFe
-        2UD3Sb56Me2YN4biYjuEBT6rJ9xo8vieBBgNNZCeiKA286muPIDoIZDLdUGPoMlRFiGt8q
-        yymYXk9ew9mfje8I6aDWDcEJn1bk254=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-164-LQ1In6XsOFqesLEw3syA_w-1; Wed, 22 Jan 2020 12:05:30 -0500
-X-MC-Unique: LQ1In6XsOFqesLEw3syA_w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 59F7B18B5F95;
-        Wed, 22 Jan 2020 17:05:29 +0000 (UTC)
-Received: from redhat.com (ovpn-112-42.rdu2.redhat.com [10.10.112.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 525198574F;
-        Wed, 22 Jan 2020 17:05:26 +0000 (UTC)
-Date:   Wed, 22 Jan 2020 09:02:25 -0800
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, lsf-pc@lists.linux-foundation.org,
-        Jens Axboe <axboe@kernel.dk>, Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Do not pin pages for various
- direct-io scheme
-Message-ID: <20200122170225.GB6009@redhat.com>
+        Wed, 22 Jan 2020 12:04:47 -0500
+Received: by mail-il1-f195.google.com with SMTP id t2so5668725ilq.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jan 2020 09:04:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XWTQKsARJ+uzj6OBD4b66jlpFw8cyx0abxQgN3Kvgv4=;
+        b=dHkKEGgH54CBLZcJKvkkdgLaX01WGN/ZkqqVq/hZ+7IW8DzAblc0STtyXBWwiXD3re
+         ir+Y3SK4pmMtj4lXy+HYCLfETcVl5XG5H39kbu+tQg/ZmqNzhhA5K6QOXUkY5N8SwJNf
+         RqEHAPiBkazaRBkEOHjp5RuoIae2CwZfsQy20mQ9OyJ2kNyRH9zUHiH5YuRVT0QAso7w
+         ci3MPZx0ieZpFehxt02qM5jX+YrT9AQL617YjVdlNna060vWuSajOrq9rVkNM8/wMu4D
+         WZBHeiLRMrf5XM3QPKG7vRRvHz8ybnJGHs9T45NlL8ThyzvQGV41ikLhiLCBkS30zHE6
+         1eNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XWTQKsARJ+uzj6OBD4b66jlpFw8cyx0abxQgN3Kvgv4=;
+        b=OUT7SuhQkiIw6ZheOsaFtRNd9+0s/vgou5QspU3lg0j5TPrFEJHYwJ4CXIGIZwhXJ9
+         kPkCZ9BhR6JscS7004MvD0TfcQf2uuD3iI/SyEssOU5Y0sDLGFy8ZHeWSyG7bxmRt6xl
+         arXYk7GxiY09y7qfTN+u/qWpXSSDDGNo2BlNB8NMU0w01fWKr5XOtnowgvUaqbvJA6y5
+         KHoYP82c5mI/r4m+aeXwGqtxzVz5XHorUFJcGdKQ4zhs6I2wJPAblaZuCCClcjAqIRW6
+         eHV/PQlCracAl3Bk4ELSRDWooLnctctywt6+4wJj5EWoY1DhwXTgtvoOMCLbQ97FmryO
+         ytOw==
+X-Gm-Message-State: APjAAAVeGVddRu9BX/MSwDyERJbRRKXTomoYjsNmPwHYrJEPA8UNsamL
+        qyQwHWIC8ETnoWjdZajFpgh1LafHwYI=
+X-Google-Smtp-Source: APXvYqypbMgNnhw5DUBINcLHTOLuL/DfhR+ZyDBtkYwX3VNVbXnCvUAZDLZCrkPuGPkzGVNHJrTKLg==
+X-Received: by 2002:a92:d642:: with SMTP id x2mr8909980ilp.169.1579712686373;
+        Wed, 22 Jan 2020 09:04:46 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id q1sm10959011iog.8.2020.01.22.09.04.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 09:04:45 -0800 (PST)
+Subject: Re: [LSF/MM/BPF TOPIC] Do not pin pages for various direct-io scheme
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Benjamin LaHaise <bcrl@kvack.org>
 References: <20200122023100.75226-1-jglisse@redhat.com>
- <CAA9_cmfDKan60EnXCptAu9U6XgQgr5-MKfrENDNOSZYmQY9iRA@mail.gmail.com>
- <20200122050012.GD76712@redhat.com>
- <CAPcyv4hF-bagqZk-n_2QyvG5zE=5uSWJnbkDsfY3FYHT0+F6FQ@mail.gmail.com>
+ <ba250f19-cc51-f1dc-3236-58be1f291db3@kernel.dk>
+ <20200122045723.GC76712@redhat.com> <20200122115926.GW29276@dhcp22.suse.cz>
+ <015647b0-360c-c9ac-ac20-405ae0ec4512@kernel.dk>
+ <20200122165427.GA6009@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <66027259-81c3-0bc4-a70b-74069e746058@kernel.dk>
+Date:   Wed, 22 Jan 2020 10:04:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hF-bagqZk-n_2QyvG5zE=5uSWJnbkDsfY3FYHT0+F6FQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200122165427.GA6009@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 07:56:50AM -0800, Dan Williams wrote:
-> On Tue, Jan 21, 2020 at 9:04 PM Jerome Glisse <jglisse@redhat.com> wrot=
-e:
-> >
-> > On Tue, Jan 21, 2020 at 08:19:54PM -0800, Dan Williams wrote:
-> > > On Tue, Jan 21, 2020 at 6:34 PM <jglisse@redhat.com> wrote:
-> > > >
-> > > > From: J=E9r=F4me Glisse <jglisse@redhat.com>
-> > > >
-> > > > Direct I/O does pin memory through GUP (get user page) this does
-> > > > block several mm activities like:
-> > > >     - compaction
-> > > >     - numa
-> > > >     - migration
-> > > >     ...
-> > > >
-> > > > It is also troublesome if the pinned pages are actualy file back
-> > > > pages that migth go under writeback. In which case the page can
-> > > > not be write protected from direct-io point of view (see various
-> > > > discussion about recent work on GUP [1]). This does happens for
-> > > > instance if the virtual memory address use as buffer for read
-> > > > operation is the outcome of an mmap of a regular file.
-> > > >
-> > > >
-> > > > With direct-io or aio (asynchronous io) pages are pinned until
-> > > > syscall completion (which depends on many factors: io size,
-> > > > block device speed, ...). For io-uring pages can be pinned an
-> > > > indifinite amount of time.
-> > > >
-> > > >
-> > > > So i would like to convert direct io code (direct-io, aio and
-> > > > io-uring) to obey mmu notifier and thus allow memory management
-> > > > and writeback to work and behave like any other process memory.
-> > > >
-> > > > For direct-io and aio this mostly gives a way to wait on syscall
-> > > > completion. For io-uring this means that buffer might need to be
-> > > > re-validated (ie looking up pages again to get the new set of
-> > > > pages for the buffer). Impact for io-uring is the delay needed
-> > > > to lookup new pages or wait on writeback (if necessary). This
-> > > > would only happens _if_ an invalidation event happens, which it-
-> > > > self should only happen under memory preissure or for NUMA
-> > > > activities.
-> > >
-> > > This seems to assume that memory pressure and NUMA migration are ra=
-re
-> > > events. Some of the proposed hierarchical memory management schemes
-> > > [1] might impact that assumption.
-> > >
-> > > [1]: http://lore.kernel.org/r/20191101075727.26683-1-ying.huang@int=
-el.com/
-> > >
-> >
-> > Yes, it is true that it will likely becomes more and more an issues.
-> > We are facing a tough choice here as pining block NUMA or any kind of
-> > migration and thus might impede performance while invalidating an io-
-> > uring buffer will also cause a small latency burst. I do not think we
-> > can make everyone happy but at very least we should avoid pining and
-> > provide knobs to let user decide what they care more about (ie io wit=
-h-
-> > out burst or better NUMA locality).
->=20
-> It's a question of tradeoffs and this proposal seems to have already
-> decided that the question should be answered in favor a GPU/SVM
-> centric view of the world without presenting the alternative.
-> Direct-I/O colliding with GPU operations might also be solved by
-> always triggering a migration, and applications that care would avoid
-> colliding operations that slow down their GPU workload. A slow compat
-> fallback that applications can programmatically avoid is more flexible
-> than an upfront knob.
+On 1/22/20 9:54 AM, Jerome Glisse wrote:
+> On Wed, Jan 22, 2020 at 08:12:51AM -0700, Jens Axboe wrote:
+>> On 1/22/20 4:59 AM, Michal Hocko wrote:
+>>> On Tue 21-01-20 20:57:23, Jerome Glisse wrote:
+>>>> We can also discuss what kind of knobs we want to expose so that
+>>>> people can decide to choose the tradeof themself (ie from i want low
+>>>> latency io-uring and i don't care wether mm can not do its business; to
+>>>> i want mm to never be impeded in its business and i accept the extra
+>>>> latency burst i might face in io operations).
+>>>
+>>> I do not think it is a good idea to make this configurable. How can
+>>> people sensibly choose between the two without deep understanding of
+>>> internals?
+>>
+>> Fully agree, we can't just punt this to a knob and call it good, that's
+>> a typical fallacy of core changes. And there is only one mode for
+>> io_uring, and that's consistent low latency. If this change introduces
+>> weird reclaim, compaction or migration latencies, then that's a
+>> non-starter as far as I'm concerned.
+>>
+>> And what do those two settings even mean? I don't even know, and a user
+>> sure as hell doesn't either.
+>>
+>> io_uring pins two types of pages - registered buffers, these are used
+>> for actual IO, and the rings themselves. The rings are not used for IO,
+>> just used to communicate between the application and the kernel.
+> 
+> So, do we still want to solve file back pages write back if page in
+> ubuffer are from a file ?
 
-To make it clear i do not care about direct I/O colliding with anything
-GPU or otherwise, anything like that is up to the application programmer.
+That's not currently a concern for io_uring, as it disallows file backed
+pages for the IO buffers that are being registered.
 
-My sole interest is with page pinning that block compaction and migration=
-.
-The former imped the kernel capability to materialize huge page, the
-latter can impact performance badly including for the direct i/o user.
-For instance if the process using io-uring get migrated to different node
-after registering its buffer then it will keep using memory from a
-different node which in the end might be much worse then the one time
-extra latency spike the migration incur.
+> Also we can introduce a flag when registering buffer that allows to
+> register buffer without pining and thus avoid the RLIMIT_MEMLOCK at
+> the cost of possible latency spike. Then user registering the buffer
+> knows what he gets.
 
-Cheers,
-J=E9r=F4me
+That may be fine for others users, but I don't think it'll apply
+to io_uring. I can't see anyone selecting that flag, unless you're
+doing something funky where you're registering a substantial amount
+of the system memory for IO buffers. And I don't think that's going
+to be a super valid use case...
+
+> Maybe it would be good to test, it might stay in the noise, then it
+> might be a good thing to do. Also they are strategy to avoid latency
+> spike for instance we can block/force skip mm invalidation if buffer
+> has pending/running io in the ring ie only have buffer invalidation
+> happens when there is no pending/running submission entry.
+
+Would that really work? The buffer could very well be idle right when
+you check, but wanting to do IO the instant you decide you can do
+background work on it. Additionally, that would require accounting
+on when the buffers are inflight, which is exactly the kind of
+overhead we're trying to avoid to begin with.
+
+> We can also pick what kind of invalidation we allow (compaction,
+> migration, ...) and thus limit the scope and likelyhood of
+> invalidation.
+
+I think it'd be useful to try and understand the use case first.
+If we're pinning a small percentage of the system memory, do we
+really care at all? Isn't it completely fine to just ignore?
+
+-- 
+Jens Axboe
 
