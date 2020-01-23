@@ -2,104 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5A3147351
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 22:45:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 326CA147356
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 22:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgAWVpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 16:45:41 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28103 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728057AbgAWVpl (ORCPT
+        id S1729122AbgAWVrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 16:47:52 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44129 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728984AbgAWVrw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 16:45:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579815939;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=u61jrRml7uBsTChqQkvEyIjmfc5MgOu8Mlxfsu5OMjo=;
-        b=IHNgFR67rxe/Y3v6/qX/+7rF4x4fCsJkB3TvgXM4HzcIFTPlAzVctwotVVGNz3rGjuOQZk
-        7bBLjdV0kMkdPbzcFLiEN6z9jVjclTUXsm5seJPeCdlM6HmmrfK88P80WPYPCvC67xIDT6
-        8yng0hfqOVbp3iScDPSyIMng3L6eCck=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-4S5rYNjdPKSSqRzB9M4nug-1; Thu, 23 Jan 2020 16:45:38 -0500
-X-MC-Unique: 4S5rYNjdPKSSqRzB9M4nug-1
-Received: by mail-wm1-f72.google.com with SMTP id o24so1145104wmh.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2020 13:45:38 -0800 (PST)
+        Thu, 23 Jan 2020 16:47:52 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q8so5420490ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2020 13:47:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YhdQmzKcBNrdoLI54N+iRiz95hS2N5V9TEIVZsNwGUQ=;
+        b=zvNKYSbEyhPQ3NLDHr7JObqj/IOu7umr2jteRknL+jllPcUiisljvVVxsdw8gofqQK
+         djFVBpfpXx33ps/9HFrET+9LsNNf6IOgVO5Ct5mt8yuTvADQoze2He42TBidV7Za/Iwq
+         VBXPOWZrBBAZzXzwaR382mYyF5nCrbeLgZNckklHJsSzIlPecfo+hjxfKH6pbXlHSAPF
+         53CdBCMcn+McG0AixIwVLmEANV4WY5a0Wb770ITfd/hdieQoZvbliSVbkfrt7UVpM15K
+         LlmSSoir7uAu5IXp4zxnY6Hor3F2/BfeHrW0PFBhSJxd0bVbH0FXqfBUKkdNP4XX5tOU
+         OCTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=u61jrRml7uBsTChqQkvEyIjmfc5MgOu8Mlxfsu5OMjo=;
-        b=Go576ZdZAVG+RH5yJT959H5+6UnNHUjTMB4RmwVmJPBIvlTE4hIFuO4oI9v05h4cBJ
-         0UTAhr5uda/gDo3JPhBWwRfWNwzm9/EBFDB8C7CwXVLfuA4kTaXldA2zl6EOr+LzA/V/
-         DGJfbQxEhHaJEzmCdsdc9/Qr5N4nCU7+cQAfjqlkZqnNaJLaputduybJ/CVZESBQC1yp
-         DDoE+DwRxkWqrk6vc2G31CagGW2SHY5H1/UYNqp9ulHN2fla37YgmX8GQyzJMevahVfp
-         xU19onEx++/z6EUyca8bhc6T2dU7wxvpSEH0s/Vho4BVof/bOFLainfs+E2OlOuHEINe
-         qa1g==
-X-Gm-Message-State: APjAAAU1gMkIpRfcMxPJlN6XSDoalQbd95/3x9qfs9OOKaik5IOOc+Yv
-        rv6Y3PsHNulNzLK2959I+jGsDqadsaOLlkg2WA9xJeulluhZP3UqgeWap+Ht7r+VgOh5IQr7dw+
-        nDg+7uj43lxzBXvv9VXBE6H90SA==
-X-Received: by 2002:a5d:4085:: with SMTP id o5mr91676wrp.321.1579815937024;
-        Thu, 23 Jan 2020 13:45:37 -0800 (PST)
-X-Google-Smtp-Source: APXvYqypvLRV506GGxMfAQP/vrSzj5p5HHA+EMluQu+yI3TOmaSFK8iaFL33miPix2yjG9Oq+XvZzw==
-X-Received: by 2002:a5d:4085:: with SMTP id o5mr91651wrp.321.1579815936765;
-        Thu, 23 Jan 2020 13:45:36 -0800 (PST)
-Received: from steredhat ([80.188.125.198])
-        by smtp.gmail.com with ESMTPSA id y139sm4299842wmd.24.2020.01.23.13.45.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2020 13:45:35 -0800 (PST)
-Date:   Thu, 23 Jan 2020 22:45:33 +0100
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] io_uring: wakeup threads waiting for EPOLLOUT events
-Message-ID: <20200123214533.ikn4olf7k5dfbaq6@steredhat>
-References: <20200116134946.184711-1-sgarzare@redhat.com>
- <2d2dda92-3c50-ee62-5ffe-0589d4c8fc0d@kernel.dk>
- <20200116155557.mwjc7vu33xespiag@steredhat>
- <5723453a-9326-e954-978e-910b8b495b38@kernel.dk>
- <20200116162630.6r3xc55kdyyq5tvz@steredhat>
- <a02a58dc-bf23-ed74-aec6-52c85360fe00@kernel.dk>
- <20200116170342.4jvkhbbw4x6z3txn@steredhat>
- <2d3d4932-8894-6969-4006-25141ca1286e@kernel.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YhdQmzKcBNrdoLI54N+iRiz95hS2N5V9TEIVZsNwGUQ=;
+        b=Qk7DOS1uFykyyQLKdrYf3+FxmdF06FdmpfA9srUD1oU+en/2eaoMMz3/Gi0ihBcLPe
+         XTuVXD24khHS6nwYoatxEKmhDx+t9AY+TzQcIV1d1IRcRVs5j1w7HUBtBnOiQoI7WR99
+         bWtv9kTboQDm+4/1E6TrCupZH3EQIeFqANsMdXl00/Gf8dlhDelJcOuApIEXIRvmoWHC
+         1SU9daLuu6Wv6LxBdO80g5Im6pn6xKQ53lE1F1Zt8yIzG27a4AlMUomjJian4k1uzFF0
+         sn58CQDF3NH4RgAQj5C55b4/naihA6xGGOApHKCHBec7M7zmLZiZ/jiQtARh5MOBTCDC
+         7NYA==
+X-Gm-Message-State: APjAAAVda85rnNZ/thz89Mm279zqJHxRgAMjiyV2FCNPhKBpk2o7JiY0
+        Jbl08JnI+w+nkebjYTdZa7aoqXaR4w/EAgIZXtwr
+X-Google-Smtp-Source: APXvYqztFa7vAl8EvjnBAbXT/Sxp3LD4cPaFKrc0PnFsn1Bc8BoDdWYI9cS1dXL0IglZHlYX5t78xA0hNpmBE5LAkJ0=
+X-Received: by 2002:a05:651c:204f:: with SMTP id t15mr251303ljo.240.1579816069696;
+ Thu, 23 Jan 2020 13:47:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d3d4932-8894-6969-4006-25141ca1286e@kernel.dk>
+References: <cover.1577736799.git.rgb@redhat.com> <cfbb80a08fc770dd0dcf6dac6ff307a80d877c3f.1577736799.git.rgb@redhat.com>
+ <CAHC9VhT1+mx_tVzyXD=UBqagqYgAFjZ=X1A6oBiMvjVCn8=V-w@mail.gmail.com> <20200123210240.sq64tptjm3ds7xss@madcap2.tricolour.ca>
+In-Reply-To: <20200123210240.sq64tptjm3ds7xss@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Jan 2020 16:47:38 -0500
+Message-ID: <CAHC9VhQtAfW-+sK3Gb6y=jPYOkyXnopO94k+u_6UKAAaACg44Q@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 12/16] audit: contid check descendancy and nesting
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 12:13:57PM -0700, Jens Axboe wrote:
-> On 1/16/20 10:03 AM, Stefano Garzarella wrote:
-> > On Thu, Jan 16, 2020 at 09:30:12AM -0700, Jens Axboe wrote:
-> >> On 1/16/20 9:26 AM, Stefano Garzarella wrote:
-> >>>> Since the use case is mostly single submitter, unless you're doing
-> >>>> something funky or unusual, you're not going to be needing POLLOUT ever.
-> >>>
-> >>> The case that I had in mind was with kernel side polling enabled and
-> >>> a single submitter that can use epoll() to wait free slots in the SQ
-> >>> ring. (I don't have a test, maybe I can write one...)
-> >>
-> >> Right, I think that's the only use case where it makes sense, because
-> >> you have someone else draining the sq side for you. A test case would
-> >> indeed be nice, liburing has a good arsenal of test cases and this would
-> >> be a good addition!
-> > 
-> > Sure, I'll send a test to liburing for this case!
-> 
-> Gentle ping on the test case :-)
-> 
+On Thu, Jan 23, 2020 at 4:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-01-22 16:29, Paul Moore wrote:
+> > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > Require the target task to be a descendant of the container
+> > > orchestrator/engine.
+> > >
+> > > You would only change the audit container ID from one set or inherited
+> > > value to another if you were nesting containers.
+> > >
+> > > If changing the contid, the container orchestrator/engine must be a
+> > > descendant and not same orchestrator as the one that set it so it is not
+> > > possible to change the contid of another orchestrator's container.
+> > >
+> > > Since the task_is_descendant() function is used in YAMA and in audit,
+> > > remove the duplication and pull the function into kernel/core/sched.c
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  include/linux/sched.h    |  3 +++
+> > >  kernel/audit.c           | 44 ++++++++++++++++++++++++++++++++++++--------
+> > >  kernel/sched/core.c      | 33 +++++++++++++++++++++++++++++++++
+> > >  security/yama/yama_lsm.c | 33 ---------------------------------
+> > >  4 files changed, 72 insertions(+), 41 deletions(-)
+> >
+> > ...
+> >
+> > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > index f7a8d3288ca0..ef8e07524c46 100644
+> > > --- a/kernel/audit.c
+> > > +++ b/kernel/audit.c
+> > > @@ -2603,22 +2610,43 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+> > >         oldcontid = audit_get_contid(task);
+> > >         read_lock(&tasklist_lock);
+> > >         /* Don't allow the contid to be unset */
+> > > -       if (!audit_contid_valid(contid))
+> > > +       if (!audit_contid_valid(contid)) {
+> > >                 rc = -EINVAL;
+> > > +               goto unlock;
+> > > +       }
+> > >         /* Don't allow the contid to be set to the same value again */
+> > > -       else if (contid == oldcontid) {
+> > > +       if (contid == oldcontid) {
+> > >                 rc = -EADDRINUSE;
+> > > +               goto unlock;
+> > > +       }
+> > >         /* if we don't have caps, reject */
+> > > -       else if (!capable(CAP_AUDIT_CONTROL))
+> > > +       if (!capable(CAP_AUDIT_CONTROL)) {
+> > >                 rc = -EPERM;
+> > > -       /* if task has children or is not single-threaded, deny */
+> > > -       else if (!list_empty(&task->children))
+> > > +               goto unlock;
+> > > +       }
+> > > +       /* if task has children, deny */
+> > > +       if (!list_empty(&task->children)) {
+> > >                 rc = -EBUSY;
+> > > -       else if (!(thread_group_leader(task) && thread_group_empty(task)))
+> > > +               goto unlock;
+> > > +       }
+> > > +       /* if task is not single-threaded, deny */
+> > > +       if (!(thread_group_leader(task) && thread_group_empty(task))) {
+> > >                 rc = -EALREADY;
+> > > -       /* if contid is already set, deny */
+> > > -       else if (audit_contid_set(task))
+> > > +               goto unlock;
+> > > +       }
+> >
+> > It seems like the if/else-if conversion above should be part of an
+> > earlier patchset.
+>
+> I had considered that, but it wasn't obvious where that conversion
+> should happen since it wasn't necessary earlier and is now.  I can move
+> it earlier if you feel strongly about it.
 
-Yes, you are right :-)
+Not particularly.
 
-I was a little busy this week to finish some works before DevConf.
-I hope to work on the test case these days, so by Monday I hope I have it ;-)
-
-Cheers,
-Stefano
-
+-- 
+paul moore
+www.paul-moore.com
