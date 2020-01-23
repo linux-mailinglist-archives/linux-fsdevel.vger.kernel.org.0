@@ -2,93 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A48146262
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 08:16:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9357C1462AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 08:27:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725828AbgAWHQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 02:16:47 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:34338 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725535AbgAWHQq (ORCPT
+        id S1725989AbgAWH1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 02:27:39 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59206 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbgAWH1j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 02:16:46 -0500
-Received: from dread.disaster.area (pa49-195-162-125.pa.nsw.optusnet.com.au [49.195.162.125])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D0CEB3A2854;
-        Thu, 23 Jan 2020 18:16:40 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iuWjH-0002Dt-I3; Thu, 23 Jan 2020 18:16:39 +1100
-Date:   Thu, 23 Jan 2020 18:16:39 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Omar Sandoval <osandov@osandov.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>, "hch@lst.de" <hch@lst.de>,
-        "miklos@szeredi.hu" <miklos@szeredi.hu>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
-Message-ID: <20200123071639.GA7216@dread.disaster.area>
-References: <20200117202219.GB295250@vader>
- <20200117222212.GP8904@ZenIV.linux.org.uk>
- <20200117235444.GC295250@vader>
- <20200118004738.GQ8904@ZenIV.linux.org.uk>
- <20200118011734.GD295250@vader>
- <20200118022032.GR8904@ZenIV.linux.org.uk>
- <20200121230521.GA394361@vader>
- <CAOQ4uxgsoGMsNxhmtzZPqb+NshpJ3_P8vDiKpJFO5ZK25jZr0w@mail.gmail.com>
- <20200122221003.GB394361@vader>
- <20200123034745.GI23230@ZenIV.linux.org.uk>
+        Thu, 23 Jan 2020 02:27:39 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00N7NSGB134299;
+        Thu, 23 Jan 2020 07:27:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
+ bh=aNJtCdKiyElSLkFhxuIW9EKjg+NzaLIcTRbJ9YNwB90=;
+ b=E0fWqhfGjPoWviMF9bDHdBTYzPeAvOZjFjvd2Fewp45EXCVCMUZDVMupfudy3DavDO7c
+ ScNx1/ztlJfPQRpCpe+rvRC8gPyiAxEqVbfVJueoYR5Qe2HSXP++oVi9b60eUk4ZHWZi
+ ZWxdkW9K1WbmXfeX451EdmGtbUuJwVetgBBlxEJKOtK8ECazO1EY5WRHQ+l5/wnlCQJw
+ KwV7vzj57yoA34ulxdLtitNUAR3Trxxd18FzwPZDky81Jhcq4jErEQJo8w2m63f37+gV
+ ht1aniAVX6aQ66fhfsX2xcr+506dF2YH6AlGPx1wRW5igiysyg35hvSKWZCyVv5tO6Y4 ig== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2xktnrg8a5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Jan 2020 07:27:29 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00N7NHM7032257;
+        Thu, 23 Jan 2020 07:25:28 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2xppq4wd4j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Jan 2020 07:25:28 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00N7PP8h001915;
+        Thu, 23 Jan 2020 07:25:25 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 Jan 2020 23:25:24 -0800
+Date:   Thu, 23 Jan 2020 10:25:15 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     me@kaowomen.cn
+Cc:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>,
+        "'devel@driverdev.osuosl.org'" <devel@driverdev.osuosl.org>,
+        "'Valdis Kletnieks'" <valdis.kletnieks@vt.edu>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] staging: exfat: remove fs_func struct.
+Message-ID: <20200123072515.GJ1847@kadam>
+References: <20200117062046.20491-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <20200122085737.GA2511011@kroah.com>
+ <OSAPR01MB1569F24512678DEA1C175504900F0@OSAPR01MB1569.jpnprd01.prod.outlook.com>
+ <20200123070435.cjso5yh6nmmhd4gm@kaowomen.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200123034745.GI23230@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=eqEhQ2W7mF93FbYHClaXRw==:117 a=eqEhQ2W7mF93FbYHClaXRw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
-        a=7-415B0cAAAA:8 a=agfXOARqqYv4CNyIZKwA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200123070435.cjso5yh6nmmhd4gm@kaowomen.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9508 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001230063
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9508 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001230063
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 03:47:45AM +0000, Al Viro wrote:
-> On Wed, Jan 22, 2020 at 02:10:03PM -0800, Omar Sandoval wrote:
-> 
-> > > Sorry for not reading all the thread again, some API questions:
-> > > - We intend to allow AT_REPLACE only with O_TMPFILE src. Right?
+On Thu, Jan 23, 2020 at 03:04:35PM +0800, me@kaowomen.cn wrote:
+> On Thu, Jan 23, 2020 at 06:38:53AM +0000, Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp wrote:
+> > Hello, Greg.
 > > 
-> > I wasn't planning on having that restriction. It's not too much effort
-> > for filesystems to support it for normal files, so I wouldn't want to
-> > place an artificial restriction on a useful primitive.
-> 
-> I'm not sure; that's how we ended up with the unspeakable APIs like
-> rename(2), after all...
+> > Thank you for the quick reply.
+> > 
+> > > Also the patch does not apply to the linux-next tree at all, so I can't take it.
+> > The patch I sent was based on the master branch of “https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/”
+> > and its tag was v5.5-rc6.
+> > 
+> > > Also the patch does not apply to the linux-next tree at all, so I can't take it.  Please rebase and resend.
+> > I will send a new patch based on the latest master branch of “https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git”.
+> > 
+> > 
+> > By the way, could you answer below questions for my sending patches in future?
+> > 1. Which repository and branch should be based when creating a new patch?
+> > 2. How do I inform you about a base on which I create a patch?
+> If you like you can add [PATCH -next] to patch title before send it. :)
 
-Yet it is just rename(2) with the serial numbers filed off -
-complete with all the same data vs metadata ordering problems that
-rename(2) comes along with. i.e. it needs fsync to guarantee data
-integrity of the source file before the linkat() call is made.
+This applies to networking and not to staging.  For staging, always work
+against linux-next or staging-next.
 
-If we can forsee that users are going to complain that
-linkat(AT_REPLACE) using O_TMPFILE files is not atomic because it
-leaves zero length files behind after a crash just like rename()
-does, then we haven't really improved anything at all...
+For networking patches sent to Dave Miller, then you have to figure out
+if the patch applies to [PATCH net] or [PATCH net-next].  Just putting
+[PATCH -next] because you happen to be working on linux-next is not
+correct.  You have to investigate both networking trees to determine
+where the patch should be applied.
 
-And, really, I don't think anyone wants another API that requires
-multiple fsync calls to use correctly for crash-safe file
-replacement, let alone try to teach people who still cant rename a
-file safely how to use it....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+regards,
+dan carpenter
