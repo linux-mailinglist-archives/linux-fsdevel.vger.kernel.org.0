@@ -2,97 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89FC61465C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 11:31:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 188B314662C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 11:59:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgAWKb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 05:31:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54946 "EHLO mx2.suse.de"
+        id S1729153AbgAWK70 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 05:59:26 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34149 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726194AbgAWKb0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 05:31:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E0256B220;
-        Thu, 23 Jan 2020 10:31:24 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 60F471E0B01; Thu, 23 Jan 2020 11:31:21 +0100 (CET)
-Date:   Thu, 23 Jan 2020 11:31:21 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>, Chris Mason <clm@fb.com>
-Subject: Re: [RFC v2 0/9] Replacing the readpages a_op
-Message-ID: <20200123103121.GB5728@quack2.suse.cz>
-References: <20200115023843.31325-1-willy@infradead.org>
- <20200121113627.GA1746@quack2.suse.cz>
- <20200121214845.GA14467@bombadil.infradead.org>
- <20200122094414.GC12845@quack2.suse.cz>
+        id S1729108AbgAWK7Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jan 2020 05:59:16 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 483K5r5snRz9sSQ;
+        Thu, 23 Jan 2020 21:59:12 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1579777154;
+        bh=HLfndF9RAt4g+AGkbC5qXfhi2W5ru43lrY+OrFwE77c=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=HSStN14FpEBPLwZGlx8oA+ZZNFfWdzHQErga4zK0XJhZfzP21D9wVvy2nuua2Mcro
+         coc6kYH0eO3TodIQoXW3uHMTv0a3Qpku4sXMmh6C1rqkRglSS/MAUic6YqP0/byH0G
+         ZJ7pawYuL1pjqPlF2vm4ykwCpFBmFOSc0iYPFqJZo0mEpsJQ76+wJbrBrKrEo9nmNs
+         ZgSBsLMbn5gSujjwiM9+A2Ut5yJUmDY0rLKA8hcDKkIQJCPsjUpvQ3nRRKQRMY/OPV
+         I80FJuKhnIDrVr9c3L0OKrBKo50KaQQi2hgOJyv7mbq1cJ3kvDlZyYKoDIRW7yeq51
+         dxF8E/uUq8TlQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 5/6] powerpc/32s: prepare prevent_user_access() for user_access_end()
+In-Reply-To: <824b69f5452d1d41d12c4dbd306d4b8f32d493fc.1579715466.git.christophe.leroy@c-s.fr>
+References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr> <824b69f5452d1d41d12c4dbd306d4b8f32d493fc.1579715466.git.christophe.leroy@c-s.fr>
+Date:   Thu, 23 Jan 2020 21:59:07 +1100
+Message-ID: <87pnfaiglg.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200122094414.GC12845@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-01-20 10:44:14, Jan Kara wrote:
-> On Tue 21-01-20 13:48:45, Matthew Wilcox wrote:
-> > On Tue, Jan 21, 2020 at 12:36:27PM +0100, Jan Kara wrote:
-> > > > v2: Chris asked me to show what this would look like if we just have
-> > > > the implementation look up the pages in the page cache, and I managed
-> > > > to figure out some things I'd done wrong last time.  It's even simpler
-> > > > than v1 (net 104 lines deleted).
-> > > 
-> > > I have an unfinished patch series laying around that pulls the ->readpage
-> > > / ->readpages API in somewhat different direction so I'd like to discuss
-> > > whether it's possible to solve my problem using your API. The problem I
-> > > have is that currently some operations such as hole punching can race with
-> > > ->readpage / ->readpages like:
-> > > 
-> > > CPU0						CPU1
-> > > fallocate(fd, FALLOC_FL_PUNCH_HOLE, off, len)
-> > >   filemap_write_and_wait_range()
-> > >   down_write(inode->i_rwsem);
-> > >   truncate_pagecache_range();
-> > > 						readahead(fd, off, len)
-> > > 						  creates pages in page cache
-> > > 						  looks up block mapping
-> > >   removes blocks from inode and frees them
-> > > 						  issues bio
-> > > 						    - reads stale data -
-> > > 						      potential security
-> > > 						      issue
-> > > 
-> > > Now how I wanted to address this is that I'd change the API convention for
-> > > ->readpage() so that we call it with the page unlocked and the function
-> > > would lock the page, check it's still OK, and do what it needs. And this
-> > > will allow ->readpage() and also ->readpages() to grab lock
-> > > (EXT4_I(inode)->i_mmap_sem in case of ext4) to synchronize with hole punching
-> > > while we are adding pages to page cache and mapping underlying blocks.
-> > > 
-> > > Now your API makes even ->readpages() (actually ->readahead) called with
-> > > pages locked so that makes this approach problematic because of lock
-> > > inversions. So I'd prefer if we could keep the situation that ->readpages /
-> > > ->readahead gets called without any pages in page cache locked...
-> > 
-> > I'm not a huge fan of that approach because it increases the number of
-> > atomic ops (right now, we __SetPageLocked on the page before adding it
-> > to i_pages).
-> 
-> Yeah, good point. The per-page cost of locking may be noticeable.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> In preparation of implementing user_access_begin and friends
+> on powerpc, the book3s/32 version of prevent_user_access() need
+> to be prepared for user_access_end().
+>
+> user_access_end() doesn't provide the address and size which
+> were passed to user_access_begin(), required by prevent_user_access()
+> to know which segment to modify.
+>
+> The list of segments which where unprotected by allow_user_access()
+> are available in current->kuap. But we don't want prevent_user_access()
+> to read this all the time, especially everytime it is 0 (for instance
+> because the access was not a write access).
+>
+> Implement a special direction case named KUAP_SELF. In this case only,
+> the addr and end are retrieved from current->kuap.
 
-Thinking about this a bit more, we should be using ->readpages() to fill
-most of the data. And for ->readpages() there would be no additional
-overhead. Just for ->readpage() which should be rarely needed. We just need
-to come up with a good solution for filesystems that have ->readpage but
-not ->readpages.
+Can we call it KUAP_CURRENT?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+ie. "use the KUAP state in current"
+
+cheers
