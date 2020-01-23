@@ -2,105 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849F014664A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 12:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F515146754
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 12:56:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbgAWLFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 06:05:09 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:57364 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726026AbgAWLFJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 06:05:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579777508;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jxuyA80MEb2gTFQSCosXFokQLxTD9/TGE5FZXZ4AEMM=;
-        b=J2s79Z7t+QeS+d8HCTZE6CMZJ1S1hG/VieatsGVbw7pQwlwEiQA6Sr6iorAf7B/XJyPcNB
-        jRvF8GAmI/N2kRxY5mVbXCLtkzsCoP0Gl1/XWVutUYwWqK/6ML4rIkjqeOpXA5AnuqLLk9
-        uMoNCeyEho/uEltIwqbISgJ5IGsLlFQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-177--nKY3tyLNCSpxiCzT7fDaA-1; Thu, 23 Jan 2020 06:05:04 -0500
-X-MC-Unique: -nKY3tyLNCSpxiCzT7fDaA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728811AbgAWL4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 06:56:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:38191 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbgAWL4V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jan 2020 06:56:21 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 360CB1005F6B;
-        Thu, 23 Jan 2020 11:05:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-49.rdu2.redhat.com [10.10.120.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA64B5C1B5;
-        Thu, 23 Jan 2020 11:05:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200122193306.GB4675@bombadil.infradead.org>
-References: <20200122193306.GB4675@bombadil.infradead.org> <3577430.1579705075@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 483LMf5wWGz9sRl;
+        Thu, 23 Jan 2020 22:56:14 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1579780577;
+        bh=UovATE1i4RpVC/VrqLzFv3e4N/nnRhe7v5C5tuu556A=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=PsAOPoqnEkBhDZvT6xRmVeG1ZkgZd+qP9Jyv+LszgXRlTyk7MopH4Fnv/iq5IWdov
+         QZzOwON1X9Jzz90ght1caGt2oNeFtBKwOE+4WgQJhx5o3IDQWb7Ugatw3ZYt2UFnZm
+         UTSc5wuOHq2u4HWG6eIFf3EedbwVrq8xCQgiqa+UOlxForADFD33MC56cPcSeAvQlf
+         8bnY+ta6n/k7rXXfL4dpMBuzYx8gHMpF+jlCs+tMCPIrtEBEr/75L+qXq9U4KtpSNJ
+         y3vhPNxyNjh6ekeyzPAnyKsXqIajzD8FwBkZ+qCAwoG5mw2MSxuJDRrHsJHdVw8/H4
+         jaypJxGjAOARg==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 1/6] fs/readdir: Fix filldir() and filldir64() use of user_access_begin()
+In-Reply-To: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+Date:   Thu, 23 Jan 2020 22:56:11 +1100
+Message-ID: <87muaeidyc.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3785794.1579777499.1@warthog.procyon.org.uk>
-Date:   Thu, 23 Jan 2020 11:04:59 +0000
-Message-ID: <3785795.1579777499@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+Hi Christophe,
 
-> It's perfectly legal to have compound pages in the page cache.  Call
-> find_subpage(page, xas.xa_index) unconditionally.
+This patch is independent of the rest of the series AFAICS, and it looks
+like Linus has modified it quite a bit down thread.
 
-Like this?
+So I'll take patches 2-6 via powerpc and assume this patch will go via
+Linus or Al or elsewhere.
 
-#define iterate_mapping(i, n, __v, skip, STEP) {		\
-	struct page *page;					\
-	size_t wanted = n, seg, offset;				\
-	loff_t start = i->mapping_start + skip;			\
-	pgoff_t index = start >> PAGE_SHIFT;			\
-								\
-	XA_STATE(xas, &i->mapping->i_pages, index);		\
-								\
-	rcu_read_lock();						\
-	xas_for_each(&xas, page, ULONG_MAX) {				\
-		if (xas_retry(&xas, page) || xa_is_value(page)) {	\
-			WARN_ON(1);					\
-			break;						\
-		}							\
-		__v.bv_page = find_subpage(page, xas.xa_index);		\
-		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
-		seg = PAGE_SIZE - offset;			\
-		__v.bv_offset = offset;				\
-		__v.bv_len = min(n, seg);			\
-		(void)(STEP);					\
-		n -= __v.bv_len;				\
-		skip += __v.bv_len;				\
-		if (n == 0)					\
-			break;					\
-	}							\
-	rcu_read_unlock();					\
-	n = wanted - n;						\
-}
+Also a couple of minor spelling fixes below.
 
-Note that the walk is not restartable - and the array is supposed to have been
-fully populated by the caller for the range specified - so I've made it print
-a warning and end the loop if xas_retry() or xa_is_value() return true (which
-takes care of the !page case too).  Possibly I could just leave it to fault in
-this case and not check.
+cheers
 
-If PageHuge(page) is true, I presume I need to support that too.  How do I
-find out how big the page is?
-
-David
-
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> Some architectures grand full access to userspace regardless of the
+                     ^
+                     grant
+> address/len passed to user_access_begin(), but other architectures
+> only grand access to the requested area.
+       ^
+       grant
+>
+> For exemple, on 32 bits powerpc (book3s/32), access is granted by
+      ^
+      example
+> segments of 256 Mbytes.
+>
+> Modify filldir() and filldir64() to request the real area they need
+> to get access to, i.e. the area covering the parent dirent (if any)
+> and the contiguous current dirent.
+>
+> Fixes: 9f79b78ef744 ("Convert filldir[64]() from __put_user() to unsafe_put_user()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+> v2: have user_access_begin() cover both parent dirent (if any) and current dirent
+> ---
+>  fs/readdir.c | 50 ++++++++++++++++++++++++++++----------------------
+>  1 file changed, 28 insertions(+), 22 deletions(-)
+>
+> diff --git a/fs/readdir.c b/fs/readdir.c
+> index d26d5ea4de7b..3f9b4488d9b7 100644
+> --- a/fs/readdir.c
+> +++ b/fs/readdir.c
+> @@ -214,7 +214,7 @@ struct getdents_callback {
+>  static int filldir(struct dir_context *ctx, const char *name, int namlen,
+>  		   loff_t offset, u64 ino, unsigned int d_type)
+>  {
+> -	struct linux_dirent __user * dirent;
+> +	struct linux_dirent __user * dirent, *dirent0;
+>  	struct getdents_callback *buf =
+>  		container_of(ctx, struct getdents_callback, ctx);
+>  	unsigned long d_ino;
+> @@ -232,19 +232,22 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
+>  		buf->error = -EOVERFLOW;
+>  		return -EOVERFLOW;
+>  	}
+> -	dirent = buf->previous;
+> -	if (dirent && signal_pending(current))
+> +	dirent0 = buf->previous;
+> +	if (dirent0 && signal_pending(current))
+>  		return -EINTR;
+>  
+> -	/*
+> -	 * Note! This range-checks 'previous' (which may be NULL).
+> -	 * The real range was checked in getdents
+> -	 */
+> -	if (!user_access_begin(dirent, sizeof(*dirent)))
+> -		goto efault;
+> -	if (dirent)
+> -		unsafe_put_user(offset, &dirent->d_off, efault_end);
+>  	dirent = buf->current_dir;
+> +	if (dirent0) {
+> +		int sz = (void __user *)dirent + reclen -
+> +			 (void __user *)dirent0;
+> +
+> +		if (!user_access_begin(dirent0, sz))
+> +			goto efault;
+> +		unsafe_put_user(offset, &dirent0->d_off, efault_end);
+> +	} else {
+> +		if (!user_access_begin(dirent, reclen))
+> +			goto efault;
+> +	}
+>  	unsafe_put_user(d_ino, &dirent->d_ino, efault_end);
+>  	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+>  	unsafe_put_user(d_type, (char __user *) dirent + reclen - 1, efault_end);
+> @@ -307,7 +310,7 @@ struct getdents_callback64 {
+>  static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+>  		     loff_t offset, u64 ino, unsigned int d_type)
+>  {
+> -	struct linux_dirent64 __user *dirent;
+> +	struct linux_dirent64 __user *dirent, *dirent0;
+>  	struct getdents_callback64 *buf =
+>  		container_of(ctx, struct getdents_callback64, ctx);
+>  	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
+> @@ -319,19 +322,22 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+>  	buf->error = -EINVAL;	/* only used if we fail.. */
+>  	if (reclen > buf->count)
+>  		return -EINVAL;
+> -	dirent = buf->previous;
+> -	if (dirent && signal_pending(current))
+> +	dirent0 = buf->previous;
+> +	if (dirent0 && signal_pending(current))
+>  		return -EINTR;
+>  
+> -	/*
+> -	 * Note! This range-checks 'previous' (which may be NULL).
+> -	 * The real range was checked in getdents
+> -	 */
+> -	if (!user_access_begin(dirent, sizeof(*dirent)))
+> -		goto efault;
+> -	if (dirent)
+> -		unsafe_put_user(offset, &dirent->d_off, efault_end);
+>  	dirent = buf->current_dir;
+> +	if (dirent0) {
+> +		int sz = (void __user *)dirent + reclen -
+> +			 (void __user *)dirent0;
+> +
+> +		if (!user_access_begin(dirent0, sz))
+> +			goto efault;
+> +		unsafe_put_user(offset, &dirent0->d_off, efault_end);
+> +	} else {
+> +		if (!user_access_begin(dirent, reclen))
+> +			goto efault;
+> +	}
+>  	unsafe_put_user(ino, &dirent->d_ino, efault_end);
+>  	unsafe_put_user(reclen, &dirent->d_reclen, efault_end);
+>  	unsafe_put_user(d_type, &dirent->d_type, efault_end);
+> -- 
+> 2.25.0
