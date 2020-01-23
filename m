@@ -2,150 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2C1146F34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 18:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74079146FDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 18:38:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbgAWRJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 12:09:19 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41572 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbgAWRJS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 12:09:18 -0500
-Received: by mail-lj1-f195.google.com with SMTP id h23so4351509ljc.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2020 09:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EoI0l4kaWTQec4tn5Ld9ZCvI5RqFAqp9PrVGXBLYlGE=;
-        b=fVFhxuuC85CKWEXjWPZjUwe+E2ZvU24vSAIadJBa+Ft9IRArNmW35Swl+jhyL4SbSw
-         Q9y1gY0sctni33PC0OvsTEp15m3qeF+Ox4KoeaR1j1bfiGK/un6S52NDn4Mmp7JZyTWN
-         T4+GcR/uluwB+tQB+fNDYzVWf25RKz6Wf9cz/hgquK9Jxf67xA/gq61Jlji6pBo0BW1h
-         pphNci+Itjc9Hy6EK728qegKSUWTqi4toMGOqpiG4FTi4ZVSa3Pyo+WL4giv/emjl4KZ
-         N+8QV2duNaLjezM2vWW4tbJ2IqC9/1zcehqsTVQU1Cz0GaYOg/ae7LEcFoRy5LtZ74Xo
-         fKgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EoI0l4kaWTQec4tn5Ld9ZCvI5RqFAqp9PrVGXBLYlGE=;
-        b=DwJY0eifVS2iACdxet0v5358DfZ8Vsm1UWjw4CXOJvuR92GlcMwgqWZfuGqw71SRYk
-         Q/ZgyQBlBFC8lax4lU1uwilCIbGfviE3cfRmIeBuDrlWvRIqBmkH4moNdy5htKV5rp7a
-         bOEiDQBwvG1fWnR5ZHhO7g1UcwFONraYZS+J1jjidC5reZVA3TRRO/WuRvKGMBcXHUqR
-         W2dQjnnLAqMVL5XYSFPpQZ9rW/1sRBAt6f3Xnl6olcZWn4gpJSlDZvPhV1ZQNfAI3cr5
-         22gbPniXC3WotvJ9gMaSiAuEqznd8kuzRk8Pc6cznd4WYQ9dJYcBberfLnXidzsp2d/8
-         I6zA==
-X-Gm-Message-State: APjAAAUZzyLvfUmK9XbR1WrfIoGJP0pU0XeWc97QDn0YiaR3HuiEIclN
-        TB15pdAVS1AcfYBwi3DZiknBmyQCzDSymda3wn4e
-X-Google-Smtp-Source: APXvYqw/G8F1wO9xDPIULnMv336Q7Ztb/ejMkG/Wfe5XISfozmjQXVeq7xRRyREbIKTpRE6MgbiXKL2eAyaswTaX414=
-X-Received: by 2002:a2e:9f52:: with SMTP id v18mr23988656ljk.30.1579799355718;
- Thu, 23 Jan 2020 09:09:15 -0800 (PST)
+        id S1728827AbgAWRiD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 12:38:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40452 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727022AbgAWRiC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jan 2020 12:38:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 8F80CAE46;
+        Thu, 23 Jan 2020 17:38:00 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id E0910DA730; Thu, 23 Jan 2020 18:37:43 +0100 (CET)
+Date:   Thu, 23 Jan 2020 18:37:43 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     fdmanana@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, darrick.wong@oracle.com,
+        Filipe Manana <fdmanana@suse.com>
+Subject: Re: [PATCH 0/2] Allow deduplication of the eof block when it is safe
+ to do so
+Message-ID: <20200123173742.GF3929@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, fdmanana@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, darrick.wong@oracle.com,
+        Filipe Manana <fdmanana@suse.com>
+References: <20191216182656.15624-1-fdmanana@kernel.org>
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <7d7933d742fdf4a94c84b791906a450b16f2e81f.1577736799.git.rgb@redhat.com>
- <CAHC9VhSuwJGryfrBfzxG01zwb-O_7dbjS0x0a3w-XjcNuYSAcg@mail.gmail.com> <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca>
-In-Reply-To: <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 23 Jan 2020 12:09:04 -0500
-Message-ID: <CAHC9VhTusiQoudB8G5jjDFyM9WxBUAjZ6_X35ywJ063Jb75dQA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216182656.15624-1-fdmanana@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 11:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-01-22 16:28, Paul Moore wrote:
-> > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Add audit container identifier support to the action of signalling the
-> > > audit daemon.
-> > >
-> > > Since this would need to add an element to the audit_sig_info struct,
-> > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> > > audit_sig_info2 struct.  Corresponding support is required in the
-> > > userspace code to reflect the new record request and reply type.
-> > > An older userspace won't break since it won't know to request this
-> > > record type.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h       |  7 +++++++
-> > >  include/uapi/linux/audit.h  |  1 +
-> > >  kernel/audit.c              | 35 +++++++++++++++++++++++++++++++++++
-> > >  kernel/audit.h              |  1 +
-> > >  security/selinux/nlmsgtab.c |  1 +
-> > >  5 files changed, 45 insertions(+)
-> >
-> > ...
-> >
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index 0871c3e5d6df..51159c94041c 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -126,6 +126,14 @@ struct auditd_connection {
-> > >  kuid_t         audit_sig_uid = INVALID_UID;
-> > >  pid_t          audit_sig_pid = -1;
-> > >  u32            audit_sig_sid = 0;
-> > > +/* Since the signal information is stored in the record buffer at the
-> > > + * time of the signal, but not retrieved until later, there is a chance
-> > > + * that the last process in the container could terminate before the
-> > > + * signal record is delivered.  In this circumstance, there is a chance
-> > > + * the orchestrator could reuse the audit container identifier, causing
-> > > + * an overlap of audit records that refer to the same audit container
-> > > + * identifier, but a different container instance.  */
-> > > +u64            audit_sig_cid = AUDIT_CID_UNSET;
-> >
-> > I believe we could prevent the case mentioned above by taking an
-> > additional reference to the audit container ID object when the signal
-> > information is collected, dropping it only after the signal
-> > information is collected by userspace or another process signals the
-> > audit daemon.  Yes, it would block that audit container ID from being
-> > reused immediately, but since we are talking about one number out of
-> > 2^64 that seems like a reasonable tradeoff.
->
-> I had thought that through and should have been more explicit about that
-> situation when I documented it.  We could do that, but then the syscall
-> records would be connected with the call from auditd on shutdown to
-> request that signal information, rather than the exit of that last
-> process that was using that container.  This strikes me as misleading.
-> Is that really what we want?
+On Mon, Dec 16, 2019 at 06:26:54PM +0000, fdmanana@kernel.org wrote:
+> From: Filipe Manana <fdmanana@suse.com>
+> 
+> Hi,
+> 
+> This short series allows deduplication of the last block of a file when
+> the eof is not aligned to the sector size, as long as the range's end
+> offset matches the eof of the destination file.
+> 
+> This is a safe case unlike the case where we attempt to clone the block in
+> the middle of a file (which results in a corruption I found last year and
+> affected both btrfs and xfs).
+> 
+> This is motivated by btrfs users reporting lower deduplication scores
+> starting with kernel 5.0, which was the kernel release where btrfs was
+> changed to use the generic VFS helper generic_remap_file_range_prep().
+> Users observed that the last block was no longer deduplicated when a
+> file's size is not block size aligned.  For btrfs this is specially
+> important because references are kept per extent and not per block, so
+> not having the last block deduplicated means the entire extent is kept
+> allocated, making the deduplication not effective and often pointless in
+> many cases.
+> 
+> Thanks.
+> 
+> Filipe Manana (2):
+>   fs: allow deduplication of eof block into the end of the destination
+>     file
+>   Btrfs: make deduplication with range including the last block work
 
- ???
+I'm going to send pull request with these two patches once the merge
+window opens.
 
-I think one of us is not understanding the other; maybe it's me, maybe
-it's you, maybe it's both of us.
-
-Anyway, here is what I was trying to convey with my original comment
-... When we record the audit container ID in audit_signal_info() we
-take an extra reference to the audit container ID object so that it
-will not disappear (and get reused) until after we respond with an
-AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
-AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took in
-audit_signal_info().  Unless I'm missing some other change you made,
-this *shouldn't* affect the syscall records, all it does is preserve
-the audit container ID object in the kernel's ACID store so it doesn't
-get reused.
-
-(We do need to do some extra housekeeping in audit_signal_info() to
-deal with the case where nobody asks for AUDIT_SIGNAL_INFO2 -
-basically if audit_sig_cid is not NULL we should drop a reference
-before assigning it a new object pointer, and of course we would need
-to set audit_sig_cid to NULL in audit_receive_msg() after sending it
-up to userspace and dropping the extra ref.)
-
--- 
-paul moore
-www.paul-moore.com
+git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git fs-dedupe-last-block
