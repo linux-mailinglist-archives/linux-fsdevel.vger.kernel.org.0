@@ -2,312 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BEC146EB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 17:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E2C1146F34
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jan 2020 18:09:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729099AbgAWQyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 11:54:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23752 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729106AbgAWQyJ (ORCPT
+        id S1728904AbgAWRJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 12:09:19 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41572 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729099AbgAWRJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 11:54:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1579798446;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=jpq/osZAJyDr2z94dAuCr9p/bGQZdQmEdxKCIx63h60=;
-        b=Ui3Y1HGJAERm42El9A1MH+doSa28a3S+yodr0Q4gQIbulJ6WZxCDylsHzJ/7noMBqFlrTZ
-        HpronqDBxHsF+N+MnTls0Ex8TUbXxHFW3udf5Pu/h/PNvMF6iteETQfazQrLp6JvNmnHYs
-        /enjW31jDUTnDfyhT8BCizK2DgrBJQ4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-Qv0KknqCOVGAJGcqvsA4nA-1; Thu, 23 Jan 2020 11:52:53 -0500
-X-MC-Unique: Qv0KknqCOVGAJGcqvsA4nA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96FD01800D78;
-        Thu, 23 Jan 2020 16:52:50 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5CC485C1BB;
-        Thu, 23 Jan 2020 16:52:50 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E2F7B2202E9; Thu, 23 Jan 2020 11:52:49 -0500 (EST)
-Date:   Thu, 23 Jan 2020 11:52:49 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>, dan.j.williams@intel.com,
-        linux-nvdimm@lists.01.org
-Cc:     linux-fsdevel@vger.kernel.org, vishal.l.verma@intel.com,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: [RFC] dax,pmem: Provide a dax operation to zero range of memory
-Message-ID: <20200123165249.GA7664@redhat.com>
+        Thu, 23 Jan 2020 12:09:18 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so4351509ljc.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jan 2020 09:09:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EoI0l4kaWTQec4tn5Ld9ZCvI5RqFAqp9PrVGXBLYlGE=;
+        b=fVFhxuuC85CKWEXjWPZjUwe+E2ZvU24vSAIadJBa+Ft9IRArNmW35Swl+jhyL4SbSw
+         Q9y1gY0sctni33PC0OvsTEp15m3qeF+Ox4KoeaR1j1bfiGK/un6S52NDn4Mmp7JZyTWN
+         T4+GcR/uluwB+tQB+fNDYzVWf25RKz6Wf9cz/hgquK9Jxf67xA/gq61Jlji6pBo0BW1h
+         pphNci+Itjc9Hy6EK728qegKSUWTqi4toMGOqpiG4FTi4ZVSa3Pyo+WL4giv/emjl4KZ
+         N+8QV2duNaLjezM2vWW4tbJ2IqC9/1zcehqsTVQU1Cz0GaYOg/ae7LEcFoRy5LtZ74Xo
+         fKgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EoI0l4kaWTQec4tn5Ld9ZCvI5RqFAqp9PrVGXBLYlGE=;
+        b=DwJY0eifVS2iACdxet0v5358DfZ8Vsm1UWjw4CXOJvuR92GlcMwgqWZfuGqw71SRYk
+         Q/ZgyQBlBFC8lax4lU1uwilCIbGfviE3cfRmIeBuDrlWvRIqBmkH4moNdy5htKV5rp7a
+         bOEiDQBwvG1fWnR5ZHhO7g1UcwFONraYZS+J1jjidC5reZVA3TRRO/WuRvKGMBcXHUqR
+         W2dQjnnLAqMVL5XYSFPpQZ9rW/1sRBAt6f3Xnl6olcZWn4gpJSlDZvPhV1ZQNfAI3cr5
+         22gbPniXC3WotvJ9gMaSiAuEqznd8kuzRk8Pc6cznd4WYQ9dJYcBberfLnXidzsp2d/8
+         I6zA==
+X-Gm-Message-State: APjAAAUZzyLvfUmK9XbR1WrfIoGJP0pU0XeWc97QDn0YiaR3HuiEIclN
+        TB15pdAVS1AcfYBwi3DZiknBmyQCzDSymda3wn4e
+X-Google-Smtp-Source: APXvYqw/G8F1wO9xDPIULnMv336Q7Ztb/ejMkG/Wfe5XISfozmjQXVeq7xRRyREbIKTpRE6MgbiXKL2eAyaswTaX414=
+X-Received: by 2002:a2e:9f52:: with SMTP id v18mr23988656ljk.30.1579799355718;
+ Thu, 23 Jan 2020 09:09:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <cover.1577736799.git.rgb@redhat.com> <7d7933d742fdf4a94c84b791906a450b16f2e81f.1577736799.git.rgb@redhat.com>
+ <CAHC9VhSuwJGryfrBfzxG01zwb-O_7dbjS0x0a3w-XjcNuYSAcg@mail.gmail.com> <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca>
+In-Reply-To: <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Jan 2020 12:09:04 -0500
+Message-ID: <CAHC9VhTusiQoudB8G5jjDFyM9WxBUAjZ6_X35ywJ063Jb75dQA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Jan 23, 2020 at 11:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-01-22 16:28, Paul Moore wrote:
+> > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > Add audit container identifier support to the action of signalling the
+> > > audit daemon.
+> > >
+> > > Since this would need to add an element to the audit_sig_info struct,
+> > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
+> > > audit_sig_info2 struct.  Corresponding support is required in the
+> > > userspace code to reflect the new record request and reply type.
+> > > An older userspace won't break since it won't know to request this
+> > > record type.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  include/linux/audit.h       |  7 +++++++
+> > >  include/uapi/linux/audit.h  |  1 +
+> > >  kernel/audit.c              | 35 +++++++++++++++++++++++++++++++++++
+> > >  kernel/audit.h              |  1 +
+> > >  security/selinux/nlmsgtab.c |  1 +
+> > >  5 files changed, 45 insertions(+)
+> >
+> > ...
+> >
+> > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > index 0871c3e5d6df..51159c94041c 100644
+> > > --- a/kernel/audit.c
+> > > +++ b/kernel/audit.c
+> > > @@ -126,6 +126,14 @@ struct auditd_connection {
+> > >  kuid_t         audit_sig_uid = INVALID_UID;
+> > >  pid_t          audit_sig_pid = -1;
+> > >  u32            audit_sig_sid = 0;
+> > > +/* Since the signal information is stored in the record buffer at the
+> > > + * time of the signal, but not retrieved until later, there is a chance
+> > > + * that the last process in the container could terminate before the
+> > > + * signal record is delivered.  In this circumstance, there is a chance
+> > > + * the orchestrator could reuse the audit container identifier, causing
+> > > + * an overlap of audit records that refer to the same audit container
+> > > + * identifier, but a different container instance.  */
+> > > +u64            audit_sig_cid = AUDIT_CID_UNSET;
+> >
+> > I believe we could prevent the case mentioned above by taking an
+> > additional reference to the audit container ID object when the signal
+> > information is collected, dropping it only after the signal
+> > information is collected by userspace or another process signals the
+> > audit daemon.  Yes, it would block that audit container ID from being
+> > reused immediately, but since we are talking about one number out of
+> > 2^64 that seems like a reasonable tradeoff.
+>
+> I had thought that through and should have been more explicit about that
+> situation when I documented it.  We could do that, but then the syscall
+> records would be connected with the call from auditd on shutdown to
+> request that signal information, rather than the exit of that last
+> process that was using that container.  This strikes me as misleading.
+> Is that really what we want?
 
-This is an RFC patch to provide a dax operation to zero a range of memory.
-It will also clear poison in the process. This is primarily compile tested
-patch. I don't have real hardware to test the poison logic. I am posting
-this to figure out if this is the right direction or not.
+ ???
 
-Motivation from this patch comes from Christoph's feedback that he will
-rather prefer a dax way to zero a range instead of relying on having to
-call blkdev_issue_zeroout() in __dax_zero_page_range().
+I think one of us is not understanding the other; maybe it's me, maybe
+it's you, maybe it's both of us.
 
-https://lkml.org/lkml/2019/8/26/361
+Anyway, here is what I was trying to convey with my original comment
+... When we record the audit container ID in audit_signal_info() we
+take an extra reference to the audit container ID object so that it
+will not disappear (and get reused) until after we respond with an
+AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
+AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took in
+audit_signal_info().  Unless I'm missing some other change you made,
+this *shouldn't* affect the syscall records, all it does is preserve
+the audit container ID object in the kernel's ACID store so it doesn't
+get reused.
 
-My motivation for this change is virtiofs DAX support. There we use DAX
-but we don't have a block device. So any dax code which has the assumption
-that there is always a block device associated is a problem. So this
-is more of a cleanup of one of the places where dax has this dependency
-on block device and if we add a dax operation for zeroing a range, it
-can help with not having to call blkdev_issue_zeroout() in dax path.
+(We do need to do some extra housekeeping in audit_signal_info() to
+deal with the case where nobody asks for AUDIT_SIGNAL_INFO2 -
+basically if audit_sig_cid is not NULL we should drop a reference
+before assigning it a new object pointer, and of course we would need
+to set audit_sig_cid to NULL in audit_receive_msg() after sending it
+up to userspace and dropping the extra ref.)
 
-I have yet to take care of stacked block drivers (dm/md).
-
-Current poison clearing logic is primarily written with assumption that
-I/O is sector aligned. With this new method, this assumption is broken
-and one can pass any range of memory to zero. I have fixed few places
-in existing logic to be able to handle an arbitrary start/end. I am
-not sure are there other dependencies which might need fixing or
-prohibit us from providing this method.
-
-Any feedback or comment is welcome.
-
-Thanks
-Vivek
-
----
- drivers/dax/super.c   |   13 +++++++++
- drivers/nvdimm/pmem.c |   67 ++++++++++++++++++++++++++++++++++++++++++--------
- fs/dax.c              |   39 ++++++++---------------------
- include/linux/dax.h   |    3 ++
- 4 files changed, 85 insertions(+), 37 deletions(-)
-
-Index: rhvgoyal-linux/drivers/nvdimm/pmem.c
-===================================================================
---- rhvgoyal-linux.orig/drivers/nvdimm/pmem.c	2020-01-23 11:32:11.075139183 -0500
-+++ rhvgoyal-linux/drivers/nvdimm/pmem.c	2020-01-23 11:32:28.660139183 -0500
-@@ -52,8 +52,8 @@ static void hwpoison_clear(struct pmem_d
- 	if (is_vmalloc_addr(pmem->virt_addr))
- 		return;
- 
--	pfn_start = PHYS_PFN(phys);
--	pfn_end = pfn_start + PHYS_PFN(len);
-+	pfn_start = PFN_UP(phys);
-+	pfn_end = PFN_DOWN(phys + len);
- 	for (pfn = pfn_start; pfn < pfn_end; pfn++) {
- 		struct page *page = pfn_to_page(pfn);
- 
-@@ -71,22 +71,24 @@ static blk_status_t pmem_clear_poison(st
- 		phys_addr_t offset, unsigned int len)
- {
- 	struct device *dev = to_dev(pmem);
--	sector_t sector;
-+	sector_t sector_start, sector_end;
- 	long cleared;
- 	blk_status_t rc = BLK_STS_OK;
-+	int nr_sectors;
- 
--	sector = (offset - pmem->data_offset) / 512;
-+	sector_start = ALIGN((offset - pmem->data_offset), 512) / 512;
-+	sector_end = ALIGN_DOWN((offset - pmem->data_offset + len), 512)/512;
-+	nr_sectors =  sector_end - sector_start;
- 
- 	cleared = nvdimm_clear_poison(dev, pmem->phys_addr + offset, len);
- 	if (cleared < len)
- 		rc = BLK_STS_IOERR;
--	if (cleared > 0 && cleared / 512) {
-+	if (cleared > 0 && nr_sectors > 0) {
- 		hwpoison_clear(pmem, pmem->phys_addr + offset, cleared);
--		cleared /= 512;
--		dev_dbg(dev, "%#llx clear %ld sector%s\n",
--				(unsigned long long) sector, cleared,
--				cleared > 1 ? "s" : "");
--		badblocks_clear(&pmem->bb, sector, cleared);
-+		dev_dbg(dev, "%#llx clear %d sector%s\n",
-+				(unsigned long long) sector_start, nr_sectors,
-+				nr_sectors > 1 ? "s" : "");
-+		badblocks_clear(&pmem->bb, sector_start, nr_sectors);
- 		if (pmem->bb_state)
- 			sysfs_notify_dirent(pmem->bb_state);
- 	}
-@@ -268,6 +270,50 @@ static const struct block_device_operati
- 	.revalidate_disk =	nvdimm_revalidate_disk,
- };
- 
-+static int pmem_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-+				    unsigned int offset, loff_t len)
-+{
-+	int rc = 0;
-+	phys_addr_t phys_pos = pgoff * PAGE_SIZE + offset;
-+	struct pmem_device *pmem = dax_get_private(dax_dev);
-+	struct page *page = ZERO_PAGE(0);
-+
-+	do {
-+		unsigned bytes, nr_sectors = 0;
-+		sector_t sector_start, sector_end;
-+		bool bad_pmem = false;
-+		phys_addr_t pmem_off = phys_pos + pmem->data_offset;
-+		void *pmem_addr = pmem->virt_addr + pmem_off;
-+		unsigned int page_offset;
-+
-+		page_offset = offset_in_page(phys_pos);
-+		bytes = min_t(loff_t, PAGE_SIZE - page_offset, len);
-+
-+		sector_start = ALIGN(phys_pos, 512)/512;
-+		sector_end = ALIGN_DOWN(phys_pos + bytes, 512)/512;
-+		if (sector_end > sector_start)
-+			nr_sectors = sector_end - sector_start;
-+
-+		if (nr_sectors &&
-+		    unlikely(is_bad_pmem(&pmem->bb, sector_start,
-+					 nr_sectors * 512)))
-+			bad_pmem = true;
-+
-+		write_pmem(pmem_addr, page, 0, bytes);
-+		if (unlikely(bad_pmem)) {
-+			rc = pmem_clear_poison(pmem, pmem_off, bytes);
-+			write_pmem(pmem_addr, page, 0, bytes);
-+		}
-+		if (rc > 0)
-+			return -EIO;
-+
-+		phys_pos += phys_pos + bytes;
-+		len -= bytes;
-+	} while (len > 0);
-+
-+	return 0;
-+}
-+
- static long pmem_dax_direct_access(struct dax_device *dax_dev,
- 		pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn)
- {
-@@ -299,6 +345,7 @@ static const struct dax_operations pmem_
- 	.dax_supported = generic_fsdax_supported,
- 	.copy_from_iter = pmem_copy_from_iter,
- 	.copy_to_iter = pmem_copy_to_iter,
-+	.zero_page_range = pmem_dax_zero_page_range,
- };
- 
- static const struct attribute_group *pmem_attribute_groups[] = {
-Index: rhvgoyal-linux/include/linux/dax.h
-===================================================================
---- rhvgoyal-linux.orig/include/linux/dax.h	2020-01-23 11:25:23.814139183 -0500
-+++ rhvgoyal-linux/include/linux/dax.h	2020-01-23 11:32:17.799139183 -0500
-@@ -34,6 +34,8 @@ struct dax_operations {
- 	/* copy_to_iter: required operation for fs-dax direct-i/o */
- 	size_t (*copy_to_iter)(struct dax_device *, pgoff_t, void *, size_t,
- 			struct iov_iter *);
-+	/* zero_page_range: optional operation for fs-dax direct-i/o */
-+	int (*zero_page_range)(struct dax_device *, pgoff_t, unsigned, loff_t);
- };
- 
- extern struct attribute_group dax_attribute_group;
-@@ -209,6 +211,7 @@ size_t dax_copy_from_iter(struct dax_dev
- 		size_t bytes, struct iov_iter *i);
- size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
- 		size_t bytes, struct iov_iter *i);
-+int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff, unsigned offset, loff_t len);
- void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
- 
- ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
-Index: rhvgoyal-linux/fs/dax.c
-===================================================================
---- rhvgoyal-linux.orig/fs/dax.c	2020-01-23 11:25:23.814139183 -0500
-+++ rhvgoyal-linux/fs/dax.c	2020-01-23 11:32:17.801139183 -0500
-@@ -1044,38 +1044,23 @@ static vm_fault_t dax_load_hole(struct x
- 	return ret;
- }
- 
--static bool dax_range_is_aligned(struct block_device *bdev,
--				 unsigned int offset, unsigned int length)
--{
--	unsigned short sector_size = bdev_logical_block_size(bdev);
--
--	if (!IS_ALIGNED(offset, sector_size))
--		return false;
--	if (!IS_ALIGNED(length, sector_size))
--		return false;
--
--	return true;
--}
--
- int __dax_zero_page_range(struct block_device *bdev,
- 		struct dax_device *dax_dev, sector_t sector,
- 		unsigned int offset, unsigned int size)
- {
--	if (dax_range_is_aligned(bdev, offset, size)) {
--		sector_t start_sector = sector + (offset >> 9);
-+	pgoff_t pgoff;
-+	long rc, id;
- 
--		return blkdev_issue_zeroout(bdev, start_sector,
--				size >> 9, GFP_NOFS, 0);
--	} else {
--		pgoff_t pgoff;
--		long rc, id;
-+	rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
-+	if (rc)
-+		return rc;
-+
-+	id = dax_read_lock();
-+	rc = dax_zero_page_range(dax_dev, pgoff, offset, size);
-+	if (rc == -EOPNOTSUPP) {
- 		void *kaddr;
- 
--		rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
--		if (rc)
--			return rc;
--
--		id = dax_read_lock();
-+		/* If driver does not implement zero page range, fallback */
- 		rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
- 		if (rc < 0) {
- 			dax_read_unlock(id);
-@@ -1083,9 +1068,9 @@ int __dax_zero_page_range(struct block_d
- 		}
- 		memset(kaddr + offset, 0, size);
- 		dax_flush(dax_dev, kaddr + offset, size);
--		dax_read_unlock(id);
- 	}
--	return 0;
-+	dax_read_unlock(id);
-+	return rc;
- }
- EXPORT_SYMBOL_GPL(__dax_zero_page_range);
- 
-Index: rhvgoyal-linux/drivers/dax/super.c
-===================================================================
---- rhvgoyal-linux.orig/drivers/dax/super.c	2020-01-23 11:25:23.814139183 -0500
-+++ rhvgoyal-linux/drivers/dax/super.c	2020-01-23 11:32:17.802139183 -0500
-@@ -344,6 +344,19 @@ size_t dax_copy_to_iter(struct dax_devic
- }
- EXPORT_SYMBOL_GPL(dax_copy_to_iter);
- 
-+int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-+			unsigned offset, loff_t len)
-+{
-+	if (!dax_alive(dax_dev))
-+		return 0;
-+
-+	if (!dax_dev->ops->zero_page_range)
-+		return -EOPNOTSUPP;
-+
-+	return dax_dev->ops->zero_page_range(dax_dev, pgoff, offset, len);
-+}
-+EXPORT_SYMBOL_GPL(dax_zero_page_range);
-+
- #ifdef CONFIG_ARCH_HAS_PMEM_API
- void arch_wb_cache_pmem(void *addr, size_t size);
- void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
-
+-- 
+paul moore
+www.paul-moore.com
