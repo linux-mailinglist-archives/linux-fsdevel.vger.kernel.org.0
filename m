@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 293BB147820
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 06:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6CF147833
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 06:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbgAXF16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 00:27:58 -0500
-Received: from sonic303-23.consmr.mail.gq1.yahoo.com ([98.137.64.204]:42371
-        "EHLO sonic303-23.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729740AbgAXF16 (ORCPT
+        id S1730372AbgAXFef (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jan 2020 00:34:35 -0500
+Received: from sonic304-23.consmr.mail.gq1.yahoo.com ([98.137.68.204]:37913
+        "EHLO sonic304-23.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729868AbgAXFee (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 00:27:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1579843676; bh=9necSZIJYyRRJ8jaU0pxv6QHcZkJLNsfLRyto+nrVh0=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=WwEBKWsy3oq7a8PjwdUA//IN9YkACLmL5JznGU9u2ynO50qVQKTY+sGwdeM7JCgEqxq4e4P5wPDriPFV5J79Ssf3kl73HUHggdKPFI+v28aGyt+jmBW7h/T7+8YfdjfuUI8/myIw1/Ztm0RBiCtqK9HV8IYngEvGsMoEEnwKWLwdOjb6iBo9i6wgrVr457ybo9zDHNQ1daEoGg1E1MjmeyNuEM5eNjG3Bq60L0MRPzy05DtHXZkUcAeY9LeNU/cwL4sJE+J5e9ytGu1sKX2xYKkJuVVM9bpsc5oditlBs85xcTX6bi9KBEJ2yY2XPHN24XV46BZLJFrAD+yY8+AjgA==
-X-YMail-OSG: qwkSMKYVM1nerF17bL_ncoKZ2f_7EvelyTnyy3.ARwKl_O4amY4btNkvurM6GkS
- tz_M1Jj66QgrapfINFE7UFlEbiLNWpxMMC0irIKqVtR4VgNCfNvkd2GitLYcrbCEmRe__rz9aEDG
- ZfHMAOJOxx8fZ6DX9H0vybNj_il3xFVv7olWcc976yMVozTOQdrl9J8EmFPPy4uUXGR8aJNwQjbP
- U0jJFJDZItheE38vAa3kAOdwUJzSRNztxYZIVgkvclBGwRBEHp_2tN7swPgkkgpcM1RHu7Ar0nM1
- zCyuJZxodiGH0E6xnDscrLD5EybnjK5gxz_mv8_Dc_gtUlE6.IhtxeaDuoD.lVe_7enHdDvyZpVA
- Fm6oZEn7vQTuCO8pj9Zd1rM7wU5BVpa7v0iDmjHZxOVvrnhXwrMWqkyZJurCYT5IZG_Pwg.u8tkx
- 1SIUkcsDBLAI0u8Jj03SLeMwfB.cfPkxTUKOS8rrzMl.iVDp2HFup9VnvedaUEqwUaGqyIImdzm3
- 9YQvtEyumMbr7Hg.gHWnwE67kU7wpQm9nbxIE_l.CjFarf4wu12imoWhbtFQpj2ltbeLIK7qu3Fd
- 6yOudhzS1S3pavDFunOHu9UXRtoXrKEglCQhA3YR1NAVrHmOr8CzPHPMxd3DWdzy7S3gRnDpG_AX
- gk2c3R.D54fyXcrsNuWRsGpAL1aa1VGy77HIT1mAfFY0MSeqv1B5eTq7EJFWUSIMTD7tOgh4vBDK
- BNZ1oD5enzzGfKh_1JjuDf69PFMWYbH.QfVWY61YOWdBzSS0uaLHBOXbwzW5rV1XkQKi4j1zmX.l
- 10Fk3AeDnoQaWx5Moqv18Oz1Tc..AEiBaD9aTGQfVX7YUyi7jHRovnVy8mAD2F4bQKE5.3nAx427
- uF3LPxI_gkd8LkauPvDyh7HD7SmoZtTubyPxMtgueBIA4YNqGDL8J6IFOMdlNO7jE1WcKDTLE63W
- Uy16LO2Vogu2th1yjnnGpaAhHbjMySKUq3u0u4.HNtd5cg0OuHjjFe0E5YgVM3tI825GTG5bsVOm
- A2H1FYmGq3JdexnGbqGnTfdPOZi4h6DPLHT3Fvxg46yJvXW193JJf69qKG2KdnjnVPYe3396Y13D
- FW6pqj9hNUKu6w_oGAPTBVbEYT2yNXr4.wg1PnYpFHUPDKarAClWCOAmxzlwTCOLK0GuNiWK9ItM
- nNzEWorDfEZi_7RGLuUbFWKb2DKSEaYMBJhg4wqyaK8Ii1GeCkOqWePBwMZieIyKILpHQX3GegwY
- 5fPch8JKIXEepoGK7Ud4WkupjyMgzkE8Pe3XRIuVL3slJZMH8RR9urgW831I17RP2Xyx0gBSALJS
- bfVsd3XrV2xpw4O5RqUj16Y76vzS3DemXYXClYZ5yRxjlpIHmk7ctla4tZwODvVmAy.dJKizhsV1
- SdNFR_yBYcwpZQ3UEzU3kojQlAqDMgkk1Ag--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Fri, 24 Jan 2020 05:27:56 +0000
-Received: by smtp428.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f9b7953f40d5a7531fce28ad55186da6;
-          Fri, 24 Jan 2020 05:27:55 +0000 (UTC)
-Date:   Fri, 24 Jan 2020 13:27:50 +0800
+        Fri, 24 Jan 2020 00:34:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1579844073; bh=UeJz9jyBNt5yayp7xj4f/SZWo0DpuycvuaFMYq1D8lg=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=NxNxPOFzSfORh0/j+CyjrCAXbIzvw6ZHJA0VT8plACOZ69yKZ55in66tkPbpWIcBeXRauEXemw1f9NZuEngyqU03g5dB2t0fRuOpKrpSqk8C7OW5sREI1tfvGJjw4vYKZ/lvWk3ek5sXuqAZt4K5kdJmwHm0MomdHvKzEawtNAehxb0CgxWxvNx+s99RX0sZNdPqqqSbCC6Aev27kzSxU6jkruWXIi0S0gL0xTj9CIwK1UdChRNGYcPS8deeuVlDZVq1SKvJ9xi1Y65+dhmbGqLOBiFGfdn31thYTepR1qhDojoNp+AVSFypKdEH2/fJUEGPrlDs7rirncqaTnWvYg==
+X-YMail-OSG: jpBgorYVM1niDtoaJJkIHlAQwijPN.6fSmZoI4.D5pZpqmPkPgbrgdCc3bajoGE
+ 9NFLvAJZlQp9e_slnmrybNZnRd7.xfJeiO6p85yik1XdVrNwNPhSm7jC9gCYQpbQ1MkUkVhqXlP8
+ CbEPhu4VEYevwxrsg6VN3Rpigk9xLiQ0ucRw.WZKNCtGQ_AkCTxq_fYq_ss8sbV.95yBQIXJ0RSE
+ zRDQNhHjjg.aO7x1BBPbsgppivpLGEgOiP7lO9Z.lhCBjTtlCBAVap3b1O1SDS1bjkBV8phceVDM
+ nFcv_4kWg4jLu8D.dxw_dzp_fyrhpnFP.AFhMPhf_hhugMfXrsiPdNzfoREF07wZDwdbuPOML59U
+ Oo7RuXpvNk6UbxfDveVZFmJHvf1oaNZGMjrZcOaGq0E6mUW45Op3kBteRJ.Syn1W.FigWSPEMjbl
+ OmdiDgOaJ2ExqCMAvX9L_99nm25IX76gES9xIONRNAu.vzQsrhtppRKnGUS9YiZ3IvX6CndPC2.F
+ 0wvZIz9aW8HHlg7FUPmiplPN91NmJrJ6aPO1noqJQSTV23HC38nDaMllXTr_GkK7TGnc94flHjou
+ zwP0NLw8Sw_ajvTHDXIOSE4nKr08X0bJ8rqqwOl_HgHcte4Zoi1ZJqvUSiKA1UYOW27wzv8lcyrK
+ e1WNg9KWHpUZHamY4taOgz8.8XNJ2F_i5RH4PapB4xFfr8cw9bAySh9Bkpy4VROqymI7I7JPY00q
+ Iyy7E.wWJfM8ch.37t2vFxAqcqqm1PMlcXfeBQl9TFfNLq6cAKRZWsr8oNGp4HlJHApqOaFm1.Q4
+ 8RNzJwUqJ87Crb3sx0unDxhoHpV6AiXotap4dvQmv_f7aLd0GrG5hUccDlTdPCEklvQeP9nIEZqv
+ OPy6RwATC6wnGkKQseChbiXzfsybZbyNpXc6tfzCjki99l23c44E9ukJdbDmWKNQ95ga73oghi.I
+ 97wQS8b3Vz9_x5Eh6yqw55CUvejzxvwFeM8DH4cskesjYGhgQQb2Vjr.AiPZeOu5d8umJZjTZG3g
+ mcuTqSUCqRUF5C62h4Khc9AWYp57Mr59cTTFXwlCrSyYJFEp9l90dhncXdL4S.26.0SQ0vJvKhBZ
+ X3BpqbjCVSdFOhNyzOnCp2_BrmCagUDAUATKCuedlydlI68tUQ_OkkkIHvOqoXSAO7meALGjHMsP
+ OMISiC2VQSlwwKmGIDOFLJsDqTl6SLV1vDZ2r1nALsat6ul2TGkpmvM_q9AGMorgiS3LRghQWAvI
+ z4EhmII8xNvwUT8cxPFrX06Yhfll.WNp7qiY6pMIb_ZkuZLaHhKochdff.I9l8U6QToEgzG0AEKD
+ X1nwNxGlfh5jUxtNLWD267If67nf456b57TzIDkE1KOIbHMfgw4SLofRbwDWkPsZglTDkBaBnCWr
+ 1advyz4RlnpkNGQ9QV.pBaXmwhD6r72hh8fiCGsLBbA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Fri, 24 Jan 2020 05:34:33 +0000
+Received: by smtp432.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5154e0a93daa76c8f17f548eb900f9b7;
+          Fri, 24 Jan 2020 05:34:30 +0000 (UTC)
+Date:   Fri, 24 Jan 2020 13:34:23 +0800
 From:   Gao Xiang <hsiangkao@aol.com>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -45,7 +45,7 @@ Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Daniel Rosenberg <drosen@google.com>,
         Gabriel Krisman Bertazi <krisman@collabora.com>
 Subject: Re: [PATCH] ext4: fix race conditions in ->d_compare() and ->d_hash()
-Message-ID: <20200124052740.GB31271@hsiangkao-HP-ZHAN-66-Pro-G1>
+Message-ID: <20200124053415.GC31271@hsiangkao-HP-ZHAN-66-Pro-G1>
 References: <20200124041234.159740-1-ebiggers@kernel.org>
  <20200124050423.GA31271@hsiangkao-HP-ZHAN-66-Pro-G1>
  <20200124051601.GB832@sol.localdomain>
@@ -61,38 +61,19 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Jan 23, 2020 at 09:16:01PM -0800, Eric Biggers wrote:
-> On Fri, Jan 24, 2020 at 01:04:25PM +0800, Gao Xiang wrote:
-> > > diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-> > > index 8964778aabefb..0129d14629881 100644
-> > > --- a/fs/ext4/dir.c
-> > > +++ b/fs/ext4/dir.c
-> > > @@ -671,9 +671,11 @@ static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
-> > >  			  const char *str, const struct qstr *name)
-> > >  {
-> > >  	struct qstr qstr = {.name = str, .len = len };
-> > > -	struct inode *inode = dentry->d_parent->d_inode;
-> > > +	const struct dentry *parent = READ_ONCE(dentry->d_parent);
-> > 
-> > I'm not sure if we really need READ_ONCE d_parent here (p.s. d_parent
-> > won't be NULL anyway), and d_seq will guard all its validity. If I'm
-> > wrong, correct me kindly...
-> > 
-> > Otherwise, it looks good to me...
-> > Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-> > 
-> 
-> While d_parent can't be set to NULL, it can still be changed concurrently.
+
+[]
+
 > So we need READ_ONCE() to ensure that a consistent value is used.
 
-If I understand correctly, unlazy RCU->ref-walk will be guarded by
-seqlock, and for ref-walk we have d_lock (and even parent lock)
-in relative paths. So I prematurely think no race of renaming or
-unlinking evenually.
-
-I'm curious about that if experts could correct me about this.
+By the way, my understanding is all pointer could be accessed
+atomicly guaranteed by compiler. In my opinion, we generally
+use READ_ONCE() on pointers for other uses (such as, avoid
+accessing a variable twice due to compiler optimization and
+it will break some logic potentially or need some data
+dependency barrier...)
 
 Thanks,
 Gao Xiang
 
-> 
-> - Eric
+
