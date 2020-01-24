@@ -2,120 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A4314777F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 05:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4976414779D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 05:30:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbgAXEQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jan 2020 23:16:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47864 "EHLO mail.kernel.org"
+        id S1730261AbgAXE34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jan 2020 23:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729797AbgAXEQ2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jan 2020 23:16:28 -0500
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729316AbgAXE3z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jan 2020 23:29:55 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 920902070A;
-        Fri, 24 Jan 2020 04:16:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC6392072C;
+        Fri, 24 Jan 2020 04:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579839387;
-        bh=kj/UPIlxMTG1LNrRNQzAQibp9tj2WikH8O930HrmAmU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a67IdEUAnRcrrHdsQK7Nbl5g7OMOKGhUa7H2t42Ofc5V4ViYMbnvhK/a34YlJ+krO
-         vmTgWu/vfSimME2bI6MPvtXho8XRo0ExKGAxkWCy262Xx8CsCGhYC/qMYhcQmegp9w
-         qkPDAlLSC701dz3K1kcrqiHoKDf0AfVYXDtnfgjk=
+        s=default; t=1579840195;
+        bh=w7bUGOmBcf8WYfmLHNz1iZda5pKwrIDULz8xqJEmZmo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RJRx1UroRpNjDxxEZ8+qL1gktnq773hIx31h2M0OdBjHhtDUVdOlVsijub/9qOrJC
+         l16OFpelVLUsiwddVu0rQyNDShAvyriuZEyJnfg6kkHmDYhN8CJDcx/BAP2oLrP6OW
+         tgAwolhEK7ImbCOQj5cJpnHZjDPPM3BpUgQxIjes=
+Date:   Thu, 23 Jan 2020 20:29:53 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Daniel Rosenberg <drosen@google.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH 2/2] f2fs: fix race conditions in ->d_compare() and ->d_hash()
-Date:   Thu, 23 Jan 2020 20:15:49 -0800
-Message-Id: <20200124041549.159983-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200124041549.159983-1-ebiggers@kernel.org>
-References: <20200124041549.159983-1-ebiggers@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Namjae Jeon <linkinjeon@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: oopsably broken case-insensitive support in ext4 and f2fs (Re:
+ vfat: Broken case-insensitive support for UTF-8)
+Message-ID: <20200124042953.GA832@sol.localdomain>
+References: <20200119221455.bac7dc55g56q2l4r@pali>
+ <87sgkan57p.fsf@mail.parknet.co.jp>
+ <20200120073040.GZ8904@ZenIV.linux.org.uk>
+ <20200120074558.GA8904@ZenIV.linux.org.uk>
+ <20200120080721.GB8904@ZenIV.linux.org.uk>
+ <20200120193558.GD8904@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200120193558.GD8904@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, Jan 20, 2020 at 07:35:58PM +0000, Al Viro wrote:
+> On Mon, Jan 20, 2020 at 08:07:21AM +0000, Al Viro wrote:
+> 
+> > > > I hadn't checked ->d_compare() instances for a while; somebody needs to
+> > > > do that again, by the look of it.  The above definitely is broken;
+> > > > no idea how many other instaces had grown such bugs...
+> > > 
+> > > f2fs one also has the same bug.  Anyway, I'm going down right now, will
+> > > check the rest tomorrow morning...
+> > 
+> > We _probably_ can get away with just checking that inode for NULL and
+> > buggering off if it is (->d_seq mismatch is guaranteed in that case),
+> > but I suspect that we might need READ_ONCE() on both dereferences.
+> > I hate memory barriers...
+> 
+> FWIW, other instances seem to be OK; HFS+ one might or might not be
+> OK in the face of concurrent rename (wrong result in that case is
+> no problem; oops would be), but it doesn't play silly buggers with
+> pointer-chasing.
+> 
+> ext4 and f2fs do, and ->d_compare() is broken in both of them.
 
-Since ->d_compare() and ->d_hash() can be called in RCU-walk mode,
-->d_parent and ->d_inode can be concurrently modified, and in
-particular, ->d_inode may be changed to NULL.  For f2fs_d_hash() this
-resulted in a reproducible NULL dereference if a lookup is done in a
-directory being deleted, e.g. with:
+Thanks Al.  I sent out fixes for this:
 
-	int main()
-	{
-		if (fork()) {
-			for (;;) {
-				mkdir("subdir", 0700);
-				rmdir("subdir");
-			}
-		} else {
-			for (;;)
-				access("subdir/file", 0);
-		}
-	}
+ext4: https://lore.kernel.org/r/20200124041234.159740-1-ebiggers@kernel.org
+f2fs: https://lore.kernel.org/r/20200124041549.159983-1-ebiggers@kernel.org
 
-... or by running the 't_encrypted_d_revalidate' program from xfstests.
-Both repros work in any directory on a filesystem with the encoding
-feature, even if the directory doesn't actually have the casefold flag.
+Note that ->d_hash() was broken too.  In fact, that was much easier to
+reproduce.
 
-I couldn't reproduce a crash in f2fs_d_compare(), but it appears that a
-similar crash is possible there.
-
-Fix these bugs by reading ->d_parent and ->d_inode using READ_ONCE() and
-falling back to the case sensitive behavior if the inode is NULL.
-
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Fixes: 2c2eb7a300cd ("f2fs: Support case-insensitive file name lookups")
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/f2fs/dir.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index aea9e2806144d..d7c9a2cda4899 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1083,24 +1083,27 @@ static int f2fs_d_compare(const struct dentry *dentry, unsigned int len,
- 			  const char *str, const struct qstr *name)
- {
- 	struct qstr qstr = {.name = str, .len = len };
-+	const struct dentry *parent = READ_ONCE(dentry->d_parent);
-+	const struct inode *inode = READ_ONCE(parent->d_inode);
- 
--	if (!IS_CASEFOLDED(dentry->d_parent->d_inode)) {
-+	if (!inode || !IS_CASEFOLDED(inode)) {
- 		if (len != name->len)
- 			return -1;
- 		return memcmp(str, name->name, len);
- 	}
- 
--	return f2fs_ci_compare(dentry->d_parent->d_inode, name, &qstr, false);
-+	return f2fs_ci_compare(inode, name, &qstr, false);
- }
- 
- static int f2fs_d_hash(const struct dentry *dentry, struct qstr *str)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(dentry->d_sb);
- 	const struct unicode_map *um = sbi->s_encoding;
-+	const struct inode *inode = READ_ONCE(dentry->d_inode);
- 	unsigned char *norm;
- 	int len, ret = 0;
- 
--	if (!IS_CASEFOLDED(dentry->d_inode))
-+	if (!inode || !IS_CASEFOLDED(inode))
- 		return 0;
- 
- 	norm = f2fs_kmalloc(sbi, PATH_MAX, GFP_ATOMIC);
--- 
-2.25.0
-
+- Eric
