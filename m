@@ -2,119 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5311A148198
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 12:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B45148425
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 12:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391025AbgAXLVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 06:21:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57382 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390799AbgAXLVP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 06:21:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8NtwvVXwMbEeKGtQBpJWoIGytCazgM6ygP8M0AMB/oU=; b=uw5i2aWn7LL3opxrLL8s3yLU7
-        OlFhXFgymnVfWwiFsQv7xuY8rEzyIYDxDrHR1EfJUBpR7CaOxyBVzpag72ZwQO2HsATPjMEIsqnMx
-        FxGLIux7G5uCfbbZhltleiqFqOnQCntQkAm0DW8m4MmYDdbxw8O7gP6HVg9EeIiP0WRgTu1FdaMrp
-        sNjmWJFMBE4hR09qjY/ekkPZvjZt2jLDGLhd60fvpVg5yQRhlgUOINx0CfZL49q8mhHt7CRiDnSXO
-        6evHpbTq9I7kRdNX3bFlOnM+U412f1nq4ftd26DBGGCqqkRFB56va9jGFf2xU4ezJZL49Z2jGV82m
-        +eJ6gnGNQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iux1R-0002C3-Uo; Fri, 24 Jan 2020 11:21:09 +0000
-Date:   Fri, 24 Jan 2020 03:21:09 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
-Message-ID: <20200124112109.GK4675@bombadil.infradead.org>
-References: <20200122193306.GB4675@bombadil.infradead.org>
- <3577430.1579705075@warthog.procyon.org.uk>
- <3785795.1579777499@warthog.procyon.org.uk>
+        id S2392043AbgAXLkc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jan 2020 06:40:32 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10076 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403843AbgAXLk0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:40:26 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 483xyt3Jbyz9tyMg;
+        Fri, 24 Jan 2020 12:40:22 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=iiu4nggJ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id A3I6opIEV_tl; Fri, 24 Jan 2020 12:40:22 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 483xyt27bmz9tyMf;
+        Fri, 24 Jan 2020 12:40:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1579866022; bh=FHdRJ1lym9x5LZH3JKxzccvEq6M9sGBs3OTmqNRLhTU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iiu4nggJtlejyS9CxTCWd166SJF9J7eVXuwRZ7M2gotO68hUK81m+MR2Tstk3ho8B
+         Rj9fXdhonGjq/7IdTo1GHGLsriWmDEEd0f4c2HcS4bPl+9p+eVKJ1QKA/pX/XYHPtq
+         QQIRjBIznCVLXgOan515E+eWZeriwxtYhT7tVKTQ=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 885948B858;
+        Fri, 24 Jan 2020 12:40:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id Rd4xOECJWD9L; Fri, 24 Jan 2020 12:40:23 +0100 (CET)
+Received: from [172.25.230.111] (po15451.idsi0.si.c-s.fr [172.25.230.111])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 514BB8B84A;
+        Fri, 24 Jan 2020 12:40:23 +0100 (CET)
+Subject: Re: [PATCH v2 6/6] powerpc: Implement user_access_begin and friends
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr>
+ <2a20d19776faba4d85dbe51ae00a5f6ac5ac0969.1579715466.git.christophe.leroy@c-s.fr>
+ <87iml2idi9.fsf@mpe.ellerman.id.au> <87ftg6icc8.fsf@mpe.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <0c2855c2-a6d6-6b35-7f69-f55add58dfb8@c-s.fr>
+Date:   Fri, 24 Jan 2020 12:40:23 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3785795.1579777499@warthog.procyon.org.uk>
+In-Reply-To: <87ftg6icc8.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 23, 2020 at 11:04:59AM +0000, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
+
+
+Le 23/01/2020 à 13:31, Michael Ellerman a écrit :
+> Michael Ellerman <mpe@ellerman.id.au> writes:
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>>> Today, when a function like strncpy_from_user() is called,
+>>> the userspace access protection is de-activated and re-activated
+>>> for every word read.
+>>>
+>>> By implementing user_access_begin and friends, the protection
+>>> is de-activated at the beginning of the copy and re-activated at the
+>>> end.
+>>>
+>>> Implement user_access_begin(), user_access_end() and
+>>> unsafe_get_user(), unsafe_put_user() and unsafe_copy_to_user()
+>>>
+>>> For the time being, we keep user_access_save() and
+>>> user_access_restore() as nops.
+>>
+>> That means we will run with user access enabled in a few more places, but
+>> it's only used sparingly AFAICS:
+>>
+>>    kernel/trace/trace_branch.c:    unsigned long flags = user_access_save();
+>>    lib/ubsan.c:    unsigned long flags = user_access_save();
+>>    lib/ubsan.c:    unsigned long ua_flags = user_access_save();
+>>    mm/kasan/common.c:      unsigned long flags = user_access_save();
+>>
+>> And we don't have objtool checking that user access enablement isn't
+>> leaking in the first place, so I guess it's OK for us not to implement
+>> these to begin with?
 > 
-> > It's perfectly legal to have compound pages in the page cache.  Call
-> > find_subpage(page, xas.xa_index) unconditionally.
+> It looks like we can implement them on on all three KUAP
+> implementations.
 > 
-> Like this?
+> For radix and 8xx we just return/set the relevant SPR.
 > 
-> #define iterate_mapping(i, n, __v, skip, STEP) {		\
-> 	struct page *page;					\
-> 	size_t wanted = n, seg, offset;				\
-> 	loff_t start = i->mapping_start + skip;			\
-> 	pgoff_t index = start >> PAGE_SHIFT;			\
-> 								\
-> 	XA_STATE(xas, &i->mapping->i_pages, index);		\
-> 								\
-> 	rcu_read_lock();						\
-> 	xas_for_each(&xas, page, ULONG_MAX) {				\
+> For book3s/32/kup.h I think we'd just need to add a KUAP_CURRENT case to
+> allow_user_access()?
 
-I actually quite liked the iterator you had before; I was thinking of
-wrapping it up as xas_for_each_contig().
+Can't do that, we don't want to keep the info in current->thread.kuap 
+after user_access_save(), otherwise we might unexpectedly re-open access 
+through an interrupt.
 
-> 		if (xas_retry(&xas, page) || xa_is_value(page)) {	\
-> 			WARN_ON(1);					\
-> 			break;						\
-> 		}							\
+And if we use KUAP_CURRENT case of prevent_user_access(), it means we'll 
+read current->thread.kuap twice.
 
-Actually, xas_retry() can happen, even with the page itself pinned.  It
-indicates the xarray data structure changed under you while walking it
-and you need to restart the walk from the top (arguably this shouldn't
-be exposed to callers at all, and in the future it may not be ... it's
-something inherited from the radix tree interface).
+So, just regenerate addr and end from the flags, and use 
+allow_user_access() and prevent_user_access() as usual.
 
-So this should be:
+I'll have it in v4
 
-		if (xas_retry(&xas, page))
-			continue;
-		if (WARN_ON(xa_is_value(page)))
-			break;
-
-> 		__v.bv_page = find_subpage(page, xas.xa_index);		\
-
-Yes.
-
-> 		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
-> 		seg = PAGE_SIZE - offset;			\
-> 		__v.bv_offset = offset;				\
-> 		__v.bv_len = min(n, seg);			\
-> 		(void)(STEP);					\
-> 		n -= __v.bv_len;				\
-> 		skip += __v.bv_len;				\
-> 		if (n == 0)					\
-> 			break;					\
-> 	}							\
-> 	rcu_read_unlock();					\
-> 	n = wanted - n;						\
-> }
-> 
-> Note that the walk is not restartable - and the array is supposed to have been
-> fully populated by the caller for the range specified - so I've made it print
-> a warning and end the loop if xas_retry() or xa_is_value() return true (which
-> takes care of the !page case too).  Possibly I could just leave it to fault in
-> this case and not check.
-> 
-> If PageHuge(page) is true, I presume I need to support that too.  How do I
-> find out how big the page is?
-
-PageHuge() is only going to be true for hugetlbfs mappings.  I'm OK
-with not supporting those for now ... eventually I want to get rid of
-the special cases in the page cache for hugetlbfs, but there's about
-six other projects standing between me and that.
+Christophe
