@@ -2,79 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 143D2148F1F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 21:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 694D5148F30
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 21:14:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387397AbgAXUKP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 15:10:15 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43500 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729308AbgAXUKP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 15:10:15 -0500
-Received: by mail-ed1-f68.google.com with SMTP id dc19so3784292edb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2020 12:10:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
-        b=D57LaX6fPIH9yUp1n9+Oi2UloLj6giH8ArlR4WpiryOjEWH0YZzmHpB7st9eYWD7TS
-         3j+v+LFsCXuf38Ry79+XOYI8bX8rWiHVP83p0KFyhcNBtyplhPLMBFeQgyCznZeNhu4d
-         bnUnov6ftmIi4qUTGqr5SEUrcbtZUY6nZZ2nI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EW6Y/EZHZi/ttUxTUSXyYBrJLM6UmlUPE/P/09OJMp8=;
-        b=T7h0ofa3u43sZuqs/POsN6qjloiCUEpYmkwLd6fivw8L6yiWSIEnuFtHWa4srlGmRv
-         Ea/B72X5iBdA6IKwV1mNx6lQk/M4mb75iOu2I7UEHnADyimQ1It6jRhCnOYUfszdAFVP
-         LJijAtuhWQZdVXCSRJBOn3KS17OMvjQSEHh2vyvJIKauD+FmCtHXPBw/pSDzu8JOEpdw
-         Gi0NozaWZ8ZChlSQ6ISd33q9FMMqQxrLvY1r6r3+cKbvJ1DQW3YkD/ifvT8D2oDXyk2I
-         hiKm0lZF1NDCU2+WKIh1kV/NbgbK+eszk1vJkVSEHnWU1Sr87iVr3D9GHL+u8YzNPKvS
-         XlRA==
-X-Gm-Message-State: APjAAAWO8MtEdoj/5JyM7E7siG/Yjwo8vaxbRXE9HVdTS3qnFl6iHP+D
-        Ep5xH1Ih+hqcoAeE5UyybtG9u2NYwOT3PjQhGMlrMAzX+kw=
-X-Google-Smtp-Source: APXvYqwWJyOj8lNCsez+rW7XtOC4RGJBUgl+VpwoBouyvHuLrvQ3yPoOq7ALyHD46F67pPGbj4kMWn5TGsuAHVWCMdo=
-X-Received: by 2002:a17:906:680b:: with SMTP id k11mr4160436ejr.0.1579896613104;
- Fri, 24 Jan 2020 12:10:13 -0800 (PST)
+        id S2404265AbgAXUOF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jan 2020 15:14:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387535AbgAXUOF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jan 2020 15:14:05 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F8CF2071E;
+        Fri, 24 Jan 2020 20:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579896844;
+        bh=BXwKT7PuUAxXdQBtcYCaPasA/6uX1OMir4E6yh0LA3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1ag7/2DSoxG5KYU0EMVWB64o75K0btoF+qRMCO5k9cTMqUywqJBdCg/sUprpKIHv/
+         9MepeQSjc6pe8xJdw8+LoNAgcQY5x8NUgXg6RHWOLoXD7dmmnthVG6ewye8WF1rbAv
+         53XYtcyTT0ewAW3ULL2QSG0sBV/ytCRp6aZzLJeA=
+Date:   Fri, 24 Jan 2020 12:14:02 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v5 4/6] ubifs: don't trigger assertion on invalid no-key
+ filename
+Message-ID: <20200124201317.GC41762@gmail.com>
+References: <20200120223201.241390-1-ebiggers@kernel.org>
+ <20200120223201.241390-5-ebiggers@kernel.org>
+ <20200122003014.GA180824@gmail.com>
 MIME-Version: 1.0
-References: <20200124091743.3357-1-sargun@sargun.me> <20200124091743.3357-4-sargun@sargun.me>
- <20200124180332.GA4151@cisco>
-In-Reply-To: <20200124180332.GA4151@cisco>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Fri, 24 Jan 2020 12:09:37 -0800
-Message-ID: <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
- pidfd on listener trap
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200122003014.GA180824@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
->
-> On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
-> > Currently, this just opens the group leader of the thread that triggere
-> > the event, as pidfds (currently) are limited to group leaders.
->
-> I don't love the semantics of this; when they're not limited to thread
-> group leaders any more, we won't be able to change this. Is that work
-> far off?
->
-> Tycho
+On Tue, Jan 21, 2020 at 04:30:15PM -0800, Eric Biggers wrote:
+> On Mon, Jan 20, 2020 at 02:31:59PM -0800, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > If userspace provides an invalid fscrypt no-key filename which encodes a
+> > hash value with any of the UBIFS node type bits set (i.e. the high 3
+> > bits), gracefully report ENOENT rather than triggering ubifs_assert().
+> > 
+> > Test case with kvm-xfstests shell:
+> > 
+> >     . fs/ubifs/config
+> >     . ~/xfstests/common/encrypt
+> >     dev=$(__blkdev_to_ubi_volume /dev/vdc)
+> >     ubiupdatevol $dev -t
+> >     mount $dev /mnt -t ubifs
+> >     mkdir /mnt/edir
+> >     xfs_io -c set_encpolicy /mnt/edir
+> >     rm /mnt/edir/_,,,,,DAAAAAAAAAAAAAAAAAAAAAAAAAA
+> > 
+> > With the bug, the following assertion fails on the 'rm' command:
+> > 
+> >     [   19.066048] UBIFS error (ubi0:0 pid 379): ubifs_assert_failed: UBIFS assert failed: !(hash & ~UBIFS_S_KEY_HASH_MASK), in fs/ubifs/key.h:170
+> > 
+> > Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
+> > Cc: <stable@vger.kernel.org> # v4.10+
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> 
+> Richard, can you review the two UBIFS patches in this series, and if you're okay
+> with them, provide Acked-by's so that we can take them through the fscrypt tree?
+> They don't conflict with anything currently in the UBIFS tree.
+> 
 
-We would be able to change this in the future if we introduced a flag like
-SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
-pidfd that's for the thread, and not just the group leader. The flag could
-either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
-could require both. Alternatively, we can rename
-SECCOMP_USER_NOTIF_FLAG_PIDFD to
-SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
+Richard, any objection to us taking these patches through the fscrypt tree?
+
+- Eric
