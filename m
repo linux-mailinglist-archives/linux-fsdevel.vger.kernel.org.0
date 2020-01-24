@@ -2,71 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBCD148D61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 19:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E739148D63
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 19:03:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391115AbgAXSDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 13:03:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389561AbgAXSDZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 13:03:25 -0500
-Received: from localhost (unknown [104.132.0.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B63C12072C;
-        Fri, 24 Jan 2020 18:03:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579889004;
-        bh=oVdt0AydXA7suK5u7WiRV7oRH1hbokRTp4g30Tso34Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Eddd49ULHT0W1wmLkSOIMvil+ujKKTFlRcVAfjMPQcjsT7l1KLA2XAeLL6KtpxyS8
-         E04n69szM0GdhIJa+C/ao5LfM72pj5ZooXvUx3kmi3mIBIFw78I5IgGHOQGnbl2fdG
-         Q3JmMARP4WMTfkLhFDVvVLHhiLRcLftsVnO6M46k=
-Date:   Fri, 24 Jan 2020 10:03:23 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Namjae Jeon <linkinjeon@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: oopsably broken case-insensitive support in ext4 and f2fs (Re:
- vfat: Broken case-insensitive support for UTF-8)
-Message-ID: <20200124180323.GA33470@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20200119221455.bac7dc55g56q2l4r@pali>
- <87sgkan57p.fsf@mail.parknet.co.jp>
- <20200120073040.GZ8904@ZenIV.linux.org.uk>
- <20200120074558.GA8904@ZenIV.linux.org.uk>
- <20200120080721.GB8904@ZenIV.linux.org.uk>
- <20200120193558.GD8904@ZenIV.linux.org.uk>
- <20200124042953.GA832@sol.localdomain>
- <CAHk-=wgwFMW09uz0HLUuQFMpi_UYtKAUvcCJ-oxyVqybry1=Ng@mail.gmail.com>
+        id S2391142AbgAXSDd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jan 2020 13:03:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36635 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391133AbgAXSDd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jan 2020 13:03:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a6so1111370plm.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2020 10:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KYYV9rcdEb+nT+n76T9IL2Mvjnz++gVjwO67Ed6lDIA=;
+        b=QLBgRrCRV3Qrx7BRCpYBc1z6C+go7OJtBBMTk2vteQruNfk+Jb4+PlqJWk6jwdNFO9
+         Vw2yUcc/MCqfZTQ7O6Iqm/RGOxZOBFCNJ6kCB7uJEIIlLDpt/qm2YX1+QHI0GYc6jiTu
+         +qzBhavepYUedI7ys2+YwQW/Bl+IVfsxJR0cnDnVJ9ED/qsqfOra6kyi8LhDIYt4kxy7
+         5Xj2aDsQ4WI17egTXDEFzF/O4IuypL8PFT07s029KMwqFmjLcdgGszHc7iny2Ynu33ot
+         cLpN+/Ki10iyRJlbelw5tEM189ZIgkpyZlt5eCKwGw+flz72N+3qAgZ0fIZpiTfHgC+G
+         DToA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KYYV9rcdEb+nT+n76T9IL2Mvjnz++gVjwO67Ed6lDIA=;
+        b=kjUwpKu4kIRzOkWYimlp0YVltBgspKdYNW3i7E8AgxmbzaO6iadEZXnOm7UZ5uNXpR
+         WJb7VS/0z4qsYBKrX3egn1TDzJCQatPwvHYWDtsjzs/lVSixvGAwVROYyuNqE2c/TyCj
+         PeBEAKFGkpJJ1tc/WwQ6YK7NsaN5ANV7KxUV5AOx68jV0844d8Bqifg7PrTnHbz1DF6w
+         ukwwjzg/woj0doGG4WTi0hVbhOzgVdQlnGyQEpSriW2gnFxOGVzvCahhZU+gjC5oKLw6
+         QOHunAi/13/EhSVL3sTFicxgOm/r2QCEdyWP44l2Gd0ivcjqa1vXSF65m56K9PA1v/Vr
+         WexA==
+X-Gm-Message-State: APjAAAVt/f0Il+qqmEDQ0sRT5clqFw9xUs8yc7CmMEFjnPIKbwbQtPPi
+        AG/WgKeKruuyCZqBRWbZsU7TxQ==
+X-Google-Smtp-Source: APXvYqxzwjaX46e/1fUSjuFqRje3gg6dT16MaHtJeX4pLiTiDcr2YsyJMPFPS/RCb7fTnNGkezX5Jw==
+X-Received: by 2002:a17:90a:2763:: with SMTP id o90mr459921pje.110.1579889012413;
+        Fri, 24 Jan 2020 10:03:32 -0800 (PST)
+Received: from cisco ([69.162.16.18])
+        by smtp.gmail.com with ESMTPSA id v15sm7022881pju.15.2020.01.24.10.03.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 10:03:31 -0800 (PST)
+Date:   Fri, 24 Jan 2020 10:03:32 -0800
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, christian.brauner@ubuntu.com
+Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
+ pidfd on listener trap
+Message-ID: <20200124180332.GA4151@cisco>
+References: <20200124091743.3357-1-sargun@sargun.me>
+ <20200124091743.3357-4-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgwFMW09uz0HLUuQFMpi_UYtKAUvcCJ-oxyVqybry1=Ng@mail.gmail.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20200124091743.3357-4-sargun@sargun.me>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/24, Linus Torvalds wrote:
-> On Thu, Jan 23, 2020 at 8:29 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > Thanks Al.  I sent out fixes for this:
-> 
-> How did that f2fs_d_compare() function ever work? It was doing the
-> memcmp on completely the wrong thing.
+On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
+> Currently, this just opens the group leader of the thread that triggere
+> the event, as pidfds (currently) are limited to group leaders.
 
-Urg.. my bad. I didn't do enough stress test on casefolding case which
-is only activated given "mkfs -C utf8:strict". And Android hasn't enabled
-it yet.
+I don't love the semantics of this; when they're not limited to thread
+group leaders any more, we won't be able to change this. Is that work
+far off?
 
-> 
->               Linus
+Tycho
