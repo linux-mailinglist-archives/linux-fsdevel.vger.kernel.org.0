@@ -2,83 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2178147EE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 11:42:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5311A148198
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jan 2020 12:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbgAXKmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 05:42:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:55913 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbgAXKmn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 05:42:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 483whD6FWGz9s1x;
-        Fri, 24 Jan 2020 21:42:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1579862561;
-        bh=H4j0Futj5uqyyAbpgglurPALtZHLyOVkkBYQKpFq/88=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=MmR6teA231c1fXQY1+vLqi0yz+Vc/SdGtcRyQ5HHkVx+BNa3Psa5ILkQxN57JPZ+l
-         QIDQJ6babRxL+JNOJ1Ihqnztvi+zDQ0ClPcWniXnyA9m5CrYol7du1yr6gvZgrSqj9
-         Sm2JIYeF0VfZ0LNwzGOk02j//mTV+bi0mJJXC3wPwjd0kXnV/egJmn1DK/vMu2Ze/H
-         PEy7abr1N9fN1d18XYZwK4cyAbdcoaYAt+wPy0l8aEU5uIJ2g2Gc0DLfd86fF20aOj
-         IDGhhd9mt4ij7rNrL1OTDb6LldjgXtBTveq+DlS/1iY4HEmLNb4b5jrGYiOtxTLgBD
-         84Co0BMAqYRew==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S2391025AbgAXLVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jan 2020 06:21:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57382 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390799AbgAXLVP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jan 2020 06:21:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8NtwvVXwMbEeKGtQBpJWoIGytCazgM6ygP8M0AMB/oU=; b=uw5i2aWn7LL3opxrLL8s3yLU7
+        OlFhXFgymnVfWwiFsQv7xuY8rEzyIYDxDrHR1EfJUBpR7CaOxyBVzpag72ZwQO2HsATPjMEIsqnMx
+        FxGLIux7G5uCfbbZhltleiqFqOnQCntQkAm0DW8m4MmYDdbxw8O7gP6HVg9EeIiP0WRgTu1FdaMrp
+        sNjmWJFMBE4hR09qjY/ekkPZvjZt2jLDGLhd60fvpVg5yQRhlgUOINx0CfZL49q8mhHt7CRiDnSXO
+        6evHpbTq9I7kRdNX3bFlOnM+U412f1nq4ftd26DBGGCqqkRFB56va9jGFf2xU4ezJZL49Z2jGV82m
+        +eJ6gnGNQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iux1R-0002C3-Uo; Fri, 24 Jan 2020 11:21:09 +0000
+Date:   Fri, 24 Jan 2020 03:21:09 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 1/6] fs/readdir: Fix filldir() and filldir64() use of user_access_begin()
-In-Reply-To: <CAHk-=whCk8z2_kggSCoAGMne8PNSvcT2T4bBH62ngoFrsTyV6w@mail.gmail.com>
-References: <12a4be679e43de1eca6e5e2173163f27e2f25236.1579715466.git.christophe.leroy@c-s.fr> <87muaeidyc.fsf@mpe.ellerman.id.au> <87k15iidrq.fsf@mpe.ellerman.id.au> <CAHk-=whCk8z2_kggSCoAGMne8PNSvcT2T4bBH62ngoFrsTyV6w@mail.gmail.com>
-Date:   Fri, 24 Jan 2020 21:42:30 +1100
-Message-ID: <878slxi19l.fsf@mpe.ellerman.id.au>
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] iov_iter: Add ITER_MAPPING
+Message-ID: <20200124112109.GK4675@bombadil.infradead.org>
+References: <20200122193306.GB4675@bombadil.infradead.org>
+ <3577430.1579705075@warthog.procyon.org.uk>
+ <3785795.1579777499@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3785795.1579777499@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-> On Thu, Jan 23, 2020 at 4:00 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->>
->> So I guess I'll wait and see what happens with patch 1.
->
-> I've committed my fixes to filldir[64]() directly - they really were
-> fixing me being lazy about the range, and the name length checking
-> really is a theoretical "access wrong user space pointer" issue with
-> corrupted filesystems regardless (even though I suspect it's entirely
-> theoretical - even a corrupt filesystem hopefully won't be passing in
-> negative directory entry lengths or something like that).
+On Thu, Jan 23, 2020 at 11:04:59AM +0000, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > It's perfectly legal to have compound pages in the page cache.  Call
+> > find_subpage(page, xas.xa_index) unconditionally.
+> 
+> Like this?
+> 
+> #define iterate_mapping(i, n, __v, skip, STEP) {		\
+> 	struct page *page;					\
+> 	size_t wanted = n, seg, offset;				\
+> 	loff_t start = i->mapping_start + skip;			\
+> 	pgoff_t index = start >> PAGE_SHIFT;			\
+> 								\
+> 	XA_STATE(xas, &i->mapping->i_pages, index);		\
+> 								\
+> 	rcu_read_lock();						\
+> 	xas_for_each(&xas, page, ULONG_MAX) {				\
 
-Great, thanks.
+I actually quite liked the iterator you had before; I was thinking of
+wrapping it up as xas_for_each_contig().
 
-> The "pass in read/write" part I'm not entirely convinced about.
-> Honestly, if this is just for ppc32 and nobody else really needs it,
-> make the ppc32s thing always just enable both user space reads and
-> writes. That's the semantics for x86 and arm as is, I'm not convinced
-> that we should complicate this for a legacy platform.
+> 		if (xas_retry(&xas, page) || xa_is_value(page)) {	\
+> 			WARN_ON(1);					\
+> 			break;						\
+> 		}							\
 
-We can use the read/write info on Power9 too. That's a niche platform
-but hopefully not legacy status yet :P
+Actually, xas_retry() can happen, even with the page itself pinned.  It
+indicates the xarray data structure changed under you while walking it
+and you need to restart the walk from the top (arguably this shouldn't
+be exposed to callers at all, and in the future it may not be ... it's
+something inherited from the radix tree interface).
 
-But it's entirely optional, as you say we can just enable read/write if
-we aren't passed the read/write info from the upper-level API.
+So this should be:
 
-I think our priority should be getting objtool going on powerpc to check
-our user access regions are well contained. Once we have that working
-maybe then we can look at plumbing the direction through
-user_access_begin() etc.
+		if (xas_retry(&xas, page))
+			continue;
+		if (WARN_ON(xa_is_value(page)))
+			break;
 
-cheers
+> 		__v.bv_page = find_subpage(page, xas.xa_index);		\
+
+Yes.
+
+> 		offset = (i->mapping_start + skip) & ~PAGE_MASK;	\
+> 		seg = PAGE_SIZE - offset;			\
+> 		__v.bv_offset = offset;				\
+> 		__v.bv_len = min(n, seg);			\
+> 		(void)(STEP);					\
+> 		n -= __v.bv_len;				\
+> 		skip += __v.bv_len;				\
+> 		if (n == 0)					\
+> 			break;					\
+> 	}							\
+> 	rcu_read_unlock();					\
+> 	n = wanted - n;						\
+> }
+> 
+> Note that the walk is not restartable - and the array is supposed to have been
+> fully populated by the caller for the range specified - so I've made it print
+> a warning and end the loop if xas_retry() or xa_is_value() return true (which
+> takes care of the !page case too).  Possibly I could just leave it to fault in
+> this case and not check.
+> 
+> If PageHuge(page) is true, I presume I need to support that too.  How do I
+> find out how big the page is?
+
+PageHuge() is only going to be true for hugetlbfs mappings.  I'm OK
+with not supporting those for now ... eventually I want to get rid of
+the special cases in the page cache for hugetlbfs, but there's about
+six other projects standing between me and that.
