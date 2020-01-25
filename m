@@ -2,119 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 956BA14973E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 19:46:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9CF14975B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 20:10:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgAYSpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 13:45:47 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33201 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgAYSpr (ORCPT
+        id S1726599AbgAYTJw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 14:09:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57876 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgAYTJw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 13:45:47 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so6329952lji.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jan 2020 10:45:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=agKBgndk3wOWKqvCTJf0yLyX2bJKGsFMAU50Ri7/n9U=;
-        b=ebrkpC8lWGHzj/TTwQVlGmpfBj+LMhP3xc48s3IkdXLpfPBkmBQH8glAibN3NZzhJ7
-         eaX+oPyIl6RK4Fcu/p33lei0jipvUcU+PHgqX1Ir4aJDuHlpLIX4SbceygCECD/xiFMl
-         QwEsuOsJJnKRw8LKLW82q3yqXp++TF+4Q343k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=agKBgndk3wOWKqvCTJf0yLyX2bJKGsFMAU50Ri7/n9U=;
-        b=eFsG9/+jRe6w0kvfCRBgBjvufLZOwewWuyg08GxN4SKyJodzS/y7Mz8ieF6cHb74CE
-         jqNmEjgQxx5RFY+IIg095ckHZ6gS9wEnk3wzJtvQwO5p9HMaikAT6gH7FEQIEbCcfe0r
-         75qSNu0Fc2TpIM5Bhc6CfaayHRr0B4hEVN7npZS1S4ns2zZAqyaqs8ZeNOAahnYYVZYr
-         VkAYpT1iiueBhJt6hZJ+HB3EmZd8Oz5kVeeA0zgySUIUHkEEZAglWAYeiK0qKGcNIjC7
-         G8IZ6AFhJtuN3StC11i6Q1IVw7M5DEbYzFC+cKIFQy3mhw4LPRQAbuz0HAz+c3qQR0S1
-         BmnA==
-X-Gm-Message-State: APjAAAV4I/SSyfmFQ+ou+xoy+meEd/RpO4OWWg8v4wLXYOUOjpKS5BX0
-        6LSz6bcV95XtSvWzVoAf/fmJN3rP7AE=
-X-Google-Smtp-Source: APXvYqw/qtziW7CsZBSgnVv/qZlE0KMlFGYpKWoym4Mi8LCk0ITIVzVNLbpt14mp8o1tUh8cUqLGWQ==
-X-Received: by 2002:a2e:8016:: with SMTP id j22mr5390899ljg.24.1579977943228;
-        Sat, 25 Jan 2020 10:45:43 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id 11sm3967239lju.103.2020.01.25.10.45.41
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jan 2020 10:45:42 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id x7so6248812ljc.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jan 2020 10:45:41 -0800 (PST)
-X-Received: by 2002:a05:651c:ce:: with SMTP id 14mr2080983ljr.241.1579977941361;
- Sat, 25 Jan 2020 10:45:41 -0800 (PST)
+        Sat, 25 Jan 2020 14:09:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=My5//NJQysYMT+Wea8KLUdQ/Ww11h9Uv4t+v7jFecDU=; b=fFmYgDNNvt77kQV4xKWYDlosj
+        tCRnFy39irUUteCkoPzUlBM/Wm5FkejDjX1gLGOh1AOSU9xWtasFCl6Yk4gnJp6YHhDtEnfffUKLF
+        EBp2IlTESitbhAv7sRphU+1LFGbjMg61Nw3xVl/bb+yYBk+izXwb/6w33+zt3U0xxf/W/ggVQJ07u
+        C+r9ejvmR76/vpb7qv/B3UnJlBSOjzyCBm6eBaw8FGfOYR0uAYkhizpzn61a5zTykX2GN2qAM6O8x
+        MUsWC+f6ZstKPT6dK6hp2fpwysNavccb6La+1kyQ4NeJT5uZiEB2XGltOcYtJtuxj3lzmJR+FTww1
+        4eL0GLFtA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ivQoZ-00036i-67; Sat, 25 Jan 2020 19:09:51 +0000
+Date:   Sat, 25 Jan 2020 11:09:51 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/12] erofs: Convert uncompressed files from readpages
+ to readahead
+Message-ID: <20200125190951.GN4675@bombadil.infradead.org>
+References: <20200125013553.24899-1-willy@infradead.org>
+ <20200125013553.24899-8-willy@infradead.org>
+ <20200125015323.GA9918@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com> <20200125130541.450409-8-gladkov.alexey@gmail.com>
-In-Reply-To: <20200125130541.450409-8-gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 25 Jan 2020 10:45:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
-Message-ID: <CAHk-=wiGNSQCA8TYa1Akp0_GRpe=ELKDPkDX5nzM5R=oDy1U+Q@mail.gmail.com>
-Subject: Re: [PATCH v7 07/11] proc: flush task dcache entries from all procfs instances
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200125015323.GA9918@hsiangkao-HP-ZHAN-66-Pro-G1>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 25, 2020 at 5:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
-> This allows to flush dcache entries of a task on multiple procfs mounts
-> per pid namespace.
+On Sat, Jan 25, 2020 at 09:53:29AM +0800, Gao Xiang wrote:
+> > +		/* all the page errors are ignored when readahead */
+> > +		if (IS_ERR(bio)) {
+> > +			pr_err("%s, readahead error at page %lu of nid %llu\n",
+> > +			       __func__, page->index,
+> > +			       EROFS_I(mapping->host)->nid);
+> >  
+> > -				bio = NULL;
+> > -			}
+> > +			bio = NULL;
+> > +			put_page(page);
+> 
+> Out of curiously, some little question... Why we need put_page(page) twice
+> if erofs_read_raw_page returns with error...
+> 
+> One put_page(page) is used as a temporary reference count for this request,
+> we could put_page(page) in advance since pages are still locked before endio.
+> 
+> Another put_page(page) is used for page cache xarray. I think in this case
+> the page has been successfully inserted to the page cache anyway, after erroring
+> out it will trigger .readpage again... so probably we need to keep this
+> refcount count for page cache xarray?
+> 
+> If I'm missing something, kindly correct me if I'm wrong....
 
-From a quick read-through, this is the only one I really react negatively to.
-
-The locking looks odd. It only seems to protect the new proc_mounts
-list, but then it's a whole big rwsem, and it's taken over all of
-proc_flush_task_mnt(), and the locking is exported to all over as a
-result of that - including the dummy functions for "there is no proc"
-case.
-
-And proc_flush_task_mnt() itself should need no locking over any of
-it, so it's all just for the silly looping over the list.
-
-So
-
- (a) this looks fishy and feels wrong - I get a very strong feeling
-that the locking is wrong to begin with, and could/should have been
-done differently
-
- (b) all the locking should have been internal to /proc, and those
-wrappers shouldn't exist in a common header file (and certainly not
-for the non-proc case).
-
-Yes, (a) is just a feeling, and I don't have any great suggestions.
-Maybe make it an RCU list and use a spinlock for updating it?
-
-But (b) is pretty much a non-starter in this form. Those wrappers
-shouldn't be in a globally exported core header file. No way.
-
-               Linus
+You're quite right.  After readahead has completed, the page should have
+a refcount of 1 and be unlocked.  If we hit an error, the page should
+be !uptodate.  It doesn't matter whether we set PageError or not in this
+case; filemap_fault() will ClearPageError() before retrying if the page
+is !uptodate.  This extra put_page() is wrong, and I'll remove it from
+the next version.  Thanks!
