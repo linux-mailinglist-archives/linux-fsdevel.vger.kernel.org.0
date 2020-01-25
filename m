@@ -2,91 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3697D149330
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 04:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 702611493C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 07:17:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbgAYD5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jan 2020 22:57:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48224 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbgAYD5p (ORCPT
+        id S1725996AbgAYGRQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 01:17:16 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40411 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgAYGRP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jan 2020 22:57:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lx0lKKnkqhl0zcGVWH7r4Ty17wTgyP7eWJIw8u2UES8=; b=iH3BlPfu1A1X7J+NKyJSKjuXD
-        GWqzxemtGZlidnfLckCSUlh3uxKqlLMl5js8/AGNlozsz4suLtaPnBfhlU0ZoR+ZBeDsuH61dOSi9
-        ZeCNNq2MEgScp7QeMzsvrUxdbQB0gMj4y9N2wWBUt05isit6e3rne6azh/ncYVIpgl4BC0/x/geV3
-        MxZcb38PFW5p4FysEyJvIi7Y7pQaG+3E4cv/YbsbMWHUeep1VQx1+AgB/Uj2eAtxRH9cLv+G5hgRX
-        V/9VG8Kw9BgHVjEoUccJi2nM2CqhQSk0BLKO4Rw8wV+GqKIjZvJ0JAa8O8aKC06qH7YJEoRiGaNeD
-        QO9xevOAg==;
-Received: from [2601:1c0:6280:3f0::ed68]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ivCZp-0007SX-Sz; Sat, 25 Jan 2020 03:57:41 +0000
-Subject: Re: [PATCH 04/12] mm: Add readahead address space operation
-To:     Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com
-References: <20200125013553.24899-1-willy@infradead.org>
- <20200125013553.24899-5-willy@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4e28eb80-d602-47e6-51ec-63bb39e1a296@infradead.org>
-Date:   Fri, 24 Jan 2020 19:57:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sat, 25 Jan 2020 01:17:15 -0500
+Received: by mail-qk1-f193.google.com with SMTP id t204so3573066qke.7;
+        Fri, 24 Jan 2020 22:17:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tsg/r/0YkW+EwvqQByRlznkOGOX8nMWqFwoWlOGNvn8=;
+        b=iY+grmAPc30j6s7U+lRPizYmH7hV2PAWEKR71dLE2dmN6yU1rFMyesbZUFSMOauaVf
+         AQ9cpT68ECqVY+efd5oKkLJvdlIt9sZXp1sT7hhWx7cKC3Z0kVr+qI6rJzJHuS7+OAYT
+         9tP8OzS97Jt32QTS1CFNMlc2IzGOFYPry2npjIJ+lyjXTv+Qg1tlLW3anAB8VyEs0WHd
+         b1Q+rh7P8cnrvzw0V6HrjKy4O80PZNQnYnI1jN1Xd2QA1VsboWQ9oZ6Bv8rfkVJAhaIK
+         22EQOoPEm6OaRMU3O4rOgxpn0I1J4f5p8qRuDarvNU+gH14FZqOSSJ0iow23txsL6/SX
+         NIsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tsg/r/0YkW+EwvqQByRlznkOGOX8nMWqFwoWlOGNvn8=;
+        b=swPbXZpzIymRlRkx8eDj9P4dz+a0CRt53QWFKhqU+ZR9BB8Es3pJQgwm/YSNoo+b9F
+         v/FHJX3vY05pstG46Sxu6ktVr0GI0lAi0VZiljowP0RccWgZrsfzd+RK1NzwL6YpSr/C
+         u14e/7wW8Tp3mHLvuOTWMmo7lSl5XiFZFufTYMrb8Y0H/tJELqj2Jj8iaYT5BFvUCwrk
+         82ZmDtaqf+tGRq+L2QafvbdkSOlQSqhgRJm5YnFn/Am/LCC4TP3D2KNJtIvYbZ03OcuX
+         OB6/hshFPmVAVEuwhPpCkIohkrsOFTjqmnLRAf3uY3bpWR3tGxk79t582zB+PEpwFps6
+         ut1Q==
+X-Gm-Message-State: APjAAAWgkfYDXLXLCfn+ouFySxI1v6tevNJXz45wQkzj5/V2johfhpNJ
+        gBrL/SQUUntKkkRgBu6lj2ZhEC7+UPq9Ef9xAJA=
+X-Google-Smtp-Source: APXvYqzXMH2ecc4WrNRTSRqMoJiY5NdwoAvLhz3IqzcpCpum0aGfk2zEnLWmJG13dZn/DF6tLcJ+3/2VAi47wkEYVVY=
+X-Received: by 2002:a05:620a:15e9:: with SMTP id p9mr6924393qkm.490.1579933034407;
+ Fri, 24 Jan 2020 22:17:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200125013553.24899-5-willy@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <fed4f49349913cb6739dac647ba6a61d56b989d2.1579783936.git.christophe.leroy@c-s.fr>
+ <e11a8f0670251267f87e3114e0bdbacb1eb72980.1579783936.git.christophe.leroy@c-s.fr>
+ <CAHk-=wg4HEABOZdjxMzbembNmxs1zYfrNAEc2L+JS9FBSnM8JA@mail.gmail.com>
+In-Reply-To: <CAHk-=wg4HEABOZdjxMzbembNmxs1zYfrNAEc2L+JS9FBSnM8JA@mail.gmail.com>
+From:   Tony Luck <tony.luck@gmail.com>
+Date:   Fri, 24 Jan 2020 22:17:03 -0800
+Message-ID: <CA+8MBb++x2onyy0obGKc=3exTCekWRJ98xhQZuvHMQbFvV7zCw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] uaccess: Tell user_access_begin() if it's for a
+ write or not
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/24/20 5:35 PM, Matthew Wilcox wrote:
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 7d4d09dd5e6d..bb06fb7b120b 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -706,6 +706,8 @@ cache in your filesystem.  The following members are defined:
->  		int (*readpage)(struct file *, struct page *);
->  		int (*writepages)(struct address_space *, struct writeback_control *);
->  		int (*set_page_dirty)(struct page *page);
-> +		unsigned (*readahead)(struct file *filp, struct address_space *mapping,
-> +				 pgoff_t start, unsigned nr_pages);
->  		int (*readpages)(struct file *filp, struct address_space *mapping,
->  				 struct list_head *pages, unsigned nr_pages);
->  		int (*write_begin)(struct file *, struct address_space *mapping,
-> @@ -781,6 +783,15 @@ cache in your filesystem.  The following members are defined:
->  	If defined, it should set the PageDirty flag, and the
->  	PAGECACHE_TAG_DIRTY tag in the radix tree.
->  
-> +``readahead``
-> +	called by the VM to read pages associated with the address_space
-> +	object.  The pages are consecutive in the page cache and are
-> +        locked.  The implementation should decrement the page refcount after
-> +        attempting I/O on each page.  Usually the page will be unlocked by
-> +        the I/O completion handler.  If the function does not attempt I/O on
-> +        some pages, return the number of pages which were not read so the
-> +        common code can unlock the pages for you.
-> +
+On Thu, Jan 23, 2020 at 10:03 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> We used to have a read/write argument to the old "verify_area()" and
+> "access_ok()" model, and it was a mistake. It was due to odd i386 user
+> access issues. We got rid of it. I'm not convinced this is any better
+> - it looks very similar and for odd ppc access issues.
 
-Please use consistent indentation (tabs).
+If the mode (read or write) were made visible to the trap handler, I'd
+find that useful for machine check recovery.  If I'm in the middle of a
+copy_from_user() and I get a machine check reading poison from a
+user address ... then I could try to recover in the same way as for the
+user accessing the poison (offline the page, SIGBUS the task). But if
+the poison is in kernel memory and we are doing a copy_to_user(), then
+we are hosed (or would need some more complex recovery plan).
 
->  ``readpages``
->  	called by the VM to read pages associated with the address_space
->  	object.  This is essentially just a vector version of readpage.
+[Note that we only get recoverable machine checks on loads... writes
+are posted, so if something goes wrong it isn't synchronous with the store
+instruction that initiated it]
 
-
-cheers.
--- 
-~Randy
-
+-Tony
