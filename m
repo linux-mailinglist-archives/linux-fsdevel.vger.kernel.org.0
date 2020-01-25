@@ -2,96 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22719149919
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 06:42:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B843B149989
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 08:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbgAZFmy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jan 2020 00:42:54 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:43422 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgAZFmy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jan 2020 00:42:54 -0500
-Received: by mail-il1-f193.google.com with SMTP id o13so4262906ilg.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jan 2020 21:42:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0FozRu6Z46A1Ox9dVGHRP4DE9HvTC18OKQ2gVKB5H0I=;
-        b=btm3FgLJ76pCbaN9E1aHd2oRO0ynyht6XDpRf1NqBO0KsxDdMPCDLlJSI+R/y7CzNp
-         oTob9nBVf1guTbe87lKoYbuKDoC0Ql9g/TGdEcmgcKa22CDAGLFRuC4fp19A9o6yHTL3
-         BEFHMz/mK29Nu8bLopbByot+VLxOTUCq1nUjjgFkqgAQFOGrA9JRqBVEU3vbEbGYj1fY
-         LhGd7pEFDzL3Fcljj7NX6cElajCJ0vMkdIgbIrk1Y9Hm6TS7KcKXSQp5DVDzoJYpi0Tb
-         ww4IeJfARco7kUDRhNK5PuWzvJ0qetZih0El03fZ7BBrQRxw9DU0SwfvRfjIAlAKKCp4
-         kREA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0FozRu6Z46A1Ox9dVGHRP4DE9HvTC18OKQ2gVKB5H0I=;
-        b=I5nSrHXE/21XXv+HoF2GCnHywhWJXd5nVfGiaN1z53Crv6BhXk5X5JQXSa3Ji6YRtp
-         IrT8DSJrxQm0hvVSLam7h1sE81oRl4wplv1nHsX8qxAPDWFM/XJ8fwzWf0Nnr+4GmXxo
-         7TRtazNOvLf3o5tNPV/7yLNoXK6pFfL0fPTQO3TrezJhqeXUSSFjhTuWLdLqQ4YbT9BY
-         WlIpjSCL483qg79olgmawoW7BQAb1gs9mabq8zrrhAo/KXiaNm9MbQxdaxbuvoKKwkdk
-         9/6c4dQKs7EYOpz3TFdl0kZTjc7uIV1F46DFMuzcHqPcLJSS6xPAtBADIhVeyQoo9jn9
-         oJKg==
-X-Gm-Message-State: APjAAAUolTrVwSTV4TwrRixeeKIw5R6E98Sgn4xanxEx1B7CHDtcKdkW
-        P/+jTP8Qke+/2NGfPMHiz6jntw==
-X-Google-Smtp-Source: APXvYqwEmcq7qaAbzib65zO2VCQ8YB0IQaaR8HionrT430XtGRaSzx5polOejYPQ1Bv9MvnRpMQiDg==
-X-Received: by 2002:a92:de46:: with SMTP id e6mr9722912ilr.122.1580017373261;
-        Sat, 25 Jan 2020 21:42:53 -0800 (PST)
-Received: from cisco ([2601:282:902:b340:51e3:9841:c212:5f6])
-        by smtp.gmail.com with ESMTPSA id t15sm3350809ili.50.2020.01.25.21.42.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jan 2020 21:42:52 -0800 (PST)
-Date:   Sat, 25 Jan 2020 21:42:56 -0800
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
- pidfd on listener trap
-Message-ID: <20200126054256.GB4151@cisco>
-References: <20200124091743.3357-1-sargun@sargun.me>
- <20200124091743.3357-4-sargun@sargun.me>
- <20200124180332.GA4151@cisco>
- <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
+        id S1726852AbgAZHnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jan 2020 02:43:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726426AbgAZHnA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 26 Jan 2020 02:43:00 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84A662071E;
+        Sun, 26 Jan 2020 07:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580024579;
+        bh=UcAPO1fkxYC4ytyKX1oTy8cKaRy2y2XXPJoZZhR3HRM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MUnjdjSiO+93K2gosmx9muHilww8DDnIaDl1yb9MgidpGc7L+ryjgf5HzNKDBiUwL
+         28mGAvCoph4j5xoP/y1tqIvdGLc/UaMxw1rKvSKnmoch64U/bSAqIdVM+FK1gd2MLO
+         Sr7HJFObHfskjwzYafH+gR+IPkCGl5HML8cEdnrQ=
+Date:   Sat, 25 Jan 2020 14:38:14 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Pragat Pandya <pragat.pandya@gmail.com>
+Cc:     "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
+        ppandya2103@gmail.com,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [RESEND PATCH] staging: exfat: Fix alignment warnings
+Message-ID: <20200125133814.GA3518118@kroah.com>
+References: <7278a1cb979cd574bccbbbccaf1a9c90acd514b5.camel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7278a1cb979cd574bccbbbccaf1a9c90acd514b5.camel@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 12:09:37PM -0800, Sargun Dhillon wrote:
-> On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
-> > > Currently, this just opens the group leader of the thread that triggere
-> > > the event, as pidfds (currently) are limited to group leaders.
-> >
-> > I don't love the semantics of this; when they're not limited to thread
-> > group leaders any more, we won't be able to change this. Is that work
-> > far off?
-> >
-> > Tycho
+On Sat, Jan 25, 2020 at 05:49:48PM +0530, Pragat Pandya wrote:
+> Fix checkpatch warning "Alignment should match open parenthesis".
 > 
-> We would be able to change this in the future if we introduced a flag like
-> SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
-> pidfd that's for the thread, and not just the group leader. The flag could
-> either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
-> could require both. Alternatively, we can rename
-> SECCOMP_USER_NOTIF_FLAG_PIDFD to
-> SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
+> Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+> ---
+>  drivers/staging/exfat/exfat_blkdev.c |  4 ++--
+>  drivers/staging/exfat/exfat_core.c   | 29 ++++++++++++++--------------
+>  drivers/staging/exfat/exfat_super.c  |  2 +-
+>  3 files changed, 18 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/staging/exfat/exfat_blkdev.c
+> b/drivers/staging/exfat/exfat_blkdev.c
+> index 7bcd98b13109..3068bfda39e4 100644
+> --- a/drivers/staging/exfat/exfat_blkdev.c
+> +++ b/drivers/staging/exfat/exfat_blkdev.c
+> @@ -31,7 +31,7 @@ void exfat_bdev_close(struct super_block *sb)
+>  }
+>  
+>  int exfat_bdev_read(struct super_block *sb, sector_t secno, struct
+> buffer_head **bh,
+> -             u32 num_secs, bool read)
+> +                   u32 num_secs, bool read)
 
-Ok, but then isn't this just another temporary API? Seems like it's
-worth waiting until the Right Way exists.
+Hi,
 
-Tycho
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
+  and can not be applied.  Please read the file,
+  Documentation/email-clients.txt in order to fix this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
