@@ -2,111 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E131495A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 14:07:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EED611495DF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 14:15:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbgAYNHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 08:07:00 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:41520 "EHLO mail.unsafe.ru"
+        id S1728292AbgAYNPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 08:15:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729353AbgAYNG4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:06:56 -0500
-Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725812AbgAYNPE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 Jan 2020 08:15:04 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 0592AC61B47;
-        Sat, 25 Jan 2020 13:06:51 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v7 11/11] proc: Move hidepid values to uapi as they are user interface to mount
-Date:   Sat, 25 Jan 2020 14:05:41 +0100
-Message-Id: <20200125130541.450409-12-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200125130541.450409-1-gladkov.alexey@gmail.com>
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id B49742071A;
+        Sat, 25 Jan 2020 13:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579958103;
+        bh=YrMaopeIElCm2701zXAtNoG1FrkPY4mNmwga5Vke9n4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HM43GISKiUCkOtHkoJRrPKD5WczChvI38tbKfD4ANX9ncuxa/uPdT4u+2dBTyQ/IT
+         NeLbmh2O77B/K9MUJMiaLZDhQ/EmeEpn567LBNLCmTp2Zi4S1Tn8L5py9qPqMRdpvu
+         1BONPIqXGp+WRu87wcrIpBpQG0FqMsth4/ngMNP0=
+Message-ID: <c49d8fb5f7a056cddfa19f9b48af878ac14536d2.camel@kernel.org>
+Subject: Re: [PATCH 1/6] fs: add namei support for doing a non-blocking path
+ lookup
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Date:   Sat, 25 Jan 2020 08:15:01 -0500
+In-Reply-To: <20200107170034.16165-2-axboe@kernel.dk>
+References: <20200107170034.16165-1-axboe@kernel.dk>
+         <20200107170034.16165-2-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- include/linux/proc_fs.h      |  9 +--------
- include/uapi/linux/proc_fs.h | 13 +++++++++++++
- 2 files changed, 14 insertions(+), 8 deletions(-)
- create mode 100644 include/uapi/linux/proc_fs.h
+On Tue, 2020-01-07 at 10:00 -0700, Jens Axboe wrote:
+> If the fast lookup fails, then return -EAGAIN to have the caller retry
+> the path lookup. Assume that a dentry having any of:
+> 
+> ->d_revalidate()
+> ->d_automount()
+> ->d_manage()
+> 
+> could block in those callbacks. Preemptively return -EAGAIN if any of
+> these are present.
+> 
+> This is in preparation for supporting non-blocking open.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  fs/namei.c            | 21 ++++++++++++++++++++-
+>  include/linux/namei.h |  2 ++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index b367fdb91682..ed108a41634f 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1641,6 +1641,17 @@ static struct dentry *__lookup_hash(const struct qstr *name,
+>  	return dentry;
+>  }
+>  
+> +static inline bool lookup_could_block(struct dentry *dentry, unsigned int flags)
+> +{
+> +	const struct dentry_operations *ops = dentry->d_op;
+> +
+> +	if (!ops || !(flags & LOOKUP_NONBLOCK))
+> +		return 0;
+> +
+> +	/* assume these dentry ops may block */
+> +	return ops->d_revalidate || ops->d_automount || ops->d_manage;
+> +}
+> +
 
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 3ad0a47c3556..f2b4a411d371 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -7,19 +7,12 @@
- 
- #include <linux/types.h>
- #include <linux/fs.h>
-+#include <uapi/linux/proc_fs.h>
- 
- struct proc_dir_entry;
- struct seq_file;
- struct seq_operations;
- 
--/* definitions for hide_pid field */
--enum {
--	HIDEPID_OFF	  = 0,
--	HIDEPID_NO_ACCESS = 1,
--	HIDEPID_INVISIBLE = 2,
--	HIDEPID_NOT_PTRACABLE = 4, /* Limit pids to only ptracable pids */
--};
--
- /* definitions for proc mount option pidonly */
- enum {
- 	PROC_PIDONLY_OFF = 0,
-diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
-new file mode 100644
-index 000000000000..1e3374efffe2
---- /dev/null
-+++ b/include/uapi/linux/proc_fs.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_PROC_FS_H
-+#define _UAPI_PROC_FS_H
-+
-+/* definitions for hide_pid field */
-+enum {
-+	HIDEPID_OFF           = 0,
-+	HIDEPID_NO_ACCESS     = 1,
-+	HIDEPID_INVISIBLE     = 2,
-+	HIDEPID_NOT_PTRACABLE = 4,
-+};
-+
-+#endif
+d_revalidate shouldn't block if LOOKUP_RCU is set.
+
+
+>  static int lookup_fast(struct nameidata *nd,
+>  		       struct path *path, struct inode **inode,
+>  		       unsigned *seqp)
+> @@ -1665,6 +1676,9 @@ static int lookup_fast(struct nameidata *nd,
+>  			return 0;
+>  		}
+>  
+> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
+> +			return -EAGAIN;
+> +
+>  		/*
+>  		 * This sequence count validates that the inode matches
+>  		 * the dentry name information from lookup.
+> @@ -1707,7 +1721,10 @@ static int lookup_fast(struct nameidata *nd,
+>  		dentry = __d_lookup(parent, &nd->last);
+>  		if (unlikely(!dentry))
+>  			return 0;
+> -		status = d_revalidate(dentry, nd->flags);
+> +		if (unlikely(lookup_could_block(dentry, nd->flags)))
+> +			status = -EAGAIN;
+> +		else
+> +			status = d_revalidate(dentry, nd->flags);
+>  	}
+>  	if (unlikely(status <= 0)) {
+>  		if (!status)
+> @@ -1912,6 +1929,8 @@ static int walk_component(struct nameidata *nd, int flags)
+>  	if (unlikely(err <= 0)) {
+>  		if (err < 0)
+>  			return err;
+> +		if (nd->flags & LOOKUP_NONBLOCK)
+> +			return -EAGAIN;
+>  		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
+>  					  nd->flags);
+>  		if (IS_ERR(path.dentry))
+> diff --git a/include/linux/namei.h b/include/linux/namei.h
+> index 4e77068f7a1a..392eb439f88b 100644
+> --- a/include/linux/namei.h
+> +++ b/include/linux/namei.h
+> @@ -49,6 +49,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
+>  /* LOOKUP_* flags which do scope-related checks based on the dirfd. */
+>  #define LOOKUP_IS_SCOPED (LOOKUP_BENEATH | LOOKUP_IN_ROOT)
+>  
+> +#define LOOKUP_NONBLOCK		0x200000 /* don't block for lookup */
+> +
+>  extern int path_pts(struct path *path);
+>  
+>  extern int user_path_at_empty(int, const char __user *, unsigned, struct path *, int *empty);
+
 -- 
-2.24.1
+Jeff Layton <jlayton@kernel.org>
 
