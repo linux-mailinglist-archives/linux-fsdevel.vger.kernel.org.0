@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DB91495AB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 14:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 439321495A9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 14:07:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbgAYNGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 08:06:55 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:41582 "EHLO mail.unsafe.ru"
+        id S1729473AbgAYNHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 08:07:00 -0500
+Received: from monster.unsafe.ru ([5.9.28.80]:41488 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729325AbgAYNGz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 08:06:55 -0500
+        id S1729337AbgAYNG4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 Jan 2020 08:06:56 -0500
 Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 4E45CC61B45;
-        Sat, 25 Jan 2020 13:06:50 +0000 (UTC)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id 2BDE3C61B46;
+        Sat, 25 Jan 2020 13:06:51 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -42,9 +42,9 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Solar Designer <solar@openwall.com>,
         Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v7 09/11] proc: add option to mount only a pids subset
-Date:   Sat, 25 Jan 2020 14:05:39 +0100
-Message-Id: <20200125130541.450409-10-gladkov.alexey@gmail.com>
+Subject: [PATCH v7 10/11] docs: proc: add documentation for "hidepid=4" and "subset=pidfs" options and new mount behavior
+Date:   Sat, 25 Jan 2020 14:05:40 +0100
+Message-Id: <20200125130541.450409-11-gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200125130541.450409-1-gladkov.alexey@gmail.com>
 References: <20200125130541.450409-1-gladkov.alexey@gmail.com>
@@ -55,214 +55,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows to hide all files and directories in the procfs that are not
-related to tasks.
-
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/generic.c       |  9 +++++++++
- fs/proc/inode.c         |  7 +++++++
- fs/proc/internal.h      | 10 ++++++++++
- fs/proc/root.c          | 36 ++++++++++++++++++++++++++++++++++++
- include/linux/proc_fs.h |  7 +++++++
- 5 files changed, 69 insertions(+)
+ Documentation/filesystems/proc.txt | 53 ++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/fs/proc/generic.c b/fs/proc/generic.c
-index 64e9ee1b129e..6f6517d63053 100644
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -267,6 +267,11 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
- struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
- 		unsigned int flags)
- {
-+	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 99ca040e3f90..4741fd092f36 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -50,6 +50,8 @@ Table of Contents
+   4	Configuring procfs
+   4.1	Mount options
+ 
++  5	Filesystem behavior
 +
-+	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-+		return ERR_PTR(-ENOENT);
+ ------------------------------------------------------------------------------
+ Preface
+ ------------------------------------------------------------------------------
+@@ -2021,6 +2023,7 @@ The following mount options are supported:
+ 
+ 	hidepid=	Set /proc/<pid>/ access mode.
+ 	gid=		Set the group authorized to learn processes information.
++	subset=		Show only the specified subset of procfs.
+ 
+ hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
+ (default).
+@@ -2042,6 +2045,56 @@ information about running processes, whether some daemon runs with elevated
+ privileges, whether other user runs some sensitive program, whether other users
+ run any program at all, etc.
+ 
++hidepid=4 means that procfs should only contain /proc/<pid>/ directories
++that the caller can ptrace.
 +
- 	return proc_lookup_de(dir, dentry, PDE(dir));
- }
- 
-@@ -323,6 +328,10 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
- int proc_readdir(struct file *file, struct dir_context *ctx)
- {
- 	struct inode *inode = file_inode(file);
-+	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
+ gid= defines a group authorized to learn processes information otherwise
+ prohibited by hidepid=.  If you use some daemon like identd which needs to learn
+ information about processes information, just add identd to this group.
 +
-+	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-+		return 1;
- 
- 	return proc_readdir_de(file, ctx, PDE(inode));
- }
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 70b722fb8811..f35eef117775 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -114,6 +114,9 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
- 	if (hidepid != HIDEPID_OFF)
- 		seq_printf(seq, ",hidepid=%u", hidepid);
- 
-+	if (proc_fs_pidonly(fs_info) != PROC_PIDONLY_OFF)
-+		seq_printf(seq, ",subset=pidfs");
++subset=pidfs hides all top level files and directories in the procfs that
++are not related to tasks.
 +
- 	return 0;
- }
- 
-@@ -333,12 +336,16 @@ proc_reg_get_unmapped_area(struct file *file, unsigned long orig_addr,
- 
- static int proc_reg_open(struct inode *inode, struct file *file)
- {
-+	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
- 	struct proc_dir_entry *pde = PDE(inode);
- 	int rv = 0;
- 	typeof_member(struct file_operations, open) open;
- 	typeof_member(struct file_operations, release) release;
- 	struct pde_opener *pdeo;
- 
-+	if (proc_fs_pidonly(fs_info) == PROC_PIDONLY_ON)
-+		return -ENOENT;
++------------------------------------------------------------------------------
++5 Filesystem behavior
++------------------------------------------------------------------------------
 +
- 	/*
- 	 * Ensure that
- 	 * 1) PDE's ->release hook will be called no matter what
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index ff2f274b2e0d..e2c729267317 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -126,6 +126,11 @@ static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_p
- 	fs_info->hide_pid = hide_pid;
- }
- 
-+static inline void proc_fs_set_pidonly(struct proc_fs_info *fs_info, int value)
-+{
-+	fs_info->pidonly = value;
-+}
++Originally, before the advent of pid namepsace, procfs was a global file
++system. It means that there was only one procfs instance in the system.
 +
- static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
- {
- 	fs_info->pid_gid = gid;
-@@ -141,6 +146,11 @@ static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
- 	return fs_info->pid_gid;
- }
- 
-+static inline int proc_fs_pidonly(struct proc_fs_info *fs_info)
-+{
-+	return fs_info->pidonly;
-+}
++When pid namespace was added, a separate procfs instance was mounted in
++each pid namespace. So, procfs mount options are global among all
++mountpoints within the same namespace.
 +
- void task_dump_owner(struct task_struct *task, umode_t mode,
- 		     kuid_t *ruid, kgid_t *rgid);
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 57276cb65528..8e8d5c930e32 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -34,16 +34,19 @@ struct proc_fs_context {
- 	unsigned int		mask;
- 	int			hidepid;
- 	int			gid;
-+	int			pidonly;
- };
- 
- enum proc_param {
- 	Opt_gid,
- 	Opt_hidepid,
-+	Opt_subset,
- };
- 
- static const struct fs_parameter_spec proc_param_specs[] = {
- 	fsparam_u32("gid",	Opt_gid),
- 	fsparam_u32("hidepid",	Opt_hidepid),
-+	fsparam_string("subset",	Opt_subset),
- 	{}
- };
- 
-@@ -61,6 +64,30 @@ valid_hidepid(unsigned int value)
- 		value == HIDEPID_NOT_PTRACABLE);
- }
- 
-+static inline int
-+proc_parse_subset_param(struct fs_context *fc, char *value)
-+{
-+	struct proc_fs_context *ctx = fc->fs_private;
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
 +
-+	while (value) {
-+		char *ptr = strchr(value, ',');
++# strace -e mount mount -o hidepid=1 -t proc proc /tmp/proc
++mount("proc", "/tmp/proc", "proc", 0, "hidepid=1") = 0
+++++ exited with 0 +++
 +
-+		if (ptr != NULL)
-+			*ptr++ = '\0';
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
++proc /tmp/proc proc rw,relatime,hidepid=2 0 0
 +
-+		if (*value != '\0') {
-+			if (!strcmp(value, "pidfs")) {
-+				ctx->pidonly = PROC_PIDONLY_ON;
-+			} else {
-+				return invalf(fc, "proc: unsupported subset option - %s\n", value);
-+			}
-+		}
-+		value = ptr;
-+	}
++and only after remounting procfs mount options will change at all
++mountpoints.
 +
-+	return 0;
-+}
++# mount -o remount,hidepid=1 -t proc proc /tmp/proc
 +
- static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
- 	struct proc_fs_context *ctx = fc->fs_private;
-@@ -82,6 +109,11 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->hidepid = result.uint_32;
- 		break;
- 
-+	case Opt_subset:
-+		if (proc_parse_subset_param(fc, param->string) < 0)
-+			return -EINVAL;
-+		break;
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=1 0 0
++proc /tmp/proc proc rw,relatime,hidepid=1 0 0
 +
- 	default:
- 		return -EINVAL;
- 	}
-@@ -102,6 +134,7 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
- 
- 		proc_fs_set_pid_gid(fs_info, proc_fs_pid_gid(pidns_fs_info));
- 		proc_fs_set_hide_pid(fs_info, proc_fs_hide_pid(pidns_fs_info));
-+		proc_fs_set_pidonly(fs_info, proc_fs_pidonly(pidns_fs_info));
- 	}
- 
- 	if (ctx->mask & (1 << Opt_gid))
-@@ -109,6 +142,9 @@ static void proc_apply_options(struct proc_fs_info *fs_info,
- 
- 	if (ctx->mask & (1 << Opt_hidepid))
- 		proc_fs_set_hide_pid(fs_info, ctx->hidepid);
++This behavior is different from the behavior of other filesystems.
 +
-+	if (ctx->mask & (1 << Opt_subset))
-+		proc_fs_set_pidonly(fs_info, ctx->pidonly);
- }
- 
- static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 6822548405a7..3ad0a47c3556 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -20,6 +20,12 @@ enum {
- 	HIDEPID_NOT_PTRACABLE = 4, /* Limit pids to only ptracable pids */
- };
- 
-+/* definitions for proc mount option pidonly */
-+enum {
-+	PROC_PIDONLY_OFF = 0,
-+	PROC_PIDONLY_ON  = 1,
-+};
++The new procfs behavior is more like other filesystems. Each procfs mount
++creates a new procfs instance. Mount options affect own procfs instance.
++It means that it became possible to have several procfs instances
++displaying tasks with different filtering options in one pid namespace.
 +
- struct proc_fs_info {
- 	struct list_head pidns_entry;    /* Node in procfs_mounts of a pidns */
- 	struct super_block *m_super;
-@@ -28,6 +34,7 @@ struct proc_fs_info {
- 	struct dentry *proc_thread_self; /* For /proc/thread-self */
- 	kgid_t pid_gid;
- 	int hide_pid;
-+	int pidonly;
- };
- 
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
++# mount -o hidepid=2 -t proc proc /proc
++# mount -o hidepid=1 -t proc proc /tmp/proc
++# grep ^proc /proc/mounts
++proc /proc proc rw,relatime,hidepid=2 0 0
++proc /tmp/proc proc rw,relatime,hidepid=1 0 0
 -- 
 2.24.1
 
