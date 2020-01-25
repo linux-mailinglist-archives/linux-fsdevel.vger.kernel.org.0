@@ -2,98 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4563A1493DB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 08:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE35614957B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jan 2020 13:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbgAYHG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 02:06:57 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38394 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgAYHG4 (ORCPT
+        id S1729008AbgAYMT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 07:19:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44125 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgAYMT5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 02:06:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y17so4753330wrh.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jan 2020 23:06:53 -0800 (PST)
+        Sat, 25 Jan 2020 07:19:57 -0500
+Received: by mail-pg1-f196.google.com with SMTP id x7so2574747pgl.11;
+        Sat, 25 Jan 2020 04:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J2pAdz/2no+OOg9fKoS5FkAo0J1e424VM8oJW+tiob0=;
-        b=iUx7nPSxTTagp7Ag7cP6ZLkQksAJzUfDwlOlpn93fDgcU/CWH5BN6v3XU4rKI7YrLv
-         vjr1uWgrDmh9+dN3c5kjP9G1B9uj0Uqj1oSypuajuo7A96HOXwXuh4VbKqKTtwNgU4PW
-         OOdmwUmaGXcXnhE/pHieJckCqK7vCixFms+uFW7vd9CcNESZuJ0qNJzlIsKPnFh4WZ96
-         nHI/YoeUr0t/uLjSMOI+2uWrWzP1+JWXs3Ay1+Me3zXF6jJeCfAuMduhOlphCFybBUw4
-         1dyWj8VNHeJgqGkNc91+L2BnSyFXhmKP0YPHHYIcsWIhLptuxK26jx+mhAv0gXVjEK2d
-         yDog==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=hwWu6okC0N3Gkmn79bDcMM/cFq8TnEPpdReD6l6SEB4=;
+        b=RphLi8tbHG2VFnqieMTN0YIh2fG9bB+o+OtfHPSzs8UvKUSi2CfOt+Rh0YR0vvs5/V
+         Ytx8BXoacrWfRfHjXIWAh6Vmc6RV9s9JKH7pgwr86HqaRVjiai1MHsLWNDruUs/eQ1Fy
+         t/sxoVnx5JxvbyM6OhzFJdnBJ0TrP77Tg8uza0Kb79YZnNXLQGl8weJ3Pau6cudfkZT+
+         qbUFCSXM3KBQXpYXDdtBZnJYXZdjO/q2HURtrms4UBveHz3D25+MEJ0rIgsm4WtsG9BY
+         LTiLl4BGDCCiW5JCcGSHLqPyTUVkFymm41WdJ1hlKpfPEiJuQg0//gYAuEhtKtlOTdWD
+         hc3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J2pAdz/2no+OOg9fKoS5FkAo0J1e424VM8oJW+tiob0=;
-        b=paK4TzpD+dd1Br7j56xy9GklC09wv10/72xiF/89w6kG82F8Qk6Zk5AGls1vXSKILY
-         94E8nDrUv2Zc52NHIZDyW28sJ4I490OkxJYoLD55Mua4FYhZt1rX5PmZwXN7GbVAb5s4
-         2jaWHiHSt52aSHC4udxCx1EC52UsrkHyw2nKN/GRd0Q99YWakpJfejVJjXbCWrKyubpG
-         AyGlyaJ9Gzm4WAY6FufX+mSZCNrRS0hUX5e2PWjnVsebIElkIX2pfwSN4cez34lIo1bI
-         af5bXhjlZ7xr4/9bUf0zbxI6gkDe9T7tkDwXjXImEdVjF6TyOxeq0bjFCp8ae2MfocaR
-         kgyw==
-X-Gm-Message-State: APjAAAXth/og8zlKoVsCZDfH+4j5tymjuOTBhN5lbORZvNO3/+Y6eMdw
-        3WBnWNeaBSEpvfQD/0BUThWTHjX2hHGGjV7Up0JLUA==
-X-Google-Smtp-Source: APXvYqz3cWy/GqT/vNNk3kJQESif/EIu2KbH+K7HS8QiTyZS5IvujaaqLJaXWZ+XalPPx69ooJAoQ0ErXha/5McJ8Rg=
-X-Received: by 2002:a5d:65cf:: with SMTP id e15mr8635872wrw.126.1579936013232;
- Fri, 24 Jan 2020 23:06:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20200124051332.DoQFo8kO9%akpm@linux-foundation.org> <1ccf26d9-9420-fc33-ad96-c3daedb1c487@infradead.org>
-In-Reply-To: <1ccf26d9-9420-fc33-ad96-c3daedb1c487@infradead.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 25 Jan 2020 08:06:42 +0100
-Message-ID: <CAKv+Gu8ZcO3jRMuMJL_eTmWtuzJ+=qEA9muuN5DpdpikFLwamg@mail.gmail.com>
-Subject: Re: mmotm 2020-01-23-21-12 uploaded (efi)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        mhocko@suse.cz, mm-commits@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=hwWu6okC0N3Gkmn79bDcMM/cFq8TnEPpdReD6l6SEB4=;
+        b=qubbhe/WUnj9snRFfIUgUih4SAE0bEZFOy4xhybeWhHdPGo8C6tpsZXel1N1VVUgLn
+         Z5en1OQeQWc8Tf6BKLU8KliECK6xNbNtoE5uW2bBt2Mofb282MRtJq9viive53l/CWHy
+         2MnFSS1vIDa9duSiAPA4mMB23YjYISr5ap+AUWZ02ws9CTRZRM+QsoAUn6MGG9GCe/a1
+         yIKIJlr8gBZYQT6BPFf15P2VlxLO5DesGvrD0Vjt9HapXybbu4YECCr9pmhNaPZw37eb
+         2khF2WFmnPUIWdSwjS1YTKNVINJVljFbUa3r1HX+VF9eSV9g6HB2aGYbCu9ImLbVzgYc
+         kY2g==
+X-Gm-Message-State: APjAAAV7g6z53GEc2KQR6KJhzEftdFWGjHNn7CcTM2+yW58NgG7npJ1C
+        SmBFCS8AZYEKZu+571bVMD0=
+X-Google-Smtp-Source: APXvYqwcktisFvFa0xypdItbOhMgBziNO9uldLnq5sZ1nAwnACzvWeNxS8w25Old5jPphLqNWJUm6Q==
+X-Received: by 2002:a05:6a00:8a:: with SMTP id c10mr7426938pfj.191.1579954796169;
+        Sat, 25 Jan 2020 04:19:56 -0800 (PST)
+Received: from pragat-GL553VD ([2405:204:810d:f9d8:3956:8df2:aee5:9cf6])
+        by smtp.googlemail.com with ESMTPSA id h7sm10186982pfq.36.2020.01.25.04.19.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 25 Jan 2020 04:19:55 -0800 (PST)
+Message-ID: <7278a1cb979cd574bccbbbccaf1a9c90acd514b5.camel@gmail.com>
+Subject: [RESEND PATCH] staging: exfat: Fix alignment warnings
+From:   Pragat Pandya <pragat.pandya@gmail.com>
+To:     "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        ppandya2103@gmail.com
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Date:   Sat, 25 Jan 2020 17:49:48 +0530
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 25 Jan 2020 at 01:09, Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 1/23/20 9:13 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2020-01-23-21-12 has been uploaded to
-> >
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > mmotm-readme.txt says
-> >
-> > README for mm-of-the-moment:
-> >
-> > http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> >
->
-> on x86_64:
-> CONFIG_X86_UV is not set/enabled.
->
-> from linux-next.patch (in mmotm):
->
-> ld: arch/x86/platform/efi/efi_64.o: in function `efi_set_virtual_address_map':
-> efi_64.c:(.init.text+0x11aa): undefined reference to `efi_uv1_memmap_phys_prolog'
-> ld: efi_64.c:(.init.text+0x123c): undefined reference to `efi_uv1_memmap_phys_epilog'
->
->
-> Full randconfig file is attached.
->
+Fix checkpatch warning "Alignment should match open parenthesis".
 
-Should be fixed by
+Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+---
+ drivers/staging/exfat/exfat_blkdev.c |  4 ++--
+ drivers/staging/exfat/exfat_core.c   | 29 ++++++++++++++--------------
+ drivers/staging/exfat/exfat_super.c  |  2 +-
+ 3 files changed, 18 insertions(+), 17 deletions(-)
 
-https://lore.kernel.org/linux-efi/20200121093912.5246-1-ardb@kernel.org/
+diff --git a/drivers/staging/exfat/exfat_blkdev.c
+b/drivers/staging/exfat/exfat_blkdev.c
+index 7bcd98b13109..3068bfda39e4 100644
+--- a/drivers/staging/exfat/exfat_blkdev.c
++++ b/drivers/staging/exfat/exfat_blkdev.c
+@@ -31,7 +31,7 @@ void exfat_bdev_close(struct super_block *sb)
+ }
+ 
+ int exfat_bdev_read(struct super_block *sb, sector_t secno, struct
+buffer_head **bh,
+-             u32 num_secs, bool read)
++                   u32 num_secs, bool read)
+ {
+        struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
+        struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -66,7 +66,7 @@ int exfat_bdev_read(struct super_block *sb, sector_t
+secno, struct buffer_head *
+ }
+ 
+ int exfat_bdev_write(struct super_block *sb, sector_t secno, struct
+buffer_head *bh,
+-              u32 num_secs, bool sync)
++                    u32 num_secs, bool sync)
+ {
+        s32 count;
+        struct buffer_head *bh2;
+diff --git a/drivers/staging/exfat/exfat_core.c
+b/drivers/staging/exfat/exfat_core.c
+index 794000e7bc6f..754407c738b7 100644
+--- a/drivers/staging/exfat/exfat_core.c
++++ b/drivers/staging/exfat/exfat_core.c
+@@ -250,7 +250,7 @@ static u32 test_alloc_bitmap(struct super_block
+*sb, u32 clu)
+ }
+ 
+ static s32 exfat_alloc_cluster(struct super_block *sb, s32 num_alloc,
+-                       struct chain_t *p_chain)
++                              struct chain_t *p_chain)
+ {
+        s32 num_clusters = 0;
+        u32 hint_clu, new_clu, last_clu = CLUSTER_32(~0);
+@@ -329,7 +329,7 @@ static s32 exfat_alloc_cluster(struct super_block
+*sb, s32 num_alloc,
+ }
+ 
+ static void exfat_free_cluster(struct super_block *sb, struct chain_t
+*p_chain,
+-                       s32 do_relse)
++                              s32 do_relse)
+ {
+        s32 num_clusters = 0;
+        u32 clu;
+@@ -920,7 +920,7 @@ static void exfat_set_entry_size(struct dentry_t
+*p_entry, u64 size)
+ }
+ 
+ static void exfat_get_entry_time(struct dentry_t *p_entry, struct
+timestamp_t *tp,
+-                         u8 mode)
++                                u8 mode)
+ {
+        u16 t = 0x00, d = 0x21;
+        struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
+@@ -949,7 +949,7 @@ static void exfat_get_entry_time(struct dentry_t
+*p_entry, struct timestamp_t *t
+ }
+ 
+ static void exfat_set_entry_time(struct dentry_t *p_entry, struct
+timestamp_t *tp,
+-                         u8 mode)
++                                u8 mode)
+ {
+        u16 t, d;
+        struct file_dentry_t *ep = (struct file_dentry_t *)p_entry;
+@@ -1013,7 +1013,7 @@ static void init_name_entry(struct name_dentry_t
+*ep, u16 *uniname)
+ }
+ 
+ static s32 exfat_init_dir_entry(struct super_block *sb, struct chain_t
+*p_dir,
+-                        s32 entry, u32 type, u32 start_clu, u64 size)
++                               s32 entry, u32 type, u32 start_clu, u64
+size)
+ {
+        sector_t sector;
+        u8 flags;
+@@ -1089,7 +1089,7 @@ static s32 exfat_init_ext_entry(struct
+super_block *sb, struct chain_t *p_dir,
+ }
+ 
+ static void exfat_delete_dir_entry(struct super_block *sb, struct
+chain_t *p_dir,
+-                           s32 entry, s32 order, s32 num_entries)
++                                  s32 entry, s32 order, s32
+num_entries)
+ {
+        int i;
+        sector_t sector;
+@@ -1256,7 +1256,7 @@ static s32 _walk_fat_chain(struct super_block
+*sb, struct chain_t *p_dir,
+ }
+ 
+ static s32 find_location(struct super_block *sb, struct chain_t
+*p_dir, s32 entry,
+-                 sector_t *sector, s32 *offset)
++                        sector_t *sector, s32 *offset)
+ {
+        s32 off, ret;
+        u32 clu = 0;
+@@ -1492,7 +1492,8 @@ void release_entry_set(struct entry_set_cache_t
+*es)
+ 
+ /* search EMPTY CONTINUOUS "num_entries" entries */
+ static s32 search_deleted_or_unused_entry(struct super_block *sb,
+-                                  struct chain_t *p_dir, s32
+num_entries)
++                                         struct chain_t *p_dir,
++                                         s32 num_entries)
+ {
+        int i, dentry, num_empty = 0;
+        s32 dentries_per_clu;
+@@ -1668,7 +1669,7 @@ static s32 find_empty_entry(struct inode *inode,
+struct chain_t *p_dir, s32 num_
+ }
+ 
+ static s32 extract_uni_name_from_name_entry(struct name_dentry_t *ep,
+u16 *uniname,
+-                                    s32 order)
++                                           s32 order)
+ {
+        int i, len = 0;
+ 
+@@ -1690,8 +1691,8 @@ static s32
+extract_uni_name_from_name_entry(struct name_dentry_t *ep, u16 *unina
+  * -2 : entry with the name does not exist
+  */
+ static s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t
+*p_dir,
+-                        struct uni_name_t *p_uniname, s32 num_entries,
+-                        struct dos_name_t *p_dosname, u32 type)
++                               struct uni_name_t *p_uniname, s32
+num_entries,
++                               struct dos_name_t *p_dosname, u32 type)
+ {
+        int i = 0, dentry = 0, num_ext_entries = 0, len, step;
+        s32 order = 0;
+@@ -1833,7 +1834,7 @@ static s32 exfat_find_dir_entry(struct
+super_block *sb, struct chain_t *p_dir,
+ }
+ 
+ static s32 exfat_count_ext_entries(struct super_block *sb, struct
+chain_t *p_dir,
+-                           s32 entry, struct dentry_t *p_entry)
++                                  s32 entry, struct dentry_t *p_entry)
+ {
+        int i, count = 0;
+        u32 type;
+@@ -1996,8 +1997,8 @@ s32 get_num_entries_and_dos_name(struct
+super_block *sb, struct chain_t *p_dir,
+ }
+ 
+ static void exfat_get_uni_name_from_ext_entry(struct super_block *sb,
+-                                      struct chain_t *p_dir, s32
+entry,
+-                                      u16 *uniname)
++                                             struct chain_t *p_dir,
+s32 entry,
++                                             u16 *uniname)
+ {
+        int i;
+        struct dentry_t *ep;
+diff --git a/drivers/staging/exfat/exfat_super.c
+b/drivers/staging/exfat/exfat_super.c
+index 9f91853b189b..75bb36071722 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -365,7 +365,7 @@ static int ffsMountVol(struct super_block *sb)
+ 
+        if (p_bd->sector_size < sb->s_blocksize) {
+                printk(KERN_INFO "EXFAT: mount failed - sector size %d
+less than blocksize %ld\n",
+-                       p_bd->sector_size,  sb->s_blocksize);
++                      p_bd->sector_size,  sb->s_blocksize);
+                ret = -EINVAL;
+                goto out;
+        }
+-- 
+2.17.1
+
