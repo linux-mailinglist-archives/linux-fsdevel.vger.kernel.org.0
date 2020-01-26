@@ -2,163 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67746149A7D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 12:54:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED4E149B44
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 16:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387429AbgAZLys (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jan 2020 06:54:48 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44433 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgAZLys (ORCPT
+        id S1726210AbgAZPIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jan 2020 10:08:15 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34885 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbgAZPIO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jan 2020 06:54:48 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g19so3610810eds.11;
-        Sun, 26 Jan 2020 03:54:45 -0800 (PST)
+        Sun, 26 Jan 2020 10:08:14 -0500
+Received: by mail-wr1-f67.google.com with SMTP id g17so7843778wro.2;
+        Sun, 26 Jan 2020 07:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version:content-id;
-        bh=yebpCXrtZX8bx3fQb5NWjS3jPJJayF5dsD82yx4g9kY=;
-        b=K4FedAVyqeEd9VcH6t/5K1e9kdcf2VE+t2m/1s4BwLxfMMt9m0rxxr6+Epmbml5hyA
-         LQNwSP4yirgcbKJncp48HdkyeDhj9MWB10hFMbL6dJLe6zIWZW/r45gYOvewzXw8Qj4o
-         7jYfewofIYAKdsML3FSln6latL+kYWZWAKVCGUq1/UogAYv81LDoelceUltJFoxJlqB9
-         cMbMoZab6n24EzCPtLYvVe8SEIjrV7+wKTOd3v7yTrN12u6W0x89+/kGRhs4OcKPfoA/
-         UZHN+RD573fE+ieYwtq26Cc72LKe40rCH/ckaI/pT+OYpvgFMZgNOCjjLVSugUivkYsn
-         0Rig==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=z79T6YhNfkWdwuKGiX5xKV0iKzoNVcE/b5/v1NUh0PA=;
+        b=Eho0gL/Gipi0LehXFSZkSEk424FahnFpXjyjIZ1tPqbDpX5IUNyMBQkCvPCW4ohtOv
+         DNYnrm+xxZ/EvOyfmUaxz4JlZKeMz3QwHdlzvuBUFnBjO59GdTCone4Sz5AmB5pJmXZX
+         I85rYEI4ekuXrXZWHVEuJp1MjLuXnNxwgBeerNM3iOtY2+ZiPRmcDdqmiydOIROXjmXz
+         KEWcr78db3hvV0Ke9xZD8AijE/HLmn0NTw/SklTO+Q05Ij4IO1qKqkVbD2ZDAO7BTPWh
+         K/9SYQjdidsCrAmuPJLAj0H89Hj51M/4N190evEUSgeSF7hgL8yPZYG2seTlHPUEE8+2
+         2e7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version:content-id;
-        bh=yebpCXrtZX8bx3fQb5NWjS3jPJJayF5dsD82yx4g9kY=;
-        b=ukYTB5DLqxENQZMOelb9DgNuq9ljRLtUZrQETZpj1IAN41A8wEmCzN4Htd8VC1KOWZ
-         cKbOso/1VLRdO89eWzqILBr0+o0w0ds8KyhwBa4hdZqghT8IBiZfueNHdE8oTrxAs0hC
-         VBMFC38EcmB5Qy5RFezaJRBoXA98GdLaDyww53Demhz6v0UFoWLos0DSa+zk11/WM0P9
-         HubItPR00ruvMcEOc6esU6JJA2/6PtcL/wKNWrRScKTMZHS7X3dGouqIHWthFOUwIIiD
-         QF0SvUFMYUJ5BiFKvqsu8F0H8SCZNi76YVVxrbQixU/+2b1mokzp92WdNYAnmuUwqbAz
-         f9bA==
-X-Gm-Message-State: APjAAAVSdC2jFKcQJSICTRig5ApW/kGa8xmZFc1aIvJhmb0vpUHbErlk
-        1PVKDGDvqVokCkKA4p9u/eM=
-X-Google-Smtp-Source: APXvYqxfMz+LuhN79Em3ii/ilFnUf4Rw1aGe7WJUHbV187YP9KWdveWG1Oxgvj0kx/yc9rp+izn3pg==
-X-Received: by 2002:a17:906:5586:: with SMTP id y6mr9416414ejp.343.1580039684935;
-        Sun, 26 Jan 2020 03:54:44 -0800 (PST)
-Received: from felia ([2001:16b8:2da0:3900:15f5:151e:3025:d216])
-        by smtp.gmail.com with ESMTPSA id d19sm258868ejd.21.2020.01.26.03.54.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=z79T6YhNfkWdwuKGiX5xKV0iKzoNVcE/b5/v1NUh0PA=;
+        b=WhD7VZvn4aZIdpkBXTjMKmbPjb9XpbmAl8tTIczlo68Hk+Itsf2Q7ayGFh9oAjDIZo
+         nMap2DK6FskD7NuC7QGDrtj806B6lwZK7d+ucbRwMlhqkpfE3i01ko7vL7DlMNPk1ekT
+         HrUqW9InUay0Zd7iChjl64uPlyBAKrQgOtvcsT1NjnPf11XtKPzAoI57+FRPHla3jYxf
+         vyl18Mw18uorvAYLGjqBa+boTtCyusFGNhC3Of6Yx/owTEF3HJlcbEyIsS0cXRPJ2anM
+         NjHIJvM78DryXMVXmPpmACdl7IQ/hpVOKBXI8aewY8PfBi79oLHzSsr7fkPTUk94pwBV
+         bI9w==
+X-Gm-Message-State: APjAAAW3wIrA48kISKFLGwzQWU3DAL1xd7vHcqTT40/0h4Mhh7tkbBvu
+        Om005+vsw6uX3o4pbGLszyXvVdE=
+X-Google-Smtp-Source: APXvYqzYP0hQtEFeCLt+FlIM0Gd2a+sLwKcfWBGLQHO2C2P2pcFnV9LNlmdWc1XVOHxTR4SioLxb1g==
+X-Received: by 2002:adf:df83:: with SMTP id z3mr15696286wrl.389.1580051292547;
+        Sun, 26 Jan 2020 07:08:12 -0800 (PST)
+Received: from avx2 ([46.53.250.34])
+        by smtp.gmail.com with ESMTPSA id m21sm14940792wmi.27.2020.01.26.07.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jan 2020 03:54:44 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Sun, 26 Jan 2020 12:54:42 +0100 (CET)
-X-X-Sender: lukas@felia
-To:     =?ISO-8859-15?Q?Jouni_H=F6gander?= <jouni.hogander@unikie.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>, syzkaller@googlegroups.com
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-In-Reply-To: <87sgk8szhc.fsf@unikie.com>
-Message-ID: <alpine.DEB.2.21.2001261236430.4933@felia>
-References: <20191127203114.766709977@linuxfoundation.org> <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com> <20191128073623.GE3317872@kroah.com> <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com> <20191129085800.GF3584430@kroah.com>
- <87sgk8szhc.fsf@unikie.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 26 Jan 2020 07:08:11 -0800 (PST)
+Date:   Sun, 26 Jan 2020 18:07:57 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+Subject: Re: mmotm 2020-01-21-13-28 uploaded (struct proc_ops)
+Message-ID: <20200126150757.GA27267@avx2>
+References: <20200121212915.APuBK%akpm@linux-foundation.org>
+ <d18345b6-616f-4ea3-7b9e-956f8edc26b7@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-62265607-1580039587=:4933"
-Content-ID: <alpine.DEB.2.21.2001261254360.4933@felia>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d18345b6-616f-4ea3-7b9e-956f8edc26b7@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-62265607-1580039587=:4933
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.DEB.2.21.2001261254361.4933@felia>
-
-
-On Wed, 22 Jan 2020, Jouni H�gander wrote:
-
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> >> > Now queued up, I'll push out -rc2 versions with this fix.
-> >> >
-> >> > greg k-h
-> >> 
-> >> We have also been informed about another regression these two commits
-> >> are causing:
-> >> 
-> >> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp/
-> >> 
-> >> I suggest to drop these two patches from this queue, and give us a
-> >> week to shake out the regressions of the change, and once ready, we
-> >> can include the complete set of fixes to stable (probably in a week or
-> >> two).
-> >
-> > Ok, thanks for the information, I've now dropped them from all of the
-> > queues that had them in them.
-> >
-> > greg k-h
+On Tue, Jan 21, 2020 at 07:19:22PM -0800, Randy Dunlap wrote:
+> On 1/21/20 1:29 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-01-21-13-28 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
 > 
-> I have now run more extensive Syzkaller testing on following patches:
+> and when CONFIG_PROC_FS is not set/enabled, kernel/sched/psi.c gets:
 > 
-> cb626bf566eb net-sysfs: Fix reference count leak
-> ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
-> e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
-> 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
-> b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
-> 
-> These patches are fixing couple of memory leaks including this one found
-> by Syzbot: https://syzkaller.appspot.com/bug?extid=ad8ca40ecd77896d51e2
-> 
-> I can reproduce these memory leaks in following stable branches: 4.14,
-> 4.19, and 5.4.
-> 
-> These are all now merged into net/master tree and based on my testing
-> they are ready to be taken into stable branches as well.
->
+> ../kernel/sched/psi.c: In function ‘psi_proc_init’:
+> ../kernel/sched/psi.c:1287:56: error: macro "proc_create" requires 4 arguments, but only 3 given
+>    proc_create("pressure/cpu", 0, NULL &psi_cpu_proc_ops);
 
-+ syzkaller list
-Jouni et. al, please drop Linus in further responses; Linus, it was wrong 
-to add you to this thread in the first place (reason is explained below)
-
-Jouni, thanks for investigating.
-
-It raises the following questions and comments:
-
-- Does the memory leak NOT appear on 4.9 and earlier LTS branches (or did 
-you not check that)? If it does not appear, can you bisect it with the 
-reproducer to the commit between 4.14 and 4.9?
-
-- Do the reproducers you found with your syzkaller testing show the same 
-behaviour (same bisection) as the reproducers from syzbot?
-
-- I fear syzbot's automatic bisection on is wrong, and Linus' commit 
-0e034f5c4bc4 ("iwlwifi: fix mis-merge that breaks the driver") is not to 
-blame here; that commit did not cause the memory leak, but fixed some 
-unrelated issue that simply confuses syzbot's automatic bisection.
-
-Just FYI: Dmitry Vyukov's evaluation of the syzbot bisection shows that 
-about 50% are wrong, e.g., due to multiple bugs being triggered with one 
-reproducer and the difficulty of automatically identifying them of being 
-different due to different root causes (despite the smart heuristics of 
-syzkaller & syzbot). So, to identify the actual commit on which the memory 
-leak first appeared, you need to bisect manually with your own judgement 
-if the reported bug stack trace fits to the issue you investigating. Or 
-you use syzbot's automatic bisection but then with a reduced kernel config 
-that cannot be confused by other issues. You might possibly also hit a 
-"beginning of time" in your bisection, where KASAN was simply not 
-supported, then the initially causing commit can simply not determined by 
-bisection with the reproducer and needs some code inspection and 
-archaeology with git. Can you go ahead try to identify the correct commit 
-for this issue?
-
-
-Lukas
---8323329-62265607-1580039587=:4933--
+Thanks, Randy. I've checked current mmotm, it looks like no more "NUL"s
+exist.
