@@ -2,118 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E3814985B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 02:03:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D49001498A9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 05:03:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgAZBDC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 20:03:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41996 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728925AbgAZBDC (ORCPT
+        id S1729212AbgAZEDk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 23:03:40 -0500
+Received: from mout-p-102.mailbox.org ([80.241.56.152]:45724 "EHLO
+        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728842AbgAZEDk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 20:03:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580000580;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=C4UL/sgONviDDd6p9omNf+B6AIXhtVKxNHoU71HLvJU=;
-        b=R0FVevCLMrQi7L4PRiolQoWouiDmv49tKs6xjHy8XFZLywIRwfQKVef//UA8o7T9rENqhj
-        HryVPxioupu5Zy2lfXKsOM/ExoRg0jppL9t0CqMioGtixEqq7ov6HRG+ZDDaLZ4oRzMYOJ
-        3CwnQJrflTscXAUXCZSxxVk7wRdLwkQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-193-tWSNo41eO2W7Co1G0ej1EQ-1; Sat, 25 Jan 2020 20:02:56 -0500
-X-MC-Unique: tWSNo41eO2W7Co1G0ej1EQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Sat, 25 Jan 2020 23:03:40 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4A32613E1;
-        Sun, 26 Jan 2020 01:02:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-99.rdu2.redhat.com [10.10.120.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4AE1D60BEC;
-        Sun, 26 Jan 2020 01:02:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix characters allowed into cell names
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 26 Jan 2020 01:02:53 +0000
-Message-ID: <158000057348.1293463.7255193286211009648.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.19
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 484zkw5BGZzKmmL;
+        Sun, 26 Jan 2020 05:03:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 5GIkHq8nVH0q; Sun, 26 Jan 2020 05:03:32 +0100 (CET)
+Date:   Sun, 26 Jan 2020 15:03:25 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, christian.brauner@ubuntu.com
+Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
+ pidfd on listener trap
+Message-ID: <20200126040325.5eimmm7hli5qcqrr@yavin.dot.cyphar.com>
+References: <20200124091743.3357-1-sargun@sargun.me>
+ <20200124091743.3357-4-sargun@sargun.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="agr6povy326nigo3"
+Content-Disposition: inline
+In-Reply-To: <20200124091743.3357-4-sargun@sargun.me>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The afs filesystem needs to prohibit certain characters from cell names,
-such as '/', as these are used to form filenames in procfs, leading to the
-following warning being generated:
 
-	WARNING: CPU: 0 PID: 3489 at fs/proc/generic.c:178
+--agr6povy326nigo3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix afs_alloc_cell() to disallow nonprintable characters, '/', '@' and
-names that begin with a dot.
+On 2020-01-24, Sargun Dhillon <sargun@sargun.me> wrote:
+> This introduces the capability for users of seccomp's listener behaviour
+> to be able to receive the pidfd of the process that triggered the event.
+> Currently, this just opens the group leader of the thread that triggere
+> the event, as pidfds (currently) are limited to group leaders.
+>=20
+> For actions which do not act on the process outside of the pidfd, there
+> is then no need to check the cookie to ensure validity of the request
+> throughout the listener's handling of it.
+>=20
+> This can be extended later on as well when pidfd capabilities are added
+> to be able to have the listener imbue the pidfd with certain capabilities
+> when it is delivered to userspace.
+>=20
+> It is the responsibility of the user to close the pidfd.
+>=20
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> ---
+>  include/uapi/linux/seccomp.h |  4 +++
+>  kernel/seccomp.c             | 68 ++++++++++++++++++++++++++++++++----
+>  2 files changed, 66 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
+> index be84d87f1f46..64f6fc5c95f1 100644
+> --- a/include/uapi/linux/seccomp.h
+> +++ b/include/uapi/linux/seccomp.h
+> @@ -69,11 +69,15 @@ struct seccomp_notif_sizes {
+>  	__u16 seccomp_data;
+>  };
+> =20
+> +/* Valid flags for struct seccomp_notif */
+> +#define SECCOMP_USER_NOTIF_FLAG_PIDFD	(1UL << 0) /* populate pidfd */
+> +
+>  struct seccomp_notif {
+>  	__u64 id;
+>  	__u32 pid;
+>  	__u32 flags;
+>  	struct seccomp_data data;
+> +	__u32 pidfd;
+>  };
+> =20
+>  /*
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index b6ea3dcb57bf..93f9cf45ce07 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -1019,21 +1019,61 @@ static int seccomp_notify_release(struct inode *i=
+node, struct file *file)
+>  	return 0;
+>  }
+> =20
+> +
+> +static long __seccomp_notify_recv_pidfd(void __user *buf,
+> +					struct seccomp_notif *unotif,
+> +					struct task_struct *group_leader)
+> +{
+> +	struct file *pidfd_file;
+> +	struct pid *pid;
+> +	int fd;
+> +
+> +	pid =3D get_task_pid(group_leader, PIDTYPE_PID);
+> +	pidfd_file =3D pidfd_create_file(pid);
+> +	put_pid(pid);
+> +	if (IS_ERR(pidfd_file))
+> +		return PTR_ERR(pidfd_file);
+> +
+> +	fd =3D get_unused_fd_flags(O_RDWR | O_CLOEXEC);
 
-Remove the check for "@cell" as that is then redundant.
+You don't need to pass O_RDWR -- only O_CLOEXEC is checked by
+get_unused_fd_flags().
 
-This can be tested by running:
+> +	if (fd < 0) {
+> +		fput(pidfd_file);
+> +		return fd;
+> +	}
+> +
+> +	unotif->pidfd =3D fd;
+> +
+> +	if (copy_to_user(buf, unotif, sizeof(*unotif))) {
+> +		put_unused_fd(fd);
+> +		fput(pidfd_file);
+> +		return -EFAULT;
+> +	}
+> +
+> +	fd_install(fd, pidfd_file);
+> +
+> +	return 0;
+> +}
+> +
+>  static long seccomp_notify_recv(struct seccomp_filter *filter,
+>  				void __user *buf)
+>  {
+>  	struct seccomp_knotif *knotif =3D NULL, *cur;
+>  	struct seccomp_notif unotif;
+> +	struct task_struct *group_leader;
+> +	bool send_pidfd;
+>  	ssize_t ret;
+> =20
+> +	if (copy_from_user(&unotif, buf, sizeof(unotif)))
+> +		return -EFAULT;
+>  	/* Verify that we're not given garbage to keep struct extensible. */
+> -	ret =3D check_zeroed_user(buf, sizeof(unotif));
+> -	if (ret < 0)
+> -		return ret;
+> -	if (!ret)
+> +	if (unotif.id ||
+> +	    unotif.pid ||
+> +	    memchr_inv(&unotif.data, 0, sizeof(unotif.data)) ||
+> +	    unotif.pidfd)
+> +		return -EINVAL;
 
-	echo add foo/.bar 1.2.3.4 >/proc/fs/afs/cells
+IMHO this check is more confusing than the original check_zeroed_user().
+Something like the following is simpler and less prone to forgetting to
+add a new field in the future:
 
-Note that we will also need to deal with:
+	if (memchr_inv(&unotif, 0, sizeof(unotif)))
+		return -EINVAL;
 
- - Names ending in ".invalid" shouldn't be passed to the DNS.
+> +	if (unotif.flags & ~(SECCOMP_USER_NOTIF_FLAG_PIDFD))
+>  		return -EINVAL;
+> =20
+> -	memset(&unotif, 0, sizeof(unotif));
+> +	send_pidfd =3D unotif.flags & SECCOMP_USER_NOTIF_FLAG_PIDFD;
+> =20
+>  	ret =3D down_interruptible(&filter->notif->request);
+>  	if (ret < 0)
+> @@ -1057,9 +1097,13 @@ static long seccomp_notify_recv(struct seccomp_fil=
+ter *filter,
+>  		goto out;
+>  	}
+> =20
+> +	memset(&unotif, 0, sizeof(unotif));
+> +
+>  	unotif.id =3D knotif->id;
+>  	unotif.pid =3D task_pid_vnr(knotif->task);
+>  	unotif.data =3D *(knotif->data);
+> +	if (send_pidfd)
+> +		group_leader =3D get_task_struct(knotif->task->group_leader);
+> =20
+>  	knotif->state =3D SECCOMP_NOTIFY_SENT;
+>  	wake_up_poll(&filter->notif->wqh, EPOLLOUT | EPOLLWRNORM);
+> @@ -1067,9 +1111,21 @@ static long seccomp_notify_recv(struct seccomp_fil=
+ter *filter,
+>  out:
+>  	mutex_unlock(&filter->notify_lock);
+> =20
+> -	if (ret =3D=3D 0 && copy_to_user(buf, &unotif, sizeof(unotif))) {
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * We've successfully received a notification, let's try to copy it to
+> +	 * userspace.
+> +	 */
+> +	if (send_pidfd) {
+> +		ret =3D __seccomp_notify_recv_pidfd(buf, &unotif, group_leader);
+> +		put_task_struct(group_leader);
+> +	} else if (copy_to_user(buf, &unotif, sizeof(unotif))) {
+>  		ret =3D -EFAULT;
+> +	}
 
- - Names that contain non-valid domainname chars shouldn't be passed to the
-   DNS.
+To my eye, the way this helper is used is a bit ugly -- my first
+question when reading this was "why aren't we doing a copy_to_user() for
+pidfds?".
 
- - DNS replies that say "your-dns-needs-immediate-attention.<gTLD>" and
-   replies containing A records that say 127.0.53.53 should be considered
-   invalid.
-   [https://www.icann.org/en/system/files/files/name-collision-mitigation-01aug14-en.pdf]
+Something like the following might be a bit cleaner I think:
 
-but these need to be dealt with by the kafs-client DNS program rather than
-the kernel.
+	struct file *pidfd_file =3D NULL;
 
-Fixes: ^1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+b904ba7c947a37b4b291@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+	if (send_pidfd) {
+		// helper allocates the pidfd_file and sets unotify->fd
+		ret =3D __seccomp_notify_recv_pidfd(&unotify, &pidfd_file)
+		if (ret)
+			goto err; // or whatever
+	}
 
- fs/afs/cell.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+	if (copy_to_user(buf, &unotif, sizeof(unotif))) {
+		ret =3D -EFAULT;
+		goto err; // or whatever
+	}
 
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 1310893c1634..40491edefd69 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -134,8 +134,17 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 		_leave(" = -ENAMETOOLONG");
- 		return ERR_PTR(-ENAMETOOLONG);
- 	}
--	if (namelen == 5 && memcmp(name, "@cell", 5) == 0)
-+
-+	/* Prohibit cell names that contain unprintable chars, '/' and '@' or
-+	 * that begin with a dot.  This also precludes "@cell".
-+	 */
-+	if (name[0] == '.')
- 		return ERR_PTR(-EINVAL);
-+	for (i = 0; i < namelen; i++) {
-+		char ch = name[i];
-+		if (!isprint(ch) || ch == '/' || ch == '@')
-+			return ERR_PTR(-EINVAL);
-+	}
- 
- 	_enter("%*.*s,%s", namelen, namelen, name, addresses);
- 
+	if (send_pidfd)
+		fd_install(unotif.fd, pidfd_file)
 
+But to be fair, this is also somewhat ugly too.
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--agr6povy326nigo3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXi0PigAKCRCdlLljIbnQ
+EomfAQDluboSG8nfIYj8GB8Y2ZpECxaq+0rPYsy1fBipnRcdIQD9F7MsqSvwf1oL
+IB6sETPcTLtpv1LXQe7sALgl4CnbKgE=
+=WWGx
+-----END PGP SIGNATURE-----
+
+--agr6povy326nigo3--
