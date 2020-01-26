@@ -2,97 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0CF1498B0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 05:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5C31498B5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jan 2020 05:14:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbgAZEKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Jan 2020 23:10:23 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:45856 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728842AbgAZEKX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Jan 2020 23:10:23 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 484ztj4mYPzKmmG;
-        Sun, 26 Jan 2020 05:10:21 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id cyVBuGgdlFHA; Sun, 26 Jan 2020 05:10:18 +0100 (CET)
-Date:   Sun, 26 Jan 2020 15:10:09 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Tycho Andersen <tycho@tycho.ws>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
+        id S1729196AbgAZEOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Jan 2020 23:14:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43448 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729112AbgAZEOt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 Jan 2020 23:14:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A41ACAC5C;
+        Sun, 26 Jan 2020 04:14:47 +0000 (UTC)
+Date:   Sun, 26 Jan 2020 15:14:39 +1100
+From:   Aleksa Sarai <asarai@suse.de>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, christian.brauner@ubuntu.com
 Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
  pidfd on listener trap
-Message-ID: <20200126041009.wubw4t5iaypf6bkk@yavin.dot.cyphar.com>
+Message-ID: <20200126041439.liwfmb4h74zmhi76@yavin.dot.cyphar.com>
 References: <20200124091743.3357-1-sargun@sargun.me>
  <20200124091743.3357-4-sargun@sargun.me>
- <20200124180332.GA4151@cisco>
- <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
+ <20200126040325.5eimmm7hli5qcqrr@yavin.dot.cyphar.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b547hxjkssbqtln5"
+        protocol="application/pgp-signature"; boundary="hqgjtbxoii2e4zog"
 Content-Disposition: inline
-In-Reply-To: <CAMp4zn_WXwxJ6Md4rgFzdAY_xea4TmVDdQc1iJDObEMm5Yc79g@mail.gmail.com>
+In-Reply-To: <20200126040325.5eimmm7hli5qcqrr@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---b547hxjkssbqtln5
+--hqgjtbxoii2e4zog
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 2020-01-24, Sargun Dhillon <sargun@sargun.me> wrote:
-> On Fri, Jan 24, 2020 at 10:03 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > On Fri, Jan 24, 2020 at 01:17:42AM -0800, Sargun Dhillon wrote:
-> > > Currently, this just opens the group leader of the thread that trigge=
-re
-> > > the event, as pidfds (currently) are limited to group leaders.
-> >
-> > I don't love the semantics of this; when they're not limited to thread
-> > group leaders any more, we won't be able to change this. Is that work
-> > far off?
-> >
-> > Tycho
+On 2020-01-26, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2020-01-24, Sargun Dhillon <sargun@sargun.me> wrote:
+> >  static long seccomp_notify_recv(struct seccomp_filter *filter,
+> >  				void __user *buf)
+> >  {
+> >  	struct seccomp_knotif *knotif =3D NULL, *cur;
+> >  	struct seccomp_notif unotif;
+> > +	struct task_struct *group_leader;
+> > +	bool send_pidfd;
+> >  	ssize_t ret;
+> > =20
+> > +	if (copy_from_user(&unotif, buf, sizeof(unotif)))
+> > +		return -EFAULT;
+> >  	/* Verify that we're not given garbage to keep struct extensible. */
+> > -	ret =3D check_zeroed_user(buf, sizeof(unotif));
+> > -	if (ret < 0)
+> > -		return ret;
+> > -	if (!ret)
+> > +	if (unotif.id ||
+> > +	    unotif.pid ||
+> > +	    memchr_inv(&unotif.data, 0, sizeof(unotif.data)) ||
+> > +	    unotif.pidfd)
+> > +		return -EINVAL;
 >=20
-> We would be able to change this in the future if we introduced a flag like
-> SECCOMP_USER_NOTIF_FLAG_PIDFD_THREAD which would send a
-> pidfd that's for the thread, and not just the group leader. The flag could
-> either be XOR with SECCOMP_USER_NOTIF_FLAG_PIDFD, or
-> could require both. Alternatively, we can rename
-> SECCOMP_USER_NOTIF_FLAG_PIDFD to
-> SECCOMP_USER_NOTIF_FLAG_GROUP_LEADER_PIDFD.
+> IMHO this check is more confusing than the original check_zeroed_user().
+> Something like the following is simpler and less prone to forgetting to
+> add a new field in the future:
+>=20
+> 	if (memchr_inv(&unotif, 0, sizeof(unotif)))
+> 		return -EINVAL;
 
-Possibly unpopular proposal -- would it make sense to just store the
-pidfd_open(2) flags rather than coming up with our own set for
-SECCOMP_USER_NOTIF? If/when pidfds are expanded to include non-leaders
-there will be a corresponding flag for pidfd_open(2). Something like:
-
-	struct seccomp_notif {
-		__u64 id;
-		__u32 pid;
-		__u32 flags;
-		struct seccomp_data data;
-		__u64 pidfd_flags; // or __u32 -- not sure what Christian plans
-		__u32 pidfd;
-		__u32 __padding;
-	};
-
-This does mean there'll be an additional flags field, but I think it's a
-slightly more consistent way to indicate "SECCOMP_USER_NOTIF_FLAG_PIDFD
-implies a pidfd_open(2) on the traced task".
+Also the check in the patch doesn't ensure that any unnamed padding is
+zeroed -- memchr_inv(&unotif, 0, sizeof(unotif)) does.
 
 --=20
 Aleksa Sarai
@@ -100,15 +83,24 @@ Senior Software Engineer (Containers)
 SUSE Linux GmbH
 <https://www.cyphar.com/>
 
---b547hxjkssbqtln5
+--hqgjtbxoii2e4zog
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXi0RHgAKCRCdlLljIbnQ
-EhRBAP9kCf5WxYqsddLpbde2EDbbHMYUsQFCJzkEKqYgxO8v6gEAodewLdV9xQjY
-t35JSLzrhWvvTNnq1B+Vvdyvj9MvDwA=
-=bVpa
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAl4tEiwACgkQnhiqJn3b
+jbTteQ/+JshgPkAMJKFvNtMDmJpL7P7c3yj6E3WmLPyOsxvBYndxxt2T8/NGEkps
+dyUtBVjqguB9yUDaHUw5K7Ac86pAlyjG+gQVO0tk3LKA649QJoa05hLw6ix0Eg4E
+W9CkIDesL5daNxCn5Qm6fhB8/KTK2ex4JAQEhLX6wyx2/q+5J0i+ZDdDVhMlQC4N
+XZ+s8p3O6j+sEtA7W1cO7Xq+GWqwOtH772Cy4BT1s6hIIpkBS05VXtN6rzwKj15D
+8QkXyfBhHk1p6C92tr/N0RHZ2k5Im2ySDGGg9G6BVOSoUAIPvUyjRlPIj6gSXsuN
+0HvC4olEAD/9ZQQIoPtfSGYpvG9y/tndpAGKMDZjfKmg/IGFHrfTLAUPPvOYCSox
+elV4e8mfwRu2oOZaYwBRasWc7NNUdYwetOkaRwnMiMoxSMHCBK1JBkhwjVoohAsM
+C84aTpwyJcqCx+HB8drVI28eZp1+ukA/aDdxSW4l6gUSkfwxrkIEMOEFSlwQfrH3
+5R3uYw6FTZL2Pcs6TN1W2oVawF7BYkQnvpvG8iHaflgkICajnMpWrcJT6l+IdkQq
+dmtwaJKc/ExzVmlNzwyVD4nKg00Du1am5Fithn6eRZWj9GY5pMhz6qh9xZJgA03J
+KOtokDIAmVO+C1CieF4aj394NbS4gYm0u9aXgyv0yG6060jcaXw=
+=TQFh
 -----END PGP SIGNATURE-----
 
---b547hxjkssbqtln5--
+--hqgjtbxoii2e4zog--
