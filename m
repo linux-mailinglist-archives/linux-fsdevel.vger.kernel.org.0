@@ -2,88 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B228814A458
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 14:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B6914A465
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 14:03:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725828AbgA0NAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 08:00:16 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33221 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbgA0NAQ (ORCPT
+        id S1726518AbgA0NDG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 08:03:06 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53846 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbgA0NDF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 08:00:16 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n25so6132617lfl.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2020 05:00:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZJNzprftu5dcU/szZB/Ubowobleex8rerW+4xWJyt/M=;
-        b=VoO+O8oliDEu27wte/68JQesstuhw1JLi9F499LFmln4kg2fnU80g+Hy939slqwayM
-         6X4kQsHF3iGoWNUylpAMzFOkSDlcyP5/xyc0nU7I/ZTTBqifEIlQVkwwEbO747yLu+pJ
-         1djgkjWksVX3uhDMrT2nQ3tRFxpQRSNk75/8zCqkaGcvS3EmE66VBYCGeeGKoS8z8VJT
-         mKJuWPfApbN4BycDPeyoUqzdZk5e0nyZKMhHLxkO4pkhpTozPbRLOhmheKxVubOO/98R
-         Nq34lzm5O1uV00jxqCWfyoHMsxuubjaSAkl9vEG10D5/2xyp98i8Xb+VDazvAENA75Qi
-         OF9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZJNzprftu5dcU/szZB/Ubowobleex8rerW+4xWJyt/M=;
-        b=E9QMPkSXY6zearTUF833JuUqVAXTTla6W1zNYVy5WjDJQH643wsWu81igvfeKjugwc
-         2TdBKSYPt84SERoP3ec0X6nqPgVQO0bWgL8mWcp0Jlb+btQw3fRDrNrJROaiz2HuloZY
-         LSqBUWs4JB+zIJxxj+Ru08E2lrtXMc7cvNg1xi3qkbnpFSWSu9KhoX0AMV3dr5H4c4yX
-         1/550JpG7Le5xWARnX/PorqJ3Tlb/kZjPa8es/EIuxbzPQuuiS+M9aGYrOaIboShJrCB
-         nrqSunecV9E0Fwu10AylXoMmneGY8VQTetSBb/eVO/71BvortejiS1HNTVLNxTO/PT5t
-         Nw5w==
-X-Gm-Message-State: APjAAAWaIx25EQrT59okxK5ywQB8NksBNWJSOmPN8qFfuh76SIXKudOj
-        t5obtIPvFo2Lsb/fEVFTb3ZZGw==
-X-Google-Smtp-Source: APXvYqysAoofMf7LQ5awnT1fddVOicFrSd53w1Fmy5Kunrv9ngQonmVjbMl/JL3C6VYXCdPDTAql6w==
-X-Received: by 2002:ac2:59dd:: with SMTP id x29mr7959464lfn.95.1580130014394;
-        Mon, 27 Jan 2020 05:00:14 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b4sm8138667lfo.48.2020.01.27.05.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 05:00:13 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 5ED20100AD0; Mon, 27 Jan 2020 16:00:20 +0300 (+03)
-Date:   Mon, 27 Jan 2020 16:00:20 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH 1/3] mm/gup: track FOLL_PIN pages
-Message-ID: <20200127130020.4p56lh32twui5563@box>
-References: <20200125021115.731629-1-jhubbard@nvidia.com>
- <20200125021115.731629-2-jhubbard@nvidia.com>
+        Mon, 27 Jan 2020 08:03:05 -0500
+Received: from ip5f5bd665.dynamic.kabel-deutschland.de ([95.91.214.101] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iw42e-0001Yk-8w; Mon, 27 Jan 2020 13:03:00 +0000
+Date:   Mon, 27 Jan 2020 14:02:59 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Mike Christie <mchristi@redhat.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-api@vger.kernel.org, idryomov@gmail.com,
+        Michal Hocko <mhocko@kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org, martin@urbackup.org,
+        Damien.LeMoal@wdc.com, Michal Hocko <mhocko@suse.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+Subject: Re: [PATCH] Add prctl support for controlling mem reclaim V4
+Message-ID: <20200127130258.2bknkl3mwpkfyml4@wittgenstein>
+References: <20191112001900.9206-1-mchristi@redhat.com>
+ <CALvZod47XyD2x8TuZcb9PgeVY14JBwNhsUpN3RAeAt+RJJC=hg@mail.gmail.com>
+ <5E2B19C9.6080907@redhat.com>
+ <20200124211642.GB7216@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200125021115.731629-2-jhubbard@nvidia.com>
+In-Reply-To: <20200124211642.GB7216@dread.disaster.area>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 06:11:13PM -0800, John Hubbard wrote:
->  12 files changed, 577 insertions(+), 171 deletions(-)
+On Sat, Jan 25, 2020 at 08:16:42AM +1100, Dave Chinner wrote:
+> On Fri, Jan 24, 2020 at 10:22:33AM -0600, Mike Christie wrote:
+> > On 12/05/2019 04:43 PM, Shakeel Butt wrote:
+> > > On Mon, Nov 11, 2019 at 4:19 PM Mike Christie <mchristi@redhat.com> wrote:
+> > >> This patch adds a new prctl command that daemons can use after they have
+> > >> done their initial setup, and before they start to do allocations that
+> > >> are in the IO path. It sets the PF_MEMALLOC_NOIO and PF_LESS_THROTTLE
+> > >> flags so both userspace block and FS threads can use it to avoid the
+> > >> allocation recursion and try to prevent from being throttled while
+> > >> writing out data to free up memory.
+> > >>
+> > >> Signed-off-by: Mike Christie <mchristi@redhat.com>
+> > >> Acked-by: Michal Hocko <mhocko@suse.com>
+> > >> Tested-by: Masato Suzuki <masato.suzuki@wdc.com>
+> > >> Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+> > > 
+> > > I suppose this patch should be routed through MM tree, so, CCing Andrew.
+> > >
+> > 
+> > Andrew and other mm/storage developers,
+> > 
+> > Do I need to handle anything else for this patch, or are there any other
+> > concerns? Is this maybe something we want to talk about at a quick LSF
+> > session?
+> > 
+> > I have retested it with Linus's current tree. It still applies cleanly
+> > (just some offsets), and fixes the problem described above we have been
+> > hitting.
+> 
+> I must have missed this version being posted (just looked it up on
+> lore.kernel.org). As far as I'm concerned this is good to go and it
+> is absolutely necessary for userspace IO stacks to function
+> correctly.
+> 
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> 
+> If no manintainer picks it up before the next merge window, then I
 
-Can we get it split? There's too much going on to give meaningful review.
+Since prctl() is thread-management and fs people seem to be happy and
+have acked it I can pick this up too if noone objects and send this
+along with the rest of process management.
 
--- 
- Kirill A. Shutemov
+Christian
