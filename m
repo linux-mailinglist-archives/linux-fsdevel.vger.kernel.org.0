@@ -2,290 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D20E414AB57
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 21:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 890B214AB7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 22:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbgA0Uwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 15:52:54 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:55146 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbgA0Uwy (ORCPT
+        id S1726173AbgA0VQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 16:16:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43175 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgA0VQU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 15:52:54 -0500
-Received: by mail-pj1-f65.google.com with SMTP id dw13so6146pjb.4;
-        Mon, 27 Jan 2020 12:52:53 -0800 (PST)
+        Mon, 27 Jan 2020 16:16:20 -0500
+Received: by mail-wr1-f68.google.com with SMTP id d16so13376491wre.10;
+        Mon, 27 Jan 2020 13:16:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=FAvjESqfHP0fRix1omPJhQlHaWmPxKT1qAt5Io3Ecl0=;
-        b=Xrxs/PB39/S+H1IW0+72Sfz/DhvnxYqqn2qJ9YlbcVC9r1TiItpscPOkGQebWqPqNb
-         qN29FKoS9z+zGCshkF3ZhfH1C7sukU5sq/SY3iRNNBnifo84tvPcHJF+PrxosvEW6f7e
-         0gKup7VweMRIX2jAaOy75EgPOiejG83Mp8X3k2L7FN5CGZssT+Qm/yO++Lb+XBk//8nm
-         Li66s5WTX54iZ2aOJDbzkymJGtVmtJIsjb1G4ciPJWAG0X/g7RtQUWNBCMYTNL+PVLO8
-         TpSlpocHuuDdA8OK/AHwfRWOv2yUVeTg/gmUv5d0ZbKBgFY4hdjpx4ksZ6FV42vqXMbM
-         tP3g==
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=81DUY2c9ZW9f7zPo1osSxiKRvvdo9rLFQnLTxxEr3HA=;
+        b=PHgQraG7ew4Ok+osxRiL5gGVuArcTfpQmtcDcfLtwrxGuCQSmCl/ePQOiEfc/UB344
+         cJ55zwrIBvxU+s1jxtukUMYkJXJW5PeDWi+vAgRm37dF+PhmhNH7Io/eUX/VCoAbQhvJ
+         DQxGLH850YxfALv077fYueO7atlFXfiKlU0PWuiNVTCBX4udfFkjB9Q62y8bWUphlCG2
+         mli4yv9yt5/nuczWjzvikK+X0dSJVjCsGaynMkCZUu44lHnPJD1IvOVFuW78VVSymi2D
+         kb7mlENI9eJectKM9mQ4Igd7/T57dD8vNCXKMxUSOkYrAcIdvz5mcDuibBHHIaurvWR/
+         4kKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FAvjESqfHP0fRix1omPJhQlHaWmPxKT1qAt5Io3Ecl0=;
-        b=lX8z+8g5nL4NrWTfTptCH5HTsgtUYpBjwuqNPlHzEy5rlrLZ4PGkxA9eMY+UNCV/Pc
-         KA5XsR5quwWlOSFFCvqPAJJNWXgzlDCK2KMTjH7VVDykqrKoNb9AU2VmerD41CDNJ8t8
-         WV43qd25+PT6Oa7CVbvKu2DfbVPWi//vgakUCU8h+s7mZY8/qxH4MDzOHQLSMpGFrGb3
-         MvMWWTmh4ZTTOJ3st/xDMnh8dogdXy4fElrh/H22Cv3+l4/v+nvoKlwt+avUJTOLj2vu
-         zq9oPjLdnAdmPU2hcE8EylRMjSJhBcuf+hiRZfD4T2t8fDRiCLjomepjqv5+pmk88imk
-         Q/Dg==
-X-Gm-Message-State: APjAAAWsgeJh29qpfiO2kri4BmJVv84z+rIalsTR5nIs/LeVjQKmYWPi
-        N/xgnJk0ntkGjSa5qF5GXvY=
-X-Google-Smtp-Source: APXvYqziiwBxEqM+qUPCXXYIJEjli9/gHs667J01IfZYGmcZtgdT4LyE0M0MXDptNU+hyPY434XtzA==
-X-Received: by 2002:a17:90a:17c2:: with SMTP id q60mr534633pja.111.1580158372874;
-        Mon, 27 Jan 2020 12:52:52 -0800 (PST)
-Received: from Ryzen-7-3700X.localdomain ([192.200.24.85])
-        by smtp.gmail.com with ESMTPSA id y197sm17641232pfc.79.2020.01.27.12.52.50
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=81DUY2c9ZW9f7zPo1osSxiKRvvdo9rLFQnLTxxEr3HA=;
+        b=EOcxFw8H2anPZVOnqBm8/+mI0LUOOw0LosCftt3/nixT+75zPNf0MMfGMfv7TVnrw7
+         +6/7pHyKZzOfHaOINBxJrYM99KXTd93A0aVtPPe1dOpgYOEinMymf9k2rSoxQsY1lTSU
+         8gJMV2gC/j5xeuQb2hCVAmiPh8NxnMd/3O+fp2clvg0jQt29HcR4uQYQtj8DXvfemkfj
+         bVsqngE32jAnfYM5CWU7Ey+R7aCzfDKD4gM67mBrU3Eu2N6MBDg/S1IzjRtx9yE9lerM
+         /W60Vz3bOXtqx3bzK5nzBHwMlwEUlJIpq0xweFd03+P6GMhGtR1redes0nlentNT3err
+         HiKA==
+X-Gm-Message-State: APjAAAUYf5wE0dIxv79pJVEdMSPWjajS6H5tDtsoph7C9TMAwM9SYjxo
+        kuwXFVV8PfGbbmFvvYltxjotY5HazT0=
+X-Google-Smtp-Source: APXvYqza+0GIumRtV/WgC/siHrRCCJMNjwMyDziQ44OPZCYLe1nTsMeKS4x4oWbytILc5TJdphmycQ==
+X-Received: by 2002:adf:f80b:: with SMTP id s11mr25389289wrp.12.1580159777788;
+        Mon, 27 Jan 2020 13:16:17 -0800 (PST)
+Received: from felia ([2001:16b8:2d9d:8c00:380d:4350:8c25:6615])
+        by smtp.gmail.com with ESMTPSA id u16sm50960wmj.41.2020.01.27.13.16.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 12:52:52 -0800 (PST)
-Date:   Mon, 27 Jan 2020 13:52:47 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 27 Jan 2020 13:16:17 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
+Date:   Mon, 27 Jan 2020 22:16:04 +0100 (CET)
+X-X-Sender: lukas@felia
+To:     =?ISO-8859-15?Q?Jouni_H=F6gander?= <jouni.hogander@unikie.com>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH 2/3] mm/gup_benchmark: support pin_user_pages() and
- related calls
-Message-ID: <20200127205247.GA578@Ryzen-7-3700X.localdomain>
-References: <20200125021115.731629-1-jhubbard@nvidia.com>
- <20200125021115.731629-3-jhubbard@nvidia.com>
+        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>, syzkaller@googlegroups.com
+Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
+In-Reply-To: <87h80h2suv.fsf@unikie.com>
+Message-ID: <alpine.DEB.2.21.2001272145260.2951@felia>
+References: <20191127203114.766709977@linuxfoundation.org> <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com> <20191128073623.GE3317872@kroah.com> <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com> <20191129085800.GF3584430@kroah.com>
+ <87sgk8szhc.fsf@unikie.com> <alpine.DEB.2.21.2001261236430.4933@felia> <87h80h2suv.fsf@unikie.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200125021115.731629-3-jhubbard@nvidia.com>
+Content-Type: multipart/mixed; boundary="8323329-600720457-1580159776=:2951"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi John,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Fri, Jan 24, 2020 at 06:11:14PM -0800, John Hubbard wrote:
-> Up until now, gup_benchmark supported testing of the
-> following kernel functions:
-> 
-> * get_user_pages(): via the '-U' command line option
-> * get_user_pages_longterm(): via the '-L' command line option
-> * get_user_pages_fast(): as the default (no options required)
-> 
-> Add test coverage for the new corresponding pin_*() functions:
-> 
-> * pin_user_pages_fast(): via the '-a' command line option
-> * pin_user_pages():      via the '-b' command line option
-> 
-> Also, add an option for clarity: '-u' for what is now (still) the
-> default choice: get_user_pages_fast().
-> 
-> Also, for the commands that set FOLL_PIN, verify that the pages
-> really are dma-pinned, via the new is_dma_pinned() routine.
-> Those commands are:
-> 
->     PIN_FAST_BENCHMARK     : calls pin_user_pages_fast()
->     PIN_BENCHMARK          : calls pin_user_pages()
-> 
-> In between the calls to pin_*() and unpin_user_pages(),
-> check each page: if page_dma_pinned() returns false, then
-> WARN and return.
-> 
-> Do this outside of the benchmark timestamps, so that it doesn't
-> affect reported times.
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  mm/gup_benchmark.c                         | 70 ++++++++++++++++++++--
->  tools/testing/selftests/vm/gup_benchmark.c | 15 ++++-
->  2 files changed, 79 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-> index 8dba38e79a9f..3d5fb765e4e6 100644
-> --- a/mm/gup_benchmark.c
-> +++ b/mm/gup_benchmark.c
-> @@ -8,6 +8,8 @@
->  #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
->  #define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
->  #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
-> +#define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
-> +#define PIN_BENCHMARK		_IOWR('g', 5, struct gup_benchmark)
->  
->  struct gup_benchmark {
->  	__u64 get_delta_usec;
-> @@ -19,6 +21,47 @@ struct gup_benchmark {
->  	__u64 expansion[10];	/* For future use */
->  };
->  
-> +static void put_back_pages(int cmd, struct page **pages, unsigned long nr_pages)
+--8323329-600720457-1580159776=:2951
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-We received a Clang build report on this patch because the use of
-PIN_FAST_BENCHMARK and PIN_BENCHMARK in the switch statement below will
-overflow int; this should be unsigned int to match the cmd parameter in
-the ioctls.
 
-The report can be read here if you care for it:
 
-https://groups.google.com/d/msg/clang-built-linux/gyGayC_dnis/D1celSStEgAJ
+On Mon, 27 Jan 2020, Jouni Högander wrote:
 
-Cheers,
-Nathan
-
-> +{
-> +	int i;
-> +
-> +	switch (cmd) {
-> +	case GUP_FAST_BENCHMARK:
-> +	case GUP_LONGTERM_BENCHMARK:
-> +	case GUP_BENCHMARK:
-> +		for (i = 0; i < nr_pages; i++)
-> +			put_page(pages[i]);
-> +		break;
-> +
-> +	case PIN_FAST_BENCHMARK:
-> +	case PIN_BENCHMARK:
-> +		unpin_user_pages(pages, nr_pages);
-> +		break;
-> +	}
-> +}
-> +
-> +static void verify_dma_pinned(int cmd, struct page **pages,
-> +			      unsigned long nr_pages)
-> +{
-> +	int i;
-> +	struct page *page;
-> +
-> +	switch (cmd) {
-> +	case PIN_FAST_BENCHMARK:
-> +	case PIN_BENCHMARK:
-> +		for (i = 0; i < nr_pages; i++) {
-> +			page = pages[i];
-> +			if (WARN(!page_dma_pinned(page),
-> +				 "pages[%d] is NOT dma-pinned\n", i)) {
-> +
-> +				dump_page(page, "gup_benchmark failure");
-> +				break;
-> +			}
-> +		}
-> +		break;
-> +	}
-> +}
-> +
->  static int __gup_benchmark_ioctl(unsigned int cmd,
->  		struct gup_benchmark *gup)
->  {
-> @@ -66,6 +109,14 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
->  			nr = get_user_pages(addr, nr, gup->flags, pages + i,
->  					    NULL);
->  			break;
-> +		case PIN_FAST_BENCHMARK:
-> +			nr = pin_user_pages_fast(addr, nr, gup->flags,
-> +						 pages + i);
-> +			break;
-> +		case PIN_BENCHMARK:
-> +			nr = pin_user_pages(addr, nr, gup->flags, pages + i,
-> +					    NULL);
-> +			break;
->  		default:
->  			kvfree(pages);
->  			ret = -EINVAL;
-> @@ -78,15 +129,22 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
->  	}
->  	end_time = ktime_get();
->  
-> +	/* Shifting the meaning of nr_pages: now it is actual number pinned: */
-> +	nr_pages = i;
-> +
->  	gup->get_delta_usec = ktime_us_delta(end_time, start_time);
->  	gup->size = addr - gup->addr;
->  
-> +	/*
-> +	 * Take an un-benchmark-timed moment to verify DMA pinned
-> +	 * state: print a warning if any non-dma-pinned pages are found:
-> +	 */
-> +	verify_dma_pinned(cmd, pages, nr_pages);
-> +
->  	start_time = ktime_get();
-> -	for (i = 0; i < nr_pages; i++) {
-> -		if (!pages[i])
-> -			break;
-> -		put_page(pages[i]);
-> -	}
-> +
-> +	put_back_pages(cmd, pages, nr_pages);
-> +
->  	end_time = ktime_get();
->  	gup->put_delta_usec = ktime_us_delta(end_time, start_time);
->  
-> @@ -105,6 +163,8 @@ static long gup_benchmark_ioctl(struct file *filep, unsigned int cmd,
->  	case GUP_FAST_BENCHMARK:
->  	case GUP_LONGTERM_BENCHMARK:
->  	case GUP_BENCHMARK:
-> +	case PIN_FAST_BENCHMARK:
-> +	case PIN_BENCHMARK:
->  		break;
->  	default:
->  		return -EINVAL;
-> diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-> index 389327e9b30a..43b4dfe161a2 100644
-> --- a/tools/testing/selftests/vm/gup_benchmark.c
-> +++ b/tools/testing/selftests/vm/gup_benchmark.c
-> @@ -18,6 +18,10 @@
->  #define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
->  #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
->  
-> +/* Similar to above, but use FOLL_PIN instead of FOLL_GET. */
-> +#define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
-> +#define PIN_BENCHMARK		_IOWR('g', 5, struct gup_benchmark)
-> +
->  /* Just the flags we need, copied from mm.h: */
->  #define FOLL_WRITE	0x01	/* check pte is writable */
->  
-> @@ -40,8 +44,14 @@ int main(int argc, char **argv)
->  	char *file = "/dev/zero";
->  	char *p;
->  
-> -	while ((opt = getopt(argc, argv, "m:r:n:f:tTLUwSH")) != -1) {
-> +	while ((opt = getopt(argc, argv, "m:r:n:f:abtTLUuwSH")) != -1) {
->  		switch (opt) {
-> +		case 'a':
-> +			cmd = PIN_FAST_BENCHMARK;
-> +			break;
-> +		case 'b':
-> +			cmd = PIN_BENCHMARK;
-> +			break;
->  		case 'm':
->  			size = atoi(optarg) * MB;
->  			break;
-> @@ -63,6 +73,9 @@ int main(int argc, char **argv)
->  		case 'U':
->  			cmd = GUP_BENCHMARK;
->  			break;
-> +		case 'u':
-> +			cmd = GUP_FAST_BENCHMARK;
-> +			break;
->  		case 'w':
->  			write = 1;
->  			break;
-> -- 
-> 2.25.0
+> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 > 
+> > On Wed, 22 Jan 2020, Jouni Högander wrote:
+> >
+> >> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> >> >> > Now queued up, I'll push out -rc2 versions with this fix.
+> >> >> >
+> >> >> > greg k-h
+> >> >> 
+> >> >> We have also been informed about another regression these two commits
+> >> >> are causing:
+> >> >> 
+> >> >> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp/
+> >> >> 
+> >> >> I suggest to drop these two patches from this queue, and give us a
+> >> >> week to shake out the regressions of the change, and once ready, we
+> >> >> can include the complete set of fixes to stable (probably in a week or
+> >> >> two).
+> >> >
+> >> > Ok, thanks for the information, I've now dropped them from all of the
+> >> > queues that had them in them.
+> >> >
+> >> > greg k-h
+> >> 
+> >> I have now run more extensive Syzkaller testing on following patches:
+> >> 
+> >> cb626bf566eb net-sysfs: Fix reference count leak
+> >> ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
+> >> e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
+> >> 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
+> >> b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
+> >> 
+> >> These patches are fixing couple of memory leaks including this one found
+> >> by Syzbot: https://syzkaller.appspot.com/bug?extid=ad8ca40ecd77896d51e2
+> >> 
+> >> I can reproduce these memory leaks in following stable branches: 4.14,
+> >> 4.19, and 5.4.
+> >> 
+> >> These are all now merged into net/master tree and based on my testing
+> >> they are ready to be taken into stable branches as well.
+> >>
+> >
+> > + syzkaller list
+> > Jouni et. al, please drop Linus in further responses; Linus, it was wrong 
+> > to add you to this thread in the first place (reason is explained below)
+> >
+> > Jouni, thanks for investigating.
+> >
+> > It raises the following questions and comments:
+> >
+> > - Does the memory leak NOT appear on 4.9 and earlier LTS branches (or did 
+> > you not check that)? If it does not appear, can you bisect it with the 
+> > reproducer to the commit between 4.14 and 4.9?
+> 
+> I tested and these memory leaks are not reproucible in 4.9 and earlier.
+> 
+> >
+> > - Do the reproducers you found with your syzkaller testing show the same 
+> > behaviour (same bisection) as the reproducers from syzbot?
+> 
+> Yes, they are same.
+> 
+> >
+> > - I fear syzbot's automatic bisection on is wrong, and Linus' commit 
+> > 0e034f5c4bc4 ("iwlwifi: fix mis-merge that breaks the driver") is not to 
+> > blame here; that commit did not cause the memory leak, but fixed some 
+> > unrelated issue that simply confuses syzbot's automatic bisection.
+> >
+> > Just FYI: Dmitry Vyukov's evaluation of the syzbot bisection shows that 
+> > about 50% are wrong, e.g., due to multiple bugs being triggered with one 
+> > reproducer and the difficulty of automatically identifying them of being 
+> > different due to different root causes (despite the smart heuristics of 
+> > syzkaller & syzbot). So, to identify the actual commit on which the memory 
+> > leak first appeared, you need to bisect manually with your own judgement 
+> > if the reported bug stack trace fits to the issue you investigating. Or 
+> > you use syzbot's automatic bisection but then with a reduced kernel config 
+> > that cannot be confused by other issues. You might possibly also hit a 
+> > "beginning of time" in your bisection, where KASAN was simply not 
+> > supported, then the initially causing commit can simply not determined by 
+> > bisection with the reproducer and needs some code inspection and 
+> > archaeology with git. Can you go ahead try to identify the correct commit 
+> > for this issue?
+> 
+> These two commits (that are not in 4.9 and earlier) are intorducing these leaks:
+> 
+> commit e331c9066901dfe40bea4647521b86e9fb9901bb
+> Author: YueHaibing <yuehaibing@huawei.com>
+> Date:   Tue Mar 19 10:16:53 2019 +0800
+> 
+>     net-sysfs: call dev_hold if kobject_init_and_add success
+>     
+>     [ Upstream commit a3e23f719f5c4a38ffb3d30c8d7632a4ed8ccd9e ]
+>     
+>     In netdev_queue_add_kobject and rx_queue_add_kobject,
+>     if sysfs_create_group failed, kobject_put will call
+>     netdev_queue_release to decrease dev refcont, however
+>     dev_hold has not be called. So we will see this while
+>     unregistering dev:
+>     
+>     unregister_netdevice: waiting for bcsh0 to become free. Usage count = -1
+>     
+>     Reported-by: Hulk Robot <hulkci@huawei.com>
+>     Fixes: d0d668371679 ("net: don't decrement kobj reference count on init fail
+> ure")
+>     Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> commit d0d6683716791b2a2761a1bb025c613eb73da6c3
+> Author: stephen hemminger <stephen@networkplumber.org>
+> Date:   Fri Aug 18 13:46:19 2017 -0700
+> 
+>     net: don't decrement kobj reference count on init failure
+>     
+>     If kobject_init_and_add failed, then the failure path would
+>     decrement the reference count of the queue kobject whose reference
+>     count was already zero.
+>     
+>     Fixes: 114cf5802165 ("bql: Byte queue limits")
+>     Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+
+But, it seems that we now have just a long sequences of fix patches.
+
+This commit from 2011 seems to be the initial buggy one:
+
+commit 114cf5802165ee93e3ab461c9c505cd94a08b800
+Author: Tom Herbert <therbert@google.com>
+Date:   Mon Nov 28 16:33:09 2011 +0000
+
+    bql: Byte queue limits
+
+And then we just have fixes over fixes:
+
+114cf5802165ee93e3ab461c9c505cd94a08b800
+fixed by d0d6683716791b2a2761a1bb025c613eb73da6c3
+fixed by a3e23f719f5c4a38ffb3d30c8d7632a4ed8ccd9e
+fixed by the sequence of your five patches, mentioned above
+
+
+If that is right, we should be able to find a reproducer with syzkaller on 
+the versions before d0d668371679 ("net: don't decrement kobj reference 
+count on init failure") with fault injection enabled or some manually 
+injected fault by modifying the source code to always fail on init to 
+really trigger the init failure, and see the reference count go below 
+zero.
+
+All further issues should also have reproducers found with syzkaller.
+If we have a good feeling on the reproducers and this series of fixes 
+really fixed the issue now here for all cases, we should suggest to 
+backport all of the fixes to 4.4 and 4.9.
+
+We should NOT just have Greg pick up a subset of the patches and backport 
+them to 4.4 and 4.9, that will likely break more than it fixes.
+
+Jouni, did you see Greg's bot inform you that he would pick up your latest 
+patch for 4.4 and 4.9? Please respond to those emails to make sure a 
+complete set of patches is picked up, which we tested with all those 
+intermediate reproducers and an extensive syzkaller run hitting the 
+net-sysfs interface (e.g., by configuring the corpus and check coverage).
+
+If you cannot do this testing for 4.4 and 4.9 now quickly (you 
+potentially have less than 24 hours), we should hold those new patches 
+back for 4.4 and 4.9, as none of the fixes seem to be applied at all right 
+now and the users have not complained yet on 4.4 and 4.9.
+Once testing of the whole fix sequence is done, we request to backport all 
+patches at once for 4.4 and 4.9.
+
+Lukas
+
+
+--8323329-600720457-1580159776=:2951--
