@@ -2,226 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0C314A1FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:30:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E045014A209
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:33:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbgA0Kap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 05:30:45 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34917 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729293AbgA0Kam (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 05:30:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580121040;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=B5seMdInBob5KBB/Ici0anA5L1DZMOsToJq/Z5iUw2E=;
-        b=ZaRBVqh53GrDj+2qvr883CdRc2tEezHo0rjXuh+gBGc3uOpmL5sjBD9zmtEKNRdRHGLnAP
-        S9BP09vUXKIrHZjyIDDU46pmNjpquuxPBgRoOOY1r14LEYETfdM+m66g9Ifar6WgEK/R0n
-        iVnbx5jQTAyqibCaIekSI6F0ruFNktU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-262-asALZdzQNV6PH_YcoB2bbw-1; Mon, 27 Jan 2020 05:30:37 -0500
-X-MC-Unique: asALZdzQNV6PH_YcoB2bbw-1
-Received: by mail-wm1-f71.google.com with SMTP id b202so1204896wmb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2020 02:30:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B5seMdInBob5KBB/Ici0anA5L1DZMOsToJq/Z5iUw2E=;
-        b=pELxXIFB71fF6LV0uYI5wIrAETAK/WexnMwoVDYNAsF7chqRDGbXfZd8HqBO+ueLWS
-         L9hXyeJ1FNLUgfd5Vq5789I68In3+MtG0vDohY4OSDY+rUhrracfmiVXCAs0xl0uJM8u
-         1w+uQcRxT5tdq+igEqJHeEk63mol7y+71oA2nTYzuG/PXIEO5aRhmHSi7wB40L2ch62O
-         VZNMNAEfqUkgEgp1H333dXwmXm/YilLhHb5lQpTackFb6I3zlx+gHcI630j4ko8kiTG+
-         wYI0wd+xXwbA4DV6bUKPlC/T+mwImiO8TfAD/AuoEPbryE5KPPrgfGE2KEEZ3ASEjlyO
-         0XMg==
-X-Gm-Message-State: APjAAAVEutKPzbbWb5BZA76G3eH1bMFhpgG/MUZi+cxcAxAF8eAxXcg9
-        EZYRiDYVpHaJMcyQ6En+unqfDlCqnumaDamPGg8WTWgJhcFEcGKyqDqqSlbvdz1g3koyhaG85+I
-        0GFcle0rWDljyyJQXUYa+OTFL
-X-Received: by 2002:a05:600c:20c1:: with SMTP id y1mr5646035wmm.164.1580121036577;
-        Mon, 27 Jan 2020 02:30:36 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxNP1yLOiuz11SqkgN+NSgVx33ZKZPJzCymBsy7575Ijof+Xt9mNxslTm1pwcw9yz9/cYbQrg==
-X-Received: by 2002:a05:600c:20c1:: with SMTP id y1mr5646000wmm.164.1580121036206;
-        Mon, 27 Jan 2020 02:30:36 -0800 (PST)
-Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
-        by smtp.gmail.com with ESMTPSA id w22sm17514661wmk.34.2020.01.27.02.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 02:30:35 -0800 (PST)
-Date:   Mon, 27 Jan 2020 10:30:34 +0000
-From:   Aaron Tomlin <atomlin@redhat.com>
-To:     Grzegorz Halat <ghalat@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        ssaner@redhat.com, oleksandr@redhat.com, vbendel@redhat.com,
-        kirill@shutemov.name, khlebnikov@yandex-team.ru,
-        borntraeger@de.ibm.com, Andrew Morton <akpm@linux-foundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_mm_error sysctl
-Message-ID: <20200127103034.lb2piuvtohwqysbs@atomlin.usersys.com>
-References: <20200127101100.92588-1-ghalat@redhat.com>
+        id S1729847AbgA0Kdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 05:33:31 -0500
+Received: from mout.web.de ([212.227.17.12]:33775 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729099AbgA0Kda (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jan 2020 05:33:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1580121199;
+        bh=dAxxIGooUrpYMIc/V5niU8NEItO2A/L1D6LYedd4Kb4=;
+        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
+        b=rYtGbKgXJevnIC0LSpzxAHP/IKW+VPszQwWByyb8862z5f0q/rLwrRCg6/dn26fKy
+         yN2pdgxkucwdVXmmINN4hHUUbEMWkcDInaT9jQIX25fchM4pjMjasQbKusT0SiOREm
+         BxRWuAAhRkMlqnWdIJsTZJSdAtJMUnssoQlMP3Zc=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.115.58]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M2Mcy-1jleO31bkK-00s2n6; Mon, 27
+ Jan 2020 11:33:19 +0100
+To:     Pragat Pandya <pragat.pandya@gmail.com>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
+Subject: Re: [PATCH 02/22] staging: exfat: Rename variable "Month" to "month"
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <3b444326-1295-fecb-2ff8-ddf770627bec@web.de>
+Date:   Mon, 27 Jan 2020 11:33:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200127101100.92588-1-ghalat@redhat.com>
-X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
-X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
-User-Agent: NeoMutt/20180716-1637-ee8449
+Content-Language: en-US
+X-Provags-ID: V03:K1:uxyvTeLc2QZWHfxXQ5yjYIF7M1dLi6IMScZb2KpG8Uq+6jIlYNg
+ EISlabkrMWvvBQeq+PTHJ8YgcvrsWZSlU5dpwXGm7yK9lpW7HY7pMVqw9CJsru0DKyGnU6e
+ 5ghtARIjPhQxdMlvUW5e3ZxW+wLyqi7kWwg7c00y7R52MpGnzCl10mopxbBYi0AlYRc67t5
+ fl1DgXZwziDgsNGVWtY5A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Mm3Dq3GHmXE=:/CU046Gjox9LZ75LmHF9ae
+ my+9+rjVnQtMTHuR82tfX5j0oowwBGnwpzyK3l5yXJHNLXy+oXdoLusdhR30lHp+PaacMYM42
+ gAeULAX+P7V9TB3gZHRsEvfVvJOKnCUT1HqljCdVKk4PR8K2QrJCvrsQmAne332mHWyGZrQ+L
+ 0o7U4+n4gf8mqFIOUViYVe7SGtml3RP+s93bNe5S4WZC/GBMVj/8HYpAaVQcAxWlHhc0yBEYx
+ q5SltDeo01wPircy5Il/LZqLP7XRMAlNlUiwBLKrJ5IP5opsOCxJhR8Wd43qA3zypjCS8WERP
+ wf6eIylGZ4Fr62m7sa5RCoPAoeLBaFtLTD9Jn5Ua9In0bSYOtWKU6IrxF/fxExgxiw/dstDEa
+ vtKZC6JNdaPrSqXCqaTzPTS6GNxZp2l3h45ZzhMKqCMzGgDw/G5UcdyJJENtn0DOooFlupLVz
+ evMVjlCDwm+SEL7ytnLpG+9HRYZctb+l9Hrcl2sFIJF4so5OOhNfwOo4Tjsq5QtsBc26jVV0b
+ dnu3AvDLSMcG3YJFxaP/MVnJxyLg9k1z/tMADpAd2s/ULzp6hsDLtlrVMY8hk2aZQcGnjbe3t
+ xJjUot5iI8u3+g+b0lfWKB3Y8L3HvDy6z/iB0l1ArNw+bAMhF4W8DyqXJDihN+nVMxu04o8Gb
+ 9vI7KYpKMUu+W7ZaQ0ndPdP6rHaCSo9lhbv8kKTT0Ka30K17dZZu/XHhtJjwbRVr+yKpFhCgz
+ gexeRfuUjXNOBgXa5fdYoArBEyyQZZlTqaGouRjnuIII37qrwckAluuUhUjrH58tlWWKofO+G
+ euH6zPFS35e+psL5C2f2aM0J03mBVqxI/Y8pGZ8K/u6dJpa0DY4sDMN2E3/RmZqcSbIVcwOot
+ OX4QDLk9nYX+0InxYnnYTbtYaExuvv4b98Wxres2Lk2/6Mft6Her9Kaa9/hR1tqT4tIi7HsSc
+ jVoPhQJ+KoQNtSl6m6SZGSZ4FDrSKMFm8hs5p1vu8En9tX3qnIleDiFRG0M/RbalsomjoKXsj
+ rbEoHVkkjTfNeIXaywxNF5xj1CtA07hYQFhdrWRix9zN+bOUgD4ehioIicVW008dS5liKgaw7
+ QFm0Qzpj+ySkApYQC2u7HIB9uXUgudmT+K8imYekEXgWrT9kr1FOJNJ+VrG7XL8BWUsEcXlAX
+ tK6s7+myWCDvz+d1TYDt/Ur2N6fXhKeAdJATwYrwILkzlomXCRXQrYmdKiLGIt4Zc01Zhm+5k
+ 2NvtGIlv9ccBMwVmP
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 2020-01-27 11:11 +0100, Grzegorz Halat wrote:
-> Memory management subsystem performs various checks at runtime,
-> if an inconsistency is detected then such event is being logged and kernel
-> continues to run. While debugging such problems it is helpful to collect
-> memory dump as early as possible. Currently, there is no easy way to panic
-> kernel when such error is detected.
-> 
-> It was proposed[1] to panic the kernel if panic_on_oops is set but this
-> approach was not accepted. One of alternative proposals was introduction of
-> a new sysctl.
-> 
-> The patch adds panic_on_mm_error sysctl. If the sysctl is set then the
-> kernel will be crashed when an inconsistency is detected by memory
-> management. This currently means panic when bad page or bad PTE
-> is detected(this may be extended to other places in MM).
-> 
-> Another use case of this sysctl may be in security-wise environments,
-> it may be more desired to crash machine than continue to run with
-> potentially damaged data structures.
-> 
-> [1] https://marc.info/?l=linux-mm&m=142649500728327&w=2
-> 
-> Signed-off-by: Grzegorz Halat <ghalat@redhat.com>
-> ---
->  Documentation/admin-guide/sysctl/kernel.rst | 12 ++++++++++++
->  include/linux/kernel.h                      |  1 +
->  kernel/sysctl.c                             |  9 +++++++++
->  mm/memory.c                                 |  7 +++++++
->  mm/page_alloc.c                             |  4 +++-
->  5 files changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index def074807cee..2fecd6b2547e 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -61,6 +61,7 @@ show up in /proc/sys/kernel:
->  - overflowgid
->  - overflowuid
->  - panic
-> +- panic_on_mm_error
->  - panic_on_oops
->  - panic_on_stackoverflow
->  - panic_on_unrecovered_nmi
-> @@ -611,6 +612,17 @@ an IO error.
->     and you can use this option to take a crash dump.
->  
->  
-> +panic_on_mm_error:
-> +==============
-> +
-> +Controls the kernel's behaviour when inconsistency is detected
-> +by memory management code, for example bad page state or bad PTE.
-> +
-> +0: try to continue operation.
-> +
-> +1: panic immediately.
-> +
-> +
->  panic_on_oops:
->  ==============
->  
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index 0d9db2a14f44..5f9d408512ff 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -518,6 +518,7 @@ extern int oops_in_progress;		/* If set, an oops, panic(), BUG() or die() is in
->  extern int panic_timeout;
->  extern unsigned long panic_print;
->  extern int panic_on_oops;
-> +extern int panic_on_mm_error;
->  extern int panic_on_unrecovered_nmi;
->  extern int panic_on_io_nmi;
->  extern int panic_on_warn;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 70665934d53e..6477e1cce28b 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1238,6 +1238,15 @@ static struct ctl_table kern_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> +	{
-> +		.procname	= "panic_on_mm_error",
-> +		.data		= &panic_on_mm_error,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= SYSCTL_ZERO,
-> +		.extra2		= SYSCTL_ONE,
-> +	},
->  #if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
->  	{
->  		.procname	= "timer_migration",
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 45442d9a4f52..cce74ff39447 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -71,6 +71,7 @@
->  #include <linux/dax.h>
->  #include <linux/oom.h>
->  #include <linux/numa.h>
-> +#include <linux/module.h>
->  
->  #include <trace/events/kmem.h>
->  
-> @@ -88,6 +89,8 @@
->  #warning Unfortunate NUMA and NUMA Balancing config, growing page-frame for last_cpupid.
->  #endif
->  
-> +int panic_on_mm_error __read_mostly;
-> +
->  #ifndef CONFIG_NEED_MULTIPLE_NODES
->  /* use the per-pgdat data instead for discontigmem - mbligh */
->  unsigned long max_mapnr;
-> @@ -543,6 +546,10 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->  		 vma->vm_ops ? vma->vm_ops->fault : NULL,
->  		 vma->vm_file ? vma->vm_file->f_op->mmap : NULL,
->  		 mapping ? mapping->a_ops->readpage : NULL);
-> +
-> +	print_modules();
-> +	if (panic_on_mm_error)
-> +		panic("Bad page map detected");
->  	dump_stack();
->  	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
->  }
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d047bf7d8fd4..2ea6a65ba011 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -643,9 +643,11 @@ static void bad_page(struct page *page, const char *reason,
->  	if (bad_flags)
->  		pr_alert("bad because of flags: %#lx(%pGp)\n",
->  						bad_flags, &bad_flags);
-> -	dump_page_owner(page);
->  
-> +	dump_page_owner(page);
->  	print_modules();
-> +	if (panic_on_mm_error)
-> +		panic("Bad page state detected");
->  	dump_stack();
->  out:
->  	/* Leave bad fields for debug, except PageBuddy could make trouble */
+> Change all the occurrences of "Month" to "month" in exfat.
 
-Reviewed-by: Aaron Tomlin <atomlin@redhat.com>
+I hope that the final commit will not contain a misplaced quotation character
+in the subject.
 
--- 
-Aaron Tomlin
-
+Regards,
+Markus
