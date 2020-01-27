@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1CF14A1A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D43314A1AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:15:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729918AbgA0KPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 05:15:08 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45626 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729665AbgA0KPH (ORCPT
+        id S1729930AbgA0KPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 05:15:13 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:33091 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729579AbgA0KPN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 05:15:07 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 2so4678607pfg.12;
-        Mon, 27 Jan 2020 02:15:07 -0800 (PST)
+        Mon, 27 Jan 2020 05:15:13 -0500
+Received: by mail-pj1-f68.google.com with SMTP id m7so1923794pjs.0;
+        Mon, 27 Jan 2020 02:15:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tfqT994o6hFKwC+NJH5VhBNOIvQ5NHGDSHAgoN5IQQg=;
-        b=PYxFSJCOp4tSt1yqQ1Non9MhjGXhvzz0Q0c6Eo4PnLRd2QoSjU2mUZ0Tnf/q7M52U2
-         EdBAxOQv+vy4khjwtzDYTucIWnVb09U3ZhooncfWRE1z9ZjPpNnOKjzIF3iB6zHcDGLj
-         9aHheSTFbL6ikPdph8gkwdt6pC8nVe4KjRNMsAPXNVtg8KtMcxhdare/0u8JJgKMOlUM
-         cwMCYNwU0WYnZ69l8tOmYSwQhr1dnRbQdnolfL2dxQXIXovbYJhBTxO5wRnIainm7gNc
-         mnhy+XSfDs9MciGvm0VsKBo3KNB1/LBQRCyt/SYGrNrrUvGSefn/y1q8Mc+ZtxHYk3Fw
-         Hi2Q==
+        bh=+sMuF5qnUnN9Y8onz/B4zeL75IEd/ON79HtlJ1XRPFg=;
+        b=XvfG0jLHnDaERvZ+WHnA6vywBGhXrHvlvVwQUv0Fu1WZ7t0zp8NsGU5a79TLmuRaBB
+         iwIoJ68Yt2jM7poch61FpjmrNMxATkPBXcCBJWwlSTWJB5UQZ88YVS1cfJlPVbQjAn8R
+         5z5b22IOLyq0OoTJh7cLUWuTdskuujTeyua0KrDNwgInvmIErZbLq8sy/ID9fdY8dFgs
+         pN3jPCzKBDX68gWQ+Fb7cmWaTeEZGx9h13gLS0aNc6ON2NFexL5S9d+0XLs9ridT6ybi
+         zoZjwzyNSHdgGVwE4Z22cYIh3UtS5m+cAImSt0VSHhZbn3x/GKQsSVGTqxJVJeFwnEuM
+         2TCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tfqT994o6hFKwC+NJH5VhBNOIvQ5NHGDSHAgoN5IQQg=;
-        b=i97EENUeGjudnjKex4fwzAlFhnvVz8tkjS4KfEfgZ7z6g8HOri9P3S8iaAEIw8itVT
-         gvYWgIb52o3rO6Gdp0XWhMkc72n/ljN3ZUtCZpksL/p/f9XQ/jvOyCNZWXhHoHmS2or0
-         JZr/D9SPqL29f/BlGHxtsZQPQtQcx42//mF7Dsc3Q4aZZooLvrTMm4ZSTtKaVMDgtczJ
-         OuOIciJGPCPuwpG5xLCpWvMSJPvJbZZeC8S5zumdMZZFNpSJsMkcg4DOwHO/2Jm0y+fO
-         pgMd1EISWr1Fe0gkNufRaipb4bWeClDsso0g91TnNKOGD3xNZ9tDiMfhUyt1Rz2qoyVl
-         D3qw==
-X-Gm-Message-State: APjAAAXdaQIsieE91rjudDPEaYw1b8dHz6Cdy8/1geXcEZIkX0UNSAiv
-        Ka7kVjNRvhTVHZ8d6EWRj4w=
-X-Google-Smtp-Source: APXvYqwnlc/BTVD+zB2gkJ9TRRoZAjk4QyN2K+bRR20xZDRzGaJ5+E5yNuABM4OXiSgvvZwiMtkkaA==
-X-Received: by 2002:a62:7696:: with SMTP id r144mr15571402pfc.177.1580120107229;
-        Mon, 27 Jan 2020 02:15:07 -0800 (PST)
+        bh=+sMuF5qnUnN9Y8onz/B4zeL75IEd/ON79HtlJ1XRPFg=;
+        b=R/cz42Jx3VABAKxGwP8vbGHfRLUCpR9g1U3R8TUIAMVsyJ5BWZkQFFmyVNekoGJ7i8
+         2l5aSbzon/fTHsp053A5W5Wf7w13Kd/wK3j6tE/9vH7Z/shww7fjJ2zRvPzNlNWquoZH
+         H7tXChE6/T2bS0Xh1jQik3k+O4YjJoQKUL9xGmiqGbXiX1JxbGdeNuoumiywN0mfl3QR
+         QpLDNVxKhWm6dysf/ar53WrbQUPzUsIg3nClktPlWXWv9OrPj41hATjDM73cFK3YeI6e
+         EV2BE1YLW+Zo2xn696Ovua/xUXi6UlTfr9Uz1IdxQw8NnXOGqn0O5HW09CEX6CQjhLj0
+         EPAA==
+X-Gm-Message-State: APjAAAVttlLelEtQ1DKVg2POzwq7qG0ZMC+L8ImvR2hkuAMF0Be0vuAl
+        2yw3rrhhLoqYruG8ssjDLoU=
+X-Google-Smtp-Source: APXvYqwpspdRYPpxmAb+3sp5DfpMT0p35fOj7YL4PbTXIAGdRlX3cKuYysRJEfediyYGYOmDYq1j7w==
+X-Received: by 2002:a17:90a:c983:: with SMTP id w3mr13584404pjt.121.1580120112342;
+        Mon, 27 Jan 2020 02:15:12 -0800 (PST)
 Received: from localhost.localdomain ([2405:205:c902:a5e9:3956:8df2:aee5:9cf6])
-        by smtp.gmail.com with ESMTPSA id s15sm15504138pgq.4.2020.01.27.02.15.02
+        by smtp.gmail.com with ESMTPSA id s15sm15504138pgq.4.2020.01.27.02.15.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 02:15:06 -0800 (PST)
+        Mon, 27 Jan 2020 02:15:11 -0800 (PST)
 From:   Pragat Pandya <pragat.pandya@gmail.com>
 To:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org
 Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         skhan@linuxfoundation.org, Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH 09/22] staging: exfat: Rename variable "Size" to "size"
-Date:   Mon, 27 Jan 2020 15:43:30 +0530
-Message-Id: <20200127101343.20415-10-pragat.pandya@gmail.com>
+Subject: [PATCH 10/22] staging: exfat: Rename variable "SecSize" to "sec_size"
+Date:   Mon, 27 Jan 2020 15:43:31 +0530
+Message-Id: <20200127101343.20415-11-pragat.pandya@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200127101343.20415-1-pragat.pandya@gmail.com>
 References: <20200127101343.20415-1-pragat.pandya@gmail.com>
@@ -61,7 +61,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change all the occurences of "Size" to "size" in exfat.
+Change all the occurrences of "SecSize" to "sec_size" in exfat.
 
 Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
 ---
@@ -69,18 +69,18 @@ Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 52f314d50b91..a228350acdb4 100644
+index a228350acdb4..58292495bb57 100644
 --- a/drivers/staging/exfat/exfat.h
 +++ b/drivers/staging/exfat/exfat.h
-@@ -233,7 +233,7 @@ struct date_time_t {
- 
- struct part_info_t {
- 	u32      offset;    /* start sector number of the partition */
--	u32      Size;      /* in sectors */
-+	u32      size;      /* in sectors */
+@@ -237,7 +237,7 @@ struct part_info_t {
  };
  
  struct dev_info_t {
+-	u32      SecSize;    /* sector size in bytes */
++	u32      sec_size;    /* sector size in bytes */
+ 	u32      DevSize;    /* block device size in sectors */
+ };
+ 
 -- 
 2.17.1
 
