@@ -2,134 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 695AA149E8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 06:06:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0185149F13
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 07:43:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbgA0FGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 00:06:31 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:40868 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbgA0FGa (ORCPT
+        id S1727250AbgA0Gnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 01:43:42 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54194 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbgA0Gnm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 00:06:30 -0500
-Received: by mail-il1-f196.google.com with SMTP id i7so3254046ilr.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 26 Jan 2020 21:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8T3JDpxBE2PuzGuLciOyK1XdDOMf7MGFDmAy+zMLvQY=;
-        b=pF+vNJbJ0EtML4m5uQzN+qes0p+UYwzmj9aI3bkvvBs0Rl8aydvz1JMnKMNFu/Mbsj
-         9RZat21omjBpJ6qMIf1jl3jH9nHWXOuTr3xJkuRA8o/uhTrORJwfmcGh8bSVlANt0rWY
-         tzkSr0LG2JOa4DcN5Hc2cdCoPgpPqBeO/CVsc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8T3JDpxBE2PuzGuLciOyK1XdDOMf7MGFDmAy+zMLvQY=;
-        b=JjNj4/oOLCxcgWRlxxztD7pWW5VZhiBsoy/1Rd/A2q0DQ4oNEQoZ0d5yNtWIu1m+DV
-         baVl8HHfmlhY1AZuVIHaUDjYhUOkDBPxYicRPADDwVDDpgz1mOee3n9bJA4t7qpl4hwp
-         EeS0T8inLY7htjF2FXKrIomHGWV3omiW9L/YVg5D6ptFhCElPb5rd8MXlQ96m3HjVNSl
-         Fck9MBwjcgF9jnAsLg4axLH1+pTfAuSOl7XoHnE6cB3fMOv/5XE4IH/fRIXr+mGpbejv
-         WsFC/3ljC14PT+7PHW1TMXKcAC4iQ+g+Hr07tRbNGIjvCJexm9pyR8FwejFxufl9+H2F
-         AXiw==
-X-Gm-Message-State: APjAAAXS/PeCQYKnH1oqd04qwaNCB0Ua8y18Piu0UNWRRNJxW1yTgSSg
-        9GQkjwssm4P7EI2a7sxhTyPfTg==
-X-Google-Smtp-Source: APXvYqzU6hFcVnk71OVfcxJiZKXDs3RdLFB+1o6wVm+OqDIQIQA2gWUGkW3N70o5On3Ded/4jvA7AQ==
-X-Received: by 2002:a92:d3cc:: with SMTP id c12mr13807584ilh.266.1580101590015;
-        Sun, 26 Jan 2020 21:06:30 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id b12sm3185583ion.83.2020.01.26.21.06.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 26 Jan 2020 21:06:29 -0800 (PST)
-Date:   Mon, 27 Jan 2020 05:06:28 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Aleksa Sarai <asarai@suse.de>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, christian.brauner@ubuntu.com
-Subject: Re: [PATCH 3/4] seccomp: Add SECCOMP_USER_NOTIF_FLAG_PIDFD to get
- pidfd on listener trap
-Message-ID: <20200127050627.GA21575@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20200124091743.3357-1-sargun@sargun.me>
- <20200124091743.3357-4-sargun@sargun.me>
- <20200126040325.5eimmm7hli5qcqrr@yavin.dot.cyphar.com>
- <20200126041439.liwfmb4h74zmhi76@yavin.dot.cyphar.com>
+        Mon, 27 Jan 2020 01:43:42 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R6hEek178135;
+        Mon, 27 Jan 2020 06:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=vMrJ91GMO1CD+aMStdBznA5LKGeM9s5PCFnZKiLM6Zg=;
+ b=MhroejlrkNIdtbIljVPw48Nka8wHrP2QJ09hldcb801d86I4e7O1TnDb/zx8cWcwF+4Y
+ 7aice71dKEwOa9SXGFjP5suwwh4smAfH51Bn0QTcja3BVk0t1g5PndBSCvaNNCWEWeN5
+ rxAcOHxGvGXZX39QdT8pWx3QtjguzGIEtySLaKIlB6hHOMepigQPorYeuaKfoNVzo1Ch
+ 4DFA0USJKORo8jJSQkbSiiNPYI8z/sMcpT37ihqFdsMzHi5VYDCyGx083EynRCA0m2rw
+ eH3D7qYJ+iQ3lesNFj1pNzsdd1qo4LzDheFTEe9iHPpLlG2d2VoUmYS4h8ew/K0jkVjn hg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2xrd3twe5a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Jan 2020 06:43:37 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00R6hVuu039799;
+        Mon, 27 Jan 2020 06:43:36 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2xryu8qh09-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Jan 2020 06:43:36 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00R6gsKO003420;
+        Mon, 27 Jan 2020 06:42:54 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 26 Jan 2020 22:42:54 -0800
+Date:   Mon, 27 Jan 2020 09:42:46 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp
+Subject: Re: [PATCH v3] staging: exfat: remove fs_func struct.
+Message-ID: <20200127064246.GO1847@kadam>
+References: <20200123102445.123033-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200126041439.liwfmb4h74zmhi76@yavin.dot.cyphar.com>
+In-Reply-To: <20200123102445.123033-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=980
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001270057
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9512 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001270057
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 26, 2020 at 03:14:39PM +1100, Aleksa Sarai wrote:
-> On 2020-01-26, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > On 2020-01-24, Sargun Dhillon <sargun@sargun.me> wrote:
-> > >  static long seccomp_notify_recv(struct seccomp_filter *filter,
-> > >  				void __user *buf)
-> > >  {
-> > >  	struct seccomp_knotif *knotif = NULL, *cur;
-> > >  	struct seccomp_notif unotif;
-> > > +	struct task_struct *group_leader;
-> > > +	bool send_pidfd;
-> > >  	ssize_t ret;
-> > >  
-> > > +	if (copy_from_user(&unotif, buf, sizeof(unotif)))
-> > > +		return -EFAULT;
-> > >  	/* Verify that we're not given garbage to keep struct extensible. */
-> > > -	ret = check_zeroed_user(buf, sizeof(unotif));
-> > > -	if (ret < 0)
-> > > -		return ret;
-> > > -	if (!ret)
-> > > +	if (unotif.id ||
-> > > +	    unotif.pid ||
-> > > +	    memchr_inv(&unotif.data, 0, sizeof(unotif.data)) ||
-> > > +	    unotif.pidfd)
-> > > +		return -EINVAL;
-> > 
-> > IMHO this check is more confusing than the original check_zeroed_user().
-> > Something like the following is simpler and less prone to forgetting to
-> > add a new field in the future:
-> > 
-I'm all for this, originally my patch read:
+Looks good to me.
 
-__u32 flags = 0;
-swap(unotif.flags, flags);
-if (memchr(&unotif, 0, sizeof(unotif))
-	return -EINVAL;
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---- And then check flags appropriately. I'm not sure if this is "better",
-as I didn't see any other implementations that look like this in the
-kernel. What do you think? It could even look "simpler", as in:
-
-__u32 flags;
-
-if (copy_from_user(....))
-	return -EFAULT;
-flags = unotif.flags;
-unotif.flags = 0;
-if (memchr_inv(&unotif, 0, sizeof(unotif)))
-	return -EINVAL;
-
-
-Are either of those preferential, reasonable, or at a minimum inoffensive?
-> > 	if (memchr_inv(&unotif, 0, sizeof(unotif)))
-> > 		return -EINVAL;
-> 
-Wouldn't this fail if flags was set to any value? We either need to zero
-out flags prior to checking, or split it into range checks that exclude
-flags.
-
-> Also the check in the patch doesn't ensure that any unnamed padding is
-> zeroed -- memchr_inv(&unotif, 0, sizeof(unotif)) does.
-> 
-> -- 
-> Aleksa Sarai
-> Senior Software Engineer (Containers)
-> SUSE Linux GmbH
-> <https://www.cyphar.com/>
-
+regards,
+dan carpenter
 
