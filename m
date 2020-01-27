@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4C614A1F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0C314A1FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 11:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbgA0K20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 05:28:26 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:27582 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729293AbgA0K2Z (ORCPT
+        id S1729770AbgA0Kap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 05:30:45 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34917 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729293AbgA0Kam (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 05:28:25 -0500
+        Mon, 27 Jan 2020 05:30:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580120903;
+        s=mimecast20190719; t=1580121040;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=8fokyBNPtsUbKBwZwksoLlR7AFo3Aw5I+PUuhOyENIk=;
-        b=c5hqh5qk9Dq/dDNiJV8OXyDAM79KvsdBndz9TP+UJkc8K4FPGk0oTk9Tb8nBEPt3xYwdIy
-        Z40zygOMFdoUTtUP0kxaIAMXh6+GhZF3Br14gv8J4sIPx50NJquSzoG/fu7rj8Vc8PbMU8
-        fihFaJf6ynbYuT+EMSHCs7yTb0avUcQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-278-KUI5QADjPWKZw_CcVei7jQ-1; Mon, 27 Jan 2020 05:28:21 -0500
-X-MC-Unique: KUI5QADjPWKZw_CcVei7jQ-1
-Received: by mail-wm1-f72.google.com with SMTP id b133so1323108wmb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2020 02:28:21 -0800 (PST)
+        bh=B5seMdInBob5KBB/Ici0anA5L1DZMOsToJq/Z5iUw2E=;
+        b=ZaRBVqh53GrDj+2qvr883CdRc2tEezHo0rjXuh+gBGc3uOpmL5sjBD9zmtEKNRdRHGLnAP
+        S9BP09vUXKIrHZjyIDDU46pmNjpquuxPBgRoOOY1r14LEYETfdM+m66g9Ifar6WgEK/R0n
+        iVnbx5jQTAyqibCaIekSI6F0ruFNktU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-262-asALZdzQNV6PH_YcoB2bbw-1; Mon, 27 Jan 2020 05:30:37 -0500
+X-MC-Unique: asALZdzQNV6PH_YcoB2bbw-1
+Received: by mail-wm1-f71.google.com with SMTP id b202so1204896wmb.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2020 02:30:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8fokyBNPtsUbKBwZwksoLlR7AFo3Aw5I+PUuhOyENIk=;
-        b=ATszPd+vInpy0rcDUMSdnxrlseTewEmx5wGg6myBEXpOP3+zhwDBaTThHLIvMXs2ZQ
-         roEdFic+QaCPv5nwayXHiOTR74cfa+4t7RVlsQ0CJ9W6CFyEmP9euTEOtvXht9c4vFWO
-         n9+09TDCayXzYLe3IUKDSOIGYfs6ui2i+HrEg2DnuLaipWqrSgSxmfNTfStOIOzHVeWA
-         hu0Mkba8m8wzQibjjqfZ04rGlosiDTtGZ5QrzanjrGy2b570fXCWYp1bkFpdl+FX3sjt
-         C0kyeEL2EFIUytChLPA+9wmG8AN+G63OuL2UxHX+SeOefWUbAOKXixuiE0Qq4XBRyzEk
-         lexA==
-X-Gm-Message-State: APjAAAVVGzGzs8iVNcXGgAQPswGSAvh2Uf6aDTzwO6oc27iQT5HmQM2A
-        mfrMjxq5u//08zRWaPt1NqLuFtnRnHGZ/rWH3o3mBbnFePBfk7ejdX8NWW+73oepnUvoGOGEdm7
-        QALhkoMzzF82dNoWhKnO7HhDFWg==
-X-Received: by 2002:adf:dc86:: with SMTP id r6mr20825644wrj.68.1580120900129;
-        Mon, 27 Jan 2020 02:28:20 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwLWleqqkTYz3vNYvSYX+2oj8y2inl971E8faKn2s20ZKZi1w9g3+F4v+wDDCi6S9HVQPkd7Q==
-X-Received: by 2002:adf:dc86:: with SMTP id r6mr20825596wrj.68.1580120899785;
-        Mon, 27 Jan 2020 02:28:19 -0800 (PST)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id b10sm21694800wrt.90.2020.01.27.02.28.18
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B5seMdInBob5KBB/Ici0anA5L1DZMOsToJq/Z5iUw2E=;
+        b=pELxXIFB71fF6LV0uYI5wIrAETAK/WexnMwoVDYNAsF7chqRDGbXfZd8HqBO+ueLWS
+         L9hXyeJ1FNLUgfd5Vq5789I68In3+MtG0vDohY4OSDY+rUhrracfmiVXCAs0xl0uJM8u
+         1w+uQcRxT5tdq+igEqJHeEk63mol7y+71oA2nTYzuG/PXIEO5aRhmHSi7wB40L2ch62O
+         VZNMNAEfqUkgEgp1H333dXwmXm/YilLhHb5lQpTackFb6I3zlx+gHcI630j4ko8kiTG+
+         wYI0wd+xXwbA4DV6bUKPlC/T+mwImiO8TfAD/AuoEPbryE5KPPrgfGE2KEEZ3ASEjlyO
+         0XMg==
+X-Gm-Message-State: APjAAAVEutKPzbbWb5BZA76G3eH1bMFhpgG/MUZi+cxcAxAF8eAxXcg9
+        EZYRiDYVpHaJMcyQ6En+unqfDlCqnumaDamPGg8WTWgJhcFEcGKyqDqqSlbvdz1g3koyhaG85+I
+        0GFcle0rWDljyyJQXUYa+OTFL
+X-Received: by 2002:a05:600c:20c1:: with SMTP id y1mr5646035wmm.164.1580121036577;
+        Mon, 27 Jan 2020 02:30:36 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxNP1yLOiuz11SqkgN+NSgVx33ZKZPJzCymBsy7575Ijof+Xt9mNxslTm1pwcw9yz9/cYbQrg==
+X-Received: by 2002:a05:600c:20c1:: with SMTP id y1mr5646000wmm.164.1580121036206;
+        Mon, 27 Jan 2020 02:30:36 -0800 (PST)
+Received: from localhost (cpc111743-lutn13-2-0-cust844.9-3.cable.virginm.net. [82.17.115.77])
+        by smtp.gmail.com with ESMTPSA id w22sm17514661wmk.34.2020.01.27.02.30.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2020 02:28:19 -0800 (PST)
-Date:   Mon, 27 Jan 2020 11:28:18 +0100
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
+        Mon, 27 Jan 2020 02:30:35 -0800 (PST)
+Date:   Mon, 27 Jan 2020 10:30:34 +0000
+From:   Aaron Tomlin <atomlin@redhat.com>
 To:     Grzegorz Halat <ghalat@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        ssaner@redhat.com, atomlin@redhat.com, vbendel@redhat.com,
+        ssaner@redhat.com, oleksandr@redhat.com, vbendel@redhat.com,
         kirill@shutemov.name, khlebnikov@yandex-team.ru,
         borntraeger@de.ibm.com, Andrew Morton <akpm@linux-foundation.org>,
         Iurii Zaikin <yzaikin@google.com>,
@@ -63,18 +63,21 @@ Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Luis Chamberlain <mcgrof@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>
 Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_mm_error sysctl
-Message-ID: <20200127102818.7hr5shcskfbwa7eu@butterfly.localdomain>
+Message-ID: <20200127103034.lb2piuvtohwqysbs@atomlin.usersys.com>
 References: <20200127101100.92588-1-ghalat@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20200127101100.92588-1-ghalat@redhat.com>
+X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
+X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
+User-Agent: NeoMutt/20180716-1637-ee8449
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 27, 2020 at 11:11:00AM +0100, Grzegorz Halat wrote:
+On Mon 2020-01-27 11:11 +0100, Grzegorz Halat wrote:
 > Memory management subsystem performs various checks at runtime,
 > if an inconsistency is detected then such event is being logged and kernel
 > continues to run. While debugging such problems it is helpful to collect
@@ -216,14 +219,9 @@ On Mon, Jan 27, 2020 at 11:11:00AM +0100, Grzegorz Halat wrote:
 >  	dump_stack();
 >  out:
 >  	/* Leave bad fields for debug, except PageBuddy could make trouble */
-> -- 
-> 2.21.1
-> 
 
-Reviewed-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Reviewed-by: Aaron Tomlin <atomlin@redhat.com>
 
 -- 
-  Best regards,
-    Oleksandr Natalenko (post-factum)
-    Senior Software Maintenance Engineer
+Aaron Tomlin
 
