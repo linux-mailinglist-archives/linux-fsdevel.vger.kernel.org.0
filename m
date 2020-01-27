@@ -2,206 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C666714A668
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 15:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F4A14A81E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jan 2020 17:32:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbgA0OnQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jan 2020 09:43:16 -0500
-Received: from outbound-smtp34.blacknight.com ([46.22.139.253]:55119 "EHLO
-        outbound-smtp34.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726443AbgA0OnQ (ORCPT
+        id S1726323AbgA0Qcu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jan 2020 11:32:50 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:39176 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726173AbgA0Qct (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jan 2020 09:43:16 -0500
-X-Greylist: delayed 423 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jan 2020 09:43:14 EST
-Received: from mail.blacknight.com (unknown [81.17.255.152])
-        by outbound-smtp34.blacknight.com (Postfix) with ESMTPS id A3676B9E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jan 2020 14:36:10 +0000 (GMT)
-Received: (qmail 26736 invoked from network); 27 Jan 2020 14:36:10 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 27 Jan 2020 14:36:10 -0000
-Date:   Mon, 27 Jan 2020 14:36:08 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Ingo Molnar <mingo@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to stack
- on the same CPU
-Message-ID: <20200127143608.GX3466@techsingularity.net>
+        Mon, 27 Jan 2020 11:32:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580142768;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=acerTmkt9MrRw3hrdmoRuF2JZHiXd5F9RUaO+9oi+NM=;
+        b=JLE84qwj2VfTcmLXSLV/40sJJmlaKyHHkPnfjZwXg5LHPWkXPtirvMGV2hrjK0+bC6WXrF
+        TSPPROG0SWYJepolIOxRJSwe3kstgDxq73xhtglIKUIAvAsAzz8EV04J9a9XpQKGixLnyM
+        XMuuS7s67v+VQddYN/4+tc4ie6bYhYo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-m-TBYEO8MYSG4Dy6f6lWHg-1; Mon, 27 Jan 2020 11:32:46 -0500
+X-MC-Unique: m-TBYEO8MYSG4Dy6f6lWHg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 02F908010EC;
+        Mon, 27 Jan 2020 16:32:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-99.rdu2.redhat.com [10.10.120.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9425886433;
+        Mon, 27 Jan 2020 16:32:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAOQ4uxicFmiFKz7ZkHYuzduuTDaCTDqo26fo02-VjTMmQaaf+A@mail.gmail.com>
+References: <CAOQ4uxicFmiFKz7ZkHYuzduuTDaCTDqo26fo02-VjTMmQaaf+A@mail.gmail.com> <14196.1575902815@warthog.procyon.org.uk> <CAOQ4uxj7RhrBnWb3Lqi3hHLuXNkVXrKio398_PAEczxfyW7HsA@mail.gmail.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     dhowells@redhat.com, lsf-pc@lists.linux-foundation.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] How to make disconnected operation work?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1477631.1580142761.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 27 Jan 2020 16:32:41 +0000
+Message-ID: <1477632.1580142761@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 8ab39f11d974 ("xfs: prevent CIL push holdoff in log
-recovery") changed from using bound workqueues to using unbound
-workqueues. Functionally this makes sense but it was observed at the time
-that the dbench performance dropped quite a lot and CPU migrations were
-excessively high even when there are plenty of idle CPUs.
+Amir Goldstein <amir73il@gmail.com> wrote:
 
-The pattern of the task migration is straight-forward. With XFS, an IO
-issuer may delegate work to a kworker which wakes on the same CPU. On
-completion of the work, it wakes the task, finds that the previous CPU
-is busy (because the kworker is still running on it) and migrates the
-task to the next idle CPU. The task ends up migrating around all CPUs
-sharing a LLC at high frequency. This has negative implications both in
-commication costs and power management.  mpstat confirmed that at low
-thread counts that all CPUs sharing an LLC has low level of activity.
+> My thinking is: Can't we implement a stackable cachefs which interfaces
+> with fscache and whose API to the netfs is pure vfs APIs, just like
+> overlayfs interfaces with lower fs?
 
-The impact of this problem is related to the number of CPUs sharing an LLC.
+In short, no - doing it with pure the VFS APIs that we have is not that si=
+mple
+(yes, Solaris does it with a stacking filesystem, and I don't know anythin=
+g
+about the API details, but there must be an auxiliary API).  You need to
+handle:
 
-This patch special cases the pattern and allows a kworker waker and a
-task wakee to stack on the same CPU if there is a strong chance they are
-directly related. The expectation is that the kworker is likely going
-back to sleep shortly. This is not guaranteed as the IO could be queued
-asynchronously but there is a very strong relationship between the task and
-kworker in this case that would justify stacking on the same CPU instead
-of migrating. There should be few concerns about kworker starvation given
-that the special casing is only when the kworker is the waker.
+ (1) Remote invalidation.  The netfs needs to tell the cache layer
+     asynchronously about remote modifications - where the modification ca=
+n
+     modify not just file content but also directory structure, and even f=
+ile
+     data invalidation may be partial.
 
-DBench on XFS
-MMTests config: io-dbench4-async modified to run on a fresh XFS filesystem
+ (2) Unique file group matching.  The info required to match a group of fi=
+les
+     (e.g. an NFS server, an AFS volume, a CIFS share) is not necessarily
+     available through the VFS API - I'm not sure even the export API make=
+s
+     this available since it's built on the assumption that it's exporting
+     local files.
 
-UMA machine with 8 cores sharing LLC
-                          5.5.0-rc7              5.5.0-rc7
-                  tipsched-20200124           kworkerstack
-Amean     1        22.63 (   0.00%)       20.54 *   9.23%*
-Amean     2        25.56 (   0.00%)       23.40 *   8.44%*
-Amean     4        28.63 (   0.00%)       27.85 *   2.70%*
-Amean     8        37.66 (   0.00%)       37.68 (  -0.05%)
-Amean     64      469.47 (   0.00%)      468.26 (   0.26%)
-Stddev    1         1.00 (   0.00%)        0.72 (  28.12%)
-Stddev    2         1.62 (   0.00%)        1.97 ( -21.54%)
-Stddev    4         2.53 (   0.00%)        3.58 ( -41.19%)
-Stddev    8         5.30 (   0.00%)        5.20 (   1.92%)
-Stddev    64       86.36 (   0.00%)       94.53 (  -9.46%)
+ (3) File matching.  The info required to match a file to the cache is not
+     necessarily available through the VFS API.  NFS has file handles, for
+     example; the YFS variant of AFS has 96-bit 'inode numbers'.  (This mi=
+ght
+     be done with the export API - it that's counted so).  Further, the fi=
+le
+     identifier may not be unique outside the file group.
 
-NUMA machine, 48 CPUs total, 24 CPUs share cache
-                           5.5.0-rc7              5.5.0-rc7
-                   tipsched-20200124      kworkerstack-v1r2
-Amean     1         58.69 (   0.00%)       30.21 *  48.53%*
-Amean     2         60.90 (   0.00%)       35.29 *  42.05%*
-Amean     4         66.77 (   0.00%)       46.55 *  30.28%*
-Amean     8         81.41 (   0.00%)       68.46 *  15.91%*
-Amean     16       113.29 (   0.00%)      107.79 *   4.85%*
-Amean     32       199.10 (   0.00%)      198.22 *   0.44%*
-Amean     64       478.99 (   0.00%)      477.06 *   0.40%*
-Amean     128     1345.26 (   0.00%)     1372.64 *  -2.04%*
-Stddev    1          2.64 (   0.00%)        4.17 ( -58.08%)
-Stddev    2          4.35 (   0.00%)        5.38 ( -23.73%)
-Stddev    4          6.77 (   0.00%)        6.56 (   3.00%)
-Stddev    8         11.61 (   0.00%)       10.91 (   6.04%)
-Stddev    16        18.63 (   0.00%)       19.19 (  -3.01%)
-Stddev    32        38.71 (   0.00%)       38.30 (   1.06%)
-Stddev    64       100.28 (   0.00%)       91.24 (   9.02%)
-Stddev    128      186.87 (   0.00%)      160.34 (  14.20%)
+ (4) Coherency management.  The netfs must tell the cache whether or not t=
+he
+     data contained in the cache is valid.  This information is not
+     necessarily available through the VFS APIs (NFS change IDs, AFS data
+     version, AFS volume sync info).  It's also highly filesystem specific=
+.
 
-Dbench has been modified to report the time to complete a single "load
-file". This is a more meaningful metric for dbench that a throughput
-metric as the benchmark makes many different system calls that are not
-throughput-related
+It might also have security implications for netfs's that handle their own
+security (such as AFS does), but that might fall out naturally.
 
-Patch shows a 9.23% and 48.53% reduction in the time to process a load
-file with the difference partially explained by the number of CPUs sharing
-a LLC. In a separate run, task migrations were almost eliminated by the
-patch for low client counts. In case people have issue with the metric
-used for the benchmark, this is a comparison of the throughputs as
-reported by dbench on the NUMA machine.
+> As long as netfs supports direct_IO() (all except afs do) then the activ=
+e page
+> cache could be that of the stackable cachefs and network IO is always
+> direct from/to cachefs pages.
 
-dbench4 Throughput (misleading but traditional)
-                           5.5.0-rc7              5.5.0-rc7
-                   tipsched-20200124      kworkerstack-v1r2
-Hmean     1        321.41 (   0.00%)      617.82 *  92.22%*
-Hmean     2        622.87 (   0.00%)     1066.80 *  71.27%*
-Hmean     4       1134.56 (   0.00%)     1623.74 *  43.12%*
-Hmean     8       1869.96 (   0.00%)     2212.67 *  18.33%*
-Hmean     16      2673.11 (   0.00%)     2806.13 *   4.98%*
-Hmean     32      3032.74 (   0.00%)     3039.54 (   0.22%)
-Hmean     64      2514.25 (   0.00%)     2498.96 *  -0.61%*
-Hmean     128     1778.49 (   0.00%)     1746.05 *  -1.82%*
+What about objects that don't support DIO?  Directories, symbolic links an=
+d
+automount points?  All of these things are cacheable objects with AFS.
 
-Note that this is somewhat specific to XFS and ext4 shows no performance
-difference as it does not rely on kworkers in the same way. No major
-problem was observed running other workloads on different machines although
-not all tests have completed yet.
+And speaking of automount points - how would you deal with those beyond si=
+mply
+caching the contents?  Create a new stacked instance over it?  How do you =
+see
+the automount point itself?
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/core.c  | 11 -----------
- kernel/sched/fair.c  | 13 +++++++++++++
- kernel/sched/sched.h | 13 +++++++++++++
- 3 files changed, 26 insertions(+), 11 deletions(-)
+I see that the NFS FH encoder doesn't handle automount points.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fc1dfc007604..1f615a223791 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1442,17 +1442,6 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
- 
- #ifdef CONFIG_SMP
- 
--static inline bool is_per_cpu_kthread(struct task_struct *p)
--{
--	if (!(p->flags & PF_KTHREAD))
--		return false;
--
--	if (p->nr_cpus_allowed != 1)
--		return false;
--
--	return true;
--}
--
- /*
-  * Per-CPU kthreads are allowed to run on !active && online CPUs, see
-  * __set_cpus_allowed_ptr() and select_fallback_rq().
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fe4e0d775375..76df439aff76 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5912,6 +5912,19 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	    (available_idle_cpu(prev) || sched_idle_cpu(prev)))
- 		return prev;
- 
-+	/*
-+	 * Allow a per-cpu kthread to stack with the wakee if the
-+	 * kworker thread and the tasks previous CPU are the same.
-+	 * The assumption is that the wakee queued work for the
-+	 * per-cpu kthread that is now complete and the wakeup is
-+	 * essentially a sync wakeup.
-+	 */
-+	if (is_per_cpu_kthread(current) &&
-+	    prev == smp_processor_id() &&
-+	    this_rq()->nr_running <= 1) {
-+		return prev;
-+	}
-+
- 	/* Check a recently used CPU as a potential idle candidate: */
- 	recent_used_cpu = p->recent_used_cpu;
- 	if (recent_used_cpu != prev &&
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 1a88dc8ad11b..5876e6ba5903 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2479,3 +2479,16 @@ static inline void membarrier_switch_mm(struct rq *rq,
- {
- }
- #endif
-+
-+#ifdef CONFIG_SMP
-+static inline bool is_per_cpu_kthread(struct task_struct *p)
-+{
-+	if (!(p->flags & PF_KTHREAD))
-+		return false;
-+
-+	if (p->nr_cpus_allowed != 1)
-+		return false;
-+
-+	return true;
-+}
-+#endif
+> If netfs supports export_operations (all except afs do), then indexing
+> the cache objects could be done in a generic manner using fsid and
+> file handle, just like overlayfs index feature works today.
+
+FSID isn't unique and doesn't exist for all filesystems.  Two NFS servers,=
+ for
+example, can give you the same FSID, but referring to different things.  A=
+FS
+has a textual cell name and a volume ID that you need to combine; it doesn=
+'t
+have an FSID.
+
+This may work for overlayfs as the FSID can be confined to a particular
+overlay.  However, that's not what we're dealing with.  We would be talkin=
+g
+about an index that potentially covers *all* the mounted netfs.
+
+Also, from your description that sounds like a bug in overlayfs.  If the
+overlain NFS tree does a referral to a different server, you no longer hav=
+e a
+unique FSID or a unique FH within that FSID so your index is broken.
+
+> Would it not be a maintenance win if all (or most of) the fscache logic
+> was yanked out of all the specific netfs's?
+
+Actually, it may not help enormously with disconnected operation.  A certa=
+in
+amount of the logic probably has to be implemented in the netfs as each ne=
+tfs
+provides different facilities for managing this.
+
+Yes, it gets some of the I/O stuff out - but I want to move some of that d=
+own
+into the VM if I can and librarifying the rest should take care of that.
+
+> Can you think of reasons why the stackable cachefs model cannot work
+> or why it is inferior to the current fscache integration model with netf=
+s's?
+
+Yes.  It's a lot more operationally expensive and it's harder to use.  The
+cache driver would also have to get a lot bigger, but that would be
+reasonable.
+
+Firstly, the expense: you have to double up all the inodes and dentries th=
+at
+are in use - and that's not counting the resources used inside the cache
+itself.
+
+Secondly, the administration: I'm assuming you're suggesting the way I thi=
+nk
+Solaris does it and that you have to make two mounts: firstly you mount th=
+e
+netfs and then you mount the cache over it.  It's much simpler if you just
+need make the netfs mount only and then that goes and uses the cache if it=
+'s
+available - it's also simple to bring the cache online after the fact mean=
+ing
+you can even cache applied retroactively to a root filesystem.
+
+You also have the issue of what happens if someone bind-mounts the netfs m=
+ount
+and mounts the cache over only one of the views.  Now you have a coherency
+management problem that the cache cannot see.  It's only visible to the ne=
+tfs,
+but the netfs doesn't know about the cache.
+
+There's also file locking.  Overlayfs doesn't support file locking that I =
+can
+see, but NFS, AFS and CIFS all do.
+
+
+Anyway, you might be able to guess that I'm really against using stackable
+filesystems for things like this and like UID shifting.  I think it adds m=
+ore
+expense and complexity than it's necessarily worth.
+
+I was more inclined to go with unionfs than overlayfs and do the filesyste=
+m
+union in the VFS as it ought to be cheaper if you're using it (whereas
+overlayfs is cheaper if you're not).
+
+One final thing - even if we did want to switch to an stacked approach, we
+might still have to maintain the current way as people use it.
+
+David
+
