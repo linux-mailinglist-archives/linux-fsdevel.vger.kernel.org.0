@@ -2,140 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 881DF14C334
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 00:02:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1D814C33C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 00:04:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgA1XB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 18:01:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42711 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbgA1XB4 (ORCPT
+        id S1726551AbgA1XEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 18:04:23 -0500
+Received: from mail-pj1-f74.google.com ([209.85.216.74]:59160 "EHLO
+        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbgA1XEX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 18:01:56 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 4so7421469pfz.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 15:01:56 -0800 (PST)
+        Tue, 28 Jan 2020 18:04:23 -0500
+Received: by mail-pj1-f74.google.com with SMTP id ie20so2290370pjb.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 15:04:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+dg91h5BizLIOhJtrfPoQX1PBXFzRkzG/EccKIP5g+k=;
-        b=SLEtsTXM5HHL6KRx3hcUWmwHu6WOPgN0CNP8fHNTI+FAT+8rXdOFNHQ4Yag2eY0oom
-         MxIjkObrnioymch5q5MyrzGbWNjwhgMUswCx/M+MVBVQAe23jccXfrAxinTI930p2387
-         D9bys2Kwzdd099/FcXPhmwL9QuGCzxCyDD8ZA=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=4wthl79HWP0T/o9zvBpWHIzpNLIBPxOPJx5PymHVG6Q=;
+        b=GDX/C/OSuHuMeBJ1ahgPZL1VVGEdTJy/yP3LL9+inyqMwkRHK7dFp/+xG9iD5I3Wye
+         R8FtJLFJ0eV70EjeSjg0U5qKk8bSzCa1QbG+lL0sub2v+jXGlXmnUJiDQTieWdmoJRZV
+         aEnhZYhnDWVpjcVBM8BKswB2TVHRR/Zw2QhMO3zPPcBHrLgbdTdvsKjAa5dI1XUBjCHL
+         spmbAHxV0hBMSAK/CaKKdUNumnezHwIPqNO1a9JQZ9rUo5YhVBh1WYO9WyquZ7bULg08
+         P/qSWjuqXIzcKanpjDIRuMerEfswNe+d9wkqs/hJKIaTCfLoyJCRVC1TZ7x8bQnI9TV9
+         rJQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+dg91h5BizLIOhJtrfPoQX1PBXFzRkzG/EccKIP5g+k=;
-        b=aGnan2YJqCRh/VGieAb4MVJVyykpb9KhFTe8ublKLLYfRwhMqy5dtFbvw89TGVMDcs
-         bOips6isIwz/E3Foke3R8jFq0XETACpbI4UpDci7iviIuLxCdgXTrQfSS6GPGJLXgVvL
-         /FjkJ3poVg+DKqZAvY0JDyaJpZSJOqx6+rWiulmCSLPMruJEHOocur+1eRQ76DT6dwlt
-         mF7QxWwmzspsz23S0jjdqE9Neyd6DgFwXZljbdtoDN55X0jYSnJmJhcYr0x2iKKw93Qr
-         DDehXdJVFv11vw+ATYhWrrLrzyo8JKPWSvTiPfhtDJHlQ6gNbgLm7Zxpg7OKMnK1Czmh
-         7j2w==
-X-Gm-Message-State: APjAAAWcLcoj5DpiE/k903PN/FY22F+E3lrvG0rSsf7nbMK4Iu+41tH4
-        Y0+UsxLdEEIt492CpjHzfFBbEw==
-X-Google-Smtp-Source: APXvYqxW3ZrU4wM0/mAVtxUyqtcw5VzYRKNT21IpKIlpAgs8GJ04bta0GGU8Rs7byefZaonYLylsnQ==
-X-Received: by 2002:aa7:82d5:: with SMTP id f21mr6360681pfn.245.1580252515843;
-        Tue, 28 Jan 2020 15:01:55 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k21sm136324pgt.22.2020.01.28.15.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2020 15:01:54 -0800 (PST)
-Date:   Tue, 28 Jan 2020 15:01:53 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Jiri Slaby <jslaby@suse.cz>, Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=4wthl79HWP0T/o9zvBpWHIzpNLIBPxOPJx5PymHVG6Q=;
+        b=aVt8aoKte3g/QApPeHfKD5Lq5E18AtL6MTmqdbYxOa2v2RVRuJClRY1qW/MdlKwMOk
+         nRldXIgJnoc9le1dWYjifP1wz7mMDpUzr1p2FfsBcC45N9FYBN106jKGI2xS+zVHL/9Y
+         vmVJ+HVsuJjRhTVzmocYD4MvDJOP7Y7qYEjOWE2D1V8QbfCVK0lNVtucOGvm/AMCPsB/
+         VwInkkqSrkHzKXg6scxQCAy8ao7GQ414cId75K2NFZmmIGeOA9hLgcBP7+LiGIcymQ+f
+         QpzLnRzGJmBGhCkRfnlNq3z6rx3IMrSWerbWgJuI6td5TGnxc+rEREzGabKlgHSasxrB
+         BiGQ==
+X-Gm-Message-State: APjAAAXMv8NUb19pZKcISvmspyAFPOcaTu0dQpcXmeQZN+d3D5+D59f2
+        3/AU8mJMfIpREBhECYKzYRUBO4L/WTE=
+X-Google-Smtp-Source: APXvYqw5NZo8NAG4OMkcKqlZwD1DRl7BGD/ZEL4QespRsfp8h2gjJpR5FGRTvo86dDcfrVlQ5mEeoeJD/MY=
+X-Received: by 2002:a63:1c1d:: with SMTP id c29mr27636876pgc.14.1580252662083;
+ Tue, 28 Jan 2020 15:04:22 -0800 (PST)
+Date:   Tue, 28 Jan 2020 15:03:23 -0800
+Message-Id: <20200128230328.183524-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v6 0/5] Support fof Casefolding and Encryption
+From:   Daniel Rosenberg <drosen@google.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-Message-ID: <202001281457.FA11CC313A@keescook>
-References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
- <1515636190-24061-10-git-send-email-keescook@chromium.org>
- <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
- <201911121313.1097D6EE@keescook>
- <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
- <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 08:58:31AM +0100, Christian Borntraeger wrote:
-> 
-> 
-> On 28.01.20 00:19, Kees Cook wrote:
-> > On Thu, Jan 23, 2020 at 09:14:20AM +0100, Jiri Slaby wrote:
-> >> On 14. 11. 19, 22:27, Kees Cook wrote:
-> >>> On Tue, Nov 12, 2019 at 01:21:54PM -0800, Kees Cook wrote:
-> >>>> How is iucv the only network protocol that has run into this? Do others
-> >>>> use a bounce buffer?
-> >>>
-> >>> Another solution would be to use a dedicated kmem cache (instead of the
-> >>> shared kmalloc dma one)?
-> >>
-> >> Has there been any conclusion to this thread yet? For the time being, we
-> >> disabled HARDENED_USERCOPY on s390...
-> >>
-> >> https://lore.kernel.org/kernel-hardening/9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz/
-> > 
-> > I haven't heard anything new. What did people think of a separate kmem
-> > cache?
-> > 
-> 
-> Adding Julian and Ursula. A separate kmem cache for iucv might be indeed
-> a solution for the user hardening issue.
+These patches are all on top of fscrypt's development branch
 
-It should be very clean -- any existing kmallocs already have to be
-"special" in the sense that they're marked with the DMA flag. So
-converting these to a separate cache should be mostly mechanical.
+Ext4 and F2FS currently both support casefolding and encryption, but not at
+the same time. These patches aim to rectify that.
 
-> On the other hand not marking the DMA caches still seems questionable.
+I moved the identical casefolding dcache operations for ext4 and f2fs into
+fs/unicode, as all filesystems using casefolded names will want them.
 
-My understanding is that exposing DMA memory to userspace copies can
-lead to unexpected results, especially for misbehaving hardware, so I'm
-not convinced this is a generically bad hardening choice.
+I've also adjust fscrypt to not set it's d_revalidate operation during it's
+prepare lookup, instead having the calling filesystem set it up. This is
+done to that the filesystem may have it's own dentry_operations.
 
--Kees
+For Ext4, since the hash for encrypted casefolded directory names cannot be
+computed without the key, we need to store the hash on disk. We only do so
+for encrypted and casefolded directories to avoid on disk format changes.
+Previously encryption and casefolding could not be on the same filesystem,
+and we're relaxing that requirement. F2fs is a bit more straightforward
+since it already stores hashes on disk.
 
-> 
-> For reference
-> https://bugzilla.suse.com/show_bug.cgi?id=1156053
-> the kernel hardening now triggers a warning.
-> 
+I've updated the related tools with just enough to enable the feature. I
+still need to adjust ext4's fsck's, although without access to the keys,
+neither fsck will be able to verify the hashes of casefolded and encrypted
+names.
+
+v6 changes:
+Went back to using dentry_operations for casefolding. Provided standard
+implementations in fs/unicode, avoiding extra allocation in d_hash op.
+Moved fscrypt d_ops setting to be filesystem's responsibility to maintain
+compatibility with casefolding and overlayfs if casefolding is not used
+fixes some f2fs error handling
+
+v4-5: patches submitted on fscrypt
+
+v3 changes:
+fscrypt patch only creates hash key if it will be needed.
+Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
+
+v2 changes:
+fscrypt moved to separate thread to rebase on fscrypt dev branch
+addressed feedback, plus some minor fixes
+
+
+Daniel Rosenberg (5):
+  unicode: Add standard casefolded d_ops
+  fscrypt: Have filesystems handle their d_ops
+  f2fs: Handle casefolding with Encryption
+  ext4: Hande casefolding with encryption
+  ext4: Optimize match for casefolded encrypted dirs
+
+ Documentation/filesystems/ext4/directory.rst |  27 ++
+ fs/crypto/fname.c                            |   7 +-
+ fs/crypto/fscrypt_private.h                  |   1 -
+ fs/crypto/hooks.c                            |   1 -
+ fs/ext4/dir.c                                | 102 +++---
+ fs/ext4/ext4.h                               |  86 +++--
+ fs/ext4/hash.c                               |  26 +-
+ fs/ext4/ialloc.c                             |   5 +-
+ fs/ext4/inline.c                             |  41 ++-
+ fs/ext4/namei.c                              | 325 ++++++++++++-------
+ fs/ext4/super.c                              |  21 +-
+ fs/f2fs/dir.c                                | 151 +++++----
+ fs/f2fs/f2fs.h                               |  16 +-
+ fs/f2fs/hash.c                               |  25 +-
+ fs/f2fs/inline.c                             |   9 +-
+ fs/f2fs/namei.c                              |   1 +
+ fs/f2fs/super.c                              |  17 +-
+ fs/f2fs/sysfs.c                              |   8 +-
+ fs/ubifs/dir.c                               |  18 +
+ fs/unicode/utf8-core.c                       |  61 ++++
+ include/linux/fs.h                           |  10 +
+ include/linux/fscrypt.h                      |   6 +-
+ include/linux/unicode.h                      |  17 +
+ 23 files changed, 644 insertions(+), 337 deletions(-)
 
 -- 
-Kees Cook
+2.25.0.341.g760bfbb309-goog
+
