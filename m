@@ -2,253 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8057314B244
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 11:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F7514B26D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 11:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbgA1KGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 05:06:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50723 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbgA1KGd (ORCPT
+        id S1725937AbgA1KSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 05:18:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5694 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725882AbgA1KSn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:06:33 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iwNlP-0008Dq-QQ; Tue, 28 Jan 2020 11:06:31 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iwNlP-0004fS-1f; Tue, 28 Jan 2020 11:06:31 +0100
-Date:   Tue, 28 Jan 2020 11:06:31 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>,
-        kernel@pengutronix.de
-Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
-Message-ID: <20200128100631.zv7cn726twylcmb7@pengutronix.de>
-References: <20200124131323.23885-1-s.hauer@pengutronix.de>
- <20200124131323.23885-2-s.hauer@pengutronix.de>
- <20200127104518.GC19414@quack2.suse.cz>
+        Tue, 28 Jan 2020 05:18:43 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00SA9rjL118802
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 05:18:42 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrk2f597n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 05:18:41 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Tue, 28 Jan 2020 10:18:39 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 Jan 2020 10:18:37 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00SAIaYp21627118
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 10:18:36 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 276EFAE056;
+        Tue, 28 Jan 2020 10:18:36 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E67C5AE051;
+        Tue, 28 Jan 2020 10:18:33 +0000 (GMT)
+Received: from dhcp-9-199-158-40.in.ibm.com (unknown [9.199.158.40])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Jan 2020 10:18:33 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        hch@infradead.org, cmaiolino@redhat.com,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RFCv2 0/4] ext4: bmap & fiemap conversion to use iomap
+Date:   Tue, 28 Jan 2020 15:48:24 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200127104518.GC19414@quack2.suse.cz>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:03:46 up 204 days, 16:13, 87 users,  load average: 0.27, 0.34,
- 0.27
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20012810-0012-0000-0000-000003816240
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20012810-0013-0000-0000-000021BDB50D
+Message-Id: <cover.1580121790.git.riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ mlxscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1911200001 definitions=main-2001280083
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+Hello All,
 
-On Mon, Jan 27, 2020 at 11:45:18AM +0100, Jan Kara wrote:
-> >  	cmds = cmd >> SUBCMDSHIFT;
-> >  	type = cmd & SUBCMDMASK;
-> >  
-> > +
-> 
-> Unnecessary empty line added...
+Background
+==========
+There are RFCv2 patches to move ext4 bmap & fiemap calls to use iomap APIs.
+This reduces the users of ext4_get_block API and thus a step towards getting
+rid of buffer_heads from ext4. Also reduces a lot of code by making use of
+existing iomap_ops (except for xattr implementation).
 
-Fixed
+Testing (done on ext4 master branch)
+========
+'xfstests -g auto' passes with default mkfs/mount configuration
+(v/s which also pass with vanilla kernel without this patch). Except
+generic/473 which also failes on XFS. This seems to be the test case issue
+since it expects the data in slightly different way as compared to what iomap
+returns.
+Point 2.a below describes more about this.
 
-> > +	if (q_path) {
-> > +		ret = user_path_at(AT_FDCWD, special,
-> > +				   LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-> > +				   &sb_path);
-> > +		if (ret)
-> > +			goto out;
-> > +
-> > +		sb = sb_path.mnt->mnt_sb;
-> 
-> So I've realized that just looking up superblock with user_path_at() is not
-> enough. Quota code also expects that the superblock will be locked
-> (sb->s_umount) and filesystem will not be frozen (in case the quota
-> operation is going to modify the filesystem). This is needed to serialize
-> e.g. remount and quota operations or quota operations among themselves.
-> So you still need something like following to get superblock from the path:
+Observations/Review required
+============================
+1. bmap related old v/s new method differences:-
+	a. In case if addr > INT_MAX, it issues a warning and
+	   returns 0 as the block no. While earlier it used to return the
+	   truncated value with no warning.
+	b. block no. is only returned in case of iomap->type is IOMAP_MAPPED,
+	   but not when iomap->type is IOMAP_UNWRITTEN. While with previously
+	   we used to get block no. for both of above cases.
 
-Ok, here's an updated version. I'll send an update for the whole series
-when Richard had a look over it.
+2. Fiemap related old v/s new method differences:-
+	a. iomap_fiemap returns the disk extent information in exact
+	   correspondence with start of user requested logical offset till the
+	   length requested by user. While in previous implementation the
+	   returned information used to give the complete extent information if
+	   the range requested by user lies in between the extent mapping.
+	b. iomap_fiemap adds the FIEMAP_EXTENT_LAST flag also at the last
+	   fiemap_extent mapping range requested by the user via fm_length (
+	   if that has a valid mapped extent on the disk). But if the user
+	   requested for more fm_length which could not be mapped in the last
+	   fiemap_extent, then the flag is not set.
+	   
 
-Sascha
+e.g. output for above differences 2.a & 2.b
+===========================================
+create a file with below cmds. 
+1. fallocate -o 0 -l 8K testfile.txt
+2. xfs_io -c "pwrite 8K 8K" testfile.txt
+3. check extent mapping:- xfs_io -c "fiemap -v" testfile.txt
+4. run this binary on with and without these patches:- ./a.out (test_fiemap_diff.c) [4]
 
-----------------------------8<-----------------------------
+o/p of xfs_io -c "fiemap -v"
+============================================
+With this patch on patched kernel:-
+testfile.txt:
+ EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+   0: [0..15]:         122802736..122802751    16 0x800
+   1: [16..31]:        122687536..122687551    16   0x1
 
-From 9c91395f2667c8a48f52a80896e559daf16f4a4c Mon Sep 17 00:00:00 2001
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 30 Oct 2019 08:35:11 +0100
-Subject: [PATCH] quota: Allow to pass mount path to quotactl
+without patch on vanilla kernel (no difference):-
+testfile.txt:
+ EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+   0: [0..15]:         332211376..332211391    16 0x800
+   1: [16..31]:        332722392..332722407    16   0x1
 
-This patch introduces the Q_PATH flag to the quotactl cmd argument.
-When given, the path given in the special argument to quotactl will
-be the mount path where the filesystem is mounted, instead of a path
-to the block device.
-This is necessary for filesystems which do not have a block device as
-backing store. Particularly this is done for upcoming UBIFS support.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- fs/quota/quota.c           | 75 ++++++++++++++++++++++++++++++++------
- include/uapi/linux/quota.h |  1 +
- 2 files changed, 64 insertions(+), 12 deletions(-)
+o/p of a.out without patch:-
+================
+riteshh-> ./a.out 
+logical: [       0..      15] phys: 332211376..332211391 flags: 0x800 tot: 16
+(0) extent flag = 2048
 
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index 5444d3c4d93f..712b71760f9d 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -19,6 +19,7 @@
- #include <linux/types.h>
- #include <linux/writeback.h>
- #include <linux/nospec.h>
-+#include <linux/mount.h>
- 
- static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
- 				     qid_t id)
-@@ -810,6 +811,36 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
- #endif
- }
- 
-+static struct super_block *quotactl_path(const char __user *special, int cmd,
-+					 struct path *path)
-+{
-+	struct super_block *sb;
-+	int ret;
-+
-+	ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-+			   path);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	sb = path->mnt->mnt_sb;
-+restart:
-+	if (quotactl_cmd_onoff(cmd))
-+		down_write(&sb->s_umount);
-+	else
-+		down_read(&sb->s_umount);
-+
-+	if (quotactl_cmd_write(cmd) && sb->s_writers.frozen != SB_UNFROZEN) {
-+		if (quotactl_cmd_onoff(cmd))
-+			up_write(&sb->s_umount);
-+		else
-+			up_read(&sb->s_umount);
-+		wait_event(sb->s_writers.wait_unfrozen,
-+			   sb->s_writers.frozen == SB_UNFROZEN);
-+		goto restart;
-+	}
-+
-+	return sb;
-+}
- /*
-  * This is the system call interface. This communicates with
-  * the user-level programs. Currently this only supports diskquota
-@@ -821,8 +852,9 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
- {
- 	uint cmds, type;
- 	struct super_block *sb = NULL;
--	struct path path, *pathp = NULL;
-+	struct path file_path, *file_pathp = NULL, sb_path;
- 	int ret;
-+	bool q_path;
- 
- 	cmds = cmd >> SUBCMDSHIFT;
- 	type = cmd & SUBCMDMASK;
-@@ -830,6 +862,9 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
- 	if (type >= MAXQUOTAS)
- 		return -EINVAL;
- 
-+	q_path = cmds & Q_PATH;
-+	cmds &= ~Q_PATH;
-+
- 	/*
- 	 * As a special case Q_SYNC can be called without a specific device.
- 	 * It will iterate all superblocks that have quota enabled and call
-@@ -847,28 +882,44 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
- 	 * resolution (think about autofs) and thus deadlocks could arise.
- 	 */
- 	if (cmds == Q_QUOTAON) {
--		ret = user_path_at(AT_FDCWD, addr, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &path);
-+		ret = user_path_at(AT_FDCWD, addr,
-+				   LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-+				   &file_path);
- 		if (ret)
--			pathp = ERR_PTR(ret);
-+			file_pathp = ERR_PTR(ret);
- 		else
--			pathp = &path;
-+			file_pathp = &file_path;
- 	}
- 
--	sb = quotactl_block(special, cmds);
-+	if (q_path)
-+		sb = quotactl_path(special, cmds, &sb_path);
-+	else
-+		sb = quotactl_block(special, cmds);
-+
- 	if (IS_ERR(sb)) {
- 		ret = PTR_ERR(sb);
- 		goto out;
- 	}
- 
--	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
-+	ret = do_quotactl(sb, type, cmds, id, addr, file_pathp);
-+
-+	if (q_path) {
-+		if (quotactl_cmd_onoff(cmd))
-+			up_write(&sb->s_umount);
-+		else
-+			up_read(&sb->s_umount);
-+
-+		path_put(&sb_path);
-+	} else {
-+		if (!quotactl_cmd_onoff(cmds))
-+			drop_super(sb);
-+		else
-+			drop_super_exclusive(sb);
-+	}
- 
--	if (!quotactl_cmd_onoff(cmds))
--		drop_super(sb);
--	else
--		drop_super_exclusive(sb);
- out:
--	if (pathp && !IS_ERR(pathp))
--		path_put(pathp);
-+	if (file_pathp && !IS_ERR(file_pathp))
-+		path_put(file_pathp);
- 	return ret;
- }
- 
-diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
-index f17c9636a859..e1787c0df601 100644
---- a/include/uapi/linux/quota.h
-+++ b/include/uapi/linux/quota.h
-@@ -71,6 +71,7 @@
- #define Q_GETQUOTA 0x800007	/* get user quota structure */
- #define Q_SETQUOTA 0x800008	/* set user quota structure */
- #define Q_GETNEXTQUOTA 0x800009	/* get disk limits and usage >= ID */
-+#define Q_PATH     0x400000	/* quotactl special arg contains mount path */
- 
- /* Quota format type IDs */
- #define	QFMT_VFS_OLD 1
--- 
-2.25.0
+o/p of a.out with patch (both point 2.a & 2.b could be seen)
+=======================
+riteshh-> ./a.out
+logical: [       0..       7] phys: 122802736..122802743 flags: 0x801 tot: 8
+(0) extent flag = 2049
 
+FYI - In test_fiemap_diff.c test we had 
+a. fm_extent_count = 1
+b. fm_start = 0
+c. fm_length = 4K
+Whereas when we change fm_extent_count = 32, then we don't see any difference.
+
+e.g. output for above difference listed in point 1.b
+====================================================
+
+o/p without patch (block no returned for unwritten block as well)
+=========Testing IOCTL FIBMAP=========
+File size = 16384, blkcnt = 4, blocksize = 4096
+  0   41526422
+  1   41526423
+  2   41590299
+  3   41590300
+
+o/p with patch (0 returned for unwritten block)
+=========Testing IOCTL FIBMAP=========
+File size = 16384, blkcnt = 4, blocksize = 4096
+  0          0          0
+  1          0          0
+  2   15335942      29953
+  3   15335943      29953
+
+
+Summary:-
+========
+Due to some of the observational differences to user, listed above,
+requesting to please help with a careful review in moving this to iomap.
+Digging into some older threads, it looks like these differences should be fine,
+since the same tools have been working fine with XFS (which uses iomap based
+implementation) [1]
+Also as Ted suggested in [3]: Fiemap & bmap spec could be made based on the ext4
+implementation. But since all the tools also work with xfs which uses iomap
+based fiemap, so we should be good there.
+
+
+References of some previous discussions:
+=======================================
+[1]: https://www.spinics.net/lists/linux-fsdevel/msg128370.html
+[2]: https://www.spinics.net/lists/linux-fsdevel/msg127675.html
+[3]: https://www.spinics.net/lists/linux-fsdevel/msg128368.html
+[4]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test_fiemap_diff.c
+[RFCv1]: https://www.spinics.net/lists/linux-ext4/msg67077.html 
+
+
+Ritesh Harjani (4):
+  ext4: Add IOMAP_F_MERGED for non-extent based mapping
+  ext4: Optimize ext4_ext_precache for 0 depth
+  ext4: Move ext4 bmap to use iomap infrastructure.
+  ext4: Move ext4_fiemap to use iomap infrastructure
+
+ fs/ext4/extents.c | 288 +++++++---------------------------------------
+ fs/ext4/inline.c  |  41 -------
+ fs/ext4/inode.c   |   6 +-
+ 3 files changed, 49 insertions(+), 286 deletions(-)
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.21.0
+
