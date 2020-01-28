@@ -2,177 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48BD814B097
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 08:58:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B295214B112
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 09:46:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbgA1H6r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 02:58:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725825AbgA1H6r (ORCPT
+        id S1725988AbgA1Iqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 03:46:34 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45143 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgA1Iqe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 02:58:47 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00S7wbou052120
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 02:58:46 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xrhv1c40f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 02:58:45 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 28 Jan 2020 07:58:43 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 Jan 2020 07:58:34 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00S7wWmZ48627784
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Jan 2020 07:58:32 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0E85A4040;
-        Tue, 28 Jan 2020 07:58:32 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC979A404D;
-        Tue, 28 Jan 2020 07:58:31 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.41])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 28 Jan 2020 07:58:31 +0000 (GMT)
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches as
- usercopy caches
-To:     Kees Cook <keescook@chromium.org>, Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-References: <1515636190-24061-1-git-send-email-keescook@chromium.org>
- <1515636190-24061-10-git-send-email-keescook@chromium.org>
- <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
- <201911121313.1097D6EE@keescook> <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
- <202001271519.AA6ADEACF0@keescook>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Date:   Tue, 28 Jan 2020 08:58:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 28 Jan 2020 03:46:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id f25so923899ljg.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 00:46:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=unikie-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=SDBsxgSpYZSFr1ROXj8dVGyZsGMgCVC//9YDGkSiWcg=;
+        b=HGnELdt8HlrpzP4ndtkJ7Wvh1GyMe5vSQZx7pSdGLhEAvOZ1fZ8fqHnMvplCAV7ik1
+         dNp+bNgUu02Shms45KKKjf+lTu626ec+zLwZlvuNoomFnCGG5CC3cvV/fDs8cWcJsCuV
+         XXnXvqPVfO+bpsK3darslnkbK0Gm4aPPcmn+4A8NpeLq0PVOr0kTgCAUlmhOl156CwVY
+         PFUHG849UCeVpY6AubiyU70BoZp+xeRzOV7ltcTJvE3iggfVWZCoevVWztxsg/+Y7BrY
+         dl520z2P4oZkghEPx6Sg+eX47RW2CG24QdALI+s6XLrBz3nQ7zDOXcWVCnAoEp10UA+p
+         oz2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version:content-transfer-encoding;
+        bh=SDBsxgSpYZSFr1ROXj8dVGyZsGMgCVC//9YDGkSiWcg=;
+        b=Erh2Si1N6H3k2ArnHxalnPw2fCsoXOuDJAUrhOgEN4zov1KOU5ggrCUTZmj9jF1Z2h
+         qVRcYGNX/8DlZdqagqprWlVetAuVCtn1arL1wCKWDJNEpk49KD4+O4Fo2crKJMpCFd4e
+         knFsD3ejXIzTXiVmDjD8gdGhoS2fWMxatnX8rYmfzdPOT/+xJiq7ib2rKNiA4NMBBoWG
+         7z7GLL0NjjaSKXtTWRO1ianfC94Cpo+fOqRia0bC5LogQEzkZGaHZ7A24XpSuFVQ6T5G
+         HGBA1TCuqjcN97+cABvfSV2DkDddSq7saqGyWTpZpWubbARJeqyU/Bav6L7t/uSveg9S
+         qY4w==
+X-Gm-Message-State: APjAAAWAzqstMSXLWdHCLhydEpWVcmRFmJnDtrgJDxzD+tYGgwert5sI
+        hCyxbwo2vDOG0QzN3GX10XQbVg==
+X-Google-Smtp-Source: APXvYqyt2aBzRqqHZepJ45mwWclGHx9VYi3zavQa87nf+WeEgvwZg1USKMiIA3JW/8FYm7eanS1N1g==
+X-Received: by 2002:a2e:818e:: with SMTP id e14mr12558317ljg.2.1580201190711;
+        Tue, 28 Jan 2020 00:46:30 -0800 (PST)
+Received: from GL-434 ([109.204.235.119])
+        by smtp.gmail.com with ESMTPSA id f16sm9231922ljn.17.2020.01.28.00.46.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Jan 2020 00:46:29 -0800 (PST)
+From:   jouni.hogander@unikie.com (Jouni =?utf-8?Q?H=C3=B6gander?=)
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>, syzkaller@googlegroups.com
+Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
+References: <20191127203114.766709977@linuxfoundation.org>
+        <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
+        <20191128073623.GE3317872@kroah.com>
+        <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com>
+        <20191129085800.GF3584430@kroah.com> <87sgk8szhc.fsf@unikie.com>
+        <alpine.DEB.2.21.2001261236430.4933@felia> <87h80h2suv.fsf@unikie.com>
+        <alpine.DEB.2.21.2001272145260.2951@felia>
+Date:   Tue, 28 Jan 2020 10:46:29 +0200
+In-Reply-To: <alpine.DEB.2.21.2001272145260.2951@felia> (Lukas Bulwahn's
+        message of "Mon, 27 Jan 2020 22:16:04 +0100 (CET)")
+Message-ID: <874kwg2cka.fsf@unikie.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <202001271519.AA6ADEACF0@keescook>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012807-4275-0000-0000-0000039B95C8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012807-4276-0000-0000-000038AFAC92
-Message-Id: <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-28_02:2020-01-24,2020-01-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 clxscore=1011 phishscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001280066
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
 
+> On Mon, 27 Jan 2020, Jouni H=C3=B6gander wrote:
+>
+>> Lukas Bulwahn <lukas.bulwahn@gmail.com> writes:
+>>=20
+>> > On Wed, 22 Jan 2020, Jouni H=C3=B6gander wrote:
+>> >
+>> >> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+>> >> >> > Now queued up, I'll push out -rc2 versions with this fix.
+>> >> >> >
+>> >> >> > greg k-h
+>> >> >>=20
+>> >> >> We have also been informed about another regression these two comm=
+its
+>> >> >> are causing:
+>> >> >>=20
+>> >> >> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@=
+I-love.SAKURA.ne.jp/
+>> >> >>=20
+>> >> >> I suggest to drop these two patches from this queue, and give us a
+>> >> >> week to shake out the regressions of the change, and once ready, we
+>> >> >> can include the complete set of fixes to stable (probably in a wee=
+k or
+>> >> >> two).
+>> >> >
+>> >> > Ok, thanks for the information, I've now dropped them from all of t=
+he
+>> >> > queues that had them in them.
+>> >> >
+>> >> > greg k-h
+>> >>=20
+>> >> I have now run more extensive Syzkaller testing on following patches:
+>> >>=20
+>> >> cb626bf566eb net-sysfs: Fix reference count leak
+>> >> ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
+>> >> e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
+>> >> 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
+>> >> b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_a=
+dd_kobject
+>> >>=20
+>> >> These patches are fixing couple of memory leaks including this one fo=
+und
+>> >> by Syzbot: https://syzkaller.appspot.com/bug?extid=3Dad8ca40ecd77896d=
+51e2
+>> >>=20
+>> >> I can reproduce these memory leaks in following stable branches: 4.14,
+>> >> 4.19, and 5.4.
+>> >>=20
+>> >> These are all now merged into net/master tree and based on my testing
+>> >> they are ready to be taken into stable branches as well.
+>> >>
+>> >
+>> > + syzkaller list
+>> > Jouni et. al, please drop Linus in further responses; Linus, it was wr=
+ong=20
+>> > to add you to this thread in the first place (reason is explained belo=
+w)
+>> >
+>> > Jouni, thanks for investigating.
+>> >
+>> > It raises the following questions and comments:
+>> >
+>> > - Does the memory leak NOT appear on 4.9 and earlier LTS branches (or =
+did=20
+>> > you not check that)? If it does not appear, can you bisect it with the=
+=20
+>> > reproducer to the commit between 4.14 and 4.9?
+>>=20
+>> I tested and these memory leaks are not reproucible in 4.9 and earlier.
+>>=20
+>> >
+>> > - Do the reproducers you found with your syzkaller testing show the sa=
+me=20
+>> > behaviour (same bisection) as the reproducers from syzbot?
+>>=20
+>> Yes, they are same.
+>>=20
+>> >
+>> > - I fear syzbot's automatic bisection on is wrong, and Linus' commit=20
+>> > 0e034f5c4bc4 ("iwlwifi: fix mis-merge that breaks the driver") is not =
+to=20
+>> > blame here; that commit did not cause the memory leak, but fixed some=
+=20
+>> > unrelated issue that simply confuses syzbot's automatic bisection.
+>> >
+>> > Just FYI: Dmitry Vyukov's evaluation of the syzbot bisection shows tha=
+t=20
+>> > about 50% are wrong, e.g., due to multiple bugs being triggered with o=
+ne=20
+>> > reproducer and the difficulty of automatically identifying them of bei=
+ng=20
+>> > different due to different root causes (despite the smart heuristics o=
+f=20
+>> > syzkaller & syzbot). So, to identify the actual commit on which the me=
+mory=20
+>> > leak first appeared, you need to bisect manually with your own judgeme=
+nt=20
+>> > if the reported bug stack trace fits to the issue you investigating. O=
+r=20
+>> > you use syzbot's automatic bisection but then with a reduced kernel co=
+nfig=20
+>> > that cannot be confused by other issues. You might possibly also hit a=
+=20
+>> > "beginning of time" in your bisection, where KASAN was simply not=20
+>> > supported, then the initially causing commit can simply not determined=
+ by=20
+>> > bisection with the reproducer and needs some code inspection and=20
+>> > archaeology with git. Can you go ahead try to identify the correct com=
+mit=20
+>> > for this issue?
+>>=20
+>> These two commits (that are not in 4.9 and earlier) are intorducing thes=
+e leaks:
+>>=20
+>> commit e331c9066901dfe40bea4647521b86e9fb9901bb
+>> Author: YueHaibing <yuehaibing@huawei.com>
+>> Date:   Tue Mar 19 10:16:53 2019 +0800
+>>=20
+>>     net-sysfs: call dev_hold if kobject_init_and_add success
+>>=20=20=20=20=20
+>>     [ Upstream commit a3e23f719f5c4a38ffb3d30c8d7632a4ed8ccd9e ]
+>>=20=20=20=20=20
+>>     In netdev_queue_add_kobject and rx_queue_add_kobject,
+>>     if sysfs_create_group failed, kobject_put will call
+>>     netdev_queue_release to decrease dev refcont, however
+>>     dev_hold has not be called. So we will see this while
+>>     unregistering dev:
+>>=20=20=20=20=20
+>>     unregister_netdevice: waiting for bcsh0 to become free. Usage count =
+=3D -1
+>>=20=20=20=20=20
+>>     Reported-by: Hulk Robot <hulkci@huawei.com>
+>>     Fixes: d0d668371679 ("net: don't decrement kobj reference count on i=
+nit fail
+>> ure")
+>>     Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>>     Signed-off-by: David S. Miller <davem@davemloft.net>
+>>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>=20
+>> commit d0d6683716791b2a2761a1bb025c613eb73da6c3
+>> Author: stephen hemminger <stephen@networkplumber.org>
+>> Date:   Fri Aug 18 13:46:19 2017 -0700
+>>=20
+>>     net: don't decrement kobj reference count on init failure
+>>=20=20=20=20=20
+>>     If kobject_init_and_add failed, then the failure path would
+>>     decrement the reference count of the queue kobject whose reference
+>>     count was already zero.
+>>=20=20=20=20=20
+>>     Fixes: 114cf5802165 ("bql: Byte queue limits")
+>>     Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+>>     Signed-off-by: David S. Miller <davem@davemloft.net>
+>>=20
+>
+> But, it seems that we now have just a long sequences of fix patches.
+>
+> This commit from 2011 seems to be the initial buggy one:
+>
+> commit 114cf5802165ee93e3ab461c9c505cd94a08b800
+> Author: Tom Herbert <therbert@google.com>
+> Date:   Mon Nov 28 16:33:09 2011 +0000
+>
+>     bql: Byte queue limits
+>
+> And then we just have fixes over fixes:
+>
+> 114cf5802165ee93e3ab461c9c505cd94a08b800
+> fixed by d0d6683716791b2a2761a1bb025c613eb73da6c3
+> fixed by a3e23f719f5c4a38ffb3d30c8d7632a4ed8ccd9e
+> fixed by the sequence of your five patches, mentioned above
+>
+>
+> If that is right, we should be able to find a reproducer with syzkaller o=
+n=20
+> the versions before d0d668371679 ("net: don't decrement kobj reference=20
+> count on init failure") with fault injection enabled or some manually=20
+> injected fault by modifying the source code to always fail on init to=20
+> really trigger the init failure, and see the reference count go below=20
+> zero.
+>
+> All further issues should also have reproducers found with syzkaller.
+> If we have a good feeling on the reproducers and this series of fixes=20
+> really fixed the issue now here for all cases, we should suggest to=20
+> backport all of the fixes to 4.4 and 4.9.
+>
+> We should NOT just have Greg pick up a subset of the patches and backport=
+=20
+> them to 4.4 and 4.9, that will likely break more than it fixes.
 
-On 28.01.20 00:19, Kees Cook wrote:
-> On Thu, Jan 23, 2020 at 09:14:20AM +0100, Jiri Slaby wrote:
->> On 14. 11. 19, 22:27, Kees Cook wrote:
->>> On Tue, Nov 12, 2019 at 01:21:54PM -0800, Kees Cook wrote:
->>>> How is iucv the only network protocol that has run into this? Do others
->>>> use a bounce buffer?
->>>
->>> Another solution would be to use a dedicated kmem cache (instead of the
->>> shared kmalloc dma one)?
->>
->> Has there been any conclusion to this thread yet? For the time being, we
->> disabled HARDENED_USERCOPY on s390...
->>
->> https://lore.kernel.org/kernel-hardening/9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz/
-> 
-> I haven't heard anything new. What did people think of a separate kmem
-> cache?
-> 
+Yes, this is the case.
 
-Adding Julian and Ursula. A separate kmem cache for iucv might be indeed
-a solution for the user hardening issue.
-On the other hand not marking the DMA caches still seems questionable.
+>
+> Jouni, did you see Greg's bot inform you that he would pick up your lates=
+t=20
+> patch for 4.4 and 4.9? Please respond to those emails to make sure a=20
+> complete set of patches is picked up, which we tested with all those=20
+> intermediate reproducers and an extensive syzkaller run hitting the=20
+> net-sysfs interface (e.g., by configuring the corpus and check
+> coverage).
 
-For reference
-https://bugzilla.suse.com/show_bug.cgi?id=1156053
-the kernel hardening now triggers a warning.
+I already responded to not pick these patches into 4.4 and 4.9.=20
 
+>
+> If you cannot do this testing for 4.4 and 4.9 now quickly (you=20
+> potentially have less than 24 hours), we should hold those new patches=20
+> back for 4.4 and 4.9, as none of the fixes seem to be applied at all righ=
+t=20
+> now and the users have not complained yet on 4.4 and 4.9.
+> Once testing of the whole fix sequence is done, we request to backport al=
+l=20
+> patches at once for 4.4 and 4.9.
+
+If we want to pick whole set including older patches I think I need more
+time for identifying which older patches (apart from these two I
+identified causing the memory leak) should be taken in and for testing.
+
+>
+> Lukas
+
+BR,
+
+Jouni H=C3=B6gander
