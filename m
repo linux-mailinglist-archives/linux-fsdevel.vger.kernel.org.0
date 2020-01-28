@@ -2,139 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A276B14B28F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 11:28:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7597114B2A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 11:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725959AbgA1K2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 05:28:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46045 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgA1K2T (ORCPT
+        id S1725926AbgA1KcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 05:32:21 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:52006 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725922AbgA1KcV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:28:19 -0500
-Received: by mail-lj1-f196.google.com with SMTP id f25so1230831ljg.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 02:28:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=unikie-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=R/hB3d9WV1ZfOuGwum6uaHEPLLo7pAkJ9wkfhb8ryno=;
-        b=priCxcB8LwrgDL3P9hJ8Fhmz7cxKGIy5qUbauEytJmHyUWYu7pXT5HSujg53hLD3Lr
-         krD7ENJZwPzwkJrsrHAK6YqYhHgULLtAv3mK/hHiODmlK32heqyLinOp00IRwaIuXApL
-         r2IK4w3Ajxik/4eEu8URX3EjVRQlMxzkY/UpVyhmwgZAszAKja9SosTyp8ojYQMuoUn0
-         cSNpivomMSRy5LkkEMTLTVtyJgXrq68NQ6QCCrfix2uFvQ4B4DMTtx0XOoo6Fk0Q4F37
-         Yc6wsBtUuRXwz3SS71tWgFCnxW+4bCcSWOKSvBjtE13pMU9IvLjbV3IrIpat5Uq1UorZ
-         0E6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version:content-transfer-encoding;
-        bh=R/hB3d9WV1ZfOuGwum6uaHEPLLo7pAkJ9wkfhb8ryno=;
-        b=NP6o4BGBhKQbAWI0/tZtRA/z4BShdnhh1GQ4GWKKMZcnMhQp+VSHrsqejCa54jXUds
-         qqb/FPdI7MfbxqseXh3+9vNJg/HEWue6BwBPo5907zmZuqitdMuyXTY1OnB6zhUF12l7
-         UzSvgQvSVMRXpAsU31t8F0NCw6HnB+OAe/llgGQpUfqZxUP1WzAuh9Ug44k36nVmbbuH
-         We/6axFVAHFOKj9+6teNrYLn/mwoBKnOQRngSiTCe152USui0rKkIzoc3jdO+tEgPxXd
-         KzcRZhrAXML047d5dzo+zSip/mtHwmx1URZqXVZuYUXHAp1GL4E+17/ZP47QTNge92h1
-         Kxbg==
-X-Gm-Message-State: APjAAAXLrfpgZQ8hTyYng5cNU3vDPyiHCQcEu6W1N8NuuBioua29Xm4z
-        RwJ0RdhH/MKE4CXKDPqgZsBK2w==
-X-Google-Smtp-Source: APXvYqz1H+G5sAa2YK3jJrrb2gl81iOk9gR7ql0r3PFxcDlQk+/3WQL3GKFf6/h+4lgSCFz2FboK2w==
-X-Received: by 2002:a2e:9c04:: with SMTP id s4mr13050425lji.147.1580207297152;
-        Tue, 28 Jan 2020 02:28:17 -0800 (PST)
-Received: from GL-434 ([109.204.235.119])
-        by smtp.gmail.com with ESMTPSA id d11sm9687741lfj.3.2020.01.28.02.28.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Jan 2020 02:28:16 -0800 (PST)
-From:   jouni.hogander@unikie.com (Jouni =?utf-8?Q?H=C3=B6gander?=)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>, syzkaller@googlegroups.com
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-References: <20191127203114.766709977@linuxfoundation.org>
-        <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
-        <20191128073623.GE3317872@kroah.com>
-        <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com>
-        <20191129085800.GF3584430@kroah.com> <87sgk8szhc.fsf@unikie.com>
-Date:   Tue, 28 Jan 2020 12:28:15 +0200
-In-Reply-To: <87sgk8szhc.fsf@unikie.com> ("Jouni \=\?utf-8\?Q\?H\=C3\=B6gander\?\=
- \=\?utf-8\?Q\?\=22's\?\= message of "Wed,
-        22 Jan 2020 09:48:47 +0200")
-Message-ID: <87zhe727uo.fsf@unikie.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 28 Jan 2020 05:32:21 -0500
+Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id EB7BD1C28C7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 10:32:18 +0000 (GMT)
+Received: (qmail 29623 invoked from network); 28 Jan 2020 10:32:18 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2020 10:32:18 -0000
+Date:   Tue, 28 Jan 2020 10:32:16 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
+ stack on the same CPU
+Message-ID: <20200128103216.GA3466@techsingularity.net>
+References: <20200128100643.3016-1-hdanton@sina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200128100643.3016-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Greg,
-
-jouni.hogander@unikie.com (Jouni H=C3=B6gander) writes:
-
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
->>> > Now queued up, I'll push out -rc2 versions with this fix.
->>> >
->>> > greg k-h
->>>=20
->>> We have also been informed about another regression these two commits
->>> are causing:
->>>=20
->>> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@I-lov=
-e.SAKURA.ne.jp/
->>>=20
->>> I suggest to drop these two patches from this queue, and give us a
->>> week to shake out the regressions of the change, and once ready, we
->>> can include the complete set of fixes to stable (probably in a week or
->>> two).
->>
->> Ok, thanks for the information, I've now dropped them from all of the
->> queues that had them in them.
->>
->> greg k-h
+On Tue, Jan 28, 2020 at 06:06:43PM +0800, Hillf Danton wrote:
+> 
+> On Mon, 27 Jan 2020 14:36:08 +0000 Mel Gorman wrote:
+> > Commit 8ab39f11d974 ("xfs: prevent CIL push holdoff in log
+> > recovery") changed from using bound workqueues to using unbound
+> > workqueues. Functionally this makes sense but it was observed at the time
+> > that the dbench performance dropped quite a lot and CPU migrations were
+> > excessively high even when there are plenty of idle CPUs.
+> > 
+> > The pattern of the task migration is straight-forward. With XFS, an IO
+> > issuer may delegate work to a kworker which wakes on the same CPU. On
+> > completion of the work, it wakes the task, finds that the previous CPU
+> > is busy (because the kworker is still running on it) and migrates the
+> > task to the next idle CPU. The task ends up migrating around all CPUs
+> > sharing a LLC at high frequency. This has negative implications both in
+> > commication costs and power management.  mpstat confirmed that at low
+> > thread counts that all CPUs sharing an LLC has low level of activity.
+> > 
+> > The impact of this problem is related to the number of CPUs sharing an LLC.
+> > 
 >
-> I have now run more extensive Syzkaller testing on following patches:
->
-> cb626bf566eb net-sysfs: Fix reference count leak
-> ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
-> e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
-> 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
-> b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_k=
-object
->
-> These patches are fixing couple of memory leaks including this one found
-> by Syzbot: https://syzkaller.appspot.com/bug?extid=3Dad8ca40ecd77896d51e2
->
-> I can reproduce these memory leaks in following stable branches: 4.14,
-> 4.19, and 5.4.
->
-> These are all now merged into net/master tree and based on my testing
-> they are ready to be taken into stable branches as well.
->
-> Best Regards,
->
-> Jouni H=C3=B6gander
+> Are you trying to fix a problem of cache affinity?
+> 
 
-These four patches are still missing from 4.14 and 4.19 branches:
+No, I'm simply stating that the search space for select_idle_sibling
+matters.
 
-ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
-e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
-48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
-b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_kob=
-ject
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index fe4e0d775375..76df439aff76 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -5912,6 +5912,19 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+> >  	    (available_idle_cpu(prev) || sched_idle_cpu(prev)))
+> >  		return prev;
+> >  
+> > +	/*
+> > +	 * Allow a per-cpu kthread to stack with the wakee if the
+> > +	 * kworker thread and the tasks previous CPU are the same.
+> > +	 * The assumption is that the wakee queued work for the
+> > +	 * per-cpu kthread that is now complete and the wakeup is
+> > +	 * essentially a sync wakeup.
+> > +	 */
+> > +	if (is_per_cpu_kthread(current) &&
+> > +	    prev == smp_processor_id() &&
+> 
+> Looks like cache affinity is not your target.
 
-Could you please consider taking them in or let me know if you want some
-further activities from my side?
+It's not, at least not LLC. L1 is a partial consideration.
 
-BR,
+> Wondering why it does not work to select a cpu sharing cache with prev
+> if strong relation exists between waker and wakee.
+> 
 
-Jouni H=C3=B6gander
+Functionally it works, it's just slow. There is a cost to migration and
+a cost to exiting from idle state and ramping up the CPU frequency.
+
+> > +	    this_rq()->nr_running <= 1) {
+> > +		return prev;
+> > +	}
+> > +
+> >  	/* Check a recently used CPU as a potential idle candidate: */
+> >  	recent_used_cpu = p->recent_used_cpu;
+> >  	if (recent_used_cpu != prev &&
+> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> > index 1a88dc8ad11b..5876e6ba5903 100644
+> > --- a/kernel/sched/sched.h
+> > +++ b/kernel/sched/sched.h
+> > @@ -2479,3 +2479,16 @@ static inline void membarrier_switch_mm(struct rq *rq,
+> >  {
+> >  }
+> >  #endif
+> > +
+> > +#ifdef CONFIG_SMP
+> > +static inline bool is_per_cpu_kthread(struct task_struct *p)
+> > +{
+> > +	if (!(p->flags & PF_KTHREAD))
+> > +		return false;
+> 
+> Suspect you need PF_KTHREAD instead of PF_WQ_WORKER. Here is a
+> small helper and feel free to pick it up if it makes a sense.
+> 
+
+Did you mean to switch that around? Either way, I moved an existing helper
+that is already used to detect this particular situation. While it works
+when it's made specific to a workqueue and open-coding it, there was no
+clear reason to narrow the conditions further.
+
+-- 
+Mel Gorman
+SUSE Labs
