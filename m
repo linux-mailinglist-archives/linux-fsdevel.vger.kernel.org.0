@@ -2,218 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF7614BD13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 16:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E32B814BDA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 17:26:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgA1PkL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 10:40:11 -0500
-Received: from outbound-smtp01.blacknight.com ([81.17.249.7]:60219 "EHLO
-        outbound-smtp01.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726141AbgA1PkK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 10:40:10 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp01.blacknight.com (Postfix) with ESMTPS id 999BB988EE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 15:40:08 +0000 (GMT)
-Received: (qmail 23247 invoked from network); 28 Jan 2020 15:40:08 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2020 15:40:08 -0000
-Date:   Tue, 28 Jan 2020 15:40:06 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Phil Auld <pauld@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sched, fair: Allow a per-cpu kthread waking a task to
- stack on the same CPU
-Message-ID: <20200128154006.GD3466@techsingularity.net>
+        id S1726211AbgA1QZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 11:25:55 -0500
+Received: from mout.web.de ([212.227.15.3]:33989 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726007AbgA1QZz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jan 2020 11:25:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1580228693;
+        bh=5zEqEcZAWVjGp8xkcQEhydEZ+GyThYQytTy9UD6ojXA=;
+        h=X-UI-Sender-Class:Cc:Subject:From:To:Date;
+        b=UE1JPMiCsCDfislzMWPYW+KkuOCy8pafU3ju0CIluG40j2yTx5sEdms6mkaWs5Lj9
+         4uPYN2UIGIHu5mmeWsT2GwEGl678rQoz4AhqDKrNgQDklxRKKvPs+EHkVJbM0FGFmS
+         dHcIhcj+GEi7EGVBnTZ6ieqtiH3397Z9X9XgHTxU=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.131.179]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lj2XW-1jZg6d0OoI-00dIzo; Tue, 28
+ Jan 2020 17:24:53 +0100
+Cc:     linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: Re: [PATCH v9 1/2] fs: New zonefs file system
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Message-ID: <1928f213-f6c8-156f-a968-6d0603a7656c@web.de>
+Date:   Tue, 28 Jan 2020 17:24:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:F3L4Sg8wKTShzAEVuteP5QIgWQ5qNzSUMXawHy2itbq8+p+oRcd
+ BTerA7YNbX9/H6xgQBmQhcNimuKGD55s+Kb1CgxVuVwyoPYqZIKT2Bg4ewIGU8BBaAoabJN
+ /otvC7i33lMk8FV8RJIzU9UjnvmMPLUtc68CXwktyJz7ycIchN/WM39i32jZW45uQ00DaVO
+ MeHanePewzYxYlUIE/0ZA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KFn36JFlvnE=:RqeyIl5POgkPWZc6l224tm
+ Yk0tzgN0G0KT1Lv+5upqzRJGkBf7x1uLtDROA6miqU0N4733kyk9E9CJ/8InB+gcR7auma5is
+ q+nrTgHzwPIdpPWSgX+r+RAnpkwwFus9sxsSylFHVWZvUnYV34SR3n3UrmuHUVoGpbGJmsZNR
+ uQVFgOGRwNUzkRI4PBbKFoROhEbRFoHjK6w5MVfVGceUTCJ0Uhki4P4A7rAwQgbazaw7JCVML
+ D7RjfrBVvTP3gIkrJSsqNHQLIP3jXCl/wLeSXJFZnx05jcOwbBK/enNz9FbyyHykDa15zZ2FL
+ /KUYJTNcEjhH98LvdCgx4BIK8tYk4Rg2aOd82OdE4FkTI/dkcKQd/adecDqDPpjQUzl/sWgqw
+ ZClvTod8RiMbN1mx0WGQ5FILur9FG0q4iACqNj+e2npTdPmSpUuWK+xEU3nzhnnYBCx1838Is
+ KD3af2mJZg2BDvJiCiB1hEWWhx1kjoTTWq5bqA/CMUQZtsspqVeL/aZ2diOLETW1ptf+FU8s2
+ qvSVc2fVkHC/M3mG4IUFmVB02IudIx+OKDkBtxwkpqyP5Zss1zLx2qyyiAryMSDeNxp98dFWy
+ Pu0KJSrP41jLV19BwADyuk+s5yY4VE4kDXsL7yAegy90TyEFhZ1J9RD8QfxnJukGWzO06sLk3
+ ObxjmICYb9vVcECnVRmuj5QCX0yBEStmTkVU62uwFnQyMQXKZnEy79z/4CvG8hMs0qv95icKP
+ PyD0cKv4eFEzsyNAysvYX+XxSffQZLeT798S/UOenwwRgyPyeK/q7N5EpXmrOCXYXSRzPCFu3
+ Qf6y/oxSk1oHee2be/l/PWkSuT45UXdfRskP1h4nArTmtepcDjUIAfVQNc7lQisfA/55iTANQ
+ BiV2JAy0xBX/6WMn7iNDlXK2luO2X3kdOcjojQvszRuZIhxCLfqbBeMcsXDfqi7YsD4cJyQ6A
+ HAU0rE1MZERX2fDmbPgFK1wK+wKZMCZPFSeq+D8ZTIBT5wWQ0O5+rxmhPArotgRc/IZeagvjY
+ OZ78y/wSDHcfJ9eq729A3zxWKt9tF6B7teda9pOolYxLO+jhCZ1uwPd+qt+cTHuyMQ5FYcM2P
+ ziEzjf7yf4UCT2gyljh/5VuB7Z+hNY3OPJGSzDJnOjCBthkfOlHsz7BhZ4/n0GsFXYu94hXli
+ xNQJhj+tIDwl6JJP+eFWvhu20WBAkua9uzH9uro/PE8LU36P9mt1oHIQWcOjhKOAs9mHASjV9
+ glXEB8W8Q7hi+jkYk
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 8ab39f11d974 ("xfs: prevent CIL push holdoff in log
-recovery") changed from using bound workqueues to using unbound
-workqueues. Functionally this makes sense but it was observed at the
-time that the dbench performance dropped quite a lot and CPU migrations
-were increased.
+=E2=80=A6
+> +++ b/fs/zonefs/Kconfig
+=E2=80=A6
+> +	help
+> +	  zonefs is a simple File System which exposes zones of a zoned block
 
-The current pattern of the task migration is straight-forward. With XFS,
-an IO issuer delegates work to xlog_cil_push_work on an unbound kworker.
-This runs on a nearby CPU and on completion, dbench wakes up on its old CPU
-as it is still idle and no migration occurs. dbench then queues the real
-IO on the blk_mq_requeue_work work item which runs on a bound kworker
-which is forced to run on the same CPU as dbench. When IO completes,
-the bound kworker wakes dbench but as the kworker is a bound but,
-real task, the CPU is not considered idle and dbench gets migrated by
-select_idle_sibling to a new CPU. dbench may ping-pong between two CPUs
-for a while but ultimately it starts a round-robin of all CPUs sharing
-the same LLC. High-frequency migration on each IO completion has poor
-performance overall. It has negative implications both in commication
-costs and power management. mpstat confirmed that at low thread counts
-that all CPUs sharing an LLC has low level of activity.
+Does the capitalisation matter here?
+Would the spelling =E2=80=9CZonefs is a simple file system which =E2=80=A6=
+=E2=80=9D be appropriate?
 
-Note that even if the CIL patch was reverted, there still would
-be migrations but the impact is less noticeable. It turns out that
-individually the scheduler, XFS, blk-mq and workqueues all made sensible
-decisions but in combination, the overall effect was sub-optimal.
-
-This patch special cases the IO issue/completion pattern and allows
-a bound kworker waker and a task wakee to stack on the same CPU if
-there is a strong chance they are directly related. The expectation
-is that the kworker is likely going back to sleep shortly. This is not
-guaranteed as the IO could be queued asynchronously but there is a very
-strong relationship between the task and kworker in this case that would
-justify stacking on the same CPU instead of migrating. There should be
-few concerns about kworker starvation given that the special casing is
-only when the kworker is the waker.
-
-DBench on XFS
-MMTests config: io-dbench4-async modified to run on a fresh XFS filesystem
-
-UMA machine with 8 cores sharing LLC
-                          5.5.0-rc7              5.5.0-rc7
-                  tipsched-20200124           kworkerstack
-Amean     1        22.63 (   0.00%)       20.54 *   9.23%*
-Amean     2        25.56 (   0.00%)       23.40 *   8.44%*
-Amean     4        28.63 (   0.00%)       27.85 *   2.70%*
-Amean     8        37.66 (   0.00%)       37.68 (  -0.05%)
-Amean     64      469.47 (   0.00%)      468.26 (   0.26%)
-Stddev    1         1.00 (   0.00%)        0.72 (  28.12%)
-Stddev    2         1.62 (   0.00%)        1.97 ( -21.54%)
-Stddev    4         2.53 (   0.00%)        3.58 ( -41.19%)
-Stddev    8         5.30 (   0.00%)        5.20 (   1.92%)
-Stddev    64       86.36 (   0.00%)       94.53 (  -9.46%)
-
-NUMA machine, 48 CPUs total, 24 CPUs share cache
-                           5.5.0-rc7              5.5.0-rc7
-                   tipsched-20200124      kworkerstack-v1r2
-Amean     1         58.69 (   0.00%)       30.21 *  48.53%*
-Amean     2         60.90 (   0.00%)       35.29 *  42.05%*
-Amean     4         66.77 (   0.00%)       46.55 *  30.28%*
-Amean     8         81.41 (   0.00%)       68.46 *  15.91%*
-Amean     16       113.29 (   0.00%)      107.79 *   4.85%*
-Amean     32       199.10 (   0.00%)      198.22 *   0.44%*
-Amean     64       478.99 (   0.00%)      477.06 *   0.40%*
-Amean     128     1345.26 (   0.00%)     1372.64 *  -2.04%*
-Stddev    1          2.64 (   0.00%)        4.17 ( -58.08%)
-Stddev    2          4.35 (   0.00%)        5.38 ( -23.73%)
-Stddev    4          6.77 (   0.00%)        6.56 (   3.00%)
-Stddev    8         11.61 (   0.00%)       10.91 (   6.04%)
-Stddev    16        18.63 (   0.00%)       19.19 (  -3.01%)
-Stddev    32        38.71 (   0.00%)       38.30 (   1.06%)
-Stddev    64       100.28 (   0.00%)       91.24 (   9.02%)
-Stddev    128      186.87 (   0.00%)      160.34 (  14.20%)
-
-Dbench has been modified to report the time to complete a single "load
-file". This is a more meaningful metric for dbench that a throughput
-metric as the benchmark makes many different system calls that are not
-throughput-related
-
-Patch shows a 9.23% and 48.53% reduction in the time to process a load
-file with the difference partially explained by the number of CPUs sharing
-a LLC. In a separate run, task migrations were almost eliminated by the
-patch for low client counts. In case people have issue with the metric
-used for the benchmark, this is a comparison of the throughputs as
-reported by dbench on the NUMA machine.
-
-dbench4 Throughput (misleading but traditional)
-                           5.5.0-rc7              5.5.0-rc7
-                   tipsched-20200124      kworkerstack-v1r2
-Hmean     1        321.41 (   0.00%)      617.82 *  92.22%*
-Hmean     2        622.87 (   0.00%)     1066.80 *  71.27%*
-Hmean     4       1134.56 (   0.00%)     1623.74 *  43.12%*
-Hmean     8       1869.96 (   0.00%)     2212.67 *  18.33%*
-Hmean     16      2673.11 (   0.00%)     2806.13 *   4.98%*
-Hmean     32      3032.74 (   0.00%)     3039.54 (   0.22%)
-Hmean     64      2514.25 (   0.00%)     2498.96 *  -0.61%*
-Hmean     128     1778.49 (   0.00%)     1746.05 *  -1.82%*
-
-Note that this is somewhat specific to XFS and ext4 shows no performance
-difference as it does not rely on kworkers in the same way. No major
-problem was observed running other workloads on different machines although
-not all tests have completed yet.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/core.c  | 11 -----------
- kernel/sched/fair.c  | 14 ++++++++++++++
- kernel/sched/sched.h | 13 +++++++++++++
- 3 files changed, 27 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index fc1dfc007604..1f615a223791 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1442,17 +1442,6 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
- 
- #ifdef CONFIG_SMP
- 
--static inline bool is_per_cpu_kthread(struct task_struct *p)
--{
--	if (!(p->flags & PF_KTHREAD))
--		return false;
--
--	if (p->nr_cpus_allowed != 1)
--		return false;
--
--	return true;
--}
--
- /*
-  * Per-CPU kthreads are allowed to run on !active && online CPUs, see
-  * __set_cpus_allowed_ptr() and select_fallback_rq().
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fe4e0d775375..52a62f550082 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5912,6 +5912,20 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	    (available_idle_cpu(prev) || sched_idle_cpu(prev)))
- 		return prev;
- 
-+	/*
-+	 * Allow a per-cpu kthread to stack with the wakee if the
-+	 * kworker thread and the tasks previous CPUs are the same.
-+	 * The assumption is that the wakee queued work for the
-+	 * per-cpu kthread that is now complete and the wakeup is
-+	 * essentially a sync wakeup. An obvious example of this
-+	 * pattern is IO completions.
-+	 */
-+	if (is_per_cpu_kthread(current) &&
-+	    prev == smp_processor_id() &&
-+	    this_rq()->nr_running <= 1) {
-+		return prev;
-+	}
-+
- 	/* Check a recently used CPU as a potential idle candidate: */
- 	recent_used_cpu = p->recent_used_cpu;
- 	if (recent_used_cpu != prev &&
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 1a88dc8ad11b..5876e6ba5903 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2479,3 +2479,16 @@ static inline void membarrier_switch_mm(struct rq *rq,
- {
- }
- #endif
-+
-+#ifdef CONFIG_SMP
-+static inline bool is_per_cpu_kthread(struct task_struct *p)
-+{
-+	if (!(p->flags & PF_KTHREAD))
-+		return false;
-+
-+	if (p->nr_cpus_allowed != 1)
-+		return false;
-+
-+	return true;
-+}
-+#endif
+Regards,
+Markus
