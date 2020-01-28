@@ -2,132 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7597114B2A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 11:32:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB2E314B39B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 12:42:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgA1KcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 05:32:21 -0500
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:52006 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725922AbgA1KcV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 05:32:21 -0500
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id EB7BD1C28C7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 10:32:18 +0000 (GMT)
-Received: (qmail 29623 invoked from network); 28 Jan 2020 10:32:18 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2020 10:32:18 -0000
-Date:   Tue, 28 Jan 2020 10:32:16 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
- stack on the same CPU
-Message-ID: <20200128103216.GA3466@techsingularity.net>
-References: <20200128100643.3016-1-hdanton@sina.com>
+        id S1725959AbgA1LmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 06:42:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43730 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbgA1LmD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jan 2020 06:42:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2A052AD45;
+        Tue, 28 Jan 2020 11:42:00 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 680001E0E4B; Tue, 28 Jan 2020 12:41:59 +0100 (CET)
+Date:   Tue, 28 Jan 2020 12:41:59 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>,
+        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de
+Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Message-ID: <20200128114159.GA8930@quack2.suse.cz>
+References: <20200124131323.23885-1-s.hauer@pengutronix.de>
+ <20200124131323.23885-2-s.hauer@pengutronix.de>
+ <20200127104518.GC19414@quack2.suse.cz>
+ <20200128100631.zv7cn726twylcmb7@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200128100643.3016-1-hdanton@sina.com>
+In-Reply-To: <20200128100631.zv7cn726twylcmb7@pengutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 06:06:43PM +0800, Hillf Danton wrote:
+On Tue 28-01-20 11:06:31, Sascha Hauer wrote:
+> Hi Jan,
 > 
-> On Mon, 27 Jan 2020 14:36:08 +0000 Mel Gorman wrote:
-> > Commit 8ab39f11d974 ("xfs: prevent CIL push holdoff in log
-> > recovery") changed from using bound workqueues to using unbound
-> > workqueues. Functionally this makes sense but it was observed at the time
-> > that the dbench performance dropped quite a lot and CPU migrations were
-> > excessively high even when there are plenty of idle CPUs.
+> On Mon, Jan 27, 2020 at 11:45:18AM +0100, Jan Kara wrote:
+> > >  	cmds = cmd >> SUBCMDSHIFT;
+> > >  	type = cmd & SUBCMDMASK;
+> > >  
+> > > +
 > > 
-> > The pattern of the task migration is straight-forward. With XFS, an IO
-> > issuer may delegate work to a kworker which wakes on the same CPU. On
-> > completion of the work, it wakes the task, finds that the previous CPU
-> > is busy (because the kworker is still running on it) and migrates the
-> > task to the next idle CPU. The task ends up migrating around all CPUs
-> > sharing a LLC at high frequency. This has negative implications both in
-> > commication costs and power management.  mpstat confirmed that at low
-> > thread counts that all CPUs sharing an LLC has low level of activity.
+> > Unnecessary empty line added...
+> 
+> Fixed
+> 
+> > > +	if (q_path) {
+> > > +		ret = user_path_at(AT_FDCWD, special,
+> > > +				   LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
+> > > +				   &sb_path);
+> > > +		if (ret)
+> > > +			goto out;
+> > > +
+> > > +		sb = sb_path.mnt->mnt_sb;
 > > 
-> > The impact of this problem is related to the number of CPUs sharing an LLC.
-> > 
->
-> Are you trying to fix a problem of cache affinity?
+> > So I've realized that just looking up superblock with user_path_at() is not
+> > enough. Quota code also expects that the superblock will be locked
+> > (sb->s_umount) and filesystem will not be frozen (in case the quota
+> > operation is going to modify the filesystem). This is needed to serialize
+> > e.g. remount and quota operations or quota operations among themselves.
+> > So you still need something like following to get superblock from the path:
 > 
-
-No, I'm simply stating that the search space for select_idle_sibling
-matters.
-
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index fe4e0d775375..76df439aff76 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5912,6 +5912,19 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
-> >  	    (available_idle_cpu(prev) || sched_idle_cpu(prev)))
-> >  		return prev;
-> >  
-> > +	/*
-> > +	 * Allow a per-cpu kthread to stack with the wakee if the
-> > +	 * kworker thread and the tasks previous CPU are the same.
-> > +	 * The assumption is that the wakee queued work for the
-> > +	 * per-cpu kthread that is now complete and the wakeup is
-> > +	 * essentially a sync wakeup.
-> > +	 */
-> > +	if (is_per_cpu_kthread(current) &&
-> > +	    prev == smp_processor_id() &&
+> Ok, here's an updated version. I'll send an update for the whole series
+> when Richard had a look over it.
 > 
-> Looks like cache affinity is not your target.
-
-It's not, at least not LLC. L1 is a partial consideration.
-
-> Wondering why it does not work to select a cpu sharing cache with prev
-> if strong relation exists between waker and wakee.
+> Sascha
 > 
-
-Functionally it works, it's just slow. There is a cost to migration and
-a cost to exiting from idle state and ramping up the CPU frequency.
-
-> > +	    this_rq()->nr_running <= 1) {
-> > +		return prev;
-> > +	}
-> > +
-> >  	/* Check a recently used CPU as a potential idle candidate: */
-> >  	recent_used_cpu = p->recent_used_cpu;
-> >  	if (recent_used_cpu != prev &&
-> > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> > index 1a88dc8ad11b..5876e6ba5903 100644
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -2479,3 +2479,16 @@ static inline void membarrier_switch_mm(struct rq *rq,
-> >  {
-> >  }
-> >  #endif
-> > +
-> > +#ifdef CONFIG_SMP
-> > +static inline bool is_per_cpu_kthread(struct task_struct *p)
-> > +{
-> > +	if (!(p->flags & PF_KTHREAD))
-> > +		return false;
+> ----------------------------8<-----------------------------
 > 
-> Suspect you need PF_KTHREAD instead of PF_WQ_WORKER. Here is a
-> small helper and feel free to pick it up if it makes a sense.
+> From 9c91395f2667c8a48f52a80896e559daf16f4a4c Mon Sep 17 00:00:00 2001
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> Date: Wed, 30 Oct 2019 08:35:11 +0100
+> Subject: [PATCH] quota: Allow to pass mount path to quotactl
 > 
+> This patch introduces the Q_PATH flag to the quotactl cmd argument.
+> When given, the path given in the special argument to quotactl will
+> be the mount path where the filesystem is mounted, instead of a path
+> to the block device.
+> This is necessary for filesystems which do not have a block device as
+> backing store. Particularly this is done for upcoming UBIFS support.
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-Did you mean to switch that around? Either way, I moved an existing helper
-that is already used to detect this particular situation. While it works
-when it's made specific to a workqueue and open-coding it, there was no
-clear reason to narrow the conditions further.
+Thanks. The patch looks good to me now. You can add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/quota/quota.c           | 75 ++++++++++++++++++++++++++++++++------
+>  include/uapi/linux/quota.h |  1 +
+>  2 files changed, 64 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+> index 5444d3c4d93f..712b71760f9d 100644
+> --- a/fs/quota/quota.c
+> +++ b/fs/quota/quota.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/types.h>
+>  #include <linux/writeback.h>
+>  #include <linux/nospec.h>
+> +#include <linux/mount.h>
+>  
+>  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+>  				     qid_t id)
+> @@ -810,6 +811,36 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+>  #endif
+>  }
+>  
+> +static struct super_block *quotactl_path(const char __user *special, int cmd,
+> +					 struct path *path)
+> +{
+> +	struct super_block *sb;
+> +	int ret;
+> +
+> +	ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
+> +			   path);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	sb = path->mnt->mnt_sb;
+> +restart:
+> +	if (quotactl_cmd_onoff(cmd))
+> +		down_write(&sb->s_umount);
+> +	else
+> +		down_read(&sb->s_umount);
+> +
+> +	if (quotactl_cmd_write(cmd) && sb->s_writers.frozen != SB_UNFROZEN) {
+> +		if (quotactl_cmd_onoff(cmd))
+> +			up_write(&sb->s_umount);
+> +		else
+> +			up_read(&sb->s_umount);
+> +		wait_event(sb->s_writers.wait_unfrozen,
+> +			   sb->s_writers.frozen == SB_UNFROZEN);
+> +		goto restart;
+> +	}
+> +
+> +	return sb;
+> +}
+>  /*
+>   * This is the system call interface. This communicates with
+>   * the user-level programs. Currently this only supports diskquota
+> @@ -821,8 +852,9 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+>  {
+>  	uint cmds, type;
+>  	struct super_block *sb = NULL;
+> -	struct path path, *pathp = NULL;
+> +	struct path file_path, *file_pathp = NULL, sb_path;
+>  	int ret;
+> +	bool q_path;
+>  
+>  	cmds = cmd >> SUBCMDSHIFT;
+>  	type = cmd & SUBCMDMASK;
+> @@ -830,6 +862,9 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+>  	if (type >= MAXQUOTAS)
+>  		return -EINVAL;
+>  
+> +	q_path = cmds & Q_PATH;
+> +	cmds &= ~Q_PATH;
+> +
+>  	/*
+>  	 * As a special case Q_SYNC can be called without a specific device.
+>  	 * It will iterate all superblocks that have quota enabled and call
+> @@ -847,28 +882,44 @@ int kernel_quotactl(unsigned int cmd, const char __user *special,
+>  	 * resolution (think about autofs) and thus deadlocks could arise.
+>  	 */
+>  	if (cmds == Q_QUOTAON) {
+> -		ret = user_path_at(AT_FDCWD, addr, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &path);
+> +		ret = user_path_at(AT_FDCWD, addr,
+> +				   LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
+> +				   &file_path);
+>  		if (ret)
+> -			pathp = ERR_PTR(ret);
+> +			file_pathp = ERR_PTR(ret);
+>  		else
+> -			pathp = &path;
+> +			file_pathp = &file_path;
+>  	}
+>  
+> -	sb = quotactl_block(special, cmds);
+> +	if (q_path)
+> +		sb = quotactl_path(special, cmds, &sb_path);
+> +	else
+> +		sb = quotactl_block(special, cmds);
+> +
+>  	if (IS_ERR(sb)) {
+>  		ret = PTR_ERR(sb);
+>  		goto out;
+>  	}
+>  
+> -	ret = do_quotactl(sb, type, cmds, id, addr, pathp);
+> +	ret = do_quotactl(sb, type, cmds, id, addr, file_pathp);
+> +
+> +	if (q_path) {
+> +		if (quotactl_cmd_onoff(cmd))
+> +			up_write(&sb->s_umount);
+> +		else
+> +			up_read(&sb->s_umount);
+> +
+> +		path_put(&sb_path);
+> +	} else {
+> +		if (!quotactl_cmd_onoff(cmds))
+> +			drop_super(sb);
+> +		else
+> +			drop_super_exclusive(sb);
+> +	}
+>  
+> -	if (!quotactl_cmd_onoff(cmds))
+> -		drop_super(sb);
+> -	else
+> -		drop_super_exclusive(sb);
+>  out:
+> -	if (pathp && !IS_ERR(pathp))
+> -		path_put(pathp);
+> +	if (file_pathp && !IS_ERR(file_pathp))
+> +		path_put(file_pathp);
+>  	return ret;
+>  }
+>  
+> diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
+> index f17c9636a859..e1787c0df601 100644
+> --- a/include/uapi/linux/quota.h
+> +++ b/include/uapi/linux/quota.h
+> @@ -71,6 +71,7 @@
+>  #define Q_GETQUOTA 0x800007	/* get user quota structure */
+>  #define Q_SETQUOTA 0x800008	/* set user quota structure */
+>  #define Q_GETNEXTQUOTA 0x800009	/* get disk limits and usage >= ID */
+> +#define Q_PATH     0x400000	/* quotactl special arg contains mount path */
+>  
+>  /* Quota format type IDs */
+>  #define	QFMT_VFS_OLD 1
+> -- 
+> 2.25.0
+> 
+> 
+> -- 
+> Pengutronix e.K.                           |                             |
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 -- 
-Mel Gorman
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
