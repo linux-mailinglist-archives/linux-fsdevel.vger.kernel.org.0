@@ -2,114 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C67C14B4E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 14:30:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F69F14B53F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 14:41:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbgA1N3v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 08:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725852AbgA1N3v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 08:29:51 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CDFF22522;
-        Tue, 28 Jan 2020 13:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580218190;
-        bh=6ZWtuJeJGD/vSdabZ+Y8n3PzjfZ41WaLfTxUqO7NTS4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LTtQjKO6EYlnnorbv7eYnezhDMhehRtItnN54RZ1s43CGNB4vbPgOIzeXdQ8tEvmr
-         XOzUXi1iLehhViF7oiXMNQSHuPwzbzqEIvSC7/f3H85S3WeLaqf0R2Cngz10NvL8gv
-         bHg154WREvL5LqrTjfXxWY4NAWI9GfFvbzZi9Mhs=
-Date:   Tue, 28 Jan 2020 14:29:41 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jouni =?iso-8859-1?Q?H=F6gander?= <jouni.hogander@unikie.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>, syzkaller@googlegroups.com
-Subject: Re: [PATCH 4.19 000/306] 4.19.87-stable review
-Message-ID: <20200128132941.GA2956977@kroah.com>
-References: <20191127203114.766709977@linuxfoundation.org>
- <CA+G9fYuAY+14aPiRVUcXLbsr5zJ-GLjULX=s9jcGWcw_vb5Kzw@mail.gmail.com>
- <20191128073623.GE3317872@kroah.com>
- <CAKXUXMy_=gVVw656AL5Rih_DJrdrFLoURS-et0+dpJ2cKaw6SQ@mail.gmail.com>
- <20191129085800.GF3584430@kroah.com>
- <87sgk8szhc.fsf@unikie.com>
- <87zhe727uo.fsf@unikie.com>
+        id S1726303AbgA1Nlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 08:41:52 -0500
+Received: from outbound-smtp15.blacknight.com ([46.22.139.232]:54221 "EHLO
+        outbound-smtp15.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726107AbgA1Nlw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jan 2020 08:41:52 -0500
+Received: from mail.blacknight.com (unknown [81.17.255.152])
+        by outbound-smtp15.blacknight.com (Postfix) with ESMTPS id 8133D1C30BF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jan 2020 13:41:50 +0000 (GMT)
+Received: (qmail 3614 invoked from network); 28 Jan 2020 13:41:50 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2020 13:41:50 -0000
+Date:   Tue, 28 Jan 2020 13:41:48 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
+ stack on the same CPU
+Message-ID: <20200128134148.GB3466@techsingularity.net>
+References: <20200128100643.3016-1-hdanton@sina.com>
+ <20200128130837.11136-1-hdanton@sina.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87zhe727uo.fsf@unikie.com>
+In-Reply-To: <20200128130837.11136-1-hdanton@sina.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 12:28:15PM +0200, Jouni Högander wrote:
-> Hello Greg,
+On Tue, Jan 28, 2020 at 09:08:37PM +0800, Hillf Danton wrote:
+> > Functionally it works, it's just slow. There is a cost to migration and
+> > a cost to exiting from idle state and ramping up the CPU frequency.
+> > 
+> Yeah we need to pay some costs but are not they compensated by the ping
+> and pong that waker and wakee are happy to play for ten minutes on
+> different cpus sharing cache if you have no way to migrate waker?
 > 
-> jouni.hogander@unikie.com (Jouni Högander) writes:
-> 
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> >>> > Now queued up, I'll push out -rc2 versions with this fix.
-> >>> >
-> >>> > greg k-h
-> >>> 
-> >>> We have also been informed about another regression these two commits
-> >>> are causing:
-> >>> 
-> >>> https://lore.kernel.org/lkml/ace19af4-7cae-babd-bac5-cd3505dcd874@I-love.SAKURA.ne.jp/
-> >>> 
-> >>> I suggest to drop these two patches from this queue, and give us a
-> >>> week to shake out the regressions of the change, and once ready, we
-> >>> can include the complete set of fixes to stable (probably in a week or
-> >>> two).
-> >>
-> >> Ok, thanks for the information, I've now dropped them from all of the
-> >> queues that had them in them.
-> >>
-> >> greg k-h
-> >
-> > I have now run more extensive Syzkaller testing on following patches:
-> >
-> > cb626bf566eb net-sysfs: Fix reference count leak
-> > ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
-> > e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
-> > 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
-> > b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
-> >
-> > These patches are fixing couple of memory leaks including this one found
-> > by Syzbot: https://syzkaller.appspot.com/bug?extid=ad8ca40ecd77896d51e2
-> >
-> > I can reproduce these memory leaks in following stable branches: 4.14,
-> > 4.19, and 5.4.
-> >
-> > These are all now merged into net/master tree and based on my testing
-> > they are ready to be taken into stable branches as well.
-> >
-> > Best Regards,
-> >
-> > Jouni Högander
-> 
-> These four patches are still missing from 4.14 and 4.19 branches:
-> 
-> ddd9b5e3e765 net-sysfs: Call dev_hold always in rx_queue_add_kobject
-> e0b60903b434 net-sysfs: Call dev_hold always in netdev_queue_add_kobje
-> 48a322b6f996 net-sysfs: fix netdev_queue_add_kobject() breakage
-> b8eb718348b8 net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject
-> 
-> Could you please consider taking them in or let me know if you want some
-> further activities from my side?
 
-Thanks for the list, I have now queued these all up.
+I could get into it depth but the changelog already mentions the cpufreq
+implications and the consequences of round-robining around the machine
+as a side-effect of how select_idle_sibling works. The data indicates
+that we are not compensated by the migrations.
 
-greg k-h
+> Or back to the kworker case, a tradeoff needs to make between making kworker
+> able to run on cache-sharing cpus and adding scheduling heuristics. IOW
+> is cache affinity the key to the problem?
+> 
+
+The kworker is already running on CPUs sharing cache. That is not the
+central issue.
+
+-- 
+Mel Gorman
+SUSE Labs
