@@ -2,114 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E201614BC76
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 15:58:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD82D14BCDA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jan 2020 16:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgA1O6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 09:58:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45070 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726735AbgA1O6w (ORCPT
+        id S1726735AbgA1P3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 10:29:01 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41308 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbgA1P3B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 09:58:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580223532;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J9dup7HkrusSVVs3WtrZZpcnlSHPtUcbtBH6WbbXS20=;
-        b=J30K3AORJ3u894nARd8dIl1Z30S+r4Q/OamxYtefkwp+hkTdfx4+9EZLUGAX0FGGjgvTdp
-        p3dVKHZIYWQiu56NmsW+HJZcuZz1xMLSLUvXxen3u9qD24RmxhHGvNth9qq6AjjgqkCYBs
-        8KZIF0F/gaXYoVo2IQfEHfgh8EgTqBc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-295-qOK9YP5uP1yGI5aGU72MxA-1; Tue, 28 Jan 2020 09:58:47 -0500
-X-MC-Unique: qOK9YP5uP1yGI5aGU72MxA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 879C18010C9;
-        Tue, 28 Jan 2020 14:58:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A7FC85C290;
-        Tue, 28 Jan 2020 14:58:39 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 28 Jan 2020 15:58:43 +0100 (CET)
-Date:   Tue, 28 Jan 2020 15:58:38 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v7 02/11] proc: add proc_fs_info struct to store proc
- information
-Message-ID: <20200128145837.GD17943@redhat.com>
-References: <20200125130541.450409-1-gladkov.alexey@gmail.com>
- <20200125130541.450409-3-gladkov.alexey@gmail.com>
- <20200128134337.GC17943@redhat.com>
+        Tue, 28 Jan 2020 10:29:01 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00SFPHgT186968;
+        Tue, 28 Jan 2020 15:28:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=WKREm9GNdyHPTYI+kbYnItKrdQm6BQxz8RGHgWDEdBs=;
+ b=SraNQwis3xFBm/dZOJrrrQ+xbi7eCLXwJMJehAus9po8wcNcz0r2GBo/eKXhMr+cm737
+ FpbBmpisHvwGZBdKewx373fGocUvgR7Fj4CzoPX8YE6X5SEe0syC5mee2PTq5dPu+KJv
+ X51M77rM4Q+yHvLk4pW6DoewB4LI2oqw7qFJxXSSOUp7xoW7gcqmdiE+LxOoRnfGALxF
+ u1N3q0PdRqHc3aGhvtzekBQtcJQJbIkeTsQtZthJ7Sfni6pp3ulqeniDb92VgCZvzERA
+ n4n9lDeqSadUW4W/TkraGFUkGrnzk1xnfk6SqgWiEbGvU4kLxMGckpW2JfKFdAz/7mHQ Xg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xrd3u71ee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 15:28:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00SFLOUN033729;
+        Tue, 28 Jan 2020 15:28:37 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2xta8hyhbt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jan 2020 15:28:37 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00SFSWX2029827;
+        Tue, 28 Jan 2020 15:28:32 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 Jan 2020 07:28:32 -0800
+Date:   Tue, 28 Jan 2020 07:28:30 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, cmaiolino@redhat.com
+Subject: Re: [RFCv2 4/4] ext4: Move ext4_fiemap to use iomap infrastructure
+Message-ID: <20200128152830.GA3673284@magnolia>
+References: <cover.1580121790.git.riteshh@linux.ibm.com>
+ <0147a2923d339bdef5802dde8d5019d719f0d796.1580121790.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200128134337.GC17943@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <0147a2923d339bdef5802dde8d5019d719f0d796.1580121790.git.riteshh@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001280122
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001280122
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/28, Oleg Nesterov wrote:
->
-> On 01/25, Alexey Gladkov wrote:
-> >
-> >  static int proc_init_fs_context(struct fs_context *fc)
-> >  {
-> >  	struct proc_fs_context *ctx;
-> > +	struct pid_namespace *pid_ns;
-> >
-> >  	ctx = kzalloc(sizeof(struct proc_fs_context), GFP_KERNEL);
-> >  	if (!ctx)
-> >  		return -ENOMEM;
-> >
-> > -	ctx->pid_ns = get_pid_ns(task_active_pid_ns(current));
-> > +	pid_ns = get_pid_ns(task_active_pid_ns(current));
-> > +
-> > +	if (!pid_ns->proc_mnt) {
-> > +		ctx->fs_info = kzalloc(sizeof(struct proc_fs_info), GFP_KERNEL);
-> > +		if (!ctx->fs_info) {
-> > +			kfree(ctx);
-> > +			return -ENOMEM;
-> > +		}
-> > +		ctx->fs_info->pid_ns = pid_ns;
-> > +	} else {
-> > +		ctx->fs_info = proc_sb_info(pid_ns->proc_mnt->mnt_sb);
-> > +	}
-> > +
->
-> it seems that this code lacks put_pid_ns() if pid_ns->proc_mnt != NULL
-> or if kzalloc() fails?
+On Tue, Jan 28, 2020 at 03:48:28PM +0530, Ritesh Harjani wrote:
+> Since ext4 already defines necessary iomap_ops required to move to iomap
+> for fiemap, so this patch makes those changes to use existing iomap_ops
+> for ext4_fiemap and thus removes all unwanted code.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> ---
+>  fs/ext4/extents.c | 279 +++++++---------------------------------------
+>  fs/ext4/inline.c  |  41 -------
+>  2 files changed, 38 insertions(+), 282 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 0de548bb3c90..901caee2fcb1 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
 
-OK, this is fixed in 6/11.
+<snip> Just a cursory glance...
 
-Oleg.
+> @@ -5130,40 +4927,42 @@ static int ext4_xattr_fiemap(struct inode *inode,
+>  				EXT4_I(inode)->i_extra_isize;
+>  		physical += offset;
+>  		length = EXT4_SB(inode->i_sb)->s_inode_size - offset;
+> -		flags |= FIEMAP_EXTENT_DATA_INLINE;
+>  		brelse(iloc.bh);
+>  	} else { /* external block */
+>  		physical = (__u64)EXT4_I(inode)->i_file_acl << blockbits;
+>  		length = inode->i_sb->s_blocksize;
+>  	}
+>  
+> -	if (physical)
+> -		error = fiemap_fill_next_extent(fieinfo, 0, physical,
+> -						length, flags);
+> -	return (error < 0 ? error : 0);
+> +	iomap->addr = physical;
+> +	iomap->offset = 0;
+> +	iomap->length = length;
+> +	iomap->type = IOMAP_INLINE;
+> +	iomap->flags = 0;
 
+Er... external "ACL" blocks aren't IOMAP_INLINE.
+
+--D
