@@ -2,126 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC6214C758
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:20:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248F214C769
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:24:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgA2IUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 03:20:36 -0500
-Received: from mout.web.de ([212.227.17.11]:47441 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726116AbgA2IUg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 03:20:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1580286022;
-        bh=tQri1edDa91kqLteq8ZB5NArUvsgvHIMED+tnqAit8U=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=ZbmCYLXWdZCT2u7MUK4E6UEbw6GOFyp5/JqSF+bf/ElTjE9TYrm7vme996pmTyJ6B
-         ueF8lIUa2ov78e9n10pwQ7Hk2GjovPj36ivG31+zJ9hwoI4kKMMolMilrewz6nwbmb
-         rfQ/ogKNXMFKKqBhOXm8t+pQGubyfRdwTlUV+nWY=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.70.44]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0M1X9B-1jpWCC3a9Z-00tPkz; Wed, 29
- Jan 2020 09:20:21 +0100
-Subject: Re: [v9 1/2] fs: New zonefs file system
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+        id S1726157AbgA2IYW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 03:24:22 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:61074 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbgA2IYW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Jan 2020 03:24:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1580286261; x=1611822261;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
+  b=CyOGcL6lZcmbJQqWY+gzer3aGh4c3eyioCV7+Rebs1XVtO0I5Nnu5YL3
+   Tv3weoIKsHA0C/J4Dsg6Px12WbhIqSYqOjeeRL2IydwRvdYut8ogo3laC
+   k2uBBbJZe3IejQXogYElWsPkZrzRHxGEYwbxmsy+s+yn6eNSes2V4/ELi
+   +nkBusTDhVl/ExHggcP2HKOIOEAsZG5mRxapqDOxP8CVdjpi27GlP17XR
+   6nDX/rdoMfpEpnsGFS50pEydwkhwDx3Adsyt+oZlND91Hq6BcevxEilUB
+   6t8nrc+Wqq42vE531f0czRXGt2XYRVU72aSNrQKL0c/mlS25BjPG3hIQL
+   g==;
+IronPort-SDR: Ml7ebd8/t3Acx5MNPBkJ/58C7xxxAyL2gMzj6zJlShOcsa/bhmhHBrdA2mFsY72TftA5qSrHVi
+ E25r02pP9R/2N72Vx7MJGKkCWOyOjjqCaxHCv7nmIwVI4d3S4KLAGc0O8/SNdbcbwI2Mh0L8wr
+ NHAeaMmkZPNZLnePJKlKondO6dVaWD7367AugRy3FxyXbOVKdGbelvhghi833V8FFsyxvntsh/
+ hcxevJm59q+tMSoOS9xdym3UCyABCnUrM0gx+VyfdDPvObfgZHbO41iUzbpnv+mJDWhcADWRux
+ hyU=
+X-IronPort-AV: E=Sophos;i="5.70,377,1574092800"; 
+   d="scan'208";a="236568456"
+Received: from mail-sn1nam02lp2053.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.53])
+  by ob1.hgst.iphmx.com with ESMTP; 29 Jan 2020 16:24:20 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BRUK0+x4ozOLfTHlnvC/pOhZKXMySfYwSygCUikxrebk5fdZs7p9ILeZdq+AhbO2PaUYVzAP+FbrifB58wa19zn/D1C41iVFBI17JuvNLELFTXFEWgEbGcKGOkaZnIzyZt6XxR3ORjm13dH3Ap99+lLRrBKa3+fg682vSkUNmpDK9PegRw3aXmOSjV0Prw5Hx86iifbloGZb3OhXSNAn/icou85cwn9oEG0cPnNwhhZ9/FTNc1/bpFyiHjlx43ZtZAD/kO95UBsrByu13RUoskMAcJCYjfEWEFDcjzrDm8bDQC4jaXmHfTRwyLGQAqR41Ip7aBkbtY+Rm/eYK1lUbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
+ b=GQo/ez/FEie8cgyTmOa5oWZeRMfs5ngaYvjOq7GYfANLUq/g+I8pC9fsNtjOkn3XZGct/rtGBxI3Z8tjdS/OpMjcP+qd5AtQbp6MbDDgcL3SR0Ar206XknfEmZgq3YmeADVyuynXYd7vcBP5n9pNdFHVt+3PVbx3VEXCjL4XcWi74JKU/hoovBdUJptKdVRHH3xZZHLYndAuVfjMXgpq9kH8eKYVtdnn8F9o7T2rZX3wHFcQuLPbChky6KLC3k+5J6c5KkL3HHILsK5JnG6QqmFG89IPKK+VFCwxE/G7EW3racv7IRTTDojnnDY9WzsxYr7/SYGkyKcXUqxXpb4nsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
+ b=txuhSFxlXRA4NA3NtSLITshvJTRJ3NQpMe/9Yd7LmT+qU2iAKCzzuemyNgAO88INmfNCPRfw6Si2Pf8+X7mZq4hhoViLVgJ6EuocqbWcm16Bc/3YeHz+f93tP9HZJARHCSiqCgzeb1x92eLDFDBlO5jt7BLu234XqlS4KT5OZ+c=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
+ BYAPR04MB5877.namprd04.prod.outlook.com (20.179.58.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.24; Wed, 29 Jan 2020 08:24:18 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::cd8e:d1de:e661:a61]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::cd8e:d1de:e661:a61%5]) with mapi id 15.20.2665.027; Wed, 29 Jan 2020
+ 08:24:18 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Hannes Reinecke <hare@suse.de>,
         Johannes Thumshirn <jth@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Naohiro Aota <Naohiro.Aota@wdc.com>
+Subject: Re: [v9 1/2] fs: New zonefs file system
+Thread-Topic: [v9 1/2] fs: New zonefs file system
+Thread-Index: AQHV1nz4VgmI+ONs6EuOARHWsE8vTA==
+Date:   Wed, 29 Jan 2020 08:24:18 +0000
+Message-ID: <BYAPR04MB581624B1EFB13DEEA299C699E7050@BYAPR04MB5816.namprd04.prod.outlook.com>
 References: <23bf669d-b75f-ed94-478d-06bddd357919@web.de>
  <5fe2d31c2f798b0768eec3ebc35bc973bc07ba1c.camel@wdc.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <938e70e3-0f45-2858-a4fc-dd90371e4e90@web.de>
-Date:   Wed, 29 Jan 2020 09:20:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <5fe2d31c2f798b0768eec3ebc35bc973bc07ba1c.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
+ <938e70e3-0f45-2858-a4fc-dd90371e4e90@web.de>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.12]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d5f2a73b-3fdb-4e00-95f9-08d7a494a2a2
+x-ms-traffictypediagnostic: BYAPR04MB5877:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB5877AC5DD40D7101CA306E6AE7050@BYAPR04MB5877.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 02973C87BC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(86362001)(8676002)(66556008)(7696005)(64756008)(186003)(66446008)(6506007)(71200400001)(53546011)(4326008)(2906002)(76116006)(8936002)(91956017)(66946007)(81156014)(81166006)(66476007)(316002)(4744005)(55016002)(52536014)(478600001)(54906003)(110136005)(26005)(33656002)(5660300002)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5877;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SLsEfDK+Mb757vcByhg5xONfdLwKn92A5QCewhResgVRmWHZ1BWhtK5XnVrNn4vg0HrELMyWkL2q+OTkZBSnzzrPfItLGwQIZgnxU1mGSeZwsrq46PXEsBaNTzlh2RFDx6UewN5KTDJJLlvIyKqGEyPall1zFxuKaCVUSrzpR6jTRpKK1e4yoK9DQfW8b0FKczzdu7ybXLjGcQ9bOp2ohpbvrX9tBWjBkSWQZ+rxMU9BQC7QSbkodQ8U7WE2j/1r7mYIiAt6o+YnlgogQwHpLKkK/sBMZBEMt7s/hyzDjOOkw0ejgVaTT4fmIS3YoercsLuulx/hHscNOV4btqqOO7Sri4yErHZPMXq7mdbp+3X6M0Veo+NLEDabU0386Alqb2z3eZmQwqzK4aRAfbcERYLSutLaJLISpuNLsNXfDxJ1phx0lx/O5pjvCXkL6zu3
+x-ms-exchange-antispam-messagedata: vD5u3RIqisPX8UNHkLkld5bKZECqcX1rJtXbcji0Zc6qkIkv6394011ycKib81jCfZdnzv9PIwiHOQrK3ikMo6ethATHhKXRrFMzNfyogd7iK5M3lMRTJMqGRyK/XP8ACH3QXcPhxnJGGAt+dX0iPw==
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PLm4Glozz6oS0aLFLldM/En7SfLq1Lpc2hlL9LhSlqvSXqtmXLE
- BY7eBssOkysJKFEfih/3tAi5i3E5URrz1g6MLOyQb6YpYAS9UG0Xxi93zb7sYkTrRzhT8BO
- fhbFPlGZufA/XsS3gppL6LKWTAlEiVElX/Lj38RFcvMld9WJ430HSH8yts9a5L3p2bGGBEa
- feeL5yBA781dnYwluK5kg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Z7sqPbNLeos=:81AATFj02WUoLyVQO6W3dX
- t5V01gaDOXhBzyUIquL3o9bjFF38g97GdOs2+AL5qcpaBr3P4+pSPEExG97GDp+kCBUNBABs8
- gdITGLifKZeYouH/Z3nRzQBESvutABwBm0IwciHiPpFDwA4nA7qlA7AXNUYweK93HBW8Fr60b
- gl7+3S/Fb38+V4pkRkw0WThf3s6+GTL3sdyp9aOhUjKhe9S5eO7MRW8CYWw8xCdRhwkWxU+kV
- e29DWN1w2f+r+pFoXxqGyiOwF1J3ekTAlqAVjfuSuNjPM8/f1F3X9B7cyposV8Kd0i/kEaRp/
- EO7RYDb0E7DXEKFI+Yuzmp2Z6qT3/kgUJ91HIoteyKFlUhe2v9nSg8xk2YdTAcKfb6T2KUBD6
- kUMabgt8/3oNJLc1gRBXUMewj5NMsRPCDdBtgocRMG++4a0jxO2cW0XPuS8UH1P5CWVKbTK+k
- T1zmermha0HYlw+B38x68X9gsqLd7krfY4AIcX81QdjGM2cMoMya5yMPnx8t054ovY6vtFHXS
- 4U2/LSdHQUzpsqqsJ55YFfbfn2XxaI9J+CIqA44WTwOM/9Ub8T8ypkLcTDtuI9u6cH7mYAjK5
- C2ccVFeMTGMwBGL4g9KXeDApcC53eZUndpGI2e67bJyxrEAqVMuKGNdWXuhlJoKrUmM3lWTxh
- MX5EU14NC6z+hdb8Pg/DnzK1blDJ3oUiHcscquDRnXGph1B4cRjPOcWPvyGbeySWBLNx8TMpY
- j0ZQJMUSGR5NL8KyYMuz5dVIZ5vjn0bj0N/5oaGfV22U6xZIRVm/6x8vTvmQHhsGHLbITAE/v
- /V5VRtTmejCJKH4Y7ZqHuNU+8mh48+8QywaRuC78KTH7geKfSl2Fu0P8RGkF8X9HFpbsEAY38
- DsVDunJdfHmUooi2XmKoHr5E9Ol4a3WoPKhUfl6KgNsah7px+2sWDUNbvUmjiEkjI8VrhxpX1
- hjNZHkqs/9YfFQqNI5pI+lSUsOjyLI69BykaLzTLMAtwkdIrPUn0GBV09PMd5kVy6ni3Cb3m3
- RzSR2HYjqHnm9eb96sxyaxKYhtQX9t4IDrU1pRnCfRt4yMI7qa+3qqBwbAhiIk4kZxwn23TVf
- zeW1ezQYNk+sR9HMOf4awPebXpYLZlGPiwU40FrYnPGUU/rWN/8ZAAf35Xe4Wz34hLiFamAtQ
- pwVHrZ5CzZ3mdyhA4qmDh/cRveRHLBg2E1c3T/uuje52n9QpRdMqEnj/g0aFsIz6VKCHoazy6
- pxjq1AlBGD2fr5B7T
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5f2a73b-3fdb-4e00-95f9-08d7a494a2a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2020 08:24:18.5374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wl4AinB/jwRUkzX3jW7CllQjS/2F9fm8ycgcogCKz9Pfa3ORSs2vc4mjehK3mz2Vn8Cc7dauPfrseakLDirm9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5877
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> Would you like to reconsider your name selection for such labels?
-=E2=80=A6
-> Fixed. Thanks !
-
-Will a different identifier be occasionally more helpful than the label =
-=E2=80=9Cout=E2=80=9D
-also at other source code places?
-
-Regards,
-Markus
+On 2020/01/29 17:20, Markus Elfring wrote:=0A=
+>>> Would you like to reconsider your name selection for such labels?=0A=
+> =85=0A=
+>> Fixed. Thanks !=0A=
+> =0A=
+> Will a different identifier be occasionally more helpful than the label =
+=93out=94=0A=
+> also at other source code places?=0A=
+=0A=
+I am addressing all comments I got for v10 right now and reviewing all the=
+=0A=
+goto labels too. Thanks.=0A=
+=0A=
+> =0A=
+> Regards,=0A=
+> Markus=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
