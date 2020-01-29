@@ -2,165 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6040514D241
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 22:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 232D914D28D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 22:33:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbgA2VEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 16:04:00 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30405 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727208AbgA2VEA (ORCPT
+        id S1726487AbgA2VdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 16:33:24 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41878 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726222AbgA2VdY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 16:04:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580331839;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=r0KdhIk6vdsvsxafx/5yol6YXj51zDU8/Pl0eKaAZKw=;
-        b=hxu7XYE5K8uaO4GEFc7op9xzlmP1B3XdUySN2V/r5K1w0W5c+4Mh/Qj3nVk8WcTOfwmeem
-        fXonMdNEpY2TmyjBI94le6W2ZnKO1Eqk0iICxB6s8meQePXpI9bYx8sgPSkYanKrBmyBEv
-        Hdnbm9eihvjntwM7Ruf3ORV0CZnrXJ4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-249-VxC5R8yBMImShVyDuAXhlQ-1; Wed, 29 Jan 2020 16:03:39 -0500
-X-MC-Unique: VxC5R8yBMImShVyDuAXhlQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A47F13E8;
-        Wed, 29 Jan 2020 21:03:38 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DBD6187B09;
-        Wed, 29 Jan 2020 21:03:37 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 6DEE42202E9; Wed, 29 Jan 2020 16:03:37 -0500 (EST)
-Date:   Wed, 29 Jan 2020 16:03:37 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>, vishal.l.verma@intel.com,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: [RFC][PATCH] dax: Do not try to clear poison for partial pages
-Message-ID: <20200129210337.GA13630@redhat.com>
+        Wed, 29 Jan 2020 16:33:24 -0500
+Received: from dread.disaster.area (pa49-195-111-217.pa.nsw.optusnet.com.au [49.195.111.217])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 70BDA7EAB58;
+        Thu, 30 Jan 2020 08:33:19 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iwuxa-0004p3-9N; Thu, 30 Jan 2020 08:33:18 +1100
+Date:   Thu, 30 Jan 2020 08:33:18 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "jth@kernel.org" <jth@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "hare@suse.de" <hare@suse.de>
+Subject: Re: [PATCH v9 1/2] fs: New zonefs file system
+Message-ID: <20200129213318.GM18610@dread.disaster.area>
+References: <20200127100521.53899-1-damien.lemoal@wdc.com>
+ <20200127100521.53899-2-damien.lemoal@wdc.com>
+ <20200128174608.GR3447196@magnolia>
+ <b404c1cd7a0c8ccbabcbd3c8aed440542750706e.camel@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <b404c1cd7a0c8ccbabcbd3c8aed440542750706e.camel@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=0OveGI8p3fsTA6FL6ss4ZQ==:117 a=0OveGI8p3fsTA6FL6ss4ZQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=7-415B0cAAAA:8 a=3J5UeX1WDUf5wypQ6G8A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am looking into getting rid of dependency on block device in dax
-path. One such place is __dax_zero_page_range() which checks if
-range being zeroed is aligned to block device logical size, then
-it calls bdev_issue_zeroout() instead of doing memset(). Calling
-blkdev_issue_zeroout() also clears bad blocks and poison if any
-in that range.
+On Wed, Jan 29, 2020 at 01:06:29PM +0000, Damien Le Moal wrote:
+> On Tue, 2020-01-28 at 09:46 -0800, Darrick J. Wong wrote:
+> > > +static int zonefs_io_err_cb(struct blk_zone *zone, unsigned int idx, void *data)
+> > > +{
+> > > +	struct zonefs_ioerr_data *ioerr = data;
+> > > +	struct inode *inode = ioerr->inode;
+> > > +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> > > +	struct super_block *sb = inode->i_sb;
+> > > +	loff_t isize, wp_ofst;
+> > > +
+> > > +	/*
+> > > +	 * The condition of the zone may have change. Fix the file access
+> > > +	 * permissions if necessary.
+> > > +	 */
+> > > +	zonefs_update_file_perm(inode, zone);
+> > > +
+> > > +	/*
+> > > +	 * There is no write pointer on conventional zones and read operations
+> > > +	 * do not change a zone write pointer. So there is nothing more to do
+> > > +	 * for these two cases.
+> > > +	 */
+> > > +	if (zi->i_ztype == ZONEFS_ZTYPE_CNV || !ioerr->write)
+> > > +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * For sequential zones write, make sure that the zone write pointer
+> > > +	 * position is as expected, that is, in sync with the inode size.
+> > > +	 */
+> > > +	wp_ofst = (zone->wp - zone->start) << SECTOR_SHIFT;
+> > > +	zi->i_wpoffset = wp_ofst;
+> > > +	isize = i_size_read(inode);
+> > > +
+> > > +	if (isize == wp_ofst)
+> > /> +		return 0;
+> > > +
+> > > +	/*
+> > > +	 * The inode size and the zone write pointer are not in sync.
+> > > +	 * If the inode size is below the zone write pointer, then data was
+> > 
+> > I'm a little confused about what events these states reflect.
+> > 
+> > "inode size is below the zone wp" -- let's say we have a partially
+> > written sequential zone:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDD
+> > ----^---------------
+> >     WP
+> > 
+> > Then we tried to write to the end of the sequential zone:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDWWWW
+> > ----^---------------
+> >     WP
+> > 
+> > Then an error happens so we didn't update the isize, and now we see that
+> > the write pointer is beyond isize (pretend the write failed to the '?'
+> > area):
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDD?DD
+> > --------^-----------
+> >         WP
+> 
+> If the write failed at the "?" location, then the zone write pointer
+> points to that location since nothing after that location can be
+> written unless that location itself is first written.
+> 
+> So with your example, the drive will give back:
+> 
+>     isize
+> ----v---------------
+> DDDDDD?XX
+> ------^-------------
+>       WP
+> 
+> With XX denoting the unwritten part of the issued write.
+> 
+> > So if we increase isize to match the WP, what happens when userspace
+> > tries to read the question-mark area?  Do they get read errors?  Stale
+> > contents?
+> 
+> Nope, see above: the write pointer always point to the sector following
+> the last sector correctly written. So increasing isize to the write
+> pointer location only exposes the data that actually was written and is
+> readable. No stale data.
+> > Or am I misunderstanding SMR firmware, and the drive only advances the
+> > write pointer once it has written a block?  i.e. if a write fails in
+> > the middle, the drive ends up in this state, not the one I drew above:
+> > 
+> >     isize
+> > ----v---------------
+> > DDDDDD?
+> > -----^--------------
+> >      WP
+> > 
+> > In which case it would be fine to push isize up to the write pointer?
+> 
+> Exactly. This is how the ZBC & ZAC (and upcoming ZNS) specifications
+> define the write pointer behavior. That makes error recovery a lot
+> easier and does not result in stale data accesses. Just notice the one-
+> off difference for the WP position from your example as WP will be
+> pointing at the error location, not the last written location. Indexing
+> from 0, we get (wp - zone start) always being isize with all written
+> and readable data in the sector range between zone start and zone write
+> pointer.
 
-This path is used by iomap_zero_range() which in-turn is being
-used by filesystems to zero partial filesystem system blocks.
-For zeroing full filesystem blocks we seem to be calling
-blkdev_issue_zeroout() which clears bad blocks and poison in that
-range.
+Ok, I'm going throw a curve ball here: volatile device caches.
 
-So this code currently only seems to help with partial filesystem
-block zeroing. That too only if truncation/hole_punch happens on
-device logical block size boundary.
+How does the write pointer updates interact with device write
+caches? i.e.  the first write could be sitting in the device write
+cache, and the OS write pointer has been advanced. Then another write
+occurs, the device decides to write both to physical media, and it
+gets a write error in the area of the first write that only hit the
+volatile cache.
 
-To avoid using blkdev_issue_zeroout() in this path, I proposed another
-patch here which adds another dax operation to zero out a rangex and
-clear poison.
+So does this mean that, from the POV of the OS, the device zone
+write pointer has gone backwards?
 
-https://lore.kernel.org/linux-fsdevel/20200123165249.GA7664@redhat.com/
+Unless there's some other magic that ensures device cached writes
+that have been signalled as successfully completed to the OS
+can never fail or that sequential zone writes are never cached in
+volatile memory in drives, I can't see how the above guarantees
+can be provided.
 
-Thinking more about it, it might be an overkill to solve this problem.
+> It is hard to decide on the best action to take here considering the
+> simple nature of zonefs (i.e. another better interface to do raw block
+> device file accesses). Including your comments on mount options, I cam
+> up with these actions that the user can choose with mount options:
+> * repair: Truncate the inode size only, nothing else
+> * remount-ro (default): Truncate the inode size and remount read-only
+> * zone-ro: Truncate the inode size and set the inode read-only
+> * zone-offline: Truncate the inode size to 0 and assume that its zone 
+> is offline (no reads nor writes possible).
+> 
+> This gives I think a good range of possible behaviors that the user may
+> want, from almost nothing (repair) to extreme to avoid accessing bad
+> data (zone-offline).
 
-How about if we just not clear poison/bad blocks when a partial page
-is being zeroed. IOW, users will need to hole_punch whole filesystem
-block worth of data which will free that block and it will be zeroed
-some other time and clear poison in the process. For partial fs block
-truncation/punch_hole, we don't clear poison.
+I would suggest that this is something that can be added later as it
+is not critical to supporting the underlying functionality.  Right
+now I'd just pick the safest option: shutdown to protect what data
+is on the storage right now and then let the user take action to
+recover/fix the issue.
 
-If above interface is acceptable, then we can get rid of code which
-tries to call blkdev_issue_zeroout() in iomap_zero_range() path and
-we don't have to implement another dax operation.
+> > > +	 * BIO allocations for the same device. The former case may end up in
+> > > +	 * a deadlock on the inode truncate mutex, while the latter may prevent
+> > > +	 * forward progress with BIO allocations as we are potentially still
+> > > +	 * holding the failed BIO. Executing the report zones under GFP_NOIO
+> > > +	 * avoids both problems.
+> > > +	 */
+> > > +	noio_flag = memalloc_noio_save();
+> > 
+> > Don't you still need memalloc_nofs_ here too?
+> 
+> noio implies nofs, doesn't it ? Or rather, noio is more restrictive
+> than nofs here. Which is safer since we need a struct request to be
+> able to execute blkdev_report_zones().
 
-Looking for some feedback on this.
+Correct, noio implies nofs.
 
-Vivek
- 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c |   50 +++++++++++++++-----------------------------------
- 1 file changed, 15 insertions(+), 35 deletions(-)
+Cheers,
 
-Index: redhat-linux/fs/dax.c
-===================================================================
---- redhat-linux.orig/fs/dax.c	2020-01-29 15:19:18.551902448 -0500
-+++ redhat-linux/fs/dax.c	2020-01-29 15:40:56.584824549 -0500
-@@ -1044,47 +1044,27 @@ static vm_fault_t dax_load_hole(struct x
- 	return ret;
- }
- 
--static bool dax_range_is_aligned(struct block_device *bdev,
--				 unsigned int offset, unsigned int length)
--{
--	unsigned short sector_size = bdev_logical_block_size(bdev);
--
--	if (!IS_ALIGNED(offset, sector_size))
--		return false;
--	if (!IS_ALIGNED(length, sector_size))
--		return false;
--
--	return true;
--}
--
- int __dax_zero_page_range(struct block_device *bdev,
- 		struct dax_device *dax_dev, sector_t sector,
- 		unsigned int offset, unsigned int size)
- {
--	if (dax_range_is_aligned(bdev, offset, size)) {
--		sector_t start_sector = sector + (offset >> 9);
--
--		return blkdev_issue_zeroout(bdev, start_sector,
--				size >> 9, GFP_NOFS, 0);
--	} else {
--		pgoff_t pgoff;
--		long rc, id;
--		void *kaddr;
--
--		rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
--		if (rc)
--			return rc;
--
--		id = dax_read_lock();
--		rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
--		if (rc < 0) {
--			dax_read_unlock(id);
--			return rc;
--		}
--		memset(kaddr + offset, 0, size);
--		dax_flush(dax_dev, kaddr + offset, size);
-+	pgoff_t pgoff;
-+	long rc, id;
-+	void *kaddr;
-+
-+	rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
-+	if (rc)
-+		return rc;
-+
-+	id = dax_read_lock();
-+	rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
-+	if (rc < 0) {
- 		dax_read_unlock(id);
-+		return rc;
- 	}
-+	memset(kaddr + offset, 0, size);
-+	dax_flush(dax_dev, kaddr + offset, size);
-+	dax_read_unlock(id);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(__dax_zero_page_range);
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
