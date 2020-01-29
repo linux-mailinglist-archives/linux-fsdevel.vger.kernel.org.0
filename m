@@ -2,90 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2963214CDEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 17:03:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B20F614CE11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 17:14:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbgA2QDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 11:03:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgA2QDE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:03:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=up63fpfGYOvkp3SBYBCK24upbKtaXQK6d7PtLy0cev8=; b=ZdO1rpUQOR0SM6EoYPZcn4JDT
-        rNZ3sHm8mZrDvYiY5E3OQPXSNDtuzvvyYWMTEfJJZm7ouV0Pfkxt0A5w5clE3nTH9HCbHEx86BBtp
-        6juLb2UL5QT61MbPuGdmvcU/tcfri/3PyajzJEp4x/xWLGljUIFmn8Nbh9jSYIgvZPMeSteD03SRw
-        XYVnL8Ln47CE0D+Gws6DTVw/6tlYFzTf2p7maGQN02vRE6V+Yvb02p2UIYDlWoPVTPRMbx//gBNSU
-        kcgzWSPUmFGN/EOY7lygHL3FaH5qWjL6DuOx//Gd9S2BC8EuEpH9DWXQ/4igwg3lKKFEeFt3kDOEM
-        1D+RgIX9g==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwpnv-0007TM-3C; Wed, 29 Jan 2020 16:02:59 +0000
-Subject: Re: mmotm 2020-01-28-20-05 uploaded (security/security.c)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org>
- <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
- <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <30511826-765f-6b10-7bad-b950b3941295@infradead.org>
-Date:   Wed, 29 Jan 2020 08:02:57 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726679AbgA2QO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 11:14:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50998 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbgA2QO6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Jan 2020 11:14:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A1BD6ACF0;
+        Wed, 29 Jan 2020 16:14:56 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 167D61E0D4F; Wed, 29 Jan 2020 17:14:50 +0100 (CET)
+Date:   Wed, 29 Jan 2020 17:14:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Jan Kara <jack@suse.com>, Richard Weinberger <richard@nod.at>,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Message-ID: <20200129161450.GA8591@quack2.suse.cz>
+References: <20200124131323.23885-1-s.hauer@pengutronix.de>
+ <20200124131323.23885-2-s.hauer@pengutronix.de>
+ <20200127104518.GC19414@quack2.suse.cz>
+ <20200128100631.zv7cn726twylcmb7@pengutronix.de>
+ <20200129012929.GV23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200129012929.GV23230@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/29/20 5:51 AM, Paul Moore wrote:
-> On Tue, Jan 28, 2020 at 11:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 1/28/20 8:06 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
->>>
->>>    http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>
->> security/security.c contains duplicate lines for <lockdown_reasons> array:
+On Wed 29-01-20 01:29:29, Al Viro wrote:
+> On Tue, Jan 28, 2020 at 11:06:31AM +0100, Sascha Hauer wrote:
+> > Hi Jan,
 > 
-> Hmmm.  Commit 59438b46471a ("security,lockdown,selinux: implement
-> SELinux lockdown"), which was merged into Linus' tree during the
-> current merge window, moved the lockdown_reasons array from
-> security/lockdown/lockdown.c to security/security.c; is there another
-> tree in linux-next which is moving lockdown_reasons into
-> security/security.c?
+> > @@ -810,6 +811,36 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+> >  #endif
+> >  }
+> >  
+> > +static struct super_block *quotactl_path(const char __user *special, int cmd,
+> > +					 struct path *path)
+> > +{
+> > +	struct super_block *sb;
+> > +	int ret;
+> > +
+> > +	ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
+> > +			   path);
+> > +	if (ret)
+> > +		return ERR_PTR(ret);
+> > +
+> > +	sb = path->mnt->mnt_sb;
+> > +restart:
+> > +	if (quotactl_cmd_onoff(cmd))
+> > +		down_write(&sb->s_umount);
+> > +	else
+> > +		down_read(&sb->s_umount);
+> > +
+> > +	if (quotactl_cmd_write(cmd) && sb->s_writers.frozen != SB_UNFROZEN) {
+> > +		if (quotactl_cmd_onoff(cmd))
+> > +			up_write(&sb->s_umount);
+> > +		else
+> > +			up_read(&sb->s_umount);
+> > +		wait_event(sb->s_writers.wait_unfrozen,
+> > +			   sb->s_writers.frozen == SB_UNFROZEN);
+> > +		goto restart;
+> > +	}
+> > +
+> > +	return sb;
+> > +}
 > 
+> This partial duplicate of __get_super_thawed() guts does *not* belong here,
+> especially not interleaved with quota-specific checks.
 
-Somehow in mmotm those lines of code were merged 2x:
-once from origin.patch and once from linux-next.patch.
+OK, so some primitive in fs/super.c like:
 
-Looks more like a mmotm merge issue, not a security/ issue.
+void hold_super_thawed(struct super_block *sb, bool excl);
 
+that would implement the above functionality and grab passive reference?
+
+> > +	if (q_path) {
+> > +		if (quotactl_cmd_onoff(cmd))
+> > +			up_write(&sb->s_umount);
+> > +		else
+> > +			up_read(&sb->s_umount);
+> > +
+> > +		path_put(&sb_path);
+> > +	} else {
+> > +		if (!quotactl_cmd_onoff(cmds))
+> > +			drop_super(sb);
+> > +		else
+> > +			drop_super_exclusive(sb);
+> > +	}
+> 
+> Er...  Why not have the same code that you've used to lock the damn thing
+> (needs to be moved to fs/super.c) simply get a passive ref to it?  Then
+> you could do the same thing, q_path or no q_path...
+
+Yes.
+
+								Honza
 -- 
-~Randy
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
