@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE2E14C7BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D8114C7BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:58:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgA2I6s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 03:58:48 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:32823 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbgA2I6r (ORCPT
+        id S1726518AbgA2I6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 03:58:49 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:56117 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbgA2I6s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 03:58:47 -0500
-Received: by mail-pj1-f67.google.com with SMTP id m7so1393378pjs.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2020 00:58:47 -0800 (PST)
+        Wed, 29 Jan 2020 03:58:48 -0500
+Received: by mail-pj1-f66.google.com with SMTP id d5so2287901pjz.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2020 00:58:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gLcRmbaGlZdT/dpZlJUmvZno5pRafmsAvk974Kpo0hg=;
-        b=mb8cBEpA3kSfsTu7exv1MCGJUeyN+lfxZAD3Efx9bUHCoXR5j1OU27+equvmQZ9rmt
-         8N/lTHAPHbVQK/hAFvhEzXu/aJXwAoqlmsNpD9k3k7sb2ERFPLinACzP9tizVbQcAhvO
-         WE/Yl0Va4oA8QYdm9rOz6VHRuai/8H8PVHvwVmmsSIxqy1d43j3j6+0CWH6sZbhB9J5l
-         b8A44RQ5DHymlJTJrQxfFvydpsZbBvrU43SLfmzSG/hoUSiRZqy33mWqZ09DqZxmpcWD
-         5O6tVbDMRhDI0c+Rm9dloMIVYBBk9qZfX9YehjEQm/z54Sn1WhQIFmn8JhbqQ6RSAAvj
-         FGTQ==
+        bh=0pLjeeSFVIA65fVNzYeh03dIJsej38JGIb4IT7g3DAY=;
+        b=oNqYPLRAqNupF61/dxKjeKt/3FMONNbtOjjkfcyOi4g6eA2UTQEZs7agCCGGmYdc1M
+         qeyXylP8hzenzBo+Z1hTcEbXc4J9TDFJDI5fyZxMyV/FmMZHbhxQU43faxx2I8Z81ZQy
+         lIngAZhj08NsFXI3EmxxOMMp405NamgtVA0u993FUxqjaLy6tYJzK1AgccNkHTqSUN4N
+         Q6JTwXUtsU+18uZcyH3GgfM5o/goI7GaOUQ4XWqO4+brxCW8aE1OlOv4oCxjCbiY1lGV
+         5hjKZV93xd2WUZHP/8WTCAS3/8NxCcmxYds9N/aJ4n/U3FF3C2K/XzAYdkgnbT4cva6n
+         46Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gLcRmbaGlZdT/dpZlJUmvZno5pRafmsAvk974Kpo0hg=;
-        b=bLtu0JJwcPwp1L+0ipcvj4ij3fTk55DmNOiav8kE7lLvxdpIAJxJsXKOpEm+RrXMHX
-         1BSQR8O4rfNRm9rnOvoRIKbgtMpsSCl/XGjyuwjiE8hQT0XNTV3M+2mbDAiQ+4GQuFYQ
-         33OS80gUzeq3WmK13LGE0rGywh0mnRHyD+KzImdeIv0cP/ifYIS3K9Z/TzarwFmunUUv
-         Z8p/xO01d6yxA1H+uRIEjz3pTMCGSL2W965Ml2Mfg3DUoJRtGyHP0o2z/I3AeThwYpBq
-         E3YSmF3Wjepr8iLL1oq53k8jJxvZyC/3XkrX8+sfqw9rtuM43szruBKbIMIjV0nhlnOK
-         x3zw==
-X-Gm-Message-State: APjAAAXXPyPABTPoLWAxE7IMRUqvJj/DcQ6DvAKsqUlf39NCseOP8jX9
-        N58xONxeVee60nhL7v9TuBj54asHJWw=
-X-Google-Smtp-Source: APXvYqx4RDyNcm34fCJVlHIU8RNGSRM4h3hd0We3221K6tQ+fvfAEkwzIsyZ0cETIXBDLKQPcLf8ww==
-X-Received: by 2002:a17:902:a514:: with SMTP id s20mr26765805plq.300.1580288326418;
-        Wed, 29 Jan 2020 00:58:46 -0800 (PST)
+        bh=0pLjeeSFVIA65fVNzYeh03dIJsej38JGIb4IT7g3DAY=;
+        b=ioJw41n7sMf/Sb3KLplr7VRe4zcGVmCAm+RtRc+7Li9tqr1m0+fQQmSpuiKeqRSGsr
+         KXF+olk1ORe8O8XrmJQ3trnP2MppNox2GTKLyurh9vmbkS2j+jdneGUPz+satYL2WDXR
+         FtYAO1nJ8jMKMYomEA/Kaheje+Z7hjhWIYRiwp3WKF18Ki1419HI86ilayTUICgx5vA1
+         u441+GTC/ltNu0zlP5RSgnBqFCCm75817Px9eir4sSGFDFhcDvIG4IeroI9kySjc11Bd
+         H6TOP66AtWpIgIDMtepfRZ0Gsvc2ZXX9qmeob2pyr2yMXKkiyA6lQ/BK51p1ZCuTQSf6
+         CV3Q==
+X-Gm-Message-State: APjAAAWQiqf6Kt5C4tWKljD0k3cyqj0DLKVSUVptBpmpuZKtQZJpaqCy
+        69BVKt+WSRTJshn2/LQ+wqxQT9yhENU=
+X-Google-Smtp-Source: APXvYqx77wlHtLV7un/BDna10JbY4hLtjiB8HOZLggWTx/a4PrphO8N5k6bOAQEjiRoTssqhGJomgw==
+X-Received: by 2002:a17:90a:178f:: with SMTP id q15mr10166214pja.132.1580288327539;
+        Wed, 29 Jan 2020 00:58:47 -0800 (PST)
 Received: from vader.hsd1.wa.comcast.net ([2601:602:8b80:8e0:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id s131sm1935932pfs.135.2020.01.29.00.58.45
+        by smtp.gmail.com with ESMTPSA id s131sm1935932pfs.135.2020.01.29.00.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 00:58:45 -0800 (PST)
+        Wed, 29 Jan 2020 00:58:47 -0800 (PST)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 Cc:     kernel-team@fb.com, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Xi Wang <xi@cs.washington.edu>
-Subject: [RFC PATCH xfsprogs] xfs_io: add support for linkat() AT_LINK_REPLACE
-Date:   Wed, 29 Jan 2020 00:58:29 -0800
-Message-Id: <ff4b873f356ed8ff63ee582bc57c4babea947159.1580253398.git.osandov@fb.com>
+Subject: [RFC PATCH v4 0/4] fs: add flag to linkat() for replacing destination
+Date:   Wed, 29 Jan 2020 00:58:30 -0800
+Message-Id: <cover.1580251857.git.osandov@fb.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <cover.1580251857.git.osandov@fb.com>
 References: <cover.1580251857.git.osandov@fb.com>
@@ -66,92 +66,97 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- io/link.c         | 24 ++++++++++++++++++++----
- man/man8/xfs_io.8 |  9 ++++++++-
- 2 files changed, 28 insertions(+), 5 deletions(-)
+[Sorry if you got this twice, I botched the Cc's on the previous
+ submission.]
 
-diff --git a/io/link.c b/io/link.c
-index f4f4b139..3fc3e24d 100644
---- a/io/link.c
-+++ b/io/link.c
-@@ -12,6 +12,9 @@
- #ifndef AT_EMPTY_PATH
- #define AT_EMPTY_PATH	0x1000
- #endif
-+#ifndef AT_LINK_REPLACE
-+#define AT_LINK_REPLACE	0x10000
-+#endif
- 
- static cmdinfo_t flink_cmd;
- 
-@@ -22,6 +25,7 @@ flink_help(void)
- "\n"
- "link the open file descriptor to the supplied filename\n"
- "\n"
-+" -f -- overwrite the target filename if it exists (AT_LINK_REPLACE)\n"
- "\n"));
- }
- 
-@@ -30,10 +34,22 @@ flink_f(
- 	int		argc,
- 	char		**argv)
- {
--	if (argc != 2)
-+	int		flags = AT_EMPTY_PATH;
-+	int		c;
-+
-+	while ((c = getopt(argc, argv, "f")) != EOF) {
-+		switch (c) {
-+		case 'f':
-+			flags |= AT_LINK_REPLACE;
-+			break;
-+		default:
-+			return command_usage(&flink_cmd);
-+		}
-+	}
-+	if (optind != argc - 1)
- 		return command_usage(&flink_cmd);
- 
--	if (linkat(file->fd, "", AT_FDCWD, argv[1], AT_EMPTY_PATH) < 0) {
-+	if (linkat(file->fd, "", AT_FDCWD, argv[optind], flags) < 0) {
- 		perror("flink");
- 		return 0;
- 	}
-@@ -46,9 +62,9 @@ flink_init(void)
- 	flink_cmd.name = "flink";
- 	flink_cmd.cfunc = flink_f;
- 	flink_cmd.argmin = 1;
--	flink_cmd.argmax = 1;
-+	flink_cmd.argmax = -1;
- 	flink_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK | CMD_FLAG_ONESHOT;
--	flink_cmd.args = _("filename");
-+	flink_cmd.args = _("[-f] filename");
- 	flink_cmd.oneline =
- 		_("link the open file descriptor to the supplied filename");
- 	flink_cmd.help = flink_help;
-diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
-index c69b295d..f79b3a59 100644
---- a/man/man8/xfs_io.8
-+++ b/man/man8/xfs_io.8
-@@ -807,8 +807,15 @@ for the full list) is available via the
- .B help
- command.
- .TP
--.BI "flink " path
-+.BI "flink [ \-f ]" " path"
- Link the currently open file descriptor into the filesystem namespace.
-+.RS 1.0i
-+.PD 0
-+.TP 0.4i
-+.B \-f
-+overwrite the target path if it exists (AT_LINK_REPLACE).
-+.PD
-+.RE
- .TP
- .BR stat " [ " \-v "|" \-r " ]"
- Selected statistics from
+Hello,
+
+This series adds an AT_LINK_REPLACE flag to linkat() which allows
+atomically replacing the destination if it exists. This is a respin of
+an old series [1] that I was convinced to resend due to some recent
+interest [2][3].
+
+Patch 1 adds a flags argument to i_ops->link() in preparation. Patch 2
+adds the VFS support. Patch 3 fixes an inode leak in btrfs_link(),
+included in this series because it conflicts with patch 4. Patch 4 adds
+support for AT_LINK_REPLACE to Btrfs.
+
+I've also included a man-page patch (with an example program), an xfs_io
+patch, and an fstest.
+
+Some outstanding issues:
+
+- The Btrfs implementation does a d_drop() on the replaced dentry. We
+  probably want a d_replace() helper for filesystems to use.
+- Should AT_LINK_REPLACE be limited to O_TMPFILE? In my opinion, the
+  answer is no. After all, `ln -f` is not that exotic.
+- Should AT_LINK_REPLACE guarantee data integrity? Again, I think the
+  answer is no. That's more suited to something like Amir's AT_ATOMIC
+  proposal [4].
+
+Changes since v3:
+
+- Rebased on v5.5.
+- Added patches 1 and 3.
+- Incorporated Al's feedback on various error cases in patch 2.
+- Renamed the flag to AT_LINK_REPLACE.
+
+Thanks!
+
+1: https://lore.kernel.org/linux-fsdevel/cover.1524549513.git.osandov@fb.com/
+2: https://lore.kernel.org/linux-fsdevel/3326.1579019665@warthog.procyon.org.uk/
+3: https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.org.uk/
+4: https://lore.kernel.org/linux-fsdevel/20190527172655.9287-1-amir73il@gmail.com/
+
+Omar Sandoval (4):
+  fs: add flags argument to i_op->link()
+  fs: add AT_LINK_REPLACE flag for linkat() which replaces the target
+  Btrfs: fix inode reference count leak in btrfs_link() error path
+  Btrfs: add support for linkat() AT_REPLACE
+
+ fs/9p/vfs_inode.c          |   5 +-
+ fs/9p/vfs_inode_dotl.c     |   5 +-
+ fs/affs/affs.h             |   2 +-
+ fs/affs/namei.c            |   6 +-
+ fs/afs/dir.c               |   7 +-
+ fs/bad_inode.c             |   2 +-
+ fs/bfs/dir.c               |   7 +-
+ fs/btrfs/inode.c           |  70 ++++++++++++++--
+ fs/ceph/dir.c              |   5 +-
+ fs/cifs/cifsfs.h           |   2 +-
+ fs/cifs/link.c             |   5 +-
+ fs/coda/dir.c              |   5 +-
+ fs/ecryptfs/inode.c        |   7 +-
+ fs/ext2/namei.c            |   5 +-
+ fs/ext4/namei.c            |   7 +-
+ fs/f2fs/namei.c            |   5 +-
+ fs/fuse/dir.c              |   5 +-
+ fs/gfs2/inode.c            |   5 +-
+ fs/hfsplus/dir.c           |   5 +-
+ fs/hostfs/hostfs_kern.c    |   5 +-
+ fs/jffs2/dir.c             |   8 +-
+ fs/jfs/namei.c             |   7 +-
+ fs/libfs.c                 |   6 +-
+ fs/minix/namei.c           |   5 +-
+ fs/namei.c                 | 166 +++++++++++++++++++++++++++++--------
+ fs/nfs/dir.c               |   6 +-
+ fs/nfs/internal.h          |   2 +-
+ fs/nfsd/vfs.c              |   2 +-
+ fs/nilfs2/namei.c          |   5 +-
+ fs/ocfs2/namei.c           |   6 +-
+ fs/overlayfs/dir.c         |   5 +-
+ fs/overlayfs/overlayfs.h   |   2 +-
+ fs/reiserfs/namei.c        |   5 +-
+ fs/sysv/namei.c            |   7 +-
+ fs/ubifs/dir.c             |   5 +-
+ fs/udf/namei.c             |   5 +-
+ fs/ufs/namei.c             |   5 +-
+ fs/xfs/xfs_iops.c          |   6 +-
+ include/linux/fs.h         |   6 +-
+ include/uapi/linux/fcntl.h |   1 +
+ mm/shmem.c                 |   6 +-
+ 41 files changed, 341 insertions(+), 90 deletions(-)
+
 -- 
 2.25.0
 
