@@ -2,91 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE7BD14CBBC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 14:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 187A314CC64
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 15:27:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgA2NwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 08:52:06 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:39850 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgA2NwG (ORCPT
+        id S1726558AbgA2O1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 09:27:12 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38162 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbgA2O1L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 08:52:06 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m13so18670295edb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2020 05:52:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g/z/wuxc+7xT2yV/Klj0Qifjo3UGoZMxK1efiAVi90k=;
-        b=OA+jLaOxwv5kxEK2jsC84DNaLbn6Q1JxahmQrobXYSjuoltN+RtJtJ4ZtScgLiCFu3
-         T5UYzEfynULE4EaZg4NBya6auTieKqJkB2N44rpxTyRYKKTCiGSN3sfgKbWAjKWTZZgk
-         bAD8Oj8cd64yGmTYuHWo3WiQieUFsd3dneI8ES7qmXhnxxYMoRE/LfryOQtanjRzfZkC
-         hKKe/5J/uYyUdKpTYVjyKNMTSptlQBaj2dAw2epcloBiAsIge+mEKsRomG6oAnqwGVMe
-         3NY7D1MfljKmmnH8QiCR5CwQaU5BXX/6xWOJPMIlDcDhlRKQTQTuG2EXA+XQ0hioW122
-         +fAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g/z/wuxc+7xT2yV/Klj0Qifjo3UGoZMxK1efiAVi90k=;
-        b=WTrQNASOvgsUcIxn3zDylg2tt2HXJJexVfprYr5hvd1rt9V7bBcXANkSUDCDyTbFBW
-         JyUFuLdInvYkB2OZKhAZJwgc+c4pZADxekugW43fz/T8UYTFc/yEnkCrna+koX6PzLcz
-         N6YQRN1n9edooUhxql9Kw1kCjMdFAtBiPAv8CNe64z0eyuOuEft2fWzlYcgKgD9lbcBd
-         hMinI+sM7KvI1VoQb7T6vyvD5pgOWGzg1QWk8BiUO3vbvxfwayyVXVM9h14go7rtklYA
-         lDlwl997S+hE1DiBvXAoLZaz5A3ayzaApI5qIRlQYTW+jTfC615/BMiqJi+Pl8zHCJp2
-         F0Zw==
-X-Gm-Message-State: APjAAAV4OdGZPESQ70H3S8ShxbDqTbcGoFfsa/NNZLNkRmZYdpzNCMMo
-        aaMLKEGgZHSmX0eZ5qn/ucQX27LaAThNgj2om5L0
-X-Google-Smtp-Source: APXvYqzfpqAQqbk304DWn4ktRIxY8tzK9qnQQq5mo7EYBxsHQtxhRehkW3/mP7Fefk8Y240fGdoIbbYINrSyMgy7Rl0=
-X-Received: by 2002:a17:906:f251:: with SMTP id gy17mr7400826ejb.308.1580305924909;
- Wed, 29 Jan 2020 05:52:04 -0800 (PST)
+        Wed, 29 Jan 2020 09:27:11 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iwoJB-004KmP-I8; Wed, 29 Jan 2020 14:27:09 +0000
+Date:   Wed, 29 Jan 2020 14:27:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] vfs.git openat2 series
+Message-ID: <20200129142709.GX23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org> <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
-In-Reply-To: <56177bc4-441d-36f4-fe73-4e86edf02899@infradead.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 29 Jan 2020 08:51:53 -0500
-Message-ID: <CAHC9VhRW68ccE_8HJnv4anFdSgkY2Yk3612LPCT5o4+vXQGqQA@mail.gmail.com>
-Subject: Re: mmotm 2020-01-28-20-05 uploaded (security/security.c)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 28, 2020 at 11:52 PM Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 1/28/20 8:06 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
-> >
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > mmotm-readme.txt says
-> >
-> > README for mm-of-the-moment:
-> >
-> > http://www.ozlabs.org/~akpm/mmotm/
-> >
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> >
->
-> security/security.c contains duplicate lines for <lockdown_reasons> array:
+	openat2() series; I'm afraid that the rest of namei stuff will
+have to wait - it got zero review the last time I'd posted #work.namei,
+and there had been a leak in the posted series I'd caught only last
+weekend.  I was going to repost it on Monday, but the window opened
+and the odds of getting any review during that...  Oh, well...
 
-Hmmm.  Commit 59438b46471a ("security,lockdown,selinux: implement
-SELinux lockdown"), which was merged into Linus' tree during the
-current merge window, moved the lockdown_reasons array from
-security/lockdown/lockdown.c to security/security.c; is there another
-tree in linux-next which is moving lockdown_reasons into
-security/security.c?
+	Anyway, openat2 part should be ready; that _did_ get sane amount
+of review and public testing, so here it comes.
 
--- 
-paul moore
-www.paul-moore.com
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.openat2
+
+for you to fetch changes up to b55eef872a96738ea9cb35774db5ce9a7d3a648f:
+
+  Documentation: path-lookup: include new LOOKUP flags (2020-01-18 09:19:28 -0500)
+
+----------------------------------------------------------------
+Aleksa Sarai (13):
+      namei: only return -ECHILD from follow_dotdot_rcu()
+      nsfs: clean-up ns_get_path() signature to return int
+      namei: allow nd_jump_link() to produce errors
+      namei: allow set_root() to produce errors
+      namei: LOOKUP_NO_SYMLINKS: block symlink resolution
+      namei: LOOKUP_NO_MAGICLINKS: block magic-link resolution
+      namei: LOOKUP_NO_XDEV: block mountpoint crossing
+      namei: LOOKUP_BENEATH: O_BENEATH-like scoped resolution
+      namei: LOOKUP_IN_ROOT: chroot-like scoped resolution
+      namei: LOOKUP_{IN_ROOT,BENEATH}: permit limited ".." resolution
+      open: introduce openat2(2) syscall
+      selftests: add openat2(2) selftests
+      Documentation: path-lookup: include new LOOKUP flags
+
+ CREDITS                                            |   4 +-
+ Documentation/filesystems/path-lookup.rst          |  68 ++-
+ MAINTAINERS                                        |   1 +
+ arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
+ arch/arm/tools/syscall.tbl                         |   1 +
+ arch/arm64/include/asm/unistd.h                    |   2 +-
+ arch/arm64/include/asm/unistd32.h                  |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl              |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl              |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl                |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
+ fs/namei.c                                         | 199 ++++++--
+ fs/nsfs.c                                          |  29 +-
+ fs/open.c                                          | 147 ++++--
+ fs/proc/base.c                                     |   3 +-
+ fs/proc/namespaces.c                               |  20 +-
+ include/linux/fcntl.h                              |  16 +-
+ include/linux/namei.h                              |  12 +-
+ include/linux/proc_ns.h                            |   4 +-
+ include/linux/syscalls.h                           |   3 +
+ include/uapi/asm-generic/unistd.h                  |   5 +-
+ include/uapi/linux/fcntl.h                         |   2 +-
+ include/uapi/linux/openat2.h                       |  39 ++
+ kernel/bpf/offload.c                               |  12 +-
+ kernel/events/core.c                               |   2 +-
+ security/apparmor/apparmorfs.c                     |   6 +-
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/openat2/.gitignore         |   1 +
+ tools/testing/selftests/openat2/Makefile           |   8 +
+ tools/testing/selftests/openat2/helpers.c          | 109 +++++
+ tools/testing/selftests/openat2/helpers.h          | 106 +++++
+ tools/testing/selftests/openat2/openat2_test.c     | 312 ++++++++++++
+ .../testing/selftests/openat2/rename_attack_test.c | 160 +++++++
+ tools/testing/selftests/openat2/resolve_test.c     | 523 +++++++++++++++++++++
+ 44 files changed, 1696 insertions(+), 116 deletions(-)
+ create mode 100644 include/uapi/linux/openat2.h
+ create mode 100644 tools/testing/selftests/openat2/.gitignore
+ create mode 100644 tools/testing/selftests/openat2/Makefile
+ create mode 100644 tools/testing/selftests/openat2/helpers.c
+ create mode 100644 tools/testing/selftests/openat2/helpers.h
+ create mode 100644 tools/testing/selftests/openat2/openat2_test.c
+ create mode 100644 tools/testing/selftests/openat2/rename_attack_test.c
+ create mode 100644 tools/testing/selftests/openat2/resolve_test.c
