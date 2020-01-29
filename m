@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187A314CC64
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 15:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 401C214CC71
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 15:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgA2O1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 09:27:12 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38162 "EHLO
+        id S1726485AbgA2O27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 09:28:59 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38182 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgA2O1L (ORCPT
+        with ESMTP id S1726178AbgA2O27 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 09:27:11 -0500
+        Wed, 29 Jan 2020 09:28:59 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwoJB-004KmP-I8; Wed, 29 Jan 2020 14:27:09 +0000
-Date:   Wed, 29 Jan 2020 14:27:09 +0000
+        id 1iwoKv-004L1o-Uq; Wed, 29 Jan 2020 14:28:58 +0000
+Date:   Wed, 29 Jan 2020 14:28:57 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] vfs.git openat2 series
-Message-ID: <20200129142709.GX23230@ZenIV.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] adfs series
+Message-ID: <20200129142857.GY23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -28,14 +28,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	openat2() series; I'm afraid that the rest of namei stuff will
-have to wait - it got zero review the last time I'd posted #work.namei,
-and there had been a leak in the posted series I'd caught only last
-weekend.  I was going to repost it on Monday, but the window opened
-and the odds of getting any review during that...  Oh, well...
-
-	Anyway, openat2 part should be ready; that _did_ get sane amount
-of review and public testing, so here it comes.
+	adfs stuff for this cycle
 
 The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
@@ -43,78 +36,67 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.openat2
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.adfs
 
-for you to fetch changes up to b55eef872a96738ea9cb35774db5ce9a7d3a648f:
+for you to fetch changes up to 587065dcac64e88132803cdb0a7f26bb4a79cf46:
 
-  Documentation: path-lookup: include new LOOKUP flags (2020-01-18 09:19:28 -0500)
+  fs/adfs: bigdir: Fix an error code in adfs_fplus_read() (2020-01-25 11:31:59 -0500)
 
 ----------------------------------------------------------------
-Aleksa Sarai (13):
-      namei: only return -ECHILD from follow_dotdot_rcu()
-      nsfs: clean-up ns_get_path() signature to return int
-      namei: allow nd_jump_link() to produce errors
-      namei: allow set_root() to produce errors
-      namei: LOOKUP_NO_SYMLINKS: block symlink resolution
-      namei: LOOKUP_NO_MAGICLINKS: block magic-link resolution
-      namei: LOOKUP_NO_XDEV: block mountpoint crossing
-      namei: LOOKUP_BENEATH: O_BENEATH-like scoped resolution
-      namei: LOOKUP_IN_ROOT: chroot-like scoped resolution
-      namei: LOOKUP_{IN_ROOT,BENEATH}: permit limited ".." resolution
-      open: introduce openat2(2) syscall
-      selftests: add openat2(2) selftests
-      Documentation: path-lookup: include new LOOKUP flags
+Dan Carpenter (1):
+      fs/adfs: bigdir: Fix an error code in adfs_fplus_read()
 
- CREDITS                                            |   4 +-
- Documentation/filesystems/path-lookup.rst          |  68 ++-
- MAINTAINERS                                        |   1 +
- arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
- arch/arm/tools/syscall.tbl                         |   1 +
- arch/arm64/include/asm/unistd.h                    |   2 +-
- arch/arm64/include/asm/unistd32.h                  |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl              |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
- arch/s390/kernel/syscalls/syscall.tbl              |   1 +
- arch/sh/kernel/syscalls/syscall.tbl                |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
- fs/namei.c                                         | 199 ++++++--
- fs/nsfs.c                                          |  29 +-
- fs/open.c                                          | 147 ++++--
- fs/proc/base.c                                     |   3 +-
- fs/proc/namespaces.c                               |  20 +-
- include/linux/fcntl.h                              |  16 +-
- include/linux/namei.h                              |  12 +-
- include/linux/proc_ns.h                            |   4 +-
- include/linux/syscalls.h                           |   3 +
- include/uapi/asm-generic/unistd.h                  |   5 +-
- include/uapi/linux/fcntl.h                         |   2 +-
- include/uapi/linux/openat2.h                       |  39 ++
- kernel/bpf/offload.c                               |  12 +-
- kernel/events/core.c                               |   2 +-
- security/apparmor/apparmorfs.c                     |   6 +-
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/openat2/.gitignore         |   1 +
- tools/testing/selftests/openat2/Makefile           |   8 +
- tools/testing/selftests/openat2/helpers.c          | 109 +++++
- tools/testing/selftests/openat2/helpers.h          | 106 +++++
- tools/testing/selftests/openat2/openat2_test.c     | 312 ++++++++++++
- .../testing/selftests/openat2/rename_attack_test.c | 160 +++++++
- tools/testing/selftests/openat2/resolve_test.c     | 523 +++++++++++++++++++++
- 44 files changed, 1696 insertions(+), 116 deletions(-)
- create mode 100644 include/uapi/linux/openat2.h
- create mode 100644 tools/testing/selftests/openat2/.gitignore
- create mode 100644 tools/testing/selftests/openat2/Makefile
- create mode 100644 tools/testing/selftests/openat2/helpers.c
- create mode 100644 tools/testing/selftests/openat2/helpers.h
- create mode 100644 tools/testing/selftests/openat2/openat2_test.c
- create mode 100644 tools/testing/selftests/openat2/rename_attack_test.c
- create mode 100644 tools/testing/selftests/openat2/resolve_test.c
+Russell King (41):
+      fs/adfs: inode: update timestamps to centisecond precision
+      fs/adfs: inode: fix adfs_mode2atts()
+      fs/adfs: map: move map reading and validation to map.c
+      fs/adfs: map: rename adfs_map_free() to adfs_map_statfs()
+      fs/adfs: map: break up adfs_read_map()
+      fs/adfs: map: factor out map cleanup
+      fs/adfs: map: incorporate map offsets into layout
+      fs/adfs: map: use find_next_bit_le() rather than open coding it
+      fs/adfs: map: move map-specific sb initialisation to map.c
+      fs/adfs: map: fix map scanning
+      fs/adfs: dir: rename bh_fplus to bhs
+      fs/adfs: dir: add common dir object initialisation
+      fs/adfs: dir: add common directory buffer release method
+      fs/adfs: dir: add common directory sync method
+      fs/adfs: dir: add generic copy functions
+      fs/adfs: dir: add generic directory reading
+      fs/adfs: dir: add helper to read directory using inode
+      fs/adfs: dir: add helper to mark directory buffers dirty
+      fs/adfs: dir: update directory locking
+      fs/adfs: dir: modernise on-disk directory structures
+      fs/adfs: dir: improve update failure handling
+      fs/adfs: dir: improve compiler coverage in adfs_dir_update
+      fs/adfs: dir: switch to iterate_shared method
+      fs/adfs: dir: add more efficient iterate() per-format method
+      fs/adfs: dir: use pointers to access directory head/tails
+      fs/adfs: newdir: factor out directory format validation
+      fs/adfs: newdir: improve directory validation
+      fs/adfs: newdir: merge adfs_dir_read() into adfs_f_read()
+      fs/adfs: newdir: clean up adfs_f_update()
+      fs/adfs: newdir: split out directory commit from update
+      fs/adfs: bigdir: factor out directory entry offset calculation
+      fs/adfs: bigdir: extract directory validation
+      fs/adfs: bigdir: directory validation strengthening
+      fs/adfs: bigdir: calculate and validate directory checkbyte
+      fs/adfs: bigdir: implement directory update support
+      fs/adfs: super: fix inode dropping
+      fs/adfs: dir: remove debug in adfs_dir_update()
+      fs/adfs: super: extract filesystem block probe
+      fs/adfs: super: add support for E and E+ floppy image formats
+      fs/adfs: mostly divorse inode number from indirect disc address
+      Documentation: update adfs filesystem documentation
+
+ Documentation/filesystems/adfs.txt |  24 +++
+ fs/adfs/adfs.h                     |  32 ++--
+ fs/adfs/dir.c                      | 314 +++++++++++++++++++++++++--------
+ fs/adfs/dir_f.c                    | 302 +++++++++-----------------------
+ fs/adfs/dir_f.h                    |  52 +++---
+ fs/adfs/dir_fplus.c                | 346 +++++++++++++++++++++----------------
+ fs/adfs/dir_fplus.h                |   6 +-
+ fs/adfs/inode.c                    |  64 +++----
+ fs/adfs/map.c                      | 247 +++++++++++++++++++-------
+ fs/adfs/super.c                    | 267 ++++++++++------------------
+ 10 files changed, 914 insertions(+), 740 deletions(-)
