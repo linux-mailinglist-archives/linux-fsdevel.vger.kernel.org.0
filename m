@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3BB614CEE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3734014CEEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbgA2RAB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 12:00:01 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36721 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbgA2Q76 (ORCPT
+        id S1726998AbgA2RAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 12:00:05 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:37907 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbgA2RAF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 11:59:58 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k3so76880pgc.3;
-        Wed, 29 Jan 2020 08:59:58 -0800 (PST)
+        Wed, 29 Jan 2020 12:00:05 -0500
+Received: by mail-pj1-f68.google.com with SMTP id j17so28239pjz.3;
+        Wed, 29 Jan 2020 09:00:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=eHjjsiMv1wzBzYyD+HE2PIrBR1oeknOAP7k+Y37wTOU=;
-        b=shw0t8B3zA6CFyI1x/5Y4QVs4mRC4KcQuPyKBA/kKA/pBp5R3adOcDf+e8sY/1XebQ
-         nuR793bgVlDQfNjsSd8SYIrZziZmqY+enjkFZ/ndySx/mJ2S2BWlg7CTzhkAJltN4yW1
-         YvIA4zjInhJewzLRZXwgyzGbUzhhWj4pS52a3hOgjW4beVUctm/BaxLXqWXmH592ycZ3
-         iwLlUEFamzMt0nogbi7KDvOQI/6h3ACnDHhWZB7SDmj8p0IDvCyZRM0J0TXDFTIegn0d
-         txtdOIrQdDxD01YEUM/4eBjlN8Cjf3zafwyWwZBDHWpH20NHXUZbcB2bPYE/LZg560FK
-         TPWw==
+        bh=bPvZB2eXnaQVO0WfOG+R7PFYHNHOhAB7tEpy1Zm0ayk=;
+        b=b696053/Lt9vjqeFFvinQoccKggmldIV0Y1dzSBoR7i3gVTaRlbbMgLIp0TzZQCFwX
+         Ryg50luCMbqng2qTecKgyo9na24UhZiRqmsLXR3oV1zcIirYWmu7dqtUyPwvSIaZy5X+
+         /iL5AkJjnwIg4RH3c7zNApVrMneIZeTQCJhakDmqu/P15MVEiAnqUMHPtosbVpLi3+mt
+         Nu/d+MnRe6NmhlXIZFlGGSm7wFZ7l2aVt2xEHOa7iRklUqJ5MAveXW4SbK0eHUYvaHuE
+         7rS5qXrL79jLKCgpcd5kklcWt8evCPADzm59uRvGUFYtyNwJXlv6a5dbsf2Bka1dE0Wz
+         6oJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=eHjjsiMv1wzBzYyD+HE2PIrBR1oeknOAP7k+Y37wTOU=;
-        b=HCTKMPHlhZINj2CRXrx/GkEJKduDvSlX4OUUwmnO7wp+cSbDO/C0EntMFFo8nB1Bts
-         qSw1qp3qY0wnpb9wWCtKG0WtIsSLMJslVcjWI56lhoZKeShJYzSVg+ykCJ6ZpAXWl0sM
-         exDU+2USGhq10B9qnbKyLmZ5vAFVMB1D7d9L4YZQ3Lce/0JLr27VUcygquMljCME4upS
-         QheIDh94KcvGh6F5bB3eJmCWDIErcGfhQjUyr4s6DxEc8bFS6cqH2YylspqHhQH95/w0
-         5lKLmoIcGRiBd06YDB2hC2HhfYMhkqCn1r22NUgO0b0akvbVB6hu3ShpYktFhvHl1zEA
-         /Mvg==
-X-Gm-Message-State: APjAAAWLl4YTBpfD/FCL/slkPsA0Oxc/kOQTcH5OeZebuPQ9GRBKjyEb
-        0AH9RAcZNoiRqjLnIRvsQzE=
-X-Google-Smtp-Source: APXvYqxABWPyCjxgqwnirseesvhmXcgODMGoWG64H+djLbHYA5lVIEhFjUKzaCXD/ZciOPEJSZoA6A==
-X-Received: by 2002:aa7:8bcd:: with SMTP id s13mr518903pfd.234.1580317197984;
-        Wed, 29 Jan 2020 08:59:57 -0800 (PST)
+        bh=bPvZB2eXnaQVO0WfOG+R7PFYHNHOhAB7tEpy1Zm0ayk=;
+        b=eA4IQOo9U4oIY56WzVGh833sm4YYLMOxYxYdu2vvqTjQqVKlCl3u2CxztZYZ4q0KR+
+         /V769oI+1Xu0VCVLgETOLH2lE8HHhHp600BOEK1/xPTNLsado3EXFn/srXseLjhFyuPO
+         7NLq3N/6VLb18KkO2dMuuej7DiWEG97b6nckCCBDIaxTVlVlTRp/ohMvlwKOUjJeWpN4
+         Uarv9x3KcWBtJdhYle7FswEe5pG0nTl5dNFqC4ePgaZshjDi9S0rWw54sEHHXCZMnHOU
+         soE0x2SFJ4TtQZ26kB9Yn6Ezjk2qlwjavVpx2XLvJrFt/m85bDGL44rgWvn88wR54Msb
+         5YXw==
+X-Gm-Message-State: APjAAAWnoruEVd4SOfD98sf4iI+J5hCQHNWh5TT6U9PwFrrE9fCFhyni
+        w/V4srIrsNJKc7wE2za4pW81gX9uT5w=
+X-Google-Smtp-Source: APXvYqzxWBAM79wHdhfvx7HHnyjNePmla14ZZU8SCEMcp3qgnwSWntL6S+VfriBAQyiyMUfbBfvcng==
+X-Received: by 2002:a17:902:ba8a:: with SMTP id k10mr271498pls.333.1580317204283;
+        Wed, 29 Jan 2020 09:00:04 -0800 (PST)
 Received: from localhost.localdomain ([2405:205:c92f:3ccd:49ce:a9e3:28b5:cf94])
-        by smtp.gmail.com with ESMTPSA id f8sm3223610pfn.2.2020.01.29.08.59.54
+        by smtp.gmail.com with ESMTPSA id f8sm3223610pfn.2.2020.01.29.08.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2020 08:59:57 -0800 (PST)
+        Wed, 29 Jan 2020 09:00:03 -0800 (PST)
 From:   Pragat Pandya <pragat.pandya@gmail.com>
 To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH 12/19] staging: exfat: Rename variable 'UsedClusters' to 'used_clusters'
-Date:   Wed, 29 Jan 2020 22:28:25 +0530
-Message-Id: <20200129165832.10574-13-pragat.pandya@gmail.com>
+Subject: [PATCH 13/19] staging: exfat: Rename variable 'Name' to 'name'
+Date:   Wed, 29 Jan 2020 22:28:26 +0530
+Message-Id: <20200129165832.10574-14-pragat.pandya@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200129165832.10574-1-pragat.pandya@gmail.com>
 References: <20200129165832.10574-1-pragat.pandya@gmail.com>
@@ -62,53 +62,85 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Fix checkpatch warning: Avoid CamelCase.
-Change all occurrecnes of identifier "UsedClusters" to "used_clusters"
+Change all occurrences of identifier "Name" to "name"
 
 Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
 ---
- drivers/staging/exfat/exfat.h       | 2 +-
- drivers/staging/exfat/exfat_super.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/exfat/exfat.h       |  2 +-
+ drivers/staging/exfat/exfat_super.c | 12 ++++++------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 2c42519d5eba..2242cf1fdb4a 100644
+index 2242cf1fdb4a..e74e4d5fecd4 100644
 --- a/drivers/staging/exfat/exfat.h
 +++ b/drivers/staging/exfat/exfat.h
-@@ -246,7 +246,7 @@ struct vol_info_t {
- 	u32      cluster_size;
- 	u32      num_clusters;
- 	u32      free_clusters;
--	u32      UsedClusters;
-+	u32      used_clusters;
+@@ -270,7 +270,7 @@ struct file_id_t {
  };
  
- /* directory structure */
+ struct dir_entry_t {
+-	char Name[MAX_NAME_LENGTH * MAX_CHARSET_SIZE];
++	char name[MAX_NAME_LENGTH * MAX_CHARSET_SIZE];
+ 
+ 	/* used only for FAT12/16/32, not used for exFAT */
+ 	char ShortName[DOS_NAME_LENGTH + 2];
 diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 335bf39aa171..4b8ffb8ab557 100644
+index 4b8ffb8ab557..8e9684808cba 100644
 --- a/drivers/staging/exfat/exfat_super.c
 +++ b/drivers/staging/exfat/exfat_super.c
-@@ -497,8 +497,8 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
- 	info->fat_type = p_fs->vol_type;
- 	info->cluster_size = p_fs->cluster_size;
- 	info->num_clusters = p_fs->num_clusters - 2; /* clu 0 & 1 */
--	info->UsedClusters = p_fs->used_clusters;
--	info->free_clusters = info->num_clusters - info->UsedClusters;
-+	info->used_clusters = p_fs->used_clusters;
-+	info->free_clusters = info->num_clusters - info->used_clusters;
+@@ -1465,7 +1465,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 			memset((char *)&info->AccessTimestamp, 0,
+ 			       sizeof(struct date_time_t));
+ 			strcpy(info->ShortName, ".");
+-			strcpy(info->Name, ".");
++			strcpy(info->name, ".");
  
- 	if (p_fs->dev_ejected)
- 		err = -EIO;
-@@ -3351,8 +3351,8 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 		info.fat_type = p_fs->vol_type;
- 		info.cluster_size = p_fs->cluster_size;
- 		info.num_clusters = p_fs->num_clusters - 2;
--		info.UsedClusters = p_fs->used_clusters;
--		info.free_clusters = info.num_clusters - info.UsedClusters;
-+		info.used_clusters = p_fs->used_clusters;
-+		info.free_clusters = info.num_clusters - info.used_clusters;
+ 			dir.dir = p_fs->root_dir;
+ 			dir.flags = 0x01;
+@@ -1530,7 +1530,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	 */
+ 	p_fs->fs_func->get_uni_name_from_ext_entry(sb, &fid->dir, fid->entry,
+ 						   uni_name.name);
+-	nls_uniname_to_cstring(sb, info->Name, &uni_name);
++	nls_uniname_to_cstring(sb, info->name, &uni_name);
  
- 		if (p_fs->dev_ejected)
- 			pr_info("[EXFAT] statfs on device that is ejected\n");
+ 	info->NumSubdirs = 2;
+ 
+@@ -1948,7 +1948,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 			*uni_name.name = 0x0;
+ 			fs_func->get_uni_name_from_ext_entry(sb, &dir, dentry,
+ 							     uni_name.name);
+-			nls_uniname_to_cstring(sb, dir_entry->Name, &uni_name);
++			nls_uniname_to_cstring(sb, dir_entry->name, &uni_name);
+ 			exfat_buf_unlock(sb, sector);
+ 
+ 			ep = get_entry_in_dir(sb, &clu, i + 1, NULL);
+@@ -1991,7 +1991,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 		}
+ 	}
+ 
+-	*dir_entry->Name = '\0';
++	*dir_entry->name = '\0';
+ 
+ 	fid->rwoffset = (s64)(++dentry);
+ 
+@@ -2129,7 +2129,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ 
+ 	cpos = EXFAT_I(inode)->fid.rwoffset << DENTRY_SIZE_BITS;
+ 
+-	if (!de.Name[0])
++	if (!de.name[0])
+ 		goto end_of_dir;
+ 
+ 	if (!memcmp(de.ShortName, DOS_CUR_DIR_NAME, DOS_NAME_LENGTH)) {
+@@ -2149,7 +2149,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ 		}
+ 	}
+ 
+-	if (!dir_emit(ctx, de.Name, strlen(de.Name), inum,
++	if (!dir_emit(ctx, de.name, strlen(de.name), inum,
+ 		      (de.Attr & ATTR_SUBDIR) ? DT_DIR : DT_REG))
+ 		goto out;
+ 
 -- 
 2.17.1
 
