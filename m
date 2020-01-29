@@ -2,86 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB24814C8F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 11:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 887E814C8F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 11:50:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbgA2KuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 05:50:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbgA2KuP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 05:50:15 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85E1720720;
-        Wed, 29 Jan 2020 10:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580295015;
-        bh=jHwJpm2yRmwh7TjlKXTA2UFU1Yy6KXRu81Yj3516AGA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fjCiN/BJOb2/B7vg2e94h8DAzpYS3l38HMIdqnZ0MvLsLuQHXGF6CJ5LiGWk7Uy4n
-         skUSY0DwR78Yh17dtmt5PHQnlqrlBCKpZ/rjIqjPXikOg1KWUUffnnvkONMO0jSVct
-         r8eKt+0D1j/6ya7l0kBtiyMAQQbpZNhAP0Odd9dU=
-Date:   Wed, 29 Jan 2020 11:50:12 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pragat Pandya <pragat.pandya@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        devel@driverdev.osuosl.org, valdis.kletnieks@vt.edu,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH 09/22] staging: exfat: Rename variable "Size" to "size"
-Message-ID: <20200129105012.GA3884393@kroah.com>
-References: <20200127101343.20415-1-pragat.pandya@gmail.com>
- <20200127101343.20415-10-pragat.pandya@gmail.com>
- <20200127115741.GA1847@kadam>
- <287916429826dd2f14d82f9b7b6b15a9cace2734.camel@gmail.com>
+        id S1726261AbgA2Kut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 05:50:49 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38705 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgA2Kut (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Jan 2020 05:50:49 -0500
+Received: by mail-io1-f65.google.com with SMTP id s24so16518763iog.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2020 02:50:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xWJyJn0sfT0Zc5yi27vWrHQD81AWkTLfYCa1678fPLo=;
+        b=Gf6CTpyTECKUTC/bnNsYZb4GH5leoYRRcnPTp/KFi5JNN2XMLYSfBihxGeTsEnp2ln
+         C44X0C640MPWJZyTWqRyHbZRRHCdrh4gjmkUk63NkrWuXsI505/vERefKnBHYvNT0O3u
+         n8U5fx/OyDpaZcvna3pGyEuw8SqEvSaEVn+Ic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xWJyJn0sfT0Zc5yi27vWrHQD81AWkTLfYCa1678fPLo=;
+        b=heWgcmrHC24iuM/lDjAuM11mGtYL3L5IShSodzUjvDZnv6/TIdAykneyNu9xc8E/Up
+         0U4StiNK+jFdpwPHjUJ82wvekgw0nh69EELzBV8aDMv0N6fgA/e7fHHWwYRTtec8A0sF
+         Q1dcSDW/xQBM7WEUGC2vhw9Td6q6AGljIjINNUyRVVhC3ku9TQx7U+of26hRR+O1bNXI
+         0akckWzJO9446ftr/BYLOfYmu/Gyd4HyOsb/4/gYPUBMX7IyMQ2F/6cinpW6OEB4Y+cb
+         wS14v14EDiXijHDxJjSKXMCAmv6nepHOI3q23Rl9+I+wYYjyucBSVb+utrEMqBToGjr+
+         Xwxg==
+X-Gm-Message-State: APjAAAWrjJNvLMqTpDc9nuLKuUZhHiemGauydiEHotzvLpqVcyKBI1gb
+        SK/a+zcx4/FGylavP173TkUYZ+NFbDoeJx3hr67oig==
+X-Google-Smtp-Source: APXvYqyMwMa1EZLvilOnOqucjHfFowYylcPwKRIaPLXouVwygD13i61Qx/FolEShfxCTy2yX3s8VN1aTQydpbYCRsB8=
+X-Received: by 2002:a05:6638:3b6:: with SMTP id z22mr21031873jap.35.1580295048355;
+ Wed, 29 Jan 2020 02:50:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <287916429826dd2f14d82f9b7b6b15a9cace2734.camel@gmail.com>
+References: <20200125013553.24899-1-willy@infradead.org> <20200125013553.24899-12-willy@infradead.org>
+In-Reply-To: <20200125013553.24899-12-willy@infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 29 Jan 2020 11:50:37 +0100
+Message-ID: <CAJfpegvk2ZHzZCriAjdWoKvDXLtXi_c4mh34qLfy9O89+oAwhQ@mail.gmail.com>
+Subject: Re: [PATCH 11/12] fuse: Convert from readpages to readahead
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 04:10:39PM +0530, Pragat Pandya wrote:
-> On Mon, 2020-01-27 at 14:57 +0300, Dan Carpenter wrote:
-> > On Mon, Jan 27, 2020 at 03:43:30PM +0530, Pragat Pandya wrote:
-> > > Change all the occurences of "Size" to "size" in exfat.
-> > > 
-> > > Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
-> > > ---
-> > >  drivers/staging/exfat/exfat.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/staging/exfat/exfat.h
-> > > b/drivers/staging/exfat/exfat.h
-> > > index 52f314d50b91..a228350acdb4 100644
-> > > --- a/drivers/staging/exfat/exfat.h
-> > > +++ b/drivers/staging/exfat/exfat.h
-> > > @@ -233,7 +233,7 @@ struct date_time_t {
-> > >  
-> > >  struct part_info_t {
-> > >  	u32      offset;    /* start sector number of the partition */
-> > > -	u32      Size;      /* in sectors */
-> > > +	u32      size;      /* in sectors */
-> > >  };
-> > 
-> > We just renamed all the struct members of this without changing any
-> > users.  Which suggests that this is unused and can be deleted.
-> > 
-> > regards,
-> > dan carpenter
-> > 
-> Can I just drop this commit from this patchset and do a separate patch
-> to remove the unused structure?
+On Sat, Jan 25, 2020 at 2:36 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+>
+> Use the new readahead operation in fuse.  Switching away from the
+> read_cache_pages() helper gets rid of an implicit call to put_page(),
+> so we can get rid of the get_page() call in fuse_readpages_fill().
+> We can also get rid of the call to fuse_wait_on_page_writeback() as
+> this page is newly allocated and so cannot be under writeback.
 
-Drop this one, and the other ones that touch this structure, and do a
-separate patch.  This series needs fixing up anyway, I can't take it
-as-is.
+Not sure.  fuse_wait_on_page_writeback() waits not on the page but the
+byte range indicated by the index.
 
-thanks,
+Fuse writeback goes through some hoops to prevent reclaim related
+deadlocks, which means that the byte range could still be under
+writeback, yet the page belonging to that range be already reclaimed.
+ This fuse_wait_on_page_writeback() is trying to serialize reads
+against such writes.
 
-greg k-h
+Thanks,
+Miklos
