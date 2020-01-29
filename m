@@ -2,136 +2,321 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E78C414C4EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 04:24:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A861F14C519
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 05:06:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbgA2DYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jan 2020 22:24:47 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:17900 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbgA2DYY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jan 2020 22:24:24 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e30fad50003>; Tue, 28 Jan 2020 19:24:05 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Jan 2020 19:24:20 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Jan 2020 19:24:20 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jan
- 2020 03:24:19 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 29 Jan 2020 03:24:19 +0000
-Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e30fae30007>; Tue, 28 Jan 2020 19:24:19 -0800
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v2 8/8] selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN coverage
-Date:   Tue, 28 Jan 2020 19:24:17 -0800
-Message-ID: <20200129032417.3085670-9-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200129032417.3085670-1-jhubbard@nvidia.com>
-References: <20200129032417.3085670-1-jhubbard@nvidia.com>
-MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580268245; bh=Q/jtf1QAQWUBdGa6x5cGwrQgIxtlzXz53YFDTgazJkU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=OfVxu5XUMoa0jfrsUtQqs/QQpukmxuEgszfT42NxxSVKqYrSaNN5MrNrCf47W+w92
-         E1cjqFQ7g3WZsn8M8IlIB1Kyz6hNG1HZEB2ZIOVLaHLMMSW8ijVgsyIsZ38lg1mZGx
-         5lrbYItcIYtkGSd3wbyOjDIk4TD2+kVS6hIf52HPJNcDHl9ynC+WHMvwjTNiElkEsi
-         3+cBRWTQwjf2P8hlZniohdC++khabUbbej0oUg+oQrnmB8r3yU5vJTuZRwcGwiEf7n
-         HbWfrvXGaotuOrOhDCYrkG+a7nhGHqhDjA2W8HCl6bVbTBukVt0SwL4yRpYascONOp
-         3LktvdGl4C9ng==
+        id S1726541AbgA2EGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jan 2020 23:06:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726346AbgA2EGn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jan 2020 23:06:43 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5166F20702;
+        Wed, 29 Jan 2020 04:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580270801;
+        bh=KvrkkHtjW9s8D8gWFBhUlWtkC74LPUJm7tXnhtzLJ8Y=;
+        h=Date:From:To:Subject:From;
+        b=q/WkdWTRB19Oens+eNFd5/8cfg4F+QY1xPso6dmxCZPhI5lorKpgtLCTCs/iSTOAN
+         rDHpIiRB2S5eQmagRCHF9QG9DAP9vFw8yD9/85SYUsycLdV/rEmlKoXcoIAVXRXF5y
+         UDqsruvSPmk65Hqw6rvnSvCVLyQnGyFyAzLnxIhc=
+Date:   Tue, 28 Jan 2020 20:06:40 -0800
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2020-01-28-20-05 uploaded
+Message-ID: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It's good to have basic unit test coverage of the new FOLL_PIN
-behavior. Fortunately, the gup_benchmark unit test is extremely
-fast (a few milliseconds), so adding it the the run_vmtests suite
-is going to cause no noticeable change in running time.
+The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
 
-So, add two new invocations to run_vmtests:
+   http://www.ozlabs.org/~akpm/mmotm/
 
-1) Run gup_benchmark with normal get_user_pages().
+mmotm-readme.txt says
 
-2) Run gup_benchmark with pin_user_pages(). This is much like
-the first call, except that it sets FOLL_PIN.
+README for mm-of-the-moment:
 
-Running these two in quick succession also provide a visual
-comparison of the running times, which is convenient.
+http://www.ozlabs.org/~akpm/mmotm/
 
-The new invocations are fairly early in the run_vmtests script,
-because with test suites, it's usually preferable to put the
-shorter, faster tests first, all other things being equal.
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- tools/testing/selftests/vm/run_vmtests | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftes=
-ts/vm/run_vmtests
-index a692ea828317..df6a6bf3f238 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -112,6 +112,28 @@ echo "NOTE: The above hugetlb tests provide minimal co=
-verage.  Use"
- echo "      https://github.com/libhugetlbfs/libhugetlbfs.git for"
- echo "      hugetlb regression testing."
-=20
-+echo "--------------------------------------------"
-+echo "running 'gup_benchmark -U' (normal/slow gup)"
-+echo "--------------------------------------------"
-+./gup_benchmark -U
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
-+echo "------------------------------------------"
-+echo "running gup_benchmark -b (pin_user_pages)"
-+echo "------------------------------------------"
-+./gup_benchmark -b
-+if [ $? -ne 0 ]; then
-+	echo "[FAIL]"
-+	exitcode=3D1
-+else
-+	echo "[PASS]"
-+fi
-+
- echo "-------------------"
- echo "running userfaultfd"
- echo "-------------------"
---=20
-2.25.0
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.5:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* lib-test_bitmap-correct-test-data-offsets-for-32-bit.patch
+* memcg-fix-a-crash-in-wb_workfn-when-a-device-disappears.patch
+* mm-mempolicyc-fix-out-of-bounds-write-in-mpol_parse_str.patch
+* ocfs2-fix-the-oops-problem-when-write-cloned-file.patch
+* mm-sparse-reset-sections-mem_map-when-fully-deactivated.patch
+* mm-migratec-also-overwrite-error-when-it-is-bigger-than-zero.patch
+* mm-memory_hotplug-fix-remove_memory-lockdep-splat.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* x86-mm-split-vmalloc_sync_all.patch
+* revert-ipcsem-remove-uneeded-sem_undo_list-lock-usage-in-exit_sem.patch
+* mm-fix-uninitialized-memmaps-on-a-partially-populated-last-section.patch
+* fs-proc-pagec-allow-inspection-of-last-section-and-fix-end-detection.patch
+* mm-initialize-memmap-of-unavailable-memory-directly.patch
+* mm-thp-remove-the-defer-list-related-code-since-this-will-not-happen.patch
+* mm-move_pages-report-the-number-of-non-attempted-pages.patch
+* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
+* scripts-spellingtxt-add-issus-typo.patch
+* fs-ocfs-remove-unnecessary-assertion-in-dlm_migrate_lockres.patch
+* ocfs2-remove-unneeded-semicolon.patch
+* ocfs2-make-local-header-paths-relative-to-c-files.patch
+* ocfs2-dlm-remove-redundant-assignment-to-ret.patch
+* ocfs2-dlm-move-bits_to_bytes-to-bitopsh-for-wider-use.patch
+* ocfs2-fix-a-null-pointer-dereference-when-call-ocfs2_update_inode_fsync_trans.patch
+* ocfs2-use-ocfs2_update_inode_fsync_trans-to-access-t_tid-in-handle-h_transaction.patch
+* ramfs-support-o_tmpfile.patch
+  mm.patch
+* mm-avoid-slub-allocation-while-holding-list_lock.patch
+* kmemleak-turn-kmemleak_lock-and-object-lock-to-raw_spinlock_t.patch
+* mm-debug-always-print-flags-in-dump_page.patch
+* mm-clean-up-filemap_write_and_wait.patch
+* mm-fix-gup_pud_range.patch
+* mm-gupc-use-is_vm_hugetlb_page-to-check-whether-to-follow-huge.patch
+* mm-gup-factor-out-duplicate-code-from-four-routines.patch
+* mm-gup-move-try_get_compound_head-to-top-fix-minor-issues.patch
+* mm-cleanup-__put_devmap_managed_page-vs-page_free.patch
+* mm-devmap-refactor-1-based-refcounting-for-zone_device-pages.patch
+* goldish_pipe-rename-local-pin_user_pages-routine.patch
+* mm-fix-get_user_pages_remotes-handling-of-foll_longterm.patch
+* vfio-fix-foll_longterm-use-simplify-get_user_pages_remote-call.patch
+* mm-gup-allow-foll_force-for-get_user_pages_fast.patch
+* ib-umem-use-get_user_pages_fast-to-pin-dma-pages.patch
+* media-v4l2-core-set-pages-dirty-upon-releasing-dma-buffers.patch
+* mm-gup-introduce-pin_user_pages-and-foll_pin.patch
+* goldish_pipe-convert-to-pin_user_pages-and-put_user_page.patch
+* ib-corehwumem-set-foll_pin-via-pin_user_pages-fix-up-odp.patch
+* mm-process_vm_access-set-foll_pin-via-pin_user_pages_remote.patch
+* drm-via-set-foll_pin-via-pin_user_pages_fast.patch
+* fs-io_uring-set-foll_pin-via-pin_user_pages.patch
+* net-xdp-set-foll_pin-via-pin_user_pages.patch
+* media-v4l2-core-pin_user_pages-foll_pin-and-put_user_page-conversion.patch
+* vfio-mm-pin_user_pages-foll_pin-and-put_user_page-conversion.patch
+* powerpc-book3s64-convert-to-pin_user_pages-and-put_user_page.patch
+* mm-gup_benchmark-use-proper-foll_write-flags-instead-of-hard-coding-1.patch
+* mm-tree-wide-rename-put_user_page-to-unpin_user_page.patch
+* swap_next-should-increase-position-index.patch
+* mm-cleanup-some-useless-code.patch
+* mm-vmscan-expose-cgroup_ino-for-memcg-reclaim-tracepoints.patch
+* mm-pgmap-use-correct-alignment-when-looking-at-first-pfn-from-a-region.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-page_vma_mappedc-explicitly-compare-pfn-for-normal-hugetlbfs-and-thp-page.patch
+* mm-tracing-print-symbol-name-for-kmem_alloc_node-call_site-events.patch
+* lib-test_kasanc-fix-memory-leak-in-kmalloc_oob_krealloc_more.patch
+* mm-early_remap-use-%pa-to-print-resource_size_t-variables.patch
+* mm-page_alloc-skip-non-present-sections-on-zone-initialization.patch
+* mm-page_alloc-fix-and-rework-pfn-handling-in-memmap_init_zone.patch
+* mm-factor-out-next_present_section_nr.patch
+* mm-remove-the-memory-isolate-notifier.patch
+* mm-remove-count-parameter-from-has_unmovable_pages.patch
+* mm-vmscanc-remove-unused-return-value-of-shrink_node.patch
+* mm-vmscan-remove-prefetch_prev_lru_page.patch
+* mm-vmscan-remove-unused-reclaim_off-reclaim_zone.patch
+* mm-vmscan-remove-unused-reclaim_off-reclaim_zone-fix.patch
+* tools-vm-slabinfo-fix-sanity-checks-enabling.patch
+* mm-memblock-define-memblock_physmem_add.patch
+* memblock-use-__func__-in-remaining-memblock_dbg-call-sites.patch
+* mm-oom-avoid-printk-iteration-under-rcu.patch
+* mm-oom-avoid-printk-iteration-under-rcu-fix.patch
+* mm-oom-dump-stack-of-victim-when-reaping-failed.patch
+* mm-huge_memoryc-use-head-to-check-huge-zero-page.patch
+* mm-huge_memoryc-use-head-to-emphasize-the-purpose-of-page.patch
+* mm-huge_memoryc-reduce-critical-section-protected-by-split_queue_lock.patch
+* mm-migrate-remove-useless-mask-of-start-address.patch
+* mm-migrate-clean-up-some-minor-coding-style.patch
+* mm-migrate-add-stable-check-in-migrate_vma_insert_page.patch
+* mm-thp-fix-defrag-setting-if-newline-is-not-used.patch
+* mm-get-rid-of-odd-jump-labels-in-find_mergeable_anon_vma.patch
+* drivers-base-memoryc-cache-memory-blocks-in-xarray-to-accelerate-lookup.patch
+* drivers-base-memoryc-cache-memory-blocks-in-xarray-to-accelerate-lookup-fix.patch
+* mm-memmap_init-update-variable-name-in-memmap_init_zone.patch
+* mm-memory_hotplug-poison-memmap-in-remove_pfn_range_from_zone.patch
+* mm-memory_hotplug-we-always-have-a-zone-in-find_smallestbiggest_section_pfn.patch
+* mm-memory_hotplug-dont-check-for-all-holes-in-shrink_zone_span.patch
+* mm-memory_hotplug-drop-local-variables-in-shrink_zone_span.patch
+* mm-memory_hotplug-cleanup-__remove_pages.patch
+* mm-memory_hotplug-drop-valid_start-valid_end-from-test_pages_in_a_zone.patch
+* mm-memory_hotplug-pass-in-nid-to-online_pages.patch
+* mm-hotplug-silence-a-lockdep-splat-with-printk.patch
+* mm-page_isolation-fix-potential-warning-from-user.patch
+* zswap-add-allocation-hysteresis-if-pool-limit-is-hit.patch
+* zswap-potential-null-dereference-on-error-in-init_zswap.patch
+* mm-clean-up-obsolete-check-on-space-in-page-flags.patch
+* mm-remove-dead-code-totalram_pages_set.patch
+* mm-drop-elements-hw-and-phys_callback-from-struct-memory_block.patch
+* mm-fix-comments-related-to-node-reclaim.patch
+* zram-try-to-avoid-worst-case-scenario-on-same-element-pages.patch
+* zram-try-to-avoid-worst-case-scenario-on-same-element-pages-update.patch
+* zram-fix-error-return-codes-not-being-returned-in-writeback_store.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* y2038-remove-ktime-to-from-timespec-timeval-conversion.patch
+* y2038-remove-unused-time32-interfaces.patch
+* y2038-hide-timeval-timespec-itimerval-itimerspec-types.patch
+* add-helpers-for-kelvin-to-from-celsius-conversion.patch
+* acpi-thermal-switch-to-use-linux-unitsh-helpers.patch
+* platform-x86-asus-wmi-switch-to-use-linux-unitsh-helpers.patch
+* platform-x86-intel_menlow-switch-to-use-linux-unitsh-helpers.patch
+* thermal-int340x-switch-to-use-linux-unitsh-helpers.patch
+* thermal-intel_pch-switch-to-use-linux-unitsh-helpers.patch
+* nvme-hwmon-switch-to-use-linux-unitsh-helpers.patch
+* thermal-remove-kelvin-to-from-celsius-conversion-helpers-from-linux-thermalh.patch
+* iwlegacy-use-linux-unitsh-helpers.patch
+* iwlegacy-use-linux-unitsh-helpers-fix.patch
+* iwlwifi-use-linux-unitsh-helpers.patch
+* thermal-armada-remove-unused-to_mcelsius-macro.patch
+* iio-adc-qcom-vadc-common-use-linux-unitsh-helpers.patch
+* maintainers-add-an-entry-for-kfifo.patch
+* lib-zlib-add-s390-hardware-support-for-kernel-zlib_deflate.patch
+* s390-boot-rename-heap_size-due-to-name-collision.patch
+* lib-zlib-add-s390-hardware-support-for-kernel-zlib_inflate.patch
+* s390-boot-add-dfltcc=-kernel-command-line-parameter.patch
+* lib-zlib-add-zlib_deflate_dfltcc_enabled-function.patch
+* btrfs-use-larger-zlib-buffer-for-s390-hardware-compression.patch
+* lib-scatterlist-adjust-indentation-in-__sg_alloc_table.patch
+* uapi-rename-ext2_swab-to-swab-and-share-globally-in-swabh.patch
+* lib-find_bitc-join-_find_next_bit_le.patch
+* lib-find_bitc-uninline-helper-_find_next_bit.patch
+* string-add-stracpy-and-stracpy_pad-mechanisms.patch
+* documentation-checkpatch-prefer-stracpy-strscpy-over-strcpy-strlcpy-strncpy.patch
+* elf-smaller-code-generation-around-auxv-vector-fill.patch
+* elf-fix-start_code-calculation.patch
+* elf-dont-copy-elf-header-around.patch
+* elf-better-codegen-around-current-mm.patch
+* elf-make-bad_addr-unlikely.patch
+* elf-coredump-allocate-core-elf-header-on-stack.patch
+* elf-coredump-delete-duplicated-overflow-check.patch
+* elf-coredump-allow-process-with-empty-address-space-to-coredump.patch
+* init-mainc-log-arguments-and-environment-passed-to-init.patch
+* init-mainc-remove-unnecessary-repair_env_string-in-do_initcall_level.patch
+* init-mainc-fix-quoted-value-handling-in-unknown_bootoption.patch
+* init-fix-misleading-this-architecture-does-not-have-kernel-memory-protection-message.patch
+* reiserfs-prevent-null-pointer-dereference-in-reiserfs_insert_item.patch
+* execve-warn-if-process-starts-with-executable-stack.patch
+* io-mapping-use-phys_pfn-macro-in-io_mapping_map_atomic_wc.patch
+* kernel-relayc-fix-read_pos-error-when-multiple-readers.patch
+* aio-simplify-read_events.patch
+* kcov-ignore-fault-inject-and-stacktrace.patch
+* mips-kdb-remove-old-workaround-for-backtracing-on-other-cpus.patch
+* kdb-kdb_current_regs-should-be-private.patch
+* kdb-kdb_current_task-shouldnt-be-exported.patch
+* kdb-gid-rid-of-implicit-setting-of-the-current-task-regs.patch
+* kdb-get-rid-of-confusing-diag-msg-from-rd-if-current-task-has-no-regs.patch
+* smp_mb__beforeafter_atomic-update-documentation.patch
+* ipc-mqueuec-remove-duplicated-code.patch
+* ipc-mqueuec-update-document-memory-barriers.patch
+* ipc-msgc-update-and-document-memory-barriers.patch
+* ipc-semc-document-and-update-memory-barriers.patch
+* ipc-consolidate-all-xxxctl_down-functions.patch
+* ipc-consolidate-all-xxxctl_down-functions-fix.patch
+  linux-next.patch
+  linux-next-fix.patch
+  linux-next-git-rejects.patch
+* drivers-block-null_blk_mainc-fix-layout.patch
+* drivers-block-null_blk_mainc-fix-uninitialized-var-warnings.patch
+* pinctrl-fix-pxa2xxc-build-warnings.patch
+* mm-remove-__krealloc.patch
+* mm-add-generic-pd_leaf-macros.patch
+* arc-mm-add-pd_leaf-definitions.patch
+* arm-mm-add-pd_leaf-definitions.patch
+* arm64-mm-add-pd_leaf-definitions.patch
+* mips-mm-add-pd_leaf-definitions.patch
+* powerpc-mm-add-pd_leaf-definitions.patch
+* riscv-mm-add-pd_leaf-definitions.patch
+* s390-mm-add-pd_leaf-definitions.patch
+* sparc-mm-add-pd_leaf-definitions.patch
+* x86-mm-add-pd_leaf-definitions.patch
+* mm-pagewalk-add-p4d_entry-and-pgd_entry.patch
+* mm-pagewalk-add-p4d_entry-and-pgd_entry-fix.patch
+* mm-pagewalk-allow-walking-without-vma.patch
+* mm-pagewalk-dont-lock-ptes-for-walk_page_range_novma.patch
+* mm-pagewalk-fix-termination-condition-in-walk_pte_range.patch
+* mm-pagewalk-add-depth-parameter-to-pte_hole.patch
+* x86-mm-point-to-struct-seq_file-from-struct-pg_state.patch
+* x86-mmefi-convert-ptdump_walk_pgd_level-to-take-a-mm_struct.patch
+* x86-mm-convert-ptdump_walk_pgd_level_debugfs-to-take-an-mm_struct.patch
+* mm-add-generic-ptdump.patch
+* x86-mm-convert-dump_pagetables-to-use-walk_page_range.patch
+* arm64-mm-convert-mm-dumpc-to-use-walk_page_range.patch
+* arm64-mm-display-non-present-entries-in-ptdump.patch
+* mm-ptdump-reduce-level-numbers-by-1-in-note_page.patch
+* x86-mm-avoid-allocating-struct-mm_struct-on-the-stack.patch
+* x86-mm-avoid-allocating-struct-mm_struct-on-the-stack-fix.patch
+* powerpc-mmu_gather-enable-rcu_table_free-even-for-smp-case.patch
+* mm-mmu_gather-invalidate-tlb-correctly-on-batch-allocation-failure-and-flush.patch
+* asm-generic-tlb-avoid-potential-double-flush.patch
+* asm-gemeric-tlb-remove-stray-function-declarations.patch
+* asm-generic-tlb-add-missing-config-symbol.patch
+* asm-generic-tlb-rename-have_rcu_table_free.patch
+* asm-generic-tlb-rename-have_mmu_gather_page_size.patch
+* asm-generic-tlb-rename-have_mmu_gather_no_gather.patch
+* asm-generic-tlb-provide-mmu_gather_table_free.patch
+* proc-decouple-proc-from-vfs-with-struct-proc_ops.patch
+* proc-convert-everything-to-struct-proc_ops.patch
+* proc-convert-everything-to-struct-proc_ops-fix.patch
+* proc-convert-everything-to-struct-proc_ops-fix-2.patch
+* lib-string-add-strnchrnul.patch
+* bitops-more-bits_to_-macros.patch
+* lib-add-test-for-bitmap_parse.patch
+* lib-add-test-for-bitmap_parse-fix.patch
+* lib-add-test-for-bitmap_parse-fix-2.patch
+* lib-make-bitmap_parse_user-a-wrapper-on-bitmap_parse.patch
+* lib-rework-bitmap_parse.patch
+* lib-new-testcases-for-bitmap_parse_user.patch
+* cpumask-dont-calculate-length-of-the-input-string.patch
+* treewide-remove-redundent-is_err-before-error-code-check.patch
+* arm-dma-api-fix-max_pfn-off-by-one-error-in-__dma_supported.patch
+* drivers-tty-serial-sh-scic-suppress-warning.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
