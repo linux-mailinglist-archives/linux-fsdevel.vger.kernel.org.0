@@ -2,92 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4855B14CF51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:09:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF05A14CF87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:20:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbgA2RJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 12:09:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49012 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbgA2RJp (ORCPT
+        id S1727088AbgA2RU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 12:20:28 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39851 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726906AbgA2RU2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 12:09:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JBGzCaUSC9Lw4zwXSBacb958kBHmLwh4j+E2NT3N+w8=; b=NhFKnxuoL1ybWnVtBKPDIWMBP
-        kobcIUhcIWOiLiG3PhNd1ELyerpA31rPbS6Kk+/rNcGNtdvIwl3PWmij/a9xM6voX6vcQ34B/13tb
-        4sU+kkNa7lo/b+1DVlDczi63ra5N/m9v+y0mgHUBdkQYpbYHvL4MFcrF2hKLGtE/SDpRurYO/ZJMU
-        3fNEzYX6iMsOEDNCuxNq+MS6nvqCnrBj9PFGyavXJ3LfiH3BOipeubAWMl/VM2NN+GdAtadT2jDC1
-        ZhsY2KS8Q6r+OuKBSd1ZSOIe6r+EBoMmmCU1+Zeo7KcL47ocsUHq4SR16gYSJMGUFtfahEHuJSMCK
-        tP90C6XjA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iwqqR-00019P-Ug; Wed, 29 Jan 2020 17:09:39 +0000
-Date:   Wed, 29 Jan 2020 09:09:39 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Christopher Lameter <cl@linux.com>,
-        Kees Cook <keescook@chromium.org>, Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-Message-ID: <20200129170939.GA4277@infradead.org>
-References: <1515636190-24061-10-git-send-email-keescook@chromium.org>
- <9519edb7-456a-a2fa-659e-3e5a1ff89466@suse.cz>
- <201911121313.1097D6EE@keescook>
- <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
- <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
- <202001281457.FA11CC313A@keescook>
- <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
- <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
+        Wed, 29 Jan 2020 12:20:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580318427;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cQH6ZYTqwW+stKfQ8AjSjdZ36iZukpGr3cI8BWThvC4=;
+        b=RJy/stPIJHS80u/ApwJQ8dW0WrLsqTkQnrt/TidKxvHBzcTMllHI+sQNn0I6rD87NTnYah
+        zfWwiLX3KW56oFRDCpnwSxEm/BeW1fywkfETdODtC5ODdiIN7BlynEeorKcD0WY04kwEvR
+        A3gNBNBU/U4h+IbepT6vOOSsDNStmL0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-243-vKpp2hkHOK6vd_qVuq69pQ-1; Wed, 29 Jan 2020 12:20:03 -0500
+X-MC-Unique: vKpp2hkHOK6vd_qVuq69pQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B3CFA1010418;
+        Wed, 29 Jan 2020 17:20:00 +0000 (UTC)
+Received: from treble (ovpn-120-83.rdu2.redhat.com [10.10.120.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D43CF60C85;
+        Wed, 29 Jan 2020 17:19:58 +0000 (UTC)
+Date:   Wed, 29 Jan 2020 11:19:56 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2020-01-28-20-05 uploaded (objtool warnings)
+Message-ID: <20200129171956.wlwz5gr6fva5iae7@treble>
+References: <20200129040640.6PNuz0vcp%akpm@linux-foundation.org>
+ <5f2400c0-3d9d-9bfd-315e-a26bedb165a7@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <5f2400c0-3d9d-9bfd-315e-a26bedb165a7@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 06:07:14PM +0100, Christian Borntraeger wrote:
-> > DMA can be done to NORMAL memory as well.
+On Wed, Jan 29, 2020 at 08:43:35AM -0800, Randy Dunlap wrote:
+> On 1/28/20 8:06 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-01-28-20-05 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
 > 
-> Exactly. 
-> I think iucv uses GFP_DMA because z/VM needs those buffers to reside below 2GB (which is ZONA_DMA for s390).
+> on x86_64: (duh)
+> 
+> > gcc --version
+> gcc (SUSE Linux) 7.5.0
+> 
+> 
+> fs/namei.o: warning: objtool: do_renameat2()+0x46d: unreachable instruction
+> kernel/exit.o: warning: objtool: __x64_sys_exit_group()+0x2b: unreachable instruction
+> drivers/iio/adc/vf610_adc.o: warning: objtool: vf610_set_conversion_mode()+0x4e: unreachable instruction
+> 
+> 
+> Full randconfig file is attached.
+> 
+> Do you want the .o files, Josh?
 
-The normal way to allocate memory with addressing limits would be to
-use dma_alloc_coherent and friends.  Any chance to switch iucv over to
-that?  Or is there no device associated with it?
+I'm able to recreate with your config, so I don't need the .o files.
+
+Thanks.
+
+-- 
+Josh
+
