@@ -2,93 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A488E14CD0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 16:16:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D3314CDBD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 16:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbgA2PQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 10:16:02 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:46526 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbgA2PQC (ORCPT
+        id S1726672AbgA2PoK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 10:44:10 -0500
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:43794 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726240AbgA2PoK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 10:16:02 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00TFDJXg152160;
-        Wed, 29 Jan 2020 15:15:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=AUHscgmUga0TtBYeVkbnnpKK+M7Sw+pMq45avp9+6iU=;
- b=WIYmU0EnZ2PDeYYj/uBUPVnBElQB0hzKUlvOMu60sBK3tlsORcfKny7Z7f5oV614/8MZ
- e/LQyT7RdaQBcWnGUo2Nf4CytynPC1hzyU5p/bleGOxG1fiFtKmyIvev5znKZbZALiji
- yBzAK6XPiJl9BuZFv7ZnwY/t0L+vGWt7nTw13zaNcKt12hZq2olNunmCcNwQMZKL4UZE
- 5WNJDWF/LLC8u/ba5MwxQzsrykCrHxsXXvpgiLX93/hJ98/FX6TdH2kM/kG3XiTZAoaH
- YyphCBYAEA34Zz28Oc62aIPEjhdAl2j+FyrhUAv5QJEvPpt3cp0eb50m8HcQejw3mSYY nw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2xrdmqp4a0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jan 2020 15:15:55 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00TFDoeo062067;
-        Wed, 29 Jan 2020 15:15:54 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2xth5kdyy4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Jan 2020 15:15:54 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00TFFnYA028842;
-        Wed, 29 Jan 2020 15:15:51 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 29 Jan 2020 07:15:48 -0800
-Date:   Wed, 29 Jan 2020 18:15:41 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp
-Subject: Re: [PATCH] staging: exfat: remove 'vol_type' variable.
-Message-ID: <20200129151541.GB1778@kadam>
-References: <20200129111232.78539-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+        Wed, 29 Jan 2020 10:44:10 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 02E022E14E1;
+        Wed, 29 Jan 2020 18:44:07 +0300 (MSK)
+Received: from vla1-5a8b76e65344.qloud-c.yandex.net (vla1-5a8b76e65344.qloud-c.yandex.net [2a02:6b8:c0d:3183:0:640:5a8b:76e6])
+        by mxbackcorp1g.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id nn7RLD3EXz-i63W54mO;
+        Wed, 29 Jan 2020 18:44:06 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1580312646; bh=0jW6t+ksq3AyJDbN3e/NgjTwllbzze9cvhKWBhAewXM=;
+        h=Message-ID:Date:To:From:Subject;
+        b=ZP4xZQA3zhPFSasiI9+ba/q+k4mBN4vp9NzjWdDtJa4oFUOF/uoUue9C59LJnKSe7
+         X59e7xTDFBoeTveNmoEyofhNLL1CJo/7ahb83/8uQv3BTRIU2PTW7WpFlpy2r6dAHj
+         2EQ9Y4yAYVkJz3Bo5BhtdNHqgHzVpErU99UnZllI=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:8448:fbcc:1dac:c863])
+        by vla1-5a8b76e65344.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id f3Omvi9QUt-i5VOvHST;
+        Wed, 29 Jan 2020 18:44:05 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH RFC] ext4: skip concurrent inode updates in lazytime
+ optimization
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Date:   Wed, 29 Jan 2020 18:44:05 +0300
+Message-ID: <158031264567.6836.126132376018905207.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129111232.78539-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001290128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9514 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001290128
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 08:12:32PM +0900, Tetsuhiro Kohada wrote:
-> @@ -2085,7 +2069,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
->  
->  	cpos = ctx->pos;
->  	/* Fake . and .. for the root directory. */
-> -	if ((p_fs->vol_type == EXFAT) || (inode->i_ino == EXFAT_ROOT_INO)) {
-> +	if (inode->i_ino == EXFAT_ROOT_INO) {
+Function ext4_update_other_inodes_time() implements optimization which
+opportunistically updates times for inodes within same inode table block.
 
-This isn't right.  The first condition is always true so in the original
-code we never bothered to check the second condition.
+For now	concurrent inode lookup by number does not scale well because
+inode hash table is protected with single spinlock. It could become very
+hot at concurrent writes to fast nvme when inode cache has enough inodes.
 
->  		while (cpos < 2) {
->  			if (inode->i_ino == EXFAT_ROOT_INO)
->  				inum = EXFAT_ROOT_INO;
+Probably someday inode hash will become searchable under RCU.
+(see linked patchset by David Howells)
 
-regards,
-dan carpenter
+Let's skip concurrent updates instead of wasting cpu time at spinlock.
+
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Link: https://lore.kernel.org/lkml/155620449631.4720.8762546550728087460.stgit@warthog.procyon.org.uk/
+---
+ fs/ext4/inode.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 629a25d999f0..dc3e1b38e3ed 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4849,11 +4849,16 @@ static int other_inode_match(struct inode * inode, unsigned long ino,
+ static void ext4_update_other_inodes_time(struct super_block *sb,
+ 					  unsigned long orig_ino, char *buf)
+ {
++	static DEFINE_SPINLOCK(lock);
+ 	struct other_inode oi;
+ 	unsigned long ino;
+ 	int i, inodes_per_block = EXT4_SB(sb)->s_inodes_per_block;
+ 	int inode_size = EXT4_INODE_SIZE(sb);
+ 
++	/* Don't bother inode_hash_lock with concurrent updates. */
++	if (!spin_trylock(&lock))
++		return;
++
+ 	oi.orig_ino = orig_ino;
+ 	/*
+ 	 * Calculate the first inode in the inode table block.  Inode
+@@ -4867,6 +4872,8 @@ static void ext4_update_other_inodes_time(struct super_block *sb,
+ 		oi.raw_inode = (struct ext4_inode *) buf;
+ 		(void) find_inode_nowait(sb, ino, other_inode_match, &oi);
+ 	}
++
++	spin_unlock(&lock);
+ }
+ 
+ /*
 
