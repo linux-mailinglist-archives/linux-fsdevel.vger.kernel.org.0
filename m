@@ -2,219 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DC914CF88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B0614CFC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 18:39:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgA2RUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 12:20:42 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29234 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726906AbgA2RUm (ORCPT
+        id S1727233AbgA2Ri7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 12:38:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54192 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbgA2Ri6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 12:20:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580318440;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=CDEy69IL/eMYtpmDS3XjUwKwXrl7W0ck1hqzenez+2c=;
-        b=B8DOQEUqgE5NJfzMXVxHnolU/rS3ZnL1ATmNfO9WlsTmzTKWO3xVsTyfli63O9QxtHLH89
-        4ixSxcToLxnNHd79HUDcugyczPI48qMJwq4i6MybsV6PqgZavvBp2r/E1+g5T8z8Hnoc82
-        A/imV/6Hbj31cceSDuE13TP9kzaz4Ls=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-358-IuDla0bKOH2KmPPH79RJLw-1; Wed, 29 Jan 2020 12:20:20 -0500
-X-MC-Unique: IuDla0bKOH2KmPPH79RJLw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 46763477;
-        Wed, 29 Jan 2020 17:20:19 +0000 (UTC)
-Received: from localhost (ovpn-117-180.ams2.redhat.com [10.36.117.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7B5F5DE53;
-        Wed, 29 Jan 2020 17:20:11 +0000 (UTC)
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Avi Kivity <avi@scylladb.com>,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [RFC] eventfd: add EFD_AUTORESET flag
-Date:   Wed, 29 Jan 2020 17:20:10 +0000
-Message-Id: <20200129172010.162215-1-stefanha@redhat.com>
+        Wed, 29 Jan 2020 12:38:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Gc3ks24OG6X76f+yAGA45eM4fknNEyoh+zvpOec4XLI=; b=DrEnxIvCOx0T33JROVafFekwY
+        od8NQOjAsF4gsSr7L8yMUUamw6VwZ1Wyft5tj9oxTzG4tggqa6ey8DL49jQvhTQdsFvPDBmIU/KVG
+        PB0J9pjy9pJ3BfdksVsr8Zld0Yko146sw5ph/We4CMg3DxBh6Tak08DBYSCF9azbKb+GNy5nbpR7V
+        HwRqrp2IREayDQEteLRQ5hopWzdUMdrI1uQZ5bOZVdHvtlmqXcERa+8H20vpXLPZLXdcC8iEjvK7R
+        WS/hdcvcFX7FO0SUm/yYqkFvg/RMAyGc43DOlfjjB4jqWqVYT3OboKwHOkv9ywOFKlONZAFB2auMs
+        EmC7jW0gg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iwrIk-0003Xh-JK; Wed, 29 Jan 2020 17:38:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 52E533035D4;
+        Wed, 29 Jan 2020 18:37:09 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3BFEA2B7334C0; Wed, 29 Jan 2020 18:38:52 +0100 (CET)
+Date:   Wed, 29 Jan 2020 18:38:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Dave Chinner <david@fromorbit.com>, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>, Phil Auld <pauld@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
+ stack on the same CPU
+Message-ID: <20200129173852.GP14914@hirez.programming.kicks-ass.net>
+References: <20200127143608.GX3466@techsingularity.net>
+ <20200127223256.GA18610@dread.disaster.area>
+ <20200128011936.GY3466@techsingularity.net>
+ <20200128091012.GZ3466@techsingularity.net>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200128091012.GZ3466@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some applications simply use eventfd for inter-thread notifications
-without requiring counter or semaphore semantics.  They wait for the
-eventfd to become readable using poll(2)/select(2) and then call read(2)
-to reset the counter.
+On Tue, Jan 28, 2020 at 09:10:12AM +0000, Mel Gorman wrote:
+> Peter, Ingo and Vincent -- I know the timing is bad due to the merge
+> window but do you have any thoughts on allowing select_idle_sibling to
+> stack a wakee task on the same CPU as a waker in this specific case?
 
-This patch adds the EFD_AUTORESET flag to reset the counter when
-f_ops->poll() finds the eventfd is readable, eliminating the need to
-call read(2) to reset the counter.
+I sort of see, but *groan*...
 
-This results in a small but measurable 1% performance improvement with
-QEMU virtio-blk emulation.  Each read(2) takes 1 microsecond execution
-time in the event loop according to perf.
+so if the kworker unlocks a contended mutex/rwsem/completion...
 
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
-Does this look like a reasonable thing to do?  I'm not very familiar
-with f_ops->poll() or the eventfd internals, so maybe I'm overlooking a
-design flaw.
+I suppose the fact that it limits it to tasks that were running on the
+same CPU limits the impact if we do get it wrong.
 
-I've tested this with QEMU and it works fine:
-https://github.com/stefanha/qemu/commits/eventfd-autoreset
----
- fs/eventfd.c            | 99 +++++++++++++++++++++++++----------------
- include/linux/eventfd.h |  3 +-
- 2 files changed, 62 insertions(+), 40 deletions(-)
+Elsewhere you write:
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 8aa0ea8c55e8..208f6b9e2234 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -116,45 +116,62 @@ static __poll_t eventfd_poll(struct file *file, pol=
-l_table *wait)
-=20
- 	poll_wait(file, &ctx->wqh, wait);
-=20
--	/*
--	 * All writes to ctx->count occur within ctx->wqh.lock.  This read
--	 * can be done outside ctx->wqh.lock because we know that poll_wait
--	 * takes that lock (through add_wait_queue) if our caller will sleep.
--	 *
--	 * The read _can_ therefore seep into add_wait_queue's critical
--	 * section, but cannot move above it!  add_wait_queue's spin_lock acts
--	 * as an acquire barrier and ensures that the read be ordered properly
--	 * against the writes.  The following CAN happen and is safe:
--	 *
--	 *     poll                               write
--	 *     -----------------                  ------------
--	 *     lock ctx->wqh.lock (in poll_wait)
--	 *     count =3D ctx->count
--	 *     __add_wait_queue
--	 *     unlock ctx->wqh.lock
--	 *                                        lock ctx->qwh.lock
--	 *                                        ctx->count +=3D n
--	 *                                        if (waitqueue_active)
--	 *                                          wake_up_locked_poll
--	 *                                        unlock ctx->qwh.lock
--	 *     eventfd_poll returns 0
--	 *
--	 * but the following, which would miss a wakeup, cannot happen:
--	 *
--	 *     poll                               write
--	 *     -----------------                  ------------
--	 *     count =3D ctx->count (INVALID!)
--	 *                                        lock ctx->qwh.lock
--	 *                                        ctx->count +=3D n
--	 *                                        **waitqueue_active is false**
--	 *                                        **no wake_up_locked_poll!**
--	 *                                        unlock ctx->qwh.lock
--	 *     lock ctx->wqh.lock (in poll_wait)
--	 *     __add_wait_queue
--	 *     unlock ctx->wqh.lock
--	 *     eventfd_poll returns 0
--	 */
--	count =3D READ_ONCE(ctx->count);
-+	if (ctx->flags & EFD_AUTORESET) {
-+		unsigned long flags;
-+		__poll_t requested =3D poll_requested_events(wait);
-+
-+		spin_lock_irqsave(&ctx->wqh.lock, flags);
-+		count =3D ctx->count;
-+
-+		/* Reset counter if caller is polling for read */
-+		if (count !=3D 0 && (requested & EPOLLIN)) {
-+			ctx->count =3D 0;
-+			events |=3D EPOLLOUT;
-+			/* TODO is a EPOLLOUT wakeup necessary here? */
-+		}
-+
-+		spin_unlock_irqrestore(&ctx->wqh.lock, flags);
-+	} else {
-+		/*
-+		 * All writes to ctx->count occur within ctx->wqh.lock.  This read
-+		 * can be done outside ctx->wqh.lock because we know that poll_wait
-+		 * takes that lock (through add_wait_queue) if our caller will sleep.
-+		 *
-+		 * The read _can_ therefore seep into add_wait_queue's critical
-+		 * section, but cannot move above it!  add_wait_queue's spin_lock acts
-+		 * as an acquire barrier and ensures that the read be ordered properly
-+		 * against the writes.  The following CAN happen and is safe:
-+		 *
-+		 *     poll                               write
-+		 *     -----------------                  ------------
-+		 *     lock ctx->wqh.lock (in poll_wait)
-+		 *     count =3D ctx->count
-+		 *     __add_wait_queue
-+		 *     unlock ctx->wqh.lock
-+		 *                                        lock ctx->qwh.lock
-+		 *                                        ctx->count +=3D n
-+		 *                                        if (waitqueue_active)
-+		 *                                          wake_up_locked_poll
-+		 *                                        unlock ctx->qwh.lock
-+		 *     eventfd_poll returns 0
-+		 *
-+		 * but the following, which would miss a wakeup, cannot happen:
-+		 *
-+		 *     poll                               write
-+		 *     -----------------                  ------------
-+		 *     count =3D ctx->count (INVALID!)
-+		 *                                        lock ctx->qwh.lock
-+		 *                                        ctx->count +=3D n
-+		 *                                        **waitqueue_active is false*=
-*
-+		 *                                        **no wake_up_locked_poll!**
-+		 *                                        unlock ctx->qwh.lock
-+		 *     lock ctx->wqh.lock (in poll_wait)
-+		 *     __add_wait_queue
-+		 *     unlock ctx->wqh.lock
-+		 *     eventfd_poll returns 0
-+		 */
-+		count =3D READ_ONCE(ctx->count);
-+	}
-=20
- 	if (count > 0)
- 		events |=3D EPOLLIN;
-@@ -400,6 +417,10 @@ static int do_eventfd(unsigned int count, int flags)
- 	if (flags & ~EFD_FLAGS_SET)
- 		return -EINVAL;
-=20
-+	/* Semaphore semantics don't make sense when autoreset is enabled */
-+	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
-+		return -EINVAL;
-+
- 	ctx =3D kmalloc(sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
-diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-index ffcc7724ca21..27577fafc553 100644
---- a/include/linux/eventfd.h
-+++ b/include/linux/eventfd.h
-@@ -21,11 +21,12 @@
-  * shared O_* flags.
-  */
- #define EFD_SEMAPHORE (1 << 0)
-+#define EFD_AUTORESET (1 << 6) /* aliases O_CREAT */
- #define EFD_CLOEXEC O_CLOEXEC
- #define EFD_NONBLOCK O_NONBLOCK
-=20
- #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
--#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
-+#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE | EFD_AUTO=
-RESET)
-=20
- struct eventfd_ctx;
- struct file;
---=20
-2.24.1
+> I would prefer the wakeup code did not have to signal that it's a
+> synchronous wakeup. Sync wakeups so exist but callers got it wrong many
+> times where stacking was allowed and then the waker did not go to sleep.
+> While the chain of events are related, they are not related in a very
+> obvious way. I think it's much safer to keep this as a scheduler
+> heuristic instead of depending on callers to have sufficient knowledge
+> of the scheduler implementation.
 
+That is true; the existing WF_SYNC has caused many issues for maybe
+being too strong.
+
+But what if we create a new hint that combines both these ideas? Say
+WF_COMPLETE and subject that to these same criteria. This way we can
+eliminate wakeups from locks and such (they won't have this set).
+
+Or am I just making things complicated again?
