@@ -2,136 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248F214C769
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:24:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D224C14C7B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jan 2020 09:58:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgA2IYW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 03:24:22 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:61074 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbgA2IYW (ORCPT
+        id S1726322AbgA2I6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 03:58:45 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34303 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbgA2I6p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 03:24:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580286261; x=1611822261;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
-  b=CyOGcL6lZcmbJQqWY+gzer3aGh4c3eyioCV7+Rebs1XVtO0I5Nnu5YL3
-   Tv3weoIKsHA0C/J4Dsg6Px12WbhIqSYqOjeeRL2IydwRvdYut8ogo3laC
-   k2uBBbJZe3IejQXogYElWsPkZrzRHxGEYwbxmsy+s+yn6eNSes2V4/ELi
-   +nkBusTDhVl/ExHggcP2HKOIOEAsZG5mRxapqDOxP8CVdjpi27GlP17XR
-   6nDX/rdoMfpEpnsGFS50pEydwkhwDx3Adsyt+oZlND91Hq6BcevxEilUB
-   6t8nrc+Wqq42vE531f0czRXGt2XYRVU72aSNrQKL0c/mlS25BjPG3hIQL
-   g==;
-IronPort-SDR: Ml7ebd8/t3Acx5MNPBkJ/58C7xxxAyL2gMzj6zJlShOcsa/bhmhHBrdA2mFsY72TftA5qSrHVi
- E25r02pP9R/2N72Vx7MJGKkCWOyOjjqCaxHCv7nmIwVI4d3S4KLAGc0O8/SNdbcbwI2Mh0L8wr
- NHAeaMmkZPNZLnePJKlKondO6dVaWD7367AugRy3FxyXbOVKdGbelvhghi833V8FFsyxvntsh/
- hcxevJm59q+tMSoOS9xdym3UCyABCnUrM0gx+VyfdDPvObfgZHbO41iUzbpnv+mJDWhcADWRux
- hyU=
-X-IronPort-AV: E=Sophos;i="5.70,377,1574092800"; 
-   d="scan'208";a="236568456"
-Received: from mail-sn1nam02lp2053.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.53])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Jan 2020 16:24:20 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BRUK0+x4ozOLfTHlnvC/pOhZKXMySfYwSygCUikxrebk5fdZs7p9ILeZdq+AhbO2PaUYVzAP+FbrifB58wa19zn/D1C41iVFBI17JuvNLELFTXFEWgEbGcKGOkaZnIzyZt6XxR3ORjm13dH3Ap99+lLRrBKa3+fg682vSkUNmpDK9PegRw3aXmOSjV0Prw5Hx86iifbloGZb3OhXSNAn/icou85cwn9oEG0cPnNwhhZ9/FTNc1/bpFyiHjlx43ZtZAD/kO95UBsrByu13RUoskMAcJCYjfEWEFDcjzrDm8bDQC4jaXmHfTRwyLGQAqR41Ip7aBkbtY+Rm/eYK1lUbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
- b=GQo/ez/FEie8cgyTmOa5oWZeRMfs5ngaYvjOq7GYfANLUq/g+I8pC9fsNtjOkn3XZGct/rtGBxI3Z8tjdS/OpMjcP+qd5AtQbp6MbDDgcL3SR0Ar206XknfEmZgq3YmeADVyuynXYd7vcBP5n9pNdFHVt+3PVbx3VEXCjL4XcWi74JKU/hoovBdUJptKdVRHH3xZZHLYndAuVfjMXgpq9kH8eKYVtdnn8F9o7T2rZX3wHFcQuLPbChky6KLC3k+5J6c5KkL3HHILsK5JnG6QqmFG89IPKK+VFCwxE/G7EW3racv7IRTTDojnnDY9WzsxYr7/SYGkyKcXUqxXpb4nsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Wed, 29 Jan 2020 03:58:45 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i6so8110994pfc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Jan 2020 00:58:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OGBRfRD20xGWhXPt5PAz1WeTGLrC0eQ7galj7ndjLaQ=;
- b=txuhSFxlXRA4NA3NtSLITshvJTRJ3NQpMe/9Yd7LmT+qU2iAKCzzuemyNgAO88INmfNCPRfw6Si2Pf8+X7mZq4hhoViLVgJ6EuocqbWcm16Bc/3YeHz+f93tP9HZJARHCSiqCgzeb1x92eLDFDBlO5jt7BLu234XqlS4KT5OZ+c=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
- BYAPR04MB5877.namprd04.prod.outlook.com (20.179.58.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2665.24; Wed, 29 Jan 2020 08:24:18 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::cd8e:d1de:e661:a61]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::cd8e:d1de:e661:a61%5]) with mapi id 15.20.2665.027; Wed, 29 Jan 2020
- 08:24:18 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-Subject: Re: [v9 1/2] fs: New zonefs file system
-Thread-Topic: [v9 1/2] fs: New zonefs file system
-Thread-Index: AQHV1nz4VgmI+ONs6EuOARHWsE8vTA==
-Date:   Wed, 29 Jan 2020 08:24:18 +0000
-Message-ID: <BYAPR04MB581624B1EFB13DEEA299C699E7050@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <23bf669d-b75f-ed94-478d-06bddd357919@web.de>
- <5fe2d31c2f798b0768eec3ebc35bc973bc07ba1c.camel@wdc.com>
- <938e70e3-0f45-2858-a4fc-dd90371e4e90@web.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [199.255.47.12]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d5f2a73b-3fdb-4e00-95f9-08d7a494a2a2
-x-ms-traffictypediagnostic: BYAPR04MB5877:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB5877AC5DD40D7101CA306E6AE7050@BYAPR04MB5877.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 02973C87BC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(396003)(366004)(136003)(376002)(189003)(199004)(86362001)(8676002)(66556008)(7696005)(64756008)(186003)(66446008)(6506007)(71200400001)(53546011)(4326008)(2906002)(76116006)(8936002)(91956017)(66946007)(81156014)(81166006)(66476007)(316002)(4744005)(55016002)(52536014)(478600001)(54906003)(110136005)(26005)(33656002)(5660300002)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5877;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SLsEfDK+Mb757vcByhg5xONfdLwKn92A5QCewhResgVRmWHZ1BWhtK5XnVrNn4vg0HrELMyWkL2q+OTkZBSnzzrPfItLGwQIZgnxU1mGSeZwsrq46PXEsBaNTzlh2RFDx6UewN5KTDJJLlvIyKqGEyPall1zFxuKaCVUSrzpR6jTRpKK1e4yoK9DQfW8b0FKczzdu7ybXLjGcQ9bOp2ohpbvrX9tBWjBkSWQZ+rxMU9BQC7QSbkodQ8U7WE2j/1r7mYIiAt6o+YnlgogQwHpLKkK/sBMZBEMt7s/hyzDjOOkw0ejgVaTT4fmIS3YoercsLuulx/hHscNOV4btqqOO7Sri4yErHZPMXq7mdbp+3X6M0Veo+NLEDabU0386Alqb2z3eZmQwqzK4aRAfbcERYLSutLaJLISpuNLsNXfDxJ1phx0lx/O5pjvCXkL6zu3
-x-ms-exchange-antispam-messagedata: vD5u3RIqisPX8UNHkLkld5bKZECqcX1rJtXbcji0Zc6qkIkv6394011ycKib81jCfZdnzv9PIwiHOQrK3ikMo6ethATHhKXRrFMzNfyogd7iK5M3lMRTJMqGRyK/XP8ACH3QXcPhxnJGGAt+dX0iPw==
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HZ1fUgHkKafGnPPxbaIK69OWQ8cHhuK6+MSpL+KfJsw=;
+        b=J85FbUDc/TdNx7uRrkMJNtNzm2tqgFgyIb1YAEQNDhJhCaQW9aEQ0U13SPHkR3c7Xf
+         ofZic2Y+3nWH/J7UGGzlO7mQZd86FiaQEi4OCgLA9bQTctvxgpLSsAe+11+uRNU1GyAV
+         KZdm1wZ6X9EcS8cCwII1zgVTM131xJAvNr8SOANepdLfayhZ8nbn52mhdllFuvp7Vu6E
+         7lfVHsWE3jIP/WPd0h6ByqtX1TmfUwK+cglVz+SfuLSevlBVPysT51ArHJwbzEizS1Pd
+         C6SXxcBfG3hyJzp6w7CGrU3GaUwviIZ1c1Nm8OzcgzZNg805s5M0uAvuD4efBCm2qLFj
+         SYcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HZ1fUgHkKafGnPPxbaIK69OWQ8cHhuK6+MSpL+KfJsw=;
+        b=roBB0yH86E2YgEi3wHCIwaxcvQgOTpawqCzFXB++3dD1wNPTUjpwNFd7QGvPZH02yY
+         aK2d+HV6flu1Fhgw/ggGG+1wk3RNuVNdiELglU+Mr/CugXndyOcoRjn1L8E2jp3D4n4V
+         8IS3JeTy0zj3yYmMbJ0Ol4WIbvmaUIITZH0IaSeg1PVlchhNcL62g50DBRjHw8x0XEZv
+         Drv4djhOQ6yOLA66moUxCarmVkMsCNtdQhtsOQ2LF87/37D5U/9shcL5y5AFJV9rwvXz
+         AWUc4ZTR9hl1iSThQiOgguGqTgNM4qX6nOMNgSNS/ajXoFaA+YBhy7uym/OfluBf+NsD
+         fMYg==
+X-Gm-Message-State: APjAAAV+v4sASrUf1zXPYk80XIqh50Dj7uWKL863walTFoI1wmeb6K4X
+        wsiZQmHoqmYsFX3HfEFpybMVw/jWpgE=
+X-Google-Smtp-Source: APXvYqzCaxjzL1BCmtE9Gr4XiyfN2SK3rP/+TSRXQgOwqWHDazZahMLQ22ojJ77gTeOc+H6hpGaz5A==
+X-Received: by 2002:a62:1a16:: with SMTP id a22mr8261295pfa.34.1580288324210;
+        Wed, 29 Jan 2020 00:58:44 -0800 (PST)
+Received: from vader.hsd1.wa.comcast.net ([2601:602:8b80:8e0:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id s131sm1935932pfs.135.2020.01.29.00.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 00:58:43 -0800 (PST)
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kernel-team@fb.com, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Xi Wang <xi@cs.washington.edu>, fstests@vger.kernel.org
+Subject: [RFC PATCH xfstests] generic: add smoke test for AT_LINK_REPLACE
+Date:   Wed, 29 Jan 2020 00:58:27 -0800
+Message-Id: <f23621bea2e8d5f919389131b84fa0226b90f502.1580253372.git.osandov@fb.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <cover.1580251857.git.osandov@fb.com>
+References: <cover.1580251857.git.osandov@fb.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5f2a73b-3fdb-4e00-95f9-08d7a494a2a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2020 08:24:18.5374
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wl4AinB/jwRUkzX3jW7CllQjS/2F9fm8ycgcogCKz9Pfa3ORSs2vc4mjehK3mz2Vn8Cc7dauPfrseakLDirm9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5877
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/01/29 17:20, Markus Elfring wrote:=0A=
->>> Would you like to reconsider your name selection for such labels?=0A=
-> =85=0A=
->> Fixed. Thanks !=0A=
-> =0A=
-> Will a different identifier be occasionally more helpful than the label =
-=93out=94=0A=
-> also at other source code places?=0A=
-=0A=
-I am addressing all comments I got for v10 right now and reviewing all the=
-=0A=
-goto labels too. Thanks.=0A=
-=0A=
-> =0A=
-> Regards,=0A=
-> Markus=0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+From: Omar Sandoval <osandov@fb.com>
+
+Cc: fstests@vger.kernel.org
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+---
+ common/rc             |  2 +-
+ tests/generic/593     | 97 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/593.out |  6 +++
+ tests/generic/group   |  1 +
+ 4 files changed, 105 insertions(+), 1 deletion(-)
+ create mode 100755 tests/generic/593
+ create mode 100644 tests/generic/593.out
+
+diff --git a/common/rc b/common/rc
+index eeac1355..257f65a1 100644
+--- a/common/rc
++++ b/common/rc
+@@ -2172,7 +2172,7 @@ _require_xfs_io_command()
+ 		;;
+ 	"flink")
+ 		local testlink=$TEST_DIR/$$.link.xfs_io
+-		testio=`$XFS_IO_PROG -F -f -c "flink $testlink" $testfile 2>&1`
++		testio=`$XFS_IO_PROG -F -f -c "flink $param $testlink" $testfile 2>&1`
+ 		rm -f $testlink > /dev/null 2>&1
+ 		;;
+ 	"-T")
+diff --git a/tests/generic/593 b/tests/generic/593
+new file mode 100755
+index 00000000..8a9fee02
+--- /dev/null
++++ b/tests/generic/593
+@@ -0,0 +1,97 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2020 Facebook.  All Rights Reserved.
++#
++# FS QA Test 593
++#
++# Smoke test linkat() with AT_LINK_REPLACE.
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1	# failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	cd /
++	rm -f $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++
++# remove previous $seqres.full before test
++rm -f $seqres.full
++
++_supported_fs generic
++_supported_os Linux
++_require_test
++_require_xfs_io_command "-T"
++_require_xfs_io_command "flink" "-f"
++
++same_file() {
++	[[ "$(stat -c '%d %i' "$1")" = "$(stat -c '%d %i' "$2")" ]]
++}
++
++touch "$TEST_DIR/$seq.src"
++touch "$TEST_DIR/$seq.tgt"
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" "$TEST_DIR/$seq.src"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" ||
++	echo "Target was not replaced"
++
++# Linking to the same file should be a noop.
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.src" "$TEST_DIR/$seq.src"
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" "$TEST_DIR/$seq.src"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" || echo "Target changed?"
++
++# Should work with O_TMPFILE.
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" -T "$TEST_DIR"
++stat -c '%h' "$TEST_DIR/$seq.tgt"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" &&
++	echo "Target was not replaced"
++
++# It's okay if the target doesn't exist.
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt2" "$TEST_DIR/$seq.src"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt2" ||
++	echo "Target was not created"
++
++# Can't replace directories.
++mkdir "$TEST_DIR/$seq.dir"
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.dir" "$TEST_DIR/$seq.src"
++cd "$TEST_DIR/$seq.dir"
++$XFS_IO_PROG -c "flink -f ." "$TEST_DIR/$seq.src"
++$XFS_IO_PROG -c "flink -f .." "$TEST_DIR/$seq.src"
++cd - &> /dev/null
++
++# Can't replace local mount points.
++touch "$TEST_DIR/$seq.mnt"
++$MOUNT_PROG --bind "$TEST_DIR/$seq.mnt" "$TEST_DIR/$seq.mnt"
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.mnt" "$TEST_DIR/$seq.src"
++
++# Can replace mount points in other namespaces, though.
++unshare -m \
++	bash -c "$UMOUNT_PROG $TEST_DIR/$seq.mnt; $XFS_IO_PROG -c \"flink -f $TEST_DIR/$seq.mnt\" $TEST_DIR/$seq.src"
++if $UMOUNT_PROG "$TEST_DIR/$seq.mnt" &> /dev/null; then
++	echo "Mount point was not detached"
++fi
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.mnt" ||
++	echo "Mount point was not replaced"
++
++# Should replace symlinks, not follow them.
++touch "$TEST_DIR/$seq.symtgt"
++ln -s "$TEST_DIR/$seq.symtgt" "$TEST_DIR/$seq.sym"
++$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.sym" "$TEST_DIR/$seq.src"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.sym" ||
++	echo "Symlink was not replaced"
++same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.symtgt" &&
++	echo "Symlink target was replaced"
++
++rm -rf "$TEST_DIR/$seq."*
++
++status=0
++exit
+diff --git a/tests/generic/593.out b/tests/generic/593.out
+new file mode 100644
+index 00000000..834c34bf
+--- /dev/null
++++ b/tests/generic/593.out
+@@ -0,0 +1,6 @@
++QA output created by 593
++1
++flink: Is a directory
++flink: Is a directory
++flink: Is a directory
++flink: Device or resource busy
+diff --git a/tests/generic/group b/tests/generic/group
+index 6fe62505..0a87efca 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -595,3 +595,4 @@
+ 590 auto prealloc preallocrw
+ 591 auto quick rw pipe splice
+ 592 auto quick encrypt
++593 auto quick hardlink
+-- 
+2.25.0
+
