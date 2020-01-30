@@ -2,210 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F40A14DCB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 15:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1C514DCC2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 15:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbgA3OUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 09:20:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbgA3OUE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:20:04 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5652051A;
-        Thu, 30 Jan 2020 14:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580394003;
-        bh=OuzcS9U3Z7Q2MSalfgVge9XFhH403dKCk6Lo1zpZlBI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KuIP/zKTYdnBOjV9tPf1iwhfezP365etl1v7+FGGLduMcQdce7EioGyMoOxYy05fT
-         1IFC41yoCUs8zOMAHOl0FxY6dofB2fcyUdHbWvQepqG3qSPcXf+xYfYWDSmwzpLzPx
-         +g3lfca5o76Fncnrj7zJcOMRphYggLpaSHu4nUvo=
-From:   Jeff Layton <jlayton@kernel.org>
+        id S1727125AbgA3OZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 09:25:21 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39198 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgA3OZV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jan 2020 09:25:21 -0500
+Received: by mail-pj1-f66.google.com with SMTP id e9so1406213pjr.4;
+        Thu, 30 Jan 2020 06:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yk6qeDRk9bsU8rZcHl5rGYUeaQ0Nm0LWhFjeUIifTCg=;
+        b=ig4AfFwlEW+d5fbFaH+GgYqVzP0YFZXTCoswJrMx0kJSjC4fA99v9z7j3LFfVU+jxp
+         asMpi1UYRcVqfx1SjwmQ//C1T31rtF65AyRgBZKz3Bpo/ujlLlvTfpfdRpTmUFArmK5m
+         iWzBgHgIGxlMIq7FgfG05AYM3Qag7AzGcWPd5ncpbqugMhePyCjRldM+6Z3rIwaGXCrr
+         fLNFzshWXFBqJdRnQKXzOJTQdtoAfMDjpg1aYxDkBfqhFp9jnl79yvBZQFqsJ1DVr6kn
+         xq1dyP2jmm9hBVK8119UZT02p6W5+eSXdxUy6j4d6qWZ0sldFQ8F3IignkKBJnBp0XRz
+         sA9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yk6qeDRk9bsU8rZcHl5rGYUeaQ0Nm0LWhFjeUIifTCg=;
+        b=fV0V33Eo+KcOKKH/73m/cc9Sc3krqYUihxk7RQv8dPyX4Dfe/YUqXUTokAO5v6b38k
+         1AeZKDnRRBcqaYAHDJi34bj3UJHxptG/FSrXMHVgkjco6U2MPFucWO8X3/unkDGuo4oZ
+         8IgL+g8BTkfjBeDPwj/6fCRP66hMXYND9JGgOasFHtMByIlxULBxoCrPivuRmQe5GD7h
+         aEXKh+4ttuZvTD54xBEnBs1Ir2434/L9dN+S7+P1aR3DTSLMhZLwYxXZ0ni/KuJFR5Ri
+         B8hDSSCIQSysTeBwnve/pnhLOBgFA8lE4bsOA3ZTnD2b8R6l1EqHCMyE6Tc51O9gr/5c
+         Mm7Q==
+X-Gm-Message-State: APjAAAXfkzx5Wq9sxvBUy/rbpURmevvS4ETM0P/fZC/S5FKu5KMs9OJM
+        UnR3ku18165lwPaD7AMeLPA=
+X-Google-Smtp-Source: APXvYqyqIS+XYq1I0HTTRAOscemOLsmgOadI9AArHOtu2fEs5qsnq67NH6uW4eQBgn9M/eO3pw3uRQ==
+X-Received: by 2002:a17:90a:3243:: with SMTP id k61mr6405780pjb.43.1580394320899;
+        Thu, 30 Jan 2020 06:25:20 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id r2sm6669642pgv.16.2020.01.30.06.25.19
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 30 Jan 2020 06:25:20 -0800 (PST)
+From:   qiwuchen55@gmail.com
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tracing: fix test for blockdev inode in wb error handling tracepoints
-Date:   Thu, 30 Jan 2020 09:20:02 -0500
-Message-Id: <20200130142002.894960-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200130124825.476361-1-jlayton@kernel.org>
-References: <20200130124825.476361-1-jlayton@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH] fs/namespace.c: fix typos in comment
+Date:   Thu, 30 Jan 2020 22:25:05 +0800
+Message-Id: <1580394305-28573-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al pointed out that the test for whether a mapping refers to a blockdev
-inode in these tracepoints is garbage, as the superblock is always
-non-NULL.
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Add a new mapping_to_dev helper function that determines this the
-correct way, and change the tracepoints to use it. Also, fix up the
-indentation in this file.
+Fix the typos of correct parameter description.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 ---
- include/linux/fs.h             | 16 ++++++
- include/trace/events/filemap.h | 99 +++++++++++++++-------------------
- 2 files changed, 60 insertions(+), 55 deletions(-)
+ fs/namespace.c | 7 ++++---
+ fs/pnode.c     | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-Al, sorry.
-
-I had based the original on an older tree. This one should merge more
-cleanly, and also just adds a single, non-conditionally compiled helper.
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 40be2ccb87f3..264ac7d602a6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2616,6 +2616,22 @@ static inline bool sb_is_blkdev_sb(struct super_block *sb)
- 	return false;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5e1bf61..cb9584f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1975,9 +1975,10 @@ int count_mounts(struct mnt_namespace *ns, struct mount *mnt)
  }
- #endif
-+
-+/*
-+ * Return the device associated with this mapping.
-+ *
-+ * For normal inodes, return the sb of the backing filesystem, for blockdev
-+ * inodes, return the block device number associated with the inode.
-+ */
-+static inline dev_t mapping_to_dev(struct address_space *mapping)
-+{
-+	struct inode *inode = mapping->host;
-+
-+	if (sb_is_blkdev_sb(inode->i_sb))
-+		return inode->i_rdev;
-+	return inode->i_sb->s_dev;
-+}
-+
- extern int sync_filesystem(struct super_block *);
- extern const struct file_operations def_blk_fops;
- extern const struct file_operations def_chr_fops;
-diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
-index 796053e162d2..bddcc7d0bdfd 100644
---- a/include/trace/events/filemap.h
-+++ b/include/trace/events/filemap.h
-@@ -30,10 +30,7 @@ DECLARE_EVENT_CLASS(mm_filemap_op_page_cache,
- 		__entry->pfn = page_to_pfn(page);
- 		__entry->i_ino = page->mapping->host->i_ino;
- 		__entry->index = page->index;
--		if (page->mapping->host->i_sb)
--			__entry->s_dev = page->mapping->host->i_sb->s_dev;
--		else
--			__entry->s_dev = page->mapping->host->i_rdev;
-+		__entry->s_dev = mapping_to_dev(page->mapping);
- 	),
  
- 	TP_printk("dev %d:%d ino %lx page=%p pfn=%lu ofs=%lu",
-@@ -55,60 +52,52 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
- 	);
- 
- TRACE_EVENT(filemap_set_wb_err,
--		TP_PROTO(struct address_space *mapping, errseq_t eseq),
--
--		TP_ARGS(mapping, eseq),
--
--		TP_STRUCT__entry(
--			__field(unsigned long, i_ino)
--			__field(dev_t, s_dev)
--			__field(errseq_t, errseq)
--		),
--
--		TP_fast_assign(
--			__entry->i_ino = mapping->host->i_ino;
--			__entry->errseq = eseq;
--			if (mapping->host->i_sb)
--				__entry->s_dev = mapping->host->i_sb->s_dev;
--			else
--				__entry->s_dev = mapping->host->i_rdev;
--		),
--
--		TP_printk("dev=%d:%d ino=0x%lx errseq=0x%x",
--			MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
--			__entry->i_ino, __entry->errseq)
-+	TP_PROTO(struct address_space *mapping, errseq_t eseq),
-+
-+	TP_ARGS(mapping, eseq),
-+
-+	TP_STRUCT__entry(
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(errseq_t, errseq)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->i_ino = mapping->host->i_ino;
-+		__entry->errseq = eseq;
-+		__entry->s_dev = mapping_to_dev(mapping);
-+	),
-+
-+	TP_printk("dev=%d:%d ino=0x%lx errseq=0x%x",
-+		MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
-+		__entry->i_ino, __entry->errseq)
- );
- 
- TRACE_EVENT(file_check_and_advance_wb_err,
--		TP_PROTO(struct file *file, errseq_t old),
--
--		TP_ARGS(file, old),
--
--		TP_STRUCT__entry(
--			__field(struct file *, file)
--			__field(unsigned long, i_ino)
--			__field(dev_t, s_dev)
--			__field(errseq_t, old)
--			__field(errseq_t, new)
--		),
--
--		TP_fast_assign(
--			__entry->file = file;
--			__entry->i_ino = file->f_mapping->host->i_ino;
--			if (file->f_mapping->host->i_sb)
--				__entry->s_dev =
--					file->f_mapping->host->i_sb->s_dev;
--			else
--				__entry->s_dev =
--					file->f_mapping->host->i_rdev;
--			__entry->old = old;
--			__entry->new = file->f_wb_err;
--		),
--
--		TP_printk("file=%p dev=%d:%d ino=0x%lx old=0x%x new=0x%x",
--			__entry->file, MAJOR(__entry->s_dev),
--			MINOR(__entry->s_dev), __entry->i_ino, __entry->old,
--			__entry->new)
-+	TP_PROTO(struct file *file, errseq_t old),
-+
-+	TP_ARGS(file, old),
-+
-+	TP_STRUCT__entry(
-+		__field(struct file *, file)
-+		__field(unsigned long, i_ino)
-+		__field(dev_t, s_dev)
-+		__field(errseq_t, old)
-+		__field(errseq_t, new)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->file = file;
-+		__entry->i_ino = file->f_mapping->host->i_ino;
-+		__entry->s_dev = mapping_to_dev(file->f_mapping);
-+		__entry->old = old;
-+		__entry->new = file->f_wb_err;
-+	),
-+
-+	TP_printk("file=%p dev=%d:%d ino=0x%lx old=0x%x new=0x%x",
-+		__entry->file, MAJOR(__entry->s_dev),
-+		MINOR(__entry->s_dev), __entry->i_ino, __entry->old,
-+		__entry->new)
- );
- #endif /* _TRACE_FILEMAP_H */
- 
+ /*
+- *  @source_mnt : mount tree to be attached
+- *  @nd         : place the mount tree @source_mnt is attached
+- *  @parent_nd  : if non-null, detach the source_mnt from its parent and
++ *  @source_mnt : source mount.
++ *  @dest_mnt   : destination mount.
++ *  @dest_mp    : destination mountpoint.
++ *  @moving     : if true, attach source_mnt to dest_mnt and
+  *  		   store the parent mount and mountpoint dentry.
+  *  		   (done when source_mnt is moved)
+  *
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 49f6d7f..bc378ec 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -282,7 +282,7 @@ static int propagate_one(struct mount *m)
+  * headed at source_mnt's ->mnt_list
+  *
+  * @dest_mnt: destination mount.
+- * @dest_dentry: destination dentry.
++ * @dest_mp: destination mountpoint.
+  * @source_mnt: source mount.
+  * @tree_list : list of heads of trees to be attached.
+  */
 -- 
-2.24.1
+1.9.1
 
