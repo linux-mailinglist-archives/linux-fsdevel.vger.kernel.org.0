@@ -2,319 +2,319 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02C414D6B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 07:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B0A114D6EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 08:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgA3Grz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 01:47:55 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18475 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbgA3Gry (ORCPT
+        id S1726403AbgA3HHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 02:07:32 -0500
+Received: from mx04.melco.co.jp ([192.218.140.144]:35261 "EHLO
+        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbgA3HHc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 01:47:54 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e327c020000>; Wed, 29 Jan 2020 22:47:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 29 Jan 2020 22:47:51 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 29 Jan 2020 22:47:51 -0800
-Received: from [10.2.165.69] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
- 2020 06:47:50 +0000
-Subject: Re: [PATCH v2 4/8] mm/gup: track FOLL_PIN pages
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20200129032417.3085670-1-jhubbard@nvidia.com>
- <20200129032417.3085670-5-jhubbard@nvidia.com>
- <20200129135153.knie7ptvsxcgube6@box>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <0be743df-e9af-6da9-c593-9e25ab194acf@nvidia.com>
-Date:   Wed, 29 Jan 2020 22:44:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Thu, 30 Jan 2020 02:07:32 -0500
+Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
+        by mx04.melco.co.jp (Postfix) with ESMTP id D63DE3A4110;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from mr04.melco.co.jp (unknown [127.0.0.1])
+        by mr04.imss (Postfix) with ESMTP id 487WdF5VKdzRk3M;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
+        by mr04.melco.co.jp (Postfix) with ESMTP id 487WdF5B7YzRk2v;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from mf04.melco.co.jp (unknown [133.141.98.184])
+        by mf04_second.melco.co.jp (Postfix) with ESMTP id 487WdF576tzRk67;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
+        by mf04.melco.co.jp (Postfix) with ESMTP id 487WdF4ZpfzRkDv;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received:  from tux532.tad.melco.co.jp
+        by tux532.tad.melco.co.jp (unknown) with ESMTP id 00U77Tja025901;
+        Thu, 30 Jan 2020 16:07:29 +0900
+Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
+        by postfix.imss70 (Postfix) with ESMTP id 6539A17E075;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from tux554.tad.melco.co.jp (mailgw1.tad.melco.co.jp [10.168.7.223])
+        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 58D7017E073;
+        Thu, 30 Jan 2020 16:07:29 +0900 (JST)
+Received: from tux554.tad.melco.co.jp
+        by tux554.tad.melco.co.jp (unknown) with ESMTP id 00U77T38003768;
+        Thu, 30 Jan 2020 16:07:29 +0900
+From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp,
+        Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v2] staging: exfat: remove 'vol_type' variable.
+Date:   Thu, 30 Jan 2020 16:06:13 +0900
+Message-Id: <20200130070614.11999-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200129135153.knie7ptvsxcgube6@box>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580366850; bh=m5ZYa1RzG8BG4yZe/mCIbkE+2pLztusMpL2EcpkuwpM=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=DfCJGZ30wx6ffwipieuAOWILh3vNbWcrGfVRxKl+9VcaTHijWuHf3Ztap0Qs/ZzSE
-         jlYYXnyHUbRrV2lLIG3EvAgRcgG4m0yKsHIuovSzaJH625Q2mqn5Yb0ttzcjFmZGOk
-         B/Hqoduzq/m38LlJP1Zs3BgosacIiHJ81R6jd7XdQ4OHZd/Olj5Hf4n78hKNKxaUpK
-         ipWOgzBybeB3ZlF50DErDdj41bRNHEh8hvu+X39l0QBHxpTY3uT9tzRex1D4Oky8zd
-         2Wfj3GnMXgsDPRofyelZncFN8qhbbhPuaiJyffDKIvdpWjhNKliClhG0xNij3oHGEy
-         MrstvvpMDWuJw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/29/20 5:51 AM, Kirill A. Shutemov wrote:
-> On Tue, Jan 28, 2020 at 07:24:13PM -0800, John Hubbard wrote:
->> Add tracking of pages that were pinned via FOLL_PIN. This tracking is
->> implemented via overloading of page->_refcount: pins are added by
->> adding GUP_PIN_COUNTING_BIAS (1024) to the refcount. This provides a
->> fuzzy indication of pinning, and it can have false positives (and that's
->> OK). Please see the pre-existing
->> Documentation/core-api/pin_user_pages.rst for details.
->>
->> As mentioned in pin_user_pages.rst, callers who effectively set FOLL_PIN
->> (typically via pin_user_pages*()) are required to ultimately free such
->> pages via unpin_user_page().
->>
->> Please also not the limitation, discussed in pin_user_pages.rst under
-> 
-> s/not/note/
+remove 'vol_type' variable.
 
-Fixed, thanks!
+The following issues are described in exfat's TODO.
+> clean up the remaining vol_type checks, which are of two types:
+> some are ?: operators with magic numbers, and the rest are places
+> where we're doing stuff with '.' and '..'.
 
-...
->>   
->> +/**
->> + * page_dma_pinned() - report if a page is pinned for DMA.
->> + *
->> + * This function checks if a page has been pinned via a call to
->> + * pin_user_pages*().
->> + *
->> + * For non-huge pages, the return value is partially fuzzy: false is not fuzzy,
->> + * because it means "definitely not pinned for DMA", but true means "probably
->> + * pinned for DMA, but possibly a false positive due to having at least
->> + * GUP_PIN_COUNTING_BIAS worth of normal page references".
->> + *
->> + * False positives are OK, because: a) it's unlikely for a page to get that many
->> + * refcounts, and b) all the callers of this routine are expected to be able to
->> + * deal gracefully with a false positive.
-> 
-> I wounder if we should reverse the logic and name -- page_not_dma_pinned()
-> or something -- too emphasise that we can only know for sure when the page
-> is not pinned, but not necessary when it is.
-> 
+The vol_type variable is always set to 'EXFAT'.
+The variable checks are unnessesary, so remove unused code.
 
-This is an interesting point. I agree that it's worth maybe adding information
-into the function name, but I'd like to keep the bool "positive", because there
-will be a number of callers that ask "if it is possibly dma-pinned, then ...".
-So combining that, how about this function name:
+Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Reviewed-by: Mori Takahiro <Mori.Takahiro@ab.MitsubishiElectric.co.jp>
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Changes in v2:
+- Remove wrong check in exfat_readdir(), as suggested by Dan Carpenter.
+- Update comment in exfat_readdir().
 
-	page_maybe_dma_pinned()
+ drivers/staging/exfat/exfat.h       |  1 -
+ drivers/staging/exfat/exfat_core.c  | 26 +++----------
+ drivers/staging/exfat/exfat_super.c | 60 ++++++++++-------------------
+ 3 files changed, 27 insertions(+), 60 deletions(-)
 
-, which I could live with and I think would be acceptable?
-
->> + *
->> + * For more information, please see Documentation/vm/pin_user_pages.rst.
->> + *
->> + * @page:	pointer to page to be queried.
->> + * @Return:	True, if it is likely that the page has been "dma-pinned".
->> + *		False, if the page is definitely not dma-pinned.
->> + */
->> +static inline bool page_dma_pinned(struct page *page)
->> +{
->> +	/*
->> +	 * page_ref_count() is signed. If that refcount overflows, then
->> +	 * page_ref_count() returns a negative value, and callers will avoid
->> +	 * further incrementing the refcount.
->> +	 *
->> +	 * Here, for that overflow case, use the signed bit to count a little
->> +	 * bit higher via unsigned math, and thus still get an accurate result
->> +	 * from page_dma_pinned().
->> +	 */
->> +	return ((unsigned int)page_ref_count(compound_head(page))) >=
->> +		GUP_PIN_COUNTING_BIAS;
-> 
-> Do you expect it too be called on tail pages?
-
-
-Yes, we definitely cannot rule that out.
-
-
-> 
->> +}
->> +
->>   #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
->>   #define SECTION_IN_PAGE_FLAGS
->>   #endif
->> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
->> index 14d14beb1f7f..b9cbe553d1e7 100644
->> --- a/include/linux/page_ref.h
->> +++ b/include/linux/page_ref.h
->> @@ -102,6 +102,16 @@ static inline void page_ref_sub(struct page *page, int nr)
->>   		__page_ref_mod(page, -nr);
->>   }
->>   
->> +static inline int page_ref_sub_return(struct page *page, int nr)
->> +{
->> +	int ret = atomic_sub_return(nr, &page->_refcount);
->> +
->> +	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
->> +		__page_ref_mod(page, -nr);
->> +
->> +	return ret;
->> +}
->> +
-> 
-> I see opportunity to split the patch further.
-
-
-ah, OK. I wasn't sure how far to go before I get tagged for "excessive
-patch splitting"! haha. Anyway, are you suggesting to put the
-page_ref_sub_return() routine into it's own patch?
-
-Another thing to split out would be adding the flags to the remaining
-functions, such as undo_dev_pagemap(). That burns quite a few lines of
-diff. Anything else to split out?
-
-> 
->>   static inline void page_ref_inc(struct page *page)
->>   {
->>   	atomic_inc(&page->_refcount);
->> diff --git a/mm/gup.c b/mm/gup.c
->> index 9e117998274c..7a96490dcc54 100644
->> --- a/mm/gup.c
->> +++ b/mm/gup.c
->> @@ -44,6 +44,136 @@ static inline struct page *try_get_compound_head(struct page *page, int refs)
->>   	return head;
->>   }
->>   
->> +/*
->> + * try_grab_compound_head() - attempt to elevate a page's refcount, by a
->> + * flags-dependent amount.
->> + *
->> + * "grab" names in this file mean, "look at flags to decide whether to use
->> + * FOLL_PIN or FOLL_GET behavior, when incrementing the page's refcount.
->> + *
->> + * Either FOLL_PIN or FOLL_GET (or neither) must be set, but not both at the
->> + * same time. (That's true throughout the get_user_pages*() and
->> + * pin_user_pages*() APIs.) Cases:
->> + *
->> + *    FOLL_GET: page's refcount will be incremented by 1.
->> + *    FOLL_PIN: page's refcount will be incremented by GUP_PIN_COUNTING_BIAS.
->> + *
->> + * Return: head page (with refcount appropriately incremented) for success, or
->> + * NULL upon failure. If neither FOLL_GET nor FOLL_PIN was set, that's
->> + * considered failure, and furthermore, a likely bug in the caller, so a warning
->> + * is also emitted.
->> + */
->> +static __maybe_unused struct page *try_grab_compound_head(struct page *page,
->> +							  int refs,
->> +							  unsigned int flags)
->> +{
->> +	if (flags & FOLL_GET)
->> +		return try_get_compound_head(page, refs);
->> +	else if (flags & FOLL_PIN) {
->> +		refs *= GUP_PIN_COUNTING_BIAS;
->> +		return try_get_compound_head(page, refs);
-> 
-> Maybe overflow detection? At least under VM_BUG_ON()?
-
-
-OK, yes I see now that there is no check to see if we're about to overflow
-the refs, in this path. I'll add one.
-
-
-...
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 0a55dec68925..b1079aaa6f24 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -958,6 +958,11 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->>   	 */
->>   	WARN_ONCE(flags & FOLL_COW, "mm: In follow_devmap_pmd with FOLL_COW set");
->>   
->> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->> +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
->> +			 (FOLL_PIN | FOLL_GET)))
-> 
-> Too many parentheses.
-
-
-OK, I'll remove at least one. :)
-
-
-> 
->> +		return NULL;
->> +
->>   	if (flags & FOLL_WRITE && !pmd_write(*pmd))
->>   		return NULL;
->>   
->> @@ -973,7 +978,7 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->>   	 * device mapped pages can only be returned if the
->>   	 * caller will manage the page reference count.
->>   	 */
->> -	if (!(flags & FOLL_GET))
->> +	if (!(flags & (FOLL_GET | FOLL_PIN)))
->>   		return ERR_PTR(-EEXIST);
->>   
->>   	pfn += (addr & ~PMD_MASK) >> PAGE_SHIFT;
->> @@ -981,7 +986,8 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
->>   	if (!*pgmap)
->>   		return ERR_PTR(-EFAULT);
->>   	page = pfn_to_page(pfn);
->> -	get_page(page);
->> +	if (!try_grab_page(page, flags))
->> +		page = ERR_PTR(-ENOMEM);
->>   
->>   	return page;
->>   }
->> @@ -1101,6 +1107,11 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
->>   	if (flags & FOLL_WRITE && !pud_write(*pud))
->>   		return NULL;
->>   
->> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->> +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
->> +			 (FOLL_PIN | FOLL_GET)))
->> +		return NULL;
->> +
-> 
-> Ditto.
-
-
-ACK.
-
-...
->> @@ -4965,6 +4958,12 @@ follow_huge_pmd(struct mm_struct *mm, unsigned long address,
->>   	struct page *page = NULL;
->>   	spinlock_t *ptl;
->>   	pte_t pte;
->> +
->> +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
->> +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
->> +			 (FOLL_PIN | FOLL_GET)))
->> +		return NULL;
->> +
-> 
-> Ditto.
-
-ACK.
-
-
-
-
-thanks,
+diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+index 4d87360fab35..28d245b10e82 100644
+--- a/drivers/staging/exfat/exfat.h
++++ b/drivers/staging/exfat/exfat.h
+@@ -518,7 +518,6 @@ struct buf_cache_t {
+ 
+ struct fs_info_t {
+ 	u32      drv;                    /* drive ID */
+-	u32      vol_type;               /* volume FAT type */
+ 	u32      vol_id;                 /* volume serial number */
+ 
+ 	u64      num_sectors;            /* num of sectors in volume */
+diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+index 07b460d01334..5a686289a1db 100644
+--- a/drivers/staging/exfat/exfat_core.c
++++ b/drivers/staging/exfat/exfat_core.c
+@@ -1560,11 +1560,7 @@ static s32 search_deleted_or_unused_entry(struct super_block *sb,
+ 			if (num_empty >= num_entries) {
+ 				p_fs->hint_uentry.dir = CLUSTER_32(~0);
+ 				p_fs->hint_uentry.entry = -1;
+-
+-				if (p_fs->vol_type == EXFAT)
+-					return dentry - (num_entries - 1);
+-				else
+-					return dentry;
++				return dentry - (num_entries - 1);
+ 			}
+ 		}
+ 
+@@ -1914,7 +1910,7 @@ s32 count_dos_name_entries(struct super_block *sb, struct chain_t *p_dir,
+ 
+ bool is_dir_empty(struct super_block *sb, struct chain_t *p_dir)
+ {
+-	int i, count = 0;
++	int i;
+ 	s32 dentries_per_clu;
+ 	u32 type;
+ 	struct chain_t clu;
+@@ -1943,15 +1939,7 @@ bool is_dir_empty(struct super_block *sb, struct chain_t *p_dir)
+ 
+ 			if (type == TYPE_UNUSED)
+ 				return true;
+-			if ((type != TYPE_FILE) && (type != TYPE_DIR))
+-				continue;
+-
+-			if (p_dir->dir == CLUSTER_32(0)) /* FAT16 root_dir */
+-				return false;
+-
+-			if (p_fs->vol_type == EXFAT)
+-				return false;
+-			if ((p_dir->dir == p_fs->root_dir) || ((++count) > 2))
++			if ((type == TYPE_FILE) || (type == TYPE_DIR))
+ 				return false;
+ 		}
+ 
+@@ -2128,7 +2116,6 @@ s32 exfat_mount(struct super_block *sb, struct pbr_sector_t *p_pbr)
+ 	p_fs->num_clusters = GET32(p_bpb->clu_count) + 2;
+ 	/* because the cluster index starts with 2 */
+ 
+-	p_fs->vol_type = EXFAT;
+ 	p_fs->vol_id = GET32(p_bpb->vol_serial);
+ 
+ 	p_fs->root_dir = GET32(p_bpb->root_cluster);
+@@ -2165,7 +2152,7 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+ 
+ 	clu.dir = CLUSTER_32(~0);
+ 	clu.size = 0;
+-	clu.flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++	clu.flags = 0x03;
+ 
+ 	/* (1) allocate a cluster */
+ 	ret = exfat_alloc_cluster(sb, 1, &clu);
+@@ -2198,7 +2185,7 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+ 	fid->entry = dentry;
+ 
+ 	fid->attr = ATTR_SUBDIR;
+-	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++	fid->flags = 0x03;
+ 	fid->size = size;
+ 	fid->start_clu = clu.dir;
+ 
+@@ -2215,7 +2202,6 @@ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+ 	s32 ret, dentry, num_entries;
+ 	struct dos_name_t dos_name;
+ 	struct super_block *sb = inode->i_sb;
+-	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 
+ 	ret = get_num_entries_and_dos_name(sb, p_dir, p_uniname, &num_entries,
+ 					   &dos_name);
+@@ -2247,7 +2233,7 @@ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+ 	fid->entry = dentry;
+ 
+ 	fid->attr = ATTR_ARCHIVE | mode;
+-	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++	fid->flags = 0x03;
+ 	fid->size = 0;
+ 	fid->start_clu = CLUSTER_32(~0);
+ 
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index b81d2a87b82e..da4ee387b70b 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -494,7 +494,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
+ 	if (p_fs->used_clusters == UINT_MAX)
+ 		p_fs->used_clusters = exfat_count_used_clusters(sb);
+ 
+-	info->FatType = p_fs->vol_type;
++	info->FatType = EXFAT;
+ 	info->ClusterSize = p_fs->cluster_size;
+ 	info->NumClusters = p_fs->num_clusters - 2; /* clu 0 & 1 */
+ 	info->UsedClusters = p_fs->used_clusters;
+@@ -602,7 +602,7 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
+ 
+ 		fid->size = exfat_get_entry_size(ep2);
+ 		if ((fid->type == TYPE_FILE) && (fid->size == 0)) {
+-			fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++			fid->flags = 0x03;
+ 			fid->start_clu = CLUSTER_32(~0);
+ 		} else {
+ 			fid->flags = exfat_get_entry_flag(ep2);
+@@ -1095,7 +1095,7 @@ static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
+ 	fid->size = new_size;
+ 	fid->attr |= ATTR_ARCHIVE;
+ 	if (new_size == 0) {
+-		fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++		fid->flags = 0x03;
+ 		fid->start_clu = CLUSTER_32(~0);
+ 	}
+ 
+@@ -1203,14 +1203,6 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+ 
+ 	dentry = fid->entry;
+ 
+-	/* check if the old file is "." or ".." */
+-	if (p_fs->vol_type != EXFAT) {
+-		if ((olddir.dir != p_fs->root_dir) && (dentry < 2)) {
+-			ret = -EPERM;
+-			goto out2;
+-		}
+-	}
+-
+ 	ep = get_entry_in_dir(sb, &olddir, dentry, NULL);
+ 	if (!ep) {
+ 		ret = -ENOENT;
+@@ -1342,7 +1334,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
+ 
+ 	fid->size = 0;
+ 	fid->start_clu = CLUSTER_32(~0);
+-	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++	fid->flags = 0x03;
+ 
+ #ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
+ 	fs_sync(sb, true);
+@@ -2020,12 +2012,6 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
+ 
+ 	dentry = fid->entry;
+ 
+-	/* check if the file is "." or ".." */
+-	if (p_fs->vol_type != EXFAT) {
+-		if ((dir.dir != p_fs->root_dir) && (dentry < 2))
+-			return -EPERM;
+-	}
+-
+ 	/* acquire the lock for file system critical section */
+ 	mutex_lock(&p_fs->v_mutex);
+ 
+@@ -2048,7 +2034,7 @@ static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
+ 
+ 	fid->size = 0;
+ 	fid->start_clu = CLUSTER_32(~0);
+-	fid->flags = (p_fs->vol_type == EXFAT) ? 0x03 : 0x01;
++	fid->flags = 0x03;
+ 
+ #ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
+ 	fs_sync(sb, true);
+@@ -2073,8 +2059,6 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct super_block *sb = inode->i_sb;
+-	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+-	struct fs_info_t *p_fs = &sbi->fs_info;
+ 	struct bd_info_t *p_bd = &(EXFAT_SB(sb)->bd_info);
+ 	struct dir_entry_t de;
+ 	unsigned long inum;
+@@ -2084,24 +2068,22 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ 	__lock_super(sb);
+ 
+ 	cpos = ctx->pos;
+-	/* Fake . and .. for the root directory. */
+-	if ((p_fs->vol_type == EXFAT) || (inode->i_ino == EXFAT_ROOT_INO)) {
+-		while (cpos < 2) {
+-			if (inode->i_ino == EXFAT_ROOT_INO)
+-				inum = EXFAT_ROOT_INO;
+-			else if (cpos == 0)
+-				inum = inode->i_ino;
+-			else /* (cpos == 1) */
+-				inum = parent_ino(filp->f_path.dentry);
+-
+-			if (!dir_emit_dots(filp, ctx))
+-				goto out;
+-			cpos++;
+-			ctx->pos++;
+-		}
+-		if (cpos == 2)
+-			cpos = 0;
++	/* Fake . and .. for any directory. */
++	while (cpos < 2) {
++		if (inode->i_ino == EXFAT_ROOT_INO)
++			inum = EXFAT_ROOT_INO;
++		else if (cpos == 0)
++			inum = inode->i_ino;
++		else /* (cpos == 1) */
++			inum = parent_ino(filp->f_path.dentry);
++		
++		if (!dir_emit_dots(filp, ctx))
++			goto out;
++		cpos++;
++		ctx->pos++;
+ 	}
++	if (cpos == 2)
++		cpos = 0;
+ 	if (cpos & (DENTRY_SIZE - 1)) {
+ 		err = -ENOENT;
+ 		goto out;
+@@ -3345,7 +3327,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 			return -EIO;
+ 
+ 	} else {
+-		info.FatType = p_fs->vol_type;
++		info.FatType = EXFAT;
+ 		info.ClusterSize = p_fs->cluster_size;
+ 		info.NumClusters = p_fs->num_clusters - 2;
+ 		info.UsedClusters = p_fs->used_clusters;
 -- 
-John Hubbard
-NVIDIA
+2.25.0
+
