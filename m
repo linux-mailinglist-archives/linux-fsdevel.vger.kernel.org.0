@@ -2,83 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90CF414D44B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 01:05:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB41F14D4BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 01:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbgA3AFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jan 2020 19:05:45 -0500
-Received: from bes.azurecrimson.com ([172.104.212.111]:44384 "EHLO
-        mail.azurecrimson.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgA3AFp (ORCPT
+        id S1726671AbgA3Ani (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jan 2020 19:43:38 -0500
+Received: from outbound-smtp09.blacknight.com ([46.22.139.14]:60481 "EHLO
+        outbound-smtp09.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726528AbgA3Ani (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jan 2020 19:05:45 -0500
-X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 Jan 2020 19:05:45 EST
-Received: from sekhmet (50-107-163-230.dlls.pa.frontiernet.net [50.107.163.230])
-        by mail.azurecrimson.com (Postfix) with ESMTPSA id B40DBF6250;
-        Wed, 29 Jan 2020 23:57:47 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.azurecrimson.com B40DBF6250
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=azurecrimson.com;
-        s=bes; t=1580342267;
-        bh=SW+HnaMOmyjOUGYrYfr2VCXWewEK4mxbj73LzBK3K/E=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Y8W55IdOxJLLFxbAVq/rfthBlsrqVJ7EKm8LqMaLE+J39btXlR/DxbAscOopxh2YN
-         llE9qL/45kpdY6MD5WKKkLj3Pd/lPemG133gp3sSageom8zW+kcATxoslWJqWAwqY9
-         BBlW7xbMCDKa6mzlPhfZEFHZArd6niUya+IovFbA=
-Date:   Wed, 29 Jan 2020 23:58:23 +0000
-From:   Liam Dana <azurecrimson@azurecrimson.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk
-Subject: [PATCH] splice: fix splice_pipe_to_pipe() busy wait
-Message-ID: <20200129235823.GA32247@sekhmet>
+        Wed, 29 Jan 2020 19:43:38 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp09.blacknight.com (Postfix) with ESMTPS id 241361C3FDC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2020 00:43:36 +0000 (GMT)
+Received: (qmail 22593 invoked from network); 30 Jan 2020 00:43:35 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 30 Jan 2020 00:43:35 -0000
+Date:   Thu, 30 Jan 2020 00:43:34 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>, Phil Auld <pauld@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched, fair: Allow a per-cpu kthread waking a task to
+ stack on the same CPU
+Message-ID: <20200130004334.GF3466@techsingularity.net>
+References: <20200127143608.GX3466@techsingularity.net>
+ <20200127223256.GA18610@dread.disaster.area>
+ <20200128011936.GY3466@techsingularity.net>
+ <20200128091012.GZ3466@techsingularity.net>
+ <20200129173852.GP14914@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
+In-Reply-To: <20200129173852.GP14914@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fixes: 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not
-cursor and length")
+On Wed, Jan 29, 2020 at 06:38:52PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 28, 2020 at 09:10:12AM +0000, Mel Gorman wrote:
+> > Peter, Ingo and Vincent -- I know the timing is bad due to the merge
+> > window but do you have any thoughts on allowing select_idle_sibling to
+> > stack a wakee task on the same CPU as a waker in this specific case?
+> 
+> I sort of see, but *groan*...
+> 
 
-Commit 8cefc107ca54 ("pipe: Use head and tail pointers for the ring, not
-cursor and length") changed the way buffer occupancy is computed. During
-the refactor an early-return check in opipe_prep() was inverted, and it
-no longer waits for a reader to drain the full pipe buffer. When
-splicing 2 pipes (via the splice() syscall, SPLICE_F_NONBLOCK unset, and
-opipe full), this causes splice_pipe_to_pipe() to busy-wait.
+This is the reaction I kinda expected. Sync wakeups and select_idle_sibling
+probably caused someone PTSD at some point before my time in kernel/sched/.
 
-This bug can be reproduced by running the following command:
-$ yes | ./bug | pv -qL 1 >/dev/null
-where "./bug" is the following C program:
-int main() {
- while (splice(STDIN_FILENO, 0, STDOUT_FILENO, 0, 65536, 0));
- return 0;
-}
+> so if the kworker unlocks a contended mutex/rwsem/completion...
+> 
+> I suppose the fact that it limits it to tasks that were running on the
+> same CPU limits the impact if we do get it wrong.
+> 
 
-The above program will spend the majority of its time in the splice()
-syscall, and will not return with ERESTARTSYS in the event of a
-pending_signal(). Meanwhile busy-waiting causes high power usage.
+And it's limited to no other task currently running on the
+CPU. Now, potentially multiple sleepers are on that CPU waiting for
+a mutex/rwsem/completion but it's very unlikely and mostly likely due
+to the machine being saturated in which case searching for an idle CPU
+will probably fail. It would also be bound by a small window after the
+first wakeup before the task becomes runnable before the nr_running check
+mitigages the problem. Besides, if the sleeping task is waiting on the
+lock, it *is* related to the kworker which is probably finished.
 
-Signed-off-by: Liam Dana <azurecrimson@azurecrimson.com>
----
- fs/splice.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In other words, even this patches worst-case behaviour does not seem
+that bad.
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 3009652a41c8..06a21449e030 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -1503,7 +1503,7 @@ static int opipe_prep(struct pipe_inode_info *pipe, unsigned int flags)
- 	 * Check pipe occupancy without the inode lock first. This function
- 	 * is speculative anyways, so missing one is ok.
- 	 */
--	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+	if (!pipe_full(pipe->head, pipe->tail, pipe->max_usage))
- 		return 0;
- 
- 	ret = 0;
+> Elsewhere you write:
+> 
+> > I would prefer the wakeup code did not have to signal that it's a
+> > synchronous wakeup. Sync wakeups so exist but callers got it wrong many
+> > times where stacking was allowed and then the waker did not go to sleep.
+> > While the chain of events are related, they are not related in a very
+> > obvious way. I think it's much safer to keep this as a scheduler
+> > heuristic instead of depending on callers to have sufficient knowledge
+> > of the scheduler implementation.
+> 
+> That is true; the existing WF_SYNC has caused many issues for maybe
+> being too strong.
+> 
+
+Exactly. It ended up being almost ignored. It basically just means that
+the waker CPU may be used as the target for wake_affine because the
+users were not obeying the contract.
+
+> But what if we create a new hint that combines both these ideas? Say
+> WF_COMPLETE and subject that to these same criteria. This way we can
+> eliminate wakeups from locks and such (they won't have this set).
+> 
+
+I think that'll end up with three consequences. First, it falls foul
+of Rusty's Rules of API Design[1] because even if people read the
+implementation and the documentation, they might still get it wrong like
+what happened with WF_SYNC.  Second, some other subsystem will think it's
+special and use the flag because it happens to work for one benchmark or
+worse, they happened to copy/paste the code for some reason. Finally,
+the workqueue implementation may change in some way that renders the
+use of the flag incorrect. With this patch, if workqueues change design,
+it's more likely the patch becomes a no-op.
+
+> Or am I just making things complicated again?
+
+I think so but I also wrote the patch so I'm biased. I think the callers
+would be forced into an API change if it's a common pattern where multiple
+unbound tasks can sleep on the same CPU waiting on a single kworker and
+I struggle to think of such an example.
+
+The length of time it took this issue to be detected and patched is
+indicative that not everyone is familiar with kernel/sched/fair.c and its
+consequences.  If they were, chances are they would have implemented some
+mental hack like binding a task to a single CPU until the IO completes.
+
+[1] http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+
 -- 
-2.24.1
-
+Mel Gorman
+SUSE Labs
