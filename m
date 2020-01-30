@@ -2,230 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBE114E047
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 18:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D96FB14E31A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 20:23:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgA3RyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 12:54:19 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51215 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727333AbgA3RyT (ORCPT
+        id S1727564AbgA3TXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 14:23:43 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:53993 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbgA3TXm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 12:54:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580406858;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mrGHfSuCn/1HZGIkAY3brhdYxU0Wlxx8zZuo7ggIi2g=;
-        b=hRbDvyULpxGFPauCn5mD/nUuH76IfOLAtinuhbtjYTRLMKrYnBhUsASzxmYVKx6EWb6kOz
-        LD6KFCkx7fiqYvNgQ1w0rrQm8ZW0Pz4fc+M/V1Of5+JWvO7BhbsNchf1ED+I00MI7iU2gJ
-        ZsIlHdAGNrQTMMnd4zgGZstQbrFUTLE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-429-Z9Ru1kz5Np68iCziGKnAGg-1; Thu, 30 Jan 2020 12:54:02 -0500
-X-MC-Unique: Z9Ru1kz5Np68iCziGKnAGg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 34C8613E7;
-        Thu, 30 Jan 2020 17:54:00 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4AE0B5C1B2;
-        Thu, 30 Jan 2020 17:53:48 +0000 (UTC)
-Date:   Thu, 30 Jan 2020 12:53:46 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V8 02/16] audit: add container id
-Message-ID: <20200130175346.4ds4dursrarwv4x6@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <70ad50e69185c50843d5e14462f1c4f03655d503.1577736799.git.rgb@redhat.com>
- <CAHC9VhTKE_3bOXs+UcpKDQhatKH92uY3Hy=JA4sXXVGOC0ek8A@mail.gmail.com>
+        Thu, 30 Jan 2020 14:23:42 -0500
+Received: by mail-pj1-f65.google.com with SMTP id n96so1760763pjc.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2020 11:23:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=STfgILZYJSeHL29PKr26PXRGNaaOXbLTCRy3jhx8noU=;
+        b=jqYeVsahhF99yBrSGAvuHdMSc2W97p/s3hZt9gt9YFSuOjK3g3byaqJC2nQE+QDIfI
+         Z8NqxNikaMbSwQW2aQmx4Z02ThbSexr8D1XYxdrnXThBpe0rcHGSppH4YG+Li4+wqP63
+         2itQvwz4W2zBZh2IImAm5jdwB75aiWKl25l50=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=STfgILZYJSeHL29PKr26PXRGNaaOXbLTCRy3jhx8noU=;
+        b=Q7+sMDPV+Yp2V6V3nLvvBGDQD2Sw9KhVz5i/V4No/Pvt7MyuJtGaT9sI0n5QV32mC+
+         GahbNRVlWBBlUegGuxMG2lPV0iDc3zDbosi2lKvK7e8VFr3syPB3DRhdK79FkXhRM6KQ
+         mxwMdqsx1Aygvwovnb2rmGKqLR/+HY/B365KWxEYg9Mt3a43vG5Tue5BJsLMjadDUSRy
+         HyRbYE2gCRCBpKByU1dKOwxSWq2GUVmVAJSVdY+2qY6Fpi9YaF+OlJYiEhTq1Szddjwg
+         DDl0j4Ttd+CPm7y22XfqkwxQHr2qkMahTgozZTBwzNiJgE6N5ZkMB81vugWPE1tlGPWw
+         yFvQ==
+X-Gm-Message-State: APjAAAVyiExm5IHtLGQRMbZN9AnTm3bkRgXvIQ27lYbW0zx9T51udjxK
+        WY4aSo1BSlrLFD7obV1HO3A91g==
+X-Google-Smtp-Source: APXvYqw7tzrE450ZfccVZjN7IiTuW4qM2cwf555Gxth2MtTA6Fx8D7q2y+CnyzGujglJaRni3OFJmQ==
+X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr7802031pjk.134.1580412220763;
+        Thu, 30 Jan 2020 11:23:40 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b185sm7608776pfa.102.2020.01.30.11.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 11:23:39 -0800 (PST)
+Date:   Thu, 30 Jan 2020 11:23:38 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Jan Kara <jack@suse.cz>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Rik van Riel <riel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Kubecek <mkubecek@suse.cz>
+Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
+ as usercopy caches
+Message-ID: <202001300945.7D465B5F5@keescook>
+References: <201911121313.1097D6EE@keescook>
+ <201911141327.4DE6510@keescook>
+ <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
+ <202001271519.AA6ADEACF0@keescook>
+ <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
+ <202001281457.FA11CC313A@keescook>
+ <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
+ <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
+ <20200129170939.GA4277@infradead.org>
+ <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhTKE_3bOXs+UcpKDQhatKH92uY3Hy=JA4sXXVGOC0ek8A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-01-22 16:28, Paul Moore wrote:
-> On Tue, Dec 31, 2019 at 2:49 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > Implement the proc fs write to set the audit container identifier of a
-> > process, emitting an AUDIT_CONTAINER_OP record to document the event.
-> >
-> > This is a write from the container orchestrator task to a proc entry of
-> > the form /proc/PID/audit_containerid where PID is the process ID of the
-> > newly created task that is to become the first task in a container, or
-> > an additional task added to a container.
-> >
-> > The write expects up to a u64 value (unset: 18446744073709551615).
-> >
-> > The writer must have capability CAP_AUDIT_CONTROL.
-> >
-> > This will produce a record such as this:
-> >   type=CONTAINER_OP msg=audit(2018-06-06 12:39:29.636:26949) : op=set opid=2209 contid=123456 old-contid=18446744073709551615
-> >
-> > The "op" field indicates an initial set.  The "opid" field is the
-> > object's PID, the process being "contained".  New and old audit
-> > container identifier values are given in the "contid" fields.
-> >
-> > It is not permitted to unset the audit container identifier.
-> > A child inherits its parent's audit container identifier.
-> >
-> > Please see the github audit kernel issue for the main feature:
-> >   https://github.com/linux-audit/audit-kernel/issues/90
-> > Please see the github audit userspace issue for supporting additions:
-> >   https://github.com/linux-audit/audit-userspace/issues/51
-> > Please see the github audit testsuiite issue for the test case:
-> >   https://github.com/linux-audit/audit-testsuite/issues/64
-> > Please see the github audit wiki for the feature overview:
-> >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > Acked-by: Steve Grubb <sgrubb@redhat.com>
-> > Acked-by: Neil Horman <nhorman@tuxdriver.com>
-> > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  fs/proc/base.c             | 36 ++++++++++++++++++++++++++++
-> >  include/linux/audit.h      | 25 ++++++++++++++++++++
-> >  include/uapi/linux/audit.h |  2 ++
-> >  kernel/audit.c             | 58 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  kernel/audit.h             |  1 +
-> >  kernel/auditsc.c           |  4 ++++
-> >  6 files changed, 126 insertions(+)
+On Wed, Jan 29, 2020 at 06:19:56PM +0100, Christian Borntraeger wrote:
+> On 29.01.20 18:09, Christoph Hellwig wrote:
+> > On Wed, Jan 29, 2020 at 06:07:14PM +0100, Christian Borntraeger wrote:
+> >>> DMA can be done to NORMAL memory as well.
+> >>
+> >> Exactly. 
+> >> I think iucv uses GFP_DMA because z/VM needs those buffers to reside below 2GB (which is ZONA_DMA for s390).
+> > 
+> > The normal way to allocate memory with addressing limits would be to
+> > use dma_alloc_coherent and friends.  Any chance to switch iucv over to
+> > that?  Or is there no device associated with it?
 > 
-> ...
+> There is not necessarily a device for that. It is a hypervisor interface (an
+> instruction that is interpreted by z/VM). We do have the netiucv driver that
+> creates a virtual nic, but there is also AF_IUCV which works without a device.
 > 
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 397f8fb4836a..2d7707426b7d 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -2356,6 +2358,62 @@ int audit_signal_info(int sig, struct task_struct *t)
-> >         return audit_signal_info_syscall(t);
-> >  }
-> >
-> > +/*
-> > + * audit_set_contid - set current task's audit contid
-> > + * @task: target task
-> > + * @contid: contid value
-> > + *
-> > + * Returns 0 on success, -EPERM on permission failure.
-> > + *
-> > + * Called (set) from fs/proc/base.c::proc_contid_write().
-> > + */
-> > +int audit_set_contid(struct task_struct *task, u64 contid)
-> > +{
-> > +       u64 oldcontid;
-> > +       int rc = 0;
-> > +       struct audit_buffer *ab;
-> > +
-> > +       task_lock(task);
-> > +       /* Can't set if audit disabled */
-> > +       if (!task->audit) {
-> > +               task_unlock(task);
-> > +               return -ENOPROTOOPT;
-> > +       }
-> > +       oldcontid = audit_get_contid(task);
-> > +       read_lock(&tasklist_lock);
-> > +       /* Don't allow the audit containerid to be unset */
-> > +       if (!audit_contid_valid(contid))
-> > +               rc = -EINVAL;
-> > +       /* if we don't have caps, reject */
-> > +       else if (!capable(CAP_AUDIT_CONTROL))
-> > +               rc = -EPERM;
-> > +       /* if task has children or is not single-threaded, deny */
-> > +       else if (!list_empty(&task->children))
-> > +               rc = -EBUSY;
-> > +       else if (!(thread_group_leader(task) && thread_group_empty(task)))
-> > +               rc = -EALREADY;
-> 
-> [NOTE: there is a bigger issue below which I think is going to require
-> a respin/fixup of this patch so I'm going to take the opportunity to
-> do a bit more bikeshedding ;)]
-> 
-> It seems like we could combine both the thread/children checks under a
-> single -EBUSY return value.  In both cases the caller should be able
-> to determine if the target process is multi-threaded for has spawned
-> children, yes?  FWIW, my motivation for this question is that
-> -EALREADY seems like a poor choice here.
+> But back to the original question: If we mark kmalloc caches as usercopy caches,
+> we should do the same for DMA kmalloc caches. As outlined by Christoph, this has
+> nothing to do with device DMA.
 
-Fair enough.
+Hm, looks like it's allocated from the low 16MB. Seems like poor naming!
+:) There seems to be a LOT of stuff using GFP_DMA, and it seems unlikely
+those are all expecting low addresses?
 
-> > +       /* if contid is already set, deny */
-> > +       else if (audit_contid_set(task))
-> > +               rc = -ECHILD;
-> 
-> Does -EEXIST make more sense here?
+Since this has only been a problem on s390, should just s390 gain the
+weakening of the usercopy restriction?  Something like:
 
-Perhaps.  I don't feel strongly about it, but none of these error codes
-were intended for this use and should not overlap with other errors from
-writing to /proc.
 
-> > +       read_unlock(&tasklist_lock);
-> > +       if (!rc)
-> > +               task->audit->contid = contid;
-> > +       task_unlock(task);
-> > +
-> > +       if (!audit_enabled)
-> > +               return rc;
-> > +
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONTAINER_OP);
-> > +       if (!ab)
-> > +               return rc;
-> > +
-> > +       audit_log_format(ab,
-> > +                        "op=set opid=%d contid=%llu old-contid=%llu",
-> > +                        task_tgid_nr(task), contid, oldcontid);
-> > +       audit_log_end(ab);
-> 
-> Assuming audit is enabled we always emit the record above, even if we
-> were not actually able to set the Audit Container ID (ACID); this
-> seems wrong to me.  I think the proper behavior would be to either add
-> a "res=" field to indicate success/failure or only emit the record
-> when we actually change a task's ACID.  Considering the impact that
-> the ACID value will potentially have on the audit stream, it seems
-> like always logging the record and including a "res=" field may be the
-> safer choice.
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 1907cb2903c7..c5bbc141f20b 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1303,7 +1303,9 @@ void __init create_kmalloc_caches(slab_flags_t flags)
+ 			kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
+ 				kmalloc_info[i].name[KMALLOC_DMA],
+ 				kmalloc_info[i].size,
+-				SLAB_CACHE_DMA | flags, 0, 0);
++				SLAB_CACHE_DMA | flags, 0,
++				IS_ENABLED(CONFIG_S390) ?
++					kmalloc_info[i].size : 0);
+ 		}
+ 	}
+ #endif
 
-This record should be accompanied by a syscall record (and eventually
-possibly a CONTAINER_ID record of the orchestrator, if it is already in
-a container).  The syscall record has a res= field that already gives
-this result.
 
-> > +       return rc;
-> > +}
-> > +
-> >  /**
-> >   * audit_log_end - end one audit record
-> >   * @ab: the audit_buffer
-> 
-> --
-> paul moore
-> www.paul-moore.com
-> 
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+-- 
+Kees Cook
