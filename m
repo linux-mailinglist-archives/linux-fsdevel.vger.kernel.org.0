@@ -2,24 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FC914DCFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 15:45:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1280814DE00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 16:38:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgA3OpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 09:45:22 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60653 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbgA3OpW (ORCPT
+        id S1727217AbgA3Pi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 10:38:29 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55710 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727158AbgA3Pi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 09:45:22 -0500
-Received: from [109.134.33.162] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ixB4K-0002Bk-94; Thu, 30 Jan 2020 14:45:20 +0000
-Date:   Thu, 30 Jan 2020 15:45:20 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
+        Thu, 30 Jan 2020 10:38:29 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixBth-004oy2-Rz; Thu, 30 Jan 2020 15:38:25 +0000
+Date:   Thu, 30 Jan 2020 15:38:25 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     linux-fsdevel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -27,64 +24,68 @@ Cc:     linux-fsdevel@vger.kernel.org,
         Eric Biederman <ebiederm@xmission.com>
 Subject: Re: [PATCH 04/17] follow_automount() doesn't need the entire
  nameidata
-Message-ID: <20200130144520.hnf2yk5tjalxfddn@wittgenstein>
+Message-ID: <20200130153825.GA23230@ZenIV.linux.org.uk>
 References: <20200119031423.GV8904@ZenIV.linux.org.uk>
  <20200119031738.2681033-1-viro@ZenIV.linux.org.uk>
  <20200119031738.2681033-4-viro@ZenIV.linux.org.uk>
+ <20200130144520.hnf2yk5tjalxfddn@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200119031738.2681033-4-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200130144520.hnf2yk5tjalxfddn@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 19, 2020 at 03:17:16AM +0000, Al Viro wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
+On Thu, Jan 30, 2020 at 03:45:20PM +0100, Christian Brauner wrote:
+> > -	nd->total_link_count++;
+> > -	if (nd->total_link_count >= 40)
+> > +	if (count && *count++ >= 40)
 > 
-> only the address of ->total_link_count and the flags
+> He, side-effects galore. :)
+> Isn't this incrementing the address but you want to increment the
+> counter?
+> Seems like this should be
 > 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/namei.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index d30a74a18da9..3b6f60c02f8a 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1133,7 +1133,7 @@ EXPORT_SYMBOL(follow_up);
->   * - return -EISDIR to tell follow_managed() to stop and return the path we
->   *   were called with.
->   */
-> -static int follow_automount(struct path *path, struct nameidata *nd)
-> +static int follow_automount(struct path *path, int *count, unsigned lookup_flags)
->  {
->  	struct dentry *dentry = path->dentry;
->  
-> @@ -1148,13 +1148,12 @@ static int follow_automount(struct path *path, struct nameidata *nd)
->  	 * as being automount points.  These will need the attentions
->  	 * of the daemon to instantiate them before they can be used.
->  	 */
-> -	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
-> +	if (!(lookup_flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
->  			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
->  	    dentry->d_inode)
->  		return -EISDIR;
->  
-> -	nd->total_link_count++;
-> -	if (nd->total_link_count >= 40)
-> +	if (count && *count++ >= 40)
+> if (count && (*count)++ >= 40)
 
-He, side-effects galore. :)
-Isn't this incrementing the address but you want to increment the
-counter?
-Seems like this should be
+Nice catch; incidentally, it means that usual testsuites (xfstests,
+LTP) are missing the automount loop detection.  Hmm...
 
-if (count && (*count)++ >= 40)
+Something like
 
-and even then it seems to me not incrementing at all when we have hit
-the limit seems more natural?
+export $FOO over nfs4 to localhost
 
-Christian
+mkdir $FOO/sub
+touch $FOO/a
+mount $SCRATCH_DEV $FOO/sub
+touch $FOO/sub/a
+cd $BAR
+mkdir nfs
+mount -t nfs localhost:$FOO nfs
+for i in `seq 40`; do ln -s l`expr $i - 1` l$i; done
+for i in `seq 40`; do ln -s m`expr $i - 1` m$i; done
+ln -s nfs/sub/a l0
+ln -s nfs/a m0
+for i in `seq 40`; do
+	umount nfs/sub 2>/dev/null
+	cat l$i m$i
+done
+
+BTW, the check of pre-increment value is more correct - it's
+accidental, but it does give consistency with the normal symlink
+following.  We do allow up to 40 symlinks over the pathname
+resolution, not up to 39.
+
+The thing above should produce
+cat: l39: Too many levels of symbolic links
+cat: l40: Too many levels of symbolic links
+cat: m40: Too many levels of symbolic links
+
+Here l<n> and m<n> go through n + 1 symlink, ending at
+nfs/sub/a and nfs/a resp.; the former does trigger an automount,
+the latter does not.
+
+On mainline it actually starts to complain about l38, l39, l40 and m40,
+due to that off-by-one in follow_automount().
