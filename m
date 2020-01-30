@@ -2,91 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE19214D8B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 11:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22ED214D9CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 12:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgA3KLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 05:11:53 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:54524 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgA3KLw (ORCPT
+        id S1727165AbgA3LbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 06:31:21 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46926 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726980AbgA3LbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:11:52 -0500
-Received: by mail-pj1-f65.google.com with SMTP id dw13so1115783pjb.4;
-        Thu, 30 Jan 2020 02:11:52 -0800 (PST)
+        Thu, 30 Jan 2020 06:31:21 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x14so2883783ljd.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2020 03:31:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=X6B408HVKqVgRddttBmZ/lvRWns0/HwPdIVXoXJfH4E=;
-        b=c7Ivzmp3oKr9rXKl5OoQ+47r/bqWcTqeLMbGis525KSXrrwn5BJAXMMnvQO+EazbD3
-         X5N2jpP6TPpE8o8Pt4eegtqRL8G+8OGJc2+VcTE/9JGHzn/CiJ0unLnKfyYp7MCG5FY8
-         rwUNbQtWuxAeXcDjZSQKQqBdFGC49jLIYcBVf08jjdq8nQRuVBMtZaCGyu51ylbvZW4m
-         QMQ3RAjCRwWUnI0KJtypR16+rL6mwc0xlHgSnTdTcYOHIBplOXXgWcDoGNNparelJ8Ez
-         8Tek53F5EtaApt7IpJ3IXru3ktvF/2n3MduFNH38D3wpg+h5QMlvHvjTvUQWhdPxSgG1
-         KY7A==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/EN520UCUxsEUBwp+gxS6OoGlcVQKRNBVBF0BZx9y+I=;
+        b=Tsy8nAO0PvaScoyPHxQ8u0Q+uBQzLnebXEkKCAg+P2fPtHalLWm98o3bNIETmJk5Ax
+         GIRK0uSiHJ59wddWXiQye/G8OPgZv2mm0LsDsZ2nZHJirH3IYNo46TkDYqgz5CMTQ1xw
+         3wr3AseYMfQDfaItEw9mxy6wVkEHMXK3pBatYbOrO+QJm5HvMdWQdcvT4UvyPjEjlV2I
+         c7o3jEmW8+sHIEpnAt1EMA8iI5ykE01yWc3XdnCvW/XjyKW71c9UFc0YbgGm38DCjXvU
+         4b7+TJJVVG8NR6O6Z0y2TSvGBoBUJu7xGq45uwGY0olDpcFxUsT1bVJAtVtVMKT7uqdU
+         My4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=X6B408HVKqVgRddttBmZ/lvRWns0/HwPdIVXoXJfH4E=;
-        b=UGKm1x3Cgi9pYe3sQ0bvIpIrEfFHKOxq0vgKnWUoCtbAb0VhHsrBqry5kFiQQo0e2N
-         yWg+W9/5DxwlEl3uQCy2SLQxWs/6IOMW3nxiBcjjR2bq49lZT51sMVPrGzJvViTCrpiV
-         Dsena/UQwR5tijhG3rRGmXSfBGP699UN7ipn4rOpXvIq9XXCP39hJVoDg1Qm2RnZtldU
-         FuRNgkrwK8F1mJBp/Fr7m3rnT6/1r7kwcU6aHbsRypGcA2BzL/xVxpPF/g/1XzozyvbO
-         Hzl6gXznBCwUobXp8JZSaX9/OrOuZTFWk5hU/3r6hRzxGoRRTMHxYzF9J4UVmUSdK332
-         KyGQ==
-X-Gm-Message-State: APjAAAVbFJkJ1zikYx8VylrzZX9ZAwGEwp+25q5/25dsJkTaBt9xGuEG
-        0X9qvaZgD11Yx71xv9rwq+Q=
-X-Google-Smtp-Source: APXvYqyKkr61j+ElMfljiMs2BCzPRuQOnrAi43XYT2V9n8VWhg2yQWg72wstJF6J7ByCuUJYQ/ALuw==
-X-Received: by 2002:a17:902:8a89:: with SMTP id p9mr3924542plo.286.1580379112493;
-        Thu, 30 Jan 2020 02:11:52 -0800 (PST)
-Received: from localhost.localdomain ([2405:204:848d:d4b5:49ce:a9e3:28b5:cf94])
-        by smtp.gmail.com with ESMTPSA id k21sm6239683pfa.63.2020.01.30.02.11.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/EN520UCUxsEUBwp+gxS6OoGlcVQKRNBVBF0BZx9y+I=;
+        b=RUuILgsbEqUZT6pMquLs07mop7lgRllJax72s/jzsy5E1DaAwLo+H0q7H+CwxpakfY
+         GuhZarJ4tkx6p7OPeJKoActJ0DFoeQyQvazObhOofazxgGIWIVMKlk18Gd63vpcdappk
+         fS932k7bJEjvu3H4XtDfWJACWmTw5NWqPnvZUNA/yNl4/QvmaAmkvss0XDESLQOzAkVq
+         4PusRA3r5RMXWD5KHTYycB6vyLiox/LxrRmScLvDP6Es8UpcYNP1TW+sCFZ3evfKi8QZ
+         I1Bo6nv22TazHpuFpy+g8iJ3K7hJN/AG3h28PgHQHn251YyhyiE1MQAf7ebRguy+Ugbu
+         BB6w==
+X-Gm-Message-State: APjAAAUbBlEQSaPpHIDK8upEFzt0YYkEfo0tFGtrBMDuzg4nTJ0CX07P
+        Jq5DC18IBpmxD0I0/Uz5oLhbHA==
+X-Google-Smtp-Source: APXvYqzOfHleShWYEZ7+vculAYaLdAq1R8IjRRLv6oV11NywrAJ0QawfN5bbH06GtSQcqK2Wevv/Xw==
+X-Received: by 2002:a2e:9218:: with SMTP id k24mr2468907ljg.262.1580383878986;
+        Thu, 30 Jan 2020 03:31:18 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id u25sm2683666ljj.70.2020.01.30.03.31.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 02:11:51 -0800 (PST)
-From:   Pragat Pandya <pragat.pandya@gmail.com>
-To:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org,
-        Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH 2/2] staging: exfat: Remove unused struct 'dev_info_t'
-Date:   Thu, 30 Jan 2020 15:41:18 +0530
-Message-Id: <20200130101118.15936-3-pragat.pandya@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200130101118.15936-1-pragat.pandya@gmail.com>
-References: <20200130101118.15936-1-pragat.pandya@gmail.com>
+        Thu, 30 Jan 2020 03:31:18 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id C35F8100B00; Thu, 30 Jan 2020 14:31:26 +0300 (+03)
+Date:   Thu, 30 Jan 2020 14:31:26 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v2 4/8] mm/gup: track FOLL_PIN pages
+Message-ID: <20200130113126.5ftq4gd5k7o7tipj@box>
+References: <20200129032417.3085670-1-jhubbard@nvidia.com>
+ <20200129032417.3085670-5-jhubbard@nvidia.com>
+ <20200129135153.knie7ptvsxcgube6@box>
+ <0be743df-e9af-6da9-c593-9e25ab194acf@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0be743df-e9af-6da9-c593-9e25ab194acf@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove global declaration of unused struct "dev_info_t".
-Structure "dev_info_t" is defined in exfat.h and not referenced in any
-other file.
+On Wed, Jan 29, 2020 at 10:44:50PM -0800, John Hubbard wrote:
+> On 1/29/20 5:51 AM, Kirill A. Shutemov wrote:
+> > > +/**
+> > > + * page_dma_pinned() - report if a page is pinned for DMA.
+> > > + *
+> > > + * This function checks if a page has been pinned via a call to
+> > > + * pin_user_pages*().
+> > > + *
+> > > + * For non-huge pages, the return value is partially fuzzy: false is not fuzzy,
+> > > + * because it means "definitely not pinned for DMA", but true means "probably
+> > > + * pinned for DMA, but possibly a false positive due to having at least
+> > > + * GUP_PIN_COUNTING_BIAS worth of normal page references".
+> > > + *
+> > > + * False positives are OK, because: a) it's unlikely for a page to get that many
+> > > + * refcounts, and b) all the callers of this routine are expected to be able to
+> > > + * deal gracefully with a false positive.
+> > 
+> > I wounder if we should reverse the logic and name -- page_not_dma_pinned()
+> > or something -- too emphasise that we can only know for sure when the page
+> > is not pinned, but not necessary when it is.
+> > 
+> 
+> This is an interesting point. I agree that it's worth maybe adding information
+> into the function name, but I'd like to keep the bool "positive", because there
+> will be a number of callers that ask "if it is possibly dma-pinned, then ...".
+> So combining that, how about this function name:
+> 
+> 	page_maybe_dma_pinned()
+> 
+> , which I could live with and I think would be acceptable?
 
-Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
----
- drivers/staging/exfat/exfat.h | 5 -----
- 1 file changed, 5 deletions(-)
+I would still prefer the negative version, but up to you.
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index b29e2f5154ee..1ae4ae4b3441 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -231,11 +231,6 @@ struct date_time_t {
- 	u16      MilliSecond;
- };
- 
--struct dev_info_t {
--	u32      SecSize;    /* sector size in bytes */
--	u32      DevSize;    /* block device size in sectors */
--};
--
- struct vol_info_t {
- 	u32      FatType;
- 	u32      ClusterSize;
+> > I see opportunity to split the patch further.
+> 
+> 
+> ah, OK. I wasn't sure how far to go before I get tagged for "excessive
+> patch splitting"! haha. Anyway, are you suggesting to put the
+> page_ref_sub_return() routine into it's own patch?
+> 
+> Another thing to split out would be adding the flags to the remaining
+> functions, such as undo_dev_pagemap(). That burns quite a few lines of
+> diff. Anything else to split out?
+
+Nothing I see immediately.
+
+> 
+> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > index 0a55dec68925..b1079aaa6f24 100644
+> > > --- a/mm/huge_memory.c
+> > > +++ b/mm/huge_memory.c
+> > > @@ -958,6 +958,11 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+> > >   	 */
+> > >   	WARN_ONCE(flags & FOLL_COW, "mm: In follow_devmap_pmd with FOLL_COW set");
+> > > +	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
+> > > +	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
+> > > +			 (FOLL_PIN | FOLL_GET)))
+> > 
+> > Too many parentheses.
+> 
+> 
+> OK, I'll remove at least one. :)
+
+I see two.
+
 -- 
-2.17.1
-
+ Kirill A. Shutemov
