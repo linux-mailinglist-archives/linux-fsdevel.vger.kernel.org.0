@@ -2,146 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D96FB14E31A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 20:23:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E65314E339
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 20:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbgA3TXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 14:23:43 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53993 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbgA3TXm (ORCPT
+        id S1727600AbgA3T2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 14:28:16 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:50208 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726267AbgA3T2N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 14:23:42 -0500
-Received: by mail-pj1-f65.google.com with SMTP id n96so1760763pjc.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2020 11:23:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=STfgILZYJSeHL29PKr26PXRGNaaOXbLTCRy3jhx8noU=;
-        b=jqYeVsahhF99yBrSGAvuHdMSc2W97p/s3hZt9gt9YFSuOjK3g3byaqJC2nQE+QDIfI
-         Z8NqxNikaMbSwQW2aQmx4Z02ThbSexr8D1XYxdrnXThBpe0rcHGSppH4YG+Li4+wqP63
-         2itQvwz4W2zBZh2IImAm5jdwB75aiWKl25l50=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=STfgILZYJSeHL29PKr26PXRGNaaOXbLTCRy3jhx8noU=;
-        b=Q7+sMDPV+Yp2V6V3nLvvBGDQD2Sw9KhVz5i/V4No/Pvt7MyuJtGaT9sI0n5QV32mC+
-         GahbNRVlWBBlUegGuxMG2lPV0iDc3zDbosi2lKvK7e8VFr3syPB3DRhdK79FkXhRM6KQ
-         mxwMdqsx1Aygvwovnb2rmGKqLR/+HY/B365KWxEYg9Mt3a43vG5Tue5BJsLMjadDUSRy
-         HyRbYE2gCRCBpKByU1dKOwxSWq2GUVmVAJSVdY+2qY6Fpi9YaF+OlJYiEhTq1Szddjwg
-         DDl0j4Ttd+CPm7y22XfqkwxQHr2qkMahTgozZTBwzNiJgE6N5ZkMB81vugWPE1tlGPWw
-         yFvQ==
-X-Gm-Message-State: APjAAAVyiExm5IHtLGQRMbZN9AnTm3bkRgXvIQ27lYbW0zx9T51udjxK
-        WY4aSo1BSlrLFD7obV1HO3A91g==
-X-Google-Smtp-Source: APXvYqw7tzrE450ZfccVZjN7IiTuW4qM2cwf555Gxth2MtTA6Fx8D7q2y+CnyzGujglJaRni3OFJmQ==
-X-Received: by 2002:a17:90a:7784:: with SMTP id v4mr7802031pjk.134.1580412220763;
-        Thu, 30 Jan 2020 11:23:40 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b185sm7608776pfa.102.2020.01.30.11.23.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 11:23:39 -0800 (PST)
-Date:   Thu, 30 Jan 2020 11:23:38 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-Message-ID: <202001300945.7D465B5F5@keescook>
-References: <201911121313.1097D6EE@keescook>
- <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz>
- <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
- <202001281457.FA11CC313A@keescook>
- <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
- <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
- <20200129170939.GA4277@infradead.org>
- <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
+        Thu, 30 Jan 2020 14:28:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580412491;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ZRSoce4aDIhYGocvIcGv2HpCjE5w9Q4ooxBftKFFfE=;
+        b=JBKTLWwKMBQLtVlNauUjcFfifrMl24vFZxaUQjN8lKQ3iHx8tF7o0efieRYnKJceOnaMcH
+        cz3hBBVs4RANfcf+yKw6xa7EzZ16LL1+fm0aSIBJAJLY8p3cFtC+jzSUeb40g6/ZBGbVtK
+        d+wcBh+aRhJc112TE9W1MYxAbHXweUs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-63-1e8F8O_FMeypJ7O5vFx2sw-1; Thu, 30 Jan 2020 14:28:09 -0500
+X-MC-Unique: 1e8F8O_FMeypJ7O5vFx2sw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9001413E5;
+        Thu, 30 Jan 2020 19:28:07 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8AC9219488;
+        Thu, 30 Jan 2020 19:27:56 +0000 (UTC)
+Date:   Thu, 30 Jan 2020 14:27:53 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
+Message-ID: <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com>
+ <6452955c1e038227a5cd169f689f3fd3db27513f.1577736799.git.rgb@redhat.com>
+ <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
+In-Reply-To: <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 06:19:56PM +0100, Christian Borntraeger wrote:
-> On 29.01.20 18:09, Christoph Hellwig wrote:
-> > On Wed, Jan 29, 2020 at 06:07:14PM +0100, Christian Borntraeger wrote:
-> >>> DMA can be done to NORMAL memory as well.
-> >>
-> >> Exactly. 
-> >> I think iucv uses GFP_DMA because z/VM needs those buffers to reside below 2GB (which is ZONA_DMA for s390).
-> > 
-> > The normal way to allocate memory with addressing limits would be to
-> > use dma_alloc_coherent and friends.  Any chance to switch iucv over to
-> > that?  Or is there no device associated with it?
+On 2020-01-22 16:29, Paul Moore wrote:
+> On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > Track the parent container of a container to be able to filter and
+> > report nesting.
+> >
+> > Now that we have a way to track and check the parent container of a
+> > container, modify the contid field format to be able to report that
+> > nesting using a carrat ("^") separator to indicate nesting.  The
+> > original field format was "contid=<contid>" for task-associated records
+> > and "contid=<contid>[,<contid>[...]]" for network-namespace-associated
+> > records.  The new field format is
+> > "contid=<contid>[^<contid>[...]][,<contid>[...]]".
 > 
-> There is not necessarily a device for that. It is a hypervisor interface (an
-> instruction that is interpreted by z/VM). We do have the netiucv driver that
-> creates a virtual nic, but there is also AF_IUCV which works without a device.
+> Let's make sure we always use a comma as a separator, even when
+> recording the parent information, for example:
+> "contid=<contid>[,^<contid>[...]][,<contid>[...]]"
+
+The intent here is to clearly indicate and separate nesting from
+parallel use of several containers by one netns.  If we do away with
+that distinction, then we lose that inheritance accountability and
+should really run the list through a "uniq" function to remove the
+produced redundancies.  This clear inheritance is something Steve was
+looking for since tracking down individual events/records to show that
+inheritance was not aways feasible due to rolled logs or search effort.
+
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  include/linux/audit.h |  1 +
+> >  kernel/audit.c        | 53 +++++++++++++++++++++++++++++++++++++++++++--------
+> >  kernel/audit.h        |  1 +
+> >  kernel/auditfilter.c  | 17 ++++++++++++++++-
+> >  kernel/auditsc.c      |  2 +-
+> >  5 files changed, 64 insertions(+), 10 deletions(-)
 > 
-> But back to the original question: If we mark kmalloc caches as usercopy caches,
-> we should do the same for DMA kmalloc caches. As outlined by Christoph, this has
-> nothing to do with device DMA.
+> ...
+> 
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index ef8e07524c46..68be59d1a89b 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> 
+> > @@ -492,6 +493,7 @@ void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
+> >                 audit_netns_contid_add(new->net_ns, contid);
+> >  }
+> >
+> > +void audit_log_contid(struct audit_buffer *ab, u64 contid);
+> 
+> If we need a forward declaration, might as well just move it up near
+> the top of the file with the rest of the declarations.
 
-Hm, looks like it's allocated from the low 16MB. Seems like poor naming!
-:) There seems to be a LOT of stuff using GFP_DMA, and it seems unlikely
-those are all expecting low addresses?
+Ok.
 
-Since this has only been a problem on s390, should just s390 gain the
-weakening of the usercopy restriction?  Something like:
+> > +void audit_log_contid(struct audit_buffer *ab, u64 contid)
+> > +{
+> > +       struct audit_contobj *cont = NULL, *prcont = NULL;
+> > +       int h;
+> 
+> It seems safer to pass the audit container ID object and not the u64.
 
+It would also be faster, but in some places it isn't available such as
+for ptrace and signal targets.  This also links back to the drop record
+refcounts to hold onto the contobj until process exit, or signal
+delivery.
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 1907cb2903c7..c5bbc141f20b 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1303,7 +1303,9 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 			kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
- 				kmalloc_info[i].name[KMALLOC_DMA],
- 				kmalloc_info[i].size,
--				SLAB_CACHE_DMA | flags, 0, 0);
-+				SLAB_CACHE_DMA | flags, 0,
-+				IS_ENABLED(CONFIG_S390) ?
-+					kmalloc_info[i].size : 0);
- 		}
- 	}
- #endif
+What we could do is to supply two potential parameters, a contobj and/or
+a contid, and have it use the contobj if it is valid, otherwise, use the
+contid, as is done for names and paths supplied to audit_log_name().
 
+> > +       if (!audit_contid_valid(contid)) {
+> > +               audit_log_format(ab, "%llu", contid);
+> 
+> Do we really want to print (u64)-1 here?  Since this is a known
+> invalid number, would "?" be a better choice?
 
+I'll defer to Steve here.  "?" would be one character vs 20 for (u64)-1.
+I don't expect there to be that many records containing (u64)-1, but it
+would also make them visually easier to pick out if that is a factor.
 
--- 
-Kees Cook
+> > +               return;
+> > +       }
+> > +       h = audit_hash_contid(contid);
+> > +       rcu_read_lock();
+> > +       list_for_each_entry_rcu(cont, &audit_contid_hash[h], list)
+> > +               if (cont->id == contid) {
+> > +                       prcont = cont;
+> 
+> Why not just pull the code below into the body of this if statement?
+> It all needs to be done under the RCU read lock anyway and the code
+> would read much better this way.
+
+Ok.
+
+> > +                       break;
+> > +               }
+> > +       if (!prcont) {
+> > +               audit_log_format(ab, "%llu", contid);
+> > +               goto out;
+> > +       }
+> > +       while (prcont) {
+> > +               audit_log_format(ab, "%llu", prcont->id);
+> > +               prcont = prcont->parent;
+> > +               if (prcont)
+> > +                       audit_log_format(ab, "^");
+> 
+> In the interest of limiting the number of calls to audit_log_format(),
+> how about something like the following:
+> 
+>   audit_log_format("%llu", cont);
+>   iter = cont->parent;
+>   while (iter) {
+>     if (iter->parent)
+>       audit_log_format("^%llu,", iter);
+>     else
+>       audit_log_format("^%llu", iter);
+>     iter = iter->parent;
+>   }
+
+Ok.
+
+> > +       }
+> > +out:
+> > +       rcu_read_unlock();
+> > +}
+> > +
+> >  /*
+> >   * audit_log_container_id - report container info
+> >   * @context: task or local context for record
+> 
+> ...
+> 
+> > @@ -2705,9 +2741,10 @@ int audit_set_contid(struct task_struct *task, u64 contid)
+> >         if (!ab)
+> >                 return rc;
+> >
+> > -       audit_log_format(ab,
+> > -                        "op=set opid=%d contid=%llu old-contid=%llu",
+> > -                        task_tgid_nr(task), contid, oldcontid);
+> > +       audit_log_format(ab, "op=set opid=%d contid=", task_tgid_nr(task));
+> > +       audit_log_contid(ab, contid);
+> > +       audit_log_format(ab, " old-contid=");
+> > +       audit_log_contid(ab, oldcontid);
+> 
+> This is an interesting case where contid and old-contid are going to
+> be largely the same, only the first (current) ID is going to be
+> different; do we want to duplicate all of those IDs?
+
+At first when I read your comment, I thought we could just take contid
+and drop oldcontid, but if it fails, we still want all the information,
+so given the way I've set up the search code in userspace, listing only
+the newest contid in the contid field and all the rest in oldcontid
+could be a good compromise.
+
+> >         audit_log_end(ab);
+> >         return rc;
+> >  }
+> > @@ -2723,9 +2760,9 @@ void audit_log_container_drop(void)
+> 
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
