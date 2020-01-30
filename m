@@ -2,94 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4BF314DEDD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 17:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8478F14DF7B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jan 2020 17:54:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbgA3QSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 11:18:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58686 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727191AbgA3QSd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 11:18:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 68C10AEFF;
-        Thu, 30 Jan 2020 16:18:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 193151E0D5D; Thu, 30 Jan 2020 17:18:32 +0100 (CET)
-Date:   Thu, 30 Jan 2020 17:18:32 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] UDF, quota, reiserfs, ext2 fixes and cleanups for 5.6-rc1
-Message-ID: <20200130161832.GA15601@quack2.suse.cz>
+        id S1727348AbgA3Qy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 11:54:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43694 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727158AbgA3Qy2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jan 2020 11:54:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qceikH9PHpCz39hioQYWaZZk7q8XBIPjc6qoISxbbjM=; b=IEtluxk0SuMb5ff+P3zrx0x0Z
+        ZDyJL2W+YIXQPZF2BhR1T7j0HbsbhoEMyK/NBw/UiOIiuLJpcb2m/xG5FDzMd5dm1zJi4/LpAYMtl
+        i4+TrlEqCOH6Mjr1dXF7PW36pKjEaB1Yc7W9+T8oD7KUeHdyh82rBQEDMKmojpNsQGfTlrQF2xmRh
+        P/GkTuDgHHGcdQbdRhUr8Kuec0tFxiPx4mG8soI0bqYR3ufvbJ3R6W7spCFqzO4jwxJe2OJFmJLeg
+        GkVE/fS5+SH9N0/DgmISRtEU8xC6+ZSOBvy9SnDTIp+CM7owxeFBT/DYppv32i7t0pNyA5ydEa3fQ
+        ymFavt1Mg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixD5F-0004ap-68; Thu, 30 Jan 2020 16:54:25 +0000
+Date:   Thu, 30 Jan 2020 08:54:25 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] splice: direct call for default_file_splice*()
+Message-ID: <20200130165425.GA8872@infradead.org>
+References: <12375b7baa741f0596d54eafc6b1cfd2489dd65a.1579553271.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <12375b7baa741f0596d54eafc6b1cfd2489dd65a.1579553271.git.asml.silence@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+On Mon, Jan 20, 2020 at 11:49:46PM +0300, Pavel Begunkov wrote:
+> Indirect calls could be very expensive nowadays, so try to use direct calls
+> whenever possible.
 
-  could you please pull from
+... and independent of that your new version is much shorter and easier
+to read.  But it could be improved a tiny little bit further:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v5.6-rc1
+>  	if (out->f_op->splice_write)
+> -		splice_write = out->f_op->splice_write;
+> +		return out->f_op->splice_write(pipe, out, ppos, len, flags);
+>  	else
+> -		splice_write = default_file_splice_write;
+> -
+> -	return splice_write(pipe, out, ppos, len, flags);
+> +		return default_file_splice_write(pipe, out, ppos, len, flags);
 
-to get a couple of assorted fixes and cleanups for udf, quota, reiserfs,
-and ext2.
+No need for the else after an return.
 
-Top of the tree is 154a4dcfc95f. The full shortlog is:
+>  	if (in->f_op->splice_read)
+> -		splice_read = in->f_op->splice_read;
+> +		return in->f_op->splice_read(in, ppos, pipe, len, flags);
+>  	else
+> -		splice_read = default_file_splice_read;
+> -
+> -	return splice_read(in, ppos, pipe, len, flags);
+> +		return default_file_splice_read(in, ppos, pipe, len, flags);
 
-Alex Shi (2):
-      fs/quota: remove unused macro
-      fs/reiserfs: remove unused macros
-
-Arnd Bergmann (1):
-      quota: avoid time_t in v1_disk_dqblk definition
-
-Chengguang Xu (1):
-      ext2: set proper errno in error case of ext2_fill_super()
-
-Jan Kara (5):
-      reiserfs: Fix memory leak of journal device string
-      reiserfs: Fix spurious unlock in reiserfs_fill_super() error handling
-      udf: Fix free space reporting for metadata and virtual partitions
-      udf: Allow writing to 'Rewritable' partitions
-      udf: Clarify meaning of f_files in udf_statfs
-
-Nathan Chancellor (1):
-      ext2: Adjust indentation in ext2_fill_super
-
-Pali Rohár (5):
-      udf: Fix spelling in EXT_NEXT_EXTENT_ALLOCDESCS
-      udf: Move OSTA Identifier Suffix macros from ecma_167.h to osta_udf.h
-      udf: Update header files to UDF 2.60
-      udf: Fix meaning of ENTITYID_FLAGS_* macros to be really bitwise-or flags
-      udf: Disallow R/W mode for disk with Metadata partition
-
-The diffstat is
-
- fs/ext2/super.c       |   7 ++--
- fs/quota/quota_v2.c   |   2 -
- fs/quota/quotaio_v1.h |   6 ++-
- fs/reiserfs/journal.c |   2 -
- fs/reiserfs/procfs.c  |   1 -
- fs/reiserfs/stree.c   |   6 ---
- fs/reiserfs/super.c   |   4 +-
- fs/udf/ecma_167.h     |  46 +++++++++++++----------
- fs/udf/inode.c        |   6 +--
- fs/udf/osta_udf.h     | 100 ++++++++++++++++++++++++++++++++++----------------
- fs/udf/super.c        |  40 ++++++++++++++------
- fs/udf/truncate.c     |   2 +-
- 12 files changed, 137 insertions(+), 85 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Same here.
