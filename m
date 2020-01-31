@@ -2,201 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010AD14EC3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 13:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E0A14ECD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 14:01:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbgAaMEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jan 2020 07:04:08 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:32780 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728571AbgAaMEI (ORCPT
+        id S1728556AbgAaNBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jan 2020 08:01:45 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33770 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728514AbgAaNBo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jan 2020 07:04:08 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so6358256otp.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2020 04:04:07 -0800 (PST)
+        Fri, 31 Jan 2020 08:01:44 -0500
+Received: by mail-lj1-f193.google.com with SMTP id y6so7032995lji.0;
+        Fri, 31 Jan 2020 05:01:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bPZYbEHgT8QqWy65RuP2LwO/ekDNyecnlbDtriR+rAY=;
-        b=InWWajXpKjo8nIUsFLbd3+gXkRiyQwKrsN3SuyxJtIAV+5mvx5jWLI+32kU4GxZqH0
-         RL3AB4Duh8Nu54vbn6Muxq8c7ddYI2vv1j7nsgV4hvKBOc2ykYv8yJY6xRCulQ68HJ9n
-         iMi+kRfnObu5vSYzqNBr6p9OyWwUMYtfZw8chuNpE5PrP9ihITkeTb6GRpUv11oX15Gx
-         hKLXcS74O2uqJiYEjhy6o05QCFBK6KK6y1VA4haWcWqrRWsb+K6OeBV3e3AiqLuW6rBp
-         N4hqHrI7+oEEVCExwmrVqpD/5Cb0z1bSEqvHGmen9xNTQ9Sn5kSIhznFRsrTIHBgnN/y
-         BP4Q==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=91NDgBxMOUQX+FZ1BTJVVc6qCU+Cj8++hqqh0GnmSfM=;
+        b=nRpXut7VNzzYjKTPl/iBVkARA1nKKVM2JLhHDU6YEEmxvCw+80Dwl5xODlKBFKjHAB
+         CUsx1vVxYWyG2VTJdeKVLBCPn2qEv8o2mOlJMAiTPMpOUjxTTYJGf4g7DlsoIDZb1dKh
+         e9ybWVTkHB2JKVFao2EeOL/eKD1voyl6aCIVgdgQepoBkXqVrhlzZIZM6zcN8LBWqa/L
+         fRV9PdIdhm+jfSSWv2niorSh3N0IxpcUt0Zu/lham/DwECpLPVGT5fjTgnW3lxp9AhuS
+         bCz7c1d0EyDiPLUu5iEoymetjYYbhwNFRsbq1T6ntHgBt1bLeH0roMA97LCS7QhJmTH3
+         F4cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bPZYbEHgT8QqWy65RuP2LwO/ekDNyecnlbDtriR+rAY=;
-        b=kWYETbx88OGp+vGdA9+/PP1LoNnCjfF3D3vDcimywn+8v0DAla1PkkdyooOm8StNo2
-         lcg1tanVx6c0kkVr/WJw/9SkXBWvBVdkGfFGL6OCxY5scF5HxvxHGFR3OBV+cV3yrA+4
-         57VTI3I/1/cGp2Jl5sFwSz1EyvVP7J+yohWBMGEAqLeqa78uw8WtmLSimZCWO7kQXtSM
-         Sp3thZGZAUK2VZQrN8jfMhrun2Wc+oQnPq/7sq0JXeAp/6E2vMLlPIAn8jfP5qbeKUL0
-         pned1jRYsKHJwxJ/f0Rxsk/0mV7Pp6Jm8P/6YbM+Y4Fhx7E3wY6906LL0XKxoQXC7c14
-         cFjw==
-X-Gm-Message-State: APjAAAVgUXxciSowQGhXQBlJlwr6f9LGey1x233k5roZh06lixN9HXMa
-        MRpZy+ZQ/t2fBdCbBDrFrSx43nly8fGFNTIa0Wo5LA==
-X-Google-Smtp-Source: APXvYqxX4kvjJgrVd0xsJAPveBUs527WZZheCaEcNR7VaN+pr2nJJe9jO88RJTZyjdW6BmhGD/zGL14X4MmAFHztlf4=
-X-Received: by 2002:a05:6830:22cc:: with SMTP id q12mr7537510otc.110.1580472246617;
- Fri, 31 Jan 2020 04:04:06 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=91NDgBxMOUQX+FZ1BTJVVc6qCU+Cj8++hqqh0GnmSfM=;
+        b=H8PVV6C4cNc+LmFxrLtdcZ74VVbBpvQMxe+Nt3d/I/Zcvc1VHBwZuXEEvCKPtf3BFr
+         /1M4XA56LSO70MGIOMBaS1z5fDboNg4pQToZ6YW8r3wOQNo+sIQHtjluXahaPd2BJge9
+         0KNb8xVQjf42QCj8ygmiM95yBjjRAFRLlw/EXm2HttKANH8PYo9LnaVUmX/es5l7RIOF
+         PheL/59aaUhQF4KalSguAEGcxKLzLBx+OpMujXcApVZjkkEX1YTFWbZBMJGUk20j6k62
+         fDo4yNNcrZy1R7cWNnEZXcgB4Gu0jnSu/xSrLQroP4gd/U15F2b3YqIGbZcsAi9+U/DW
+         lWsg==
+X-Gm-Message-State: APjAAAV6NKmWU1PGhXfXG/2UpQa0Oc10QC49Xi/+ol+4oIDqiihW15L4
+        DFT9gLjU80XaUu8PcxyoRcmWl9G55fs=
+X-Google-Smtp-Source: APXvYqxa6ny9Hj92Ow3m4QBwi5HVWBuTJM/cFloRyJixABbPoSnn/IRUdm7Q0Xpdu2uwPGjHzHXNgg==
+X-Received: by 2002:a2e:9e03:: with SMTP id e3mr5870631ljk.186.1580475702053;
+        Fri, 31 Jan 2020 05:01:42 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id w71sm5430896lff.0.2020.01.31.05.01.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 05:01:41 -0800 (PST)
+Subject: Re: [PATCH v2] fs: optimise kiocb_set_rw_flags()
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <8cecd243-38aa-292d-15cd-49b485f9253f@gmail.com>
+ <5328b35d948ea2a3aa5df2b1d740c7cb1f38c846.1579224594.git.asml.silence@gmail.com>
+Message-ID: <14929e52-9437-e856-7eff-4e5b45968f89@gmail.com>
+Date:   Fri, 31 Jan 2020 16:01:40 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-References: <201911121313.1097D6EE@keescook> <201911141327.4DE6510@keescook>
- <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz> <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com> <202001281457.FA11CC313A@keescook>
- <alpine.DEB.2.21.2001291640350.1546@www.lameter.com> <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
- <20200129170939.GA4277@infradead.org> <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
- <202001300945.7D465B5F5@keescook>
-In-Reply-To: <202001300945.7D465B5F5@keescook>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 31 Jan 2020 13:03:40 +0100
-Message-ID: <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches as
- usercopy caches
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5328b35d948ea2a3aa5df2b1d740c7cb1f38c846.1579224594.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 8:23 PM Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Jan 29, 2020 at 06:19:56PM +0100, Christian Borntraeger wrote:
-> > On 29.01.20 18:09, Christoph Hellwig wrote:
-> > > On Wed, Jan 29, 2020 at 06:07:14PM +0100, Christian Borntraeger wrote:
-> > >>> DMA can be done to NORMAL memory as well.
-> > >>
-> > >> Exactly.
-> > >> I think iucv uses GFP_DMA because z/VM needs those buffers to reside below 2GB (which is ZONA_DMA for s390).
-> > >
-> > > The normal way to allocate memory with addressing limits would be to
-> > > use dma_alloc_coherent and friends.  Any chance to switch iucv over to
-> > > that?  Or is there no device associated with it?
-> >
-> > There is not necessarily a device for that. It is a hypervisor interface (an
-> > instruction that is interpreted by z/VM). We do have the netiucv driver that
-> > creates a virtual nic, but there is also AF_IUCV which works without a device.
-> >
-> > But back to the original question: If we mark kmalloc caches as usercopy caches,
-> > we should do the same for DMA kmalloc caches. As outlined by Christoph, this has
-> > nothing to do with device DMA.
->
-> Hm, looks like it's allocated from the low 16MB. Seems like poor naming!
+On 1/17/2020 4:32 AM, Pavel Begunkov wrote:
+> kiocb_set_rw_flags() generates a poor code with several memory writes
+> and a lot of jumps. Help compilers to optimise it.
+> 
+> Tested with gcc 9.2 on x64-86, and as a result, it its output now is a
+> plain code without jumps accumulating in a register before a memory
+> write.
 
-The physical address limit of the DMA zone depends on the architecture
-(and the kernel version); e.g. on Linux 4.4 on arm64 (which is used on
-the Pixel 2), the DMA zone goes up to 4GiB. Later, arm64 started using
-the DMA32 zone for that instead (as was already the case on e.g.
-X86-64); but recently (commit 1a8e1cef7603), arm64 started using the
-DMA zone again, but now for up to 1GiB. (AFAICS the DMA32 zone can't
-be used with kmalloc at all, that only works with the DMA zone.)
+Humble ping
 
-> :) There seems to be a LOT of stuff using GFP_DMA, and it seems unlikely
-> those are all expecting low addresses?
+> 
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+> 
+> v2: check for 0 flags in advance (Matthew Wilcox)
+> 
+>  include/linux/fs.h | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 98e0349adb52..22b46fc8fdfa 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3402,22 +3402,28 @@ static inline int iocb_flags(struct file *file)
+>  
+>  static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  {
+> +	int kiocb_flags = 0;
+> +
+> +	if (!flags)
+> +		return 0;
+>  	if (unlikely(flags & ~RWF_SUPPORTED))
+>  		return -EOPNOTSUPP;
+>  
+>  	if (flags & RWF_NOWAIT) {
+>  		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
+>  			return -EOPNOTSUPP;
+> -		ki->ki_flags |= IOCB_NOWAIT;
+> +		kiocb_flags |= IOCB_NOWAIT;
+>  	}
+>  	if (flags & RWF_HIPRI)
+> -		ki->ki_flags |= IOCB_HIPRI;
+> +		kiocb_flags |= IOCB_HIPRI;
+>  	if (flags & RWF_DSYNC)
+> -		ki->ki_flags |= IOCB_DSYNC;
+> +		kiocb_flags |= IOCB_DSYNC;
+>  	if (flags & RWF_SYNC)
+> -		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
+> +		kiocb_flags |= (IOCB_DSYNC | IOCB_SYNC);
+>  	if (flags & RWF_APPEND)
+> -		ki->ki_flags |= IOCB_APPEND;
+> +		kiocb_flags |= IOCB_APPEND;
+> +
+> +	ki->ki_flags |= kiocb_flags;
+>  	return 0;
+>  }
+>  
+> 
 
-I think there's a bunch of (especially really old) hardware where the
-hardware can only talk to low physical addresses, e.g. stuff that uses
-the ISA bus.
-
-However, there aren't *that* many users of GFP_DMA that actually cause
-kmalloc allocations with GFP_DMA - many of the users of GFP_DMA
-actually just pass that flag to dma_alloc_coherent()/dma_pool_alloc(),
-where it is filtered away and the allocation ultimately doesn't go
-through the slab allocator AFAICS, or they pass it directly to the
-page allocator, where it has no effect on the usercopy stuff. Looking
-on my workstation, there are zero objects allocated in dma-kmalloc-*
-slabs:
-
-/sys/kernel/slab# for name in dma-kmalloc-*; do echo "$name: $(cat
-$name/objects)"; done
-dma-kmalloc-128: 0
-dma-kmalloc-16: 0
-dma-kmalloc-192: 0
-dma-kmalloc-1k: 0
-dma-kmalloc-256: 0
-dma-kmalloc-2k: 0
-dma-kmalloc-32: 0
-dma-kmalloc-4k: 0
-dma-kmalloc-512: 0
-dma-kmalloc-64: 0
-dma-kmalloc-8: 0
-dma-kmalloc-8k: 0
-dma-kmalloc-96: 0
-
-On a Pixel 2, there are a whole five objects allocated across the DMA
-zone kmalloc caches:
-
-walleye:/sys/kernel/slab # for name in dma-kmalloc-*; do echo "$name:
-$(cat $name/objects)"; done
-dma-kmalloc-1024: 0
-dma-kmalloc-128: 0
-dma-kmalloc-2048: 2
-dma-kmalloc-256: 0
-dma-kmalloc-4096: 3
-dma-kmalloc-512: 0
-dma-kmalloc-8192: 0
-
-> Since this has only been a problem on s390, should just s390 gain the
-> weakening of the usercopy restriction?  Something like:
->
->
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 1907cb2903c7..c5bbc141f20b 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1303,7 +1303,9 @@ void __init create_kmalloc_caches(slab_flags_t flags)
->                         kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
->                                 kmalloc_info[i].name[KMALLOC_DMA],
->                                 kmalloc_info[i].size,
-> -                               SLAB_CACHE_DMA | flags, 0, 0);
-> +                               SLAB_CACHE_DMA | flags, 0,
-> +                               IS_ENABLED(CONFIG_S390) ?
-> +                                       kmalloc_info[i].size : 0);
->                 }
->         }
->  #endif
-
-I think dma-kmalloc slabs should be handled the same way as normal
-kmalloc slabs. When a dma-kmalloc allocation is freshly created, it is
-just normal kernel memory - even if it might later be used for DMA -,
-and it should be perfectly fine to copy_from_user() into such
-allocations at that point, and to copy_to_user() out of them at the
-end. If you look at the places where such allocations are created, you
-can see things like kmemdup(), memcpy() and so on - all normal
-operations that shouldn't conceptually be different from usercopy in
-any relevant way.
+-- 
+Pavel Begunkov
