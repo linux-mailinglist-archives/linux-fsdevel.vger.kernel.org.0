@@ -2,108 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B84DF14EA43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 10:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E94714EA51
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 10:58:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgAaJwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jan 2020 04:52:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40447 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbgAaJwd (ORCPT
+        id S1728289AbgAaJ66 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jan 2020 04:58:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50700 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728240AbgAaJ66 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jan 2020 04:52:33 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c23so4430903lfi.7;
-        Fri, 31 Jan 2020 01:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2zLinx65kFK53ILK1AcLmmd59Fu+8auTjozCt4FuyXc=;
-        b=tFa2xXLPMfbQa4Lg+mSI8s/TlT4TEzvbjICetoMKNxdwsGqzYXd99yW1obFpVYoOS4
-         f8Gbz5MIV2/PXrL+s/pjZtrbShpOtC2tKv+BLM5WSbYiBfTxAXxn5fa9/SyBtl5oHAdE
-         OSnzwoFVXEhFweNJQ0O0/gS3uMzcAgcfrEOJ5Czh3qv4KSoxVWzGDiNr/QV1Ne4UJ+n8
-         1WSiDCeF31WdwWWjWg9C1Q9fYze+ZMMgpDo1L3z0c/izJuNZw6VnInN3LoxbA8yeEWMp
-         RTIt6xMq7wgtger92/GnJMXCeje8Cv1s+uiRxVEaDF/U2VIWd0T1AzS667H57mwt6iwn
-         VrnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2zLinx65kFK53ILK1AcLmmd59Fu+8auTjozCt4FuyXc=;
-        b=Bynxe7cbs/20JuuUp/Bv7LvTnz6LOS+Z+YSR04hwl5gQSi1uDI3vIsocRiBZK2nfUK
-         a/2nKKLzb/xlwlFQKmhZqSJw0uW96ITbWZQ/58FbXFkT/c7K3YU4gx3sM/sHPeQaQoE8
-         bR+7lqg0teRZE8XTpKy4Bd44Ae0SdtzhHcd6Wh3lu9be1OhnIwySoXJ6kyuJgK92uHvU
-         wD/xqzA/fFcq6TYnAbjDZnj6qi6J4CwEMEStbONUfWt3N9/Y2gXY0a9ute6qc2OPacZi
-         LF7xW05e0LTG0WmPqE/IZGC0ChDgeWRymxYBSJJNQ8RtRtEYUo94Y8AY4SJZtRJw0AkX
-         Vv+Q==
-X-Gm-Message-State: APjAAAXiWlKvqW5C1yQKi6GQjmuZioaj3Lu9kjAXsBBUO9Nt4RX0+oeh
-        /dIHt9dmCxTKC+8eVFklCBilCMdUmfo=
-X-Google-Smtp-Source: APXvYqzYXjb3R9IBvegkSpqNYMQIIrmty+2pa0JXh83XjZcPtPYUYfTGQjgzU3IyYAFO0mtvD25YyA==
-X-Received: by 2002:a19:9d0:: with SMTP id 199mr5092184lfj.110.1580464349406;
-        Fri, 31 Jan 2020 01:52:29 -0800 (PST)
-Received: from [172.31.190.83] ([86.57.146.226])
-        by smtp.gmail.com with ESMTPSA id p9sm4380158ljg.55.2020.01.31.01.52.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 01:52:28 -0800 (PST)
-Subject: Re: [PATCH] splice: direct call for default_file_splice*()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <12375b7baa741f0596d54eafc6b1cfd2489dd65a.1579553271.git.asml.silence@gmail.com>
- <20200130165425.GA8872@infradead.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <239aacf6-5f8b-39f4-b4f0-e22de4c46b88@gmail.com>
-Date:   Fri, 31 Jan 2020 12:52:27 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Fri, 31 Jan 2020 04:58:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580464735;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=pM0c0LfCmKVDajSmt5fafYF9h1wpifXzFg1uGepQ6zc=;
+        b=V6bi58ab168P1qAWqS4/zgVs1R1JMZNiwMReUG0bHYu/sXnkGErdH/1WHDZ12Dpixlg50M
+        Ti4qYu8HQkvMYuy+nGEt54kxgzr0LlwpJgvazOf3jrjqyMyfilr5HDsHVpJdLqNClruk2W
+        f77lTAzaeLrUX8+sceb+/1TypwcNrYU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-284-gcltkZgOPJKRkg8LHAmksw-1; Fri, 31 Jan 2020 04:58:50 -0500
+X-MC-Unique: gcltkZgOPJKRkg8LHAmksw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B72D9A0CBF;
+        Fri, 31 Jan 2020 09:58:49 +0000 (UTC)
+Received: from ws.net.home (ovpn-204-202.brq.redhat.com [10.40.204.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C18C45D9E5;
+        Fri, 31 Jan 2020 09:58:48 +0000 (UTC)
+Date:   Fri, 31 Jan 2020 10:58:46 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.35.1
+Message-ID: <20200131095846.ogjtqrs7ai774tka@ws.net.home>
 MIME-Version: 1.0
-In-Reply-To: <20200130165425.GA8872@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/30/2020 7:54 PM, Christoph Hellwig wrote:
-> On Mon, Jan 20, 2020 at 11:49:46PM +0300, Pavel Begunkov wrote:
->> Indirect calls could be very expensive nowadays, so try to use direct calls
->> whenever possible.
-> 
-> ... and independent of that your new version is much shorter and easier
-> to read.  But it could be improved a tiny little bit further:
-> 
->>  	if (out->f_op->splice_write)
->> -		splice_write = out->f_op->splice_write;
->> +		return out->f_op->splice_write(pipe, out, ppos, len, flags);
->>  	else
->> -		splice_write = default_file_splice_write;
->> -
->> -	return splice_write(pipe, out, ppos, len, flags);
->> +		return default_file_splice_write(pipe, out, ppos, len, flags);
-> 
-> No need for the else after an return.
 
-It generates identical binary. For this to not look sloppy, I'd add new
-line between, so the same 4 lines. And this looks better for me, but
-that's rather subjective.
+The util-linux stable release v2.35.1 is available at:
+            
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.35/
+ 
+Feedback and bug reports, as always, are welcomed.
+ 
+  Karel
 
-I don't think it's worth of changing. What's the benefit?
 
-> 
->>  	if (in->f_op->splice_read)
->> -		splice_read = in->f_op->splice_read;
->> +		return in->f_op->splice_read(in, ppos, pipe, len, flags);
->>  	else
->> -		splice_read = default_file_splice_read;
->> -
->> -	return splice_read(in, ppos, pipe, len, flags);
->> +		return default_file_splice_read(in, ppos, pipe, len, flags);
-> 
-> Same here.
-> 
+
+util-linux 2.35.1 Release Notes
+===============================
+
+build-sys:
+   - add --disable-hwclock-gplv3  [Karel Zak]
+chrt:
+   - Use sched_setscheduler system call directly  [jonnyh64]
+lib/randutils:
+   - use explicit data types for bit ops  [Karel Zak]
+libfdisk:
+   - fix __copy_partition()  [Karel Zak]
+   - make sure we use NULL after free  [Karel Zak]
+libmount:
+   - fix x- options use for non-root users  [Karel Zak]
+po:
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+sfdisk:
+   - make sure we do not overlap on --move  [Karel Zak]
+   - remove broken step alignment for --move  [Karel Zak]
 
 -- 
-Pavel Begunkov
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
