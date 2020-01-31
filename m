@@ -2,227 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 755C214E860
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 06:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8954B14E862
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 06:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgAaFZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jan 2020 00:25:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42810 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbgAaFZQ (ORCPT
+        id S1726202AbgAaFZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jan 2020 00:25:28 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:56594 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbgAaFZ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jan 2020 00:25:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iaONn3PN4CmGbzxX7vbz9VEQdINWrN40pXZYKxhUWYQ=; b=ehajBpRY8PCtQQNmVDv7QhYCT
-        KeGc3R2zmCjkhJElf+507DzutiIJb03QGG9NvfxEoOejSJMeD71eJE8erPqpWYM+NHui05kl8PzNN
-        sgjRky336NmKnskC+XdFH63rzvBaRY4YJ2sT/t+AaUsZKBAPbPtCQssMv2KUt0NxMP6I55cVODvE4
-        zLv0ut4pDVgwB7tGOyjl7ucwMv3Of3qkcBKQFbVHa6zi6xr2luhb1bGPdbc3EX+j5v284pTZoF40o
-        i792hcouH0FasM+CVotIv1sy63kwl5d6L637A3J8JCuBc1sJHR+E2pMQn/4Un6wL3NyHPix2hT6ZC
-        JKPm4kAZA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixOnr-0000lA-PD; Fri, 31 Jan 2020 05:25:15 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 2/2] fs/namespace.c: fix kernel coding style for comments and
- EXPORTs
-Message-ID: <f29712ac-2cb1-d9ba-2c35-3bc88b0e0d48@infradead.org>
-Date:   Thu, 30 Jan 2020 21:25:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 31 Jan 2020 00:25:28 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V5Nhg1016118;
+        Fri, 31 Jan 2020 05:25:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=Q8K46XY2SN8n0jr4TVed23P9qDKr7ITh1g9zSWQV5Nk=;
+ b=UWuN5mffDwa+mn/g1u3Bp18Zd8IjyvUJb4X3V/uYbFbanNeYjPWNz7hmQuUzArd0W6dw
+ B26ZEDJkLmSzb+GAxy7k/ooH2GJCep6RtV8/jZI8xwBsVCzVTSW9i29xRYSz5rC40f9g
+ HF7PQkE/1mglNJdV8rR9d4sU9RSizrY9LcB0bZAMySwRenzRjwGN8Gped8XCJt6MRTFc
+ P7/3dGoYIqPS4y9kf4U6lrHZYh6afjHvo0WivPCFpX06TMBMNnVEF1mDBEVj6cE/n8g9
+ RewHdyUZ05g4B/N++rKaxfcYR6oAOvm1N1mX6dRCbkMkUYH835dVYw7KfIx/n5BKHW4Z JQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2xrd3ur60t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Jan 2020 05:25:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V5NJ8Z127896;
+        Fri, 31 Jan 2020 05:25:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2xva6pqak1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Jan 2020 05:25:22 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00V5PLjv028148;
+        Fri, 31 Jan 2020 05:25:21 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 30 Jan 2020 21:25:21 -0800
+Date:   Thu, 30 Jan 2020 21:25:20 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Eryu Guan <guaneryu@gmail.com>
+Subject: [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
+Message-ID: <20200131052520.GC6869@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-2001310047
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-2001310047
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi everyone,
 
-Fix coding style to use documented multi-line comment style
-and EXPORT_SYMBOL()s to immediately follow their function's
-closing brace line.
+I would like to discuss how to improve the process of shepherding code
+into the kernel to make it more enjoyable for maintainers, reviewers,
+and code authors.  Here is a brief summary of how we got here:
 
-Also fix a little punctuation and a few typos.
+Years ago, XFS had one maintainer tending to all four key git repos
+(kernel, userspace, documentation, testing).  Like most subsystems, the
+maintainer did a lot of review and porting code between the kernel and
+userspace, though with help from others.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+It turns out that this didn't scale very well, so we split the
+responsibilities into three maintainers.  Like most subsystems, the
+maintainers still did a lot of review and porting work, though with help
+from others.
+
+It turns out that this system doesn't scale very well either.  Even with
+three maintainers sharing access to the git trees and working together
+to get reviews done, mailing list traffic has been trending upwards for
+years, and we still can't keep up.  I fear that many maintainers are
+burning out.  For XFS, the biggest pain point (AFAICT) is not assembly and
+testing of the git trees, but keeping up with the mail and the reviews.
+
+So what do we do about this?  I think we (the XFS project, anyway)
+should increase the amount of organizing in our review process.  For
+large patchsets, I would like to improve informal communication about
+who the author might like to have conduct a review, who might be
+interested in conducting a review, estimates of how much time a reviewer
+has to spend on a patchset, and of course, feedback about how it went.
+This of course is to lay the groundwork for making a case to our bosses
+for growing our community, allocating time for reviews and for growing
+our skills as reviewers.
+
 ---
- fs/namespace.c |   52 +++++++++++++++++++++++++++++------------------
- 1 file changed, 33 insertions(+), 19 deletions(-)
 
---- linux-next-20200130.orig/fs/namespace.c
-+++ linux-next-20200130/fs/namespace.c
-@@ -1002,8 +1002,9 @@ struct vfsmount *
- vfs_submount(const struct dentry *mountpoint, struct file_system_type *type,
- 	     const char *name, void *data)
- {
--	/* Until it is worked out how to pass the user namespace
--	 * through from the parent mount to the submount don't support
-+	/*
-+	 * Until it is worked out how to pass the user namespace
-+	 * through from the parent mount to the submount, don't support
- 	 * unprivileged mounts with submounts.
- 	 */
- 	if (mountpoint->d_sb->s_user_ns != &init_user_ns)
-@@ -1064,8 +1065,10 @@ static struct mount *clone_mnt(struct mo
- 	if (flag & CL_MAKE_SHARED)
- 		set_mnt_shared(mnt);
- 
--	/* stick the duplicate mount on the same expiry list
--	 * as the original if that was on one */
-+	/*
-+	 * stick the duplicate mount on the same expiry list
-+	 * as the original if that was on one
-+	 */
- 	if (flag & CL_EXPIRE) {
- 		if (!list_empty(&old->mnt_expire))
- 			list_add(&mnt->mnt_expire, &old->mnt_expire);
-@@ -1326,7 +1329,6 @@ int may_umount_tree(struct vfsmount *m)
- 
- 	return 1;
- }
--
- EXPORT_SYMBOL(may_umount_tree);
- 
- /**
-@@ -1353,7 +1355,6 @@ int may_umount(struct vfsmount *mnt)
- 	up_read(&namespace_sem);
- 	return ret;
- }
--
- EXPORT_SYMBOL(may_umount);
- 
- static void namespace_unlock(void)
-@@ -1402,7 +1403,8 @@ static bool disconnect_mount(struct moun
- 	if (!mnt_has_parent(mnt))
- 		return true;
- 
--	/* Because the reference counting rules change when mounts are
-+	/*
-+	 * Because the reference counting rules change when mounts are
- 	 * unmounted and connected, umounted mounts may not be
- 	 * connected to mounted mounts.
- 	 */
-@@ -1736,7 +1738,8 @@ static struct mnt_namespace *to_mnt_ns(s
- 
- static bool mnt_ns_loop(struct dentry *dentry)
- {
--	/* Could bind mounting the mount namespace inode cause a
-+	/*
-+	 * Could bind mounting the mount namespace inode cause a
- 	 * mount namespace loop?
- 	 */
- 	struct mnt_namespace *mnt_ns;
-@@ -2053,7 +2056,8 @@ static int attach_recursive_mnt(struct m
- 	struct hlist_node *n;
- 	int err;
- 
--	/* Preallocate a mountpoint in case the new mounts need
-+	/*
-+	 * Preallocate a mountpoint in case the new mounts need
- 	 * to be tucked under other mounts.
- 	 */
- 	smp = get_mountpoint(source_mnt->mnt.mnt_root);
-@@ -2664,8 +2668,10 @@ static int do_move_mount(struct path *ol
- 	if (err)
- 		goto out;
- 
--	/* if the mount is moved, it should no longer be expire
--	 * automatically */
-+	/*
-+	 * if the mount is moved, it should no longer be expired
-+	 * automatically
-+	 */
- 	list_del_init(&old->mnt_expire);
- 	if (attached)
- 		put_mountpoint(old_mp);
-@@ -2834,7 +2840,8 @@ int finish_automount(struct vfsmount *m,
- {
- 	struct mount *mnt = real_mount(m);
- 	int err;
--	/* The new mount record should have at least 2 refs to prevent it being
-+	/*
-+	 * The new mount record should have at least 2 refs to prevent it being
- 	 * expired before we get a chance to add it
- 	 */
- 	BUG_ON(mnt_get_count(mnt) < 2);
-@@ -2891,7 +2898,8 @@ void mark_mounts_for_expiry(struct list_
- 	namespace_lock();
- 	lock_mount_hash();
- 
--	/* extract from the expiration list every vfsmount that matches the
-+	/*
-+	 * extract from the expiration list every vfsmount that matches the
- 	 * following criteria:
- 	 * - only referenced by its parent vfsmount
- 	 * - still marked for expiry (marked on the last call here; marks are
-@@ -3023,7 +3031,8 @@ void *copy_mount_options(const void __us
- 	if (!copy)
- 		return ERR_PTR(-ENOMEM);
- 
--	/* We only care that *some* data at the address the user
-+	/*
-+	 * We only care that *some* data at the address the user
- 	 * gave us is valid.  Just in case, we'll zero
- 	 * the remainder of the page.
- 	 */
-@@ -3457,7 +3466,8 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, uns
- 	newmount.dentry = dget(fc->root);
- 	newmount.mnt->mnt_flags = mnt_flags;
- 
--	/* We've done the mount bit - now move the file context into more or
-+	/*
-+	 * We've done the mount bit - now move the file context into more or
- 	 * less the same state as if we'd done an fspick().  We don't want to
- 	 * do any memory allocation or anything like that at this point as we
- 	 * don't want to have to handle any errors incurred.
-@@ -3476,7 +3486,8 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, uns
- 	list_add(&mnt->mnt_list, &ns->list);
- 	mntget(newmount.mnt);
- 
--	/* Attach to an apparent O_PATH fd with a note that we need to unmount
-+	/*
-+	 * Attach to an apparent O_PATH fd with a note that we need to unmount
- 	 * it, not just simply put it.
- 	 */
- 	file = dentry_open(&newmount, O_PATH, fc->cred);
-@@ -3525,7 +3536,8 @@ SYSCALL_DEFINE5(move_mount,
- 	if (flags & ~MOVE_MOUNT__MASK)
- 		return -EINVAL;
- 
--	/* If someone gives a pathname, they aren't permitted to move
-+	/*
-+	 * If someone gives a pathname, they aren't permitted to move
- 	 * from an fd that requires unmount as we can't get at the flag
- 	 * to clear it afterwards.
- 	 */
-@@ -3853,7 +3865,8 @@ static bool mnt_already_visible(struct m
- 		if (mnt->mnt.mnt_sb->s_type != sb->s_type)
- 			continue;
- 
--		/* This mount is not fully visible if it's root directory
-+		/*
-+		 * This mount is not fully visible if it's root directory
- 		 * is not the root directory of the filesystem.
- 		 */
- 		if (mnt->mnt.mnt_root != mnt->mnt.mnt_sb->s_root)
-@@ -3876,7 +3889,8 @@ static bool mnt_already_visible(struct m
- 		    ((mnt_flags & MNT_ATIME_MASK) != (new_flags & MNT_ATIME_MASK)))
- 			continue;
- 
--		/* This mount is not fully visible if there are any
-+		/*
-+		 * This mount is not fully visible if there are any
- 		 * locked child mounts that cover anything except for
- 		 * empty directories.
- 		 */
+I want to spend the time between right now and whenever this discussion
+happens to make a list of everything that works and that could be made
+better about our development process.
 
+I want to spend five minutes at the start of the discussion to
+acknowledge everyone's feelings around that list that we will have
+compiled.
+
+Then I want to spend the rest of the session breaking up the problems
+into small enough pieces to solve, discussing solutions to those
+problems, and (ideally) pushing towards a consensus on what series of
+small adjustments we can make to arrive at something that works better
+for everyone.
+
+--D
