@@ -2,109 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE5D14E6B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 01:45:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C10F14E6B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 01:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbgAaApF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 19:45:05 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:41404 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbgAaApF (ORCPT
+        id S1727682AbgAaAqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 19:46:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44910 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbgAaAp7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 19:45:05 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V0dXd9194591;
-        Fri, 31 Jan 2020 00:45:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=QO49yaLlTpavEKGg3qkRs5wkh1oOD1x0YDVwidst4aE=;
- b=A95ia+q/Yzkg6emKpSixNPs0ejz5Ztah+2+nH5EJwmc+RAQ5tQ/Jkoi2j9iNUND6LunF
- T7z2DSK5zTHTC364XB6blAsvrAS2ZB1rJhbFxIGY2LCL7NBY4HJOyALpVtsRqfY/dQML
- r+FxcfM2UNtdjkbXAKCY1fowYrEMvxd3ZceHLz30i2NiRR4ZVhVzjgb4Q7c/izgOY7wz
- 7INeEnlM3B6zveIoujcZIgmpLXdfLC1k8nfdR6AUs8UUvHLsYrzotpjA7zm5rIvGLKmq
- W8jinwfdJrwzHnC9zy18Gc193zla4+sTWBJ405Al/CRR5rIcDbwuI4//UI128kqd1WCv dA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2xrdmqykmh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jan 2020 00:45:01 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V0dOxZ140921;
-        Fri, 31 Jan 2020 00:45:00 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2xu8e9x1xk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jan 2020 00:45:00 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 00V0ixH8024004;
-        Fri, 31 Jan 2020 00:45:00 GMT
-Received: from localhost (/10.145.179.16)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Jan 2020 16:44:48 -0800
-Date:   Thu, 30 Jan 2020 16:44:47 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-block@vger.kernel.org, martin.petersen@oracle.com,
-        Allison Collins <allison.henderson@oracle.com>,
-        bob.liu@oracle.com
-Subject: [LSF/MM/BPF TOPIC] selectively cramming things onto struct bio
-Message-ID: <20200131004447.GA6869@magnolia>
+        Thu, 30 Jan 2020 19:45:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UpM7VFG/zdQEWVczMpq8Y9+PdpJOLXC1FfE6Cj2VPL4=; b=Z812Ip8GK0i5I8as4kw56sgX1
+        n6Ne/Zw7lxZtjj+iT596InY105gESqowa+uCnSoDBxwNVxF2Q+p17ay+d2scn0QoEjXEqoiEFf7JT
+        tgOA9YkX1Q3PHUjqLY+69kfFFtiCpHfnMckNHWpgWawts9G5aNdhXob8zDSA21eOFPLYxXEPL1CnW
+        Maq6hg6OVAAUf7H72tDIu4MG6I3qTgC09FBslJWTJDLHve78n3QL2vJss5KfhD7t04Nmcf3b4WTtJ
+        BTG2BJvG83AtARHWOYeKQ8MAvLOVvOFtfcY0gihDYrEmFbIBEV9rCIHf9Y2reWcYn0IUxwDiTDVv8
+        ldUDGHLLQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ixKRa-0006mu-L4; Fri, 31 Jan 2020 00:45:58 +0000
+Date:   Thu, 30 Jan 2020 16:45:58 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4] Add a "nosymfollow" mount option.
+Message-ID: <20200131004558.GA6699@bombadil.infradead.org>
+References: <20200131002750.257358-1-zwisler@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001310002
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001310002
+In-Reply-To: <20200131002750.257358-1-zwisler@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi everyone,
+On Thu, Jan 30, 2020 at 05:27:50PM -0700, Ross Zwisler wrote:
+> For mounts that have the new "nosymfollow" option, don't follow
+> symlinks when resolving paths. The new option is similar in spirit to
+> the existing "nodev", "noexec", and "nosuid" options. Various BSD
+> variants have been supporting the "nosymfollow" mount option for a
+> long time with equivalent implementations.
+> 
+> Note that symlinks may still be created on file systems mounted with
+> the "nosymfollow" option present. readlink() remains functional, so
+> user space code that is aware of symlinks can still choose to follow
+> them explicitly.
+> 
+> Setting the "nosymfollow" mount option helps prevent privileged
+> writers from modifying files unintentionally in case there is an
+> unexpected link along the accessed path. The "nosymfollow" option is
+> thus useful as a defensive measure for systems that need to deal with
+> untrusted file systems in privileged contexts.
 
-Several months ago, there was a discussion[1] about enhancing XFS to
-take a more active role in recoverying damaged blocks from a redundant
-storage device when the block device doesn't signal an error but the
-filesystem can tell that something is wrong.
+The openat2 series was just merged yesterday which includes a
+LOOKUP_NO_SYMLINKS option.  Is this enough for your needs, or do you
+need the mount option?
 
-Yes, we (XFS) would like to be able to exhaust all available storage
-redundancy before we resort to rebuilding lost metadata, and we'd like
-to do that without implementing our own RAID layer.
-
-In the end, the largest stumbling block seems to be how to attach
-additional instructions to struct bio.  Jens rejected the idea of adding
-more pointers or more bytes to a struct bio since we'd be forcing
-everyone to pay the extra memory price for a feature that in the ideal
-situation will be used infrequently.
-
-I think Martin Petersen tried to introduce separate bio pools so that we
-only end up using larger bios for devices that really need it, but ran
-into some difficulty with the usage model for how that would work.  (We
-could, in theory, need to attach integrity data *and* retry attributes
-to the same disk access).
-
-So I propose a discussion of what exactly are the combinations of bio
-attributes that are needed by block layer callers.  IIRC, the DIF/DIX
-support code need to be able to attach the integrity data on its own;
-whereas XFS already knows which device and which replica it would like
-to try.  If the storage isn't total crap it shouldn't need to use the
-feature all that often.
-
-While we're on the topic of replica selection and discovery, let's also
-bikeshed how to figure out how many replicas are even available.
-
-(Yes, yes, the crazydragon rears his head again...;)
-
---D
-
-[1] https://lore.kernel.org/linux-block/1543376991-5764-1-git-send-email-allison.henderson@oracle.com/
+https://lore.kernel.org/linux-fsdevel/20200129142709.GX23230@ZenIV.linux.org.uk/
