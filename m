@@ -2,150 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7338B14F3AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 22:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9988914F3CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 22:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbgAaVUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jan 2020 16:20:25 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42698 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgAaVUZ (ORCPT
+        id S1726154AbgAaVcY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jan 2020 16:32:24 -0500
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:34367 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgAaVcY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jan 2020 16:20:25 -0500
-Received: by mail-il1-f195.google.com with SMTP id x2so7462608ila.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2020 13:20:24 -0800 (PST)
+        Fri, 31 Jan 2020 16:32:24 -0500
+Received: by mail-pf1-f169.google.com with SMTP id i6so4022134pfc.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2020 13:32:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XsXkK20jPtEnVwhNsitvdugBIKWgAwClWv8+OTKRTE8=;
-        b=d+aziJ/+nTTI2qr/oUXg4+d0CV8BTwtqUMq7m70yyGwOM3tfD/4v7qkOCrXHAcAog+
-         /G+X04d12UphxRK0tSEFedAsTfYtxywrhzf2N51wmJdHbNgffU+Uwi0ChrYr/bQBnbzJ
-         6TrZ+uoA9pVAPEGm40C9HpnQUlFmb+mpZLzNj4cNCsPK1EubqVS38Nq7wr6va4+k0eUO
-         i0F5K/O8r7xlzLXnvA0BNcY74cZ2C9ZdX/WozEPn442ZzdM0FHMSGuqTDYVTTSM3wCyn
-         Jv5V32ArkeN3hmNp5BZQftPGCdTq2W8JJKUgShEwEyOeHjnGIdGZRK+5sF7uwmRzx4st
-         J4sQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XyFA36WxUtgN1B6uI/dhE/JlFw5l7tRA6v/t9YsZ+4Y=;
+        b=1xEOD17FFwIS8nQeoUgkw25qZ9S3mjwlnxclYFqCV7Mn1dWiDr18EUry59fS4tajRd
+         avmrAy7klh6lZK7FgCpyHlMQoQN2qxJ7H/3e8AWJ45qn/irosuPX25rTApTlQA8cT+ZM
+         cUNjFlsdbZPm5QJA42yplQgd92FRfZpBhTyP4+DEzD47O+TiM6LjonwmDp2USGbI9JuY
+         ZwrT6mYOA7dsGHgTE38y8ChC0iFw0d84lAOkbjE144kve6DZrqBB6GRB+dYcJq65uyxD
+         ETQkYjVsB0w1dqU7gwT1/DSHnSN5ypUNoWyBsIXlOfKnUEVa0wOkv4TeeX4WHjHJABoF
+         aJVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XsXkK20jPtEnVwhNsitvdugBIKWgAwClWv8+OTKRTE8=;
-        b=h+XJP1fNtugsfv5LL+uRwpArHiQ6BIcwm9ZkV4m3qB63wlI6/g9lcLSmvT9W9sbCJq
-         4FMpK3lvey/7NxGedBTmEnA5AcRzOjDSJd9cLInu1YIGmHKAfSIpUKgy3puVD3eMa+Rt
-         JYA3Eh6x4C2pItSk5+eW6DJIDEmjZ6GZoYggyNsQzCeBNFNLHAzf0N7y+BmkB9x/8T5T
-         5KwJTSNNMg5od9dG8qYeWLhVOZOERShrxZwpePKLsegPUwSbxKqjLulKAfC50thktBpE
-         KDWcSy2LZQzFVsR0d5vHrruvhy8xGvdVGSiCPFCnifjhe/1mJFUapyo5ih1gd8LxgbFJ
-         xA/g==
-X-Gm-Message-State: APjAAAXKOHFxmWsruxFmvlqvskdVH3o7z2L30U+5mOV7wYVL2aV6OZZy
-        JRv7VF6fNhCRsNH9iMeOVwmo+A==
-X-Google-Smtp-Source: APXvYqxanQz6LFC/sb5ilIL2kTGGXNfMzO++BYBtgZ4z3pj8S8iAviWR/mgH70n4xVanLgijw/kVpw==
-X-Received: by 2002:a92:9f4e:: with SMTP id u75mr10952412ili.116.1580505624177;
-        Fri, 31 Jan 2020 13:20:24 -0800 (PST)
-Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
-        by smtp.gmail.com with ESMTPSA id t19sm2704536ioc.38.2020.01.31.13.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jan 2020 13:20:23 -0800 (PST)
-Date:   Fri, 31 Jan 2020 14:20:21 -0700
-From:   Ross Zwisler <zwisler@google.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <zwisler@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Mattias Nissler <mnissler@chromium.org>,
-        Benjamin Gordon <bmgordon@google.com>,
-        Raul Rangel <rrangel@google.com>,
-        Micah Morton <mortonm@google.com>,
-        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4] Add a "nosymfollow" mount option.
-Message-ID: <20200131212021.GA108613@google.com>
-References: <20200131002750.257358-1-zwisler@google.com>
- <20200131004558.GA6699@bombadil.infradead.org>
- <20200131015134.5ovxakcavk2x4diz@yavin.dot.cyphar.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XyFA36WxUtgN1B6uI/dhE/JlFw5l7tRA6v/t9YsZ+4Y=;
+        b=XhRVmmfAHVsmbq1GF8eZCF9jSB7Ye3pwNoGB8E9UN/4BhNRx5eH1wYB74cZpy7GZa6
+         1uWEGJuWMWgZVOHyP+RFZ+5zYBQZ4wF+nHIAYNt0kQ10ijau492QHhb/rw2ARpCuF74+
+         48EcKJlUKtQKrrzhlu8S9OiYBj8yjcx9h/YvlfR91KcrAuhcDuwwad3hg4NBKJxV7/3l
+         38lBEj+1BPJAqxRRoAX/BQ5FOIm92GLUNOkwtmuENqhC3XNaRCx0l/oIeNW3azGP/goK
+         Qjy6WFBO+olo+wKa++1RMQlxi+0tjLc7tLxyp/sVW1Kwo5CaJigkgltA3CDGt3tlHXrg
+         i+Dw==
+X-Gm-Message-State: APjAAAUfEHk+4bY3go/vFxNaFVz/KkdUDqIfNI7eNmoAutZJn64Tctew
+        wCMC9ARnr48kr8lBfXCWA8iR4n17l5TzkQ==
+X-Google-Smtp-Source: APXvYqy24Ve1+561kObrRFqRP0GvpY+qJCRm1uwI+US5R1xiDIwpAS6GNLd3Ugtjyfcc/16sAe4VbA==
+X-Received: by 2002:a63:5f43:: with SMTP id t64mr12110260pgb.360.1580506343432;
+        Fri, 31 Jan 2020 13:32:23 -0800 (PST)
+Received: from [172.20.10.2] ([107.72.96.24])
+        by smtp.gmail.com with ESMTPSA id h7sm11895854pfq.36.2020.01.31.13.32.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jan 2020 13:32:22 -0800 (PST)
+Subject: Re: [LSF/MM/BPF TOPIC] programmable IO control flow with io_uring and
+ BPF
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        lsf-pc@lists.linux-foundation.org
+Cc:     io-uring <io-uring@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        bpf@vger.kernel.org
+References: <e25f7a09-96b2-2288-4777-9f728a8b2c23@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a2975b58-4d53-f13e-841c-04d4075cd0cd@kernel.dk>
+Date:   Fri, 31 Jan 2020 14:30:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200131015134.5ovxakcavk2x4diz@yavin.dot.cyphar.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <e25f7a09-96b2-2288-4777-9f728a8b2c23@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 12:51:34PM +1100, Aleksa Sarai wrote:
-> On 2020-01-30, Matthew Wilcox <willy@infradead.org> wrote:
-> > On Thu, Jan 30, 2020 at 05:27:50PM -0700, Ross Zwisler wrote:
-> > > For mounts that have the new "nosymfollow" option, don't follow
-> > > symlinks when resolving paths. The new option is similar in spirit to
-> > > the existing "nodev", "noexec", and "nosuid" options. Various BSD
-> > > variants have been supporting the "nosymfollow" mount option for a
-> > > long time with equivalent implementations.
-> > > 
-> > > Note that symlinks may still be created on file systems mounted with
-> > > the "nosymfollow" option present. readlink() remains functional, so
-> > > user space code that is aware of symlinks can still choose to follow
-> > > them explicitly.
-> > > 
-> > > Setting the "nosymfollow" mount option helps prevent privileged
-> > > writers from modifying files unintentionally in case there is an
-> > > unexpected link along the accessed path. The "nosymfollow" option is
-> > > thus useful as a defensive measure for systems that need to deal with
-> > > untrusted file systems in privileged contexts.
-> > 
-> > The openat2 series was just merged yesterday which includes a
-> > LOOKUP_NO_SYMLINKS option.  Is this enough for your needs, or do you
-> > need the mount option?
+On 1/24/20 7:18 AM, Pavel Begunkov wrote:
+> Apart from concurrent IO execution, io_uring allows to issue a sequence
+> of operations, a.k.a links, where requests are executed sequentially one
+> after another. If an "error" happened, the rest of the link will be
+> cancelled.
 > 
-> I have discussed a theoretical "noxdev" mount option (which is
-> effectively LOOKUP_NO_XDEV) with Howells (added to Cc) in the past, and
-> the main argument for having a mount option is that you can apply the
-> protection to older programs without having to rewrite them to use
-> openat2(2).
+> The problem is what to consider an "error". For example, if we
+> read less bytes than have been asked for, the link will be cancelled.
+> It's necessary to play safe here, but this implies a lot of overhead if
+> that isn't the desired behaviour. The user would need to reap all
+> cancelled requests, analyse the state, resubmit them and suffer from
+> context switches and all in-kernel preparation work. And there are
+> dozens of possibly desirable patterns, so it's just not viable to
+> hard-code them into the kernel.
+> 
+> The other problem is to keep in running even when a request depends on
+> a result of the previous one. It could be simple passing return code or
+> something more fancy, like reading from the userspace.
+> 
+> And that's where BPF will be extremely useful. It will control the flow
+> and do steering.
+> 
+> The concept is to be able run a BPF program after a request's
+> completion, taking the request's state, and doing some of the following:
+> 1. drop a link/request
+> 2. issue new requests
+> 3. link/unlink requests
+> 4. do fast calculations / accumulate data
+> 5. emit information to the userspace (e.g. via ring's CQ)
+> 
+> With that, it will be possible to have almost context-switch-less IO,
+> and that's really tempting considering how fast current devices are.
+> 
+> What to discuss:
+> 1. use cases
+> 2. control flow for non-privileged users (e.g. allowing some popular
+>    pre-registered patterns)
+> 3. what input the program needs (e.g. last request's
+>    io_uring_cqe) and how to pass it.
+> 4. whether we need notification via CQ for each cancelled/requested
+>    request, because sometimes they only add noise
+> 5. BPF access to user data (e.g. allow to read only registered buffers)
+> 6. implementation details. E.g.
+>    - how to ask to run BPF (e.g. with a new opcode)
+>    - having global BPF, bound to an io_uring instance or mixed
+>    - program state and how to register
+>    - rework notion of draining and sequencing
+>    - live-lock avoidance (e.g. double check io_uring shut-down code)
 
-Ah, yep, this is exactly what we're trying to achieve with the "nosymfollow"
-mount option: protect existing programs from malicious filesystems without
-having to modify those programs.
+I think this is a key topic that we should absolutely discuss at LSFMM.
 
-The types of attacks we are concerned about are pretty well summarized in this
-LWN article from over a decade ago:
+-- 
+Jens Axboe
 
-https://lwn.net/Articles/250468/
-
-And searching around (I just Googled "symlink exploit") it's pretty easy to
-find related security blogs and CVEs.
-
-The noxdev mount option seems interesting, bug I don't fully understand yet
-how it would work.  With the openat2() syscall it's clear which things need to
-be part of the same mount: the dfd (or CWD in the case of AT_FDCWD) and the
-filename you're opening.  How would this work for the noxdev mount option and
-the legacy open(2) syscall, for example?  Would you just always compare
-'pathname' with the current working directory?  Examine 'pathname' and make
-sure that if any filesystems in that path have 'noxdev' set, you never
-traverse out of them?  Something else?
-
-If noxdev would involve a pathname traversal to make sure you don't ever leave
-mounts with noxdev set, I think this could potentially cover the use cases I'm
-worried about.  This would restrict symlink traversal to files within the same
-filesystem, and would restrict traversal to both normal and bind mounts from
-within the restricted filesystem, correct?
-
-> However, the underlying argument for "noxdev" was that you could use it
-> to constrain something like "tar -xf" inside a mountpoint (which could
-> -- in principle -- be a bind-mount). I'm not so sure that "nosymfollow"
-> has similar "obviously useful" applications (though I'd be happy to be
-> proven wrong).
-
-In ChromeOS we use the LSM referenced in my patch to provide a blanket
-enforcement that symlinks aren't traversed at all on user-supplied
-filesystems, which are considered untrusted.  I'd essentially like to build on
-the protections offered by LOOKUP_NO_SYMLINKS and extend that protection to
-all accesses to user-supplied filesystems.
-
-> If FreeBSD also has "nosymfollow", are there many applications where it
-> is used over O_BENEATH (and how many would be serviced by
-> LOOKUP_NO_SYMLINKS)?
-
-Sorry, I don't have any good info on whether nosymfollow and O_BENEATH are
-commonly used together in FreeBSD.
