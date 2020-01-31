@@ -2,112 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F420314E6E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 02:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C490B14E702
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 03:17:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbgAaBvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 20:51:54 -0500
-Received: from mout-p-101.mailbox.org ([80.241.56.151]:63440 "EHLO
-        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbgAaBvy (ORCPT
+        id S1727833AbgAaCRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 21:17:07 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:38268 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727741AbgAaCRG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 20:51:54 -0500
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4880Zb4HwvzKmbG;
-        Fri, 31 Jan 2020 02:51:51 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id MWeK3efgu-qD; Fri, 31 Jan 2020 02:51:47 +0100 (CET)
-Date:   Fri, 31 Jan 2020 12:51:34 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
+        Thu, 30 Jan 2020 21:17:06 -0500
+Received: from dread.disaster.area (pa49-195-111-217.pa.nsw.optusnet.com.au [49.195.111.217])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 936E23A2BDF;
+        Fri, 31 Jan 2020 13:17:02 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ixLrh-0006P1-9m; Fri, 31 Jan 2020 13:17:01 +1100
+Date:   Fri, 31 Jan 2020 13:17:01 +1100
+From:   Dave Chinner <david@fromorbit.com>
 To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org,
-        Mattias Nissler <mnissler@chromium.org>,
-        Benjamin Gordon <bmgordon@google.com>,
-        Ross Zwisler <zwisler@google.com>,
-        Raul Rangel <rrangel@google.com>,
-        Micah Morton <mortonm@google.com>,
-        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4] Add a "nosymfollow" mount option.
-Message-ID: <20200131015134.5ovxakcavk2x4diz@yavin.dot.cyphar.com>
-References: <20200131002750.257358-1-zwisler@google.com>
- <20200131004558.GA6699@bombadil.infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 06/12] btrfs: Convert from readpages to readahead
+Message-ID: <20200131021701.GB18575@dread.disaster.area>
+References: <20200125013553.24899-1-willy@infradead.org>
+ <20200125013553.24899-7-willy@infradead.org>
+ <20200129004609.GI18610@dread.disaster.area>
+ <20200130080939.GL6615@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a2ekpxn36mkkxtgo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200131004558.GA6699@bombadil.infradead.org>
+In-Reply-To: <20200130080939.GL6615@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=0OveGI8p3fsTA6FL6ss4ZQ==:117 a=0OveGI8p3fsTA6FL6ss4ZQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=Jdjhy38mL1oA:10
+        a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=-ZxxmdGvqcmE25f44t8A:9
+        a=WA9dXB9HyJ0bNApb:21 a=s0uptFhnqMGzMIq5:21 a=CjuIK1q_8ugA:10
+        a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jan 30, 2020 at 12:09:39AM -0800, Matthew Wilcox wrote:
+> On Wed, Jan 29, 2020 at 11:46:09AM +1100, Dave Chinner wrote:
+> > On Fri, Jan 24, 2020 at 05:35:47PM -0800, Matthew Wilcox wrote:
+> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > > 
+> > > Use the new readahead operation in btrfs
+> > > 
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > Cc: linux-btrfs@vger.kernel.org
+> > > ---
+> > >  fs/btrfs/extent_io.c | 15 ++++-----------
+> > >  fs/btrfs/extent_io.h |  2 +-
+> > >  fs/btrfs/inode.c     | 18 +++++++++---------
+> > >  3 files changed, 14 insertions(+), 21 deletions(-)
+> > > 
+> > > diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> > > index 2f4802f405a2..b1e2acbec165 100644
+> > > --- a/fs/btrfs/extent_io.c
+> > > +++ b/fs/btrfs/extent_io.c
+> > > @@ -4283,7 +4283,7 @@ int extent_writepages(struct address_space *mapping,
+> > >  	return ret;
+> > >  }
+> > >  
+> > > -int extent_readpages(struct address_space *mapping, struct list_head *pages,
+> > > +unsigned extent_readahead(struct address_space *mapping, pgoff_t start,
+> > >  		     unsigned nr_pages)
+> > >  {
+> > >  	struct bio *bio = NULL;
+> > > @@ -4294,20 +4294,13 @@ int extent_readpages(struct address_space *mapping, struct list_head *pages,
+> > >  	int nr = 0;
+> > >  	u64 prev_em_start = (u64)-1;
+> > >  
+> > > -	while (!list_empty(pages)) {
+> > > +	while (nr_pages) {
+> > >  		u64 contig_end = 0;
+> > >  
+> > > -		for (nr = 0; nr < ARRAY_SIZE(pagepool) && !list_empty(pages);) {
+> > > -			struct page *page = lru_to_page(pages);
+> > > +		for (nr = 0; nr < ARRAY_SIZE(pagepool) && nr_pages--;) {
+> > 
+> > What is stopping nr_pages from going negative here, and then looping
+> > forever on the outer nr_pages loop? Perhaps "while(nr_pages > 0) {"
+> > would be better there?
+> 
+> Ugh, nr_pages is unsigned, so that's no good.  Maybe make this a more
+> conventional loop ...
+> 
+>         while (nr_pages) {
+>                 u64 contig_end = 0;
+> 
+>                 for (nr = 0; nr < ARRAY_SIZE(pagepool); nr++) {
+>                         struct page *page = readahead_page(mapping, start++);
+> 
+>                         prefetchw(&page->flags);
+>                         pagepool[nr] = page;
+>                         contig_end = page_offset(page) + PAGE_SIZE - 1;
+>                         if (--nr_pages == 0)
+>                                 break;
+>                 }
 
---a2ekpxn36mkkxtgo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks like it solves the problem :)
 
-On 2020-01-30, Matthew Wilcox <willy@infradead.org> wrote:
-> On Thu, Jan 30, 2020 at 05:27:50PM -0700, Ross Zwisler wrote:
-> > For mounts that have the new "nosymfollow" option, don't follow
-> > symlinks when resolving paths. The new option is similar in spirit to
-> > the existing "nodev", "noexec", and "nosuid" options. Various BSD
-> > variants have been supporting the "nosymfollow" mount option for a
-> > long time with equivalent implementations.
-> >=20
-> > Note that symlinks may still be created on file systems mounted with
-> > the "nosymfollow" option present. readlink() remains functional, so
-> > user space code that is aware of symlinks can still choose to follow
-> > them explicitly.
-> >=20
-> > Setting the "nosymfollow" mount option helps prevent privileged
-> > writers from modifying files unintentionally in case there is an
-> > unexpected link along the accessed path. The "nosymfollow" option is
-> > thus useful as a defensive measure for systems that need to deal with
-> > untrusted file systems in privileged contexts.
->=20
-> The openat2 series was just merged yesterday which includes a
-> LOOKUP_NO_SYMLINKS option.  Is this enough for your needs, or do you
-> need the mount option?
+Cheers,
 
-I have discussed a theoretical "noxdev" mount option (which is
-effectively LOOKUP_NO_XDEV) with Howells (added to Cc) in the past, and
-the main argument for having a mount option is that you can apply the
-protection to older programs without having to rewrite them to use
-openat2(2).
-
-However, the underlying argument for "noxdev" was that you could use it
-to constrain something like "tar -xf" inside a mountpoint (which could
--- in principle -- be a bind-mount). I'm not so sure that "nosymfollow"
-has similar "obviously useful" applications (though I'd be happy to be
-proven wrong).
-
-If FreeBSD also has "nosymfollow", are there many applications where it
-is used over O_BENEATH (and how many would be serviced by
-LOOKUP_NO_SYMLINKS)?
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---a2ekpxn36mkkxtgo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXjOIIwAKCRCdlLljIbnQ
-EnRJAP4uFywWOb6ReIzsqzsKt7+dBNFkydGZSn1Mh5kVnCOLDwD+KBQlXVWnVeCC
-e9GY+E9f+wfO76G+HUmfdcIieDBmaw0=
-=nzA6
------END PGP SIGNATURE-----
-
---a2ekpxn36mkkxtgo--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
