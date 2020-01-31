@@ -2,148 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4D714E922
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 08:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF08514E963
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 09:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbgAaHaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jan 2020 02:30:14 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:44255 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728027AbgAaHaO (ORCPT
+        id S1728119AbgAaIEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jan 2020 03:04:41 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:26246 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728077AbgAaIEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jan 2020 02:30:14 -0500
-Received: by mail-il1-f195.google.com with SMTP id s85so1910829ill.11;
-        Thu, 30 Jan 2020 23:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7YnwfCsSdf/0WOJ9Oa1E18FRl+xULNznjlib/kMTaDQ=;
-        b=RUXZ2BFI2w5nfAf8NsWnbhtyi6CsfSGTgaRu1CmunD0ClEKGCgjxkIk+5bY/IjeEvh
-         B0MqFiGvQf/baEfAy71d82Y9IdyVvub7g31VMJpJLFkPKDPjtKyYjZL2PP+RntiXmeyd
-         egtbUom4v/JPhQf09C4KBgEeN/9gBiGjQqPgcBSKOyWk+2Y8FtAg+vq8gX1yujeSGMPd
-         oqe9Bwo9MXQtNbOD3Wr7due00Rap9h3uGnXrTRhNroQIlaTS9y2xWtMkFxENYyldy+xb
-         3elTNf6nO4M5tx6Q7XbgA8dARURMkl2ojxWqEQPKKYM5kROCe6SXbir9GNNSK8q8Eiz1
-         /6QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7YnwfCsSdf/0WOJ9Oa1E18FRl+xULNznjlib/kMTaDQ=;
-        b=sr5auI8PZmXUE+y+T2k/U3LsEt8unCQ0FPJU39MvYGi3zkK00sJ5lE/LmbC1+4Fljs
-         PB9WKlHEX+YS2CohQ62nSG7CanDeJ5/tf2OhTTr3kGSSp+taFRV9avyEIHBzDLb96Wfl
-         Mk7r3xUGxCun84FUDSvJbbVuuBasWRKTKuJ1rudM7VIcgJYvmGfP6AdFzbKcYKZEQegj
-         z/9bXu/kFkmwNk0ZYSC/O7EGWJgaBdUbT1HAneRSSmIL4H4aQz++mWxp2UYLtXYbJ5nc
-         lp+8d5YA4PwjNUwmmEPqCY990dTWE2kRBmk6lLoBoiA3aPttFY1GcUAQdOpt/dlxfdkZ
-         zLHg==
-X-Gm-Message-State: APjAAAUZT0q6vzP3BCriCu5Cuv4/TGzX4moM8nNkn1EESaM9lXDOXTCG
-        d4VtlLgrtNI+dU/4n7jlzcOMR9GA+6+5c6cNZ1Y=
-X-Google-Smtp-Source: APXvYqzQNsxkQvGJwoAOD70agQSWixU8qWteVRXCA6DxikU+KqdlGmwg++FA3wB6CDDpG14QtPJqm98qe3uXrw8nT8k=
-X-Received: by 2002:a92:8656:: with SMTP id g83mr1523334ild.9.1580455813505;
- Thu, 30 Jan 2020 23:30:13 -0800 (PST)
+        Fri, 31 Jan 2020 03:04:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580457880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LqxBP0u9MyUGNYA0T46ZpRaJAvhjzHm/yrssVAOj7S0=;
+        b=G3ikPaP114+WfowA/W7uecs74vUrln8kCGcFzbW9U0dxbN13r4/CIxpj3EF2bmbDIFftju
+        E/Q3w38VxXfDAz3+V/SMAWU0YgwOslg433ldjrJMXV1N8kRBYPvpoSqaCaE5gNYhcrxBBg
+        gcE3ApLrWh4ZR7mT7gArQro1ALcqmZ4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-228-AUGLICTTN2ClQBV031KvlQ-1; Fri, 31 Jan 2020 03:04:35 -0500
+X-MC-Unique: AUGLICTTN2ClQBV031KvlQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4667F1937FFA;
+        Fri, 31 Jan 2020 08:04:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-197.rdu2.redhat.com [10.10.120.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 352A887B15;
+        Fri, 31 Jan 2020 08:04:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200131053150.GB17457@lst.de>
+References: <20200131053150.GB17457@lst.de> <20200117222212.GP8904@ZenIV.linux.org.uk> <20200117235444.GC295250@vader> <20200118004738.GQ8904@ZenIV.linux.org.uk> <20200118011734.GD295250@vader> <20200118022032.GR8904@ZenIV.linux.org.uk> <20200121230521.GA394361@vader> <CAOQ4uxgsoGMsNxhmtzZPqb+NshpJ3_P8vDiKpJFO5ZK25jZr0w@mail.gmail.com> <20200122221003.GB394361@vader> <20200123034745.GI23230@ZenIV.linux.org.uk> <2173869.1580222138@warthog.procyon.org.uk>
+To:     "hch@lst.de" <hch@lst.de>
+Cc:     dhowells@redhat.com, Dave Chinner <david@fromorbit.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>,
+        "miklos@szeredi.hu" <miklos@szeredi.hu>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Allowing linkat() to replace the destination
 MIME-Version: 1.0
-References: <20200131052520.GC6869@magnolia>
-In-Reply-To: <20200131052520.GC6869@magnolia>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 31 Jan 2020 09:30:02 +0200
-Message-ID: <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3773160.1580457868.1@warthog.procyon.org.uk>
+Date:   Fri, 31 Jan 2020 08:04:28 +0000
+Message-ID: <3773161.1580457868@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 7:25 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
->
-> Hi everyone,
->
-> I would like to discuss how to improve the process of shepherding code
-> into the kernel to make it more enjoyable for maintainers, reviewers,
-> and code authors.  Here is a brief summary of how we got here:
->
-> Years ago, XFS had one maintainer tending to all four key git repos
-> (kernel, userspace, documentation, testing).  Like most subsystems, the
-> maintainer did a lot of review and porting code between the kernel and
-> userspace, though with help from others.
->
-> It turns out that this didn't scale very well, so we split the
-> responsibilities into three maintainers.  Like most subsystems, the
-> maintainers still did a lot of review and porting work, though with help
-> from others.
->
-> It turns out that this system doesn't scale very well either.  Even with
-> three maintainers sharing access to the git trees and working together
-> to get reviews done, mailing list traffic has been trending upwards for
-> years, and we still can't keep up.  I fear that many maintainers are
-> burning out.  For XFS, the biggest pain point (AFAICT) is not assembly and
-> testing of the git trees, but keeping up with the mail and the reviews.
->
-> So what do we do about this?  I think we (the XFS project, anyway)
-> should increase the amount of organizing in our review process.  For
-> large patchsets, I would like to improve informal communication about
-> who the author might like to have conduct a review, who might be
-> interested in conducting a review, estimates of how much time a reviewer
-> has to spend on a patchset, and of course, feedback about how it went.
-> This of course is to lay the groundwork for making a case to our bosses
-> for growing our community, allocating time for reviews and for growing
-> our skills as reviewers.
->
+hch@lst.de <hch@lst.de> wrote:
 
-Interesting.
+> > I'm using direct I/O, so I'm assuming I don't need to fsync().
+> 
+> Direct I/O of course requires fsync.  What makes you think different?
 
-Eryu usually posts a weekly status of xfstests review queue, often with
-a call for reviewers, sometimes with specific patch series mentioned.
-That helps me as a developer to monitor the status of my own work
-and it helps me as a reviewer to put the efforts where the maintainer
-needs me the most.
+I guess that's fair.  Even if the data makes it directly to storage, that's
+not a guarantee that the metadata does.
 
-For xfs kernel patches, I can represent the voice of "new blood".
-Getting new people to join the review effort is quite a hard barrier.
-I have taken a few stabs at doing review for xfs patch series over the
-year, but it mostly ends up feeling like it helped me (get to know xfs code
-better) more than it helped the maintainer, because the chances of a
-new reviewer to catch meaningful bugs are very low and if another reviewer
-is going to go over the same patch series, the chances of new reviewer to
-catch bugs that novice reviewer will not catch are extremely low.
+David
 
-However, there are quite a few cleanup and refactoring patch series,
-especially on the xfs list, where a review from an "outsider" could still
-be of value to the xfs community. OTOH, for xfs maintainer, those are
-the easy patches to review, so is there a gain in offloading those reviews?
-
-Bottom line - a report of the subsystem review queue status, call for
-reviewers and highlighting specific areas in need of review is a good idea.
-Developers responding to that report publicly with availability for review,
-intention and expected time frame for taking on a review would be helpful
-for both maintainers and potential reviewers.
-
-Thanks,
-Amir.
-
-> ---
->
-> I want to spend the time between right now and whenever this discussion
-> happens to make a list of everything that works and that could be made
-> better about our development process.
->
-> I want to spend five minutes at the start of the discussion to
-> acknowledge everyone's feelings around that list that we will have
-> compiled.
->
-> Then I want to spend the rest of the session breaking up the problems
-> into small enough pieces to solve, discussing solutions to those
-> problems, and (ideally) pushing towards a consensus on what series of
-> small adjustments we can make to arrive at something that works better
-> for everyone.
->
-> --D
-> _______________________________________________
-> Lsf-pc mailing list
-> Lsf-pc@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/lsf-pc
