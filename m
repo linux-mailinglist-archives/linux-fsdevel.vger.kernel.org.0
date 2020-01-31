@@ -2,107 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6613214E68F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 01:24:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5774814E697
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jan 2020 01:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbgAaAYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jan 2020 19:24:43 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:49338 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbgAaAYm (ORCPT
+        id S1727618AbgAaA2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jan 2020 19:28:12 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39132 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbgAaA2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jan 2020 19:24:42 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V0DS5n013696;
-        Fri, 31 Jan 2020 00:24:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=PHHFJnHdUF//GSXlXFHlwA3WfQxHtImAPZuJXTssNqY=;
- b=hLxxiWGJC3dwuAiuoTgjziWsoLp4SKpihiHt838a3pqqhkX+rMJAlgdnjYfE08qXMUYx
- iYq9iUQ6JKHwpOOMtuC2omMkOgClGEoitfn4KYnftVN5EHJtwYTcuBKvP8Hz/DgQFHAG
- opeNs/Q7Wt6SJtuczal1KqIeKCI/jacPURHpvSqQ0DWw37PWiy/MuSNGz0cDZrO3p9w5
- GUXNu5p0xTH1iJWG9DMh6UwUIn3i1UsV3ZkO17iUkfczGdwzbQTZCxDJ5wsuVGvVv2ue
- b4zTZqyD4Cn3XWY+z8IuAQj0GCEFVlxcLQVOM5b3Vjl+hVkh9UZj7iwtqp2zly8WKNiN Ww== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2xrd3uqg27-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jan 2020 00:24:37 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 00V0DvoF091397;
-        Fri, 31 Jan 2020 00:24:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2xv8npk8r1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jan 2020 00:24:36 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 00V0OZLD009238;
-        Fri, 31 Jan 2020 00:24:35 GMT
-Received: from localhost (/10.145.179.16)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Jan 2020 16:24:34 -0800
-Date:   Thu, 30 Jan 2020 16:24:32 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     lsf-pc@lists.linux-foundation.org
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>, linux-mm@kvack.org
-Subject: [LSF/MM/BPF TOPIC] shrinker changes for non-blocking inode reclaim
-Message-ID: <20200131002432.GA6874@magnolia>
+        Thu, 30 Jan 2020 19:28:12 -0500
+Received: by mail-il1-f193.google.com with SMTP id f70so4704619ill.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jan 2020 16:28:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5ROJG3uYhVm/nO8xbwsGieRNbZvdCR5sey5l7a+PU2Q=;
+        b=TjAL1AJjI9BnZIshIxhWxMDY1DFedMYxFM1FuouAtJ2A0sB6NH1j8jIk1s+ojTWpyv
+         C6s2/7FJTM4u9/vFLHr+Mh1aUmIj5nF0iVUK0FIrKa+TdFKkJ7gOZwc6nMfTGTMB8v4c
+         yVpCpjJ65nHijq2yI29W7o9puxiTQnEP38PdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5ROJG3uYhVm/nO8xbwsGieRNbZvdCR5sey5l7a+PU2Q=;
+        b=QPqy9VvKAWUFBmuchfURGP6O02SeRdUTky/Cir31/OPqLVpTOVJzUsv3JtkY4xeHuy
+         g5iY/sMF/Nq9K0GxjzYrHYMeZQVAqGF+o5s/WPJawcfFd2SYj/b7eXXtGYmSwcM8T2fs
+         36PoHu8GaVVM+gF7Eot/fe2kaJB1v4X9ZOF5Av1SnDUHC/Dqxz9gY+979He0nPznEZAZ
+         MLW/PfP+9J/kBmHul4FMVRW481Eq32C/6EKwf0Dvm1iZcFc9gLpCIZWxZq2A11ljaBXc
+         +jgQkCiTzZTF7gpcpN+qm7YgnINzVOYxIrDZZzQOxWqrIRZp+5Y9cfDa3RmAAjDp18A8
+         E8bg==
+X-Gm-Message-State: APjAAAU79eTM/mIs4ruM3lbeonZfpltGKFeMiyTaXyzSrU1j2MxYWE7t
+        QXId987YwMkbtePKpasbD4ZDXA==
+X-Google-Smtp-Source: APXvYqzlog8EP9AhoM70a7aP2EyToH/eoXoIkRPpgv5HccvB3Ewx1sJYYURkSax3vGrEXphg4ornGA==
+X-Received: by 2002:a92:5d16:: with SMTP id r22mr7199743ilb.230.1580430490830;
+        Thu, 30 Jan 2020 16:28:10 -0800 (PST)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id b12sm2456075iln.62.2020.01.30.16.28.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 16:28:10 -0800 (PST)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mattias Nissler <mnissler@chromium.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4] Add a "nosymfollow" mount option.
+Date:   Thu, 30 Jan 2020 17:27:50 -0700
+Message-Id: <20200131002750.257358-1-zwisler@google.com>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2001310000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9516 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2001310000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Mattias Nissler <mnissler@chromium.org>
 
-Dave Chinner sent a big long patchset[1] that changes the behavior of mm
-shrinker which will make it easier for us to make reclaim of xfs inodes
-not block on IO.  I don't want to lead this discussion and nominate Dave
-to do so, but if he cannot make it to LSF then I will take over.
+For mounts that have the new "nosymfollow" option, don't follow
+symlinks when resolving paths. The new option is similar in spirit to
+the existing "nodev", "noexec", and "nosuid" options. Various BSD
+variants have been supporting the "nosymfollow" mount option for a
+long time with equivalent implementations.
+
+Note that symlinks may still be created on file systems mounted with
+the "nosymfollow" option present. readlink() remains functional, so
+user space code that is aware of symlinks can still choose to follow
+them explicitly.
+
+Setting the "nosymfollow" mount option helps prevent privileged
+writers from modifying files unintentionally in case there is an
+unexpected link along the accessed path. The "nosymfollow" option is
+thus useful as a defensive measure for systems that need to deal with
+untrusted file systems in privileged contexts.
+
+Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+Signed-off-by: Ross Zwisler <zwisler@google.com>
 
 ---
 
-In a nutshell, we actually can make XFS inode reclaim mostly nonblocking
-right now by shifting responsibility for doing one last flush of the
-ondisk metadata to the XFS log.  After that, memory reclaim "merely" has
-to poke the log ... but doing this naïvely causes IO storms issued from
-log pokes started during direct reclaim.  Shifting that to kswapd
-results in unnecessary OOMs in direct reclaim because we failed to free
-enough resources even though we're on our way to being able to free
-resources.
+This was previously posted a few years ago:
 
-What we need are some fairly minor changes to how the shrinkers work --
-first, XFS needs to be able to communicate to a caller of its shrinker
-that we freed X items, but we can free another Y items from another
-context (e.g. kswapd).  Second, we need a way to actually do that work
-from a less-restrictive context (kswapd) and to have direct reclaim
-throttle itself if kswapd is busy actually doing the work that it can't
-do.  Third, we need to teach kswapd how to discover that we're running
-IO as fast as we can and that it needs to wait a little while to let us
-catch up.
+v2: https://patchwork.kernel.org/patch/9384153/
+v3: https://lore.kernel.org/patchwork/patch/736423/
 
-So the question(s) are: What do people think of these changes to
-shrinker behavior?  Are they acceptable to the mm and fs communities?
-If so, how do we stage these changes in tandem with the XFS changes so
-that we can commit these new features and a user of them in the same
-kernel cycle?
+The problem that this patch solves still exists.  I rebased and retested
+this patch against kernel v5.5.
 
---D
+FreeBSD solves this with an equivalent flag:
 
-[1] https://lore.kernel.org/linux-xfs/20191031234618.15403-1-david@fromorbit.com/
+https://github.com/freebsd/freebsd/blob/master/sys/kern/vfs_lookup.c#L1040
+https://www.freebsd.org/cgi/man.cgi?mount(8)
+
+And ChromeOS has been solving this with 200+ lines of LSM code:
+
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1334029/
+
+This kernel patch is much shorter (13 lines!) and IMO is a much cleaner
+solution.  Let's reconsider getting this merged.
+
+There is some follow-up work that will need to be done:
+ - Upstream support for the flag to util-linux.  Example CL that I've
+   been testing with:
+   https://github.com/rzwisler/util-linux/commit/e3b8e365492e8cc87c750c4946eb013a486978d2
+ - Update man pages for mount(8) and mount(2).
+ - Update man page for statfs(2).
+ - Add this option to the new fsmount(2) syscall:
+   https://lwn.net/Articles/802096/
+
+I'm happy to take care of these, but wanted to get feedback on the
+kernel patch first.
+---
+ fs/namei.c                 | 3 +++
+ fs/namespace.c             | 2 ++
+ fs/proc_namespace.c        | 1 +
+ fs/statfs.c                | 2 ++
+ include/linux/mount.h      | 3 ++-
+ include/linux/statfs.h     | 1 +
+ include/uapi/linux/mount.h | 1 +
+ 7 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 4fb61e0754ed6..f198a0ea9b1c0 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1059,6 +1059,9 @@ const char *get_link(struct nameidata *nd)
+ 		touch_atime(&last->link);
+ 	}
+ 
++	if (nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW)
++		return ERR_PTR(-EACCES);
++
+ 	error = security_inode_follow_link(dentry, inode,
+ 					   nd->flags & LOOKUP_RCU);
+ 	if (unlikely(error))
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 5e1bf611a9eb6..240421e02940d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3109,6 +3109,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
+ 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
+ 	if (flags & MS_RDONLY)
+ 		mnt_flags |= MNT_READONLY;
++	if (flags & MS_NOSYMFOLLOW)
++		mnt_flags |= MNT_NOSYMFOLLOW;
+ 
+ 	/* The default atime for remount is preservation */
+ 	if ((flags & MS_REMOUNT) &&
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 273ee82d8aa97..91a552f617406 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_NOATIME, ",noatime" },
+ 		{ MNT_NODIRATIME, ",nodiratime" },
+ 		{ MNT_RELATIME, ",relatime" },
++		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
+ 		{ 0, NULL }
+ 	};
+ 	const struct proc_fs_info *fs_infop;
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 2616424012ea7..59f33752c1311 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
+ 		flags |= ST_NODIRATIME;
+ 	if (mnt_flags & MNT_RELATIME)
+ 		flags |= ST_RELATIME;
++	if (mnt_flags & MNT_NOSYMFOLLOW)
++		flags |= ST_NOSYMFOLLOW;
+ 	return flags;
+ }
+ 
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index bf8cc4108b8f9..ff2d132c21f5d 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -30,6 +30,7 @@ struct fs_context;
+ #define MNT_NODIRATIME	0x10
+ #define MNT_RELATIME	0x20
+ #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
++#define MNT_NOSYMFOLLOW	0x80
+ 
+ #define MNT_SHRINKABLE	0x100
+ #define MNT_WRITE_HOLD	0x200
+@@ -46,7 +47,7 @@ struct fs_context;
+ #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
+ #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
+ 				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
+-				 | MNT_READONLY)
++				 | MNT_READONLY | MNT_NOSYMFOLLOW)
+ #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
+ 
+ #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL | \
+diff --git a/include/linux/statfs.h b/include/linux/statfs.h
+index 9bc69edb8f188..fac4356ea1bfc 100644
+--- a/include/linux/statfs.h
++++ b/include/linux/statfs.h
+@@ -40,6 +40,7 @@ struct kstatfs {
+ #define ST_NOATIME	0x0400	/* do not update access times */
+ #define ST_NODIRATIME	0x0800	/* do not update directory access times */
+ #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
++#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
+ 
+ struct dentry;
+ extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 96a0240f23fed..c268ea586dbf4 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -34,6 +34,7 @@
+ #define MS_I_VERSION	(1<<23) /* Update inode I_version field */
+ #define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
+ #define MS_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
++#define MS_NOSYMFOLLOW	(1<<26) /* Do not follow symlinks */
+ 
+ /* These sb flags are internal to the kernel */
+ #define MS_SUBMOUNT     (1<<26)
+-- 
+2.25.0.341.g760bfbb309-goog
+
