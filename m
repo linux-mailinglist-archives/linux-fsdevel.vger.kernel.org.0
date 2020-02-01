@@ -2,66 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EFF14F6C1
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 06:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A6214F6CE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 06:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbgBAFew (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 00:34:52 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52930 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgBAFew (ORCPT
+        id S1726106AbgBAF7q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 00:59:46 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40497 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbgBAF7q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 00:34:52 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixlQf-005YzV-TQ; Sat, 01 Feb 2020 05:34:50 +0000
-Date:   Sat, 1 Feb 2020 05:34:49 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+190005201ced78a74ad6@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in path_openat
-Message-ID: <20200201053449.GH23230@ZenIV.linux.org.uk>
-References: <000000000000b926cf059d7c6552@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000b926cf059d7c6552@google.com>
+        Sat, 1 Feb 2020 00:59:46 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k25so4740791pgt.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2020 21:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=u7jvdW2fuKLsgDs+57d3EfQoMcxdP0/UGeFmBvVw6Wk=;
+        b=nZM1RxaDTVov+U6ndPCalWFSVoqiEaXcSrj7A9AdG5jcGoO6iclBflZ4T1/4s8P2Iv
+         2Van3+djZNb5ciPp/zi+mYsHzCJvu9cX+iF29PU6AfBpeoEDizrUpbgCMoknYA7s/dYf
+         4KJMA0aakcFxO5+GpQr+mTwVXPmzoKgiUa++KvBBOrADphrcUuR0JoS+fiRbA9nAtOXz
+         EgwlvzQAmBFKYgoyWPam3Bqwh4oeCfPTPScuQPzE+zhwAACCXOks3b8fMEI5zcg5cx0F
+         gxwH1eE04j6XZ1x+V6WstZ/95XYzCmgXDilEuDQcCTCL9g8jXAAPyI/TEdQ3kL85Fb0E
+         Oe7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=u7jvdW2fuKLsgDs+57d3EfQoMcxdP0/UGeFmBvVw6Wk=;
+        b=A3tC9TvY9GUSR900KTcBFvvED+eR2iupJAwrwjwcCQKhu0dDQx4/2k24C1V3qtQmcJ
+         /pkE7s3tq5OyiCWCDL8oni5q4kAXuUnEdcSWqqdYzutYHotornc1Z61ekSMXNOhD7/fc
+         0PBl/1ELJZvJCBOhk2kPJZSFcNiUrPAE+Q2rU4p5fXnx7Gr5htSjGZtXPYaK85zSMcaf
+         RSe36tA4UA3OnbRKmZ4zzL3HGqeN3e4/Nz2YLtA0q+2rGJdjAomMiV6so5ee+iwP/5Xr
+         s4623rKYAn9rLiDCj10mBNDhFSSsT6mf7qR6oFW53jVspM/h0m2xTNCTO5xnDOGuzAUC
+         8XqQ==
+X-Gm-Message-State: APjAAAXqQ9rcXvoALPVM+rDNs8d5ategpPP7mx0xIQ1bDxsIxFSdEig7
+        KuT9057/lHBMwxQGhtBOgps=
+X-Google-Smtp-Source: APXvYqymKYB5+Ffpvrx5KI1PsFaaBT91h90joKrHJSOC1Suunj81iuDNayY+ipRJ6L8XORlxyf1KKg==
+X-Received: by 2002:a63:5818:: with SMTP id m24mr14239189pgb.358.1580536785843;
+        Fri, 31 Jan 2020 21:59:45 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id y76sm12774490pfc.87.2020.01.31.21.59.44
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 31 Jan 2020 21:59:45 -0800 (PST)
+From:   qiwuchen55@gmail.com
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: [PATCH] fuse: fix inode rwsem regression
+Date:   Sat,  1 Feb 2020 13:49:31 +0800
+Message-Id: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 08:48:11PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    ccaaaf6f Merge tag 'mpx-for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=115bda4ee00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=879390c6b09ccf66
-> dashboard link: https://syzkaller.appspot.com/bug?extid=190005201ced78a74ad6
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1674c776e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1565e101e00000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+190005201ced78a74ad6@syzkaller.appspotmail.com
+From: chenqiwu <chenqiwu@xiaomi.com>
 
-Already reported; see if the following fixes that:
+Apparently our current rwsem code doesn't like doing the trylock, then
+lock for real scheme.  So change our direct write method to just do the
+trylock for the RWF_NOWAIT case.
+This seems to fix AIM7 regression in some scalable filesystems upto ~25%
+in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 4167109297e0..db6565c99825 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3333,8 +3333,8 @@ static int do_last(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
- 	struct dentry *dir = nd->path.dentry;
--	kuid_t dir_uid = dir->d_inode->i_uid;
--	umode_t dir_mode = dir->d_inode->i_mode;
-+	kuid_t dir_uid = nd->inode->i_uid;
-+	umode_t dir_mode = nd->inode->i_mode;
- 	int open_flag = op->open_flag;
- 	bool will_truncate = (open_flag & O_TRUNC) != 0;
- 	bool got_write = false;
+Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+---
+ fs/fuse/file.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index ce71538..ac16994 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	ssize_t res;
+ 
+ 	/* Don't allow parallel writes to the same file */
+-	inode_lock(inode);
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!inode_trylock(inode))
++			return -EAGAIN;
++	} else {
++		inode_lock(inode);
++	}
++
+ 	res = generic_write_checks(iocb, from);
+ 	if (res > 0) {
+ 		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+-- 
+1.9.1
+
