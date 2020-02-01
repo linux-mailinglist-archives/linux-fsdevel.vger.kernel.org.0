@@ -2,192 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FEC914FA32
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 20:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D1A14FA71
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 20:54:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgBAT2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 14:28:17 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33538 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgBAT2R (ORCPT
+        id S1726487AbgBATy6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 14:54:58 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:43884 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbgBATy6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 14:28:17 -0500
-Received: by mail-ot1-f68.google.com with SMTP id b18so9930439otp.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 11:28:16 -0800 (PST)
+        Sat, 1 Feb 2020 14:54:58 -0500
+Received: by mail-il1-f193.google.com with SMTP id o13so9231429ilg.10;
+        Sat, 01 Feb 2020 11:54:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cxP/mWDrHKD9UWBcOV7z7zMrCIASBgDPmpZP09ULspU=;
-        b=DHbz0vbxuVJr39v4IG5GLko8yPJ2OS6cGBWBlCBw6koGzH+k7gmSCl86lfXXJXyTfS
-         lGLseZubt3OGJEGo7iYD6W08gI9l+Z0T6Z8qt2Sl4a584TvXAdgew2Zny1clbqb5yqTa
-         zo5P76hEP3ZOy/8YimvwqHHOOK/+kG2vflddlA4LDX2Xk+CZis5rwduV5SZe3AGIcN3F
-         N1JkutQpZB5oy9/0pQcdNCdb8eg8DZDeDkDvE3MZ2bvF7MYUe2GeY5l/edaHdyr+Ie4h
-         WulEeklbFMQFb86tSVVfFrIvW121MkB3D9LqmtYh62q+ZNYSKUgfvb5q/vKRjxTNuy/J
-         QBzw==
+        bh=5ZM+XG0Qafoo8yoA94Tb8BHY4hUIVe3CK4bN+n5GzG8=;
+        b=nM4GcWpAjqrvtL0Lcot/MfvVHtdRX+7g84363eMq/9AuOgxISlHekqaj3V52RNVmkm
+         /ioWKfJZAkxg9iBcZUCW+mJwCkoFS+Gb2xhExyOKZiXItEGsDEX6Dt5Bf541NXK0sTHQ
+         OfSkxk/se9sB5wMFojGXz6KvoP2KlTASo44Wb5gNchmhOs5LdCdGhr1HSlyzGMHAbUM0
+         1vOEEpt5AHGPBBXSY3iF3kHqh/J8eRjPlfPcq8DEwu8wYUDvZ1sFG07i5GXZDeTamJaW
+         wKuM+UDaxinaG+hK+FRey6eXOpNF3EFJAePEkon67a03z3EeFPsWnfyVfm251IsJtyWl
+         LvbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cxP/mWDrHKD9UWBcOV7z7zMrCIASBgDPmpZP09ULspU=;
-        b=A5p950fNoCe5HIfFtuLV45LRujgPKcFUgHFp+HtK4BctSKyLc1yXZeO6kn2fmUrTc8
-         Ka9r4RG1jdfDI0oFcy73jxcqVw0DpUyAAMeiUCKmQhGhavCeGjQlpdTYKPCO1npMPWf/
-         iZJGsZPjfe+iV+i9pEhuNye51tMS5/hToju/wV5troOsZDqReDUmtLQRxQFDyyhwiBL5
-         g9hXxrgHMr9vF/C8o6SNSxcx2DXKgGW3cj3CAQrxeDmq7FoZDvYX+oq2xAn0tt+NOdOV
-         vcWFNS6LlJKQTNOVS3pNEqNxPloW+k4DwrpEh8xXxtgcpfy7NzHPLcrmFjGauq7g4GMt
-         2ZOw==
-X-Gm-Message-State: APjAAAVnqjGiw+Iyqm+cynI/4lzNrvfvAR62c6RQTnjU1lrvdu+db0i5
-        hv/CQvaq6JmoNHHNM6N/PaTCFDwWpzIsghpWzfW8BQ==
-X-Google-Smtp-Source: APXvYqwr4ptf9tE3b6yjDXLUXSR7qGzKb90HMFk1L4yOE6UqTeeItB+3BKcSnDGEm0sa3acbKu307vS9ea6L+YdsRSA=
-X-Received: by 2002:a9d:74d0:: with SMTP id a16mr1495412otl.228.1580585295885;
- Sat, 01 Feb 2020 11:28:15 -0800 (PST)
+        bh=5ZM+XG0Qafoo8yoA94Tb8BHY4hUIVe3CK4bN+n5GzG8=;
+        b=jUdX4t3R3jdzd3ueQGHzY2G8+9e2sPV852u1thekUtgmkqxrqK0E2dYk1y+gqsYAjW
+         2+UWJcC2URYhqeh29s04RZzVFX5B69meUq3zwJxG5k/o+agJVXyjMSaSFb5PKNadw8gT
+         n7YzWTxJCE8s5cq6knc0unpeUoE3O1cjFMRRSKZ5zHl0tAr5xBj6EP0SwKSHNpK2xFbd
+         NyUiEThcGzVNs6qDLJB+c8n36lelL5n4y2RP3NPjfBS65/Q7ixRiBVOXxnzk3HOe3kyO
+         5Zld4lmgm/WdVYp8uBPiFmmjpgJ3z50/4+XOc5HsSJvzJyhlV39qRV5WUoQrLdqaSVRe
+         HmnQ==
+X-Gm-Message-State: APjAAAU7sllHClubQbzGtqt6dpvASy9CZAU04r8loFn3JNpUgu8omm2h
+        c9s2NQV6nLmk+7f7ya8PRkmaksc+diyUP8ybMRo=
+X-Google-Smtp-Source: APXvYqwLHAZsySBQ5toZfqW/3M9sNi5WUjCIwF+SI1xCAeDRgfX4LKqJmF2bmQV/9y0r2Ld5SOqDmVCpjzeN7PYQtxs=
+X-Received: by 2002:a92:d642:: with SMTP id x2mr8368738ilp.169.1580586897434;
+ Sat, 01 Feb 2020 11:54:57 -0800 (PST)
 MIME-Version: 1.0
-References: <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz> <202001271519.AA6ADEACF0@keescook>
- <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com> <202001281457.FA11CC313A@keescook>
- <alpine.DEB.2.21.2001291640350.1546@www.lameter.com> <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
- <20200129170939.GA4277@infradead.org> <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
- <202001300945.7D465B5F5@keescook> <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
- <202002010952.ACDA7A81@keescook>
-In-Reply-To: <202002010952.ACDA7A81@keescook>
-From:   Jann Horn <jannh@google.com>
-Date:   Sat, 1 Feb 2020 20:27:49 +0100
-Message-ID: <CAG48ez2ms+TDEXQdDONuQ1GG0K20E69nV1r_yjKxxYjYKv1VCg@mail.gmail.com>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches as
- usercopy caches
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>, Marc Zyngier <marc.zyngier@arm.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
+References: <CAH2r5mvYTimXUfJB+p0mvYV3jAR1u5G4F3m+OqA_5jKiLhVE8A@mail.gmail.com>
+ <20200130015210.GB3673284@magnolia>
+In-Reply-To: <20200130015210.GB3673284@magnolia>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sat, 1 Feb 2020 13:54:46 -0600
+Message-ID: <CAH2r5mv55Ua3B8WX1Qht1xfWL-k5pGJrN+Uz0L4jHtYOo9RMKw@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Enhancing Linux Copy Performance and Function
+ and improving backup scenarios
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        lsf-pc@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[pruned bogus addresses from recipient list]
-
-On Sat, Feb 1, 2020 at 6:56 PM Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Jan 31, 2020 at 01:03:40PM +0100, Jann Horn wrote:
-> > I think dma-kmalloc slabs should be handled the same way as normal
-> > kmalloc slabs. When a dma-kmalloc allocation is freshly created, it is
-> > just normal kernel memory - even if it might later be used for DMA -,
-> > and it should be perfectly fine to copy_from_user() into such
-> > allocations at that point, and to copy_to_user() out of them at the
-> > end. If you look at the places where such allocations are created, you
-> > can see things like kmemdup(), memcpy() and so on - all normal
-> > operations that shouldn't conceptually be different from usercopy in
-> > any relevant way.
+On Wed, Jan 29, 2020 at 7:54 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
 >
-> I can't find where the address limit for dma-kmalloc is implemented.
+> On Wed, Jan 22, 2020 at 05:13:53PM -0600, Steve French wrote:
+> > As discussed last year:
+> >
+> > Current Linux copy tools have various problems compared to other
+> > platforms - small I/O sizes (and most don't allow it to be
+> > configured), lack of parallel I/O for multi-file copies, inability to
+> > reduce metadata updates by setting file size first, lack of cross
+>
+> ...and yet weirdly we tell everyone on xfs not to do that or to use
+> fallocate, so that delayed speculative allocation can do its thing.
+> We also tell them not to create deep directory trees because xfs isn't
+> ext4.
 
-dma-kmalloc is a slab that uses GFP_DMA pages.
+Delayed speculative allocation may help xfs but changing file size
+thousands of times for network and cluster fs for a single file copy
+can be a disaster for other file systems (due to the excessive cost
+it adds to metadata sync time) - so there are file systems where
+setting the file size first can help
 
-Things have changed a bit through the kernel versions, but in current
-mainline, the zone limit for GFP_DMA is reported from arch code to
-generic code via zone_dma_bits, from where it is used to decide which
-zones should be used for allocations based on the address limit of a
-given device:
+> >  And copy tools rely less on
+> > the kernel file system (vs. code in the user space tool) in Linux than
+> > would be expected, in order to determine which optimizations to use.
+>
+> What kernel interfaces would we expect userspace to use to figure out
+> the confusing mess of optimizations? :)
 
-kernel/dma/direct.c:
-/*
- * Most architectures use ZONE_DMA for the first 16 Megabytes, but some use it
- * it for entirely different regions. In that case the arch code needs to
- * override the variable below for dma-direct to work properly.
- */
-unsigned int zone_dma_bits __ro_after_init = 24;
-[...]
-static gfp_t __dma_direct_optimal_gfp_mask(struct device *dev, u64 dma_mask,
-                u64 *phys_limit)
-{
-[...]
-        /*
-         * Optimistically try the zone that the physical address mask falls
-         * into first.  If that returns memory that isn't actually addressable
-         * we will fallback to the next lower zone and try again.
-         *
-         * Note that GFP_DMA32 and GFP_DMA are no ops without the corresponding
-         * zones.
-         */
-        if (*phys_limit <= DMA_BIT_MASK(zone_dma_bits))
-                return GFP_DMA;
-        if (*phys_limit <= DMA_BIT_MASK(32))
-                return GFP_DMA32;
-        return 0;
-}
+copy_file_range and clone_file_range are a good start ... few tools
+use them ...
 
+> There's a whole bunch of xfs ioctls like dioinfo and the like that we
+> ought to push to statx too.  Is that an example of what you mean?
 
-There are only a few architectures that override the limit:
+That is a good example.   And then getting tools to use these,
+even if there are some file system dependent cases.
 
-powerpc:
-        /*
-         * Allow 30-bit DMA for very limited Broadcom wifi chips on many
-         * powerbooks.
-         */
-        if (IS_ENABLED(CONFIG_PPC32))
-                zone_dma_bits = 30;
-        else
-                zone_dma_bits = 31;
+>
+> > But some progress has been made since last year's summit, with new
+> > copy tools being released and improvements to some of the kernel file
+> > systems, and also some additional feedback on lwn and on the mailing
+> > lists.  In addition these discussions have prompted additional
+> > feedback on how to improve file backup/restore scenarios (e.g. to
+> > mounts to the cloud from local Linux systems) which require preserving
+> > more timestamps, ACLs and metadata, and preserving them efficiently.
+>
+> I suppose it would be useful to think a little more about cross-device
+> fs copies considering that the "devices" can be VM block devs backed by
+> files on a filesystem that supports reflink.  I have no idea how you
+> manage that sanely though.
 
-s390:
-        zone_dma_bits = 31;
+I trust XFS and BTRFS and SMB3 and cluster fs etc. to solve this better
+than the block level (better locking, leases/delegation, state management, etc.)
+though.
 
-and arm64:
-#define ARM64_ZONE_DMA_BITS     30
-[...]
-        if (IS_ENABLED(CONFIG_ZONE_DMA)) {
-                zone_dma_bits = ARM64_ZONE_DMA_BITS;
-                arm64_dma_phys_limit = max_zone_phys(ARM64_ZONE_DMA_BITS);
-        }
+-- 
+Thanks,
 
-
-The actual categorization of page ranges into zones happens via
-free_area_init_nodes() or free_area_init_node(); these are provided
-with arrays of maximum physical addresses or zone sizes (depending on
-which of them is called) by arch-specific code.
-For arm64, the caller is zone_sizes_init(). X86 does it in zone_sizes_init().
-
-> As to whitelisting all of dma-kmalloc -- I guess I can be talked into
-> it. It still seems like the memory used for direct hardware
-> communication shouldn't be exposed to userspace, but it we're dealing
-> with packet data, etc, then it makes sense not to have to have bounce
-> buffers, etc.
-
-FWIW, as far as I understand, usercopy doesn't actually have any
-effect on drivers that use the modern, proper APIs, since those don't
-use the slab allocator at all - as I pointed out in my last mail, the
-dma-kmalloc* slabs are used very rarely. (Which is good, because
-putting objects from less-than-page-size slabs into iommu entries is a
-terrible idea from a security and reliability perspective because it
-gives the hardware access to completely unrelated memory.) Instead,
-they get pages from the page allocator, and these pages may e.g. be
-allocated from the DMA, DMA32 or NORMAL zones depending on the
-restrictions imposed by hardware. So I think the usercopy restriction
-only affects a few oddball drivers (like this s390 stuff), which is
-why you're not seeing more bug reports caused by this.
+Steve
