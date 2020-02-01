@@ -2,91 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0A6214F6CE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 06:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C639D14F6EC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 07:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbgBAF7q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 00:59:46 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40497 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgBAF7q (ORCPT
+        id S1726133AbgBAG2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 01:28:04 -0500
+Received: from mout-p-202.mailbox.org ([80.241.56.172]:18638 "EHLO
+        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbgBAG2E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 00:59:46 -0500
-Received: by mail-pg1-f193.google.com with SMTP id k25so4740791pgt.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jan 2020 21:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=u7jvdW2fuKLsgDs+57d3EfQoMcxdP0/UGeFmBvVw6Wk=;
-        b=nZM1RxaDTVov+U6ndPCalWFSVoqiEaXcSrj7A9AdG5jcGoO6iclBflZ4T1/4s8P2Iv
-         2Van3+djZNb5ciPp/zi+mYsHzCJvu9cX+iF29PU6AfBpeoEDizrUpbgCMoknYA7s/dYf
-         4KJMA0aakcFxO5+GpQr+mTwVXPmzoKgiUa++KvBBOrADphrcUuR0JoS+fiRbA9nAtOXz
-         EgwlvzQAmBFKYgoyWPam3Bqwh4oeCfPTPScuQPzE+zhwAACCXOks3b8fMEI5zcg5cx0F
-         gxwH1eE04j6XZ1x+V6WstZ/95XYzCmgXDilEuDQcCTCL9g8jXAAPyI/TEdQ3kL85Fb0E
-         Oe7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=u7jvdW2fuKLsgDs+57d3EfQoMcxdP0/UGeFmBvVw6Wk=;
-        b=A3tC9TvY9GUSR900KTcBFvvED+eR2iupJAwrwjwcCQKhu0dDQx4/2k24C1V3qtQmcJ
-         /pkE7s3tq5OyiCWCDL8oni5q4kAXuUnEdcSWqqdYzutYHotornc1Z61ekSMXNOhD7/fc
-         0PBl/1ELJZvJCBOhk2kPJZSFcNiUrPAE+Q2rU4p5fXnx7Gr5htSjGZtXPYaK85zSMcaf
-         RSe36tA4UA3OnbRKmZ4zzL3HGqeN3e4/Nz2YLtA0q+2rGJdjAomMiV6so5ee+iwP/5Xr
-         s4623rKYAn9rLiDCj10mBNDhFSSsT6mf7qR6oFW53jVspM/h0m2xTNCTO5xnDOGuzAUC
-         8XqQ==
-X-Gm-Message-State: APjAAAXqQ9rcXvoALPVM+rDNs8d5ategpPP7mx0xIQ1bDxsIxFSdEig7
-        KuT9057/lHBMwxQGhtBOgps=
-X-Google-Smtp-Source: APXvYqymKYB5+Ffpvrx5KI1PsFaaBT91h90joKrHJSOC1Suunj81iuDNayY+ipRJ6L8XORlxyf1KKg==
-X-Received: by 2002:a63:5818:: with SMTP id m24mr14239189pgb.358.1580536785843;
-        Fri, 31 Jan 2020 21:59:45 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id y76sm12774490pfc.87.2020.01.31.21.59.44
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 31 Jan 2020 21:59:45 -0800 (PST)
-From:   qiwuchen55@gmail.com
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
-Subject: [PATCH] fuse: fix inode rwsem regression
-Date:   Sat,  1 Feb 2020 13:49:31 +0800
-Message-Id: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Sat, 1 Feb 2020 01:28:04 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 488kfn3DgHzQk03;
+        Sat,  1 Feb 2020 07:28:01 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id 23aY_owvYlBV; Sat,  1 Feb 2020 07:27:56 +0100 (CET)
+Date:   Sat, 1 Feb 2020 17:27:44 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ross Zwisler <zwisler@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <zwisler@chromium.org>,
+        linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4] Add a "nosymfollow" mount option.
+Message-ID: <20200201062744.fehlhq3jtetfcxuw@yavin.dot.cyphar.com>
+References: <20200131002750.257358-1-zwisler@google.com>
+ <20200131004558.GA6699@bombadil.infradead.org>
+ <20200131015134.5ovxakcavk2x4diz@yavin.dot.cyphar.com>
+ <20200131212021.GA108613@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wimogbxgdozmpthq"
+Content-Disposition: inline
+In-Reply-To: <20200131212021.GA108613@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: chenqiwu <chenqiwu@xiaomi.com>
 
-Apparently our current rwsem code doesn't like doing the trylock, then
-lock for real scheme.  So change our direct write method to just do the
-trylock for the RWF_NOWAIT case.
-This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
+--wimogbxgdozmpthq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
----
- fs/fuse/file.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+On 2020-01-31, Ross Zwisler <zwisler@google.com> wrote:
+> On Fri, Jan 31, 2020 at 12:51:34PM +1100, Aleksa Sarai wrote:
+> > On 2020-01-30, Matthew Wilcox <willy@infradead.org> wrote:
+> > > On Thu, Jan 30, 2020 at 05:27:50PM -0700, Ross Zwisler wrote:
+> > > > For mounts that have the new "nosymfollow" option, don't follow
+> > > > symlinks when resolving paths. The new option is similar in spirit =
+to
+> > > > the existing "nodev", "noexec", and "nosuid" options. Various BSD
+> > > > variants have been supporting the "nosymfollow" mount option for a
+> > > > long time with equivalent implementations.
+> > > >=20
+> > > > Note that symlinks may still be created on file systems mounted with
+> > > > the "nosymfollow" option present. readlink() remains functional, so
+> > > > user space code that is aware of symlinks can still choose to follow
+> > > > them explicitly.
+> > > >=20
+> > > > Setting the "nosymfollow" mount option helps prevent privileged
+> > > > writers from modifying files unintentionally in case there is an
+> > > > unexpected link along the accessed path. The "nosymfollow" option is
+> > > > thus useful as a defensive measure for systems that need to deal wi=
+th
+> > > > untrusted file systems in privileged contexts.
+> > >=20
+> > > The openat2 series was just merged yesterday which includes a
+> > > LOOKUP_NO_SYMLINKS option.  Is this enough for your needs, or do you
+> > > need the mount option?
+> >=20
+> > I have discussed a theoretical "noxdev" mount option (which is
+> > effectively LOOKUP_NO_XDEV) with Howells (added to Cc) in the past, and
+> > the main argument for having a mount option is that you can apply the
+> > protection to older programs without having to rewrite them to use
+> > openat2(2).
+>=20
+> Ah, yep, this is exactly what we're trying to achieve with the "nosymfoll=
+ow"
+> mount option: protect existing programs from malicious filesystems without
+> having to modify those programs.
+>=20
+> The types of attacks we are concerned about are pretty well summarized in=
+ this
+> LWN article from over a decade ago:
+>=20
+> https://lwn.net/Articles/250468/
+>=20
+> And searching around (I just Googled "symlink exploit") it's pretty easy =
+to
+> find related security blogs and CVEs.
+>=20
+> The noxdev mount option seems interesting, bug I don't fully understand y=
+et
+> how it would work.  With the openat2() syscall it's clear which things ne=
+ed to
+> be part of the same mount: the dfd (or CWD in the case of AT_FDCWD) and t=
+he
+> filename you're opening.  How would this work for the noxdev mount option=
+ and
+> the legacy open(2) syscall, for example?  Would you just always compare
+> 'pathname' with the current working directory?  Examine 'pathname' and ma=
+ke
+> sure that if any filesystems in that path have 'noxdev' set, you never
+> traverse out of them?  Something else?
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index ce71538..ac16994 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t res;
- 
- 	/* Don't allow parallel writes to the same file */
--	inode_lock(inode);
-+	if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (!inode_trylock(inode))
-+			return -EAGAIN;
-+	} else {
-+		inode_lock(inode);
-+	}
-+
- 	res = generic_write_checks(iocb, from);
- 	if (res > 0) {
- 		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
--- 
-1.9.1
+The idea is that "noxdev" would be "sticky" (or if you prefer, like a
+glue trap). As soon as you walk into a mountpoint that has "noxdev", you
+cannot cross any subsequent mountpoint boundaries (a-la LOOKUP_NO_XDEV).
 
+> If noxdev would involve a pathname traversal to make sure you don't ever =
+leave
+> mounts with noxdev set, I think this could potentially cover the use case=
+s I'm
+> worried about.  This would restrict symlink traversal to files within the=
+ same
+> filesystem, and would restrict traversal to both normal and bind mounts f=
+rom
+> within the restricted filesystem, correct?
+
+Yes, but it would have to block all mountpoint crossings including
+bind-mounts, because the obvious way of checking for mountpoint
+crossings (vfsmount comparisons) results in bind-mounts being seen as
+different mounts. This is how LOOKUP_NO_XDEV works. Would this be a
+show-stopped for ChromeOS?
+
+I personally find "noxdev" to be a semantically clearer statement of
+intention ("I don't want any lookup that reaches this mount-point to
+leave") than "nosymfollow" (though to be fair, this is closer in
+semantics to the other "no*" mount flags). But after looking at [1] and
+thinking about it for a bit, I don't really have a problem with either
+solution.
+
+The only problem is that "noxdev" would probably need to be settable on
+bind-mounts, and from [2] it looks like the new mount API struggles with
+configuring bind-mounts.
+
+> > However, the underlying argument for "noxdev" was that you could use it
+> > to constrain something like "tar -xf" inside a mountpoint (which could
+> > -- in principle -- be a bind-mount). I'm not so sure that "nosymfollow"
+> > has similar "obviously useful" applications (though I'd be happy to be
+> > proven wrong).
+>=20
+> In ChromeOS we use the LSM referenced in my patch to provide a blanket
+> enforcement that symlinks aren't traversed at all on user-supplied
+> filesystems, which are considered untrusted.  I'd essentially like to bui=
+ld on
+> the protections offered by LOOKUP_NO_SYMLINKS and extend that protection =
+to
+> all accesses to user-supplied filesystems.
+
+Yeah, after writing my mail I took a look at [1] and I agree that having
+a solution which helps older programs would be helpful. With openat2 and
+libpathrs[3] I'm hoping to lead the charge on a "rewrite userspace"
+effort, but waiting around for that to be complete probably isn't a
+workable solution. ;)
+
+[1]: https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-des=
+ign-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-=
+traversal
+[2]: https://lwn.net/Articles/809125/
+[3]: https://github.com/openSUSE/libpathrs
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--wimogbxgdozmpthq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXjUaXgAKCRCdlLljIbnQ
+EltFAQD2Ty11Fy+2kbUzE7CVrlD1V9YfmHIFj5vjMa4D/m1qBAEA08J+gbnEeZTW
++xn3HMUWaUU9MrU5+LeOhxf6NgpN0AE=
+=FE6j
+-----END PGP SIGNATURE-----
+
+--wimogbxgdozmpthq--
