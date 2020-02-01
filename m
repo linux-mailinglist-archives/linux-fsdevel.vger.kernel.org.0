@@ -2,164 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3AC14FAE9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 00:09:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DB714FAED
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 00:16:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgBAXJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 18:09:11 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:50743 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726487AbgBAXJK (ORCPT
+        id S1726637AbgBAXQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 18:16:17 -0500
+Received: from mail-pj1-f49.google.com ([209.85.216.49]:52434 "EHLO
+        mail-pj1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbgBAXQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 18:09:10 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id E45E121AF1;
-        Sat,  1 Feb 2020 18:09:09 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sat, 01 Feb 2020 18:09:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=j
-        bRWZESbTTo4igy9a0un1fKO8J7/F+oK9jmYMIQn0OQ=; b=kaBAHLkYFHwCRbLz7
-        jJQgxoaxPFcIZ/A0hE7L286eTL9sLnFJezcUKf8K7eh14WyAxH8cjBVObxIgze8n
-        /IfyJAJ0LIk1n885uMcuHfIbygsWFb1V8PF8ttpyaNbo6y/rgoC0pjybigQ97J8U
-        eW6/mj9tUekXfW/YDYKS23dwp8kY4kR9vB1RhzU5ZNB2UnguNFZdk4a/i5SYqfWV
-        hh6tdm40cO3QqLtKJTCxuaCkw+Ad3COwok12d9mQatL+y7PB/oDoqerGFiAT5JWu
-        poZQNU7hHy2zTQ5tt9K8iAqhsacjTjJUqwGbBqvlB0G/WZ15mqMufgH4IUVDoTwq
-        FVj0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=jbRWZESbTTo4igy9a0un1fKO8J7/F+oK9jmYMIQn0
-        OQ=; b=EOAEhCxK5ES1idCQ8ij45I6yraX3mY4J+PG97cwHVYb9vRPPx7pixssEw
-        0HvJrE0Gt7iB4DTmS/r87RKtLLsa7tOfbQxeWPyktWWYIxCQ6hqJmjBe5j/SD0Xk
-        xQMeB5BqWHLkUpdTElzOGvfHdqSccIo7Qcz5lOWuBGTYJZHqqzr6IzStjPxrJz+r
-        Zk2bT1dr67i2HmY1DlMKAsGwOG+qXMXyUyaR6PfORQC0rP6nEqA5L8OxtF0o6oiW
-        Td6o9UjGQpj+35lI9dzZMUcKz4Famdh1RoylUD/bAT/E25dwklJcszfuREOIa35b
-        hW19uPfmRst/pruKh8zTmW1ZqiVEw==
-X-ME-Sender: <xms:FAU2XvPdqaGv1Ub7JIlPpBCvjzJS6TpMWko1Jv3VtgzAvLn4I_4u4g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeefgddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhepuffvfhfhkffffgggjggtgfesthekre
-    dttdefjeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugdrshgt
-    hhhusggvrhhtsehfrghsthhmrghilhdrfhhmqeenucfkphepudejiedrudekledrieekrd
-    dukeelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhep
-    sggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:FAU2Xi5QhrJN7VQSfSCvGW57T7MectRhfQ9sNhoqJF3-dV4rKgNHSQ>
-    <xmx:FAU2XgNjORv0C7mADX_7GoRh1keP6Rj18i_Qr-lGpSLNohcFHOI_3w>
-    <xmx:FAU2XgmNvOIXn1M6TOkuOn9GC9k7mgoDBhKiLEyGheHrY4D6pOxXng>
-    <xmx:FQU2XssgRmuM5JZvHnnqGOVunf6-I1e7aQHSfoGRSScHQmet5myzQA>
-Received: from [192.168.1.20] (vol21-h02-176-189-68-189.dsl.sta.abo.bbox.fr [176.189.68.189])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5AFAD3060BB4;
-        Sat,  1 Feb 2020 18:09:08 -0500 (EST)
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-To:     qiwuchen55@gmail.com, miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-Autocrypt: addr=bernd.schubert@fastmail.fm; prefer-encrypt=mutual;
- keydata= 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
-Message-ID: <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
-Date:   Sun, 2 Feb 2020 00:09:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 1 Feb 2020 18:16:17 -0500
+Received: by mail-pj1-f49.google.com with SMTP id ep11so4594535pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 15:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=iGWodyo7BE3SjtJqSzBK4M9PQhoTpRtuGVVx63VdcvE=;
+        b=VG8VHgFW5Y8I1qQ+mKKmHk3CK1FeLilftSPodp/gAQLO7H0iMnXo/hbXzzW+1sBgCy
+         FVFZJbW2QCXRlgfWq52EZyv8hyFKxVc7n0VUJSzxoGj6M0Ma3oBg8m+qb8v9DwzpC1t6
+         dmK7lN+1vbf5qhYIMTy8ObDbZgfXaAI1SCI/gBHNGC6XQG6/ZWuKSSBrPUefrSvYszQZ
+         zyCWCNDZn5eh9psagZ4lktWyeufza8klNNhqusERsju64VtmXzSxDL/TjlaX9lL62+1N
+         lad3q8zuHBPNqmJ3WN0Ev/jLSE9OK/3/+q+Kr6aTOKtX3lqH7aN9HchPQuvDC+FRxgC4
+         U6ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=iGWodyo7BE3SjtJqSzBK4M9PQhoTpRtuGVVx63VdcvE=;
+        b=ZJNqTqKM5BW2AEPT5nVhhJNUMYLv7erwLd3M11zmw2ePjFjhREJJaYyqmtsYi8WDlQ
+         BgfEO57TIbcXxTREC0+THazLvk4pa+u+ZLjVVC7pg/pUuflYY496hIZNT+NZutVuUOPY
+         nuh9fNIQfu4/g7MvyL+LTFJSylhzci11+PKb3+kfAWIHmqkZlk8tavL0OYnkHZhaFTXB
+         Xs7GZIAOBMua70IDCizQkcWjkQj6ElNDlorQ6w2CTbNyoysMHlnaw7XN7mdQxk8A/dl6
+         /bvWEdOc6qoaRoBf52SmjfroZ+jkJUKoiMe0OlT5zCksG+Ou2Y39otM8cweyqNsU/JEW
+         BMcA==
+X-Gm-Message-State: APjAAAXw/6weqYda48sCwoc3S1i4uR2e9dmw4u+nUz2dNaNyCGU1+Ojx
+        pBIYweBtb4C1sIujMxjXkWQixQ==
+X-Google-Smtp-Source: APXvYqzwWU/jmICW8I0Bs+kQESOAJUhqZqQrxBQZImpPgkzh/M14GEdRdgArFATUrqRq68VbajhSyA==
+X-Received: by 2002:a17:902:8688:: with SMTP id g8mr16718690plo.277.1580598976077;
+        Sat, 01 Feb 2020 15:16:16 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id 136sm14221343pgg.74.2020.02.01.15.16.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Feb 2020 15:16:15 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <497E0258-F69E-4739-B9B5-B3DA92571A27@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_18888712-B94F-4C77-8A59-99C68A3C505C";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [LSF/MM/BPF TOPIC] Enhancing Linux Copy Performance and Function
+ and improving backup scenarios
+Date:   Sat, 1 Feb 2020 16:16:11 -0700
+In-Reply-To: <CAH2r5mv55Ua3B8WX1Qht1xfWL-k5pGJrN+Uz0L4jHtYOo9RMKw@mail.gmail.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        lsf-pc@lists.linux-foundation.org
+To:     Steve French <smfrench@gmail.com>
+References: <CAH2r5mvYTimXUfJB+p0mvYV3jAR1u5G4F3m+OqA_5jKiLhVE8A@mail.gmail.com>
+ <20200130015210.GB3673284@magnolia>
+ <CAH2r5mv55Ua3B8WX1Qht1xfWL-k5pGJrN+Uz0L4jHtYOo9RMKw@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--Apple-Mail=_18888712-B94F-4C77-8A59-99C68A3C505C
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-On 2/1/20 6:49 AM, qiwuchen55@gmail.com wrote:
-> From: chenqiwu <chenqiwu@xiaomi.com>
-> 
-> Apparently our current rwsem code doesn't like doing the trylock, then
-> lock for real scheme.  So change our direct write method to just do the
-> trylock for the RWF_NOWAIT case.
-> This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-> in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
-> 
-> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> ---
->  fs/fuse/file.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index ce71538..ac16994 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	ssize_t res;
->  
->  	/* Don't allow parallel writes to the same file */
-> -	inode_lock(inode);
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock(inode))
-> +			return -EAGAIN;
-> +	} else {
-> +		inode_lock(inode);
-> +	}
-> +
->  	res = generic_write_checks(iocb, from);
->  	if (res > 0) {
->  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-> 
+On Feb 1, 2020, at 12:54 PM, Steve French <smfrench@gmail.com> wrote:
+>=20
+> On Wed, Jan 29, 2020 at 7:54 PM Darrick J. Wong =
+<darrick.wong@oracle.com> wrote:
+>>=20
+>> On Wed, Jan 22, 2020 at 05:13:53PM -0600, Steve French wrote:
+>>> As discussed last year:
+>>>=20
+>>> Current Linux copy tools have various problems compared to other
+>>> platforms - small I/O sizes (and most don't allow it to be
+>>> configured), lack of parallel I/O for multi-file copies, inability =
+to
+>>> reduce metadata updates by setting file size first, lack of cross
+>>=20
+>> ...and yet weirdly we tell everyone on xfs not to do that or to use
+>> fallocate, so that delayed speculative allocation can do its thing.
+>> We also tell them not to create deep directory trees because xfs =
+isn't
+>> ext4.
+>=20
+> Delayed speculative allocation may help xfs but changing file size
+> thousands of times for network and cluster fs for a single file copy
+> can be a disaster for other file systems (due to the excessive cost
+> it adds to metadata sync time) - so there are file systems where
+> setting the file size first can help
+
+Sometimes I think it is worthwhile to bite the bullet and just submit
+patches to the important upstream tools to make them work well.  I've
+sone that in the past for cp, tar, rsync, ls, etc. so that they work
+better.  If you've ever straced those tools, you will see they do a
+lot of needless filesystem operations (repeated stat() in particular)
+that could be optimized - no syscall is better than a fast syscall.
+
+For cp it was changed to not allocate the st_blksize buffer on the
+stack, which choked when Lustre reported st_blksize=3D8MB.  I'm starting
+to think that it makes sense for all filesystems to use multi-MB buffers
+when reading/copying file data, rather than 4KB or 32KB as it does =
+today.
+It might also be good for cp to use O_DIRECT for large file copies =
+rather
+than buffered IO to avoid polluting the cache?  Having it use AIO/DIO
+would likely be a huge improvement as well.
+
+That probably holds true for many other tools that still use st_blksize.
+Maybe filesystems like ext4/xfs/btrfs should start reporting a larger
+st_blksize as well?
+
+As for parallel file copying, we've been working on MPIFileUtils, which
+has parallel tree/file operations (also multi-node), but has the =
+drawback
+that it depends on MPI for remote thread startup, and isn't for =
+everyone.
+It should be possible to change it to run in parallel on a single node =
+if
+MPI wasn't installed, which would make the tools more generally usable.
+
+>>> And copy tools rely less on
+>>> the kernel file system (vs. code in the user space tool) in Linux =
+than
+>>> would be expected, in order to determine which optimizations to use.
+>>=20
+>> What kernel interfaces would we expect userspace to use to figure out
+>> the confusing mess of optimizations? :)
+>=20
+> copy_file_range and clone_file_range are a good start ... few tools
+> use them ...
+
+One area that is really lacking a parallel interface is for directory
+and namespace operations.  We still need to do serialized readdir()
+and stat for operations in a directory.  There are now parallel VFS
+lookups, but it would be useful to allow parallel create and unlink
+for regular files, and possibly renames of files within a directory.
+
+For ext4 at least, it would be possible to have parallel readdir()
+by generating synthetic telldir() cookies to divide up the directory
+into several chunks that can be read in parallel.  Something like:
+
+     seek(dir_fd[0], 0, SEEK_END)
+     pos_max =3D telldir(dir_fd[0])
+     pos_inc =3D pos_max / num_threads
+     for (i =3D 0; i < num_threads; i++)
+         seekdir(dir_fd[i], i * pos_inc)
+
+but I don't know if that would be portable to other filesystems.
+
+XFS has a "bulkstat" interface which would likely be useful for
+directory traversal tools.
+
+>> There's a whole bunch of xfs ioctls like dioinfo and the like that we
+>> ought to push to statx too.  Is that an example of what you mean?
+>=20
+> That is a good example.   And then getting tools to use these,
+> even if there are some file system dependent cases.
+
+I've seen that copy to/from userspace is a bottleneck if the storage is
+fast.  Since the cross-filesystem copy_file_range() patches have landed,
+getting those into userspace tools would be a big performance win.
+
+Dave talked a few times about adding better info than st_blksize for
+different IO-related parameters (alignment, etc).  It was not included
+in the initial statx() landing because of excessive bikeshedding, but
+makes sense to re-examine what could be used there.  Since statx() is
+flexible, applications could be patched immediately to check for the
+new fields, without having to wait for a new syscall to propagate out.
+
+That said, if data copies are done in the kernel, this may be moot for
+some tools, but would still be useful for others.
+
+>>> But some progress has been made since last year's summit, with new
+>>> copy tools being released and improvements to some of the kernel =
+file
+>>> systems, and also some additional feedback on lwn and on the mailing
+>>> lists.
+
+I think if the tools are named anything other than cp, dd, tar, find
+it is much less likely that anyone will use them, so focussing developer
+efforts on the common GNU tools is more likely to be a win than making
+another new copy tool that nobody will use, IMHO.
+
+>>> In addition these discussions have prompted additional
+>>> feedback on how to improve file backup/restore scenarios (e.g. to
+>>> mounts to the cloud from local Linux systems) which require =
+preserving
+>>> more timestamps, ACLs and metadata, and preserving them efficiently.
+>>=20
+>> I suppose it would be useful to think a little more about =
+cross-device
+>> fs copies considering that the "devices" can be VM block devs backed =
+by
+>> files on a filesystem that supports reflink.  I have no idea how you
+>> manage that sanely though.
+>=20
+> I trust XFS and BTRFS and SMB3 and cluster fs etc. to solve this =
+better
+> than the block level (better locking, leases/delegation, state =
+management,
+> etc.) though.
+
+Getting RichACLs into the kernel would definitely help here.  Non-Linux
+filesystems have some variant of NFSv4 ACLs, and having only POSIX ACLs
+on Linux is a real hassle here.  Either the outside ACLs are stored as =
+an
+xattr blob, which leads to different semantics depending on the access
+method (CIFS, NFS, etc) or they are shoe-horned into the POSIX ACL and
+lose information.
+
+Cheers, Andreas
 
 
-I would actually like to ask if we can do something about this lock
-altogether. Replace it with a range lock?  This very lock badly hurts
-fuse shared file performance and maybe I miss something, but it should
-be needed only for writes/reads going into the same file?
 
 
-Thanks,
-Bernd
+
+
+--Apple-Mail=_18888712-B94F-4C77-8A59-99C68A3C505C
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl42BrsACgkQcqXauRfM
+H+AxlQ/9FywysisQOOCc/ouusT5nKTjv6mvLQmY+1TxXBie24tz+ndWXs6gz68MF
+j8Lqz7BYaTTfeLc98s488jHPA9O/MIounuAtUfx/mqiwFIwPlysrXhAXam9lo+HZ
+DnhMYBzlGtoHy/82Wb3pkl5iNauqFNMVeInnHOaRtmEmutqSsZ1EPXId6MMIGr1N
+LbjkXXLpL2LXmn3pVM+0xVRdaWRYUEe8DBQ3YskaIf4lqjw6HlAHOHsrRm9DZqTi
+B4C9zVVfIdDFss8N9lOemMRX7yMVDNKMxBdHRQExLpKN4B9p4rK405K5YDuxY0yp
+3wYcZPEBXlIDsR2y7EkJR4DQ80DF3W4rlsACzLDp6wsjdIRLq0IxlZEZuzptoyiN
+RJvgy4e6nyVWcX3j864vqHcAAd5NQ3XVCAMRNPy4OXOPWmWovcN845uDL6mcX5SN
+fykRtlAKJs/+L8LRy+tbAt4FJD0e+fIuBls7t8M90tGEs49bg8GZIzk3HMvOdKvD
+ld9VkWf6lFIwg/zkidEvYxRpYFwwdh9j9LPg6cgc1VKneMzNbAuEK9OmODXmT8gy
+s/YNiqj8JMWVU50V5MDYRda4LoTcH6eUR4ANXcnNiF0UlIdoj9Id2BpUbr92KvoD
+/Fw+XQIy96XHZGrM7wly17Jqz3NGu5e/O8hJKVUWXlaAqRx09nQ=
+=zjhF
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_18888712-B94F-4C77-8A59-99C68A3C505C--
