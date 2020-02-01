@@ -2,68 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C6C14F8B7
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 16:48:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075D314F8D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Feb 2020 17:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgBAPsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 10:48:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35946 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbgBAPsB (ORCPT
+        id S1726677AbgBAQWt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 11:22:49 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41064 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbgBAQWt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 10:48:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yGIgcb3CmGMyo0/Lz0VtvC3YVMdDRbL17gGOx8oi+ZQ=; b=ufoWGPcfyX1q9mdMD4mpi46ae
-        bbXJkuBWXsKgQoxRoYcR4Wy6wi3A5T5SPfAGQTvU9X5Ezq2VqAmMmKbbutFlQRZ/S/mK3yKSt9au8
-        jPRAn5AwVFjYRJQq3D9yDLypr3idM0R7R7qo8PKPh57kmUzk0KxMUU1M4sAnId1XRvMQbDFAH5UWU
-        Ks6GaC3WqdYj2Fm92f7/NYUvuii2ohGgLUwxbrK8x5sqvufLl3CJ5X5LncjLk9V79CaeSa7iF+LDG
-        ORM/cq+8R/rGU0cnVC/l2FkihsBj9L22md5MGJiJe5LvXtGtqgD7yn68eiWarHiM1DGAyZo7eDPyi
-        hl+emzMxQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ixuzw-0001qt-Ka; Sat, 01 Feb 2020 15:47:52 +0000
-Date:   Sat, 1 Feb 2020 07:47:52 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     qiwuchen55@gmail.com
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-Message-ID: <20200201154752.GA12698@bombadil.infradead.org>
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
+        Sat, 1 Feb 2020 11:22:49 -0500
+Received: by mail-pg1-f194.google.com with SMTP id l3so1194331pgi.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 08:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LjZGc3GpXKgh0Fpg4TWhP09d0kLnJRFrxHAI23jbET8=;
+        b=WznZtWJCMDQYYS6poHS9yUqttdgqJMbaEJycKD/MywGA96ApeoxesQkpo2Usqcg1Fu
+         l672V2aWezxCuptvVNy0fVWmqgkzT/0V7zzLMm2vYLqW7tUZwzwr+Z+Uims/i93LD38v
+         TFMiMbf1+zyK3m5s0FpnPKOQPifHEbCGt63jTN6MsQX2yCU2pkiAOR4HJjSET3T3H0LC
+         6BPIZrgnm/QFjbcQ6LuHZnkHtZPBTFA0I73uST+sY/KI2wd2b2WPK+66S1eDcPRidv9F
+         oYaJATLFDKzXIayrmwY8NF7fHbbKSXO9HTf4nNjQxvjOnDyxuJFM+XFTkkfIaBT5qLfd
+         66Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LjZGc3GpXKgh0Fpg4TWhP09d0kLnJRFrxHAI23jbET8=;
+        b=LXf5sO1kuITCYEezRr71/BaUTXxAc3H7pB4suvWyLrF2k40QU1zwE5dIulCEoejvCU
+         TLNjlB9rqlmyXWs/CiTXf1MJV0NlsrcVi6blH4bsG7T6+8ZLrd/cgUitT6xdqgRV135F
+         Gx83cKWaD9PI4jQlGnP5DgJQG89oA+E3zKq/r56ugMZrsA2PagoYHEU4tqbmXGXr+H3r
+         2Jzp7rX45LZfEhQyQkRNS0TRObBUM9dK9YxZZVavooTczrq9ZuA0HFQc+c3o1Cnr+Ayv
+         mHDuv/ZVzCsYhje9RASojkdeQANmfkdRWp3ThTUsNfds9OVysrrWQtJe6ktPmvZ8J1Hd
+         sCnw==
+X-Gm-Message-State: APjAAAVb9/1Jd/KQrSRRRo6Ki+gJ0NW0jsXKDPZv7/nklO7Xwv7GP/R6
+        Xtlj3qrEfqu3IQ05hSlEAE0wgSB9mog=
+X-Google-Smtp-Source: APXvYqxKkcsG9kae9V9BqrQLaC/Vyivx2CRCcsviQqvbTHPQ7FuNdsLerepdErr6IS/L8jdMq68oRA==
+X-Received: by 2002:a63:450:: with SMTP id 77mr16384845pge.290.1580574167737;
+        Sat, 01 Feb 2020 08:22:47 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id f81sm13800057pfa.118.2020.02.01.08.22.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Feb 2020 08:22:47 -0800 (PST)
+Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
+To:     Andres Freund <andres@anarazel.de>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fab2fcb4-9fc2-e7db-b881-80c42f21e4bf@kernel.dk>
+Date:   Sat, 1 Feb 2020 09:22:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
+In-Reply-To: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 01, 2020 at 01:49:31PM +0800, qiwuchen55@gmail.com wrote:
-> Apparently our current rwsem code doesn't like doing the trylock, then
-> lock for real scheme.  So change our direct write method to just do the
-> trylock for the RWF_NOWAIT case.
-> This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-> in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
-
-This commit message doesn't match the patch.
-
->  	/* Don't allow parallel writes to the same file */
-> -	inode_lock(inode);
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock(inode))
-> +			return -EAGAIN;
-> +	} else {
-> +		inode_lock(inode);
-> +	}
-> +
->  	res = generic_write_checks(iocb, from);
->  	if (res > 0) {
->  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-> -- 
-> 1.9.1
+On 2/1/20 2:43 AM, Andres Freund wrote:
+> Hi
 > 
+> Currently io_uring executes fadvise in submission context except for
+> DONTNEED:
+> 
+> static int io_fadvise(struct io_kiocb *req, struct io_kiocb **nxt,
+> 		      bool force_nonblock)
+> {
+> ...
+> 	/* DONTNEED may block, others _should_ not */
+> 	if (fa->advice == POSIX_FADV_DONTNEED && force_nonblock)
+> 		return -EAGAIN;
+> 
+> which makes sense for POSIX_FADV_{NORMAL, RANDOM, WILLNEED}, but doesn't
+> seem like it's true for POSIX_FADV_WILLNEED?
+> 
+> As far as I can tell POSIX_FADV_WILLNEED synchronously starts readahead,
+> including page allocation etc, which of course might trigger quite
+> blocking. The fs also quite possibly needs to read metadata.
+> 
+> 
+> Seems like either WILLNEED would have to always be deferred, or
+> force_page_cache_readahead, __do_page_cache_readahead would etc need to
+> be wired up to know not to block. Including returning EAGAIN, despite
+> force_page_cache_readahead and generic_readahead() intentially ignoring
+> return values / errors.
+> 
+> I guess it's also possible to just add a separate precheck that looks
+> whether there's any IO needing to be done for the range. That could
+> potentially also be used to make DONTNEED nonblocking in case everything
+> is clean already, which seems like it could be nice. But that seems
+> weird modularity wise.
+
+Good point, we can block on the read-ahead. Which is counter intuitive,
+but true.
+
+I'll queue up the below for now, better safe than sorry.
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fb5c5b3e23f4..1464e4c9b04c 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2728,8 +2728,7 @@ static int io_fadvise(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	struct io_fadvise *fa = &req->fadvise;
+ 	int ret;
+ 
+-	/* DONTNEED may block, others _should_ not */
+-	if (fa->advice == POSIX_FADV_DONTNEED && force_nonblock)
++	if (force_nonblock)
+ 		return -EAGAIN;
+ 
+ 	ret = vfs_fadvise(req->file, fa->offset, fa->len, fa->advice);
+
+-- 
+Jens Axboe
+
