@@ -2,65 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF2814FF36
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 22:18:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2420814FF5F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 22:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbgBBVSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 16:18:20 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:39405 "EHLO
+        id S1726992AbgBBVZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 16:25:03 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:36913 "EHLO
         wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726967AbgBBVST (ORCPT
+        by vger.kernel.org with ESMTP id S1726971AbgBBVZD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:18:19 -0500
+        Sun, 2 Feb 2020 16:25:03 -0500
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 6B2BA623;
-        Sun,  2 Feb 2020 16:18:18 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id EC54C2F0;
+        Sun,  2 Feb 2020 16:25:01 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Sun, 02 Feb 2020 16:18:18 -0500
+  by compute4.internal (MEProxy); Sun, 02 Feb 2020 16:25:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
         subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=Y
-        YauA2N+/JraUuA6qvvhlo/yFe2Uz2pyn6+LyWyPsP0=; b=adN/3glPJjvyT3H1P
-        ilzmCAb00ZYJad6Jq3mushB1VedNSROnB3qTaZiYVpdgxc+R64ZrenhTNF+DTAn0
-        s/p+llhSyXuPHPgCks/CSBsA39dt/cLFD2HJLaIurb6VD0lWz8lJTZzIqfBa+9z6
-        uLSfRVIKaxmZvHOmILvTG0KeGFtVdGsrH8x3voj4W6KcyeV7SRyWn5k9A5pZDqZ1
-        UfmbFsxYsYbdGiO6P12URNioK8q/bWVvCWnqbD+1GWagiIw4vxXTJGPAdFRp8+ze
-        pqWfVbifsjEpqDZZIf6F6SWl7FPzQZ4f75+qTW8cX1xf1IdbrkMRkY9zVsGuYwqn
-        OTSVQ==
+        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=L
+        PxAQQiqRuoGOPKvYDIsLfwWX7h3xUQbmwrfmLakCe4=; b=Hmka/5594kogfTHSe
+        njcJkTHBFRhi1dtYBnecVetpuLZHyYslqhYAEa/iMriNJGBrBbfg5T3wtfNNzFoq
+        761nVT2i9lYEqde3nc6Fh+Suu+v8ZIi2X68h6N5lb7gPMXSqsxfVvpUy8WxIVy4E
+        g+2Ru49oRuw5FB2yx/csIek8a1BumVYYG2EcBzjtHaZXeIyRxIAJxomiNagq6X0q
+        I/lq5YdAp2m8SUWFB50bMni5IZd2ILVTQwo3w6NMP0VgMRn88gv+9A6WlSyIPX9U
+        hgfhrXdhBn2Z9LtcUPjDwTUf0GXWjr2qXbJLh+R7xWqo97nio742pV7+CuIXHBx+
+        3GwQQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=YYauA2N+/JraUuA6qvvhlo/yFe2Uz2pyn6+LyWyPs
-        P0=; b=jJfIc1J8522hjifmSosrUYVMCSeAxtqUL9ddm1y3CnVsTVOcrJ2GLwBRe
-        arHEMluFUWyf0qmwH+m8+CcFeWh1dYUKX/0qQbeboY/Q0aC+teuz3v01g3aqskOq
-        Ul7Acs4yuj+eJch9i2wTddG8GIU4YutWbINvkCiu5i6Sjo68/K0IWqIQXHcpA/w8
-        sX0cSg5F5uxWKq+exqZBk6BRctClOL4PVIqhm7gQrbWxolqfqMbqLgBsZsxiJAA3
-        z2aFtCb953SpNSZRr1Ztg4AEAb6YlA61lkUg/UiyIM+MIjxgoKT16NwSw02DyqWl
-        Rq9TOEGDO8uUDf5bxCyluiFAi0wyA==
-X-ME-Sender: <xms:mDw3XkZP1ACP1neRvYMDM7P6dB4SBLT0oBhArLZpcpbaapMp7XMerg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeehgddugeeiucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm1; bh=LPxAQQiqRuoGOPKvYDIsLfwWX7h3xUQbmwrfmLakC
+        e4=; b=BkwmvuA5eKxoL2ecK8vaWz8OzrG+bRStDEEMmrLTyH9wUl9+SLguWXcMN
+        6ezKm+ho6hYR+sh2veCV2AKy+Sa33eCNbZB7QLRUOLYhfaLaS8VqMWwSubo3DX94
+        g7IJn45iBqz7uSQiPvhUodAFjirfIdw5f9fpdbyALlIsonwquiNDWIlYBINN5m16
+        /cJW3+kGLXc7CTwNhEDypnpgkz87/71AKgu3ki+LlSMfc/89EqqroDbg65hC9pf/
+        G/GMjiSTTlb5fcAdnDtU8Kz6VtXZWjfT5G9QDW8D53XnMBlMr3W2QQ8Z3CAVzscj
+        Uy0Z5eZ80WA/P0kjQadYFfdg2XaPg==
+X-ME-Sender: <xms:LT43XhSf-nK5iOOp98uoYfio071OETUcbgluxqGJGD8PIZa7Vf5AMA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeehgddugeejucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtke
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtje
     ertddtfeejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhs
     tghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmheqnecukfhppedujeeirddukeelrdeike
     drudekleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
     pegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:mDw3Xv06xScZ7O_KZXO0U8UxoWf4sBi5Pzdx-B8fwz1hcKcaB83e_g>
-    <xmx:mDw3Xl2uB8SR6wf3XylQ4fRa8moveeBpyOEO5-JZuRwYfmJmLSvYtg>
-    <xmx:mDw3Xk47vBhu47Xi2KcotdmYfZlVxW75DIsNVUg8UZsh42UiweXVIw>
-    <xmx:mjw3XnLNmRc_coylCX0YRVWd63_RIb8NFMF7E8p4WJnS366VqVUWAQ>
+X-ME-Proxy: <xmx:LT43XvCoNr-G3PRj4KwYNDNeFdHGLxsA6_35jgStcFdHvb4fbpiqig>
+    <xmx:LT43Xh17-CQK3RopScxpUnApaDCE8fPvxdvuzyuMzEnPSwMhxYXy6A>
+    <xmx:LT43XtWCI7AxpL_Tln_2ZOv0OR8eY9H13WaPmFI6392QaPF02M6wWw>
+    <xmx:LT43XnQiHFRWIbda3esPxSqmlDUD860z1Vd8Ojwxt4shUKFqBAxrYQ>
 Received: from [192.168.1.20] (vol21-h02-176-189-68-189.dsl.sta.abo.bbox.fr [176.189.68.189])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DA442328005E;
-        Sun,  2 Feb 2020 16:18:15 -0500 (EST)
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-To:     chenqiwu <qiwuchen55@gmail.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
- <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
- <20200202020817.GA14887@cqw-OptiPlex-7050>
+        by mail.messagingengine.com (Postfix) with ESMTPA id 7E581328005D;
+        Sun,  2 Feb 2020 16:25:00 -0500 (EST)
+Subject: Re: [PATCH] fuse: Allow parallel DIO reads and check NOWAIT case for
+ DIO writes
+To:     qiwuchen55@gmail.com, miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>
+References: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
 From:   Bernd Schubert <bernd.schubert@fastmail.fm>
 Autocrypt: addr=bernd.schubert@fastmail.fm; prefer-encrypt=mutual;
  keydata= mQINBFQNcsgBEACdIK/JfbtJ0RUTqxoXTFaiiPt9Bc46nJ5CZWVcjls1BMc+N08bR+SD5dVe
@@ -106,15 +104,15 @@ Autocrypt: addr=bernd.schubert@fastmail.fm; prefer-encrypt=mutual;
  OLadHKf8Yg3VCa2whTbG6d/QqPNmltZxzcc9V8ldyVP7JjDBqc4KIuYWsnXJuRjD3+wJFjSD
  nRuztIt6LzsJVlO2b5984kKndPSY68MKDwRZFsskNpDiZn90tk6ShQi049dgrt1Z6aNJsbAY
  RKuEd5PPcv5D3SuPWLXJKLv4QH5esd6iPv20WmEodsArrg==
-Message-ID: <aafd8abf-832b-6348-7b74-4d65451a1eb6@fastmail.fm>
-Date:   Sun, 2 Feb 2020 22:18:58 +0100
+Message-ID: <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
+Date:   Sun, 2 Feb 2020 22:25:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200202020817.GA14887@cqw-OptiPlex-7050>
+In-Reply-To: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -122,66 +120,18 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2/2/20 3:08 AM, chenqiwu wrote:
-> On Sun, Feb 02, 2020 at 12:09:50AM +0100, Bernd Schubert wrote:
->>
->>
->> On 2/1/20 6:49 AM, qiwuchen55@gmail.com wrote:
->>> From: chenqiwu <chenqiwu@xiaomi.com>
->>>
->>> Apparently our current rwsem code doesn't like doing the trylock, then
->>> lock for real scheme.  So change our direct write method to just do the
->>> trylock for the RWF_NOWAIT case.
->>> This seems to fix AIM7 regression in some scalable filesystems upto ~25%
->>> in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
->>>
->>> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
->>> ---
->>>  fs/fuse/file.c | 8 +++++++-
->>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index ce71538..ac16994 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
->>>  	ssize_t res;
->>>  
->>>  	/* Don't allow parallel writes to the same file */
->>> -	inode_lock(inode);
->>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
->>> +		if (!inode_trylock(inode))
->>> +			return -EAGAIN;
->>> +	} else {
->>> +		inode_lock(inode);
->>> +	}
->>> +
->>>  	res = generic_write_checks(iocb, from);
->>>  	if (res > 0) {
->>>  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
->>>
->>
->>
->> I would actually like to ask if we can do something about this lock
->> altogether. Replace it with a range lock?  This very lock badly hurts
->> fuse shared file performance and maybe I miss something, but it should
->> be needed only for writes/reads going into the same file?
->>
-> I think replacing the internal inode rwsem with a range lock maybe not
-> a good idea, because it may cause potential block for different writes/reads
-> routes when this range lock is owned by someone. Using internal inode rwsem
-> can avoid this range racy.
-> 
+> @@ -1518,6 +1525,9 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  
+>  		res = __fuse_direct_read(&io, to, &iocb->ki_pos);
+>  	}
+> +	inode_unlock_shared(inode);
+> +
+> +	file_accessed(iocb->ki_filp);
 
-So your 2nd patch changes to rw-locks and should solve low read
-direct-io performance, but single shared file writes is still an issue.
-For network file systems it also common to globally enforce fuse
-direct-io to reduce/avoid cache coherency issues - the application
-typically doesn't ask for that on its own. And that is where this lock
-is badly hurting.  Hmm, maybe we should differentiate between
-fuse-internal direct-io and application direct-io requests here? Or we
-need a range lock,that supports shared readers (I haven't looked at any
-of the proposed range lock patches yet (non has landed yet, right?).
+
+Shouldn't the file_accessed() in different patch, with a description? It
+looks totally unrelated to locking?
+
 
 Thanks,
 Bernd
