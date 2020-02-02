@@ -2,140 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B321504E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 12:06:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16E2F15061C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 13:25:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbgBCLGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 06:06:51 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:37367 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727268AbgBCLGu (ORCPT
+        id S1728023AbgBCMZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 07:25:37 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36321 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728010AbgBCMZg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 06:06:50 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7C46621F57;
-        Mon,  3 Feb 2020 06:06:49 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 03 Feb 2020 06:06:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=NeywmRTXFlPPGpmrIlLmDGmyULW
-        /aHnlSGPykwDSgV4=; b=mIdeyCoPq+cYflUc2/An6NdgElK7pUEqlDNRzwUfYJ8
-        GA8p6srodHzgacu1/5IAdhWaHCB4QBrvj7Gr3PhHeoJfuDxKLXWL0nztRSHJZVev
-        0zhy1gBr3mz/2EwFYpluX0+zQKhLRNGoh7Vkdj7phZs14WUOCKxmf3kZk5bvkyM6
-        VhfcHgXt0QSTwcAb1ImIDrNj5gjUZAr0UpE1kxp3VyYxSlggA/19aOBN7z2rqqbF
-        PfP44S9d4rIbhYSI7TFBBhaTEux415E/ffLj3LjDdUc/KOH2XSpr9UDv0JQmsHcb
-        TTYA0++rQgFgnK7LkDbF2GgdPAkhMclCTrV+A+Ywv5A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NeywmR
-        TXFlPPGpmrIlLmDGmyULW/aHnlSGPykwDSgV4=; b=QS2hbBA36i5GE7TbVxNATW
-        1nFk1kJ/F3mhHG2TAUoSY7lP03TQ9pz/vMWzrDGUmghx2YsZX7l88gPDz8sGfXSa
-        nbjF2PKM6qeBW2fCovpSkL5HSoPXozPrd07pVjjHQHoHaFkSXfeKYiJ3eA6n4YzP
-        Ah5+ilnO+nUf3nW89/oC4zuedIfbXCzz+GZSFWqljpPyTZDDF7uInxtz4Nubi06V
-        xBIPfsOcNzvNjwjnz2hta+DKrpjZY2ftsqTBcOzZc8sYprSp3/nR/q3dxdYVz01E
-        lieNu1hHbfDxKf2mYnn7GHVsK0GlmCdXyqPFHRfv+bmR1lLOeL/vOJQvyl9rXogw
-        ==
-X-ME-Sender: <xms:yP43XgmNoGQ3oPwpsI7mZd5TGm7phJbkFTG7NsgKVqNb_9XYAj1iRg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeejgddvvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppeduje
-    dvrdehkedrvdejrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:yP43Xkqcj9ahGzgmMs8oHquwHSP1HGIyJ1hfdBXym-ciKCSRlY4p_g>
-    <xmx:yP43XgmzbfQYAVL2HsN3wA0ClrFtQXC0-mPsn-85NND-4gUhkZnlbw>
-    <xmx:yP43XkzyuQqIho2ZEV5TSLLPrOqU31qg0tac-0thFlLmAxlZVHskkg>
-    <xmx:yf43XlZIFjlGzoXBBD0dBfeU9xL2gni4ROvk54k_x0Qy-a3ei97uAg>
-Received: from intern.anarazel.de (unknown [172.58.27.127])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0073730602DB;
-        Mon,  3 Feb 2020 06:06:48 -0500 (EST)
-Date:   Sun, 2 Feb 2020 23:42:57 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
-Message-ID: <20200203074257.nx23pigjtmgbyyyz@alap3.anarazel.de>
-References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
- <20200203064047.GC8731@bombadil.infradead.org>
+        Mon, 3 Feb 2020 07:25:36 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 185so7503862pfv.3;
+        Mon, 03 Feb 2020 04:25:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:message-id:subject:to:cc:in-reply-to:references:mime-version
+         :date:user-agent:content-transfer-encoding;
+        bh=FKUC96H2QwgVAGrgpxfMD76drSTiMD3FF9MdbiCIpS8=;
+        b=HPO1AgLlnfZ+pZluxQyqrCTra6XSAwt2F+Uj29FPvo2c4XwRnwT72wrZ+jzbuurIXK
+         C+KAlWeBcVrPXX07WgD5kWbvkehjRGvGKZQgBoP0gwGp/plQRcySiHHb5RRmYdGynuFO
+         +6CW/ZwP1YlgBAwyBIfaF82nh2r+7uSzFgcqnSB7L0Ar2naG8oEpogeO6sS6BCcQSrly
+         w+hw8kJA2NPNK+AuCvFQ7AMOSzwWz+nMuvLX170Ds2yLbr7vi6SNZQo/UXA/r4tDj7+z
+         fq17M4t1bk1moTxFhigPrcp3YpYftiVCzykWuOr7B0IQEqFbckyfzpcj7P97SNzmhpHA
+         KJKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:subject:to:cc:in-reply-to
+         :references:mime-version:date:user-agent:content-transfer-encoding;
+        bh=FKUC96H2QwgVAGrgpxfMD76drSTiMD3FF9MdbiCIpS8=;
+        b=GfIBf4FFurTz53R2CekLfe/A0TtObbyGOwzcPClzD8DeFfMIQvT8gG3FrgZh6YUYvD
+         UbuwnXVRNkLmOKdqpHNA0r26GnW/N86UGrdODyWl1d1QWpxHYaFh+WA/fyyOEATxI+9a
+         dIFHYZy0f6uek3F4scA0e3jWLS+zlRqQ+GVbXC+0Z6plxSd0MeqJR9UKLTQwEDWVCVOJ
+         Cf+jBYAkbYR1Ai9zMNzl1w5VVgIS30Qv5/vQOuBt27LKDpHt+GzDVM68T77RE6UCq3Mp
+         GpJwNC0FNwKxWC1MLbt+pS8w26COc9mq4zw9kX7vHe7gpObv1rWFGNMkFsaPcJDiyAQn
+         YC7Q==
+X-Gm-Message-State: APjAAAV7qqHIiYhLd3gio9EaM1XkiVZXBOrd90dKENCKToEK9uIw7Bml
+        WRSIwvJJIWCyf7UmIe2FWg+b1tsN+IEq+OTa
+X-Google-Smtp-Source: APXvYqxOxWVTsRcvd9C4m7tKFtSR+8DtXkqhasjaCOq+nAlY3nENXgj29dpRAJjfDVd0Kr5ww8JTBA==
+X-Received: by 2002:aa7:820d:: with SMTP id k13mr25350332pfi.10.1580732734710;
+        Mon, 03 Feb 2020 04:25:34 -0800 (PST)
+Received: from xps ([103.125.232.133])
+        by smtp.gmail.com with ESMTPSA id o16sm19905855pgl.58.2020.02.03.04.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 04:25:33 -0800 (PST)
+From:   YunQiang Su <wzssyqa@gmail.com>
+X-Google-Original-From: YunQiang Su <ysu@wavecomp.com>
+Message-ID: <cca45705edcdd27898188be06c9f31ec824a6b50.camel@wavecomp.com>
+Subject: Re: [EXTERNAL][PATCH v3] binfmt_misc: pass binfmt_misc flags to
+ the interpreter
+To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
+References: <20200128132539.782286-1-laurent@vivier.eu>
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203064047.GC8731@bombadil.infradead.org>
+Date:   Sun, 02 Feb 2020 20:15:43 +0800
+User-Agent: Evolution 3.34.1-3 
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
-
-On 2020-02-02 22:40:47 -0800, Matthew Wilcox wrote:
-> On Sat, Feb 01, 2020 at 01:43:09AM -0800, Andres Freund wrote:
-> > As far as I can tell POSIX_FADV_WILLNEED synchronously starts readahead,
-> > including page allocation etc, which of course might trigger quite
-> > blocking. The fs also quite possibly needs to read metadata.
-> > 
-> > 
-> > Seems like either WILLNEED would have to always be deferred, or
-> > force_page_cache_readahead, __do_page_cache_readahead would etc need to
-> > be wired up to know not to block. Including returning EAGAIN, despite
-> > force_page_cache_readahead and generic_readahead() intentially ignoring
-> > return values / errors.
+在 2020-01-28二的 14:25 +0100，Laurent Vivier写道：
+> It can be useful to the interpreter to know which flags are in use.
 > 
-> The first step is going to be letting the readahead code know that it
-> should have this behaviour, which is tricky because the code flow looks
-> like this:
+> For instance, knowing if the preserve-argv[0] is in use would
+> allow to skip the pathname argument.
 > 
-> io_fadvise
->   vfs_fadvise
->     file->f_op->fadvise()
+> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
+> flag to inform interpreter if the preserve-argv[0] is enabled.
+> 
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
 
-Yea.
+Reviewed-by: YunQiang Su <ysu@wavecomp.com>
 
+> ---
+> 
+> Notes:
+>     This can be tested with QEMU from my branch:
+>     
+>       https://github.com/vivier/qemu/commits/binfmt-argv0
+>     
+>     With something like:
+>     
+>       # cp ..../qemu-ppc /chroot/powerpc/jessie
+>     
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
+> yes \
+>                             --persistent no --preserve-argv0 yes
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: POC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       sh
+>     
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
+> yes \
+>                             --persistent no --preserve-argv0 no
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: OC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       /bin/sh
+>     
+>     v3: mix my patch with one from YunQiang Su and my comments on it
+>         introduce a new flag in the uabi for the AT_FLAGS
+>     v2: only pass special flags (remove Magic and Enabled flags)
+> 
+>  fs/binfmt_elf.c              | 5 ++++-
+>  fs/binfmt_elf_fdpic.c        | 5 ++++-
+>  fs/binfmt_misc.c             | 4 +++-
+>  include/linux/binfmts.h      | 4 ++++
+>  include/uapi/linux/binfmts.h | 4 ++++
+>  5 files changed, 19 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index ecd8d2698515..ff918042ceed 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm,
+> struct elfhdr *exec,
+>  	unsigned char k_rand_bytes[16];
+>  	int items;
+>  	elf_addr_t *elf_info;
+> +	elf_addr_t flags = 0;
+>  	int ei_index = 0;
+>  	const struct cred *cred = current_cred();
+>  	struct vm_area_struct *vma;
+> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm,
+> struct elfhdr *exec,
+>  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+>  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
+> -	NEW_AUX_ENT(AT_FLAGS, 0);
+> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +	NEW_AUX_ENT(AT_FLAGS, flags);
+>  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
+>  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred-
+> >uid));
+>  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred-
+> >euid));
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index 240f66663543..abb90d82aa58 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct
+> linux_binprm *bprm,
+>  	char __user *u_platform, *u_base_platform, *p;
+>  	int loop;
+>  	int nr;	/* reset for each csp adjustment */
+> +	unsigned long flags = 0;
+>  
+>  #ifdef CONFIG_MMU
+>  	/* In some cases (e.g. Hyper-Threading), we want to avoid L1
+> evictions
+> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct
+> linux_binprm *bprm,
+>  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
+>  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
+>  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
+> -	NEW_AUX_ENT(AT_FLAGS,	0);
+> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +	NEW_AUX_ENT(AT_FLAGS,	flags);
+>  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
+>  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred-
+> >user_ns, cred->uid));
+>  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred-
+> >user_ns, cred->euid));
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..b9acdd26a654 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm
+> *bprm)
+>  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+>  		goto ret;
+>  
+> -	if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
+> +	if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
+> +		bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
+> +	} else {
+>  		retval = remove_arg_zero(bprm);
+>  		if (retval)
+>  			goto ret;
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc633f3be..265b80d5fd6f 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -78,6 +78,10 @@ struct linux_binprm {
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 <<
+> BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
+>  
+> +/* if preserve the argv0 for the interpreter  */
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 <<
+> BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  /* Function parameter for binfmt->coredump */
+>  struct coredump_params {
+>  	const kernel_siginfo_t *siginfo;
+> diff --git a/include/uapi/linux/binfmts.h
+> b/include/uapi/linux/binfmts.h
+> index 689025d9c185..a70747416130 100644
+> --- a/include/uapi/linux/binfmts.h
+> +++ b/include/uapi/linux/binfmts.h
+> @@ -18,4 +18,8 @@ struct pt_regs;
+>  /* sizeof(linux_binprm->buf) */
+>  #define BINPRM_BUF_SIZE 256
+>  
+> +/* if preserve the argv0 for the interpreter  */
+> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
+> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  #endif /* _UAPI_LINUX_BINFMTS_H */
 
-> ... and we'd be breaking brand new ground trying to add a gfp_t to a
-> file_operations method.  Which is not to say it couldn't be done, but
-> would mean changing filesystems, just so we could pass the gfp
-> flags through from the top level to the low level.  It wouldn't be
-> too bad; only two filesystems implement an ->fadvise op today.
-
-I was wondering if the right approach could be to pass through a kiocb
-instead of gfp_t. There's obviously precedent for that in
-file_operations, and then IOCB_NOWAIT could be used to represent the the
-intent to not block. It'd be a bit weird in the sense that currently
-there'd probably be no callback - but that seems fairly minor. And who
-knows, 
-
-
-> Next possibility, we could add a POSIX_FADV_WILLNEED_ASYNC advice
-> flag.
-
-POSIX_FADV_DONTNEED has similar problems to POSIX_FADV_WILLNEED, so it'd
-be nice to come up with an API change to vfs_fadvise that'd support
-both. Obviously there also could be a POSIX_FADV_DONTNEED_ASYNC, but ...
-
-
-> Something I already want to see in an entirely different context is
-> a flag in the task_struct which says, essentially, "don't block in
-> memory allocations" -- ie behave as if __GFP_NOWAIT | __GFP_NOWARN
-> is set.  See my proposal here:
-
-I'm a bit out of my depth here: Would __GFP_NOWAIT actually be suitable
-to indicate that no blocking IO is to be executed by the FS? E.g. for
-metadata? As far as I can tell that's also a problem, not just reclaim
-to make space for the to-be-read data.
-
-
-> I've got my head stuck in the middle of the readahead code right now,
-> so this seems like a good time to add this functionality.  Once I'm done
-> with finding out who broke my test VM, I'll take a shot at adding
-> this.
-
-Cool!
-
-Greetings,
-
-Andres Freund
