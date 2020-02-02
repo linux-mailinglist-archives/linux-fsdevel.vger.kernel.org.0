@@ -2,142 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A270414FB33
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 03:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0403C14FB34
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 03:08:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbgBBCCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 21:02:19 -0500
-Received: from mout.gmx.net ([212.227.15.18]:39657 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbgBBCCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 21:02:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1580608937;
-        bh=jS6B2LN4qRD1FiWx/800KFZ9BGh30fsz9JBNS1d/JxI=;
-        h=X-UI-Sender-Class:To:From:Subject:Date;
-        b=BdW4Un1m19VLx+tNrh6ZJH+D61Zc2ViiSvBglm79x21cVLXZp7aCDXKGiDu0StVtf
-         6+vWenuBHAv8Kx6KpXO7uhBhyX8nysEG56H4tz2iDD2TnHtPp4oclT6w+Hgez01I49
-         31pvWV1YI9QdpXJcskUxfbnjPcl4oDk4zrDaq2Y4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.com (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1Mulm5-1jonlb11Nr-00rsEH; Sun, 02
- Feb 2020 03:02:16 +0100
-To:     linux-ext4@vger.kernel.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Subject: About read-only feature EXT4_FEATURE_RO_COMPAT_SHARED_BLOCKS
-Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
- mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
- PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
- 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
- D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
- efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
- ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
- BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
- 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
- 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
- EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
- 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
- ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
- oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
- fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
- 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
- ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
- oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
-Message-ID: <4697ab8d-f9cf-07cc-0ce9-db92e9381492@gmx.com>
-Date:   Sun, 2 Feb 2020 10:02:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        id S1726794AbgBBCIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 21:08:20 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41595 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbgBBCIU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 1 Feb 2020 21:08:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id j9so2488465pfa.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 18:08:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ziz1vcIA0cAuMmJDEwXsJ9Bf+GwAVEVzYmI7RK7+MZ4=;
+        b=Pr8JtpStIwbiJ/6vwi5Qc3vnBfkwjBuz5vHLmhAZH+swoWIDP0i/Wxx8L7qA9a8puM
+         lr/swYhMeosVMWHXuWWSNtr7zs3La9Tj5672HbaySWn4HFPyw7LiZwHxIDmjcGnakcdG
+         ucaDAPePBH8YFOJMkWH/qtl+5/mI2pIIIU82R0Mgkx8msFXimEpYk3uSdH3XN024mcpA
+         gu0mGgFlV2/WhtRMCKig+lJrCK/w2oJN3HOG9s1xg0DcVgNLkd2fLsxgZjuecr7jdUcM
+         97FkdVxDKpKZ95aOcbmNeCvMarylJ5QM9TCLC0SU9nbyJsoROoZHsacckpXIIpBO/u03
+         0aXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ziz1vcIA0cAuMmJDEwXsJ9Bf+GwAVEVzYmI7RK7+MZ4=;
+        b=He29XUte8MRB+mDXu8XUEDNGpatirucobojyc1aSW4LqeTbJbIGLzJ2KE12bj9fTmO
+         ND+44mxusQ7PRa7F/ao9CULYPS/QcosspQ/g0EN/5YcbjBikdLQsIgdlxN2onHMkGUi0
+         SjybuJUVg5RCZBzk3fUfZr8fEMp/49aweySsxFaeYc5s8KE+ve2FFSHW9ZiunzDXz2O6
+         h/RBJHSliDIYxsSCJiNKB1eESa3rVP1tZKj9aMKvJbqnzM7g9o2JM79RwBhy1fY5HPwR
+         PbhIAr+hgMxqK7eyByH96sMByrFDLWsfkeZvtBniK0HDxXTgIQ2jNO6R9TNjfcJ44Ko1
+         8IiQ==
+X-Gm-Message-State: APjAAAXigOu5nw79XR4/KCjUvDMsgHULbMtNpknmwZPiXmewbWU/MISZ
+        AfulghPSOStmnIRpUx1IXWbjvXzesjE=
+X-Google-Smtp-Source: APXvYqyiatYxbdWLfqpS/HL3rq1Xco0Tw4wdLUDE/iDENt3UAjmp4AT0xM2WSDwtSrZ9kQn0GVL4jg==
+X-Received: by 2002:a63:447:: with SMTP id 68mr4946255pge.97.1580609299875;
+        Sat, 01 Feb 2020 18:08:19 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id z18sm15516600pfk.19.2020.02.01.18.08.18
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sat, 01 Feb 2020 18:08:19 -0800 (PST)
+Date:   Sun, 2 Feb 2020 10:08:17 +0800
+From:   chenqiwu <qiwuchen55@gmail.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        chenqiwu <chenqiwu@xiaomi.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] fuse: fix inode rwsem regression
+Message-ID: <20200202020817.GA14887@cqw-OptiPlex-7050>
+References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
+ <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="ttRdle2b4khj48s4ZraTVMryllJUe6JaV"
-X-Provags-ID: V03:K1:ldIic9/tqxvnJX8pO0CLhWW+L5Zl4LzvIzzan8YC+Rq1Y9wL3RF
- Ee08je3mC51S+/tJ8AppS5ZesqVzlmT/R/O+HE92oeVjYztn8jqPnllr0qlKROskv9UL27o
- qOGIrHZh6GZqXgEiXphxZzkjBts49J4KkiyZci5rSsRYatY+2OHEPze1R9+MRBucgv7pUPw
- l3lkhILGI7YK2pxlbF3mA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:E7GMOS1ZlqU=:3S8s7fQRY9TorMIEfY6o3H
- 9bmHXSsUCh3rm4d9IYOKq0oZx+F36lwBlBDMQp1+/PhAb+qlHI7GQ6VGAYxNcqpqJ7PmYyS2P
- kn5n1V8yFG1oM1bqKFRJE/y5sE6bWz81x28mVkuc/iVguELZ2gTnEOaomKp8sL6JjmdykHHuZ
- NIfatbPPEKGpnoiKMvLVZcgKH64m4gfn63MQwaYXWIxurmqzBox/pE7C6NDDleBSgCLNZ/dGV
- j13kYIlkAh7bBb1db/TrJ3eNbkcSiFBsH4tCTmkt0fsSrFOXFE/M5ShRtXabxDjgU7iSsthoL
- ylWmiOtC48fhB2GYv74SHbI3uD8IfZ04yt0koUwo1AkotM9GR4dnQqGmimQTodDOWOcMXTPEH
- pTnTkHE6M9+ZnUz0LiC07Zw4BPm0U0tIp1ksn3+SX6MrotVq9hwSnA9FQVfwQp02yoDNpXT5X
- CK0eTwd2XFEcLFSqiuQil+ZlgDj/aTw9G7BzNSPnToQvXmdfh3WXNP4pTpkdOqaT7PDFVJbo+
- D/cYEZz1Ffwp0c1y3Ye4b7JVWZMLY51iRdGBJZvyQvdAERhvnLHRing145AGFViNU3nTx8/c3
- /hpNz6a0oG8GJbIDdaT+h0gyMW6vBDxZNbVFNiv1zcdsIOe4A4aUVgoLox9a2/LznTEDF1TRJ
- B7S7539lYQbirWy8CPUueQoKt4Z6fZx/jDWI3+HbQ4sSc1mxaTxFVs+4ffz/zqHxibFpdQ07t
- 18FA71ELw2LAyHYdjBAcrbrYDqkbDUES8QcUvlPOgkoBbLWe2FKZeOE4+wAExNU5L27p/nc5R
- YQZOhglkwAMz6Xp1vgNwwMIL9zJ/HxTcVYgUSoG5/qP9TOGcT50sjFjw77+7tTu3oOd5duHgw
- yHxahDFk4vaHlcZhMqJd/1ghyU7jylfR3w4TLHoJ2f9KnawEmEgVu9goZIRWwrdktxZ6WXrF9
- KoQ3f85AC1AfSKpaRnW4IHBfdGcFX4DwGotDi/nmr8TPtbxlwlp1+LQyUr0RN3Wd4BlC3idp4
- MfRNExvFAouGGbrMXyeMvqj3NwOYHjaNCM/ACURoxk6/jKFJjhIvkh10Pd08Rb01T9Yw8nXJ9
- ny9Y+3+XFKhL7ntaZflvb5lSzpRn/gcCLLxGt72DcXSjlvJ+aTV7RmhYEgD8ocyRRsBagrwmz
- ymOiM5gS0xf2YUknFHLOk1TynG+KXCBrhbbJUW4Bt/pyfr2XVyN7G1vwkuAZpYDu6fszksO+G
- znC2cd4JlwgdOJps9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ttRdle2b4khj48s4ZraTVMryllJUe6JaV
-Content-Type: multipart/mixed; boundary="gHzb7Jv3uwwl8ywRz1kd3twosCZQuJEAz"
-
---gHzb7Jv3uwwl8ywRz1kd3twosCZQuJEAz
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-Hi ext4 guys,
-
-Recently I found an image from android (vendor.img) has this RO feature
-set, but kernel doesn't support it, thus no easy way to modify it.
-(Although I can just modify the underlying block for my purpose, it's
-just one line change, I still want a more elegant way).
-
-Thus it can only be mounted RO. So far so good, as from its name, it's
-kinda of deduped (BTW, both XFS and Btrfs supports RW mount for
-reflinked/deduped fs).
-
-But the problem is, how to create such image?
-
-Man page of mke2fs has no mention of such thing at all, and obviously
-for whoever comes up with such "brilliant" way to block users from
-modifying things, the "-E unshare_blocks" will just make the image too
-large for the device.
-
-Or we must go the Android rabbit hole to find an exotic tool to modify
-even one line of a config file?
-
-Thanks,
-Qu
-
-
---gHzb7Jv3uwwl8ywRz1kd3twosCZQuJEAz--
-
---ttRdle2b4khj48s4ZraTVMryllJUe6JaV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl42LaUACgkQwj2R86El
-/qiNdgf9HKeu+xtdBWRXm8yvy0x/giFCC5dAThCixVc+637hFh3eqgjD+AvdDcqA
-Rj2X1BGKgJGvGJvL6tOdQ7Ga9rb+AeNbMm734KsZMi/89gKYqh655hiMoyKyvr5E
-n8oW79TUHkgo6sZDAwkxZfLQep4a9/j+LgEOGhdtmSM/r/LyjtegyaEH3GDcG29c
-2IwLQ0DwOHOzN1gqu1Yfz97ObPKeXk5Zhs/UUoVHYV2myCsfoP4pL5A5wsm6D4qv
-Bf5E8bwAbRLHklM4ezr3ppiNjQ1yTdshS+vfQHvTiMCytUxM68LuxCdp0qx43h2R
-5WLjMJ1UHAicKxP0iyHGeAex8aUETg==
-=iM+l
------END PGP SIGNATURE-----
-
---ttRdle2b4khj48s4ZraTVMryllJUe6JaV--
+On Sun, Feb 02, 2020 at 12:09:50AM +0100, Bernd Schubert wrote:
+> 
+> 
+> On 2/1/20 6:49 AM, qiwuchen55@gmail.com wrote:
+> > From: chenqiwu <chenqiwu@xiaomi.com>
+> > 
+> > Apparently our current rwsem code doesn't like doing the trylock, then
+> > lock for real scheme.  So change our direct write method to just do the
+> > trylock for the RWF_NOWAIT case.
+> > This seems to fix AIM7 regression in some scalable filesystems upto ~25%
+> > in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
+> > 
+> > Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+> > ---
+> >  fs/fuse/file.c | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index ce71538..ac16994 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >  	ssize_t res;
+> >  
+> >  	/* Don't allow parallel writes to the same file */
+> > -	inode_lock(inode);
+> > +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> > +		if (!inode_trylock(inode))
+> > +			return -EAGAIN;
+> > +	} else {
+> > +		inode_lock(inode);
+> > +	}
+> > +
+> >  	res = generic_write_checks(iocb, from);
+> >  	if (res > 0) {
+> >  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+> > 
+> 
+> 
+> I would actually like to ask if we can do something about this lock
+> altogether. Replace it with a range lock?  This very lock badly hurts
+> fuse shared file performance and maybe I miss something, but it should
+> be needed only for writes/reads going into the same file?
+>
+I think replacing the internal inode rwsem with a range lock maybe not
+a good idea, because it may cause potential block for different writes/reads
+routes when this range lock is owned by someone. Using internal inode rwsem
+can avoid this range racy.
