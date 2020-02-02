@@ -2,71 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF71214FC0A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 08:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98BAA14FC0E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 08:14:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgBBHFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 02:05:03 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:44032 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbgBBHFD (ORCPT
+        id S1726837AbgBBHOi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 02:14:38 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49609 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726483AbgBBHOi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 02:05:03 -0500
-Received: by mail-io1-f70.google.com with SMTP id t17so7199796ioi.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 23:05:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Fqcj080fpjW3YleUBFYycrIBXVF2KLfVb8A0MJTatPs=;
-        b=IoqY0C77ZSlw7kgBt1EgdtIcm0NjNk9Q3QL9nJDjhdCqvrgkAtfZKmShVXvEDwF14T
-         fEld7BybLO+RWNGTRC7jNARjv7dPFT+Ct1JOck3OxFF5HvQHBuo296MPyQgg7+axDfPI
-         +3GdexJYMJKN6QP0GpdgKkNNlIuIQeCv7rX1aQechO4rkl+16+a6bVmAvumi10yMal1n
-         CQ5RRcec3LxQ5ZZOkGTrhjCtIlk24qCdL1/Vd3tQ+xQaFk3ogzeN3EdiQxMcL2/gta6l
-         xO0njhXdNTKPLE286MUkGCWDRuipzTdtk281NxxlyOQi4qn79EUQzRf9WlX4K94RD9qY
-         zuqQ==
-X-Gm-Message-State: APjAAAUg1DFANn7CIxH+AvujWYRs5lrtJsu8RpwUWw/UrO1rUf4zRA01
-        fmEYO3SWlitSsj2XlQCVwyzj9S0fiZzRqrIXp1XnuTMZolKV
-X-Google-Smtp-Source: APXvYqxfBgVwZ/hal5pak54Hcteg+t0Fij/8KIMoja/+eLHlPRn9E4SfA6mh3Gdu3ROVJtSS+LFRs6S4yHL4Rd9kab/BnsMwYdze
+        Sun, 2 Feb 2020 02:14:38 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4698C21B10;
+        Sun,  2 Feb 2020 02:14:37 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 02 Feb 2020 02:14:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=M9Dz30ZTX6O5HaMibb7km2szsUt
+        1BfrAvqHLkKt3Maw=; b=SsQsuvheWRYHUhLA8y54Mmvg7/snwBNeactAMTvlhqH
+        Q1wAS5178dtFde9z3twh8m/fX7984yuYmtP3cmKZdkXeYlqRRl+j9w0cxWADjAaq
+        tWGVJTfpH98kziSkUs8YUzozDCbiX8j7rqaCtunp3IxqdV0ApViqyb0DNV7j+59O
+        qzyqgsQ9qwV+kOrkqSBu0m2dHbUFB1Qfg532LH1gwcb5lnooEL6E2uXKfxbXmu/X
+        +mqYIMo7+RIfbbvlYOQtGv1ACoeI48l9ui+opWTiONjA49bjxmmcnd2PAbn51ks1
+        4tbOLRDFsjnjF2nOvHDakNJwsONVjC3n2QO19Y7XRcg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=M9Dz30
+        ZTX6O5HaMibb7km2szsUt1BfrAvqHLkKt3Maw=; b=yenjx75KoWe+mCYuMA9KuB
+        OSexOng9OP4Njy8RhtnNIR3pLn+z3YP+4i+cWiKSAOkKDnjsdSWCUSFmAWpEI+q1
+        foLjwy9wIwx0Xuz1nwid2SW9ngG4FgcnhNn8kX3ei5OBqh1VGIv1rL9SKrxiQhjt
+        cBjgSMGYmTsmKEQGuzW+g80uSkXQoMFIdqwzRn8SZM0xu1GvOUKXxfM7Ye/Ks+WH
+        OqNIMQLg7ztJuUFmemUFrYtw7tjQyXyg49GziQIkPcFI9RlLPvNV3SUcKijZ187n
+        y5h9eS3oEQU1KsqASUWnfy1u7CMnY2jekmM3uQZynwaI3sk/XXsPyWhD+v/4eWbQ
+        ==
+X-ME-Sender: <xms:3HY2XvYlAIPyPLKu_hdBa93znGj7wSUPK_bH2CJnE6nLYxdt2x6Zgg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeeggdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecukfhppedvud
+    dvrdejiedrvdehfedrudejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpegrnhgurhgvshesrghnrghrrgiivghlrdguvg
+X-ME-Proxy: <xmx:3HY2XmQ4nlbP5EQFFdjjEj4UarBUGU1YZatGAdPnXf_vtwjxkzwZXg>
+    <xmx:3HY2XhU662_T2QZg3oYzNABH-V-GDr0jeX0TL2cPfOCun-29LAeWrg>
+    <xmx:3HY2XtYgBNMA_psS67nSXqmRALBypchR4PV1CYZz60ezZH53Fp9DdQ>
+    <xmx:3XY2XpO2NF_tezUZGrMVbhmfq7iJSRooLMym-U7yD4geqhz0MzXsOQ>
+Received: from intern.anarazel.de (unknown [212.76.253.171])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 996913280059;
+        Sun,  2 Feb 2020 02:14:36 -0500 (EST)
+Date:   Sat, 1 Feb 2020 23:14:35 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
+Message-ID: <20200202071435.2hqg5dtqkejpjpft@alap3.anarazel.de>
+References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
+ <fab2fcb4-9fc2-e7db-b881-80c42f21e4bf@kernel.dk>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8e4c:: with SMTP id r12mr14311646ioo.119.1580627101442;
- Sat, 01 Feb 2020 23:05:01 -0800 (PST)
-Date:   Sat, 01 Feb 2020 23:05:01 -0800
-In-Reply-To: <0000000000001a1ef1059b1a27c7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e76ba6059d926c08@google.com>
-Subject: Re: INFO: task hung in __generic_file_fsync (2)
-From:   syzbot <syzbot+44c32606d8669fb0d45c@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, axboe@kernel.dk, dave@stgolabs.net,
-        hch@lst.de, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, ming.lei@redhat.com, osandov@fb.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fab2fcb4-9fc2-e7db-b881-80c42f21e4bf@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+Hi,
 
-commit 85a8ce62c2eabe28b9d76ca4eecf37922402df93
-Author: Ming Lei <ming.lei@redhat.com>
-Date:   Fri Dec 27 23:05:48 2019 +0000
+On 2020-02-01 09:22:45 -0700, Jens Axboe wrote:
+> On 2/1/20 2:43 AM, Andres Freund wrote:
+> > Seems like either WILLNEED would have to always be deferred, or
+> > force_page_cache_readahead, __do_page_cache_readahead would etc need to
+> > be wired up to know not to block. Including returning EAGAIN, despite
+> > force_page_cache_readahead and generic_readahead() intentially ignoring
+> > return values / errors.
+> > 
+> > I guess it's also possible to just add a separate precheck that looks
+> > whether there's any IO needing to be done for the range. That could
+> > potentially also be used to make DONTNEED nonblocking in case everything
+> > is clean already, which seems like it could be nice. But that seems
+> > weird modularity wise.
+> 
+> Good point, we can block on the read-ahead. Which is counter intuitive,
+> but true.
 
-    block: add bio_truncate to fix guard_bio_eod
+> I'll queue up the below for now, better safe than sorry.
+> 
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index fb5c5b3e23f4..1464e4c9b04c 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2728,8 +2728,7 @@ static int io_fadvise(struct io_kiocb *req, struct io_kiocb **nxt,
+>  	struct io_fadvise *fa = &req->fadvise;
+>  	int ret;
+>  
+> -	/* DONTNEED may block, others _should_ not */
+> -	if (fa->advice == POSIX_FADV_DONTNEED && force_nonblock)
+> +	if (force_nonblock)
+>  		return -EAGAIN;
+>  
+>  	ret = vfs_fadvise(req->file, fa->offset, fa->len, fa->advice);
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13ebe101e00000
-start commit:   bf8d1cd4 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-dashboard link: https://syzkaller.appspot.com/bug?extid=44c32606d8669fb0d45c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137e2615e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11306971e00000
+Hm, that seems a bit broad. It seems fairly safe to leave
+POSIX_FADV_{NORMAL,RANDOM,SEQUENTIAL} as sync. I guess there's there's
+the argument that that's not something one does frequently enough to
+care, but it's not hard to imagine wanting to change to RANDOM for a few
+reads and then back to NORMAL.
 
-If the result looks correct, please mark the bug fixed by replying with:
+Greetings,
 
-#syz fix: block: add bio_truncate to fix guard_bio_eod
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Andres Freund
