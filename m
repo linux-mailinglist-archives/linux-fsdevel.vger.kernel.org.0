@@ -2,114 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0403C14FB34
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 03:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE1F14FB36
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 03:16:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgBBCIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Feb 2020 21:08:20 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41595 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbgBBCIU (ORCPT
+        id S1726805AbgBBCQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Feb 2020 21:16:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40278 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbgBBCQf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Feb 2020 21:08:20 -0500
-Received: by mail-pf1-f193.google.com with SMTP id j9so2488465pfa.8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 18:08:20 -0800 (PST)
+        Sat, 1 Feb 2020 21:16:35 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y1so4386707plp.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Feb 2020 18:16:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ziz1vcIA0cAuMmJDEwXsJ9Bf+GwAVEVzYmI7RK7+MZ4=;
-        b=Pr8JtpStIwbiJ/6vwi5Qc3vnBfkwjBuz5vHLmhAZH+swoWIDP0i/Wxx8L7qA9a8puM
-         lr/swYhMeosVMWHXuWWSNtr7zs3La9Tj5672HbaySWn4HFPyw7LiZwHxIDmjcGnakcdG
-         ucaDAPePBH8YFOJMkWH/qtl+5/mI2pIIIU82R0Mgkx8msFXimEpYk3uSdH3XN024mcpA
-         gu0mGgFlV2/WhtRMCKig+lJrCK/w2oJN3HOG9s1xg0DcVgNLkd2fLsxgZjuecr7jdUcM
-         97FkdVxDKpKZ95aOcbmNeCvMarylJ5QM9TCLC0SU9nbyJsoROoZHsacckpXIIpBO/u03
-         0aXQ==
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=YdIQTRK4jxj79GTFYVoRuBUKuQUyOIcAPKo43gVIN98=;
+        b=Zph8hywTRDdX/jA2QVuRfkYloFinE2U268oinWpVUSJsO2LU1dc0Myh3Qw00tQJqk0
+         24jX+zrtFwxwy2CzVxR3Nt3gxiJfcIOeZmCqaer4qARY33y6TS843dY/9Xx2VaqhKnn9
+         ChKlJk8tS4nyN7gLWpq9ljXRnBhM4UFKSzseIomzIl3q64BlbTxN98QQApqBfyMfal/7
+         SRVx1RwhVV/fVtqgFA2uiSNTc4LZkZEDDuN0iE7DfRc3iz1EhKsPdnupHorQcdZyreyL
+         I2aSBXt1B/No27G2r0aU2zXOSAXebXLbrFYBNhyITDps0UwDW8Jkjn3mbFiQcSjkraYR
+         Kbjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ziz1vcIA0cAuMmJDEwXsJ9Bf+GwAVEVzYmI7RK7+MZ4=;
-        b=He29XUte8MRB+mDXu8XUEDNGpatirucobojyc1aSW4LqeTbJbIGLzJ2KE12bj9fTmO
-         ND+44mxusQ7PRa7F/ao9CULYPS/QcosspQ/g0EN/5YcbjBikdLQsIgdlxN2onHMkGUi0
-         SjybuJUVg5RCZBzk3fUfZr8fEMp/49aweySsxFaeYc5s8KE+ve2FFSHW9ZiunzDXz2O6
-         h/RBJHSliDIYxsSCJiNKB1eESa3rVP1tZKj9aMKvJbqnzM7g9o2JM79RwBhy1fY5HPwR
-         PbhIAr+hgMxqK7eyByH96sMByrFDLWsfkeZvtBniK0HDxXTgIQ2jNO6R9TNjfcJ44Ko1
-         8IiQ==
-X-Gm-Message-State: APjAAAXigOu5nw79XR4/KCjUvDMsgHULbMtNpknmwZPiXmewbWU/MISZ
-        AfulghPSOStmnIRpUx1IXWbjvXzesjE=
-X-Google-Smtp-Source: APXvYqyiatYxbdWLfqpS/HL3rq1Xco0Tw4wdLUDE/iDENt3UAjmp4AT0xM2WSDwtSrZ9kQn0GVL4jg==
-X-Received: by 2002:a63:447:: with SMTP id 68mr4946255pge.97.1580609299875;
-        Sat, 01 Feb 2020 18:08:19 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id z18sm15516600pfk.19.2020.02.01.18.08.18
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sat, 01 Feb 2020 18:08:19 -0800 (PST)
-Date:   Sun, 2 Feb 2020 10:08:17 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-Message-ID: <20200202020817.GA14887@cqw-OptiPlex-7050>
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
- <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=YdIQTRK4jxj79GTFYVoRuBUKuQUyOIcAPKo43gVIN98=;
+        b=ptHMDAPwgKfqzcXioPcHKTj8q3CXiqz9OYnSWJ3JgEU9f1ergisbKoOUfwzICVrGjl
+         /w6c4B3eQI+LmucSRwnTDGckvZkKRCntsolNTssLttBLgXxT61HYc7RUyQh98yrmJT7N
+         ALvc8mwuFyJSfacO19BGKSG+F79vG+bLZut1VkH7Y5RqADZg5dQcKS+pAJKmtozmbH9p
+         IZlnAsNGGzIfcqI30Jtajmc9PV8KlsO4974ewytQY5gm/DYPmENYHuzyXid5pSNv4JoQ
+         ch/oaIPZTScgVvNy//6QWjAT8E0AUCYUrDbgPRJN+OjIz7XD02gEhNIHQfNUM4PZ+2vi
+         onhQ==
+X-Gm-Message-State: APjAAAV0XhJYIv5kloFe3lwNxtVlU0AGyuGVJZqLayUGdlsdZe+lzGyi
+        6L4jjt2+UWLnUKAmFPZQvgiKeA==
+X-Google-Smtp-Source: APXvYqw55Qq7yZ9J/1lwT7tGm+YK1IoI+i7p2G+M8jbum5GrEElhO1eaiMfzgOytepAv6Dh/WYmNBg==
+X-Received: by 2002:a17:90a:5801:: with SMTP id h1mr8686190pji.121.1580609792715;
+        Sat, 01 Feb 2020 18:16:32 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id p5sm15114181pga.69.2020.02.01.18.16.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 01 Feb 2020 18:16:31 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <F933761F-D748-4FD9-9FC3-2C52D7CA205D@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_E26B7161-ABF9-47FF-AD20-30D089BD5809";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: About read-only feature EXT4_FEATURE_RO_COMPAT_SHARED_BLOCKS
+Date:   Sat, 1 Feb 2020 19:16:27 -0700
+In-Reply-To: <4697ab8d-f9cf-07cc-0ce9-db92e9381492@gmx.com>
+Cc:     linux-ext4@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
+References: <4697ab8d-f9cf-07cc-0ce9-db92e9381492@gmx.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 02, 2020 at 12:09:50AM +0100, Bernd Schubert wrote:
+
+--Apple-Mail=_E26B7161-ABF9-47FF-AD20-30D089BD5809
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Feb 1, 2020, at 7:02 PM, Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
 > 
+> Hi ext4 guys,
 > 
-> On 2/1/20 6:49 AM, qiwuchen55@gmail.com wrote:
-> > From: chenqiwu <chenqiwu@xiaomi.com>
-> > 
-> > Apparently our current rwsem code doesn't like doing the trylock, then
-> > lock for real scheme.  So change our direct write method to just do the
-> > trylock for the RWF_NOWAIT case.
-> > This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-> > in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
-> > 
-> > Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> > ---
-> >  fs/fuse/file.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index ce71538..ac16994 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >  	ssize_t res;
-> >  
-> >  	/* Don't allow parallel writes to the same file */
-> > -	inode_lock(inode);
-> > +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> > +		if (!inode_trylock(inode))
-> > +			return -EAGAIN;
-> > +	} else {
-> > +		inode_lock(inode);
-> > +	}
-> > +
-> >  	res = generic_write_checks(iocb, from);
-> >  	if (res > 0) {
-> >  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-> > 
+> Recently I found an image from android (vendor.img) has this RO feature
+> set, but kernel doesn't support it, thus no easy way to modify it.
+> (Although I can just modify the underlying block for my purpose, it's
+> just one line change, I still want a more elegant way).
 > 
+> Thus it can only be mounted RO. So far so good, as from its name, it's
+> kinda of deduped (BTW, both XFS and Btrfs supports RW mount for
+> reflinked/deduped fs).
 > 
-> I would actually like to ask if we can do something about this lock
-> altogether. Replace it with a range lock?  This very lock badly hurts
-> fuse shared file performance and maybe I miss something, but it should
-> be needed only for writes/reads going into the same file?
->
-I think replacing the internal inode rwsem with a range lock maybe not
-a good idea, because it may cause potential block for different writes/reads
-routes when this range lock is owned by someone. Using internal inode rwsem
-can avoid this range racy.
+> But the problem is, how to create such image?
+> 
+> Man page of mke2fs has no mention of such thing at all, and obviously
+> for whoever comes up with such "brilliant" way to block users from
+> modifying things, the "-E unshare_blocks" will just make the image too
+> large for the device.
+> 
+> Or we must go the Android rabbit hole to find an exotic tool to modify
+> even one line of a config file?
+
+I believe that this feature was only implemented inside Google.
+
+However, if you want to make changes to some files in this filesystem
+there should be a number of ways to do it:
+- use "dd" to dump file block(s) from image, edit them, then write back.
+  use "debugfs -c -R 'stat /path/to/file' vendor.img" for block addresses
+- use debugfs to clear the flag, mount the filesystem normally, then
+  overwrite the file *in place* (using "dd" or similar) so that the
+  blocks for the shared file are not reallocated due to unlink, write
+- make a simple patch for the kernel to "support" this feature, then
+  mount it and modify the file in a similar manner
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_E26B7161-ABF9-47FF-AD20-30D089BD5809
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl42MPsACgkQcqXauRfM
+H+Bwkw/+N0E88yxZRmHucLUPVYX9cEAZV0z1KbPwbwD6JcLV/fdFqBW5gYwpjDSs
+Cn7BAOM04sbt6y7Yn61S6DOTxRMlQ5oPuI7qObhS8s6gK5eWTRDhqhlFcKnQk60N
+WcUFXvuu1bW6A9GrrDwW15ebbVopNk3Y+E3uVD+KWTGMw6A1UyEIbGIngQDh0kAo
+9JYr7wSN3Z+UhyQoEhZOUAP47uRJvgRwHAyNbET+xaBkgURBNZfs8LDliBJ7QuOC
+ANED2jUzYSywCjtKslHYwNBZUhfoOJa2zl8qRM4hbj7HuEvVSzodAM/b7csVwqKe
+sGxU6E8tNO5oBQXzGQfMqAuZM5tcCndS6eT0P1zIj7vEQe0FaZ3ptXmomG0m+/rs
+V5UrTgQa8VAHs608lzJusKrr0DiPV64IitrmnoQmN1AKNMxbz4BshpNk198k5SsB
+q9qsqbYI3mgESSb54E6Aa8MgWBYL/vmHsEbpSwRrkXyEEl6P5dDcbeqByngdSisk
+GzhSiCvK81Qjx/ASmMiwQEtufis/msbIpE1e/TiIKA9g0mN4U0q3Z+p1PVJiP0H1
+2xof0BSr2VAngylBO/H3iYuhy2KdH9r8qWYlXVn7Sbx5My7UKMbwuJnBhJDweUxr
+Lf2jE2qg7WJtX7ii8JpvMDPIdTNu66OU8U/Kq2CLrh75cOLk01A=
+=iNtk
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E26B7161-ABF9-47FF-AD20-30D089BD5809--
