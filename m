@@ -2,63 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F2E514FD44
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 14:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 001AD14FDBE
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 16:19:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbgBBNVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 08:21:34 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9680 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726342AbgBBNVe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 08:21:34 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1CD0019DDCFA158EFFD1;
-        Sun,  2 Feb 2020 21:21:30 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Sun, 2 Feb 2020 21:21:21 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yaohongbo@huawei.com>, <chenzhou10@huawei.com>
-Subject: [PATCH -next] fs_parse: make fs_param_bad_value() static
-Date:   Sun, 2 Feb 2020 21:15:46 +0800
-Message-ID: <20200202131546.30174-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726893AbgBBPTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 10:19:41 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:20784 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726837AbgBBPTl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 Feb 2020 10:19:41 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 489ZPk12h2zKmVh;
+        Sun,  2 Feb 2020 16:19:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
+        with ESMTP id LvqAQQwTW8vU; Sun,  2 Feb 2020 16:19:33 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH man-pages v2 0/2] document openat2(2)
+Date:   Mon,  3 Feb 2020 02:19:05 +1100
+Message-Id: <20200202151907.23587-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix sparse warning:
+Patch changelog:
+  v2:
+    * Updated based on the new (now-merged) structure layout and semantics.
+  v1: <https://lore.kernel.org/linux-man/20191206142931.28138-1-cyphar@cyphar.com/>
+    * Updated based on Kerrisk's review.
+ RFC: <https://lore.kernel.org/linux-man/20191003145542.17490-1-cyphar@cyphar.com/>
 
-fs/fs_parser.c:192:5: warning:
-	symbol 'fs_param_bad_value' was not declared. Should it be static?
+Now that openat2(2) has landed in Linus's tree[1], here is the
+associated man-page changes to document it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- fs/fs_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b55eef872a96738ea9cb35774db5ce9a7d3a648f
 
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index fdc047b..904e91f 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -189,7 +189,7 @@ int fs_lookup_param(struct fs_context *fc,
- }
- EXPORT_SYMBOL(fs_lookup_param);
- 
--int fs_param_bad_value(struct p_log *log, struct fs_parameter *param)
-+static int fs_param_bad_value(struct p_log *log, struct fs_parameter *param)
- {
- 	return inval_plog(log, "Bad value for '%s'", param->key);
- }
+Aleksa Sarai (2):
+  path_resolution.7: update to mention openat2(2) features
+  openat2.2: document new openat2(2) syscall
+
+ man2/open.2            |  17 ++
+ man2/openat2.2         | 471 +++++++++++++++++++++++++++++++++++++++++
+ man7/path_resolution.7 |  56 +++--
+ 3 files changed, 526 insertions(+), 18 deletions(-)
+ create mode 100644 man2/openat2.2
+
 -- 
-2.7.4
+2.25.0
 
