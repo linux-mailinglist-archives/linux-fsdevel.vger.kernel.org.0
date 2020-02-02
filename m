@@ -2,136 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2420814FF5F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 22:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E15114FF6D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Feb 2020 22:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbgBBVZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 16:25:03 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:36913 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726971AbgBBVZD (ORCPT
+        id S1727027AbgBBVq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 16:46:29 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57025 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726967AbgBBVq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 16:25:03 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id EC54C2F0;
-        Sun,  2 Feb 2020 16:25:01 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Sun, 02 Feb 2020 16:25:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm2; bh=L
-        PxAQQiqRuoGOPKvYDIsLfwWX7h3xUQbmwrfmLakCe4=; b=Hmka/5594kogfTHSe
-        njcJkTHBFRhi1dtYBnecVetpuLZHyYslqhYAEa/iMriNJGBrBbfg5T3wtfNNzFoq
-        761nVT2i9lYEqde3nc6Fh+Suu+v8ZIi2X68h6N5lb7gPMXSqsxfVvpUy8WxIVy4E
-        g+2Ru49oRuw5FB2yx/csIek8a1BumVYYG2EcBzjtHaZXeIyRxIAJxomiNagq6X0q
-        I/lq5YdAp2m8SUWFB50bMni5IZd2ILVTQwo3w6NMP0VgMRn88gv+9A6WlSyIPX9U
-        hgfhrXdhBn2Z9LtcUPjDwTUf0GXWjr2qXbJLh+R7xWqo97nio742pV7+CuIXHBx+
-        3GwQQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=LPxAQQiqRuoGOPKvYDIsLfwWX7h3xUQbmwrfmLakC
-        e4=; b=BkwmvuA5eKxoL2ecK8vaWz8OzrG+bRStDEEMmrLTyH9wUl9+SLguWXcMN
-        6ezKm+ho6hYR+sh2veCV2AKy+Sa33eCNbZB7QLRUOLYhfaLaS8VqMWwSubo3DX94
-        g7IJn45iBqz7uSQiPvhUodAFjirfIdw5f9fpdbyALlIsonwquiNDWIlYBINN5m16
-        /cJW3+kGLXc7CTwNhEDypnpgkz87/71AKgu3ki+LlSMfc/89EqqroDbg65hC9pf/
-        G/GMjiSTTlb5fcAdnDtU8Kz6VtXZWjfT5G9QDW8D53XnMBlMr3W2QQ8Z3CAVzscj
-        Uy0Z5eZ80WA/P0kjQadYFfdg2XaPg==
-X-ME-Sender: <xms:LT43XhSf-nK5iOOp98uoYfio071OETUcbgluxqGJGD8PIZa7Vf5AMA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrgeehgddugeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtje
-    ertddtfeejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhs
-    tghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmheqnecukfhppedujeeirddukeelrdeike
-    drudekleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
-X-ME-Proxy: <xmx:LT43XvCoNr-G3PRj4KwYNDNeFdHGLxsA6_35jgStcFdHvb4fbpiqig>
-    <xmx:LT43Xh17-CQK3RopScxpUnApaDCE8fPvxdvuzyuMzEnPSwMhxYXy6A>
-    <xmx:LT43XtWCI7AxpL_Tln_2ZOv0OR8eY9H13WaPmFI6392QaPF02M6wWw>
-    <xmx:LT43XnQiHFRWIbda3esPxSqmlDUD860z1Vd8Ojwxt4shUKFqBAxrYQ>
-Received: from [192.168.1.20] (vol21-h02-176-189-68-189.dsl.sta.abo.bbox.fr [176.189.68.189])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7E581328005D;
-        Sun,  2 Feb 2020 16:25:00 -0500 (EST)
-Subject: Re: [PATCH] fuse: Allow parallel DIO reads and check NOWAIT case for
- DIO writes
-To:     qiwuchen55@gmail.com, miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>
-References: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-Autocrypt: addr=bernd.schubert@fastmail.fm; prefer-encrypt=mutual;
- keydata= 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
-Message-ID: <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
-Date:   Sun, 2 Feb 2020 22:25:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Sun, 2 Feb 2020 16:46:29 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 757227EA635;
+        Mon,  3 Feb 2020 08:46:22 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iyN4O-0005tx-MD; Mon, 03 Feb 2020 08:46:20 +1100
+Date:   Mon, 3 Feb 2020 08:46:20 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Allison Collins <allison.henderson@oracle.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
+Message-ID: <20200202214620.GA20628@dread.disaster.area>
+References: <20200131052520.GC6869@magnolia>
+ <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
+ <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=yPCof4ZbAAAA:8 a=VlmzTjhvAAAA:8 a=7-415B0cAAAA:8 a=fJ0nBAgzBULzsgNbrLIA:9
+        a=5Y_2ujE4nDxRVm0g:21 a=9x76spwRDswDgojx:21 a=CjuIK1q_8ugA:10
+        a=DWPK8KkkzkCXmqKYfE4-:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jan 31, 2020 at 08:20:37PM -0700, Allison Collins wrote:
+> 
+> 
+> On 1/31/20 12:30 AM, Amir Goldstein wrote:
+> > On Fri, Jan 31, 2020 at 7:25 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > > 
+> > > Hi everyone,
+> > > 
+> > > I would like to discuss how to improve the process of shepherding code
+> > > into the kernel to make it more enjoyable for maintainers, reviewers,
+> > > and code authors.  Here is a brief summary of how we got here:
+> > > 
+> > > Years ago, XFS had one maintainer tending to all four key git repos
+> > > (kernel, userspace, documentation, testing).  Like most subsystems, the
+> > > maintainer did a lot of review and porting code between the kernel and
+> > > userspace, though with help from others.
+> > > 
+> > > It turns out that this didn't scale very well, so we split the
+> > > responsibilities into three maintainers.  Like most subsystems, the
+> > > maintainers still did a lot of review and porting work, though with help
+> > > from others.
+> > > 
+> > > It turns out that this system doesn't scale very well either.  Even with
+> > > three maintainers sharing access to the git trees and working together
+> > > to get reviews done, mailing list traffic has been trending upwards for
+> > > years, and we still can't keep up.  I fear that many maintainers are
+> > > burning out.  For XFS, the biggest pain point (AFAICT) is not assembly and
+> > > testing of the git trees, but keeping up with the mail and the reviews.
+> > > 
+> > > So what do we do about this?  I think we (the XFS project, anyway)
+> > > should increase the amount of organizing in our review process.  For
+> > > large patchsets, I would like to improve informal communication about
+> > > who the author might like to have conduct a review, who might be
+> > > interested in conducting a review, estimates of how much time a reviewer
+> > > has to spend on a patchset, and of course, feedback about how it went.
+> > > This of course is to lay the groundwork for making a case to our bosses
+> > > for growing our community, allocating time for reviews and for growing
+> > > our skills as reviewers.
+> > > 
+> > 
+> > Interesting.
+> > 
+> > Eryu usually posts a weekly status of xfstests review queue, often with
+> > a call for reviewers, sometimes with specific patch series mentioned.
+> > That helps me as a developer to monitor the status of my own work
+> > and it helps me as a reviewer to put the efforts where the maintainer
+> > needs me the most.
+> > 
+> > For xfs kernel patches, I can represent the voice of "new blood".
+> > Getting new people to join the review effort is quite a hard barrier.
+> > I have taken a few stabs at doing review for xfs patch series over the
+> > year, but it mostly ends up feeling like it helped me (get to know xfs code
+> > better) more than it helped the maintainer, because the chances of a
+> > new reviewer to catch meaningful bugs are very low and if another reviewer
+> > is going to go over the same patch series, the chances of new reviewer to
+> > catch bugs that novice reviewer will not catch are extremely low.
+> That sounds like a familiar experience.  Lots of times I'll start a review,
+> but then someone else will finish it before I do, and catch more things
+> along the way.  So I sort of feel like if it's not something I can get
+> through quickly, then it's not a very good distribution of work effort and I
+> should shift to something else. Most of the time, I'll study it until I feel
+> like I understand what the person is trying to do, and I might catch stuff
+> that appears like it may not align with that pursuit, but I don't
+> necessarily feel I can deem it void of all unforeseen bugs.
 
+I think you are both underselling yourselves. Imposter syndrome and
+all that jazz.
 
-> @@ -1518,6 +1525,9 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  
->  		res = __fuse_direct_read(&io, to, &iocb->ki_pos);
->  	}
-> +	inode_unlock_shared(inode);
-> +
-> +	file_accessed(iocb->ki_filp);
+The reality is that we don't need more people doing the sorts of
+"how does this work with the rest of XFS" reviews that people like
+Darricki or Christoph do. What we really need is more people looking
+at whether loops are correctly terminated, the right variable types
+are used, we don't have signed vs unsigned issues, 32 bit overflows,
+use the right 32/64 bit division functions, the error handling logic
+is correct, etc.
 
+It's those sorts of little details that lead to most bugs, and
+that's precisely the sort of thing that is typically missed by an
+experienced developer doing a "is this the best possible
+implemenation of this functionality" review.
 
-Shouldn't the file_accessed() in different patch, with a description? It
-looks totally unrelated to locking?
+A recent personal example: look at the review of Matthew Wilcox's
+->readahead() series that I recently did. I noticed problems in the
+core change and the erofs and btfrs implementations not because I
+knew anything about those filesystems, but because I was checking
+whether the new loops iterated the pages in the page cache
+correctly. i.e. all I was really looking at was variable counting
+and loop initialisation and termination conditions. Experience tells
+me this stuff is notoriously difficult to get right, so that's what
+I looked at....
 
+IOWs, you don't need to know anything about the subsystem to
+perform such a useful review, and a lot of the time you won't find a
+problem. But it's still a very useful review to perform, and in
+doing so you've validated, to the best of your ability, that the
+change is sound. Put simply:
 
-Thanks,
-Bernd
+	"I've checked <all these things> and it looks good to me.
+
+	Reviewed-by: Joe Bloggs <joe@blogg.com>"
+
+This is a very useful, valid review, regardless of whether you find
+anything. It's also a method of review that you can use when you
+have limited time - rather than trying to check everything and
+spending hours on a pathset, pick one thing and get the entire
+review done in 15 minutes. Then do the same thing for the next patch
+set. You'll be surprised how many things you notice that aren't what
+you are looking for when you do this.
+
+Hence the fact that other people find (different) issues is
+irrelevant - they'll be looking at different things to you, and
+there may not even be any overlap in the focus/scope of the reviews
+that have been performed. You may find the same things, but that is
+also not a bad thing - I intentionally don't read other reviews
+before I review a patch series, so that I don't taint my view of the
+code before I look at it (e.g., darrick found a bug in this code, so
+I don't need to look at it...).
+
+IOWs, if you are starting from the premise that "I don't know this
+code well enough to perform a useful review" then you are setting
+yourself up for failure right at the start. Read the series
+description, think about the change being made, use your experience
+to answer the question "what's a mistake I could make performing
+this change". Then go looking for that mistake through the
+patch(es). In the process of performing this review, more than
+likely, you'll notice bugs other than what you are actually looking
+for...
+
+This does not require any deep subsystem specific knowledge, but in
+doing this sort of review you're going to notice things and learn
+about the code and slowly build your knowledge and experience about
+that subsystem.
+
+> > However, there are quite a few cleanup and refactoring patch series,
+> > especially on the xfs list, where a review from an "outsider" could still
+> > be of value to the xfs community. OTOH, for xfs maintainer, those are
+> > the easy patches to review, so is there a gain in offloading those reviews?
+> > 
+> > Bottom line - a report of the subsystem review queue status, call for
+> > reviewers and highlighting specific areas in need of review is a good idea.
+> > Developers responding to that report publicly with availability for review,
+> > intention and expected time frame for taking on a review would be helpful
+> > for both maintainers and potential reviewers.
+> I definitely think that would help delegate review efforts a little more.
+> That way it's clear what people are working on, and what still needs
+> attention.
+
+It is not the maintainer's repsonsibility to gather reviewers. That
+is entirely the responsibility of the patch submitter. That is, if
+the code has gone unreviewed, it is up to the submitter to find
+people to review the code, not the maintainer. If you, as a
+developer, are unable to find people willing to review your code
+then it's a sign you haven't been reviewing enough code yourself.
+
+Good reviewers are a valuable resource - as a developer I rely on
+reviewers to get my code merged, so if I don't review code and
+everyone else behaves the same way, how can I possibly get my code
+merged? IOWs, review is something every developer should be spending
+a significant chunk of their time on. IMO, if you are not spending
+*at least* a whole day a week reviewing code, you're not actually
+doing enough code review to allow other developers to be as
+productive as you are.
+
+The more you review other people's code, the more you learn about
+the code and the more likely other people will be to review your
+code because they know you'll review their code in turn.  It's a
+positive reinforcement cycle that benefits both the individual
+developers personally and the wider community.
+
+But this positive reinforcemnt cycle just doesn't happen if people
+avoid reviewing code because they think "I don't know anything so my
+review is not going to be worth anything".  Constructive review, not
+matter whether it's performed at a simple or complex level, is
+always valuable.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
