@@ -2,142 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 181F6150205
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 08:37:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F21D150214
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 08:46:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727493AbgBCHhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 02:37:43 -0500
-Received: from m12-11.163.com ([220.181.12.11]:52557 "EHLO m12-11.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727096AbgBCHhm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 02:37:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=o3Tkh
-        9ug+o/6puv66scuZdDiGZSDYt1HdEg9ceqFI74=; b=eZQl/EcPQzzY4GyQRBsqo
-        VDRzNpAdE7TthZnwLNu44F/Nlcgk4rRaxMZ0Zca6+HE6lqmwrM+/YUfEX/u9mKOs
-        dfZvrJR/cQBs061n8hNm0QTNtvCHqo+vpBmBcR70PBHptk58VHiDGVwmLwSsePeV
-        6sUknayCoZA5vYoV8GZ42M=
-Received: from localhost.localdomain (unknown [183.211.129.68])
-        by smtp7 (Coremail) with SMTP id C8CowAA3PSGWzTdefosHJQ--.43826S2;
-        Mon, 03 Feb 2020 15:36:56 +0800 (CST)
-From:   Xiao Yang <ice_yangxiao@163.com>
-To:     miklos@szeredi.hu, vgoyal@redhat.com, stefanha@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com,
-        Xiao Yang <ice_yangxiao@163.com>
-Subject: [PATCH] fuse: Don't make buffered read forward overflow value to a userspace process
-Date:   Mon,  3 Feb 2020 15:36:52 +0800
-Message-Id: <20200203073652.12067-1-ice_yangxiao@163.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727689AbgBCHqw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 02:46:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58872 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbgBCHqw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Feb 2020 02:46:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1OnLUtccVxzRGy3H6tEuURVA5Cw1eDsrX9HvO+XJeD4=; b=tIPQmbMBJJkyM1EUffKpQ6t8+
+        6fwTSe6r4ihL5NqNlss4BtnMRFyaJcEPiVZ64i/7LitZrfYs81oZ1L69NyPjMREv3zXAuPxvS0bI2
+        eMLUSHfCDe+Uhbh/03f2I/93N1FOLazKz82/5pZp0ZjY/ieytY6YhoUGFolkmaBRB9ehsBDiIZHK+
+        bkuV60ig9MmsNyEVGt8E0ZhQVk6ERJlJE/YSTpSCBFbCtPNtYKIiwbs9X9JfUX2DCkFMoZJyTbNcM
+        L+Sm7T5i2/9zTP8/s+1LrDkKFqoSf7iPfX+6fv7NwwWoLbf8UowsIMPpObCqY5IZs9aWtvn+JjE0x
+        uAmUP6+mA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iyWRQ-0001Y1-VE; Mon, 03 Feb 2020 07:46:44 +0000
+Date:   Sun, 2 Feb 2020 23:46:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        Ursula Braun <ubraun@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        David Windsor <dave@nullcore.net>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>,
+        Jan Kara <jack@suse.cz>, Marc Zyngier <marc.zyngier@arm.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Kubecek <mkubecek@suse.cz>
+Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
+ as usercopy caches
+Message-ID: <20200203074644.GD8731@bombadil.infradead.org>
+References: <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com>
+ <202001281457.FA11CC313A@keescook>
+ <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
+ <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com>
+ <20200129170939.GA4277@infradead.org>
+ <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com>
+ <202001300945.7D465B5F5@keescook>
+ <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
+ <202002010952.ACDA7A81@keescook>
+ <CAG48ez2ms+TDEXQdDONuQ1GG0K20E69nV1r_yjKxxYjYKv1VCg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8CowAA3PSGWzTdefosHJQ--.43826S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1kXr1UJFy3Zw15tr4Utwb_yoW5urWfpF
-        ZxJ3W3AayxJFy3CrsrArn5Zr1fCwn3GFWIqrWxW3yrX3W2yF9Yk3ZIgF1rury8WrWkCr12
-        qr4DKr17ur1DJ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UC385UUUUU=
-X-Originating-IP: [183.211.129.68]
-X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiqBm+Xlc7NRQeiAAAsK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2ms+TDEXQdDONuQ1GG0K20E69nV1r_yjKxxYjYKv1VCg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Buffered read in fuse normally goes via:
--> generic_file_buffered_read()
-  ------------------------------
-  -> fuse_readpages()
-    -> fuse_send_readpages()
-  or
-  -> fuse_readpage() [if fuse_readpages() fails to get page]
-    -> fuse_do_readpage()
-  ------------------------------
-      -> fuse_simple_request()
+On Sat, Feb 01, 2020 at 08:27:49PM +0100, Jann Horn wrote:
+> FWIW, as far as I understand, usercopy doesn't actually have any
+> effect on drivers that use the modern, proper APIs, since those don't
+> use the slab allocator at all - as I pointed out in my last mail, the
+> dma-kmalloc* slabs are used very rarely. (Which is good, because
+> putting objects from less-than-page-size slabs into iommu entries is a
+> terrible idea from a security and reliability perspective because it
+> gives the hardware access to completely unrelated memory.) Instead,
+> they get pages from the page allocator, and these pages may e.g. be
+> allocated from the DMA, DMA32 or NORMAL zones depending on the
+> restrictions imposed by hardware. So I think the usercopy restriction
+> only affects a few oddball drivers (like this s390 stuff), which is
+> why you're not seeing more bug reports caused by this.
 
-Buffered read changes original offset to page-aligned length by left-shift
-and extends original count to be multiples of PAGE_SIZE and then fuse
-forwards these new parameters to a userspace process, so it is possible
-for the resulting offset(e.g page-aligned offset + extended count) to
-exceed the whole file size(even the max value of off_t) when the userspace
-process does read with new parameters.
+Getting pages from the page allocator is true for dma_alloc_coherent()
+and friends.  But it's not true for streaming DMA mappings (dma_map_*)
+for which the memory usually comes from kmalloc().  If this is something
+we want to fix (and I have an awful feeling we're going to regret it
+if we say "no, we trust the hardware"), we're going to have to come up
+with a new memory allocation API for these cases.  Or bounce bugger the
+memory for devices we don't trust.
 
-xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
-because it triggers this issue.  See the following explanation:
-PAGE_SIZE: 4096, file size: 2^63 - 1
-Original: offset: 2^63 - 2, count: 1
-Changed by buffered read: offset: 2^63 - 4096, count: 4096
-New offset + new count exceeds the file size as well as LLONG_MAX
-
-Make fuse calculate the number of bytes of data pages contain as
-nfs_page_length() and generic_file_buffered_read() do, and then forward
-page-aligned offset and normal count to a userspace process.
-
-Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
----
- fs/fuse/file.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index ce715380143c..5afc4b623eaf 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -19,6 +19,23 @@
- #include <linux/falloc.h>
- #include <linux/uio.h>
- 
-+static unsigned int fuse_page_length(struct page *page)
-+{
-+	loff_t i_size = i_size_read(page->mapping->host);
-+
-+	if (i_size > 0) {
-+		pgoff_t index = page_index(page);
-+		pgoff_t end_index = (i_size - 1) >> PAGE_SHIFT;
-+
-+		if (index < end_index)
-+			return PAGE_SIZE;
-+		if (index == end_index)
-+			return ((i_size - 1) & ~PAGE_MASK) + 1;
-+	}
-+
-+	return 0;
-+}
-+
- static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
- 				      struct fuse_page_desc **desc)
- {
-@@ -783,7 +800,7 @@ static int fuse_do_readpage(struct file *file, struct page *page)
- 	struct inode *inode = page->mapping->host;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
- 	loff_t pos = page_offset(page);
--	struct fuse_page_desc desc = { .length = PAGE_SIZE };
-+	struct fuse_page_desc desc = { .length = fuse_page_length(page) };
- 	struct fuse_io_args ia = {
- 		.ap.args.page_zeroing = true,
- 		.ap.args.out_pages = true,
-@@ -881,9 +898,12 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
- 	struct fuse_conn *fc = ff->fc;
- 	struct fuse_args_pages *ap = &ia->ap;
- 	loff_t pos = page_offset(ap->pages[0]);
--	size_t count = ap->num_pages << PAGE_SHIFT;
-+	size_t count = 0;
- 	ssize_t res;
--	int err;
-+	int err, i;
-+
-+	for (i = 0; i < ap->num_pages; i++)
-+		count += ap->descs[i].length;
- 
- 	ap->args.out_pages = true;
- 	ap->args.page_zeroing = true;
-@@ -944,7 +964,7 @@ static int fuse_readpages_fill(void *_data, struct page *page)
- 
- 	get_page(page);
- 	ap->pages[ap->num_pages] = page;
--	ap->descs[ap->num_pages].length = PAGE_SIZE;
-+	ap->descs[ap->num_pages].length = fuse_page_length(page);
- 	ap->num_pages++;
- 	data->nr_pages--;
- 	return 0;
--- 
-2.21.0
-
-
+The problem with the dma_map_* API is that memory might end up being
+allocated once and then used multiple times by different drivers.  eg if
+I allocate an NFS packet, it might get sent first to eth0, then (when the
+route fails) sent to eth1.  Similarly in storage, a RAID-5 driver might
+map the same memory several times to send to different disk controllers.
