@@ -2,53 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14B01506CD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 419E6150713
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:23:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgBCNTZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 08:19:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34872 "EHLO
+        id S1727334AbgBCNXU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 08:23:20 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39467 "EHLO
         mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbgBCNTY (ORCPT
+        with ESMTP id S1726100AbgBCNXU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:19:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q8so14600344ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:19:23 -0800 (PST)
+        Mon, 3 Feb 2020 08:23:20 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o15so9052581ljg.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:23:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=JVGRyQQaBReM02JrPoDmLBao0aPgpMTrxPDXDLtuBvs=;
-        b=sHxNUX+2LzpyRJMjJ5Qfj9YCDSX6ExJg/Bd8Kbu6D3J1Pm6xg2/nCBLBUPM+5aDgph
-         Vx13T6xRUazl2+5WDzyI2+KQ5Fwv9EnEICrEEivYt8zYofksOtWDQ0ieEYPnxb0jWoql
-         2KXNT1xLabVpDbI6yu0pfXCX+ZkkKbcyN9i+rhwy9QqfIGMVfaGyVA3Fl5FlrA0MARbM
-         fqCitH4ncSFtWXk3XtHIzHlxaXyvB4HPNozXmu/2hHRj2Rk8jnrIB7LYIzQ+bFvU3rx0
-         zfqTJdh5FWcWe4I1vVRvwPei1Q5hrFlirNIRHGzVETfP4olS+o7cqE6CGB4YvD5YrwQv
-         379g==
+         :content-disposition:in-reply-to;
+        bh=yciKij7aZ9IxqsUAs/104yOVBksVOCSAdlwEXkSdpoQ=;
+        b=FAiKXrOR692VWEgWF88bI0DjGDu/Sjr0t06eV884FO+vVgwg4SO1uh7Qjl5zLD2Mnt
+         6dIaQ6GUVYMIRRdp6Zr3N4HwWQyUE9FJgr/ot760UXFb9ieeuh0y5ihna9xcf2NmLfCx
+         ATq82Ac6zbqDRu4VKrwnxbU4xctjK9vueLdVmKNpS6KqzdJvtHV4CLOBxIiZkxMDg+qK
+         ecH96G8OHeFmWugtvDrmtXQeUcEyqBTxR9to5bv4yN3DtqJmP2+Xwq+RSXlRUoI+6ri4
+         AUdjBjhCj/vULhTNfShatAWSXcd57f3QFCfh0lIhgZ0VEybpMYi20qW77bNE0IKdYCKt
+         uSlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=JVGRyQQaBReM02JrPoDmLBao0aPgpMTrxPDXDLtuBvs=;
-        b=um2G4cE4Y3lzKR3uaNFdoWfP5RU1Y80u5+opJnV0F3z3BjWnQQrP/Rk1ZX5yCiYsF0
-         RiacbdbB/3x1Xk0lXzEET7W+xownWtCvziqc6MIbwuIECNTiDOpcheqOuEk3OubLtRs+
-         5yjyUD0D1T5QMBPE4Fk2cdSVAG2XWjm7+gsii86Fv1ek7RvbKx3Mfc10/OpZcSgPKWAL
-         nk0354oCiJRemRVedqROyh5Uqi8uyU/7jQd33WzIRDpJIa0U6LvUbajBeqFAmKcSuRDY
-         WX3GUA4GB5bYJPIGvp0ah4ap0xPruS78kQAJwahN8PVOwvUGIgi1mxGTPvWxSu3cHYdD
-         d5uw==
-X-Gm-Message-State: APjAAAWXr62dQgPTz9miQx/Od0KAR/b9o1Kz13Y4jcqKW9lbKvUFg6Ew
-        lPhVMMv199bxJOzwx8v89p5JbQ==
-X-Google-Smtp-Source: APXvYqw/kW5LBbvbpobmbtSlzot4JutREBTd02ZbvusFPkOi/RVuHv3ziJ7u01y8QC5aHMcpggWohA==
-X-Received: by 2002:a2e:94c8:: with SMTP id r8mr14014356ljh.28.1580735962743;
-        Mon, 03 Feb 2020 05:19:22 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to;
+        bh=yciKij7aZ9IxqsUAs/104yOVBksVOCSAdlwEXkSdpoQ=;
+        b=Iqj71OGtmfHZd9AFBPIfBUp3KlT5J2TdggDtEcPYuf5XN5rnZHmp4iyq6JGf5FWTRd
+         IZLujYf0ZNEXr7qjlbT/RLSN14r3NgfHuxwRv76rutQxm6h9iXfWu9vsyfujLV64Lto9
+         NT7n4YV507OfDphyttz458vb0zdk9cRblxo+Qest0S5Hfhbcw3+mOJTmePquoIwIOvjs
+         cP3hLS/dMJx3jOF1LxfV1/ZPJyklAFOeaYom8KHoNerv81tj1yPeN+LsU1MY6D7faiSy
+         w9BG7zgYsL/6m2YAifoRf0uNJih1QQPZ5amUra0vTG3CGIwRiIHwGUTsFuqH+w24oBO1
+         10rw==
+X-Gm-Message-State: APjAAAXnAB4FN/cjzGPSCbXnkRK3F8VhbSs/rH0b18+W1GoQqKbF+KrQ
+        wzkwHzlMnZMrV1s/X6bOcy/Z9w==
+X-Google-Smtp-Source: APXvYqz6+ASziVfzDtmIfqoBNJGqRDrKpccZCRWjuRMxtwAuDOff2v4nbarQjcGBTnjRDFxC1sKg0Q==
+X-Received: by 2002:a2e:b0e3:: with SMTP id h3mr13425116ljl.56.1580736196893;
+        Mon, 03 Feb 2020 05:23:16 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id z205sm8831859lfa.52.2020.02.03.05.19.21
+        by smtp.gmail.com with ESMTPSA id j7sm8959848lfh.25.2020.02.03.05.23.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 05:19:22 -0800 (PST)
+        Mon, 03 Feb 2020 05:23:16 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 9F93C100DC8; Mon,  3 Feb 2020 16:19:34 +0300 (+03)
-Date:   Mon, 3 Feb 2020 16:19:34 +0300
+        id 1306D100DC8; Mon,  3 Feb 2020 16:23:29 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:23:29 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -67,40 +66,63 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v3 03/12] mm/gup: pass a flags arg to __gup_device_*
- functions
-Message-ID: <20200203131934.pxwmyemhgiqcb5j3@box>
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 04/12] mm: introduce page_ref_sub_return()
+Message-ID: <20200203132329.oj32h4ryna4gmkwh@box>
 References: <20200201034029.4063170-1-jhubbard@nvidia.com>
- <20200201034029.4063170-4-jhubbard@nvidia.com>
+ <20200201034029.4063170-5-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200201034029.4063170-4-jhubbard@nvidia.com>
+In-Reply-To: <20200201034029.4063170-5-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 07:40:20PM -0800, John Hubbard wrote:
-> A subsequent patch requires access to gup flags, so pass the flags
-> argument through to the __gup_device_* functions.
+On Fri, Jan 31, 2020 at 07:40:21PM -0800, John Hubbard wrote:
+> An upcoming patch requires subtracting a large chunk of refcounts from
+> a page, and checking what the resulting refcount is. This is a little
+> different than the usual "check for zero refcount" that many of the
+> page ref functions already do. However, it is similar to a few other
+> routines that (like this one) are generally useful for things such as
+> 1-based refcounting.
 > 
-> Also placate checkpatch.pl by shortening a nearby line.
+> Add page_ref_sub_return(), that subtracts a chunk of refcounts
+> atomically, and returns an atomic snapshot of the result.
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> 
-
-Empty line here?
-
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  include/linux/page_ref.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+> index 14d14beb1f7f..b9cbe553d1e7 100644
+> --- a/include/linux/page_ref.h
+> +++ b/include/linux/page_ref.h
+> @@ -102,6 +102,16 @@ static inline void page_ref_sub(struct page *page, int nr)
+>  		__page_ref_mod(page, -nr);
+>  }
+>  
+> +static inline int page_ref_sub_return(struct page *page, int nr)
+> +{
+> +	int ret = atomic_sub_return(nr, &page->_refcount);
+> +
+> +	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
+> +		__page_ref_mod(page, -nr);
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Shouldn't it be __page_ref_mod_and_return() and relevant tracepoint?
+
+> +
+> +	return ret;
+> +}
+> +
+>  static inline void page_ref_inc(struct page *page)
+>  {
+>  	atomic_inc(&page->_refcount);
+> -- 
+> 2.25.0
+> 
 
 -- 
  Kirill A. Shutemov
