@@ -2,138 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43BD91500B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 04:20:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 716801500C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 04:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgBCDUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 22:20:16 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38494 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbgBCDUQ (ORCPT
+        id S1727242AbgBCDjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 22:39:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37478 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbgBCDjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 22:20:16 -0500
-Received: by mail-pg1-f193.google.com with SMTP id a33so7026106pgm.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 02 Feb 2020 19:20:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Za5Sr8YzwMTkDYP6x/gVgtusvcyP37eHqgzHf18f+NM=;
-        b=tpip8nRwJ4mmGSf1Kzj97uoTolWxd0lpFk32P8C2T7TsVXT5I2iCbK0LyzrgTm3j0M
-         vFllRrMUj7O1AtcG0A1jPyTOUxIqCg4jcJ8VQZvInE0Ahm2578JLSeK4oM6gbRL02yH6
-         mGmQUHTFZ/jMYC/UTPRerDd7IolJzR61nPFjFxJRl+lsLFTh2abdUTPGN6vu7QyJztAI
-         BxNJ8L9Tf3IE/GNBcFUj9HlUyzd/pZxgrAbAx86h1oiI967CbL5WrxQfJlxxEXAl8Whd
-         R+x4JzJUu5hKzPdkHZ4B0Ry9lOsBgZ/BM4hFIE44RJp59w+Qdba4RIgN394+JLFONKRC
-         QFQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Za5Sr8YzwMTkDYP6x/gVgtusvcyP37eHqgzHf18f+NM=;
-        b=VVzAUBbfNp6jZg3PDxuY9qHVUKXlV84p3V5m1kPMXCM5qVnqWm+hEMGkeWkj/fZTDj
-         +ucLxIhz5I+JovqO2B1HBuntXHmAqq7tfH9aJzEv9jveAv55p0N7F+JenU1F70oD5yeD
-         Aw1GeQWcW9dnZWz1O3ACuPCEFU2vb1vugPSfh9DBHBy0ih2IvgLeMxAFAq9tZU8/I4Nr
-         oNoZw/utalX45qohs4Jv3oK1Le/43cNelfZN1XuAUCbEQJkll/XPXONcjAHoqR7MehOd
-         1MhDG7BXseWYMw/O0pC0c2RcWiCbnO8ABXhmdotQdJWVe7eJZzsta08Ib6dfsV43y0n8
-         3TLw==
-X-Gm-Message-State: APjAAAVaxaKV83A7A8aJrhEjRd5smyrgeXG6JUDDyZhgiX5xydjAwftq
-        ddfZWWja73roDkdcarrlkN8=
-X-Google-Smtp-Source: APXvYqzRDkZlDccuvljSVGl3/k3E+kojcy7lqZPa1HIxcvfHlFhEcf0D9AuwnM5M2p5zABlcCT8sTA==
-X-Received: by 2002:a63:f744:: with SMTP id f4mr10621024pgk.345.1580700015244;
-        Sun, 02 Feb 2020 19:20:15 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id o1sm8847459pfg.60.2020.02.02.19.20.13
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 02 Feb 2020 19:20:14 -0800 (PST)
-Date:   Mon, 3 Feb 2020 11:20:12 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-Message-ID: <20200203032012.GA11846@cqw-OptiPlex-7050>
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
- <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm>
- <20200202020817.GA14887@cqw-OptiPlex-7050>
- <aafd8abf-832b-6348-7b74-4d65451a1eb6@fastmail.fm>
+        Sun, 2 Feb 2020 22:39:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VjqPzn+7dA/AhZbAs/fy4ycUJnCi/pTarPPUfYx0mRI=; b=Rz31j39TdBc/NVH+JzHDT9UBi
+        jvvSe/azXsS7Oom5NmIczyjg3zM8vt61u2AJ9DNVewIV4Fufsul2T8PCVeUxM6ve+mRh2An5yQyVk
+        fhdCR70WB020Tgc5krSd2lVryayT31oI1JFLDhZOraL61adwBmZBHlv08lXifHf0DwqLlXlXhpGrZ
+        s0Xq1kLpNx7EPDMI6rxvqAFb3Jhiochrw91jIH6kAB0e3+HCz822EMDqd8CkVfJmfDSGgrIwYY1Bl
+        //wsIn0sOOJfs55NdhBCMs9D2m8zSAxmZYh5FFC8pNWXE/PiN3s+NoNbrbeA6iCGDi4ml2ubY+G8q
+        F3CWaYacw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iySZj-0001q5-8J; Mon, 03 Feb 2020 03:39:03 +0000
+Date:   Sun, 2 Feb 2020 19:39:03 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2] f2fs: Make f2fs_readpages readable again
+Message-ID: <20200203033903.GB8731@bombadil.infradead.org>
+References: <20200201150807.17820-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aafd8abf-832b-6348-7b74-4d65451a1eb6@fastmail.fm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200201150807.17820-1-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 02, 2020 at 10:18:58PM +0100, Bernd Schubert wrote:
-> 
-> 
-> On 2/2/20 3:08 AM, chenqiwu wrote:
-> > On Sun, Feb 02, 2020 at 12:09:50AM +0100, Bernd Schubert wrote:
-> >>
-> >>
-> >> On 2/1/20 6:49 AM, qiwuchen55@gmail.com wrote:
-> >>> From: chenqiwu <chenqiwu@xiaomi.com>
-> >>>
-> >>> Apparently our current rwsem code doesn't like doing the trylock, then
-> >>> lock for real scheme.  So change our direct write method to just do the
-> >>> trylock for the RWF_NOWAIT case.
-> >>> This seems to fix AIM7 regression in some scalable filesystems upto ~25%
-> >>> in some cases. Claimed in commit 942491c9e6d6 ("xfs: fix AIM7 regression")
-> >>>
-> >>> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
-> >>> ---
-> >>>  fs/fuse/file.c | 8 +++++++-
-> >>>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> >>> index ce71538..ac16994 100644
-> >>> --- a/fs/fuse/file.c
-> >>> +++ b/fs/fuse/file.c
-> >>> @@ -1529,7 +1529,13 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >>>  	ssize_t res;
-> >>>  
-> >>>  	/* Don't allow parallel writes to the same file */
-> >>> -	inode_lock(inode);
-> >>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> >>> +		if (!inode_trylock(inode))
-> >>> +			return -EAGAIN;
-> >>> +	} else {
-> >>> +		inode_lock(inode);
-> >>> +	}
-> >>> +
-> >>>  	res = generic_write_checks(iocb, from);
-> >>>  	if (res > 0) {
-> >>>  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-> >>>
-> >>
-> >>
-> >> I would actually like to ask if we can do something about this lock
-> >> altogether. Replace it with a range lock?  This very lock badly hurts
-> >> fuse shared file performance and maybe I miss something, but it should
-> >> be needed only for writes/reads going into the same file?
-> >>
-> > I think replacing the internal inode rwsem with a range lock maybe not
-> > a good idea, because it may cause potential block for different writes/reads
-> > routes when this range lock is owned by someone. Using internal inode rwsem
-> > can avoid this range racy.
-> > 
-> 
-> So your 2nd patch changes to rw-locks and should solve low read
-> direct-io performance, but single shared file writes is still an issue.
-> For network file systems it also common to globally enforce fuse
-> direct-io to reduce/avoid cache coherency issues - the application
-> typically doesn't ask for that on its own. And that is where this lock
-> is badly hurting.  Hmm, maybe we should differentiate between
-> fuse-internal direct-io and application direct-io requests here? Or we
-> need a range lock,that supports shared readers (I haven't looked at any
-> of the proposed range lock patches yet (non has landed yet, right?).
->
-There is a recent fix for ext4 and we can evaluate and apply it to fuse
-filesytem for solving low dio-write performance.
-aa9714d0e(ext4: Start with shared i_rwsem in case of DIO instead of exclusive)
 
-Thanks!
-Qiwu
+Remove the horrendous ifdeffery by slipping an IS_ENABLED into
+f2fs_compressed_file().
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+v2: Fix compilation by adding more dummy functions
+
+ fs/f2fs/data.c |  6 ------
+ fs/f2fs/f2fs.h | 10 +++++++++-
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8bd9afa81c54..41156a8f60a7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2203,7 +2203,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+ 				goto next_page;
+ 		}
+ 
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+ 		if (f2fs_compressed_file(inode)) {
+ 			/* there are remained comressed pages, submit them */
+ 			if (!f2fs_cluster_can_merge_page(&cc, page->index)) {
+@@ -2230,14 +2229,11 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+ 			goto next_page;
+ 		}
+ read_single_page:
+-#endif
+ 
+ 		ret = f2fs_read_single_page(inode, page, max_nr_pages, &map,
+ 					&bio, &last_block_in_bio, is_readahead);
+ 		if (ret) {
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+ set_error_page:
+-#endif
+ 			SetPageError(page);
+ 			zero_user_segment(page, 0, PAGE_SIZE);
+ 			unlock_page(page);
+@@ -2246,7 +2242,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+ 		if (pages)
+ 			put_page(page);
+ 
+-#ifdef CONFIG_F2FS_FS_COMPRESSION
+ 		if (f2fs_compressed_file(inode)) {
+ 			/* last page */
+ 			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
+@@ -2257,7 +2252,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
+ 				f2fs_destroy_compress_ctx(&cc);
+ 			}
+ 		}
+-#endif
+ 	}
+ 	BUG_ON(pages && !list_empty(pages));
+ 	if (bio)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 5355be6b6755..e90d2b3f1d2d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2706,7 +2706,8 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
+ 
+ static inline int f2fs_compressed_file(struct inode *inode)
+ {
+-	return S_ISREG(inode->i_mode) &&
++	return IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) &&
++		S_ISREG(inode->i_mode) &&
+ 		is_inode_flag_set(inode, FI_COMPRESSED_FILE);
+ }
+ 
+@@ -3797,6 +3798,13 @@ static inline struct page *f2fs_compress_control_page(struct page *page)
+ 	WARN_ON_ONCE(1);
+ 	return ERR_PTR(-EINVAL);
+ }
++#define f2fs_cluster_can_merge_page(cc, index)	false
++#define f2fs_read_multi_pages(cc, bio, nr_pages, last, is_ra) 0
++#define f2fs_init_compress_ctx(cc) 0
++#define f2fs_destroy_compress_ctx(cc) (void)0
++#define f2fs_cluster_is_empty(cc) true
++#define f2fs_compress_ctx_add_page(cc, page) (void)0
++#define f2fs_is_compressed_cluster(cc, index) false
+ #endif
+ 
+ static inline void set_compress_context(struct inode *inode)
+-- 
+2.24.1
+
