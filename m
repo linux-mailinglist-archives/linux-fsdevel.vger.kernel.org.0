@@ -2,130 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716801500C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 04:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A0491500D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 05:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgBCDjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 22:39:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37478 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbgBCDjE (ORCPT
+        id S1727258AbgBCEAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Feb 2020 23:00:55 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42930 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbgBCEAz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 22:39:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VjqPzn+7dA/AhZbAs/fy4ycUJnCi/pTarPPUfYx0mRI=; b=Rz31j39TdBc/NVH+JzHDT9UBi
-        jvvSe/azXsS7Oom5NmIczyjg3zM8vt61u2AJ9DNVewIV4Fufsul2T8PCVeUxM6ve+mRh2An5yQyVk
-        fhdCR70WB020Tgc5krSd2lVryayT31oI1JFLDhZOraL61adwBmZBHlv08lXifHf0DwqLlXlXhpGrZ
-        s0Xq1kLpNx7EPDMI6rxvqAFb3Jhiochrw91jIH6kAB0e3+HCz822EMDqd8CkVfJmfDSGgrIwYY1Bl
-        //wsIn0sOOJfs55NdhBCMs9D2m8zSAxmZYh5FFC8pNWXE/PiN3s+NoNbrbeA6iCGDi4ml2ubY+G8q
-        F3CWaYacw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iySZj-0001q5-8J; Mon, 03 Feb 2020 03:39:03 +0000
-Date:   Sun, 2 Feb 2020 19:39:03 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] f2fs: Make f2fs_readpages readable again
-Message-ID: <20200203033903.GB8731@bombadil.infradead.org>
-References: <20200201150807.17820-1-willy@infradead.org>
+        Sun, 2 Feb 2020 23:00:55 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w21so1303650pgl.9;
+        Sun, 02 Feb 2020 20:00:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Rr8HCvzHGy43zP4xWeCYuUUUoHY3g639VB8x/Nydnlg=;
+        b=muo9tv8kjF11m+vSPjqfEII/CZlpoxWRQgX5XYoLk1hjHyL+cVNJGj4bmkAYXzizak
+         Y4i91wtr2ujHX07+XLbFejWyoqTSv9vJBLIpTyKRb9d2bWbxgac+OpiTZqfkDLOzB7ee
+         zyR/RQPUwhb4SNboWPaHLBVcZBtRPCKQpbO835cOLmDYEmFQ2rtA5UHQZKuX5ZiXjwhV
+         kJw6cotpt3LtfSjgPsn7vEKpBHzoc837OBa7+G+RusS0dcQ2LjjphwWSyj2EzPtlzSi/
+         5WlfbkzwXfeqZXAT1Zgh7qAb2k1Y5ZkoS70bn2iQi6O2jZQU3S3gNwmX0zv6STsIxsBQ
+         fzbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Rr8HCvzHGy43zP4xWeCYuUUUoHY3g639VB8x/Nydnlg=;
+        b=ocnf1lXuXBMZ4AJHhSXwQa5lq9er7rO0JtS/nCvWYbqTmx5sfvGlx1Cyc9MmfN+O+1
+         RmTKD9UuiICbTEa60anSMfbSbB0mbSRVXD128BpTj8Ps5fvhsKnmIhePBa6d/pms7ftJ
+         vKGfwL9o5I+kNA8kp/t3XVdKI6MziAk4XhK0F6Jut6BASX+jyUQiyrOfUD59//1nBnv0
+         dby6Ch0vWr7GYiwHiM5xfZWeQn0VlK1v/QWa5EUVyF0pTfIBK0tSv6fYJpOCqhoNhaPo
+         d/RDvQoGa1Uz5qPlbFHBRd9bjxomGT8vwpem8liFOo/hCjr6VTgWkq9CeWH6eVWzVEKc
+         /osg==
+X-Gm-Message-State: APjAAAW//l1x9ElfNy7TQ+0Jw87cdsEUzRgbkyGMAyBF7sMeLyBykqDO
+        n48HtHZJa2elj2nPRulF+J0=
+X-Google-Smtp-Source: APXvYqw6sOBM5hkQdEcY93EBISXIcWxUa5iFOJ0ybi1o8lz/TCOyKmjVlPeCcfdTU561dRtnIHT7cA==
+X-Received: by 2002:a62:e80a:: with SMTP id c10mr22435421pfi.129.1580702454450;
+        Sun, 02 Feb 2020 20:00:54 -0800 (PST)
+Received: from localhost ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id 28sm14213294pgl.42.2020.02.02.20.00.53
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 02 Feb 2020 20:00:53 -0800 (PST)
+Date:   Mon, 3 Feb 2020 12:00:51 +0800
+From:   chenqiwu <qiwuchen55@gmail.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: Re: [PATCH] fuse: Allow parallel DIO reads and check NOWAIT case for
+ DIO writes
+Message-ID: <20200203040051.GB11846@cqw-OptiPlex-7050>
+References: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
+ <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200201150807.17820-1-willy@infradead.org>
+In-Reply-To: <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-Remove the horrendous ifdeffery by slipping an IS_ENABLED into
-f2fs_compressed_file().
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
-v2: Fix compilation by adding more dummy functions
-
- fs/f2fs/data.c |  6 ------
- fs/f2fs/f2fs.h | 10 +++++++++-
- 2 files changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 8bd9afa81c54..41156a8f60a7 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2203,7 +2203,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 				goto next_page;
- 		}
- 
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- 		if (f2fs_compressed_file(inode)) {
- 			/* there are remained comressed pages, submit them */
- 			if (!f2fs_cluster_can_merge_page(&cc, page->index)) {
-@@ -2230,14 +2229,11 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 			goto next_page;
- 		}
- read_single_page:
--#endif
- 
- 		ret = f2fs_read_single_page(inode, page, max_nr_pages, &map,
- 					&bio, &last_block_in_bio, is_readahead);
- 		if (ret) {
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- set_error_page:
--#endif
- 			SetPageError(page);
- 			zero_user_segment(page, 0, PAGE_SIZE);
- 			unlock_page(page);
-@@ -2246,7 +2242,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 		if (pages)
- 			put_page(page);
- 
--#ifdef CONFIG_F2FS_FS_COMPRESSION
- 		if (f2fs_compressed_file(inode)) {
- 			/* last page */
- 			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
-@@ -2257,7 +2252,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
- 				f2fs_destroy_compress_ctx(&cc);
- 			}
- 		}
--#endif
- 	}
- 	BUG_ON(pages && !list_empty(pages));
- 	if (bio)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 5355be6b6755..e90d2b3f1d2d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2706,7 +2706,8 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
- 
- static inline int f2fs_compressed_file(struct inode *inode)
- {
--	return S_ISREG(inode->i_mode) &&
-+	return IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) &&
-+		S_ISREG(inode->i_mode) &&
- 		is_inode_flag_set(inode, FI_COMPRESSED_FILE);
- }
- 
-@@ -3797,6 +3798,13 @@ static inline struct page *f2fs_compress_control_page(struct page *page)
- 	WARN_ON_ONCE(1);
- 	return ERR_PTR(-EINVAL);
- }
-+#define f2fs_cluster_can_merge_page(cc, index)	false
-+#define f2fs_read_multi_pages(cc, bio, nr_pages, last, is_ra) 0
-+#define f2fs_init_compress_ctx(cc) 0
-+#define f2fs_destroy_compress_ctx(cc) (void)0
-+#define f2fs_cluster_is_empty(cc) true
-+#define f2fs_compress_ctx_add_page(cc, page) (void)0
-+#define f2fs_is_compressed_cluster(cc, index) false
- #endif
- 
- static inline void set_compress_context(struct inode *inode)
--- 
-2.24.1
-
+On Sun, Feb 02, 2020 at 10:25:43PM +0100, Bernd Schubert wrote:
+> 
+> 
+> > @@ -1518,6 +1525,9 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> >  
+> >  		res = __fuse_direct_read(&io, to, &iocb->ki_pos);
+> >  	}
+> > +	inode_unlock_shared(inode);
+> > +
+> > +	file_accessed(iocb->ki_filp);
+> 
+> 
+> Shouldn't the file_accessed() in different patch, with a description? It
+> looks totally unrelated to locking?
+>
+Thanks for your remind! file_accessed() is used to update atime for
+every direct read, it's totally unrelated to locking. I will separate
+it to another patch.
