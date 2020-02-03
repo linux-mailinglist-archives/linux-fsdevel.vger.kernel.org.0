@@ -2,30 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB771511B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 22:17:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F19BE1511CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 22:30:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbgBCVRo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 16:17:44 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12229 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBCVRo (ORCPT
+        id S1727129AbgBCVaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 16:30:12 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37737 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgBCVaM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 16:17:44 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e388dde0000>; Mon, 03 Feb 2020 13:17:19 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 03 Feb 2020 13:17:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 03 Feb 2020 13:17:41 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Feb
- 2020 21:17:41 +0000
-Subject: Re: [PATCH v3 11/12] mm/gup_benchmark: support pin_user_pages() and
- related calls
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 3 Feb 2020 16:30:12 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v17so16257702ljg.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 13:30:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ySSbnLN31i7Gv0dEujqlmedo6RywQfw4YrrrpttJLgk=;
+        b=KobgtCTPqTOidmxNwdxQ0hjvbnszX+R4RWcWLWxJ+uvTDI/rP69kW8duPgWbHo1LVu
+         Sai4Dm4sazBGzwERWccFEXaI598eq6EWecYp34MW8ILJVsyleE407qEGsPN5qJ4lgyQ/
+         8K7jri+GO3U75nnDYdlociAEKfXothG/+7X7ABSQeFCAAQT2t8Iss0GJiF9iv6h6I4UP
+         D3lM3GXquVFErJ1lYr6xVbbVnSqatuWVwE8qbSdpnrtqyce3rATRSAmpPf7mROafnEyP
+         VBMpp8JU2l/Tn2SByXuuWLdhBDykIbMvQ4LgrqFcuIVRgpsVbRcK9eCcpoO2Zlcy6tZZ
+         SvDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ySSbnLN31i7Gv0dEujqlmedo6RywQfw4YrrrpttJLgk=;
+        b=fE3F1DyBGLnu1RqwII79omrD0IQUT1dhUBAM6YNDtBfNtLQidfM3X/AZ+EfjETvaqA
+         Me19D9R63O6hsvyF5U0Nst/By6gkjIyx4prbW3RnWQD0rIY0D4d9avPLSO0QKdS1wO4i
+         6SgqdticYN+M397mSWfG0h/hDUMIPdwVHWUOgKt/AvtFbJE2AP++MGzcnpb6+XgNQjcZ
+         utiid+mX6cTRj3qROaFkp+DM09pIrQTjDZbyZYTZlqh0oy68Eok8783QKZg7kjYQ1B1n
+         LtqVdNhCY39riJ5hqQkcMmBVD0UzSi0lHhTmCPn1xEE6kS2sd4x8ha41LZJ5gXXWM+tV
+         ENCw==
+X-Gm-Message-State: APjAAAU+zLlFOdrvjytmgzYg2OpjvhHD6PPb0MiibcW0iCy/SC2Z+ad0
+        l7z4tVKfaZuHxesvjeUk/LW3Sg==
+X-Google-Smtp-Source: APXvYqzZ8QqSIH6wmy7AnrvnvdyFJ/nn3W6Ulq1Wz+pKu0iT1z5Hjs/H587kjfOvuXRpwubRreoNeQ==
+X-Received: by 2002:a2e:9c85:: with SMTP id x5mr15245701lji.50.1580765409905;
+        Mon, 03 Feb 2020 13:30:09 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id k24sm12450538ljj.27.2020.02.03.13.30.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 13:30:09 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 19070100AF6; Tue,  4 Feb 2020 00:30:22 +0300 (+03)
+Date:   Tue, 4 Feb 2020 00:30:22 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -33,122 +58,56 @@ CC:     Andrew Morton <akpm@linux-foundation.org>,
         Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
         Michal Hocko <mhocko@suse.com>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         Shuah Khan <shuah@kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
+ reporting
+Message-ID: <20200203213022.rltjlohvaswk32ln@box.shutemov.name>
 References: <20200201034029.4063170-1-jhubbard@nvidia.com>
- <20200201034029.4063170-12-jhubbard@nvidia.com>
- <20200203135845.ymfbghs7rf67awex@box>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <b554db44-7315-b99f-1151-ba2a1b2445ce@nvidia.com>
-Date:   Mon, 3 Feb 2020 13:17:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+ <20200201034029.4063170-11-jhubbard@nvidia.com>
+ <20200203135320.edujsfjwt5nvtiit@box>
+ <0425e1e6-f172-91df-2251-7583fcfed3e6@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20200203135845.ymfbghs7rf67awex@box>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580764639; bh=2IB1FDGpBsDLtY2DmO1HxSdFOfS/ze4NUeLdmKESN3o=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=VA7dHTuJqfoBaZISH3ys3eVXPTLDIYenBIFXfe5Gpxpr9UcxwE2/bI3Sh1G/Imcmy
-         024824qdOtSpR3aQovCzV8b2+dU2ioTH20o5wLjZdiS9HbXUnJoTUS7ljrcz16hgSr
-         JOMEZ2EPl0r/SIkKsZT8Tz/Cb8aatw1oTjr9w1xRGY/BiKsakgTDubFWSE2ZROKHj2
-         sVVgIGYqXYvDRyWNR7iSRSLUPGv61HWYWFhLQmTi4YZjlRKCQDfY53sV2RFLspz840
-         8rEVpzEfC+yV6JKNLc66tAtJZl+42xdfklcghWejs8ZqrqrMPYc0KONH39P5vPLePe
-         JZqZFv3XYqG/Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0425e1e6-f172-91df-2251-7583fcfed3e6@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/3/20 5:58 AM, Kirill A. Shutemov wrote:
-...
->> @@ -19,6 +21,48 @@ struct gup_benchmark {
->>  	__u64 expansion[10];	/* For future use */
->>  };
->>  
->> +static void put_back_pages(unsigned int cmd, struct page **pages,
->> +			   unsigned long nr_pages)
->> +{
->> +	int i;
->> +
->> +	switch (cmd) {
->> +	case GUP_FAST_BENCHMARK:
->> +	case GUP_LONGTERM_BENCHMARK:
->> +	case GUP_BENCHMARK:
->> +		for (i = 0; i < nr_pages; i++)
+On Mon, Feb 03, 2020 at 01:04:04PM -0800, John Hubbard wrote:
+> On 2/3/20 5:53 AM, Kirill A. Shutemov wrote:
+> > On Fri, Jan 31, 2020 at 07:40:27PM -0800, John Hubbard wrote:
+> >> diff --git a/mm/gup.c b/mm/gup.c
+> >> index c10d0d051c5b..9fe61d15fc0e 100644
+> >> --- a/mm/gup.c
+> >> +++ b/mm/gup.c
+> >> @@ -29,6 +29,19 @@ struct follow_page_context {
+> >>  	unsigned int page_mask;
+> >>  };
+> >>  
+> >> +#ifdef CONFIG_DEBUG_VM
+> > 
+> > Why under CONFIG_DEBUG_VM? There's nothing about this in the cover letter.
+> > 
 > 
-> 'i' is 'int' and 'nr_pages' is 'unsigned long'.
-> There's space for trouble :P
+> Early on, gup_benchmark showed a really significant slowdown from using these 
+> counters. And I don't doubt that it's still the case.
 > 
+> I'll re-measure and add a short summary and a few numbers to the patch commit
+> description, and to the v4 cover letter.
 
-Yes, I've changed it to "unsigned int", thanks.
+Looks like you'll show zeros for these counters if debug is off. It can be
+confusing to the user. I think these counters should go away if you don't
+count them.
 
->> +			put_page(pages[i]);
->> +		break;
->> +
->> +	case PIN_FAST_BENCHMARK:
->> +	case PIN_BENCHMARK:
->> +		unpin_user_pages(pages, nr_pages);
->> +		break;
->> +	}
->> +}
->> +
->> +static void verify_dma_pinned(unsigned int cmd, struct page **pages,
->> +			      unsigned long nr_pages)
->> +{
->> +	int i;
->> +	struct page *page;
->> +
->> +	switch (cmd) {
->> +	case PIN_FAST_BENCHMARK:
->> +	case PIN_BENCHMARK:
->> +		for (i = 0; i < nr_pages; i++) {
-> 
-> Ditto.
-> 
-
-Fixed here also.
-
-
->> +			page = pages[i];
->> +			if (WARN(!page_maybe_dma_pinned(page),
->> +				 "pages[%d] is NOT dma-pinned\n", i)) {
-
-...and changed to "pages[%u]", to match.
-
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
-
-
->> +
->> +				dump_page(page, "gup_benchmark failure");
->> +				break;
->> +			}
->> +		}
->> +		break;
->> +	}
->> +}
->> +
->>  static int __gup_benchmark_ioctl(unsigned int cmd,
->>  		struct gup_benchmark *gup)
->>  {
-> 
+ Kirill A. Shutemov
