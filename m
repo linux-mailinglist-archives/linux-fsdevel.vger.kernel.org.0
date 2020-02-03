@@ -2,165 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5AFA1510A4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 21:00:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D571510BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 21:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbgBCUAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 15:00:55 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26846 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726250AbgBCUAz (ORCPT
+        id S1726325AbgBCUDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 15:03:51 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9932 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgBCUDv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 15:00:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580760054;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hxbWiCAn4qzNWGzInygE6oJMfXNXSLmxv5Z+XX2YjiM=;
-        b=Gnow+liDE+uygCdRhfXiOwFreEarG0t8h3deJ8EaoeXwJPYQE1AIzOUp0vbAnDI+Krr8Tm
-        vR0pVymgR1M0pVctesfNZhWjYENSKjJsLUBjODTF5mzYPVd508PQMNB+dQVlkvfUAwyKs8
-        efMB82ods2IV6HdmUtPWQiMHXI7zIQE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-137-1o3bk_lWMSKbfqaHjQvukw-1; Mon, 03 Feb 2020 15:00:51 -0500
-X-MC-Unique: 1o3bk_lWMSKbfqaHjQvukw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A51121005502;
-        Mon,  3 Feb 2020 20:00:49 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CB865C1B5;
-        Mon,  3 Feb 2020 20:00:49 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 22CDD224750; Mon,  3 Feb 2020 15:00:46 -0500 (EST)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, hch@infradead.org
-Cc:     vgoyal@redhat.com, vishal.l.verma@intel.com, dm-devel@redhat.com
-Subject: [PATCH 5/5] dax,iomap: Add helper dax_iomap_zero() to zero a range
-Date:   Mon,  3 Feb 2020 15:00:29 -0500
-Message-Id: <20200203200029.4592-6-vgoyal@redhat.com>
-In-Reply-To: <20200203200029.4592-1-vgoyal@redhat.com>
-References: <20200203200029.4592-1-vgoyal@redhat.com>
+        Mon, 3 Feb 2020 15:03:51 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e387c980000>; Mon, 03 Feb 2020 12:03:36 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 03 Feb 2020 12:03:50 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 03 Feb 2020 12:03:50 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Feb
+ 2020 20:03:50 +0000
+Subject: Re: [PATCH v3 04/12] mm: introduce page_ref_sub_return()
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200201034029.4063170-1-jhubbard@nvidia.com>
+ <20200201034029.4063170-5-jhubbard@nvidia.com>
+ <20200203132329.oj32h4ryna4gmkwh@box>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <c9f4bb05-457d-a7ea-f449-dfb399facb3c@nvidia.com>
+Date:   Mon, 3 Feb 2020 12:03:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200203132329.oj32h4ryna4gmkwh@box>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580760216; bh=slWoAOjCgnvUbCzYd3p0ud2KsXbx4UbZ3i/D9mUZD1g=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oVZNVkNOYc+kjHjL1ubbfOHYXpU03ACYQb+0iGYED3N00qAA3rTqLUI6W/FLL+/94
+         /0KeKWTUWnMIexwZe5JmSqXp+kb8hJtQy0qeXMnTlnzW+b9F2iWiGnPnnt9cE9x8i/
+         5STz78HwfzxwIVZPLujhbB4GRDXG5qsYqBngJ+h0QUog4ruNYP7jhqKRoTVJibYTtb
+         a5Zzlj4qk7geaex9f3KLWk/NEEPuHZInTpHE7rcDuc1a+AITXTK3Kr/YvNFR/r+NMN
+         W/eQjpACACV53Umd/t7HWidJT6UkHnNwf4WNStZTM+x7tku5YdYyA+1ka/W79nkeIP
+         FYwSgB6uujrlg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper dax_ioamp_zero() to zero a range. This patch basically
-merges __dax_zero_page_range() and iomap_dax_zero().
+On 2/3/20 5:23 AM, Kirill A. Shutemov wrote:
+> On Fri, Jan 31, 2020 at 07:40:21PM -0800, John Hubbard wrote:
+>> An upcoming patch requires subtracting a large chunk of refcounts from
+>> a page, and checking what the resulting refcount is. This is a little
+>> different than the usual "check for zero refcount" that many of the
+>> page ref functions already do. However, it is similar to a few other
+>> routines that (like this one) are generally useful for things such as
+>> 1-based refcounting.
+>>
+>> Add page_ref_sub_return(), that subtracts a chunk of refcounts
+>> atomically, and returns an atomic snapshot of the result.
+>>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
+>>  include/linux/page_ref.h | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+>> index 14d14beb1f7f..b9cbe553d1e7 100644
+>> --- a/include/linux/page_ref.h
+>> +++ b/include/linux/page_ref.h
+>> @@ -102,6 +102,16 @@ static inline void page_ref_sub(struct page *page, int nr)
+>>  		__page_ref_mod(page, -nr);
+>>  }
+>>  
+>> +static inline int page_ref_sub_return(struct page *page, int nr)
+>> +{
+>> +	int ret = atomic_sub_return(nr, &page->_refcount);
+>> +
+>> +	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
+>> +		__page_ref_mod(page, -nr);
+> 
+> Shouldn't it be __page_ref_mod_and_return() and relevant tracepoint?
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c               | 12 ++++++------
- fs/iomap/buffered-io.c |  9 +--------
- include/linux/dax.h    | 11 +++++------
- 3 files changed, 12 insertions(+), 20 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 1b9ba6b59cdb..63303e274221 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1059,23 +1059,23 @@ int generic_dax_zero_page_range(struct dax_device=
- *dax_dev, pgoff_t pgoff,
- }
- EXPORT_SYMBOL_GPL(generic_dax_zero_page_range);
-=20
--int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int size)
-+int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-+			      struct iomap *iomap)
- {
- 	pgoff_t pgoff;
- 	long rc, id;
-+	sector_t sector =3D iomap_sector(iomap, pos & PAGE_MASK);
-=20
--	rc =3D bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
-+	rc =3D bdev_dax_pgoff(iomap->bdev, sector, PAGE_SIZE, &pgoff);
- 	if (rc)
- 		return rc;
-=20
- 	id =3D dax_read_lock();
--	rc =3D dax_zero_page_range(dax_dev, pgoff, offset, size);
-+	rc =3D dax_zero_page_range(iomap->dax_dev, pgoff, offset, size);
- 	dax_read_unlock(id);
- 	return rc;
- }
--EXPORT_SYMBOL_GPL(__dax_zero_page_range);
-+EXPORT_SYMBOL_GPL(dax_iomap_zero);
-=20
- static loff_t
- dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *da=
-ta,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 828444e14d09..5a5d784a110e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -974,13 +974,6 @@ static int iomap_zero(struct inode *inode, loff_t po=
-s, unsigned offset,
- 	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
- }
-=20
--static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
--		struct iomap *iomap)
--{
--	return __dax_zero_page_range(iomap->bdev, iomap->dax_dev,
--			iomap_sector(iomap, pos & PAGE_MASK), offset, bytes);
--}
--
- static loff_t
- iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
- 		void *data, struct iomap *iomap, struct iomap *srcmap)
-@@ -1000,7 +993,7 @@ iomap_zero_range_actor(struct inode *inode, loff_t p=
-os, loff_t count,
- 		bytes =3D min_t(loff_t, PAGE_SIZE - offset, count);
-=20
- 		if (IS_DAX(inode))
--			status =3D iomap_dax_zero(pos, offset, bytes, iomap);
-+			status =3D dax_iomap_zero(pos, offset, bytes, iomap);
- 		else
- 			status =3D iomap_zero(inode, pos, offset, bytes, iomap,
- 					srcmap);
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 3356b874c55d..ffaaa12f8ca9 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -13,6 +13,7 @@
- typedef unsigned long dax_entry_t;
-=20
- struct iomap_ops;
-+struct iomap;
- struct dax_device;
- struct dax_operations {
- 	/*
-@@ -228,13 +229,11 @@ int dax_invalidate_mapping_entry_sync(struct addres=
-s_space *mapping,
- 				      pgoff_t index);
-=20
- #ifdef CONFIG_FS_DAX
--int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int length);
-+int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-+			      struct iomap *iomap);
- #else
--static inline int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int length)
-+static inline int dax_iomap_zero(loff_t pos, unsigned offset, unsigned s=
-ize,
-+				 struct iomap *iomap)
- {
- 	return -ENXIO;
- }
---=20
-2.18.1
+Why yes, it should. I didn't even notice that that more precise function existed,
+thanks for catching that. I've changed it to this for the next version of the
+patchset:
 
+static inline int page_ref_sub_return(struct page *page, int nr)
+{
+	int ret = atomic_sub_return(nr, &page->_refcount);
+
+	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod))
+		__page_ref_mod_and_return(page, -nr, ret);
+	return ret;
+}
+
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static inline void page_ref_inc(struct page *page)
+>>  {
+>>  	atomic_inc(&page->_refcount);
+>> -- 
+>> 2.25.0
+>>
+> 
