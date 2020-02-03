@@ -2,191 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 481DE1507D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6428615081C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 15:11:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgBCN6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 08:58:37 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33734 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbgBCN6g (ORCPT
+        id S1728081AbgBCOLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 09:11:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726258AbgBCOLI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:58:36 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n25so9812698lfl.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:58:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Q7EhG/mHxujJqjIax+tX/L6XnMUCZchWEgmsqcRY8O4=;
-        b=qKCSEPA3x8kojnT0VGPWx1REhr2EhqE6i1LsFUAGRHw89eQpMMqBQ9S9OSvrvMREnc
-         Kqf2KRHdvRc9eNFj0Fbr8amLlQZMLRlz6zKBMg1WL7/HIA+tXPcqjLVjTQ2R7KakPHd8
-         jwLdRMJfSReB3MhMaxEKhmAyNYGue1eXm2uMQreQl/L3J3E4gO+Q1+0WudsQbAd9bkPn
-         tpo6FUUIsaQOfmxjgM5AMcQ+fxVRdOxwlQKq6LqAAqxfW9Lb9cGiXiPNFT0E2TvHmN+Z
-         vo1cDgpRnH/G5otSfVV8D6MokorSsYfD5tcRiWSrkfw8urfjsB3lWjxMQIv0hsoauceU
-         fDLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Q7EhG/mHxujJqjIax+tX/L6XnMUCZchWEgmsqcRY8O4=;
-        b=JkMro5M9x2UQPA+Sq+qKuIA0+QS4vTwh9Mz+HHqEyKds6Il7P9nRpDtq7jXbg4MeRt
-         guQaIqOm2sl5DYFfm6Ads14Ph6VzGkie+ILzlS8GvIqX/qZ6xPnMvpWxvdW0ngUm4N6m
-         XqIb4ZXe1A/+DDqtQP4rLlFwU2PuXk0hZVoDN/bqEmK00IKJnuWNjBqVBjIHe3+GwT7F
-         +eUgT1v2p6SDlV5Sz0AOoUQw/NMH7k/x/iVVgXQ4KZwz0m9yfMDmyAnsdx6Ofx1wwWwE
-         HQFsM5/PNuIDf/vBCmingAfTY0nQWbMkFcYyrZRGtEvS/qt8YmlharYDeq2zG5LNd0Fe
-         2Wow==
-X-Gm-Message-State: APjAAAX9QNfpffPtTtI3s/z8HeqiOmgPkSi5I2Jz28RbXZGlFka0u8ve
-        6DcAq9S2LbMbnlUDAJSzilNlZA==
-X-Google-Smtp-Source: APXvYqwy/AMeACpJx+sRC2T4Q93xcTj2QVF/axvUST/Peo/4AOgO4Rx5SZuMTvzfMfCoqFdSX1vYAA==
-X-Received: by 2002:ac2:4246:: with SMTP id m6mr12228504lfl.165.1580738313898;
-        Mon, 03 Feb 2020 05:58:33 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id n2sm9868111ljj.1.2020.02.03.05.58.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 05:58:33 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C5259100DC8; Mon,  3 Feb 2020 16:58:45 +0300 (+03)
-Date:   Mon, 3 Feb 2020 16:58:45 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mon, 3 Feb 2020 09:11:08 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 013EAv4l075189
+        for <linux-fsdevel@vger.kernel.org>; Mon, 3 Feb 2020 09:11:07 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xxkdc391v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 09:11:05 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Mon, 3 Feb 2020 14:08:36 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 3 Feb 2020 14:08:32 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 013E8VcA32440800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Feb 2020 14:08:31 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31782A405C;
+        Mon,  3 Feb 2020 14:08:31 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6E1BA4062;
+        Mon,  3 Feb 2020 14:08:30 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.99.16])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  3 Feb 2020 14:08:30 +0000 (GMT)
+Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_inconsistent_mm sysctl
+To:     Qian Cai <cai@lca.pw>, Grzegorz Halat <ghalat@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, ssaner@redhat.com, atomlin@redhat.com,
+        oleksandr@redhat.com, vbendel@redhat.com, kirill@shutemov.name,
+        khlebnikov@yandex-team.ru,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 11/12] mm/gup_benchmark: support pin_user_pages() and
- related calls
-Message-ID: <20200203135845.ymfbghs7rf67awex@box>
-References: <20200201034029.4063170-1-jhubbard@nvidia.com>
- <20200201034029.4063170-12-jhubbard@nvidia.com>
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+References: <20200129180851.551109-1-ghalat@redhat.com>
+ <84C253EB-B348-4B62-B863-F192FBA8C202@lca.pw>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Date:   Mon, 3 Feb 2020 15:08:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200201034029.4063170-12-jhubbard@nvidia.com>
+In-Reply-To: <84C253EB-B348-4B62-B863-F192FBA8C202@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020314-0008-0000-0000-0000034F4DD3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020314-0009-0000-0000-00004A6FD797
+Message-Id: <34467005-1742-47a0-cd2b-05567584b91e@de.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-03_04:2020-02-02,2020-02-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=811
+ suspectscore=27 phishscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 adultscore=0 impostorscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1911200001
+ definitions=main-2002030107
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 07:40:28PM -0800, John Hubbard wrote:
-> Up until now, gup_benchmark supported testing of the
-> following kernel functions:
-> 
-> * get_user_pages(): via the '-U' command line option
-> * get_user_pages_longterm(): via the '-L' command line option
-> * get_user_pages_fast(): as the default (no options required)
-> 
-> Add test coverage for the new corresponding pin_*() functions:
-> 
-> * pin_user_pages_fast(): via the '-a' command line option
-> * pin_user_pages():      via the '-b' command line option
-> 
-> Also, add an option for clarity: '-u' for what is now (still) the
-> default choice: get_user_pages_fast().
-> 
-> Also, for the commands that set FOLL_PIN, verify that the pages
-> really are dma-pinned, via the new is_dma_pinned() routine.
-> Those commands are:
-> 
->     PIN_FAST_BENCHMARK     : calls pin_user_pages_fast()
->     PIN_BENCHMARK          : calls pin_user_pages()
-> 
-> In between the calls to pin_*() and unpin_user_pages(),
-> check each page: if page_maybe_dma_pinned() returns false, then
-> WARN and return.
-> 
-> Do this outside of the benchmark timestamps, so that it doesn't
-> affect reported times.
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  mm/gup_benchmark.c                         | 71 ++++++++++++++++++++--
->  tools/testing/selftests/vm/gup_benchmark.c | 15 ++++-
->  2 files changed, 80 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-> index 8dba38e79a9f..447628d0131f 100644
-> --- a/mm/gup_benchmark.c
-> +++ b/mm/gup_benchmark.c
-> @@ -8,6 +8,8 @@
->  #define GUP_FAST_BENCHMARK	_IOWR('g', 1, struct gup_benchmark)
->  #define GUP_LONGTERM_BENCHMARK	_IOWR('g', 2, struct gup_benchmark)
->  #define GUP_BENCHMARK		_IOWR('g', 3, struct gup_benchmark)
-> +#define PIN_FAST_BENCHMARK	_IOWR('g', 4, struct gup_benchmark)
-> +#define PIN_BENCHMARK		_IOWR('g', 5, struct gup_benchmark)
->  
->  struct gup_benchmark {
->  	__u64 get_delta_usec;
-> @@ -19,6 +21,48 @@ struct gup_benchmark {
->  	__u64 expansion[10];	/* For future use */
->  };
->  
-> +static void put_back_pages(unsigned int cmd, struct page **pages,
-> +			   unsigned long nr_pages)
-> +{
-> +	int i;
-> +
-> +	switch (cmd) {
-> +	case GUP_FAST_BENCHMARK:
-> +	case GUP_LONGTERM_BENCHMARK:
-> +	case GUP_BENCHMARK:
-> +		for (i = 0; i < nr_pages; i++)
 
-'i' is 'int' and 'nr_pages' is 'unsigned long'.
-There's space for trouble :P
 
-> +			put_page(pages[i]);
-> +		break;
-> +
-> +	case PIN_FAST_BENCHMARK:
-> +	case PIN_BENCHMARK:
-> +		unpin_user_pages(pages, nr_pages);
-> +		break;
-> +	}
-> +}
-> +
-> +static void verify_dma_pinned(unsigned int cmd, struct page **pages,
-> +			      unsigned long nr_pages)
-> +{
-> +	int i;
-> +	struct page *page;
-> +
-> +	switch (cmd) {
-> +	case PIN_FAST_BENCHMARK:
-> +	case PIN_BENCHMARK:
-> +		for (i = 0; i < nr_pages; i++) {
+On 29.01.20 19:39, Qian Cai wrote:
+> 
+> 
+>> On Jan 29, 2020, at 1:08 PM, Grzegorz Halat <ghalat@redhat.com> wrote:
+>>
+>> Memory management subsystem performs various checks at runtime,
+>> if an inconsistency is detected then such event is being logged and kernel
+>> continues to run. While debugging such problems it is helpful to collect
+>> memory dump as early as possible. Currently, there is no easy way to panic
+>> kernel when such error is detected.
+>>
+>> It was proposed[1] to panic the kernel if panic_on_oops is set but this
+>> approach was not accepted. One of alternative proposals was introduction of
+>> a new sysctl.
+>>
+>> Add a new sysctl - panic_on_inconsistent_mm. If the sysctl is set then the
+>> kernel will be crashed when an inconsistency is detected by memory
+>> management. This currently means panic when bad page or bad PTE
+>> is detected(this may be extended to other places in MM).
+>>
+>> Another use case of this sysctl may be in security-wise environments,
+>> it may be more desired to crash machine than continue to run with
+>> potentially damaged data structures.
+> 
+> It is annoying that I have to repeat my feedback, but I don’t know why
+> admins want to enable this by allowing normal users to crash the systems
+> more easily through recoverable MM bugs where I am sure we have plenty.
+> How does that improve the security?
 
-Ditto.
+There are cases where data corruption is a no-go, while "one node going down" 
+is acceptable.
+And then there is also the case for payed service providers that often need
+a dump at the time of the problem to understand rare issues.
 
-> +			page = pages[i];
-> +			if (WARN(!page_maybe_dma_pinned(page),
-> +				 "pages[%d] is NOT dma-pinned\n", i)) {
-> +
-> +				dump_page(page, "gup_benchmark failure");
-> +				break;
-> +			}
-> +		}
-> +		break;
-> +	}
-> +}
-> +
->  static int __gup_benchmark_ioctl(unsigned int cmd,
->  		struct gup_benchmark *gup)
->  {
+So I DO see value in such a thing. We should just piggy-back on panic_on_warn
+I guess.
 
--- 
- Kirill A. Shutemov
