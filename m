@@ -2,131 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7C57150602
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 13:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CBE1506B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbgBCMTe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 07:19:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36350 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbgBCMTe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 07:19:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8D080B1C8;
-        Mon,  3 Feb 2020 12:19:30 +0000 (UTC)
-Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_inconsistent_mm sysctl
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Grzegorz Halat <ghalat@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, ssaner@redhat.com, atomlin@redhat.com,
-        oleksandr@redhat.com, vbendel@redhat.com, kirill@shutemov.name,
-        khlebnikov@yandex-team.ru, borntraeger@de.ibm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        id S1728226AbgBCNQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 08:16:41 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42564 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbgBCNQl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Feb 2020 08:16:41 -0500
+Received: by mail-lj1-f195.google.com with SMTP id d10so14550795ljl.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:16:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Qg71wuq+HUuLTE+gluyqJRk6R7IYzrOtEHHz+ac8ZpM=;
+        b=CC5rGlvJRzYFaVvEQmwbNC1ul7esNJjYZyLDrHnuq3t5DBbgrsp/MkjWbYCroY76KX
+         chkfamGwMrF0+DaINosh1xHU81SKo5fm1lydTwoN0uFEvTeARKthdNRLVZaL/0FlORqq
+         G7O04FeWYkPeix/e53R0JU+cuMFaRswnn3H/WM1jHREA9lX6nX8fDBJ1W8C5O/QWJ/YQ
+         +raTMUmUBx34sERgrv/+jVhVnnutHf/zLu+T67mXOkRqRbZ9OSo7rt00erNYA3JN/pla
+         YN1lA1E5sdJA3YLfVavlvfm9eN/+JNjgxwp47UfigpuPvgHtmzn9p7zFvpO/G6VzENtI
+         Cubw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Qg71wuq+HUuLTE+gluyqJRk6R7IYzrOtEHHz+ac8ZpM=;
+        b=Uo5fANXwBd27roqg4Tb5vYNsEgDYM+DbxCpXTooUODE7LxnAb/raVS7lwrXsDopuns
+         tdWQYmNSs/cbfpaFZEAxo2SQCq0sFfFrufrtfYi5VHtQKCIocogJW17mLjX+KN3UFUxy
+         2KqVcENTAHoh647jmXvaFkDGig3HBfTlC6t4Gw40fVUvWXt0yXjhg1VQ7Aen5SmG6H50
+         pYohaVp8+yoTuR0olD8Xl9ytQtcoIXKI6RAfc2oYeXkmUznzcY5MCb7553AOkLYZ55Q2
+         Km3fUT+2qRdK1Xkzo1mNG8sv/lmvdAyWuZId0qX0J8hf3CQlhwflS2e6Q0h1pceRE0BX
+         PVkw==
+X-Gm-Message-State: APjAAAUAXJbkuSP6o+epv4LcbiVfG30DNMhyM5ziOnAndfUxrNQrAc4i
+        hWbRt55K/XaLnn65DtczB5ww8Q==
+X-Google-Smtp-Source: APXvYqyGAMixTSCi/O2Fbmmvwq4F+Kpwzelp/ZePNtB0r7IGFSK1fy7tUEjC85bYyQIG+4m03dECqA==
+X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr14513915ljm.58.1580735798292;
+        Mon, 03 Feb 2020 05:16:38 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id x29sm10469144lfg.45.2020.02.03.05.16.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 05:16:37 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id CA41C100DC8; Mon,  3 Feb 2020 16:16:49 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:16:49 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Jonathan Corbet <corbet@lwn.net>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Qian Cai <cai@lca.pw>
-References: <20200129180851.551109-1-ghalat@redhat.com>
- <d47a5f31-5862-b0a9-660c-48105f4f049b@suse.cz>
- <202001301128.1CBD1BA52@keescook>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <1cb86d36-7620-be11-7833-0b3bab3c5c1f@suse.cz>
-Date:   Mon, 3 Feb 2020 13:19:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 01/12] mm: dump_page(): better diagnostics for
+ compound pages
+Message-ID: <20200203131649.vptndo5emkzlaiew@box>
+References: <20200201034029.4063170-1-jhubbard@nvidia.com>
+ <20200201034029.4063170-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <202001301128.1CBD1BA52@keescook>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200201034029.4063170-2-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/30/20 8:28 PM, Kees Cook wrote:
-> On Thu, Jan 30, 2020 at 03:44:50PM +0100, Vlastimil Babka wrote:
->> On 1/29/20 7:08 PM, Grzegorz Halat wrote:
->>> Memory management subsystem performs various checks at runtime,
->>> if an inconsistency is detected then such event is being logged and kernel
->>> continues to run. While debugging such problems it is helpful to collect
->>> memory dump as early as possible. Currently, there is no easy way to panic
->>> kernel when such error is detected.
->>>
->>> It was proposed[1] to panic the kernel if panic_on_oops is set but this
->>> approach was not accepted. One of alternative proposals was introduction of
->>> a new sysctl.
->>>
->>> Add a new sysctl - panic_on_inconsistent_mm. If the sysctl is set then the
->>> kernel will be crashed when an inconsistency is detected by memory
->>> management. This currently means panic when bad page or bad PTE
->>> is detected(this may be extended to other places in MM).
->>
->> I wonder, should enabling the sysctl also effectively convert VM_WARN...
->> to VM_BUG... ?
+On Fri, Jan 31, 2020 at 07:40:18PM -0800, John Hubbard wrote:
+> A compound page collects the refcount in the head page, while leaving
+> the refcount of each tail page at zero. Therefore, when debugging a
+> problem that involves compound pages, it's best to have diagnostics that
+> reflect that situation. However, dump_page() is oblivious to these
+> points.
 > 
-> There is already panic_on_warn sysctl... wouldn't that be sufficient?
+> Change dump_page() as follows:
+> 
+> 1) For tail pages, print relevant head page information: refcount, in
+>    particular. But only do this if the page is not corrupted so badly
+>    that the pointer to the head page is all wrong.
+> 
+> 2) Do a separate check to catch any (rare) cases of the tail page's
+>    refcount being non-zero, and issue a separate, clear pr_warn() if
+>    that ever happens.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-True, forgot about it. Thanks.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+Few nit-picks below.
+
+> ---
+>  mm/debug.c | 34 ++++++++++++++++++++++++++++------
+>  1 file changed, 28 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/debug.c b/mm/debug.c
+> index ecccd9f17801..beb1c59d784b 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -42,6 +42,32 @@ const struct trace_print_flags vmaflag_names[] = {
+>  	{0, NULL}
+>  };
+>  
+> +static void __dump_tail_page(struct page *page, int mapcount)
+> +{
+> +	struct page *head = compound_head(page);
+> +
+> +	if ((page < head) || (page >= head + MAX_ORDER_NR_PAGES)) {
+
+I'm not sure if we want to use compound_nr() here instead of
+MAX_ORDER_NR_PAGES. Do you have any reasonaing about it?
+
+> +		/*
+> +		 * Page is hopelessly corrupted, so limit any reporting to
+> +		 * information about the page itself. Do not attempt to look at
+> +		 * the head page.
+> +		 */
+> +		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+> +			"index:%#lx (corrupted tail page case)\n",
+> +			page, page_ref_count(page), mapcount, page->mapping,
+> +			page_to_pgoff(page));
+> +	} else {
+> +		pr_warn("page:%px compound refcount:%d mapcount:%d mapping:%px "
+> +			"index:%#lx compound_mapcount:%d\n",
+> +			page, page_ref_count(head), mapcount, head->mapping,
+> +			page_to_pgoff(head), compound_mapcount(page));
+> +	}
+> +
+> +	if (page_ref_count(page) != 0)
+> +		pr_warn("page:%px PROBLEM: non-zero refcount (==%d) on this "
+> +			"tail page\n", page, page_ref_count(page));
+
+Wrap into {}, please.
+
+> +}
+> +
+>  void __dump_page(struct page *page, const char *reason)
+>  {
+>  	struct address_space *mapping;
+> @@ -75,12 +101,8 @@ void __dump_page(struct page *page, const char *reason)
+>  	 */
+>  	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
+>  
+> -	if (PageCompound(page))
+> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+> -			"index:%#lx compound_mapcount: %d\n",
+> -			page, page_ref_count(page), mapcount,
+> -			page->mapping, page_to_pgoff(page),
+> -			compound_mapcount(page));
+> +	if (PageTail(page))
+> +		__dump_tail_page(page, mapcount);
+>  	else
+>  		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
+>  			page, page_ref_count(page), mapcount,
+> -- 
+> 2.25.0
+> 
+
+-- 
+ Kirill A. Shutemov
