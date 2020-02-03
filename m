@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11210150720
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B26C3150728
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgBCNYc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 08:24:32 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40931 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgBCNYb (ORCPT
+        id S1727586AbgBCN0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 08:26:17 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43223 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbgBCN0Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:24:31 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18so14587005ljo.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:24:30 -0800 (PST)
+        Mon, 3 Feb 2020 08:26:16 -0500
+Received: by mail-lj1-f194.google.com with SMTP id a13so14583300ljm.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:26:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Zkts+cGeEEtVuxNtWUSWiHH/b9CvDi3byTsQsBOoffc=;
-        b=uMg77BV0yqbAokDjCIsX7WMm2+rljZD30A9Pgzvg2whq0fdLlCKNcVner/6Vldy+Do
-         FJQe9cz1HwrRCTkHR76IWJkaU5PiNAe3jfkVCM41ucop+Vhsr3TE8nBD+OZBkeOwg1tK
-         tIwWZLieJoA/GglHEidrlbm6zzJlqI84LHEJYsB4i6yqavXKRSdIIRjV07xPQ9irUsii
-         fqWGRS0az2183mpkYJlDAldhbLf4FtoF5fIgpFJmgnWg+6SKmWS1oF6zqS+n4NWU8e0P
-         L1jvslaK69PxYYY/eLHnnLHG+RZYhMnLAKnh/UgEnV0qIGCLCEPbaD8fIfWosAQBpGkK
-         18JA==
+        bh=/c8JqFBoF+Wyv0y7vjPLE9bVpeDasBR2S69E+7r2TtY=;
+        b=Qvgtk33ftlbcsS5ozma4SkqBFwKXe/etS4q98w1ik72KUgLvZCb5LF6bX9en+6X9bo
+         RZkuxEhczs1LHPUxff5YONZLAinu2abSX1x8hd1YrVMhXhSPB6YnCGS2IgB7n4ZvycwY
+         4guibrya0uJJxVpAXyYDoHuuVBQYz+s5yLsNWj8sly+tVIODbFFekbsty1PMf0QzYhud
+         yGJvBqTV33CGmK5iIJ6dNPJY9ofEyM3bweM9PnVwm793arTmLHxyQ5c99wp2YWiXJHjo
+         fRwKRyBoSNe9NapKkTYXp8GqbEXUwRw4pFOvGuL+bWN/i5mbQ7e2xKkp1bS2QFcw0bFF
+         p4Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Zkts+cGeEEtVuxNtWUSWiHH/b9CvDi3byTsQsBOoffc=;
-        b=JbXb6kyw9AyhS56ccrUcosFsHxt/6IPqysR9P8x4vBZa7ijg8cjMqll2VlvL9bHaeV
-         TaWnQkNby/OxIOOM3LAypY3B+IRGw9J1QbD6F7u3ZkfzaB0RJFV4c+Gz8vSyhiDu49Ry
-         sPszVPBnUd4QyFQq5OVqT0Kjq/IGca1QG8dRGoObKHdJmWNLyd0aSmm2iVfOifNzZK2C
-         GW3dHdzUO1Zldiatc9Ct0nB6On0WQP7r4CwqMI+Jo7/ZsX5IkZyh0QCzOAhTp1I2eRCI
-         yJiDdfj3j4FF3zEeFEp3YBEbbHwyyjnhq/Om6T/ICXjRnCBm+/jIfguWa5Hidb+vl0oE
-         EAXA==
-X-Gm-Message-State: APjAAAVs/8TEBIfIGTMkUNktWfPILO4EHGZketw1R2YA2EDClxDl5lZA
-        ne181+3+ybQAo374ds+0S2zLnA==
-X-Google-Smtp-Source: APXvYqxyrBwcLQLkKywdLgZRmnj/Xxrleln4eaTTDtgmBedmh/EgtmO52sB+qALEUQcISXFUYFMPnA==
-X-Received: by 2002:a05:651c:102c:: with SMTP id w12mr13991181ljm.53.1580736269586;
-        Mon, 03 Feb 2020 05:24:29 -0800 (PST)
+        bh=/c8JqFBoF+Wyv0y7vjPLE9bVpeDasBR2S69E+7r2TtY=;
+        b=HNLeqYOkYN7TMKYFoavm0t6Mpref8/alZFiEuGVXmct6Tu6324i2AFGKGxZt2O6VUG
+         XmBPC0GrUvvt9E0VIOt4m1YYdsNaHF57JYj4FyqTN6251BkrUuB5RxMecf/OaTnMN3rS
+         pn6Bbq/VcqKMqQ7wqjErq1qry+n0DuxW2yvUsAKAaVN9mBRsGwAZCAj0aCUfpoCK5Ndk
+         TjvY0LlUEsXKYYkNdxprpOo41cD2tiV+FA+uK6umodVSFSzWCWfvMjoW/GsHoUlyc6ff
+         O82uwJN7bUMRAeG4qiT35RWz5xVvVvlkYi3bU1mytnlR/WpaJqR67F2LxhNUh0GPnVbH
+         JmPQ==
+X-Gm-Message-State: APjAAAW5pwHhiEBQeO4J3KvVT283Dqlsj8QlyHqrx6vSdRApJlIhdpH8
+        Ykv+clQox6Q5mTY0V5C0ZZwp7A==
+X-Google-Smtp-Source: APXvYqyAwd06U5sHJ6RJuXAzdAU4K5P7qW3PVQBSvKIMhVgDvbt0mabo67VXojbyegXmFIr9BORhmw==
+X-Received: by 2002:a05:651c:1bb:: with SMTP id c27mr14397156ljn.277.1580736374697;
+        Mon, 03 Feb 2020 05:26:14 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id n23sm8931924lfa.41.2020.02.03.05.24.28
+        by smtp.gmail.com with ESMTPSA id m24sm11753539ljb.81.2020.02.03.05.26.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 05:24:28 -0800 (PST)
+        Mon, 03 Feb 2020 05:26:13 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id B6499100DC8; Mon,  3 Feb 2020 16:24:41 +0300 (+03)
-Date:   Mon, 3 Feb 2020 16:24:41 +0300
+        id A788C100DC8; Mon,  3 Feb 2020 16:26:26 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:26:26 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -67,22 +67,26 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
         linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 05/12] mm/gup: pass gup flags to two more routines
-Message-ID: <20200203132441.ig7qihjvz5mfgcnc@box>
+Subject: Re: [PATCH v3 06/12] mm/gup: require FOLL_GET for
+ get_user_pages_fast()
+Message-ID: <20200203132626.ckkozepykxmqxf6a@box>
 References: <20200201034029.4063170-1-jhubbard@nvidia.com>
- <20200201034029.4063170-6-jhubbard@nvidia.com>
+ <20200201034029.4063170-7-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200201034029.4063170-6-jhubbard@nvidia.com>
+In-Reply-To: <20200201034029.4063170-7-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 07:40:22PM -0800, John Hubbard wrote:
-> In preparation for an upcoming patch, send gup flags args to two more
-> routines: put_compound_head(), and undo_dev_pagemap().
+On Fri, Jan 31, 2020 at 07:40:23PM -0800, John Hubbard wrote:
+> Internal to mm/gup.c, require that get_user_pages_fast()
+> and __get_user_pages_fast() identify themselves, by setting
+> FOLL_GET. This is required in order to be able to make decisions
+> based on "FOLL_PIN, or FOLL_GET, or both or neither are set", in
+> upcoming patches.
 > 
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
