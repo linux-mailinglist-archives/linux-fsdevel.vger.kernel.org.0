@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81890151178
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 21:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7923C15117A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 21:59:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgBCU7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 15:59:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47754 "EHLO mx2.suse.de"
+        id S1727156AbgBCU73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 15:59:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47774 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbgBCU7V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1725372AbgBCU7V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 3 Feb 2020 15:59:21 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4444FAD48;
+        by mx2.suse.de (Postfix) with ESMTP id 9E718AD78;
         Mon,  3 Feb 2020 20:59:19 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
@@ -24,9 +24,9 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] epoll: ep->wq can be woken up unlocked in certain cases
-Date:   Mon,  3 Feb 2020 21:59:06 +0100
-Message-Id: <20200203205907.291929-2-rpenyaev@suse.de>
+Subject: [PATCH 3/3] kselftest: introduce new epoll test case
+Date:   Mon,  3 Feb 2020 21:59:07 +0100
+Message-Id: <20200203205907.291929-3-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200203205907.291929-1-rpenyaev@suse.de>
 References: <20200203205907.291929-1-rpenyaev@suse.de>
@@ -38,8 +38,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now ep->lock is responsible for wqueue serialization, thus if ep->lock
-is taken on write path, wake_up_locked() can be invoked.
+This testcase repeats epollbug.c from the bug:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=205933
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Max Neunhoeffer <max@arangodb.com>
@@ -51,53 +52,98 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ .../filesystems/epoll/epoll_wakeup_test.c     | 67 ++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index eee3c92a9ebf..6e218234bd4a 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1173,7 +1173,7 @@ static inline bool chain_epi_lockless(struct epitem *epi)
-  * Another thing worth to mention is that ep_poll_callback() can be called
-  * concurrently for the same @epi from different CPUs if poll table was inited
-  * with several wait queues entries.  Plural wakeup from different CPUs of a
-- * single wait queue is serialized by wq.lock, but the case when multiple wait
-+ * single wait queue is serialized by ep->lock, but the case when multiple wait
-  * queues are used should be detected accordingly.  This is detected using
-  * cmpxchg() operation.
-  */
-@@ -1248,6 +1248,12 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- 				break;
- 			}
- 		}
-+		/*
-+		 * Since here we have the read lock (ep->lock) taken, plural
-+		 * wakeup from different CPUs can occur, thus we call wake_up()
-+		 * variant which implies its own lock on wqueue. All other paths
-+		 * take write lock.
-+		 */
- 		wake_up(&ep->wq);
- 	}
- 	if (waitqueue_active(&ep->poll_wait))
-@@ -1551,7 +1557,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
+index 37a04dab56f0..11eee0b60040 100644
+--- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
++++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
+@@ -7,13 +7,14 @@
+ #include <pthread.h>
+ #include <sys/epoll.h>
+ #include <sys/socket.h>
++#include <sys/eventfd.h>
+ #include "../../kselftest_harness.h"
  
- 		/* Notify waiting tasks that events are available */
- 		if (waitqueue_active(&ep->wq))
--			wake_up(&ep->wq);
-+			wake_up_locked(&ep->wq);
- 		if (waitqueue_active(&ep->poll_wait))
- 			pwake++;
- 	}
-@@ -1657,7 +1663,7 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
+ struct epoll_mtcontext
+ {
+ 	int efd[3];
+ 	int sfd[4];
+-	int count;
++	volatile int count;
  
- 			/* Notify waiting tasks that events are available */
- 			if (waitqueue_active(&ep->wq))
--				wake_up(&ep->wq);
-+				wake_up_locked(&ep->wq);
- 			if (waitqueue_active(&ep->poll_wait))
- 				pwake++;
- 		}
+ 	pthread_t main;
+ 	pthread_t waiter;
+@@ -3071,4 +3072,68 @@ TEST(epoll58)
+ 	close(ctx.sfd[3]);
+ }
+ 
++static void *epoll59_thread(void *ctx_)
++{
++	struct epoll_mtcontext *ctx = ctx_;
++	struct epoll_event e;
++	int i;
++
++	for (i = 0; i < 100000; i++) {
++		while (ctx->count == 0)
++			;
++
++		e.events = EPOLLIN | EPOLLERR | EPOLLET;
++		epoll_ctl(ctx->efd[0], EPOLL_CTL_MOD, ctx->sfd[0], &e);
++		ctx->count = 0;
++	}
++
++	return NULL;
++}
++
++/*
++ *        t0
++ *      (p) \
++ *           e0
++ *     (et) /
++ *        e0
++ *
++ * Based on https://bugzilla.kernel.org/show_bug.cgi?id=205933
++ */
++TEST(epoll59)
++{
++	pthread_t emitter;
++	struct pollfd pfd;
++	struct epoll_event e;
++	struct epoll_mtcontext ctx = { 0 };
++	int i, ret;
++
++	signal(SIGUSR1, signal_handler);
++
++	ctx.efd[0] = epoll_create1(0);
++	ASSERT_GE(ctx.efd[0], 0);
++
++	ctx.sfd[0] = eventfd(1, 0);
++	ASSERT_GE(ctx.sfd[0], 0);
++
++	e.events = EPOLLIN | EPOLLERR | EPOLLET;
++	ASSERT_EQ(epoll_ctl(ctx.efd[0], EPOLL_CTL_ADD, ctx.sfd[0], &e), 0);
++
++	ASSERT_EQ(pthread_create(&emitter, NULL, epoll59_thread, &ctx), 0);
++
++	for (i = 0; i < 100000; i++) {
++		ret = epoll_wait(ctx.efd[0], &e, 1, 1000);
++		ASSERT_GT(ret, 0);
++
++		while (ctx.count != 0)
++			;
++		ctx.count = 1;
++	}
++	if (pthread_tryjoin_np(emitter, NULL) < 0) {
++		pthread_kill(emitter, SIGUSR1);
++		pthread_join(emitter, NULL);
++	}
++	close(ctx.efd[0]);
++	close(ctx.sfd[0]);
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.24.1
 
