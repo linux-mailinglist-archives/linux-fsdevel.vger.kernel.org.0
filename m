@@ -2,84 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A0491500D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 05:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88DE51501C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 07:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbgBCEAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Feb 2020 23:00:55 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42930 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbgBCEAz (ORCPT
+        id S1727538AbgBCGkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 01:40:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52270 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbgBCGkt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Feb 2020 23:00:55 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w21so1303650pgl.9;
-        Sun, 02 Feb 2020 20:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Rr8HCvzHGy43zP4xWeCYuUUUoHY3g639VB8x/Nydnlg=;
-        b=muo9tv8kjF11m+vSPjqfEII/CZlpoxWRQgX5XYoLk1hjHyL+cVNJGj4bmkAYXzizak
-         Y4i91wtr2ujHX07+XLbFejWyoqTSv9vJBLIpTyKRb9d2bWbxgac+OpiTZqfkDLOzB7ee
-         zyR/RQPUwhb4SNboWPaHLBVcZBtRPCKQpbO835cOLmDYEmFQ2rtA5UHQZKuX5ZiXjwhV
-         kJw6cotpt3LtfSjgPsn7vEKpBHzoc837OBa7+G+RusS0dcQ2LjjphwWSyj2EzPtlzSi/
-         5WlfbkzwXfeqZXAT1Zgh7qAb2k1Y5ZkoS70bn2iQi6O2jZQU3S3gNwmX0zv6STsIxsBQ
-         fzbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Rr8HCvzHGy43zP4xWeCYuUUUoHY3g639VB8x/Nydnlg=;
-        b=ocnf1lXuXBMZ4AJHhSXwQa5lq9er7rO0JtS/nCvWYbqTmx5sfvGlx1Cyc9MmfN+O+1
-         RmTKD9UuiICbTEa60anSMfbSbB0mbSRVXD128BpTj8Ps5fvhsKnmIhePBa6d/pms7ftJ
-         vKGfwL9o5I+kNA8kp/t3XVdKI6MziAk4XhK0F6Jut6BASX+jyUQiyrOfUD59//1nBnv0
-         dby6Ch0vWr7GYiwHiM5xfZWeQn0VlK1v/QWa5EUVyF0pTfIBK0tSv6fYJpOCqhoNhaPo
-         d/RDvQoGa1Uz5qPlbFHBRd9bjxomGT8vwpem8liFOo/hCjr6VTgWkq9CeWH6eVWzVEKc
-         /osg==
-X-Gm-Message-State: APjAAAW//l1x9ElfNy7TQ+0Jw87cdsEUzRgbkyGMAyBF7sMeLyBykqDO
-        n48HtHZJa2elj2nPRulF+J0=
-X-Google-Smtp-Source: APXvYqw6sOBM5hkQdEcY93EBISXIcWxUa5iFOJ0ybi1o8lz/TCOyKmjVlPeCcfdTU561dRtnIHT7cA==
-X-Received: by 2002:a62:e80a:: with SMTP id c10mr22435421pfi.129.1580702454450;
-        Sun, 02 Feb 2020 20:00:54 -0800 (PST)
-Received: from localhost ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id 28sm14213294pgl.42.2020.02.02.20.00.53
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 02 Feb 2020 20:00:53 -0800 (PST)
-Date:   Mon, 3 Feb 2020 12:00:51 +0800
-From:   chenqiwu <qiwuchen55@gmail.com>
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH] fuse: Allow parallel DIO reads and check NOWAIT case for
- DIO writes
-Message-ID: <20200203040051.GB11846@cqw-OptiPlex-7050>
-References: <1580614487-1341-1-git-send-email-qiwuchen55@gmail.com>
- <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
+        Mon, 3 Feb 2020 01:40:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+oruxRScDmkGc5AbbIcp+LddBqgaqdady2ZMcAFy+7I=; b=kI5wBMsehb5l7wNQktLEpISuE
+        tnFVjk26Bi0+Bjke91WN6eTwkhQ5n4vZlGmgNBm9BQOe2UopVEHNIrBjuphbrfunaURvLD19Skaiy
+        cG9sjRpU3fmtdVqYFUh+ovqJzcW9DcBO/vZs7ag/bP55JMgCyHGeZKsJpMTkfSQwDqZnfb5kard59
+        Mne7b+GKTI4GJYCRcPRrzoZrFOVn59UhPNVyuCMGQujc0eev373jzclLf1Ea31KOyil3JyluPu1Vl
+        atwNNSxz5Vf5KAcyQA6QOZcQDShBWItN7CEmoaT3gPCbqQI6W8xrsVQila8USZd/q5tIwH9S6mdXM
+        MYOX+qx8Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iyVPb-0006Xo-O5; Mon, 03 Feb 2020 06:40:47 +0000
+Date:   Sun, 2 Feb 2020 22:40:47 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andres Freund <andres@anarazel.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
+Message-ID: <20200203064047.GC8731@bombadil.infradead.org>
+References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <07d333db-9ed3-2628-673e-cb614c31f29e@fastmail.fm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 02, 2020 at 10:25:43PM +0100, Bernd Schubert wrote:
+On Sat, Feb 01, 2020 at 01:43:09AM -0800, Andres Freund wrote:
+> As far as I can tell POSIX_FADV_WILLNEED synchronously starts readahead,
+> including page allocation etc, which of course might trigger quite
+> blocking. The fs also quite possibly needs to read metadata.
 > 
 > 
-> > @@ -1518,6 +1525,9 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >  
-> >  		res = __fuse_direct_read(&io, to, &iocb->ki_pos);
-> >  	}
-> > +	inode_unlock_shared(inode);
-> > +
-> > +	file_accessed(iocb->ki_filp);
-> 
-> 
-> Shouldn't the file_accessed() in different patch, with a description? It
-> looks totally unrelated to locking?
->
-Thanks for your remind! file_accessed() is used to update atime for
-every direct read, it's totally unrelated to locking. I will separate
-it to another patch.
+> Seems like either WILLNEED would have to always be deferred, or
+> force_page_cache_readahead, __do_page_cache_readahead would etc need to
+> be wired up to know not to block. Including returning EAGAIN, despite
+> force_page_cache_readahead and generic_readahead() intentially ignoring
+> return values / errors.
+
+The first step is going to be letting the readahead code know that it
+should have this behaviour, which is tricky because the code flow looks
+like this:
+
+io_fadvise
+  vfs_fadvise
+    file->f_op->fadvise()
+
+... and we'd be breaking brand new ground trying to add a gfp_t to a
+file_operations method.  Which is not to say it couldn't be done, but
+would mean changing filesystems, just so we could pass the gfp
+flags through from the top level to the low level.  It wouldn't be
+too bad; only two filesystems implement an ->fadvise op today.
+
+Next possibility, we could add a POSIX_FADV_WILLNEED_ASYNC advice flag.
+This would be kind of gnarly; look at XFS for example:
+
+        if (advice == POSIX_FADV_WILLNEED) {
+                lockflags = XFS_IOLOCK_SHARED;
+                xfs_ilock(ip, lockflags);
+        }
+        ret = generic_fadvise(file, start, end, advice);
+        if (lockflags)
+                xfs_iunlock(ip, lockflags);
+
+so if there's some other filesystem which decides to start taking a lock
+here and we miss it, it'll break when executing async.
+
+Something I already want to see in an entirely different context is
+a flag in the task_struct which says, essentially, "don't block in
+memory allocations" -- ie behave as if __GFP_NOWAIT | __GFP_NOWARN
+is set.  See my proposal here:
+
+https://lore.kernel.org/linux-mm/20200106220910.GK6788@bombadil.infradead.org/
+(option 2)
+You can see Kirill, Vlastimil and Michal are in favour of adding a
+memalloc_nowait_*() API, and it would also save us here from having to
+pass this information down the stack to force_page_cache_readahead()
+and friends.
+
+I've got my head stuck in the middle of the readahead code right now,
+so this seems like a good time to add this functionality.  Once I'm done
+with finding out who broke my test VM, I'll take a shot at adding this.
