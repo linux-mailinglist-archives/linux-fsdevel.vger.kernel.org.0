@@ -2,99 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88DE51501C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 07:40:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 181F6150205
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 08:37:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbgBCGkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 01:40:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52270 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgBCGkt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 01:40:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+oruxRScDmkGc5AbbIcp+LddBqgaqdady2ZMcAFy+7I=; b=kI5wBMsehb5l7wNQktLEpISuE
-        tnFVjk26Bi0+Bjke91WN6eTwkhQ5n4vZlGmgNBm9BQOe2UopVEHNIrBjuphbrfunaURvLD19Skaiy
-        cG9sjRpU3fmtdVqYFUh+ovqJzcW9DcBO/vZs7ag/bP55JMgCyHGeZKsJpMTkfSQwDqZnfb5kard59
-        Mne7b+GKTI4GJYCRcPRrzoZrFOVn59UhPNVyuCMGQujc0eev373jzclLf1Ea31KOyil3JyluPu1Vl
-        atwNNSxz5Vf5KAcyQA6QOZcQDShBWItN7CEmoaT3gPCbqQI6W8xrsVQila8USZd/q5tIwH9S6mdXM
-        MYOX+qx8Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyVPb-0006Xo-O5; Mon, 03 Feb 2020 06:40:47 +0000
-Date:   Sun, 2 Feb 2020 22:40:47 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andres Freund <andres@anarazel.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: io_uring force_nonblock vs POSIX_FADV_WILLNEED
-Message-ID: <20200203064047.GC8731@bombadil.infradead.org>
-References: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
+        id S1727493AbgBCHhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 02:37:43 -0500
+Received: from m12-11.163.com ([220.181.12.11]:52557 "EHLO m12-11.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727096AbgBCHhm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Feb 2020 02:37:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=o3Tkh
+        9ug+o/6puv66scuZdDiGZSDYt1HdEg9ceqFI74=; b=eZQl/EcPQzzY4GyQRBsqo
+        VDRzNpAdE7TthZnwLNu44F/Nlcgk4rRaxMZ0Zca6+HE6lqmwrM+/YUfEX/u9mKOs
+        dfZvrJR/cQBs061n8hNm0QTNtvCHqo+vpBmBcR70PBHptk58VHiDGVwmLwSsePeV
+        6sUknayCoZA5vYoV8GZ42M=
+Received: from localhost.localdomain (unknown [183.211.129.68])
+        by smtp7 (Coremail) with SMTP id C8CowAA3PSGWzTdefosHJQ--.43826S2;
+        Mon, 03 Feb 2020 15:36:56 +0800 (CST)
+From:   Xiao Yang <ice_yangxiao@163.com>
+To:     miklos@szeredi.hu, vgoyal@redhat.com, stefanha@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com,
+        Xiao Yang <ice_yangxiao@163.com>
+Subject: [PATCH] fuse: Don't make buffered read forward overflow value to a userspace process
+Date:   Mon,  3 Feb 2020 15:36:52 +0800
+Message-Id: <20200203073652.12067-1-ice_yangxiao@163.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200201094309.6si5dllxo4i25f4u@alap3.anarazel.de>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8CowAA3PSGWzTdefosHJQ--.43826S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZF1kXr1UJFy3Zw15tr4Utwb_yoW5urWfpF
+        ZxJ3W3AayxJFy3CrsrArn5Zr1fCwn3GFWIqrWxW3yrX3W2yF9Yk3ZIgF1rury8WrWkCr12
+        qr4DKr17ur1DJ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UC385UUUUU=
+X-Originating-IP: [183.211.129.68]
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiqBm+Xlc7NRQeiAAAsK
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 01, 2020 at 01:43:09AM -0800, Andres Freund wrote:
-> As far as I can tell POSIX_FADV_WILLNEED synchronously starts readahead,
-> including page allocation etc, which of course might trigger quite
-> blocking. The fs also quite possibly needs to read metadata.
-> 
-> 
-> Seems like either WILLNEED would have to always be deferred, or
-> force_page_cache_readahead, __do_page_cache_readahead would etc need to
-> be wired up to know not to block. Including returning EAGAIN, despite
-> force_page_cache_readahead and generic_readahead() intentially ignoring
-> return values / errors.
+Buffered read in fuse normally goes via:
+-> generic_file_buffered_read()
+  ------------------------------
+  -> fuse_readpages()
+    -> fuse_send_readpages()
+  or
+  -> fuse_readpage() [if fuse_readpages() fails to get page]
+    -> fuse_do_readpage()
+  ------------------------------
+      -> fuse_simple_request()
 
-The first step is going to be letting the readahead code know that it
-should have this behaviour, which is tricky because the code flow looks
-like this:
+Buffered read changes original offset to page-aligned length by left-shift
+and extends original count to be multiples of PAGE_SIZE and then fuse
+forwards these new parameters to a userspace process, so it is possible
+for the resulting offset(e.g page-aligned offset + extended count) to
+exceed the whole file size(even the max value of off_t) when the userspace
+process does read with new parameters.
 
-io_fadvise
-  vfs_fadvise
-    file->f_op->fadvise()
+xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
+because it triggers this issue.  See the following explanation:
+PAGE_SIZE: 4096, file size: 2^63 - 1
+Original: offset: 2^63 - 2, count: 1
+Changed by buffered read: offset: 2^63 - 4096, count: 4096
+New offset + new count exceeds the file size as well as LLONG_MAX
 
-... and we'd be breaking brand new ground trying to add a gfp_t to a
-file_operations method.  Which is not to say it couldn't be done, but
-would mean changing filesystems, just so we could pass the gfp
-flags through from the top level to the low level.  It wouldn't be
-too bad; only two filesystems implement an ->fadvise op today.
+Make fuse calculate the number of bytes of data pages contain as
+nfs_page_length() and generic_file_buffered_read() do, and then forward
+page-aligned offset and normal count to a userspace process.
 
-Next possibility, we could add a POSIX_FADV_WILLNEED_ASYNC advice flag.
-This would be kind of gnarly; look at XFS for example:
+Signed-off-by: Xiao Yang <ice_yangxiao@163.com>
+---
+ fs/fuse/file.c | 28 ++++++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-        if (advice == POSIX_FADV_WILLNEED) {
-                lockflags = XFS_IOLOCK_SHARED;
-                xfs_ilock(ip, lockflags);
-        }
-        ret = generic_fadvise(file, start, end, advice);
-        if (lockflags)
-                xfs_iunlock(ip, lockflags);
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index ce715380143c..5afc4b623eaf 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -19,6 +19,23 @@
+ #include <linux/falloc.h>
+ #include <linux/uio.h>
+ 
++static unsigned int fuse_page_length(struct page *page)
++{
++	loff_t i_size = i_size_read(page->mapping->host);
++
++	if (i_size > 0) {
++		pgoff_t index = page_index(page);
++		pgoff_t end_index = (i_size - 1) >> PAGE_SHIFT;
++
++		if (index < end_index)
++			return PAGE_SIZE;
++		if (index == end_index)
++			return ((i_size - 1) & ~PAGE_MASK) + 1;
++	}
++
++	return 0;
++}
++
+ static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
+ 				      struct fuse_page_desc **desc)
+ {
+@@ -783,7 +800,7 @@ static int fuse_do_readpage(struct file *file, struct page *page)
+ 	struct inode *inode = page->mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	loff_t pos = page_offset(page);
+-	struct fuse_page_desc desc = { .length = PAGE_SIZE };
++	struct fuse_page_desc desc = { .length = fuse_page_length(page) };
+ 	struct fuse_io_args ia = {
+ 		.ap.args.page_zeroing = true,
+ 		.ap.args.out_pages = true,
+@@ -881,9 +898,12 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ 	struct fuse_conn *fc = ff->fc;
+ 	struct fuse_args_pages *ap = &ia->ap;
+ 	loff_t pos = page_offset(ap->pages[0]);
+-	size_t count = ap->num_pages << PAGE_SHIFT;
++	size_t count = 0;
+ 	ssize_t res;
+-	int err;
++	int err, i;
++
++	for (i = 0; i < ap->num_pages; i++)
++		count += ap->descs[i].length;
+ 
+ 	ap->args.out_pages = true;
+ 	ap->args.page_zeroing = true;
+@@ -944,7 +964,7 @@ static int fuse_readpages_fill(void *_data, struct page *page)
+ 
+ 	get_page(page);
+ 	ap->pages[ap->num_pages] = page;
+-	ap->descs[ap->num_pages].length = PAGE_SIZE;
++	ap->descs[ap->num_pages].length = fuse_page_length(page);
+ 	ap->num_pages++;
+ 	data->nr_pages--;
+ 	return 0;
+-- 
+2.21.0
 
-so if there's some other filesystem which decides to start taking a lock
-here and we miss it, it'll break when executing async.
 
-Something I already want to see in an entirely different context is
-a flag in the task_struct which says, essentially, "don't block in
-memory allocations" -- ie behave as if __GFP_NOWAIT | __GFP_NOWARN
-is set.  See my proposal here:
-
-https://lore.kernel.org/linux-mm/20200106220910.GK6788@bombadil.infradead.org/
-(option 2)
-You can see Kirill, Vlastimil and Michal are in favour of adding a
-memalloc_nowait_*() API, and it would also save us here from having to
-pass this information down the stack to force_page_cache_readahead()
-and friends.
-
-I've got my head stuck in the middle of the readahead code right now,
-so this seems like a good time to add this functionality.  Once I'm done
-with finding out who broke my test VM, I'll take a shot at adding this.
