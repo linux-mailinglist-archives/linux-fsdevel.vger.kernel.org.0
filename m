@@ -2,84 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A28711512A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 00:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EED1512D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 00:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbgBCXCQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 18:02:16 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46218 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726872AbgBCXCP (ORCPT
+        id S1727164AbgBCXQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 18:16:55 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5715 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbgBCXQy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 18:02:15 -0500
-Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 77ADE3A2A22;
-        Tue,  4 Feb 2020 10:02:10 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iykjJ-0006Rf-AX; Tue, 04 Feb 2020 10:02:09 +1100
-Date:   Tue, 4 Feb 2020 10:02:09 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: RFC: hold i_rwsem until aio completes
-Message-ID: <20200203230209.GC20628@dread.disaster.area>
-References: <20200114161225.309792-1-hch@lst.de>
- <20200118092838.GB9407@dread.disaster.area>
- <20200203174641.GA20035@lst.de>
+        Mon, 3 Feb 2020 18:16:54 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e38a9ac0002>; Mon, 03 Feb 2020 15:15:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Feb 2020 15:16:52 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Feb 2020 15:16:52 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 3 Feb
+ 2020 23:16:52 +0000
+Subject: Re: [PATCH v3 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
+ reporting
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200201034029.4063170-1-jhubbard@nvidia.com>
+ <20200201034029.4063170-11-jhubbard@nvidia.com>
+ <20200203135320.edujsfjwt5nvtiit@box>
+ <0425e1e6-f172-91df-2251-7583fcfed3e6@nvidia.com>
+ <20200203213022.rltjlohvaswk32ln@box.shutemov.name>
+ <0a81878a-1f7f-daec-0833-d5b91d197ddf@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <aa33fc2c-956b-4197-e418-220198827ce6@nvidia.com>
+Date:   Mon, 3 Feb 2020 15:16:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203174641.GA20035@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=4rX9TS273XGzNsaKJp0A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <0a81878a-1f7f-daec-0833-d5b91d197ddf@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580771756; bh=gvY+g+j4Cj7DxqzAg/mvEPWkOwg/CtLtNejZlwoZKR0=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=bvGYZeEZhdzmUm7/dYb8FIKdGpgeZzC3J0CrzLhhHGHjYXMti9hHN9MSqVzHFcNo0
+         oNMt21uHiUzvprhIl/oMCokx6Bbcmizhamb59Yb6eSD8v4BqKb/x0DEXedh45mcmhN
+         hGr850FTLsQiwe3uEaxwRtsJ1WVB3xWH1EEgMpDLQuZheUBgU/jZxNtRAM1oTcHFV6
+         om2FUKOUPW2PMVRq9cYZUwhHTtlezrfRAzh+rXyVycb+FA00v6cYHjU2y9iFdSSWOb
+         VgzH+jvJzuWzEmJfzcVK8YTKu5LLf4ZhsaIwz8fQvZgCZ8G0ftJVPMd+dd8BCjyMz8
+         CBGwBZbi5Qp0g==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 06:46:41PM +0100, Christoph Hellwig wrote:
-> On Sat, Jan 18, 2020 at 08:28:38PM +1100, Dave Chinner wrote:
-> > I think it's pretty gross, actually. It  makes the same mistake made
-> > with locking in the old direct IO code - it encodes specific lock
-> > operations via flags into random locations in the DIO path. This is
-> > a very slippery slope, and IMO it is an layering violation to encode
-> > specific filesystem locking smeantics into a layer that is supposed
-> > to be generic and completely filesystem agnostic. i.e.  this
-> > mechanism breaks if a filesystem moves to a different type of lock
-> > (e.g. range locks), and history teaches us that we'll end up making
-> > a horrible, unmaintainable mess to support different locking
-> > mechanisms and contexts.
-> > 
-> > I think that we should be moving to a model where the filesystem
-> > provides an unlock method in the iomap operations structure, and if
-> > the method is present in iomap_dio_complete() it gets called for the
-> > filesystem to unlock the inode at the appropriate point. This also
-> > allows the filesystem to provide a different method for read or
-> > write unlock, depending on what type of lock it held at submission.
-> > This gets rid of the need for the iomap code to know what type of
-> > lock the caller holds, too.
+On 2/3/20 1:34 PM, John Hubbard wrote:
+> On 2/3/20 1:30 PM, Kirill A. Shutemov wrote:
+>> On Mon, Feb 03, 2020 at 01:04:04PM -0800, John Hubbard wrote:
+>>> On 2/3/20 5:53 AM, Kirill A. Shutemov wrote:
+>>>> On Fri, Jan 31, 2020 at 07:40:27PM -0800, John Hubbard wrote:
+>>>>> diff --git a/mm/gup.c b/mm/gup.c
+>>>>> index c10d0d051c5b..9fe61d15fc0e 100644
+>>>>> --- a/mm/gup.c
+>>>>> +++ b/mm/gup.c
+>>>>> @@ -29,6 +29,19 @@ struct follow_page_context {
+>>>>>  	unsigned int page_mask;
+>>>>>  };
+>>>>>  
+>>>>> +#ifdef CONFIG_DEBUG_VM
+>>>>
+>>>> Why under CONFIG_DEBUG_VM? There's nothing about this in the cover letter.
+>>>>
+>>>
+>>> Early on, gup_benchmark showed a really significant slowdown from using these 
+>>> counters. And I don't doubt that it's still the case.
+>>>
+>>> I'll re-measure and add a short summary and a few numbers to the patch commit
+>>> description, and to the v4 cover letter.
+>>
+>> Looks like you'll show zeros for these counters if debug is off. It can be
+>> confusing to the user. I think these counters should go away if you don't
+>> count them.
+>>
 > 
-> I'd rather avoid yet another method.  But I think with a little
-> tweaking we can move the unlock into the ->end_io method.
+> OK, that's a good point. (And in fact, the counters==0 situation already led me
+> astray briefly while debugging with Leon R, even. heh.) I'll remove them entirely for
+> the !CONFIG_DEBUG_VM case.
+> 
 
-That would work, too :)
+On second thought, let me do some more careful performance testing. I don't recall
+now if I was just removing every possible perf slowdown item, when I made this decision.
+It could be that the perf is not affected, and I could just leave this feature enabled
+at all times, which would be nicer.
 
-Cheers,
+And after all, these counters were designed for pretty hot-path items. I'll report back
+with results...
 
-Dave.
+
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
+
