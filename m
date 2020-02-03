@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CBE1506B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D52F01506BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 14:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbgBCNQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 08:16:41 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42564 "EHLO
+        id S1727170AbgBCNRf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 08:17:35 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34583 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbgBCNQl (ORCPT
+        with ESMTP id S1727376AbgBCNRe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 08:16:41 -0500
-Received: by mail-lj1-f195.google.com with SMTP id d10so14550795ljl.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:16:39 -0800 (PST)
+        Mon, 3 Feb 2020 08:17:34 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x7so14619400ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 05:17:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Qg71wuq+HUuLTE+gluyqJRk6R7IYzrOtEHHz+ac8ZpM=;
-        b=CC5rGlvJRzYFaVvEQmwbNC1ul7esNJjYZyLDrHnuq3t5DBbgrsp/MkjWbYCroY76KX
-         chkfamGwMrF0+DaINosh1xHU81SKo5fm1lydTwoN0uFEvTeARKthdNRLVZaL/0FlORqq
-         G7O04FeWYkPeix/e53R0JU+cuMFaRswnn3H/WM1jHREA9lX6nX8fDBJ1W8C5O/QWJ/YQ
-         +raTMUmUBx34sERgrv/+jVhVnnutHf/zLu+T67mXOkRqRbZ9OSo7rt00erNYA3JN/pla
-         YN1lA1E5sdJA3YLfVavlvfm9eN/+JNjgxwp47UfigpuPvgHtmzn9p7zFvpO/G6VzENtI
-         Cubw==
+        bh=vyFT4rLw7oKG03KTCLsTCkr74zWtEKjYEEOBftr+6P0=;
+        b=o5Ff7btsNGi9NOXnjubu+7cTXPZzjIguylFxg2meFJKfZpUujo4sDiBm4/PoClx4Kf
+         wAG+40lcRzRFD2Co4z/dCvXZkYHngCJJvQG6Ro/d5Jm8BkZvOVNgFHKyhYYFkEvWw0aa
+         4VwPcAc6uWQZ0Yd3ylaVtft2ryUHgm9OCWOQ5Hh6uzsALWd6gB3mINfr5rfMNTl765vG
+         uALlx7fVFek/4XK+QVXRG+jLYeMHLD4cZqm8RYCS6Mqdrfm8thosqdfb6bNYw5rBicmE
+         HJsg9ArBJmbt0pkJ1ndiDf0a6JSC2Os6yrRXqftoz+cbYoumzUNhzEWAGvRcPkk36K3w
+         IIeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Qg71wuq+HUuLTE+gluyqJRk6R7IYzrOtEHHz+ac8ZpM=;
-        b=Uo5fANXwBd27roqg4Tb5vYNsEgDYM+DbxCpXTooUODE7LxnAb/raVS7lwrXsDopuns
-         tdWQYmNSs/cbfpaFZEAxo2SQCq0sFfFrufrtfYi5VHtQKCIocogJW17mLjX+KN3UFUxy
-         2KqVcENTAHoh647jmXvaFkDGig3HBfTlC6t4Gw40fVUvWXt0yXjhg1VQ7Aen5SmG6H50
-         pYohaVp8+yoTuR0olD8Xl9ytQtcoIXKI6RAfc2oYeXkmUznzcY5MCb7553AOkLYZ55Q2
-         Km3fUT+2qRdK1Xkzo1mNG8sv/lmvdAyWuZId0qX0J8hf3CQlhwflS2e6Q0h1pceRE0BX
-         PVkw==
-X-Gm-Message-State: APjAAAUAXJbkuSP6o+epv4LcbiVfG30DNMhyM5ziOnAndfUxrNQrAc4i
-        hWbRt55K/XaLnn65DtczB5ww8Q==
-X-Google-Smtp-Source: APXvYqyGAMixTSCi/O2Fbmmvwq4F+Kpwzelp/ZePNtB0r7IGFSK1fy7tUEjC85bYyQIG+4m03dECqA==
-X-Received: by 2002:a2e:b4e7:: with SMTP id s7mr14513915ljm.58.1580735798292;
-        Mon, 03 Feb 2020 05:16:38 -0800 (PST)
+        bh=vyFT4rLw7oKG03KTCLsTCkr74zWtEKjYEEOBftr+6P0=;
+        b=gOjZK7nTvSylIIoxO5z3YwNWCV7/d6rgevP7QBBuz0XDAm/UUuMPtYO2GZ/7SAylpk
+         9w5972bYmSdcyLuEkrbLjT96V35AFYC5xWYzXsFFnnPKXvl1MW+sM2dfL5QZ4cvzXBqZ
+         ikFBupsXRKgjsbp0Jlp7TaDsLTUkVY0E56QtoulFwBQOSVa7x/AslJpH1YTi465tq1Vp
+         SHGBKLOsedKbZrBK7x8ESNV3Mgo9WUV2mR4dSRBNLHpLC0WuOlr8i9mIwxCi+foWHR7t
+         kM1rsSqGtoYmJ1BkMTFYsBUWxAXSlV1jwMJh/fgehc7V/H0UtJnC8GzrHuyxXF+CIcqD
+         FBNQ==
+X-Gm-Message-State: APjAAAUd7gAtyL/QxhxZ9YOMQKwZFD5gCkV7caRtxyu5ZFwwcpvkbfyO
+        wWIkjtM5jPhhc8lApcQzxSmzpQ==
+X-Google-Smtp-Source: APXvYqzNUL0o3i1b2tHehpWzfV/mFHtL+96xJ6zWYkW97kHAQ906cHrLM/Ge9Zfr+Ej7Vk691i4ZeQ==
+X-Received: by 2002:a2e:9a93:: with SMTP id p19mr13816964lji.177.1580735852643;
+        Mon, 03 Feb 2020 05:17:32 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id x29sm10469144lfg.45.2020.02.03.05.16.37
+        by smtp.gmail.com with ESMTPSA id z8sm9754153ljk.13.2020.02.03.05.17.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 05:16:37 -0800 (PST)
+        Mon, 03 Feb 2020 05:17:31 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id CA41C100DC8; Mon,  3 Feb 2020 16:16:49 +0300 (+03)
-Date:   Mon, 3 Feb 2020 16:16:49 +0300
+        id 79B2B100DC8; Mon,  3 Feb 2020 16:17:44 +0300 (+03)
+Date:   Mon, 3 Feb 2020 16:17:44 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -66,113 +66,32 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v3 01/12] mm: dump_page(): better diagnostics for
- compound pages
-Message-ID: <20200203131649.vptndo5emkzlaiew@box>
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 02/12] mm/gup: split get_user_pages_remote() into two
+ routines
+Message-ID: <20200203131744.6idhpu2ho3ajfu55@box>
 References: <20200201034029.4063170-1-jhubbard@nvidia.com>
- <20200201034029.4063170-2-jhubbard@nvidia.com>
+ <20200201034029.4063170-3-jhubbard@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200201034029.4063170-2-jhubbard@nvidia.com>
+In-Reply-To: <20200201034029.4063170-3-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 31, 2020 at 07:40:18PM -0800, John Hubbard wrote:
-> A compound page collects the refcount in the head page, while leaving
-> the refcount of each tail page at zero. Therefore, when debugging a
-> problem that involves compound pages, it's best to have diagnostics that
-> reflect that situation. However, dump_page() is oblivious to these
-> points.
+On Fri, Jan 31, 2020 at 07:40:19PM -0800, John Hubbard wrote:
+> An upcoming patch requires reusing the implementation of
+> get_user_pages_remote(). Split up get_user_pages_remote() into an outer
+> routine that checks flags, and an implementation routine that will be
+> reused. This makes subsequent changes much easier to understand.
 > 
-> Change dump_page() as follows:
+> There should be no change in behavior due to this patch.
 > 
-> 1) For tail pages, print relevant head page information: refcount, in
->    particular. But only do this if the page is not corrupted so badly
->    that the pointer to the head page is all wrong.
-> 
-> 2) Do a separate check to catch any (rare) cases of the tail page's
->    refcount being non-zero, and issue a separate, clear pr_warn() if
->    that ever happens.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
-Few nit-picks below.
-
-> ---
->  mm/debug.c | 34 ++++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/debug.c b/mm/debug.c
-> index ecccd9f17801..beb1c59d784b 100644
-> --- a/mm/debug.c
-> +++ b/mm/debug.c
-> @@ -42,6 +42,32 @@ const struct trace_print_flags vmaflag_names[] = {
->  	{0, NULL}
->  };
->  
-> +static void __dump_tail_page(struct page *page, int mapcount)
-> +{
-> +	struct page *head = compound_head(page);
-> +
-> +	if ((page < head) || (page >= head + MAX_ORDER_NR_PAGES)) {
-
-I'm not sure if we want to use compound_nr() here instead of
-MAX_ORDER_NR_PAGES. Do you have any reasonaing about it?
-
-> +		/*
-> +		 * Page is hopelessly corrupted, so limit any reporting to
-> +		 * information about the page itself. Do not attempt to look at
-> +		 * the head page.
-> +		 */
-> +		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
-> +			"index:%#lx (corrupted tail page case)\n",
-> +			page, page_ref_count(page), mapcount, page->mapping,
-> +			page_to_pgoff(page));
-> +	} else {
-> +		pr_warn("page:%px compound refcount:%d mapcount:%d mapping:%px "
-> +			"index:%#lx compound_mapcount:%d\n",
-> +			page, page_ref_count(head), mapcount, head->mapping,
-> +			page_to_pgoff(head), compound_mapcount(page));
-> +	}
-> +
-> +	if (page_ref_count(page) != 0)
-> +		pr_warn("page:%px PROBLEM: non-zero refcount (==%d) on this "
-> +			"tail page\n", page, page_ref_count(page));
-
-Wrap into {}, please.
-
-> +}
-> +
->  void __dump_page(struct page *page, const char *reason)
->  {
->  	struct address_space *mapping;
-> @@ -75,12 +101,8 @@ void __dump_page(struct page *page, const char *reason)
->  	 */
->  	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
->  
-> -	if (PageCompound(page))
-> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
-> -			"index:%#lx compound_mapcount: %d\n",
-> -			page, page_ref_count(page), mapcount,
-> -			page->mapping, page_to_pgoff(page),
-> -			compound_mapcount(page));
-> +	if (PageTail(page))
-> +		__dump_tail_page(page, mapcount);
->  	else
->  		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
->  			page, page_ref_count(page), mapcount,
-> -- 
-> 2.25.0
-> 
 
 -- 
  Kirill A. Shutemov
