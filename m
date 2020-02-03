@@ -2,139 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E16150E8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 18:20:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82733150EA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Feb 2020 18:33:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbgBCRUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 12:20:04 -0500
-Received: from gentwo.org ([3.19.106.255]:41104 "EHLO gentwo.org"
+        id S1727595AbgBCRda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 12:33:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39976 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727429AbgBCRUE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 12:20:04 -0500
-Received: by gentwo.org (Postfix, from userid 1002)
-        id 5781C3F244; Mon,  3 Feb 2020 17:20:02 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by gentwo.org (Postfix) with ESMTP id 55B463ED62;
-        Mon,  3 Feb 2020 17:20:02 +0000 (UTC)
-Date:   Mon, 3 Feb 2020 17:20:02 +0000 (UTC)
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@www.lameter.com
-To:     Kees Cook <keescook@chromium.org>
-cc:     Jann Horn <jannh@google.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        David Windsor <dave@nullcore.net>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Jan Kara <jack@suse.cz>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rik van Riel <riel@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Kubecek <mkubecek@suse.cz>
-Subject: Re: [kernel-hardening] [PATCH 09/38] usercopy: Mark kmalloc caches
- as usercopy caches
-In-Reply-To: <202002010952.ACDA7A81@keescook>
-Message-ID: <alpine.DEB.2.21.2002031716440.1668@www.lameter.com>
-References: <bfca96db-bbd0-d958-7732-76e36c667c68@suse.cz> <202001271519.AA6ADEACF0@keescook> <5861936c-1fe1-4c44-d012-26efa0c8b6e7@de.ibm.com> <202001281457.FA11CC313A@keescook> <alpine.DEB.2.21.2001291640350.1546@www.lameter.com>
- <6844ea47-8e0e-4fb7-d86f-68046995a749@de.ibm.com> <20200129170939.GA4277@infradead.org> <771c5511-c5ab-3dd1-d938-5dbc40396daa@de.ibm.com> <202001300945.7D465B5F5@keescook> <CAG48ez1a4waGk9kB0WLaSbs4muSoK0AYAVk8=XYaKj4_+6e6Hg@mail.gmail.com>
- <202002010952.ACDA7A81@keescook>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727620AbgBCRda (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Feb 2020 12:33:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id F3108ADD7;
+        Mon,  3 Feb 2020 17:33:27 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 03 Feb 2020 18:33:27 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Max Neunhoeffer <max@arangodb.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
+Subject: Re: epoll_wait misses edge-triggered eventfd events: bug in Linux 5.3
+ and 5.4
+In-Reply-To: <20200203151536.caf6n4b2ymvtssmh@tux>
+References: <20200131135730.ezwtgxddjpuczpwy@tux>
+ <20200201121647.62914697@cakuba.hsd1.ca.comcast.net>
+ <20200203151536.caf6n4b2ymvtssmh@tux>
+Message-ID: <5a16db1f2983ab105b99121ce0737d11@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 1 Feb 2020, Kees Cook wrote:
->
-> I can't find where the address limit for dma-kmalloc is implemented.
+Hi Max and all,
 
-include/linux/mmzones.h
+I can reproduce the issue.  My epoll optimization which you referenced
+did not consider the case of wakeups on epoll_ctl() path, only the fd
+update path.
 
-enum zone_type {
-        /*
-         * ZONE_DMA and ZONE_DMA32 are used when there are peripherals not able
-         * to DMA to all of the addressable memory (ZONE_NORMAL).
-         * On architectures where this area covers the whole 32 bit address
-         * space ZONE_DMA32 is used. ZONE_DMA is left for the ones with smaller
-         * DMA addressing constraints. This distinction is important as a 32bit
-         * DMA mask is assumed when ZONE_DMA32 is defined. Some 64-bit
-         * platforms may need both zones as they support peripherals with
-         * different DMA addressing limitations.
-         *
-         * Some examples:
-         *
-         *  - i386 and x86_64 have a fixed 16M ZONE_DMA and ZONE_DMA32 for the
-         *    rest of the lower 4G.
-         *
-         *  - arm only uses ZONE_DMA, the size, up to 4G, may vary depending on
-         *    the specific device.
-         *
-         *  - arm64 has a fixed 1G ZONE_DMA and ZONE_DMA32 for the rest of the
-         *    lower 4G.
-         *
-         *  - powerpc only uses ZONE_DMA, the size, up to 2G, may vary
-         *    depending on the specific device.
-         *
-         *  - s390 uses ZONE_DMA fixed to the lower 2G.
-         *
-         *  - ia64 and riscv only use ZONE_DMA32.
-         *
-         *  - parisc uses neither.
-         */
-#ifdef CONFIG_ZONE_DMA
-        ZONE_DMA,
-#endif
-#ifdef CONFIG_ZONE_DMA32
-        ZONE_DMA32,
-#endif
-        /*
-         * Normal addressable memory is in ZONE_NORMAL. DMA operations can
-be
-         * performed on pages in ZONE_NORMAL if the DMA devices support
-         * transfers to all addressable memory.
-         */
-        ZONE_NORMAL,
-#ifdef CONFIG_HIGHMEM
-        /*
-         * A memory area that is only addressable by the kernel through
-         * mapping portions into its own address space. This is for example
-         * used by i386 to allow the kernel to address the memory beyond
-         * 900MB. The kernel will set up special mappings (page
-         * table entries on i386) for each page that the kernel needs to
-         * access.
-         */
-        ZONE_HIGHMEM,
-#endif
-        ZONE_MOVABLE,
-#ifdef CONFIG_ZONE_DEVICE
-        ZONE_DEVICE,
-#endif
-        __MAX_NR_ZONES
+I will send the fix upstream today/tomorrow (already tested on the
+epollbug.c), the exemplary patch at the bottom of the current
+email.
 
-};
+Also I would like to  submit the epollbug.c as a test case for
+the epoll test suite. Does the author of epollbug have any
+objections?
+
+Thanks.
+
+--
+Roman
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index c4159bcc05d9..a90f8b8a5def 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -745,7 +745,7 @@ static __poll_t ep_scan_ready_list(struct eventpoll 
+*ep,
+                  * the ->poll() wait list (delayed after we release the 
+lock).
+                  */
+                 if (waitqueue_active(&ep->wq))
+-                       wake_up(&ep->wq);
++                       wake_up_locked(&ep->wq);
+                 if (waitqueue_active(&ep->poll_wait))
+                         pwake++;
+         }
+@@ -1200,7 +1200,7 @@ static inline bool chain_epi_lockless(struct 
+epitem *epi)
+   * Another thing worth to mention is that ep_poll_callback() can be 
+called
+   * concurrently for the same @epi from different CPUs if poll table was 
+inited
+   * with several wait queues entries.  Plural wakeup from different CPUs 
+of a
+- * single wait queue is serialized by wq.lock, but the case when 
+multiple wait
++ * single wait queue is serialized by ep->lock, but the case when 
+multiple wait
+   * queues are used should be detected accordingly.  This is detected 
+using
+   * cmpxchg() operation.
+   */
+@@ -1275,6 +1275,13 @@ static int ep_poll_callback(wait_queue_entry_t 
+*wait, unsigned mode, int sync, v
+                                 break;
+                         }
+                 }
++               /*
++                * Since here we have the read lock (ep->lock) taken, 
+plural
++                * wakeup from different CPUs can occur, thus we call 
+wake_up()
++                * variant which implies its own lock on wqueue. All 
+other paths
++                * take write lock, thus modifications on ep->wq are 
+serialized
++                * by rw lock.
++                */
+                 wake_up(&ep->wq);
+         }
+         if (waitqueue_active(&ep->poll_wait))
+@@ -1578,7 +1585,7 @@ static int ep_insert(struct eventpoll *ep, const 
+struct epoll_event *event,
+
+                 /* Notify waiting tasks that events are available */
+                 if (waitqueue_active(&ep->wq))
+-                       wake_up(&ep->wq);
++                       wake_up_locked(&ep->wq);
+                 if (waitqueue_active(&ep->poll_wait))
+                         pwake++;
+         }
+@@ -1684,7 +1691,7 @@ static int ep_modify(struct eventpoll *ep, struct 
+epitem *epi,
+
+                         /* Notify waiting tasks that events are 
+available */
+                         if (waitqueue_active(&ep->wq))
+-                               wake_up(&ep->wq);
++                               wake_up_locked(&ep->wq);
+                         if (waitqueue_active(&ep->poll_wait))
+                                 pwake++;
+                 }
+@@ -1881,9 +1888,9 @@ static int ep_poll(struct eventpoll *ep, struct 
+epoll_event __user *events,
+                 waiter = true;
+                 init_waitqueue_entry(&wait, current);
+
+-               spin_lock_irq(&ep->wq.lock);
++               write_lock_irq(&ep->lock);
+                 __add_wait_queue_exclusive(&ep->wq, &wait);
+-               spin_unlock_irq(&ep->wq.lock);
++               write_unlock_irq(&ep->lock);
+         }
+
+         for (;;) {
+@@ -1931,9 +1938,9 @@ static int ep_poll(struct eventpoll *ep, struct 
+epoll_event __user *events,
+                 goto fetch_events;
+
+         if (waiter) {
+-               spin_lock_irq(&ep->wq.lock);
++               write_lock_irq(&ep->lock);
+                 __remove_wait_queue(&ep->wq, &wait);
+-               spin_unlock_irq(&ep->wq.lock);
++               write_unlock_irq(&ep->lock);
+         }
+
+         return res;
+
+
+
+
+On 2020-02-03 16:15, Max Neunhoeffer wrote:
+> Dear Jakub and all,
+> 
+> I have done a git bisect and found that this commit introduced the 
+> epoll
+> bug:
+> 
+> https://github.com/torvalds/linux/commit/a218cc4914209ac14476cb32769b31a556355b22
+> 
+> I Cc the author of the commit.
+> 
+> This makes sense, since the commit introduces a new rwlock to reduce
+> contention in ep_poll_callback. I do not fully understand the details
+> but this sounds all very close to this bug.
+> 
+> I have also verified that the bug is still present in the latest master
+> branch in Linus' repository.
+> 
+> Furthermore, Chris Kohlhoff has provided yet another reproducing 
+> program
+> which is no longer using edge-triggered but standard level-triggered
+> events and epoll_wait. This makes the bug all the more urgent, since
+> potentially more programs could run into this problem and could end up
+> with sleeping barbers.
+> 
+> I have added all the details to the bugzilla bugreport:
+> 
+>   https://bugzilla.kernel.org/show_bug.cgi?id=205933
+> 
+> Hopefully, we can resolve this now equipped with this amount of 
+> information.
+> 
+> Best regards,
+>   Max.
+> 
+> On 20/02/01 12:16, Jakub Kicinski wrote:
+>> On Fri, 31 Jan 2020 14:57:30 +0100, Max Neunhoeffer wrote:
+>> > Dear All,
+>> >
+>> > I believe I have found a bug in Linux 5.3 and 5.4 in epoll_wait/epoll_ctl
+>> > when an eventfd together with edge-triggered or the EPOLLONESHOT policy
+>> > is used. If an epoll_ctl call to rearm the eventfd happens approximately
+>> > at the same time as the epoll_wait goes to sleep, the event can be lost,
+>> > even though proper protection through a mutex is employed.
+>> >
+>> > The details together with two programs showing the problem can be found
+>> > here:
+>> >
+>> >   https://bugzilla.kernel.org/show_bug.cgi?id=205933
+>> >
+>> > Older kernels seem not to have this problem, although I did not test all
+>> > versions. I know that 4.15 and 5.0 do not show the problem.
+>> >
+>> > Note that this method of using epoll_wait/eventfd is used by
+>> > boost::asio to wake up event loops in case a new completion handler
+>> > is posted to an io_service, so this is probably relevant for many
+>> > applications.
+>> >
+>> > Any help with this would be appreciated.
+>> 
+>> Could be networking related but let's CC FS folks just in case.
+>> 
+>> Would you be able to perform bisection to narrow down the search
+>> for a buggy change?
 
