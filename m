@@ -2,98 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 179F8151CB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 15:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94258151CC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 15:59:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbgBDO6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 09:58:34 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35520 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727267AbgBDO6e (ORCPT
+        id S1727336AbgBDO76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 09:59:58 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:53688 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727319AbgBDO76 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 09:58:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AfAKF0TXjgF6cXOTs0IpvR8bmv7Y5y+OTvhW+uwkYRk=; b=jToIu+2geApo4hExEekSN8//Dd
-        2Rr+plF0PB/eoNuH+8VtbAXDE4wYNJTu1b6Hwfffr8N7g3sN6DCWKoRtmBGp+SWEVhVij0/295+Xm
-        3KYG9tLY7mPgoajeQTZgnjfrZ6xrGHk8TzUFisU2KUe3DsgMpPSiIh3ixf2CkKWhkGlX/KElGf4dk
-        iZlJn5y8HhHxHYup8syqlIqOrhpMUibNDf2+udSBBTeqGaFZy2Kf3MVIgiD56cJ3muEF4LrO4XjLd
-        fU8nHmNSSwQ/sLJtRKRlo+OkWXSuQnCeW7JZuczjuyrd1raDGzt3bW6Mw90hAGtEGOlHripIRvONT
-        GICtGCaw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyzeq-0001AI-T3; Tue, 04 Feb 2020 14:58:32 +0000
-Date:   Tue, 4 Feb 2020 06:58:32 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 0/9] Inline Encryption Support
-Message-ID: <20200204145832.GA28393@infradead.org>
-References: <20191218145136.172774-1-satyat@google.com>
- <20200108140556.GB2896@infradead.org>
- <20200108184305.GA173657@google.com>
- <20200117085210.GA5473@infradead.org>
- <20200201005341.GA134917@google.com>
- <20200203091558.GA28527@infradead.org>
- <20200204033915.GA122248@google.com>
+        Tue, 4 Feb 2020 09:59:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580828397;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=G4OL5c8ap2AVZmyYHDqCmQgp9/fB+rx7zQbFyZWDmWE=;
+        b=TNUXRPtSRF9DTrEbxw7cK+PG1h9YIwM9bSuRb4eAdCSQ+WYioM4Nkh96V7mYX4R+0OMO/R
+        My+Vu1jI1mMNqUPPrtwND3E8Cg1zRpDw3zTy7opayJhbelnQ/FgoYuOua2uo/714/O5IWS
+        VEmS2ApG6gxa7vJjZ+4NOCAWfLG+3ms=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-93-hJoMHsq4PaSwH3BD7fuFgg-1; Tue, 04 Feb 2020 09:59:52 -0500
+X-MC-Unique: hJoMHsq4PaSwH3BD7fuFgg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A5B7418B6392;
+        Tue,  4 Feb 2020 14:59:51 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A0A85C1D4;
+        Tue,  4 Feb 2020 14:59:51 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1C66A2202E9; Tue,  4 Feb 2020 09:59:51 -0500 (EST)
+Date:   Tue, 4 Feb 2020 09:59:51 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/4] ovl: alllow remote upper
+Message-ID: <20200204145951.GC11631@redhat.com>
+References: <20200131115004.17410-1-mszeredi@redhat.com>
+ <20200131115004.17410-5-mszeredi@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200204033915.GA122248@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200131115004.17410-5-mszeredi@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 07:39:15PM -0800, Satya Tangirala wrote:
-> Wouldn't that mean that all the other requests in the queue, even ones that
-> don't even need any inline encryption, also don't get processed until the
-> queue is woken up again?
+On Fri, Jan 31, 2020 at 12:50:04PM +0100, Miklos Szeredi wrote:
+> No reason to prevent upper layer being a remote filesystem.  Do the
+> revalidation in that case, just as we already do for lower layers.
+> 
+> This lets virtiofs be used as upper layer, which appears to be a real use
+> case.
 
-For the basic implementation yes.
+Hi Miklos,
 
-> And if so, are we really ok with that?
+I have couple of very basic questions.
 
-That depends on the use cases.  With the fscrypt setup are we still
-going to see unencrypted I/O to the device as well?  If so we'll need
-to refine the setup and only queue up unencrypted requests.  But I'd
-still try to dumb version first and then refine it.
+- So with this change, we will allow NFS to be upper layer also?
 
-> As you said, we'd need the queue to wake up once a keyslot is available.
-> It's possible that only some hardware queues and not others get blocked
-> because of keyslot programming, so ideally, we could somehow make the
-> correct hardware queue(s) wake up once a keyslot is freed. But the keyslot
-> manager can't assume that it's actually blk-mq that's being used
-> underneath,
+- What does revalidation on lower/upper mean? Does that mean that
+  lower/upper can now change underneath overlayfs and overlayfs will
+  cope with it. If we still expect underlying layers not to change, then
+  what's the point of calling ->revalidate().
 
-Why?  The legacy requet code is long gone.
+Thanks
+Vivek
 
-> Also I forgot to mention this in my previous mail, but there may be some
-> drivers/devices whose keyslots cannot be programmed from an atomic context,
-> so this approach which might make things difficult in those situations (the
-> UFS v2.1 spec, which I followed while implementing support for inline
-> crypto for UFS, does not care whether we're in an atomic context or not,
-> but there might be specifications for other drivers, or even some
-> particular UFS inline encryption hardware that do).
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/namei.c | 3 +--
+>  fs/overlayfs/super.c | 8 ++++++--
+>  fs/overlayfs/util.c  | 2 ++
+>  3 files changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 76e61cc27822..0db23baf98e7 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -845,8 +845,7 @@ struct dentry *ovl_lookup(struct inode *dir, struct dentry *dentry,
+>  		if (err)
+>  			goto out;
+>  
+> -		if (upperdentry && (upperdentry->d_flags & DCACHE_OP_REAL ||
+> -				    unlikely(ovl_dentry_remote(upperdentry)))) {
+> +		if (upperdentry && upperdentry->d_flags & DCACHE_OP_REAL) {
+>  			dput(upperdentry);
+>  			err = -EREMOTE;
+>  			goto out;
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 26d4153240a8..ed3a11db9039 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -135,9 +135,14 @@ static int ovl_dentry_revalidate_common(struct dentry *dentry,
+>  					unsigned int flags, bool weak)
+>  {
+>  	struct ovl_entry *oe = dentry->d_fsdata;
+> +	struct dentry *upper;
+>  	unsigned int i;
+>  	int ret = 1;
+>  
+> +	upper = ovl_dentry_upper(dentry);
+> +	if (upper)
+> +		ret = ovl_revalidate_real(upper, flags, weak);
+> +
+>  	for (i = 0; ret > 0 && i < oe->numlower; i++) {
+>  		ret = ovl_revalidate_real(oe->lowerstack[i].dentry, flags,
+>  					  weak);
+> @@ -747,8 +752,7 @@ static int ovl_mount_dir(const char *name, struct path *path)
+>  		ovl_unescape(tmp);
+>  		err = ovl_mount_dir_noesc(tmp, path);
+>  
+> -		if (!err && (ovl_dentry_remote(path->dentry) ||
+> -			     path->dentry->d_flags & DCACHE_OP_REAL)) {
+> +		if (!err && path->dentry->d_flags & DCACHE_OP_REAL) {
+>  			pr_err("filesystem on '%s' not supported as upperdir\n",
+>  			       tmp);
+>  			path_put_init(path);
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 3ad8fb291f7d..c793722739e1 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -96,6 +96,8 @@ void ovl_dentry_update_reval(struct dentry *dentry, struct dentry *upperdentry,
+>  	struct ovl_entry *oe = OVL_E(dentry);
+>  	unsigned int i, flags = 0;
+>  
+> +	if (upperdentry)
+> +		flags |= upperdentry->d_flags;
+>  	for (i = 0; i < oe->numlower; i++)
+>  		flags |= oe->lowerstack[i].dentry->d_flags;
+>  
+> -- 
+> 2.21.1
+> 
 
-We have an option to never call ->queue_rq from atomic context
-(BLK_MQ_F_BLOCKING).  But do you know of existing hardware that behaves
-like this or is it just hypothetical?
-
-> So unless you have strong objections, I'd want to continue programming
-> keyslots per-bio for the above reasons.
-
-I'm pretty sure from looking at the code that doing inline encryption
-at the bio level is the wrong approach.  That isn't supposed to end
-the discussion, but especially things like waking up after a keyslot
-becomes available fits much better into the request layer resource
-model that is built around queuing limitations, and not the make_request
-model that assumes the driver can always queue.
