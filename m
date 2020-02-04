@@ -2,219 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77EA61522EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 00:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99503152301
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 00:24:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727711AbgBDXPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 18:15:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48570 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727685AbgBDXPU (ORCPT
+        id S1727537AbgBDXY2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 18:24:28 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:58816 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbgBDXY2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 18:15:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580858118;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oE+GbwjQPEUxQxgoqp1axXub52iza+nsVW7DZrtJxPM=;
-        b=NIIqRq5R0lblUTuQnMKIHT8+haQ/NGEy9YKSeRT1eOYKai8q7ODVpmYWnJ7GUWCT33mfHM
-        uWw0YmPTzBWqpE3IvEn5AJ8NrK4lzXByB+22zpl6syK4k48uTNjBVz1n0NtLUCQ2tWS/Tb
-        We58eDAD6OJ+HnSaZHCb3kCIc/uc/hw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-333-KJ8fBWDAPoyKV5DcK0QoQg-1; Tue, 04 Feb 2020 18:15:13 -0500
-X-MC-Unique: KJ8fBWDAPoyKV5DcK0QoQg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9E6CC1084449;
-        Tue,  4 Feb 2020 23:15:11 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 34FAD5DA2C;
-        Tue,  4 Feb 2020 23:14:57 +0000 (UTC)
-Date:   Tue, 4 Feb 2020 18:14:54 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-Message-ID: <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <7d7933d742fdf4a94c84b791906a450b16f2e81f.1577736799.git.rgb@redhat.com>
- <CAHC9VhSuwJGryfrBfzxG01zwb-O_7dbjS0x0a3w-XjcNuYSAcg@mail.gmail.com>
- <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca>
- <CAHC9VhTusiQoudB8G5jjDFyM9WxBUAjZ6_X35ywJ063Jb75dQA@mail.gmail.com>
- <20200123200412.j2aucdp3cvk57prw@madcap2.tricolour.ca>
- <CAHC9VhQ2_MQdGAT6Pda9FRe6s0y4JC1XUQenpr-VJiyq9M_CBw@mail.gmail.com>
+        Tue, 4 Feb 2020 18:24:28 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014NOHer053148;
+        Tue, 4 Feb 2020 23:24:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=qt4ezHX8pCFsu0aJka+2xOJeOvz1X7xZLjw4ti/Tm1Q=;
+ b=Ma9gSfR5OLtnHJ/IRPATq3AaBrQ/+MzHOCoyZZE7WiIAd54tNdDU9l55X1b4G7cpbmx0
+ nv6teP6sWa4v/k71IfUiAYgKGhOfPkKICRW+MKmP7xhZ6NJF+BT3lMyFp1Lj3IbDAUcB
+ 9Ff1JIonJ70xh18RSAYzkqwH+8WKEU8taE1cllQWZ86eoLbWsjnfTROtYjittfTMoGGI
+ GfgZgrih3INbnN589yuDse6d6lsgddNUoKyQEVVsmp52Xt5uMBeXjxknLXW3jM/lI8XK
+ t80dCDLiDiU9H+GKaEhElHDuoIBZX/tx1PthQobo8nzcC0FoJWOOVOnBOVRkQNff+hy2 PA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2xyhkfg4r7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 23:24:17 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014NOEA5187113;
+        Tue, 4 Feb 2020 23:24:17 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2xyhmet495-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 04 Feb 2020 23:24:16 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014NNKv0004192;
+        Tue, 4 Feb 2020 23:23:20 GMT
+Received: from localhost (/10.159.250.52)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 04 Feb 2020 15:23:19 -0800
+Date:   Tue, 4 Feb 2020 15:23:18 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [RFC] dax,pmem: Provide a dax operation to zero range of memory
+Message-ID: <20200204232318.GF6874@magnolia>
+References: <20200123165249.GA7664@redhat.com>
+ <20200123190103.GB8236@magnolia>
+ <CAPcyv4jT3py4gtdJo84i8gPnJo5MO4uGaaO=+fuuAjXQ0gQsHA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ2_MQdGAT6Pda9FRe6s0y4JC1XUQenpr-VJiyq9M_CBw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <CAPcyv4jT3py4gtdJo84i8gPnJo5MO4uGaaO=+fuuAjXQ0gQsHA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-2001150001 definitions=main-2002040159
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-2001150001
+ definitions=main-2002040159
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-01-23 16:35, Paul Moore wrote:
-> On Thu, Jan 23, 2020 at 3:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2020-01-23 12:09, Paul Moore wrote:
-> > > On Thu, Jan 23, 2020 at 11:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2020-01-22 16:28, Paul Moore wrote:
-> > > > > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > >
-> > > > > > Add audit container identifier support to the action of signalling the
-> > > > > > audit daemon.
-> > > > > >
-> > > > > > Since this would need to add an element to the audit_sig_info struct,
-> > > > > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> > > > > > audit_sig_info2 struct.  Corresponding support is required in the
-> > > > > > userspace code to reflect the new record request and reply type.
-> > > > > > An older userspace won't break since it won't know to request this
-> > > > > > record type.
-> > > > > >
-> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > ---
-> > > > > >  include/linux/audit.h       |  7 +++++++
-> > > > > >  include/uapi/linux/audit.h  |  1 +
-> > > > > >  kernel/audit.c              | 35 +++++++++++++++++++++++++++++++++++
-> > > > > >  kernel/audit.h              |  1 +
-> > > > > >  security/selinux/nlmsgtab.c |  1 +
-> > > > > >  5 files changed, 45 insertions(+)
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > > index 0871c3e5d6df..51159c94041c 100644
-> > > > > > --- a/kernel/audit.c
-> > > > > > +++ b/kernel/audit.c
-> > > > > > @@ -126,6 +126,14 @@ struct auditd_connection {
-> > > > > >  kuid_t         audit_sig_uid = INVALID_UID;
-> > > > > >  pid_t          audit_sig_pid = -1;
-> > > > > >  u32            audit_sig_sid = 0;
-> > > > > > +/* Since the signal information is stored in the record buffer at the
-> > > > > > + * time of the signal, but not retrieved until later, there is a chance
-> > > > > > + * that the last process in the container could terminate before the
-> > > > > > + * signal record is delivered.  In this circumstance, there is a chance
-> > > > > > + * the orchestrator could reuse the audit container identifier, causing
-> > > > > > + * an overlap of audit records that refer to the same audit container
-> > > > > > + * identifier, but a different container instance.  */
-> > > > > > +u64            audit_sig_cid = AUDIT_CID_UNSET;
-> > > > >
-> > > > > I believe we could prevent the case mentioned above by taking an
-> > > > > additional reference to the audit container ID object when the signal
-> > > > > information is collected, dropping it only after the signal
-> > > > > information is collected by userspace or another process signals the
-> > > > > audit daemon.  Yes, it would block that audit container ID from being
-> > > > > reused immediately, but since we are talking about one number out of
-> > > > > 2^64 that seems like a reasonable tradeoff.
-> > > >
-> > > > I had thought that through and should have been more explicit about that
-> > > > situation when I documented it.  We could do that, but then the syscall
-> > > > records would be connected with the call from auditd on shutdown to
-> > > > request that signal information, rather than the exit of that last
-> > > > process that was using that container.  This strikes me as misleading.
-> > > > Is that really what we want?
-> > >
-> > >  ???
-> > >
-> > > I think one of us is not understanding the other; maybe it's me, maybe
-> > > it's you, maybe it's both of us.
-> > >
-> > > Anyway, here is what I was trying to convey with my original comment
-> > > ... When we record the audit container ID in audit_signal_info() we
-> > > take an extra reference to the audit container ID object so that it
-> > > will not disappear (and get reused) until after we respond with an
-> > > AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
-> > > AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took in
-> > > audit_signal_info().  Unless I'm missing some other change you made,
-> > > this *shouldn't* affect the syscall records, all it does is preserve
-> > > the audit container ID object in the kernel's ACID store so it doesn't
-> > > get reused.
+On Fri, Jan 31, 2020 at 03:31:58PM -0800, Dan Williams wrote:
+> On Thu, Jan 23, 2020 at 11:07 AM Darrick J. Wong
+> <darrick.wong@oracle.com> wrote:
 > >
-> > This is exactly what I had understood.  I hadn't considered the extra
-> > details below in detail due to my original syscall concern, but they
-> > make sense.
+> > On Thu, Jan 23, 2020 at 11:52:49AM -0500, Vivek Goyal wrote:
+> > > Hi,
+> > >
+> > > This is an RFC patch to provide a dax operation to zero a range of memory.
+> > > It will also clear poison in the process. This is primarily compile tested
+> > > patch. I don't have real hardware to test the poison logic. I am posting
+> > > this to figure out if this is the right direction or not.
+> > >
+> > > Motivation from this patch comes from Christoph's feedback that he will
+> > > rather prefer a dax way to zero a range instead of relying on having to
+> > > call blkdev_issue_zeroout() in __dax_zero_page_range().
+> > >
+> > > https://lkml.org/lkml/2019/8/26/361
+> > >
+> > > My motivation for this change is virtiofs DAX support. There we use DAX
+> > > but we don't have a block device. So any dax code which has the assumption
+> > > that there is always a block device associated is a problem. So this
+> > > is more of a cleanup of one of the places where dax has this dependency
+> > > on block device and if we add a dax operation for zeroing a range, it
+> > > can help with not having to call blkdev_issue_zeroout() in dax path.
+> > >
+> > > I have yet to take care of stacked block drivers (dm/md).
+> > >
+> > > Current poison clearing logic is primarily written with assumption that
+> > > I/O is sector aligned. With this new method, this assumption is broken
+> > > and one can pass any range of memory to zero. I have fixed few places
+> > > in existing logic to be able to handle an arbitrary start/end. I am
+> > > not sure are there other dependencies which might need fixing or
+> > > prohibit us from providing this method.
+> > >
+> > > Any feedback or comment is welcome.
 > >
-> > The syscall I refer to is the one connected with the drop of the
-> > audit container identifier by the last process that was in that
-> > container in patch 5/16.  The production of this record is contingent on
-> > the last ref in a contobj being dropped.  So if it is due to that ref
-> > being maintained by audit_signal_info() until the AUDIT_SIGNAL_INFO2
-> > record it fetched, then it will appear that the fetch action closed the
-> > container rather than the last process in the container to exit.
+> > So who gest to use this? :)
 > >
-> > Does this make sense?
+> > Should we (XFS) make fallocate(ZERO_RANGE) detect when it's operating on
+> > a written extent in a DAX file and call this instead of what it does now
+> > (punch range and reallocate unwritten)?
 > 
-> More so than your original reply, at least to me anyway.
+> If it eliminates more block assumptions, then yes. In general I think
+> there are opportunities to use "native" direct_access instead of
+> block-i/o for other areas too, like metadata i/o.
 > 
-> It makes sense that the audit container ID wouldn't be marked as
-> "dead" since it would still be very much alive and available for use
-> by the orchestrator, the question is if that is desirable or not.  I
-> think the answer to this comes down the preserving the correctness of
-> the audit log.
+> > Is this the kind of thing XFS should just do on its own when DAX us that
+> > some range of pmem has gone bad and now we need to (a) race with the
+> > userland programs to write /something/ to the range to prevent a machine
+> > check (b) whack all the programs that think they have a mapping to
+> > their data, (c) see if we have a DRAM copy and just write that back, (d)
+> > set wb_err so fsyncs fail, and/or (e) regenerate metadata as necessary?
 > 
-> If the audit container ID reported by AUDIT_SIGNAL_INFO2 has been
-> reused then I think there is a legitimate concern that the audit log
-> is not correct, and could be misleading.  If we solve that by grabbing
-> an extra reference, then there could also be some confusion as
-> userspace considers a container to be "dead" while the audit container
-> ID still exists in the kernel, and the kernel generated audit
-> container ID death record will not be generated until much later (and
-> possibly be associated with a different event, but that could be
-> solved by unassociating the container death record).
+> (a), (b) duplicate what memory error handling already does. So yes,
+> could be done but it only helps if machine check handling is broken or
+> missing.
 
-How does syscall association of the death record with AUDIT_SIGNAL_INFO2
-possibly get associated with another event?  Or is the syscall
-association with the fetch for the AUDIT_SIGNAL_INFO2 the other event?
+<nod> 
 
-Another idea might be to bump the refcount in audit_signal_info() but
-mark tht contid as dead so it can't be reused if we are concerned that
-the dead contid be reused?
+> (c) what DRAM copy in the DAX case?
 
-There is still the problem later that the reported contid is incomplete
-compared to the rest of the contid reporting cycle wrt nesting since
-AUDIT_SIGNAL_INFO2 will need to be more complex w/2 variable length
-fields to accommodate a nested contid list.
+Sorry, I was talking about the fs metadata that we cache in DRAM.
 
->  Of the two
-> approaches, I think the latter is safer in that it preserves the
-> correctness of the audit log, even though it could result in a delay
-> of the container death record.
+> (d) dax fsync is just cache flush, so it can't fail, or are you
+> talking about errors in metadata?
 
-I prefer the former since it strongly indicates last task in the
-container.  The AUDIT_SIGNAL_INFO2 msg has the pid and other subject
-attributes and the contid to strongly link the responsible party.
+I'm talking about an S_DAX file that someone is doing regular write()s
+to:
 
-> Neither way is perfect, so if you have any other ideas I'm all ears.
+1. Open file O_RDWR
+2. Write something to the file
+3. Some time later, something decides the pmem is bad.
+4. Program calls fsync(); does it return EIO?
+
+(I shouldn't have mixed the metadata/file data cases, sorry...)
+
+> (e) I thought our solution for dax metadata redundancy is to use a
+> realtime data device and raid mirror for the metadata device.
+
+In the end it was set aside on the grounds that reserving space for
+a separate metadata device was too costly and too complex for now.
+We might get back to it later when the <cough> economics improve.
+
+> > <cough> Will XFS ever get that "your storage went bad" hook that was
+> > promised ages ago?
 > 
-> > > (We do need to do some extra housekeeping in audit_signal_info() to
-> > > deal with the case where nobody asks for AUDIT_SIGNAL_INFO2 -
-> > > basically if audit_sig_cid is not NULL we should drop a reference
-> > > before assigning it a new object pointer, and of course we would need
-> > > to set audit_sig_cid to NULL in audit_receive_msg() after sending it
-> > > up to userspace and dropping the extra ref.)
+> pmem developers don't scale?
+
+Ah, sorry. :/
+
+> > Though I guess it only does this a single page at a time, which won't be
+> > awesome if we're trying to zero (say) 100GB of pmem.  I was expecting to
+> > see one big memset() call to zero the entire range followed by
+> > pmem_clear_poison() on the entire range, but I guess you did tag this
+> > RFC. :)
 > 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
+> Until movdir64b is available the only way to clear poison is by making
+> a call to the BIOS. The BIOS may not be efficient at bulk clearing.
 
-- RGB
+Well then let's port XFS to SMM mode. <duck>
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+(No, please don't...)
 
+--D
