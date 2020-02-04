@@ -2,151 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3E11521A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 22:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A6771521DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 22:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgBDVGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 16:06:13 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:55614 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbgBDVGN (ORCPT
+        id S1727500AbgBDVUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 16:20:03 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59526 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727451AbgBDVUD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 16:06:13 -0500
-Received: by mail-il1-f200.google.com with SMTP id w62so16009223ila.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 13:06:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Ec6H7uOKuEKDUgpYQ9tAdF70iyOvPezHib3X4v8QxEU=;
-        b=ChIlDKzmCANFjnOe9j77zsCRlPX754in6CDazIi98QUwVNg5awvuOfWunt74WMGBJF
-         VCywReWCrSQRZd4hrdHN50+kqYD5oXgbzKkb5ptbSUMBsFH3YcBO4F4lhlwAg82SnmRX
-         TKsZCQKn8G4bGmoQMM2mwoBtVTutTcY0xfRl7GuEzhGkLsfY7U7vaNpbQcfnbcAjXtTY
-         s38/jPT2GQNF7IJcMgDU1rWDhYFws6RyoKKzpqJv771f/icvy0tATJMsBmurhjDjp83m
-         EqF1Y1VT//dBeEDgANoUWfhzTSCxXTNLgdsd4VfetlW5gUiZtPGH5gBOhTTZcUVvkF+u
-         uMPQ==
-X-Gm-Message-State: APjAAAXlUgRhVJe2/y3bsO9fD3vVzIWfm4kYuYalgAn9Q4QC0aEu1XRY
-        0+8QCkdI0DXchEDVzw6bErLfsVj//RyYe8zqiWZgdvobRg95
-X-Google-Smtp-Source: APXvYqwh32XJRILeZPcNCc2nNebeCO6epiO+CqG7Z5hpPiNEEcKCGunzGgajvqiQP8ZQkxMpbG31NChx+6SJWRbp0jq6IyqMcLv3
+        Tue, 4 Feb 2020 16:20:03 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4E9EC3A2B57;
+        Wed,  5 Feb 2020 08:19:55 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1iz5bu-0005hq-5b; Wed, 05 Feb 2020 08:19:54 +1100
+Date:   Wed, 5 Feb 2020 08:19:54 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Dave Chinner <dchinner@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] protect page cache from freeing inode
+Message-ID: <20200204211954.GA20584@dread.disaster.area>
+References: <1578499437-1664-1-git-send-email-laoar.shao@gmail.com>
+ <CALOAHbAs7d7UhO6cd5_6vTm0cgcdTiwNNMSfFX4D0hdMc+CaEg@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8cce:: with SMTP id k14mr26510068iot.294.1580850372422;
- Tue, 04 Feb 2020 13:06:12 -0800 (PST)
-Date:   Tue, 04 Feb 2020 13:06:12 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e43122059dc66882@google.com>
-Subject: KASAN: use-after-free Write in percpu_ref_switch_to_percpu
-From:   syzbot <syzbot+7caeaea49c2c8a591e3d@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALOAHbAs7d7UhO6cd5_6vTm0cgcdTiwNNMSfFX4D0hdMc+CaEg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=Sa-qTvfxgUUOiSiq2jIA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Jan 22, 2020 at 09:46:57PM +0800, Yafang Shao wrote:
+> On Thu, Jan 9, 2020 at 12:04 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > On my server there're some running MEMCGs protected by memory.{min, low},
+> > but I found the usage of these MEMCGs abruptly became very small, which
+> > were far less than the protect limit. It confused me and finally I
+> > found that was because of inode stealing.
+> > Once an inode is freed, all its belonging page caches will be dropped as
+> > well, no matter how may page caches it has. So if we intend to protect the
+> > page caches in a memcg, we must protect their host (the inode) first.
+> > Otherwise the memcg protection can be easily bypassed with freeing inode,
+> > especially if there're big files in this memcg.
+> > The inherent mismatch between memcg and inode is a trouble. One inode can
+> > be shared by different MEMCGs, but it is a very rare case. If an inode is
+> > shared, its belonging page caches may be charged to different MEMCGs.
+> > Currently there's no perfect solution to fix this kind of issue, but the
+> > inode majority-writer ownership switching can help it more or less.
+> >
+> > - Changes against v2:
+> >     1. Seperates memcg patches from this patchset, suggested by Roman.
+> >        A separate patch is alreay ACKed by Roman, please the MEMCG
+> >        maintianers help take a look at it[1].
+> >     2. Improves code around the usage of for_each_mem_cgroup(), suggested
+> >        by Dave
+> >     3. Use memcg_low_reclaim passed from scan_control, instead of
+> >        introducing a new member in struct mem_cgroup.
+> >     4. Some other code improvement suggested by Dave.
+> >
+> >
+> > - Changes against v1:
+> > Use the memcg passed from the shrink_control, instead of getting it from
+> > inode itself, suggested by Dave. That could make the laying better.
+> >
+> > [1]
+> > https://lore.kernel.org/linux-mm/CALOAHbBhPgh3WEuLu2B6e2vj1J8K=gGOyCKzb8tKWmDqFs-rfQ@mail.gmail.com/
+> >
+> > Yafang Shao (3):
+> >   mm, list_lru: make memcg visible to lru walker isolation function
+> >   mm, shrinker: make memcg low reclaim visible to lru walker isolation
+> >     function
+> >   memcg, inode: protect page cache from freeing inode
+> >
+> >  fs/inode.c                 | 78 ++++++++++++++++++++++++++++++++++++++++++++--
+> >  include/linux/memcontrol.h | 21 +++++++++++++
+> >  include/linux/shrinker.h   |  3 ++
+> >  mm/list_lru.c              | 47 +++++++++++++++++-----------
+> >  mm/memcontrol.c            | 15 ---------
+> >  mm/vmscan.c                | 27 +++++++++-------
+> >  6 files changed, 143 insertions(+), 48 deletions(-)
+> >
+> 
+> Dave,  Johannes,
+> 
+> Any comments on this new version ?
 
-syzbot found the following crash on:
+Sorry, I lost track of this amongst travel and conferences mid
+january. Can you update and post it again once -rc1 is out?
 
-HEAD commit:    754beeec Merge tag 'char-misc-5.6-rc1-2' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fe4511e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99db4e42d047be3
-dashboard link: https://syzkaller.appspot.com/bug?extid=7caeaea49c2c8a591e3d
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Cheers,
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7caeaea49c2c8a591e3d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in percpu_ref_switch_to_percpu+0x69/0x70 lib/percpu-refcount.c:314
-Write of size 1 at addr ffff888095e3b430 by task kworker/1:31/2772
-
-CPU: 1 PID: 2772 Comm: kworker/1:31 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events io_ring_file_ref_switch
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
- __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
- kasan_report+0x12/0x20 mm/kasan/common.c:641
- __asan_report_store1_noabort+0x17/0x20 mm/kasan/generic_report.c:137
- percpu_ref_switch_to_percpu+0x69/0x70 lib/percpu-refcount.c:314
- io_ring_file_ref_switch+0x791/0xac0 fs/io_uring.c:5499
- process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
- worker_thread+0x98/0xe40 kernel/workqueue.c:2410
- kthread+0x361/0x430 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 26829:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
- kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
- __do_kmalloc mm/slab.c:3656 [inline]
- __kmalloc+0x163/0x770 mm/slab.c:3665
- kmalloc include/linux/slab.h:561 [inline]
- kzalloc.constprop.0+0x1b/0x20 include/linux/slab.h:670
- io_sqe_files_register fs/io_uring.c:5528 [inline]
- __io_uring_register+0xad7/0x2f40 fs/io_uring.c:6875
- __do_sys_io_uring_register fs/io_uring.c:6955 [inline]
- __se_sys_io_uring_register fs/io_uring.c:6937 [inline]
- __x64_sys_io_uring_register+0x1a1/0x560 fs/io_uring.c:6937
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 26826:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
- __cache_free mm/slab.c:3426 [inline]
- kfree+0x10a/0x2c0 mm/slab.c:3757
- io_sqe_files_unregister+0x2e2/0x4d0 fs/io_uring.c:5250
- io_ring_ctx_free fs/io_uring.c:6229 [inline]
- io_ring_ctx_wait_and_kill+0x447/0x9b0 fs/io_uring.c:6310
- io_uring_release+0x42/0x50 fs/io_uring.c:6318
- __fput+0x2ff/0x890 fs/file_table.c:280
- ____fput+0x16/0x20 fs/file_table.c:313
- task_work_run+0x145/0x1c0 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
- prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
- do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff888095e3b400
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 48 bytes inside of
- 256-byte region [ffff888095e3b400, ffff888095e3b500)
-The buggy address belongs to the page:
-page:ffffea0002578ec0 refcount:1 mapcount:0 mapping:ffff8880aa4008c0 index:0x0
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00025c09c8 ffffea00027f8308 ffff8880aa4008c0
-raw: 0000000000000000 ffff888095e3b000 0000000100000008 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888095e3b300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888095e3b380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888095e3b400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff888095e3b480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888095e3b500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
