@@ -2,86 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A6261520E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 20:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF3E11521A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 22:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbgBDTQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 14:16:52 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:40022 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbgBDTQv (ORCPT
+        id S1727490AbgBDVGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 16:06:13 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:55614 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbgBDVGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 14:16:51 -0500
-Received: by mail-il1-f193.google.com with SMTP id i7so16884321ilr.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 11:16:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N9/6XU2LpZWsBgzTzP/hhFG+SEvjhrm1Akh+4LB2jFQ=;
-        b=a+K+LZWcvBn/Qen+mTbm7223lprh5qcBn4n03M+j1wt01jaRqnWZdiVfg8OXtoJRuv
-         jsFJk1c/r2LP7mJnsYPJCuY09T0w7SMu45sZvs8mlUdxbkANMu9bUNkqywhtzLwrWCUH
-         Y5I3ZpOtvK5+VQCI2CCizK69Gkl6kx/0lPYyY=
+        Tue, 4 Feb 2020 16:06:13 -0500
+Received: by mail-il1-f200.google.com with SMTP id w62so16009223ila.22
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 13:06:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N9/6XU2LpZWsBgzTzP/hhFG+SEvjhrm1Akh+4LB2jFQ=;
-        b=tbamXL6BW+5OGGoWJtenXFIHknH3z2y2L+ymLpfrMlUTI/XX+DVZyzATFfPyE9+VwU
-         y66u+IJRWCVVAUEX+0NRnAn0U7jCXxWZdI/ysVXKdmcA65MpICUrTFaQT/BsD4MrNBkw
-         cAl/y0Y1OpZDjx/bepQa/nsNSXVWo3dR32R6n5ewRCc9cGQH8IJxI8HxX8Qfcn4YGhVm
-         Z1I5X5mRXakvfAcnjScTV46nbYzAy5VPrA4EB6yC5a22M8lRF1XamnrVokZsPpdJLWVV
-         SB6FkJOZdTwafYanlhmNCJz7SXE52s26rIOyj7bnfqp3+LQZ9E1+CNIVhn1jkCvjNAUz
-         eRCw==
-X-Gm-Message-State: APjAAAWOixuZAWPfWvJ//8mGONDp8IpAOavF2V0Bx54Oz7cVBHeAFTK6
-        NeWvXWhtM3Mp30hsQMrl2wUz/3g1UhGd3B0g5F00QQ==
-X-Google-Smtp-Source: APXvYqwBCrb0c3k8/h5XEMaUEVvPRrRnwM6U/8qzM3bVAInIClMbhx20heV2frId/eht16ldh1qeEDwL4qHGTjKjEIg=
-X-Received: by 2002:a92:3c93:: with SMTP id j19mr20659572ilf.63.1580843809908;
- Tue, 04 Feb 2020 11:16:49 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Ec6H7uOKuEKDUgpYQ9tAdF70iyOvPezHib3X4v8QxEU=;
+        b=ChIlDKzmCANFjnOe9j77zsCRlPX754in6CDazIi98QUwVNg5awvuOfWunt74WMGBJF
+         VCywReWCrSQRZd4hrdHN50+kqYD5oXgbzKkb5ptbSUMBsFH3YcBO4F4lhlwAg82SnmRX
+         TKsZCQKn8G4bGmoQMM2mwoBtVTutTcY0xfRl7GuEzhGkLsfY7U7vaNpbQcfnbcAjXtTY
+         s38/jPT2GQNF7IJcMgDU1rWDhYFws6RyoKKzpqJv771f/icvy0tATJMsBmurhjDjp83m
+         EqF1Y1VT//dBeEDgANoUWfhzTSCxXTNLgdsd4VfetlW5gUiZtPGH5gBOhTTZcUVvkF+u
+         uMPQ==
+X-Gm-Message-State: APjAAAXlUgRhVJe2/y3bsO9fD3vVzIWfm4kYuYalgAn9Q4QC0aEu1XRY
+        0+8QCkdI0DXchEDVzw6bErLfsVj//RyYe8zqiWZgdvobRg95
+X-Google-Smtp-Source: APXvYqwh32XJRILeZPcNCc2nNebeCO6epiO+CqG7Z5hpPiNEEcKCGunzGgajvqiQP8ZQkxMpbG31NChx+6SJWRbp0jq6IyqMcLv3
 MIME-Version: 1.0
-References: <20200131115004.17410-1-mszeredi@redhat.com> <20200131115004.17410-5-mszeredi@redhat.com>
- <20200204145951.GC11631@redhat.com> <CAJfpegtq4A-m9vOPwUftiotC_Xv6w-dnhCi9=E0t-b1ZPJXPGw@mail.gmail.com>
- <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
- <20200204184221.GA24566@redhat.com> <CAOQ4uxhfV++XvO17ywftnhLoryYsynF=Y-pHCwmPdymc6naOFg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhfV++XvO17ywftnhLoryYsynF=Y-pHCwmPdymc6naOFg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 4 Feb 2020 20:16:39 +0100
-Message-ID: <CAJfpeguHjd2PMPxgbzFbdGM_7F6L4v+UGorjp2sMFtykR71QaA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ovl: alllow remote upper
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Received: by 2002:a5d:8cce:: with SMTP id k14mr26510068iot.294.1580850372422;
+ Tue, 04 Feb 2020 13:06:12 -0800 (PST)
+Date:   Tue, 04 Feb 2020 13:06:12 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e43122059dc66882@google.com>
+Subject: KASAN: use-after-free Write in percpu_ref_switch_to_percpu
+From:   syzbot <syzbot+7caeaea49c2c8a591e3d@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 8:11 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Feb 4, 2020 at 8:42 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+Hello,
 
-> > So as of now user space will get -ESTALE and that will get cleared when
-> > user space retries after corresponding ovl dentry has been dropped from
-> > cache (either dentry is evicted, cache is cleared forcibly or overlayfs
-> > is remounted)? If yes, that kind of makes sense. Overlay does not expect
-> > underlying layers to change and if a change it detected it is flagged
-> > to user space (and overlayfs does not try to fix it)?
-> >
->
-> I looks like it. I don't really understand why overlayfs shouldn't drop
-> the dentry on failure to revalidate. Maybe I am missing something.
+syzbot found the following crash on:
 
-I don't remember the exact reason.   Maybe it's just that it makes
-little sense to redo the lookup on remote change, but not on local
-change...
+HEAD commit:    754beeec Merge tag 'char-misc-5.6-rc1-2' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fe4511e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99db4e42d047be3
+dashboard link: https://syzkaller.appspot.com/bug?extid=7caeaea49c2c8a591e3d
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Note:  I'm not against detection of changing underlying layers and
-redoing the lookup in that case.  Maybe we can do it optionally
-(because it could be expensive), but first there needs to be a use
-case and we seem to lack that.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Thanks,
-Miklos
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7caeaea49c2c8a591e3d@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in percpu_ref_switch_to_percpu+0x69/0x70 lib/percpu-refcount.c:314
+Write of size 1 at addr ffff888095e3b430 by task kworker/1:31/2772
+
+CPU: 1 PID: 2772 Comm: kworker/1:31 Not tainted 5.5.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events io_ring_file_ref_switch
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ __asan_report_store1_noabort+0x17/0x20 mm/kasan/generic_report.c:137
+ percpu_ref_switch_to_percpu+0x69/0x70 lib/percpu-refcount.c:314
+ io_ring_file_ref_switch+0x791/0xac0 fs/io_uring.c:5499
+ process_one_work+0xa05/0x17a0 kernel/workqueue.c:2264
+ worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+ kthread+0x361/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+Allocated by task 26829:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
+ __do_kmalloc mm/slab.c:3656 [inline]
+ __kmalloc+0x163/0x770 mm/slab.c:3665
+ kmalloc include/linux/slab.h:561 [inline]
+ kzalloc.constprop.0+0x1b/0x20 include/linux/slab.h:670
+ io_sqe_files_register fs/io_uring.c:5528 [inline]
+ __io_uring_register+0xad7/0x2f40 fs/io_uring.c:6875
+ __do_sys_io_uring_register fs/io_uring.c:6955 [inline]
+ __se_sys_io_uring_register fs/io_uring.c:6937 [inline]
+ __x64_sys_io_uring_register+0x1a1/0x560 fs/io_uring.c:6937
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 26826:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kfree+0x10a/0x2c0 mm/slab.c:3757
+ io_sqe_files_unregister+0x2e2/0x4d0 fs/io_uring.c:5250
+ io_ring_ctx_free fs/io_uring.c:6229 [inline]
+ io_ring_ctx_wait_and_kill+0x447/0x9b0 fs/io_uring.c:6310
+ io_uring_release+0x42/0x50 fs/io_uring.c:6318
+ __fput+0x2ff/0x890 fs/file_table.c:280
+ ____fput+0x16/0x20 fs/file_table.c:313
+ task_work_run+0x145/0x1c0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
+ prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
+ do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888095e3b400
+ which belongs to the cache kmalloc-256 of size 256
+The buggy address is located 48 bytes inside of
+ 256-byte region [ffff888095e3b400, ffff888095e3b500)
+The buggy address belongs to the page:
+page:ffffea0002578ec0 refcount:1 mapcount:0 mapping:ffff8880aa4008c0 index:0x0
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00025c09c8 ffffea00027f8308 ffff8880aa4008c0
+raw: 0000000000000000 ffff888095e3b000 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888095e3b300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888095e3b380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888095e3b400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff888095e3b480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888095e3b500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
