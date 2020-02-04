@@ -2,130 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18AB41514AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 04:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E20CD1514CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 05:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgBDDjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Feb 2020 22:39:22 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46093 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbgBDDjW (ORCPT
+        id S1727124AbgBDEBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Feb 2020 23:01:16 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:53812 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726924AbgBDEBQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Feb 2020 22:39:22 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y8so6666871pll.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 19:39:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mPedbGLBNu2L3k6HSm0HBzkbV9veK3pUwD/I6GC5AJI=;
-        b=V35oksgSkm4ljAJXfpnCVS3GtTn17dSUeg2MvjUD8k9o4vbf9KU6/80bq/BynnK1Qf
-         IsJGGcd5RzKRTU+nuDS2OYIOc9FrCpdpjRZyPBPFE4VGdh8TVYGf/KZWj18ekArH9rB1
-         w8p1F8d+QpPkaiSpRGyBDkj03c0jf2DQ57xf2Mxcugwiy69Pm15KEyOVkkUu7FV9znsq
-         UVvWnmAFcbKMwQUVUJe/J9SizvP5DudE2sXnJ5u1ewncR+bSgjEEpmtsP8PzxWChcBCK
-         6pM/4UvjdlaLkbLMTSJpg7PKD37OS6sT9PM/ja7gJe1oJXxJfSA2WaA9rGwsQ7HAVGGd
-         1tug==
+        Mon, 3 Feb 2020 23:01:16 -0500
+X-Greylist: delayed 2198 seconds by postgrey-1.27 at vger.kernel.org; Mon, 03 Feb 2020 23:01:15 EST
+Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 0143OaqF022223
+        for <linux-fsdevel@vger.kernel.org>; Mon, 3 Feb 2020 22:24:36 -0500
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 0143OV5i021594
+        for <linux-fsdevel@vger.kernel.org>; Mon, 3 Feb 2020 22:24:36 -0500
+Received: by mail-qt1-f197.google.com with SMTP id g26so11425170qts.16
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Feb 2020 19:24:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mPedbGLBNu2L3k6HSm0HBzkbV9veK3pUwD/I6GC5AJI=;
-        b=OIp4gtk02vGW0AovoDfpJIMdOdiutVafwNLhE0SBs/OKLRoNpDJQs/Zg1IrEKNtjVj
-         3FAfivWg7N+AzycqJfxfeKFbhdq9ZHihH4WWqlTOtSE61alL080HjpYjzFB3fMzU5qJK
-         7ZOzwMXHSucE3lZ+9m17up2CGv7lu/DROgveCtfVsnaCvTzquRqkkmg3N6qKPrRHWgXr
-         +ZcV0r21MkPw0TkZopI1shEGGP6IHdFwVYFM0mxwSvWQkNJ7v7vgsaHkMwCK1ospNP8b
-         IY9rN8c8myVvkra3G9mkkHZpomct5DbbUNLcO7PudPZbjE0VQ+E3OayKmZ9uyDEwwAFV
-         W2OQ==
-X-Gm-Message-State: APjAAAWCy9BomjrzR0FFGjMWOO7v2TaOFWHby/yQVRd19/zrBQC7nxbj
-        naHClC38kdrTpiaTtUhdqg1xzw==
-X-Google-Smtp-Source: APXvYqw1B1BjXGg0r30M6wu7yNLM6kBYQXBj/o7bHXB1/TSf0blx3HAUudnmN5lGww82QU4/vn4Bug==
-X-Received: by 2002:a17:902:8b85:: with SMTP id ay5mr25055691plb.253.1580787560953;
-        Mon, 03 Feb 2020 19:39:20 -0800 (PST)
-Received: from google.com ([2620:15c:201:0:7f8c:9d6e:20b8:e324])
-        by smtp.gmail.com with ESMTPSA id g10sm10397099pfo.166.2020.02.03.19.39.20
+        h=x-gm-message-state:sender:from:to:cc:subject:mime-version:date
+         :message-id;
+        bh=V0/IZKokpuyk/X3Vu3SualtRqH1dQKvBg/2kFPFAJ0I=;
+        b=jxwYEm1e3ep2XgGY8WHf8Px6phg/BPplOLieRqH5ECEryqnS/3pJN2LdYcHZTCS+86
+         /uEaQ7Zz8D3yX53s8NQsiE5OIY2OuqNyX4yzf7RpLvqRFwjh6LodhCJ3ciV9LJ8lBfkn
+         sCGfs1SxLkTdq2ENYGwPMXpjYZNKD2hQV2nJaDFF7u8eGO6qQpR+DqLCZvadDFa1+nBk
+         QVYBoST+nYhgYmpRfTM9ya91YE4P/QqPw26zAavc9gCgDVcVFaTn0S8tl/PhTOsJ+bUL
+         QjVBRaTQLy9cw1pP4xZK3WfiX9rscRVlJDZcdmO2bYCx1Msip6viBL1GmhwmrqgC0jOd
+         U19A==
+X-Gm-Message-State: APjAAAWHBknFouxEqgm78voVJEsB3Z2EwodwmNwR7cXjv1iFEpszp+/X
+        V0PB1KCfPgHyivVYJDtbI4y06R8F1zJGU7zWICsuPRJKv5tPz4lRDrOPCkhJkfj3FvDTTGH8I0f
+        2jGke3wpSh+CnhM6CKyvivBovvjGNFeMdLXEO
+X-Received: by 2002:a05:620a:911:: with SMTP id v17mr27054840qkv.94.1580786671453;
+        Mon, 03 Feb 2020 19:24:31 -0800 (PST)
+X-Google-Smtp-Source: APXvYqynlzp4F+A8uKELbLyu6AWOZzAz2UaDwcopLrdiLMlBxHlUbdeuosTBDbmuyLkGEK4SfzEj1Q==
+X-Received: by 2002:a05:620a:911:: with SMTP id v17mr27054821qkv.94.1580786671163;
+        Mon, 03 Feb 2020 19:24:31 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id b144sm3302012qkg.126.2020.02.03.19.24.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 19:39:20 -0800 (PST)
-Date:   Mon, 3 Feb 2020 19:39:15 -0800
-From:   Satya Tangirala <satyat@google.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 0/9] Inline Encryption Support
-Message-ID: <20200204033915.GA122248@google.com>
-References: <20191218145136.172774-1-satyat@google.com>
- <20200108140556.GB2896@infradead.org>
- <20200108184305.GA173657@google.com>
- <20200117085210.GA5473@infradead.org>
- <20200201005341.GA134917@google.com>
- <20200203091558.GA28527@infradead.org>
-MIME-Version: 1.0
+        Mon, 03 Feb 2020 19:24:29 -0800 (PST)
+From:   "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Namjae Jeon <linkinjeon@gmail.com>
+cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org, hch@lst.de, sj1557.seo@samsung.com,
+        pali.rohar@gmail.com, arnd@arndb.de, namjae.jeon@samsung.com,
+        viro@zeniv.linux.org.uk
+Subject: [PATCH] exfat: update file system parameter handling
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200203091558.GA28527@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Mon, 03 Feb 2020 22:24:28 -0500
+Message-ID: <297144.1580786668@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 01:15:58AM -0800, Christoph Hellwig wrote:
-> On Fri, Jan 31, 2020 at 04:53:41PM -0800, Satya Tangirala wrote:
-> > So I tried reading through more of blk-mq and the IO schedulers to figure
-> > out how to do this. As far as I can tell, requests may be merged with
-> > each other until they're taken off the scheduler. So ideally, we'd
-> > program a keyslot for a request when it's taken off the scheduler, but
-> > this happens from within an atomic context. Otoh, programming a keyslot
-> > might cause the thread to sleep (in the event that all keyslots are in use
-> > by other in-flight requests). Unless I'm missing something, or you had some
-> > other different idea in mind, I think it's a lot easier to stick to letting
-> > blk-crypto program keyslots and manage them per-bio...
-> 
-> But as far as I understand from reading the code it only sleeps because
-> it waits for another key slot to be released.  Which is exactly like
-> any other resource constraint in the storage device.  In that case
-> ->queue_rq returns BLK_STS_RESOURCE (or you do the equivalent in the
-> blk-mq code) and the queue gets woken again once the resource is
-> available.
-Wouldn't that mean that all the other requests in the queue, even ones that
-don't even need any inline encryption, also don't get processed until the
-queue is woken up again? And if so, are we really ok with that?
+Al Viro recently reworked the way file system parameters are handled
+Update super.c to work with it in linux-next 20200203.
 
-As you said, we'd need the queue to wake up once a keyslot is available.
-It's possible that only some hardware queues and not others get blocked
-because of keyslot programming, so ideally, we could somehow make the
-correct hardware queue(s) wake up once a keyslot is freed. But the keyslot
-manager can't assume that it's actually blk-mq that's being used
-underneath, so if we want to get the keyslot manager to do something once
-a keyslot was freed, it would need some generic way to signal that to
-blk-mq. We can also just wait around for the queue to restart by itself
-after some time delay and try to program the keyslot again at that point,
-although I wouldn't want to do that because in the current design we know
-exactly when a keyslot is freed, and we don't need to rely on potentially
-inefficient guesswork about when we can successfully program a keyslot.
-Maybe we're alright with waking up all the queues rather than only the
-ones that really need it? But in any case, I don't know yet what the
-best way to solve this problem is.
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-We would also need to make changes to handle programming keyslots in
-some of the other make_request_fns besides blk_mq_make_request too
-(wherever relevant, at least) which adds more complexity. Overall, it seems
-to me like trying to manage programming of keyslots on a per-request basis
-is maybe more code than what we have now, and I'm not sure what we're
-really buying by doing it (other than perhaps the performance benefit of
-having to get fewer refcounts on a variable and fewer comparisions of
-cryptographic keys).
+--- fs/exfat/super.c.orig	2020-02-03 21:11:02.562305585 -0500
++++ fs/exfat/super.c	2020-02-03 22:17:21.699045311 -0500
+@@ -214,7 +214,14 @@ enum {
+ 	Opt_time_offset,
+ };
+ 
+-static const struct fs_parameter_spec exfat_param_specs[] = {
++static const struct constant_table exfat_param_enums[] = {
++	{ "continue",		EXFAT_ERRORS_CONT },
++	{ "panic",		EXFAT_ERRORS_PANIC },
++	{ "remount-ro",		EXFAT_ERRORS_RO },
++	{}
++};
++
++static const struct fs_parameter_spec exfat_parameters[] = {
+ 	fsparam_u32("uid",			Opt_uid),
+ 	fsparam_u32("gid",			Opt_gid),
+ 	fsparam_u32oct("umask",			Opt_umask),
+@@ -222,25 +229,12 @@ static const struct fs_parameter_spec ex
+ 	fsparam_u32oct("fmask",			Opt_fmask),
+ 	fsparam_u32oct("allow_utime",		Opt_allow_utime),
+ 	fsparam_string("iocharset",		Opt_charset),
+-	fsparam_enum("errors",			Opt_errors),
++	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
+ 	fsparam_flag("discard",			Opt_discard),
+ 	fsparam_s32("time_offset",		Opt_time_offset),
+ 	{}
+ };
+ 
+-static const struct fs_parameter_enum exfat_param_enums[] = {
+-	{ Opt_errors,	"continue",		EXFAT_ERRORS_CONT },
+-	{ Opt_errors,	"panic",		EXFAT_ERRORS_PANIC },
+-	{ Opt_errors,	"remount-ro",		EXFAT_ERRORS_RO },
+-	{}
+-};
+-
+-static const struct fs_parameter_description exfat_parameters = {
+-	.name		= "exfat",
+-	.specs		= exfat_param_specs,
+-	.enums		= exfat_param_enums,
+-};
+-
+ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
+ 	struct exfat_sb_info *sbi = fc->s_fs_info;
+@@ -248,7 +242,7 @@ static int exfat_parse_param(struct fs_c
+ 	struct fs_parse_result result;
+ 	int opt;
+ 
+-	opt = fs_parse(fc, &exfat_parameters, param, &result);
++	opt = fs_parse(fc, exfat_parameters, param, &result);
+ 	if (opt < 0)
+ 		return opt;
+ 
+@@ -665,7 +659,7 @@ static struct file_system_type exfat_fs_
+ 	.owner			= THIS_MODULE,
+ 	.name			= "exfat",
+ 	.init_fs_context	= exfat_init_fs_context,
+-	.parameters		= &exfat_parameters,
++	.parameters		= exfat_parameters,
+ 	.kill_sb		= kill_block_super,
+ 	.fs_flags		= FS_REQUIRES_DEV,
+ };
 
-Also I forgot to mention this in my previous mail, but there may be some
-drivers/devices whose keyslots cannot be programmed from an atomic context,
-so this approach which might make things difficult in those situations (the
-UFS v2.1 spec, which I followed while implementing support for inline
-crypto for UFS, does not care whether we're in an atomic context or not,
-but there might be specifications for other drivers, or even some
-particular UFS inline encryption hardware that do).
-
-So unless you have strong objections, I'd want to continue programming
-keyslots per-bio for the above reasons.
