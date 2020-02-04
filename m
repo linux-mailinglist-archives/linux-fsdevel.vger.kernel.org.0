@@ -2,197 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F171518EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 11:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4326D1518FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 11:41:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgBDKf3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 05:35:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41971 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbgBDKf2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 05:35:28 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iyvYC-0004wP-NX; Tue, 04 Feb 2020 11:35:24 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1iyvYB-0004Gi-3r; Tue, 04 Feb 2020 11:35:23 +0100
-Date:   Tue, 4 Feb 2020 11:35:23 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Jan Kara <jack@suse.com>,
-        Richard Weinberger <richard@nod.at>, kernel@pengutronix.de
-Subject: Re: [PATCH 1/8] quota: Allow to pass mount path to quotactl
-Message-ID: <20200204103523.tbxzptf4lkr474yi@pengutronix.de>
-References: <20200124131323.23885-1-s.hauer@pengutronix.de>
- <20200124131323.23885-2-s.hauer@pengutronix.de>
- <20200127104518.GC19414@quack2.suse.cz>
- <20200128100631.zv7cn726twylcmb7@pengutronix.de>
- <20200129012929.GV23230@ZenIV.linux.org.uk>
+        id S1726684AbgBDKlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 05:41:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51882 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726364AbgBDKlp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Feb 2020 05:41:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 656B0B066;
+        Tue,  4 Feb 2020 10:41:43 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200129012929.GV23230@ZenIV.linux.org.uk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:21:53 up 211 days, 14:32, 79 users,  load average: 0.16, 0.19,
- 0.23
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 04 Feb 2020 11:41:42 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Max Neunhoeffer <max@arangodb.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] epoll: fix possible lost wakeup on epoll_ctl() path
+In-Reply-To: <20200203205907.291929-1-rpenyaev@suse.de>
+References: <20200203205907.291929-1-rpenyaev@suse.de>
+Message-ID: <51f29f23a4d996810bfad12b9634ee12@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 29, 2020 at 01:29:29AM +0000, Al Viro wrote:
-> On Tue, Jan 28, 2020 at 11:06:31AM +0100, Sascha Hauer wrote:
-> > Hi Jan,
+Hi Andrew,
+
+Could you please suggest me, do I need to include Reported-by tag,
+or reference to the bug is enough?
+
+--
+Roman
+
+On 2020-02-03 21:59, Roman Penyaev wrote:
+> This fixes possible lost wakeup introduced by the a218cc491420.
+> Originally modifications to ep->wq were serialized by ep->wq.lock,
+> but in the a218cc491420 new rw lock was introduced in order to
+> relax fd event path, i.e. callers of ep_poll_callback() function.
 > 
-> > @@ -810,6 +811,36 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
-> >  #endif
-> >  }
-> >  
-> > +static struct super_block *quotactl_path(const char __user *special, int cmd,
-> > +					 struct path *path)
-> > +{
-> > +	struct super_block *sb;
-> > +	int ret;
-> > +
-> > +	ret = user_path_at(AT_FDCWD, special, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-> > +			   path);
-> > +	if (ret)
-> > +		return ERR_PTR(ret);
-> > +
-> > +	sb = path->mnt->mnt_sb;
-> > +restart:
-> > +	if (quotactl_cmd_onoff(cmd))
-> > +		down_write(&sb->s_umount);
-> > +	else
-> > +		down_read(&sb->s_umount);
-> > +
-> > +	if (quotactl_cmd_write(cmd) && sb->s_writers.frozen != SB_UNFROZEN) {
-> > +		if (quotactl_cmd_onoff(cmd))
-> > +			up_write(&sb->s_umount);
-> > +		else
-> > +			up_read(&sb->s_umount);
-> > +		wait_event(sb->s_writers.wait_unfrozen,
-> > +			   sb->s_writers.frozen == SB_UNFROZEN);
-> > +		goto restart;
-> > +	}
-> > +
-> > +	return sb;
-> > +}
+> After the change ep_modify and ep_insert (both are called on
+> epoll_ctl() path) were switched to ep->lock, but ep_poll
+> (epoll_wait) was using ep->wq.lock on wqueue list modification.
 > 
-> This partial duplicate of __get_super_thawed() guts does *not* belong here,
-> especially not interleaved with quota-specific checks.
+> The bug doesn't lead to any wqueue list corruptions, because wake up
+> path and list modifications were serialized by ep->wq.lock
+> internally, but actual waitqueue_active() check prior wake_up()
+> call can be reordered with modification of ep ready list, thus
+> wake up can be lost.
 > 
-> > +	if (q_path) {
-> > +		if (quotactl_cmd_onoff(cmd))
-> > +			up_write(&sb->s_umount);
-> > +		else
-> > +			up_read(&sb->s_umount);
-> > +
-> > +		path_put(&sb_path);
-> > +	} else {
-> > +		if (!quotactl_cmd_onoff(cmds))
-> > +			drop_super(sb);
-> > +		else
-> > +			drop_super_exclusive(sb);
-> > +	}
+> Current patch replaces ep->wq.lock with the ep->lock for wqueue
+> modifications, thus wake up path always observes activeness of
+> the wqueue correcty.
 > 
-> Er...  Why not have the same code that you've used to lock the damn thing
-> (needs to be moved to fs/super.c) simply get a passive ref to it?  Then
-> you could do the same thing, q_path or no q_path...
+> Fixes: a218cc491420 ("epoll: use rwlock in order to reduce
+> ep_poll_callback() contention")
+> References: https://bugzilla.kernel.org/show_bug.cgi?id=205933
+> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+> Cc: Max Neunhoeffer <max@arangodb.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
+> Cc: Davidlohr Bueso <dbueso@suse.de>
+> Cc: Jason Baron <jbaron@akamai.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  fs/eventpoll.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index b041b66002db..eee3c92a9ebf 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1854,9 +1854,9 @@ static int ep_poll(struct eventpoll *ep, struct
+> epoll_event __user *events,
+>  		waiter = true;
+>  		init_waitqueue_entry(&wait, current);
+> 
+> -		spin_lock_irq(&ep->wq.lock);
+> +		write_lock_irq(&ep->lock);
+>  		__add_wait_queue_exclusive(&ep->wq, &wait);
+> -		spin_unlock_irq(&ep->wq.lock);
+> +		write_unlock_irq(&ep->lock);
+>  	}
+> 
+>  	for (;;) {
+> @@ -1904,9 +1904,9 @@ static int ep_poll(struct eventpoll *ep, struct
+> epoll_event __user *events,
+>  		goto fetch_events;
+> 
+>  	if (waiter) {
+> -		spin_lock_irq(&ep->wq.lock);
+> +		write_lock_irq(&ep->lock);
+>  		__remove_wait_queue(&ep->wq, &wait);
+> -		spin_unlock_irq(&ep->wq.lock);
+> +		write_unlock_irq(&ep->lock);
+>  	}
+> 
+>  	return res;
 
-I am getting confused here. To an earlier version of this series you
-responded:
-
-> And for path-based you don't need to mess with superblock
-> references - just keep the struct path until the end.  That
-> will keep the superblock alive and active just fine.
-
-I did that and got the objection from Jan:
-
-> So I've realized that just looking up superblock with user_path_at() is not
-> enough. Quota code also expects that the superblock will be locked
-> (sb->s_umount) and filesystem will not be frozen (in case the quota
-> operation is going to modify the filesystem). This is needed to serialize
-> e.g. remount and quota operations or quota operations among themselves.
-
-So after drawing circles we now seem to be back at passive references.
-What I have now in my tree is this in fs/super.c, untested currently:
-
-static bool __grab_super_thawed(struct super_block *sb, bool excl)
-{
-	while (1) {
-		bool again = false;
-
-		spin_lock(&sb_lock);
-
-		if (hlist_unhashed(&sb->s_instances)) {
-			spin_unlock(&sb_lock);
-			return false;
-		}
-
-		sb->s_count++;
-		spin_unlock(&sb_lock);
-
-		if (excl)
-			down_write(&sb->s_umount);
-		else
-			down_read(&sb->s_umount);
-
-		if (sb->s_root && (sb->s_flags & SB_BORN)) {
-			if (sb->s_writers.frozen == SB_UNFROZEN)
-				return true;
-			else
-				again = true;
-		}
-
-		if (excl)
-			up_write(&sb->s_umount);
-		else
-			up_read(&sb->s_umount);
-
-		if (again)
-			wait_event(sb->s_writers.wait_unfrozen,
-				   sb->s_writers.frozen == SB_UNFROZEN);
-
-		put_super(sb);
-
-		if (!again)
-			return false;
-	}
-
-	return ret;
-}
-
-int grab_super_thawed(struct super_block *sb)
-{
-	return __grab_super_thawed(sb, false);
-}
-
-int grab_super_exclusive_thawed(struct super_block *sb)
-{
-	return __grab_super_thawed(sb, true);
-}
-
-Does this look ok now?
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
