@@ -2,114 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6771521DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 22:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D481521E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 22:21:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbgBDVUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 16:20:03 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:59526 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727451AbgBDVUD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 16:20:03 -0500
-Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4E9EC3A2B57;
-        Wed,  5 Feb 2020 08:19:55 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1iz5bu-0005hq-5b; Wed, 05 Feb 2020 08:19:54 +1100
-Date:   Wed, 5 Feb 2020 08:19:54 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Dave Chinner <dchinner@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] protect page cache from freeing inode
-Message-ID: <20200204211954.GA20584@dread.disaster.area>
-References: <1578499437-1664-1-git-send-email-laoar.shao@gmail.com>
- <CALOAHbAs7d7UhO6cd5_6vTm0cgcdTiwNNMSfFX4D0hdMc+CaEg@mail.gmail.com>
+        id S1727587AbgBDVVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 16:21:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727566AbgBDVVO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Feb 2020 16:21:14 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB9E52082E;
+        Tue,  4 Feb 2020 21:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580851273;
+        bh=KKB12bjPksD5iDE0UW+8PafWpWM7BZjKsP6ut1aSK0A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oxmTWCjiquUMY/wLyhosQzPiJUtMVJpf+m1lgxRnrRYaMOAsKMe+YztcbPWFAAUfW
+         iI4xdmUCwP/eczU9zRInuGln1AqHPidnOQJDDwEhMnsC7PSPpuh221PGtC+P6WWC9o
+         fNNO9pXc/hjVFXtQuzkp0Oh/c6mafWyPFwBNDC30=
+Date:   Tue, 4 Feb 2020 13:21:11 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 0/9] Inline Encryption Support
+Message-ID: <20200204212110.GA122850@gmail.com>
+References: <20191218145136.172774-1-satyat@google.com>
+ <20200108140556.GB2896@infradead.org>
+ <20200108184305.GA173657@google.com>
+ <20200117085210.GA5473@infradead.org>
+ <20200201005341.GA134917@google.com>
+ <20200203091558.GA28527@infradead.org>
+ <20200204033915.GA122248@google.com>
+ <20200204145832.GA28393@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALOAHbAs7d7UhO6cd5_6vTm0cgcdTiwNNMSfFX4D0hdMc+CaEg@mail.gmail.com>
+In-Reply-To: <20200204145832.GA28393@infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=Sa-qTvfxgUUOiSiq2jIA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 22, 2020 at 09:46:57PM +0800, Yafang Shao wrote:
-> On Thu, Jan 9, 2020 at 12:04 AM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >
-> > On my server there're some running MEMCGs protected by memory.{min, low},
-> > but I found the usage of these MEMCGs abruptly became very small, which
-> > were far less than the protect limit. It confused me and finally I
-> > found that was because of inode stealing.
-> > Once an inode is freed, all its belonging page caches will be dropped as
-> > well, no matter how may page caches it has. So if we intend to protect the
-> > page caches in a memcg, we must protect their host (the inode) first.
-> > Otherwise the memcg protection can be easily bypassed with freeing inode,
-> > especially if there're big files in this memcg.
-> > The inherent mismatch between memcg and inode is a trouble. One inode can
-> > be shared by different MEMCGs, but it is a very rare case. If an inode is
-> > shared, its belonging page caches may be charged to different MEMCGs.
-> > Currently there's no perfect solution to fix this kind of issue, but the
-> > inode majority-writer ownership switching can help it more or less.
-> >
-> > - Changes against v2:
-> >     1. Seperates memcg patches from this patchset, suggested by Roman.
-> >        A separate patch is alreay ACKed by Roman, please the MEMCG
-> >        maintianers help take a look at it[1].
-> >     2. Improves code around the usage of for_each_mem_cgroup(), suggested
-> >        by Dave
-> >     3. Use memcg_low_reclaim passed from scan_control, instead of
-> >        introducing a new member in struct mem_cgroup.
-> >     4. Some other code improvement suggested by Dave.
-> >
-> >
-> > - Changes against v1:
-> > Use the memcg passed from the shrink_control, instead of getting it from
-> > inode itself, suggested by Dave. That could make the laying better.
-> >
-> > [1]
-> > https://lore.kernel.org/linux-mm/CALOAHbBhPgh3WEuLu2B6e2vj1J8K=gGOyCKzb8tKWmDqFs-rfQ@mail.gmail.com/
-> >
-> > Yafang Shao (3):
-> >   mm, list_lru: make memcg visible to lru walker isolation function
-> >   mm, shrinker: make memcg low reclaim visible to lru walker isolation
-> >     function
-> >   memcg, inode: protect page cache from freeing inode
-> >
-> >  fs/inode.c                 | 78 ++++++++++++++++++++++++++++++++++++++++++++--
-> >  include/linux/memcontrol.h | 21 +++++++++++++
-> >  include/linux/shrinker.h   |  3 ++
-> >  mm/list_lru.c              | 47 +++++++++++++++++-----------
-> >  mm/memcontrol.c            | 15 ---------
-> >  mm/vmscan.c                | 27 +++++++++-------
-> >  6 files changed, 143 insertions(+), 48 deletions(-)
-> >
+On Tue, Feb 04, 2020 at 06:58:32AM -0800, Christoph Hellwig wrote:
+> On Mon, Feb 03, 2020 at 07:39:15PM -0800, Satya Tangirala wrote:
+> > Wouldn't that mean that all the other requests in the queue, even ones that
+> > don't even need any inline encryption, also don't get processed until the
+> > queue is woken up again?
 > 
-> Dave,  Johannes,
+> For the basic implementation yes.
 > 
-> Any comments on this new version ?
+> > And if so, are we really ok with that?
+> 
+> That depends on the use cases.  With the fscrypt setup are we still
+> going to see unencrypted I/O to the device as well?  If so we'll need
+> to refine the setup and only queue up unencrypted requests.  But I'd
+> still try to dumb version first and then refine it.
 
-Sorry, I lost track of this amongst travel and conferences mid
-january. Can you update and post it again once -rc1 is out?
+Definitely, for several reasons:
 
-Cheers,
+- Not all files on the filesystem are necessarily encrypted.
+- Filesystem metadata is not encrypted (except for filenames, but those don't
+  use inline encryption).
+- Encryption isn't necessarily being used on all partitions on the disk.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+It's also not just about unencrypted vs. encrypted, since just because someone
+is waiting for one keyslot doesn't mean we should pause all encrypted I/O to the
+device for all keyslots.
+
+> 
+> > As you said, we'd need the queue to wake up once a keyslot is available.
+> > It's possible that only some hardware queues and not others get blocked
+> > because of keyslot programming, so ideally, we could somehow make the
+> > correct hardware queue(s) wake up once a keyslot is freed. But the keyslot
+> > manager can't assume that it's actually blk-mq that's being used
+> > underneath,
+> 
+> Why?  The legacy requet code is long gone.
+> 
+> > Also I forgot to mention this in my previous mail, but there may be some
+> > drivers/devices whose keyslots cannot be programmed from an atomic context,
+> > so this approach which might make things difficult in those situations (the
+> > UFS v2.1 spec, which I followed while implementing support for inline
+> > crypto for UFS, does not care whether we're in an atomic context or not,
+> > but there might be specifications for other drivers, or even some
+> > particular UFS inline encryption hardware that do).
+> 
+> We have an option to never call ->queue_rq from atomic context
+> (BLK_MQ_F_BLOCKING).  But do you know of existing hardware that behaves
+> like this or is it just hypothetical?
+
+Maybe -- check the Qualcomm ICE (Inline Crypto Engine) driver I posted at
+https://lkml.kernel.org/linux-block/20200110061634.46742-1-ebiggers@kernel.org/.
+The hardware requires vendor-specific SMC calls to program keys, rather than the
+UFS standard way.  It's currently blocking, since the code to make the SMC calls
+in drivers/firmware/qcom_scm*.c uses GFP_KERNEL and mutex_lock().
+
+I'll test whether it can work in atomic context by using GFP_ATOMIC and
+qcom_scm_call_atomic() instead.  (Adding a spinlock might be needed too.)
+
+- Eric
