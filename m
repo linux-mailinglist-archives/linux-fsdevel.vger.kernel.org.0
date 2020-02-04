@@ -2,72 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A968A151CC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 16:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 021E9151D1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Feb 2020 16:22:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbgBDPAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 10:00:17 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52392 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbgBDPAR (ORCPT
+        id S1727401AbgBDPWf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 4 Feb 2020 10:22:35 -0500
+Received: from smtp.eckelmann.de ([217.19.183.80]:55128 "EHLO
+        smtp.eckelmann.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbgBDPWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 10:00:17 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iyzgV-007F28-EN; Tue, 04 Feb 2020 15:00:15 +0000
-Date:   Tue, 4 Feb 2020 15:00:15 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [put pull] timestamp stuff
-Message-ID: <20200204150015.GR23230@ZenIV.linux.org.uk>
+        Tue, 4 Feb 2020 10:22:35 -0500
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Feb 2020 10:22:34 EST
+Received: from EX-SRV1.eckelmann.group (2a00:1f08:4007:e035:172:18:35:4) by
+ EX-SRV1.eckelmann.group (2a00:1f08:4007:e035:172:18:35:4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1591.10; Tue, 4 Feb 2020 16:07:31 +0100
+Received: from EX-SRV1.eckelmann.group ([fe80::250:56ff:fe8b:faa6]) by
+ EX-SRV1.eckelmann.group ([fe80::250:56ff:fe8b:faa6%3]) with mapi id
+ 15.01.1591.017; Tue, 4 Feb 2020 16:07:31 +0100
+From:   "Mainz, Roland" <R.Mainz@eckelmann.de>
+To:     Sascha Hauer <s.hauer@pengutronix.de>, Jan Kara <jack@suse.cz>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Richard Weinberger" <richard@nod.at>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Jan Kara <jack@suse.com>,
+        "Mainz, Roland" <R.Mainz@eckelmann.de>
+Subject: Implementing quota support on Linux without block device as backing
+ store ? / was: RE: [PATCH 1/8] quota: Allow to pass mount path to quotactl
+Thread-Topic: Implementing quota support on Linux without block device as
+ backing store ? / was: RE: [PATCH 1/8] quota: Allow to pass mount path to
+ quotactl
+Thread-Index: AdXbbKDrCgOz0kbdRUqDYOUqf+uszQ==
+Date:   Tue, 4 Feb 2020 15:07:31 +0000
+Message-ID: <db98497119d542b88e0cfc76d9b0921b@eckelmann.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2a00:1f08:4007:3c00:f91e:e10f:9d83:89d4]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	More 64bit timestamp work
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git imm.timestamp
+Sascha Hauer wrote:
+> This patch introduces the Q_PATH flag to the quotactl cmd argument.
+> When given, the path given in the special argument to quotactl will be the
+> mount path where the filesystem is mounted, instead of a path to the block
+> device.
+> This is necessary for filesystems which do not have a block device as backing
+> store. Particularly this is done for upcoming UBIFS support.
 
-for you to fetch changes up to f0f3588f7a95bb8e02b0f8f5138efb7064665730:
+Just curious: Did you check how NFSv4 (also a filesystem without block device as backing store...)  implemented quota support ? Maybe there is already a solution...
 
-  kernfs: don't bother with timestamp truncation (2019-12-08 19:10:57 -0500)
+----
 
-----------------------------------------------------------------
-Al Viro (1):
-      kernfs: don't bother with timestamp truncation
+Bye,
+Roland
+-- 
+Roland Mainz, MAA/CAS
+Eckelmann AG, Berliner Str. 161, 65205 Wiesbaden
+Telefon +49/611/7103-661, Fax +49/611/7103-133
+r.mainz@eckelmann.de
 
-Amir Goldstein (1):
-      utimes: Clamp the timestamps in notify_change()
+Eckelmann Group - Source of inspiration
 
-Deepa Dinamani (6):
-      fs: fat: Eliminate timespec64_trunc() usage
-      fs: cifs: Delete usage of timespec64_trunc
-      fs: ceph: Delete timespec64_trunc() usage
-      fs: ubifs: Eliminate timespec64_trunc() usage
-      fs: Delete timespec64_trunc()
-      fs: Do not overload update_time
-
- fs/attr.c            | 23 +++++++++++------------
- fs/ceph/mds_client.c |  4 +---
- fs/cifs/inode.c      | 13 +++++++------
- fs/configfs/inode.c  |  9 +++------
- fs/f2fs/file.c       | 18 ++++++------------
- fs/fat/misc.c        | 10 +++++++++-
- fs/inode.c           | 33 +++------------------------------
- fs/kernfs/inode.c    |  6 +++---
- fs/ntfs/inode.c      | 18 ++++++------------
- fs/ubifs/file.c      | 18 ++++++------------
- fs/ubifs/sb.c        | 11 ++++-------
- fs/utimes.c          |  4 ++--
- include/linux/fs.h   |  1 -
- 13 files changed, 61 insertions(+), 107 deletions(-)
