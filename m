@@ -2,93 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB3C51525B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 05:50:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D3D15267B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 07:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbgBEEuI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 23:50:08 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:50338 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbgBEEuI (ORCPT
+        id S1727116AbgBEGx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 01:53:28 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35893 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbgBEGx2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 23:50:08 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1izCda-0004Hp-00; Wed, 05 Feb 2020 04:50:06 +0000
-Date:   Tue, 4 Feb 2020 23:50:06 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] vfs: add RWF_NOAPPEND flag for pwritev2
-Message-ID: <20200205045006.GZ1663@brightrain.aerifal.cx>
+        Wed, 5 Feb 2020 01:53:28 -0500
+Received: by mail-lj1-f195.google.com with SMTP id r19so1149469ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 22:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2rHfdxHhDLs+MM9uoNDxMNVLPLgX0yrzzDYb5bvzyPs=;
+        b=YqGr520gJK49j9BS5djcnSQIVbFnezOdeXThn4a1UvkDe+fWAXI8xjLPZY/2hHQZgw
+         W3dIK16G2ofRNyK8gtgqWihIhtD+XeKORIC66fA0OhNPtqIUalUUUfOHoVpoMxJwot5r
+         fCn2gNfkYPjnpRyHiPVn/3Q7Io9ydT/2hly3w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2rHfdxHhDLs+MM9uoNDxMNVLPLgX0yrzzDYb5bvzyPs=;
+        b=nfPitcEznGumYirESAMcJ6VWzdlH+qAuKe3mp3tbw7qLtv3F1SK2fsD+vuMIAamSQw
+         TjOuqqEqDVQ/PdLQQJUPMR959qrA8ilYyeQEesLePwnRdA04Gq0wwsOAIcU9FidwnxDb
+         +ShfYXQSDjaJ4p/bvVbA8RC9cT7sU0TQHFX4dp3hBifbnkCe1mCh91t5cAUj0XDm9WU8
+         JrHT3bk8dljqZMpwbAoM/vhKwLFl+o+gKjAQQ/1rBhcQbpA6IjpIH4omLFnZUIyqeC3i
+         wGbEHqvoGwlsURPZOLfPi4MRYYM8DGxFntBEVz5C8Zn27SELDaXAeGYWDrt9uwNMJdBG
+         b5Vg==
+X-Gm-Message-State: APjAAAXz0YU/+YXmbv4EmvxDQ2WYH3lEUu2dboG62S8cBab0RVlHNoPR
+        9O5B5354c/LqVECiRAtlK7yICUDWpFNQIg==
+X-Google-Smtp-Source: APXvYqw9nOaPrHuUZQnuELX3PmMI5dDg3uR1q5sVNvEC1dG0I2YRF+AHHcLfIg/46aZQBvr3SI/zcA==
+X-Received: by 2002:a2e:a361:: with SMTP id i1mr19069371ljn.29.1580885605128;
+        Tue, 04 Feb 2020 22:53:25 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id n13sm12583215lji.91.2020.02.04.22.53.24
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Feb 2020 22:53:24 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id n25so683461lfl.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 22:53:24 -0800 (PST)
+X-Received: by 2002:a19:4849:: with SMTP id v70mr17364590lfa.30.1580885603756;
+ Tue, 04 Feb 2020 22:53:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20200204150015.GR23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200204150015.GR23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 5 Feb 2020 06:53:07 +0000
+X-Gmail-Original-Message-ID: <CAHk-=wivZdF6tNERQp+CXyz7zeN4uG9O4d7mZhCrp3anJ29Arg@mail.gmail.com>
+Message-ID: <CAHk-=wivZdF6tNERQp+CXyz7zeN4uG9O4d7mZhCrp3anJ29Arg@mail.gmail.com>
+Subject: Re: [put pull] timestamp stuff
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pwrite function, originally defined by POSIX (thus the "p"), is
-defined to ignore O_APPEND and write at the offset passed as its
-argument. However, historically Linux honored O_APPEND if set and
-ignored the offset. This cannot be changed due to stability policy,
-but is documented in the man page as a bug.
+On Tue, Feb 4, 2020 at 3:00 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         More 64bit timestamp work
 
-Now that there's a pwritev2 syscall providing a superset of the pwrite
-functionality that has a flags argument, the conforming behavior can
-be offered to userspace via a new flag. Since pwritev2 checks flag
-validity (in kiocb_set_rw_flags) and reports unknown ones with
-EOPNOTSUPP, callers will not get wrong behavior on old kernels that
-don't support the new flag; the error is reported and the caller can
-decide how to handle it.
+Heh. pr-tracker-bot is not replying to your pull request, because you
+misspelled the subject line ("put pull").
 
-Signed-off-by: Rich Felker <dalias@libc.org>
----
- include/linux/fs.h      | 4 ++++
- include/uapi/linux/fs.h | 5 ++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+But pr-tracker-bot _also_ isn't responding to the one where that
+wasn't the case:
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e0d909d35763..3a769a972f79 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3397,6 +3397,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- {
- 	if (unlikely(flags & ~RWF_SUPPORTED))
- 		return -EOPNOTSUPP;
-+	if (unlikely((flags & RWF_APPEND) && (flags & RWF_NOAPPEND)))
-+		return -EINVAL;
- 
- 	if (flags & RWF_NOWAIT) {
- 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
-@@ -3411,6 +3413,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
- 	if (flags & RWF_APPEND)
- 		ki->ki_flags |= IOCB_APPEND;
-+	if (flags & RWF_NOAPPEND)
-+		ki->ki_flags &= ~IOCB_APPEND;
- 	return 0;
- }
- 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 379a612f8f1d..591357d9b3c9 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -299,8 +299,11 @@ typedef int __bitwise __kernel_rwf_t;
- /* per-IO O_APPEND */
- #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
- 
-+/* per-IO negation of O_APPEND */
-+#define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND)
-+			 RWF_APPEND | RWF_NOAPPEND)
- 
- #endif /* _UAPI_LINUX_FS_H */
--- 
-2.21.0
+   [git pull] kernel-initiated rm -rf on ramfs-style filesystems
 
+and I'm not seeing why that one wasn't picked up. But it seems to be
+because it never made it to lore.
+
+I see
+
+  To: Linus Torvalds <torvalds@linux-foundation.org>
+  Cc: fsdevel.@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
+  Subject: [git pull] kernel-initiated rm -rf on ramfs-style filesystems
+  Message-ID: <20200204150912.GS23230@ZenIV.linux.org.uk>
+
+on that other message in my mailbox, but I don't see it on lore. Odd.
+Is it because the "fsdevel" address is mis-spelled on the Cc line?
+Strange.
+
+Anyway, both pull requests pulled, even though neither got a
+pr-tracker-bot response for two apparently very different reasons.
+
+               Linus
