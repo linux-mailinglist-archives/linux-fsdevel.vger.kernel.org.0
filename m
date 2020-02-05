@@ -2,195 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 021EF153B23
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB1D153B34
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgBEWkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 17:40:51 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40292 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbgBEWkv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:40:51 -0500
-Received: by mail-ed1-f67.google.com with SMTP id p3so3825045edx.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 14:40:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8xXG1QtEMIn8V9gNjRgmErq86awhNCCbmdyeTvn2xh4=;
-        b=B2gKGom18+c9MF6YGaz2F1Z1qW9+72OISrmowso176+fbEJ4JZdJKOh3vsryaEmTh2
-         qsQvM5njKuNSX/pDogHOs3oz3vOQ0pSe5bjZ3GghT09ZXUiPFwt+WUNdZWFtpiBvr/Vo
-         35XRtzO5XOYYDiWHXeJnqRi+81XvR1hD6IRxs+Agj7o11R3YTydxawjWSUzK+RHi0MZn
-         Qz4QNQ8DGRcLR8vX7dZCGPvsmhfEZ4NN3T2QQS15BGUtGdgRlr1kIGvLIHMoZd+OjNMA
-         UPaI06zrpOfJBd5wMiWOhk/QoVlDtFLtkPQ7CGVCqyrKxkW/Rki6/QlMAUO25kMLkiU5
-         KqHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8xXG1QtEMIn8V9gNjRgmErq86awhNCCbmdyeTvn2xh4=;
-        b=gGjd9rLV/w43DISbovyDJ40CwGSWPLU+qp3VrT/O8ko7Lt6u9qV5sew9XgzM6f4dRf
-         ZbcltIrB7BIkeCdt6muOFzisBEfa9NEPUZn16nGtj69zHocemtPlRNaEVfVSJ9uv4N6K
-         ZpO3gShJxwTpf+L5RjVvejyCyhIqLnn8uBNNFp9jl3nhNlgZ5Ccvn2p6ZG6sYYa5CQtV
-         5zwf+GIrV8GTDw6EXp89lvBzrQQC51p8SA59FcZjm7e0E99TE3oXbf8ztw5B/9BPipeE
-         XA1r6e3s1n/0jka/UaXBNGeZPXShZzc8m5GeVg+kMc4tI4+e3xA+P2/4BRkVNNfUIG5h
-         7m3A==
-X-Gm-Message-State: APjAAAV1+ogjuQnCt3FfL2VDbRlEPgyJVvxHvBcrogfwc711Z1OubKX1
-        ukL5WCLPU3P+5x9kThJLRj2UaHK//TBypS25HU/5
-X-Google-Smtp-Source: APXvYqyVmzGVk7l0HXNY4hEqVOGOlb69aaI9jrvMLTASMwXkrAFjGVXWNm6juE48f6syGPPLenhCV6x6YfwAuvnC2Wk=
-X-Received: by 2002:a50:a7a5:: with SMTP id i34mr396051edc.128.1580942447650;
- Wed, 05 Feb 2020 14:40:47 -0800 (PST)
+        id S1727532AbgBEWnG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 17:43:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727493AbgBEWnF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Feb 2020 17:43:05 -0500
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65D72214AF;
+        Wed,  5 Feb 2020 22:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580942584;
+        bh=nn5r09JSEA69HqCVsbRn5ZRAKkatyDwlsdVsj6TXSvg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=v+bTsd3SYSOG83+82drqx4QCsD7STR7LWPil9yz8osY3LqRWEK7Xn4uw3r87HI2ib
+         JC7qWCSMlB6+ZxzIkB79R3eGP4IZ+MSSpijveIabqAbwd3sbBy+ODSLE8R3q4sxdjo
+         BhB3Wreljh++Fzh07OMNhpp5qn9InM8a999FMkYs=
+Date:   Wed, 5 Feb 2020 14:43:04 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: moar new code for 5.6
+Message-ID: <20200205224303.GF6870@magnolia>
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <a911acf0b209c05dc156fb6b57f9da45778747ce.1577736799.git.rgb@redhat.com>
- <CAHC9VhRRW2fFcgBs-R_BZ7ZWCP5wsXA9DB1RUM=QeKj2xZkS2Q@mail.gmail.com> <20200204225148.io3ayosk4efz2qii@madcap2.tricolour.ca>
-In-Reply-To: <20200204225148.io3ayosk4efz2qii@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Feb 2020 17:40:36 -0500
-Message-ID: <CAHC9VhQSZDt4KyFmc9TtLvKgziMCkPzRWdwa71Juo=LZRygfVA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 04/16] audit: convert to contid list to check
- for orch/engine ownership
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 5:52 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-01-22 16:28, Paul Moore wrote:
-> > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Store the audit container identifier in a refcounted kernel object that
-> > > is added to the master list of audit container identifiers.  This will
-> > > allow multiple container orchestrators/engines to work on the same
-> > > machine without danger of inadvertantly re-using an existing identifier.
-> > > It will also allow an orchestrator to inject a process into an existing
-> > > container by checking if the original container owner is the one
-> > > injecting the task.  A hash table list is used to optimize searches.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h | 14 ++++++--
-> > >  kernel/audit.c        | 98 ++++++++++++++++++++++++++++++++++++++++++++++++---
-> > >  kernel/audit.h        |  8 +++++
-> > >  3 files changed, 112 insertions(+), 8 deletions(-)
+Hi Linus,
 
-...
+Please pull this second batch of new changes for 5.6-rc1.  This contains
+the buffer error code refactoring I mentioned last week, now that it has
+had extra time to complete the full xfs fuzz testing suite to make sure
+there aren't any obvious new bugs.
 
-> > > @@ -232,7 +263,11 @@ int audit_alloc(struct task_struct *tsk)
-> > >         }
-> > >         info->loginuid = audit_get_loginuid(current);
-> > >         info->sessionid = audit_get_sessionid(current);
-> > > -       info->contid = audit_get_contid(current);
-> > > +       spin_lock(&audit_contobj_list_lock);
-> > > +       info->cont = _audit_contobj(current);
-> > > +       if (info->cont)
-> > > +               _audit_contobj_hold(info->cont);
-> > > +       spin_unlock(&audit_contobj_list_lock);
-> >
-> > If we are taking a spinlock in order to bump the refcount, does it
-> > really need to be a refcount_t or can we just use a normal integer?
-> > In RCU protected lists a spinlock is usually used to protect
-> > adds/removes to the list, not the content of individual list items.
-> >
-> > My guess is you probably want to use the spinlock as described above
-> > (list add/remove protection) and manipulate the refcount_t inside a
-> > RCU read lock protected region.
->
-> Ok, I guess it could be an integer if it were protected by the spinlock,
-> but I think you've guessed my intent, so let us keep it as a refcount
-> and tighten the spinlock scope and use rcu read locking to protect _get
-> and _put in _alloc, _free, and later on when protecting the network
-> namespace contobj lists.  This should reduce potential contention for
-> the spinlock to one location over fewer lines of code in that place
-> while speeding up updates and slightly simplifying code in the others.
+This merges cleanly against upstream as of about 15 minutes ago.  Note
+that the -merge-7 and -merge-8 tags both point to the same ten day old
+commit; the message attached to -8 reflects only the changes since last
+week's pull.  Please let me know if anything odd happens during the
+merge, though it should be clean.
 
-If it helps, you should be able to find plenty of rcu/spinlock
-protected list examples in the kernel code.  It might be a good idea
-if you spent some time looking at those implementations first to get
-an idea of how it is usually done.
+--D
 
-> > > @@ -2381,9 +2425,12 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > >         }
-> > >         oldcontid = audit_get_contid(task);
-> > >         read_lock(&tasklist_lock);
-> > > -       /* Don't allow the audit containerid to be unset */
-> > > +       /* Don't allow the contid to be unset */
-> > >         if (!audit_contid_valid(contid))
-> > >                 rc = -EINVAL;
-> > > +       /* Don't allow the contid to be set to the same value again */
-> > > +       else if (contid == oldcontid) {
-> > > +               rc = -EADDRINUSE;
-> >
-> > First, is that brace a typo?  It looks like it.  Did this compile?
->
-> Yes, it was fixed in the later patch that restructured the if
-> statements.
+The following changes since commit b3531f5fc16d4df2b12567bce48cd9f3ab5f9131:
 
-Generic reminder that each patch should compile and function on it's
-own without the need for any follow-up patches.  I know Richard is
-already aware of that, and this was a mistake that slipped through the
-cracks; this reminder is more for those who may be lurking on the
-list.
+  xfs: remove unused variable 'done' (2020-01-23 21:24:50 -0800)
 
-> > Second, can you explain why (re)setting the audit container ID to the
-> > same value is something we need to prohibit?  I'm guessing it has
-> > something to do with explicitly set vs inherited, but I don't want to
-> > assume too much about your thinking behind this.
->
-> It made the refcounting more complicated later, and besides, the
-> prohibition on setting the contid again if it is already set would catch
-> this case, so I'll remove it in this patch and ensure this action
-> doesn't cause a problem in later patches.
->
-> > If it is "set vs inherited", would allowing an orchestrator to
-> > explicitly "set" an inherited audit container ID provide some level or
-> > protection against moving the task?
->
-> I can't see it helping prevent this since later descendancy checks will
-> stop this move anyways.
+are available in the Git repository at:
 
-That's what I thought, but I was just trying to think of any reason
-why you felt this might have been useful since it was in the patch.
-If it's in the patch I tend to fall back on the idea that it must have
-served a purpose ;)
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.6-merge-8
 
-> > > @@ -2396,8 +2443,49 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > >         else if (audit_contid_set(task))
-> > >                 rc = -ECHILD;
-> > >         read_unlock(&tasklist_lock);
-> > > -       if (!rc)
-> > > -               task->audit->contid = contid;
-> > > +       if (!rc) {
-> > > +               struct audit_contobj *oldcont = _audit_contobj(task);
-> > > +               struct audit_contobj *cont = NULL, *newcont = NULL;
-> > > +               int h = audit_hash_contid(contid);
-> > > +
-> > > +               rcu_read_lock();
-> > > +               list_for_each_entry_rcu(cont, &audit_contid_hash[h], list)
-> > > +                       if (cont->id == contid) {
-> > > +                               /* task injection to existing container */
-> > > +                               if (current == cont->owner) {
-> >
-> > Do we have any protection against the task pointed to by cont->owner
-> > going away and a new task with the same current pointer value (no
-> > longer the legitimate audit container ID owner) manipulating the
-> > target task's audit container ID?
->
-> Yes, the get_task_struct() call below.
+for you to fetch changes up to cdbcf82b86ea24aa942991b4233cd8ddf13f590c:
 
-Gotcha.
+  xfs: fix xfs_buf_ioerror_alert location reporting (2020-01-26 14:32:27 -0800)
 
--- 
-paul moore
-www.paul-moore.com
+----------------------------------------------------------------
+(More) new code for 5.6:
+- Refactor the metadata buffer functions to return the usual int error
+value instead of the open coded error checking mess we have now.
+
+----------------------------------------------------------------
+Darrick J. Wong (12):
+      xfs: make xfs_buf_alloc return an error code
+      xfs: make xfs_buf_get_map return an error code
+      xfs: make xfs_buf_read_map return an error code
+      xfs: make xfs_buf_get return an error code
+      xfs: make xfs_buf_get_uncached return an error code
+      xfs: make xfs_buf_read return an error code
+      xfs: make xfs_trans_get_buf_map return an error code
+      xfs: make xfs_trans_get_buf return an error code
+      xfs: remove the xfs_btree_get_buf[ls] functions
+      xfs: make xfs_*read_agf return EAGAIN to ALLOC_FLAG_TRYLOCK callers
+      xfs: remove unnecessary null pointer checks from _read_agf callers
+      xfs: fix xfs_buf_ioerror_alert location reporting
+
+ fs/xfs/libxfs/xfs_ag.c          |  21 +++---
+ fs/xfs/libxfs/xfs_alloc.c       |  51 ++++++-------
+ fs/xfs/libxfs/xfs_attr_remote.c |  22 ++----
+ fs/xfs/libxfs/xfs_bmap.c        |  25 ++++---
+ fs/xfs/libxfs/xfs_btree.c       |  45 +----------
+ fs/xfs/libxfs/xfs_btree.h       |  21 ------
+ fs/xfs/libxfs/xfs_da_btree.c    |   8 +-
+ fs/xfs/libxfs/xfs_ialloc.c      |  12 +--
+ fs/xfs/libxfs/xfs_refcount.c    |   6 --
+ fs/xfs/libxfs/xfs_sb.c          |  17 +++--
+ fs/xfs/scrub/agheader_repair.c  |   4 -
+ fs/xfs/scrub/fscounters.c       |   3 -
+ fs/xfs/scrub/repair.c           |  10 ++-
+ fs/xfs/xfs_attr_inactive.c      |  17 +++--
+ fs/xfs/xfs_buf.c                | 161 ++++++++++++++++++++++++----------------
+ fs/xfs/xfs_buf.h                |  33 ++++----
+ fs/xfs/xfs_buf_item.c           |   2 +-
+ fs/xfs/xfs_discard.c            |   2 +-
+ fs/xfs/xfs_dquot.c              |   8 +-
+ fs/xfs/xfs_filestream.c         |  11 ++-
+ fs/xfs/xfs_inode.c              |  12 +--
+ fs/xfs/xfs_log_recover.c        |  30 +++-----
+ fs/xfs/xfs_reflink.c            |   2 -
+ fs/xfs/xfs_rtalloc.c            |   8 +-
+ fs/xfs/xfs_symlink.c            |  37 +++------
+ fs/xfs/xfs_trans.h              |  14 ++--
+ fs/xfs/xfs_trans_buf.c          |  61 ++++++---------
+ 27 files changed, 278 insertions(+), 365 deletions(-)
