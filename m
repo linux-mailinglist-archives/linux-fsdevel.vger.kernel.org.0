@@ -2,101 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C2A153B9D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 00:06:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A0B153BB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 00:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbgBEXGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 18:06:31 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:48826 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727237AbgBEXGb (ORCPT
+        id S1727474AbgBEXNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 18:13:32 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1635 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbgBEXNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 18:06:31 -0500
-Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 14B6F8204F1;
-        Thu,  6 Feb 2020 10:06:27 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1izTkY-0006PA-46; Thu, 06 Feb 2020 10:06:26 +1100
-Date:   Thu, 6 Feb 2020 10:06:26 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        fstests@vger.kernel.org
-Subject: Re: [PATCH 0/3] fstests: fixes for 64k pages and dax
-Message-ID: <20200205230626.GO20628@dread.disaster.area>
-References: <20200205224818.18707-1-jmoyer@redhat.com>
+        Wed, 5 Feb 2020 18:13:32 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3b4c000000>; Wed, 05 Feb 2020 15:13:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 05 Feb 2020 15:13:28 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 05 Feb 2020 15:13:28 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
+ 2020 23:13:28 +0000
+Subject: Re: [PATCH v4 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
+ reporting
+To:     Jan Kara <jack@suse.cz>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200204234117.2974687-1-jhubbard@nvidia.com>
+ <20200204234117.2974687-11-jhubbard@nvidia.com>
+ <20200205093733.GB28058@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <09b49b0d-85cc-87b8-9176-0963f6c8c735@nvidia.com>
+Date:   Wed, 5 Feb 2020 15:13:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200205224818.18707-1-jmoyer@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=Hdpg4Cy1Pty9vVzyJowA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200205093733.GB28058@quack2.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580944384; bh=QZo2rYgRggJLhdhuOglfdT26CygAzcQcsm1mvo4G27A=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=rET6ClPJ1i9ucTvvRWF/1/c462K2mCH6nZx8WiCBRBOHIYQjg+sBdCGrPEtzpJsKC
+         oKyCPZwjz3pxDIMTZQ64WUhXMxGUcmo2sbbCBiqNCUtVm8IDqmSKyYGkw81oZa918B
+         N0ScNcSKXjJywqnA2ZRAnUbR9x/eLSSwDq662e/d+ttmimG7GT1j+2mJRKDHI6zZbH
+         86HZzVIKep/0LUPMJQsvDeV54HT0Y46r7c6qo8I9SUAiapmADqg+pUsaOz9YoF0uW1
+         Jn2PUL4F9EQ2HxmAkHcoSFDySLMhNHZs2ZqJAAvZxFMlEtNxpUbGKwxFOdO35tSUdu
+         Cvzd7Xz67EEww==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[cc fstests@vger.kernel.org]
+On 2/5/20 1:37 AM, Jan Kara wrote:
+> ...
+> 
+>> @@ -104,6 +106,9 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
+>>  		if (hpage_pincount_available(page))
+>>  			hpage_pincount_add(page, refs);
+>>  
+>> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED,
+>> +				    orig_refs);
+>> +
+>>  		return page;
+>>  	}
+>>  
+> 
+> It seems to me you miss mod_node_page_state() in put_compound_head(), don't
+> you?
 
-On Wed, Feb 05, 2020 at 05:48:15PM -0500, Jeff Moyer wrote:
-> This set of patches fixes a few false positives I encountered when
-> testing DAX on ppc64le (which has a 64k page size).
-> 
-> Patch 1 is actually not specific to non-4k page sizes.  Right now we
-> only test for dax incompatibility in the dm flakey target.  This means
-> that tests that use dm-thin or the snapshot target will still try to
-> run.  Moving the check to _require_dm_target fixes that problem.
-> 
-> Patches 2 and 3 get rid of hard coded block/page sizes in the tests.
-> They run just fine on 64k pages and 64k block sizes.
-> 
-> Even after these patches, there are many more tests that fail in the
-> following configuration:
-> 
-> MKFS_OPTIONS="-b size=65536 -m reflink=0" MOUNT_OPTIONS="-o dax"
-> 
-> One class of failures is tests that create a really small file system
-> size.  Some of those tests seem to require the very small size, but
-> others seem like they could live with a slightly bigger size that
-> would then fit the log (the typical failure is a mkfs failure due to
-> not enough blocks for the log).  For the former case, I'm tempted to
-> send patches to _notrun those tests, and for the latter, I'd like to
-> bump the file system sizes up.  300MB seems to be large enough to
-> accommodate the log.  Would folks be opposed to those approaches?
-> 
-> Another class of failure is tests that either hard-code a block size
-> to trigger a specific error case, or that test a multitude of block
-> sizes.  I'd like to send a patch to _notrun those tests if there is
-> a user-specified block size.  That will require parsing the MKFS_OPTIONS
-> based on the fs type, of course.  Is that something that seems
-> reasonable?
-> 
-> I will follow up with a series of patches to implement those changes
-> if there is consensus on the approach.  These first three seemed
-> straight-forward to me, so that's where I'm starting.
-> 
-> Thanks!
-> Jeff
-> 
-> [PATCH 1/3] dax/dm: disable testing on devices that don't support dax
-> [PATCH 2/3] t_mmap_collision: fix hard-coded page size
-> [PATCH 3/3] xfs/300: modify test to work on any fs block size
 
-Hi Jeff,
+Yes, that was definitely missing. I've added this for the next version:
 
-You probably should be sending fstests patches to
-fstests@vger.kernel.org, otherwise they probably won't get noticed
-by the fstests maintainer...
 
-Cheers,
+diff --git a/mm/gup.c b/mm/gup.c
+index 7c543849181b..ae503c51bc7f 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2268,6 +2268,8 @@ static int record_subpages(struct page *page, unsigned long addr,
+ 
+ static void put_compound_head(struct page *page, int refs, unsigned int flags)
+ {
++       int orig_refs = refs;
++
+        if (flags & FOLL_PIN) {
+                if (hpage_pincount_available(page))
+                        hpage_pincount_sub(page, refs);
+@@ -2283,6 +2285,8 @@ static void put_compound_head(struct page *page, int refs, unsigned int flags)
+        if (refs > 1)
+                page_ref_sub(page, refs - 1);
+        put_page(page);
++
++       mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, orig_refs);
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_HUGEPD
 
-Dave.
+
+
+> 
+> Otherwise I like the new stat names better :).
+> 
+> 								Honza
+> 
+
+Glad to hear that! :)
+
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
