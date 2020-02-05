@@ -2,346 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1C41534D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 16:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 482EE153506
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 17:12:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbgBEP5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 10:57:52 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53520 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbgBEP5v (ORCPT
+        id S1727050AbgBEQMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 11:12:18 -0500
+Received: from outbound-smtp46.blacknight.com ([46.22.136.58]:53483 "EHLO
+        outbound-smtp46.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726678AbgBEQMS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 10:57:51 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 015FrQpZ044982;
-        Wed, 5 Feb 2020 15:57:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=5lbTEkKa/RVA5AT951KVvMm+geaBxj7YxSpcm2IbdQs=;
- b=b9RSVT9comObUwU0UMexlfK82XSrgAXYCW56fgjHzh/gFSJZlQueDwmgK9ZihWgGMm89
- vtx18KGx2k0VBCgsZ975AN+g56Do/DFk1QNmK+9Yr4jZ1bumyYZAkt4Mqfik2olL7jjy
- nnqN0fH6QLZBpNANSNJEyPWkkNz3pcl6URd1RCZShtdwZe3Xivx7nKMeGpXYvQcN5Tnh
- WrWHYBId90+N3WMdxHe+HkWNZhSA52iLGPTct8ZSll44oNum/ktMhjZ8Q3ki4xVssDFi
- H81bPLkoEgl26Qut6cxMqs/E/h3yRn+eHeKf8GhaiIRDcSZTM+vKV+hYziE+h6oXJIRM Eg== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=5lbTEkKa/RVA5AT951KVvMm+geaBxj7YxSpcm2IbdQs=;
- b=cCFYbSdE9r111wnxTEXvsV8UKXu7qPijn8DFdGtLhj+BIiO+vubNtwUrW3aIGJqaEvaq
- 8vs9YUk2+lrfPb0hc95q/+QqteOW9nfprrYp6OnvJSKw+6ypw6Oz9f+Q+9aLZ675Ujje
- SdD2RyLZL8udlamNJfuBj3ykKlvOZ2lkYo77pu7GSo3EcHIbPwAydlRDJps4MwI7QxiH
- KGVM2DfN6zOwp3jV1IehW7bEi577hF9HFsaSO6ReOfZA4LsZr7RQvTG8V8JE1r1HV3l7
- 7pJYZ4O7giEAikUF1Wx/y5NyYt9b2mNu1+pcBdWu4PPrCTCquLrRxYU43fh3+Sx7Of4+ pw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2xykbp3x9y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Feb 2020 15:57:38 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 015FsDZ9164574;
-        Wed, 5 Feb 2020 15:57:38 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2xymut2429-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Feb 2020 15:57:38 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 015FvZeP001922;
-        Wed, 5 Feb 2020 15:57:35 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Feb 2020 07:57:34 -0800
-Date:   Wed, 5 Feb 2020 07:57:33 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, cmaiolino@redhat.com
-Subject: Re: [RFCv2 0/4] ext4: bmap & fiemap conversion to use iomap
-Message-ID: <20200205155733.GH6874@magnolia>
-References: <cover.1580121790.git.riteshh@linux.ibm.com>
- <20200130160018.GC3445353@magnolia>
- <20200205124750.AE9DDA404D@d06av23.portsmouth.uk.ibm.com>
+        Wed, 5 Feb 2020 11:12:18 -0500
+X-Greylist: delayed 381 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Feb 2020 11:12:15 EST
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp46.blacknight.com (Postfix) with ESMTPS id 250B1FA982
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Feb 2020 16:05:53 +0000 (GMT)
+Received: (qmail 17834 invoked from network); 5 Feb 2020 16:05:52 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 5 Feb 2020 16:05:52 -0000
+Date:   Wed, 5 Feb 2020 16:05:51 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] Congestion
+Message-ID: <20200205160551.GI3466@techsingularity.net>
+References: <20191231125908.GD6788@bombadil.infradead.org>
+ <20200106115514.GG12699@dhcp22.suse.cz>
+ <20200106232100.GL23195@dread.disaster.area>
+ <20200109110751.GF27035@quack2.suse.cz>
+ <20200109230043.GS23195@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200205124750.AE9DDA404D@d06av23.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-2002050123
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-2002050123
+In-Reply-To: <20200109230043.GS23195@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 06:17:44PM +0530, Ritesh Harjani wrote:
-> 
-> 
-> On 1/30/20 11:04 PM, Ritesh Harjani wrote:
-> > 
-> > 
-> > On 1/30/20 9:30 PM, Darrick J. Wong wrote:
-> > > On Tue, Jan 28, 2020 at 03:48:24PM +0530, Ritesh Harjani wrote:
-> > > > Hello All,
-> > > > 
-> > > > Background
-> > > > ==========
-> > > > There are RFCv2 patches to move ext4 bmap & fiemap calls to use
-> > > > iomap APIs.
-> > > > This reduces the users of ext4_get_block API and thus a step
-> > > > towards getting
-> > > > rid of buffer_heads from ext4. Also reduces a lot of code by
-> > > > making use of
-> > > > existing iomap_ops (except for xattr implementation).
-> > > > 
-> > > > Testing (done on ext4 master branch)
-> > > > ========
-> > > > 'xfstests -g auto' passes with default mkfs/mount configuration
-> > > > (v/s which also pass with vanilla kernel without this patch). Except
-> > > > generic/473 which also failes on XFS. This seems to be the test
-> > > > case issue
-> > > > since it expects the data in slightly different way as compared
-> > > > to what iomap
-> > > > returns.
-> > > > Point 2.a below describes more about this.
-> > > > 
-> > > > Observations/Review required
-> > > > ============================
-> > > > 1. bmap related old v/s new method differences:-
-> > > >     a. In case if addr > INT_MAX, it issues a warning and
-> > > >        returns 0 as the block no. While earlier it used to return the
-> > > >        truncated value with no warning.
-> > > 
-> > > Good...
-> > > 
-> > > >     b. block no. is only returned in case of iomap->type is
-> > > > IOMAP_MAPPED,
-> > > >        but not when iomap->type is IOMAP_UNWRITTEN. While with
-> > > > previously
-> > > >        we used to get block no. for both of above cases.
-> > > 
-> > > Assuming the only remaining usecase of bmap is to tell old bootloaders
-> > > where to find vmlinuz blocks on disk, I don't see much reason to map
-> > > unwritten blocks -- there's no data there, and if your bootloader writes
-> > > to the filesystem(!) then you can't read whatever was written there
-> > > anyway.
-> > 
-> > Yes, no objection there. Just wanted to get it reviewed.
-> > 
-> > 
-> > > 
-> > > Uh, can we put this ioctl on the deprecation list, please? :)
-> > > 
-> > > > 2. Fiemap related old v/s new method differences:-
-> > > >     a. iomap_fiemap returns the disk extent information in exact
-> > > >        correspondence with start of user requested logical
-> > > > offset till the
-> > > >        length requested by user. While in previous implementation the
-> > > >        returned information used to give the complete extent
-> > > > information if
-> > > >        the range requested by user lies in between the extent mapping.
-> > > 
-> > > This is a topic of much disagreement.  The FIEMAP documentation says
-> > > that the call must return data for the requested range, but *may* return
-> > > a mapping that extends beyond the requested range.
-> > > 
-> > > XFS (and now iomap) only return data for the requested range, whereas
-> > > ext4 has (had?) the behavior you describe.  generic/473 was an attempt
-> > > to enforce the ext4 behavior across all filesystems, but I put it in my
-> > > dead list and never run it.
-> > > 
-> > > So it's a behavioral change, but the new behavior isn't forbidden.
-> > 
-> > Sure, thanks.
-> > 
-> > > 
-> > > >     b. iomap_fiemap adds the FIEMAP_EXTENT_LAST flag also at the last
-> > > >        fiemap_extent mapping range requested by the user via fm_length (
-> > > >        if that has a valid mapped extent on the disk).
-> > > 
-> > > That sounds like a bug.  _LAST is supposed to be set on the last extent
-> > > in the file, not the last record in the queried dataset.
-> > 
-> > Thought so too, sure will spend some time to try fixing it.
-> 
-> Looked into this. I think below should fix our above reported problem with
-> current iomap code.
-> If no objection I will send send PATCHv3 with below fix as the first
-> patch in the series.
-> 
-> diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
-> index bccf305ea9ce..ee53991810d5 100644
-> --- a/fs/iomap/fiemap.c
-> +++ b/fs/iomap/fiemap.c
-> @@ -100,7 +100,12 @@ int iomap_fiemap(struct inode *inode, struct
-> fiemap_extent_info *fi,
->         }
-> 
->         if (ctx.prev.type != IOMAP_HOLE) {
-> -               ret = iomap_to_fiemap(fi, &ctx.prev, FIEMAP_EXTENT_LAST);
-> +               u32 flags = 0;
-> +               loff_t isize = i_size_read(inode);
-> +
-> +               if (ctx.prev.offset + ctx.prev.length >= isize)
+This thread is ancient but I'm only getting to it now, to express an
+interest in the general discussion as much as anything else.
 
-What happens if ctx.prev actually is the last iomap in the file, but
-isize extends beyond that?  e.g.,
+On Fri, Jan 10, 2020 at 10:00:43AM +1100, Dave Chinner wrote:
+> > I don't think so... So I think that to solve this
+> > problem in a robust way, we need to provide a mechanism for slab shrinkers
+> > to say something like "hang on, I can reclaim X objects you asked for but
+> > it will take time, I'll signal to you when they are reclaimable". This way
+> > we avoid blocking in the shrinker and can do more efficient async batched
+> > reclaim and on mm side we have the freedom to either wait for slab reclaim
+> > to progress (if this slab is fundamental to memory pressure) or just go try
+> > reclaim something else. Of course, the devil is in the details :).
+> 
+> That's pretty much exactly what my non-blocking XFS inode reclaim
+> patches do. It tries to scan, but when it can't make progress it
+> sets a "need backoff" flag and defers the remaining work and expects
+> the high level code to make a sensible back-off decision.
+> 
+> The problem is that the decision the high level code makes at the
+> moment is not sensible - it is "back off for a bit, then increase
+> the reclaim priority and reclaim from the page cache again. That;s
+> what is driving the swap storms - inode reclaim says "back-off" and
+> stops trying to do reclaim, and that causes the high level code to
+> reclaim the page cache harder.
+> 
+> OTOH, if we *block in the inode shrinker* as we do now, then we
+> don't increase reclaim priority (and hence the amount of page cache
+> scanning) and so the reclaim algorithms don't drive deeply into
+> swap-storm conditions.
+> 
+> That's the fundamental problem here - we need to throttle reclaim
+> without *needing to restart the entire high level reclaim loop*.
+> This is an architecture problem more than anything - node and memcg
+> aware shrinkers outnumber the page cache LRU zones by a large
+> number, but we can't throttle on individual shrinkers and wait for
+> them to make progress like we can individual page LRU zone lists.
+> Hence if we want to throttle an individual shrinker, the *only
+> reliable option* we currently have is for the shrinker to block
+> itself.
+> 
 
-# xfs_io -f -c 'pwrite 0 64k' /a
-# truncate -s 100m /a
-# filefrag -v /a
+Despite the topic name, I learning towards thinking that this is not a
+congestion issue as such. The throttling mechanism based on BDI partially
+solved old problems of swap storm, direct relaim issued writeback
+(historical) or excessive scanning leading to premature OOM kill. When
+reclaim stopped issuing waiting on writeback it had to rely on congestion
+control instead and it always was a bit fragile but mostly worked until
+hardware moved on, storage got faster, memories got larger, or did
+something crazy like buy a second disk.
 
-I think we need the fiemap variant of the iomap_begin functions to pass
-a flag in the iomap that the fiemap implementation can pick up.
+The  commonmreason that stalling would occur is because large amounts of
+dirty/writeback pages were encountered at the tail of the LRU leading to
+large amounts of CPU time spent on useless scanning and increasing scan
+rates until OOM occurred. It never took into account any other factor
+like shrinker state.
 
---D
+But fundamentally what gets a process into trouble is when "reclaim
+efficiency" drops. Efficiency is the ratio between reclaim scan and
+reclaim steal with perfect efficiency being one page scanned results in
+one page reclaimed. As long as reclaim efficiency is perfect, a system
+may be thrashing but it's not stalling on writeback. It may still be
+stalling on read but that tends to be less harmful.
 
-> +                       flags |= FIEMAP_EXTENT_LAST;
-> +               ret = iomap_to_fiemap(fi, &ctx.prev, flags);
->                 if (ret < 0)
->                         return ret;
->         }
+Blocking on "congestion" caught one very bad condition where efficiency
+drops -- excessive dirty/writeback pages on the tail of the file LRU. It
+happened to be a common condition such as if a USB stick was being written
+but not the only one. When it happened, excessive clean file pages would
+be taken, swap storms occur and the system thrashes while the dirty
+pages are being cleaned.
+
+In roughly in order of severity the most relevant causes of efficiency
+drops that come to mind are
+
+o page is unevictable due to mlock (goes to separate list)
+o page is accessed and gets activated
+o THP has to be split and does another lap through the LRU
+o page could not be unmapped (probably heavily shared and should be
+  activated anyway)
+o page is dirty/writeback and goes back on the LRU
+o page has associated buffers that cannot be freed
+
+While I'm nowhere near having enough time to write a prototype, I think
+it could be throttle reclaim based on recent allocation rate and the
+contributors to poor reclaim efficiency.
+
+Recent allocation rate is appropriate because processes dirtying memory
+should get caught in balance_dirty_page. It's only heavy allocators that
+can drive excessive reclaim for multiple unrelated processes. So first,
+try and keep a rough track of the recent allocation rate or maybe just
+something like the number of consecutive allocations that entered the
+slow path due to a low watermark failure.
+
+Once a task enters direct reclaim, track the reasons for poor reclaim
+efficiency (like the list above but maybe add shrinkers) and calculate a
+score based on weight. An accessed page would have a light weight, a dirty
+page would have a heavy weight. Shrinkers could apply some unknown weight
+but I don't know what might be sensible or what the relative weighting
+would be.
+
+If direct reclaim should continue for another loop, wait on a per-node
+waitqueue until kswapd frees pages above the high watermark or a
+timeout. The length of the timeout would depend on how heavy an allocator
+the process is and the reasons why reclaim efficiency was dropping. The
+timeout costs should accumulate while a task remains in direct reclaim
+to limit the chance that an unrelated process is punished.
+
+It's all hand-waving but I think this would be enough to detect a heavy
+allocator encountering lots of dirty pages at the tail of the LRU at high
+frequency without relying on BDI congestion detection. The downside is if
+the system really is thrashing then a light allocator can become a heavy
+allocator because it's trying to read itself from swap or fetch hot data.
+
+> And, realistically, to make this all work in a consistent manner,
+> the zone LRU walkers really should be transitioned to run as shrinker
+> instances that are node and memcg aware, and so they do individual
+> backoff and throttling in the same manner that large slab caches do.
+> This way we end up with an integrated, consistent high level reclaim
+> management architecture that automatically balances page cache vs
+> slab cache reclaim balance...
 > 
-> 
-> -ritesh
-> 
-> 
-> > 
-> > 
-> > > 
-> > > > But if the user
-> > > >        requested for more fm_length which could not be mapped in
-> > > > the last
-> > > >        fiemap_extent, then the flag is not set.
-> > > 
-> > > Yes... if there were more extents to map than there was space in the map
-> > > array, then _LAST should remain unset to encourage userspace to come
-> > > back for the rest of the mappings.
-> > > 
-> > > (Unless maybe I'm misunderstanding here...)
-> > > 
-> > > > e.g. output for above differences 2.a & 2.b
-> > > > ===========================================
-> > > > create a file with below cmds.
-> > > > 1. fallocate -o 0 -l 8K testfile.txt
-> > > > 2. xfs_io -c "pwrite 8K 8K" testfile.txt
-> > > > 3. check extent mapping:- xfs_io -c "fiemap -v" testfile.txt
-> > > > 4. run this binary on with and without these patches:- ./a.out
-> > > > (test_fiemap_diff.c) [4]
-> > > > 
-> > > > o/p of xfs_io -c "fiemap -v"
-> > > > ============================================
-> > > > With this patch on patched kernel:-
-> > > > testfile.txt:
-> > > >   EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
-> > > >     0: [0..15]:         122802736..122802751    16 0x800
-> > > >     1: [16..31]:        122687536..122687551    16   0x1
-> > > > 
-> > > > without patch on vanilla kernel (no difference):-
-> > > > testfile.txt:
-> > > >   EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
-> > > >     0: [0..15]:         332211376..332211391    16 0x800
-> > > >     1: [16..31]:        332722392..332722407    16   0x1
-> > > > 
-> > > > 
-> > > > o/p of a.out without patch:-
-> > > > ================
-> > > > riteshh-> ./a.out
-> > > > logical: [       0..      15] phys: 332211376..332211391 flags:
-> > > > 0x800 tot: 16
-> > > > (0) extent flag = 2048
-> > > > 
-> > > > o/p of a.out with patch (both point 2.a & 2.b could be seen)
-> > > > =======================
-> > > > riteshh-> ./a.out
-> > > > logical: [       0..       7] phys: 122802736..122802743 flags:
-> > > > 0x801 tot: 8
-> > > > (0) extent flag = 2049
-> > > > 
-> > > > FYI - In test_fiemap_diff.c test we had
-> > > > a. fm_extent_count = 1
-> > > > b. fm_start = 0
-> > > > c. fm_length = 4K
-> > > > Whereas when we change fm_extent_count = 32, then we don't see
-> > > > any difference.
-> > > > 
-> > > > e.g. output for above difference listed in point 1.b
-> > > > ====================================================
-> > > > 
-> > > > o/p without patch (block no returned for unwritten block as well)
-> > > > =========Testing IOCTL FIBMAP=========
-> > > > File size = 16384, blkcnt = 4, blocksize = 4096
-> > > >    0   41526422
-> > > >    1   41526423
-> > > >    2   41590299
-> > > >    3   41590300
-> > > > 
-> > > > o/p with patch (0 returned for unwritten block)
-> > > > =========Testing IOCTL FIBMAP=========
-> > > > File size = 16384, blkcnt = 4, blocksize = 4096
-> > > >    0          0          0
-> > > >    1          0          0
-> > > >    2   15335942      29953
-> > > >    3   15335943      29953
-> > > > 
-> > > > 
-> > > > Summary:-
-> > > > ========
-> > > > Due to some of the observational differences to user, listed above,
-> > > > requesting to please help with a careful review in moving this to iomap.
-> > > > Digging into some older threads, it looks like these differences
-> > > > should be fine,
-> > > > since the same tools have been working fine with XFS (which uses
-> > > > iomap based
-> > > > implementation) [1]
-> > > > Also as Ted suggested in [3]: Fiemap & bmap spec could be made
-> > > > based on the ext4
-> > > > implementation. But since all the tools also work with xfs which
-> > > > uses iomap
-> > > > based fiemap, so we should be good there.
-> > > 
-> > > <nod> Thanks for the worked example output. :)
-> > 
-> > Thanks for the review. :)
-> > 
-> > ritesh
-> > 
-> > 
-> > > 
-> > > --D
-> > > 
-> > > > 
-> > > > References of some previous discussions:
-> > > > =======================================
-> > > > [1]: https://www.spinics.net/lists/linux-fsdevel/msg128370.html
-> > > > [2]: https://www.spinics.net/lists/linux-fsdevel/msg127675.html
-> > > > [3]: https://www.spinics.net/lists/linux-fsdevel/msg128368.html
-> > > > [4]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test_fiemap_diff.c
-> > > > 
-> > > > [RFCv1]: https://www.spinics.net/lists/linux-ext4/msg67077.html
-> > > > 
-> > > > 
-> > > > Ritesh Harjani (4):
-> > > >    ext4: Add IOMAP_F_MERGED for non-extent based mapping
-> > > >    ext4: Optimize ext4_ext_precache for 0 depth
-> > > >    ext4: Move ext4 bmap to use iomap infrastructure.
-> > > >    ext4: Move ext4_fiemap to use iomap infrastructure
-> > > > 
-> > > >   fs/ext4/extents.c | 288 +++++++---------------------------------------
-> > > >   fs/ext4/inline.c  |  41 -------
-> > > >   fs/ext4/inode.c   |   6 +-
-> > > >   3 files changed, 49 insertions(+), 286 deletions(-)
-> > > > 
-> > > > -- 
-> > > > 2.21.0
-> > > > 
-> 
+
+That'd probably make more sense but I don't think it would be mandatory
+to get some basic replacement for wait_iff_congested working.
+
+-- 
+Mel Gorman
+SUSE Labs
