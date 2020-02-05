@@ -2,219 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 216DC153B63
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:50:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBFC0153B6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:52:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbgBEWum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 17:50:42 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45001 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbgBEWum (ORCPT
+        id S1727607AbgBEWvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 17:51:43 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40638 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbgBEWvm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:50:42 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g19so3830987eds.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 14:50:40 -0800 (PST)
+        Wed, 5 Feb 2020 17:51:42 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p3so3848074edx.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 14:51:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oCUytS6g641J3tcs63EguLa4i9YrPYhugF9NrBFVt0A=;
-        b=LhqvsuRSA4VPD4eDBS98H9PdhUNvbEDjJfARIvTagB4Pbr7Lzl/Ujvqd9lE6I0E5rv
-         iNWm5MfzRgUHzuyhXoD3jmVEMsKjR0F5FBC1ff7mI1h+gnmONlRlo4R93WJZsugNhiFo
-         40eR5d65tbSMkjeLa9BQnToHh0xPmJw4SwneOPS0mCA7CKSI2GHWiUz1AzCTX2SldRVq
-         rFVUD+N7RDAa5788OR/TzconMfWOwpK0QuAosgMQu6K/YeeRRFqgYwGjx2FGplWEyzmo
-         tXdjMQcn4czk3so5X4miLpVFmxKiL2uQWRUQoRnBeQqFp1+7wnReIAJjDJcL68+UlFew
-         8p+w==
+        bh=KkJqADdzREDp4wpCa3aAuBXzYy2a7dWtxmQqACuBiLA=;
+        b=tlFhwg7fuSsr9lDMyg/hJyhV9/r+SA/pNtn3GhTpEFeVNqw8D7oPmYV55YrajcvhPi
+         6USVBo6kXicLmvv6Bg2Y0ha0tk2Nay7mXyPilZSuO9GsGXq5p9msM1TW1ThqpEKIk6TO
+         4/OQyO/ulzcMerTQGaeD0VryqdPshEHuhKpG+unQcWhv6sPRbnKksfprLCn66VInLREd
+         Je6wlsaG5QsXqkI7MrdKq8b444s9J9M4EeNMgElcAD+QNFZ/daBRaPIp/Nv+OU/SgL9L
+         aTwx//Ff6J7OlQ/9BFdzCkZlg1MXq+nUXXnJiTXBCnSxNct/pUB8o87OQuSAcShpAQtW
+         d60Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oCUytS6g641J3tcs63EguLa4i9YrPYhugF9NrBFVt0A=;
-        b=BLaz2WPcUBf2TqeIWs2+jJCPMt9ZF4iSE8BrbNXYPejX7tv5Fz7skaQ288+cbg5z3R
-         JQVg5UQaw8Z2vqqxjeMo7FHPh11aMC5iCUMVZqFbSY8a5g58hiXctaLrvaOz0/BVnzNu
-         EnVcAMvLBqsmP93RBiXhw7z3yO5TruDzxGY2hDrffS5eFWGyY1/j8eNXwYRYRwtPupfq
-         3qgD2hubqyxBf2GQn2XrPYs8A/NdGQI8BYhbQn3e7CnZXmWtg2zphovLBDshezlj2eG6
-         8KIrxt5VW7m10CTxTj5uJb7S0EtJVRWSvuBbkkT+v1euI3gVdOqcnWLwmPb7zRFTZkvw
-         Q/2g==
-X-Gm-Message-State: APjAAAVnhzhu1VBdS88lKhmCGt4zPv+QfXC57zq6V+XWwqCGZE6IwhJY
-        WBhuoqGJ3Lytn5IBFPL5e1ufPSkCNcvqP69PCKrw
-X-Google-Smtp-Source: APXvYqzArv8aqc17G9clMFHzJDgoR01sfKnB5zKeGqYBAG7/zDEtsAzGFNzwSV4GXWYxeN77WLmoVFV8Kzp5Z7nAVys=
-X-Received: by 2002:a50:fd15:: with SMTP id i21mr422196eds.12.1580943039631;
- Wed, 05 Feb 2020 14:50:39 -0800 (PST)
+        bh=KkJqADdzREDp4wpCa3aAuBXzYy2a7dWtxmQqACuBiLA=;
+        b=eVzMUAfkls0l+rr1Mh46xiHuGK9Rf5Gvwe/vERjr703MDBab0ivpORdnQWUVMmXMQo
+         2+b2JJy9/Mq7ohpFd9Irdl4aZP/3PaBI1v1kDEZ5itkUhvo87QnzY7KbjXfwYr9TofD5
+         hmmxoq9IrHwx6meAoJIPFnp3hwGCX7bQvo4mzs3HgQlglh+6c1LdPZLnWm/HIDs1w/e1
+         mzIFswZKZRKw6RNcvZxKOFt4Te38r5RBEku5BA+kBKPfOFmYCehlraadHRmSAE6RfJK9
+         OHN2CQ+U2y8JGLFPSIz6YIzs0PPlvMLcnia2i2QWuE0d3DHjcoVllXxxyUsEzm6B8Pvp
+         wTlw==
+X-Gm-Message-State: APjAAAUrq4vj7U0HmLEAcGQ6Ra2ykzO1RzaEhM2Zpef5YPei8sqairzB
+        g+dqKLkzsrQdFIxggAHH82jr0HEa1Q1pqexhdN93
+X-Google-Smtp-Source: APXvYqz2aK9JflWz0zHltcgH6zygcn9lbVHxrjU8/1oDrOSsvKKPYicMl7ZrYmjGxJ5ErI7H2IQMPuhpOBJ/wakZNE8=
+X-Received: by 2002:a50:e108:: with SMTP id h8mr394067edl.196.1580943101124;
+ Wed, 05 Feb 2020 14:51:41 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <7d7933d742fdf4a94c84b791906a450b16f2e81f.1577736799.git.rgb@redhat.com>
- <CAHC9VhSuwJGryfrBfzxG01zwb-O_7dbjS0x0a3w-XjcNuYSAcg@mail.gmail.com>
- <20200123162918.b3jbed7tbvr2sf2p@madcap2.tricolour.ca> <CAHC9VhTusiQoudB8G5jjDFyM9WxBUAjZ6_X35ywJ063Jb75dQA@mail.gmail.com>
- <20200123200412.j2aucdp3cvk57prw@madcap2.tricolour.ca> <CAHC9VhQ2_MQdGAT6Pda9FRe6s0y4JC1XUQenpr-VJiyq9M_CBw@mail.gmail.com>
- <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
-In-Reply-To: <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com> <2954ed671a7622ddf3abdb8854dbba2ad13e9f33.1577736799.git.rgb@redhat.com>
+ <CAHC9VhRw3Fj9-hi+Vj8JJb_GXM4B9N5hRXa9H6aQkuuFqJJ15w@mail.gmail.com> <20200204234258.uwaqk3s3c42fxews@madcap2.tricolour.ca>
+In-Reply-To: <20200204234258.uwaqk3s3c42fxews@madcap2.tricolour.ca>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Feb 2020 17:50:28 -0500
-Message-ID: <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
+Date:   Wed, 5 Feb 2020 17:51:30 -0500
+Message-ID: <CAHC9VhT0NELsrEeTmX15GaZ1SE-qZiQmz9-WweRGWRPcGN5EmA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 11/16] audit: add support for containerid to
+ network namespaces
 To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 6:15 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-01-23 16:35, Paul Moore wrote:
-> > On Thu, Jan 23, 2020 at 3:04 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-01-23 12:09, Paul Moore wrote:
-> > > > On Thu, Jan 23, 2020 at 11:29 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2020-01-22 16:28, Paul Moore wrote:
-> > > > > > On Tue, Dec 31, 2019 at 2:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > >
-> > > > > > > Add audit container identifier support to the action of signalling the
-> > > > > > > audit daemon.
-> > > > > > >
-> > > > > > > Since this would need to add an element to the audit_sig_info struct,
-> > > > > > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> > > > > > > audit_sig_info2 struct.  Corresponding support is required in the
-> > > > > > > userspace code to reflect the new record request and reply type.
-> > > > > > > An older userspace won't break since it won't know to request this
-> > > > > > > record type.
-> > > > > > >
-> > > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > > ---
-> > > > > > >  include/linux/audit.h       |  7 +++++++
-> > > > > > >  include/uapi/linux/audit.h  |  1 +
-> > > > > > >  kernel/audit.c              | 35 +++++++++++++++++++++++++++++++++++
-> > > > > > >  kernel/audit.h              |  1 +
-> > > > > > >  security/selinux/nlmsgtab.c |  1 +
-> > > > > > >  5 files changed, 45 insertions(+)
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > > > > > index 0871c3e5d6df..51159c94041c 100644
-> > > > > > > --- a/kernel/audit.c
-> > > > > > > +++ b/kernel/audit.c
-> > > > > > > @@ -126,6 +126,14 @@ struct auditd_connection {
-> > > > > > >  kuid_t         audit_sig_uid = INVALID_UID;
-> > > > > > >  pid_t          audit_sig_pid = -1;
-> > > > > > >  u32            audit_sig_sid = 0;
-> > > > > > > +/* Since the signal information is stored in the record buffer at the
-> > > > > > > + * time of the signal, but not retrieved until later, there is a chance
-> > > > > > > + * that the last process in the container could terminate before the
-> > > > > > > + * signal record is delivered.  In this circumstance, there is a chance
-> > > > > > > + * the orchestrator could reuse the audit container identifier, causing
-> > > > > > > + * an overlap of audit records that refer to the same audit container
-> > > > > > > + * identifier, but a different container instance.  */
-> > > > > > > +u64            audit_sig_cid = AUDIT_CID_UNSET;
-> > > > > >
-> > > > > > I believe we could prevent the case mentioned above by taking an
-> > > > > > additional reference to the audit container ID object when the signal
-> > > > > > information is collected, dropping it only after the signal
-> > > > > > information is collected by userspace or another process signals the
-> > > > > > audit daemon.  Yes, it would block that audit container ID from being
-> > > > > > reused immediately, but since we are talking about one number out of
-> > > > > > 2^64 that seems like a reasonable tradeoff.
-> > > > >
-> > > > > I had thought that through and should have been more explicit about that
-> > > > > situation when I documented it.  We could do that, but then the syscall
-> > > > > records would be connected with the call from auditd on shutdown to
-> > > > > request that signal information, rather than the exit of that last
-> > > > > process that was using that container.  This strikes me as misleading.
-> > > > > Is that really what we want?
-> > > >
-> > > >  ???
-> > > >
-> > > > I think one of us is not understanding the other; maybe it's me, maybe
-> > > > it's you, maybe it's both of us.
-> > > >
-> > > > Anyway, here is what I was trying to convey with my original comment
-> > > > ... When we record the audit container ID in audit_signal_info() we
-> > > > take an extra reference to the audit container ID object so that it
-> > > > will not disappear (and get reused) until after we respond with an
-> > > > AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
-> > > > AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took in
-> > > > audit_signal_info().  Unless I'm missing some other change you made,
-> > > > this *shouldn't* affect the syscall records, all it does is preserve
-> > > > the audit container ID object in the kernel's ACID store so it doesn't
-> > > > get reused.
+On Tue, Feb 4, 2020 at 6:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-01-22 16:28, Paul Moore wrote:
+> > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 > > >
-> > > This is exactly what I had understood.  I hadn't considered the extra
-> > > details below in detail due to my original syscall concern, but they
-> > > make sense.
+> > > This also adds support to qualify NETFILTER_PKT records.
 > > >
-> > > The syscall I refer to is the one connected with the drop of the
-> > > audit container identifier by the last process that was in that
-> > > container in patch 5/16.  The production of this record is contingent on
-> > > the last ref in a contobj being dropped.  So if it is due to that ref
-> > > being maintained by audit_signal_info() until the AUDIT_SIGNAL_INFO2
-> > > record it fetched, then it will appear that the fetch action closed the
-> > > container rather than the last process in the container to exit.
+> > > Audit events could happen in a network namespace outside of a task
+> > > context due to packets received from the net that trigger an auditing
+> > > rule prior to being associated with a running task.  The network
+> > > namespace could be in use by multiple containers by association to the
+> > > tasks in that network namespace.  We still want a way to attribute
+> > > these events to any potential containers.  Keep a list per network
+> > > namespace to track these audit container identifiiers.
 > > >
-> > > Does this make sense?
+> > > Add/increment the audit container identifier on:
+> > > - initial setting of the audit container identifier via /proc
+> > > - clone/fork call that inherits an audit container identifier
+> > > - unshare call that inherits an audit container identifier
+> > > - setns call that inherits an audit container identifier
+> > > Delete/decrement the audit container identifier on:
+> > > - an inherited audit container identifier dropped when child set
+> > > - process exit
+> > > - unshare call that drops a net namespace
+> > > - setns call that drops a net namespace
+> > >
+> > > Add audit container identifier auxiliary record(s) to NETFILTER_PKT
+> > > event standalone records.  Iterate through all potential audit container
+> > > identifiers associated with a network namespace.
+> > >
+> > > Please see the github audit kernel issue for contid net support:
+> > >   https://github.com/linux-audit/audit-kernel/issues/92
+> > > Please see the github audit testsuiite issue for the test case:
+> > >   https://github.com/linux-audit/audit-testsuite/issues/64
+> > > Please see the github audit wiki for the feature overview:
+> > >   https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >  include/linux/audit.h    |  24 +++++++++
+> > >  kernel/audit.c           | 132 ++++++++++++++++++++++++++++++++++++++++++++++-
+> > >  kernel/nsproxy.c         |   4 ++
+> > >  net/netfilter/nft_log.c  |  11 +++-
+> > >  net/netfilter/xt_AUDIT.c |  11 +++-
+> > >  5 files changed, 176 insertions(+), 6 deletions(-)
 > >
-> > More so than your original reply, at least to me anyway.
+> > ...
 > >
-> > It makes sense that the audit container ID wouldn't be marked as
-> > "dead" since it would still be very much alive and available for use
-> > by the orchestrator, the question is if that is desirable or not.  I
-> > think the answer to this comes down the preserving the correctness of
-> > the audit log.
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index 5531d37a4226..ed8d5b74758d 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -12,6 +12,7 @@
+> > >  #include <linux/sched.h>
+> > >  #include <linux/ptrace.h>
+> > >  #include <uapi/linux/audit.h>
+> > > +#include <linux/refcount.h>
+> > >
+> > >  #define AUDIT_INO_UNSET ((unsigned long)-1)
+> > >  #define AUDIT_DEV_UNSET ((dev_t)-1)
+> > > @@ -121,6 +122,13 @@ struct audit_task_info {
+> > >
+> > >  extern struct audit_task_info init_struct_audit;
+> > >
+> > > +struct audit_contobj_netns {
+> > > +       struct list_head        list;
+> > > +       u64                     id;
 > >
-> > If the audit container ID reported by AUDIT_SIGNAL_INFO2 has been
-> > reused then I think there is a legitimate concern that the audit log
-> > is not correct, and could be misleading.  If we solve that by grabbing
-> > an extra reference, then there could also be some confusion as
-> > userspace considers a container to be "dead" while the audit container
-> > ID still exists in the kernel, and the kernel generated audit
-> > container ID death record will not be generated until much later (and
-> > possibly be associated with a different event, but that could be
-> > solved by unassociating the container death record).
+> > Since we now track audit container IDs in their own structure, why not
+> > link directly to the audit container ID object (and bump the
+> > refcount)?
 >
-> How does syscall association of the death record with AUDIT_SIGNAL_INFO2
-> possibly get associated with another event?  Or is the syscall
-> association with the fetch for the AUDIT_SIGNAL_INFO2 the other event?
+> Ok, I've done this but at first I had doubts about the complexity.
 
-The issue is when does the audit container ID "die".  If it is when
-the last task in the container exits, then the death record will be
-associated when the task's exit.  If the audit container ID lives on
-until the last reference of it in the audit logs, including the
-SIGNAL_INFO2 message, the death record will be associated with the
-related SIGNAL_INFO2 syscalls, or perhaps unassociated depending on
-the details of the syscalls/netlink.
-
-> Another idea might be to bump the refcount in audit_signal_info() but
-> mark tht contid as dead so it can't be reused if we are concerned that
-> the dead contid be reused?
-
-Ooof.  Yes, maybe, but that would be ugly.
-
-> There is still the problem later that the reported contid is incomplete
-> compared to the rest of the contid reporting cycle wrt nesting since
-> AUDIT_SIGNAL_INFO2 will need to be more complex w/2 variable length
-> fields to accommodate a nested contid list.
-
-Do we really care about the full nested audit container ID list in the
-SIGNAL_INFO2 record?
-
-> >  Of the two
-> > approaches, I think the latter is safer in that it preserves the
-> > correctness of the audit log, even though it could result in a delay
-> > of the container death record.
->
-> I prefer the former since it strongly indicates last task in the
-> container.  The AUDIT_SIGNAL_INFO2 msg has the pid and other subject
-> attributes and the contid to strongly link the responsible party.
-
-Steve is the only one who really tracks the security certifications
-that are relevant to audit, see what the certification requirements
-have to say and we can revisit this.
+Yes, it will be more complex, but it should be much safer.
 
 -- 
 paul moore
