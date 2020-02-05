@@ -2,90 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF7C152513
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 04:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1384D15251D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 04:08:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbgBEDFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 22:05:16 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44720 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbgBEDFQ (ORCPT
+        id S1727789AbgBEDI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 22:08:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57974 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbgBEDI5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 22:05:16 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v201so345758lfa.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 19:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
-        b=a/rT7owEo3U/lPRFn35JOyHmNdZNKq3CUN5eC0vmSOAlGMUJJc7ELCvSX1Mh8APfaa
-         lAlLVERWXR5pYN81ddhMclRnb/OmN5Fx2KddB7KuZLDfFPyFM3c5qNNCCjwGgxr+r3s1
-         DNCcaZvM6VYKACKmTz/OjiTlKJVFN9VL8YzEYvQS2U83lFvZUm1XWKOklUIkQxQvXozG
-         vNU7Zo1syf0hTTILG3oFQfUcj+JQqVr59fj+c5MCVuSCuEvLrPxTFeYRhYsiMU1wniYS
-         k/ew5rFlhFL2LzMHulEuIV3u33upCBPfLhXENQXAIsbZYUZT2I99yQmfa/FkquxeDAIP
-         aNXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
-        b=dmz1nI1lXHntAYVXqhgsFVTv6OYrHVLGeDZO4bx1azFQgt7P2oDhyUQyt7rqCt9kSW
-         dCaglcK8xeDhFwZxcHwA200AcPMFeyGfVSrbNDocf91/m1jujexAJ65ef3+Dx4cii7Y5
-         UW09scidl+acl/OrhlUUzOcORr7Zwd8W4FwUCjxLxkpUSy++ItlScOPyVeNz/I59sAln
-         UJyixkOEMOFwNuQ4JQDRaxzBPxIeFXTBVnwVrBkVPbphCCnetT+uuljorp/xVl6KhW8S
-         Wbf+wb9m9K6cryqo+/9IJ3Hgw3kuBzMFRwwCjsPgc4JskrBEz8bxTx/kB174jCfIjZL6
-         9MmA==
-X-Gm-Message-State: APjAAAUNM5Az+1U7LEO0q+9ZrEWiI/M2ASIwaUIoLvZCA0E17wzsRI9D
-        CN+vIXgphbwehgI5Pu91FFJWq6J3sI/If97PtoQL7w==
-X-Google-Smtp-Source: APXvYqzeG4caRRvcRllow4EA73MGmU6WFhFNYJbaTAD8sJamhzsXSFSCQuZUYpZgWEJovRgzDpyi7R9sxFKJltzNJtg=
-X-Received: by 2002:a19:4a92:: with SMTP id x140mr17094713lfa.29.1580871913677;
- Tue, 04 Feb 2020 19:05:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20200128230328.183524-1-drosen@google.com> <20200128230328.183524-2-drosen@google.com>
- <85sgjsxx2g.fsf@collabora.com>
-In-Reply-To: <85sgjsxx2g.fsf@collabora.com>
-From:   Daniel Rosenberg <drosen@google.com>
-Date:   Tue, 4 Feb 2020 19:05:02 -0800
-Message-ID: <CA+PiJmS3kbK8220QaccP5jJ7dSf4xv3UrStQvLskAtCN+=vG_A@mail.gmail.com>
-Subject: Re: [PATCH v6 1/5] unicode: Add standard casefolded d_ops
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Tue, 4 Feb 2020 22:08:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=B9LDa0XPjCzIKceODg69dXaRY5vDVy2Yt+cLAsHZ2iE=; b=PQCpAoMYAzYAXkWKSEO3RGZF4s
+        AK6ojSEAycRh8cHHpUbZtVb7KM0F/ojyKZAZKrn7EBESGSRqa/T6/DnaZMEFk+Y1TRw4fo+iTeEg/
+        AiRolVywUugJMf867i8TU7jcgVi/Cb3WzTHOaxrEeDR25uQxgNtyA6p5vyxiL8MD6DY8cG7TxK6uL
+        iYTl5wvvDyvzqdgU/6DCi8FDWVcB2GZC3kI49PLkwZ8adicSn4VdToOOVrMRIlc2qLaAjUYpsSaKa
+        1Yjyvignnce2OK8Ng0b/D/7aWKtJlLdLoU3V4H/W5zdAN4SpOCZw0vuIVUWByWc/kHmlF7sCJKyA9
+        r/sGtZ2g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izB3V-0000ZM-OD; Wed, 05 Feb 2020 03:08:45 +0000
+Date:   Tue, 4 Feb 2020 19:08:45 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: Make f2fs_readpages readable again
+Message-ID: <20200205030845.GP8731@bombadil.infradead.org>
+References: <20200201150807.17820-1-willy@infradead.org>
+ <20200203033903.GB8731@bombadil.infradead.org>
+ <bd08bf56-f901-33b1-5151-f77fd823e343@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd08bf56-f901-33b1-5151-f77fd823e343@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 2, 2020 at 5:46 PM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
->
-> I don't think fs/unicode is the right place for these very specific
-> filesystem functions, just because they happen to use unicode.  It is an
-> encoding library, it doesn't care about dentries, nor should know how to
-> handle them.  It exposes a simple api to manipulate and convert utf8 strings.
->
-> I saw change was after the desire to not have these functions polluting
-> the VFS hot path, but that has nothing to do with placing them here.
->
-> Would libfs be better?  or a casefolding library in fs/casefold.c?
->
->
-> --
-> Gabriel Krisman Bertazi
+On Wed, Feb 05, 2020 at 09:58:29AM +0800, Chao Yu wrote:
+> On 2020/2/3 11:39, Matthew Wilcox wrote:
+> > 
+> > Remove the horrendous ifdeffery by slipping an IS_ENABLED into
+> > f2fs_compressed_file().
+> 
+> I'd like to suggest to use
+> 
+> if (IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) && f2fs_compressed_file(inode))
+> 
+> here to clean up f2fs_readpages' codes.
+> 
+> Otherwise, f2fs module w/o compression support will not recognize compressed
+> file in most other cases if we add IS_ENABLED() condition into
+> f2fs_compressed_file().
 
-The hash function needs access to utf8ncursor, but apart from that,
-libfs would make sense. utf8ncursor is the only reason I have them
-here. How do you feel about exposing utf8cursor or something similar?
+If we need to recognise them in order to deny access to them, then I
+suppose we need two predicates.  Perhaps:
+
+	f2fs_unsupported_attributes(inode)
+and
+	f2fs_compressed_file(inode)
+
+where f2fs_unsupported_attributes can NACK any set flag (including those
+which don't exist yet), eg encrypted.  That seems like a larger change
+than I should be making, since I'm not really familiar with f2fs code.
