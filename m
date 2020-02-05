@@ -2,168 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7535A1524B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 03:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF7C152513
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 04:05:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgBECGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 21:06:50 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43410 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbgBECGu (ORCPT
+        id S1727911AbgBEDFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 22:05:16 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44720 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbgBEDFQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 21:06:50 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so188431plq.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 18:06:49 -0800 (PST)
+        Tue, 4 Feb 2020 22:05:16 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v201so345758lfa.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 19:05:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=0jBRUb1ZBEx+1dFbOp0wECOIQmaO4/JQGToETxiEsqE=;
-        b=N6fkzS5wV+MydCl1UTfzMK4gSRyHh6CBDX0eovaYtuOuLZHpZ0srCuNMTymVgDzfN1
-         WGO+jo4i5pFHfarZb/ZWhud4GWK2W/i7q80lrc/+pC0lgE8mJrTIbjc1S4zdY4yLdOZ4
-         kIvSpIqozmRIQt0OF+eRtej8vE1diN88V6pwdKB3tIEz7b8S+xJVx6kjxEX78kP6vIOv
-         mkfLbmbqCshiZEwihxukArqZdY+UtfTaz1YfLxpRimPkBTWD2k+XzoI+0YVnOztTXA1J
-         QmUfLqbtIqwIDP9XGT05hh7fmYI+sz0q6lcqIygJ8rPGhkN+TeEhDBYdaiNNvpBhQkXX
-         3IJw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
+        b=a/rT7owEo3U/lPRFn35JOyHmNdZNKq3CUN5eC0vmSOAlGMUJJc7ELCvSX1Mh8APfaa
+         lAlLVERWXR5pYN81ddhMclRnb/OmN5Fx2KddB7KuZLDfFPyFM3c5qNNCCjwGgxr+r3s1
+         DNCcaZvM6VYKACKmTz/OjiTlKJVFN9VL8YzEYvQS2U83lFvZUm1XWKOklUIkQxQvXozG
+         vNU7Zo1syf0hTTILG3oFQfUcj+JQqVr59fj+c5MCVuSCuEvLrPxTFeYRhYsiMU1wniYS
+         k/ew5rFlhFL2LzMHulEuIV3u33upCBPfLhXENQXAIsbZYUZT2I99yQmfa/FkquxeDAIP
+         aNXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0jBRUb1ZBEx+1dFbOp0wECOIQmaO4/JQGToETxiEsqE=;
-        b=E0HfSnxOz7AthrNgL7t6WVbEnfxRQivlyA2Nlgbj0Wza7b6JIH6b6fsFyh0AG6rg3h
-         2UKM58xxCm37qmIz4Ky653gT6vvUEUE7MceBeUWCQZeIykGSejgA4wl9Hg1u7/UsdPLi
-         44ra88V0aCFamUHKdaChwyJCjukT/NptzSiLnaUmE8MMEOvR0DsnJV+8xoQjufZloIz4
-         6MfzB/bs9p5FTVLdABSUx1Dclvlbemqf1BvAD3TkGrWS47aXTiVzVbsbNgxdSfg3CVSf
-         ynGDX77gkVacvU4WfhmkhFLq4hdrkCjdrbXiW4tDKl/FR9dsve+ouqbm64AG/wiPyA65
-         Zttw==
-X-Gm-Message-State: APjAAAX9a+e+2w8wkfyMgzT3tHIO3wNndXZOpSEVTqaGqdlaneVIDOoo
-        bbo/+VFShqsy18I9Btb6DVMlgg==
-X-Google-Smtp-Source: APXvYqzzFBo3OXX/aDPaDPo3+5xyek1CUtfyZuVwB6bLorUVBuNVRzKOLuw8Rm2fkjXOlkKVySbKEA==
-X-Received: by 2002:a17:902:fe0d:: with SMTP id g13mr32241136plj.124.1580868408572;
-        Tue, 04 Feb 2020 18:06:48 -0800 (PST)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id o10sm25022074pgq.68.2020.02.04.18.06.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Feb 2020 18:06:47 -0800 (PST)
-Subject: Re: KASAN: use-after-free Write in percpu_ref_switch_to_percpu
-To:     syzbot <syzbot+7caeaea49c2c8a591e3d@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <000000000000e43122059dc66882@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <523df4b5-03b7-570c-d542-17ed1b9883ba@kernel.dk>
-Date:   Tue, 4 Feb 2020 19:06:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5WF1go+DuJvbwgdXeUhoD65NaX1JQ7zRHimo51GmC8M=;
+        b=dmz1nI1lXHntAYVXqhgsFVTv6OYrHVLGeDZO4bx1azFQgt7P2oDhyUQyt7rqCt9kSW
+         dCaglcK8xeDhFwZxcHwA200AcPMFeyGfVSrbNDocf91/m1jujexAJ65ef3+Dx4cii7Y5
+         UW09scidl+acl/OrhlUUzOcORr7Zwd8W4FwUCjxLxkpUSy++ItlScOPyVeNz/I59sAln
+         UJyixkOEMOFwNuQ4JQDRaxzBPxIeFXTBVnwVrBkVPbphCCnetT+uuljorp/xVl6KhW8S
+         Wbf+wb9m9K6cryqo+/9IJ3Hgw3kuBzMFRwwCjsPgc4JskrBEz8bxTx/kB174jCfIjZL6
+         9MmA==
+X-Gm-Message-State: APjAAAUNM5Az+1U7LEO0q+9ZrEWiI/M2ASIwaUIoLvZCA0E17wzsRI9D
+        CN+vIXgphbwehgI5Pu91FFJWq6J3sI/If97PtoQL7w==
+X-Google-Smtp-Source: APXvYqzeG4caRRvcRllow4EA73MGmU6WFhFNYJbaTAD8sJamhzsXSFSCQuZUYpZgWEJovRgzDpyi7R9sxFKJltzNJtg=
+X-Received: by 2002:a19:4a92:: with SMTP id x140mr17094713lfa.29.1580871913677;
+ Tue, 04 Feb 2020 19:05:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <000000000000e43122059dc66882@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200128230328.183524-1-drosen@google.com> <20200128230328.183524-2-drosen@google.com>
+ <85sgjsxx2g.fsf@collabora.com>
+In-Reply-To: <85sgjsxx2g.fsf@collabora.com>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Tue, 4 Feb 2020 19:05:02 -0800
+Message-ID: <CA+PiJmS3kbK8220QaccP5jJ7dSf4xv3UrStQvLskAtCN+=vG_A@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] unicode: Add standard casefolded d_ops
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/4/20 2:06 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    754beeec Merge tag 'char-misc-5.6-rc1-2' of git://git.kern..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15fe4511e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=99db4e42d047be3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7caeaea49c2c8a591e3d
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
+On Sun, Feb 2, 2020 at 5:46 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+>
+> I don't think fs/unicode is the right place for these very specific
+> filesystem functions, just because they happen to use unicode.  It is an
+> encoding library, it doesn't care about dentries, nor should know how to
+> handle them.  It exposes a simple api to manipulate and convert utf8 strings.
+>
+> I saw change was after the desire to not have these functions polluting
+> the VFS hot path, but that has nothing to do with placing them here.
+>
+> Would libfs be better?  or a casefolding library in fs/casefold.c?
+>
+>
+> --
+> Gabriel Krisman Bertazi
 
-I can't reproduce this one, but I think we've seen it internally
-as well. Testing the below fix.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 87f8655656b5..f204593b4f1a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -753,6 +753,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				 struct io_uring_files_update *ip,
- 				 unsigned nr_args);
- static int io_grab_files(struct io_kiocb *req);
-+static void io_ring_file_ref_flush(struct fixed_file_data *data);
- 
- static struct kmem_cache *req_cachep;
- 
-@@ -5261,15 +5262,10 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	if (!data)
- 		return -ENXIO;
- 
--	/* protect against inflight atomic switch, which drops the ref */
--	percpu_ref_get(&data->refs);
--	/* wait for existing switches */
--	flush_work(&data->ref_work);
- 	percpu_ref_kill_and_confirm(&data->refs, io_file_ref_kill);
--	wait_for_completion(&data->done);
--	percpu_ref_put(&data->refs);
--	/* flush potential new switch */
- 	flush_work(&data->ref_work);
-+	io_ring_file_ref_flush(data);
-+	wait_for_completion(&data->done);
- 	percpu_ref_exit(&data->refs);
- 
- 	__io_sqe_files_unregister(ctx);
-@@ -5507,14 +5503,11 @@ struct io_file_put {
- 	struct completion *done;
- };
- 
--static void io_ring_file_ref_switch(struct work_struct *work)
-+static void io_ring_file_ref_flush(struct fixed_file_data *data)
- {
- 	struct io_file_put *pfile, *tmp;
--	struct fixed_file_data *data;
- 	struct llist_node *node;
- 
--	data = container_of(work, struct fixed_file_data, ref_work);
--
- 	while ((node = llist_del_all(&data->put_llist)) != NULL) {
- 		llist_for_each_entry_safe(pfile, tmp, node, llist) {
- 			io_ring_file_put(data->ctx, pfile->file);
-@@ -5524,7 +5517,14 @@ static void io_ring_file_ref_switch(struct work_struct *work)
- 				kfree(pfile);
- 		}
- 	}
-+}
- 
-+static void io_ring_file_ref_switch(struct work_struct *work)
-+{
-+	struct fixed_file_data *data;
-+
-+	data = container_of(work, struct fixed_file_data, ref_work);
-+	io_ring_file_ref_flush(data);
- 	percpu_ref_get(&data->refs);
- 	percpu_ref_switch_to_percpu(&data->refs);
- }
-@@ -5535,8 +5535,14 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
- 
- 	data = container_of(ref, struct fixed_file_data, refs);
- 
--	/* we can't safely switch from inside this context, punt to wq */
--	queue_work(system_wq, &data->ref_work);
-+	/*
-+	 * We can't safely switch from inside this context, punt to wq. If
-+	 * the table ref is going away, the table is being unregistered.
-+	 * Don't queue up the async work for that case, the caller will
-+	 * handle it.
-+	 */
-+	if (!percpu_ref_is_dying(&data->refs))
-+		queue_work(system_wq, &data->ref_work);
- }
- 
- static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
-
--- 
-Jens Axboe
-
+The hash function needs access to utf8ncursor, but apart from that,
+libfs would make sense. utf8ncursor is the only reason I have them
+here. How do you feel about exposing utf8cursor or something similar?
