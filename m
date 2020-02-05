@@ -2,413 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56433153068
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 13:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85FD21530AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 13:27:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbgBEMIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 07:08:51 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:60741 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbgBEMIs (ORCPT
+        id S1727231AbgBEM1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 07:27:33 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34858 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbgBEM1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 07:08:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580904529; x=1612440529;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XJTMmU0v+c2N2QepUypMG7PXvJGy4H27CsFDeDiiF+8=;
-  b=XpcNPr5S9aQtW+bpF+4iMlpCv7zpMgTw6XPMZ02yrp3GudnPWn8bAybx
-   vFXpraW9myXvBG5CveG3RyvIbRYKZ3DXrU8qTDe9rjNii6rqstCR+BvJQ
-   0wbYvVIgl4OsA16fA7ZnFixsKUNY2NM6v3rqAvqev1mfMbnFovSXP4u3/
-   cqCsHIsGlCqlJxp1WLQ/ckTFZlZdLFt6Pq2HXNxExxeJSvw1LK6t3ZkpK
-   Cf/yb9FXu0bivbk9k3wc8VCJ4ZMqbgrIMpnN+h7FTeQoQd0dy3FDi5JSf
-   Rp5N+9QxivAF4vU4SRt7h9Icbs/x0a/nCdkRxOey4IrgC8vqbrqZGmfH3
-   g==;
-IronPort-SDR: j828TDDtt9cGzpc2ChXapltUotq/nb9qkmN2t3iMR1DnTzUn2G00ex4YHINO61Dc7umKy5tOFz
- 0y0qMJhZfmQJEj1JEQ/J6ZThfbn4bwl3l7UQQ/laWHF02JaEVQlT9rJhrHBI1oAA5BcdlyRa1k
- bhpoRdUrJ2RljLFn8MSEGJD3ckHydzIgJIjsFLvWPyO7qgh8YU+qLoolv2tjkbTFXJ5HnidO+1
- aIVrgne3cPe/NffPVL5AAg5SBEje4xdCbmZeYxsOLL9mqAYsY7xoUp4Ub643FH7E1dNqRU2iuz
- Th0=
-X-URL-LookUp-ScanningError: 1
-X-IronPort-AV: E=Sophos;i="5.70,405,1574092800"; 
-   d="scan'208";a="230892093"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Feb 2020 20:08:45 +0800
-IronPort-SDR: tpZJVzaxf7kL95NdDjuVe8VN90plAyrMGMaCeYaUVtl3Gm/raodFEZai+pOkW9F7iFA8Pnrzfi
- e9iFLqlA57qQ1u3fJYpeNfeacYinsoHJx+gcBaxt99PtvorMAdeynB6+wtMc8iHESW7drDzoZF
- cw3cACnGXBwO6ThLv+2FwBuVA4R7/pTfeZngSZ99L3f8El1eAwCzgxj96TYxKtLMA7fpLjO93N
- oEB1IkXx0Kd4681XXx49xsiO1oeMFk/s9Z0GR61CqYTHaltFds/ZdFg5l6qCcYEThyfgHxni1h
- xllwH5sQOBKRCKYAR31oCz4S
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 04:01:44 -0800
-IronPort-SDR: OALH4gQTr6lCHQA2pp1hE022tsYqpqQ1LlZCq+Pzfl+G5cr+FY813HK1EZPA998DZ3lwGgKCKK
- EfKXf/EYKbfBRubt2riyb1WfXRHgZTOGscpuGK0G4K6DP6dpOECBaboaCGFPmSkLVK7Ze4GHDD
- zBppKY3VT/VqoIA01P/dVfZnGkWpNBPDAVZLqeUuRcob1ZaSoFZHcsacjSKOxUYxoD62FzX68z
- 6FQ8MHHUeF1vQSE2QGWLzbd6SrDTKUmwHswSwB8NzG7KhN8Qt0HxQNcrgzBymMFl3A6Jvypnan
- V/A=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip01.wdc.com with ESMTP; 05 Feb 2020 04:08:42 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>
-Subject: [PATCH v11 2/2] zonefs: Add documentation
-Date:   Wed,  5 Feb 2020 21:08:37 +0900
-Message-Id: <20200205120837.67798-3-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200205120837.67798-1-damien.lemoal@wdc.com>
-References: <20200205120837.67798-1-damien.lemoal@wdc.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 5 Feb 2020 07:27:32 -0500
+Received: by mail-pg1-f195.google.com with SMTP id l24so907393pgk.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 04:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ivt1LYO6LYOHcHwPSQmtuArF9ktifjWoUdVKgp/JOoU=;
+        b=pkII8JZWiS3VBXuKr9QvgIzuaR1DSfs575fs65XAT6sz730Yspk2WhzZwtbB9j2geh
+         wg55BkpU9M4lm8ip/eOIuKmJdtpNWZLw9ucJlea/pXzU7fwg1pG9mUAHvASb6Y+xkqMb
+         aaRqxa0OTZ12MI04u7Qhl0bld9b6pRfyqJTh4wKrqQcpVsi7BvuooClH2jdR1UuSCpWW
+         nhvhsf1sxDwebubz+4QZr0pI+D95YO/tmx6U0isTTu87uKoxiikvK7OYeoLW53qtUqHO
+         aFSTwyI+TPAp15fRxj9VGi5A9DFbFFlSz7JE2GCKhtYfrlRgKibFVTTpHQKbl5p7cOAa
+         CWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ivt1LYO6LYOHcHwPSQmtuArF9ktifjWoUdVKgp/JOoU=;
+        b=Oh7l0fthVBHNZeFGypZMHi50Es97/p0dJ10DajISYjey2azuloYTNxyp0QEOgrissm
+         0GwrNh+Cz+kwgQC+hG4HGHVjnemLz9J6Cn15Jl27s/pOOtT0P27+Ttnqn4LWKQ3jp/nK
+         bbluNLuMAUl2IjcWk+4UeNmLFd66s/W4a4djmNy5MqaRbIkiSrYbQmnBR7ISEqzdT7HI
+         2X/CIqtkBV084E24q3faWiFuB9rmHdYcnandE3A73pHxgn24SrJqGRR4hG2lgCckX042
+         9DjSnfiJ437b4JYI00yvnHYEqtT8elitVaXHO6KQ2SobfV+OSWlFhaRiE/93wM+RNkaJ
+         A8Vw==
+X-Gm-Message-State: APjAAAX2wwIglVG/JG4hxnRFAoMouT0iAXHSysEf9j38eC5HZa7ZQJlg
+        SoY5VTEOFniGR6TcNXbwb3qw1nma
+X-Google-Smtp-Source: APXvYqwWvyeIqBT7t2qhf6AUQaUAKecQmtuqMIa6wJ5J9g2Do0plecn1C5pkE2OgSepnaxDYr0/mfQ==
+X-Received: by 2002:a62:6342:: with SMTP id x63mr36372630pfb.103.1580905651524;
+        Wed, 05 Feb 2020 04:27:31 -0800 (PST)
+Received: from localhost.localdomain ([180.70.143.152])
+        by smtp.gmail.com with ESMTPSA id o16sm27350075pgl.58.2020.02.05.04.27.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 04:27:30 -0800 (PST)
+From:   Taehee Yoo <ap420073@gmail.com>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     ap420073@gmail.com
+Subject: [PATCH] debugfs: Check module state before warning in {full/open}_proxy_open()
+Date:   Wed,  5 Feb 2020 12:27:24 +0000
+Message-Id: <20200205122724.1307-1-ap420073@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the new file Documentation/filesystems/zonefs.txt to document
-zonefs principles and user-space tool usage.
+When the module is being removed, the module state is set to
+MODULE_STATE_GOING. At this point, try_module_get() fails.
+And when {full/open}_proxy_open() is being called,
+it calls try_module_get() to try to hold module reference count.
+If it fails, it warns about the possibility of debugfs file leak.
 
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+If {full/open}_proxy_open() is called while the module is being removed,
+it fails to hold the module.
+So, It warns about debugfs file leak. But it is not the debugfs file
+leak case. So, this patch just adds module state checking routine
+in the {full/open}_proxy_open().
+
+Test commands:
+    #SHELL1
+    while :
+    do
+        modprobe netdevsim
+	echo 1 > /sys/bus/netdevsim/new_device
+	modprobe -rv netdevsim
+    done
+
+    #SHELL2
+    while :
+    do
+        cat /sys/kernel/debug/netdevsim/netdevsim1/ports/0/ipsec
+    done
+
+Splat looks like:
+[  298.766738][T14664] debugfs file owner did not clean up at exit: ipsec
+[  298.766766][T14664] WARNING: CPU: 2 PID: 14664 at fs/debugfs/file.c:312 full_proxy_open+0x10f/0x650
+[  298.768595][T14664] Modules linked in: netdevsim(-) openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv6 n]
+[  298.771343][T14664] CPU: 2 PID: 14664 Comm: cat Tainted: G        W         5.5.0+ #1
+[  298.772373][T14664] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  298.773545][T14664] RIP: 0010:full_proxy_open+0x10f/0x650
+[  298.774247][T14664] Code: 48 c1 ea 03 80 3c 02 00 0f 85 c1 04 00 00 49 8b 3c 24 e8 e4 b5 78 ff 84 c0 75 2d 4c 89 ee 48
+[  298.776782][T14664] RSP: 0018:ffff88805b7df9b8 EFLAGS: 00010282
+[  298.777583][T14664] RAX: dffffc0000000008 RBX: ffff8880511725c0 RCX: 0000000000000000
+[  298.778610][T14664] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff8880540c5c14
+[  298.779637][T14664] RBP: 0000000000000000 R08: fffffbfff15235ad R09: 0000000000000000
+[  298.780664][T14664] R10: 0000000000000001 R11: 0000000000000000 R12: ffffffffc06b5000
+[  298.781702][T14664] R13: ffff88804c234a88 R14: ffff88804c22dd00 R15: ffffffff8a1b5660
+[  298.782722][T14664] FS:  00007fafa13a8540(0000) GS:ffff88806c800000(0000) knlGS:0000000000000000
+[  298.783845][T14664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  298.784672][T14664] CR2: 00007fafa0e9cd10 CR3: 000000004b286005 CR4: 00000000000606e0
+[  298.785739][T14664] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  298.786769][T14664] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  298.787785][T14664] Call Trace:
+[  298.788237][T14664]  do_dentry_open+0x63c/0xf50
+[  298.788872][T14664]  ? open_proxy_open+0x270/0x270
+[  298.789524][T14664]  ? __x64_sys_fchdir+0x180/0x180
+[  298.790169][T14664]  ? inode_permission+0x65/0x390
+[  298.790832][T14664]  path_openat+0xc45/0x2680
+[  298.791425][T14664]  ? save_stack+0x69/0x80
+[  298.791988][T14664]  ? save_stack+0x19/0x80
+[  298.792544][T14664]  ? path_mountpoint+0x2e0/0x2e0
+[  298.793233][T14664]  ? check_chain_key+0x236/0x5d0
+[  298.793910][T14664]  ? sched_clock_cpu+0x18/0x170
+[  298.794527][T14664]  ? find_held_lock+0x39/0x1d0
+[  298.795153][T14664]  do_filp_open+0x16a/0x260
+[ ... ]
+
+Fixes: 9fd4dcece43a ("debugfs: prevent access to possibly dead file_operations at file open")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
 ---
- Documentation/filesystems/zonefs.txt | 310 +++++++++++++++++++++++++++
- MAINTAINERS                          |   1 +
- 2 files changed, 311 insertions(+)
- create mode 100644 Documentation/filesystems/zonefs.txt
+ fs/debugfs/file.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/filesystems/zonefs.txt b/Documentation/filesystems/zonefs.txt
-new file mode 100644
-index 000000000000..6f8b2004248f
---- /dev/null
-+++ b/Documentation/filesystems/zonefs.txt
-@@ -0,0 +1,310 @@
-+ZoneFS - Zone filesystem for Zoned block devices
-+
-+Introduction
-+============
-+
-+zonefs is a very simple file system exposing each zone of a zoned block device
-+as a file. Unlike a regular POSIX-compliant file system with native zoned block
-+device support (e.g. f2fs), zonefs does not hide the sequential write
-+constraint of zoned block devices to the user. Files representing sequential
-+write zones of the device must be written sequentially starting from the end
-+of the file (append only writes).
-+
-+As such, zonefs is in essence closer to a raw block device access interface
-+than to a full-featured POSIX file system. The goal of zonefs is to simplify
-+the implementation of zoned block device support in applications by replacing
-+raw block device file accesses with a richer file API, avoiding relying on
-+direct block device file ioctls which may be more obscure to developers. One
-+example of this approach is the implementation of LSM (log-structured merge)
-+tree structures (such as used in RocksDB and LevelDB) on zoned block devices
-+by allowing SSTables to be stored in a zone file similarly to a regular file
-+system rather than as a range of sectors of the entire disk. The introduction
-+of the higher level construct "one file is one zone" can help reducing the
-+amount of changes needed in the application as well as introducing support for
-+different application programming languages.
-+
-+Zoned block devices
-+-------------------
-+
-+Zoned storage devices belong to a class of storage devices with an address
-+space that is divided into zones. A zone is a group of consecutive LBAs and all
-+zones are contiguous (there are no LBA gaps). Zones may have different types.
-+* Conventional zones: there are no access constraints to LBAs belonging to
-+  conventional zones. Any read or write access can be executed, similarly to a
-+  regular block device.
-+* Sequential zones: these zones accept random reads but must be written
-+  sequentially. Each sequential zone has a write pointer maintained by the
-+  device that keeps track of the mandatory start LBA position of the next write
-+  to the device. As a result of this write constraint, LBAs in a sequential zone
-+  cannot be overwritten. Sequential zones must first be erased using a special
-+  command (zone reset) before rewriting.
-+
-+Zoned storage devices can be implemented using various recording and media
-+technologies. The most common form of zoned storage today uses the SCSI Zoned
-+Block Commands (ZBC) and Zoned ATA Commands (ZAC) interfaces on Shingled
-+Magnetic Recording (SMR) HDDs.
-+
-+Solid State Disks (SSD) storage devices can also implement a zoned interface
-+to, for instance, reduce internal write amplification due to garbage collection.
-+The NVMe Zoned NameSpace (ZNS) is a technical proposal of the NVMe standard
-+committee aiming at adding a zoned storage interface to the NVMe protocol.
-+
-+Zonefs Overview
-+===============
-+
-+Zonefs exposes the zones of a zoned block device as files. The files
-+representing zones are grouped by zone type, which are themselves represented
-+by sub-directories. This file structure is built entirely using zone information
-+provided by the device and so does not require any complex on-disk metadata
-+structure.
-+
-+zonefs on-disk metadata
-+-----------------------
-+
-+zonefs on-disk metadata is reduced to an immutable super block which
-+persistently stores a magic number and optional feature flags and values. On
-+mount, zonefs uses blkdev_report_zones() to obtain the device zone configuration
-+and populates the mount point with a static file tree solely based on this
-+information. File sizes come from the device zone type and write pointer
-+position managed by the device itself.
-+
-+The super block is always written on disk at sector 0. The first zone of the
-+device storing the super block is never exposed as a zone file by zonefs. If
-+the zone containing the super block is a sequential zone, the mkzonefs format
-+tool always "finishes" the zone, that is, it transitions the zone to a full
-+state to make it read-only, preventing any data write.
-+
-+Zone type sub-directories
-+-------------------------
-+
-+Files representing zones of the same type are grouped together under the same
-+sub-directory automatically created on mount.
-+
-+For conventional zones, the sub-directory "cnv" is used. This directory is
-+however created if and only if the device has usable conventional zones. If
-+the device only has a single conventional zone at sector 0, the zone will not
-+be exposed as a file as it will be used to store the zonefs super block. For
-+such devices, the "cnv" sub-directory will not be created.
-+
-+For sequential write zones, the sub-directory "seq" is used.
-+
-+These two directories are the only directories that exist in zonefs. Users
-+cannot create other directories and cannot rename nor delete the "cnv" and
-+"seq" sub-directories.
-+
-+The size of the directories indicated by the st_size field of struct stat,
-+obtained with the stat() or fstat() system calls, indicates the number of files
-+existing under the directory.
-+
-+Zone files
-+----------
-+
-+Zone files are named using the number of the zone they represent within the set
-+of zones of a particular type. That is, both the "cnv" and "seq" directories
-+contain files named "0", "1", "2", ... The file numbers also represent
-+increasing zone start sector on the device.
-+
-+All read and write operations to zone files are not allowed beyond the file
-+maximum size, that is, beyond the zone size. Any access exceeding the zone
-+size is failed with the -EFBIG error.
-+
-+Creating, deleting, renaming or modifying any attribute of files and
-+sub-directories is not allowed.
-+
-+The number of blocks of a file as reported by stat() and fstat() indicates the
-+size of the file zone, or in other words, the maximum file size.
-+
-+Conventional zone files
-+-----------------------
-+
-+The size of conventional zone files is fixed to the size of the zone they
-+represent. Conventional zone files cannot be truncated.
-+
-+These files can be randomly read and written using any type of I/O operation:
-+buffered I/Os, direct I/Os, memory mapped I/Os (mmap), etc. There are no I/O
-+constraint for these files beyond the file size limit mentioned above.
-+
-+Sequential zone files
-+---------------------
-+
-+The size of sequential zone files grouped in the "seq" sub-directory represents
-+the file's zone write pointer position relative to the zone start sector.
-+
-+Sequential zone files can only be written sequentially, starting from the file
-+end, that is, write operations can only be append writes. Zonefs makes no
-+attempt at accepting random writes and will fail any write request that has a
-+start offset not corresponding to the end of the file, or to the end of the last
-+write issued and still in-flight (for asynchrnous I/O operations).
-+
-+Since dirty page writeback by the page cache does not guarantee a sequential
-+write pattern, zonefs prevents buffered writes and writeable shared mappings
-+on sequential files. Only direct I/O writes are accepted for these files.
-+zonefs relies on the sequential delivery of write I/O requests to the device
-+implemented by the block layer elevator. An elevator implementing the sequential
-+write feature for zoned block device (ELEVATOR_F_ZBD_SEQ_WRITE elevator feature)
-+must be used. This type of elevator (e.g. mq-deadline) is the set by default
-+for zoned block devices on device initialization.
-+
-+There are no restrictions on the type of I/O used for read operations in
-+sequential zone files. Buffered I/Os, direct I/Os and shared read mappings are
-+all accepted.
-+
-+Truncating sequential zone files is allowed only down to 0, in which case, the
-+zone is reset to rewind the file zone write pointer position to the start of
-+the zone, or up to the zone size, in which case the file's zone is transitioned
-+to the FULL state (finish zone operation).
-+
-+zonefs format options
-+---------------------
-+
-+Several optional features of zonefs can be enabled at format time.
-+* Conventional zone aggregation: ranges of contiguous conventional zones can be
-+  aggregated into a single larger file instead of the default one file per zone.
-+* File ownership: The owner UID and GID of zone files is by default 0 (root)
-+  but can be changed to any valid UID/GID.
-+* File access permissions: the default 640 access permissions can be changed.
-+
-+zonefs mount options
-+--------------------
-+
-+zonefs defines several mount options allowing the user to control the file
-+system behavior when write I/O errors occur and when inconsistencies between a
-+file size and its zone write pointer position are discovered. The handling of
-+read I/O errors is not changed by these options as long as no inode size
-+corruption is detected.
-+
-+These options are as follows.
-+* errors=remount-ro (default)
-+  All write IO errors and errors due to a zone of the device going "bad"
-+  (condition changed to offline or read-only), the file system is remounted
-+  read-only after fixing the size and access permissions of the inode that
-+  suffered the IO error.
-+* errors=zone-ro
-+  Any write IO error to a file zone result in the zone being considered as in a
-+  read-only condition, preventing any further modification to the file. This
-+  option does not affect the handling of errors due to offline zones. For these
-+  zones, all accesses (read and write) are disabled.
-+* errors=zone-offline
-+  Any write IO error to a file zone result in the zone being considered as in
-+  an offline condition. This implies that the file size is changed to 0 and all
-+  read/write accesses to the file disabled, preventing all accesses by the user.
-+* errors=repair
-+  Any inconsistency between an inode size and its zone amount of written data
-+  due to IO errors or external corruption are fixed without any change to file
-+  access rights. This option does not affect the processing of zones that were
-+  signaled as read-only or offline by the device. For read-only zones, the file
-+  read accesses are disabled and for offline zones, all access permissions are
-+  removed.
-+
-+For sequential zone files, inconsistencies between an inode size and the amount
-+of data writen in its zone, that is, the position of the file zone write
-+pointer, can result from different events:
-+* When the device write cache is enabled, a differed write error can occur
-+  resulting in the amount of data written in the zone being less than the inode
-+  size.
-+* Partial failures of large write I/O operations (e.g. one BIO of a multi-bio
-+  large direct write fails) can result in the amount of data written in the
-+  zone being larger than the inode size.
-+* External action on the disk such as write, zone reset or zone finish
-+  operations will change a file zone write pointer position resulting in a
-+  reported amount of written data being different from the file inode size.
-+
-+Finally, defective drives may change the condition of any zone to offline (zone
-+dead) or read-only. Such changes, when discovered with the IO errors they can
-+cause, are handled automatically regardless of the options specified at mount
-+time. For offline zones, the action taken is similar to the action defined by
-+the errors=zone-offline mount option. For read-only zones, the action used is
-+as defined by the errors=zone-ro mount option.
-+
-+Zonefs User Space Tools
-+=======================
-+
-+The mkzonefs tool is used to format zoned block devices for use with zonefs.
-+This tool is available on Github at:
-+
-+https://github.com/damien-lemoal/zonefs-tools
-+
-+zonefs-tools also includes a test suite which can be run against any zoned
-+block device, including null_blk block device created with zoned mode.
-+
-+Examples
-+--------
-+
-+The following formats a 15TB host-managed SMR HDD with 256 MB zones
-+with the conventional zones aggregation feature enabled.
-+
-+# mkzonefs -o aggr_cnv /dev/sdX
-+# mount -t zonefs /dev/sdX /mnt
-+# ls -l /mnt/
-+total 0
-+dr-xr-xr-x 2 root root     1 Nov 25 13:23 cnv
-+dr-xr-xr-x 2 root root 55356 Nov 25 13:23 seq
-+
-+The size of the zone files sub-directories indicate the number of files
-+existing for each type of zones. In this example, there is only one
-+conventional zone file (all conventional zones are aggregated under a single
-+file).
-+
-+# ls -l /mnt/cnv
-+total 137101312
-+-rw-r----- 1 root root 140391743488 Nov 25 13:23 0
-+
-+This aggregated conventional zone file can be used as a regular file.
-+
-+# mkfs.ext4 /mnt/cnv/0
-+# mount -o loop /mnt/cnv/0 /data
-+
-+The "seq" sub-directory grouping files for sequential write zones has in this
-+example 55356 zones.
-+
-+# ls -lv /mnt/seq
-+total 14511243264
-+-rw-r----- 1 root root 0 Nov 25 13:23 0
-+-rw-r----- 1 root root 0 Nov 25 13:23 1
-+-rw-r----- 1 root root 0 Nov 25 13:23 2
-+...
-+-rw-r----- 1 root root 0 Nov 25 13:23 55354
-+-rw-r----- 1 root root 0 Nov 25 13:23 55355
-+
-+For sequential write zone files, the file size changes as data is appended at
-+the end of the file, similarly to any regular file system.
-+
-+# dd if=/dev/zero of=/mnt/seq/0 bs=4096 count=1 conv=notrunc oflag=direct
-+1+0 records in
-+1+0 records out
-+4096 bytes (4.1 kB, 4.0 KiB) copied, 0.00044121 s, 9.3 MB/s
-+
-+# ls -l /mnt/seq/0
-+-rw-r----- 1 root root 4096 Nov 25 13:23 /mnt/seq/0
-+
-+The written file can be truncated to the zone size, preventing any further
-+write operation.
-+
-+# truncate -s 268435456 /mnt/seq/0
-+# ls -l /mnt/seq/0
-+-rw-r----- 1 root root 268435456 Nov 25 13:49 /mnt/seq/0
-+
-+Truncation to 0 size allows freeing the file zone storage space and restart
-+append-writes to the file.
-+
-+# truncate -s 0 /mnt/seq/0
-+# ls -l /mnt/seq/0
-+-rw-r----- 1 root root 0 Nov 25 13:49 /mnt/seq/0
-+
-+Since files are statically mapped to zones on the disk, the number of blocks of
-+a file as reported by stat() and fstat() indicates the size of the file zone.
-+
-+# stat /mnt/seq/0
-+  File: /mnt/seq/0
-+  Size: 0         	Blocks: 524288     IO Block: 4096   regular empty file
-+Device: 870h/2160d	Inode: 50431       Links: 1
-+Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)
-+Access: 2019-11-25 13:23:57.048971997 +0900
-+Modify: 2019-11-25 13:52:25.553805765 +0900
-+Change: 2019-11-25 13:52:25.553805765 +0900
-+ Birth: -
-+
-+The number of blocks of the file ("Blocks") in units of 512B blocks gives the
-+maximum file size of 524288 * 512 B = 256 MB, corresponding to the device zone
-+size in this example. Of note is that the "IO block" field always indicates the
-+minimum I/O size for writes and corresponds to the device physical sector size.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 089fd879632a..e9dcf8952573 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18311,6 +18311,7 @@ L:	linux-fsdevel@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git
- S:	Maintained
- F:	fs/zonefs/
-+F:	Documentation/filesystems/zonefs.txt
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 634b09d18b77..890903543678 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -175,8 +175,11 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
+ 	if (r)
+ 		goto out;
  
- ZPOOL COMPRESSED PAGE STORAGE API
- M:	Dan Streetman <ddstreet@ieee.org>
+-	real_fops = fops_get(real_fops);
+-	if (!real_fops) {
++	if (!fops_get(real_fops)) {
++		if (real_fops->owner &&
++		    real_fops->owner->state == MODULE_STATE_GOING)
++			goto out;
++
+ 		/* Huh? Module did not clean up after itself at exit? */
+ 		WARN(1, "debugfs file owner did not clean up at exit: %pd",
+ 			dentry);
+@@ -305,8 +308,11 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
+ 	if (r)
+ 		goto out;
+ 
+-	real_fops = fops_get(real_fops);
+-	if (!real_fops) {
++	if (!fops_get(real_fops)) {
++		if (real_fops->owner &&
++		    real_fops->owner->state == MODULE_STATE_GOING)
++			goto out;
++
+ 		/* Huh? Module did not cleanup after itself at exit? */
+ 		WARN(1, "debugfs file owner did not clean up at exit: %pd",
+ 			dentry);
 -- 
-2.24.1
+2.17.1
 
