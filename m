@@ -2,180 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC6A153B9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 00:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14C2A153B9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 00:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgBEXGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 18:06:10 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42941 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgBEXGF (ORCPT
+        id S1727771AbgBEXGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 18:06:31 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:48826 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727237AbgBEXGb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 18:06:05 -0500
-Received: by mail-ed1-f66.google.com with SMTP id e10so3864212edv.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 15:06:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vlJ/U1sEBP1oQwj7OCYoHbsQvGpwGivKoqIGPKoUwhQ=;
-        b=g3A0hNA6kxL9eVlbJg40LlUAgcaXfVIhyAWWXE+HXr4LqixdrqRVAo/myymEo1mxz0
-         7oLsCAN+970Ac58Bz39uxwHBk5xS8SmurEjexUpApiFBRmVaj+XThRHvQNFNlv5Nxdxo
-         4Y1zuutWQbpPW1mbRN/esV23cyvTHNslCjf2ltrYRk5IuHoDiWXU476zY1D53uqKUG7s
-         cJHhXWBb02p6B1RoTL5si0XL5svLP327G3/+Fl6KhJME78x4C51Ez4OcNAgFkA0DfIcX
-         6IA/anxSDbd0lNnuSHawKXd/latZwau57XBct1nsJ/nu94DAxJ6NZhH7tJ76mKMrc570
-         KC6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vlJ/U1sEBP1oQwj7OCYoHbsQvGpwGivKoqIGPKoUwhQ=;
-        b=o+qavQVDU9bS//Z8Q3995Pu5YJKX+/ICcb8WXg27BY6v92Pcx53YoO0h+F8bClBzyX
-         8rr7MJvZHp3BTEcME6o+N1mdYUVX2TDMmRGe+3+u89B+WeKESzw2QNJk6ifEIGo4qcvJ
-         AkH1r0KIqRWdFWtbdgYGUdXmbZ/px72KuTGPJdC/+ur4isqO7Or1eU+NkS8E8zINExVo
-         VmSK4dJg7Q2lDnNM7hdljBmPB4ukYo8qUt3JFoUzRS7WSHSvtyzcMtFDLCBB9LlMRM8K
-         AMQaSEH1ekWFwrrSYIDGYNlHlgCe6RU1yk3kQD9n6YhGigy01wjPpxOJVlXV4t57hE8v
-         L3bQ==
-X-Gm-Message-State: APjAAAXxIUct2qPZ/RYeHsFPB/LKasg+jzLpBHDYTYM2ZEveCHyYJCqS
-        31oPbToj4YcctpubzHQrymmWDlJHrXWMGI2rjRZY
-X-Google-Smtp-Source: APXvYqz/4rBVGOVjSYn3epCJFE9lKFv+T/52X8+lWfni3jO5pJYkLxPkkrOJ1odyceqG814XJFKyAUMdwXjFbMkHuZg=
-X-Received: by 2002:a17:906:f251:: with SMTP id gy17mr338432ejb.308.1580943963052;
- Wed, 05 Feb 2020 15:06:03 -0800 (PST)
+        Wed, 5 Feb 2020 18:06:31 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 14B6F8204F1;
+        Thu,  6 Feb 2020 10:06:27 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1izTkY-0006PA-46; Thu, 06 Feb 2020 10:06:26 +1100
+Date:   Thu, 6 Feb 2020 10:06:26 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        fstests@vger.kernel.org
+Subject: Re: [PATCH 0/3] fstests: fixes for 64k pages and dax
+Message-ID: <20200205230626.GO20628@dread.disaster.area>
+References: <20200205224818.18707-1-jmoyer@redhat.com>
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <6452955c1e038227a5cd169f689f3fd3db27513f.1577736799.git.rgb@redhat.com>
- <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com> <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca>
-In-Reply-To: <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Feb 2020 18:05:52 -0500
-Message-ID: <CAHC9VhSVN3mNb5enhLR1hY+ekiAyiYWbehrwd_zN7kz13dF=1w@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205224818.18707-1-jmoyer@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=Hdpg4Cy1Pty9vVzyJowA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 2:28 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-01-22 16:29, Paul Moore wrote:
-> > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Track the parent container of a container to be able to filter and
-> > > report nesting.
-> > >
-> > > Now that we have a way to track and check the parent container of a
-> > > container, modify the contid field format to be able to report that
-> > > nesting using a carrat ("^") separator to indicate nesting.  The
-> > > original field format was "contid=<contid>" for task-associated records
-> > > and "contid=<contid>[,<contid>[...]]" for network-namespace-associated
-> > > records.  The new field format is
-> > > "contid=<contid>[^<contid>[...]][,<contid>[...]]".
-> >
-> > Let's make sure we always use a comma as a separator, even when
-> > recording the parent information, for example:
-> > "contid=<contid>[,^<contid>[...]][,<contid>[...]]"
->
-> The intent here is to clearly indicate and separate nesting from
-> parallel use of several containers by one netns.  If we do away with
-> that distinction, then we lose that inheritance accountability and
-> should really run the list through a "uniq" function to remove the
-> produced redundancies.  This clear inheritance is something Steve was
-> looking for since tracking down individual events/records to show that
-> inheritance was not aways feasible due to rolled logs or search effort.
+[cc fstests@vger.kernel.org]
 
-Perhaps my example wasn't clear.  I'm not opposed to the little
-carat/hat character indicating a container's parent, I just think it
-would be good to also include a comma *in*addition* to the carat/hat.
+On Wed, Feb 05, 2020 at 05:48:15PM -0500, Jeff Moyer wrote:
+> This set of patches fixes a few false positives I encountered when
+> testing DAX on ppc64le (which has a 64k page size).
+> 
+> Patch 1 is actually not specific to non-4k page sizes.  Right now we
+> only test for dax incompatibility in the dm flakey target.  This means
+> that tests that use dm-thin or the snapshot target will still try to
+> run.  Moving the check to _require_dm_target fixes that problem.
+> 
+> Patches 2 and 3 get rid of hard coded block/page sizes in the tests.
+> They run just fine on 64k pages and 64k block sizes.
+> 
+> Even after these patches, there are many more tests that fail in the
+> following configuration:
+> 
+> MKFS_OPTIONS="-b size=65536 -m reflink=0" MOUNT_OPTIONS="-o dax"
+> 
+> One class of failures is tests that create a really small file system
+> size.  Some of those tests seem to require the very small size, but
+> others seem like they could live with a slightly bigger size that
+> would then fit the log (the typical failure is a mkfs failure due to
+> not enough blocks for the log).  For the former case, I'm tempted to
+> send patches to _notrun those tests, and for the latter, I'd like to
+> bump the file system sizes up.  300MB seems to be large enough to
+> accommodate the log.  Would folks be opposed to those approaches?
+> 
+> Another class of failure is tests that either hard-code a block size
+> to trigger a specific error case, or that test a multitude of block
+> sizes.  I'd like to send a patch to _notrun those tests if there is
+> a user-specified block size.  That will require parsing the MKFS_OPTIONS
+> based on the fs type, of course.  Is that something that seems
+> reasonable?
+> 
+> I will follow up with a series of patches to implement those changes
+> if there is consensus on the approach.  These first three seemed
+> straight-forward to me, so that's where I'm starting.
+> 
+> Thanks!
+> Jeff
+> 
+> [PATCH 1/3] dax/dm: disable testing on devices that don't support dax
+> [PATCH 2/3] t_mmap_collision: fix hard-coded page size
+> [PATCH 3/3] xfs/300: modify test to work on any fs block size
 
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h |  1 +
-> > >  kernel/audit.c        | 53 +++++++++++++++++++++++++++++++++++++++++++--------
-> > >  kernel/audit.h        |  1 +
-> > >  kernel/auditfilter.c  | 17 ++++++++++++++++-
-> > >  kernel/auditsc.c      |  2 +-
-> > >  5 files changed, 64 insertions(+), 10 deletions(-)
-> >
-> > ...
-> >
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index ef8e07524c46..68be59d1a89b 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> >
-> > > @@ -492,6 +493,7 @@ void audit_switch_task_namespaces(struct nsproxy *ns, struct task_struct *p)
-> > >                 audit_netns_contid_add(new->net_ns, contid);
-> > >  }
-> > >
-> > > +void audit_log_contid(struct audit_buffer *ab, u64 contid);
-> >
-> > If we need a forward declaration, might as well just move it up near
-> > the top of the file with the rest of the declarations.
->
-> Ok.
->
-> > > +void audit_log_contid(struct audit_buffer *ab, u64 contid)
-> > > +{
-> > > +       struct audit_contobj *cont = NULL, *prcont = NULL;
-> > > +       int h;
-> >
-> > It seems safer to pass the audit container ID object and not the u64.
->
-> It would also be faster, but in some places it isn't available such as
-> for ptrace and signal targets.  This also links back to the drop record
-> refcounts to hold onto the contobj until process exit, or signal
-> delivery.
->
-> What we could do is to supply two potential parameters, a contobj and/or
-> a contid, and have it use the contobj if it is valid, otherwise, use the
-> contid, as is done for names and paths supplied to audit_log_name().
+Hi Jeff,
 
-Let's not do multiple parameters, that begs for misuse, let's take the
-wrapper function route:
+You probably should be sending fstests patches to
+fstests@vger.kernel.org, otherwise they probably won't get noticed
+by the fstests maintainer...
 
- func a(int id) {
-   // important stuff
- }
+Cheers,
 
- func ao(struct obj) {
-   a(obj.id);
- }
-
-... and we can add a comment that you *really* should be using the
-variant that passes an object.
-
-> > > @@ -2705,9 +2741,10 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > >         if (!ab)
-> > >                 return rc;
-> > >
-> > > -       audit_log_format(ab,
-> > > -                        "op=set opid=%d contid=%llu old-contid=%llu",
-> > > -                        task_tgid_nr(task), contid, oldcontid);
-> > > +       audit_log_format(ab, "op=set opid=%d contid=", task_tgid_nr(task));
-> > > +       audit_log_contid(ab, contid);
-> > > +       audit_log_format(ab, " old-contid=");
-> > > +       audit_log_contid(ab, oldcontid);
-> >
-> > This is an interesting case where contid and old-contid are going to
-> > be largely the same, only the first (current) ID is going to be
-> > different; do we want to duplicate all of those IDs?
->
-> At first when I read your comment, I thought we could just take contid
-> and drop oldcontid, but if it fails, we still want all the information,
-> so given the way I've set up the search code in userspace, listing only
-> the newest contid in the contid field and all the rest in oldcontid
-> could be a good compromise.
-
-This is along the lines of what I was thinking.
-
+Dave.
 -- 
-paul moore
-www.paul-moore.com
+Dave Chinner
+david@fromorbit.com
