@@ -2,144 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE1C153AD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34CD7153AE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 23:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbgBEWTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 17:19:36 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2887 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbgBEWTg (ORCPT
+        id S1727530AbgBEWXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 17:23:10 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41285 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbgBEWXK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:19:36 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3b3f3d0000>; Wed, 05 Feb 2020 14:18:37 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 05 Feb 2020 14:19:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 05 Feb 2020 14:19:35 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
- 2020 22:19:35 +0000
-Subject: Re: [PATCH 8/8] xarray: Don't clear marks in xas_store()
-To:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>
-References: <20200204142514.15826-1-jack@suse.cz>
- <20200204142514.15826-9-jack@suse.cz>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <8ea2682b-7240-dca3-b123-2df7d0c994ba@nvidia.com>
-Date:   Wed, 5 Feb 2020 14:19:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 5 Feb 2020 17:23:10 -0500
+Received: by mail-ot1-f67.google.com with SMTP id r27so3566115otc.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 14:23:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=7BPBFZwYMLdjTS7FC4wsJG0SBY3jzmuiQq5ab/pR8tE=;
+        b=bsCVEZXyO1m1nDWrhyLfqfamqKXOfvuJP41PTr4vHEntSvyBELd7iYKhNse6c2Tn9g
+         iIYLNxjo6KV5OEOU8j19451ahN0XbitPB0O/3aRADfb1w9uvKbYi0JIUSthzfFbgWSZV
+         dMOREBTUlTsa8xBI1nry+fdIWSqxaER3PK0/U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=7BPBFZwYMLdjTS7FC4wsJG0SBY3jzmuiQq5ab/pR8tE=;
+        b=Ctgrbecat/DuqHqcwCR+Ffn8u3cDEnHqNEfF05wB2JYOaQlilHR4U6DPqxeUqRPkFk
+         0Fh49t3ncPQnbNTORXA4alraR6fPZuBEtXXcnM95to9LqJgniz4yUMTuQKw//1OZJHc3
+         8djaKOIZDkt/KwioUL+4ks/V3NzcsQ4IX+kPJNMxBMjJzvmbJUVkpl1Wt9FCA19LnfY1
+         R/8k+W/nvsDhfrZmDEhiRLsyr8Jt9Us3mhsB3b/oQ0NZmXu3Q4fP+w5oppMAfcbfPQoL
+         TQ8LLlH6g66MDrFuMdgeehBLaeI0HnDgHopbrZrnW6/Esr06+LVGpqMI26RDurPp1GNG
+         /FOQ==
+X-Gm-Message-State: APjAAAVeNsnqkVcrsS+kmf077D5i4rjY3OS5p+WFqMbzmfspK1vQnhUc
+        WDDdSFLtAu+jARlk6as28e4DeQ==
+X-Google-Smtp-Source: APXvYqwiWxsqH9jzwGGCPTTA/BuMOcFastWQH/FIEhWKfTbMO7E5g/kRONngb8jpggIUpd8KuKUR/A==
+X-Received: by 2002:a9d:1ca3:: with SMTP id l35mr27648946ota.271.1580941389697;
+        Wed, 05 Feb 2020 14:23:09 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n22sm369796otj.36.2020.02.05.14.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2020 14:23:08 -0800 (PST)
+Date:   Wed, 5 Feb 2020 14:23:07 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Grzegorz Halat <ghalat@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, ssaner@redhat.com, atomlin@redhat.com,
+        oleksandr@redhat.com, vbendel@redhat.com, kirill@shutemov.name,
+        khlebnikov@yandex-team.ru,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [PATCH 1/1] mm: sysctl: add panic_on_inconsistent_mm sysctl
+Message-ID: <202002051421.9419721B@keescook>
+References: <20200129180851.551109-1-ghalat@redhat.com>
+ <84C253EB-B348-4B62-B863-F192FBA8C202@lca.pw>
+ <34467005-1742-47a0-cd2b-05567584b91e@de.ibm.com>
+ <1580742371.7365.1.camel@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <20200204142514.15826-9-jack@suse.cz>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580941117; bh=QcP51/11tG4WHcW63IGM4gFzJVabzZAkSLmNu9TE4KY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=PJ1y4l5tpDGTu8Q5p82nW6YxFnqo9yqOQ3D7X4U38zEvdYCzZ+mpm6FgLx2ZzNsiM
-         qYezXrQqd9skuvOmCgYg2ojnKora59U7sFSPRY3qpZe72Tqb6TyNEd/nTG+L8uIgAy
-         tA5ky5G4rQYgLwZlqswX9Z0KxbkqnzPeivU65333b6XqrPsmD6RJYuv+lOBWbx5gmb
-         jbnv1Kn+CLus/h1rV68uV6IU9ZdHlJC5QiV0du+eGGz2velqAqLKdC5ugLLEZFd7K4
-         BSP0R0r89SUujjr1+6cFYNTqU4PDu3xYY8j8WQs9FLyN8l7+2LmZ87RGk8a4GCW8Xr
-         jV/R7tYY8qNLQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1580742371.7365.1.camel@lca.pw>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/4/20 6:25 AM, Jan Kara wrote:
-> When storing NULL in xarray, xas_store() has been clearing all marks
-> because it could otherwise confuse xas_for_each_marked(). That is
-> however no longer true and no current user relies on this behavior.
-
-
-However, let's not forget that the API was also documented to behave
-in this way--it's not an accidental detail. Below...
-
-
-> Furthermore it seems as a cleaner API to not do clearing behind caller's
-> back in case we store NULL.
+On Mon, Feb 03, 2020 at 10:06:11AM -0500, Qian Cai wrote:
+> On Mon, 2020-02-03 at 15:08 +0100, Christian Borntraeger wrote:
+> > 
+> > On 29.01.20 19:39, Qian Cai wrote:
+> > > 
+> > > 
+> > > > On Jan 29, 2020, at 1:08 PM, Grzegorz Halat <ghalat@redhat.com> wrote:
+> > > > 
+> > > > Memory management subsystem performs various checks at runtime,
+> > > > if an inconsistency is detected then such event is being logged and kernel
+> > > > continues to run. While debugging such problems it is helpful to collect
+> > > > memory dump as early as possible. Currently, there is no easy way to panic
+> > > > kernel when such error is detected.
+> > > > 
+> > > > It was proposed[1] to panic the kernel if panic_on_oops is set but this
+> > > > approach was not accepted. One of alternative proposals was introduction of
+> > > > a new sysctl.
+> > > > 
+> > > > Add a new sysctl - panic_on_inconsistent_mm. If the sysctl is set then the
+> > > > kernel will be crashed when an inconsistency is detected by memory
+> > > > management. This currently means panic when bad page or bad PTE
+> > > > is detected(this may be extended to other places in MM).
+> > > > 
+> > > > Another use case of this sysctl may be in security-wise environments,
+> > > > it may be more desired to crash machine than continue to run with
+> > > > potentially damaged data structures.
+> > > 
+> > > It is annoying that I have to repeat my feedback, but I don’t know why
+> > > admins want to enable this by allowing normal users to crash the systems
+> > > more easily through recoverable MM bugs where I am sure we have plenty.
+> > > How does that improve the security?
+> > 
+> > There are cases where data corruption is a no-go, while "one node going down" 
+> > is acceptable.
+> > And then there is also the case for payed service providers that often need
+> > a dump at the time of the problem to understand rare issues.
+> > 
+> > So I DO see value in such a thing. We should just piggy-back on panic_on_warn
+> > I guess.
+> > 
 > 
-> This provides a nice boost to truncate numbers due to saving unnecessary
-> tag initialization when clearing shadow entries. Sample benchmark
-> showing time to truncate 128 files 1GB each on machine with 64GB of RAM
-> (so about half of entries are shadow entries):
-> 
->          AVG      STDDEV
-> Vanilla  4.825s   0.036
-> Patched  4.516s   0.014
-> 
-> So we can see about 6% reduction in overall truncate time.
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  lib/xarray.c | 9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 4e32497c51bd..f165e83652f1 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -799,17 +799,8 @@ void *xas_store(struct xa_state *xas, void *entry)
->  		if (xas->xa_sibs)
->  			xas_squash_marks(xas);
->  	}
-> -	if (!entry)
-> -		xas_init_marks(xas);
->  
->  	for (;;) {
-> -		/*
-> -		 * Must clear the marks before setting the entry to NULL,
-> -		 * otherwise xas_for_each_marked may find a NULL entry and
-> -		 * stop early.  rcu_assign_pointer contains a release barrier
-> -		 * so the mark clearing will appear to happen before the
-> -		 * entry is set to NULL.
-> -		 */
+> Indeed, so change pr_alert() to pr_warn() there then?
 
-So if we do this, I think we'd also want something like this (probably with
-better wording, this is just a first draft):
+pr_* are just printk levels. If you want a full trace and to hook to
+panic_on_warn, you want WARN_ON(condition) (or WARN_ON_ONCE(), etc).
 
-diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-index 640934b6f7b4..8adeaa8c012e 100644
---- a/Documentation/core-api/xarray.rst
-+++ b/Documentation/core-api/xarray.rst
-@@ -66,10 +66,11 @@ pointer at every index.
- You can then set entries using xa_store() and get entries
- using xa_load().  xa_store will overwrite any entry with the
- new entry and return the previous entry stored at that index.  You can
--use xa_erase() instead of calling xa_store() with a
-+use xa_erase() plus xas_init_marks(), instead of calling xa_store() with a
- ``NULL`` entry.  There is no difference between an entry that has never
--been stored to, one that has been erased and one that has most recently
--had ``NULL`` stored to it.
-+been stored to and one that has been erased. Those, in turn, are the same
-+as an entry that has had ``NULL`` stored to it and also had its marks
-+erased via xas_init_marks().
- 
- You can conditionally replace an entry at an index by using
- xa_cmpxchg().  Like cmpxchg(), it will only succeed if
-
-
-
->  		rcu_assign_pointer(*slot, entry);
->  		if (xa_is_node(next) && (!node || node->shift))
->  			xas_free_nodes(xas, xa_to_node(next));
-> 
-
-
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Kees Cook
