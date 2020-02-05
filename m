@@ -2,279 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5B4152421
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 01:39:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A1E15246F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 02:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbgBEAju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 19:39:50 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31003 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727647AbgBEAju (ORCPT
+        id S1727729AbgBEBU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 20:20:27 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41866 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727674AbgBEBU1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 19:39:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1580863188;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vVcjWGSIO/6HrV4SfXcKeCJavn13kL4kYAAWkT145to=;
-        b=Kjc6S/SFv58vYefXKSod+MGbrzo8fVoQQYklNvJbswxoDlnpX1LYS2KG+pn1nFaH9PMunp
-        dq3/TzQneonpk/yd9igPDz634TJxw6lbk+zzq1Wraa/n6AplggTafLT0q0D0hjRNQvHcw9
-        NxJBNNs+Dy6K7MGM7PFmYKxujv24mPs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-196-GYc-yhAzNTWtmmXelgC71A-1; Tue, 04 Feb 2020 19:39:46 -0500
-X-MC-Unique: GYc-yhAzNTWtmmXelgC71A-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 042521005513;
-        Wed,  5 Feb 2020 00:39:45 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD3A9811F8;
-        Wed,  5 Feb 2020 00:39:33 +0000 (UTC)
-Date:   Tue, 4 Feb 2020 19:39:30 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
-        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
- outside init_user_ns
-Message-ID: <20200205003930.2efpm4tvrisgmj4t@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
- <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
+        Tue, 4 Feb 2020 20:20:27 -0500
+Received: by mail-il1-f194.google.com with SMTP id f10so443999ils.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Feb 2020 17:20:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W0yQGDZerCMtKY6Kjdt1L600+y/8MQHS81Frdz0g8rg=;
+        b=WXovHO8ACtYwJ2he/KBeBhjgslIBnRQ5EwS2/+jmVYGvp08DAoecZKFkcolCZOklhJ
+         zRCGnGNeXTeFQRky6rEv2nL5lQ847Rp1NQD6rM11ILYYezYv3/gSPbfUu64BrJeeMXsP
+         aeiW4beetWmQl8+wf1LJ7WkMJMu37njsSF98eHDzP6EQk0tS5yP3bKTpZCqg69FOh/4a
+         oMUV4U3dA3/8SqkX/QS2iM98s2jiOebndlKVFkwDijzOPMLy2QGSq8OMNgQxe+auPbE/
+         73w1KIBRJkO2WjK/sRNDWfBe/noie8TRLJjn5bCG2c0kSzyJO1BOiLO/bmI4WHwFPSmW
+         AX5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W0yQGDZerCMtKY6Kjdt1L600+y/8MQHS81Frdz0g8rg=;
+        b=sbkmeQd35eLDGGVTfOT7giyhkIwG25+Assz8HZT6rJee2gfHfSCytXjmCWYrzvkyiw
+         BVSuha8wVJkvnQmX6DrGjah7N65VrObmYZjx7pnG/dANI2sJVgHhp+p2aJ66fjNN1MoG
+         u64inAFkIw/HRqkQHtmn7UKLuS2TQRtXMN72MocMktVCrOoHLyyMgvmUZ0sPNZjkGyo9
+         DR4tbCV0uK3mH+qsDPhsTg2bnAuPRB8su2LjKy91iWdOx0Z/hNvJtP72On2PuRvLWZW+
+         nmuzGcAH/7T2OtuvifZwYaoed6vl/MvFhkTRcMIur761GlmD9t14FWSAlzmRHja4jZd/
+         QCSg==
+X-Gm-Message-State: APjAAAXfUEKjrn1es+RKETAmbKZlNrpdzoPtMe0X9K27M7gjzv4Hq+nS
+        +pSDDlWcqqy+lFWqhkdyoxKyVCRBMRGhqUAt4GlcKtnq
+X-Google-Smtp-Source: APXvYqyCkFN6Hg1ip9U3BPP5zZB50t/FjZK5mzZsLcv0aqT45pq5jorxFjaRGlfzw47qNmTCz1O2t8U4z7MHpgVlsS0=
+X-Received: by 2002:a92:c848:: with SMTP id b8mr31751810ilq.168.1580865626631;
+ Tue, 04 Feb 2020 17:20:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <1578499437-1664-1-git-send-email-laoar.shao@gmail.com>
+ <CALOAHbAs7d7UhO6cd5_6vTm0cgcdTiwNNMSfFX4D0hdMc+CaEg@mail.gmail.com> <20200204211954.GA20584@dread.disaster.area>
+In-Reply-To: <20200204211954.GA20584@dread.disaster.area>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 5 Feb 2020 09:19:50 +0800
+Message-ID: <CALOAHbChK=JNA5q-3QqyNVG34RZxmZdUOR2HvtNWHCz+EAQAaQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] protect page cache from freeing inode
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Dave Chinner <dchinner@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-01-22 16:29, Paul Moore wrote:
-> On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Wed, Feb 5, 2020 at 5:20 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Wed, Jan 22, 2020 at 09:46:57PM +0800, Yafang Shao wrote:
+> > On Thu, Jan 9, 2020 at 12:04 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> > >
+> > > On my server there're some running MEMCGs protected by memory.{min, low},
+> > > but I found the usage of these MEMCGs abruptly became very small, which
+> > > were far less than the protect limit. It confused me and finally I
+> > > found that was because of inode stealing.
+> > > Once an inode is freed, all its belonging page caches will be dropped as
+> > > well, no matter how may page caches it has. So if we intend to protect the
+> > > page caches in a memcg, we must protect their host (the inode) first.
+> > > Otherwise the memcg protection can be easily bypassed with freeing inode,
+> > > especially if there're big files in this memcg.
+> > > The inherent mismatch between memcg and inode is a trouble. One inode can
+> > > be shared by different MEMCGs, but it is a very rare case. If an inode is
+> > > shared, its belonging page caches may be charged to different MEMCGs.
+> > > Currently there's no perfect solution to fix this kind of issue, but the
+> > > inode majority-writer ownership switching can help it more or less.
+> > >
+> > > - Changes against v2:
+> > >     1. Seperates memcg patches from this patchset, suggested by Roman.
+> > >        A separate patch is alreay ACKed by Roman, please the MEMCG
+> > >        maintianers help take a look at it[1].
+> > >     2. Improves code around the usage of for_each_mem_cgroup(), suggested
+> > >        by Dave
+> > >     3. Use memcg_low_reclaim passed from scan_control, instead of
+> > >        introducing a new member in struct mem_cgroup.
+> > >     4. Some other code improvement suggested by Dave.
+> > >
+> > >
+> > > - Changes against v1:
+> > > Use the memcg passed from the shrink_control, instead of getting it from
+> > > inode itself, suggested by Dave. That could make the laying better.
+> > >
+> > > [1]
+> > > https://lore.kernel.org/linux-mm/CALOAHbBhPgh3WEuLu2B6e2vj1J8K=gGOyCKzb8tKWmDqFs-rfQ@mail.gmail.com/
+> > >
+> > > Yafang Shao (3):
+> > >   mm, list_lru: make memcg visible to lru walker isolation function
+> > >   mm, shrinker: make memcg low reclaim visible to lru walker isolation
+> > >     function
+> > >   memcg, inode: protect page cache from freeing inode
+> > >
+> > >  fs/inode.c                 | 78 ++++++++++++++++++++++++++++++++++++++++++++--
+> > >  include/linux/memcontrol.h | 21 +++++++++++++
+> > >  include/linux/shrinker.h   |  3 ++
+> > >  mm/list_lru.c              | 47 +++++++++++++++++-----------
+> > >  mm/memcontrol.c            | 15 ---------
+> > >  mm/vmscan.c                | 27 +++++++++-------
+> > >  6 files changed, 143 insertions(+), 48 deletions(-)
+> > >
 > >
-> > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-> > process in a non-init user namespace the capability to set audit
-> > container identifiers.
+> > Dave,  Johannes,
 > >
-> > Provide /proc/$PID/audit_capcontid interface to capcontid.
-> > Valid values are: 1==enabled, 0==disabled
-> 
-> It would be good to be more explicit about "enabled" and "disabled" in
-> the commit description.  For example, which setting allows the target
-> task to set audit container IDs of it's children processes?
+> > Any comments on this new version ?
+>
+> Sorry, I lost track of this amongst travel and conferences mid
+> january. Can you update and post it again once -rc1 is out?
+>
 
-Ok...
+Sure, I will do it.
+Thanks for your reply.
 
-> > Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
-> > opid= capcontid= old-capcontid=
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/audit.h      | 14 ++++++++++++
-> >  include/uapi/linux/audit.h |  1 +
-> >  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
-> >  4 files changed, 105 insertions(+)
-> 
-> ...
-> 
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 26091800180c..283ef8e006e7 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -1360,6 +1360,59 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
-> >         .write          = proc_contid_write,
-> >         .llseek         = generic_file_llseek,
-> >  };
-> > +
-> > +static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
-> > +                                 size_t count, loff_t *ppos)
-> > +{
-> > +       struct inode *inode = file_inode(file);
-> > +       struct task_struct *task = get_proc_task(inode);
-> > +       ssize_t length;
-> > +       char tmpbuf[TMPBUFLEN];
-> > +
-> > +       if (!task)
-> > +               return -ESRCH;
-> > +       /* if we don't have caps, reject */
-> > +       if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-> > +               return -EPERM;
-> > +       length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(task));
-> > +       put_task_struct(task);
-> > +       return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-> > +}
-> > +
-> > +static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
-> > +                                  size_t count, loff_t *ppos)
-> > +{
-> > +       struct inode *inode = file_inode(file);
-> > +       u32 capcontid;
-> > +       int rv;
-> > +       struct task_struct *task = get_proc_task(inode);
-> > +
-> > +       if (!task)
-> > +               return -ESRCH;
-> > +       if (*ppos != 0) {
-> > +               /* No partial writes. */
-> > +               put_task_struct(task);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +       rv = kstrtou32_from_user(buf, count, 10, &capcontid);
-> > +       if (rv < 0) {
-> > +               put_task_struct(task);
-> > +               return rv;
-> > +       }
-> > +
-> > +       rv = audit_set_capcontid(task, capcontid);
-> > +       put_task_struct(task);
-> > +       if (rv < 0)
-> > +               return rv;
-> > +       return count;
-> > +}
-> > +
-> > +static const struct file_operations proc_capcontid_operations = {
-> > +       .read           = proc_capcontid_read,
-> > +       .write          = proc_capcontid_write,
-> > +       .llseek         = generic_file_llseek,
-> > +};
-> >  #endif
-> >
-> >  #ifdef CONFIG_FAULT_INJECTION
-> > @@ -3121,6 +3174,7 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
-> >         REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
-> >         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
-> >         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-> > +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
-> >  #endif
-> >  #ifdef CONFIG_FAULT_INJECTION
-> >         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-> > @@ -3522,6 +3576,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
-> >         REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
-> >         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
-> >         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-> > +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
-> >  #endif
-> >  #ifdef CONFIG_FAULT_INJECTION
-> >         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 28b9c7cd86a6..62c453306c2a 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -116,6 +116,7 @@ struct audit_task_info {
-> >         kuid_t                  loginuid;
-> >         unsigned int            sessionid;
-> >         struct audit_contobj    *cont;
-> > +       u32                     capcontid;
-> 
-> Where is the code change that actually uses this to enforce the
-> described policy on setting an audit container ID?
-
-Oops, lost in shuffle of refactorisation when dumping the netlink code in
-favour of /proc.
-
-> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > index 2844d78cd7af..01251e6dcec0 100644
-> > --- a/include/uapi/linux/audit.h
-> > +++ b/include/uapi/linux/audit.h
-> > @@ -73,6 +73,7 @@
-> >  #define AUDIT_GET_FEATURE      1019    /* Get which features are enabled */
-> >  #define AUDIT_CONTAINER_OP     1020    /* Define the container id and info */
-> >  #define AUDIT_SIGNAL_INFO2     1021    /* Get info auditd signal sender */
-> > +#define AUDIT_SET_CAPCONTID    1022    /* Set cap_contid of a task */
-> >
-> >  #define AUDIT_FIRST_USER_MSG   1100    /* Userspace messages mostly uninteresting to kernel */
-> >  #define AUDIT_USER_AVC         1107    /* We filter this differently */
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 1287f0b63757..1c22dd084ae8 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
-> >         return false;
-> >  }
-> >
-> > +int audit_set_capcontid(struct task_struct *task, u32 enable)
-> > +{
-> > +       u32 oldcapcontid;
-> > +       int rc = 0;
-> > +       struct audit_buffer *ab;
-> > +
-> > +       if (!task->audit)
-> > +               return -ENOPROTOOPT;
-> > +       oldcapcontid = audit_get_capcontid(task);
-> > +       /* if task is not descendant, block */
-> > +       if (task == current)
-> > +               rc = -EBADSLT;
-> > +       else if (!task_is_descendant(current, task))
-> > +               rc = -EXDEV;
-> 
-> See my previous comments about error code sanity.
-
-I'll go with EXDEV.
-
-> > +       else if (current_user_ns() == &init_user_ns) {
-> > +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-> > +                       rc = -EPERM;
-> 
-> I think we just want to use ns_capable() in the context of the current
-> userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
-
-I thought we had firmly established in previous discussion that
-CAP_AUDIT_CONTROL in anything other than init_user_ns was completely irrelevant
-and untrustable.
-
->   if (current_user_ns() != &init_user_ns) {
->     if (!ns_capable(CAP_AUDIT_CONTROL) || !audit_get_capcontid())
->       rc = -EPERM;
->   } else if (!capable(CAP_AUDIT_CONTROL))
->     rc = -EPERM;
-> 
-> > +       }
-> > +       if (!rc)
-> > +               task->audit->capcontid = enable;
-> > +
-> > +       if (!audit_enabled)
-> > +               return rc;
-> > +
-> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
-> > +       if (!ab)
-> > +               return rc;
-> > +
-> > +       audit_log_format(ab,
-> > +                        "opid=%d capcontid=%u old-capcontid=%u",
-> > +                        task_tgid_nr(task), enable, oldcapcontid);
-> > +       audit_log_end(ab);
-> 
-> My prior comments about recording the success/failure, or not emitting
-> the record on failure, seem relevant here too.
-
-It should be recorded in the syscall record.
-
-> > +       return rc;
-> > +}
-> 
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+Thanks
+Yafang
