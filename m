@@ -2,140 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51013152494
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 02:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6988A15249B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 03:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbgBEB6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 20:58:37 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50718 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727714AbgBEB6g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 20:58:36 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id C58F14B6B979FCF636BB;
-        Wed,  5 Feb 2020 09:58:33 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 5 Feb 2020
- 09:58:30 +0800
-Subject: Re: [PATCH v2] f2fs: Make f2fs_readpages readable again
-To:     Matthew Wilcox <willy@infradead.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20200201150807.17820-1-willy@infradead.org>
- <20200203033903.GB8731@bombadil.infradead.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <bd08bf56-f901-33b1-5151-f77fd823e343@huawei.com>
-Date:   Wed, 5 Feb 2020 09:58:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727758AbgBECBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 21:01:30 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:19643 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbgBECBa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Feb 2020 21:01:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1580868089; x=1612404089;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SyD/cpSqf3fsyjP7v6TIGvkanp29RFxaNJ9Ii2ufFlg=;
+  b=P88E5yN/WgpaOUPIA8BTsC4DckrKxVabCVA7cA/+ZpAKkQwc0Dn4nJY/
+   J3d9b+BX4Pb2I24ShKaFBitvOL3aQEko/jBcxj/EXLKkgaIyI4rj0EgPV
+   3GXmnIGRPcfC1Kkg0kbZ4uE6Ch1/44a+GbLw8meZP/2aduFINILrup+mg
+   HmKC0vGolAM3gQShNZ7F9V07xSeWNBABzMt6DvxcPpt29hhxgTnbuhoUI
+   Yw89OPtBYse65PzG0OvwxzWOdnwmgb1gkJroHf9jmC67qsZX/TAE3XNtg
+   8v8qsuidiNaUSPJG4W4NJHrmFqZ+8x5bN63CAICUMhKv2iWnLaG5pCbgm
+   A==;
+IronPort-SDR: a7jtzxFE2rDCsGYlFn8TrX/pjjAdpIeQjVudC6ZKL3dUpDq/i0mHrpjMuRrSRlBI1aJmcxecv/
+ C9P/SUMHBrAE3qhT0PL80OeyOTR+tnsFFUBr8bH4LkgKGFAH4MY+YFVtIF9BY59Ml5s6xqFpnF
+ m/Rxi1HrJpr3aoV8unkfv8ckKUqjJVdP3/l1/pLr8rxliQ55pTzIqwxlgtPDU/p1CjUpX7ZmQV
+ c5t8IknyxJWrspT4GYB21Xi5O+IjxZwgVF4gJka9ww3rBA4q2+/icmRtsOaX8zR6ReCYM5Eomz
+ N8g=
+X-IronPort-AV: E=Sophos;i="5.70,404,1574092800"; 
+   d="scan'208";a="237075800"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 05 Feb 2020 10:01:29 +0800
+IronPort-SDR: qR8/dUn9JRRfgme8xu/X5929kqJqmNjg1DWE8TvCSjmZTX/SFfVCsl6S9fmMiLPgOeK2Z6dd9S
+ pjpG9Vkx/dT0fDcSxz+3UmqhGIXMj1/lp3iAJy7IvkBWTL1YJ2c2Ho9Sp/+kyRt5uruH0W5WiR
+ X37kU8eKPE0fkS5UtIo24eNiqAfNOWMZPW/wUBOyghYG9o0qQc0szvMS1mZ/iuBmUeoenD2nSB
+ nmGUXUv9D0/DdJo0ytpsWNWu1MzmWFzdBUsk5FE9vT8/4J+Z/y+4DDvN9qFw8s1ri6p6i6YeNs
+ dm04QTWr3/I+ouiH4pD567BO
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2020 17:54:30 -0800
+IronPort-SDR: cqmtsDlZ7qsPDgjufUiSSi88Qmix/oHaXZmFMVf9B6sbKU/AXd7KSjufcreyMxsVr6d5fGsEKP
+ nfASaZKfbkTwg7JJj9t5QG4qTfC7YoV4yZoJPbkkJYAkd7dnlr6xwOO1U4SdzQ5vO+UmfqMhwu
+ tbGvIfhVQJx8lfpeJJZWWnHZRfYV94UGvgPcVrwzwnOMavN26CT1Mg2z1Fqn2REUbSXK0VtKMP
+ cOBGRGOVBqI16gsxLXCyLJqBNWDU21jVF8MMgYQxKUQ+KBQuN1mXaj7KASzKcWNnWREbJ5g5ww
+ g/w=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with SMTP; 04 Feb 2020 18:01:28 -0800
+Received: (nullmailer pid 1228849 invoked by uid 1000);
+        Wed, 05 Feb 2020 02:01:27 -0000
+Date:   Wed, 5 Feb 2020 11:01:27 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] mm, swap: unlock inode in error path of claim_swapfile
+Message-ID: <20200205020127.v3rhbndyr6e7edbn@naota.dhcp.fujisawa.hgst.com>
+References: <20200204095943.727666-1-naohiro.aota@wdc.com>
+ <20200204154229.GC6874@magnolia>
+ <20200204234916.s6zx6i2ko4mvxim2@naota.dhcp.fujisawa.hgst.com>
+ <20200204235608.GG6874@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20200203033903.GB8731@bombadil.infradead.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200204235608.GG6874@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/2/3 11:39, Matthew Wilcox wrote:
-> 
-> Remove the horrendous ifdeffery by slipping an IS_ENABLED into
-> f2fs_compressed_file().
+On Tue, Feb 04, 2020 at 03:56:08PM -0800, Darrick J. Wong wrote:
+>On Wed, Feb 05, 2020 at 08:49:16AM +0900, Naohiro Aota wrote:
+>> On Tue, Feb 04, 2020 at 07:42:29AM -0800, Darrick J. Wong wrote:
+>> > On Tue, Feb 04, 2020 at 06:59:43PM +0900, Naohiro Aota wrote:
+>> > > claim_swapfile() currently keeps the inode locked when it is successful, or
+>> > > the file is already swapfile (with -EBUSY). And, on the other error cases,
+>> > > it does not lock the inode.
+>> > >
+>> > > This inconsistency of the lock state and return value is quite confusing
+>> > > and actually causing a bad unlock balance as below in the "bad_swap"
+>> > > section of __do_sys_swapon().
+>> > >
+>> > > This commit fixes this issue by unlocking the inode on the error path. It
+>> > > also reverts blocksize and releases bdev, so that the caller can safely
+>> > > forget about the inode.
+>> > >
+>> > >     =====================================
+>> > >     WARNING: bad unlock balance detected!
+>> > >     5.5.0-rc7+ #176 Not tainted
+>> > >     -------------------------------------
+>> > >     swapon/4294 is trying to release lock (&sb->s_type->i_mutex_key) at:
+>> > >     [<ffffffff8173a6eb>] __do_sys_swapon+0x94b/0x3550
+>> > >     but there are no more locks to release!
+>> > >
+>> > >     other info that might help us debug this:
+>> > >     no locks held by swapon/4294.
+>> > >
+>> > >     stack backtrace:
+>> > >     CPU: 5 PID: 4294 Comm: swapon Not tainted 5.5.0-rc7-BTRFS-ZNS+ #176
+>> > >     Hardware name: ASUS All Series/H87-PRO, BIOS 2102 07/29/2014
+>> > >     Call Trace:
+>> > >      dump_stack+0xa1/0xea
+>> > >      ? __do_sys_swapon+0x94b/0x3550
+>> > >      print_unlock_imbalance_bug.cold+0x114/0x123
+>> > >      ? __do_sys_swapon+0x94b/0x3550
+>> > >      lock_release+0x562/0xed0
+>> > >      ? kvfree+0x31/0x40
+>> > >      ? lock_downgrade+0x770/0x770
+>> > >      ? kvfree+0x31/0x40
+>> > >      ? rcu_read_lock_sched_held+0xa1/0xd0
+>> > >      ? rcu_read_lock_bh_held+0xb0/0xb0
+>> > >      up_write+0x2d/0x490
+>> > >      ? kfree+0x293/0x2f0
+>> > >      __do_sys_swapon+0x94b/0x3550
+>> > >      ? putname+0xb0/0xf0
+>> > >      ? kmem_cache_free+0x2e7/0x370
+>> > >      ? do_sys_open+0x184/0x3e0
+>> > >      ? generic_max_swapfile_size+0x40/0x40
+>> > >      ? do_syscall_64+0x27/0x4b0
+>> > >      ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> > >      ? lockdep_hardirqs_on+0x38c/0x590
+>> > >      __x64_sys_swapon+0x54/0x80
+>> > >      do_syscall_64+0xa4/0x4b0
+>> > >      entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> > >     RIP: 0033:0x7f15da0a0dc7
+>> > >
+>> > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
+>> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>> > > ---
+>> > >  mm/swapfile.c | 29 ++++++++++++++++++++++-------
+>> > >  1 file changed, 22 insertions(+), 7 deletions(-)
+>> > >
+>> > > diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> > > index bb3261d45b6a..dd5d7fa42282 100644
+>> > > --- a/mm/swapfile.c
+>> > > +++ b/mm/swapfile.c
+>> > > @@ -2886,24 +2886,37 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
+>> > >  		p->old_block_size = block_size(p->bdev);
+>> > >  		error = set_blocksize(p->bdev, PAGE_SIZE);
+>> > >  		if (error < 0)
+>> > > -			return error;
+>> > > +			goto err;
+>> > >  		/*
+>> > >  		 * Zoned block devices contain zones that have a sequential
+>> > >  		 * write only restriction.  Hence zoned block devices are not
+>> > >  		 * suitable for swapping.  Disallow them here.
+>> > >  		 */
+>> > > -		if (blk_queue_is_zoned(p->bdev->bd_queue))
+>> > > -			return -EINVAL;
+>> > > +		if (blk_queue_is_zoned(p->bdev->bd_queue)) {
+>> > > +			error = -EINVAL;
+>> > > +			goto err;
+>> > > +		}
+>> > >  		p->flags |= SWP_BLKDEV;
+>> > >  	} else if (S_ISREG(inode->i_mode)) {
+>> > >  		p->bdev = inode->i_sb->s_bdev;
+>> > >  	}
+>> > >
+>> > >  	inode_lock(inode);
+>> > > -	if (IS_SWAPFILE(inode))
+>> > > -		return -EBUSY;
+>> > > +	if (IS_SWAPFILE(inode)) {
+>> > > +		inode_unlock(inode);
+>> > > +		error = -EBUSY;
+>> > > +		goto err;
+>> > > +	}
+>> > >
+>> > >  	return 0;
+>> > > +
+>> > > +err:
+>> > > +	if (S_ISBLK(inode->i_mode)) {
+>> > > +		set_blocksize(p->bdev, p->old_block_size);
+>> > > +		blkdev_put(p->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
+>> > > +	}
+>> > > +
+>> > > +	return error;
+>> > >  }
+>> > >
+>> > >
+>> > > @@ -3157,10 +3170,12 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+>> > >  	mapping = swap_file->f_mapping;
+>> > >  	inode = mapping->host;
+>> > >
+>> > > -	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
+>> > > +	/* do inode_lock(inode); */
+>> >
+>> > What if we made this function responsible for calling inode_lock (and
+>> > unlock) instead of splitting it between sys_swapon and claim_swapfile?
+>>
+>> I think we cannot take inode_lock before claim_swapfile() because we can
+>> have circular locking dependency as:
+>>
+>> claim_swapfile()
+>> -> blkdev_get()    -> __blkdev_get()
+>>       -> mutex_lock(&bdev->bd_mutex)
+>>       -> bd_set_size()
+>>          -> inode_lock(&bdev->bd_inode);
+>
+>Ah, good point. Thank you for doing the research on that. :)
+>
+>> So, one thing we can do is to move inode_lock() and "if (IS_SWAPFILE(..))
+>> ..." out of claim_swapfile(). In this case, the "bad_swap" section must
+>> check if "inode_is_locked" to call "inode_unlock".
+>
+>I think I wouldn't rely on inode_is_locked and structure the error
+>escape as follows:
+>
+>	err = claim_swapfile()
+>	if (err)
+>		goto bad_swap;
+>
+>	inode_lock()
+>	if (IS_SWAPFILE)
+>		goto unlock_swap;
+>
+>	other_stuff()
+>
+>unlock_swap:
+>	inode_unlock()
+>bad_swap:
+>	fput()
+>
+>since that's how we (well, XFS anyway :)) tend to do it.
 
-I'd like to suggest to use
-
-if (IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) && f2fs_compressed_file(inode))
-
-here to clean up f2fs_readpages' codes.
-
-Otherwise, f2fs module w/o compression support will not recognize compressed
-file in most other cases if we add IS_ENABLED() condition into
-f2fs_compressed_file().
+That's possible, but current error handling (the "bad_swap" section) is not
+well organized, so we may hit some other lock issue or race problem ... OK,
+I'll investigate and try to reorder the error handling code to be cleaner.
 
 Thanks,
 
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
-> v2: Fix compilation by adding more dummy functions
-> 
->  fs/f2fs/data.c |  6 ------
->  fs/f2fs/f2fs.h | 10 +++++++++-
->  2 files changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 8bd9afa81c54..41156a8f60a7 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2203,7 +2203,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
->  				goto next_page;
->  		}
->  
-> -#ifdef CONFIG_F2FS_FS_COMPRESSION
->  		if (f2fs_compressed_file(inode)) {
->  			/* there are remained comressed pages, submit them */
->  			if (!f2fs_cluster_can_merge_page(&cc, page->index)) {
-> @@ -2230,14 +2229,11 @@ int f2fs_mpage_readpages(struct address_space *mapping,
->  			goto next_page;
->  		}
->  read_single_page:
-> -#endif
->  
->  		ret = f2fs_read_single_page(inode, page, max_nr_pages, &map,
->  					&bio, &last_block_in_bio, is_readahead);
->  		if (ret) {
-> -#ifdef CONFIG_F2FS_FS_COMPRESSION
->  set_error_page:
-> -#endif
->  			SetPageError(page);
->  			zero_user_segment(page, 0, PAGE_SIZE);
->  			unlock_page(page);
-> @@ -2246,7 +2242,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
->  		if (pages)
->  			put_page(page);
->  
-> -#ifdef CONFIG_F2FS_FS_COMPRESSION
->  		if (f2fs_compressed_file(inode)) {
->  			/* last page */
->  			if (nr_pages == 1 && !f2fs_cluster_is_empty(&cc)) {
-> @@ -2257,7 +2252,6 @@ int f2fs_mpage_readpages(struct address_space *mapping,
->  				f2fs_destroy_compress_ctx(&cc);
->  			}
->  		}
-> -#endif
->  	}
->  	BUG_ON(pages && !list_empty(pages));
->  	if (bio)
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 5355be6b6755..e90d2b3f1d2d 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -2706,7 +2706,8 @@ static inline int f2fs_has_inline_xattr(struct inode *inode)
->  
->  static inline int f2fs_compressed_file(struct inode *inode)
->  {
-> -	return S_ISREG(inode->i_mode) &&
-> +	return IS_ENABLED(CONFIG_F2FS_FS_COMPRESSION) &&
-> +		S_ISREG(inode->i_mode) &&
->  		is_inode_flag_set(inode, FI_COMPRESSED_FILE);
->  }
->  
-> @@ -3797,6 +3798,13 @@ static inline struct page *f2fs_compress_control_page(struct page *page)
->  	WARN_ON_ONCE(1);
->  	return ERR_PTR(-EINVAL);
->  }
-> +#define f2fs_cluster_can_merge_page(cc, index)	false
-> +#define f2fs_read_multi_pages(cc, bio, nr_pages, last, is_ra) 0
-> +#define f2fs_init_compress_ctx(cc) 0
-> +#define f2fs_destroy_compress_ctx(cc) (void)0
-> +#define f2fs_cluster_is_empty(cc) true
-> +#define f2fs_compress_ctx_add_page(cc, page) (void)0
-> +#define f2fs_is_compressed_cluster(cc, index) false
->  #endif
->  
->  static inline void set_compress_context(struct inode *inode)
-> 
+>
+>--D
+>
+>> >
+>> > --D
+>> >
+>> > >  	error = claim_swapfile(p, inode);
+>> > > -	if (unlikely(error))
+>> > > +	if (unlikely(error)) {
+>> > > +		inode = NULL;
+>> > >  		goto bad_swap;
+>> > > +	}
+>> > >
+>> > >  	/*
+>> > >  	 * Read the swap header.
+>> > > --
+>> > > 2.25.0
+>> > >
