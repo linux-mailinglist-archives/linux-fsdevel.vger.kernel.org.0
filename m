@@ -2,245 +2,279 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 703321523A5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 00:56:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5B4152421
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 01:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbgBDX4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 18:56:19 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:38090 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbgBDX4T (ORCPT
+        id S1727762AbgBEAju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 19:39:50 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31003 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727647AbgBEAju (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 18:56:19 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014NmU3L079333;
-        Tue, 4 Feb 2020 23:56:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=52KzkG/J+VWiaJrVi1k1Dkvuk2f0YHbnNWygA0UWPSo=;
- b=otK55Zj5wnz49Zx/Q+uqE35yqQwRoTkfKMxRH66VdqI4y+zhQmfweIyQ4hGDaO7PzFmu
- 0KFP4jtBcLKIo0AUlv3wRe05VdLcSHYJnjmiw99tr2bFkQIVfvipnE+y4uMOPcqzDqy6
- +988bEGSJcsFLrHwTU03J9O0unvOnCc+FFJ64k21WLEHkfflCRRnXhq36wH2WosswUG9
- YUU/leTlBe3vnpNnBaTGJOcJBeaWeiWPFnb7XOXaH37t2qTJeCXBklmhet0cmsXG2CH4
- OLNMXMGVVRs7vQw1et2oBekYv6cc2y+fFTyAvyYoZLuEx8sDClOhfaPFJv2SM821ITxd zQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2xyhkf87n2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 23:56:11 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id 014NrwZx049508;
-        Tue, 4 Feb 2020 23:56:10 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2xyhmq3527-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 04 Feb 2020 23:56:10 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 014Nu9Ex018740;
-        Tue, 4 Feb 2020 23:56:09 GMT
-Received: from localhost (/10.159.250.52)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 04 Feb 2020 15:56:09 -0800
-Date:   Tue, 4 Feb 2020 15:56:08 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] mm, swap: unlock inode in error path of claim_swapfile
-Message-ID: <20200204235608.GG6874@magnolia>
-References: <20200204095943.727666-1-naohiro.aota@wdc.com>
- <20200204154229.GC6874@magnolia>
- <20200204234916.s6zx6i2ko4mvxim2@naota.dhcp.fujisawa.hgst.com>
+        Tue, 4 Feb 2020 19:39:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580863188;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vVcjWGSIO/6HrV4SfXcKeCJavn13kL4kYAAWkT145to=;
+        b=Kjc6S/SFv58vYefXKSod+MGbrzo8fVoQQYklNvJbswxoDlnpX1LYS2KG+pn1nFaH9PMunp
+        dq3/TzQneonpk/yd9igPDz634TJxw6lbk+zzq1Wraa/n6AplggTafLT0q0D0hjRNQvHcw9
+        NxJBNNs+Dy6K7MGM7PFmYKxujv24mPs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-196-GYc-yhAzNTWtmmXelgC71A-1; Tue, 04 Feb 2020 19:39:46 -0500
+X-MC-Unique: GYc-yhAzNTWtmmXelgC71A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 042521005513;
+        Wed,  5 Feb 2020 00:39:45 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD3A9811F8;
+        Wed,  5 Feb 2020 00:39:33 +0000 (UTC)
+Date:   Tue, 4 Feb 2020 19:39:30 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        sgrubb@redhat.com, omosnace@redhat.com, dhowells@redhat.com,
+        simo@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
+        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
+        mpatel@redhat.com
+Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20200205003930.2efpm4tvrisgmj4t@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com>
+ <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
+ <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200204234916.s6zx6i2ko4mvxim2@naota.dhcp.fujisawa.hgst.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-2001150001 definitions=main-2002040163
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9521 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-2001150001
- definitions=main-2002040163
+In-Reply-To: <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 08:49:16AM +0900, Naohiro Aota wrote:
-> On Tue, Feb 04, 2020 at 07:42:29AM -0800, Darrick J. Wong wrote:
-> > On Tue, Feb 04, 2020 at 06:59:43PM +0900, Naohiro Aota wrote:
-> > > claim_swapfile() currently keeps the inode locked when it is successful, or
-> > > the file is already swapfile (with -EBUSY). And, on the other error cases,
-> > > it does not lock the inode.
-> > > 
-> > > This inconsistency of the lock state and return value is quite confusing
-> > > and actually causing a bad unlock balance as below in the "bad_swap"
-> > > section of __do_sys_swapon().
-> > > 
-> > > This commit fixes this issue by unlocking the inode on the error path. It
-> > > also reverts blocksize and releases bdev, so that the caller can safely
-> > > forget about the inode.
-> > > 
-> > >     =====================================
-> > >     WARNING: bad unlock balance detected!
-> > >     5.5.0-rc7+ #176 Not tainted
-> > >     -------------------------------------
-> > >     swapon/4294 is trying to release lock (&sb->s_type->i_mutex_key) at:
-> > >     [<ffffffff8173a6eb>] __do_sys_swapon+0x94b/0x3550
-> > >     but there are no more locks to release!
-> > > 
-> > >     other info that might help us debug this:
-> > >     no locks held by swapon/4294.
-> > > 
-> > >     stack backtrace:
-> > >     CPU: 5 PID: 4294 Comm: swapon Not tainted 5.5.0-rc7-BTRFS-ZNS+ #176
-> > >     Hardware name: ASUS All Series/H87-PRO, BIOS 2102 07/29/2014
-> > >     Call Trace:
-> > >      dump_stack+0xa1/0xea
-> > >      ? __do_sys_swapon+0x94b/0x3550
-> > >      print_unlock_imbalance_bug.cold+0x114/0x123
-> > >      ? __do_sys_swapon+0x94b/0x3550
-> > >      lock_release+0x562/0xed0
-> > >      ? kvfree+0x31/0x40
-> > >      ? lock_downgrade+0x770/0x770
-> > >      ? kvfree+0x31/0x40
-> > >      ? rcu_read_lock_sched_held+0xa1/0xd0
-> > >      ? rcu_read_lock_bh_held+0xb0/0xb0
-> > >      up_write+0x2d/0x490
-> > >      ? kfree+0x293/0x2f0
-> > >      __do_sys_swapon+0x94b/0x3550
-> > >      ? putname+0xb0/0xf0
-> > >      ? kmem_cache_free+0x2e7/0x370
-> > >      ? do_sys_open+0x184/0x3e0
-> > >      ? generic_max_swapfile_size+0x40/0x40
-> > >      ? do_syscall_64+0x27/0x4b0
-> > >      ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > >      ? lockdep_hardirqs_on+0x38c/0x590
-> > >      __x64_sys_swapon+0x54/0x80
-> > >      do_syscall_64+0xa4/0x4b0
-> > >      entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > >     RIP: 0033:0x7f15da0a0dc7
-> > > 
-> > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > > ---
-> > >  mm/swapfile.c | 29 ++++++++++++++++++++++-------
-> > >  1 file changed, 22 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > > index bb3261d45b6a..dd5d7fa42282 100644
-> > > --- a/mm/swapfile.c
-> > > +++ b/mm/swapfile.c
-> > > @@ -2886,24 +2886,37 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
-> > >  		p->old_block_size = block_size(p->bdev);
-> > >  		error = set_blocksize(p->bdev, PAGE_SIZE);
-> > >  		if (error < 0)
-> > > -			return error;
-> > > +			goto err;
-> > >  		/*
-> > >  		 * Zoned block devices contain zones that have a sequential
-> > >  		 * write only restriction.  Hence zoned block devices are not
-> > >  		 * suitable for swapping.  Disallow them here.
-> > >  		 */
-> > > -		if (blk_queue_is_zoned(p->bdev->bd_queue))
-> > > -			return -EINVAL;
-> > > +		if (blk_queue_is_zoned(p->bdev->bd_queue)) {
-> > > +			error = -EINVAL;
-> > > +			goto err;
-> > > +		}
-> > >  		p->flags |= SWP_BLKDEV;
-> > >  	} else if (S_ISREG(inode->i_mode)) {
-> > >  		p->bdev = inode->i_sb->s_bdev;
-> > >  	}
-> > > 
-> > >  	inode_lock(inode);
-> > > -	if (IS_SWAPFILE(inode))
-> > > -		return -EBUSY;
-> > > +	if (IS_SWAPFILE(inode)) {
-> > > +		inode_unlock(inode);
-> > > +		error = -EBUSY;
-> > > +		goto err;
-> > > +	}
-> > > 
-> > >  	return 0;
-> > > +
-> > > +err:
-> > > +	if (S_ISBLK(inode->i_mode)) {
-> > > +		set_blocksize(p->bdev, p->old_block_size);
-> > > +		blkdev_put(p->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
-> > > +	}
-> > > +
-> > > +	return error;
-> > >  }
-> > > 
-> > > 
-> > > @@ -3157,10 +3170,12 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
-> > >  	mapping = swap_file->f_mapping;
-> > >  	inode = mapping->host;
-> > > 
-> > > -	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
-> > > +	/* do inode_lock(inode); */
-> > 
-> > What if we made this function responsible for calling inode_lock (and
-> > unlock) instead of splitting it between sys_swapon and claim_swapfile?
+On 2020-01-22 16:29, Paul Moore wrote:
+> On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > process in a non-init user namespace the capability to set audit
+> > container identifiers.
+> >
+> > Provide /proc/$PID/audit_capcontid interface to capcontid.
+> > Valid values are: 1==enabled, 0==disabled
 > 
-> I think we cannot take inode_lock before claim_swapfile() because we can
-> have circular locking dependency as:
+> It would be good to be more explicit about "enabled" and "disabled" in
+> the commit description.  For example, which setting allows the target
+> task to set audit container IDs of it's children processes?
+
+Ok...
+
+> > Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
+> > opid= capcontid= old-capcontid=
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/audit.h      | 14 ++++++++++++
+> >  include/uapi/linux/audit.h |  1 +
+> >  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
+> >  4 files changed, 105 insertions(+)
 > 
-> claim_swapfile()
-> -> blkdev_get()    -> __blkdev_get()
->       -> mutex_lock(&bdev->bd_mutex)
->       -> bd_set_size()
->          -> inode_lock(&bdev->bd_inode);
+> ...
+> 
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index 26091800180c..283ef8e006e7 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -1360,6 +1360,59 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
+> >         .write          = proc_contid_write,
+> >         .llseek         = generic_file_llseek,
+> >  };
+> > +
+> > +static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
+> > +                                 size_t count, loff_t *ppos)
+> > +{
+> > +       struct inode *inode = file_inode(file);
+> > +       struct task_struct *task = get_proc_task(inode);
+> > +       ssize_t length;
+> > +       char tmpbuf[TMPBUFLEN];
+> > +
+> > +       if (!task)
+> > +               return -ESRCH;
+> > +       /* if we don't have caps, reject */
+> > +       if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> > +               return -EPERM;
+> > +       length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(task));
+> > +       put_task_struct(task);
+> > +       return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
+> > +}
+> > +
+> > +static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
+> > +                                  size_t count, loff_t *ppos)
+> > +{
+> > +       struct inode *inode = file_inode(file);
+> > +       u32 capcontid;
+> > +       int rv;
+> > +       struct task_struct *task = get_proc_task(inode);
+> > +
+> > +       if (!task)
+> > +               return -ESRCH;
+> > +       if (*ppos != 0) {
+> > +               /* No partial writes. */
+> > +               put_task_struct(task);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       rv = kstrtou32_from_user(buf, count, 10, &capcontid);
+> > +       if (rv < 0) {
+> > +               put_task_struct(task);
+> > +               return rv;
+> > +       }
+> > +
+> > +       rv = audit_set_capcontid(task, capcontid);
+> > +       put_task_struct(task);
+> > +       if (rv < 0)
+> > +               return rv;
+> > +       return count;
+> > +}
+> > +
+> > +static const struct file_operations proc_capcontid_operations = {
+> > +       .read           = proc_capcontid_read,
+> > +       .write          = proc_capcontid_write,
+> > +       .llseek         = generic_file_llseek,
+> > +};
+> >  #endif
+> >
+> >  #ifdef CONFIG_FAULT_INJECTION
+> > @@ -3121,6 +3174,7 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
+> >         REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
+> >         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+> >         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
+> > +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
+> >  #endif
+> >  #ifdef CONFIG_FAULT_INJECTION
+> >         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+> > @@ -3522,6 +3576,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
+> >         REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
+> >         REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+> >         REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
+> > +       REG("audit_capcontainerid", S_IWUSR|S_IRUSR|S_IRUSR, proc_capcontid_operations),
+> >  #endif
+> >  #ifdef CONFIG_FAULT_INJECTION
+> >         REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 28b9c7cd86a6..62c453306c2a 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -116,6 +116,7 @@ struct audit_task_info {
+> >         kuid_t                  loginuid;
+> >         unsigned int            sessionid;
+> >         struct audit_contobj    *cont;
+> > +       u32                     capcontid;
+> 
+> Where is the code change that actually uses this to enforce the
+> described policy on setting an audit container ID?
 
-Ah, good point. Thank you for doing the research on that. :)
+Oops, lost in shuffle of refactorisation when dumping the netlink code in
+favour of /proc.
 
-> So, one thing we can do is to move inode_lock() and "if (IS_SWAPFILE(..))
-> ..." out of claim_swapfile(). In this case, the "bad_swap" section must
-> check if "inode_is_locked" to call "inode_unlock".
+> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > index 2844d78cd7af..01251e6dcec0 100644
+> > --- a/include/uapi/linux/audit.h
+> > +++ b/include/uapi/linux/audit.h
+> > @@ -73,6 +73,7 @@
+> >  #define AUDIT_GET_FEATURE      1019    /* Get which features are enabled */
+> >  #define AUDIT_CONTAINER_OP     1020    /* Define the container id and info */
+> >  #define AUDIT_SIGNAL_INFO2     1021    /* Get info auditd signal sender */
+> > +#define AUDIT_SET_CAPCONTID    1022    /* Set cap_contid of a task */
+> >
+> >  #define AUDIT_FIRST_USER_MSG   1100    /* Userspace messages mostly uninteresting to kernel */
+> >  #define AUDIT_USER_AVC         1107    /* We filter this differently */
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 1287f0b63757..1c22dd084ae8 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
+> >         return false;
+> >  }
+> >
+> > +int audit_set_capcontid(struct task_struct *task, u32 enable)
+> > +{
+> > +       u32 oldcapcontid;
+> > +       int rc = 0;
+> > +       struct audit_buffer *ab;
+> > +
+> > +       if (!task->audit)
+> > +               return -ENOPROTOOPT;
+> > +       oldcapcontid = audit_get_capcontid(task);
+> > +       /* if task is not descendant, block */
+> > +       if (task == current)
+> > +               rc = -EBADSLT;
+> > +       else if (!task_is_descendant(current, task))
+> > +               rc = -EXDEV;
+> 
+> See my previous comments about error code sanity.
 
-I think I wouldn't rely on inode_is_locked and structure the error
-escape as follows:
+I'll go with EXDEV.
 
-	err = claim_swapfile()
-	if (err)
-		goto bad_swap;
+> > +       else if (current_user_ns() == &init_user_ns) {
+> > +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> > +                       rc = -EPERM;
+> 
+> I think we just want to use ns_capable() in the context of the current
+> userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
 
-	inode_lock()
-	if (IS_SWAPFILE)
-		goto unlock_swap;
+I thought we had firmly established in previous discussion that
+CAP_AUDIT_CONTROL in anything other than init_user_ns was completely irrelevant
+and untrustable.
 
-	other_stuff()
+>   if (current_user_ns() != &init_user_ns) {
+>     if (!ns_capable(CAP_AUDIT_CONTROL) || !audit_get_capcontid())
+>       rc = -EPERM;
+>   } else if (!capable(CAP_AUDIT_CONTROL))
+>     rc = -EPERM;
+> 
+> > +       }
+> > +       if (!rc)
+> > +               task->audit->capcontid = enable;
+> > +
+> > +       if (!audit_enabled)
+> > +               return rc;
+> > +
+> > +       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
+> > +       if (!ab)
+> > +               return rc;
+> > +
+> > +       audit_log_format(ab,
+> > +                        "opid=%d capcontid=%u old-capcontid=%u",
+> > +                        task_tgid_nr(task), enable, oldcapcontid);
+> > +       audit_log_end(ab);
+> 
+> My prior comments about recording the success/failure, or not emitting
+> the record on failure, seem relevant here too.
 
-unlock_swap:
-	inode_unlock()
-bad_swap:
-	fput()
+It should be recorded in the syscall record.
 
-since that's how we (well, XFS anyway :)) tend to do it.
+> > +       return rc;
+> > +}
+> 
+> paul moore
 
---D
+- RGB
 
-> > 
-> > --D
-> > 
-> > >  	error = claim_swapfile(p, inode);
-> > > -	if (unlikely(error))
-> > > +	if (unlikely(error)) {
-> > > +		inode = NULL;
-> > >  		goto bad_swap;
-> > > +	}
-> > > 
-> > >  	/*
-> > >  	 * Read the swap header.
-> > > --
-> > > 2.25.0
-> > > 
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
