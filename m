@@ -2,110 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1657F15386F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 19:45:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2F11538D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 20:16:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbgBESpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 13:45:15 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33772 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726822AbgBESpO (ORCPT
+        id S1727486AbgBETQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 14:16:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49818 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727162AbgBETQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 13:45:14 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d5so2404841qto.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 10:45:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QYoMdIAaqahJjepvkJ7REaMmBDJckxR3VrMFaS6MKNY=;
-        b=GdVPLikdaMErLnDV65mcb/+ItucXtOwLICARC88ezS9vFIlFCBXrtnGMf+g6v489FN
-         n+48qQFv8gt2UQ93yob4VTNBvaGyOhGAOboMJIHxB4o/PPc5Ph0X2PD84rb4OTmWS3rJ
-         yUR0QjHfD2h4hiTX2SQ0wRa+cS0UGdV0frHs0ocxr2tKVNO8WPaxblqQth+mJwCtzebw
-         pkyRary2dSismCyszI9Z7ilb/UHhLfWbF378hulwQs9T1tbxIY0gw9r/ISzlP/AZM4hK
-         YRhfN/I6IhujDgJ+A2q1BM24cLTaGrO8I1luSBmkj1hRO0ba4xCRZYFo/z5jbI3akRlc
-         6W7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QYoMdIAaqahJjepvkJ7REaMmBDJckxR3VrMFaS6MKNY=;
-        b=p1FKxrXRHX/RGvlahfIn6hVJbt925rX2lb4GnsWg2nV+CJJnXjmAdN89mb4GHdUH3f
-         rdwaxlMn2sC4wcRTAxrR4kQjNNINGF6ThsuhUvymdTz1gsNd9myivd3fyfRdINheXoNT
-         N4ByrP/ZUQ4DOiYwdEY6IhS1dSIvXtxglr1wyx3qe5DQ5Da9SuyzQjgwME1sLzoH7Of0
-         cTvBnTXN1UX17b0tiRUu0Sdzh+saHKl1myQODGK8Oz3slgP+CHuqOHRUWjPibvcYCqbS
-         TKiym+f4Z808JQkNC+W3liTbBRCRme8/a4xqklqita3utTJfeA6ic2/rrgFDCbmVm3o2
-         96hA==
-X-Gm-Message-State: APjAAAVDdbW4fvhyoeC+glQxfVoKaHdQPnE5auuB+5Tom5MaAO6QyX7O
-        mnlWC2J1+294OmB5agD3BAAzuXVN5iQ=
-X-Google-Smtp-Source: APXvYqzWcr4PCpzvsF2kua43sLKjIgPtIjh8aXczMBiNRwSqrEUPqJ7EzvB56kTUEocmfGwTFLWj8w==
-X-Received: by 2002:aed:2d86:: with SMTP id i6mr35454014qtd.297.1580928313307;
-        Wed, 05 Feb 2020 10:45:13 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-57-212.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.57.212])
-        by smtp.gmail.com with ESMTPSA id 73sm320171qtg.40.2020.02.05.10.45.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Feb 2020 10:45:12 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1izPfk-0003uX-6R; Wed, 05 Feb 2020 14:45:12 -0400
-Date:   Wed, 5 Feb 2020 14:45:12 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 3/8] xarray: Explicitely set XA_FREE_MARK in
- __xa_cmpxchg()
-Message-ID: <20200205184512.GC28298@ziepe.ca>
-References: <20200204142514.15826-1-jack@suse.cz>
- <20200204142514.15826-4-jack@suse.cz>
+        Wed, 5 Feb 2020 14:16:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580930167;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=rb7G4sCm0/kOn0JB7aa17eiASsOgtyGCK66O/DqQUSQ=;
+        b=cXYqTi8xr6mRrE+zpaSSaPiyrs2lapglMas2iFcC20rCv7sHdTfHU6FPIM5i+vsIcrUTZW
+        RZ/I8JQYmI9kuJfrPkTtqTVaDrj1njvAAeB05safAG4yt0/nXUglCnciJViv/rfQSpvKRS
+        eXCw8dIgWEDGUwyxDg7JuzuGtrMwP0c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-344-uSI5rDvVMdOiUhM9pxX_ow-1; Wed, 05 Feb 2020 14:16:01 -0500
+X-MC-Unique: uSI5rDvVMdOiUhM9pxX_ow-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A036DBB1;
+        Wed,  5 Feb 2020 19:16:00 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F2D0101D4B7;
+        Wed,  5 Feb 2020 19:15:59 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     dan.j.williams@intel.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        willy@infradead.org, jack@suse.cz
+Subject: [patch] dax: pass NOWAIT flag to iomap_apply
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Wed, 05 Feb 2020 14:15:58 -0500
+Message-ID: <x49r1z86e1d.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200204142514.15826-4-jack@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 03:25:09PM +0100, Jan Kara wrote:
-> __xa_cmpxchg() relies on xas_store() to set XA_FREE_MARK when storing
-> NULL into xarray that has free tracking enabled. Make the setting of
-> XA_FREE_MARK explicit similarly as its clearing currently it.
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
->  lib/xarray.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index ae8b7070e82c..4e32497c51bd 100644
-> +++ b/lib/xarray.c
-> @@ -1477,8 +1477,12 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
->  		curr = xas_load(&xas);
->  		if (curr == old) {
->  			xas_store(&xas, entry);
-> -			if (xa_track_free(xa) && entry && !curr)
-> -				xas_clear_mark(&xas, XA_FREE_MARK);
-> +			if (xa_track_free(xa)) {
-> +				if (entry && !curr)
-> +					xas_clear_mark(&xas, XA_FREE_MARK);
-> +				else if (!entry && curr)
-> +					xas_set_mark(&xas, XA_FREE_MARK);
-> +			}
+fstests generic/471 reports a failure when run with MOUNT_OPTIONS="-o
+dax".  The reason is that the initial pwrite to an empty file with the
+RWF_NOWAIT flag set does not return -EAGAIN.  It turns out that
+dax_iomap_rw doesn't pass that flag through to iomap_apply.
 
-This feels like an optimization that should also happen for
-__xa_store, which has very similar code:
+With this patch applied, generic/471 passes for me.
 
-		curr = xas_store(&xas, entry);
-		if (xa_track_free(xa))
-			xas_clear_mark(&xas, XA_FREE_MARK);
+Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
 
-Something like
+diff --git a/fs/dax.c b/fs/dax.c
+index 1f1f0201cad1..0b0d8819cb1b 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1207,6 +1207,9 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		lockdep_assert_held(&inode->i_rwsem);
+ 	}
+ 
++	if (iocb->ki_flags & IOCB_NOWAIT)
++		flags |= IOMAP_NOWAIT;
++
+ 	while (iov_iter_count(iter)) {
+ 		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
+ 				iter, dax_iomap_actor);
 
-                if (xa_track_free(xa) && entry && !curr)
-			xas_clear_mark(&xas, XA_FREE_MARK);
-
-?
-
-Regards,
-Jason
