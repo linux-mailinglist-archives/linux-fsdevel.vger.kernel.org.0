@@ -2,78 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8FE152591
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 05:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B1B1525A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 05:42:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbgBEEVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Feb 2020 23:21:42 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47498 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbgBEEVm (ORCPT
+        id S1727929AbgBEEmQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Feb 2020 23:42:16 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:50334 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727873AbgBEEmQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Feb 2020 23:21:42 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 694AB29298E
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v6 1/5] unicode: Add standard casefolded d_ops
-Organization: Collabora
-References: <20200128230328.183524-1-drosen@google.com>
-        <20200128230328.183524-2-drosen@google.com>
-        <85sgjsxx2g.fsf@collabora.com>
-        <CA+PiJmS3kbK8220QaccP5jJ7dSf4xv3UrStQvLskAtCN+=vG_A@mail.gmail.com>
-Date:   Tue, 04 Feb 2020 23:21:33 -0500
-In-Reply-To: <CA+PiJmS3kbK8220QaccP5jJ7dSf4xv3UrStQvLskAtCN+=vG_A@mail.gmail.com>
-        (Daniel Rosenberg's message of "Tue, 4 Feb 2020 19:05:02 -0800")
-Message-ID: <85h8051x6a.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 4 Feb 2020 23:42:16 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1izCVy-0004Fh-00; Wed, 05 Feb 2020 04:42:14 +0000
+Date:   Tue, 4 Feb 2020 23:42:14 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Proposal to fix pwrite with O_APPEND via pwritev2 flag
+Message-ID: <20200205044214.GY1663@brightrain.aerifal.cx>
+References: <20200124000243.GA12112@brightrain.aerifal.cx>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200124000243.GA12112@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
+On Thu, Jan 23, 2020 at 07:02:43PM -0500, Rich Felker wrote:
+> There's a longstanding unfixable (due to API stability) bug in the
+> pwrite syscall:
+> 
+> http://man7.org/linux/man-pages/man2/pwrite.2.html#BUGS
+> 
+> whereby it wrongly honors O_APPEND if set, ignoring the caller-passed
+> offset. Now that there's a pwritev2 syscall that takes a flags
+> argument, it's possible to fix this without breaking stability by
+> adding a new RWF_NOAPPEND flag, which callers that want the fixed
+> behavior can then pass.
+> 
+> I have a completely untested patch to add such a flag, but would like
+> to get a feel for whether the concept is acceptable before putting
+> time into testing it. If so, I'll submit this as a proper patch with
+> detailed commit message etc. Draft is below.
 
-> On Sun, Feb 2, 2020 at 5:46 PM Gabriel Krisman Bertazi
-> <krisman@collabora.com> wrote:
->>
->>
->> I don't think fs/unicode is the right place for these very specific
->> filesystem functions, just because they happen to use unicode.  It is an
->> encoding library, it doesn't care about dentries, nor should know how to
->> handle them.  It exposes a simple api to manipulate and convert utf8 strings.
->>
->> I saw change was after the desire to not have these functions polluting
->> the VFS hot path, but that has nothing to do with placing them here.
->>
->> Would libfs be better?  or a casefolding library in fs/casefold.c?
->>
->>
->> --
->> Gabriel Krisman Bertazi
->
-> The hash function needs access to utf8ncursor, but apart from that,
-> libfs would make sense. utf8ncursor is the only reason I have them
-> here. How do you feel about exposing utf8cursor or something similar?
+I went ahead and tested this, and it works as intended, so I'll post a
+proper patch with commit message.
 
-Hi,
+Rich
 
-It was designed to be an internal thing, but I'm ok with exposing it.
 
--- 
-Gabriel Krisman Bertazi
+
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e0d909d35763..3a769a972f79 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3397,6 +3397,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  {
+>  	if (unlikely(flags & ~RWF_SUPPORTED))
+>  		return -EOPNOTSUPP;
+> +	if (unlikely((flags & RWF_APPEND) && (flags & RWF_NOAPPEND)))
+> +		return -EINVAL;
+>  
+>  	if (flags & RWF_NOWAIT) {
+>  		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
+> @@ -3411,6 +3413,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+>  		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
+>  	if (flags & RWF_APPEND)
+>  		ki->ki_flags |= IOCB_APPEND;
+> +	if (flags & RWF_NOAPPEND)
+> +		ki->ki_flags &= ~IOCB_APPEND;
+>  	return 0;
+>  }
+>  
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 379a612f8f1d..591357d9b3c9 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -299,8 +299,11 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* per-IO O_APPEND */
+>  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+>  
+> +/* per-IO negation of O_APPEND */
+> +#define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
+> +
+>  /* mask of flags supported by the kernel */
+>  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+> -			 RWF_APPEND)
+> +			 RWF_APPEND | RWF_NOAPPEND)
+>  
+>  #endif /* _UAPI_LINUX_FS_H */
