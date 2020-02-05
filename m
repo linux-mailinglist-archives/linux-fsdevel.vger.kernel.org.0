@@ -2,159 +2,323 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FD21530AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 13:27:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5433A153107
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Feb 2020 13:48:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgBEM1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 07:27:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34858 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbgBEM1c (ORCPT
+        id S1727109AbgBEMsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 07:48:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726575AbgBEMsB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 07:27:32 -0500
-Received: by mail-pg1-f195.google.com with SMTP id l24so907393pgk.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 04:27:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ivt1LYO6LYOHcHwPSQmtuArF9ktifjWoUdVKgp/JOoU=;
-        b=pkII8JZWiS3VBXuKr9QvgIzuaR1DSfs575fs65XAT6sz730Yspk2WhzZwtbB9j2geh
-         wg55BkpU9M4lm8ip/eOIuKmJdtpNWZLw9ucJlea/pXzU7fwg1pG9mUAHvASb6Y+xkqMb
-         aaRqxa0OTZ12MI04u7Qhl0bld9b6pRfyqJTh4wKrqQcpVsi7BvuooClH2jdR1UuSCpWW
-         nhvhsf1sxDwebubz+4QZr0pI+D95YO/tmx6U0isTTu87uKoxiikvK7OYeoLW53qtUqHO
-         aFSTwyI+TPAp15fRxj9VGi5A9DFbFFlSz7JE2GCKhtYfrlRgKibFVTTpHQKbl5p7cOAa
-         CWUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ivt1LYO6LYOHcHwPSQmtuArF9ktifjWoUdVKgp/JOoU=;
-        b=Oh7l0fthVBHNZeFGypZMHi50Es97/p0dJ10DajISYjey2azuloYTNxyp0QEOgrissm
-         0GwrNh+Cz+kwgQC+hG4HGHVjnemLz9J6Cn15Jl27s/pOOtT0P27+Ttnqn4LWKQ3jp/nK
-         bbluNLuMAUl2IjcWk+4UeNmLFd66s/W4a4djmNy5MqaRbIkiSrYbQmnBR7ISEqzdT7HI
-         2X/CIqtkBV084E24q3faWiFuB9rmHdYcnandE3A73pHxgn24SrJqGRR4hG2lgCckX042
-         9DjSnfiJ437b4JYI00yvnHYEqtT8elitVaXHO6KQ2SobfV+OSWlFhaRiE/93wM+RNkaJ
-         A8Vw==
-X-Gm-Message-State: APjAAAX2wwIglVG/JG4hxnRFAoMouT0iAXHSysEf9j38eC5HZa7ZQJlg
-        SoY5VTEOFniGR6TcNXbwb3qw1nma
-X-Google-Smtp-Source: APXvYqwWvyeIqBT7t2qhf6AUQaUAKecQmtuqMIa6wJ5J9g2Do0plecn1C5pkE2OgSepnaxDYr0/mfQ==
-X-Received: by 2002:a62:6342:: with SMTP id x63mr36372630pfb.103.1580905651524;
-        Wed, 05 Feb 2020 04:27:31 -0800 (PST)
-Received: from localhost.localdomain ([180.70.143.152])
-        by smtp.gmail.com with ESMTPSA id o16sm27350075pgl.58.2020.02.05.04.27.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 04:27:30 -0800 (PST)
-From:   Taehee Yoo <ap420073@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     ap420073@gmail.com
-Subject: [PATCH] debugfs: Check module state before warning in {full/open}_proxy_open()
-Date:   Wed,  5 Feb 2020 12:27:24 +0000
-Message-Id: <20200205122724.1307-1-ap420073@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 5 Feb 2020 07:48:01 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 015Ci50o005786
+        for <linux-fsdevel@vger.kernel.org>; Wed, 5 Feb 2020 07:47:59 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xyhmknpp5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 07:47:59 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Wed, 5 Feb 2020 12:47:57 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 5 Feb 2020 12:47:53 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 015CkxGq37683528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 5 Feb 2020 12:46:59 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85106A4040;
+        Wed,  5 Feb 2020 12:47:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE9DDA404D;
+        Wed,  5 Feb 2020 12:47:50 +0000 (GMT)
+Received: from [9.199.159.77] (unknown [9.199.159.77])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  5 Feb 2020 12:47:50 +0000 (GMT)
+Subject: Re: [RFCv2 0/4] ext4: bmap & fiemap conversion to use iomap
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, cmaiolino@redhat.com
+References: <cover.1580121790.git.riteshh@linux.ibm.com>
+ <20200130160018.GC3445353@magnolia>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Wed, 5 Feb 2020 18:17:44 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20200130160018.GC3445353@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020512-0012-0000-0000-00000383E81F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020512-0013-0000-0000-000021C05274
+Message-Id: <20200205124750.AE9DDA404D@d06av23.portsmouth.uk.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-05_03:2020-02-04,2020-02-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 spamscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002050102
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the module is being removed, the module state is set to
-MODULE_STATE_GOING. At this point, try_module_get() fails.
-And when {full/open}_proxy_open() is being called,
-it calls try_module_get() to try to hold module reference count.
-If it fails, it warns about the possibility of debugfs file leak.
 
-If {full/open}_proxy_open() is called while the module is being removed,
-it fails to hold the module.
-So, It warns about debugfs file leak. But it is not the debugfs file
-leak case. So, this patch just adds module state checking routine
-in the {full/open}_proxy_open().
 
-Test commands:
-    #SHELL1
-    while :
-    do
-        modprobe netdevsim
-	echo 1 > /sys/bus/netdevsim/new_device
-	modprobe -rv netdevsim
-    done
+On 1/30/20 11:04 PM, Ritesh Harjani wrote:
+> 
+> 
+> On 1/30/20 9:30 PM, Darrick J. Wong wrote:
+>> On Tue, Jan 28, 2020 at 03:48:24PM +0530, Ritesh Harjani wrote:
+>>> Hello All,
+>>>
+>>> Background
+>>> ==========
+>>> There are RFCv2 patches to move ext4 bmap & fiemap calls to use iomap 
+>>> APIs.
+>>> This reduces the users of ext4_get_block API and thus a step towards 
+>>> getting
+>>> rid of buffer_heads from ext4. Also reduces a lot of code by making 
+>>> use of
+>>> existing iomap_ops (except for xattr implementation).
+>>>
+>>> Testing (done on ext4 master branch)
+>>> ========
+>>> 'xfstests -g auto' passes with default mkfs/mount configuration
+>>> (v/s which also pass with vanilla kernel without this patch). Except
+>>> generic/473 which also failes on XFS. This seems to be the test case 
+>>> issue
+>>> since it expects the data in slightly different way as compared to 
+>>> what iomap
+>>> returns.
+>>> Point 2.a below describes more about this.
+>>>
+>>> Observations/Review required
+>>> ============================
+>>> 1. bmap related old v/s new method differences:-
+>>>     a. In case if addr > INT_MAX, it issues a warning and
+>>>        returns 0 as the block no. While earlier it used to return the
+>>>        truncated value with no warning.
+>>
+>> Good...
+>>
+>>>     b. block no. is only returned in case of iomap->type is 
+>>> IOMAP_MAPPED,
+>>>        but not when iomap->type is IOMAP_UNWRITTEN. While with 
+>>> previously
+>>>        we used to get block no. for both of above cases.
+>>
+>> Assuming the only remaining usecase of bmap is to tell old bootloaders
+>> where to find vmlinuz blocks on disk, I don't see much reason to map
+>> unwritten blocks -- there's no data there, and if your bootloader writes
+>> to the filesystem(!) then you can't read whatever was written there
+>> anyway.
+> 
+> Yes, no objection there. Just wanted to get it reviewed.
+> 
+> 
+>>
+>> Uh, can we put this ioctl on the deprecation list, please? :)
+>>
+>>> 2. Fiemap related old v/s new method differences:-
+>>>     a. iomap_fiemap returns the disk extent information in exact
+>>>        correspondence with start of user requested logical offset 
+>>> till the
+>>>        length requested by user. While in previous implementation the
+>>>        returned information used to give the complete extent 
+>>> information if
+>>>        the range requested by user lies in between the extent mapping.
+>>
+>> This is a topic of much disagreement.  The FIEMAP documentation says
+>> that the call must return data for the requested range, but *may* return
+>> a mapping that extends beyond the requested range.
+>>
+>> XFS (and now iomap) only return data for the requested range, whereas
+>> ext4 has (had?) the behavior you describe.  generic/473 was an attempt
+>> to enforce the ext4 behavior across all filesystems, but I put it in my
+>> dead list and never run it.
+>>
+>> So it's a behavioral change, but the new behavior isn't forbidden.
+> 
+> Sure, thanks.
+> 
+>>
+>>>     b. iomap_fiemap adds the FIEMAP_EXTENT_LAST flag also at the last
+>>>        fiemap_extent mapping range requested by the user via fm_length (
+>>>        if that has a valid mapped extent on the disk).
+>>
+>> That sounds like a bug.  _LAST is supposed to be set on the last extent
+>> in the file, not the last record in the queried dataset.
+> 
+> Thought so too, sure will spend some time to try fixing it.
 
-    #SHELL2
-    while :
-    do
-        cat /sys/kernel/debug/netdevsim/netdevsim1/ports/0/ipsec
-    done
+Looked into this. I think below should fix our above reported problem 
+with current iomap code.
+If no objection I will send send PATCHv3 with below fix as the first
+patch in the series.
 
-Splat looks like:
-[  298.766738][T14664] debugfs file owner did not clean up at exit: ipsec
-[  298.766766][T14664] WARNING: CPU: 2 PID: 14664 at fs/debugfs/file.c:312 full_proxy_open+0x10f/0x650
-[  298.768595][T14664] Modules linked in: netdevsim(-) openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv6 n]
-[  298.771343][T14664] CPU: 2 PID: 14664 Comm: cat Tainted: G        W         5.5.0+ #1
-[  298.772373][T14664] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[  298.773545][T14664] RIP: 0010:full_proxy_open+0x10f/0x650
-[  298.774247][T14664] Code: 48 c1 ea 03 80 3c 02 00 0f 85 c1 04 00 00 49 8b 3c 24 e8 e4 b5 78 ff 84 c0 75 2d 4c 89 ee 48
-[  298.776782][T14664] RSP: 0018:ffff88805b7df9b8 EFLAGS: 00010282
-[  298.777583][T14664] RAX: dffffc0000000008 RBX: ffff8880511725c0 RCX: 0000000000000000
-[  298.778610][T14664] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff8880540c5c14
-[  298.779637][T14664] RBP: 0000000000000000 R08: fffffbfff15235ad R09: 0000000000000000
-[  298.780664][T14664] R10: 0000000000000001 R11: 0000000000000000 R12: ffffffffc06b5000
-[  298.781702][T14664] R13: ffff88804c234a88 R14: ffff88804c22dd00 R15: ffffffff8a1b5660
-[  298.782722][T14664] FS:  00007fafa13a8540(0000) GS:ffff88806c800000(0000) knlGS:0000000000000000
-[  298.783845][T14664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  298.784672][T14664] CR2: 00007fafa0e9cd10 CR3: 000000004b286005 CR4: 00000000000606e0
-[  298.785739][T14664] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  298.786769][T14664] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  298.787785][T14664] Call Trace:
-[  298.788237][T14664]  do_dentry_open+0x63c/0xf50
-[  298.788872][T14664]  ? open_proxy_open+0x270/0x270
-[  298.789524][T14664]  ? __x64_sys_fchdir+0x180/0x180
-[  298.790169][T14664]  ? inode_permission+0x65/0x390
-[  298.790832][T14664]  path_openat+0xc45/0x2680
-[  298.791425][T14664]  ? save_stack+0x69/0x80
-[  298.791988][T14664]  ? save_stack+0x19/0x80
-[  298.792544][T14664]  ? path_mountpoint+0x2e0/0x2e0
-[  298.793233][T14664]  ? check_chain_key+0x236/0x5d0
-[  298.793910][T14664]  ? sched_clock_cpu+0x18/0x170
-[  298.794527][T14664]  ? find_held_lock+0x39/0x1d0
-[  298.795153][T14664]  do_filp_open+0x16a/0x260
-[ ... ]
+diff --git a/fs/iomap/fiemap.c b/fs/iomap/fiemap.c
+index bccf305ea9ce..ee53991810d5 100644
+--- a/fs/iomap/fiemap.c
++++ b/fs/iomap/fiemap.c
+@@ -100,7 +100,12 @@ int iomap_fiemap(struct inode *inode, struct 
+fiemap_extent_info *fi,
+         }
 
-Fixes: 9fd4dcece43a ("debugfs: prevent access to possibly dead file_operations at file open")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
----
- fs/debugfs/file.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 634b09d18b77..890903543678 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -175,8 +175,11 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
- 	if (r)
- 		goto out;
- 
--	real_fops = fops_get(real_fops);
--	if (!real_fops) {
-+	if (!fops_get(real_fops)) {
-+		if (real_fops->owner &&
-+		    real_fops->owner->state == MODULE_STATE_GOING)
-+			goto out;
+         if (ctx.prev.type != IOMAP_HOLE) {
+-               ret = iomap_to_fiemap(fi, &ctx.prev, FIEMAP_EXTENT_LAST);
++               u32 flags = 0;
++               loff_t isize = i_size_read(inode);
 +
- 		/* Huh? Module did not clean up after itself at exit? */
- 		WARN(1, "debugfs file owner did not clean up at exit: %pd",
- 			dentry);
-@@ -305,8 +308,11 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 	if (r)
- 		goto out;
- 
--	real_fops = fops_get(real_fops);
--	if (!real_fops) {
-+	if (!fops_get(real_fops)) {
-+		if (real_fops->owner &&
-+		    real_fops->owner->state == MODULE_STATE_GOING)
-+			goto out;
-+
- 		/* Huh? Module did not cleanup after itself at exit? */
- 		WARN(1, "debugfs file owner did not clean up at exit: %pd",
- 			dentry);
--- 
-2.17.1
++               if (ctx.prev.offset + ctx.prev.length >= isize)
++                       flags |= FIEMAP_EXTENT_LAST;
++               ret = iomap_to_fiemap(fi, &ctx.prev, flags);
+                 if (ret < 0)
+                         return ret;
+         }
+
+
+-ritesh
+
+
+> 
+> 
+>>
+>>> But if the user
+>>>        requested for more fm_length which could not be mapped in the 
+>>> last
+>>>        fiemap_extent, then the flag is not set.
+>>
+>> Yes... if there were more extents to map than there was space in the map
+>> array, then _LAST should remain unset to encourage userspace to come
+>> back for the rest of the mappings.
+>>
+>> (Unless maybe I'm misunderstanding here...)
+>>
+>>> e.g. output for above differences 2.a & 2.b
+>>> ===========================================
+>>> create a file with below cmds.
+>>> 1. fallocate -o 0 -l 8K testfile.txt
+>>> 2. xfs_io -c "pwrite 8K 8K" testfile.txt
+>>> 3. check extent mapping:- xfs_io -c "fiemap -v" testfile.txt
+>>> 4. run this binary on with and without these patches:- ./a.out 
+>>> (test_fiemap_diff.c) [4]
+>>>
+>>> o/p of xfs_io -c "fiemap -v"
+>>> ============================================
+>>> With this patch on patched kernel:-
+>>> testfile.txt:
+>>>   EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+>>>     0: [0..15]:         122802736..122802751    16 0x800
+>>>     1: [16..31]:        122687536..122687551    16   0x1
+>>>
+>>> without patch on vanilla kernel (no difference):-
+>>> testfile.txt:
+>>>   EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+>>>     0: [0..15]:         332211376..332211391    16 0x800
+>>>     1: [16..31]:        332722392..332722407    16   0x1
+>>>
+>>>
+>>> o/p of a.out without patch:-
+>>> ================
+>>> riteshh-> ./a.out
+>>> logical: [       0..      15] phys: 332211376..332211391 flags: 0x800 
+>>> tot: 16
+>>> (0) extent flag = 2048
+>>>
+>>> o/p of a.out with patch (both point 2.a & 2.b could be seen)
+>>> =======================
+>>> riteshh-> ./a.out
+>>> logical: [       0..       7] phys: 122802736..122802743 flags: 0x801 
+>>> tot: 8
+>>> (0) extent flag = 2049
+>>>
+>>> FYI - In test_fiemap_diff.c test we had
+>>> a. fm_extent_count = 1
+>>> b. fm_start = 0
+>>> c. fm_length = 4K
+>>> Whereas when we change fm_extent_count = 32, then we don't see any 
+>>> difference.
+>>>
+>>> e.g. output for above difference listed in point 1.b
+>>> ====================================================
+>>>
+>>> o/p without patch (block no returned for unwritten block as well)
+>>> =========Testing IOCTL FIBMAP=========
+>>> File size = 16384, blkcnt = 4, blocksize = 4096
+>>>    0   41526422
+>>>    1   41526423
+>>>    2   41590299
+>>>    3   41590300
+>>>
+>>> o/p with patch (0 returned for unwritten block)
+>>> =========Testing IOCTL FIBMAP=========
+>>> File size = 16384, blkcnt = 4, blocksize = 4096
+>>>    0          0          0
+>>>    1          0          0
+>>>    2   15335942      29953
+>>>    3   15335943      29953
+>>>
+>>>
+>>> Summary:-
+>>> ========
+>>> Due to some of the observational differences to user, listed above,
+>>> requesting to please help with a careful review in moving this to iomap.
+>>> Digging into some older threads, it looks like these differences 
+>>> should be fine,
+>>> since the same tools have been working fine with XFS (which uses 
+>>> iomap based
+>>> implementation) [1]
+>>> Also as Ted suggested in [3]: Fiemap & bmap spec could be made based 
+>>> on the ext4
+>>> implementation. But since all the tools also work with xfs which uses 
+>>> iomap
+>>> based fiemap, so we should be good there.
+>>
+>> <nod> Thanks for the worked example output. :)
+> 
+> Thanks for the review. :)
+> 
+> ritesh
+> 
+> 
+>>
+>> --D
+>>
+>>>
+>>> References of some previous discussions:
+>>> =======================================
+>>> [1]: https://www.spinics.net/lists/linux-fsdevel/msg128370.html
+>>> [2]: https://www.spinics.net/lists/linux-fsdevel/msg127675.html
+>>> [3]: https://www.spinics.net/lists/linux-fsdevel/msg128368.html
+>>> [4]: 
+>>> https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test_fiemap_diff.c 
+>>>
+>>> [RFCv1]: https://www.spinics.net/lists/linux-ext4/msg67077.html
+>>>
+>>>
+>>> Ritesh Harjani (4):
+>>>    ext4: Add IOMAP_F_MERGED for non-extent based mapping
+>>>    ext4: Optimize ext4_ext_precache for 0 depth
+>>>    ext4: Move ext4 bmap to use iomap infrastructure.
+>>>    ext4: Move ext4_fiemap to use iomap infrastructure
+>>>
+>>>   fs/ext4/extents.c | 288 +++++++---------------------------------------
+>>>   fs/ext4/inline.c  |  41 -------
+>>>   fs/ext4/inode.c   |   6 +-
+>>>   3 files changed, 49 insertions(+), 286 deletions(-)
+>>>
+>>> -- 
+>>> 2.21.0
+>>>
 
