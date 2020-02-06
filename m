@@ -2,283 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD68F1540CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 10:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8CC1540DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 10:08:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbgBFJBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 04:01:39 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:34199 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgBFJBj (ORCPT
+        id S1728265AbgBFJIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 04:08:35 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40332 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBFJIe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 04:01:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580979700; x=1612515700;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=jyukHLzx/SqnY96ipPKUJPFOqUXXKjo4PmPngWi2Ufo=;
-  b=gZCPL3NTJA5a+YqtpWu0LnGrSNIePAxD6DmYfDvMed3mHlZEE0Gk3B0T
-   IiyedpR7TH7KO3vlgJgcXZDI5GxvMzYU4HEz6bCQCLlBPrL0sdV1gWJc6
-   gc2hEgE8S2MYFrktkYWwwr3r+Nsa3YN9jWD4yAqMCxleI7esqUupgCztm
-   YLe0087y+EjggX0AEuz7UCwQfjPZ0Ff/hB+zWpB78tCJsZYnj4vxQNgH4
-   IH2Lov90tzl10hkYdtDBfZMJiSeDqQtzWgTUlqRfwhRfst9y0lb7XQxg1
-   z475OLAiI6AjYc0AYHVBA94ARMX/kMWfOYxy5WMeQ7RMSLryyPOCjN9S6
-   Q==;
-IronPort-SDR: USVcpT9LlBY9JrXC+pUNI87jPZQFnqfipfYb+6LO5as0uT1Xb/O4vJzfDQIrKiaW2OaXpf+fvK
- 42SNgG5SZO1LF/zoZoeMOr1U++dsnsj2/jknxhXgOewGOKG4qqKv3UFDKBBktjD9CUSgesWTBn
- u3NmjbWQkNp6H9DMM3WPEABJd9ES38rRc47Q/MpW5eB1+iZtzgzpDkagqPVH9wt3Z2WeBw1mVy
- PWNt2Qjqdm+gLhxD45pxCWOCz68vOZzzFfcwb6fj1vBas/6LJHUhuaJBHiGMM1Z6OktGI5ISuy
- OHc=
-X-IronPort-AV: E=Sophos;i="5.70,409,1574092800"; 
-   d="scan'208";a="230982163"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Feb 2020 17:01:40 +0800
-IronPort-SDR: Zbr3UHb/kX4ZYqbVpXlLSAiIsLjNqTyhpKwnhoyg5w7SI4+fQls6t0APxK3l02GqtLBAqraLTB
- vlNvw3vsJXTZ3yzgMsAkKrv6ndRhlUNi9VH0Hd2XZQcygWC4ac5TyAGYpOF2qcv12PcgOD3r7f
- EUTYatniOVvvn48xNA8J7mEdINQrG4eUk+pePwCHVJ6M365ezbsVs78u/hpqSTD24sDNzOi6cZ
- oSBXoBAp9FRaxBuk6Mj1VxwkZb+Zhi/PXTwC12WONUgal72LcjHcMsHLQvAHZBJbLJWmIBe4kD
- 4fxJtam5N3ZPtrbqWCqQQCoq
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 00:54:37 -0800
-IronPort-SDR: Nnr8gP60QL8Me5dL4F4Z3MMvUbXStUGVcMAyvRG0YOj536Dq+jRSFvDXzwT57KG188SrJz7b0p
- s7vP+TI7tacCglslg+R2miLVkuGesuhQQYdxM3jnAU3IIeilKsM/en+GzbhfVRrppHHiPFDwwI
- 3wMGwntDaM8cBtj8X+bNwMxfMbojnfGnGs1IFXhLAnqiaTpS2gxg7zDFhTrG+uof4AydHZ3qoG
- 8beXMXXSCtTFKe2x4E2nwjp4qQErtOYs/O9Juyzg4lWC0h+XFbPVqyTuts26cRm0w2RNHnGJFd
- IEg=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 06 Feb 2020 01:01:37 -0800
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v2] mm, swap: move inode_lock out of claim_swapfile
-Date:   Thu,  6 Feb 2020 18:01:32 +0900
-Message-Id: <20200206090132.154869-1-naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.25.0
+        Thu, 6 Feb 2020 04:08:34 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i6so4790107otr.7;
+        Thu, 06 Feb 2020 01:08:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R3+HaL0mMa5Ymai0xRUCfU92vYqWTyV3qW0zGR4Dk0o=;
+        b=TcAr818vqjKZVL4/51CtBJBaezmFdcNM0/c0nNfkoBmEIVe5cQpWeJvh+lSTJLmzSr
+         Am/5iDGyVm3CqYWmRYC2/7UsRL8Bdmdjxs7UOQ4JChv5aGbapRU8AibZFFGV3L6n/PGy
+         JefsMgeetAt0r2xTyEmDKzi1x1lu/XpV0I7by/x2PtzDiPMedSHC6bUSKB4+q+n2Gqxw
+         D6pNaEo0pusosLOaJ592PbmzNlftkEiKHV4YK6jCdIz6iUjwsBVCvY05VHXEvGs2eVg8
+         yNYGOKabgwKlM8DuSQGfV81JuDXNDZjUYZrlqBCwQEP91YqHrtGwEC3lCSy/lZ8J+D+q
+         EZ5w==
+X-Gm-Message-State: APjAAAU45icAIBjKj4Y2zhaEv2TaRVq18ZEqaOq/djnkjQmhKyX+kmfU
+        Fu3VQTgqecnSD+FJg6jsN3dYcgdeuFOEdGCQPt5lNhF+
+X-Google-Smtp-Source: APXvYqwvjGuAJuSBAPSwrpyD3ZD5dZ7R9CuSb1K6yOoo54iS8ntKmeXBePPoOsb/IyrEro1R2xz7Xo5/LAalNRVsMNQ=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr29671803ots.250.1580980114141;
+ Thu, 06 Feb 2020 01:08:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <157528159833.22451.14878731055438721716.stgit@devnote2>
+ <157528160980.22451.2034344493364709160.stgit@devnote2> <02b132dd-6f50-cf1d-6cc1-ff6bbbcf79cd@infradead.org>
+ <20191209145009.502ece2e58ffab5e31430a0e@kernel.org> <20191209105403.788f492a@gandalf.local.home>
+In-Reply-To: <20191209105403.788f492a@gandalf.local.home>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Feb 2020 10:08:22 +0100
+Message-ID: <CAMuHMdWx4FmrGaefwkEBMGqCmJUSYxtAfkmFc7HM++fab2U-cw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 01/22] bootconfig: Add Extra Boot Config support
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-claim_swapfile() currently keeps the inode locked when it is successful, or
-the file is already swapfile (with -EBUSY). And, on the other error cases,
-it does not lock the inode.
+Hi Steven,
 
-This inconsistency of the lock state and return value is quite confusing
-and actually causing a bad unlock balance as below in the "bad_swap"
-section of __do_sys_swapon().
+On Mon, Dec 9, 2019 at 4:55 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Mon, 9 Dec 2019 14:50:09 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > On Sun, 8 Dec 2019 11:34:32 -0800
+> > Randy Dunlap <rdunlap@infradead.org> wrote:
+> > > On 12/2/19 2:13 AM, Masami Hiramatsu wrote:
+> > > > diff --git a/init/Kconfig b/init/Kconfig
+> > > > index 67a602ee17f1..13bb3eac804c 100644
+> > > > --- a/init/Kconfig
+> > > > +++ b/init/Kconfig
+> > > > @@ -1235,6 +1235,17 @@ source "usr/Kconfig"
+> > > >
+> > > >  endif
+> > > >
+> > > > +config BOOT_CONFIG
+> > > > + bool "Boot config support"
+> > > > + select LIBXBC
+> > > > + default y
+> > >
+> > > questionable "default y".
+> > > That needs lots of justification.
+> >
+> > OK, I can make it 'n' by default.
+> >
+> > I thought that was OK because most of the memories for the
+> > bootconfig support were released after initialization.
+> > If user doesn't pass the bootconfig, only the code for
+> > /proc/bootconfig remains on runtime memory.
+>
+> As 'n' is usually the default, I will argue this should be 'y'!
+>
+> This is not some new fancy feature, or device that Linus
+> complains about "my X is important!". I will say this X *is* important!
+> This will (I hope) become standard in all kernel configs. One could even
+> argue that there shouldn't even be a config for this at all (forced
+> 'y'). This would hurt more not to have than to have. I would hate to
+> try to load special options only to find out that the kernel was
+> compiled with default configs and this wasn't enabled.
 
-This commit fixes this issue by moving the inode_lock() and IS_SWAPFILE
-check out of claim_swapfile(). The inode is unlocked in
-"bad_swap_unlock_inode" section, so that the inode is ensured to be
-unlocked at "bad_swap". Thus, error handling codes after the locking now
-jumps to "bad_swap_unlock_inode" instead of "bad_swap".
+Let's bite ;-)
 
-    =====================================
-    WARNING: bad unlock balance detected!
-    5.5.0-rc7+ #176 Not tainted
-    -------------------------------------
-    swapon/4294 is trying to release lock (&sb->s_type->i_mutex_key) at:
-    [<ffffffff8173a6eb>] __do_sys_swapon+0x94b/0x3550
-    but there are no more locks to release!
+If one could even argue that there shouldn't even be a config for this
+at all, then why are there two? There's a visible BOOT_CONFIG config,
+and an invisible LIBXBC config.
 
-    other info that might help us debug this:
-    no locks held by swapon/4294.
+Are there other users planned for LIBXBC?
 
-    stack backtrace:
-    CPU: 5 PID: 4294 Comm: swapon Not tainted 5.5.0-rc7-BTRFS-ZNS+ #176
-    Hardware name: ASUS All Series/H87-PRO, BIOS 2102 07/29/2014
-    Call Trace:
-     dump_stack+0xa1/0xea
-     ? __do_sys_swapon+0x94b/0x3550
-     print_unlock_imbalance_bug.cold+0x114/0x123
-     ? __do_sys_swapon+0x94b/0x3550
-     lock_release+0x562/0xed0
-     ? kvfree+0x31/0x40
-     ? lock_downgrade+0x770/0x770
-     ? kvfree+0x31/0x40
-     ? rcu_read_lock_sched_held+0xa1/0xd0
-     ? rcu_read_lock_bh_held+0xb0/0xb0
-     up_write+0x2d/0x490
-     ? kfree+0x293/0x2f0
-     __do_sys_swapon+0x94b/0x3550
-     ? putname+0xb0/0xf0
-     ? kmem_cache_free+0x2e7/0x370
-     ? do_sys_open+0x184/0x3e0
-     ? generic_max_swapfile_size+0x40/0x40
-     ? do_syscall_64+0x27/0x4b0
-     ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
-     ? lockdep_hardirqs_on+0x38c/0x590
-     __x64_sys_swapon+0x54/0x80
-     do_syscall_64+0xa4/0x4b0
-     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    RIP: 0033:0x7f15da0a0dc7
+Thanks!
 
-Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
----
-Changelog:
-- Avoid taking inode lock in claim_swapfile()
-- Change error handling
-  - Add "bad_swap_unlock_inode" section to ensure the inode is unlocked at
-    "bad_swap"
----
- mm/swapfile.c | 41 ++++++++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 21 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index bb3261d45b6a..2c4c349e1101 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2899,10 +2899,6 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
- 		p->bdev = inode->i_sb->s_bdev;
- 	}
- 
--	inode_lock(inode);
--	if (IS_SWAPFILE(inode))
--		return -EBUSY;
--
- 	return 0;
- }
- 
-@@ -3157,36 +3153,41 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	mapping = swap_file->f_mapping;
- 	inode = mapping->host;
- 
--	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
- 	error = claim_swapfile(p, inode);
- 	if (unlikely(error))
- 		goto bad_swap;
- 
-+	inode_lock(inode);
-+	if (IS_SWAPFILE(inode)) {
-+		error = -EBUSY;
-+		goto bad_swap_unlock_inode;
-+	}
-+
- 	/*
- 	 * Read the swap header.
- 	 */
- 	if (!mapping->a_ops->readpage) {
- 		error = -EINVAL;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 	page = read_mapping_page(mapping, 0, swap_file);
- 	if (IS_ERR(page)) {
- 		error = PTR_ERR(page);
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 	swap_header = kmap(page);
- 
- 	maxpages = read_swap_header(p, swap_header, inode);
- 	if (unlikely(!maxpages)) {
- 		error = -EINVAL;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	/* OK, set up the swap map and apply the bad block list */
- 	swap_map = vzalloc(maxpages);
- 	if (!swap_map) {
- 		error = -ENOMEM;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	if (bdi_cap_stable_pages_required(inode_to_bdi(inode)))
-@@ -3211,7 +3212,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 					GFP_KERNEL);
- 		if (!cluster_info) {
- 			error = -ENOMEM;
--			goto bad_swap;
-+			goto bad_swap_unlock_inode;
- 		}
- 
- 		for (ci = 0; ci < nr_cluster; ci++)
-@@ -3220,7 +3221,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		p->percpu_cluster = alloc_percpu(struct percpu_cluster);
- 		if (!p->percpu_cluster) {
- 			error = -ENOMEM;
--			goto bad_swap;
-+			goto bad_swap_unlock_inode;
- 		}
- 		for_each_possible_cpu(cpu) {
- 			struct percpu_cluster *cluster;
-@@ -3234,13 +3235,13 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 
- 	error = swap_cgroup_swapon(p->type, maxpages);
- 	if (error)
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 
- 	nr_extents = setup_swap_map_and_extents(p, swap_header, swap_map,
- 		cluster_info, maxpages, &span);
- 	if (unlikely(nr_extents < 0)) {
- 		error = nr_extents;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 	/* frontswap enabled? set up bit-per-page map for frontswap */
- 	if (IS_ENABLED(CONFIG_FRONTSWAP))
-@@ -3280,7 +3281,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 
- 	error = init_swap_address_space(p->type, maxpages);
- 	if (error)
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 
- 	/*
- 	 * Flush any pending IO and dirty mappings before we start using this
-@@ -3290,7 +3291,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	error = inode_drain_writes(inode);
- 	if (error) {
- 		inode->i_flags &= ~S_SWAPFILE;
--		goto bad_swap;
-+		goto bad_swap_unlock_inode;
- 	}
- 
- 	mutex_lock(&swapon_mutex);
-@@ -3315,6 +3316,8 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 
- 	error = 0;
- 	goto out;
-+bad_swap_unlock_inode:
-+	inode_unlock(inode);
- bad_swap:
- 	free_percpu(p->percpu_cluster);
- 	p->percpu_cluster = NULL;
-@@ -3322,6 +3325,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 		set_blocksize(p->bdev, p->old_block_size);
- 		blkdev_put(p->bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL);
- 	}
-+	inode = NULL;
- 	destroy_swap_extents(p);
- 	swap_cgroup_swapoff(p->type);
- 	spin_lock(&swap_lock);
-@@ -3333,13 +3337,8 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	kvfree(frontswap_map);
- 	if (inced_nr_rotate_swap)
- 		atomic_dec(&nr_rotate_swap);
--	if (swap_file) {
--		if (inode) {
--			inode_unlock(inode);
--			inode = NULL;
--		}
-+	if (swap_file)
- 		filp_close(swap_file, NULL);
--	}
- out:
- 	if (page && !IS_ERR(page)) {
- 		kunmap(page);
+                        Geert
+
 -- 
-2.25.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
