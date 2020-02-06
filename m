@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 012CA1548CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 17:06:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 200B21548CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 17:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgBFQGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 11:06:15 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34378 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbgBFQGO (ORCPT
+        id S1727606AbgBFQIA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 11:08:00 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:34134 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbgBFQH7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 11:06:14 -0500
-Received: by mail-qt1-f193.google.com with SMTP id h12so4895094qtu.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 08:06:14 -0800 (PST)
+        Thu, 6 Feb 2020 11:07:59 -0500
+Received: by mail-qk1-f196.google.com with SMTP id n184so1253366qkn.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 08:07:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TOpDnOmikrBXC5kmc3qaZNmORvSpErQ9QFP+CEPFlhw=;
-        b=b51IzTYfP6gmr6t9CsOMS15u2gSfO4c4qm6Nh6swdEbCGBcxH/g1W0y2ax/4ca95Ik
-         ObPtcQJJhNKANxgzDf8Lpzq4FLPVWfuaBx9VgeChcWFdlbbzcQKs0u55RLBby1yKCP8J
-         46kkUzZK0lGMY36OEqjUPZ1Kovs30r5QAkEYR+fqev/+vdvXqpywi8aLW9TaR5oDJn44
-         Uk1K5TjynT13vdZGwU40DM7aHWOvXr0mI+3h+2yEOF7rp9YJgIoXfmtRNwua4jMYUl8u
-         txe3wHAKPkGqxLod9fxeNj7v3Ah8NSSzjRm502F+rBShSDZb0CQ9Dn5vyF0ZJ5+82f2b
-         bqlw==
+        bh=eq3piDj8jKAFLmxP2KZ9VSOcO8UDniVQrrVahdOHA5Q=;
+        b=ov55h5+BgbIe0D5yCrxIc0pUrt9PvP9NnLsPgG1X3KiEV36O0g4TMH2B4mkgJu1bBE
+         rRbd3uNvlWK9V3M2O4szQ9ZQrCT5XJfZrfy/qYJjJDEmSEBHxH8XFsXIcfA6zBCneHNp
+         RGGePKFxzEtgx7wp3+m8kSAsSaFUVyrXyrzd/reF4NwLWRDBoU4K93yOKbLS3wzcAQdv
+         +U17X57ITnc6BFYl1p5J+EfzZ7cul5l+T0HpI6QtVzKeXQ4kvZ2Z4Nyr5LSIN5wxWY65
+         54qzT3FWbnqtShJ002VfKGuK9S5K+F5iqjORTlAscpMBoie+8/T+LNCFVz/fRCy8nAre
+         INPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TOpDnOmikrBXC5kmc3qaZNmORvSpErQ9QFP+CEPFlhw=;
-        b=JrHVML+0HUxtI+nQrlaPtHIn03/JwPr3uCdDc2yf1QacOiNe7cGNbJm+1vF4c1IC8P
-         PXH1+6RqKCk5LVKxk8JyR/xBsqXAe3Un4FeTSigzEQ7Hun126Q0k2vGS0rqWet9slWGp
-         Ar7lvGaVIRpitp28hO6LC0i5VnjHNAw8jb2hsH60q6fhUEPZqd/Yhb7EKeriA0cSnjRr
-         7lhs0oC7S+IinOCSh7BQmz4pH1wu28TiO5ctx0NNEV+agMMZXiH/R2xbm0Kr+NiBdJFG
-         yf+DpLmWgFv6hEmvjck7BMh8/euga7p97UqvW5Os45vqbyK4rbupOYQKXf1otJJgSKvv
-         /WMw==
-X-Gm-Message-State: APjAAAVyJNiG1uuaJf5Q6OVHotjXYKyccvBuVRb4K2tXJf5ZWFm4XkZm
-        QqP/L7F95LZVojL1EyFauD1A/lelm5c=
-X-Google-Smtp-Source: APXvYqyPfR7kSXIFxPfc4EZu+fntSUP9W0ce4lfp83zqTzhC9yI4rqOWURuVsxXIGkk23C6sPWBrEg==
-X-Received: by 2002:ac8:7607:: with SMTP id t7mr3228493qtq.51.1581005173253;
-        Thu, 06 Feb 2020 08:06:13 -0800 (PST)
+        bh=eq3piDj8jKAFLmxP2KZ9VSOcO8UDniVQrrVahdOHA5Q=;
+        b=F0FgtPqHUfokfRC4YKDp0lY48b/JbW9yYPRNvu9iltfb9HaUScrOIpDzPo+KzxHxrQ
+         /Cv/7rPjXIMVADM8CwB+F7t1I4gwSpULMt3D67BuEkcIR0K70ULsQ76Gsb06ndBy9g3r
+         bn7WECLZykJidpUTL4BmKPlIRJ3lkd4SmRXpvSjs2j05HijrlOBs7a4qiBbgPaGW0P0U
+         yz+lU8Lf9Kkzk7iEMO6KRQuHZCuEm48Rl8KS1tMuVxHhA6kShw9yHgCG6aS4czLteIIJ
+         ky7MRuUMETWRZJ2UVfqojT1Sn/w9T432niQGW0xB9daYiWRyBsJSHzhvrwxGv+dWeSnl
+         kj0Q==
+X-Gm-Message-State: APjAAAU1p3PsHwoLp/cxKtP/yTTLu4yHsOMqhfXzCfrIYRltxS/9kqKP
+        xW2Xag//dcZ+uq5UFmmXE0m8136skZs=
+X-Google-Smtp-Source: APXvYqwLng2wowAydmJ6JgM/foZWVFcunHLc12K6X/dCiTPwu9ONE7pL1fgFhA/d9Gc3WEUM6sPuvg==
+X-Received: by 2002:ae9:f50c:: with SMTP id o12mr3249146qkg.42.1581005278225;
+        Thu, 06 Feb 2020 08:07:58 -0800 (PST)
 Received: from [192.168.1.106] ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id b17sm1821889qtr.36.2020.02.06.08.06.11
+        by smtp.gmail.com with ESMTPSA id d9sm1803939qth.34.2020.02.06.08.07.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Feb 2020 08:06:12 -0800 (PST)
+        Thu, 06 Feb 2020 08:07:57 -0800 (PST)
 Subject: Re: [PATCH 02/20] btrfs: introduce chunk allocation policy
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         David Sterba <dsterba@suse.com>
@@ -58,8 +58,8 @@ Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
 References: <20200206104214.400857-1-naohiro.aota@wdc.com>
  <20200206104214.400857-3-naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <e9a1f1c7-b5ae-dc39-c2a2-aa5bb52bd4ec@toxicpanda.com>
-Date:   Thu, 6 Feb 2020 11:06:11 -0500
+Message-ID: <bf1a4a98-76b6-b570-a068-f082170b1f39@toxicpanda.com>
+Date:   Thu, 6 Feb 2020 11:07:56 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
  Gecko/20100101 Thunderbird/68.4.2
 MIME-Version: 1.0
@@ -74,15 +74,20 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2/6/20 5:41 AM, Naohiro Aota wrote:
 > This commit introduces chuk allocation policy for btrfs. This policy
+                           ^^
+                         chunk
+
 > controls how btrfs allocate a chunk and device extents from devices.
 > 
 > There is no functional change introduced with this commit.
 > 
 > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I'd rather see this right before it's actually used, so I can decide if it's the 
-correct place/approach for this.  Maybe once I'm through the whole series it'll 
-make sense, but right now I can't tell where it gets used and thus can't really 
-say if it's ok or not.  Thanks,
+Of course then I notice my mail client re-ordered your emails and it was 
+actually in the next patch.  You can add
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+to this.  Thanks,
 
 Josef
