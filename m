@@ -2,115 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B70A154573
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 14:51:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C914E1545D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 15:14:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgBFNvK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 08:51:10 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:28380 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbgBFNvK (ORCPT
+        id S1727415AbgBFOOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 09:14:02 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728141AbgBFOOB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 08:51:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1580997070; x=1612533070;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
-  b=KJLGEGsI70/1dPal8aocJujN1ugBkPHzXQ3kNFZkkPrdt9g6jjJU2vOn
-   Rgqfut00GQN3nGVcThdLQDkdkkWtDOR3aqb3mDYkt0ICYP2GPuiQyLinF
-   fzxVXFi2IGcuDsvmqQ+prRiIc3lE6eCzVpCK9dyV1VoKivjCnxD/J6C64
-   ThOGU7fEPozK/5OEsGjlXeORUK9608SMlfUjZ9cHB8wQYsyyMrbjua0CX
-   xFeC9AJIfUhIEJAdSgm6js4N2En2yNTJ3ZBOO7YK6M0sE/vkKcd9FOSpY
-   mPhG/fBaY3y//INg4IgGx1FgJi3dYG7fjgJCPGJDLn0FPILg58TD2PbWT
-   A==;
-IronPort-SDR: akge97sQfVmpmtcHXtT21FN+Hih1E46AMxnVY7GeBVR5md0jpU60dN4nd1SOvbCUAXouDdofxU
- wwOyN5/yNTs0F76eiKCBXOIoUDQIrNLlqRlyDU+0iTwIircU1Uey1litZiFaiIgZIRL7axoXLa
- AssuR2eO8Xte1QdzhAejXzy2T+LqcuaGthahaE1/HVwQJoSa5eoxw2OYV+GwxQOvFEvjPMs166
- hPN+ePR0UOgIha+okAptFoSpQ2kObEaGVoV/mt5aPBKXASoOiBIT9lJ+p4po83APF3LvLcWm3X
- E2g=
-X-IronPort-AV: E=Sophos;i="5.70,409,1574092800"; 
-   d="scan'208";a="129802012"
-Received: from mail-bn8nam12lp2170.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.170])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Feb 2020 21:51:08 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nKHm+3bI3fCTy1aRm6G+SegoLQZi1Zpw4UqbyIO7QoDHXpeTNm3KBScbkrZM6ukQ4lFhm5cGc7j3bZ5d4upSOWM5+cTEjfe6H8aD+/IFjU19SPLcI+Q/LIcWRI3hszFbUh7l+SxWUsiLPbTFxg/uSzZmz6by+GIHANWmdQvm6CcXuapMgpS/rvtuvKYqdNf9W6wPwwSFVKQZaVN83o0B1l6/I1x0UEJMG6wU6e/q0lfQKauPAsNFq10w56HO6b2q4cbmKLTweynmKW7DGs+vDl1kHuiGm0obFmbjJVWX6J1tJ+TS1dqwrLhIhB8XxkCd+j1elKVrRujvpGWqmitc7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=chhG/0qk4szJY6Ra+MpFf9WikdHs6l1oqlWPIxDgFnA50Avt2zJiSOqXZIxvmEQ5DIriz3q4MrHGjGEh/LplChztGx8ooZeWF3vfYlrpYKpzrbowEMmTSKGB7oFaZb6nxuYirNutsviP19qGridwRA1MaT8gCaU/6xJMTpMMSidDAM8OdJpfYePv/yKsECbACYURMsg6PRoISeQ29Fj/P3t5N1ChMOFG1RLvVPvhMELU68b5wR2OlIC2ccW90/zN+3NWaNn/hk5YZPy5efDp+QNHIYx/PpsSyYSOOLYs4Zt7G+FPfYCcAeaifIS1gDfR8KziQC/o11l/hHhs0EN0lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=bvU3Wh2ewD5ddwg7nvgKc69dHZINwPXfxCZHr+Iqkz23xMpoPYCjlJN1TY8ySj3wn1GWiqPGVKkoxRf1AceOsOf9TaPMGykB3KGdodosbwx3wG3thRWbh2jnF3vi2dqwKySHIUAID6D7YiEFN3UmcGaB/NWyE+5TG7WyF9lY0DA=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com (10.167.139.149) by
- SN4PR0401MB3566.namprd04.prod.outlook.com (10.167.129.155) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2686.27; Thu, 6 Feb 2020 13:51:07 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::e5f5:84d2:cabc:da32]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::e5f5:84d2:cabc:da32%5]) with mapi id 15.20.2686.036; Thu, 6 Feb 2020
- 13:51:07 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>
-CC:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 05/20] btrfs: factor out set_parameters()
-Thread-Topic: [PATCH 05/20] btrfs: factor out set_parameters()
-Thread-Index: AQHV3NpoxAVEw0RnH0ifEaKl2JWYyA==
-Date:   Thu, 6 Feb 2020 13:51:07 +0000
-Message-ID: <SN4PR0401MB35985BF74918DE0D8916A5D89B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200206104214.400857-1-naohiro.aota@wdc.com>
- <20200206104214.400857-6-naohiro.aota@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 5d573577-aa84-44d3-a6ba-08d7ab0b9d9e
-x-ms-traffictypediagnostic: SN4PR0401MB3566:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB3566208082C3027E500EAD8F9B1D0@SN4PR0401MB3566.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-forefront-prvs: 0305463112
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(396003)(346002)(376002)(136003)(189003)(199004)(19618925003)(7696005)(71200400001)(2906002)(9686003)(478600001)(55016002)(558084003)(4326008)(186003)(26005)(4270600006)(81156014)(6506007)(8936002)(8676002)(86362001)(110136005)(64756008)(316002)(54906003)(66556008)(76116006)(81166006)(66946007)(91956017)(66476007)(66446008)(52536014)(5660300002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3566;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: QIPMVft6Xza//oZMszsU+FE9bhPflpkA5/js0jDYmW3+i05PkCWNtTOtqgDkJl4EtjtNxqgn2QyVoLxujRlwTXZORoUXSe97s1ds49p672pxE+88EiWT1wShPRf+/8R6+jWtgwyLhhZcWLUWnX8jcV+Z/ShbQPkoDLgzJ2coJcGhFc5MeDm6B1KLy0nwwz86tHrQo8OlyHJNJZp29ScSTpcJtOdTIbw8yq5WB4rKhQeHKz4Q3ZVkWQY7oNI1lgYsLNCAasPzgQIafxVr/m9JZCUbYN/idGzP/0SMX2Hd6lO6atczW6ikLwxchN25lv2KqPh5AVl2M7lAsRRS7DQUxCa8B1sVv0VSt2IL6sjJEmnrELujtD5MmKfUYTr/ZAJuyIGcqdqWQixyJs981PZZAGcTRvwVEaS/MtrCvzJym2VxsW/TN+rQR8LbLyC+gEDY
-x-ms-exchange-antispam-messagedata: FXuTp+3mkVynW7YYW6gupGULArsrC1pw6g9Xx9B51uclU/EaOc7i9w6Qy7tlW9bmmzg6HMqVj5k2udmbZWWHm9RmzLsnP1K1oyE0H8cNJSqsFQTCsJ65bhoboOVTYm42AI8mi8NJrBz2gSWlZTOn3w==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d573577-aa84-44d3-a6ba-08d7ab0b9d9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2020 13:51:07.2545
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OcWjRL6VVWFP75ag5vF1jY9J/63e1B5IDR4zB19QoGZa26Tca+jFW0zumYInaZZsrCudQcT1iVa2GpbBgzG+F18lVvFvLJ+/k+jOmmW5isA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3566
+        Thu, 6 Feb 2020 09:14:01 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016EDdEe060501
+        for <linux-fsdevel@vger.kernel.org>; Thu, 6 Feb 2020 09:14:00 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2xyhn5j8sw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 09:14:00 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 6 Feb 2020 14:13:58 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Feb 2020 14:13:55 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016EDsud61276348
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Feb 2020 14:13:54 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0FE614C040;
+        Thu,  6 Feb 2020 14:13:54 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE1774C052;
+        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.140.59])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Janne Karhunen <janne.karhunen@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+        monty.wiseman@ge.com, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 06 Feb 2020 09:13:52 -0500
+In-Reply-To: <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20020614-0020-0000-0000-000003A799A8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20020614-0021-0000-0000-000021FF691C
+Message-Id: <1580998432.5585.411.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-06_01:2020-02-06,2020-02-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
+ suspectscore=2 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002060108
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,=0A=
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+Hi Janne,
+
+On Fri, 2020-01-10 at 10:48 +0200, Janne Karhunen wrote:
+> On Wed, Jan 8, 2020 at 1:18 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
+> >
+> > Some systems can end up carrying lots of entries in the ima
+> > measurement list. Since every entry is using a bit of kernel
+> > memory, allow the sysadmin to export the measurement list to
+> > the filesystem to free up some memory.
+> 
+> Hopefully this addressed comments from everyone. The flush event can
+> now be triggered by the admin anytime and unique file names can be
+> used for each flush (log.1, log.2, ...) etc, so getting to the correct
+> item should be easy.
+> 
+> While it can now be argued that since this is an admin-driven event,
+> kernel does not need to write the file. However, the intention is to
+> bring out a second patch a bit later that adds a variable to define
+> the max number of entries to be kept in the kernel memory and
+> workqueue based automatic flushing. In those cases the kernel has to
+> be able to write the file without any help from the admin..
+
+The implications of exporting and removing records from the IMA-
+measurement list needs to be considered carefully.  Verifying a TPM
+quote will become dependent on knowing where the measurements are
+stored.  The existing measurement list is stored in kernel memory and,
+barring a kernel memory attack, is protected from modification.
+ Before upstreaming this or a similar patch, there needs to be a
+discussion as to how the measurement list will be protected once is it
+exported to userspace.
+
+This patch now attempts to address two very different scenarios.  The
+first scenario is where userspace is requesting exporting and removing
+of the measurement list records.  The other scenario is the kernel
+exporting and removing of the measurement list records.  Conflating
+these two different use cases might not be the right solution, as we
+originally thought.
+
+The kernel already exports the IMA measurement list to userspace via a
+securityfs file.  From a userspace perspective, missing is the ability
+of removing N number of records.  In this scenario, userspace would be
+responsible for safely storing the measurements (e.g. blockchain).
+ The kernel would only be responsible for limiting permission, perhaps
+based on a capability, before removing records from the measurement
+list. 
+
+In the kernel usecase, somehow the kernel would need to safely export
+the measurement list, or some portion of the measurement list, to a
+file and then delete that portion.  What protects the exported records
+stored in a file from modification?
+
+Instead of exporting the measurement records, one option as suggested
+by Amir Goldstein, would be to use a vfs_tmpfile() to get an anonymous
+file for backing store.  The existing securityfs measurement lists
+would then read from this private copy of the anonymous file.
+
+I've Cc'ed fsdevel for additional comments/suggestions.
+
+thanks,
+
+Mimi
+
