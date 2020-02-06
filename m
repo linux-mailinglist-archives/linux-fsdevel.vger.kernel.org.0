@@ -2,160 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD3C153C33
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 00:59:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97828153C52
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 01:37:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbgBEX6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 18:58:55 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:1731 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgBEX6z (ORCPT
+        id S1727562AbgBFAhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 19:37:53 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46303 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727561AbgBFAhw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 18:58:55 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3b56af0001>; Wed, 05 Feb 2020 15:58:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 05 Feb 2020 15:58:54 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 05 Feb 2020 15:58:54 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
- 2020 23:58:53 +0000
-Subject: Re: [PATCH v4 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20200204234117.2974687-1-jhubbard@nvidia.com>
- <20200204234117.2974687-11-jhubbard@nvidia.com>
- <20200205114325.4e2f5aghsusihpap@box>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <2b0656a2-3402-f376-7440-481124485bde@nvidia.com>
-Date:   Wed, 5 Feb 2020 15:58:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        Wed, 5 Feb 2020 19:37:52 -0500
+Received: by mail-ot1-f68.google.com with SMTP id g64so3837281otb.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 16:37:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9CgZnEXyLY0Syv8bqgt/nY2nliVOx+eludqj9JOuXxQ=;
+        b=pwboQQ6dDYepvw2yHSZ7z5GQ8dklJBoUgx6mY+1GPFCvi6qF7pwQwc1HBoxE94l5uf
+         FrRuw63gYQSxkeL3yQDQ6w7haexXzC6nuTHkR7cM3WV2kJv3Cm7yWLHrKRN5K01Aldul
+         cFm1aR5dBNJdzGk8yRek/jMlS4F3T/nHtX9o7QwHj6Kbyi2SN/oGstf5MIdDjbCg3TRV
+         wgsAqsKwlwyeCYbG9OQRCBR4XKQiIDPJTpRuT8ZRLpv2IJ1nxl/xZ01+KPD9rFacJTbS
+         1acZ0CEKWMpXWzhWtO66EURrfyINvc7RfsZ4/QSiyKI7ixNk6at3DcYSK2pqh3un6DdX
+         Prdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9CgZnEXyLY0Syv8bqgt/nY2nliVOx+eludqj9JOuXxQ=;
+        b=JFIhCuD91onCoRPqNemDp1KOjEfmRi1OChcfEo9CVwMwOCSjW+Y7ibOXyT6uRnBQZW
+         nFmR4xuA7YXFGPhNtPXNIZPO31rln3MTnFe5Buxn+0Z6UZ00Q1rH6vUJu1yxrG/tIjJJ
+         b2eHLqIAYxDIGVb/m41oWDuklQEhGXv/6BQ6foEL2Mvmy8iT4z0/n6zk7ujDc2sab+Fd
+         2UblR3zrvR7Mu7qwxBzXi2kucacqxVBWRRc8raabooxsR3SHgmJOU0h9xi4Lc6cb1bVx
+         0jxA9Bmx1a7ikxfr5vYMcIVkOkNdkhNJKyfwnQbUPI+FCKnRGXjp/pRWIxd/zQSxFVXg
+         3D/A==
+X-Gm-Message-State: APjAAAU9jB6t+WnX2G+wvnA+Mpm2qbVDPCJEYzYQa4An6iGGLxYwh8Yb
+        vsLv19eI+oJA9OgygKLCJyvk+t9QNBTbHFXGQ+ROx7fL
+X-Google-Smtp-Source: APXvYqxt4gAkv1hvtAuccfBn1VDSYiNjQ3JyFMqiBZWssfDAFC+d5vqWE5smrRjpV1xIeHW8XfSCsOK0aAAeNKsk2fM=
+X-Received: by 2002:a9d:1284:: with SMTP id g4mr27696911otg.207.1580949471777;
+ Wed, 05 Feb 2020 16:37:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200205114325.4e2f5aghsusihpap@box>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580947120; bh=eQdMCwCy4bdZgoj0Xg2Rpo0F1Zl0hA5DYDsmhvn66Ys=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=q8siZ3RTxc5+A5vd839fLbpWstbJCB342l+V3JAD86hC7sc5zMybGJEIdeHlaUU3t
-         nt8p/HHnGlgEewmi2wqwV82PDvMFaUnROFOaGq9E5VdAJm/UCuV7cJ32B4j83bSfCa
-         b0qRd+rlKh8rW1cH1wfGJX7k6E4MlDKxO8ghq9VhtIHXcXE1P9K0Vfp6hfaL7BB/yk
-         c+zr+tqiK/XwRrfuETL1mOclWclbyz8VtlwdPzJDt5tePy+r7ECX6WrKoKFwCgffdn
-         tGYMGpuSkou9GRX9fLICp7SCBSrnz4AfS/bFdxbr8zqNaT7QLqEXY/KpjurVchpJA1
-         7sHUH/d9y79qw==
+References: <20200129210337.GA13630@redhat.com> <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
+In-Reply-To: <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 5 Feb 2020 16:37:40 -0800
+Message-ID: <CAPcyv4ittXHkEV4eH_4F5vCfwRLoTTtDqEU1SmCs5DYUdZxBOA@mail.gmail.com>
+Subject: Re: [RFC][PATCH] dax: Do not try to clear poison for partial pages
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/5/20 3:43 AM, Kirill A. Shutemov wrote:
-> On Tue, Feb 04, 2020 at 03:41:15PM -0800, John Hubbard wrote:
->> Now that pages are "DMA-pinned" via pin_user_page*(), and unpinned via
->> unpin_user_pages*(), we need some visibility into whether all of this is
->> working correctly.
->>
->> Add two new fields to /proc/vmstat:
->>
->>     nr_foll_pin_acquired
->>     nr_foll_pin_released
->>
->> These are documented in Documentation/core-api/pin_user_pages.rst.
->> They represent the number of pages (since boot time) that have been
->> pinned ("nr_foll_pin_acquired") and unpinned ("nr_foll_pin_released"),
->> via pin_user_pages*() and unpin_user_pages*().
->>
->> In the absence of long-running DMA or RDMA operations that hold pages
->> pinned, the above two fields will normally be equal to each other.
->>
->> Also: update Documentation/core-api/pin_user_pages.rst, to remove an
->> earlier (now confirmed untrue) claim about a performance problem with
->> /proc/vmstat.
->>
->> Also: updated Documentation/core-api/pin_user_pages.rst to rename the
->> new /proc/vmstat entries, to the names listed here.
->>
->> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> 
-> Please, clarify semantics for huge page. An user may want to know if we
-> count huge page as one pin-acquired or by number of pages.
+On Wed, Feb 5, 2020 at 12:27 PM <jane.chu@oracle.com> wrote:
+>
+> Hello,
+>
+> I haven't seen response to this proposal, unsure if there is a different
+> but related discussion ongoing...
+>
+> I'd like to express my wish: please make it easier for the pmem
+> applications when possible.
+>
+> If kernel does not clear poison when it could legitimately do so,
 
+The only path where this happens today is write() syscalls in dax
+mode, otherwise fallocate(PUNCH_HOLE) is currently the only guaranteed
+way to trigger error clearing from userspace (outside of sending raw
+commands to the device).
 
-OK, I've added this for the next version:
+> applications have to go through lengths to clear poisons.
+> For Cloud pmem applications that have upper bound on error recovery
+> time, not clearing poison while zeroing-out is quite undesirable.
 
+The complicating factor in all of this is the alignment requirement
+for clearing and the inability for native cpu instructions to clear
+errors. On current platforms talking to firmware is required and that
+interface may require 256-byte block clearing. This is why the
+implementation glommed on to clearing errors on block-I/O path writes
+because we at least knew that all of those I/Os were 512-byte aligned.
 
-diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
-index 5776ad1ed5e4..2e939ff10b86 100644
---- a/Documentation/core-api/pin_user_pages.rst
-+++ b/Documentation/core-api/pin_user_pages.rst
-@@ -211,6 +211,33 @@ since the system was booted, via two new /proc/vmstat entries: ::
-     /proc/vmstat/nr_foll_pin_acquired
-     /proc/vmstat/nr_foll_pin_released
- 
-+Under normal conditions, these two values will be equal unless there are any
-+long-term [R]DMA pins in place, or during pin/unpin transitions.
-+
-+* nr_foll_pin_acquired: This is the number of logical pins that have been
-+  acquired since the system was powered on. For huge pages, the head page is
-+  pinned once for each page (head page and each tail page) within the huge page.
-+  This follows the same sort of behavior that get_user_pages() uses for huge
-+  pages: the head page is refcounted once for each tail or head page in the huge
-+  page, when get_user_pages() is applied to a huge page.
-+
-+* nr_foll_pin_released: The number of logical pins that have been released since
-+  the system was powered on. Note that pages are released (unpinned) on a
-+  PAGE_SIZE granularity, even if the original pin was applied to a huge page.
-+  Becaused of the pin count behavior described above in "nr_foll_pin_acquired",
-+  the accounting balances out, so that after doing this::
-+
-+    pin_user_pages(huge_page);
-+    for (each page in huge_page)
-+        unpin_user_page(page);
-+
-+...the following is expected::
-+
-+    nr_foll_pin_released == nr_foll_pin_acquired
-+
-+(...unless it was already out of balance due to a long-term RDMA pin being in
-+place.)
-+
- Other diagnostics
- =================
- 
+This gets better with cpus that support the movdir64b instruction, in
+that case there is still a 64-byte alignment requirement, but there's
+no need to talk to the BIOS and therefore no need to talk to a driver.
 
+So we have this awkward dependency on block-device I/O semantics only
+because it happened to organize i/o in a way that supports error
+clearing.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-> 
-> Otherwise looks good (given Jan concern is addressed).
-> 
+Right now the kernel does not install a pte on faults that land on a
+page with known poison, but only because the error clearing path is so
+convoluted and could only claim that fallocate(PUNCH_HOLE) cleared
+errors because that was guaranteed to send 512-byte aligned zero's
+down the block-I/O path when the fs-blocks got reallocated. In a world
+where native cpu instructions can clear errors the dax write() syscall
+case could be covered (modulo 64-byte alignment), and the kernel could
+just let the page be mapped so that the application could attempt it's
+own fine-grained clearing without calling back into the kernel.
