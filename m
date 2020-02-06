@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34FB1154C8B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 21:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 673A4154CC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 21:13:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbgBFUBO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 15:01:14 -0500
-Received: from mout.web.de ([212.227.17.12]:35751 "EHLO mout.web.de"
+        id S1727866AbgBFUNc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 15:13:32 -0500
+Received: from mout.web.de ([217.72.192.78]:54697 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727703AbgBFUBN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 15:01:13 -0500
+        id S1727526AbgBFUNc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Feb 2020 15:13:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1581018967;
-        bh=sHKBRtQ5MMP2lH0vSAPW5YT6SRR+Pv+IgL7Kc7G1Ewo=;
+        s=dbaedf251592; t=1581019971;
+        bh=YlmzSQw8XEy/MGZ9AFDnUgZH/BufFdifz8Lr2qvwTmM=;
         h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
-        b=Jtajd38xKe6rPo8vletnh/a1BKPBJ0JO73QAgAHtSWlkmdxm+leJd81FaVFfcqxjD
-         LKv9dgaRXTE3JBobkLNhEpxukqAjEuuD5RlztgaoGdiVdxexMrGEFql+sLJ4ITvsJD
-         99RtZy0jtPJS4PlD9OfAWiusGAmEB3m1XhZF5ilI=
+        b=fDZrkgHiBY8/07Wjs9z8kz8H6i8TXE/ftXKXvuyImL5sIszP1xkJVwYGhprlMIZVx
+         RbdVwIxYzlZJxzlMlbqe0omJlQ0/mDNNJNQd+uY/kxxTdTOe6kS2uARk5G471Y7kF/
+         tTQR5pg1xgKJPWTcAghqL669pyEFZtctWtpMFF/0=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
 Received: from [192.168.1.2] ([93.133.144.33]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LxwiW-1jcL3L04G4-015Igw; Thu, 06
- Feb 2020 20:56:07 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LwqFo-1jbDnX2QEy-016Nv9; Thu, 06
+ Feb 2020 21:12:51 +0100
 To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
         linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -31,7 +31,7 @@ Cc:     linux-kernel@vger.kernel.org,
         Johannes Thumshirn <jth@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Naohiro Aota <Naohiro.Aota@wdc.com>
-Subject: Re: [PATCH v12 1/2] fs: New zonefs file system
+Subject: Re: [PATCH v12 2/2] zonefs: Add documentation
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -76,67 +76,52 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <02780281-ddb3-7a2f-b5af-cc317d4adf45@web.de>
-Date:   Thu, 6 Feb 2020 20:56:05 +0100
+Message-ID: <5a6a18ff-ed4a-0404-60f8-3a155ded7a24@web.de>
+Date:   Thu, 6 Feb 2020 21:12:50 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.2
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xktzqL4FDMyeaTEy+oFlihkYsBuy+Ea4Ed64HAB3NiJPxts4Fj3
- kuH3USFWB5DkhIWu+7/e05vcrdtEaVDeaAcXbzzfLuKpuM8KpQfkbqrOH4gfZQstmZzxYsm
- +ki4nFnupmKy9qAJdnQ/X3czcjDy/uQ2zgNVTgzEV+muHsIEEvGuLb5teqJDO4W+0bQPHfY
- onCShYRJSN0hCOgF3BRrg==
+X-Provags-ID: V03:K1:YvFiunu07qcHADG+yot6BuJrBTSc7FPqrAR4vlpCpOGYfkMCJHR
+ YXOZy1sYMiPY0qWHcBaVrLcoL7nGgOKPIbsSCiczV9hK4i2RVFlT0a8aRGY0lkNaB+6idLu
+ PDLG2oEIoRyYYTG5ooRGDosm0bGVTgS3vBWtJEOgzyj345y3XYF89J6YZsu6ay/XyyaU0mC
+ H371UQKhaKn3WAFXXiQ6w==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c7uh7dJU3uE=:iMcluD0RsxPnh5UrdqUA1w
- 8WBCk84kOjiErBkY3ZbV+SEMoAEPjOU7kvw1981cCtBO8pEKlMvSfWxAhEPVdP+4HJKo0oaTw
- l2PReHyUZ0RKFNDGj/OlFoF5PuAvMN9YsJbF90qptuEuHO7X3aeYmS+rrInc8L/RXwQstUOBF
- wslVNDoFOpfOOZPbfW6hW1xS754XvcIx5yDaKaF1bWdNM+zW8pWg0Cgy3/zGsYIYTUe0uMFcG
- EYRO2/W5w4JvP6TQb3EEJqGjyHHu5qdEuiP2OftCzT+bdvBCWNEIEdx7Wl/hpyTi6c0+gGXaI
- 1Bz6pYS8GWskD9c076jnKdLcFW9gNB8pghV3jyAtTD9jWYeeCKB9GYZG8ZBOsLTti8eM3Fu3c
- BxSolysBWmImC1t3Ek4ykNyxCjxewG8y9QwI14lHF57BwHoZuva5JcKEMNuE5gksSIYZWPbWc
- snU/9s7rAPTlz/YxDEy4Vi6WS2RLbBrCr/OQrKvK0oI1Wt3FWI3qh8HNpiIXdhkUoZ/2xo2pR
- l8REgO4IxK2VTwqxr2GWPng22L5c4ANbdNx+RoQ6utUVGgQ7s1IKGU7YRcfGqgz23t/uRqtIg
- HRjFtTuXVQlO24tSA+SpOKskgqa9juseyVQJh7NAeX6zP+KGhWRhCUiYVC/bn/f8Rjhi0qrqf
- 3l9K8P8CyJ7HdzNX32ZbZtDquKBlU/z8WhSlEv60i9C6zVJHpcOrda2C4REoSGe7POID5sfRK
- SJzfZPms4UhwhyWYwSlL4fDdwkiKL9iQUazqhESe/SaVZFpRPbMpAKypQhywwKrsYp8LIK9Tl
- la4Sqj4z4h9y4+qwduP1rRJYg9ZkOVGoH2Uj02ed5RBrJG0DKX1CSq4SYx1kt7GZdEnwwOstO
- JK8xidhA/aXVD2WrCO/PoDT/xZQJp5HDXW6+knivPNWCGJ1/08sp+KiQnqYv/5OdfLhKq5vEY
- faD4eUQAZRxg2rojIwnOC2XOf3g7PrUIsPGa4Eiozb16qtqrf38LWaNzxq4Qsd8WtWglHam1X
- kHCdv4TL7hSB+jk7li+Rj5LlKmYupGoilhJcPMGgZ31e2jSuUT1pWB2Gxmz1F6Zi7NUmPJE/I
- 4qBgvNXSjGvZ+kR9eJuJZKDBs13VhUCOIJN05EKDDS1FvXvN3vdNEep/L4DBh7Kpj0Y1I4yXq
- acIqxjbVCKhH8OtcyPl0gfs6ExYh9TrLey/goBTnqgd5T6p4tUuI7MI0tu35niilhd+lqkSTg
- lvv6eYd9/G7Bzo0tF
+X-UI-Out-Filterresults: notjunk:1;V03:K0:MBmw8p72iS0=:dbDAursYXrROSKN/XMmgIT
+ vVtA20wNb9U7hJ+C8qCoNOKGlAPw2PKJsSJqizz6Q3bTe9lVGt7cCbtyxK1iWkuAKtdSDKbHu
+ mIDhCy6BsyEpAxZ2rND/dWnK+Aw2U1+FiHSdT+WYOLSSVklZWQtbLwdLHlYptpixXfrtUIZcd
+ xzp7A0+FGD5pZj0mbLZCbwUsp/sNAIuPRt9pEYCqz2m01ZFwO9NYvuzlE2AR6qmG76iZ7uJNh
+ 6wh5mcLIK7FYhfs8a9RjHTSljAiPIMZcAVqAXiFXsBM9oHmYw+DZMguLIBH4cfA1yU/YZsRZ0
+ vqumPiuCwwR4PKuVsJnBuRTF/F+uFLAZYoO3Zu1hWry3Dl8Wy8NxMXXAlaPYaGcL/OZT1y842
+ xJd3c4G4d7rDb92V/Tza5RUbvRqwjFnU7FP3h7rUUtS9Iz/RXjsPEBt5hxmZj4IN3M2ECITvy
+ 27SiJ9yc2rtdVktxSFGlgWIP++wlRsLSvaZXd09Xx8rZqTcWH3PpWZZYVzhawbOsvFbh+i2jX
+ 8LfTfCXgMmlVE2f2pmQ3lGjPjmg8ce9h4HAylOGfZ9t7A8mXpBHC0N0mzNqIj5ftcKgtvaNGe
+ Wz02JjVEQdCQWOfLhYDJLy7Y/JxCV/8PbRzI//hWyYweNAHCgTv0VxIHX7RGx3uld6MVL2u91
+ ekap9no4StmMWyUZK3s70/GNWn9hDbuwf6PgveD5NS2LWdN1HHPTHHa44BzMvvcQpC/aBv0Vq
+ pQZamYX2OrgNjxJU81JDMrF+HRSTTcHj3Qi5FXH40vaHZl0JQK5NBa6d076iPJ56UlCs1ZPQB
+ eTbusM6ZJYJwRVfMoTyJ9uYji8ymF/LMoT3Akuz0Ia2sR2cDl32ZK4EpzWFJCmRccI9Ba9iBJ
+ 7eJ9LnF6+4JQysIgQO+PmU17slEl3p++oU0TGKMrLsYLcLAHEFhYd7Y1Rlows7z8/s7N3isAH
+ CczJY6w36zYCXdDKxiDDpriCmGzh7ReLqxxGTMkC36EohBi/i7GJCvzJ2uRk4jg4XABVkRlwB
+ ALjXcdG1heS+vFwYgP/x90ZspcpEp+XlX1R6BCNck1lnW99eoCOCNTY0cOsvdH80hiz7f87le
+ uYHUBAZhPQP6+GaIMOmeniRZ5iShuaFI62f1WPSviZcS6a4eA/yyeZ5z8ApGpMA1lifQHf3cp
+ cloKZ9ljc08OrqXoUh08oHEj+1WnQp8Wkrnev8xNPXiVZkj97cnMsgy4dkwhU0VSFbUTjmkNP
+ zm/O0HaST1ffr6U+c
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+=E2=80=A6
+> +++ b/Documentation/filesystems/zonefs.txt
+=E2=80=A6
 > zonefs is a very simple file system =E2=80=A6
 
 How do you think about to be consistent with the capitalisation
-at the beginning of such sentences?
+at the beginning of such sentences (also in the software documentation)?
 https://lore.kernel.org/linux-fsdevel/20200206052631.111586-1-damien.lemoa=
 l@wdc.com/
-
-
-=E2=80=A6
-> +++ b/fs/zonefs/super.c
-=E2=80=A6
-> +static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
-> +				enum zonefs_ztype type)
-> +{
-=E2=80=A6
-> +	if (type =3D=3D ZONEFS_ZTYPE_CNV)
-> +		zgroup_name =3D "cnv";
-> +	else
-> +		zgroup_name =3D "seq";
-
-I find the following code variant more succinct.
-
-+	zgroup_name =3D (type =3D=3D ZONEFS_ZTYPE_CNV) ? "cnv" : "seq";
-
 
 Regards,
 Markus
