@@ -2,67 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A7EA1543CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 13:12:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 730921543D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 13:14:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbgBFMMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 07:12:49 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33092 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbgBFMMt (ORCPT
+        id S1727756AbgBFMO4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 07:14:56 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33004 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbgBFMO4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 07:12:49 -0500
-Received: by mail-io1-f66.google.com with SMTP id z8so6065496ioh.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 04:12:47 -0800 (PST)
+        Thu, 6 Feb 2020 07:14:56 -0500
+Received: by mail-il1-f195.google.com with SMTP id s18so4889718iln.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 04:14:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bdjmz8xQ4W39FfZGura6JJv19gcFPdnlpa8vdTyKdqE=;
-        b=HkomzyR9nZYhbivVmzCjI21V8iFL5CpopwIxdrbFUmGi/kF9IJMdLulLRCVTFFyEfO
-         3yNObwc2yDxl3hEcuGt4ehQ7V579gT9JmmzVHuYdlDY0XJQzt4AbcDGknrgukozV+mEH
-         cwl4RbOY2eHXadezJ0EMYi68I97YnnNXZdC7o=
+        bh=OdIwU+LBgb1mL3eWiBfdffn/xin9JFWGFwQp7up5cSI=;
+        b=XIWZnYR6J1zwp5bcot+rk0yXn1tsv6AnWRfIHHEBMSovpvawwbIfRBQtq3SL7nn90h
+         f03PxjQYN+ebzlrP3uzVKeP1q/1VO5/3YRkb+C2dgTpFPvkUxP8omOLulMEo6z4eAWl5
+         Ow9lgphO0cai9MA0f0DWistDqp8wvJCUnPRCk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bdjmz8xQ4W39FfZGura6JJv19gcFPdnlpa8vdTyKdqE=;
-        b=tbqLM574LY09MLE345BssW9rfZ2KJ+PqZw5ACQuNtuZvpbEm4MavQVDyvcJapWBGDq
-         mMvKSmfocNU/lcUT1e9lgzS7pSj/T+nyCUr4seN8rhlrLnyhBBcMbMgS8UFziKrMGg84
-         4rNzKzuHrhjnw5aMKynvPBK3ALyjgPvRQri+jXRwe9scBrWL/t2ALp+oFyW1jOHp+B0v
-         +XoRr59eUfaaKBiOAEQOr0Cl5IorBHniYgMgNY0dG44lCjAFww/0fotUM5BgZVpJnWY4
-         W5UElLrcDEurTtBcUo1YhpDuoFEW7iX+4AzgpG+VTzoI3o80HhyrYwen7AxMOxNH0oN/
-         wlJw==
-X-Gm-Message-State: APjAAAWG2OKkajvn86szPsoud/Pg0gflryE62Ia5CBsBirWmIuXIj6aS
-        aDh6HA0b07+KLG0riU2t9pwQ2UMfEg5/Gimw61J3Fg==
-X-Google-Smtp-Source: APXvYqyWo36JxRvwnwbq5WW32UFRhV+g6FJFCfS8osUpExOeYOY8dcPjRz37JMn4p0nqnnGKM6IkdT6k5oi2buaakKc=
-X-Received: by 2002:a02:6a10:: with SMTP id l16mr33238581jac.77.1580991167546;
- Thu, 06 Feb 2020 04:12:47 -0800 (PST)
+        bh=OdIwU+LBgb1mL3eWiBfdffn/xin9JFWGFwQp7up5cSI=;
+        b=oMZgns7t0F4CjUMzdjMU0VVrn9rZYipLf+NulzzC6T331MRNHB/uhk7D+T68BqJ+v8
+         DD9S3PtMwKyLOIw77q00wPOfLAEFZYQr9Jq5PjBldlgOdxCfAyDVbiHoAHGp06LjmkJH
+         Y1oursf6qFyOgX6gTmFG0sZpsnYg36t+H+KSz2xAPCkgRH23R4q+qIyyDcUZ9PV3aZEW
+         wJnxlbbIhvxrTSU+VME1lz6dc7LnXEFIWNxzY1uFyDkFTXdGzvVK6g3gxQuN/mObUQBo
+         l0CQVut+RCLCyRQBSZJpz+Qea1Y093HV2NwqK30M69NpSr+eDrolyrMiLJt0JgdQzH5D
+         CFqQ==
+X-Gm-Message-State: APjAAAW+sYZsb6fGQ64ElRhdY+QILxAcry4z6MgORlWaQcsu6NObpNJX
+        O/BFzMVilrEwyJeTjzJyJ2D2cxyx0oEn6uTOm0m4Ng==
+X-Google-Smtp-Source: APXvYqxE+BA6Zk65CebUGTDzrMwVNsdAiSl7quXMuQBkl3kHmT6tUoxfD8ik2WVjAAhXaS6b6oKhzg2pzJQig6S43eg=
+X-Received: by 2002:a92:c0c9:: with SMTP id t9mr3576959ilf.174.1580991295906;
+ Thu, 06 Feb 2020 04:14:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20200205131546.GA14544@redhat.com>
-In-Reply-To: <20200205131546.GA14544@redhat.com>
+References: <20200203073652.12067-1-ice_yangxiao@163.com> <CAJfpegsVjca2xGV=9xwE75a5NRSYqLpDu9x_q9CeDZ1vt-GyyQ@mail.gmail.com>
+In-Reply-To: <CAJfpegsVjca2xGV=9xwE75a5NRSYqLpDu9x_q9CeDZ1vt-GyyQ@mail.gmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 6 Feb 2020 13:12:36 +0100
-Message-ID: <CAJfpegufhOneQqGRhoXHXau7Pz7H9k4WkkZwdSbDTM8_L5t6dg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Support RENAME_WHITEOUT flag
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 6 Feb 2020 13:14:44 +0100
+Message-ID: <CAJfpegsPfurF2fB+XgSjr-CnBNcjWiqYCB6bFwP8VKNp3sUChA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Don't make buffered read forward overflow value to
+ a userspace process
+To:     Xiao Yang <ice_yangxiao@163.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 5, 2020 at 2:15 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Wed, Feb 5, 2020 at 3:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> Allow fuse to pass RENAME_WHITEOUT to fuse server. Overlayfs on top of
-> virtiofs uses RENAME_WHITEOUT.
+> On Mon, Feb 3, 2020 at 8:37 AM Xiao Yang <ice_yangxiao@163.com> wrote:
+> >
+> > Buffered read in fuse normally goes via:
+> > -> generic_file_buffered_read()
+> >   ------------------------------
+> >   -> fuse_readpages()
+> >     -> fuse_send_readpages()
+> >   or
+> >   -> fuse_readpage() [if fuse_readpages() fails to get page]
+> >     -> fuse_do_readpage()
+> >   ------------------------------
+> >       -> fuse_simple_request()
+> >
+> > Buffered read changes original offset to page-aligned length by left-shift
+> > and extends original count to be multiples of PAGE_SIZE and then fuse
+> > forwards these new parameters to a userspace process, so it is possible
+> > for the resulting offset(e.g page-aligned offset + extended count) to
+> > exceed the whole file size(even the max value of off_t) when the userspace
+> > process does read with new parameters.
+> >
+> > xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
+> > because it triggers this issue.  See the following explanation:
+> > PAGE_SIZE: 4096, file size: 2^63 - 1
+> > Original: offset: 2^63 - 2, count: 1
+> > Changed by buffered read: offset: 2^63 - 4096, count: 4096
+> > New offset + new count exceeds the file size as well as LLONG_MAX
 >
-> Without this patch renaming a directory in overlayfs (dir is on lower) fails
-> with -EINVAL. With this patch it works.
+> Thanks for the report and analysis.
 >
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> However this patch may corrupt the cache if i_size changes between
+> calls to fuse_page_length().  (e.g. first page length set to 33;
+> second page length to 45; then 33-4095 will be zeroed and 4096-4140
+> will be filled from offset 33-77).  This will be mitigated by the
+> pages being invalidated when i_size changes
+> (fuse_change_attributes()).  Filling the pages with wrong data is not
+> a good idea regardless.
+>
+> I think the best approach is first to just fix the xfstest reported
+> bug by clamping the end offset to LLONG_MAX.  That's a simple patch,
+> independent of i_size, and hence trivial to verify and hard to mess
+> up.
 
-Thanks, applied.
+Applied a fix and pushed to:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
+
+Thanks,
 Miklos
