@@ -2,88 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1609153EE8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 07:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3943E153F53
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 08:41:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgBFGyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 01:54:33 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51180 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbgBFGyd (ORCPT
+        id S1727923AbgBFHlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 02:41:44 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50810 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbgBFHlo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 01:54:33 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izb3P-0089QE-Ua; Thu, 06 Feb 2020 06:54:24 +0000
-Date:   Thu, 6 Feb 2020 06:54:23 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Namjae Jeon' <linkinjeon@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, sj1557.seo@samsung.com,
-        pali.rohar@gmail.com, arnd@arndb.de,
-        'Christoph Hellwig' <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] exfat: update file system parameter handling
-Message-ID: <20200206065423.GZ23230@ZenIV.linux.org.uk>
-References: <297144.1580786668@turing-police>
- <CGME20200204060659epcas1p1968fda93ab3a2cbbdb812b33c12d8a55@epcas1p1.samsung.com>
- <20200204060654.GB31675@lst.de>
- <003701d5db27$d3cd1ce0$7b6756a0$@samsung.com>
- <252365.1580963202@turing-police>
+        Thu, 6 Feb 2020 02:41:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=v4sgkrFRRT25twWgnublfu8qExfh0axFqZunM0WK1gU=; b=VgB0OvYzeVchVCoUP2+LkP98Af
+        3gMHK/5aS3eJ9KoukvYbk0b+nJBmaQL0QEgbGs+sO1cvP4oI5Ri9bKwsrJ6vf+hBo3LPHbxWxAvu2
+        gRH39qOT2jLoKfq07rUO1RbeqRLzlAtRH1fV0dNtb7yohuHMpjKTSHehAF4a0oATh8lBJBRzYPKPW
+        qeFSYYoXUha5yEWdNry31aDBGq2gXAf/nsjqK4HIRB3kY8KGGdHNaMK4+yKInYQhJlUzmxJ9w2eTJ
+        Olrj/7qfs0xImdjcLa68RWZrnWg2DXT60LDktCtjG8ENas/72pvNyvWuzG3B33T7nHx+E48YuJmry
+        jZTSCkPQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izbnC-0001q3-Tg; Thu, 06 Feb 2020 07:41:42 +0000
+Date:   Wed, 5 Feb 2020 23:41:42 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        device-mapper development <dm-devel@redhat.com>
+Subject: Re: [PATCH 1/5] dax, pmem: Add a dax operation zero_page_range
+Message-ID: <20200206074142.GB28365@infradead.org>
+References: <20200203200029.4592-1-vgoyal@redhat.com>
+ <20200203200029.4592-2-vgoyal@redhat.com>
+ <20200205183050.GA26711@infradead.org>
+ <20200205200259.GE14544@redhat.com>
+ <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <252365.1580963202@turing-police>
+In-Reply-To: <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 11:26:42PM -0500, Valdis Klētnieks wrote:
-> On Tue, 04 Feb 2020 15:53:38 +0900, "Namjae Jeon" said:
-> > > > Al Viro recently reworked the way file system parameters are handled
-> > > > Update super.c to work with it in linux-next 20200203.
+On Wed, Feb 05, 2020 at 04:40:44PM -0800, Dan Williams wrote:
+> > I don't have any reason not to pass phys_addr_t. If that sounds better,
+> > will make changes.
 > 
-> > Acked-by: Namjae Jeon <namjae.jeon@samsung.com>
-> >
-> > If I need to make v14 patch series for this, Let me know it.
+> The problem is device-mapper. That wants to use offset to route
+> through the map to the leaf device. If it weren't for the firmware
+> communication requirement you could do:
 > 
-> Hmm... That's a process/git question that somebody else (probably Al Viro) will
-> have to answer.
+> dax_direct_access(...)
+> generic_dax_zero_page_range(...)
 > 
-> fs/exfat/super.c won't compile on next-20200203 or later without the patch, and
-> as a practical matter the version that finally goes into the main tree will need the patch.
-> 
-> On the one hand, the proper way to track the history of that patch would be to
-> cherry-pick it into the proper spot in your patch series, right after the
-> commit that adds super.c.  Then the git history reflects what code came from
-> where.
-> 
-> On the other hand, it leaves a really small window where a git bisect can land
-> exactly on the commit that adds the unpatched version of super.c and fail to
-> buiild.  If all the Signed-off-by's were from one person, the obvious answer is
-> to fold the fix into the commit that adds super.c - but that loses the git
-> history.
-> 
-> So I'm going to dodge the question by saying "What would Al Viro do?" :)
+> ...but as long as the firmware error clearing path is required I think
+> we need to do pass the pgoff through the interface and do the pgoff to
+> virt / phys translation inside the ops handler.
 
-	The situation with #work.fs_parse is simple: I'm waiting for NFS series
-to get in (git://git.linux-nfs.org/projects/anna/linux-nfs.git, that is).
- As soon as it happens, I'm sending #work.fs_parse + merge with nfs stuff +
-fixups for said nfs stuff (as in
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?id=c354ed1)
-to Linus.  In case Anna decides to skip this cycle (and I've seen nothing that
-might indicates that), I will just send #work.fs_parse as-is.
-
-	I *can* rebase #work.fs_parse on top of NFS series (and vboxsf, and
-exfat, etc.) and send it to Linus right before -rc1, with obviously identical
-final state.  That would avoid all issues with bisect hazards, but Linus is
-usually unhappy about rebases.  And bisect hazard window is narrow...
-
-	Again, I've no problem with such rebase (hell, with additional
-branch ending in the same tree as #merge.nfs-fs_parse, verifiable by
-simple git diff - compare vfs.git merge.nfs-fs_parse.0 and
-merge.nfs-fs_parse.1, the latter being a rebase on top of #nfs-next).
-Linus, up to you...
+Maybe phys_addr_t was the wrong type - but why do we split the offset
+into the block device argument into a pgoff and offset into page instead
+of a single 64-bit value?
