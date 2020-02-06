@@ -2,122 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14AFB15483D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 16:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7897615484D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 16:43:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgBFPke (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 10:40:34 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:35208 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbgBFPke (ORCPT
+        id S1727457AbgBFPnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 10:43:14 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:65006 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbgBFPnN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:40:34 -0500
-Received: by mail-il1-f194.google.com with SMTP id g12so5473205ild.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 07:40:32 -0800 (PST)
+        Thu, 6 Feb 2020 10:43:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581003793; x=1612539793;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=ilsFRuSBIclhWGUN9rDbszXW5Ye8u2qGQBA7Vq3tznc=;
+  b=fe4AEg/1fAOETHoAHZI2N468Z5QEtzBI7luOQtoXeme4QSZaWtFOJxw1
+   8DoAtTBqKqtn3XwMrUD5qykcpqXQ/7JmAzU9yS1R2KeE4VDC+2EiJoaPC
+   x0yrt9g/hlAx/QxriIA8wx0rD55uRfG0dYT6MKRtueM+KEN6Qu59gk3DS
+   Xr8BQBG5p47PV9L126ZlBL/9Nnq6ZzPKjnAq/THGLfFdMO4PUVMTSXV9e
+   hxBsiHODX4pADL6wd6xkPWIbLoqZcxqucRdAvpegnDNDVCd+du/zjxaO0
+   RHYgvUxrMkbZwOcFdM7eoeK6D4E0BsmpgJZlWdikIwJzjIkiLHrwlvB+O
+   Q==;
+IronPort-SDR: T2HgrStMtn913HJQIfGeWg/uWzunzyXfrNH+8tow92rbuJhr/fVhLjhg9OioAWwsvJBtMoJgAg
+ nuhCkUkxX1/YRmfzkZqIkVthyNKwfNCiRKWmmMqEexGS+YNlbMTSdcfEzuTcShgq5H4DRVRCh/
+ nd7IGPrHNPnNwnZURdbPM3FsdrEoCfRWhjavQT2PIOKzdK/vDHRVt6pXEfhwKi25rE0nP+MU39
+ 8M22jPyYJCl98urFXAfhFfTV4eJgEvhEK8kct1/dBU0VPcOhqZwZNAkHM0AE6po/rjBnzURZd1
+ cGc=
+X-IronPort-AV: E=Sophos;i="5.70,410,1574092800"; 
+   d="scan'208";a="133613193"
+Received: from mail-mw2nam12lp2045.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.45])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Feb 2020 23:43:12 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gxOyW0H3g3wN7w0jKVcS+9Xn/o+OL7GoluWdkl5uUQUGj8//vJbfcLHxeNOGojtuUmAkFTQypehoTJMDtcuGaKQYcHZgQzgfKPsI/NYVb+oexTSZBdDRagAIjDaAri36bXA0XaBkPHA0B93JBeaiSGOXqs/5DCV+LZWdJC0VECKKoUuShYFZbvr9jaNuhXPCfs3zU1p7W/aBoXcD6CNywNdVpN4YOH8lCn2qR2FW7lFhB07VThO/yerhkxuOzFI+e7l9ld9iThmIt28yCUIFnLNhH2Cs1pru1d0AWP1DW7hKpnu2vevpCI+C0Tna8pwpfezatCTz2ZS1DoYXts9F8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tIVAhN7u20P2fIEeQkul9Q6+u+xeZXSMPYZ8/0Rb23k=;
+ b=Xyk0OWzQER9liE4vsRZOFPwmQjPw/KvwJqJDSgolbtxPsAKuVDqSdIKlhVmPihzZVPN4nChfDSPbZ8F4CK7LgTyQXG09z9yTdzgo1hH8dxFlTi8CKzChlL9w452esPLCitEOv04EgAFfI8ADns4zM1qLGJJjfy67y+RwG95Vb+oYF3xEDF8TVYfx091fRhTWNAYIaPT3383gUJVGV6w5NnNB0z0QJX3yBjOxxUfU8QyLy9zIsJSIqRRUjtJHM8EGNffvXJjOdnZMTXQO//rVJarBs2OIqAWOknK7wQpBThO6N8engAO9ZcGwZncK2GYeyaWaX0tsyIjFGjCkx6Gc0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O2zmteoxGT1UC7Gb/8cgIPPD9Xtd/vq0NDvlaR9kX1k=;
-        b=MoOVIog/vL2wou+pGWJ/S/xIA+emFGQjRJBab9z6LLgzThCAVSJstxOU6tQ8a3LqPr
-         QY/fjHuaqRubX3PtpuOpro8M4LhEJ5einO9FC+DcqJrR1f+RWsb+M8fi0Xt1pX15eCZ6
-         qGEhqi5/pe3DLRCQT5ShVkxKm0NC7C/7iQ+8U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O2zmteoxGT1UC7Gb/8cgIPPD9Xtd/vq0NDvlaR9kX1k=;
-        b=Oa4SDp1S4Sew+xx5GUHUlY8GgHZS28W6wnA9yiljtv5VNZH86ariV8KZwr2NcXLjIU
-         lLFxowPd8wpc4tpkHSRQ44DRSwJKslIuIrCCsIRNKWlgVVEA981now9JVFelvubooT2N
-         nlUOzhacN0wmnRAgIOoSSPS8DI9xwMvp5D46YeH9TSa6GZykH5VUw7qH8yB5JSaV8dAA
-         F6G4qj+AoyUqi7B2G4HHb6qexYBjqfEtYR3MzVywNCEWexp27b3PGc32f+VapLaET0LZ
-         ergbr3GL9qzP3Ghf8JW6iBqIdVW+8ouziifl4nO5fWhZrUo4pdnsI1FfCSwGa9IzD9eM
-         wNCA==
-X-Gm-Message-State: APjAAAU4C65jYIvTw9frQ4f2F7JuTJ6qNy3wWxBLBliz3m7xWT7VqHPf
-        DSGjmhuVQIl0cLncJ0xS8gWKjkrGkvm71n9b+6vKYw==
-X-Google-Smtp-Source: APXvYqyegvjHYD5bcMo0EkF9MtUYgm33NlQQH/TIpj/xZLHK6r7r/6SLqQVZDhoc45MyWb5gcmIgt5f1KPOsgT5axiM=
-X-Received: by 2002:a92:89c2:: with SMTP id w63mr4436819ilk.252.1581003632438;
- Thu, 06 Feb 2020 07:40:32 -0800 (PST)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tIVAhN7u20P2fIEeQkul9Q6+u+xeZXSMPYZ8/0Rb23k=;
+ b=UQ1uZks78GIK+KC7HEWsGQCnqShwF9YHeUuGXGq4/B4Y2QRDmz7v+6AaDV13cxbkdw+BMXMSoP3KWRxZP4dkkRITRryztPxChn1qWvUIbglEH5OQ7JelFGLBurvhgbjuzhbnrfQo6R2Zltr38G/MFZWU8vNxKEC99wN/+Kj4qwA=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com (10.167.139.149) by
+ SN4PR0401MB3631.namprd04.prod.outlook.com (10.167.141.153) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.27; Thu, 6 Feb 2020 15:43:10 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32%5]) with mapi id 15.20.2686.036; Thu, 6 Feb 2020
+ 15:43:10 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>
+CC:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 06/20] btrfs: factor out gather_device_info()
+Thread-Topic: [PATCH 06/20] btrfs: factor out gather_device_info()
+Thread-Index: AQHV3NprfbSNZ8/YvUyBGXFoTfjQug==
+Date:   Thu, 6 Feb 2020 15:43:10 +0000
+Message-ID: <SN4PR0401MB3598D4A69FB9C890F8C25D999B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200206104214.400857-1-naohiro.aota@wdc.com>
+ <20200206104214.400857-7-naohiro.aota@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 5a916a2f-b52e-4e35-0090-08d7ab1b4523
+x-ms-traffictypediagnostic: SN4PR0401MB3631:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN4PR0401MB3631203E366E263629A17FFD9B1D0@SN4PR0401MB3631.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0305463112
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(366004)(396003)(39860400002)(136003)(346002)(199004)(189003)(55016002)(186003)(478600001)(2906002)(71200400001)(91956017)(86362001)(76116006)(8676002)(7696005)(53546011)(4326008)(6506007)(9686003)(26005)(558084003)(110136005)(81166006)(81156014)(5660300002)(8936002)(54906003)(33656002)(316002)(52536014)(66556008)(66476007)(66446008)(66946007)(64756008);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3631;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2rzY+uVfS109gHqpCVBLZ+Y6RkqrP7BN3p3lYuKM4BEa8T4/ixAxCs82Ul7jnFgCrZLpKn9tX2a+CxlXi4w+r107i2r2S+SAGZ7Ij699sdtO12pY7TAwKFPgOAsJKHMJ7GdrXtFrxO0HGWFvvajN71Th2DLgOLGo8zMTbzVr+0zBUu58V404ATTRnQgeu515SvpfVEmioahULZP+C4IXtcjQC+Sm9M05YhF0Z2VyNDa5j57gll2vqD/bY2aOAOEcWzDIOUIk4X/EGSPiFISRajLBCwGN9j3LRcqORfYdsqcFORY0iiad2EmCc/+GC8G5IGczUGFTuqEhk/jzGBpK/keCwOoIE1ZIv0+JxXG5wijVWfMHlCoT6davbRsC6A5pu7mXQSzGxHDJozbmFTq/2/a5Rlq1JYdGTjco9e++8j6hvBq8ndBFjj9H8ATy3Zve
+x-ms-exchange-antispam-messagedata: 1T5p+b3XGlD92QuoUAjvvbAGrTKjrqp6q+qGrDWTguuGrL+i+lVGwgJqWZ3/9057Zl5jWQF0PKXn1MYtBcrwUd9EjKXQ/tl4O8HhP/Vts38Lci1s1dMEiWlxKYW6PrT+1CDsd5nRfYx3+Ovx/H0SvA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20200203073652.12067-1-ice_yangxiao@163.com> <CAJfpegsVjca2xGV=9xwE75a5NRSYqLpDu9x_q9CeDZ1vt-GyyQ@mail.gmail.com>
- <CAJfpegsPfurF2fB+XgSjr-CnBNcjWiqYCB6bFwP8VKNp3sUChA@mail.gmail.com> <bd8402d6-6d90-c659-6dc4-ac890af900a6@163.com>
-In-Reply-To: <bd8402d6-6d90-c659-6dc4-ac890af900a6@163.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 6 Feb 2020 16:40:21 +0100
-Message-ID: <CAJfpegvXJ21OzMP2eU0bT4XEb40aAqfkrZdk6AQk5bEWmevOmQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Don't make buffered read forward overflow value to
- a userspace process
-To:     Xiao Yang <ice_yangxiao@163.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a916a2f-b52e-4e35-0090-08d7ab1b4523
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2020 15:43:10.7543
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oXhxeHAgrgl2rsJjNw+tCi9lwvUPDkLJVeNBxVNMqgGZj+PNUa/2NSK8hW361pASLw/P0jHAQ1xazk8FVrawUKbcM2aVNYAcS5XQCXoptjk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3631
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 6, 2020 at 1:33 PM Xiao Yang <ice_yangxiao@163.com> wrote:
->
-> On 2/6/20 8:14 PM, Miklos Szeredi wrote:
-> > On Wed, Feb 5, 2020 at 3:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >> On Mon, Feb 3, 2020 at 8:37 AM Xiao Yang <ice_yangxiao@163.com> wrote:
-> >>> Buffered read in fuse normally goes via:
-> >>> -> generic_file_buffered_read()
-> >>>    ------------------------------
-> >>>    -> fuse_readpages()
-> >>>      -> fuse_send_readpages()
-> >>>    or
-> >>>    -> fuse_readpage() [if fuse_readpages() fails to get page]
-> >>>      -> fuse_do_readpage()
-> >>>    ------------------------------
-> >>>        -> fuse_simple_request()
-> >>>
-> >>> Buffered read changes original offset to page-aligned length by left-shift
-> >>> and extends original count to be multiples of PAGE_SIZE and then fuse
-> >>> forwards these new parameters to a userspace process, so it is possible
-> >>> for the resulting offset(e.g page-aligned offset + extended count) to
-> >>> exceed the whole file size(even the max value of off_t) when the userspace
-> >>> process does read with new parameters.
-> >>>
-> >>> xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
-> >>> because it triggers this issue.  See the following explanation:
-> >>> PAGE_SIZE: 4096, file size: 2^63 - 1
-> >>> Original: offset: 2^63 - 2, count: 1
-> >>> Changed by buffered read: offset: 2^63 - 4096, count: 4096
-> >>> New offset + new count exceeds the file size as well as LLONG_MAX
-> >> Thanks for the report and analysis.
-> >>
-> >> However this patch may corrupt the cache if i_size changes between
-> >> calls to fuse_page_length().  (e.g. first page length set to 33;
-> >> second page length to 45; then 33-4095 will be zeroed and 4096-4140
-> >> will be filled from offset 33-77).  This will be mitigated by the
-> >> pages being invalidated when i_size changes
-> >> (fuse_change_attributes()).  Filling the pages with wrong data is not
-> >> a good idea regardless.
-> >>
-> >> I think the best approach is first to just fix the xfstest reported
-> >> bug by clamping the end offset to LLONG_MAX.  That's a simple patch,
-> >> independent of i_size, and hence trivial to verify and hard to mess
-> >> up.
-> > Applied a fix and pushed to:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
->
-> Hi Miklos,
->
-> Sorry for the late reply.
->
-> You have applied a fix quickly when I am going to send a patch today.
->
-> Just one comment for your fix:
->
-> I think we need to add the overflow check in fuse_send_readpages() and
-> fuse_do_readpage().
->
-> Because generic_file_buffered_read() will call fuse_readpage() if
-> fuse_readpages() fails to get page.
-
-Thanks, fixed.
-
-Miklos
+On 06/02/2020 11:44, Naohiro Aota wrote:=0A=
+> +	BUG_ON(!alloc_profile_is_valid(type, 0));=0A=
+=0A=
+I know this was present in the old code as well, but can we turn this =0A=
+into an ASSERT() + error return?=0A=
