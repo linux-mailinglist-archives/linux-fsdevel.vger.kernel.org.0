@@ -2,37 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36033154290
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 12:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E16C81542AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 12:08:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbgBFLDw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 06:03:52 -0500
-Received: from mga02.intel.com ([134.134.136.20]:46590 "EHLO mga02.intel.com"
+        id S1727505AbgBFLI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 06:08:56 -0500
+Received: from mga14.intel.com ([192.55.52.115]:12182 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbgBFLDw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 06:03:52 -0500
+        id S1727456AbgBFLI4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Feb 2020 06:08:56 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 03:00:48 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 03:08:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,409,1574150400"; 
-   d="gz'50?scan'50,208,50";a="220410471"
+   d="gz'50?scan'50,208,50";a="432180880"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 06 Feb 2020 03:00:46 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 06 Feb 2020 03:08:54 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1izetq-000Bt9-BG; Thu, 06 Feb 2020 19:00:46 +0800
-Date:   Thu, 6 Feb 2020 19:00:31 +0800
+        id 1izf1h-0009te-PM; Thu, 06 Feb 2020 19:08:53 +0800
+Date:   Thu, 6 Feb 2020 19:08:43 +0800
 From:   kbuild test robot <lkp@intel.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
-Subject: [vfs:merge.nfs-fs_parse.0 1/2] fs/nfs/fs_context.c:101:45: error:
- macro "__fsparam" requires 5 arguments, but only 4 given
-Message-ID: <202002061921.85iCMZxM%lkp@intel.com>
+To:     Eric Sandeen <sandeen@sandeen.net>
+Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [vfs:merge.nfs-fs_parse.1 13/26] fs/nfs/fs_context.c:177:3: error:
+ 'const struct fs_parameter_description' has no member named 'name'
+Message-ID: <202002061938.tO0lpPAY%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ee27up6z4k4n2c2k"
+Content-Type: multipart/mixed; boundary="gua5qinnzhynjkmc"
 Content-Disposition: inline
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -41,218 +42,49 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---ee27up6z4k4n2c2k
+--gua5qinnzhynjkmc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git merge.nfs-fs_parse.0
-head:   c354ed1dd8f49d2308cd07ecd889962db8a7bdae
-commit: 06d90a1a82614b2942e9421e646e78dfbc7d3fd2 [1/2] Merge branch 'work.fs_parse' into merge.nfs-fs_parse
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git merge.nfs-fs_parse.1
+head:   7a53c2012d523b81902e4c7dbd5bc171f91ee125
+commit: 7984d6fd4bd61472532addd4fa247775b353fcc5 [13/26] fs_parser: remove fs_parameter_description name field
 config: nds32-defconfig (attached as .config)
 compiler: nds32le-linux-gcc (GCC) 9.2.0
 reproduce:
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        git checkout 06d90a1a82614b2942e9421e646e78dfbc7d3fd2
+        git checkout 7984d6fd4bd61472532addd4fa247775b353fcc5
         # save the attached .config to linux build tree
         GCC_VERSION=9.2.0 make.cross ARCH=nds32 
 
 If you fix the issue, kindly add following tag
 Reported-by: kbuild test robot <lkp@intel.com>
 
-Note: the vfs/merge.nfs-fs_parse.0 HEAD c354ed1dd8f49d2308cd07ecd889962db8a7bdae builds fine.
+Note: the vfs/merge.nfs-fs_parse.1 HEAD 7a53c2012d523b81902e4c7dbd5bc171f91ee125 builds fine.
       It only hurts bisectibility.
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> fs/nfs/fs_context.c:101:45: error: macro "__fsparam" requires 5 arguments, but only 4 given
-     101 |     fs_param_neg_with_no|fs_param_v_optional),
-         |                                             ^
-   In file included from fs/nfs/fs_context.c:16:
-   include/linux/fs_parser.h:106: note: macro "__fsparam" defined here
-     106 | #define __fsparam(TYPE, NAME, OPT, FLAGS, DATA) \
-         | 
->> fs/nfs/fs_context.c:100:2: error: '__fsparam' undeclared here (not in a function); did you mean 'nfs_param'?
-     100 |  __fsparam(fs_param_is_string, "fsc",  Opt_fscache,
-         |  ^~~~~~~~~
-         |  nfs_param
-   fs/nfs/fs_context.c:104:45: error: macro "__fsparam" requires 5 arguments, but only 4 given
-     104 |     fs_param_neg_with_no|fs_param_deprecated),
-         |                                             ^
-   In file included from fs/nfs/fs_context.c:16:
-   include/linux/fs_parser.h:106: note: macro "__fsparam" defined here
-     106 | #define __fsparam(TYPE, NAME, OPT, FLAGS, DATA) \
-         | 
->> fs/nfs/fs_context.c:105:45: error: macro "fsparam_enum" requires 3 arguments, but only 2 given
-     105 |  fsparam_enum  ("local_lock", Opt_local_lock),
-         |                                             ^
-   In file included from fs/nfs/fs_context.c:16:
-   include/linux/fs_parser.h:126: note: macro "fsparam_enum" defined here
-     126 | #define fsparam_enum(NAME, OPT, array) __fsparam(fs_param_is_enum, NAME, OPT, 0, array)
-         | 
->> fs/nfs/fs_context.c:105:2: error: 'fsparam_enum' undeclared here (not in a function); did you mean 'fs_param_is_enum'?
-     105 |  fsparam_enum  ("local_lock", Opt_local_lock),
-         |  ^~~~~~~~~~~~
-         |  fs_param_is_enum
-   fs/nfs/fs_context.c:107:47: error: macro "fsparam_enum" requires 3 arguments, but only 2 given
-     107 |  fsparam_enum  ("lookupcache", Opt_lookupcache),
-         |                                               ^
-   In file included from fs/nfs/fs_context.c:16:
-   include/linux/fs_parser.h:126: note: macro "fsparam_enum" defined here
-     126 | #define fsparam_enum(NAME, OPT, array) __fsparam(fs_param_is_enum, NAME, OPT, 0, array)
-         | 
->> fs/nfs/fs_context.c:161:39: error: array type has incomplete element type 'struct fs_parameter_enum'
-     161 | static const struct fs_parameter_enum nfs_param_enums[] = {
-         |                                       ^~~~~~~~~~~~~~~
->> fs/nfs/fs_context.c:173:21: error: variable 'nfs_fs_parameters' has initializer but incomplete type
-     173 | static const struct fs_parameter_description nfs_fs_parameters = {
-         |                     ^~~~~~~~~~~~~~~~~~~~~~~~
-   fs/nfs/fs_context.c:174:3: error: 'const struct fs_parameter_description' has no member named 'name'
-     174 |  .name  = "nfs",
+>> fs/nfs/fs_context.c:177:3: error: 'const struct fs_parameter_description' has no member named 'name'
+     177 |  .name  = "nfs",
          |   ^~~~
->> fs/nfs/fs_context.c:174:11: warning: excess elements in struct initializer
-     174 |  .name  = "nfs",
+>> fs/nfs/fs_context.c:177:11: error: initialization of 'const struct fs_parameter_spec *' from incompatible pointer type 'char *' [-Werror=incompatible-pointer-types]
+     177 |  .name  = "nfs",
          |           ^~~~~
-   fs/nfs/fs_context.c:174:11: note: (near initialization for 'nfs_fs_parameters')
->> fs/nfs/fs_context.c:175:3: error: 'const struct fs_parameter_description' has no member named 'specs'
-     175 |  .specs  = nfs_param_specs,
-         |   ^~~~~
-   fs/nfs/fs_context.c:175:12: warning: excess elements in struct initializer
-     175 |  .specs  = nfs_param_specs,
-         |            ^~~~~~~~~~~~~~~
-   fs/nfs/fs_context.c:175:12: note: (near initialization for 'nfs_fs_parameters')
->> fs/nfs/fs_context.c:176:3: error: 'const struct fs_parameter_description' has no member named 'enums'
-     176 |  .enums  = nfs_param_enums,
-         |   ^~~~~
-   fs/nfs/fs_context.c:176:12: warning: excess elements in struct initializer
-     176 |  .enums  = nfs_param_enums,
-         |            ^~~~~~~~~~~~~~~
-   fs/nfs/fs_context.c:176:12: note: (near initialization for 'nfs_fs_parameters')
-   fs/nfs/fs_context.c: In function 'nfs_fs_context_parse_param':
->> fs/nfs/fs_context.c:445:21: error: passing argument 2 of 'fs_parse' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     445 |  opt = fs_parse(fc, &nfs_fs_parameters, param, &result);
-         |                     ^~~~~~~~~~~~~~~~~~
-         |                     |
-         |                     const struct fs_parameter_description *
-   In file included from fs/nfs/fs_context.c:16:
-   include/linux/fs_parser.h:69:39: note: expected 'const struct fs_parameter_spec *' but argument is of type 'const struct fs_parameter_description *'
-      69 |       const struct fs_parameter_spec *desc,
-         |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-   fs/nfs/fs_context.c: At top level:
->> fs/nfs/fs_context.c:1418:17: error: initialization of 'const struct fs_parameter_spec *' from incompatible pointer type 'const struct fs_parameter_description *' [-Werror=incompatible-pointer-types]
-    1418 |  .parameters  = &nfs_fs_parameters,
-         |                 ^
-   fs/nfs/fs_context.c:1418:17: note: (near initialization for 'nfs_fs_type.parameters')
-   fs/nfs/fs_context.c:1430:17: error: initialization of 'const struct fs_parameter_spec *' from incompatible pointer type 'const struct fs_parameter_description *' [-Werror=incompatible-pointer-types]
-    1430 |  .parameters  = &nfs_fs_parameters,
-         |                 ^
-   fs/nfs/fs_context.c:1430:17: note: (near initialization for 'nfs4_fs_type.parameters')
->> fs/nfs/fs_context.c:173:46: error: storage size of 'nfs_fs_parameters' isn't known
-     173 | static const struct fs_parameter_description nfs_fs_parameters = {
-         |                                              ^~~~~~~~~~~~~~~~~
-   fs/nfs/fs_context.c:161:39: warning: 'nfs_param_enums' defined but not used [-Wunused-variable]
-     161 | static const struct fs_parameter_enum nfs_param_enums[] = {
-         |                                       ^~~~~~~~~~~~~~~
+   fs/nfs/fs_context.c:177:11: note: (near initialization for 'nfs_fs_parameters.specs')
    cc1: some warnings being treated as errors
 
-vim +/__fsparam +101 fs/nfs/fs_context.c
+vim +177 fs/nfs/fs_context.c
 
-9954bf92c0cddd5 David Howells   2019-12-10   85  
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   86  static const struct fs_parameter_spec nfs_param_specs[] = {
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   87  	fsparam_flag_no("ac",		Opt_ac),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   88  	fsparam_u32   ("acdirmax",	Opt_acdirmax),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   89  	fsparam_u32   ("acdirmin",	Opt_acdirmin),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   90  	fsparam_flag_no("acl",		Opt_acl),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   91  	fsparam_u32   ("acregmax",	Opt_acregmax),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   92  	fsparam_u32   ("acregmin",	Opt_acregmin),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   93  	fsparam_u32   ("actimeo",	Opt_actimeo),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   94  	fsparam_string("addr",		Opt_addr),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   95  	fsparam_flag  ("bg",		Opt_bg),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   96  	fsparam_u32   ("bsize",		Opt_bsize),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   97  	fsparam_string("clientaddr",	Opt_clientaddr),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   98  	fsparam_flag_no("cto",		Opt_cto),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10   99  	fsparam_flag  ("fg",		Opt_fg),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @100  	__fsparam(fs_param_is_string, "fsc",		Opt_fscache,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @101  		  fs_param_neg_with_no|fs_param_v_optional),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  102  	fsparam_flag  ("hard",		Opt_hard),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  103  	__fsparam(fs_param_is_flag, "intr",		Opt_intr,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  104  		  fs_param_neg_with_no|fs_param_deprecated),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @105  	fsparam_enum  ("local_lock",	Opt_local_lock),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  106  	fsparam_flag_no("lock",		Opt_lock),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  107  	fsparam_enum  ("lookupcache",	Opt_lookupcache),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  108  	fsparam_flag_no("migration",	Opt_migration),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  109  	fsparam_u32   ("minorversion",	Opt_minorversion),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  110  	fsparam_string("mountaddr",	Opt_mountaddr),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  111  	fsparam_string("mounthost",	Opt_mounthost),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  112  	fsparam_u32   ("mountport",	Opt_mountport),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  113  	fsparam_string("mountproto",	Opt_mountproto),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  114  	fsparam_u32   ("mountvers",	Opt_mountvers),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  115  	fsparam_u32   ("namlen",	Opt_namelen),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  116  	fsparam_u32   ("nconnect",	Opt_nconnect),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  117  	fsparam_string("nfsvers",	Opt_vers),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  118  	fsparam_u32   ("port",		Opt_port),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  119  	fsparam_flag_no("posix",	Opt_posix),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  120  	fsparam_string("proto",		Opt_proto),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  121  	fsparam_flag_no("rdirplus",	Opt_rdirplus),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  122  	fsparam_flag  ("rdma",		Opt_rdma),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  123  	fsparam_flag_no("resvport",	Opt_resvport),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  124  	fsparam_u32   ("retrans",	Opt_retrans),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  125  	fsparam_string("retry",		Opt_retry),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  126  	fsparam_u32   ("rsize",		Opt_rsize),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  127  	fsparam_string("sec",		Opt_sec),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  128  	fsparam_flag_no("sharecache",	Opt_sharecache),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  129  	fsparam_flag  ("sloppy",	Opt_sloppy),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  130  	fsparam_flag  ("soft",		Opt_soft),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  131  	fsparam_flag  ("softerr",	Opt_softerr),
-c74dfe97c104bda Trond Myklebust 2020-01-06  132  	fsparam_flag  ("softreval",	Opt_softreval),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  133  	fsparam_string("source",	Opt_source),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  134  	fsparam_flag  ("tcp",		Opt_tcp),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  135  	fsparam_u32   ("timeo",		Opt_timeo),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  136  	fsparam_flag  ("udp",		Opt_udp),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  137  	fsparam_flag  ("v2",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  138  	fsparam_flag  ("v3",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  139  	fsparam_flag  ("v4",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  140  	fsparam_flag  ("v4.0",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  141  	fsparam_flag  ("v4.1",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  142  	fsparam_flag  ("v4.2",		Opt_v),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  143  	fsparam_string("vers",		Opt_vers),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  144  	fsparam_u32   ("wsize",		Opt_wsize),
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  145  	{}
-9954bf92c0cddd5 David Howells   2019-12-10  146  };
-9954bf92c0cddd5 David Howells   2019-12-10  147  
-9954bf92c0cddd5 David Howells   2019-12-10  148  enum {
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  149  	Opt_local_lock_all,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  150  	Opt_local_lock_flock,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  151  	Opt_local_lock_none,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  152  	Opt_local_lock_posix,
-9954bf92c0cddd5 David Howells   2019-12-10  153  };
-9954bf92c0cddd5 David Howells   2019-12-10  154  
-9954bf92c0cddd5 David Howells   2019-12-10  155  enum {
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  156  	Opt_lookupcache_all,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  157  	Opt_lookupcache_none,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  158  	Opt_lookupcache_positive,
-9954bf92c0cddd5 David Howells   2019-12-10  159  };
-9954bf92c0cddd5 David Howells   2019-12-10  160  
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @161  static const struct fs_parameter_enum nfs_param_enums[] = {
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  162  	{ Opt_local_lock,	"all",		Opt_local_lock_all },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  163  	{ Opt_local_lock,	"flock",	Opt_local_lock_flock },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  164  	{ Opt_local_lock,	"none",		Opt_local_lock_none },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  165  	{ Opt_local_lock,	"posix",	Opt_local_lock_posix },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  166  	{ Opt_lookupcache,	"all",		Opt_lookupcache_all },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  167  	{ Opt_lookupcache,	"none",		Opt_lookupcache_none },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  168  	{ Opt_lookupcache,	"pos",		Opt_lookupcache_positive },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  169  	{ Opt_lookupcache,	"positive",	Opt_lookupcache_positive },
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  170  	{}
-e38bb238ed8ce28 Scott Mayhew    2019-12-10  171  };
-9954bf92c0cddd5 David Howells   2019-12-10  172  
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @173  static const struct fs_parameter_description nfs_fs_parameters = {
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @174  	.name		= "nfs",
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @175  	.specs		= nfs_param_specs,
-e38bb238ed8ce28 Scott Mayhew    2019-12-10 @176  	.enums		= nfs_param_enums,
-9954bf92c0cddd5 David Howells   2019-12-10  177  };
-9954bf92c0cddd5 David Howells   2019-12-10  178  
+9954bf92c0cddd David Howells 2019-12-10  175  
+e38bb238ed8ce2 Scott Mayhew  2019-12-10  176  static const struct fs_parameter_description nfs_fs_parameters = {
+e38bb238ed8ce2 Scott Mayhew  2019-12-10 @177  	.name		= "nfs",
+e38bb238ed8ce2 Scott Mayhew  2019-12-10  178  	.specs		= nfs_param_specs,
+9954bf92c0cddd David Howells 2019-12-10  179  };
+9954bf92c0cddd David Howells 2019-12-10  180  
 
-:::::: The code at line 101 was first introduced by commit
+:::::: The code at line 177 was first introduced by commit
 :::::: e38bb238ed8ce280a217629294ba51dc217c5a2c NFS: Convert mount option parsing to use functionality from fs_parser.h
 
 :::::: TO: Scott Mayhew <smayhew@redhat.com>
@@ -262,12 +94,12 @@ e38bb238ed8ce28 Scott Mayhew    2019-12-10 @176  	.enums		= nfs_param_enums,
 0-DAY kernel test infrastructure                 Open Source Technology Center
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
 
---ee27up6z4k4n2c2k
+--gua5qinnzhynjkmc
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICO/nO14AAy5jb25maWcAnFxbk9s2sn7Pr2AlVVtJbdk7F48zPqfmAQRBChFJ0ACoy7yw
+H4sICBHpO14AAy5jb25maWcAnFxbk9s2sn7Pr2AlVVtJbdk7F48zPqfmAQRBChFJ0ACoy7yw
 ZA1tqzIezZE0SfzvTzdIiiAFaHzO1u7aQjdujb583QD9y0+/BOTlsP22OmzWq8fH78GX+qne
 rQ71Q/B581j/dxCJIBc6YBHXb4E53Ty9/POfp4f99VVw8/bm7cWb3fp9MK13T/VjQLdPnzdf
 XqD7Zvv00y8/wX9/gcZvzzDS7r8C0+uxfvOIY7z5sl4HvyaU/hZ8eHv19gJ4qchjnlSUVlxV
@@ -467,4 +299,4 @@ l5Y0J12sPAaTGTmaxgZc0KkztMvydAgaHiY5/a6FHCW8XWJOIMeAc8+bSI0D+uVPruMxkx0D
 iJOUv9rKzleYxtw1RYPCNfzwvhblKKlpN7VhLO6KYhaOCC+sTSVmdywoDMV19KdnW7MXJPoo
 sx7aclGmuWNFiMurL84u5+7Ap0BGGKpKWAZBY/Vxpyju+Q5LW+r/AHtw5nfJpgAA
 
---ee27up6z4k4n2c2k--
+--gua5qinnzhynjkmc--
