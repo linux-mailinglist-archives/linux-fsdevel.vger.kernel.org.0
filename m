@@ -2,68 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3943E153F53
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 08:41:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E839153FB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 09:03:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgBFHlo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 02:41:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50810 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbgBFHlo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 02:41:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=v4sgkrFRRT25twWgnublfu8qExfh0axFqZunM0WK1gU=; b=VgB0OvYzeVchVCoUP2+LkP98Af
-        3gMHK/5aS3eJ9KoukvYbk0b+nJBmaQL0QEgbGs+sO1cvP4oI5Ri9bKwsrJ6vf+hBo3LPHbxWxAvu2
-        gRH39qOT2jLoKfq07rUO1RbeqRLzlAtRH1fV0dNtb7yohuHMpjKTSHehAF4a0oATh8lBJBRzYPKPW
-        qeFSYYoXUha5yEWdNry31aDBGq2gXAf/nsjqK4HIRB3kY8KGGdHNaMK4+yKInYQhJlUzmxJ9w2eTJ
-        Olrj/7qfs0xImdjcLa68RWZrnWg2DXT60LDktCtjG8ENas/72pvNyvWuzG3B33T7nHx+E48YuJmry
-        jZTSCkPQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izbnC-0001q3-Tg; Thu, 06 Feb 2020 07:41:42 +0000
-Date:   Wed, 5 Feb 2020 23:41:42 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        device-mapper development <dm-devel@redhat.com>
-Subject: Re: [PATCH 1/5] dax, pmem: Add a dax operation zero_page_range
-Message-ID: <20200206074142.GB28365@infradead.org>
-References: <20200203200029.4592-1-vgoyal@redhat.com>
- <20200203200029.4592-2-vgoyal@redhat.com>
- <20200205183050.GA26711@infradead.org>
- <20200205200259.GE14544@redhat.com>
- <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
+        id S1728115AbgBFIDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 03:03:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59922 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727952AbgBFIDJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Feb 2020 03:03:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 6FD5FAF93;
+        Thu,  6 Feb 2020 08:03:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6FE6D1E0E31; Thu,  6 Feb 2020 09:03:07 +0100 (CET)
+Date:   Thu, 6 Feb 2020 09:03:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/8] xarray: Explicitely set XA_FREE_MARK in
+ __xa_cmpxchg()
+Message-ID: <20200206080307.GB14001@quack2.suse.cz>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-4-jack@suse.cz>
+ <20200205184512.GC28298@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200205184512.GC28298@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 04:40:44PM -0800, Dan Williams wrote:
-> > I don't have any reason not to pass phys_addr_t. If that sounds better,
-> > will make changes.
+On Wed 05-02-20 14:45:12, Jason Gunthorpe wrote:
+> On Tue, Feb 04, 2020 at 03:25:09PM +0100, Jan Kara wrote:
+> > __xa_cmpxchg() relies on xas_store() to set XA_FREE_MARK when storing
+> > NULL into xarray that has free tracking enabled. Make the setting of
+> > XA_FREE_MARK explicit similarly as its clearing currently it.
+> > 
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> >  lib/xarray.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/lib/xarray.c b/lib/xarray.c
+> > index ae8b7070e82c..4e32497c51bd 100644
+> > +++ b/lib/xarray.c
+> > @@ -1477,8 +1477,12 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
+> >  		curr = xas_load(&xas);
+> >  		if (curr == old) {
+> >  			xas_store(&xas, entry);
+> > -			if (xa_track_free(xa) && entry && !curr)
+> > -				xas_clear_mark(&xas, XA_FREE_MARK);
+> > +			if (xa_track_free(xa)) {
+> > +				if (entry && !curr)
+> > +					xas_clear_mark(&xas, XA_FREE_MARK);
+> > +				else if (!entry && curr)
+> > +					xas_set_mark(&xas, XA_FREE_MARK);
+> > +			}
 > 
-> The problem is device-mapper. That wants to use offset to route
-> through the map to the leaf device. If it weren't for the firmware
-> communication requirement you could do:
+> This feels like an optimization that should also happen for
+> __xa_store, which has very similar code:
 > 
-> dax_direct_access(...)
-> generic_dax_zero_page_range(...)
+> 		curr = xas_store(&xas, entry);
+> 		if (xa_track_free(xa))
+> 			xas_clear_mark(&xas, XA_FREE_MARK);
 > 
-> ...but as long as the firmware error clearing path is required I think
-> we need to do pass the pgoff through the interface and do the pgoff to
-> virt / phys translation inside the ops handler.
+> Something like
+> 
+>                 if (xa_track_free(xa) && entry && !curr)
+> 			xas_clear_mark(&xas, XA_FREE_MARK);
+> 
+> ?
 
-Maybe phys_addr_t was the wrong type - but why do we split the offset
-into the block device argument into a pgoff and offset into page instead
-of a single 64-bit value?
+Yeah, entry != NULL is guaranteed for __xa_store() (see how it transforms
+NULL to XA_ZERO_ENTRY a few lines above) but !curr is probably a good
+condition to add to save some unnecessary clearing when overwriting
+existing values. It is unrelated to this patch though, just a separate
+optimization so I'll add that as a separate patch to the series. Thanks for
+the idea.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
