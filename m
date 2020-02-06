@@ -2,136 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C914E1545D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 15:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 223B8154645
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 15:33:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbgBFOOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 09:14:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:16918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728141AbgBFOOB (ORCPT
+        id S1728098AbgBFOdr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 09:33:47 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37424 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726765AbgBFOdr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:14:01 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 016EDdEe060501
-        for <linux-fsdevel@vger.kernel.org>; Thu, 6 Feb 2020 09:14:00 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xyhn5j8sw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 09:14:00 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 6 Feb 2020 14:13:58 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Feb 2020 14:13:55 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 016EDsud61276348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Feb 2020 14:13:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0FE614C040;
-        Thu,  6 Feb 2020 14:13:54 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EE1774C052;
-        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.59])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Feb 2020 14:13:52 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
-        monty.wiseman@ge.com, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Thu, 06 Feb 2020 09:13:52 -0500
-In-Reply-To: <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20020614-0020-0000-0000-000003A799A8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20020614-0021-0000-0000-000021FF691C
-Message-Id: <1580998432.5585.411.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-06_01:2020-02-06,2020-02-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
- suspectscore=2 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002060108
+        Thu, 6 Feb 2020 09:33:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580999626;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ncPmjoEwq7PfrjChe+n1l2nRN+8/UziQd61vGlVP2YY=;
+        b=SWI4TH//ZWynAWPQRPR2KwWpf/X6H7OBp1psZsqX8yyDouc4qPnGFTSRUJV+KFxUJPWSdN
+        CNR65uIOycmC2PS/2vXCLr2yM0unU/ECPQvpaOmScia86sd7n0eq42oi+AKMdbeGr0J+b6
+        C4zYS3QHzJeWxKMVm1JfuyyncxN03uE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-213-7qb4itb2PoGbLbtchBfLaw-1; Thu, 06 Feb 2020 09:33:42 -0500
+X-MC-Unique: 7qb4itb2PoGbLbtchBfLaw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3746C85EE82;
+        Thu,  6 Feb 2020 14:33:41 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A21526FA9;
+        Thu,  6 Feb 2020 14:33:40 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, willy@infradead.org
+Subject: Re: [patch] dax: pass NOWAIT flag to iomap_apply
+References: <x49r1z86e1d.fsf@segfault.boston.devel.redhat.com>
+        <20200206084740.GE14001@quack2.suse.cz>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 06 Feb 2020 09:33:39 -0500
+In-Reply-To: <20200206084740.GE14001@quack2.suse.cz> (Jan Kara's message of
+        "Thu, 6 Feb 2020 09:47:40 +0100")
+Message-ID: <x49tv43lr98.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Janne,
+Jan Kara <jack@suse.cz> writes:
 
-On Fri, 2020-01-10 at 10:48 +0200, Janne Karhunen wrote:
-> On Wed, Jan 8, 2020 at 1:18 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
-> >
-> > Some systems can end up carrying lots of entries in the ima
-> > measurement list. Since every entry is using a bit of kernel
-> > memory, allow the sysadmin to export the measurement list to
-> > the filesystem to free up some memory.
-> 
-> Hopefully this addressed comments from everyone. The flush event can
-> now be triggered by the admin anytime and unique file names can be
-> used for each flush (log.1, log.2, ...) etc, so getting to the correct
-> item should be easy.
-> 
-> While it can now be argued that since this is an admin-driven event,
-> kernel does not need to write the file. However, the intention is to
-> bring out a second patch a bit later that adds a variable to define
-> the max number of entries to be kept in the kernel memory and
-> workqueue based automatic flushing. In those cases the kernel has to
-> be able to write the file without any help from the admin..
+> On Wed 05-02-20 14:15:58, Jeff Moyer wrote:
+>> fstests generic/471 reports a failure when run with MOUNT_OPTIONS="-o
+>> dax".  The reason is that the initial pwrite to an empty file with the
+>> RWF_NOWAIT flag set does not return -EAGAIN.  It turns out that
+>> dax_iomap_rw doesn't pass that flag through to iomap_apply.
+>> 
+>> With this patch applied, generic/471 passes for me.
+>> 
+>> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
+>
+> The patch looks good to me. You can add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> BTW, I've just noticed ext4 seems to be buggy in this regard and even this
+> patch doesn't fix it. So I guess you've been using XFS for testing this?
 
-The implications of exporting and removing records from the IMA-
-measurement list needs to be considered carefully.  Verifying a TPM
-quote will become dependent on knowing where the measurements are
-stored.  The existing measurement list is stored in kernel memory and,
-barring a kernel memory attack, is protected from modification.
- Before upstreaming this or a similar patch, there needs to be a
-discussion as to how the measurement list will be protected once is it
-exported to userspace.
+That's right, sorry I didn't mention that.  Will you send a patch for
+ext4, or do you want me to look into it?
 
-This patch now attempts to address two very different scenarios.  The
-first scenario is where userspace is requesting exporting and removing
-of the measurement list records.  The other scenario is the kernel
-exporting and removing of the measurement list records.  Conflating
-these two different use cases might not be the right solution, as we
-originally thought.
-
-The kernel already exports the IMA measurement list to userspace via a
-securityfs file.  From a userspace perspective, missing is the ability
-of removing N number of records.  In this scenario, userspace would be
-responsible for safely storing the measurements (e.g. blockchain).
- The kernel would only be responsible for limiting permission, perhaps
-based on a capability, before removing records from the measurement
-list. 
-
-In the kernel usecase, somehow the kernel would need to safely export
-the measurement list, or some portion of the measurement list, to a
-file and then delete that portion.  What protects the exported records
-stored in a file from modification?
-
-Instead of exporting the measurement records, one option as suggested
-by Amir Goldstein, would be to use a vfs_tmpfile() to get an anonymous
-file for backing store.  The existing securityfs measurement lists
-would then read from this private copy of the anonymous file.
-
-I've Cc'ed fsdevel for additional comments/suggestions.
-
-thanks,
-
-Mimi
+Thanks!
+Jeff
 
