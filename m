@@ -2,91 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32FF2154653
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 15:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15AED154654
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 15:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgBFOg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 09:36:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49540 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727861AbgBFOg3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 09:36:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CDD29AC91;
-        Thu,  6 Feb 2020 14:36:27 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 862E01E0DEB; Thu,  6 Feb 2020 15:36:27 +0100 (CET)
-Date:   Thu, 6 Feb 2020 15:36:27 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 8/8] xarray: Don't clear marks in xas_store()
-Message-ID: <20200206143627.GA26114@quack2.suse.cz>
-References: <20200204142514.15826-1-jack@suse.cz>
- <20200204142514.15826-9-jack@suse.cz>
- <20200205184344.GB28298@ziepe.ca>
- <20200205215904.GT8731@bombadil.infradead.org>
- <20200206134904.GD25297@ziepe.ca>
+        id S1727861AbgBFOgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 09:36:50 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33018 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726765AbgBFOgt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Feb 2020 09:36:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1580999808;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=M6ywBgEyecB7i6tCl7rBaaIJ1nlHocqQsOpoi6h5WDY=;
+        b=CsgB7eUduvu0+ISkBlSObKgsrbx0gNcxysKb/vV4a6t1dBzWBYmBPsw30DfaeqDRClsuGU
+        MMYR3pEN+24Q0wU3NoI5eLYOeEEPbYdI+hlDx2w7NBTahOZ5K2T1NUfDIyg9/a461hKzLY
+        Ih6qwMB4nhwd4y0i/0DRvNehM6NdfFE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-90-acILuq70MVCP-rDbn0K-rg-1; Thu, 06 Feb 2020 09:36:46 -0500
+X-MC-Unique: acILuq70MVCP-rDbn0K-rg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CA275800D54;
+        Thu,  6 Feb 2020 14:36:44 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4302B790EE;
+        Thu,  6 Feb 2020 14:36:44 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        fstests@vger.kernel.org
+Subject: Re: [PATCH 0/3] fstests: fixes for 64k pages and dax
+References: <20200205224818.18707-1-jmoyer@redhat.com>
+        <20200205230626.GO20628@dread.disaster.area>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 06 Feb 2020 09:36:43 -0500
+In-Reply-To: <20200205230626.GO20628@dread.disaster.area> (Dave Chinner's
+        message of "Thu, 6 Feb 2020 10:06:26 +1100")
+Message-ID: <x49lfpflr44.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206134904.GD25297@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 06-02-20 09:49:04, Jason Gunthorpe wrote:
-> On Wed, Feb 05, 2020 at 01:59:04PM -0800, Matthew Wilcox wrote:
-> 
-> > > How is RCU mark reading used anyhow?
-> > 
-> > We iterate over pages in the page cache with, eg, the dirty bit set.
-> > This bug will lead to the loop terminating early and failing to find
-> > dirty pages that it should.
-> 
-> But the inhernetly weak sync of marks and pointers means that
-> iteration will miss some dirty pages and return some clean pages. It
-> is all OK for some reason?
+Dave Chinner <david@fromorbit.com> writes:
 
-Yes. The reason is - the definitive source of dirtiness is in page flags so
-if iteration returns more pages, we don't care. WRT missing pages we only
-need to make sure pages that were dirty before the iteration started are
-returned and the current code fulfills that.
+> [cc fstests@vger.kernel.org]
+>
+> On Wed, Feb 05, 2020 at 05:48:15PM -0500, Jeff Moyer wrote:
+>> This set of patches fixes a few false positives I encountered when
+>> testing DAX on ppc64le (which has a 64k page size).
+>> 
+>> Patch 1 is actually not specific to non-4k page sizes.  Right now we
+>> only test for dax incompatibility in the dm flakey target.  This means
+>> that tests that use dm-thin or the snapshot target will still try to
+>> run.  Moving the check to _require_dm_target fixes that problem.
+>> 
+>> Patches 2 and 3 get rid of hard coded block/page sizes in the tests.
+>> They run just fine on 64k pages and 64k block sizes.
+>> 
+>> Even after these patches, there are many more tests that fail in the
+>> following configuration:
+>> 
+>> MKFS_OPTIONS="-b size=65536 -m reflink=0" MOUNT_OPTIONS="-o dax"
+>> 
+>> One class of failures is tests that create a really small file system
+>> size.  Some of those tests seem to require the very small size, but
+>> others seem like they could live with a slightly bigger size that
+>> would then fit the log (the typical failure is a mkfs failure due to
+>> not enough blocks for the log).  For the former case, I'm tempted to
+>> send patches to _notrun those tests, and for the latter, I'd like to
+>> bump the file system sizes up.  300MB seems to be large enough to
+>> accommodate the log.  Would folks be opposed to those approaches?
+>> 
+>> Another class of failure is tests that either hard-code a block size
+>> to trigger a specific error case, or that test a multitude of block
+>> sizes.  I'd like to send a patch to _notrun those tests if there is
+>> a user-specified block size.  That will require parsing the MKFS_OPTIONS
+>> based on the fs type, of course.  Is that something that seems
+>> reasonable?
+>> 
+>> I will follow up with a series of patches to implement those changes
+>> if there is consensus on the approach.  These first three seemed
+>> straight-forward to me, so that's where I'm starting.
+>> 
+>> Thanks!
+>> Jeff
+>> 
+>> [PATCH 1/3] dax/dm: disable testing on devices that don't support dax
+>> [PATCH 2/3] t_mmap_collision: fix hard-coded page size
+>> [PATCH 3/3] xfs/300: modify test to work on any fs block size
+>
+> Hi Jeff,
+>
+> You probably should be sending fstests patches to
+> fstests@vger.kernel.org, otherwise they probably won't get noticed
+> by the fstests maintainer...
 
-> > > Actually the clearing of marks by xa_store(, NULL) is creating a very
-> > > subtle bug in drivers/infiniband/core/device.c :( Can you add a Fixes
-> > > line too:
-> > > 
-> > > ib_set_client_data() is assuming the marks for the entry will not
-> > > change, but if the caller passed in NULL they get wrongly reset, and
-> > > three call sites pass in NULL:
-> > >  drivers/infiniband/ulp/srpt/ib_srpt.c
-> > >  net/rds/ib.c
-> > >  net/smc/smc_ib.c
-> > > Fixes: 0df91bb67334 ("RDMA/devices: Use xarray to store the client_data")
-> > 
-> > There's no bug here.
-> > 
-> > If you're actually storing NULL in the array, then the marks would go
-> > away.  That's inherent -- imagine you have an array with a single entry
-> > at 64.  Then you store NULL there.  That causes the node to be deleted,
-> > and the marks must necessarily disappear with it -- there's nowhere to
-> > store them!
-> 
-> Ah, it is allocating! These little behavior differences are tricky to
-> remember over with infrequent use :(
+Hm, somehow I didn't know about that list.  I'll send v2 there, thanks!
 
-Yeah, that's why I'd prefer if NULL was not "special value" at all and if
-someone wanted to remove index from xarray he'd always have to use a
-special function. My patches go towards that direction but not the full way
-because there's still xa_cmpxchg() whose users use the fact that NULL is in
-fact 'erase'.
+-Jeff
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
