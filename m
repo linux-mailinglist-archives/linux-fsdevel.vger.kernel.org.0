@@ -2,90 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D42B15483A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 16:40:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14AFB15483D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 16:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgBFPj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 10:39:59 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60527 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727060AbgBFPj7 (ORCPT
+        id S1727305AbgBFPke (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 10:40:34 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:35208 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727060AbgBFPke (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 10:39:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581003597;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yYOYGUmwnwR/sxALNyTmJEU8tjH1tqXxiHmaN9nBtbg=;
-        b=ZjzLOh9EJ2zL/wQz+7OJN7EjnBs7pgXdIhd003kEwLwcPhFWub24KuHVnXf5PtNV08u1gJ
-        qj9fDYlKWVQvm/d7+ShGN8lR8GKj9+W96kAs1xCRGeNH8Iw+bWahMGIhkUDIzDkEILt+Mf
-        /O5HNqB7Wr2MO/fW9qk7dNmqM3y0Dcc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-63-W7fKFVbAO-mVmHC7HOWqXg-1; Thu, 06 Feb 2020 10:39:50 -0500
-X-MC-Unique: W7fKFVbAO-mVmHC7HOWqXg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85C7010054E3;
-        Thu,  6 Feb 2020 15:39:49 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E35AE857BF;
-        Thu,  6 Feb 2020 15:39:48 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, willy@infradead.org
-Subject: Re: [patch] dax: pass NOWAIT flag to iomap_apply
-References: <x49r1z86e1d.fsf@segfault.boston.devel.redhat.com>
-        <20200206084740.GE14001@quack2.suse.cz>
-        <x49tv43lr98.fsf@segfault.boston.devel.redhat.com>
-        <20200206144338.GB26114@quack2.suse.cz>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 06 Feb 2020 10:39:47 -0500
-In-Reply-To: <20200206144338.GB26114@quack2.suse.cz> (Jan Kara's message of
-        "Thu, 6 Feb 2020 15:43:38 +0100")
-Message-ID: <x49ftfnlo70.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 6 Feb 2020 10:40:34 -0500
+Received: by mail-il1-f194.google.com with SMTP id g12so5473205ild.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 07:40:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O2zmteoxGT1UC7Gb/8cgIPPD9Xtd/vq0NDvlaR9kX1k=;
+        b=MoOVIog/vL2wou+pGWJ/S/xIA+emFGQjRJBab9z6LLgzThCAVSJstxOU6tQ8a3LqPr
+         QY/fjHuaqRubX3PtpuOpro8M4LhEJ5einO9FC+DcqJrR1f+RWsb+M8fi0Xt1pX15eCZ6
+         qGEhqi5/pe3DLRCQT5ShVkxKm0NC7C/7iQ+8U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O2zmteoxGT1UC7Gb/8cgIPPD9Xtd/vq0NDvlaR9kX1k=;
+        b=Oa4SDp1S4Sew+xx5GUHUlY8GgHZS28W6wnA9yiljtv5VNZH86ariV8KZwr2NcXLjIU
+         lLFxowPd8wpc4tpkHSRQ44DRSwJKslIuIrCCsIRNKWlgVVEA981now9JVFelvubooT2N
+         nlUOzhacN0wmnRAgIOoSSPS8DI9xwMvp5D46YeH9TSa6GZykH5VUw7qH8yB5JSaV8dAA
+         F6G4qj+AoyUqi7B2G4HHb6qexYBjqfEtYR3MzVywNCEWexp27b3PGc32f+VapLaET0LZ
+         ergbr3GL9qzP3Ghf8JW6iBqIdVW+8ouziifl4nO5fWhZrUo4pdnsI1FfCSwGa9IzD9eM
+         wNCA==
+X-Gm-Message-State: APjAAAU4C65jYIvTw9frQ4f2F7JuTJ6qNy3wWxBLBliz3m7xWT7VqHPf
+        DSGjmhuVQIl0cLncJ0xS8gWKjkrGkvm71n9b+6vKYw==
+X-Google-Smtp-Source: APXvYqyegvjHYD5bcMo0EkF9MtUYgm33NlQQH/TIpj/xZLHK6r7r/6SLqQVZDhoc45MyWb5gcmIgt5f1KPOsgT5axiM=
+X-Received: by 2002:a92:89c2:: with SMTP id w63mr4436819ilk.252.1581003632438;
+ Thu, 06 Feb 2020 07:40:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20200203073652.12067-1-ice_yangxiao@163.com> <CAJfpegsVjca2xGV=9xwE75a5NRSYqLpDu9x_q9CeDZ1vt-GyyQ@mail.gmail.com>
+ <CAJfpegsPfurF2fB+XgSjr-CnBNcjWiqYCB6bFwP8VKNp3sUChA@mail.gmail.com> <bd8402d6-6d90-c659-6dc4-ac890af900a6@163.com>
+In-Reply-To: <bd8402d6-6d90-c659-6dc4-ac890af900a6@163.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 6 Feb 2020 16:40:21 +0100
+Message-ID: <CAJfpegvXJ21OzMP2eU0bT4XEb40aAqfkrZdk6AQk5bEWmevOmQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Don't make buffered read forward overflow value to
+ a userspace process
+To:     Xiao Yang <ice_yangxiao@163.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara <jack@suse.cz> writes:
-
-> On Thu 06-02-20 09:33:39, Jeff Moyer wrote:
->> Jan Kara <jack@suse.cz> writes:
->> 
->> > On Wed 05-02-20 14:15:58, Jeff Moyer wrote:
->> >> fstests generic/471 reports a failure when run with MOUNT_OPTIONS="-o
->> >> dax".  The reason is that the initial pwrite to an empty file with the
->> >> RWF_NOWAIT flag set does not return -EAGAIN.  It turns out that
->> >> dax_iomap_rw doesn't pass that flag through to iomap_apply.
->> >> 
->> >> With this patch applied, generic/471 passes for me.
->> >> 
->> >> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
->> >
->> > The patch looks good to me. You can add:
->> >
->> > Reviewed-by: Jan Kara <jack@suse.cz>
->> >
->> > BTW, I've just noticed ext4 seems to be buggy in this regard and even this
->> > patch doesn't fix it. So I guess you've been using XFS for testing this?
->> 
->> That's right, sorry I didn't mention that.  Will you send a patch for
->> ext4, or do you want me to look into it?
+On Thu, Feb 6, 2020 at 1:33 PM Xiao Yang <ice_yangxiao@163.com> wrote:
 >
-> I've taken down a note in todo list to eventually look into that but if you
-> can have a look, I'm more than happy to remove that entry :).
+> On 2/6/20 8:14 PM, Miklos Szeredi wrote:
+> > On Wed, Feb 5, 2020 at 3:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> On Mon, Feb 3, 2020 at 8:37 AM Xiao Yang <ice_yangxiao@163.com> wrote:
+> >>> Buffered read in fuse normally goes via:
+> >>> -> generic_file_buffered_read()
+> >>>    ------------------------------
+> >>>    -> fuse_readpages()
+> >>>      -> fuse_send_readpages()
+> >>>    or
+> >>>    -> fuse_readpage() [if fuse_readpages() fails to get page]
+> >>>      -> fuse_do_readpage()
+> >>>    ------------------------------
+> >>>        -> fuse_simple_request()
+> >>>
+> >>> Buffered read changes original offset to page-aligned length by left-shift
+> >>> and extends original count to be multiples of PAGE_SIZE and then fuse
+> >>> forwards these new parameters to a userspace process, so it is possible
+> >>> for the resulting offset(e.g page-aligned offset + extended count) to
+> >>> exceed the whole file size(even the max value of off_t) when the userspace
+> >>> process does read with new parameters.
+> >>>
+> >>> xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
+> >>> because it triggers this issue.  See the following explanation:
+> >>> PAGE_SIZE: 4096, file size: 2^63 - 1
+> >>> Original: offset: 2^63 - 2, count: 1
+> >>> Changed by buffered read: offset: 2^63 - 4096, count: 4096
+> >>> New offset + new count exceeds the file size as well as LLONG_MAX
+> >> Thanks for the report and analysis.
+> >>
+> >> However this patch may corrupt the cache if i_size changes between
+> >> calls to fuse_page_length().  (e.g. first page length set to 33;
+> >> second page length to 45; then 33-4095 will be zeroed and 4096-4140
+> >> will be filled from offset 33-77).  This will be mitigated by the
+> >> pages being invalidated when i_size changes
+> >> (fuse_change_attributes()).  Filling the pages with wrong data is not
+> >> a good idea regardless.
+> >>
+> >> I think the best approach is first to just fix the xfstest reported
+> >> bug by clamping the end offset to LLONG_MAX.  That's a simple patch,
+> >> independent of i_size, and hence trivial to verify and hard to mess
+> >> up.
+> > Applied a fix and pushed to:
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
+>
+> Hi Miklos,
+>
+> Sorry for the late reply.
+>
+> You have applied a fix quickly when I am going to send a patch today.
+>
+> Just one comment for your fix:
+>
+> I think we need to add the overflow check in fuse_send_readpages() and
+> fuse_do_readpage().
+>
+> Because generic_file_buffered_read() will call fuse_readpage() if
+> fuse_readpages() fails to get page.
 
-OK, I'll take a look.
+Thanks, fixed.
 
--Jeff
-
+Miklos
