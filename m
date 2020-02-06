@@ -2,124 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED2A153DD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 05:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3965C153DDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 05:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbgBFE0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 23:26:53 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:45382 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726687AbgBFE0x (ORCPT
+        id S1727698AbgBFE2H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 23:28:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58302 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbgBFE2H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 23:26:53 -0500
-Received: from mr1.cc.vt.edu (mr1.cc.vt.edu [IPv6:2607:b400:92:8300:0:31:1732:8aa4])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 0164QpLY029387
-        for <linux-fsdevel@vger.kernel.org>; Wed, 5 Feb 2020 23:26:51 -0500
-Received: from mail-yw1-f72.google.com (mail-yw1-f72.google.com [209.85.161.72])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 0164QkMX027353
-        for <linux-fsdevel@vger.kernel.org>; Wed, 5 Feb 2020 23:26:51 -0500
-Received: by mail-yw1-f72.google.com with SMTP id j185so6338931ywf.21
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 20:26:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=MhCySqbOzzfn5gIyvxr/SnYTBS2T8s0EdVrXnFr8wHk=;
-        b=AHTveBdNjYbnFGqGQzEIWGDX5VfEfy9GROXRopYpJAuOsjS/wePTFmTKAYQ+6lft7B
-         cxan/b4vz2KRJEaWKJ84pn/p1i6T+X1eeJSQumOHZCUUvbCvJD4jjiwqTf1F8vlkXGrc
-         Ea8kqY9t1Dg0SNRx6TOchKa6tUfhj14zyn2LR+mprSapKPIO89uJO4RrPVlvgbGP9U5D
-         hup000tS3t6XksWrOqJf5NG35JoIzfnWB4yq6/kegTeBbh2pZqq6SwbfbPiYtPDjzJLW
-         AXnA7ClDcgrBgh/5O74cL5tgxyZmQyctWjw2tMi6SjkKoFsWRg8hAtCD6Dl0KWmINJi/
-         oabg==
-X-Gm-Message-State: APjAAAXWi9w5aUjNV5+oIXYe0hitjJ5Ph/w6Zlru8NXdOdZ3HDUlwJoL
-        C3ovPnXhszlCSBWowwK+iv9vrA8h9H0qC98F0vchK6NWjCjSYZyLpUC1QdbwUMx328YKstUcoVS
-        +ldxUEU9T+qhk+K2I932Dl4zl75PZx5S7ZBRb
-X-Received: by 2002:a25:7713:: with SMTP id s19mr1360968ybc.449.1580963206394;
-        Wed, 05 Feb 2020 20:26:46 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxymezFocNbnfWO28lRZigLgbo3T6tK34wy9pWSSpfu/W+BaYL8P42JOV1GwcRaOnIqxE5k+g==
-X-Received: by 2002:a25:7713:: with SMTP id s19mr1360944ybc.449.1580963206022;
-        Wed, 05 Feb 2020 20:26:46 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id h23sm900349ywc.105.2020.02.05.20.26.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2020 20:26:43 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     "Namjae Jeon" <namjae.jeon@samsung.com>
-Cc:     "'Namjae Jeon'" <linkinjeon@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, sj1557.seo@samsung.com,
-        pali.rohar@gmail.com, arnd@arndb.de, viro@zeniv.linux.org.uk,
-        "'Christoph Hellwig'" <hch@lst.de>
-Subject: Re: [PATCH] exfat: update file system parameter handling
-In-Reply-To: <003701d5db27$d3cd1ce0$7b6756a0$@samsung.com>
-References: <297144.1580786668@turing-police> <CGME20200204060659epcas1p1968fda93ab3a2cbbdb812b33c12d8a55@epcas1p1.samsung.com> <20200204060654.GB31675@lst.de>
- <003701d5db27$d3cd1ce0$7b6756a0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1580963201_12134P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 05 Feb 2020 23:26:42 -0500
-Message-ID: <252365.1580963202@turing-police>
+        Wed, 5 Feb 2020 23:28:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3srDzlj3vxXLns6YOc9QAbtKzzZ9q6dWVHo3WgMGcfE=; b=kN55My+Qc29t3mB+G7VtG28zKU
+        QPddywk7j32t/qKFPhIEecZ/Y1HFbE1bh9fUIoRMGF9XPYVHZDHe+sT90Px7GjsfPP+1+R2TQhQes
+        qbhSurGhedq6RWNWYDB8YptU7dqwOtnmrxB3e9XO0aDPij8InGckr6+3O8WlfDwPbTUkZmVlB+VPX
+        Gimi4W+eCWLmmeYBoctZ5wqlxeu4FoIV8DfteeFCVW6I06a8OxIdKeGEmJ488CwihlRYRN8jiqyRr
+        b+UBXOctrUZl6GZoF10UuYuwdYEgnRtQLJ8+in8kyKibW+cIpY7pUdirbIsR7ZCk//n+O+BXp1mpR
+        8kDUVSrQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1izYll-0008QL-Gy; Thu, 06 Feb 2020 04:28:01 +0000
+Date:   Wed, 5 Feb 2020 20:28:01 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 8/8] xarray: Don't clear marks in xas_store()
+Message-ID: <20200206042801.GV8731@bombadil.infradead.org>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-9-jack@suse.cz>
+ <8ea2682b-7240-dca3-b123-2df7d0c994ba@nvidia.com>
+ <20200206022144.GU8731@bombadil.infradead.org>
+ <01e577b2-3349-15bc-32c7-b556e9f08536@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01e577b2-3349-15bc-32c7-b556e9f08536@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1580963201_12134P
-Content-Type: text/plain; charset=us-ascii
+On Wed, Feb 05, 2020 at 07:48:57PM -0800, John Hubbard wrote:
+> You can then set entries using xa_store() and get entries
+> using xa_load().  xa_store will overwrite any entry with the
+> new entry and return the previous entry stored at that index.  You can
+> use xa_erase(), instead of calling xa_store() with a
+> ``NULL`` entry followed by xas_init_marks().  There is no difference between
+> an entry that has never been stored to and one that has been erased. Those,
+> in turn, are the same as an entry that has had ``NULL`` stored to it and
+> also had its marks erased via xas_init_marks().
 
-On Tue, 04 Feb 2020 15:53:38 +0900, "Namjae Jeon" said:
-> > > Al Viro recently reworked the way file system parameters are handled
-> > > Update super.c to work with it in linux-next 20200203.
+There's a fundamental misunderstanding here.  If you store a NULL, the
+marks go away.  There is no such thing as a marked NULL entry.  If you
+observe such a thing, it can only exist through some kind of permitted
+RCU race, and the entry must be ignored.  If you're holding the xa_lock,
+there is no way to observe a NULL entry with a search mark set.
 
-> Acked-by: Namjae Jeon <namjae.jeon@samsung.com>
->
-> If I need to make v14 patch series for this, Let me know it.
+What Jan is trying to do is allow code that knows what it's doing
+the ability to say "Skip clearing the marks for performance reasons.
+The marks are already clear."
 
-Hmm... That's a process/git question that somebody else (probably Al Viro) will
-have to answer.
-
-fs/exfat/super.c won't compile on next-20200203 or later without the patch, and
-as a practical matter the version that finally goes into the main tree will need the patch.
-
-On the one hand, the proper way to track the history of that patch would be to
-cherry-pick it into the proper spot in your patch series, right after the
-commit that adds super.c.  Then the git history reflects what code came from
-where.
-
-On the other hand, it leaves a really small window where a git bisect can land
-exactly on the commit that adds the unpatched version of super.c and fail to
-buiild.  If all the Signed-off-by's were from one person, the obvious answer is
-to fold the fix into the commit that adds super.c - but that loses the git
-history.
-
-So I'm going to dodge the question by saying "What would Al Viro do?" :)
-
-
-
-
-
---==_Exmh_1580963201_12134P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXjuVgQdmEQWDXROgAQLHsBAAmBcnkD/ko40Nc45jXotKjplQwdbXeZvZ
-5wO8GdAbkF8TCLMZOSIwi+cXoEtTH4TFSP+SYoyHfyMMvmn68HHnXGqO0IU312Qx
-6lU/p3EmSlV9kxArZAK49+g3RhCwyckdhmULMFf2mvhgAfBg7ViNYv9wezoQP9xT
-Ja013jCCuZ5tInt2Dt0QQCmAlJjHY1/YYH4RaZQ7hpbweY6OK516JgJyjG2ZOEP0
-4VOpTRk7qEFyV/4ew9/HYU7t0h7pm0xdQ8JrIJ4Dva4hdU+LMqkWW8Fe/ISoktni
-FqZ1wLrPUWMLV/ph0+XDo82biVnkZZOKAbIyk6c7ZXRMvzANiwFdLejCAIptEGld
-8ra5N/2pw9zC0Cwk8xTGbg6Hj9r3oxAiV230Vj85cVolntFoKTh0i9PcownPAIZh
-NFq8h0Xuviha7s0EJHCFP82EkHr48bYWVYy6plj8LaFce96aRjT4m5FaK3SINeXB
-yYAhSqn0Y7tQa47+4l4oNw/M+I+awGys6w3jq0Dm1Dkh2//kkkPU2QFZJ7n/DM2E
-H92K9LqP79XUJpLv7HFLu6+Eq59tSK+w51qBQOirCGR1YkcAxKyWy3cLgSQfXs0o
-oWSQgZ/+1qK9VP0zXjbeJpgAZKif+HIhr6EotXxBhgThcryezKOgFQGshV3gM1gD
-pftiBKef1ks=
-=1wFm
------END PGP SIGNATURE-----
-
---==_Exmh_1580963201_12134P--
+I'm still mulling over the patches from Jan.  There's something I don't
+like about them, but I can't articulate it in a useful way yet.  I'm on
+board with the general principle, and obviously the xas_for_each_marked()
+bug needs to be fixed.
