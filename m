@@ -2,106 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97828153C52
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 01:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA4C153C54
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Feb 2020 01:40:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbgBFAhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Feb 2020 19:37:53 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46303 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbgBFAhw (ORCPT
+        id S1727307AbgBFAk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Feb 2020 19:40:57 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39547 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbgBFAk5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Feb 2020 19:37:52 -0500
-Received: by mail-ot1-f68.google.com with SMTP id g64so3837281otb.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 16:37:52 -0800 (PST)
+        Wed, 5 Feb 2020 19:40:57 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 77so3875602oty.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Feb 2020 16:40:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9CgZnEXyLY0Syv8bqgt/nY2nliVOx+eludqj9JOuXxQ=;
-        b=pwboQQ6dDYepvw2yHSZ7z5GQ8dklJBoUgx6mY+1GPFCvi6qF7pwQwc1HBoxE94l5uf
-         FrRuw63gYQSxkeL3yQDQ6w7haexXzC6nuTHkR7cM3WV2kJv3Cm7yWLHrKRN5K01Aldul
-         cFm1aR5dBNJdzGk8yRek/jMlS4F3T/nHtX9o7QwHj6Kbyi2SN/oGstf5MIdDjbCg3TRV
-         wgsAqsKwlwyeCYbG9OQRCBR4XKQiIDPJTpRuT8ZRLpv2IJ1nxl/xZ01+KPD9rFacJTbS
-         1acZ0CEKWMpXWzhWtO66EURrfyINvc7RfsZ4/QSiyKI7ixNk6at3DcYSK2pqh3un6DdX
-         Prdg==
+        bh=2wKAh9wuYiuc5W6sTWogwjdscmPsuVFsTNX4yHQsFIQ=;
+        b=ldEkAgr+NcpWdcJk25F86nfxNKZtEH+jI9I9Rl0qVXtcuA9BPt77zEVCLoEN5Pbeol
+         fHRD2E+B6ohnU2qzDz4q3NM7cYCa+RYlPygijcI8ic5lpPVVL7v5clOaMgcHwD0ho1hA
+         LJsiC8J8IecPG3PeqXkAJ5bGXGV8bguP2795Q/z5zOF0HVknVy2gkJju2zWumZDaX6az
+         jTuhKaBPZ8Tn02AWfKm+kWtHIHwwE9gCyzGxtNJIe2gS9eDWbwVU7wfYqkcZciaNpdWx
+         7lq9mFWmRI385KNZTtMQ/0zZAzATJ/eJ49ZglHTOYr8wGch8GBFt7G0YjjN5tRH23+rV
+         8ShA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9CgZnEXyLY0Syv8bqgt/nY2nliVOx+eludqj9JOuXxQ=;
-        b=JFIhCuD91onCoRPqNemDp1KOjEfmRi1OChcfEo9CVwMwOCSjW+Y7ibOXyT6uRnBQZW
-         nFmR4xuA7YXFGPhNtPXNIZPO31rln3MTnFe5Buxn+0Z6UZ00Q1rH6vUJu1yxrG/tIjJJ
-         b2eHLqIAYxDIGVb/m41oWDuklQEhGXv/6BQ6foEL2Mvmy8iT4z0/n6zk7ujDc2sab+Fd
-         2UblR3zrvR7Mu7qwxBzXi2kucacqxVBWRRc8raabooxsR3SHgmJOU0h9xi4Lc6cb1bVx
-         0jxA9Bmx1a7ikxfr5vYMcIVkOkNdkhNJKyfwnQbUPI+FCKnRGXjp/pRWIxd/zQSxFVXg
-         3D/A==
-X-Gm-Message-State: APjAAAU9jB6t+WnX2G+wvnA+Mpm2qbVDPCJEYzYQa4An6iGGLxYwh8Yb
-        vsLv19eI+oJA9OgygKLCJyvk+t9QNBTbHFXGQ+ROx7fL
-X-Google-Smtp-Source: APXvYqxt4gAkv1hvtAuccfBn1VDSYiNjQ3JyFMqiBZWssfDAFC+d5vqWE5smrRjpV1xIeHW8XfSCsOK0aAAeNKsk2fM=
-X-Received: by 2002:a9d:1284:: with SMTP id g4mr27696911otg.207.1580949471777;
- Wed, 05 Feb 2020 16:37:51 -0800 (PST)
+        bh=2wKAh9wuYiuc5W6sTWogwjdscmPsuVFsTNX4yHQsFIQ=;
+        b=Uzu0LI1TyNFInpwUVurxeTs1EmlNQ10+vcfdhE+Crbzm0V1FHfZ+7eqlXnhzt7c++R
+         TGFWiUQxZsvJlia4Zm6mVxVlXsBgi6fppZg8WCrlSmWFa4nWd/9w2zLSDHp4UFI/DCqr
+         1zB2Eb6c9pAUQFqvOh2ctNVFeymq+HXNRypG+ElpvushVdLhoBCCRsF74sFN3Zag+tO9
+         lsodRnWV9lJZJurgXxQlnutJJQ5HRf0MzHWJFoU4t/OOWJMAWW0KJQPwbqDDNZBwbq5B
+         mPnagez7V/parECl3CKga9MNZebz4XDAPFQwv+XR2l+IJX4r9ZWdqzbtwiJRq8ckfcDu
+         6AKg==
+X-Gm-Message-State: APjAAAXyWnjlc62KxJGT8UdnE0UL43iuxGbUINl+nYWY25919mhZBmEU
+        mbrMfrEp+Z1hKqdlrTucWllkhEY4joE+jOHx4lH1fA==
+X-Google-Smtp-Source: APXvYqyKZ7yhH4qQ9POMbzWU+GRmK/2Uv1thD8dauL6GIvGQJ18ctO/qrHQMqFzNWYo5JVYYzySS+tO87KVxX3Ho1aw=
+X-Received: by 2002:a9d:4e99:: with SMTP id v25mr29141169otk.363.1580949655787;
+ Wed, 05 Feb 2020 16:40:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20200129210337.GA13630@redhat.com> <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
-In-Reply-To: <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
+References: <20200203200029.4592-1-vgoyal@redhat.com> <20200203200029.4592-2-vgoyal@redhat.com>
+ <20200205183050.GA26711@infradead.org> <20200205200259.GE14544@redhat.com>
+In-Reply-To: <20200205200259.GE14544@redhat.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 5 Feb 2020 16:37:40 -0800
-Message-ID: <CAPcyv4ittXHkEV4eH_4F5vCfwRLoTTtDqEU1SmCs5DYUdZxBOA@mail.gmail.com>
-Subject: Re: [RFC][PATCH] dax: Do not try to clear poison for partial pages
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
+Date:   Wed, 5 Feb 2020 16:40:44 -0800
+Message-ID: <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dax, pmem: Add a dax operation zero_page_range
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        device-mapper development <dm-devel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 5, 2020 at 12:27 PM <jane.chu@oracle.com> wrote:
+On Wed, Feb 5, 2020 at 12:03 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> Hello,
+> On Wed, Feb 05, 2020 at 10:30:50AM -0800, Christoph Hellwig wrote:
+> > > +   /*
+> > > +    * There are no users as of now. Once users are there, fix dm code
+> > > +    * to be able to split a long range across targets.
+> > > +    */
+> >
+> > This comment confused me.  I think this wants to say something like:
+> >
+> >       /*
+> >        * There are now callers that want to zero across a page boundary as of
+> >        * now.  Once there are users this check can be removed after the
+> >        * device mapper code has been updated to split ranges across targets.
+> >        */
 >
-> I haven't seen response to this proposal, unsure if there is a different
-> but related discussion ongoing...
+> Yes, that's what I wanted to say but I missed one line. Thanks. Will fix
+> it.
 >
-> I'd like to express my wish: please make it easier for the pmem
-> applications when possible.
+> >
+> > > +static int pmem_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+> > > +                               unsigned int offset, size_t len)
+> > > +{
+> > > +   int rc = 0;
+> > > +   phys_addr_t phys_pos = pgoff * PAGE_SIZE + offset;
+> >
+> > Any reason not to pass a phys_addr_t in the calling convention for the
+> > method and maybe also for dax_zero_page_range itself?
 >
-> If kernel does not clear poison when it could legitimately do so,
+> I don't have any reason not to pass phys_addr_t. If that sounds better,
+> will make changes.
 
-The only path where this happens today is write() syscalls in dax
-mode, otherwise fallocate(PUNCH_HOLE) is currently the only guaranteed
-way to trigger error clearing from userspace (outside of sending raw
-commands to the device).
+The problem is device-mapper. That wants to use offset to route
+through the map to the leaf device. If it weren't for the firmware
+communication requirement you could do:
 
-> applications have to go through lengths to clear poisons.
-> For Cloud pmem applications that have upper bound on error recovery
-> time, not clearing poison while zeroing-out is quite undesirable.
+dax_direct_access(...)
+generic_dax_zero_page_range(...)
 
-The complicating factor in all of this is the alignment requirement
-for clearing and the inability for native cpu instructions to clear
-errors. On current platforms talking to firmware is required and that
-interface may require 256-byte block clearing. This is why the
-implementation glommed on to clearing errors on block-I/O path writes
-because we at least knew that all of those I/Os were 512-byte aligned.
-
-This gets better with cpus that support the movdir64b instruction, in
-that case there is still a 64-byte alignment requirement, but there's
-no need to talk to the BIOS and therefore no need to talk to a driver.
-
-So we have this awkward dependency on block-device I/O semantics only
-because it happened to organize i/o in a way that supports error
-clearing.
-
-Right now the kernel does not install a pte on faults that land on a
-page with known poison, but only because the error clearing path is so
-convoluted and could only claim that fallocate(PUNCH_HOLE) cleared
-errors because that was guaranteed to send 512-byte aligned zero's
-down the block-I/O path when the fs-blocks got reallocated. In a world
-where native cpu instructions can clear errors the dax write() syscall
-case could be covered (modulo 64-byte alignment), and the kernel could
-just let the page be mapped so that the application could attempt it's
-own fine-grained clearing without calling back into the kernel.
+...but as long as the firmware error clearing path is required I think
+we need to do pass the pgoff through the interface and do the pgoff to
+virt / phys translation inside the ops handler.
