@@ -2,112 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D77C155845
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 14:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED846155A42
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgBGNSy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 08:18:54 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40560 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbgBGNSy (ORCPT
+        id S1726936AbgBGPCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 10:02:42 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:38460 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGPCl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 08:18:54 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c23so1497574lfi.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 05:18:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uTjOaImg+ksV7BdfhHPQ/FTPKTcFmsjOHyFGzGRJy2I=;
-        b=px3p3e5+GsuY8I3lV6XSDycZ8agIVbKmPPwgLu3Lh8i8iQeajhpVMp4YENKqYEfWvR
-         l7szyDwa/fIPpLw33kK69S5Pf6ihs+yEsGacbdzkz4PviNn2h37DeQCHeB+f9y/P9dlX
-         9SdncWbfYLBcpEzPV9AYMAXIr1i7rBt3+hltAJJR9dLGiuI7doNoTQ90XAKteTE1YZaP
-         a387s5QH+qimgQKymmW0q31yZKfC7F/xrtJemao9N0ck6ye7buDsUfpVivFekLFmvpU1
-         jE51d1bi32F/J79szF6TeskC/TaCYG1Bq+VncIzgSLIpksUBxV5+49GAruiGknYNG36G
-         Yd0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uTjOaImg+ksV7BdfhHPQ/FTPKTcFmsjOHyFGzGRJy2I=;
-        b=cKy5Y4nB2B2HziScvl8Vl13JD737dYwUrVM51zCCKq0EwySIOFlQytyJFgtd+g9C3k
-         ERcO2P2uYtVETx4DBx4QFXj4pMeS/+fiCtE6Z8pLVP0vDbCIRD2Reg3q+HFVBwrHR15Y
-         dkZE6Kxo0gj/zm+yvoxkQfu5zCeAGdUhJUYe3xqhab0ECB6+BS80rK8lckpE8O/ZkEla
-         78d6+HXcIxzuOlHcK9lLLkVUyMkzRsrMhygrkw97KMxQUdsyxOxCB64yZm1HWA0+Hf8w
-         h+uoEIfgePoAc48nJtihoeMbA2NR2zUBwVsj9+fOloWKAnq1DsvEduKGIKs+g44U1y1s
-         cAaA==
-X-Gm-Message-State: APjAAAW7YFOIGbpZrUcmqpnYM7Is6ftdYJ7XxoGhILN/Bojfai8PhUpz
-        3gUDQpeNI6JF8ve7lTmt7w0HBQ==
-X-Google-Smtp-Source: APXvYqxjvYht2BAnt/sn52oyart+TOO9Z4BGc1YhTQrInCsed0Qr9BHzni7Ywm8GZcbncIGhJ4MD0g==
-X-Received: by 2002:ac2:47ec:: with SMTP id b12mr4552216lfp.162.1581081532420;
-        Fri, 07 Feb 2020 05:18:52 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 4sm1056760lfj.75.2020.02.07.05.18.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 05:18:51 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 5174D100B12; Fri,  7 Feb 2020 16:19:08 +0300 (+03)
-Date:   Fri, 7 Feb 2020 16:19:08 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-Message-ID: <20200207131908.hplpt3gvvek56zm7@box>
-References: <20200207033735.308000-1-jhubbard@nvidia.com>
- <20200207033735.308000-11-jhubbard@nvidia.com>
+        Fri, 7 Feb 2020 10:02:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581087782; x=1612623782;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QBmqK2hyrPjWSUot57VLilJic6MFv9RxkAql0uiJdCI=;
+  b=rg4MRj0GYhnk8DGlSdjKVmJ4YhktBFBqfnxF4vpSSwztcJfXChBNA/GL
+   KR0NJQhWxXEyO36g+fGv76YKzW8LBc0MFtVqZuInG2wLK2za49MBB9c7g
+   epIwzFxLq6gnU2K2DM9KI681jcsZp8OGOXSy1PhptQpUL+i9/Ju7sA9cO
+   HaXmw2sxC+tqSTb5CRu0Uik77X0VKNlS6tnBiLBbgm7AgwP/9xR5/LDqO
+   1pMUgoHAZ1PdFYYRh0f0F8S3W0X4U8mMkC14+VoyF5rfjm1yWWa3WfWFl
+   bta7Vahw+PEIF5vLd+PLss786WqQTveUFRhggkw/Zsmvyv2CmvcPTgmRw
+   Q==;
+IronPort-SDR: 39FJecUJquQzy0wMu/FtrGnyf22gz5/SUfuVFiahNPjBXOtCo9YFGQx9ZZ64kYjJTOljZJ356Q
+ ddNYaYEj8LjcRdzk3sUTZRU6EBcJCH20lNq1CdKNdqWn2Z2EEIbiJbkUuz0laFd2ME3V4GroA+
+ IofAcfxqGVSNYWfwEp3DRYjsbGh00I/36N6wD8oDRSbyUVlTos9fRr0k/Ic0d0D0RzulX+IvKo
+ Mcf2Wk19t3lOVpZ/c1jVmpoX0WPKrluwpSK8wfi6qzJViGPJ0OwfNcY00LwHVAJlNabT8kBCuQ
+ TFA=
+X-IronPort-AV: E=Sophos;i="5.70,413,1574092800"; 
+   d="scan'208";a="231121353"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 23:03:01 +0800
+IronPort-SDR: 1TATuoZvowSkMJe0Mjha74okqJgM+4O4li0OzJKr+i/Ymji/7uTunfdvgERarGBhRYyqwrt0y2
+ BhOiDCLuM6HLbPabm236ytvAMtM4Sx80VXv3MXygbz3ISaQh4lusb+js8tmXGu/CV58TAz30B0
+ pMhE0h3iO2W8WfN9N2fpQQselCa3iegsJlBj5FIxXFtGq04lj5X7j+CcWUMZTuMD8+jc8wozP3
+ dUFU0REuwguovhwW7efKrlBrrxfkuL7nODPCFRO1gxZN2XUNZIeb/uVqU1WOWQ8xVOhX4Ey5Co
+ LY2BgQecv/F8ibktMoDchZ08
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 06:55:38 -0800
+IronPort-SDR: 7eA1ie392Lcte+/6ZPFOwctwO3j8F7JxO/Dji0HmJLsH4xvr6Go6bUS5Kt1MV5am3dk8fjDiEJ
+ Wohtpk+5mM4bLjrTEcr/WMHRPigY5zcH3PdTGb4LJcQ1UehucIlarcNon4bUChAbVDZByxs2ZJ
+ 7li1SywOcx7tHhupuWnmMDpBIsTcVSSv2e76Jp0rWIYkxYwtbyKN2923XhaMF7fbVVmStWGy2I
+ pRjYvCc2MP0EBpgpPrSglr4YW3vCo81UJ2t6eTp19uGc9UZrSSCmAbZv4VfOnli9t7eZxSKgh/
+ ego=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2020 07:02:41 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] New zonefs file system for 5.6-rc1
+Date:   Sat,  8 Feb 2020 00:02:39 +0900
+Message-Id: <20200207150239.685712-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207033735.308000-11-jhubbard@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 07:37:33PM -0800, John Hubbard wrote:
-> Now that pages are "DMA-pinned" via pin_user_page*(), and unpinned via
-> unpin_user_pages*(), we need some visibility into whether all of this is
-> working correctly.
-> 
-> Add two new fields to /proc/vmstat:
-> 
->     nr_foll_pin_acquired
->     nr_foll_pin_released
-> 
-> These are documented in Documentation/core-api/pin_user_pages.rst.
-> They represent the number of pages (since boot time) that have been
-> pinned ("nr_foll_pin_acquired") and unpinned ("nr_foll_pin_released"),
-> via pin_user_pages*() and unpin_user_pages*().
-> 
-> In the absence of long-running DMA or RDMA operations that hold pages
-> pinned, the above two fields will normally be equal to each other.
-> 
-> Also: update Documentation/core-api/pin_user_pages.rst, to remove an
-> earlier (now confirmed untrue) claim about a performance problem with
-> /proc/vmstat.
-> 
-> Also: updated Documentation/core-api/pin_user_pages.rst to rename the
-> new /proc/vmstat entries, to the names listed here.
-> 
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Hi Linus,
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
--- 
- Kirill A. Shutemov
+Here is a pull request for the new zonefs file system (described briefly
+below). Please consider it for addition to kernel 5.6.
+
+The following changes since commit d5226fa6dbae0569ee43ecfc08bdcd6770fc4755:
+
+  Linux 5.5 (2020-01-26 16:23:03 -0800)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.6-rc1
+
+for you to fetch changes up to fcb9c24bef3d1d0942c50fb25fbb8ab45c7c3753:
+
+  zonefs: Add documentation (2020-02-07 14:40:13 +0900)
+
+----------------------------------------------------------------
+fs: New zonefs file system
+
+Zonefs is a very simple file system exposing each zone of a zoned block
+device as a file.
+
+Unlike a regular file system with native zoned block device support
+(e.g. f2fs or the on-going btrfs effort), zonefs does not hide the
+sequential write constraint of zoned block devices to the user. As a
+result, zonefs is not a POSIX compliant file system. Its goal is to
+simplify the implementation of zoned block devices support in
+applications by replacing raw block device file accesses with a richer
+file based API, avoiding relying on direct block device file ioctls
+which may be more obscure to developers.
+
+One example of this approach is the implementation of LSM
+(log-structured merge) tree structures (such as used in RocksDB and
+LevelDB) on zoned block devices by allowing SSTables to be stored in a
+zone file similarly to a regular file system rather than as a range of
+sectors of a zoned device. The introduction of the higher level
+construct "one file is one zone" can help reducing the amount of changes
+needed in the application while at the same time allowing the use of
+zoned block devices with various programming languages other than C.
+
+Zonefs IO management implementation uses the new iomap generic code.
+Zonefs has been successfully tested using a functional test suite
+(available with zonefs userland format tool on github) and a prototype
+implementation of LevelDB on top of zonefs.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+
+----------------------------------------------------------------
+Damien Le Moal (2):
+      fs: New zonefs file system
+      zonefs: Add documentation
+
+ Documentation/filesystems/zonefs.txt |  404 ++++++++++
+ MAINTAINERS                          |   10 +
+ fs/Kconfig                           |    1 +
+ fs/Makefile                          |    1 +
+ fs/zonefs/Kconfig                    |    9 +
+ fs/zonefs/Makefile                   |    4 +
+ fs/zonefs/super.c                    | 1439 ++++++++++++++++++++++++++++++++++
+ fs/zonefs/zonefs.h                   |  189 +++++
+ include/uapi/linux/magic.h           |    1 +
+ 9 files changed, 2058 insertions(+)
+ create mode 100644 Documentation/filesystems/zonefs.txt
+ create mode 100644 fs/zonefs/Kconfig
+ create mode 100644 fs/zonefs/Makefile
+ create mode 100644 fs/zonefs/super.c
+ create mode 100644 fs/zonefs/zonefs.h
