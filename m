@@ -2,78 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65350155C98
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B34155CD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:28:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbgBGRGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 12:06:49 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:51093 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbgBGRGs (ORCPT
+        id S1727305AbgBGR2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 12:28:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51326 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726901AbgBGR2K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:06:48 -0500
-Received: from mail-lj1-f173.google.com ([209.85.208.173]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1M7ayR-1is7HH3r9p-007ym1; Fri, 07 Feb 2020 18:06:47 +0100
-Received: by mail-lj1-f173.google.com with SMTP id y6so93648lji.0;
-        Fri, 07 Feb 2020 09:06:46 -0800 (PST)
-X-Gm-Message-State: APjAAAUJHNPXCh/xK8YFHLoStO0M8ozKP/4l15jS3+ofrisLfvHUxlQn
-        iAOqtj8EusCpznG9RAxb7yFTLwI9MAu2e89RTqM=
-X-Google-Smtp-Source: APXvYqyFrxs4D067Cq+LTtKdfrn+W0Vf9eBI5h4pPAoPLWMwWdS7Kqx2r3OvJt5B7b7BK2Cuvpcqo/wFc3iKjBsrS34=
-X-Received: by 2002:a2e:5056:: with SMTP id v22mr138394ljd.164.1581095206323;
- Fri, 07 Feb 2020 09:06:46 -0800 (PST)
+        Fri, 7 Feb 2020 12:28:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=myivX2M64tawJU//p7NCr6Swfjc7dU+qI4Gkm/F5Jqc=; b=jsmA99uv7NiFtEqo3DAeR4gvwh
+        Th9hLO16uiY9OHU7Kw9vz7yMFE3bMq3xH4ymZ/62PDWYug/SoCdc2K3/MjcOnzliNVh5LgxBjGLGT
+        gUbjWlYInXfl9ym+ZF4osdy3erkprlCYHCRkHCl8msISCezgHexDSjHIiIN24r0IfifglrRemmjox
+        As9m6xHUi4b9H+uJrKGhH2TYdkeEqnStsyN/TF9uayWe+LwUcdwOODkVcp1pgCnJuhJgZWd1KYlvZ
+        ZP62GgD0gtCZNSB+iJw8XabBeKdEiYlL299zlcgk2HiGmYZv/d6I2SWNhRVBBxnGNyhm6Dl6mR8dv
+        S8I7TzAg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j07Pu-0001vf-4e; Fri, 07 Feb 2020 17:27:46 +0000
+Date:   Fri, 7 Feb 2020 09:27:46 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v5 01/12] mm: dump_page(): better diagnostics for
+ compound pages
+Message-ID: <20200207172746.GE8731@bombadil.infradead.org>
+References: <20200207033735.308000-1-jhubbard@nvidia.com>
+ <20200207033735.308000-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-References: <20191217221708.3730997-21-arnd@arndb.de> <20200207072210.10134-1-youling257@gmail.com>
-In-Reply-To: <20200207072210.10134-1-youling257@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 7 Feb 2020 17:06:34 +0000
-X-Gmail-Original-Message-ID: <CAK8P3a2n6qttV0hhMHjb7XngA6-Aj4Q9Q_6LdK7LgyoYSvQJSw@mail.gmail.com>
-Message-ID: <CAK8P3a2n6qttV0hhMHjb7XngA6-Aj4Q9Q_6LdK7LgyoYSvQJSw@mail.gmail.com>
-Subject: Re: [PATCH v2 20/27] compat_ioctl: simplify the implementation
-To:     youling257 <youling257@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:fdtLroLKRF3z9lpaDoAat+saKdez6k1gz9YQ/JdPIcbHjwBh2SR
- cRQdIW8DVR79qmzqUQuhgKbx+WdYHxoQ0do7i5hr1fVa6EJKg5pC6cROq9wYyK9qhzoLcgM
- Jqafa17Fe8mwhjeEUUMPq4eC9N+kw6Vs78frR2Xohi8lDaDziOETYvOrzT20OYYC+p1K9mw
- B2R69JBXeNbHjhZ6gD94Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ly7G1KQZ0uo=:fERR7UDTKiJeYRbOJJZXwJ
- mKHoYCmN3zdJ+sAOvBYptoQLTQ+oWDBVkJZyHI9LzcBuaRpEuLfs3Zp2V6ao2plD+q1TG1XDq
- Xb/Kb4xSHeH76ydf6aoLsX3cJjFtUP33xdYVxO8Y/nb/SLZTfIHL4ZsxWMAjDRyXG11s/MrLY
- H+hMQfE1zvrQtS0daFK0FtVXaYcIBKyzg/mNcyx+JAwfPL56NmG87tgd2rucwMn25h4aqmcdk
- vkSnMOdjxLE09hNEYb4ldkruUHySCkTOYrDcCaQv51KxO/JT7e76RthjVdrSRsAToK/im3lGZ
- SgBshuowGaZhBjVoTvxOjjRpdjEZREyKOjdsyz/mAN2vatU84hm47XjiSzZGHncelAXSm8yna
- QmqaoZoiEM/xS1T8VPiYORLbDkFyhPGdJefplJQsYYzgGElNeXWAjYq1mtl6BJBYvfVNu6Y+y
- AfOaDuohFym2X6kdekvWRF+Mb8tc3DIZawhs3XSwDHuxB9zWWybsdT6EylCPC8qq1t1Jsvx2D
- sdm25mQ3KV2Eh94d2mYN292LRd4Xl+AaPRrXLXy7iqeFoaSdfeD2dbOqbSUQx7NPff+R4L0MU
- YxzKOo26cCY0wfSnBr0HNQoIBJLHx6490ZUJ+lljfNHDbgGKB5oJgy6Ks5kxdePUHG77+s5vj
- p7vXXS5Gvg6hBpdaNL2TLLL5FBDeXP9ewEXecRIjTvnrx89zGkBupNACJuaTAq2jvX+UYiyT1
- FSsrkkExVn047OxAf7yGbgJHoCVETBYmtJ2vRoIKW3MB3juc98dJMslUAAx0Cyhla5i1JXwY2
- mhs3w49LwyDWx0dGExupZgph8hBMmhjdsu+F4JHqp5IzM1j3v4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207033735.308000-2-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 8:22 AM youling257 <youling257@gmail.com> wrote:
->
-> This patch cause a problem on 64bit kernel 32bit userspace.
-> My 32bit Androidx86 userspace run on 64bit mainline kernel, this patch caused some app not detect root permission.
+On Thu, Feb 06, 2020 at 07:37:24PM -0800, John Hubbard wrote:
+> A compound page collects the refcount in the head page, while leaving
+> the refcount of each tail page at zero. Therefore, when debugging a
+> problem that involves compound pages, it's best to have diagnostics that
+> reflect that situation. However, dump_page() is oblivious to these
+> points.
+> 
+> Change dump_page() as follows:
+> 
+> 1) For tail pages, print relevant head page information: refcount, in
+>    particular. But only do this if the page is not corrupted so badly
+>    that the pointer to the head page is all wrong.
+> 
+> 2) Do a separate check to catch any (rare) cases of the tail page's
+>    refcount being non-zero, and issue a separate, clear pr_warn() if
+>    that ever happens.
+> 
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  mm/debug.c | 35 +++++++++++++++++++++++++++++------
+>  1 file changed, 29 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/debug.c b/mm/debug.c
+> index ecccd9f17801..f074077eee11 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -42,6 +42,33 @@ const struct trace_print_flags vmaflag_names[] = {
+>  	{0, NULL}
+>  };
+>  
+> +static void __dump_tail_page(struct page *page, int mapcount)
+> +{
+> +	struct page *head = compound_head(page);
+> +
+> +	if ((page < head) || (page >= head + MAX_ORDER_NR_PAGES)) {
+> +		/*
+> +		 * Page is hopelessly corrupted, so limit any reporting to
+> +		 * information about the page itself. Do not attempt to look at
+> +		 * the head page.
+> +		 */
+> +		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+> +			"index:%#lx (corrupted tail page case)\n",
+> +			page, page_ref_count(page), mapcount, page->mapping,
+> +			page_to_pgoff(page));
+> +	} else {
+> +		pr_warn("page:%px compound refcount:%d mapcount:%d mapping:%px "
+> +			"index:%#lx compound_mapcount:%d\n",
+> +			page, page_ref_count(head), mapcount, head->mapping,
+> +			page_to_pgoff(head), compound_mapcount(page));
+> +	}
+> +
+> +	if (page_ref_count(page) != 0) {
+> +		pr_warn("page:%px PROBLEM: non-zero refcount (==%d) on this "
+> +			"tail page\n", page, page_ref_count(page));
+> +	}
+> +}
+> +
+>  void __dump_page(struct page *page, const char *reason)
+>  {
+>  	struct address_space *mapping;
+> @@ -75,12 +102,8 @@ void __dump_page(struct page *page, const char *reason)
+>  	 */
+>  	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
+>  
+> -	if (PageCompound(page))
+> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+> -			"index:%#lx compound_mapcount: %d\n",
+> -			page, page_ref_count(page), mapcount,
+> -			page->mapping, page_to_pgoff(page),
+> -			compound_mapcount(page));
+> +	if (PageTail(page))
+> +		__dump_tail_page(page, mapcount);
+>  	else
+>  		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
+>  			page, page_ref_count(page), mapcount,
 
-Thanks for you work in bisecting the issue to my patch, sorry to have
-caused you trouble. After Christian Zigotzky
-also reported a problem in this file, I have been able to find a
-specific bug and just submitted a patch for it.
+A definite improvement, but I think we could do better.  For example,
+you've changed PageCompound to PageTail here, whereas we really do want
+to dump some more information for PageHead pages than the plain vanilla
+order-0 page has.  Another thing is that page_mapping() calls compound_head(),
+so if the page is corrupted, we're going to get a funky pointer dereference.
 
-Please have a look if that fix addresses your problem, as it's
-possible that there was more than one bug introduced
-by the original patch.
+I spent a bit of time on this reimplementation ... what do you think?
 
-       Arnd
+ - Print the mapping pointer using %p insted of %px.  The actual value of
+   the pointer can be read out of the raw page dump and using %p gives a
+   chance to correlate it to earlier printk of the mapping pointer.
+ - Add the order of the page for compound pages
+ - Dump the raw head page as well as the raw page being dumped
+
+diff --git a/mm/debug.c b/mm/debug.c
+index ecccd9f17801..0564d4cb8233 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -44,8 +44,10 @@ const struct trace_print_flags vmaflag_names[] = {
+ 
+ void __dump_page(struct page *page, const char *reason)
+ {
++	struct page *head = compound_head(page);
+ 	struct address_space *mapping;
+ 	bool page_poisoned = PagePoisoned(page);
++	bool compound = PageCompound(page);
+ 	/*
+ 	 * Accessing the pageblock without the zone lock. It could change to
+ 	 * "isolate" again in the meantime, but since we are just dumping the
+@@ -66,25 +68,32 @@ void __dump_page(struct page *page, const char *reason)
+ 		goto hex_only;
+ 	}
+ 
+-	mapping = page_mapping(page);
++	if (page < head || (page >= head + MAX_ORDER_NR_PAGES)) {
++		/* Corrupt page, cannot call page_mapping */
++		mapping = page->mapping;
++		head = page;
++		compound = false;
++	} else {
++		mapping = page_mapping(page);
++	}
+ 
+ 	/*
+ 	 * Avoid VM_BUG_ON() in page_mapcount().
+ 	 * page->_mapcount space in struct page is used by sl[aou]b pages to
+ 	 * encode own info.
+ 	 */
+-	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
++	mapcount = PageSlab(head) ? 0 : page_mapcount(head);
+ 
+-	if (PageCompound(page))
+-		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+-			"index:%#lx compound_mapcount: %d\n",
+-			page, page_ref_count(page), mapcount,
++	if (compound)
++		pr_warn("page:%px head:%px refcount:%d mapcount:%d mapping:%p "
++			"index:%#lx order:%u compound_mapcount: %d\n",
++			page, head, page_ref_count(page), mapcount,
+ 			page->mapping, page_to_pgoff(page),
+-			compound_mapcount(page));
++			compound_order(head), compound_mapcount(page));
+ 	else
+-		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
++		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p index:%#lx\n",
+ 			page, page_ref_count(page), mapcount,
+-			page->mapping, page_to_pgoff(page));
++			mapping, page_to_pgoff(page));
+ 	if (PageKsm(page))
+ 		type = "ksm ";
+ 	else if (PageAnon(page))
+@@ -106,6 +115,10 @@ void __dump_page(struct page *page, const char *reason)
+ 	print_hex_dump(KERN_WARNING, "raw: ", DUMP_PREFIX_NONE, 32,
+ 			sizeof(unsigned long), page,
+ 			sizeof(struct page), false);
++	if (!page_poisoned && compound)
++		print_hex_dump(KERN_WARNING, "head: ", DUMP_PREFIX_NONE, 32,
++			sizeof(unsigned long), head,
++			sizeof(struct page), false);
+ 
+ 	if (reason)
+ 		pr_warn("page dumped because: %s\n", reason);
