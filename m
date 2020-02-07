@@ -2,107 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93628155C8F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 681B5155C82
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:04:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgBGRFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 12:05:03 -0500
-Received: from mout.kundenserver.de ([212.227.126.130]:47875 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbgBGRFC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:05:02 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MtwIW-1jnXJr2Ehw-00uIjU; Fri, 07 Feb 2020 18:04:55 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Christian Zigotzky <chzigotzky@xenosoft.de>,
-        youling257 <youling257@gmail.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] compat_ioctl: fix FIONREAD on devices
-Date:   Fri,  7 Feb 2020 18:04:05 +0100
-Message-Id: <20200207170447.1251404-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.25.0
+        id S1727130AbgBGRE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 12:04:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726874AbgBGRE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 12:04:26 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AF7320838;
+        Fri,  7 Feb 2020 17:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581095066;
+        bh=rmwdovkzPDfU6zBkkGN1DFPIW8RKH+GAVeQqP8b7sW0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LOKxzF2Av9uZ51jStNxCyOrUHTzlWfSJ1yYOdj5zx7m39pQpvfVYrUbC1LXADkRYe
+         VgTwb5HrV262Tk+/yr7I35NMNP0FYhad2t5WPNfjNDtpJjdXDPgYq8+4HqqGak4MkJ
+         VOJM6m55x7y+qTviJOBtXVG1ZqYydtnFPFg2Y6os=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, andres@anarazel.de, willy@infradead.org,
+        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
+        akpm@linux-foundation.org
+Subject: [PATCH v3 0/3] vfs: have syncfs() return error when there are writeback errors
+Date:   Fri,  7 Feb 2020 12:04:20 -0500
+Message-Id: <20200207170423.377931-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hA/Jn/VqwfJRoyLL7+C0dmPI0bW1y9Wy9fTJ11p/XjHH/k4igyJ
- CXJDkaADAMHHgQ/+7P+QHn4ky5AqPX6P1tQMKJo8sfcJKNyXjmX8jOq+N8LZ7XkKjzZwkLv
- pjLGpDLAKybrbEP8CRU9VYzKyTxWc+NrxqS054iIaGgPWuxOxR2kIq7gcII4LoiUxuk2pxN
- y1oRGrDvsQ4roxAYiC+Qg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yLQYzVl2pag=:bHIbF5RzszCBcwzMx6AHcX
- ACxgZUrDNgXigVujVO8f1UQZrkkE5SYAAajN1JzwRqk7zMNIzopKCB7PyviLngIRTv09ACkV7
- 895B4n5art8uNiuhQtBFI8Wq3T5G4Y6ksz4ebCOqbPFc/09mwqmsbt07PhKfaloEE2MDVTExT
- f+2U7g/cwACMLViLcpf0v1S5t6+qBf+hJO81oIH5VrnwJsTtkHkhBjrm8Tt+L6dSzVQMwjiWj
- TP033bg5uysWgdGakLR7+pDd9FV98npqs3flXKYVL7W/MiWqi9oIgZ+e50k8qDhzaIZDsZjux
- jTVxe78Ec3pGwifGMQqq3eXLP+JBeEoH42gGwdTa5wHWHReQiVLfKal7aq+zKLNuMReNZAAS0
- P8ilBPokFglusgt4QpQ9urBLxaN76RE1Hu8cphUCEev1y79x3EySlP9N+8akZI40PR84Gi01Y
- M7vRqhO4vXu6NxKAx85DbSL1mN/Nny4rUoXf7r7BIDryPaljIYbLK5OKyJerRBK0t8tsrwk2H
- SDvn0sXUTH7WUc3vHOKHrlrxtegDQjOsYAQgP2tjjP0QbP111tl2NByu6pwzkS/eHPOEvt9QN
- 1tZZa5isoMwe6oCVtCgTuVWOip/ybp9FlTOiKnZU0Cm5U9/Y7UFIx+jJwVV8nf0Id/x9vGHg8
- QPz+CZvtYan1H+aZcSt7S2kOiSLZWZsF/Kuf7bI1OJWbXe2fbVa/jzgkh8qFLlDWt+G323Qck
- vIpX6UVwuBUuO24q347hxC1havOXVSrswsbxHq7uQDcUjfcsvPHwJNquhOc5Bo84/8NaQ+HeX
- FkMRH+1bceoCyCWa07JhP886S42Zwr6ocIwK0rHZV08UGgOmoM=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My final cleanup patch for sys_compat_ioctl() introduced a regression on
-the FIONREAD ioctl command, which is used for both regular and special
-files, but only works on regular files after my patch, as I had missed
-the warning that Al Viro put into a comment right above it.
+You're probably wondering -- Where are v1 and v2 sets?
 
-Change it back so it can work on any file again by moving the implementation
-to do_vfs_ioctl() instead.
+I did the first couple of versions of this set back in 2018, and then
+got dragged off to work on other things. I'd like to resurrect this set
+though, as I think it's valuable overall, and I have need of it for some
+other work I'm doing.
 
-Fixes: 77b9040195de ("compat_ioctl: simplify the implementation")
-Reported-by: Christian Zigotzky <chzigotzky@xenosoft.de>
-Reported-by: youling257 <youling257@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Untested so far. Christian and youling257, can you see if this patch
-addresses your problems?
----
- fs/ioctl.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Currently, syncfs does not return errors when one of the inodes fails to
+be written back. It will return errors based on the legacy AS_EIO and
+AS_ENOSPC flags when syncing out the block device fails, but that's not
+particularly helpful for filesystems that aren't backed by a blockdev.
+It's also possible for a stray sync to lose those errors.
 
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 7c9a5df5a597..5152c98cfc30 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -523,13 +523,9 @@ static int compat_ioctl_preallocate(struct file *file, int mode,
- 
- static int file_ioctl(struct file *filp, unsigned int cmd, int __user *p)
- {
--	struct inode *inode = file_inode(filp);
--
- 	switch (cmd) {
- 	case FIBMAP:
- 		return ioctl_fibmap(filp, p);
--	case FIONREAD:
--		return put_user(i_size_read(inode) - filp->f_pos, p);
- 	case FS_IOC_RESVSP:
- 	case FS_IOC_RESVSP64:
- 		return ioctl_preallocate(filp, 0, p);
-@@ -721,6 +717,13 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
- 	case FIDEDUPERANGE:
- 		return ioctl_file_dedupe_range(filp, argp);
- 
-+	case FIONREAD:
-+		if (!S_ISREG(inode->i_mode))
-+			return vfs_ioctl(filp, cmd, arg);
-+
-+		return put_user(i_size_read(inode) - filp->f_pos,
-+				(int __user *)argp);
-+
- 	default:
- 		if (S_ISREG(inode->i_mode))
- 			return file_ioctl(filp, cmd, argp);
+The basic idea is to track writeback errors at the superblock level,
+so that we can quickly and easily check whether something bad happened
+without having to fsync each file individually. syncfs is then changed
+to reliably report writeback errors, and a new ioctl is added to allow
+userland to get at the current errseq_t value w/o having to sync out
+anything.
+
+I do have a xfstest for this. I do not yet have manpage patches, but
+I'm happy to roll some once there is consensus on the interface.
+
+Caveats:
+
+- Having different behavior for an O_PATH descriptor in syncfs is
+  a bit odd, but it means that we don't have to grow struct file. Is
+  that acceptable from an API standpoint?
+
+- This adds a new generic fs ioctl to allow userland to scrape the
+  current superblock's errseq_t value. It may be best to present this
+  to userland via fsinfo() instead (once that's merged). I'm fine with
+  dropping the last patch for now and reworking it for fsinfo if so.
+
+Jeff Layton (3):
+  vfs: track per-sb writeback errors and report them to syncfs
+  buffer: record blockdev write errors in super_block that it backs
+  vfs: add a new ioctl for fetching the superblock's errseq_t
+
+ fs/buffer.c             |  2 ++
+ fs/ioctl.c              |  4 ++++
+ fs/open.c               |  6 +++---
+ fs/sync.c               |  9 ++++++++-
+ include/linux/errseq.h  |  1 +
+ include/linux/fs.h      |  3 +++
+ include/linux/pagemap.h |  5 ++++-
+ include/uapi/linux/fs.h |  1 +
+ lib/errseq.c            | 33 +++++++++++++++++++++++++++++++--
+ 9 files changed, 57 insertions(+), 7 deletions(-)
+
 -- 
-2.25.0
+2.24.1
 
