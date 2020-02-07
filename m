@@ -2,68 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D992155BDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 17:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1232F155BF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 17:39:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbgBGQeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 11:34:14 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:52401 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726936AbgBGQeO (ORCPT
+        id S1727123AbgBGQjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 11:39:00 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26835 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726901AbgBGQjA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 11:34:14 -0500
+        Fri, 7 Feb 2020 11:39:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581093253;
+        s=mimecast20190719; t=1581093540;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=3QRTAga3VQ9v/y6z6auDep6PqNUpoH7brYD9i0zJlUs=;
-        b=VdDj+iDd5ju97kc6DezwxjQ/KbTDbwwMS5SHZKZC5JoL95iy2d4VGbMd6EpwhUY6ZjF9jq
-        qbjW2H0jAu+Wb4y8SWGX3kWjmTFIGExNmVq5RGFxTaemeOfdwpf4W51gRdqZ7yJfA1/fVx
-        BIJyAh66IsuAdrYe82pSzRUuSris+Q8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-FcrUSCs0P4araZ4RMEpJ8Q-1; Fri, 07 Feb 2020 11:34:05 -0500
-X-MC-Unique: FcrUSCs0P4araZ4RMEpJ8Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 896671005513;
-        Fri,  7 Feb 2020 16:34:04 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F08FD790E1;
-        Fri,  7 Feb 2020 16:34:01 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 63FFF220A24; Fri,  7 Feb 2020 11:34:01 -0500 (EST)
-Date:   Fri, 7 Feb 2020 11:34:01 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, dm-devel@redhat.com
-Subject: Re: [PATCH 3/5] dm,dax: Add dax zero_page_range operation
-Message-ID: <20200207163401.GB11998@redhat.com>
-References: <20200203200029.4592-1-vgoyal@redhat.com>
- <20200203200029.4592-4-vgoyal@redhat.com>
- <20200205183304.GC26711@infradead.org>
+        bh=y3B0NGs/W84aAaWzmg3vv3+Dtgz3ksAr9b9eZvFXTsE=;
+        b=E8mh0jbnMFvkdqb2aq6LeqXeK28+s0D3N0NBjKS1kJ87ji352nuFnUD41RID6ILP2Ts5mw
+        12kh2LPtBI2ogAn13TkQH6YFmHV9fVDDQirErq1HPQ+/UTggJlU67HqeGZHW2KU1Xbrx5U
+        xL6LjIL5rrLWo6/ZMUkxEYjlbRUItYI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-221-p-TgbenOOESTjpZ8vNiTHw-1; Fri, 07 Feb 2020 11:38:57 -0500
+X-MC-Unique: p-TgbenOOESTjpZ8vNiTHw-1
+Received: by mail-wm1-f71.google.com with SMTP id t17so946896wmi.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 08:38:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y3B0NGs/W84aAaWzmg3vv3+Dtgz3ksAr9b9eZvFXTsE=;
+        b=johBQbSYk5WVu2d/zixeOUiBIzeGmhx2sw/fSWkmn5KQPbMfkS8uacRAtBwE2dP5wG
+         aHr/S+okxRx+uW2WxRWSZ+js8LrKSJE1JI3pyifgGnPV0/7WPODQJqDHtEanUyOULMUn
+         yYRCOU5UjHVjbX/zuS49CuJMifEnwKyIOvI8E/Ooy4VrLnvdRcxjpcs5ldCFyeMvO1kZ
+         ho60+eRsBZ6q0uviz6ybsIHM7YjbHNkSBULzhKgrKvkIi6/oCueZOJsdJOFhpgLoE0bN
+         XbbVauWEEAoSbKKmrpaQTLthBZdcObIl7Xk5U2oLq8kb1FIT22J2PILsK2yXWaVSqRm5
+         02lQ==
+X-Gm-Message-State: APjAAAVBWYqka0oJBp45DT575H3c1agu4MwVkyuF8wdKPzIghprB69ME
+        gwEAgy21PuSVtL+ZxHT18dtZyW4vD2qHKMfclfNAR0e7VvNoufOLEf9YY734oMp5+7mpSVWwNYw
+        4RRHAbwQcpuwlHw/l+UpDf5gxYw==
+X-Received: by 2002:a7b:c318:: with SMTP id k24mr5508475wmj.54.1581093536531;
+        Fri, 07 Feb 2020 08:38:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyzfXiEMRFxiSTWfBktKv/u3HPrByhX07ia/ebkul4WxGWtBDC2/WJGWlaoi2DsBrj0R/Rgng==
+X-Received: by 2002:a7b:c318:: with SMTP id k24mr5508452wmj.54.1581093536325;
+        Fri, 07 Feb 2020 08:38:56 -0800 (PST)
+Received: from steredhat (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
+        by smtp.gmail.com with ESMTPSA id e17sm3919212wma.12.2020.02.07.08.38.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 08:38:55 -0800 (PST)
+Date:   Fri, 7 Feb 2020 17:38:53 +0100
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring: flush overflowed CQ events in the
+ io_uring_poll()
+Message-ID: <20200207163853.bzfgn2mzpactehk3@steredhat>
+References: <20200207121828.105456-1-sgarzare@redhat.com>
+ <0acf040c-4b00-1647-e0c9-fc8b1c94685d@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200205183304.GC26711@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <0acf040c-4b00-1647-e0c9-fc8b1c94685d@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:33:04AM -0800, Christoph Hellwig wrote:
-> On Mon, Feb 03, 2020 at 03:00:27PM -0500, Vivek Goyal wrote:
-> > This patch adds support for dax zero_page_range operation to dm targets.
+On Fri, Feb 07, 2020 at 09:12:39AM -0700, Jens Axboe wrote:
+> On 2/7/20 5:18 AM, Stefano Garzarella wrote:
+> > In io_uring_poll() we must flush overflowed CQ events before to
+> > check if there are CQ events available, to avoid missing events.
+> > 
+> > We call the io_cqring_events() that checks and flushes any overflow
+> > and returns the number of CQ events available.
+> > 
+> > We can avoid taking the 'uring_lock' since the flush is already
+> > protected by 'completion_lock'.
 > 
-> Any way to share the code with the dax copy iter here?
+> Thanks, applied. I dropped that last sentence, as a) it doesn't
+> really matter, and b) we may very well already have it held here
+> if someone is doing a poll on the io_uring fd itself.
 
-Had a look at it and can't think of a good way of sharing the code. If
-you have something specific in mind, I am happy to make changes.
+Sure, indeed I was undecided whether to put it after the three dashes
+as a response to your yesterday's request.
 
-Vivek
+Thanks,
+Stefano
 
