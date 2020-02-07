@@ -2,98 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B9815602C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 21:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9A5D156071
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 22:06:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbgBGUwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 15:52:53 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41763 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726947AbgBGUww (ORCPT
+        id S1727068AbgBGVFy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 16:05:54 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:14260 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbgBGVFy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:52:52 -0500
-Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3A7708220F7;
-        Sat,  8 Feb 2020 07:52:45 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j0AcF-0005eN-RY; Sat, 08 Feb 2020 07:52:43 +1100
-Date:   Sat, 8 Feb 2020 07:52:43 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        andres@anarazel.de, willy@infradead.org, dhowells@redhat.com,
-        hch@infradead.org, jack@suse.cz, akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-Message-ID: <20200207205243.GP20628@dread.disaster.area>
-References: <20200207170423.377931-1-jlayton@kernel.org>
+        Fri, 7 Feb 2020 16:05:54 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3dd1220000>; Fri, 07 Feb 2020 13:05:38 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 07 Feb 2020 13:05:52 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 07 Feb 2020 13:05:52 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 7 Feb
+ 2020 21:05:52 +0000
+Subject: Re: [PATCH v5 01/12] mm: dump_page(): better diagnostics for compound
+ pages
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20200207033735.308000-1-jhubbard@nvidia.com>
+ <20200207033735.308000-2-jhubbard@nvidia.com>
+ <20200207172746.GE8731@bombadil.infradead.org>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <3477bf65-64dc-7854-6720-589f7fcdac07@nvidia.com>
+Date:   Fri, 7 Feb 2020 13:05:52 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207170423.377931-1-jlayton@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=9kdqgZibw9NIpUqzm0EA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200207172746.GE8731@bombadil.infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581109538; bh=7ut/wdkDS0FpA4HZltu5HfFGDc856CHfoKcOQZwZpKY=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qz9fEfJsgWpbE4ES0N4b0U2KdwU7WUZEPZkyZm1lWT+ssrEe4QmCYIAwcG3u59fsO
+         95bqQChY9FUbxQMy5LQyXcscufnj54mi7NnbUyVO1c9YXqIGoXNGYVv7DfIdlzn4Tj
+         6eWA4Vw0ML9zfUsTRNEdC/sts2heSOLYkbUKAXS7fxbr6Uq8tSFyBtoxinnLFhqb6n
+         aySRLrY5vdGSNUXd4haLTwimnVQ9jcXQ0irFEl9ctRbxH1z9GqDwtOj3hAHBktAXL6
+         8uczRol4+YH/ds6EseuIL253d1QTCTZ+4mXBq7e7xq9kpwVILZjJfMVmcYDSZAZOkm
+         0rCBfeUgW//tg==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> You're probably wondering -- Where are v1 and v2 sets?
+On 2/7/20 9:27 AM, Matthew Wilcox wrote:
+...
 > 
-> I did the first couple of versions of this set back in 2018, and then
-> got dragged off to work on other things. I'd like to resurrect this set
-> though, as I think it's valuable overall, and I have need of it for some
-> other work I'm doing.
+> A definite improvement, but I think we could do better.  For example,
+> you've changed PageCompound to PageTail here, whereas we really do want
+> to dump some more information for PageHead pages than the plain vanilla
+> order-0 page has.  Another thing is that page_mapping() calls compound_head(),
+> so if the page is corrupted, we're going to get a funky pointer dereference.
 > 
-> Currently, syncfs does not return errors when one of the inodes fails to
-> be written back. It will return errors based on the legacy AS_EIO and
-> AS_ENOSPC flags when syncing out the block device fails, but that's not
-> particularly helpful for filesystems that aren't backed by a blockdev.
-> It's also possible for a stray sync to lose those errors.
+> I spent a bit of time on this reimplementation ... what do you think?
 > 
-> The basic idea is to track writeback errors at the superblock level,
-> so that we can quickly and easily check whether something bad happened
-> without having to fsync each file individually. syncfs is then changed
-> to reliably report writeback errors, and a new ioctl is added to allow
-> userland to get at the current errseq_t value w/o having to sync out
-> anything.
 
-So what, exactly, can userspace do with this error? It has no idea
-at all what file the writeback failure occurred on or even
-what files syncfs() even acted on so there's no obvious error
-recovery that it could perform on reception of such an error.
+It looks fine to me. I gave it a quick spin, here's the output for a normal
+and a huge page, and it has everything we want to see:
 
-> I do have a xfstest for this. I do not yet have manpage patches, but
-> I'm happy to roll some once there is consensus on the interface.
+page:ffffea0010f0d640 refcount:1025 mapcount:1 mapping:0000000021857089 index:0xed
+anon flags: 0x17ffe0000080036(referenced|uptodate|lru|active|swapbacked)
+raw: 017ffe0000080036 ffffea0011731f08 ffffea0011730008 ffff8884777272c1
+raw: 00000000000000ed 0000000000000000 0000040100000000 0000000000000000
+page dumped because: testing dump_page()
+
+page:ffffea0010ef1b80 head:ffffea0010ef0000 refcount:0 mapcount:1 mapping:00000000a8e1c7fa index:0xed order:9 compound_mapcount: 1
+anon flags: 0x17ffe0000000000()
+raw: 017ffe0000000000 ffffea0010ef0001 ffffea0010ef1b88 dead000000000400
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+head: 017ffe0000090036 ffffea0011734548 ffffea0010ef8008 ffff8884777271b9
+head: 000000000000007f 0000000000000000 00000201ffffffff 0000000000000000
+page dumped because: testing dump_page()
+
+
+>  - Print the mapping pointer using %p insted of %px.  The actual value of
+>    the pointer can be read out of the raw page dump and using %p gives a
+>    chance to correlate it to earlier printk of the mapping pointer.
+>  - Add the order of the page for compound pages
+>  - Dump the raw head page as well as the raw page being dumped
 > 
-> Caveats:
+> diff --git a/mm/debug.c b/mm/debug.c
+> index ecccd9f17801..0564d4cb8233 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -44,8 +44,10 @@ const struct trace_print_flags vmaflag_names[] = {
+>  
+>  void __dump_page(struct page *page, const char *reason)
+>  {
+> +	struct page *head = compound_head(page);
+>  	struct address_space *mapping;
+>  	bool page_poisoned = PagePoisoned(page);
+> +	bool compound = PageCompound(page);
+>  	/*
+>  	 * Accessing the pageblock without the zone lock. It could change to
+>  	 * "isolate" again in the meantime, but since we are just dumping the
+> @@ -66,25 +68,32 @@ void __dump_page(struct page *page, const char *reason)
+>  		goto hex_only;
+>  	}
+>  
+> -	mapping = page_mapping(page);
+> +	if (page < head || (page >= head + MAX_ORDER_NR_PAGES)) {
+> +		/* Corrupt page, cannot call page_mapping */
+> +		mapping = page->mapping;
+> +		head = page;
+> +		compound = false;
+> +	} else {
+> +		mapping = page_mapping(page);
+> +	}
+>  
+>  	/*
+>  	 * Avoid VM_BUG_ON() in page_mapcount().
+>  	 * page->_mapcount space in struct page is used by sl[aou]b pages to
+>  	 * encode own info.
+>  	 */
+> -	mapcount = PageSlab(page) ? 0 : page_mapcount(page);
+> +	mapcount = PageSlab(head) ? 0 : page_mapcount(head);
+>  
+> -	if (PageCompound(page))
+> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px "
+> -			"index:%#lx compound_mapcount: %d\n",
+> -			page, page_ref_count(page), mapcount,
+> +	if (compound)
+> +		pr_warn("page:%px head:%px refcount:%d mapcount:%d mapping:%p "
+> +			"index:%#lx order:%u compound_mapcount: %d\n",
+> +			page, head, page_ref_count(page), mapcount,
+>  			page->mapping, page_to_pgoff(page),
+> -			compound_mapcount(page));
+> +			compound_order(head), compound_mapcount(page));
+>  	else
+> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%px index:%#lx\n",
+> +		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p index:%#lx\n",
+>  			page, page_ref_count(page), mapcount,
+> -			page->mapping, page_to_pgoff(page));
+> +			mapping, page_to_pgoff(page));
+>  	if (PageKsm(page))
+>  		type = "ksm ";
+>  	else if (PageAnon(page))
+> @@ -106,6 +115,10 @@ void __dump_page(struct page *page, const char *reason)
+>  	print_hex_dump(KERN_WARNING, "raw: ", DUMP_PREFIX_NONE, 32,
+>  			sizeof(unsigned long), page,
+>  			sizeof(struct page), false);
+> +	if (!page_poisoned && compound)
+> +		print_hex_dump(KERN_WARNING, "head: ", DUMP_PREFIX_NONE, 32,
+> +			sizeof(unsigned long), head,
+> +			sizeof(struct page), false);
+
+
+Good thought to get the hex dump of the head page in this case, yes.
+
+
+>  
+>  	if (reason)
+>  		pr_warn("page dumped because: %s\n", reason);
 > 
-> - Having different behavior for an O_PATH descriptor in syncfs is
->   a bit odd, but it means that we don't have to grow struct file. Is
->   that acceptable from an API standpoint?
 
-It's an ugly wart, IMO. But because we suck at APIs, I'm betting
-that we'll decide this is OK or do something even worse...
 
-> - This adds a new generic fs ioctl to allow userland to scrape the
->   current superblock's errseq_t value. It may be best to present this
->   to userland via fsinfo() instead (once that's merged). I'm fine with
->   dropping the last patch for now and reworking it for fsinfo if so.
+Seeing as how I want to further enhance dump_page() slightly for this series (to 
+include the 3rd struct page's hpage_pincount), would you care to send this as a 
+formal patch that I could insert into this series, to replace patch 5?
 
-What, exactly, is this useful for? Why would we consider exposing
-an internal implementation detail to userspace like this?
 
-Cheers,
-
-Dave.
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
