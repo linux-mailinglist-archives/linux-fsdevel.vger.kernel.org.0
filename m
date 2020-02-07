@@ -2,104 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66ED7155D1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:44:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4351F155D70
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 19:14:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgBGRoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 12:44:11 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:49581 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbgBGRoL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:44:11 -0500
-Received: by mail-il1-f200.google.com with SMTP id p67so341371ill.16
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 09:44:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=KswKyf5+gTM/GWQOrvGPuLAwNlzU8ivMu85nCLzbl2U=;
-        b=F9PSo7Y7/a9HMD8KqFzWpnXoa2LiX2s5OAhp1VcN/RR4xodlo5J4Vu9QZRv9geRnja
-         USfMQ6HCfSnujiirfFGAdClGqJNdRdM9C4i+oQAaCSxMF01nhwIeqO0eDPLqm13HK+FM
-         5Ot5OeXLSSGs8LifK+ZcPq5NBSFsqFoocZP8ugl/nN+rojKSENhWM49TBqWheuJRo+Rc
-         pLf6paG5hSU10QsdRBZaPZPXOH/ZlwOBKSszBW+j4RUXvnA7fMnnkdJD/EtalhJRdcKC
-         Tz57Z/HEjbo0R1JA6Qu/pNNgoNudKeEGd43G7v4uMAZIrGbRP7L6Sgha4qaMSI9seaG/
-         nG3A==
-X-Gm-Message-State: APjAAAWwPcT7NunsTaZDq5fSHlf53Nv/HymImnWyNmilrTnF+QV+y5Tm
-        LdJxZxKQq8RX7Kw5rx0L9PoUeXCDX4aJTuZ31ODCcl/lpfI5
-X-Google-Smtp-Source: APXvYqyorQikzFvtwkZdVZMWyfx4SiaVTvIOJ4zVKOI6mYJjyqUXSXjoRR5uj9C81rBsQzLDv4IOdnfxVn9yyXvWLQn3GeVtb29B
-MIME-Version: 1.0
-X-Received: by 2002:a5d:8143:: with SMTP id f3mr413861ioo.12.1581097450395;
- Fri, 07 Feb 2020 09:44:10 -0800 (PST)
-Date:   Fri, 07 Feb 2020 09:44:10 -0800
-In-Reply-To: <000000000000d895bd059dffb65c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e2de9d059dffefe3@google.com>
-Subject: Re: BUG: sleeping function called from invalid context in __kmalloc
-From:   syzbot <syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+        id S1727138AbgBGSOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 13:14:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39406 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbgBGSOJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 13:14:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0A52DAE0D;
+        Fri,  7 Feb 2020 18:14:07 +0000 (UTC)
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org
+Cc:     dave@stgolabs.net, linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        broonie@kernel.org, alex.williamson@redhat.com,
+        keescook@chromium.org, yzaikin@google.com,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 2/5] proc/sysctl: optimize proc_sys_readdir
+Date:   Fri,  7 Feb 2020 10:03:02 -0800
+Message-Id: <20200207180305.11092-3-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20200207180305.11092-1-dave@stgolabs.net>
+References: <20200207180305.11092-1-dave@stgolabs.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+This patch coverts struct ctl_dir to use an llrbtree
+instead of a regular rbtree such that computing nodes for
+potential usable entries becomes a branchless O(1) operation,
+therefore optimizing first_usable_entry(). The cost are
+mainly three additional pointers: one for the root and two
+for each struct ctl_node next/prev nodes, enlarging it from
+32 to 48 bytes on x86-64.
 
-HEAD commit:    90568ecf Merge tag 'kvm-5.6-2' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b26831e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=69fa012479f9a62
-dashboard link: https://syzkaller.appspot.com/bug?extid=98704a51af8e3d9425a9
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172182b5e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1590aab5e00000
+Cc: mcgrof@kernel.org
+Cc: keescook@chromium.org
+Cc: yzaikin@google.com
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ fs/proc/proc_sysctl.c  | 37 +++++++++++++++++++------------------
+ include/linux/sysctl.h |  6 +++---
+ 2 files changed, 22 insertions(+), 21 deletions(-)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
-
-BUG: sleeping function called from invalid context at mm/slab.h:565
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 8873, name: syz-executor545
-1 lock held by syz-executor545/8873:
- #0: ffffffff89310218 (sb_lock){+.+.}, at: spin_lock include/linux/spinlock.h:338 [inline]
- #0: ffffffff89310218 (sb_lock){+.+.}, at: sget_fc+0xdc/0x640 fs/super.c:521
-Preemption disabled at:
-[<ffffffff81be818c>] spin_lock include/linux/spinlock.h:338 [inline]
-[<ffffffff81be818c>] sget_fc+0xdc/0x640 fs/super.c:521
-CPU: 1 PID: 8873 Comm: syz-executor545 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1fb/0x318 lib/dump_stack.c:118
- ___might_sleep+0x449/0x5e0 kernel/sched/core.c:6800
- __might_sleep+0x8f/0x100 kernel/sched/core.c:6753
- slab_pre_alloc_hook mm/slab.h:565 [inline]
- slab_alloc mm/slab.c:3306 [inline]
- __do_kmalloc mm/slab.c:3654 [inline]
- __kmalloc+0x6f/0x340 mm/slab.c:3665
- kmalloc include/linux/slab.h:560 [inline]
- path_remove_extra_slash+0xae/0x2a0 fs/ceph/super.c:495
- compare_mount_options fs/ceph/super.c:553 [inline]
- ceph_compare_super+0x1d4/0x560 fs/ceph/super.c:1052
- sget_fc+0x139/0x640 fs/super.c:524
- ceph_get_tree+0x467/0x1540 fs/ceph/super.c:1127
- vfs_get_tree+0x8b/0x2a0 fs/super.c:1547
- do_new_mount fs/namespace.c:2822 [inline]
- do_mount+0x18ee/0x25a0 fs/namespace.c:3142
- __do_sys_mount fs/namespace.c:3351 [inline]
- __se_sys_mount+0xdd/0x110 fs/namespace.c:3328
- __x64_sys_mount+0xbf/0xd0 fs/namespace.c:3328
- do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441289
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe85f476d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441289
-RDX: 0000000020000140 RSI: 00000000200000c0 RDI: 0000000020000040
-RBP: 00000000006cb018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402000
-R13: 0000000000402090 R14: 0000000000000000 R15: 0000000000000000
-ceph: No mds server is up or the cluster is laggy
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index d80989b6c344..5a1b3b8be16b 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -111,15 +111,14 @@ static struct ctl_table *find_entry(struct ctl_table_header **phead,
+ {
+ 	struct ctl_table_header *head;
+ 	struct ctl_table *entry;
+-	struct rb_node *node = dir->root.rb_node;
++	struct rb_node *node = dir->root.rb_root.rb_node;
+ 
+-	while (node)
+-	{
++	while (node) {
+ 		struct ctl_node *ctl_node;
+ 		const char *procname;
+ 		int cmp;
+ 
+-		ctl_node = rb_entry(node, struct ctl_node, node);
++		ctl_node = llrb_entry(node, struct ctl_node, node);
+ 		head = ctl_node->header;
+ 		entry = &head->ctl_table[ctl_node - head->node];
+ 		procname = entry->procname;
+@@ -139,9 +138,10 @@ static struct ctl_table *find_entry(struct ctl_table_header **phead,
+ 
+ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
+ {
+-	struct rb_node *node = &head->node[entry - head->ctl_table].node;
+-	struct rb_node **p = &head->parent->root.rb_node;
++	struct rb_node *node = &head->node[entry - head->ctl_table].node.rb_node;
++	struct rb_node **p = &head->parent->root.rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
++	struct llrb_node *prev = NULL;
+ 	const char *name = entry->procname;
+ 	int namelen = strlen(name);
+ 
+@@ -153,7 +153,7 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
+ 		int cmp;
+ 
+ 		parent = *p;
+-		parent_node = rb_entry(parent, struct ctl_node, node);
++		parent_node = llrb_entry(parent, struct ctl_node, node);
+ 		parent_head = parent_node->header;
+ 		parent_entry = &parent_head->ctl_table[parent_node - parent_head->node];
+ 		parent_name = parent_entry->procname;
+@@ -161,9 +161,10 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
+ 		cmp = namecmp(name, namelen, parent_name, strlen(parent_name));
+ 		if (cmp < 0)
+ 			p = &(*p)->rb_left;
+-		else if (cmp > 0)
++		else if (cmp > 0) {
++			prev = llrb_from_rb(parent);
+ 			p = &(*p)->rb_right;
+-		else {
++		} else {
+ 			pr_err("sysctl duplicate entry: ");
+ 			sysctl_print_dir(head->parent);
+ 			pr_cont("/%s\n", entry->procname);
+@@ -172,15 +173,15 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
+ 	}
+ 
+ 	rb_link_node(node, parent, p);
+-	rb_insert_color(node, &head->parent->root);
++	llrb_insert(&head->parent->root, llrb_from_rb(node), prev);
+ 	return 0;
+ }
+ 
+ static void erase_entry(struct ctl_table_header *head, struct ctl_table *entry)
+ {
+-	struct rb_node *node = &head->node[entry - head->ctl_table].node;
++	struct llrb_node *node = &head->node[entry - head->ctl_table].node;
+ 
+-	rb_erase(node, &head->parent->root);
++	llrb_erase(node, &head->parent->root);
+ }
+ 
+ static void init_header(struct ctl_table_header *head,
+@@ -223,7 +224,7 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+ 
+ 	/* Am I creating a permanently empty directory? */
+ 	if (header->ctl_table == sysctl_mount_point) {
+-		if (!RB_EMPTY_ROOT(&dir->root))
++		if (!RB_EMPTY_ROOT(&dir->root.rb_root))
+ 			return -EINVAL;
+ 		set_empty_dir(dir);
+ 	}
+@@ -381,11 +382,11 @@ static struct ctl_table *lookup_entry(struct ctl_table_header **phead,
+ 	return entry;
+ }
+ 
+-static struct ctl_node *first_usable_entry(struct rb_node *node)
++static struct ctl_node *first_usable_entry(struct llrb_node *node)
+ {
+ 	struct ctl_node *ctl_node;
+ 
+-	for (;node; node = rb_next(node)) {
++	for (; node; node = llrb_next(node)) {
+ 		ctl_node = rb_entry(node, struct ctl_node, node);
+ 		if (use_table(ctl_node->header))
+ 			return ctl_node;
+@@ -401,7 +402,7 @@ static void first_entry(struct ctl_dir *dir,
+ 	struct ctl_node *ctl_node;
+ 
+ 	spin_lock(&sysctl_lock);
+-	ctl_node = first_usable_entry(rb_first(&dir->root));
++	ctl_node = first_usable_entry(llrb_first(&dir->root));
+ 	spin_unlock(&sysctl_lock);
+ 	if (ctl_node) {
+ 		head = ctl_node->header;
+@@ -420,7 +421,7 @@ static void next_entry(struct ctl_table_header **phead, struct ctl_table **pentr
+ 	spin_lock(&sysctl_lock);
+ 	unuse_table(head);
+ 
+-	ctl_node = first_usable_entry(rb_next(&ctl_node->node));
++	ctl_node = first_usable_entry(llrb_next(&ctl_node->node));
+ 	spin_unlock(&sysctl_lock);
+ 	head = NULL;
+ 	if (ctl_node) {
+@@ -1711,7 +1712,7 @@ void setup_sysctl_set(struct ctl_table_set *set,
+ 
+ void retire_sysctl_set(struct ctl_table_set *set)
+ {
+-	WARN_ON(!RB_EMPTY_ROOT(&set->dir.root));
++	WARN_ON(!RB_EMPTY_ROOT(&set->dir.root.rb_root));
+ }
+ 
+ int __init proc_sys_init(void)
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 02fa84493f23..afb35fa61b91 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -25,7 +25,7 @@
+ #include <linux/list.h>
+ #include <linux/rcupdate.h>
+ #include <linux/wait.h>
+-#include <linux/rbtree.h>
++#include <linux/ll_rbtree.h>
+ #include <linux/uidgid.h>
+ #include <uapi/linux/sysctl.h>
+ 
+@@ -133,7 +133,7 @@ struct ctl_table {
+ } __randomize_layout;
+ 
+ struct ctl_node {
+-	struct rb_node node;
++	struct llrb_node node;
+ 	struct ctl_table_header *header;
+ };
+ 
+@@ -161,7 +161,7 @@ struct ctl_table_header {
+ struct ctl_dir {
+ 	/* Header must be at the start of ctl_dir */
+ 	struct ctl_table_header header;
+-	struct rb_root root;
++	struct llrb_root root;
+ };
+ 
+ struct ctl_table_set {
+-- 
+2.16.4
 
