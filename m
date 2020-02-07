@@ -2,133 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED846155A42
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:02:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 551F1155ABE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:31:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgBGPCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 10:02:42 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:38460 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgBGPCl (ORCPT
+        id S1727028AbgBGPbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 10:31:14 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43538 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726674AbgBGPbO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:02:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581087782; x=1612623782;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QBmqK2hyrPjWSUot57VLilJic6MFv9RxkAql0uiJdCI=;
-  b=rg4MRj0GYhnk8DGlSdjKVmJ4YhktBFBqfnxF4vpSSwztcJfXChBNA/GL
-   KR0NJQhWxXEyO36g+fGv76YKzW8LBc0MFtVqZuInG2wLK2za49MBB9c7g
-   epIwzFxLq6gnU2K2DM9KI681jcsZp8OGOXSy1PhptQpUL+i9/Ju7sA9cO
-   HaXmw2sxC+tqSTb5CRu0Uik77X0VKNlS6tnBiLBbgm7AgwP/9xR5/LDqO
-   1pMUgoHAZ1PdFYYRh0f0F8S3W0X4U8mMkC14+VoyF5rfjm1yWWa3WfWFl
-   bta7Vahw+PEIF5vLd+PLss786WqQTveUFRhggkw/Zsmvyv2CmvcPTgmRw
-   Q==;
-IronPort-SDR: 39FJecUJquQzy0wMu/FtrGnyf22gz5/SUfuVFiahNPjBXOtCo9YFGQx9ZZ64kYjJTOljZJ356Q
- ddNYaYEj8LjcRdzk3sUTZRU6EBcJCH20lNq1CdKNdqWn2Z2EEIbiJbkUuz0laFd2ME3V4GroA+
- IofAcfxqGVSNYWfwEp3DRYjsbGh00I/36N6wD8oDRSbyUVlTos9fRr0k/Ic0d0D0RzulX+IvKo
- Mcf2Wk19t3lOVpZ/c1jVmpoX0WPKrluwpSK8wfi6qzJViGPJ0OwfNcY00LwHVAJlNabT8kBCuQ
- TFA=
-X-IronPort-AV: E=Sophos;i="5.70,413,1574092800"; 
-   d="scan'208";a="231121353"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 23:03:01 +0800
-IronPort-SDR: 1TATuoZvowSkMJe0Mjha74okqJgM+4O4li0OzJKr+i/Ymji/7uTunfdvgERarGBhRYyqwrt0y2
- BhOiDCLuM6HLbPabm236ytvAMtM4Sx80VXv3MXygbz3ISaQh4lusb+js8tmXGu/CV58TAz30B0
- pMhE0h3iO2W8WfN9N2fpQQselCa3iegsJlBj5FIxXFtGq04lj5X7j+CcWUMZTuMD8+jc8wozP3
- dUFU0REuwguovhwW7efKrlBrrxfkuL7nODPCFRO1gxZN2XUNZIeb/uVqU1WOWQ8xVOhX4Ey5Co
- LY2BgQecv/F8ibktMoDchZ08
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2020 06:55:38 -0800
-IronPort-SDR: 7eA1ie392Lcte+/6ZPFOwctwO3j8F7JxO/Dji0HmJLsH4xvr6Go6bUS5Kt1MV5am3dk8fjDiEJ
- Wohtpk+5mM4bLjrTEcr/WMHRPigY5zcH3PdTGb4LJcQ1UehucIlarcNon4bUChAbVDZByxs2ZJ
- 7li1SywOcx7tHhupuWnmMDpBIsTcVSSv2e76Jp0rWIYkxYwtbyKN2923XhaMF7fbVVmStWGy2I
- pRjYvCc2MP0EBpgpPrSglr4YW3vCo81UJ2t6eTp19uGc9UZrSSCmAbZv4VfOnli9t7eZxSKgh/
- ego=
-WDCIronportException: Internal
-Received: from washi.fujisawa.hgst.com ([10.149.53.254])
-  by uls-op-cesaip02.wdc.com with ESMTP; 07 Feb 2020 07:02:41 -0800
-From:   Damien Le Moal <damien.lemoal@wdc.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] New zonefs file system for 5.6-rc1
-Date:   Sat,  8 Feb 2020 00:02:39 +0900
-Message-Id: <20200207150239.685712-1-damien.lemoal@wdc.com>
-X-Mailer: git-send-email 2.24.1
+        Fri, 7 Feb 2020 10:31:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581089472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lJl9IZ4rUKZV3MVrE3d9DP7C/ZB0uGxE0eGmP9j33k8=;
+        b=GhdYeeRSEDGNyeY0Up/X+TEsyD07gQJDWNIGh95Y7ZlSSowdPJsCWCEckrNoZK/l6v8C+z
+        ngf9r9x1MEV5Y53ZTU5bTGcl2dyMFYgR63+G/hr10RlJr2Ik2o1+VAzUZFGJLOfUIuY4/f
+        brcmiSXYee+N84auIbT+ZAY6K1uI34I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-373-uIY1Wbw4ODWEPr8MtHbRMg-1; Fri, 07 Feb 2020 10:31:11 -0500
+X-MC-Unique: uIY1Wbw4ODWEPr8MtHbRMg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7746189F762;
+        Fri,  7 Feb 2020 15:31:09 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D38B68ECE6;
+        Fri,  7 Feb 2020 15:31:06 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 645CD220A24; Fri,  7 Feb 2020 10:31:06 -0500 (EST)
+Date:   Fri, 7 Feb 2020 10:31:06 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        dan.j.williams@intel.com, dm-devel@redhat.com
+Subject: Re: [PATCH 4/5] dax,iomap: Start using dax native zero_page_range()
+Message-ID: <20200207153106.GA11998@redhat.com>
+References: <20200203200029.4592-1-vgoyal@redhat.com>
+ <20200203200029.4592-5-vgoyal@redhat.com>
+ <20200205183356.GD26711@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205183356.GD26711@infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Wed, Feb 05, 2020 at 10:33:56AM -0800, Christoph Hellwig wrote:
+> On Mon, Feb 03, 2020 at 03:00:28PM -0500, Vivek Goyal wrote:
+> > +	id = dax_read_lock();
+> > +	rc = dax_zero_page_range(dax_dev, pgoff, offset, size);
+> > +	dax_read_unlock(id);
+> > +	return rc;
+> 
+> Is there a good reason not to move the locking into dax_zero_page_range?
 
-Here is a pull request for the new zonefs file system (described briefly
-below). Please consider it for addition to kernel 5.6.
+Thinking more about it. If we keep locking outside, then we don't have
+to take lock again when we recurse into dax_zero_page_range() in device
+mapper path. IIUC, just taking lock once at top level is enough. If that's
+the case then it probably is better to keep locking outside of
+dax_zero_page_range().
 
-The following changes since commit d5226fa6dbae0569ee43ecfc08bdcd6770fc4755:
+Thanks
+Vivek
 
-  Linux 5.5 (2020-01-26 16:23:03 -0800)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.6-rc1
-
-for you to fetch changes up to fcb9c24bef3d1d0942c50fb25fbb8ab45c7c3753:
-
-  zonefs: Add documentation (2020-02-07 14:40:13 +0900)
-
-----------------------------------------------------------------
-fs: New zonefs file system
-
-Zonefs is a very simple file system exposing each zone of a zoned block
-device as a file.
-
-Unlike a regular file system with native zoned block device support
-(e.g. f2fs or the on-going btrfs effort), zonefs does not hide the
-sequential write constraint of zoned block devices to the user. As a
-result, zonefs is not a POSIX compliant file system. Its goal is to
-simplify the implementation of zoned block devices support in
-applications by replacing raw block device file accesses with a richer
-file based API, avoiding relying on direct block device file ioctls
-which may be more obscure to developers.
-
-One example of this approach is the implementation of LSM
-(log-structured merge) tree structures (such as used in RocksDB and
-LevelDB) on zoned block devices by allowing SSTables to be stored in a
-zone file similarly to a regular file system rather than as a range of
-sectors of a zoned device. The introduction of the higher level
-construct "one file is one zone" can help reducing the amount of changes
-needed in the application while at the same time allowing the use of
-zoned block devices with various programming languages other than C.
-
-Zonefs IO management implementation uses the new iomap generic code.
-Zonefs has been successfully tested using a functional test suite
-(available with zonefs userland format tool on github) and a prototype
-implementation of LevelDB on top of zonefs.
-
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-
-----------------------------------------------------------------
-Damien Le Moal (2):
-      fs: New zonefs file system
-      zonefs: Add documentation
-
- Documentation/filesystems/zonefs.txt |  404 ++++++++++
- MAINTAINERS                          |   10 +
- fs/Kconfig                           |    1 +
- fs/Makefile                          |    1 +
- fs/zonefs/Kconfig                    |    9 +
- fs/zonefs/Makefile                   |    4 +
- fs/zonefs/super.c                    | 1439 ++++++++++++++++++++++++++++++++++
- fs/zonefs/zonefs.h                   |  189 +++++
- include/uapi/linux/magic.h           |    1 +
- 9 files changed, 2058 insertions(+)
- create mode 100644 Documentation/filesystems/zonefs.txt
- create mode 100644 fs/zonefs/Kconfig
- create mode 100644 fs/zonefs/Makefile
- create mode 100644 fs/zonefs/super.c
- create mode 100644 fs/zonefs/zonefs.h
