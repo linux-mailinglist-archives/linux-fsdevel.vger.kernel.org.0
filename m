@@ -2,123 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38059155241
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 07:06:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C3115524C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 07:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbgBGGGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 01:06:04 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:11919 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbgBGGGD (ORCPT
+        id S1726903AbgBGGLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 01:11:23 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:31937 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbgBGGLW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:06:03 -0500
+        Fri, 7 Feb 2020 01:11:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581055563; x=1612591563;
+  t=1581055884; x=1612591884;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=TceCMjfxoqrfp0V2DcMDHKp+VTOkKTloikfR28lTyO4=;
-  b=MMy406sPYegEA0w6Yn+GuUQ8MatVO47wul9gxUKaPJuXeDmWZTsjevQv
-   ncfoyJq1W/kRNHGQHzWS0FurxzP00VAQ11BN61mnRENTee7JwCLtsEvk+
-   dSEApjfUCdPsFKGCU9mEgm/4LJtm/SGxwfNm68wzxhAk48C9TKgeLMIA1
-   h9GMjkRag2nlZiX2Dw6yYmg54cSodQZaMRPYTLXYcpY/roMVG6IhHI4vK
-   rlrDDo2nLVCdtgX9mdxN9lUs8QmYa0KfnmKoXrXWH2WSCsJWheOB7GZxE
-   58pqaYLJnSk5UoSl6IGwYjiZfDgP/uWAzBIS5v8oE7TTIAQglodSFpNvF
-   Q==;
-IronPort-SDR: A8TKOwmw2b6fffePaaopfFMUuL2vDgMF1kG82sSMQxyVv2m9DHwO1cpHgK4qXtfBT21JUfIONs
- teyb/BL60rQyO/uk6SQqObi9cnrn7Rt0WFWy+POM9MGVSrV6VkSTLKZ4t8gXvcsqvpHh16ijts
- KUt8dpcd4b7uzayjYNuBQRdE155mXSwBbJ2kmB3lxShF57pk43Yet5jjosol1fjL8f0ROm3KPH
- xik+AHr+bA6AsKQpFg1GMZtEVQmPr6c7CdwKzj8aXPsbgsA6+/dzTL7dyMAadkPQmTjOhBShjG
- LhA=
+  bh=XK5Dr3azdLybQMxGVTr6vOXvQ4grvTnFSL3+eeJXcGE=;
+  b=NhrOhb+Ld+eAiFzKveTgoeyYHsfU9xVIry1NW7PzmnMG7uSxUjsj5HCu
+   aEoRFaeNvPrt0ZwH+dxZOfXBJ9jK5QDBT4OkXuEQINIoriI93sResxzv3
+   TH3J6Vszzp1R/g6n/0VbRYyZg6la5uT5bOYK2/oSyhpZFLrqOMiv1H92w
+   8VbuaIgGxSTxN1NllX/YbGpXXOuzVVQLSMswg1KHDRbS1XS1lcJ3804bI
+   nMnxI/O5w3U2j6x/cMkChnpqGN5URc47TtT8piEi4QCeFpWx9B4Q18now
+   XysgDrKOib8eIdv1t5ofQZCSytfrSrDH+WxBN1w0wxW3ZAFegNX7q+Sl5
+   w==;
+IronPort-SDR: N4TXK5f28EAbWnSnlDZ2PMwmIbplAVKSYfYF+J+j9GNAhDSTdQAEJCKYoyjzP4x3cDaKG+zjEa
+ Lap3ZN+ejQE4ZBrkNr1ZcM9TMrCdvOyhDgd5+KLSyXnd7+rCtbPkwKz98yW/gIKJS1VSUywYgc
+ +0T5ul/MBKpYs/cLrd+jVxV3haovhTllo2sS3RdQ3pHjviqyzTONwexT/E3KoXN12+oh3o1Mzk
+ 6JvVdhPNpzL9mIvtXPVyA1YyfkW9HfISwWvyPwVQWGOqOcD3ByMmo2MkZ7sf/tkoxrAVlhDw0K
+ IT8=
 X-IronPort-AV: E=Sophos;i="5.70,411,1574092800"; 
-   d="scan'208";a="237308902"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 14:06:02 +0800
-IronPort-SDR: efOejSZd4x1jyTH8/chwX3NF5GTzIdZvD2N9Jfyji3eR6RtLJcfIxEgbmWQzvS1wKSTvalKBB4
- mAlFElF6Kg+fS+oxEHDlD2OyabGgN36DzWk815SP7kTLbOm0ZoggS5dLI9R41ICyCzvGreI8hy
- RkbMo/cwCwM0uD1Oz8P6PtETEK4EgQd/2vFCI87fwmiuF4a3F3p0DXLJmkbCwswKBg8mOhLHon
- R2baHmJgQWxsRw3EoA1Wh4pMO0jjM6M3tRa7JJVTO+uuQPGlhAXuJQaKblUSbQkPcHWnxcFRFM
- D5SXcRhCYSgjcyt3yST6agd+
+   d="scan'208";a="133680910"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 14:11:23 +0800
+IronPort-SDR: R7wazCqumdQV2IFS7Vx1k32OkZwc7/D+2HtoM3VK3TJpqrRiBy50f5eb3uH/1JSwm8FY2sxb81
+ 0fxzCHmo4231QSQ5HUfBI+3EuwwodQENPCuRXGEiIuMSHYomH8VgTVFyA0niVcKlLMMsRcw2R+
+ l5urw0pwMsAoq9Wxfdc6d4JvN4kgNogB/tec0XfPK0MZPISNTi7WkLPPCXoBOUPa4qn9BryPH2
+ 2fCBngtybyMQO/vt0q1cAwVXCwHNiPhtMm4n3ICIhx2o4LV5TonZA4n1s8B0019Gb4ZDepRU4V
+ MddCfhjHOmR97ZIg0N5YTlJs
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 21:59:00 -0800
-IronPort-SDR: G/E8AIAeiSUOgMlQ4WMcbMffqmR8FD1uHPdGX3dif4XNE5jUnF4d1j62v3sw5/Li1uZdMSdQBh
- qec8jsyvF683G6N5mfBinnumHSPd6Y9SQg/55rzBmx7kV0WhBtAjStq81L6+1cABzP32uFgApz
- dVK5FrUA9KdCaHkWJsTrdaGT5JmH95UMeRKfZWglj0a7olMSY+akGHqY9hNTjD7VHSR9+4Pc04
- dJjmIrytrNtN8owz6p/75Sa3Tt8uO9eqKgDTfmCz8PI7BUaqgsTeu+Wsshp6X68eIbH+T4re7e
- Qx0=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 22:04:19 -0800
+IronPort-SDR: SywZMEInlaJnihKWKXi2nlJZ/rYf5hR7wC1d6p667wPgR2F7E0u6MzaJrYt0ZL1m/uOqPPMVwb
+ PPQv2WoFtz1cO1kTjqzqIZBlybupr1OXMMZvDTEH6226NOh2Xn97FQImVix8hvvfdTKG5Ab4nV
+ d0txHIT8aUZqP5VO7BATV4xJzE5GsTIhZTqqT54N9m16nTqlOtfpQaglvkyOhW1oRhpSLCe9XZ
+ 5Fx6i3c+oN+fDyJwtx8wB78R/d0vYDAirwro5nklGHqQT26NsLhnm5dO4qo3RY8ohBRzEIoRuq
+ 490=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 06 Feb 2020 22:06:01 -0800
-Received: (nullmailer pid 752349 invoked by uid 1000);
-        Fri, 07 Feb 2020 06:06:00 -0000
-Date:   Fri, 7 Feb 2020 15:06:00 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Martin Steigerwald <martin@lichtvoll.de>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+  by uls-op-cesaip02.wdc.com with SMTP; 06 Feb 2020 22:11:19 -0800
+Received: (nullmailer pid 756200 invoked by uid 1000);
+        Fri, 07 Feb 2020 06:11:19 -0000
+Date:   Fri, 7 Feb 2020 15:11:19 +0900
+From:   Naohiro Aota <Naohiro.Aota@wdc.com>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 00/20] btrfs: refactor and generalize
- chunk/dev_extent/extent allocation
-Message-ID: <20200207060600.bxcot22i3tpemrn5@naota.dhcp.fujisawa.hgst.com>
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 02/20] btrfs: introduce chunk allocation policy
+Message-ID: <20200207061119.bmvqcq7sv4yrktle@naota.dhcp.fujisawa.hgst.com>
 References: <20200206104214.400857-1-naohiro.aota@wdc.com>
- <5861600.kR87CiLkK2@merkaba>
+ <20200206104214.400857-3-naohiro.aota@wdc.com>
+ <SN4PR0401MB3598D9897CF42A343A03D4739B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <5861600.kR87CiLkK2@merkaba>
+In-Reply-To: <SN4PR0401MB3598D9897CF42A343A03D4739B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 12:43:30PM +0100, Martin Steigerwald wrote:
->Hi Naohiro.
+On Thu, Feb 06, 2020 at 11:30:06AM +0000, Johannes Thumshirn wrote:
+>On 06/02/2020 11:44, Naohiro Aota wrote:
+>> This commit introduces chuk allocation policy for btrfs.
 >
->Naohiro Aota - 06.02.20, 11:41:54 CET:
->> This series refactors chunk allocation, device_extent allocation and
->> extent allocation functions and make them generalized to be able to
->> implement other allocation policy easily.
->>
->> On top of this series, we can simplify some part of the "btrfs: zoned
->> block device support" series as adding a new type of chunk allocator
->> and extent allocator for zoned block devices. Furthermore, we will be
->> able to implement and test some other allocator in the idea page of
->> the wiki e.g. SSD caching, dedicated metadata drive, chunk allocation
->> groups, and so on.
->
->Regarding SSD caching, are you aware that there has been previous work
->with even involved handling part of it in the Virtual Filesystem Switch
->(VFS)?
->
->VFS hot-data tracking, LWN article:
->
->https://lwn.net/Articles/525651/
->
->Patchset, not sure whether it is the most recent one:
->
->[PATCH v2 00/12] VFS hot tracking
->
->https://lore.kernel.org/linux-btrfs/1368493184-5939-1-git-send-email-zwu.kernel@gmail.com/
+>Maybe "Introduce a per-device chink allocation policy for btrfs."
 
-Yes, I once saw the patchset. Not sure about the detail, though.
+What do you mean with "per-device"? Might be misunderstanding? One
+chunk allocation policy is set to one btrfs file system. There is no
+per-device policy for now.
 
->So for SSD caching you may be able to re-use or pick up some of this
->work, unless it would be unsuitable to be used with this new approach.
+# yep, I found my typo and fixed it: "chuk" -> "chunk"
 
-Currently, I have no plan to implement the SSD caching feature by
-myself. I think some patches of the series like this [1] can be
-reworked on my series as adding an "SSD caching chunk allocator." So,
-it's welcome to hear suggestions about the hook interface.
-
-[1] https://lore.kernel.org/linux-btrfs/1371817260-8615-3-git-send-email-zwu.kernel@gmail.com/
-
->Thanks,
->-- 
->Martin
->
+>Code wise,
+>Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >
