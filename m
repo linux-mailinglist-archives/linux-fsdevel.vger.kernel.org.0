@@ -2,104 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71012154FBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 01:30:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA09154FDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 01:59:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgBGA3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 19:29:54 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47705 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726509AbgBGA3y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 19:29:54 -0500
-Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CECD43A497D;
-        Fri,  7 Feb 2020 11:29:50 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1izrWm-0006xk-Tc; Fri, 07 Feb 2020 11:29:48 +1100
-Date:   Fri, 7 Feb 2020 11:29:48 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Damien Le Moal <damien.lemoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH v12 1/2] fs: New zonefs file system
-Message-ID: <20200207002948.GC21953@dread.disaster.area>
-References: <20200206052631.111586-1-damien.lemoal@wdc.com>
- <20200206052631.111586-2-damien.lemoal@wdc.com>
+        id S1727003AbgBGA7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 19:59:54 -0500
+Received: from m12-18.163.com ([220.181.12.18]:46726 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726997AbgBGA7y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Feb 2020 19:59:54 -0500
+X-Greylist: delayed 908 seconds by postgrey-1.27 at vger.kernel.org; Thu, 06 Feb 2020 19:59:53 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=NiGx4
+        pn11eSXeHc+vBWWaytW14cK5TaWStOxkiQWxsc=; b=OYj4/G8WyyjEM6LeuCqoM
+        LVbUOJ/VUJRitjZrLstjEMWvlxct9b8BPQIwE7aW+iD5cSQ5VlXtwGcQuTu2jyl+
+        h8EDNzjhekIP71Uxbps+QRxNCoX0NwGGOewJnzuPwEqN/WERz/zUMiNTaMWuGeTD
+        aHBJFNGMWfows8iW3kq2qA=
+Received: from [192.168.0.10] (unknown [183.211.128.97])
+        by smtp14 (Coremail) with SMTP id EsCowAAnTobZsjxesKMcUQ--.53268S2;
+        Fri, 07 Feb 2020 08:44:09 +0800 (CST)
+Subject: Re: [PATCH] fuse: Don't make buffered read forward overflow value to
+ a userspace process
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, yangx.jy@cn.fujitsu.com
+References: <20200203073652.12067-1-ice_yangxiao@163.com>
+ <CAJfpegsVjca2xGV=9xwE75a5NRSYqLpDu9x_q9CeDZ1vt-GyyQ@mail.gmail.com>
+ <CAJfpegsPfurF2fB+XgSjr-CnBNcjWiqYCB6bFwP8VKNp3sUChA@mail.gmail.com>
+ <bd8402d6-6d90-c659-6dc4-ac890af900a6@163.com>
+ <CAJfpegvXJ21OzMP2eU0bT4XEb40aAqfkrZdk6AQk5bEWmevOmQ@mail.gmail.com>
+From:   Xiao Yang <ice_yangxiao@163.com>
+Message-ID: <616196bf-789b-5c96-3a9c-761ad92afec9@163.com>
+Date:   Fri, 7 Feb 2020 08:44:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200206052631.111586-2-damien.lemoal@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=NXwXW5gbVE1O_1ho6owA:9 a=NUhwtb2oAqvidNHn:21
-        a=lSNHsdPPTDXGtUOn:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <CAJfpegvXJ21OzMP2eU0bT4XEb40aAqfkrZdk6AQk5bEWmevOmQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID: EsCowAAnTobZsjxesKMcUQ--.53268S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWr4UuF1rCr18GF4fKF47CFg_yoW5Ar4rpF
+        93KF4ayFsrW345Ars2qwn5ZFy8K3sxGFyjqFyUXryrWa4qvFn3Aa47Ww18Wr97Wry8GryI
+        qr4DX347XryDJ3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07b1db8UUUUU=
+X-Originating-IP: [183.211.128.97]
+X-CM-SenderInfo: 5lfhs5xdqj5xldr6il2tof0z/1tbiMwPCXlXl1wQifQAAsQ
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 02:26:30PM +0900, Damien Le Moal wrote:
-> zonefs is a very simple file system exposing each zone of a zoned block
-> device as a file. Unlike a regular file system with zoned block device
-> support (e.g. f2fs), zonefs does not hide the sequential write
-> constraint of zoned block devices to the user. Files representing
-> sequential write zones of the device must be written sequentially
-> starting from the end of the file (append only writes).
 
-....
-> +	if (flags & IOMAP_WRITE)
-> +		length = zi->i_max_size - offset;
-> +	else
-> +		length = min(length, isize - offset);
-> +	mutex_unlock(&zi->i_truncate_mutex);
-> +
-> +	iomap->offset = offset & (~sbi->s_blocksize_mask);
-> +	iomap->length = ((offset + length + sbi->s_blocksize_mask) &
-> +			 (~sbi->s_blocksize_mask)) - iomap->offset;
+On 2/6/20 11:40 PM, Miklos Szeredi wrote:
+> On Thu, Feb 6, 2020 at 1:33 PM Xiao Yang <ice_yangxiao@163.com> wrote:
+>> On 2/6/20 8:14 PM, Miklos Szeredi wrote:
+>>> On Wed, Feb 5, 2020 at 3:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>>> On Mon, Feb 3, 2020 at 8:37 AM Xiao Yang <ice_yangxiao@163.com> wrote:
+>>>>> Buffered read in fuse normally goes via:
+>>>>> -> generic_file_buffered_read()
+>>>>>     ------------------------------
+>>>>>     -> fuse_readpages()
+>>>>>       -> fuse_send_readpages()
+>>>>>     or
+>>>>>     -> fuse_readpage() [if fuse_readpages() fails to get page]
+>>>>>       -> fuse_do_readpage()
+>>>>>     ------------------------------
+>>>>>         -> fuse_simple_request()
+>>>>>
+>>>>> Buffered read changes original offset to page-aligned length by left-shift
+>>>>> and extends original count to be multiples of PAGE_SIZE and then fuse
+>>>>> forwards these new parameters to a userspace process, so it is possible
+>>>>> for the resulting offset(e.g page-aligned offset + extended count) to
+>>>>> exceed the whole file size(even the max value of off_t) when the userspace
+>>>>> process does read with new parameters.
+>>>>>
+>>>>> xfstests generic/525 gets "pread: Invalid argument" error on virtiofs
+>>>>> because it triggers this issue.  See the following explanation:
+>>>>> PAGE_SIZE: 4096, file size: 2^63 - 1
+>>>>> Original: offset: 2^63 - 2, count: 1
+>>>>> Changed by buffered read: offset: 2^63 - 4096, count: 4096
+>>>>> New offset + new count exceeds the file size as well as LLONG_MAX
+>>>> Thanks for the report and analysis.
+>>>>
+>>>> However this patch may corrupt the cache if i_size changes between
+>>>> calls to fuse_page_length().  (e.g. first page length set to 33;
+>>>> second page length to 45; then 33-4095 will be zeroed and 4096-4140
+>>>> will be filled from offset 33-77).  This will be mitigated by the
+>>>> pages being invalidated when i_size changes
+>>>> (fuse_change_attributes()).  Filling the pages with wrong data is not
+>>>> a good idea regardless.
+>>>>
+>>>> I think the best approach is first to just fix the xfstest reported
+>>>> bug by clamping the end offset to LLONG_MAX.  That's a simple patch,
+>>>> independent of i_size, and hence trivial to verify and hard to mess
+>>>> up.
+>>> Applied a fix and pushed to:
+>>>
+>>>     git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
+>> Hi Miklos,
+>>
+>> Sorry for the late reply.
+>>
+>> You have applied a fix quickly when I am going to send a patch today.
+>>
+>> Just one comment for your fix:
+>>
+>> I think we need to add the overflow check in fuse_send_readpages() and
+>> fuse_do_readpage().
+>>
+>> Because generic_file_buffered_read() will call fuse_readpage() if
+>> fuse_readpages() fails to get page.
+> Thanks, fixed.
 
-	iomap->length = __ALIGN_MASK(offset + length, sbi->s_blocksize_mask) -
-			iomap->offset;
+Hi Miklos,
 
-or it could just use ALIGN(..., sb->s_blocksize) and not need
-pre-calculation of the mask value...
+Thanks a lot for your quick fix again. :-)
 
+I have tested your patch and it works fine.
 
-> +static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
-> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-> +	size_t count;
-> +	ssize_t ret;
-> +
-> +	/*
-> +	 * For async direct IOs to sequential zone files, ignore IOCB_NOWAIT
-> +	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
-> +	 * on the inode lock but the second goes through but is now unaligned).
-> +	 */
-> +	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb)
-> +	    && (iocb->ki_flags & IOCB_NOWAIT))
-> +		iocb->ki_flags &= ~IOCB_NOWAIT;
+Reviewed-by: Xiao Yang <ice_yangxiao@163.com>
 
-Hmmm. I'm wondering if it would be better to return -EOPNOTSUPP here
-so that the application knows it can't do non-blocking write AIO to
-this file.
+Thanks,
 
-Everything else looks OK to me.
+Xiao Yang
 
-Cheers,
+>
+> Miklos
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
