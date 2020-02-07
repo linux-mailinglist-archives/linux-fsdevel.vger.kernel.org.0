@@ -2,124 +2,317 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4DA1560AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 22:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF9891560D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 22:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbgBGVUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 16:20:17 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:33617 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726947AbgBGVUR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 16:20:17 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 76A4A6E35;
-        Fri,  7 Feb 2020 16:20:16 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Fri, 07 Feb 2020 16:20:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=ophMmMwMLLaKjOJP0ctw12O67B1
-        zRQvfdgS0jTuIqR8=; b=KMEycsMBR2DnW931V6xgvAiSmfOPGSb/NzAgL/pUhV6
-        5Wyq45jpDjzVcopHjYYbqZijtAuNRMfgYIQi7LiqW/O/iQfZQ1tGF7fzmQhKLSTq
-        BmwiHEUOycWjA1B1zkY+lAhcNja0B3sFoFAvuu8sjlDsfnND+cZxqXWEqS2JDtsn
-        uflCLJhpFozpBlwWjUB66JvFSpQGAh2jAnursgJ5o1tDHAvMDlexrbjw2LWuvZ8M
-        0vQ1L31ji3aAqt8+SKKzihxOpwahDPVPWE55oAi7xrkKiDFgwDmnIeAmQJydYVBA
-        ITkZJBNpxvWVIBhNLXsm62+sAaKQghNrsnXJGcWBocw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ophMmM
-        wMLLaKjOJP0ctw12O67B1zRQvfdgS0jTuIqR8=; b=aIESVf2XQNaAvI8kV/eGNj
-        DpIOgPq2aDuAYiRubi/463C7rfC2j0eCrDe8JqsjUiigi1YRevlnGYQuuh8VvL0j
-        PrT/lH9WY/B6UcIPN+rrCdkHCzdLhFW7WlZceoCfW9pTb7bzt9ZNbiD+MY0MPf7m
-        5ruYOpscaPr67hXGgOeYmrBbGttGed/VWhvoejqbEgCwLR33xvqDje7DuMLmRcRh
-        2JfrO6PdYFwe9iYRy4SreANfcCDpOAkkrbEtJxTf4LS/jXreYB9VblH92sjsLNJn
-        0MXqEkK5LsK6HSg9A3dcK5HAs7FmJiEOBiBKkXTmJIOiF/Y8JFOPVG1KwFTzLVaA
-        ==
-X-ME-Sender: <xms:jdQ9XoTJtFlc5W3IHH2OBIsaDO6a0p7uAw0kbQTBG3eR7UqxveRR_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrheehgddugeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
-    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:jdQ9XmUZZ-_FSV-IM74x0z_eWM0QRuXdBHt_meHAVrD9el-QHdi_ig>
-    <xmx:jdQ9XhOh5PkuKN4saFpDH3fvsf78LC2ede3OApXrzxd9oBdiNZMCMQ>
-    <xmx:jdQ9XuqzLQeFCVMh5mjXxU7FhJsDHzR9ZAg6IHdDLqmqQ5HXl2e98g>
-    <xmx:kNQ9Xk5a7Cg59MVa46ri30azMwfznxfhuviaSQLqsbNDR2cz9HFKvQ>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C1C1A3060272;
-        Fri,  7 Feb 2020 16:20:13 -0500 (EST)
-Date:   Fri, 7 Feb 2020 13:20:12 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-Message-ID: <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
-References: <20200207170423.377931-1-jlayton@kernel.org>
- <20200207205243.GP20628@dread.disaster.area>
+        id S1727175AbgBGVtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 16:49:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727031AbgBGVtv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 16:49:51 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54D3321775;
+        Fri,  7 Feb 2020 21:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581112189;
+        bh=soBquO2SfBMzXLGAAbcm5UaWtantYBuoswFB74cyNco=;
+        h=From:To:Cc:Subject:Date:From;
+        b=P69vbEiC9/6zSokDtW6bZlQtd2OZPuDT/H+kpo2EO3VyeBg1rexDmFGrLwmPIuegD
+         Jkjd/zWQ6fUYrSIAMi8VbMoQQjyXywhJiJusie4vD63no1FztxoakPONrl3zfk6elG
+         PdSdVjosC1p31zlQjysjlOWVI0+GdB3RsrlwXlbY=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        idryomov@gmail.com, viro@zeniv.linux.org.uk, xiubli@redhat.com
+Subject: [PATCH] ceph: fix allocation under spinlock in mount option parsing
+Date:   Fri,  7 Feb 2020 16:49:48 -0500
+Message-Id: <20200207214948.1073419-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207205243.GP20628@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Al and syzbot reported that 4fbc0c711b24 (ceph: remove the extra slashes
+in the server path) had caused a regression where an allocation could be
+done under spinlock.
 
-On 2020-02-08 07:52:43 +1100, Dave Chinner wrote:
-> On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> > You're probably wondering -- Where are v1 and v2 sets?
+Fix this by keeping a canonicalized version of the path in the mount
+options. Then we can simply compare those without making copies at all
+during the comparison.
 
-> > The basic idea is to track writeback errors at the superblock level,
-> > so that we can quickly and easily check whether something bad happened
-> > without having to fsync each file individually. syncfs is then changed
-> > to reliably report writeback errors, and a new ioctl is added to allow
-> > userland to get at the current errseq_t value w/o having to sync out
-> > anything.
-> 
-> So what, exactly, can userspace do with this error? It has no idea
-> at all what file the writeback failure occurred on or even
-> what files syncfs() even acted on so there's no obvious error
-> recovery that it could perform on reception of such an error.
+Fixes: 4fbc0c711b24 ("ceph: remove the extra slashes in the server path")
+Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/super.c | 170 ++++++++++++++++++++++--------------------------
+ fs/ceph/super.h |   1 +
+ 2 files changed, 79 insertions(+), 92 deletions(-)
 
-Depends on the application.  For e.g. postgres it'd to be to reset
-in-memory contents and perform WAL replay from the last checkpoint. Due
-to various reasons* it's very hard for us (without major performance
-and/or reliability impact) to fully guarantee that by the time we fsync
-specific files we do so on an old enough fd to guarantee that we'd see
-the an error triggered by background writeback.  But keeping track of
-all potential filesystems data resides on (with one fd open permanently
-for each) and then syncfs()ing them at checkpoint time is quite doable.
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 5fa28e98d2b8..196d547c7054 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -208,6 +208,69 @@ struct ceph_parse_opts_ctx {
+ 	struct ceph_mount_options	*opts;
+ };
+ 
++/**
++ * canonicalize_path - Remove the extra slashes in the server path
++ * @server_path: the server path and could be NULL
++ *
++ * Return NULL if the path is NULL or only consists of "/", or a string
++ * without any extra slashes including the leading slash(es) and the
++ * slash(es) at the end of the server path, such as:
++ * "//dir1////dir2///" --> "dir1/dir2"
++ */
++static char *canonicalize_path(const char *server_path)
++{
++	const char *path = server_path;
++	const char *cur, *end;
++	char *buf, *p;
++	int len;
++
++	/* remove all the leading slashes */
++	while (*path == '/')
++		path++;
++
++	/* if the server path only consists of slashes */
++	if (*path == '\0')
++		return NULL;
++
++	len = strlen(path);
++
++	buf = kmalloc(len + 1, GFP_KERNEL);
++	if (!buf)
++		return ERR_PTR(-ENOMEM);
++
++	end = path + len;
++	p = buf;
++	do {
++		cur = strchr(path, '/');
++		if (!cur)
++			cur = end;
++
++		len = cur - path;
++
++		/* including one '/' */
++		if (cur != end)
++			len += 1;
++
++		memcpy(p, path, len);
++		p += len;
++
++		while (cur <= end && *cur == '/')
++			cur++;
++		path = cur;
++	} while (path < end);
++
++	*p = '\0';
++
++	/*
++	 * remove the last slash if there has and just to make sure that
++	 * we will get something like "dir1/dir2"
++	 */
++	if (*(--p) == '/')
++		*p = '\0';
++
++	return buf;
++}
++
+ /*
+  * Parse the source parameter.  Distinguish the server list from the path.
+  *
+@@ -230,15 +293,23 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
+ 
+ 	dev_name_end = strchr(dev_name, '/');
+ 	if (dev_name_end) {
+-		kfree(fsopt->server_path);
+ 
+ 		/*
+ 		 * The server_path will include the whole chars from userland
+ 		 * including the leading '/'.
+ 		 */
++		kfree(fsopt->server_path);
+ 		fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
+ 		if (!fsopt->server_path)
+ 			return -ENOMEM;
++
++		kfree(fsopt->canon_path);
++		fsopt->canon_path = canonicalize_path(fsopt->server_path);
++		if (fsopt->canon_path && IS_ERR(fsopt->canon_path)) {
++			ret = PTR_ERR(fsopt->canon_path);
++			fsopt->canon_path = NULL;
++			return ret;
++		}
+ 	} else {
+ 		dev_name_end = dev_name + strlen(dev_name);
+ 	}
+@@ -447,6 +518,7 @@ static void destroy_mount_options(struct ceph_mount_options *args)
+ 	kfree(args->snapdir_name);
+ 	kfree(args->mds_namespace);
+ 	kfree(args->server_path);
++	kfree(args->canon_path);
+ 	kfree(args->fscache_uniq);
+ 	kfree(args);
+ }
+@@ -462,73 +534,6 @@ static int strcmp_null(const char *s1, const char *s2)
+ 	return strcmp(s1, s2);
+ }
+ 
+-/**
+- * path_remove_extra_slash - Remove the extra slashes in the server path
+- * @server_path: the server path and could be NULL
+- *
+- * Return NULL if the path is NULL or only consists of "/", or a string
+- * without any extra slashes including the leading slash(es) and the
+- * slash(es) at the end of the server path, such as:
+- * "//dir1////dir2///" --> "dir1/dir2"
+- */
+-static char *path_remove_extra_slash(const char *server_path)
+-{
+-	const char *path = server_path;
+-	const char *cur, *end;
+-	char *buf, *p;
+-	int len;
+-
+-	/* if the server path is omitted */
+-	if (!path)
+-		return NULL;
+-
+-	/* remove all the leading slashes */
+-	while (*path == '/')
+-		path++;
+-
+-	/* if the server path only consists of slashes */
+-	if (*path == '\0')
+-		return NULL;
+-
+-	len = strlen(path);
+-
+-	buf = kmalloc(len + 1, GFP_KERNEL);
+-	if (!buf)
+-		return ERR_PTR(-ENOMEM);
+-
+-	end = path + len;
+-	p = buf;
+-	do {
+-		cur = strchr(path, '/');
+-		if (!cur)
+-			cur = end;
+-
+-		len = cur - path;
+-
+-		/* including one '/' */
+-		if (cur != end)
+-			len += 1;
+-
+-		memcpy(p, path, len);
+-		p += len;
+-
+-		while (cur <= end && *cur == '/')
+-			cur++;
+-		path = cur;
+-	} while (path < end);
+-
+-	*p = '\0';
+-
+-	/*
+-	 * remove the last slash if there has and just to make sure that
+-	 * we will get something like "dir1/dir2"
+-	 */
+-	if (*(--p) == '/')
+-		*p = '\0';
+-
+-	return buf;
+-}
+-
+ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+ 				 struct ceph_options *new_opt,
+ 				 struct ceph_fs_client *fsc)
+@@ -536,7 +541,6 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+ 	struct ceph_mount_options *fsopt1 = new_fsopt;
+ 	struct ceph_mount_options *fsopt2 = fsc->mount_options;
+ 	int ofs = offsetof(struct ceph_mount_options, snapdir_name);
+-	char *p1, *p2;
+ 	int ret;
+ 
+ 	ret = memcmp(fsopt1, fsopt2, ofs);
+@@ -546,21 +550,12 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+ 	ret = strcmp_null(fsopt1->snapdir_name, fsopt2->snapdir_name);
+ 	if (ret)
+ 		return ret;
++
+ 	ret = strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
+ 	if (ret)
+ 		return ret;
+ 
+-	p1 = path_remove_extra_slash(fsopt1->server_path);
+-	if (IS_ERR(p1))
+-		return PTR_ERR(p1);
+-	p2 = path_remove_extra_slash(fsopt2->server_path);
+-	if (IS_ERR(p2)) {
+-		kfree(p1);
+-		return PTR_ERR(p2);
+-	}
+-	ret = strcmp_null(p1, p2);
+-	kfree(p1);
+-	kfree(p2);
++	ret = strcmp_null(fsopt1->canon_path, fsopt2->canon_path);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -963,7 +958,9 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+ 	mutex_lock(&fsc->client->mount_mutex);
+ 
+ 	if (!fsc->sb->s_root) {
+-		const char *path, *p;
++		const char *path = fsc->mount_options->canon_path ?
++					fsc->mount_options->canon_path : "";
++
+ 		err = __ceph_open_session(fsc->client, started);
+ 		if (err < 0)
+ 			goto out;
+@@ -975,22 +972,11 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+ 				goto out;
+ 		}
+ 
+-		p = path_remove_extra_slash(fsc->mount_options->server_path);
+-		if (IS_ERR(p)) {
+-			err = PTR_ERR(p);
+-			goto out;
+-		}
+-		/* if the server path is omitted or just consists of '/' */
+-		if (!p)
+-			path = "";
+-		else
+-			path = p;
+ 		dout("mount opening path '%s'\n", path);
+ 
+ 		ceph_fs_debugfs_init(fsc);
+ 
+ 		root = open_root_dentry(fsc, path, started);
+-		kfree(p);
+ 		if (IS_ERR(root)) {
+ 			err = PTR_ERR(root);
+ 			goto out;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index e8f891770f9d..70aa32cfb64d 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -94,6 +94,7 @@ struct ceph_mount_options {
+ 	char *snapdir_name;   /* default ".snap" */
+ 	char *mds_namespace;  /* default NULL */
+ 	char *server_path;    /* default  "/" */
++	char *canon_path;     /* default "/" */
+ 	char *fscache_uniq;   /* default NULL */
+ };
+ 
+-- 
+2.24.1
 
-*I can go into details, but it's probably not interesting enough
-
-
-> > - This adds a new generic fs ioctl to allow userland to scrape the
-> >   current superblock's errseq_t value. It may be best to present this
-> >   to userland via fsinfo() instead (once that's merged). I'm fine with
-> >   dropping the last patch for now and reworking it for fsinfo if so.
-> 
-> What, exactly, is this useful for? Why would we consider exposing
-> an internal implementation detail to userspace like this?
-
-There is, as far as I can tell, so far no way but scraping the kernel
-log to figure out if there have been data loss errors on a
-machine/fs. Even besides app specific reactions like outlined above,
-just generally being able to alert whenever there error count increases
-seems extremely useful.  I'm not sure it makes sense to expose the
-errseq_t bits straight though - seems like it'd enshrine them in
-userspace ABI too much?
-
-Greetings,
-
-Andres Freund
