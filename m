@@ -2,212 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4351F155D70
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 19:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF6B155D4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 19:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbgBGSOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 13:14:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39406 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbgBGSOJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 13:14:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0A52DAE0D;
-        Fri,  7 Feb 2020 18:14:07 +0000 (UTC)
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     akpm@linux-foundation.org
-Cc:     dave@stgolabs.net, linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        broonie@kernel.org, alex.williamson@redhat.com,
-        keescook@chromium.org, yzaikin@google.com,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 2/5] proc/sysctl: optimize proc_sys_readdir
-Date:   Fri,  7 Feb 2020 10:03:02 -0800
-Message-Id: <20200207180305.11092-3-dave@stgolabs.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200207180305.11092-1-dave@stgolabs.net>
-References: <20200207180305.11092-1-dave@stgolabs.net>
+        id S1727175AbgBGSDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 13:03:20 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44902 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727075AbgBGSDU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 13:03:20 -0500
+Received: by mail-oi1-f195.google.com with SMTP id d62so2799803oia.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 10:03:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JRRbsgErUAdygrmUawyvbwsX1FDEnA0T+uTqNgnT/jc=;
+        b=PYPA0ttpp+vc1TnF/YbgoL8VN/4M6PsjI4WWmR8vyu+3R6KHEB43Hz3d4BiZQQyOmS
+         6hSONt7bVSi9vN0UJHUgktyq1UvvS3URDabSoLUNuTpum1G5TbVCieRi+jfxRvujRzuH
+         Vtn/0cEzDXf0egrjaO5NHlV8ohOxGEmTDDeIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JRRbsgErUAdygrmUawyvbwsX1FDEnA0T+uTqNgnT/jc=;
+        b=BJtdfXUbHvuh6+L+nuunSKWcvLToDJQcj/rjpWjc4w/YSCmGN1RGq5pVXs++RX2MoZ
+         XvfcqKUvtc5sZHl318CXehUt/ZeGaFz/ga11/vyO24Y1iK11r3Va1mdbY2EUgnobBT+L
+         gvqSP+g89Rjm7m0DqN8dWhaXQpvXdu2zN3qKapfBPSXPz5uizebdVBjLMJkDskHf8GXF
+         oh1ys3Dcpq82T1c3N1TsKKUca677VNpmccMuo3Urlk4uRPa6gInwiMVC3FOVBvXGv7Jo
+         EbhlbnnUDmZgQ0kyrgdthKV609O0E+/OBGV9+y63MFqwc7oSLCYDYTDBUGU0r4utsmvL
+         VMJg==
+X-Gm-Message-State: APjAAAXe0md19P7bI44NkIIvXpNhZzoGoBgCZBwA+ZDwVi8xXtzWqYJf
+        qDLVxlJ+eXSKyXpiMvKXheuplw==
+X-Google-Smtp-Source: APXvYqySIXJkC4E5+UAOxg9gQFoc/73ETVAbxtMnexlDJFWNypKUZaFeYl3y+TIOUNGOeYBgiO24Ig==
+X-Received: by 2002:aca:b183:: with SMTP id a125mr2895769oif.83.1581098599147;
+        Fri, 07 Feb 2020 10:03:19 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f22sm1314244otf.50.2020.02.07.10.03.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 10:03:18 -0800 (PST)
+Date:   Fri, 7 Feb 2020 10:03:16 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 08/22] bootconfig: init: Allow admin to use bootconfig
+ for init command line
+Message-ID: <202002070954.C18E7F58B@keescook>
+References: <157867220019.17873.13377985653744804396.stgit@devnote2>
+ <157867229521.17873.654222294326542349.stgit@devnote2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157867229521.17873.654222294326542349.stgit@devnote2>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch coverts struct ctl_dir to use an llrbtree
-instead of a regular rbtree such that computing nodes for
-potential usable entries becomes a branchless O(1) operation,
-therefore optimizing first_usable_entry(). The cost are
-mainly three additional pointers: one for the root and two
-for each struct ctl_node next/prev nodes, enlarging it from
-32 to 48 bytes on x86-64.
+On Sat, Jan 11, 2020 at 01:04:55AM +0900, Masami Hiramatsu wrote:
+> Since the current kernel command line is too short to describe
+> long and many options for init (e.g. systemd command line options),
+> this allows admin to use boot config for init command line.
+> 
+> All init command line under "init." keywords will be passed to
+> init.
+> 
+> For example,
+> 
+> init.systemd {
+> 	unified_cgroup_hierarchy = 1
+> 	debug_shell
+> 	default_timeout_start_sec = 60
+> }
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  init/main.c |   31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index c0017d9d16e7..dd7da62d99a5 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -139,6 +139,8 @@ char *saved_command_line;
+>  static char *static_command_line;
+>  /* Untouched extra command line */
+>  static char *extra_command_line;
+> +/* Extra init arguments */
+> +static char *extra_init_args;
+>  
+>  static char *execute_command;
+>  static char *ramdisk_execute_command;
+> @@ -372,6 +374,8 @@ static void __init setup_boot_config(void)
+>  		pr_info("Load boot config: %d bytes\n", size);
+>  		/* keys starting with "kernel." are passed via cmdline */
+>  		extra_command_line = xbc_make_cmdline("kernel");
+> +		/* Also, "init." keys are init arguments */
+> +		extra_init_args = xbc_make_cmdline("init");
+>  	}
+>  }
+>  #else
+> @@ -507,16 +511,18 @@ static inline void smp_prepare_cpus(unsigned int maxcpus) { }
+>   */
+>  static void __init setup_command_line(char *command_line)
+>  {
+> -	size_t len, xlen = 0;
+> +	size_t len, xlen = 0, ilen = 0;
+>  
+>  	if (extra_command_line)
+>  		xlen = strlen(extra_command_line);
+> +	if (extra_init_args)
+> +		ilen = strlen(extra_init_args) + 4; /* for " -- " */
+>  
+>  	len = xlen + strlen(boot_command_line) + 1;
+>  
+> -	saved_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
+> +	saved_command_line = memblock_alloc(len + ilen, SMP_CACHE_BYTES);
+>  	if (!saved_command_line)
+> -		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
+> +		panic("%s: Failed to allocate %zu bytes\n", __func__, len + ilen);
+>  
+>  	static_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
+>  	if (!static_command_line)
+> @@ -533,6 +539,22 @@ static void __init setup_command_line(char *command_line)
+>  	}
+>  	strcpy(saved_command_line + xlen, boot_command_line);
+>  	strcpy(static_command_line + xlen, command_line);
+> +
+> +	if (ilen) {
+> +		/*
+> +		 * Append supplemental init boot args to saved_command_line
+> +		 * so that user can check what command line options passed
+> +		 * to init.
+> +		 */
+> +		len = strlen(saved_command_line);
+> +		if (!strstr(boot_command_line, " -- ")) {
+> +			strcpy(saved_command_line + len, " -- ");
+> +			len += 4;
+> +		} else
+> +			saved_command_line[len++] = ' ';
+> +
+> +		strcpy(saved_command_line + len, extra_init_args);
+> +	}
 
-Cc: mcgrof@kernel.org
-Cc: keescook@chromium.org
-Cc: yzaikin@google.com
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- fs/proc/proc_sysctl.c  | 37 +++++++++++++++++++------------------
- include/linux/sysctl.h |  6 +++---
- 2 files changed, 22 insertions(+), 21 deletions(-)
+This isn't safe because it will destroy any argument with " -- " in
+quotes and anything after it. For example, booting with:
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index d80989b6c344..5a1b3b8be16b 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -111,15 +111,14 @@ static struct ctl_table *find_entry(struct ctl_table_header **phead,
- {
- 	struct ctl_table_header *head;
- 	struct ctl_table *entry;
--	struct rb_node *node = dir->root.rb_node;
-+	struct rb_node *node = dir->root.rb_root.rb_node;
- 
--	while (node)
--	{
-+	while (node) {
- 		struct ctl_node *ctl_node;
- 		const char *procname;
- 		int cmp;
- 
--		ctl_node = rb_entry(node, struct ctl_node, node);
-+		ctl_node = llrb_entry(node, struct ctl_node, node);
- 		head = ctl_node->header;
- 		entry = &head->ctl_table[ctl_node - head->node];
- 		procname = entry->procname;
-@@ -139,9 +138,10 @@ static struct ctl_table *find_entry(struct ctl_table_header **phead,
- 
- static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
- {
--	struct rb_node *node = &head->node[entry - head->ctl_table].node;
--	struct rb_node **p = &head->parent->root.rb_node;
-+	struct rb_node *node = &head->node[entry - head->ctl_table].node.rb_node;
-+	struct rb_node **p = &head->parent->root.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
-+	struct llrb_node *prev = NULL;
- 	const char *name = entry->procname;
- 	int namelen = strlen(name);
- 
-@@ -153,7 +153,7 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
- 		int cmp;
- 
- 		parent = *p;
--		parent_node = rb_entry(parent, struct ctl_node, node);
-+		parent_node = llrb_entry(parent, struct ctl_node, node);
- 		parent_head = parent_node->header;
- 		parent_entry = &parent_head->ctl_table[parent_node - parent_head->node];
- 		parent_name = parent_entry->procname;
-@@ -161,9 +161,10 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
- 		cmp = namecmp(name, namelen, parent_name, strlen(parent_name));
- 		if (cmp < 0)
- 			p = &(*p)->rb_left;
--		else if (cmp > 0)
-+		else if (cmp > 0) {
-+			prev = llrb_from_rb(parent);
- 			p = &(*p)->rb_right;
--		else {
-+		} else {
- 			pr_err("sysctl duplicate entry: ");
- 			sysctl_print_dir(head->parent);
- 			pr_cont("/%s\n", entry->procname);
-@@ -172,15 +173,15 @@ static int insert_entry(struct ctl_table_header *head, struct ctl_table *entry)
- 	}
- 
- 	rb_link_node(node, parent, p);
--	rb_insert_color(node, &head->parent->root);
-+	llrb_insert(&head->parent->root, llrb_from_rb(node), prev);
- 	return 0;
- }
- 
- static void erase_entry(struct ctl_table_header *head, struct ctl_table *entry)
- {
--	struct rb_node *node = &head->node[entry - head->ctl_table].node;
-+	struct llrb_node *node = &head->node[entry - head->ctl_table].node;
- 
--	rb_erase(node, &head->parent->root);
-+	llrb_erase(node, &head->parent->root);
- }
- 
- static void init_header(struct ctl_table_header *head,
-@@ -223,7 +224,7 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
- 
- 	/* Am I creating a permanently empty directory? */
- 	if (header->ctl_table == sysctl_mount_point) {
--		if (!RB_EMPTY_ROOT(&dir->root))
-+		if (!RB_EMPTY_ROOT(&dir->root.rb_root))
- 			return -EINVAL;
- 		set_empty_dir(dir);
- 	}
-@@ -381,11 +382,11 @@ static struct ctl_table *lookup_entry(struct ctl_table_header **phead,
- 	return entry;
- }
- 
--static struct ctl_node *first_usable_entry(struct rb_node *node)
-+static struct ctl_node *first_usable_entry(struct llrb_node *node)
- {
- 	struct ctl_node *ctl_node;
- 
--	for (;node; node = rb_next(node)) {
-+	for (; node; node = llrb_next(node)) {
- 		ctl_node = rb_entry(node, struct ctl_node, node);
- 		if (use_table(ctl_node->header))
- 			return ctl_node;
-@@ -401,7 +402,7 @@ static void first_entry(struct ctl_dir *dir,
- 	struct ctl_node *ctl_node;
- 
- 	spin_lock(&sysctl_lock);
--	ctl_node = first_usable_entry(rb_first(&dir->root));
-+	ctl_node = first_usable_entry(llrb_first(&dir->root));
- 	spin_unlock(&sysctl_lock);
- 	if (ctl_node) {
- 		head = ctl_node->header;
-@@ -420,7 +421,7 @@ static void next_entry(struct ctl_table_header **phead, struct ctl_table **pentr
- 	spin_lock(&sysctl_lock);
- 	unuse_table(head);
- 
--	ctl_node = first_usable_entry(rb_next(&ctl_node->node));
-+	ctl_node = first_usable_entry(llrb_next(&ctl_node->node));
- 	spin_unlock(&sysctl_lock);
- 	head = NULL;
- 	if (ctl_node) {
-@@ -1711,7 +1712,7 @@ void setup_sysctl_set(struct ctl_table_set *set,
- 
- void retire_sysctl_set(struct ctl_table_set *set)
- {
--	WARN_ON(!RB_EMPTY_ROOT(&set->dir.root));
-+	WARN_ON(!RB_EMPTY_ROOT(&set->dir.root.rb_root));
- }
- 
- int __init proc_sys_init(void)
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index 02fa84493f23..afb35fa61b91 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -25,7 +25,7 @@
- #include <linux/list.h>
- #include <linux/rcupdate.h>
- #include <linux/wait.h>
--#include <linux/rbtree.h>
-+#include <linux/ll_rbtree.h>
- #include <linux/uidgid.h>
- #include <uapi/linux/sysctl.h>
- 
-@@ -133,7 +133,7 @@ struct ctl_table {
- } __randomize_layout;
- 
- struct ctl_node {
--	struct rb_node node;
-+	struct llrb_node node;
- 	struct ctl_table_header *header;
- };
- 
-@@ -161,7 +161,7 @@ struct ctl_table_header {
- struct ctl_dir {
- 	/* Header must be at the start of ctl_dir */
- 	struct ctl_table_header header;
--	struct rb_root root;
-+	struct llrb_root root;
- };
- 
- struct ctl_table_set {
+thing=on acpi_osi="! -- " other=setting
+
+will wreck acpi_osi's value and potentially overwrite "other=settings",
+etc.
+
+(Yes, this seems very unlikely, but you can't treat " -- " as special,
+the command line string must be correct parsed for double quotes, as
+parse_args() does.)
+
+>  }
+>  
+>  /*
+> @@ -759,6 +781,9 @@ asmlinkage __visible void __init start_kernel(void)
+>  	if (!IS_ERR_OR_NULL(after_dashes))
+>  		parse_args("Setting init args", after_dashes, NULL, 0, -1, -1,
+>  			   NULL, set_init_arg);
+> +	if (extra_init_args)
+> +		parse_args("Setting extra init args", extra_init_args,
+> +			   NULL, 0, -1, -1, NULL, set_init_arg);
+
+Here is where you can append the extra_init_args, since parse_args()
+will have done the work to find after_dashes correctly.
+
+-Kees
+
+>  
+>  	/*
+>  	 * These use large bootmem allocations and must precede
+> 
+
 -- 
-2.16.4
-
+Kees Cook
