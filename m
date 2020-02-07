@@ -2,80 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99007154F95
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 01:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71012154FBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 01:30:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbgBGAI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 19:08:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48416 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbgBGAI4 (ORCPT
+        id S1727154AbgBGA3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 19:29:54 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:47705 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726509AbgBGA3y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 19:08:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pN0iI2R6rQdmuuVfN/ywYGLta/+ZSKXcgSvDvEZwm1M=; b=kd6ZoNv7jTlQE1C/YZx3xGUfRc
-        AWMtKofCtt9Emz1cr9AUHLgv9drPc/yXf/eSDD8FUNBCGsdEQkIYeAJPjCG98+i8xiJ6eF4ZPhtaX
-        Pvbfx4gp2+lreUyGZhJIKP7uFfxaRZ1YfGSiYiWUWCUzMqD0+g9Zz32od65nlIio3Brnr3qjzSz1L
-        y7pgjrZvl/SQUmcNM7UHq7zcTWsaruRoYht/2muWj6NVmTNOr98gL6PO+8CpA8XZdpehzpcALsW0u
-        0IKiSmVmhua2ewmV055wJiHFVESufRRbnfadamMvUqtcCjM+LcZxZQ2aF9Y7qgToAv+yx6KrDYtWy
-        WvcVdf9A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1izrCX-0007WL-L8; Fri, 07 Feb 2020 00:08:53 +0000
-Date:   Thu, 6 Feb 2020 16:08:53 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Mel Gorman <mgorman@suse.de>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] Congestion
-Message-ID: <20200207000853.GD8731@bombadil.infradead.org>
-References: <20191231125908.GD6788@bombadil.infradead.org>
- <20200106115514.GG12699@dhcp22.suse.cz>
- <20200106232100.GL23195@dread.disaster.area>
- <20200109110751.GF27035@quack2.suse.cz>
- <20200109230043.GS23195@dread.disaster.area>
- <20200205160551.GI3466@techsingularity.net>
- <20200206231928.GA21953@dread.disaster.area>
+        Thu, 6 Feb 2020 19:29:54 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CECD43A497D;
+        Fri,  7 Feb 2020 11:29:50 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1izrWm-0006xk-Tc; Fri, 07 Feb 2020 11:29:48 +1100
+Date:   Fri, 7 Feb 2020 11:29:48 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH v12 1/2] fs: New zonefs file system
+Message-ID: <20200207002948.GC21953@dread.disaster.area>
+References: <20200206052631.111586-1-damien.lemoal@wdc.com>
+ <20200206052631.111586-2-damien.lemoal@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200206231928.GA21953@dread.disaster.area>
+In-Reply-To: <20200206052631.111586-2-damien.lemoal@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=NXwXW5gbVE1O_1ho6owA:9 a=NUhwtb2oAqvidNHn:21
+        a=lSNHsdPPTDXGtUOn:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 10:19:28AM +1100, Dave Chinner wrote:
-> But detecting an abundance dirty pages/inodes on the LRU doesn't
-> really solve the problem of determining if and/or how long we should
-> wait for IO before we try to free more objects. There is no problem
-> with having lots of dirty pages/inodes on the LRU as long as the IO
-> subsystem keeps up with the rate at which reclaim is asking them to
-> be written back via async mechanisms (bdi writeback, metadata
-> writeback, etc).
-> 
-> The problem comes when we cannot make efficient progress cleaning
-> pages/inodes on the LRU because the IO subsystem is overloaded and
-> cannot clean pages/inodes any faster. At this point, we have to wait
-> for the IO subsystem to make progress and without feedback from the
-> IO subsystem, we have no idea how fast that progress is made. Hence
-> we have no idea how long we need to wait before trying to reclaim
-> again. i.e. the answer can be different depending on hardware
-> behaviour, not just the current instantaneous reclaim and IO state.
-> 
-> That's the fundamental problem we need to solve, and realistically
-> it can only be done with some level of feedback from the IO
-> subsystem.
+On Thu, Feb 06, 2020 at 02:26:30PM +0900, Damien Le Moal wrote:
+> zonefs is a very simple file system exposing each zone of a zoned block
+> device as a file. Unlike a regular file system with zoned block device
+> support (e.g. f2fs), zonefs does not hide the sequential write
+> constraint of zoned block devices to the user. Files representing
+> sequential write zones of the device must be written sequentially
+> starting from the end of the file (append only writes).
 
-That triggered a memory for me.  Jeremy Kerr presented a paper at LCA2006
-on a different model where the device driver pulls dirty things from the VM
-rather than having the VM push dirty things to the device driver.  It was
-prototyped in K42 rather than Linux, but the idea might be useful.
+....
+> +	if (flags & IOMAP_WRITE)
+> +		length = zi->i_max_size - offset;
+> +	else
+> +		length = min(length, isize - offset);
+> +	mutex_unlock(&zi->i_truncate_mutex);
+> +
+> +	iomap->offset = offset & (~sbi->s_blocksize_mask);
+> +	iomap->length = ((offset + length + sbi->s_blocksize_mask) &
+> +			 (~sbi->s_blocksize_mask)) - iomap->offset;
 
-http://jk.ozlabs.org/projects/k42/
-http://jk.ozlabs.org/projects/k42/device-driven-IO-lca06.pdf
+	iomap->length = __ALIGN_MASK(offset + length, sbi->s_blocksize_mask) -
+			iomap->offset;
 
+or it could just use ALIGN(..., sb->s_blocksize) and not need
+pre-calculation of the mask value...
+
+
+> +static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
+> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+> +	size_t count;
+> +	ssize_t ret;
+> +
+> +	/*
+> +	 * For async direct IOs to sequential zone files, ignore IOCB_NOWAIT
+> +	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
+> +	 * on the inode lock but the second goes through but is now unaligned).
+> +	 */
+> +	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb)
+> +	    && (iocb->ki_flags & IOCB_NOWAIT))
+> +		iocb->ki_flags &= ~IOCB_NOWAIT;
+
+Hmmm. I'm wondering if it would be better to return -EOPNOTSUPP here
+so that the application knows it can't do non-blocking write AIO to
+this file.
+
+Everything else looks OK to me.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
