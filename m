@@ -2,72 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18013155FEB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 21:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B9815602C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 21:52:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbgBGUmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 15:42:22 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41306 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbgBGUmM (ORCPT
+        id S1727071AbgBGUwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 15:52:53 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41763 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726947AbgBGUww (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:42:12 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i1so3278283oie.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 12:42:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
-        b=YPZJJy834hUJnz7pionGH11ZciL6RrbrPELuvEefyNE4m32c/3BRL7jS6BX3GTRbjW
-         A7PT2XuyoA0DKIOAMXBVLqZDks+EHHVySpQpjboWji0NFQ79t34wrEkdhJ/7mvVnPfcg
-         BPXVuIvRzTGxR9yBINGUBTO7OS1IgYRxQvNJFyy4DMElAWJNigH6Lfy9a++UWnjsZV7K
-         NbU0I3Vhb1neiaj+I96jGm3rPYvdHpbUTw6COrl+fTWEjyjGSvKY6qdov3nXpFudxXNb
-         5mDt4W3AkewRXnJYuxGyMUAK1lkfrMP5hrIUalSBsJd0qxRrK90fgDoK4eboWAVqoACA
-         vQPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=8cDRXBFOpE9J1p6S5H+HXSQg9q3m7pUJ3iUuQ5MPcDc=;
-        b=HksBOxMy06ldXmSX9x9VKKAmV4D7WXe48yGp4CGVBLBPL4L/jzNyWchttpRztu9b1N
-         bI6YyQE9B5STR0lf1qAYbNCZCFedgwPxCntJ2awzRXEhZy4H3kSG/nBQ2O8vWNeA6Nv3
-         8qtyiHvmgcxkYT9ARLGwxIKkO4Vpa0tML8Lg0t914BaxtveRhUG0gkjDd23GrNkZz2x6
-         6QgNZC3vgVqKpOsdGLz1c2fyDtLWJzbfn0/iIo0Lm+iUskSlXgXYW5Pc3xor4bi8rm5J
-         UVRpAYFO7UNtdcmtn2cbGyiQ9HNB3uhxpBAzA+DAAG6kNBse8YdeROMmZed0zFF114Uj
-         qEhA==
-X-Gm-Message-State: APjAAAWH9Qkt52BmpXmtmvMqVawdj0hWe51f1xfS+QFSRVULD+49CkGU
-        ekFFtupxqXlr0xnkDAXH827ui/gvKa1Gf6OYf8U=
-X-Google-Smtp-Source: APXvYqwSeJkRlkGgNiWsW1NpF1DiAIFzsJveh9+wRvoFwY/EgylY09EfD37WjburJ+wD5ZF6dcgpmVqlX+UTGTmHly0=
-X-Received: by 2002:aca:c7cb:: with SMTP id x194mr3327726oif.157.1581108131844;
- Fri, 07 Feb 2020 12:42:11 -0800 (PST)
+        Fri, 7 Feb 2020 15:52:52 -0500
+Received: from dread.disaster.area (pa49-181-161-120.pa.nsw.optusnet.com.au [49.181.161.120])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3A7708220F7;
+        Sat,  8 Feb 2020 07:52:45 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j0AcF-0005eN-RY; Sat, 08 Feb 2020 07:52:43 +1100
+Date:   Sat, 8 Feb 2020 07:52:43 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        andres@anarazel.de, willy@infradead.org, dhowells@redhat.com,
+        hch@infradead.org, jack@suse.cz, akpm@linux-foundation.org
+Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
+ writeback errors
+Message-ID: <20200207205243.GP20628@dread.disaster.area>
+References: <20200207170423.377931-1-jlayton@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a4a:d508:0:0:0:0:0 with HTTP; Fri, 7 Feb 2020 12:42:11 -0800 (PST)
-Reply-To: auch197722@gmail.com
-From:   "Mr. Theophilus Odadudu" <cristinamedina0010@gmail.com>
-Date:   Fri, 7 Feb 2020 15:42:11 -0500
-Message-ID: <CAPNvSTgeN84MC4a+RJ1wBioXqDfarTE4_m4nbA9Dm=S8bmF0WQ@mail.gmail.com>
-Subject: LETTER OF INQUIRY
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207170423.377931-1-jlayton@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=SkgQWeG3jiSQFIjTo4+liA==:117 a=SkgQWeG3jiSQFIjTo4+liA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=9kdqgZibw9NIpUqzm0EA:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Good Day,
+On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
+> You're probably wondering -- Where are v1 and v2 sets?
+> 
+> I did the first couple of versions of this set back in 2018, and then
+> got dragged off to work on other things. I'd like to resurrect this set
+> though, as I think it's valuable overall, and I have need of it for some
+> other work I'm doing.
+> 
+> Currently, syncfs does not return errors when one of the inodes fails to
+> be written back. It will return errors based on the legacy AS_EIO and
+> AS_ENOSPC flags when syncing out the block device fails, but that's not
+> particularly helpful for filesystems that aren't backed by a blockdev.
+> It's also possible for a stray sync to lose those errors.
+> 
+> The basic idea is to track writeback errors at the superblock level,
+> so that we can quickly and easily check whether something bad happened
+> without having to fsync each file individually. syncfs is then changed
+> to reliably report writeback errors, and a new ioctl is added to allow
+> userland to get at the current errseq_t value w/o having to sync out
+> anything.
 
-I work as a clerk in a Bank here in Nigeria, I have a very
-confidential Business Proposition for you. There is a said amount of
-money floating in the bank unclaimed, belonging to the bank Foreign
-customer who die with his family in the Ethiopian Airline crash of
-March 11, 2019.
+So what, exactly, can userspace do with this error? It has no idea
+at all what file the writeback failure occurred on or even
+what files syncfs() even acted on so there's no obvious error
+recovery that it could perform on reception of such an error.
 
-I seek your good collaboration to move the fund for our benefit. we
-have agreed that 40% be yours once you help claim.
+> I do have a xfstest for this. I do not yet have manpage patches, but
+> I'm happy to roll some once there is consensus on the interface.
+> 
+> Caveats:
+> 
+> - Having different behavior for an O_PATH descriptor in syncfs is
+>   a bit odd, but it means that we don't have to grow struct file. Is
+>   that acceptable from an API standpoint?
 
-Do get back to with 1) Your Full Name: (2) Residential Address: (3)
-Phone, Mobile  (4) Scan Copy of Your ID. to apply for claims of the
-funds.
+It's an ugly wart, IMO. But because we suck at APIs, I'm betting
+that we'll decide this is OK or do something even worse...
 
-Regards
-Theophilus Odadudu
+> - This adds a new generic fs ioctl to allow userland to scrape the
+>   current superblock's errseq_t value. It may be best to present this
+>   to userland via fsinfo() instead (once that's merged). I'm fine with
+>   dropping the last patch for now and reworking it for fsinfo if so.
+
+What, exactly, is this useful for? Why would we consider exposing
+an internal implementation detail to userspace like this?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
