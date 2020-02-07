@@ -2,22 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0390155101
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 04:35:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB956155104
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 04:36:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgBGDfp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Feb 2020 22:35:45 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:51580 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727178AbgBGDfp (ORCPT
+        id S1727392AbgBGDgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Feb 2020 22:36:16 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:43653 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727178AbgBGDgQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Feb 2020 22:35:45 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R951e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TpKNOpj_1581046530;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TpKNOpj_1581046530)
+        Thu, 6 Feb 2020 22:36:16 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TpJud8-_1581046556;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TpJud8-_1581046556)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 07 Feb 2020 11:35:31 +0800
-Subject: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA locality
- info
+          Fri, 07 Feb 2020 11:35:57 +0800
+Subject: [PATCH RESEND v8 2/2] sched/numa: documentation for per-cgroup numa
 From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -36,8 +35,8 @@ To:     Ingo Molnar <mingo@redhat.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>
 References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
-Message-ID: <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
-Date:   Fri, 7 Feb 2020 11:35:30 +0800
+Message-ID: <bc110d79-a2dd-c2c0-27e7-a60227b8936a@linux.alibaba.com>
+Date:   Fri, 7 Feb 2020 11:35:56 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
  Gecko/20100101 Thunderbird/68.4.1
 MIME-Version: 1.0
@@ -50,358 +49,269 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently there are no good approach to monitoring the per-cgroup NUMA
-efficiency, this could be a trouble especially when groups are sharing
-CPUs, we don't know which one introduced remote-memory accessing.
+Add the description for 'numa_locality', also a new doc to explain
+the details on how to deal with the per-cgroup numa statistics.
 
-Although the per-task NUMA accessing info from PMU is good for further
-debuging, but not light enough for daily monitoring, especial on a box
-with thousands of tasks.
-
-Fortunately, when NUMA Balancing enabled, it will periodly trigger page
-fault and try to increase the NUMA locality, by tracing the results we
-will be able to estimate the NUMA efficiency.
-
-On each page fault of NUMA Balancing, when task's executing CPU is from
-the same node of pages, we call this a local page accessing, otherwise
-a remote page accessing.
-
-By updating task's accessing counter into it's cgroup on ticks, we get
-the per-cgroup numa locality info.
-
-For example the new entry 'cpu.numa_stat' show:
-  page_access local=1231412 remote=53453
-
-Here we know the workloads in hierarchy have totally been traced 1284865
-times of page accessing, and 1231412 of them are local page access, which
-imply a good NUMA efficiency.
-
-By monitoring the increments, we will be able to locate the per-cgroup
-workload which NUMA Balancing can't helpwith (usually caused by wrong
-CPU and memory node bindings), then we got chance to fix that in time.
-
-Cc: Mel Gorman <mgorman@suse.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Michal Koutný <mkoutny@suse.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Iurii Zaikin <yzaikin@google.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
 ---
- include/linux/sched.h        | 15 +++++++++
- include/linux/sched/sysctl.h |  6 ++++
- init/Kconfig                 |  9 ++++++
- kernel/sched/core.c          | 75 ++++++++++++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c          | 62 ++++++++++++++++++++++++++++++++++++
- kernel/sched/sched.h         | 12 +++++++
- kernel/sysctl.c              | 11 +++++++
- 7 files changed, 190 insertions(+)
+ Documentation/admin-guide/cg-numa-stat.rst      | 178 ++++++++++++++++++++++++
+ Documentation/admin-guide/index.rst             |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ Documentation/admin-guide/sysctl/kernel.rst     |   9 ++
+ init/Kconfig                                    |   2 +
+ 5 files changed, 194 insertions(+)
+ create mode 100644 Documentation/admin-guide/cg-numa-stat.rst
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index a6c924fa1c77..74bf234bae53 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1128,6 +1128,21 @@ struct task_struct {
- 	unsigned long			numa_pages_migrated;
- #endif /* CONFIG_NUMA_BALANCING */
-
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	/*
-+	 * Counter index stand for:
-+	 * 0 -- remote page accessing
-+	 * 1 -- local page accessing
-+	 * 2 -- remote page accessing updated to cgroup
-+	 * 3 -- local page accessing updated to cgroup
-+	 *
-+	 * We record the counter before the end of task_numa_fault(), this
-+	 * is based on the fact that after page fault is handled, the task
-+	 * will access the page on the CPU where it triggered the PF.
-+	 */
-+	unsigned long			numa_page_access[4];
-+#endif
+diff --git a/Documentation/admin-guide/cg-numa-stat.rst b/Documentation/admin-guide/cg-numa-stat.rst
+new file mode 100644
+index 000000000000..1106eb1e4050
+--- /dev/null
++++ b/Documentation/admin-guide/cg-numa-stat.rst
+@@ -0,0 +1,178 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- #ifdef CONFIG_RSEQ
- 	struct rseq __user *rseq;
- 	u32 rseq_sig;
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index d4f6215ee03f..bb3721cf48e0 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -101,4 +101,10 @@ extern int sched_energy_aware_handler(struct ctl_table *table, int write,
- 				 loff_t *ppos);
- #endif
-
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+extern int sysctl_numa_locality(struct ctl_table *table, int write,
-+				 void __user *buffer, size_t *lenp,
-+				 loff_t *ppos);
-+#endif
++===============================
++Per-cgroup NUMA statistics
++===============================
 +
- #endif /* _LINUX_SCHED_SYSCTL_H */
++Background
++----------
++
++On NUMA platforms, remote memory accessing always has a performance penalty.
++Although we have NUMA balancing working hard to maximize the access locality,
++there are still situations it can't help.
++
++This could happen in modern production environment. When a large number of
++cgroups are used to classify and control resources, this creates a complex
++configuration for memory policy, CPUs and NUMA nodes. In such cases NUMA
++balancing could end up with the wrong memory policy or exhausted local NUMA
++node, which would lead to low percentage of local page accesses.
++
++We need to detect such cases, figure out which workloads from which cgroup
++have introduced the issues, then we get chance to do adjustment to avoid
++performance degradation.
++
++However, there are no hardware counters for per-task local/remote accessing
++info, we don't know how many remote page accesses have occurred for a
++particular task.
++
++NUMA Locality
++-------------
++
++Fortunately, we have NUMA Balancing which scans task's mapping and triggers
++page fault periodically, giving us the opportunity to record per-task page
++accessing info, when the CPU fall into PF is from the same node of pages, we
++consider task as doing local page accessing, otherwise the remote page
++accessing, we call these two counters the locality info.
++
++On each tick, we acquire the locality info of current task on that CPU, update
++the increments into its cgroup, becoming the group locality info.
++
++By "echo 1 > /proc/sys/kernel/numa_locality" at runtime or adding boot parameter
++'numa_locality', we will enable the accounting of per-cgroup NUMA locality info,
++the 'cpu.numa_stat' entry of CPU cgroup will show statistics::
++
++  page_access local=NR_LOCAL_PAGE_ACCESS remote=NR_REMOTE_PAGE_ACCESS
++
++We define 'NUMA locality' as::
++
++  NR_LOCAL_PAGE_ACCESS * 100 / (NR_LOCAL_PAGE_ACCESS + NR_REMOTE_PAGE_ACCESS)
++
++This per-cgroup percentage number helps to represent the NUMA Balancing behavior.
++
++Note that the accounting is hierarchical, which means the NUMA locality info for
++a given group represents not only the workload of this group, but also the
++workloads of all its descendants.
++
++For example the 'cpu.numa_stat' shows::
++
++  page_access local=129909383 remote=18265810
++
++The NUMA locality calculated as::
++
++  129909383 * 100 / (129909383 + 18265810) = 87.67
++
++Thus we know the workload of this group and its descendants have totally done
++129909383 times of local page accessing and 18265810 times of remotes, locality
++is 87.67% which implies most of the memory access are local.
++
++NUMA Consumption
++----------------
++
++There are also other cgroup entries which help us to estimate NUMA efficiency.
++They are 'cpuacct.usage_percpu' and 'memory.numa_stat'.
++
++By reading 'cpuacct.usage_percpu' we will get per-cpu runtime (in nanoseconds)
++info (in hierarchy) as::
++
++  CPU_0_RUNTIME CPU_1_RUNTIME CPU_2_RUNTIME ... CPU_X_RUNTIME
++
++Combined with the info from::
++
++  cat /sys/devices/system/node/nodeX/cpulist
++
++We would be able to accumulate the runtime of CPUs into NUMA nodes, to get the
++per-cgroup node runtime info.
++
++By reading 'memory.numa_stat' we will get per-cgroup node memory consumption
++info as::
++
++  total=TOTAL_MEM N0=MEM_ON_NODE0 N1=MEM_ON_NODE1 ... NX=MEM_ON_NODEX
++
++Together we call these the per-cgroup NUMA consumption info, telling us how many
++resources a particular workload has consumed, on a particular NUMA node.
++
++Monitoring
++----------
++
++By monitoring the increments of locality info, we can easily know whether NUMA
++Balancing is working well for a particular workload.
++
++For example we take a 5 seconds sample period, then on each sampling we have::
++
++  local_diff = last_nr_local_page_access - nr_local_page_access
++  remote_diff = last_nr_remote_page_access - nr_remote_page_access
++
++and we get the locality in this period as::
++
++  locality = local_diff * 100 / (local_diff + remote_diff)
++
++We can plot a line for locality. When the line is close to 100%, things are
++good; when getting close to 0% something is wrong. We can pick a proper
++watermark to trigger warning message.
++
++You may want to drop the data if the local/remote_diff is too small, which
++implies there are not many available pages for NUMA Balancing to scan, ignoring
++would be fine since most likely the workload is insensitive to NUMA, or the
++memory topology is already good enough.
++
++Monitoring root group helps you control the overall situation, while you may
++also want to monitor all the leaf groups which contain the workloads, this
++helps to catch the mouse.
++
++Try to put your workload into also the cpuacct & memory cgroup, when NUMA
++Balancing is disabled or locality becomes too small, we may want to monitor
++the per-node runtime & memory info to see if the node consumption meet the
++requirements.
++
++For NUMA node X on each sampling we have::
++
++  runtime_X_diff = runtime_X - last_runtime_X
++  runtime_all_diff = runtime_all - last_runtime_all
++
++  runtime_percent_X = runtime_X_diff * 100 / runtime_all_diff
++  memory_percent_X = memory_X * 100 / memory_all
++
++These two percentages are usually matched on each node, workload should execute
++mostly on the node that contains most of its memory, but it's not guaranteed.
++
++The workload may only access a small part of its memory, in such cases although
++the majority of memory are remote, locality could still be good.
++
++Thus to tell if things are fine or not depends on the understanding of system
++resource deployment, however, if you find node X got 100% memory percent but 0%
++runtime percent, definitely something is wrong.
++
++Troubleshooting
++---------------
++
++After identifying which workload introduced the bad locality, check:
++
++1). Is the workload bound to a particular NUMA node?
++2). Has any NUMA node run out of resources?
++
++There are several ways to bind task's memory with a NUMA node, the strict way
++like the MPOL_BIND memory policy or 'cpuset.mems' will limit the memory
++node where to allocate pages. In this situation, admin should make sure the
++task is allowed to run on the CPUs of that NUMA node, and make sure there are
++available CPU resources there.
++
++There are also ways to bind task's CPU with a NUMA node, like 'cpuset.cpus' or
++sched_setaffinity() syscall. In this situation, NUMA Balancing helps to migrate
++pages into that node, admin should make sure there is available memory there.
++
++Admin could try to rebind or unbind the NUMA node to erase the damage, make a
++change then observe the statistics to see if things get better until the
++situation is acceptable.
++
++Highlights
++----------
++
++For some tasks, NUMA Balancing may be found to be unnecessary to scan pages,
++and locality could always be 0 or small number, don't pay attention to them
++since they most likely insensitive to NUMA.
++
++There is no accounting until the option is turned on, so enable it in advance
++if you want to have the whole history.
++
++We have per-task migfailed counter to tell how many page migrations have
++failed for a particular task; you will find it in /proc/PID/sched entry.
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index f1d0ccffbe72..bd769f5ba565 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -114,6 +114,7 @@ configure specific aspects of kernel behavior to your liking.
+    video-output
+    wimax/index
+    xfs
++   cg-numa-stat
+
+ .. only::  subproject and html
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e35b28e3a301..9024fc1bed8d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3249,6 +3249,10 @@
+ 	numa_balancing=	[KNL,X86] Enable or disable automatic NUMA balancing.
+ 			Allowed values are enable and disable
+
++	numa_locality	[KNL] Enable per-cgroup numa locality info.
++			Useful to debug NUMA efficiency problems when there are
++			lots of per-cgroup workloads.
++
+ 	numa_zonelist_order= [KNL, BOOT] Select zonelist order for NUMA.
+ 			'node', 'default' can be specified
+ 			This can be set from sysctl after boot.
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index def074807cee..d2b862c65e67 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -556,6 +556,15 @@ rate for each task.
+ numa_balancing_scan_size_mb is how many megabytes worth of pages are
+ scanned for a given scan.
+
++numa_locality:
++=============
++
++Enables/disables per-cgroup NUMA locality info.
++
++0: disabled (default).
++1: enabled.
++
++Check Documentation/admin-guide/cg-numa-stat.rst for details.
+
+ osrelease, ostype & version:
+ ============================
 diff --git a/init/Kconfig b/init/Kconfig
-index 322fd2c65304..63c6b90a515d 100644
+index 63c6b90a515d..2b3281caab42 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
-@@ -813,6 +813,15 @@ config NUMA_BALANCING_DEFAULT_ENABLED
- 	  If set, automatic NUMA balancing will be enabled if running on a NUMA
- 	  machine.
+@@ -821,6 +821,8 @@ config CGROUP_NUMA_LOCALITY
+ 	  This option enables the collection of per-cgroup NUMA locality info,
+ 	  to tell whether NUMA Balancing is working well for a particular
+ 	  workload, also imply the NUMA efficiency.
++	  See
++		-  Documentation/admin-guide/cg-numa-stat.rst
 
-+config CGROUP_NUMA_LOCALITY
-+	bool "per-cgroup NUMA Locality"
-+	default n
-+	depends on CGROUP_SCHED && NUMA_BALANCING
-+	help
-+	  This option enables the collection of per-cgroup NUMA locality info,
-+	  to tell whether NUMA Balancing is working well for a particular
-+	  workload, also imply the NUMA efficiency.
-+
  menuconfig CGROUPS
  	bool "Control Group support"
- 	select KERNFS
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e7b08d52db93..40dd6b221eef 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7657,6 +7657,68 @@ static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
- }
- #endif /* CONFIG_RT_GROUP_SCHED */
-
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+DEFINE_STATIC_KEY_FALSE(sched_numa_locality);
-+
-+#ifdef CONFIG_PROC_SYSCTL
-+int sysctl_numa_locality(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	struct ctl_table t;
-+	int err;
-+	int state = static_branch_likely(&sched_numa_locality);
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	t = *table;
-+	t.data = &state;
-+	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
-+	if (err < 0 || !write)
-+		return err;
-+
-+	if (state)
-+		static_branch_enable(&sched_numa_locality);
-+	else
-+		static_branch_disable(&sched_numa_locality);
-+
-+	return err;
-+}
-+#endif
-+
-+static inline struct cfs_rq *tg_cfs_rq(struct task_group *tg, int cpu)
-+{
-+	return tg == &root_task_group ? &cpu_rq(cpu)->cfs : tg->cfs_rq[cpu];
-+}
-+
-+static int cpu_numa_stat_show(struct seq_file *sf, void *v)
-+{
-+	int cpu;
-+	u64 local = 0, remote = 0;
-+	struct task_group *tg = css_tg(seq_css(sf));
-+
-+	if (!static_branch_likely(&sched_numa_locality))
-+		return 0;
-+
-+	for_each_possible_cpu(cpu) {
-+		local += tg_cfs_rq(tg, cpu)->local_page_access;
-+		remote += tg_cfs_rq(tg, cpu)->remote_page_access;
-+	}
-+
-+	seq_printf(sf, "page_access local=%llu remote=%llu\n", local, remote);
-+
-+	return 0;
-+}
-+
-+static __init int numa_locality_setup(char *opt)
-+{
-+	static_branch_enable(&sched_numa_locality);
-+
-+	return 0;
-+}
-+__setup("numa_locality", numa_locality_setup);
-+#endif
-+
- static struct cftype cpu_legacy_files[] = {
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	{
-@@ -7706,6 +7768,12 @@ static struct cftype cpu_legacy_files[] = {
- 		.seq_show = cpu_uclamp_max_show,
- 		.write = cpu_uclamp_max_write,
- 	},
-+#endif
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	{
-+		.name = "numa_stat",
-+		.seq_show = cpu_numa_stat_show,
-+	},
- #endif
- 	{ }	/* Terminate */
- };
-@@ -7887,6 +7955,13 @@ static struct cftype cpu_files[] = {
- 		.seq_show = cpu_uclamp_max_show,
- 		.write = cpu_uclamp_max_write,
- 	},
-+#endif
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	{
-+		.name = "numa_stat",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = cpu_numa_stat_show,
-+	},
- #endif
- 	{ }	/* terminate */
- };
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2d170b5da0e3..eb838557bae2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1049,7 +1049,63 @@ update_stats_curr_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  * Scheduling class queueing methods:
-  */
-
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+/*
-+ * We want to record the real local/remote page access statistic
-+ * here, so 'pnid' should be pages's real residential node after
-+ * migrate_misplaced_page(), and 'cnid' should be the node of CPU
-+ * where triggered the PF.
-+ */
-+static inline void
-+update_task_locality(struct task_struct *p, int pnid, int cnid, int pages)
-+{
-+	if (!static_branch_unlikely(&sched_numa_locality))
-+		return;
-+
-+	/*
-+	 * pnid != cnid --> remote idx 0
-+	 * pnid == cnid --> local idx 1
-+	 */
-+	p->numa_page_access[!!(pnid == cnid)] += pages;
-+}
-+
-+static inline void update_group_locality(struct cfs_rq *cfs_rq)
-+{
-+	unsigned long ldiff, rdiff;
-+
-+	if (!static_branch_unlikely(&sched_numa_locality))
-+		return;
-+
-+	rdiff = current->numa_page_access[0] - current->numa_page_access[2];
-+	ldiff = current->numa_page_access[1] - current->numa_page_access[3];
-+	if (!ldiff && !rdiff)
-+		return;
-+
-+	cfs_rq->local_page_access += ldiff;
-+	cfs_rq->remote_page_access += rdiff;
-+
-+	/*
-+	 * Consider updated when reach root cfs_rq, no NUMA Balancing PF
-+	 * should happen on current task during the hierarchical updating.
-+	 */
-+	if (&cfs_rq->rq->cfs == cfs_rq) {
-+		current->numa_page_access[2] = current->numa_page_access[0];
-+		current->numa_page_access[3] = current->numa_page_access[1];
-+	}
-+}
-+#else
-+static inline void
-+update_task_locality(struct task_struct *p, int pnid, int cnid, int pages)
-+{
-+}
-+
-+static inline void update_group_locality(struct cfs_rq *cfs_rq)
-+{
-+}
-+#endif /* CONFIG_CGROUP_NUMA_LOCALITY */
-+
- #ifdef CONFIG_NUMA_BALANCING
-+
- /*
-  * Approximate time to scan a full NUMA task in ms. The task scan period is
-  * calculated based on the tasks virtual memory size and
-@@ -2465,6 +2521,8 @@ void task_numa_fault(int last_cpupid, int mem_node, int pages, int flags)
- 	p->numa_faults[task_faults_idx(NUMA_MEMBUF, mem_node, priv)] += pages;
- 	p->numa_faults[task_faults_idx(NUMA_CPUBUF, cpu_node, priv)] += pages;
- 	p->numa_faults_locality[local] += pages;
-+
-+	update_task_locality(p, mem_node, numa_node_id(), pages);
- }
-
- static void reset_ptenuma_scan(struct task_struct *p)
-@@ -2650,6 +2708,9 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
- 	p->last_sum_exec_runtime	= 0;
-
- 	init_task_work(&p->numa_work, task_numa_work);
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	memset(p->numa_page_access, 0, sizeof(p->numa_page_access));
-+#endif
-
- 	/* New address space, reset the preferred nid */
- 	if (!(clone_flags & CLONE_VM)) {
-@@ -4313,6 +4374,7 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
- 	 */
- 	update_load_avg(cfs_rq, curr, UPDATE_TG);
- 	update_cfs_group(curr);
-+	update_group_locality(cfs_rq);
-
- #ifdef CONFIG_SCHED_HRTICK
- 	/*
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 1a88dc8ad11b..66b4e581b6ed 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -575,6 +575,14 @@ struct cfs_rq {
- 	struct list_head	throttled_list;
- #endif /* CONFIG_CFS_BANDWIDTH */
- #endif /* CONFIG_FAIR_GROUP_SCHED */
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	/*
-+	 * The local/remote page access info collected from all
-+	 * the tasks in hierarchy.
-+	 */
-+	u64			local_page_access;
-+	u64			remote_page_access;
-+#endif
- };
-
- static inline int rt_bandwidth_enabled(void)
-@@ -1601,6 +1609,10 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
- extern struct static_key_false sched_numa_balancing;
- extern struct static_key_false sched_schedstats;
-
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+extern struct static_key_false sched_numa_locality;
-+#endif
-+
- static inline u64 global_rt_period(void)
- {
- 	return (u64)sysctl_sched_rt_period * NSEC_PER_USEC;
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d396aaaf19a3..a8f5951f92b3 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -428,6 +428,17 @@ static struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_ONE,
- 	},
- #endif /* CONFIG_NUMA_BALANCING */
-+#ifdef CONFIG_CGROUP_NUMA_LOCALITY
-+	{
-+		.procname	= "numa_locality",
-+		.data		= NULL, /* filled in by handler */
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sysctl_numa_locality,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif /* CONFIG_CGROUP_NUMA_LOCALITY */
- #endif /* CONFIG_SCHED_DEBUG */
- 	{
- 		.procname	= "sched_rt_period_us",
 -- 
 2.14.4.44.g2045bb6
 
