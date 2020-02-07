@@ -2,131 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849B7155F8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 21:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E54D6155F87
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 21:27:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgBGU1M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 15:27:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31881 "EHLO
+        id S1727018AbgBGU1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 15:27:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:28737 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727005AbgBGU1K (ORCPT
+        with ESMTP id S1726969AbgBGU1J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 15:27:10 -0500
+        Fri, 7 Feb 2020 15:27:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581107229;
+        s=mimecast20190719; t=1581107228;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BaMoU3pUt65BkfrWudQyORZLvQWCs8nEN8buujVWjC0=;
-        b=K078tx3IH1tx5ufyCFsi3s64DsCy4oan8kBfs/5dTjRCKfNw8FbF5fFjjd8LXqdVohW7Gr
-        d4Eg5KOiq6IjbvqpEcV5jHwTEt0npxL4f8lg+xc9GfWG7VX6oR+59/5PEL7xd3Eve/ohkL
-        aOFxvn/9lbY6xcy3FaMW//+hqIWrpUU=
+        bh=PB+gWFvG77GLEzOFbhdQg0iy3vsZ/QZsUnjkaWFwfK0=;
+        b=GwuIn7ezDt9nZiunBhxqaiHfItC/n+KUdjUiMzmC/gmGfxsWhmb3qI3acjUYDIScNP74fm
+        K1z+TykiTiodt8ga5fxf9EcXP4C3EQhpY2kF/E62opuuhXE6x8q5RMwLmufczOnh5fqv21
+        iqYRLIkfL9m0u+5B6R4KutW64k11ZH8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-266-yOy0T3A6ODmJ02SyZCEOyA-1; Fri, 07 Feb 2020 15:27:07 -0500
-X-MC-Unique: yOy0T3A6ODmJ02SyZCEOyA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-372-6Spsn_9VOW2BnY8Cgm3YQg-1; Fri, 07 Feb 2020 15:27:07 -0500
+X-MC-Unique: 6Spsn_9VOW2BnY8Cgm3YQg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E031F10054E3;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D472214E0;
         Fri,  7 Feb 2020 20:27:05 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 097AD19C6A;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0885D60BF7;
         Fri,  7 Feb 2020 20:27:03 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9162C2257D4; Fri,  7 Feb 2020 15:27:02 -0500 (EST)
+        id 9664B2257D5; Fri,  7 Feb 2020 15:27:02 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         hch@infradead.org, dan.j.williams@intel.com
 Cc:     dm-devel@redhat.com, vishal.l.verma@intel.com, vgoyal@redhat.com
-Subject: [PATCH v3 2/7] pmem: Enable pmem_do_write() to deal with arbitrary ranges
-Date:   Fri,  7 Feb 2020 15:26:47 -0500
-Message-Id: <20200207202652.1439-3-vgoyal@redhat.com>
+Subject: [PATCH v3 3/7] dax, pmem: Add a dax operation zero_page_range
+Date:   Fri,  7 Feb 2020 15:26:48 -0500
+Message-Id: <20200207202652.1439-4-vgoyal@redhat.com>
 In-Reply-To: <20200207202652.1439-1-vgoyal@redhat.com>
 References: <20200207202652.1439-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently pmem_do_write() is written with assumption that all I/O is
-sector aligned. Soon I want to use this function in zero_page_range()
-where range passed in does not have to be sector aligned.
+Add a dax operation zero_page_range, to zero a range of memory. This will
+also clear any poison in the range being zeroed.
 
-Modify this function to be able to deal with an arbitrary range. Which
-is specified by pmem_off and len.
+As of now, zeroing of up to one page is allowed in a single call. There
+are no callers which are trying to zero more than a page in a single call=
+.
+Once we grow the callers which zero more than a page in single call, we
+can add that support. Primary reason for not doing that yet is that this
+will add little complexity in dm implementation where a range might be
+spanning multiple underlying targets and one will have to split the range
+into multiple sub ranges and call zero_page_range() on individual targets=
+.
 
+Suggested-by: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- drivers/nvdimm/pmem.c | 30 ++++++++++++++++++++++--------
- 1 file changed, 22 insertions(+), 8 deletions(-)
+ drivers/dax/super.c   | 19 +++++++++++++++++++
+ drivers/nvdimm/pmem.c | 15 +++++++++++++++
+ include/linux/dax.h   |  3 +++
+ 3 files changed, 37 insertions(+)
 
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 26a654dbc69a..31ee0b47b4ed 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -344,6 +344,25 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, =
+pgoff_t pgoff, void *addr,
+ }
+ EXPORT_SYMBOL_GPL(dax_copy_to_iter);
+=20
++int dax_zero_page_range(struct dax_device *dax_dev, u64 offset, size_t l=
+en)
++{
++	if (!dax_alive(dax_dev))
++		return -ENXIO;
++
++	if (!dax_dev->ops->zero_page_range)
++		return -EOPNOTSUPP;
++	/*
++	 * There are no callers that want to zero across a page boundary as of
++	 * now. Once users are there, this check can be removed after the
++	 * device mapper code has been updated to split ranges across targets.
++	 */
++	if (offset_in_page(offset) + len > PAGE_SIZE)
++		return -EIO;
++
++	return dax_dev->ops->zero_page_range(dax_dev, offset, len);
++}
++EXPORT_SYMBOL_GPL(dax_zero_page_range);
++
+ #ifdef CONFIG_ARCH_HAS_PMEM_API
+ void arch_wb_cache_pmem(void *addr, size_t size);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
 diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 9ad07cb8c9fc..281fe04d25fd 100644
+index 281fe04d25fd..0def7dc8e487 100644
 --- a/drivers/nvdimm/pmem.c
 +++ b/drivers/nvdimm/pmem.c
-@@ -154,15 +154,23 @@ static blk_status_t pmem_do_read(struct pmem_device=
- *pmem,
+@@ -299,6 +299,20 @@ static const struct block_device_operations pmem_fop=
+s =3D {
+ 	.revalidate_disk =3D	nvdimm_revalidate_disk,
+ };
 =20
- static blk_status_t pmem_do_write(struct pmem_device *pmem,
- 			struct page *page, unsigned int page_off,
--			sector_t sector, unsigned int len)
-+			u64 pmem_off, unsigned int len)
- {
- 	blk_status_t rc =3D BLK_STS_OK;
- 	bool bad_pmem =3D false;
--	phys_addr_t pmem_off =3D sector * 512 + pmem->data_offset;
--	void *pmem_addr =3D pmem->virt_addr + pmem_off;
--
--	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
--		bad_pmem =3D true;
-+	phys_addr_t pmem_real_off =3D pmem_off + pmem->data_offset;
-+	void *pmem_addr =3D pmem->virt_addr + pmem_real_off;
-+	sector_t sector_start, sector_end;
-+	unsigned nr_sectors;
++static int pmem_dax_zero_page_range(struct dax_device *dax_dev, u64 offs=
+et,
++				    size_t len)
++{
++	int rc;
++	struct pmem_device *pmem =3D dax_get_private(dax_dev);
++	struct page *page =3D ZERO_PAGE(0);
 +
-+	sector_start =3D DIV_ROUND_UP(pmem_off, SECTOR_SIZE);
-+	sector_end =3D (pmem_off + len) >> SECTOR_SHIFT;
-+	if (sector_end > sector_start) {
-+		nr_sectors =3D sector_end - sector_start;
-+		if (unlikely(is_bad_pmem(&pmem->bb, sector_start,
-+					 nr_sectors << SECTOR_SHIFT)))
-+			bad_pmem =3D true;
-+	}
++	rc =3D pmem_do_write(pmem, page, 0, offset, len);
++	if (rc > 0)
++		return -EIO;
++
++	return 0;
++}
++
+ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+ 		pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn)
+ {
+@@ -330,6 +344,7 @@ static const struct dax_operations pmem_dax_ops =3D {
+ 	.dax_supported =3D generic_fsdax_supported,
+ 	.copy_from_iter =3D pmem_copy_from_iter,
+ 	.copy_to_iter =3D pmem_copy_to_iter,
++	.zero_page_range =3D pmem_dax_zero_page_range,
+ };
 =20
- 	/*
- 	 * Note that we write the data both before and after
-@@ -181,7 +189,13 @@ static blk_status_t pmem_do_write(struct pmem_device=
- *pmem,
- 	flush_dcache_page(page);
- 	write_pmem(pmem_addr, page, page_off, len);
- 	if (unlikely(bad_pmem)) {
--		rc =3D pmem_clear_poison(pmem, pmem_off, len);
-+		/*
-+		 * Pass sector aligned offset and length. That seems
-+		 * to work as of now. Other finer grained alignment
-+		 * cases can be addressed later if need be.
-+		 */
-+		rc =3D pmem_clear_poison(pmem, ALIGN(pmem_real_off, SECTOR_SIZE),
-+				       nr_sectors << SECTOR_SHIFT);
- 		write_pmem(pmem_addr, page, page_off, len);
- 	}
+ static const struct attribute_group *pmem_attribute_groups[] =3D {
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 9bd8528bd305..a555f0aeb7bd 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -34,6 +34,8 @@ struct dax_operations {
+ 	/* copy_to_iter: required operation for fs-dax direct-i/o */
+ 	size_t (*copy_to_iter)(struct dax_device *, pgoff_t, void *, size_t,
+ 			struct iov_iter *);
++	/* zero_page_range: required operation. Zero range with-in a page  */
++	int (*zero_page_range)(struct dax_device *, u64, size_t);
+ };
 =20
-@@ -195,7 +209,7 @@ static blk_status_t pmem_do_bvec(struct pmem_device *=
-pmem, struct page *page,
- 	if (!op_is_write(op))
- 		return pmem_do_read(pmem, page, off, sector, len);
+ extern struct attribute_group dax_attribute_group;
+@@ -209,6 +211,7 @@ size_t dax_copy_from_iter(struct dax_device *dax_dev,=
+ pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void =
+*addr,
+ 		size_t bytes, struct iov_iter *i);
++int dax_zero_page_range(struct dax_device *dax_dev, u64 offset, size_t l=
+en);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
 =20
--	return pmem_do_write(pmem, page, off, sector, len);
-+	return pmem_do_write(pmem, page, off, sector << SECTOR_SHIFT, len);
- }
-=20
- static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *b=
-io)
+ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
 --=20
 2.20.1
 
