@@ -2,164 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61831155C86
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5410155C93
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbgBGREa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 12:04:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726874AbgBGREa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:04:30 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7686521927;
-        Fri,  7 Feb 2020 17:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581095069;
-        bh=VLYiA3MH1A/lCTCPikOl983ZPXm4JWB1EKa7ZQ4K++8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ERZFqZOrJflJqfyYP391wT2lv0fv2F4QUwkCsVMrX5qea1T1V7FamJVwD0ODIsgXA
-         r2JSwJytx+fq+jNyqL80QEXSzVFMkmNlH+Zl6XX9ypiXggZJ3Ssc7ZSZZPoJ4aG1bE
-         foMynkqnumgWXTyPgV5j1Ax8pzyBfF20MNUziduw=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, andres@anarazel.de, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: [PATCH v3 3/3] vfs: add a new ioctl for fetching the superblock's errseq_t
-Date:   Fri,  7 Feb 2020 12:04:23 -0500
-Message-Id: <20200207170423.377931-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200207170423.377931-1-jlayton@kernel.org>
-References: <20200207170423.377931-1-jlayton@kernel.org>
+        id S1727048AbgBGRGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 12:06:44 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37035 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727009AbgBGRGo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 12:06:44 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q84so2663980oic.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 09:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zeTa1kMSEl3fLJZjvubhBF7lLU+TSysbdNVa6LXQMGs=;
+        b=xOuwqNiXcHB10xcosisChgV9ONSo/c2Qus/rR544MZlBpD5Ay7hfJC9WVKAzaAd+7f
+         U/ogZnw+r/oWo8eLbbH1uz2FRsW4ncL3QQaYOXB5tMGUNUgy9QHudVLVGzSGf8tXQiLG
+         G6FWY4st3CWg8CfeGHSGW+U0i4wcqLAm7c9T7Azgx+NnGbBA+0LfgBRgJ8ftSQl4fhml
+         Ib9zZx/YscmftDwtkfPV4UTOHlsHGOZr/rD9r64BmBjyAr0bHE9Q0BvufvvHXSJLVzc9
+         NuNjDbXAE4Jh3nBxliXXwfSgHCDqAqeTlhhwOsS2lluLxXV//IML04qYltBOcwek/+nD
+         vPfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zeTa1kMSEl3fLJZjvubhBF7lLU+TSysbdNVa6LXQMGs=;
+        b=qp+MwN/jFMEY96Mhasm26T85g8JoUNiGc3H2k8zUd3pqSBgALaFNlQiQqWsB5DeM39
+         fzkDy1L4e/pbwrQQP6vzC+yG3SbAxwjMRr2x1RZEaJe7RGI4YUBL1Ul6y9ykg/ks8pAV
+         c/NZ7EfGkg4A6bgQ+8fW3BZRsnR77OEM4AncW/prvv8x78Z0vEPZTAysFsV+RF6aZu7I
+         gp8zuJsjKH7XIlcrwcrSBCusoBAzAghKaGsGlL2kZuhbwRFZh6Z9ENKg78vOlMFp8ijR
+         3Jn/S1cLy9awmZp+x8ue38jawsrH2YXRM+Ec6wqdSW7FDC6UOCxSS5nQXFyRPChYQs8V
+         R98w==
+X-Gm-Message-State: APjAAAWzsU5aSOYHKZ/okMuLWc3F2BGeHbKC5cmQ8r4XY5In/P+UVt7F
+        8B7WABZg5L8KBqTwwzVLcgzgjNGSvDk3I0GKcwgn0A==
+X-Google-Smtp-Source: APXvYqyM78u7JQAugFgv5zZBfNuG8N7zn04ejIqfum6zEtPcj48HqoBLg00kLaeSxn3H7xzZslVIa+EkM26FbgU/wvs=
+X-Received: by 2002:a05:6808:a83:: with SMTP id q3mr2851359oij.0.1581095203775;
+ Fri, 07 Feb 2020 09:06:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200203200029.4592-1-vgoyal@redhat.com> <20200203200029.4592-2-vgoyal@redhat.com>
+ <20200205183050.GA26711@infradead.org> <20200205200259.GE14544@redhat.com>
+ <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
+ <20200206074142.GB28365@infradead.org> <CAPcyv4iTBTOuKjQX3eoojLM=Eai_pfARXmzpMAtgi5OWBHXvzQ@mail.gmail.com>
+ <20200207170150.GC11998@redhat.com>
+In-Reply-To: <20200207170150.GC11998@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 7 Feb 2020 09:06:32 -0800
+Message-ID: <CAPcyv4g8jUhaKXhoh-1cvE4oi2v0JQcLrnFUW9zsRiC4F-7-zQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dax, pmem: Add a dax operation zero_page_range
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        device-mapper development <dm-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+On Fri, Feb 7, 2020 at 9:02 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Fri, Feb 07, 2020 at 08:57:39AM -0800, Dan Williams wrote:
+> > On Wed, Feb 5, 2020 at 11:41 PM Christoph Hellwig <hch@infradead.org> wrote:
+> > >
+> > > On Wed, Feb 05, 2020 at 04:40:44PM -0800, Dan Williams wrote:
+> > > > > I don't have any reason not to pass phys_addr_t. If that sounds better,
+> > > > > will make changes.
+> > > >
+> > > > The problem is device-mapper. That wants to use offset to route
+> > > > through the map to the leaf device. If it weren't for the firmware
+> > > > communication requirement you could do:
+> > > >
+> > > > dax_direct_access(...)
+> > > > generic_dax_zero_page_range(...)
+> > > >
+> > > > ...but as long as the firmware error clearing path is required I think
+> > > > we need to do pass the pgoff through the interface and do the pgoff to
+> > > > virt / phys translation inside the ops handler.
+> > >
+> > > Maybe phys_addr_t was the wrong type - but why do we split the offset
+> > > into the block device argument into a pgoff and offset into page instead
+> > > of a single 64-bit value?
+> >
+> > Oh, got it yes, that looks odd for sub-page zeroing. Yes, let's just
+> > have one device relative byte-offset.
+>
+> So what's the best type to represent this offset. "u64" or "phys_addr_t"
+> or "loff_t" or something else.  I like phys_addr_t followed by u64.
 
-Some time ago, the PostgreSQL developers mentioned that they'd like a
-way to tell whether there have been any writeback errors on a given
-filesystem without having to forcibly sync out all buffered writes.
+Let's make it u64.
 
-Now that we have a per-sb errseq_t that tracks whether any inode on the
-filesystem might have failed writeback, we can present that to userland
-applications via a new interface. Add a new generic fs ioctl for that
-purpose. This just reports the current state of the errseq_t counter
-with the SEEN bit masked off.
-
-Cc: Andres Freund <andres@anarazel.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ioctl.c              |  4 ++++
- include/linux/errseq.h  |  1 +
- include/uapi/linux/fs.h |  1 +
- lib/errseq.c            | 33 +++++++++++++++++++++++++++++++--
- 4 files changed, 37 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 7c9a5df5a597..41e991cec4c3 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -705,6 +705,10 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
- 	case FS_IOC_FIEMAP:
- 		return ioctl_fiemap(filp, argp);
- 
-+	case FS_IOC_GETFSERR:
-+		return put_user(errseq_scrape(&inode->i_sb->s_wb_err),
-+				(unsigned int __user *)argp);
-+
- 	case FIGETBSZ:
- 		/* anon_bdev filesystems may not have a block size */
- 		if (!inode->i_sb->s_blocksize)
-diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-index fc2777770768..de165623fa86 100644
---- a/include/linux/errseq.h
-+++ b/include/linux/errseq.h
-@@ -9,6 +9,7 @@ typedef u32	errseq_t;
- 
- errseq_t errseq_set(errseq_t *eseq, int err);
- errseq_t errseq_sample(errseq_t *eseq);
-+errseq_t errseq_scrape(errseq_t *eseq);
- int errseq_check(errseq_t *eseq, errseq_t since);
- int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
- #endif
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 379a612f8f1d..c39b37fba7f9 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -214,6 +214,7 @@ struct fsxattr {
- #define FS_IOC_FSSETXATTR		_IOW('X', 32, struct fsxattr)
- #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
- #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
-+#define FS_IOC_GETFSERR			_IOR('e', 1, unsigned int)
- 
- /*
-  * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
-diff --git a/lib/errseq.c b/lib/errseq.c
-index 81f9e33aa7e7..8ded0920eed3 100644
---- a/lib/errseq.c
-+++ b/lib/errseq.c
-@@ -108,7 +108,7 @@ errseq_t errseq_set(errseq_t *eseq, int err)
- EXPORT_SYMBOL(errseq_set);
- 
- /**
-- * errseq_sample() - Grab current errseq_t value.
-+ * errseq_sample() - Grab current errseq_t value (or 0 if it hasn't been seen)
-  * @eseq: Pointer to errseq_t to be sampled.
-  *
-  * This function allows callers to initialise their errseq_t variable.
-@@ -117,7 +117,7 @@ EXPORT_SYMBOL(errseq_set);
-  * see it the next time it checks for an error.
-  *
-  * Context: Any context.
-- * Return: The current errseq value.
-+ * Return: The current errseq value or 0 if it wasn't previously seen
-  */
- errseq_t errseq_sample(errseq_t *eseq)
- {
-@@ -130,6 +130,35 @@ errseq_t errseq_sample(errseq_t *eseq)
- }
- EXPORT_SYMBOL(errseq_sample);
- 
-+/**
-+ * errseq_scrape() - Grab current errseq_t value
-+ * @eseq: Pointer to errseq_t to be sampled.
-+ *
-+ * This function allows callers to scrape the current value of an errseq_t.
-+ * Unlike errseq_sample, this will always return the current value with
-+ * the SEEN flag unset, even when the value has not yet been seen.
-+ *
-+ * Context: Any context.
-+ * Return: The current errseq value with ERRSEQ_SEEN masked off
-+ */
-+errseq_t errseq_scrape(errseq_t *eseq)
-+{
-+	errseq_t old = READ_ONCE(*eseq);
-+
-+	/*
-+	 * For the common case of no errors ever having been set, we can skip
-+	 * marking the SEEN bit. Once an error has been set, the value will
-+	 * never go back to zero.
-+	 */
-+	if (old != 0) {
-+		errseq_t new = old | ERRSEQ_SEEN;
-+		if (old != new)
-+			cmpxchg(eseq, old, new);
-+	}
-+	return old & ~ERRSEQ_SEEN;
-+}
-+EXPORT_SYMBOL(errseq_scrape);
-+
- /**
-  * errseq_check() - Has an error occurred since a particular sample point?
-  * @eseq: Pointer to errseq_t value to be checked.
--- 
-2.24.1
-
+phys_addr_t has already led to confusion in this thread because the
+first question I ask when I read it is "why call ->direct_access() to
+do the translation when you already have the physical address?".
