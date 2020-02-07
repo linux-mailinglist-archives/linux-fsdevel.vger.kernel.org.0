@@ -2,99 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2F9155AC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB6E155B77
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 17:12:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgBGPeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 10:34:06 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36865 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgBGPeG (ORCPT
+        id S1727065AbgBGQMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 11:12:42 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44311 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbgBGQMm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:34:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f129so3248726wmf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 07:34:05 -0800 (PST)
+        Fri, 7 Feb 2020 11:12:42 -0500
+Received: by mail-il1-f194.google.com with SMTP id s85so2124254ill.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 08:12:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
-        b=pNDfYKDmis0ZIoYPys46LJ3eBdCjoVxn/3v2EnQ5eEWQihKfa+ZrD8+lDIJelNtsNE
-         zCo0dqacfo1f14irXeNginpPFf3515oPjUrcUERQz+lgH3XM4gqZDueiPG9dYdxnmXNM
-         7EvdJylctaaygZHqEZLPF2Fo0khFqQ9PxyZfU=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lAnZ0KfpoJFXJXqEJp2h1hR24YKg8DCqzE8GT1Sg/80=;
+        b=ou7OV9nXB1rt4NAnNWVFHl5DT/z7arx3n217cok5UsX7/dZAEB/6gZZdgo5CRHKbtq
+         5MlVqxPBMVocDORdwmh/qiT1eSTmkMlpW+xIzeN3lYZj98PTiGVeUysgpuqebVnyMfiq
+         THrIoHPrfTrSpAMEGRQRuOOADT1okKx60iaHfjSi1C1VhnvFObLxss+/wqKfXI7daUDo
+         pU/yQEV036+gvU2gQoav9vyoYArKiK9vm0yjiEh4WmHKM/WvGTROd9a/JsKEr/iXZJcR
+         ldiZWBGMsC3THXrmtMnOunfqXpg7KjPd+OY2Uh2TwkySzeCQVCs2nUoko9r8tFVpqwk3
+         j47w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
-        b=GT8+gXiyHJsabzqmV0WIUUK3iHEm3hvqP90jQn5zSpZTTJ5r0X7R5WpR7AQQdRNIAD
-         Rn7WD7N7l/Y5Kyojq2Q2nFwoAR43dMs/s6jtLvWrHvg/6U9MNMzzKJQw45NmglsFmUOl
-         9rhSD4hUWrLvYwEvAlE+kSdnx8AqJ50nxgpc/WFFCMJ85C5fbemetTX+7aJ7DwbErlqn
-         FdbCb2BNFhU+Wnm3yH3z10WSn4eRnPcpX7lzqQBsNbnYGqO7z+IbnEwrJg/DLKVJ2Poz
-         B+BGrNM5zebDgyq4LOMZl6Hr2n0qADEIMZK+WoWtm3vTCPxq34+yKPKjIwj1WrHcGn/r
-         /oig==
-X-Gm-Message-State: APjAAAV7A+4CMdmppn/MyfT4FBptF9Z1/zoFIU3TrEMI1vNDFtm4kAu1
-        qiExfpVbdASuUYpkd/6chwLgTQ==
-X-Google-Smtp-Source: APXvYqy/NpI+jwi7ubi9A744y5HRTbyCjOoLff8EQAzbvpxGaSxGkf5a/khVgfzxuK6X4nsXyrH/yw==
-X-Received: by 2002:a1c:9e89:: with SMTP id h131mr4922099wme.161.1581089644697;
-        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id i16sm3983836wmb.36.2020.02.07.07.34.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
-Date:   Fri, 7 Feb 2020 16:34:01 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 5.6-rc1
-Message-ID: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lAnZ0KfpoJFXJXqEJp2h1hR24YKg8DCqzE8GT1Sg/80=;
+        b=gCYiRlf7uweqiOpsbZH1L3TSEiSiAUWTtIIgfDijJECcvJ273PR8dR2cSRsY/iE3o8
+         3shfbtbLmgWuy+Ep3u4VVb49ICn6UY/vEj2lswUJUzWsivqeTgI4MZp7eGWl8MkZ3ZvV
+         xJumjeN4SoR6f3rQr3mQHx3p3lLV9Gc5Nn7TbBYklpnSBZGFKHBUvxTLm34E8co2FepG
+         pmuM8pBpcgIh4GPYBQhd3jT/N7Lf2dsTKGtXJl81uRWtxPv5mHd1l9ymSjIeXzgwzyAd
+         uiM9CqYPDam4K4oRgDKo6jx5FFOYr58qds+jY7NRBvw/mJxaIEL/LkS/uc4J3jYz6CRq
+         wARQ==
+X-Gm-Message-State: APjAAAWIDe0beHDxyq58AGIJWbEV6O4C8pD5kMv21m35EggMLhUxfTdV
+        mbYyck7JH5FmDZG3WDr0Uw8kgg==
+X-Google-Smtp-Source: APXvYqxlLfKpSh0/MAQWoZOGzqwYq4/oCYfhJFBjQabCpXWy7DdmtSgrXlico21x2I3TZIkM7UM2Dw==
+X-Received: by 2002:a92:3a07:: with SMTP id h7mr87346ila.203.1581091961049;
+        Fri, 07 Feb 2020 08:12:41 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d7sm999245iof.14.2020.02.07.08.12.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Feb 2020 08:12:40 -0800 (PST)
+Subject: Re: [PATCH] io_uring: flush overflowed CQ events in the
+ io_uring_poll()
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org
+References: <20200207121828.105456-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0acf040c-4b00-1647-e0c9-fc8b1c94685d@kernel.dk>
+Date:   Fri, 7 Feb 2020 09:12:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20200207121828.105456-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On 2/7/20 5:18 AM, Stefano Garzarella wrote:
+> In io_uring_poll() we must flush overflowed CQ events before to
+> check if there are CQ events available, to avoid missing events.
+> 
+> We call the io_cqring_events() that checks and flushes any overflow
+> and returns the number of CQ events available.
+> 
+> We can avoid taking the 'uring_lock' since the flush is already
+> protected by 'completion_lock'.
 
-Please pull from:
+Thanks, applied. I dropped that last sentence, as a) it doesn't
+really matter, and b) we may very well already have it held here
+if someone is doing a poll on the io_uring fd itself.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.6-rc1
+-- 
+Jens Axboe
 
-- Fix a regression introduced in v5.1 that triggers WARNINGs for some fuse
-filesystems.
-
-- Fix an xfstest failure.
-
-- Allow overlayfs to be used on top of fuse/virtiofs.
-
-- Code and documentation cleanups.
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Daniel W. S. Almeida (1):
-      Documentation: filesystems: convert fuse to RST
-
-Miklos Szeredi (2):
-      fix up iter on short count in fuse_direct_io()
-      fuse: don't overflow LLONG_MAX with end offset
-
-Vivek Goyal (1):
-      fuse: Support RENAME_WHITEOUT flag
-
-zhengbin (1):
-      fuse: use true,false for bool variable
-
----
- Documentation/filesystems/{fuse.txt => fuse.rst} | 163 ++++++++++-------------
- Documentation/filesystems/index.rst              |   1 +
- MAINTAINERS                                      |   2 +-
- fs/fuse/cuse.c                                   |   4 +-
- fs/fuse/dir.c                                    |   2 +-
- fs/fuse/file.c                                   |  21 ++-
- fs/fuse/inode.c                                  |  14 +-
- fs/fuse/readdir.c                                |   2 +-
- 8 files changed, 104 insertions(+), 105 deletions(-)
- rename Documentation/filesystems/{fuse.txt => fuse.rst} (80%)
