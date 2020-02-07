@@ -2,99 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5410155C93
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65350155C98
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 18:06:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbgBGRGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 12:06:44 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37035 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbgBGRGo (ORCPT
+        id S1727381AbgBGRGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 12:06:49 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:51093 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727049AbgBGRGs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 12:06:44 -0500
-Received: by mail-oi1-f195.google.com with SMTP id q84so2663980oic.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 09:06:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zeTa1kMSEl3fLJZjvubhBF7lLU+TSysbdNVa6LXQMGs=;
-        b=xOuwqNiXcHB10xcosisChgV9ONSo/c2Qus/rR544MZlBpD5Ay7hfJC9WVKAzaAd+7f
-         U/ogZnw+r/oWo8eLbbH1uz2FRsW4ncL3QQaYOXB5tMGUNUgy9QHudVLVGzSGf8tXQiLG
-         G6FWY4st3CWg8CfeGHSGW+U0i4wcqLAm7c9T7Azgx+NnGbBA+0LfgBRgJ8ftSQl4fhml
-         Ib9zZx/YscmftDwtkfPV4UTOHlsHGOZr/rD9r64BmBjyAr0bHE9Q0BvufvvHXSJLVzc9
-         NuNjDbXAE4Jh3nBxliXXwfSgHCDqAqeTlhhwOsS2lluLxXV//IML04qYltBOcwek/+nD
-         vPfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zeTa1kMSEl3fLJZjvubhBF7lLU+TSysbdNVa6LXQMGs=;
-        b=qp+MwN/jFMEY96Mhasm26T85g8JoUNiGc3H2k8zUd3pqSBgALaFNlQiQqWsB5DeM39
-         fzkDy1L4e/pbwrQQP6vzC+yG3SbAxwjMRr2x1RZEaJe7RGI4YUBL1Ul6y9ykg/ks8pAV
-         c/NZ7EfGkg4A6bgQ+8fW3BZRsnR77OEM4AncW/prvv8x78Z0vEPZTAysFsV+RF6aZu7I
-         gp8zuJsjKH7XIlcrwcrSBCusoBAzAghKaGsGlL2kZuhbwRFZh6Z9ENKg78vOlMFp8ijR
-         3Jn/S1cLy9awmZp+x8ue38jawsrH2YXRM+Ec6wqdSW7FDC6UOCxSS5nQXFyRPChYQs8V
-         R98w==
-X-Gm-Message-State: APjAAAWzsU5aSOYHKZ/okMuLWc3F2BGeHbKC5cmQ8r4XY5In/P+UVt7F
-        8B7WABZg5L8KBqTwwzVLcgzgjNGSvDk3I0GKcwgn0A==
-X-Google-Smtp-Source: APXvYqyM78u7JQAugFgv5zZBfNuG8N7zn04ejIqfum6zEtPcj48HqoBLg00kLaeSxn3H7xzZslVIa+EkM26FbgU/wvs=
-X-Received: by 2002:a05:6808:a83:: with SMTP id q3mr2851359oij.0.1581095203775;
- Fri, 07 Feb 2020 09:06:43 -0800 (PST)
+        Fri, 7 Feb 2020 12:06:48 -0500
+Received: from mail-lj1-f173.google.com ([209.85.208.173]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1M7ayR-1is7HH3r9p-007ym1; Fri, 07 Feb 2020 18:06:47 +0100
+Received: by mail-lj1-f173.google.com with SMTP id y6so93648lji.0;
+        Fri, 07 Feb 2020 09:06:46 -0800 (PST)
+X-Gm-Message-State: APjAAAUJHNPXCh/xK8YFHLoStO0M8ozKP/4l15jS3+ofrisLfvHUxlQn
+        iAOqtj8EusCpznG9RAxb7yFTLwI9MAu2e89RTqM=
+X-Google-Smtp-Source: APXvYqyFrxs4D067Cq+LTtKdfrn+W0Vf9eBI5h4pPAoPLWMwWdS7Kqx2r3OvJt5B7b7BK2Cuvpcqo/wFc3iKjBsrS34=
+X-Received: by 2002:a2e:5056:: with SMTP id v22mr138394ljd.164.1581095206323;
+ Fri, 07 Feb 2020 09:06:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20200203200029.4592-1-vgoyal@redhat.com> <20200203200029.4592-2-vgoyal@redhat.com>
- <20200205183050.GA26711@infradead.org> <20200205200259.GE14544@redhat.com>
- <CAPcyv4iY=gw86UDLqpiCtathGXRUuxOMuU=unwxzA-cm=0x+Sg@mail.gmail.com>
- <20200206074142.GB28365@infradead.org> <CAPcyv4iTBTOuKjQX3eoojLM=Eai_pfARXmzpMAtgi5OWBHXvzQ@mail.gmail.com>
- <20200207170150.GC11998@redhat.com>
-In-Reply-To: <20200207170150.GC11998@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 7 Feb 2020 09:06:32 -0800
-Message-ID: <CAPcyv4g8jUhaKXhoh-1cvE4oi2v0JQcLrnFUW9zsRiC4F-7-zQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dax, pmem: Add a dax operation zero_page_range
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        device-mapper development <dm-devel@redhat.com>
+References: <20191217221708.3730997-21-arnd@arndb.de> <20200207072210.10134-1-youling257@gmail.com>
+In-Reply-To: <20200207072210.10134-1-youling257@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 7 Feb 2020 17:06:34 +0000
+X-Gmail-Original-Message-ID: <CAK8P3a2n6qttV0hhMHjb7XngA6-Aj4Q9Q_6LdK7LgyoYSvQJSw@mail.gmail.com>
+Message-ID: <CAK8P3a2n6qttV0hhMHjb7XngA6-Aj4Q9Q_6LdK7LgyoYSvQJSw@mail.gmail.com>
+Subject: Re: [PATCH v2 20/27] compat_ioctl: simplify the implementation
+To:     youling257 <youling257@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:fdtLroLKRF3z9lpaDoAat+saKdez6k1gz9YQ/JdPIcbHjwBh2SR
+ cRQdIW8DVR79qmzqUQuhgKbx+WdYHxoQ0do7i5hr1fVa6EJKg5pC6cROq9wYyK9qhzoLcgM
+ Jqafa17Fe8mwhjeEUUMPq4eC9N+kw6Vs78frR2Xohi8lDaDziOETYvOrzT20OYYC+p1K9mw
+ B2R69JBXeNbHjhZ6gD94Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ly7G1KQZ0uo=:fERR7UDTKiJeYRbOJJZXwJ
+ mKHoYCmN3zdJ+sAOvBYptoQLTQ+oWDBVkJZyHI9LzcBuaRpEuLfs3Zp2V6ao2plD+q1TG1XDq
+ Xb/Kb4xSHeH76ydf6aoLsX3cJjFtUP33xdYVxO8Y/nb/SLZTfIHL4ZsxWMAjDRyXG11s/MrLY
+ H+hMQfE1zvrQtS0daFK0FtVXaYcIBKyzg/mNcyx+JAwfPL56NmG87tgd2rucwMn25h4aqmcdk
+ vkSnMOdjxLE09hNEYb4ldkruUHySCkTOYrDcCaQv51KxO/JT7e76RthjVdrSRsAToK/im3lGZ
+ SgBshuowGaZhBjVoTvxOjjRpdjEZREyKOjdsyz/mAN2vatU84hm47XjiSzZGHncelAXSm8yna
+ QmqaoZoiEM/xS1T8VPiYORLbDkFyhPGdJefplJQsYYzgGElNeXWAjYq1mtl6BJBYvfVNu6Y+y
+ AfOaDuohFym2X6kdekvWRF+Mb8tc3DIZawhs3XSwDHuxB9zWWybsdT6EylCPC8qq1t1Jsvx2D
+ sdm25mQ3KV2Eh94d2mYN292LRd4Xl+AaPRrXLXy7iqeFoaSdfeD2dbOqbSUQx7NPff+R4L0MU
+ YxzKOo26cCY0wfSnBr0HNQoIBJLHx6490ZUJ+lljfNHDbgGKB5oJgy6Ks5kxdePUHG77+s5vj
+ p7vXXS5Gvg6hBpdaNL2TLLL5FBDeXP9ewEXecRIjTvnrx89zGkBupNACJuaTAq2jvX+UYiyT1
+ FSsrkkExVn047OxAf7yGbgJHoCVETBYmtJ2vRoIKW3MB3juc98dJMslUAAx0Cyhla5i1JXwY2
+ mhs3w49LwyDWx0dGExupZgph8hBMmhjdsu+F4JHqp5IzM1j3v4=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 9:02 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Fri, Feb 7, 2020 at 8:22 AM youling257 <youling257@gmail.com> wrote:
 >
-> On Fri, Feb 07, 2020 at 08:57:39AM -0800, Dan Williams wrote:
-> > On Wed, Feb 5, 2020 at 11:41 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > On Wed, Feb 05, 2020 at 04:40:44PM -0800, Dan Williams wrote:
-> > > > > I don't have any reason not to pass phys_addr_t. If that sounds better,
-> > > > > will make changes.
-> > > >
-> > > > The problem is device-mapper. That wants to use offset to route
-> > > > through the map to the leaf device. If it weren't for the firmware
-> > > > communication requirement you could do:
-> > > >
-> > > > dax_direct_access(...)
-> > > > generic_dax_zero_page_range(...)
-> > > >
-> > > > ...but as long as the firmware error clearing path is required I think
-> > > > we need to do pass the pgoff through the interface and do the pgoff to
-> > > > virt / phys translation inside the ops handler.
-> > >
-> > > Maybe phys_addr_t was the wrong type - but why do we split the offset
-> > > into the block device argument into a pgoff and offset into page instead
-> > > of a single 64-bit value?
-> >
-> > Oh, got it yes, that looks odd for sub-page zeroing. Yes, let's just
-> > have one device relative byte-offset.
->
-> So what's the best type to represent this offset. "u64" or "phys_addr_t"
-> or "loff_t" or something else.  I like phys_addr_t followed by u64.
+> This patch cause a problem on 64bit kernel 32bit userspace.
+> My 32bit Androidx86 userspace run on 64bit mainline kernel, this patch caused some app not detect root permission.
 
-Let's make it u64.
+Thanks for you work in bisecting the issue to my patch, sorry to have
+caused you trouble. After Christian Zigotzky
+also reported a problem in this file, I have been able to find a
+specific bug and just submitted a patch for it.
 
-phys_addr_t has already led to confusion in this thread because the
-first question I ask when I read it is "why call ->direct_access() to
-do the translation when you already have the physical address?".
+Please have a look if that fix addresses your problem, as it's
+possible that there was more than one bug introduced
+by the original patch.
+
+       Arnd
