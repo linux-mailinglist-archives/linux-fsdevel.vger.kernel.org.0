@@ -2,112 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FAFB155267
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 07:22:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F001115526D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 07:26:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgBGGWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 01:22:44 -0500
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:15440 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgBGGWo (ORCPT
+        id S1726465AbgBGG0s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 01:26:48 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:43620 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbgBGG0r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 01:22:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581056565; x=1612592565;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J0GPMbDdHVJhTCcVTtgSsLWjRWSYRFjDt3+8Ib0Xk0c=;
-  b=ZcRIXlW6DfvC2NCKXp4V7rrtJ3vp3iUoDuoMA+04DwmJKQNdYyyz8x5h
-   MPSFLqWdN1pbOs8tjVNQL1gVZPWGVqgtqVX/gWwY0/ofSUO+ClXaVtzn+
-   Vi5+vLq7Ev4gmILLVa1aRzXRvrjCoGMTbO1YLqi0hwcsxWjJkaI+61zOH
-   tSgGDZVowLEIMfFbPjeXcok3DKgAmJN6bcCGvvBIV6DPOupPW/c6hjtsb
-   OjVYsVGompZKsMcbRLcmPhZjPwsLbsYCSC2yixan0pA6lkLWBurfSMtnr
-   PJPaAG3uVGIO7mlX3lekynHb1fewDzRd4xnqZJFUds3cCgZpLyytLqTgH
-   g==;
-IronPort-SDR: XpCMt/qvZFuz0zHKyKg6josU87ZswGjeBcUXY6Ei4iJRvK9ZwlCTeXhfacCnVf9zL/M3bC86c9
- laPIJNtrCvzTB1NbiCWCF6NpTmnP4JDtJpkTJW9RcKxwShDC7A3Lyyx5CfJKc8carwK2GSWiuH
- qkWYXeSEkoA4WuwP/btwFoSCGYYiIWZthAFcPwPtaACMbNy1yUgmzz+i0tIlPyJ6Ls3uU7JKFD
- eAD+YJnE41rQGsiCFNrfBMtbju+7KRV7bUeW2uOBKkjAPZEjCp7tOVirurniCybJraW9taZxx/
- h74=
-X-IronPort-AV: E=Sophos;i="5.70,412,1574092800"; 
-   d="scan'208";a="130788455"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Feb 2020 14:22:44 +0800
-IronPort-SDR: qDviYGOQjOK7RJlCpbfcUyYFEybcFeSwY0il0B6tZ6b2qcx9y9HZQjG18nYptPmAKG9NiAal7E
- WP2Z5JFcArS+hh1RrYc4lFaZCOZJu7sdQBm+KTYVWvLUIppStCAzQPvCNZ72wXZtRhAGE4clUY
- 7M2bw4tFt4Cy6cpAAGXTGuGdc8rCKUE5fUMw1XJUNEuiwWJnerdWB4bsVBPN747AHywO7DeRSE
- AituyQVSfvcvlC3lR1niw49XKveuGAEoaAJEFI25ZMj2xe8a2OVSIPmCGWRcq2VwqZVhQdffdJ
- o/90gJvwaxtkS0RpXAiSLp6v
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 22:15:41 -0800
-IronPort-SDR: TM8rlh9Eg0VU12xHnt0W6jaUJS3HYYp3oZlW/1mZBxi+9O++rHeZqtjeWXNs/VcLwzXId+r6GD
- 6cN+GGNg+35V9mbsfBK0jCD9IOqT38+F9loPFCPG1sLbQzo+XQBIosT+x8W2ZhJE0jjacUWU5r
- jfHEhhBiTEz0VzXHxicoytjzfHV7L53Rrqv4qyjP4UXqkICe7RYv4gS5SPQUZVDsFjWhghxOcm
- BwOojZp+qUBHOoeoDdGbSfdfqAI9LJD5xRd6w9vgWdeCPGmT82rqr1G58PrVqT9bvIEc7KsCVH
- i9Q=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 06 Feb 2020 22:22:41 -0800
-Received: (nullmailer pid 773781 invoked by uid 1000);
-        Fri, 07 Feb 2020 06:22:41 -0000
-Date:   Fri, 7 Feb 2020 15:22:41 +0900
-From:   Naohiro Aota <Naohiro.Aota@wdc.com>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 03/20] btrfs: refactor find_free_dev_extent_start()
-Message-ID: <20200207062241.fnmptspzmf5cv6e2@naota.dhcp.fujisawa.hgst.com>
-References: <20200206104214.400857-1-naohiro.aota@wdc.com>
- <20200206104214.400857-4-naohiro.aota@wdc.com>
- <SN4PR0401MB3598B575B00C5519FD9937419B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+        Fri, 7 Feb 2020 01:26:47 -0500
+Received: by mail-il1-f194.google.com with SMTP id o13so757500ilg.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Feb 2020 22:26:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RogWDChua+WFxHQXK6tlOujlJzK0yywMxBMIxixAbh4=;
+        b=Payckzow6Due1zgDNzjiiLApVJDTJ5n0y9ZtfOHF35HmeDRPdqYx80F9hTpHRayHWg
+         Ew7HssyBYyR0sqswI3ZUnGn7qF6vFjrcdpxyAaWiMh0SOfBXAuEnzDjFJIsIWvjBSYJF
+         HEaCT4ZlD/5Ba86XE4yZm8TkBD4KH6TedEOppNK0WzyzUQWJLIHgHRnJ+sqDDDz7p2F4
+         xQGkVPwW+wIDC92LGDz5v7DIpjObj5ksIC6jwr2oz2BuGQYWeKlzlbjaE43cA1myLjmA
+         g88v5RDmGfP6U1XiH6BeDxQ2MU9k65aTSOzzMtel3WZfgiukmCynOaSO4ADUJ0UzIaPq
+         olUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RogWDChua+WFxHQXK6tlOujlJzK0yywMxBMIxixAbh4=;
+        b=rd6csevAnWJwJRXFAGZ9gzYJEXPpIMVPY7+BYUfUoqFX7TKpoX5w6b6F8sCoSW0f0l
+         6ulVdZEaGDJ8Lo/UFn+MhQ8/ahdSBh0Twh2rb7aHvDZBbUxQBdKXUk/mamoOfpUEUJcB
+         Qy8TLkdxPYfAMvG/xs9ElIyqvB4vh7mQFVSQG4z6k2nH/ZWVY/BRtocc81Jci6AFrxqC
+         k8cGTRa23zwnx9rMytxVeX3ds3z71GZYzuVIrnN10hidJCd/BbzXp7fFqXHXc+0qmNjC
+         IuEX5P44pVFzS44Rcu4/l6cW0L0TarwxmeN3wzE0u8LCHaHt/+SohUxRUwebfn826gau
+         QzKA==
+X-Gm-Message-State: APjAAAVr7yqkAcr2SAVGo/WIDprNvqJh1O1L7VwwaUYU22NcpGNzizil
+        +aO30I14HsKBT1ctPJsqmaFIn5ylOB6mLSe8Nnc=
+X-Google-Smtp-Source: APXvYqxzFYk5rYheb1DhUFIq7NfC44E3MS/n+BRnk44EEcn/vYWvXNY9g8MwurouK4qgzU0YnPGbQPyztzyS9BZpvic=
+X-Received: by 2002:a92:d5c3:: with SMTP id d3mr7826272ilq.250.1581056806911;
+ Thu, 06 Feb 2020 22:26:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB3598B575B00C5519FD9937419B1D0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200126220800.32397-1-amir73il@gmail.com> <20200206214518.GB23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200206214518.GB23230@ZenIV.linux.org.uk>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 7 Feb 2020 08:26:35 +0200
+Message-ID: <CAOQ4uxiTfS_QZN=vrFed=KSFg+CcSqo1ZRqS8_Mx_uvPk3NTPg@mail.gmail.com>
+Subject: Re: [PATCH] exportfs: fix handling of rename race in reconnect_one()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "J . Bruce Fields" <bfields@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 06, 2020 at 12:02:12PM +0000, Johannes Thumshirn wrote:
->On 06/02/2020 11:44, Naohiro Aota wrote:
->> +/*
+On Thu, Feb 6, 2020 at 11:45 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
->Nit: /**
-
-Fixed.
-
->> + * dev_extent_hole_check - check if specified hole is suitable for allocation
->> + * @device:	the device which we have the hole
->> + * @hole_start: starting position of the hole
->> + * @hole_size:	the size of the hole
->> + * @num_bytes:	the size of the free space that we need
->> + *
->> + * This function may modify @hole_start and @hole_end to reflect the
->> + * suitable position for allocation. Returns 1 if hole position is
->> + * updated, 0 otherwise.
->> + */
->> +static int dev_extent_hole_check(struct btrfs_device *device, u64 *hole_start,
->> +				 u64 *hole_size, u64 num_bytes)
->> +{
->> +	int ret = 0;
->> +	u64 hole_end = *hole_start + *hole_size;
->> +
+> On Mon, Jan 27, 2020 at 12:08:00AM +0200, Amir Goldstein wrote:
+> > If a disconnected dentry gets looked up and renamed between the
+> > call to exportfs_get_name() and lookup_one_len_unlocked(), and if also
+> > lookup_one_len_unlocked() returns ERR_PTR(-ENOENT), maybe because old
+> > parent was deleted, we return an error, although dentry may be connected.
+> >
+> > Commit 909e22e05353 ("exportfs: fix 'passing zero to ERR_PTR()'
+> > warning") changes this behavior from always returning success,
+> > regardless if dentry was reconnected by somoe other task, to always
+> > returning a failure.
+> >
+> > Change the lookup error handling to match that of exportfs_get_name()
+> > error handling and return success after getting -ENOENT and verifying
+> > that some other task has connected the dentry for us.
 >
->Couldn't this be bool?
+> It's not that simple, unfortunately.  For one thing, lookup_one_len_unlocked()
+> will normally return a negative dentry, not ERR_PTR(-ENOENT).
 
-Good point. I changed it to bool and also renamed "ret" to "changed"
-to make it clear.
+Which is why this fix is mostly relevant to removed directories.
+negative dentry case should be handled correctly by bellow:
+
+        if (tmp != dentry) {
+
+
+> For another,
+> it *can* fail for any number of other reasons (-ENOMEM, for example), without
+> anyone having ever looked it up.
+
+Yes, but why should we care to NOT return an error in case of ENOMEM.
+The question is are there other errors that we can say "we can let this slide"
+as long as the dentry is connected?
+
+I certainly don't mind going to out_reconnected for any error and that includes
+the error from exportfs_get_name(). My patch checks only the rename race
+case because this is what this function has done so far and this is what the
+big comment in out_reconnect is about.
 
 Thanks,
-
->Thanks,
->	Johannes
->
+Amir.
