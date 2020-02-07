@@ -2,75 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 551F1155ABE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2F9155AC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 16:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgBGPbO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 10:31:14 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43538 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726674AbgBGPbO (ORCPT
+        id S1726954AbgBGPeG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 10:34:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36865 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgBGPeG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 10:31:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581089472;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lJl9IZ4rUKZV3MVrE3d9DP7C/ZB0uGxE0eGmP9j33k8=;
-        b=GhdYeeRSEDGNyeY0Up/X+TEsyD07gQJDWNIGh95Y7ZlSSowdPJsCWCEckrNoZK/l6v8C+z
-        ngf9r9x1MEV5Y53ZTU5bTGcl2dyMFYgR63+G/hr10RlJr2Ik2o1+VAzUZFGJLOfUIuY4/f
-        brcmiSXYee+N84auIbT+ZAY6K1uI34I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-uIY1Wbw4ODWEPr8MtHbRMg-1; Fri, 07 Feb 2020 10:31:11 -0500
-X-MC-Unique: uIY1Wbw4ODWEPr8MtHbRMg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7746189F762;
-        Fri,  7 Feb 2020 15:31:09 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D38B68ECE6;
-        Fri,  7 Feb 2020 15:31:06 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 645CD220A24; Fri,  7 Feb 2020 10:31:06 -0500 (EST)
-Date:   Fri, 7 Feb 2020 10:31:06 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, dm-devel@redhat.com
-Subject: Re: [PATCH 4/5] dax,iomap: Start using dax native zero_page_range()
-Message-ID: <20200207153106.GA11998@redhat.com>
-References: <20200203200029.4592-1-vgoyal@redhat.com>
- <20200203200029.4592-5-vgoyal@redhat.com>
- <20200205183356.GD26711@infradead.org>
+        Fri, 7 Feb 2020 10:34:06 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f129so3248726wmf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 07:34:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
+        b=pNDfYKDmis0ZIoYPys46LJ3eBdCjoVxn/3v2EnQ5eEWQihKfa+ZrD8+lDIJelNtsNE
+         zCo0dqacfo1f14irXeNginpPFf3515oPjUrcUERQz+lgH3XM4gqZDueiPG9dYdxnmXNM
+         7EvdJylctaaygZHqEZLPF2Fo0khFqQ9PxyZfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=ubc3i5ioC2Mng+1ZCGgqSjrhQMsUN/k5l/kXQrpKbbE=;
+        b=GT8+gXiyHJsabzqmV0WIUUK3iHEm3hvqP90jQn5zSpZTTJ5r0X7R5WpR7AQQdRNIAD
+         Rn7WD7N7l/Y5Kyojq2Q2nFwoAR43dMs/s6jtLvWrHvg/6U9MNMzzKJQw45NmglsFmUOl
+         9rhSD4hUWrLvYwEvAlE+kSdnx8AqJ50nxgpc/WFFCMJ85C5fbemetTX+7aJ7DwbErlqn
+         FdbCb2BNFhU+Wnm3yH3z10WSn4eRnPcpX7lzqQBsNbnYGqO7z+IbnEwrJg/DLKVJ2Poz
+         B+BGrNM5zebDgyq4LOMZl6Hr2n0qADEIMZK+WoWtm3vTCPxq34+yKPKjIwj1WrHcGn/r
+         /oig==
+X-Gm-Message-State: APjAAAV7A+4CMdmppn/MyfT4FBptF9Z1/zoFIU3TrEMI1vNDFtm4kAu1
+        qiExfpVbdASuUYpkd/6chwLgTQ==
+X-Google-Smtp-Source: APXvYqy/NpI+jwi7ubi9A744y5HRTbyCjOoLff8EQAzbvpxGaSxGkf5a/khVgfzxuK6X4nsXyrH/yw==
+X-Received: by 2002:a1c:9e89:: with SMTP id h131mr4922099wme.161.1581089644697;
+        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id i16sm3983836wmb.36.2020.02.07.07.34.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2020 07:34:04 -0800 (PST)
+Date:   Fri, 7 Feb 2020 16:34:01 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fixes for 5.6-rc1
+Message-ID: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200205183356.GD26711@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 05, 2020 at 10:33:56AM -0800, Christoph Hellwig wrote:
-> On Mon, Feb 03, 2020 at 03:00:28PM -0500, Vivek Goyal wrote:
-> > +	id = dax_read_lock();
-> > +	rc = dax_zero_page_range(dax_dev, pgoff, offset, size);
-> > +	dax_read_unlock(id);
-> > +	return rc;
-> 
-> Is there a good reason not to move the locking into dax_zero_page_range?
+Hi Linus,
 
-Thinking more about it. If we keep locking outside, then we don't have
-to take lock again when we recurse into dax_zero_page_range() in device
-mapper path. IIUC, just taking lock once at top level is enough. If that's
-the case then it probably is better to keep locking outside of
-dax_zero_page_range().
+Please pull from:
 
-Thanks
-Vivek
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.6-rc1
 
+- Fix a regression introduced in v5.1 that triggers WARNINGs for some fuse
+filesystems.
+
+- Fix an xfstest failure.
+
+- Allow overlayfs to be used on top of fuse/virtiofs.
+
+- Code and documentation cleanups.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Daniel W. S. Almeida (1):
+      Documentation: filesystems: convert fuse to RST
+
+Miklos Szeredi (2):
+      fix up iter on short count in fuse_direct_io()
+      fuse: don't overflow LLONG_MAX with end offset
+
+Vivek Goyal (1):
+      fuse: Support RENAME_WHITEOUT flag
+
+zhengbin (1):
+      fuse: use true,false for bool variable
+
+---
+ Documentation/filesystems/{fuse.txt => fuse.rst} | 163 ++++++++++-------------
+ Documentation/filesystems/index.rst              |   1 +
+ MAINTAINERS                                      |   2 +-
+ fs/fuse/cuse.c                                   |   4 +-
+ fs/fuse/dir.c                                    |   2 +-
+ fs/fuse/file.c                                   |  21 ++-
+ fs/fuse/inode.c                                  |  14 +-
+ fs/fuse/readdir.c                                |   2 +-
+ 8 files changed, 104 insertions(+), 105 deletions(-)
+ rename Documentation/filesystems/{fuse.txt => fuse.rst} (80%)
