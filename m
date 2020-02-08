@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D274156252
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 02:35:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3605A156258
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 02:36:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbgBHBf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 20:35:57 -0500
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:47564 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbgBHBf5 (ORCPT
+        id S1727505AbgBHBf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 20:35:59 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:47664 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbgBHBf7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 20:35:57 -0500
-Received: by mail-pl1-f201.google.com with SMTP id h3so617004plt.14
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 17:35:56 -0800 (PST)
+        Fri, 7 Feb 2020 20:35:59 -0500
+Received: by mail-pg1-f201.google.com with SMTP id l15so776259pgk.14
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 17:35:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
-        b=NEywg0M14MnLDWsKOucPQs1roEACrJM00yn5kNJb9zMFZHTZqInTtQiy8IBGz9p2Hj
-         S2N+jRLMGwbFKmZnn0koP7Tcjk3PRRe25bAoZCO6ZvkOdazou5mlWmZGxidYIkcSGuOg
-         Nc74v+ubh+mtZLefCCwVuXd9BDeFc8qAxw99sNFE3K2Kpg4BaE72oOWDN6XOg4MbOAr3
-         dE6k/7AgKUChxUQkZAzZOa2U+EcNbV65+xrCtvviZzWWuHM3cy3/YjezlVDdUeYdz/l0
-         cT1t9iCftO1kkoHUVh9CSB9TUY9yRGjwmslRWvlUSeA23a9y0cc6gFqjzMT4jbC4J+6s
-         Ch8Q==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=fTgB3kb3O+v8ILq/4TyTQ+b9UXnhOVk2x96mgR9bebg=;
+        b=g8ETqpmpRRWAN/I/0ihQuyhV6cZrzbIoeWPe0HONBVPSLk67hHc/HvOH5Y3E3sfXKm
+         osLLtnREDZD+rb6zzkHfRBvJ4qwb6tOshn0h48zQROO/wU8i8sGw0n8zAkLu/i4laHlm
+         VC5SF2YtA82PkH2qCWdQZ3RA7cLHrzjuCckH/Zo905k7Bj/TUHVv0pdQVck5swTV6UjO
+         TqoElEBtPPPO4CjPtYIJ6/4J5p2FrFj5rtoF9klcjg6S6LJUJF4xprkxdTmeJM1Cviks
+         gEoth9u806ySIHFmhgq9F7gJ08gTEEDvk84fAtCnN59hxoWQi08SIbLfXedYovWzn5eQ
+         qBPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
-        b=HmokXFdKOz3mhtbQdpGfY7xL7dOxLxv3wbQ4vYF15QIH3WF4GJLQmyIuXM2vorPuPA
-         OtZnvv6z5lcMdxe9BTUxph84txAo/4jC8ceNa1ElMlADosENLymjkQSuVn2Tm43Ax9hV
-         Wxr9aZ/rYVcMFfBobT1oez/6RYmE9qJOLTcZpetcwIYSov9PN2yaubqbDi7NYatC/r6P
-         /M8gYLOku2Ud1pCkBym0m8x/+ar0f5iiW0uZBJHMKMpeaRcMZzkdWK6+JP02qimaOVBG
-         YM+ShKFC5bYrB2iYVI+MTZ1jC4j92D3w9l4nyNojWL4YFkbTqFiruUQxbU+vx8Mz7ey1
-         rliA==
-X-Gm-Message-State: APjAAAV5fgeIxlYXaqqeblA/IsCIj2Q6DQ9AVJvc1HMACMq4g8s751V1
-        rT9bvgeH0uMt9kgrZqdhz4u6mrgd/Ko=
-X-Google-Smtp-Source: APXvYqzX2zjDvOsycNvWYLOgK+VBNHyLR+WR4NBkkN5UhCL4Cx9+zC71iQcfsB2K3n5Ocuz6cv+mlKk8NrQ=
-X-Received: by 2002:a63:211f:: with SMTP id h31mr1939792pgh.299.1581125756217;
- Fri, 07 Feb 2020 17:35:56 -0800 (PST)
-Date:   Fri,  7 Feb 2020 17:35:44 -0800
-Message-Id: <20200208013552.241832-1-drosen@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=fTgB3kb3O+v8ILq/4TyTQ+b9UXnhOVk2x96mgR9bebg=;
+        b=l8i9N/4b/Jo6q2Qefi4b+oakT00uTsmN9mUivTt4HXjLO0Fhzjh6n8JXTB6XQVyp33
+         q2yfbaQpSHNVSctQ3EfBGOVkHbK5y2Nd+FhnmhVA2zJQr7qdndIzYs/lAr0o0q4vLZMy
+         /MEvsizkvKyaO52pBX9rtrktFMSjVOW3uLUwqAYcUcIf7N3q+TVFguXKY0mFmKjpBzC6
+         auo8ZDMyemkWG3dcJ72Rmb6QMtgr/uoGmmLethz+h/mR67FlCvh1S92YZHtOUQcRVt8v
+         cLtTmM7DZppaQYo0hfUzIUx+CAU0hZXJDcgXE2L3UzFkG1IrleLsJlZV8Ep7oSE0batx
+         aTYQ==
+X-Gm-Message-State: APjAAAWoL5Fsp+ekef/GEdF6bn52XYhRjvZC5zsXiIv/fcI1LxLpvVuX
+        r3ZiHvITbE7/zgzulKvhQ1AtGIHVy3U=
+X-Google-Smtp-Source: APXvYqw8lDISo/3URgAqCG25ywWyahbrkFc0mVlthEd962mlaZLm/wh8kHzbBfWez9CSIlqY/2EODpA3fUU=
+X-Received: by 2002:a65:56c6:: with SMTP id w6mr2149182pgs.167.1581125758626;
+ Fri, 07 Feb 2020 17:35:58 -0800 (PST)
+Date:   Fri,  7 Feb 2020 17:35:45 -0800
+In-Reply-To: <20200208013552.241832-1-drosen@google.com>
+Message-Id: <20200208013552.241832-2-drosen@google.com>
 Mime-Version: 1.0
+References: <20200208013552.241832-1-drosen@google.com>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-Subject: [PATCH v7 0/8] Support fof Casefolding and Encryption
+Subject: [PATCH v7 1/8] unicode: Add utf8_casefold_iter
 From:   Daniel Rosenberg <drosen@google.com>
 To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -64,93 +68,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These patches are all on top of torvalds/master
+This function will allow other uses of unicode to act upon a casefolded
+string without needing to allocate their own copy of one.
 
-Ext4 and F2FS currently both support casefolding and encryption, but not at
-the same time. These patches aim to rectify that.
+The actor function can return an nonzero value to exit early.
 
-I moved the identical casefolding dcache operations for ext4 and f2fs into
-fs/libfs.c, as all filesystems using casefolded names will want them.
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/unicode/utf8-core.c  | 25 ++++++++++++++++++++++++-
+ include/linux/unicode.h | 10 ++++++++++
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-I've also adjust fscrypt to not set it's d_revalidate operation during it's
-prepare lookup, instead having the calling filesystem set it up. This is
-done to that the filesystem may have it's own dentry_operations. Also added
-a helper function in libfs.c that will work for filesystems supporting both
-casefolding and fscrypt.
-
-For Ext4, since the hash for encrypted casefolded directory names cannot be
-computed without the key, we need to store the hash on disk. We only do so
-for encrypted and casefolded directories to avoid on disk format changes.
-Previously encryption and casefolding could not be on the same filesystem,
-and we're relaxing that requirement. F2fs is a bit more straightforward
-since it already stores hashes on disk.
-
-I've updated the related tools with just enough to enable the feature. I
-still need to adjust ext4's fsck's, although without access to the keys,
-neither fsck will be able to verify the hashes of casefolded and encrypted
-names.
-
-v7 chances:
-Moved dentry operations from unicode to libfs, added new iterator function
-to unicode to allow this.
-Added libfs function for setting dentries to remove code duplication between
-ext4 and f2fs.
-
-v6 changes:
-Went back to using dentry_operations for casefolding. Provided standard
-implementations in fs/unicode, avoiding extra allocation in d_hash op.
-Moved fscrypt d_ops setting to be filesystem's responsibility to maintain
-compatibility with casefolding and overlayfs if casefolding is not used
-fixes some f2fs error handling
-
-v4-5: patches submitted on fscrypt
-
-v3 changes:
-fscrypt patch only creates hash key if it will be needed.
-Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
-
-v2 changes:
-fscrypt moved to separate thread to rebase on fscrypt dev branch
-addressed feedback, plus some minor fixes
-
-
-Daniel Rosenberg (8):
-  unicode: Add utf8_casefold_iter
-  fs: Add standard casefolding support
-  f2fs: Use generic casefolding support
-  ext4: Use generic casefolding support
-  fscrypt: Have filesystems handle their d_ops
-  f2fs: Handle casefolding with Encryption
-  ext4: Hande casefolding with encryption
-  ext4: Optimize match for casefolded encrypted dirs
-
- Documentation/filesystems/ext4/directory.rst |  27 ++
- fs/crypto/fname.c                            |   7 +-
- fs/crypto/fscrypt_private.h                  |   1 -
- fs/crypto/hooks.c                            |   1 -
- fs/ext4/dir.c                                |  78 +----
- fs/ext4/ext4.h                               |  93 ++++--
- fs/ext4/hash.c                               |  26 +-
- fs/ext4/ialloc.c                             |   5 +-
- fs/ext4/inline.c                             |  41 ++-
- fs/ext4/namei.c                              | 325 ++++++++++++-------
- fs/ext4/super.c                              |  21 +-
- fs/f2fs/dir.c                                | 127 +++-----
- fs/f2fs/f2fs.h                               |  15 +-
- fs/f2fs/hash.c                               |  25 +-
- fs/f2fs/inline.c                             |   9 +-
- fs/f2fs/namei.c                              |   1 +
- fs/f2fs/super.c                              |  17 +-
- fs/f2fs/sysfs.c                              |  10 +-
- fs/libfs.c                                   | 127 ++++++++
- fs/ubifs/dir.c                               |  18 +
- fs/unicode/utf8-core.c                       |  25 +-
- include/linux/f2fs_fs.h                      |   3 -
- include/linux/fs.h                           |  24 ++
- include/linux/fscrypt.h                      |   6 +-
- include/linux/unicode.h                      |  10 +
- 25 files changed, 671 insertions(+), 371 deletions(-)
-
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 2a878b739115d..db050bf59a32b 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -122,9 +122,32 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 	}
+ 	return -EINVAL;
+ }
+-
+ EXPORT_SYMBOL(utf8_casefold);
+ 
++int utf8_casefold_iter(const struct unicode_map *um, const struct qstr *str,
++		    struct utf8_itr_context *ctx)
++{
++	const struct utf8data *data = utf8nfdicf(um->version);
++	struct utf8cursor cur;
++	int c;
++	int res = 0;
++	int pos = 0;
++
++	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
++		return -EINVAL;
++
++	while ((c = utf8byte(&cur))) {
++		if (c < 0)
++			return c;
++		res = ctx->actor(ctx, c, pos);
++		pos++;
++		if (res)
++			return res;
++	}
++	return res;
++}
++EXPORT_SYMBOL(utf8_casefold_iter);
++
+ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ 		   unsigned char *dest, size_t dlen)
+ {
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 990aa97d80496..2ae12f8710ae2 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -10,6 +10,13 @@ struct unicode_map {
+ 	int version;
+ };
+ 
++struct utf8_itr_context;
++typedef int (*utf8_itr_actor_t)(struct utf8_itr_context *, int byte, int pos);
++
++struct utf8_itr_context {
++	utf8_itr_actor_t actor;
++};
++
+ int utf8_validate(const struct unicode_map *um, const struct qstr *str);
+ 
+ int utf8_strncmp(const struct unicode_map *um,
+@@ -27,6 +34,9 @@ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 		  unsigned char *dest, size_t dlen);
+ 
++int utf8_casefold_iter(const struct unicode_map *um, const struct qstr *str,
++		    struct utf8_itr_context *ctx);
++
+ struct unicode_map *utf8_load(const char *version);
+ void utf8_unload(struct unicode_map *um);
+ 
 -- 
 2.25.0.341.g760bfbb309-goog
 
