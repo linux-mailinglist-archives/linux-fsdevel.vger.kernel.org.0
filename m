@@ -2,156 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD0715611B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Feb 2020 23:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E20731561EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 01:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbgBGWVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 17:21:34 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:36439 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727032AbgBGWVe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 17:21:34 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id EB2C21C01;
-        Fri,  7 Feb 2020 17:21:32 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 07 Feb 2020 17:21:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=IL/LfkaWT2urQsB/VwVzpCWTPCd
-        3Otm9ZgC8nW8C82A=; b=c9GVvFUQL80CP5G7aPFzIZxHB6c9gkhBq4HDcF3x/iS
-        5U15En+1PQy2tAnq1dQgCQY/7wTE1F51Vk7jv8AiabSp6LRe1l8SFmKGQqcflHd/
-        CBBFtm0KJLfBHfD7eNyEZKV5gdXEalo8xZwjW6Cr8ValjSiKow8FJG3A8+2CPbco
-        W8eRSvdDPFFoRnmi8cO+4oh3viBrta7VXBJo3UGrmmHGmQ+DPxACnccSkf7IoKip
-        bMF3laEtQzFtUrzSBS7sYtKWAHfkwYKY8i8AIP2Owa9EyGHfjMBC9wH5sS7dOyjh
-        ybqNDYCKmOsn3P/9IAoRNhGeis3ZObkftmjj2I2Zbvg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=IL/Lfk
-        aWT2urQsB/VwVzpCWTPCd3Otm9ZgC8nW8C82A=; b=NmcDdrsa97Tx5tzpeDOORp
-        uuPrkqmO36dy+vtvJO65zi3s9Vgtnx86di/afooGw3loWUopGKeki2HPU9TDRfvS
-        gysWUE+gTVxtg0NkfpkKEB61kaN5yTjxw+SBQFhAsnTRYUQvYS3qqNEFY7N0bxIe
-        Z+VYCObqFKWyH3RNbz1FezU8y2UhlknG4CZALpxci/YAXGqi+hOZ+tDvrQPdWyVM
-        7TznSCMAYUvPGuE8W/Js0tR4ZZMTnJDh202sN+Zyeur3C//UWrP0CUDwOi7ppEOa
-        Z4ODu340DQtEyRusHv9TLESha3Ix/momjcYPURMNml5db/FUEa1I6kPWekej6MEw
-        ==
-X-ME-Sender: <xms:7OI9Xm-llD_idtqweCTvF6nQGZ0T_af80hwi1Au5lCpHwUDmwAtfTA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrheehgdduiedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
-    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucfkphepie
-    ejrdduiedtrddvudejrddvhedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomheprghnughrvghssegrnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:7OI9XtPJrcjNGtaIT8IVdYpsBRZRdgKTSmUT6pYCw3IE81DHuACUTA>
-    <xmx:7OI9XqCLwDZHIqZ2sPseVjkzRR23tyvuoB4t5mQLxedXukmkSyRDuA>
-    <xmx:7OI9XhN_l9KujfSHtmQzhsI54zj3ddRt_YAZijwBhfZ442gDxoFXNw>
-    <xmx:7OI9XntJAwnn9R2Qg5dD2JQZonkzMy2hFoHveCqJ2zLRWLiy6Xfvaw>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 3195F328005E;
-        Fri,  7 Feb 2020 17:21:32 -0500 (EST)
-Date:   Fri, 7 Feb 2020 14:21:30 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-Message-ID: <20200207222130.urcfi3i3dlfscimy@alap3.anarazel.de>
-References: <20200207170423.377931-1-jlayton@kernel.org>
- <20200207205243.GP20628@dread.disaster.area>
- <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
- <220e015c525650588f24d17f549cd0a87ec518fd.camel@kernel.org>
+        id S1727118AbgBHA0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 19:26:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbgBHA0g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 19:26:36 -0500
+Received: from oasis.local.home (unknown [12.174.139.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2012082E;
+        Sat,  8 Feb 2020 00:26:33 +0000 (UTC)
+Date:   Fri, 7 Feb 2020 19:26:32 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] bootconfig: Use parse_args() to find bootconfig and '--'
+Message-ID: <20200207192632.0cd953a7@oasis.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <220e015c525650588f24d17f549cd0a87ec518fd.camel@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-On 2020-02-07 17:05:28 -0500, Jeff Layton wrote:
-> On Fri, 2020-02-07 at 13:20 -0800, Andres Freund wrote:
-> > On 2020-02-08 07:52:43 +1100, Dave Chinner wrote:
-> > > On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> > > > You're probably wondering -- Where are v1 and v2 sets?
-> > > > The basic idea is to track writeback errors at the superblock level,
-> > > > so that we can quickly and easily check whether something bad happened
-> > > > without having to fsync each file individually. syncfs is then changed
-> > > > to reliably report writeback errors, and a new ioctl is added to allow
-> > > > userland to get at the current errseq_t value w/o having to sync out
-> > > > anything.
-> > > 
-> > > So what, exactly, can userspace do with this error? It has no idea
-> > > at all what file the writeback failure occurred on or even
-> > > what files syncfs() even acted on so there's no obvious error
-> > > recovery that it could perform on reception of such an error.
-> > 
-> > Depends on the application.  For e.g. postgres it'd to be to reset
-> > in-memory contents and perform WAL replay from the last checkpoint. Due
-> > to various reasons* it's very hard for us (without major performance
-> > and/or reliability impact) to fully guarantee that by the time we fsync
-> > specific files we do so on an old enough fd to guarantee that we'd see
-> > the an error triggered by background writeback.  But keeping track of
-> > all potential filesystems data resides on (with one fd open permanently
-> > for each) and then syncfs()ing them at checkpoint time is quite doable.
-> > 
-> > *I can go into details, but it's probably not interesting enough
-> > 
-> 
-> Do applications (specifically postgresql) need the ability to check
-> whether there have been writeback errors on a filesystem w/o blocking on
-> a syncfs() call?  I thought that you had mentioned a specific usecase
-> for that, but if you're actually ok with syncfs() then we can drop that
-> part altogether.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-It'd be considerably better if we could check for errors without a
-blocking syncfs(). A syncfs will trigger much more dirty pages to be
-written back than what we need for durability. Our checkpoint writes are
-throttled to reduce the impact on current IO, we try to ensure there's
-not much outstanding IO before calling fsync() on FDs, etc - all to
-avoid stalls. Especially as on plenty installations there's also
-temporary files, e.g. for bigger-than-memory sorts, on the same FS.  So
-if we had to syncfs() to reliability detect errros it'd cause some pain
-- but would still be an improvement.
+The current implementation does a naive search of "bootconfig" on the kernel
+command line. But this could find "bootconfig" that is part of another
+option in quotes (although highly unlikely). But it also needs to find '--'
+on the kernel command line to know if it should append a '--' or not when a
+bootconfig in the initrd file has an "init" section. The check uses the
+naive strstr() to find to see if it exists. But this can return a false
+positive if it exists in an option and then the "init" section in the initrd
+will not be appended properly.
 
-But with a nonblocking check we could compare the error count from the
-last checkpoint with the current count before finalizing the checkpoint
-- without causing unnecessary writeback.
+Using parse_args() to find both of these will solve both of these problems.
 
-Currently, if we crash (any unclean shutdown, be it a PG bug, OS dying,
-kill -9), we'll iterate over all files afterwards to make sure they're
-fsynced, before starting to perform WAL replay. That can take quite a
-while on some systems - it'd be much nicer if we could just syncfs() the
-involved filesystems (which we can detect more quickly than iterating
-over the whole directory tree, there's only a few places where we
-support separate mounts), and still get errors.
+Link: https://lore.kernel.org/r/202002070954.C18E7F58B@keescook
 
+Fixes: 7495e0926fdf3 ("bootconfig: Only load bootconfig if "bootconfig" is on the kernel cmdline")
+Fixes: 1319916209ce8 ("bootconfig: init: Allow admin to use bootconfig for init command line")
+Reported-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ init/main.c | 36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-> Yeah, if we do end up keeping it, I'm leaning toward making this
-> fetchable via fsinfo() (once that's merged). If we do that, then we'll
-> split this into a struct with two fields -- the most recent errno and an
-> opaque token that you can keep to tell whether new errors have been
-> recorded since.
-> 
-> I think that should be a little cleaner from an API standpoint. Probably
-> we can just drop the ioctl, under the assumption that fsinfo() will be
-> available in 5.7.
+diff --git a/init/main.c b/init/main.c
+index 491f1cdb3105..e7261f1a3523 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -142,6 +142,15 @@ static char *extra_command_line;
+ /* Extra init arguments */
+ static char *extra_init_args;
+ 
++#ifdef CONFIG_BOOT_CONFIG
++/* Is bootconfig on command line? */
++static bool bootconfig_found;
++static bool initargs_found;
++#else
++# define bootconfig_found false
++# define initargs_found false
++#endif
++
+ static char *execute_command;
+ static char *ramdisk_execute_command;
+ 
+@@ -336,17 +345,31 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
+ 	return ret;
+ }
+ 
++static int __init bootconfig_params(char *param, char *val,
++				    const char *unused, void *arg)
++{
++	if (strcmp(param, "bootconfig") == 0) {
++		bootconfig_found = true;
++	} else if (strcmp(param, "--") == 0) {
++		initargs_found = true;
++	}
++	return 0;
++}
++
+ static void __init setup_boot_config(const char *cmdline)
+ {
++	static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
+ 	u32 size, csum;
+ 	char *data, *copy;
+ 	const char *p;
+ 	u32 *hdr;
+ 	int ret;
+ 
+-	p = strstr(cmdline, "bootconfig");
+-	if (!p || (p != cmdline && !isspace(*(p-1))) ||
+-	    (p[10] && !isspace(p[10])))
++	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
++	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
++		   bootconfig_params);
++
++	if (!bootconfig_found)
+ 		return;
+ 
+ 	if (!initrd_end)
+@@ -563,11 +586,12 @@ static void __init setup_command_line(char *command_line)
+ 		 * to init.
+ 		 */
+ 		len = strlen(saved_command_line);
+-		if (!strstr(boot_command_line, " -- ")) {
++		if (initargs_found) {
++			saved_command_line[len++] = ' ';
++		} else {
+ 			strcpy(saved_command_line + len, " -- ");
+ 			len += 4;
+-		} else
+-			saved_command_line[len++] = ' ';
++		}
+ 
+ 		strcpy(saved_command_line + len, extra_init_args);
+ 	}
+-- 
+2.20.1
 
-Sounds like a plan.
-
-I guess an alternative could be to expose the error count in /sys, but
-that looks like it'd be a bigger project, as there doesn't seem to be a
-good pre-existing hierarchy to hook into.
-
-Greetings,
-
-Andres Freund
