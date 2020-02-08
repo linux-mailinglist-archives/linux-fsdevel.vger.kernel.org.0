@@ -2,184 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB446156229
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 01:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E3C156247
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 02:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbgBHA4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 19:56:31 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45158 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbgBHA4b (ORCPT
+        id S1727130AbgBHBep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 20:34:45 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:46632 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbgBHBep (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 19:56:31 -0500
-Received: by mail-oi1-f195.google.com with SMTP id v19so3814681oic.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 16:56:31 -0800 (PST)
+        Fri, 7 Feb 2020 20:34:45 -0500
+Received: by mail-pg1-f201.google.com with SMTP id f5so779124pgn.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Feb 2020 17:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uUfk7LrvhAOk4XnaKszmkISGSZZmMHnSqDKeNNRnGws=;
-        b=f8bTlSKJK1CASCBdMQDuUR+vovMi+dMZj+TNpw9WYAn0ySvo8/rrah47ObGOipgd8/
-         Laiem1ICYt7oJh+ssG0CRh1GYOD+VwLr0PIOyE+wzn4kpxyRtFo6amz3qzGEebdeAuhf
-         u2tiPis+FlODyz1DcO4c2f2+Y3NGJhh7PakVs=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
+        b=ZzptqxUsermKYJMyiUDjvBiGxUIdwqTzJfy+wNJraQ/fqxPgGbS6BGRKrTpYZT99NP
+         LQVDbxgl6rqVunRCW0ICPGiKpNThIj+TdvQ5TjjeSLkpDlJtuWqpEnxBlBrS2HEtG+RW
+         9z2HN6g50wLJeFY9fmYqHHVVeKmyWOB0q7ii4xnMViegdwpFM70+FfqSZe7YAxDz9qPz
+         rQI68XvesZcSELHJhYuD8Anx5KlcByOodivzB6VfODhyuo8qsoR7iOlqkI0zS2IW8J1A
+         G74nrd0ARErEc3uP+liYKFfxifqkv4AUuLVaYmPTGE7ECQxADA+maD2kLEzIxEDZMkLy
+         HKfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uUfk7LrvhAOk4XnaKszmkISGSZZmMHnSqDKeNNRnGws=;
-        b=IWPc3TBRuBJ7ovfcFBC0LSizkcr0fsSOCprsnruo3taEH5Dc9SIc0jn22yUyZLgRnk
-         TOP8tDON8LFI2SW9yi0AaJLsiuP9iBv12LUnn0nFzQAuatiNSTJZBExB2sxGKxvFNuT4
-         Vo7/4Qn8WlAYSD9sYagv7Kl3GK2PMoiPCtQoAXLXupAxod0FHIoN+avVBobhKZq4IdEn
-         P4qgvbNBY7occ5e5S2igqzhsMdLDvzS2E9p5ar4bMcIy0K3c/XAGebDrqSmgvoelyPZJ
-         YyFhKg8/lmDoqa/1zXdBasK1081SmMsIcALFl+O11/IooSIKOGxEDS/o6sT3eudGFPli
-         Cu1w==
-X-Gm-Message-State: APjAAAU5aF5oYzxJIALehIaXhG8ZfttiYsAMhzC3FsUXvtJ0CeGqDuNn
-        KatLSwgXJLiZNB0rZZwQJNmKICBqFzaV8g==
-X-Google-Smtp-Source: APXvYqzL7hihDJWm1D3vB2KlBuf44XoCpp4DTzE6I+oV82jKtnFMR5SCdUclYPxB3PiQlLUVecS/PA==
-X-Received: by 2002:aca:1c01:: with SMTP id c1mr3956614oic.18.1581123391068;
-        Fri, 07 Feb 2020 16:56:31 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id v10sm1585946oic.32.2020.02.07.16.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2020 16:56:30 -0800 (PST)
-Date:   Fri, 7 Feb 2020 16:56:28 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] bootconfig: Use parse_args() to find bootconfig and '--'
-Message-ID: <202002071656.A078FB34@keescook>
-References: <20200207192632.0cd953a7@oasis.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207192632.0cd953a7@oasis.local.home>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=GmdJt27134kNRYXiKp4wrB+O4TXMZQXM52BZBGOfEtM=;
+        b=KvBb2F/uHN+AfsSWsmOX1X3G6yWU6oaznOs1ny9RS6+cbmXCqNNcJ024FdBGhrCL0r
+         MyFTx9EkjLgh6aw0cd9Y3dePVyrMse2x8AImUdJIuMGNGpEeMFSNfWad75Tc7JPhkp8c
+         xrJlJz4XqhLQWVB+/mVC16kTEPOcXisey4nEoYgSSZRU62w8xWtsllaG1OAR72N7j7N9
+         i1UdQU0zobL5DGcbgi6ixNktrN85uSXncuZhHzWiSUrzzLXWzKXJohW+xEGgcYiTNi3U
+         7a4GSA7n6Ad4ZMjPNyBkyRM1IJoVMOq60midlrRZKZexqd7B5+0AEDblV4GAqaQVZjJ0
+         mPVQ==
+X-Gm-Message-State: APjAAAXnzsLQHotPX1S+4TQ5fGuY6x66YtFBwMya67mdrmVXJQQuYH/8
+        U89E4o6SSPfUV4DV3X50H5BbtFUf6Gw=
+X-Google-Smtp-Source: APXvYqxT2SICJR0/scVLMtmD7Drj2JGcZpB0cicjSWB5iCPIziOWFDKhaM/J3laVncF61b47rtO91OtcfaA=
+X-Received: by 2002:a63:1c1d:: with SMTP id c29mr2121466pgc.14.1581125684457;
+ Fri, 07 Feb 2020 17:34:44 -0800 (PST)
+Date:   Fri,  7 Feb 2020 17:34:30 -0800
+Message-Id: <20200208013438.240137-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+Subject: [PATCH v7 0/8] Support fof Casefolding and Encryption
+From:   Daniel Rosenberg <drosen@google.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 07:26:32PM -0500, Steven Rostedt wrote:
-> 
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> The current implementation does a naive search of "bootconfig" on the kernel
-> command line. But this could find "bootconfig" that is part of another
-> option in quotes (although highly unlikely). But it also needs to find '--'
-> on the kernel command line to know if it should append a '--' or not when a
-> bootconfig in the initrd file has an "init" section. The check uses the
-> naive strstr() to find to see if it exists. But this can return a false
-> positive if it exists in an option and then the "init" section in the initrd
-> will not be appended properly.
-> 
-> Using parse_args() to find both of these will solve both of these problems.
-> 
-> Link: https://lore.kernel.org/r/202002070954.C18E7F58B@keescook
-> 
-> Fixes: 7495e0926fdf3 ("bootconfig: Only load bootconfig if "bootconfig" is on the kernel cmdline")
-> Fixes: 1319916209ce8 ("bootconfig: init: Allow admin to use bootconfig for init command line")
-> Reported-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+These patches are all on top of torvalds/master
 
-Cool; thanks for fixing this!
+Ext4 and F2FS currently both support casefolding and encryption, but not at
+the same time. These patches aim to rectify that.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+I moved the identical casefolding dcache operations for ext4 and f2fs into
+fs/libfs.c, as all filesystems using casefolded names will want them.
 
--Kees
+I've also adjust fscrypt to not set it's d_revalidate operation during it's
+prepare lookup, instead having the calling filesystem set it up. This is
+done to that the filesystem may have it's own dentry_operations. Also added
+a helper function in libfs.c that will work for filesystems supporting both
+casefolding and fscrypt.
 
-> ---
->  init/main.c | 36 ++++++++++++++++++++++++++++++------
->  1 file changed, 30 insertions(+), 6 deletions(-)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 491f1cdb3105..e7261f1a3523 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -142,6 +142,15 @@ static char *extra_command_line;
->  /* Extra init arguments */
->  static char *extra_init_args;
->  
-> +#ifdef CONFIG_BOOT_CONFIG
-> +/* Is bootconfig on command line? */
-> +static bool bootconfig_found;
-> +static bool initargs_found;
-> +#else
-> +# define bootconfig_found false
-> +# define initargs_found false
-> +#endif
-> +
->  static char *execute_command;
->  static char *ramdisk_execute_command;
->  
-> @@ -336,17 +345,31 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
->  	return ret;
->  }
->  
-> +static int __init bootconfig_params(char *param, char *val,
-> +				    const char *unused, void *arg)
-> +{
-> +	if (strcmp(param, "bootconfig") == 0) {
-> +		bootconfig_found = true;
-> +	} else if (strcmp(param, "--") == 0) {
-> +		initargs_found = true;
-> +	}
-> +	return 0;
-> +}
-> +
->  static void __init setup_boot_config(const char *cmdline)
->  {
-> +	static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
->  	u32 size, csum;
->  	char *data, *copy;
->  	const char *p;
->  	u32 *hdr;
->  	int ret;
->  
-> -	p = strstr(cmdline, "bootconfig");
-> -	if (!p || (p != cmdline && !isspace(*(p-1))) ||
-> -	    (p[10] && !isspace(p[10])))
-> +	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
-> +	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-> +		   bootconfig_params);
-> +
-> +	if (!bootconfig_found)
->  		return;
->  
->  	if (!initrd_end)
-> @@ -563,11 +586,12 @@ static void __init setup_command_line(char *command_line)
->  		 * to init.
->  		 */
->  		len = strlen(saved_command_line);
-> -		if (!strstr(boot_command_line, " -- ")) {
-> +		if (initargs_found) {
-> +			saved_command_line[len++] = ' ';
-> +		} else {
->  			strcpy(saved_command_line + len, " -- ");
->  			len += 4;
-> -		} else
-> -			saved_command_line[len++] = ' ';
-> +		}
->  
->  		strcpy(saved_command_line + len, extra_init_args);
->  	}
-> -- 
-> 2.20.1
-> 
+For Ext4, since the hash for encrypted casefolded directory names cannot be
+computed without the key, we need to store the hash on disk. We only do so
+for encrypted and casefolded directories to avoid on disk format changes.
+Previously encryption and casefolding could not be on the same filesystem,
+and we're relaxing that requirement. F2fs is a bit more straightforward
+since it already stores hashes on disk.
+
+I've updated the related tools with just enough to enable the feature. I
+still need to adjust ext4's fsck's, although without access to the keys,
+neither fsck will be able to verify the hashes of casefolded and encrypted
+names.
+
+v7 chances:
+Moved dentry operations from unicode to libfs, added new iterator function
+to unicode to allow this.
+Added libfs function for setting dentries to remove code duplication between
+ext4 and f2fs.
+
+v6 changes:
+Went back to using dentry_operations for casefolding. Provided standard
+implementations in fs/unicode, avoiding extra allocation in d_hash op.
+Moved fscrypt d_ops setting to be filesystem's responsibility to maintain
+compatibility with casefolding and overlayfs if casefolding is not used
+fixes some f2fs error handling
+
+v4-5: patches submitted on fscrypt
+
+v3 changes:
+fscrypt patch only creates hash key if it will be needed.
+Rebased on top of fscrypt branch, reconstified match functions in ext4/f2fs
+
+v2 changes:
+fscrypt moved to separate thread to rebase on fscrypt dev branch
+addressed feedback, plus some minor fixes
+
+
+Daniel Rosenberg (8):
+  unicode: Add utf8_casefold_iter
+  fs: Add standard casefolding support
+  f2fs: Use generic casefolding support
+  ext4: Use generic casefolding support
+  fscrypt: Have filesystems handle their d_ops
+  f2fs: Handle casefolding with Encryption
+  ext4: Hande casefolding with encryption
+  ext4: Optimize match for casefolded encrypted dirs
+
+ Documentation/filesystems/ext4/directory.rst |  27 ++
+ fs/crypto/fname.c                            |   7 +-
+ fs/crypto/fscrypt_private.h                  |   1 -
+ fs/crypto/hooks.c                            |   1 -
+ fs/ext4/dir.c                                |  78 +----
+ fs/ext4/ext4.h                               |  93 ++++--
+ fs/ext4/hash.c                               |  26 +-
+ fs/ext4/ialloc.c                             |   5 +-
+ fs/ext4/inline.c                             |  41 ++-
+ fs/ext4/namei.c                              | 325 ++++++++++++-------
+ fs/ext4/super.c                              |  21 +-
+ fs/f2fs/dir.c                                | 127 +++-----
+ fs/f2fs/f2fs.h                               |  15 +-
+ fs/f2fs/hash.c                               |  25 +-
+ fs/f2fs/inline.c                             |   9 +-
+ fs/f2fs/namei.c                              |   1 +
+ fs/f2fs/super.c                              |  17 +-
+ fs/f2fs/sysfs.c                              |  10 +-
+ fs/libfs.c                                   | 127 ++++++++
+ fs/ubifs/dir.c                               |  18 +
+ fs/unicode/utf8-core.c                       |  25 +-
+ include/linux/f2fs_fs.h                      |   3 -
+ include/linux/fs.h                           |  24 ++
+ include/linux/fscrypt.h                      |   6 +-
+ include/linux/unicode.h                      |  10 +
+ 25 files changed, 671 insertions(+), 371 deletions(-)
 
 -- 
-Kees Cook
+2.25.0.341.g760bfbb309-goog
+
