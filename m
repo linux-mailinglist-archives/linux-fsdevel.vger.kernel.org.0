@@ -2,205 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6609715676E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 20:35:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB08C1567DD
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 22:35:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbgBHTe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Feb 2020 14:34:59 -0500
-Received: from mga03.intel.com ([134.134.136.65]:60930 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbgBHTez (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Feb 2020 14:34:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:54 -0800
-X-IronPort-AV: E=Sophos;i="5.70,418,1574150400"; 
-   d="scan'208";a="221147459"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:53 -0800
-From:   ira.weiny@intel.com
-To:     linux-kernel@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 12/12] fs/xfs: Allow toggle of effective DAX flag
-Date:   Sat,  8 Feb 2020 11:34:45 -0800
-Message-Id: <20200208193445.27421-13-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20200208193445.27421-1-ira.weiny@intel.com>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
+        id S1727496AbgBHVfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Feb 2020 16:35:06 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:35245 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbgBHVfF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Feb 2020 16:35:05 -0500
+Received: from mail-qt1-f178.google.com ([209.85.160.178]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N0Zfg-1jm4Gp29Nk-00wRGd; Sat, 08 Feb 2020 22:35:03 +0100
+Received: by mail-qt1-f178.google.com with SMTP id w47so2274171qtk.4;
+        Sat, 08 Feb 2020 13:35:03 -0800 (PST)
+X-Gm-Message-State: APjAAAXv5R7k3B79AhlHeVGRjCTWO5YVHs/PgzHBwiFnO6mutZM9ambV
+        ItlhD1SBdvnMMdHIEXDLQILDf8MDKhbLh/uI8GI=
+X-Google-Smtp-Source: APXvYqzLsrtZSLstZGwRAnnF70j94DmIaNuEYsDaDUCYaakD/eZ1IYRcWs9DJZYXOvDiALmXDlsGAhoUCmOwcRKVr9E=
+X-Received: by 2002:ac8:74cb:: with SMTP id j11mr4167200qtr.304.1581197702323;
+ Sat, 08 Feb 2020 13:35:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 8 Feb 2020 22:34:46 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1fm0_JKd5NVCSgT7HCHoR7TuVyTmxCQ9wjMGhnkDKmgA@mail.gmail.com>
+Message-ID: <CAK8P3a1fm0_JKd5NVCSgT7HCHoR7TuVyTmxCQ9wjMGhnkDKmgA@mail.gmail.com>
+Subject: [GIT PULL] compat-ioctl fix for v5.6
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Zigotzky <chzigotzky@xenosoft.de>,
+        youling257 <youling257@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:R4cJWSl4x19uee2mEnK4BQyEUDNpe0YaCRERvX7aJ91McR3uY7/
+ 8fFQ9XDdTcaabQBa1R8Yu7JFYd3Q0mAX6A8A20JiBedI5teNofsXWN2rkDJ8Wr8aw+czMoP
+ Oz+3VPpRzmXxnu1Rmv6y9gc7YbQNZXF/kOlGYix8keHwI5D2gVAcNR8x6h079YKiKGNxaG0
+ hJWCLjN7U0WM1ibGOAhtw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2IgRJJ+5P8o=:ZOP/4L+s9bizBIpw6nRsDQ
+ JxkxFffH27z880yb8/+3kBQch0Kd4427LWPRqbX3ndQqBP5maUYKnHUad7tOuyo9ROwSw6tJB
+ ugG85QhLIe7Tq7cmJZudJZFkv7EViYOO/I0UzI7nc0M+cRnWzHgdZwdPp3pgbSSAElcUgKI2w
+ FRztw+Qm1FEfNUf+CKFBSgzUWQt0Kw7WFAbkseFShspt4czP1dqI2wrgS9n5HlvV9juPfFWSL
+ ZClXSvR77F7SiWTaQV8Kyw5WcPd+Tsy1ehAUaixizN0h+QciWEzvZA5WnhY0fgf3A00X5tbok
+ aiIyp6zjodvfpYC9n+xBL5RKAZd3Huiao7Gek7+I7fD3I7m5nfr9ZiuRDeKJ0TfTsxtS328VH
+ ipsceEq8tz+t6U8xLNoo6tkZ3292vaF0mW8M2btjJ1ODQwN5/vZ42R+WLplJl9Jsq0dMA+iZO
+ OM91WLvN9SuEf8+MhptRz0taShPwvZUhWz/RzyAt4G1S6uaI+u84zrUiMdWzEgTYJ6AZZt8DJ
+ M58y47qQBbqDlDI5O8iwuCAKfZjBc6PJJ4HxkioCrYDCvV0kbFvpbVorKk7M+i7eNtiaEzFao
+ BVrSnVNyyU14I3NJTXVWmOrO07c9DYfDcnvP8PhpaaoCEsLg7ePmnOb4nchuUUa36huILPW85
+ sAWONEqKN4jr2YDZRE91auvSpmo+Rr4msMekhnyngjaCNGlzlbE7Tr7zAtcAZYqOxl4WRQGu/
+ z3sV02A426Go3gqj7rcnaqq3q4T8VU+8q4uYiFeG/gZZaaTFe3ML0O/37PWHjCSWm1xOQ7TdW
+ n6WKv6QH5DCe5467zABaYhU1x5IrTVCgXoS2CF5UoyZsvCFsBY=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+The following changes since commit 77b9040195dea3fcddf19e136c9e99a501351778:
 
-Now that locking of the inode is in place we can allow a DAX state
-change while under the new lock.
+  compat_ioctl: simplify the implementation (2020-01-03 09:42:52 +0100)
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+are available in the Git repository at:
 
----
-Changes from V2:
-	Add in lock_dax_state_static_key static branch enabling.
+  git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
+tags/compat-ioctl-fix
 
- fs/xfs/xfs_inode.h |  1 +
- fs/xfs/xfs_ioctl.c | 15 ++++++++++++---
- fs/xfs/xfs_iops.c  | 15 +++++++++++----
- fs/xfs/xfs_super.c | 16 +++++++++-------
- 4 files changed, 33 insertions(+), 14 deletions(-)
+for you to fetch changes up to 0a061743af93f472687b8c69b0d539d1f12f3fd2:
 
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 25fe20740bf7..0064f8eef41d 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -469,6 +469,7 @@ int	xfs_break_layouts(struct inode *inode, uint *iolock,
- /* from xfs_iops.c */
- extern void xfs_setup_inode(struct xfs_inode *ip);
- extern void xfs_setup_iops(struct xfs_inode *ip);
-+extern void xfs_setup_a_ops(struct xfs_inode *ip);
- 
- /*
-  * When setting up a newly allocated inode, we need to call
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index 0134c9e65efb..0736cf45223d 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -1123,12 +1123,11 @@ xfs_diflags_to_linux(
- 		inode->i_flags |= S_NOATIME;
- 	else
- 		inode->i_flags &= ~S_NOATIME;
--#if 0	/* disabled until the flag switching races are sorted out */
- 	if (xflags & FS_XFLAG_DAX)
- 		inode->i_flags |= S_DAX;
- 	else
- 		inode->i_flags &= ~S_DAX;
--#endif
-+
- }
- 
- static int
-@@ -1194,6 +1193,10 @@ xfs_ioctl_setattr_dax_invalidate(
- 
- 	*join_flags = 0;
- 
-+#if !defined(CONFIG_FS_DAX)
-+	return -EINVAL;
-+#endif
-+
- 	/* If the DAX state is not changing, we have nothing to do here. */
- 	if ((fa->fsx_xflags & FS_XFLAG_DAX) &&
- 	    (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
-@@ -1205,7 +1208,7 @@ xfs_ioctl_setattr_dax_invalidate(
- 	if (S_ISDIR(inode->i_mode))
- 		return 0;
- 
--	flags = XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL;
-+	flags = XFS_MMAPLOCK_EXCL | XFS_IOLOCK_EXCL | XFS_DAX_EXCL;
- 
- 	/* lock, flush and invalidate mapping in preparation for flag change */
- 	xfs_ilock(ip, flags);
-@@ -1526,6 +1529,9 @@ xfs_ioctl_setattr(
- 	else
- 		ip->i_d.di_cowextsize = 0;
- 
-+	if (join_flags & XFS_DAX_EXCL)
-+		xfs_setup_a_ops(ip);
-+
- 	code = xfs_trans_commit(tp);
- 
- 	/*
-@@ -1635,6 +1641,9 @@ xfs_ioc_setxflags(
- 		goto out_drop_write;
- 	}
- 
-+	if (join_flags & XFS_DAX_EXCL)
-+		xfs_setup_a_ops(ip);
-+
- 	error = xfs_trans_commit(tp);
- out_drop_write:
- 	mnt_drop_write_file(filp);
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index eebec159d873..15ef51c7f0b3 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1366,6 +1366,16 @@ xfs_setup_inode(
- 	}
- }
- 
-+void xfs_setup_a_ops(struct xfs_inode *ip)
-+{
-+	struct inode		*inode = &ip->i_vnode;
-+
-+	if (IS_DAX(inode))
-+		inode->i_mapping->a_ops = &xfs_dax_aops;
-+	else
-+		inode->i_mapping->a_ops = &xfs_address_space_operations;
-+}
-+
- void
- xfs_setup_iops(
- 	struct xfs_inode	*ip)
-@@ -1376,10 +1386,7 @@ xfs_setup_iops(
- 	case S_IFREG:
- 		inode->i_op = &xfs_inode_operations;
- 		inode->i_fop = &xfs_file_operations;
--		if (IS_DAX(inode))
--			inode->i_mapping->a_ops = &xfs_dax_aops;
--		else
--			inode->i_mapping->a_ops = &xfs_address_space_operations;
-+		xfs_setup_a_ops(ip);
- 		break;
- 	case S_IFDIR:
- 		if (xfs_sb_version_hasasciici(&XFS_M(inode->i_sb)->m_sb))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 2094386af8ac..af57fe07b56d 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1332,6 +1332,7 @@ xfs_fc_fill_super(
- 	struct xfs_mount	*mp = sb->s_fs_info;
- 	struct inode		*root;
- 	int			flags = 0, error;
-+	bool                    rtdev_is_dax = false, datadev_is_dax;
- 
- 	mp->m_super = sb;
- 
-@@ -1437,17 +1438,18 @@ xfs_fc_fill_super(
- 	if (XFS_SB_VERSION_NUM(&mp->m_sb) == XFS_SB_VERSION_5)
- 		sb->s_flags |= SB_I_VERSION;
- 
--	if (mp->m_flags & XFS_MOUNT_DAX) {
--		bool rtdev_is_dax = false, datadev_is_dax;
-+	datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
-+					    sb->s_blocksize);
-+	if (mp->m_rtdev_targp)
-+		rtdev_is_dax = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
-+						  sb->s_blocksize);
-+	if (rtdev_is_dax || datadev_is_dax)
-+		enable_dax_state_static_branch();
- 
-+	if (mp->m_flags & XFS_MOUNT_DAX) {
- 		xfs_warn(mp,
- 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
- 
--		datadev_is_dax = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
--			sb->s_blocksize);
--		if (mp->m_rtdev_targp)
--			rtdev_is_dax = bdev_dax_supported(
--				mp->m_rtdev_targp->bt_bdev, sb->s_blocksize);
- 		if (!rtdev_is_dax && !datadev_is_dax) {
- 			xfs_alert(mp,
- 			"DAX unsupported by block device. Turning off DAX.");
--- 
-2.21.0
+  compat_ioctl: fix FIONREAD on devices (2020-02-08 18:02:54 +0100)
 
+----------------------------------------------------------------
+compat-ioctl fix for v5.6
+
+One patch in the compat-ioctl series broke 32-bit rootfs for multiple
+people testing on 64-bit kernels. Let's fix it in -rc1 before others
+run into the same issue.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      compat_ioctl: fix FIONREAD on devices
+
+ fs/ioctl.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
