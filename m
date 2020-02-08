@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8856315677C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 20:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D814A156763
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 20:35:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbgBHTfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Feb 2020 14:35:15 -0500
-Received: from mga12.intel.com ([192.55.52.136]:58204 "EHLO mga12.intel.com"
+        id S1727634AbgBHTex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Feb 2020 14:34:53 -0500
+Received: from mga09.intel.com ([134.134.136.24]:36194 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbgBHTew (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Feb 2020 14:34:52 -0500
+        id S1727597AbgBHTex (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Feb 2020 14:34:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:51 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:52 -0800
 X-IronPort-AV: E=Sophos;i="5.70,418,1574150400"; 
-   d="scan'208";a="265404086"
+   d="scan'208";a="346755558"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:51 -0800
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2020 11:34:51 -0800
 From:   ira.weiny@intel.com
 To:     linux-kernel@vger.kernel.org
 Cc:     Ira Weiny <ira.weiny@intel.com>,
@@ -30,9 +30,9 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 09/12] fs/xfs: Add write DAX lock to xfs layer
-Date:   Sat,  8 Feb 2020 11:34:42 -0800
-Message-Id: <20200208193445.27421-10-ira.weiny@intel.com>
+Subject: [PATCH v3 10/12] fs: Prevent DAX state change if file is mmap'ed
+Date:   Sat,  8 Feb 2020 11:34:43 -0800
+Message-Id: <20200208193445.27421-11-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20200208193445.27421-1-ira.weiny@intel.com>
 References: <20200208193445.27421-1-ira.weiny@intel.com>
@@ -45,151 +45,125 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-XFS requires regular files to be locked for write while changing to/from
-DAX state.
+Page faults need to ensure the inode DAX configuration is correct and
+consistent with the vmf information at the time of the fault.  There is
+no easy way to ensure the vmf information is correct if a DAX change is
+in progress.  Furthermore, there is no good use case to require changing
+DAX configs while the file is mmap'ed.
 
-Take the DAX write lock while changing DAX state.
-
-We define a new XFS_DAX_EXCL lock type to carry the lock through to
-transaction completion.
+Track mmap's of the file and fail the DAX change if the file is mmap'ed.
 
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
 ---
 Changes from V2:
-	Change name of patch (WAS: fs/xfs: Add lock/unlock state to xfs)
-	Remove the xfs specific lock and move to the vfs layer.
-		We still use XFS_LOCK_DAX_EXCL to be able to pass this
-		flag through to the transaction code.  But we no longer
-		have a lock specific to xfs.  This removes a lot of code
-		from the XFS layer, preps us for using this in ext4, and
-		is actually more straight forward now that all the
-		locking requirements are better known.
 
-	Fix locking order comment
-	Rework for new 'state' names
-	(Other comments on the previous patch are not applicable with
-	new patch as much of the code was removed in favor of the vfs
-	level lock)
+	move 'i_mapped' to struct address_space and rename mmap_count
+	Add inode_has_mappings() helper for FS's
+	Change reference to "mode" to "state"
 
- fs/xfs/xfs_inode.c | 22 ++++++++++++++++++++--
- fs/xfs/xfs_inode.h |  7 +++++--
- 2 files changed, 25 insertions(+), 4 deletions(-)
+ fs/inode.c         |  1 +
+ fs/xfs/xfs_ioctl.c |  8 ++++++++
+ include/linux/fs.h |  6 ++++++
+ mm/mmap.c          | 19 +++++++++++++++++--
+ 4 files changed, 32 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index 35df324875db..0c7b1855e0c8 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-  *
-  * Basic locking order:
-  *
-- * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-+ * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-  *
-  * mmap_sem locking order:
-  *
-  * i_rwsem -> page lock -> mmap_sem
-- * mmap_sem -> i_mmap_lock -> page_lock
-+ * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
-  *
-  * The difference in mmap_sem locking order mean that we cannot hold the
-  * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-@@ -182,6 +182,9 @@ xfs_ilock(
- 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
- 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
- 
-+	if (lock_flags & XFS_DAX_EXCL)
-+		inode_dax_state_down_write(VFS_I(ip));
-+
- 	if (lock_flags & XFS_IOLOCK_EXCL) {
- 		down_write_nested(&VFS_I(ip)->i_rwsem,
- 				  XFS_IOLOCK_DEP(lock_flags));
-@@ -224,6 +227,8 @@ xfs_ilock_nowait(
- 	 * You can't set both SHARED and EXCL for the same lock,
- 	 * and only XFS_IOLOCK_SHARED, XFS_IOLOCK_EXCL, XFS_ILOCK_SHARED,
- 	 * and XFS_ILOCK_EXCL are valid values to set in lock_flags.
-+	 *
-+	 * XFS_DAX_* is not allowed
- 	 */
- 	ASSERT((lock_flags & (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL)) !=
- 	       (XFS_IOLOCK_SHARED | XFS_IOLOCK_EXCL));
-@@ -232,6 +237,7 @@ xfs_ilock_nowait(
- 	ASSERT((lock_flags & (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL)) !=
- 	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
- 	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
-+	ASSERT((lock_flags & XFS_DAX_EXCL) == 0);
- 
- 	if (lock_flags & XFS_IOLOCK_EXCL) {
- 		if (!down_write_trylock(&VFS_I(ip)->i_rwsem))
-@@ -318,6 +324,9 @@ xfs_iunlock(
- 	else if (lock_flags & XFS_ILOCK_SHARED)
- 		mrunlock_shared(&ip->i_lock);
- 
-+	if (lock_flags & XFS_DAX_EXCL)
-+		inode_dax_state_up_write(VFS_I(ip));
-+
- 	trace_xfs_iunlock(ip, lock_flags, _RET_IP_);
+diff --git a/fs/inode.c b/fs/inode.c
+index 7d0227f9e3e8..bca5c9093542 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -371,6 +371,7 @@ static void __address_space_init_once(struct address_space *mapping)
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+ 	mapping->i_mmap = RB_ROOT_CACHED;
++	atomic64_set(&mapping->mmap_count, 0);
  }
  
-@@ -333,6 +342,8 @@ xfs_ilock_demote(
- 	ASSERT(lock_flags & (XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL));
- 	ASSERT((lock_flags &
- 		~(XFS_IOLOCK_EXCL|XFS_MMAPLOCK_EXCL|XFS_ILOCK_EXCL)) == 0);
-+	/* XFS_DAX_* is not allowed */
-+	ASSERT((lock_flags & XFS_DAX_EXCL) == 0);
+ void address_space_init_once(struct address_space *mapping)
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 4ff402fd6636..faba232b1f31 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1214,6 +1214,14 @@ xfs_ioctl_setattr_dax_invalidate(
+ 		goto out_unlock;
+ 	}
  
- 	if (lock_flags & XFS_ILOCK_EXCL)
- 		mrdemote(&ip->i_lock);
-@@ -465,6 +476,9 @@ xfs_lock_inodes(
- 	ASSERT(!(lock_mode & XFS_ILOCK_EXCL) ||
- 		inodes <= XFS_ILOCK_MAX_SUBCLASS + 1);
- 
-+	/* XFS_DAX_* is not allowed */
-+	ASSERT((lock_mode & XFS_DAX_EXCL) == 0);
++	/*
++	 * If there is a mapping in place we must remain in our current state.
++	 */
++	if (inode_has_mappings(inode)) {
++		error = -EBUSY;
++		goto out_unlock;
++	}
 +
- 	if (lock_mode & XFS_IOLOCK_EXCL) {
- 		ASSERT(!(lock_mode & (XFS_MMAPLOCK_EXCL | XFS_ILOCK_EXCL)));
- 	} else if (lock_mode & XFS_MMAPLOCK_EXCL)
-@@ -566,6 +580,10 @@ xfs_lock_two_inodes(
- 	ASSERT(!(ip0_mode & (XFS_MMAPLOCK_SHARED|XFS_MMAPLOCK_EXCL)) ||
- 	       !(ip1_mode & (XFS_ILOCK_SHARED|XFS_ILOCK_EXCL)));
+ 	error = filemap_write_and_wait(inode->i_mapping);
+ 	if (error)
+ 		goto out_unlock;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1a22cd94c4ab..3e0121626d94 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -459,6 +459,7 @@ struct address_space {
+ #endif
+ 	struct rb_root_cached	i_mmap;
+ 	struct rw_semaphore	i_mmap_rwsem;
++	atomic64_t              mmap_count;
+ 	unsigned long		nrpages;
+ 	unsigned long		nrexceptional;
+ 	pgoff_t			writeback_index;
+@@ -1951,6 +1952,11 @@ static inline void enable_dax_state_static_branch(void)
+ #define enable_dax_state_static_branch()
+ #endif /* CONFIG_FS_DAX */
  
-+	/* XFS_DAX_* is not allowed */
-+	ASSERT((ip0_mode & XFS_DAX_EXCL) == 0);
-+	ASSERT((ip1_mode & XFS_DAX_EXCL) == 0);
++static inline bool inode_has_mappings(struct inode *inode)
++{
++	return (atomic64_read(&inode->i_mapping->mmap_count) != 0);
++}
 +
- 	ASSERT(ip0->i_ino != ip1->i_ino);
+ static inline ssize_t call_read_iter(struct file *file, struct kiocb *kio,
+ 				     struct iov_iter *iter)
+ {
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7cc2562b99fd..6bb16a0996b5 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -171,12 +171,17 @@ void unlink_file_vma(struct vm_area_struct *vma)
+ static struct vm_area_struct *remove_vma(struct vm_area_struct *vma)
+ {
+ 	struct vm_area_struct *next = vma->vm_next;
++	struct file *f = vma->vm_file;
  
- 	if (ip0->i_ino > ip1->i_ino) {
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 492e53992fa9..25fe20740bf7 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -278,10 +278,12 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
- #define	XFS_ILOCK_SHARED	(1<<3)
- #define	XFS_MMAPLOCK_EXCL	(1<<4)
- #define	XFS_MMAPLOCK_SHARED	(1<<5)
-+#define	XFS_DAX_EXCL		(1<<6)
+ 	might_sleep();
+ 	if (vma->vm_ops && vma->vm_ops->close)
+ 		vma->vm_ops->close(vma);
+-	if (vma->vm_file)
+-		fput(vma->vm_file);
++	if (f) {
++		struct inode *inode = file_inode(f);
++		if (inode)
++			atomic64_dec(&inode->i_mapping->mmap_count);
++		fput(f);
++	}
+ 	mpol_put(vma_policy(vma));
+ 	vm_area_free(vma);
+ 	return next;
+@@ -1830,6 +1835,16 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  
- #define XFS_LOCK_MASK		(XFS_IOLOCK_EXCL | XFS_IOLOCK_SHARED \
- 				| XFS_ILOCK_EXCL | XFS_ILOCK_SHARED \
--				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED)
-+				| XFS_MMAPLOCK_EXCL | XFS_MMAPLOCK_SHARED \
-+				| XFS_DAX_EXCL)
+ 	vma_set_page_prot(vma);
  
- #define XFS_LOCK_FLAGS \
- 	{ XFS_IOLOCK_EXCL,	"IOLOCK_EXCL" }, \
-@@ -289,7 +291,8 @@ static inline void xfs_ifunlock(struct xfs_inode *ip)
- 	{ XFS_ILOCK_EXCL,	"ILOCK_EXCL" }, \
- 	{ XFS_ILOCK_SHARED,	"ILOCK_SHARED" }, \
- 	{ XFS_MMAPLOCK_EXCL,	"MMAPLOCK_EXCL" }, \
--	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }
-+	{ XFS_MMAPLOCK_SHARED,	"MMAPLOCK_SHARED" }, \
-+	{ XFS_DAX_EXCL,		"DAX_EXCL" }
++	/*
++	 * Track if there is mapping in place such that a state change
++	 * does not occur on a file which is mapped
++	 */
++	if (file) {
++		struct inode		*inode = file_inode(file);
++
++		atomic64_inc(&inode->i_mapping->mmap_count);
++	}
++
+ 	return addr;
  
- 
- /*
+ unmap_and_free_vma:
 -- 
 2.21.0
 
