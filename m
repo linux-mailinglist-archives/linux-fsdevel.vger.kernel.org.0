@@ -2,53 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B655B1562A4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 03:05:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E60661562AC
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Feb 2020 03:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgBHCFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Feb 2020 21:05:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbgBHCFI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Feb 2020 21:05:08 -0500
-Subject: Re: [GIT PULL] fuse fixes for 5.6-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581127507;
-        bh=VKwMrEOjf+pbAryXenvt1O89qe/OGTtrGybNATBS8eM=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=qBXDwPtpErz1qFtn7h9wsDiZ71eWkIFWG9ijWEQiRPmVDUSGd4WeY3jgn744fbgUu
-         eySPXTf6U3Dyu+5DIkSCVDwtVSb8JywN4lWJH5UxtCQIwbbqzL0276hujM9SAn2kb+
-         zZPAl1aJiRfLzvzcsJYsB05zUbfVGKgtucdiUpZU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
-References: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200207153401.GC7822@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
- tags/fuse-fixes-5.6-rc1
-X-PR-Tracked-Commit-Id: cabdb4fa2f666fad21b21b04c84709204f60af21
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f757165705e92db62f85a1ad287e9251d1f2cd82
-Message-Id: <158112750750.31333.3995407389947059932.pr-tracker-bot@kernel.org>
-Date:   Sat, 08 Feb 2020 02:05:07 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        id S1727131AbgBHCM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Feb 2020 21:12:26 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52510 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbgBHCM0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Feb 2020 21:12:26 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j0FbU-0098pV-DJ; Sat, 08 Feb 2020 02:12:16 +0000
+Date:   Sat, 8 Feb 2020 02:12:16 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH v7 2/8] fs: Add standard casefolding support
+Message-ID: <20200208021216.GE23230@ZenIV.linux.org.uk>
+References: <20200208013552.241832-1-drosen@google.com>
+ <20200208013552.241832-3-drosen@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200208013552.241832-3-drosen@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 7 Feb 2020 16:34:01 +0100:
+On Fri, Feb 07, 2020 at 05:35:46PM -0800, Daniel Rosenberg wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.6-rc1
+> +int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
+> +			  const char *str, const struct qstr *name)
+> +{
+> +	const struct dentry *parent = READ_ONCE(dentry->d_parent);
+> +	const struct inode *inode = READ_ONCE(parent->d_inode);
+> +	const struct super_block *sb = dentry->d_sb;
+> +	const struct unicode_map *um = sb->s_encoding;
+> +	struct qstr entry = QSTR_INIT(str, len);
+> +	int ret;
+> +
+> +	if (!inode || !needs_casefold(inode))
+> +		goto fallback;
+> +
+> +	ret = utf8_strncasecmp(um, name, &entry);
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f757165705e92db62f85a1ad287e9251d1f2cd82
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Again, is that safe in case when the contents of the string str points to
+keeps changing under you?
