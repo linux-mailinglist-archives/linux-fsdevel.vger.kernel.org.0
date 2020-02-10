@@ -2,143 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC21157EBB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 16:26:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DEA4157FC9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 17:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgBJP0W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 10:26:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:24378 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727363AbgBJP0W (ORCPT
+        id S1727906AbgBJQ3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 11:29:42 -0500
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:25629 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgBJQ3m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 10:26:22 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01AFJGIe038663
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2020 10:26:21 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y1u9p33n4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2020 10:26:21 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 10 Feb 2020 15:26:19 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Feb 2020 15:26:16 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01AFQFgV31064454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Feb 2020 15:26:15 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD41952052;
-        Mon, 10 Feb 2020 15:26:15 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.140.79])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 828CD52059;
-        Mon, 10 Feb 2020 15:26:14 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
-        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Mon, 10 Feb 2020 10:26:13 -0500
-In-Reply-To: <CAE=NcrYhz7zrhxZoVDSvfs+Cd-vNX30gGXU9Xu4K7ft-1ozN2g@mail.gmail.com>
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-         <1580998432.5585.411.camel@linux.ibm.com>
-         <CAE=NcrYhz7zrhxZoVDSvfs+Cd-vNX30gGXU9Xu4K7ft-1ozN2g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021015-0016-0000-0000-000002E585A8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021015-0017-0000-0000-0000334877FB
-Message-Id: <1581348373.5585.798.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-10_05:2020-02-10,2020-02-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 mlxlogscore=973 mlxscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002100117
+        Mon, 10 Feb 2020 11:29:42 -0500
+Date:   Mon, 10 Feb 2020 16:29:31 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1581352179;
+        bh=HaQYFeP243+jZHqXubIy8pMTeQYphN87kh+Q8EfSCug=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=aETHlAlnvTvQPVmDanVXZ67C1YxDKkAcP3yUkwrXqtxF3lYAh74Px0kK8+8KcnPps
+         M3875IFSBl/WF0/86G8k8Daw98k9L2ScMN+dO1yVlSOIXSPB+Ip+88T5TTPgApmJMp
+         vBN+/dE0B1lhH/ssW8qk1W0TBhTeOSX5VJqbtuLc=
+To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH v8 08/11] proc: instantiate only pids that we can ptrace on 'hidepid=4' mount option
+Message-ID: <aBJUaM4BeffJa3vj1p1rUZRN60LVv39CTN9ETLC-swk2b6CvAW8BbP6QbxK5zBGwSYOEiRgjE-auqdRo-pYXxhwuJ_h5rbZ9uyeFqLcLSJQ=@protonmail.ch>
+In-Reply-To: <20200210150519.538333-9-gladkov.alexey@gmail.com>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+ <20200210150519.538333-9-gladkov.alexey@gmail.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.3 required=7.0 tests=ALL_TRUSTED,BAYES_50,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT shortcircuit=no autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-02-10 at 10:04 +0200, Janne Karhunen wrote:
-> On Thu, Feb 6, 2020 at 4:14 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> 
-> > The implications of exporting and removing records from the IMA-
-> > measurement list needs to be considered carefully.  Verifying a TPM
-> > quote will become dependent on knowing where the measurements are
-> > stored.  The existing measurement list is stored in kernel memory and,
-> > barring a kernel memory attack, is protected from modification.
-> >  Before upstreaming this or a similar patch, there needs to be a
-> > discussion as to how the measurement list will be protected once is it
-> > exported to userspace.
-> >
-> > This patch now attempts to address two very different scenarios.  The
-> > first scenario is where userspace is requesting exporting and removing
-> > of the measurement list records.  The other scenario is the kernel
-> > exporting and removing of the measurement list records.  Conflating
-> > these two different use cases might not be the right solution, as we
-> > originally thought.
-> >
-> > The kernel already exports the IMA measurement list to userspace via a
-> > securityfs file.  From a userspace perspective, missing is the ability
-> > of removing N number of records.  In this scenario, userspace would be
-> > responsible for safely storing the measurements (e.g. blockchain).
-> >  The kernel would only be responsible for limiting permission, perhaps
-> > based on a capability, before removing records from the measurement
-> > list.
-> 
-> This is a good point. I will adapt the patch to this.
-> 
-> 
-> > In the kernel usecase, somehow the kernel would need to safely export
-> > the measurement list, or some portion of the measurement list, to a
-> > file and then delete that portion.  What protects the exported records
-> > stored in a file from modification?
-> 
-> Are we looking at protecting this file from a root exploit and the
-> potential DOS it might cause? In the original patch the file was root
-> writable only. As far as further limitations go, the easiest would
-> probably be to use the file immutable bit. If the kernel opens the
-> file and sets the immutable bit, it is the only entity that can ever
-> write to it - not even another root task could directly write to it.
-> The kernel could, as long as it keeps the file open.
+On Monday, February 10, 2020 3:05 PM, Alexey Gladkov <gladkov.alexey@gmail.=
+com> wrote:
 
-The problem being addressed is freeing kernel memory instead of
-letting the measurement list grow unbounded.  One solution is to
-remove measurement list records, as you did, but that changes the
-existing userspace expectations of returning the entire measurement
-list.  In the userspace scenario, removing measurement list records is
-the requirement.  For the kernel scenario, I don't think it is a
-requirement.
+> If "hidepid=3D4" mount option is set then do not instantiate pids that
+> we can not ptrace. "hidepid=3D4" means that procfs should only contain
+> pids that the caller can ptrace.
+>
+> Cc: Kees Cook keescook@chromium.org
+> Cc: Andy Lutomirski luto@kernel.org
+> Signed-off-by: Djalal Harouni tixxdz@gmail.com
+> Signed-off-by: Alexey Gladkov gladkov.alexey@gmail.com
+>
+> fs/proc/base.c | 15 +++++++++++++++
+> fs/proc/root.c | 14 +++++++++++---
+> include/linux/proc_fs.h | 1 +
+> 3 files changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 24b7c620ded3..49937d54e745 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -699,6 +699,14 @@ static bool has_pid_permissions(struct proc_fs_info =
+*fs_info,
+> struct task_struct *task,
+> int hide_pid_min)
+> {
+>
+> -   /*
+> -   -   If 'hidpid' mount option is set force a ptrace check,
+> -   -   we indicate that we are using a filesystem syscall
+> -   -   by passing PTRACE_MODE_READ_FSCREDS
+> -   */
+> -   if (proc_fs_hide_pid(fs_info) =3D=3D HIDEPID_NOT_PTRACABLE)
+> -         return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
+>
+>
+> -   if (proc_fs_hide_pid(fs_info) < hide_pid_min)
+>     return true;
+>     if (in_group_p(proc_fs_pid_gid(fs_info)))
+>     @@ -3271,7 +3279,14 @@ struct dentry *proc_pid_lookup(struct dentry *=
+dentry, unsigned int flags)
+>     if (!task)
+>     goto out;
+>
+> -   /* Limit procfs to only ptracable tasks */
+> -   if (proc_fs_hide_pid(fs_info) =3D=3D HIDEPID_NOT_PTRACABLE) {
+> -         if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
+>
+>
+> -         =09goto out_put_task;
+>
+>
+> -   }
+> -   result =3D proc_pid_instantiate(dentry, task, NULL);
+>     +out_put_task:
+>     put_task_struct(task);
+>     out:
+>     return result;
+>     diff --git a/fs/proc/root.c b/fs/proc/root.c
+>     index e2bb015da1a8..5e27bb31f125 100644
+>     --- a/fs/proc/root.c
+>     +++ b/fs/proc/root.c
+>     @@ -52,6 +52,15 @@ static const struct fs_parameter_description proc_=
+fs_parameters =3D {
+>     .specs =3D proc_param_specs,
+>     };
+>
+>     +static inline int
+>     +valid_hidepid(unsigned int value)
+>     +{
+>
+> -   return (value =3D=3D HIDEPID_OFF ||
+> -         value =3D=3D HIDEPID_NO_ACCESS ||
+>
+>
+> -         value =3D=3D HIDEPID_INVISIBLE ||
+>
+>
+> -         value =3D=3D HIDEPID_NOT_PTRACABLE);
+>
+>
+>
+> +}
+> +
+> static int proc_parse_param(struct fs_context *fc, struct fs_parameter *p=
+aram)
+> {
+> struct proc_fs_context *ctx =3D fc->fs_private;
+> @@ -68,10 +77,9 @@ static int proc_parse_param(struct fs_context *fc, str=
+uct fs_parameter *param)
+> break;
+>
+> case Opt_hidepid:
+>
+> -         if (!valid_hidepid(result.uint_32))
+>
+>
+> -         =09return invalf(fc, "proc: unknown value of hidepid.\\n");
+>           ctx->hidepid =3D result.uint_32;
+>
+>
+>
+> -         if (ctx->hidepid < HIDEPID_OFF ||
+>
+>
+> -             ctx->hidepid > HIDEPID_INVISIBLE)
+>
+>
+> -         =09return invalf(fc, "proc: hidepid value must be between 0 and=
+ 2.\\n");
+>           break;
+>
+>
+>
+> default:
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> index f307940f8311..6822548405a7 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -17,6 +17,7 @@ enum {
+> HIDEPID_OFF =3D 0,
+> HIDEPID_NO_ACCESS =3D 1,
+> HIDEPID_INVISIBLE =3D 2,
+>
+> -   HIDEPID_NOT_PTRACABLE =3D 4, /* Limit pids to only ptracable pids */
 
-> 
-> > Instead of exporting the measurement records, one option as suggested
-> > by Amir Goldstein, would be to use a vfs_tmpfile() to get an anonymous
-> > file for backing store.  The existing securityfs measurement lists
-> > would then read from this private copy of the anonymous file.
-> >
-> > I've Cc'ed fsdevel for additional comments/suggestions.
-> 
-> I didn't quickly see what the actual problem is that the vfs_tmpfile
-> solves in this context, will check.
+Is there a reason new option is "4" instead of "3"? The order 1..2..4 may b=
+e
+confusing for people.
 
-The existing IMA measurement list is by design, as coined by George
-Wilson, a "deliberate memory leak".  Fixing the "Deliberate IMA event
-log memory leak" should be the problem description.  Amir's suggestion
-of using a vfs_tmpfile seems like a reasonable solution.
-
-Mimi
-
+Jordan
