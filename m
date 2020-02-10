@@ -2,76 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B257B158379
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 20:23:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AADE1583B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 20:31:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbgBJTXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 14:23:13 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35746 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbgBJTXN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 14:23:13 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1Ee6-00AWd4-KS; Mon, 10 Feb 2020 19:23:02 +0000
-Date:   Mon, 10 Feb 2020 19:23:02 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200210192302.GI23230@ZenIV.linux.org.uk>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-8-gladkov.alexey@gmail.com>
- <CAHk-=wh05FniF0xJYqcFrmGeCvOJUqR0UL4jTC-_LvpsfNCkNw@mail.gmail.com>
+        id S1727865AbgBJTbi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 14:31:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47864 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727003AbgBJTbh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 14:31:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 120E6AFB2;
+        Mon, 10 Feb 2020 19:31:35 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh05FniF0xJYqcFrmGeCvOJUqR0UL4jTC-_LvpsfNCkNw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 10 Feb 2020 20:31:34 +0100
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     Max Neunhoeffer <max@arangodb.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] epoll: ep->wq can be woken up unlocked in certain
+ cases
+In-Reply-To: <ce0d0c49-7d62-3a5d-7bc7-5b72611f1867@akamai.com>
+References: <20200210094123.389854-1-rpenyaev@suse.de>
+ <20200210094123.389854-2-rpenyaev@suse.de>
+ <ce0d0c49-7d62-3a5d-7bc7-5b72611f1867@akamai.com>
+Message-ID: <759221a1a1a7b36c47011fa05bba20df@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 09:46:26AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > This allows to flush dcache entries of a task on multiple procfs mounts
-> > per pid namespace.
-> >
-> > The RCU lock is used because the number of reads at the task exit time
-> > is much larger than the number of procfs mounts.
+On 2020-02-10 19:16, Jason Baron wrote:
+> On 2/10/20 4:41 AM, Roman Penyaev wrote:
+>> Now ep->lock is responsible for wqueue serialization, thus if ep->lock
+>> is taken on write path, wake_up_locked() can be invoked.
+>> 
+>> Though, read path is different.  Since concurrent cpus can enter the
+>> wake up function it needs to be internally serialized, thus wake_up()
+>> variant is used which implies internal spin lock.
+>> 
+>> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+>> Cc: Max Neunhoeffer <max@arangodb.com>
+>> Cc: Jakub Kicinski <kuba@kernel.org>
+>> Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
+>> Cc: Davidlohr Bueso <dbueso@suse.de>
+>> Cc: Jason Baron <jbaron@akamai.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  Nothing interesting in v2:
+>>      changed the comment a bit
+>> 
+>>  fs/eventpoll.c | 12 +++++++++---
+>>  1 file changed, 9 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+>> index eee3c92a9ebf..6e218234bd4a 100644
+>> --- a/fs/eventpoll.c
+>> +++ b/fs/eventpoll.c
+>> @@ -1173,7 +1173,7 @@ static inline bool chain_epi_lockless(struct 
+>> epitem *epi)
+>>   * Another thing worth to mention is that ep_poll_callback() can be 
+>> called
+>>   * concurrently for the same @epi from different CPUs if poll table 
+>> was inited
+>>   * with several wait queues entries.  Plural wakeup from different 
+>> CPUs of a
+>> - * single wait queue is serialized by wq.lock, but the case when 
+>> multiple wait
+>> + * single wait queue is serialized by ep->lock, but the case when 
+>> multiple wait
+>>   * queues are used should be detected accordingly.  This is detected 
+>> using
+>>   * cmpxchg() operation.
+>>   */
+>> @@ -1248,6 +1248,12 @@ static int ep_poll_callback(wait_queue_entry_t 
+>> *wait, unsigned mode, int sync, v
+>>  				break;
+>>  			}
+>>  		}
+>> +		/*
+>> +		 * Since here we have the read lock (ep->lock) taken, plural
+>> +		 * wakeup from different CPUs can occur, thus we call wake_up()
+>> +		 * variant which implies its own lock on wqueue. All other paths
+>> +		 * take write lock.
+>> +		 */
+>>  		wake_up(&ep->wq);
+>>  	}
+>>  	if (waitqueue_active(&ep->poll_wait))
+>> @@ -1551,7 +1557,7 @@ static int ep_insert(struct eventpoll *ep, const 
+>> struct epoll_event *event,
+>> 
+>>  		/* Notify waiting tasks that events are available */
+>>  		if (waitqueue_active(&ep->wq))
+>> -			wake_up(&ep->wq);
+>> +			wake_up_locked(&ep->wq);
 > 
-> Ok, this looks better to me than the previous version.
 > 
-> But that may be the "pee-in-the-snow" effect, and I _really_ want
-> others to take a good look at the whole series.
-> 
-> The right people seem to be cc'd, but this is pretty core, and /proc
-> has a tendency to cause interesting issues because of how it's
-> involved in a lot of areas indirectly.
-> 
-> Al, Oleg, Andy, Eric?
+> So I think this will now hit the 'lockdep_assert_held()' in
+> __wake_up_common()? I agree that its correct, but I think it will
+> confuse lockdep here...
 
-Will check tonight (ears-deep in sorting out the old branches right now)
+Argh! True. And I do not see any neat way to shut up lockdep here
+(Calling lock_acquire() manually seems not an option for such minor
+thing).
+
+Then this optimization is not needed, patch is cancelled.
+
+Thanks for noting that.
+
+--
+Roman
+
