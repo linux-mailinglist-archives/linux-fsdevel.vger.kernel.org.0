@@ -2,82 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DAA315718A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 10:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D9B1571ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 10:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbgBJJVU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 04:21:20 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52201 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbgBJJVT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 04:21:19 -0500
-Received: by mail-pj1-f65.google.com with SMTP id fa20so3947272pjb.1;
-        Mon, 10 Feb 2020 01:21:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=f3PX1moHFrKZPID9Zj4amuiBq7DdkwwK6egdyOalClc=;
-        b=QnQ2Pu8lpasBZ+G1l3xLi1yIiPkVl8JZ6P1tPi2uxADrRo9sQmvr7+7LS7wc8M5Ush
-         6cC4R7F6WLRJJIuMmXTmFiTMVjpgmZpPm/QjcAnzjCO45pgBWyNh/74xP/FpU8OxJl+R
-         Ilnbe+YnghHTV7Z/t3OmWwPzwo3k2WblyNNxIYNLV6oZXPiZpLQP5chQ7iBK5AH1Hp1Y
-         rwelX51HaM0xPz/AURYfADQ9M5gFoJr6dfD23xDB3DQOQjXUiFUH3XhRgt/quJNUmATB
-         2edvO2kdOLVLNWGGELtHyxbPuw2DFFWG+4hvz1lK3wsqM/nrvNDvZvbFnxhmTxWAZguD
-         wuiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=f3PX1moHFrKZPID9Zj4amuiBq7DdkwwK6egdyOalClc=;
-        b=c5o1ShYP1hPptZbiz+FQK+qw7PkAoaYEFzyKVswy8p7m/OuPdJxN/RNn0f7gEquBqY
-         n5nSVACep6iKSy4zju1EIPG/6jFQr+o71hDpOUzG4fhjokjCBmbeTXuOJqkkrj/jzPTd
-         gus/ARK5zgWjIcKyj+jPx5p5punQxD6TRafPFpInZABC+KPcY8mOCJnWVrymo+SKF0kS
-         S7yUn/ca+7E6/c3bL0oJ5++7ZKYOmkEE6I1twn2ZmJksMRa6gNA1+TP/p4nQR483jX2c
-         wibJXiH6yQLdV4DS6a59/gzcImMWvEBoiJWdyi147q00ftz26EECbvm2NgdAx8S9vO56
-         19qA==
-X-Gm-Message-State: APjAAAVDVAg5T5WxbDbYXgpKLrcxWIo3TL1Z3pNixC3j+EW7uqChYbNt
-        dyRjwzo2BgQlm6/bVOs7DJ4=
-X-Google-Smtp-Source: APXvYqx3OfZsnRTon5ZuFohlPcKROhm+lKXTEEwlOSP1DbEPiowcEjdZvVM7ZXraZN1ETABz3DTebw==
-X-Received: by 2002:a17:90a:8806:: with SMTP id s6mr596897pjn.141.1581326479064;
-        Mon, 10 Feb 2020 01:21:19 -0800 (PST)
-Received: from localhost.localdomain ([116.126.226.81])
-        by smtp.googlemail.com with ESMTPSA id x143sm12331079pgx.54.2020.02.10.01.21.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 01:21:18 -0800 (PST)
-From:   JieunKim <jieun.kim4758@gmail.com>
-To:     valdis.kletnieks@vt.edu
-Cc:     gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, JieunKim <jieun.kim4758@gmail.com>
-Subject: [PATCH] staging: exfat: Replace printk with pr_info
-Date:   Mon, 10 Feb 2020 18:14:20 +0900
-Message-Id: <20200210091421.12335-1-jieun.kim4758@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726950AbgBJJmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 04:42:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51736 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbgBJJmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 04:42:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 8FDE0AEC4;
+        Mon, 10 Feb 2020 09:42:16 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Max Neunhoeffer <max@arangodb.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] epoll: fix possible lost wakeup on epoll_ctl() path
+Date:   Mon, 10 Feb 2020 10:41:21 +0100
+Message-Id: <20200210094123.389854-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pr_info is preferred to use than printk.
-pr_info calls printk with KERN_INFO macros by itself.
+This fixes possible lost wakeup introduced by the a218cc491420.
+Originally modifications to ep->wq were serialized by ep->wq.lock,
+but in the a218cc491420 new rw lock was introduced in order to
+relax fd event path, i.e. callers of ep_poll_callback() function.
 
-Signed-off-by: JieunKim <jieun.kim4758@gmail.com>
+After the change ep_modify and ep_insert (both are called on
+epoll_ctl() path) were switched to ep->lock, but ep_poll
+(epoll_wait) was using ep->wq.lock on wqueue list modification.
+
+The bug doesn't lead to any wqueue list corruptions, because wake up
+path and list modifications were serialized by ep->wq.lock
+internally, but actual waitqueue_active() check prior wake_up()
+call can be reordered with modifications of ep ready list, thus
+wake up can be lost.
+
+And yes, can be healed by explicit smp_mb():
+
+  list_add_tail(&epi->rdlink, &ep->rdllist);
+  smp_mb();
+  if (waitqueue_active(&ep->wq))
+	wake_up(&ep->wp);
+
+But let's make it simple, thus current patch replaces ep->wq.lock
+with the ep->lock for wqueue modifications, thus wake up path
+always observes activeness of the wqueue correcty.
+
+Fixes: a218cc491420 ("epoll: use rwlock in order to reduce ep_poll_callback() contention")
+References: https://bugzilla.kernel.org/show_bug.cgi?id=205933
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Reported-by: Max Neunhoeffer <max@arangodb.com>
+Bisected-by: Max Neunhoeffer <max@arangodb.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
+Cc: Davidlohr Bueso <dbueso@suse.de>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/staging/exfat/exfat_super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Nothing interesting in v2:
+     changed the comment a bit and specified Reported-by and Bisected-by tags
 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index b81d2a87b82e..3806036c0ef6 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -364,7 +364,7 @@ static int ffsMountVol(struct super_block *sb)
- 	exfat_bdev_open(sb);
+ fs/eventpoll.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index b041b66002db..eee3c92a9ebf 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1854,9 +1854,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		waiter = true;
+ 		init_waitqueue_entry(&wait, current);
  
- 	if (p_bd->sector_size < sb->s_blocksize) {
--		printk(KERN_INFO "EXFAT: mount failed - sector size %d less than blocksize %ld\n",
-+		pr_info("EXFAT: mount failed - sector size %d less than blocksize %ld\n",
- 		       p_bd->sector_size,  sb->s_blocksize);
- 		ret = -EINVAL;
- 		goto out;
+-		spin_lock_irq(&ep->wq.lock);
++		write_lock_irq(&ep->lock);
+ 		__add_wait_queue_exclusive(&ep->wq, &wait);
+-		spin_unlock_irq(&ep->wq.lock);
++		write_unlock_irq(&ep->lock);
+ 	}
+ 
+ 	for (;;) {
+@@ -1904,9 +1904,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		goto fetch_events;
+ 
+ 	if (waiter) {
+-		spin_lock_irq(&ep->wq.lock);
++		write_lock_irq(&ep->lock);
+ 		__remove_wait_queue(&ep->wq, &wait);
+-		spin_unlock_irq(&ep->wq.lock);
++		write_unlock_irq(&ep->lock);
+ 	}
+ 
+ 	return res;
 -- 
-2.17.1
+2.24.1
 
