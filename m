@@ -2,148 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C312156E71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 05:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B4E156E92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 06:06:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgBJEZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Feb 2020 23:25:16 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:8840 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbgBJEZQ (ORCPT
+        id S1726167AbgBJFG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 00:06:28 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42467 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbgBJFG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Feb 2020 23:25:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581308716; x=1612844716;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xCqR/3TqqcEaElnFbr8xy71PvTuhQoezMiXwBlsjsdk=;
-  b=DR+X4qfCmphl0GLKLTQHk1m2p773Io2GOE4tc2OpG3ey4pk1xt0IFqC4
-   BoOeGKBzPGhNNcNQ4ljZ5U70r/A7dbnVCua0sGgZrCwg6M9seVhp2shAk
-   e+DiiEvioBly7NyvPGs2Xth0ia0BwXDZxUJ9rkVnp98URJPWzbz5ZXbau
-   whhIPq0MQvYDpUhg0U6/6njzmr6m0fP/Xc310NNzTYp3rsboGq+gKuxZF
-   wesaTZ/wBcvtTpywj6Mi29MhZHcE225mAU547iOwTduwUTHIdwoN5qI5o
-   S0Oy1f5hKx+w/8djvY5DHe01X68iuq+xzk83seekcAIG9aS/VP74BNlvL
-   w==;
-IronPort-SDR: ZfFPazZoHeQi0Y/HZAvSJVA3BFcg5TKXbwJY591vySpr4JkIJm6WhJQ1jHvRDGulyDMt10hKhy
- RmiyXDFSF9/JXLlbxsMxEkV8cwsnN27v78BcCjHzoiFWhEdyqiL1YS/E+WctkP9ou7Vtpvcysq
- Ivnuu9FSJlITPujt58a5bpqNsAoMdEDC93/SEiMPjWz/wsd9PQVnH7fokVUQlLyg5JIblBZhJ1
- 1Jo3NYJulIasPj4T++pB+TKAF4V929IAMefWxKjMM4X1Ai6ye0ySZyLLsfWX+wTq9kll4byRWA
- toU=
-X-IronPort-AV: E=Sophos;i="5.70,423,1574092800"; 
-   d="scan'208";a="133824001"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Feb 2020 12:25:16 +0800
-IronPort-SDR: GNFdp0nLFMyadicH5eXca7CzXEUXizAbAdZC9P1GKuMCmhLGkH9PYTxitNHV3eB0EivIU2MhBW
- YClWH4PvqjRjo4fU2tgSoLfKl8HFtCxatIPN45ebGbgwQhLiWmPUVPCrfxNngLUVIP1r+E2hXS
- VajYj36WnSL3GQw+eYbeD8aidBzW3vlssdX5Drkf4/Q9DF+cl776YF4mnXRmX4uRUtNlCf+lIv
- YGw/uKEuXELII4RbmzBwzFSjQsI5TOKneds/yS0e+DUL1MTqIHDhw2iRUaKqwutBjSiZAOrmhm
- coW9D5S9MK/inBDo/VWFiL/t
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 20:18:08 -0800
-IronPort-SDR: l3Fa99Y5i8cW2YP21x0i6xbpTm6ZSnTYUZUMQC6VnbMeDU8f8rQtf0ZF5Udzvv0DxrmlIRxL/z
- mHn8dCywQlDLPmsAqxr48adS3BePeaMRgvltxOdEh7glhYhc/Ch2Hfv3hFRCpD6fbMGChH5bB8
- hqKv22x4ykcTf9LHwaAYCD5NNgyU5DGcbjbDm02ig0se3fiHEjlyGUqRlLCd2zJEXBjm+yf0sQ
- npx3d8AKzSzgpa1T3meErCNiHjSAgPNlAt1EFefSzKgiq9KZXvWKPmhnDAM091yWuH6c142uDB
- lrs=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 09 Feb 2020 20:25:14 -0800
-Received: (nullmailer pid 2754475 invoked by uid 1000);
-        Mon, 10 Feb 2020 04:25:14 -0000
-Date:   Mon, 10 Feb 2020 13:25:14 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v2] mm, swap: move inode_lock out of claim_swapfile
-Message-ID: <20200210042514.h3hhuqs2v3qketjy@naota.dhcp.fujisawa.hgst.com>
-References: <20200206090132.154869-1-naohiro.aota@wdc.com>
- <20200209201612.e5f234b357823df574104cb9@linux-foundation.org>
+        Mon, 10 Feb 2020 00:06:28 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q15so5320643qke.9;
+        Sun, 09 Feb 2020 21:06:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Gkrur8ZH9ga6UJf6rP/okXyfpeLE1Q7jCwwBrZ0bZFM=;
+        b=qMDqBORmRAd5ZpgOFblqUAwZo5iLmgGGq3mA5EuH9/v9M4jnptJjMVAlIEeY9dn4AR
+         0YsfD7fsn1NcP/TI3Aps4vngLlG792/PKjX3xALpZk9POCmkIsiZJTq9S9ofE8Q4mFRk
+         eWoeL/jTylMIXjAVVXjdZILXit/Vt1OSJCBRvc07SM/K84PqtpSC1g3lu1At/Od4jJnZ
+         lZtjhHDlWVIital3eUTyZ4MpVwokI+93hWCa+7YiymA3e+CBusU+Hdl7kNCz2CTxIGGe
+         QFf0xdjVQ6mOpz7YY4fS7L6A9aHtSLUij4ZT3lxT4vMighPeqLAGWnbuvFmaMUItWkd1
+         IxtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gkrur8ZH9ga6UJf6rP/okXyfpeLE1Q7jCwwBrZ0bZFM=;
+        b=TwUZoLRlaEFYePzGEboOkW19Rwg2lPipZlCDXLXaLJ9/Xc9nbqI3zY+m0JP8bDkaiM
+         W5gDt7W9H+tpFeKA3it1eAmGNERoJW8eoCzINCXcMNmx2D/CxdgbZBPIGXYkFn8Rr+aS
+         IB7c8Q6QWn0pw/iGPoID+XnP5uwx5kUnhddCv2k87O9ipZdGF0dhJhp4B6Bq1RUvoL64
+         a+GRo88ddAYgJDVC3L5+yMsdnl8jiWB+S4HIP1Bc5TCDmyy7MmxYomZJD+8qJtiKcp8H
+         tWdo8nbvWBxH4AuTN5lRkKq1I/yYFt56y1L3zdN607qtHvxNE3yCXI/oGRkT1ERneMRB
+         quQA==
+X-Gm-Message-State: APjAAAXjwP+ulb54M6YytjQpXUMPYEF33NVPu25Yw2piY/n4sQTDkhCX
+        W7MeWoZYDY2bb8seD1WSghk=
+X-Google-Smtp-Source: APXvYqwSzMHVASezVRXSEx111LCTL6KYQKgXVKxPFaGrTTAj3Le8B8i0qPcuW9xjxatAcitodSZ5iA==
+X-Received: by 2002:a37:693:: with SMTP id 141mr9034197qkg.134.1581311186806;
+        Sun, 09 Feb 2020 21:06:26 -0800 (PST)
+Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com. [66.111.4.227])
+        by smtp.gmail.com with ESMTPSA id q130sm5238519qka.114.2020.02.09.21.06.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 09 Feb 2020 21:06:26 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 61B2A21ADD;
+        Mon, 10 Feb 2020 00:06:25 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 10 Feb 2020 00:06:25 -0500
+X-ME-Sender: <xms:0ORAXj082ZX2f0mvLw_lTVNcfgVqHnk2OdcBfKX5CZidSeTVg2qUJg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedtgdegjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvffukfhfgggtuggjsehttdertd
+    dttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhm
+    rghilhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphephedvrd
+    duheehrdduuddurdejudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqd
+    eiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhl
+    rdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:0ORAXkeaS0vsh9hphVg5ara8sSALAIK9pPbyS1APcE4TUJHV3t9Mww>
+    <xmx:0ORAXtJ708DhpCxWnYjsps7jOER7L-PblLN0wXJs425T806EKprg0Q>
+    <xmx:0ORAXr8Po-h87hb_pymMVqxE1OoNJSAo7VJHS3imKW6KlrAALEECSA>
+    <xmx:0eRAXuiXgJYAxbQsh6dLAynE3_8s0-CHQ-bPiUfqAbrstoJQ9SCh29AiXao>
+Received: from localhost (unknown [52.155.111.71])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 94EBE328005E;
+        Mon, 10 Feb 2020 00:06:23 -0500 (EST)
+Date:   Mon, 10 Feb 2020 13:06:22 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Jules Irenge <jbi.octave@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kasan-dev@googlegroups.com, akpm@linux-foundation.org,
+        dvyukov@google.com, glider@google.com, aryabinin@virtuozzo.com,
+        bsegall@google.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
+        vincent.guittot@linaro.org, juri.lelli@redhat.com,
+        peterz@infradead.org, mingo@redhat.com, mgorman@suse.de,
+        dvhart@infradead.org, tglx@linutronix.de, namhyung@kernel.org,
+        jolsa@redhat.com, alexander.shishkin@linux.intel.com,
+        mark.rutland@arm.com, acme@kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 00/11] Lock warning cleanup
+Message-ID: <20200210050622.GC69108@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
+References: <0/11>
+ <cover.1581282103.git.jbi.octave@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200209201612.e5f234b357823df574104cb9@linux-foundation.org>
+In-Reply-To: <cover.1581282103.git.jbi.octave@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 09, 2020 at 08:16:12PM -0800, Andrew Morton wrote:
->On Thu,  6 Feb 2020 18:01:32 +0900 Naohiro Aota <naohiro.aota@wdc.com> wrote:
->
->> claim_swapfile() currently keeps the inode locked when it is successful, or
->> the file is already swapfile (with -EBUSY). And, on the other error cases,
->> it does not lock the inode.
->>
->> This inconsistency of the lock state and return value is quite confusing
->> and actually causing a bad unlock balance as below in the "bad_swap"
->> section of __do_sys_swapon().
->>
->> This commit fixes this issue by moving the inode_lock() and IS_SWAPFILE
->> check out of claim_swapfile(). The inode is unlocked in
->> "bad_swap_unlock_inode" section, so that the inode is ensured to be
->> unlocked at "bad_swap". Thus, error handling codes after the locking now
->> jumps to "bad_swap_unlock_inode" instead of "bad_swap".
->>
->>     =====================================
->>     WARNING: bad unlock balance detected!
->>     5.5.0-rc7+ #176 Not tainted
->>     -------------------------------------
->>     swapon/4294 is trying to release lock (&sb->s_type->i_mutex_key) at:
->>     [<ffffffff8173a6eb>] __do_sys_swapon+0x94b/0x3550
->>     but there are no more locks to release!
->>
->>     other info that might help us debug this:
->>     no locks held by swapon/4294.
->>
->>     stack backtrace:
->>     CPU: 5 PID: 4294 Comm: swapon Not tainted 5.5.0-rc7-BTRFS-ZNS+ #176
->>     Hardware name: ASUS All Series/H87-PRO, BIOS 2102 07/29/2014
->>     Call Trace:
->>      dump_stack+0xa1/0xea
->>      ? __do_sys_swapon+0x94b/0x3550
->>      print_unlock_imbalance_bug.cold+0x114/0x123
->>      ? __do_sys_swapon+0x94b/0x3550
->>      lock_release+0x562/0xed0
->>      ? kvfree+0x31/0x40
->>      ? lock_downgrade+0x770/0x770
->>      ? kvfree+0x31/0x40
->>      ? rcu_read_lock_sched_held+0xa1/0xd0
->>      ? rcu_read_lock_bh_held+0xb0/0xb0
->>      up_write+0x2d/0x490
->>      ? kfree+0x293/0x2f0
->>      __do_sys_swapon+0x94b/0x3550
->>      ? putname+0xb0/0xf0
->>      ? kmem_cache_free+0x2e7/0x370
->>      ? do_sys_open+0x184/0x3e0
->>      ? generic_max_swapfile_size+0x40/0x40
->>      ? do_syscall_64+0x27/0x4b0
->>      ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>      ? lockdep_hardirqs_on+0x38c/0x590
->>      __x64_sys_swapon+0x54/0x80
->>      do_syscall_64+0xa4/0x4b0
->>      entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>     RIP: 0033:0x7f15da0a0dc7
->>
->>  mm/swapfile.c | 41 ++++++++++++++++++++---------------------
->>  1 file changed, 20 insertions(+), 21 deletions(-)
->>
->> diff --git a/mm/swapfile.c b/mm/swapfile.c
->> index bb3261d45b6a..2c4c349e1101 100644
->> --- a/mm/swapfile.c
->> +++ b/mm/swapfile.c
->
->Look correct to me.
->
->But I don't think this code at the end of sys_swapon():
->
->	if (inode)
->		inode_unlock(inode);
->
->will ever execute?  `inode' is always NULL here?
+Hi Jules,
 
-On the successful case, inode is not NULL and unlocked here.
+On Sun, Feb 09, 2020 at 10:24:42PM +0000, Jules Irenge wrote:
+> This patch series adds missing annotations to functions that register warnings of context imbalance when built with Sparse tool.
+> The adds fix the warnings and give insight on what the functions are actually doing.
+> 
+> 1. Within the futex subsystem, a __releases(&pi_state->.pi_mutex.wait_lock) is added because wake_futex_pi() only releases the lock at exit,
+> must_hold(q->lock_ptr) have been added to fixup_pi_state_owner() because the lock is held at entry and exit;
+> a __releases(&hb->lock) added to futex_wait_queue_me() as it only releases the lock.
+> 
+> 2. Within fs_pin, a __releases(RCU) is added because the function exit RCU critical section at exit.
+> 
+> 3. In kasan, an __acquires(&report_lock) has been added to start_report() and   __releases(&report_lock) to end_report() 
+> 
+> 4. Within ring_buffer subsystem, a __releases(RCU) has been added perf_output_end() 
+> 
+> 5. schedule subsystem recorded an addition of the __releases(rq->lock) annotation and a __must_hold(this_rq->lock)
+> 
+> 6. At hrtimer subsystem, __acquires(timer) is added  to lock_hrtimer_base() as the function acquire the lock but never releases it.
+> Jules Irenge (11):
+>   hrtimer: Add missing annotation to lock_hrtimer_base()
+>   futex: Add missing annotation for wake_futex_pi()
+>   futex: Add missing annotation for fixup_pi_state_owner()
 
->
+Given that those three patches have been sent and reviewed, please do
+increase the version number (this time, for example, using v2) when
+sending the updated ones. Also please add a few sentences after the
+commit log describing what you have changed between versions.
+
+Here is an example:
+
+	https://lore.kernel.org/lkml/20200124231834.63628-4-pmalani@chromium.org/
+
+Regards,
+Boqun
+
+>   perf/ring_buffer: Add missing annotation to perf_output_end()
+>   sched/fair: Add missing annotation for nohz_newidle_balance()
+>   sched/deadline: Add missing annotation for dl_task_offline_migration()
+>   fs_pin: Add missing annotation for pin_kill() declaration
+>   fs_pin: Add missing annotation for pin_kill() definition
+>   kasan: add missing annotation for start_report()
+>   kasan: add missing annotation for end_report()
+>   futex: Add missing annotation for futex_wait_queue_me()
+> 
+>  fs/fs_pin.c                 | 2 +-
+>  include/linux/fs_pin.h      | 2 +-
+>  kernel/events/ring_buffer.c | 2 +-
+>  kernel/futex.c              | 3 +++
+>  kernel/sched/deadline.c     | 1 +
+>  kernel/sched/fair.c         | 2 +-
+>  kernel/time/hrtimer.c       | 1 +
+>  mm/kasan/report.c           | 4 ++--
+>  8 files changed, 11 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.24.1
+> 
