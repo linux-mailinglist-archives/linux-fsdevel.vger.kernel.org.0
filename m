@@ -2,81 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265701585FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 00:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15590158627
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 00:29:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbgBJXL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 18:11:27 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43014 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbgBJXL0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:11:26 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 9so5560599lfq.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2020 15:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jHnULLRvzcnTmrApgk0J6kXZO0qLfuB4AVQHnM4cmAE=;
-        b=esB/56n6Q/Msdc20g+jexMovttxt6hCUBxvlvmdqGEumLlcmF5aj3v38oGR21nFNxo
-         cOk4ekYVR6FdU2NjqUfNrI3LKVvMII6sqM7sSRTkqviALl/XYnv7z0n+5b5yYI3Lni/Z
-         pHlhrG3K7Bp+8RWOpjWHLKMsY1f7PTIEy4J/RPb301AvTHMZeUbf9QaVy+/1sChmohPn
-         5sq+e6/X6b3sYiGh+ziR8racoEm4OmMe/es+FRFQCba4zTFopBh8xK7owBMwffjbGKty
-         kt8xNXlsArGuuruRAvzftXBAFrERmdhUUoEdMwiUrXKqtFq9YOe+1lKW7UiPQs4r9v/n
-         YlSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jHnULLRvzcnTmrApgk0J6kXZO0qLfuB4AVQHnM4cmAE=;
-        b=PBxv+VmCfBBM4HdCN9bz4/Y89hWGYaXITM0FTu0iTA93s+T6bSk5w3Xi/Ok2JwT9r/
-         12y7FBNqC1HJ7+3dPZx+b+Wa9rScHP90GHX8cAFeO6efP73289X6UxM2AMdRfxfH2KXv
-         lUUiYyA0WTbLH33sXZz9SbseE6+Ja+cOaqP8WKlfnKeTqm5Sg5V/VU4hB/2wwHsgoDzp
-         VZF6v3YEDQ5oCCGYm8bWBhE1QnxhXSFIQyTw+4nxPoDVv32FA53AB807v/rlS1/lqK80
-         vXMMXY6/b541nuf8LmVK+FUkKIsHBKRwvKSndaQxPnu75AAUgHsoSKhCaqhs9YkrdAnN
-         b3yQ==
-X-Gm-Message-State: APjAAAXcx8PjTicw5Ky+2bCRV5RBdpUgpTGkGdSurKkoIzwf/k+gjo6B
-        xkfoNwMwD3FNF39tgaSjTKETOrETQQWjtvFWm1J4Mw==
-X-Google-Smtp-Source: APXvYqxiERXVniVJSVLKbVx/xqUKUzq4lPf5gqhBdctRYV5+IUwsgO7mOTwXnfu4yRdcGlrvRlDwJrZV+Drqhe6D0W8=
-X-Received: by 2002:a05:6512:2035:: with SMTP id s21mr1781905lfs.99.1581376284825;
- Mon, 10 Feb 2020 15:11:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20200208013552.241832-1-drosen@google.com> <20200208013552.241832-3-drosen@google.com>
- <20200208021216.GE23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200208021216.GE23230@ZenIV.linux.org.uk>
-From:   Daniel Rosenberg <drosen@google.com>
-Date:   Mon, 10 Feb 2020 15:11:13 -0800
-Message-ID: <CA+PiJmTYbEA-hgrKwtp0jZXqsfYrzgogOZ0Pt=gTCtqhBfnqFA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/8] fs: Add standard casefolding support
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1727490AbgBJX3o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 18:29:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727431AbgBJX3n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:29:43 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C811720715;
+        Mon, 10 Feb 2020 23:29:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581377383;
+        bh=arVTznMqw7xSxW48Xo/OdvgIkpvkcwR1RQPNs8Mqguo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qzalTtHDkFIFUek6BIN5kt1TeDL0ALjfwfuqsItj0pOx/yZ4SUnYZehxsznRPipug
+         H/9+Ux3iYsy2dwEDCjT+RTk/gLNwS0yh9idUQ724WMQc2539PzKIgzXgsmGN+woMVj
+         YhQl0wCBUBeBTdJYsQGLGsytuKvjYdYM25aCV068=
+Date:   Mon, 10 Feb 2020 15:29:42 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: Re: [PATCH 01/12] mm: fix a comment in sys_swapon
+Message-Id: <20200210152942.2ec4d0b71851feccb7387266@linux-foundation.org>
+In-Reply-To: <20200114161225.309792-2-hch@lst.de>
+References: <20200114161225.309792-1-hch@lst.de>
+        <20200114161225.309792-2-hch@lst.de>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 6:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Feb 07, 2020 at 05:35:46PM -0800, Daniel Rosenberg wrote:
->
->
-> Again, is that safe in case when the contents of the string str points to
-> keeps changing under you?
+On Tue, 14 Jan 2020 17:12:14 +0100 Christoph Hellwig <hch@lst.de> wrote:
 
-I'm not sure what you mean. I thought it was safe to use the str and
-len passed into d_compare. Even if it gets changed under RCU
-conditions I thought there was some code to ensure that the name/len
-pair passed in is consistent, and any other inconsistencies would get
-caught by d_seq later. Are there unsafe code paths that can follow?
+> claim_swapfile now always takes i_rwsem.
+> 
+> ...
+>
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -3157,7 +3157,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+>  	mapping = swap_file->f_mapping;
+>  	inode = mapping->host;
+>  
+> -	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
+> +	/* will take i_rwsem; */
+>  	error = claim_swapfile(p, inode);
+>  	if (unlikely(error))
+>  		goto bad_swap;
+
+http://lkml.kernel.org/r/20200206090132.154869-1-naohiro.aota@wdc.com
+removes this comment altogether.  Please check that this is OK?
+
