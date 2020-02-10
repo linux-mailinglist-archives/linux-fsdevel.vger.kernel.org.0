@@ -2,121 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD99815828B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 19:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C414C15828D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 19:37:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbgBJSg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 13:36:29 -0500
-Received: from mail-pj1-f46.google.com ([209.85.216.46]:36382 "EHLO
-        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbgBJSg1 (ORCPT
+        id S1727721AbgBJSge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 13:36:34 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:55010 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBJSgd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:36:27 -0500
-Received: by mail-pj1-f46.google.com with SMTP id gv17so119608pjb.1;
-        Mon, 10 Feb 2020 10:36:27 -0800 (PST)
+        Mon, 10 Feb 2020 13:36:33 -0500
+Received: by mail-pj1-f67.google.com with SMTP id dw13so127221pjb.4;
+        Mon, 10 Feb 2020 10:36:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TGovp5+mlZOcilFelIZAYHcz5dqg4ID3OAhR8cryaZc=;
-        b=TzF1R5W827UBKMgaeJW2wS/jV1wxHvSaD09AgiWXsI63/lGrUwyz3NXwJGlY+5IRnE
-         TSU6/TtroJDywE5DJPQv8GE4j8Fp3LT6jOvjBCowav5A0K1aR0UqDP6oShTlxu5WVavI
-         gGmLMKrCTTptTBs9DtHyI92XaCd6yrc/4D7JAdW5kBlJ4YItA/Zi/h+UisxyAKPyb2Zq
-         lath+zxBVrci+L/H7IVXkgCl1f7XPmigsCW3nZhrSIgglwKeo62OdtBgvFK/VPuF13st
-         vm7rhONFuMqUtcs9H8couOsFq2CUv1awWp/Gm8oodVVGMTcMHTW2CUB5l3a2X7Bt9L7+
-         s7Dg==
+        bh=MK4FsxQjpBNz1uNjA2K6ekiAek4HjCsK/Enob1qIWZI=;
+        b=uxHdw1vc9gBxU31jAbcH/OYulGOnEK1+UslP0RDl0CtmGs4N+K5pwHErkxDppi/DeH
+         T/4jDepJekHSiDfAvF5f+HMyY79O3gnaQCF+SLOJXR49AXsqwUhsEVWfJrH+zIvdufl6
+         hbAKUh4Xz5N+Fy+OYjQYcDQY83GLE5Nfg+Uon6tKnJbTSqlGVyFU2Zk59YTbXvHIpGru
+         lvrn8hcENFUYLIxpCqEah48gIYbS0N1FqXSPsPYoJ7n6rzVCJIrhfNiNFLRizA/LsW8F
+         bu4To/edOREVdlZaEJYMq6zJdIXvN+uKXuDLhR7fKjsmUTeuKimOAXsewDR3LAQi5fQ4
+         0j6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TGovp5+mlZOcilFelIZAYHcz5dqg4ID3OAhR8cryaZc=;
-        b=Lwg3XweDuxTfvfYOkZjKIm5UJ+STTVnOO4SLg4cGuE84lEjRY/pSA4T5vk+/hT+hQb
-         pWqUH1CIvFw1IczHdKuzpO7kniZqwop45LaAd85YOKbNkLUfIxPu5UYvKxvmtKft7/HH
-         BD3EYa6QbY44w/DHInulga5aK/ynw6ZjL+vXKEjGdyzwb1g/7oalu6/JTx7B0j+3aJsC
-         GBFsixOmsw+nRMKgRpG4+mbe+rbH6YZBWRj7YhJW4y9pXGLcUY3FVvSKvDaMNmvAKwH4
-         WTTk1HJ2mdh8RFizELDn+jWA9j/rmlFfhlK8H05m/cZireKuc9UfFIVlw4iOdG7eow6u
-         fb2A==
-X-Gm-Message-State: APjAAAUo+8DR+H+wzcnBBVH0ZkFoaaL7CE8q1MSnJQlgylzYOSelI1ej
-        RR65bFvwNcoC1T/3VlweGGlFrGeybxc=
-X-Google-Smtp-Source: APXvYqzfovHWYqXa5ytLSEwg1TcHjkmWIvcU/eg55j/XQ0jyFbelt+aqSD6th0kZfOH1Xl3C2dU46Q==
-X-Received: by 2002:a17:902:aa45:: with SMTP id c5mr13771719plr.113.1581359787196;
-        Mon, 10 Feb 2020 10:36:27 -0800 (PST)
+        bh=MK4FsxQjpBNz1uNjA2K6ekiAek4HjCsK/Enob1qIWZI=;
+        b=AMwhGyrRJ85B7+w8rXNonzoGKaYo2fVYBJ63nfxKlJZ5wDWUH8xmuwP7JRpe5+ti2I
+         2JRCcW1Il9kIBD4LkKqWemPrvpRhfQoJsyXFfeaF1EdPxrzalBamq7A03VrCM0DzxrK6
+         b2qExtIlSuUqLH5lH4dBv6bgvaarXT1X3JfKoinY6Pt/7i8qpwUmw4Web4f8MODZNYfZ
+         /bBPmuzImoiNVIs/g8f3x6pu+vN9DVkaSxGRZhIGs2ECgGoEh8ITetPXGodDNaWDU+uz
+         t2xjFREjOZT7q/iaeiCIUD+f3hy8gL2VROIGHOZc096bNPO+mnZbR63NPKI2UxoSjEcu
+         csmg==
+X-Gm-Message-State: APjAAAV/Wk5s0Z3HUCuZB8EyfJGYEjX9+5OzClWlz3MJoziw+A8cuX5w
+        4CkMsHczSDKyCWkSSbNYlFw=
+X-Google-Smtp-Source: APXvYqxrh57Ubkljq7LtUH0VkJ43yunbCWzoZ8Itz+ryTwxjAJJQEu9mcmlZH8yyul3LIohZ3QJyRw==
+X-Received: by 2002:a17:902:694c:: with SMTP id k12mr13765402plt.329.1581359792899;
+        Mon, 10 Feb 2020 10:36:32 -0800 (PST)
 Received: from localhost.localdomain ([2405:204:8308:74f3:144f:bb39:afc3:51b0])
-        by smtp.gmail.com with ESMTPSA id gc1sm124922pjb.20.2020.02.10.10.36.21
+        by smtp.gmail.com with ESMTPSA id gc1sm124922pjb.20.2020.02.10.10.36.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 10:36:26 -0800 (PST)
+        Mon, 10 Feb 2020 10:36:32 -0800 (PST)
 From:   Pragat Pandya <pragat.pandya@gmail.com>
 To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH v2 00/19] Renaming some identifiers. 
-Date:   Tue, 11 Feb 2020 00:05:39 +0530
-Message-Id: <20200210183558.11836-1-pragat.pandya@gmail.com>
+Subject: [PATCH v2 01/19] staging: exfat: Rename variable 'Year' to 'year'
+Date:   Tue, 11 Feb 2020 00:05:40 +0530
+Message-Id: <20200210183558.11836-2-pragat.pandya@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200207094612.GA562325@kroah.com>
+In-Reply-To: <20200210183558.11836-1-pragat.pandya@gmail.com>
 References: <20200207094612.GA562325@kroah.com>
+ <20200210183558.11836-1-pragat.pandya@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset renames following nineteen variables in exfat.h
 Fix checkpatch warning: Avoid CamelCase
- -Year->year
- -Day->day
- -Hour->hour
- -Minute->minute
- -Second->second
- -Millisecond->millisecond
- -FatType->fat_type
- -ClusterSize->cluster_size
- -NumClusters->num_clusters
- -FreeClusters->free_clusters
- -UsedClusters->used_clusters
- -Name->name
- -ShortName->short_name
- -Attr->attr
- -NumSubdirs->num_subdirs
- -CreateTimestamp->create_timestamp
- -ModifyTimestamp->modify_timestamp
- -AccessTimestamp->access_timestamp
+Change all occurrences of identifier "Year" to "year"
 
-v2:
- -Correct misplaced quatation character in subject line(s).
- -Remove unnecessary '_'(underscore) character in renaming of identifier
-  MilliSecond.
- -Drop commits renaming unused structure members.
+Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+---
+ drivers/staging/exfat/exfat.h       |  2 +-
+ drivers/staging/exfat/exfat_super.c | 20 ++++++++++----------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-
-Pragat Pandya (19):
-  staging: exfat: Rename variable 'Year' to 'year'
-  staging: exfat: Rename variable 'Month' to 'month'
-  staging: exfat: Rename variable 'Day' to 'day'
-  staging: exfat: Rename variable 'Hour' to 'hour'
-  staging: exfat: Rename variable 'Minute' to 'minute'
-  staging: exfat: Rename variable 'Second' to 'second'
-  staging: exfat: Rename variable 'MilliSecond' to 'millisecond'
-  staging: exfat: Rename variable 'FatType' to 'fat_type'
-  staging: exfat: Rename variable 'ClusterSize' to 'cluster_size'
-  staging: exfat: Rename variable 'NumClusters' to 'num_clusters'
-  staging: exfat: Rename variable 'FreeClusters' to 'free_clusters'
-  staging: exfat: Rename variable 'UsedClusters' to 'used_clusters'
-  staging: exfat: Rename variable 'Name' to 'name'
-  staging: exfat: Rename variable 'ShortName' to 'short_name'
-  staging: exfat: Rename variable 'Attr' to 'attr'
-  staging: exfat: Rename variable 'NumSubdirs' to 'num_subdirs'
-  staging: exfat: Rename variable 'CreateTimestamp' to
-    'create_timestamp'
-  staging: exfat: Rename variable 'ModifyTimestamp' to
-    'modify_timestamp'
-  staging: exfat: Rename variable 'AccessTimestamp' to
-    'access_timestamp'
-
- drivers/staging/exfat/exfat.h       |  38 ++---
- drivers/staging/exfat/exfat_super.c | 232 ++++++++++++++--------------
- 2 files changed, 135 insertions(+), 135 deletions(-)
-
+diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+index 4d87360fab35..30ec81250f08 100644
+--- a/drivers/staging/exfat/exfat.h
++++ b/drivers/staging/exfat/exfat.h
+@@ -222,7 +222,7 @@ static inline u16 get_row_index(u16 i)
+ #endif
+ 
+ struct date_time_t {
+-	u16      Year;
++	u16      year;
+ 	u16      Month;
+ 	u16      Day;
+ 	u16      Hour;
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index b81d2a87b82e..c2b97a059f52 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -59,7 +59,7 @@ static void exfat_write_super(struct super_block *sb);
+ /* Convert a FAT time/date pair to a UNIX date (seconds since 1 1 70). */
+ static void exfat_time_fat2unix(struct timespec64 *ts, struct date_time_t *tp)
+ {
+-	ts->tv_sec = mktime64(tp->Year + 1980, tp->Month + 1, tp->Day,
++	ts->tv_sec = mktime64(tp->year + 1980, tp->Month + 1, tp->Day,
+ 			      tp->Hour, tp->Minute, tp->Second);
+ 
+ 	ts->tv_nsec = tp->MilliSecond * NSEC_PER_MSEC;
+@@ -80,7 +80,7 @@ static void exfat_time_unix2fat(struct timespec64 *ts, struct date_time_t *tp)
+ 		tp->Hour	= 0;
+ 		tp->Day		= 1;
+ 		tp->Month	= 1;
+-		tp->Year	= 0;
++		tp->year	= 0;
+ 		return;
+ 	}
+ 
+@@ -91,7 +91,7 @@ static void exfat_time_unix2fat(struct timespec64 *ts, struct date_time_t *tp)
+ 		tp->Hour	= 23;
+ 		tp->Day		= 31;
+ 		tp->Month	= 12;
+-		tp->Year	= 127;
++		tp->year	= 127;
+ 		return;
+ 	}
+ 
+@@ -101,7 +101,7 @@ static void exfat_time_unix2fat(struct timespec64 *ts, struct date_time_t *tp)
+ 	tp->Hour	= tm.tm_hour;
+ 	tp->Day		= tm.tm_mday;
+ 	tp->Month	= tm.tm_mon + 1;
+-	tp->Year	= tm.tm_year + 1900 - 1980;
++	tp->year	= tm.tm_year + 1900 - 1980;
+ }
+ 
+ struct timestamp_t *tm_current(struct timestamp_t *tp)
+@@ -1505,7 +1505,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	info->Attr = exfat_get_entry_attr(ep);
+ 
+ 	exfat_get_entry_time(ep, &tm, TM_CREATE);
+-	info->CreateTimestamp.Year = tm.year;
++	info->CreateTimestamp.year = tm.year;
+ 	info->CreateTimestamp.Month = tm.mon;
+ 	info->CreateTimestamp.Day = tm.day;
+ 	info->CreateTimestamp.Hour = tm.hour;
+@@ -1514,7 +1514,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	info->CreateTimestamp.MilliSecond = 0;
+ 
+ 	exfat_get_entry_time(ep, &tm, TM_MODIFY);
+-	info->ModifyTimestamp.Year = tm.year;
++	info->ModifyTimestamp.year = tm.year;
+ 	info->ModifyTimestamp.Month = tm.mon;
+ 	info->ModifyTimestamp.Day = tm.day;
+ 	info->ModifyTimestamp.Hour = tm.hour;
+@@ -1610,7 +1610,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 	tm.hour = info->CreateTimestamp.Hour;
+ 	tm.day  = info->CreateTimestamp.Day;
+ 	tm.mon  = info->CreateTimestamp.Month;
+-	tm.year = info->CreateTimestamp.Year;
++	tm.year = info->CreateTimestamp.year;
+ 	exfat_set_entry_time(ep, &tm, TM_CREATE);
+ 
+ 	tm.sec  = info->ModifyTimestamp.Second;
+@@ -1618,7 +1618,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 	tm.hour = info->ModifyTimestamp.Hour;
+ 	tm.day  = info->ModifyTimestamp.Day;
+ 	tm.mon  = info->ModifyTimestamp.Month;
+-	tm.year = info->ModifyTimestamp.Year;
++	tm.year = info->ModifyTimestamp.year;
+ 	exfat_set_entry_time(ep, &tm, TM_MODIFY);
+ 
+ 	exfat_set_entry_size(ep2, info->Size);
+@@ -1922,7 +1922,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 			dir_entry->Attr = exfat_get_entry_attr(ep);
+ 
+ 			exfat_get_entry_time(ep, &tm, TM_CREATE);
+-			dir_entry->CreateTimestamp.Year = tm.year;
++			dir_entry->CreateTimestamp.year = tm.year;
+ 			dir_entry->CreateTimestamp.Month = tm.mon;
+ 			dir_entry->CreateTimestamp.Day = tm.day;
+ 			dir_entry->CreateTimestamp.Hour = tm.hour;
+@@ -1931,7 +1931,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 			dir_entry->CreateTimestamp.MilliSecond = 0;
+ 
+ 			exfat_get_entry_time(ep, &tm, TM_MODIFY);
+-			dir_entry->ModifyTimestamp.Year = tm.year;
++			dir_entry->ModifyTimestamp.year = tm.year;
+ 			dir_entry->ModifyTimestamp.Month = tm.mon;
+ 			dir_entry->ModifyTimestamp.Day = tm.day;
+ 			dir_entry->ModifyTimestamp.Hour = tm.hour;
 -- 
 2.17.1
 
