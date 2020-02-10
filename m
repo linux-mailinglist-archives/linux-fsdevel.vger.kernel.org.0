@@ -2,81 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BD4158255
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 19:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD99815828B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 19:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgBJSa7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 13:30:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727496AbgBJSa6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 13:30:58 -0500
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EA7920870
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2020 18:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581359458;
-        bh=omPLg79kMPvUSKiyNNvd0/ylILD31wzwomGJPrNGyQg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dZmJEdXyo7TiCuP494908+DDQqiXuByAFM/5ZYZdUBh1RBbsjG4Nj8BtvNderACDu
-         buUtqSZaMUtzDuCNulwdaDkgV5kqZL7lno4QgAbQ/lGQBv705tgeTFjmzJtXJCSjQ1
-         BFRJCZcEs4eVwRoiOiwkJ6JclPVFDKSbcrF3PIR0=
-Received: by mail-wr1-f44.google.com with SMTP id k11so9020251wrd.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Feb 2020 10:30:58 -0800 (PST)
-X-Gm-Message-State: APjAAAWcHROSf0h5CiREAiUQok5geLwDvLLn45grUJqAzatvDYl9h3B+
-        y9JDkpqtqH+bP6TeEXvEiEJ9gUGYKiivqinrNW7nYQ==
-X-Google-Smtp-Source: APXvYqzr7b50VDslir7PKIqAsDCapDo139eIqmv/8TM15nWdMYYpgSAHPnXtkGdcaP89mSWD9lXJHS+xhiOGpQ18who=
-X-Received: by 2002:adf:ea85:: with SMTP id s5mr3242839wrm.75.1581359456683;
- Mon, 10 Feb 2020 10:30:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com> <20200210150519.538333-6-gladkov.alexey@gmail.com>
-In-Reply-To: <20200210150519.538333-6-gladkov.alexey@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 10 Feb 2020 10:30:45 -0800
-X-Gmail-Original-Message-ID: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
-Message-ID: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
-Subject: Re: [PATCH v8 05/11] proc: add helpers to set and get proc hidepid
- and gid mount options
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727665AbgBJSg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 13:36:29 -0500
+Received: from mail-pj1-f46.google.com ([209.85.216.46]:36382 "EHLO
+        mail-pj1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBJSg1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:36:27 -0500
+Received: by mail-pj1-f46.google.com with SMTP id gv17so119608pjb.1;
+        Mon, 10 Feb 2020 10:36:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TGovp5+mlZOcilFelIZAYHcz5dqg4ID3OAhR8cryaZc=;
+        b=TzF1R5W827UBKMgaeJW2wS/jV1wxHvSaD09AgiWXsI63/lGrUwyz3NXwJGlY+5IRnE
+         TSU6/TtroJDywE5DJPQv8GE4j8Fp3LT6jOvjBCowav5A0K1aR0UqDP6oShTlxu5WVavI
+         gGmLMKrCTTptTBs9DtHyI92XaCd6yrc/4D7JAdW5kBlJ4YItA/Zi/h+UisxyAKPyb2Zq
+         lath+zxBVrci+L/H7IVXkgCl1f7XPmigsCW3nZhrSIgglwKeo62OdtBgvFK/VPuF13st
+         vm7rhONFuMqUtcs9H8couOsFq2CUv1awWp/Gm8oodVVGMTcMHTW2CUB5l3a2X7Bt9L7+
+         s7Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TGovp5+mlZOcilFelIZAYHcz5dqg4ID3OAhR8cryaZc=;
+        b=Lwg3XweDuxTfvfYOkZjKIm5UJ+STTVnOO4SLg4cGuE84lEjRY/pSA4T5vk+/hT+hQb
+         pWqUH1CIvFw1IczHdKuzpO7kniZqwop45LaAd85YOKbNkLUfIxPu5UYvKxvmtKft7/HH
+         BD3EYa6QbY44w/DHInulga5aK/ynw6ZjL+vXKEjGdyzwb1g/7oalu6/JTx7B0j+3aJsC
+         GBFsixOmsw+nRMKgRpG4+mbe+rbH6YZBWRj7YhJW4y9pXGLcUY3FVvSKvDaMNmvAKwH4
+         WTTk1HJ2mdh8RFizELDn+jWA9j/rmlFfhlK8H05m/cZireKuc9UfFIVlw4iOdG7eow6u
+         fb2A==
+X-Gm-Message-State: APjAAAUo+8DR+H+wzcnBBVH0ZkFoaaL7CE8q1MSnJQlgylzYOSelI1ej
+        RR65bFvwNcoC1T/3VlweGGlFrGeybxc=
+X-Google-Smtp-Source: APXvYqzfovHWYqXa5ytLSEwg1TcHjkmWIvcU/eg55j/XQ0jyFbelt+aqSD6th0kZfOH1Xl3C2dU46Q==
+X-Received: by 2002:a17:902:aa45:: with SMTP id c5mr13771719plr.113.1581359787196;
+        Mon, 10 Feb 2020 10:36:27 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:8308:74f3:144f:bb39:afc3:51b0])
+        by smtp.gmail.com with ESMTPSA id gc1sm124922pjb.20.2020.02.10.10.36.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 10:36:26 -0800 (PST)
+From:   Pragat Pandya <pragat.pandya@gmail.com>
+To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Pragat Pandya <pragat.pandya@gmail.com>
+Subject: [PATCH v2 00/19] Renaming some identifiers. 
+Date:   Tue, 11 Feb 2020 00:05:39 +0530
+Message-Id: <20200210183558.11836-1-pragat.pandya@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200207094612.GA562325@kroah.com>
+References: <20200207094612.GA562325@kroah.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
-> This is a cleaning patch to add helpers to set and get proc mount
-> options instead of directly using them. This make it easy to track
-> what's happening and easy to update in future.
+This patchset renames following nineteen variables in exfat.h
+Fix checkpatch warning: Avoid CamelCase
+ -Year->year
+ -Day->day
+ -Hour->hour
+ -Minute->minute
+ -Second->second
+ -Millisecond->millisecond
+ -FatType->fat_type
+ -ClusterSize->cluster_size
+ -NumClusters->num_clusters
+ -FreeClusters->free_clusters
+ -UsedClusters->used_clusters
+ -Name->name
+ -ShortName->short_name
+ -Attr->attr
+ -NumSubdirs->num_subdirs
+ -CreateTimestamp->create_timestamp
+ -ModifyTimestamp->modify_timestamp
+ -AccessTimestamp->access_timestamp
 
-On a cursory inspection, this looks like it obfuscates the code, and I
-don't see where it does something useful later in the series.  What is
-this abstraction for?
+v2:
+ -Correct misplaced quatation character in subject line(s).
+ -Remove unnecessary '_'(underscore) character in renaming of identifier
+  MilliSecond.
+ -Drop commits renaming unused structure members.
 
---Andy
+
+Pragat Pandya (19):
+  staging: exfat: Rename variable 'Year' to 'year'
+  staging: exfat: Rename variable 'Month' to 'month'
+  staging: exfat: Rename variable 'Day' to 'day'
+  staging: exfat: Rename variable 'Hour' to 'hour'
+  staging: exfat: Rename variable 'Minute' to 'minute'
+  staging: exfat: Rename variable 'Second' to 'second'
+  staging: exfat: Rename variable 'MilliSecond' to 'millisecond'
+  staging: exfat: Rename variable 'FatType' to 'fat_type'
+  staging: exfat: Rename variable 'ClusterSize' to 'cluster_size'
+  staging: exfat: Rename variable 'NumClusters' to 'num_clusters'
+  staging: exfat: Rename variable 'FreeClusters' to 'free_clusters'
+  staging: exfat: Rename variable 'UsedClusters' to 'used_clusters'
+  staging: exfat: Rename variable 'Name' to 'name'
+  staging: exfat: Rename variable 'ShortName' to 'short_name'
+  staging: exfat: Rename variable 'Attr' to 'attr'
+  staging: exfat: Rename variable 'NumSubdirs' to 'num_subdirs'
+  staging: exfat: Rename variable 'CreateTimestamp' to
+    'create_timestamp'
+  staging: exfat: Rename variable 'ModifyTimestamp' to
+    'modify_timestamp'
+  staging: exfat: Rename variable 'AccessTimestamp' to
+    'access_timestamp'
+
+ drivers/staging/exfat/exfat.h       |  38 ++---
+ drivers/staging/exfat/exfat_super.c | 232 ++++++++++++++--------------
+ 2 files changed, 135 insertions(+), 135 deletions(-)
+
+-- 
+2.17.1
+
