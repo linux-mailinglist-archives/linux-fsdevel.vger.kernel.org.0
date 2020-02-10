@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D9B1571ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 10:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 415631571EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 10:42:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbgBJJmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727435AbgBJJmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 10 Feb 2020 04:42:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51736 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:51726 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727429AbgBJJmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1726950AbgBJJmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 10 Feb 2020 04:42:18 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8FDE0AEC4;
+        by mx2.suse.de (Postfix) with ESMTP id 8F822ADEE;
         Mon, 10 Feb 2020 09:42:16 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
@@ -24,10 +24,12 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] epoll: fix possible lost wakeup on epoll_ctl() path
-Date:   Mon, 10 Feb 2020 10:41:21 +0100
-Message-Id: <20200210094123.389854-1-rpenyaev@suse.de>
+Subject: [PATCH v2 2/3] epoll: ep->wq can be woken up unlocked in certain cases
+Date:   Mon, 10 Feb 2020 10:41:22 +0100
+Message-Id: <20200210094123.389854-2-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200210094123.389854-1-rpenyaev@suse.de>
+References: <20200210094123.389854-1-rpenyaev@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -36,37 +38,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This fixes possible lost wakeup introduced by the a218cc491420.
-Originally modifications to ep->wq were serialized by ep->wq.lock,
-but in the a218cc491420 new rw lock was introduced in order to
-relax fd event path, i.e. callers of ep_poll_callback() function.
+Now ep->lock is responsible for wqueue serialization, thus if ep->lock
+is taken on write path, wake_up_locked() can be invoked.
 
-After the change ep_modify and ep_insert (both are called on
-epoll_ctl() path) were switched to ep->lock, but ep_poll
-(epoll_wait) was using ep->wq.lock on wqueue list modification.
+Though, read path is different.  Since concurrent cpus can enter the
+wake up function it needs to be internally serialized, thus wake_up()
+variant is used which implies internal spin lock.
 
-The bug doesn't lead to any wqueue list corruptions, because wake up
-path and list modifications were serialized by ep->wq.lock
-internally, but actual waitqueue_active() check prior wake_up()
-call can be reordered with modifications of ep ready list, thus
-wake up can be lost.
-
-And yes, can be healed by explicit smp_mb():
-
-  list_add_tail(&epi->rdlink, &ep->rdllist);
-  smp_mb();
-  if (waitqueue_active(&ep->wq))
-	wake_up(&ep->wp);
-
-But let's make it simple, thus current patch replaces ep->wq.lock
-with the ep->lock for wqueue modifications, thus wake up path
-always observes activeness of the wqueue correcty.
-
-Fixes: a218cc491420 ("epoll: use rwlock in order to reduce ep_poll_callback() contention")
-References: https://bugzilla.kernel.org/show_bug.cgi?id=205933
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Reported-by: Max Neunhoeffer <max@arangodb.com>
-Bisected-by: Max Neunhoeffer <max@arangodb.com>
+Cc: Max Neunhoeffer <max@arangodb.com>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
 Cc: Davidlohr Bueso <dbueso@suse.de>
@@ -76,39 +56,55 @@ Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
  Nothing interesting in v2:
-     changed the comment a bit and specified Reported-by and Bisected-by tags
+     changed the comment a bit
 
- fs/eventpoll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/eventpoll.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index b041b66002db..eee3c92a9ebf 100644
+index eee3c92a9ebf..6e218234bd4a 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1854,9 +1854,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		waiter = true;
- 		init_waitqueue_entry(&wait, current);
- 
--		spin_lock_irq(&ep->wq.lock);
-+		write_lock_irq(&ep->lock);
- 		__add_wait_queue_exclusive(&ep->wq, &wait);
--		spin_unlock_irq(&ep->wq.lock);
-+		write_unlock_irq(&ep->lock);
+@@ -1173,7 +1173,7 @@ static inline bool chain_epi_lockless(struct epitem *epi)
+  * Another thing worth to mention is that ep_poll_callback() can be called
+  * concurrently for the same @epi from different CPUs if poll table was inited
+  * with several wait queues entries.  Plural wakeup from different CPUs of a
+- * single wait queue is serialized by wq.lock, but the case when multiple wait
++ * single wait queue is serialized by ep->lock, but the case when multiple wait
+  * queues are used should be detected accordingly.  This is detected using
+  * cmpxchg() operation.
+  */
+@@ -1248,6 +1248,12 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 				break;
+ 			}
+ 		}
++		/*
++		 * Since here we have the read lock (ep->lock) taken, plural
++		 * wakeup from different CPUs can occur, thus we call wake_up()
++		 * variant which implies its own lock on wqueue. All other paths
++		 * take write lock.
++		 */
+ 		wake_up(&ep->wq);
  	}
+ 	if (waitqueue_active(&ep->poll_wait))
+@@ -1551,7 +1557,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
  
- 	for (;;) {
-@@ -1904,9 +1904,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		goto fetch_events;
- 
- 	if (waiter) {
--		spin_lock_irq(&ep->wq.lock);
-+		write_lock_irq(&ep->lock);
- 		__remove_wait_queue(&ep->wq, &wait);
--		spin_unlock_irq(&ep->wq.lock);
-+		write_unlock_irq(&ep->lock);
+ 		/* Notify waiting tasks that events are available */
+ 		if (waitqueue_active(&ep->wq))
+-			wake_up(&ep->wq);
++			wake_up_locked(&ep->wq);
+ 		if (waitqueue_active(&ep->poll_wait))
+ 			pwake++;
  	}
+@@ -1657,7 +1663,7 @@ static int ep_modify(struct eventpoll *ep, struct epitem *epi,
  
- 	return res;
+ 			/* Notify waiting tasks that events are available */
+ 			if (waitqueue_active(&ep->wq))
+-				wake_up(&ep->wq);
++				wake_up_locked(&ep->wq);
+ 			if (waitqueue_active(&ep->poll_wait))
+ 				pwake++;
+ 		}
 -- 
 2.24.1
 
