@@ -2,70 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15590158627
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 00:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C189E158643
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 00:42:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbgBJX3o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 18:29:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbgBJX3n (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 18:29:43 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C811720715;
-        Mon, 10 Feb 2020 23:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581377383;
-        bh=arVTznMqw7xSxW48Xo/OdvgIkpvkcwR1RQPNs8Mqguo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qzalTtHDkFIFUek6BIN5kt1TeDL0ALjfwfuqsItj0pOx/yZ4SUnYZehxsznRPipug
-         H/9+Ux3iYsy2dwEDCjT+RTk/gLNwS0yh9idUQ724WMQc2539PzKIgzXgsmGN+woMVj
-         YhQl0wCBUBeBTdJYsQGLGsytuKvjYdYM25aCV068=
-Date:   Mon, 10 Feb 2020 15:29:42 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: Re: [PATCH 01/12] mm: fix a comment in sys_swapon
-Message-Id: <20200210152942.2ec4d0b71851feccb7387266@linux-foundation.org>
-In-Reply-To: <20200114161225.309792-2-hch@lst.de>
-References: <20200114161225.309792-1-hch@lst.de>
-        <20200114161225.309792-2-hch@lst.de>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727556AbgBJXmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 18:42:13 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38614 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbgBJXmM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 18:42:12 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1Igp-00AcMq-LS; Mon, 10 Feb 2020 23:42:07 +0000
+Date:   Mon, 10 Feb 2020 23:42:07 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH v7 2/8] fs: Add standard casefolding support
+Message-ID: <20200210234207.GJ23230@ZenIV.linux.org.uk>
+References: <20200208013552.241832-1-drosen@google.com>
+ <20200208013552.241832-3-drosen@google.com>
+ <20200208021216.GE23230@ZenIV.linux.org.uk>
+ <CA+PiJmTYbEA-hgrKwtp0jZXqsfYrzgogOZ0Pt=gTCtqhBfnqFA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+PiJmTYbEA-hgrKwtp0jZXqsfYrzgogOZ0Pt=gTCtqhBfnqFA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 14 Jan 2020 17:12:14 +0100 Christoph Hellwig <hch@lst.de> wrote:
-
-> claim_swapfile now always takes i_rwsem.
+On Mon, Feb 10, 2020 at 03:11:13PM -0800, Daniel Rosenberg wrote:
+> On Fri, Feb 7, 2020 at 6:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Fri, Feb 07, 2020 at 05:35:46PM -0800, Daniel Rosenberg wrote:
+> >
+> >
+> > Again, is that safe in case when the contents of the string str points to
+> > keeps changing under you?
 > 
-> ...
->
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3157,7 +3157,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
->  	mapping = swap_file->f_mapping;
->  	inode = mapping->host;
->  
-> -	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
-> +	/* will take i_rwsem; */
->  	error = claim_swapfile(p, inode);
->  	if (unlikely(error))
->  		goto bad_swap;
+> I'm not sure what you mean. I thought it was safe to use the str and
+> len passed into d_compare. Even if it gets changed under RCU
+> conditions I thought there was some code to ensure that the name/len
+> pair passed in is consistent, and any other inconsistencies would get
+> caught by d_seq later. Are there unsafe code paths that can follow?
 
-http://lkml.kernel.org/r/20200206090132.154869-1-naohiro.aota@wdc.com
-removes this comment altogether.  Please check that this is OK?
+If you ever fetch the same byte twice, you might see different values.
+You need a fairly careful use of READ_ONCE() or equivalents to make
+sure that you don't get screwed over by that.
 
+Sure, ->d_seq mismatch will throw the result out, but you need to make
+sure you won't oops/step on uninitialized memory/etc. in process.
+
+It's not impossible to get right, but it's not trivial and you need all
+code working with that much more careful than normal for string handling.
