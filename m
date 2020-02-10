@@ -2,80 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E491572B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 11:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2590C1572FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Feb 2020 11:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbgBJKQe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 05:16:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43448 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbgBJKQe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 05:16:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 570C7B17A;
-        Mon, 10 Feb 2020 10:16:31 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DE6281E0E2C; Mon, 10 Feb 2020 11:16:29 +0100 (CET)
-Date:   Mon, 10 Feb 2020 11:16:29 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 10/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-Message-ID: <20200210101629.GC12923@quack2.suse.cz>
-References: <20200207033735.308000-1-jhubbard@nvidia.com>
- <20200207033735.308000-11-jhubbard@nvidia.com>
+        id S1727008AbgBJKqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 05:46:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29506 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726796AbgBJKqe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Feb 2020 05:46:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581331594;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rJyaXpulyANGo4zDbEZv1lCadcKmM1gtSWvOSX66ZQc=;
+        b=CcLXSekWyXnR51+HD7wqe76ExOrCmoiSOH5NLeSHBXAUvZ6DgbL84MeTEaeC9SQksLuBGG
+        I6gEwJww/LxyI8yC4W3GEU00MhYJWSI41yOfV/XsWN87WYYWfRYcqubiqQUa3NagfSXEvQ
+        8iV+lQ0kgHqPm4467U9wrKFpxuF8G2Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-274-DvjGlNtTMnyrPLq_eE67TQ-1; Mon, 10 Feb 2020 05:46:30 -0500
+X-MC-Unique: DvjGlNtTMnyrPLq_eE67TQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 53A2713FB;
+        Mon, 10 Feb 2020 10:46:29 +0000 (UTC)
+Received: from madhat.boston.devel.redhat.com (ovpn-117-141.phx2.redhat.com [10.3.117.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1126F8AC21;
+        Mon, 10 Feb 2020 10:46:28 +0000 (UTC)
+From:   Steve Dickson <SteveD@RedHat.com>
+Subject: ANNOUNCE: nfs-utils-2.4.3 released.
+To:     Linux NFS Mailing list <linux-nfs@vger.kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Message-ID: <06eaa4cc-3851-295c-9cf3-ff70a07e6ede@RedHat.com>
+Date:   Mon, 10 Feb 2020 05:46:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200207033735.308000-11-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 06-02-20 19:37:33, John Hubbard wrote:
-> @@ -2258,6 +2268,8 @@ static int record_subpages(struct page *page, unsigned long addr,
->  
->  static void put_compound_head(struct page *page, int refs, unsigned int flags)
->  {
-> +	int orig_refs = refs;
-> +
->  	if (flags & FOLL_PIN) {
->  		if (hpage_pincount_available(page))
->  			hpage_pincount_sub(page, refs);
-> @@ -2273,6 +2285,8 @@ static void put_compound_head(struct page *page, int refs, unsigned int flags)
->  	if (refs > 1)
->  		page_ref_sub(page, refs - 1);
->  	put_page(page);
-> +
-> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, orig_refs);
->  }
+Hello,
 
-Still not quite happy about this :) Now you update NR_FOLL_PIN_RELEASED
-even if 'flags' don't have FOLL_PIN set. You need to have the
-mod_node_page_state() inside the "if (flags & FOLL_PIN)" branch above...
+In the release a lot of work was done to bring the internal 
+rpcgen command up to speed. 
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+A couple new mount options nconnect and softreval were added.
+
+A number of compilation changes were made to enable 
+compiling in other Linux-like environments.
+
+As well as the usual bug fixes.  
+
+The tarballs can be found in
+  https://www.kernel.org/pub/linux/utils/nfs-utils/2.4.3/
+or
+  http://sourceforge.net/projects/nfs/files/nfs-utils/2.4.3
+
+The change log is in
+   https://www.kernel.org/pub/linux/utils/nfs-utils/2.4.3/2.4.3-Changelog
+or
+   http://sourceforge.net/projects/nfs/files/nfs-utils/2.4.3/
+
+The git tree is at:
+   git://linux-nfs.org/~steved/nfs-utils
+
+Please send comments/bugs to linux-nfs@vger.kernel.org
+
+steved.
+
