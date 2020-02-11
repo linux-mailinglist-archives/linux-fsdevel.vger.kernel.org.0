@@ -2,64 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFC4158669
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:05:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 178B115866E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbgBKAF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 19:05:57 -0500
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:53661 "EHLO
+        id S1727516AbgBKAK4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 19:10:56 -0500
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:35883 "EHLO
         wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727496AbgBKAF4 (ORCPT
+        by vger.kernel.org with ESMTP id S1727455AbgBKAK4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 19:05:56 -0500
-X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 19:05:56 EST
+        Mon, 10 Feb 2020 19:10:56 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id CF971655;
-        Mon, 10 Feb 2020 19:00:00 -0500 (EST)
+        by mailnew.west.internal (Postfix) with ESMTP id 30ABA664;
+        Mon, 10 Feb 2020 19:04:08 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 10 Feb 2020 19:00:01 -0500
+  by compute5.internal (MEProxy); Mon, 10 Feb 2020 19:04:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=cInhNZqekz77iMo+ZrzOQbvCpsV
-        +e2osqSVQXvKS/Hk=; b=N5YWNdSazEHoHEq9YLj9vbjMgg3uuHRb0d8MsD0hzMj
-        m31HIu7STZrvs9e6UUCq9F+BpmIlE5wOhBt9HHZZs2NfH2Oplxxo31ALZP05SDIL
-        7kxe32LYcgXP19n6xrOC+eMiMD/I2LEYkfhlvQkBx5WxI++ysjosrkXTb2rkUs2W
-        t2GA8z+qdVh5C2nmI9GZX+mn7WsxGTTf/dvZw+Lq9kl2DIyrknMlFK9kahWYl3Oz
-        NNzMhVLUDzEePX6+dT8T155BuK6nPrEBEzDnF7fu94S4JMB8ysbj1IJAGiS23LYp
-        8ndonfVFG6DkLqjcZpTV/vsdrObMu+I0a2Q+mDCgSbA==
+        :content-type:in-reply-to; s=fm3; bh=+YWviiEypY4/uSM7a/KOZGTlyXo
+        Sv+afDb7oMnLU4Ew=; b=MZYF0oN+qiSGhEtb1doYqf263EKGpRuUZQ6vmRnGSJY
+        +LnaukjCb+JPyKVzeqBqFDSL4Ze5UGigIJe7GkEbPVF2PAJ1hZin2Zb2aAKaRbgY
+        uIicwBeblBGJF5GHf7YaN26mwCMCUqEBILPaVW2eyHPWgAjt+uau49tEwjs2kDAw
+        +klTO0G95XTkcryioGbN/U7iLAbPXrIrue/LznK9A+tMk2EK8ah3FNxw3cZI2ETv
+        4azPneN9A6F1V2fhG3/DCFcz/vrmFVXlwQs4TEylPEK7Q64Y874i+Sy9BIrHkRCT
+        jhsnV+Zw4r7QcrnR8OzT6YlTHHP8eb6b9eqS/KsfLqw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=cInhNZ
-        qekz77iMo+ZrzOQbvCpsV+e2osqSVQXvKS/Hk=; b=i/YSo3Z05NRETuHYCugxtE
-        TsfQvLW3t4hdv/mANwj2Vtghh8XRZsscmEEYbPjGpi94X3RvOkbtuD5KQ9dDl51D
-        r6Podyx4MRZXips0+NxS8TF2wA7ZQ8Rf2sAN9PJlcRKwbLtKTdmpA1SOK0SBBl9Q
-        fb+ZOR1Gy2qx+R3TqnZ3XuFo2HOo4OoqTtmBqT9ZnJ1ApfVl7aNGAoi13/DbtP3+
-        s1uIyZPPZSBCrUVrOo2T8akq1NE1Cq+Bplu+7nAjkpZQ9iFCGNQsk9ymYqWntVBA
-        3e4Ni/AdxOnG4bASsupoflwmV/nUXK//SYp7jfFbRc7WFtXuvMTaQjsU2l3PpkVA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+YWvii
+        EypY4/uSM7a/KOZGTlyXoSv+afDb7oMnLU4Ew=; b=LMi7uQsdhZcpFyxYXa4hPx
+        Xx8GnZwxIZO+lTki/ZSVbZRlCb72kNRLIAiH1THDEGfjH92d2pge0rPnb798ffFu
+        oWo0psgjieDdbX9n+6IRUzeyJlkcTbMuqPVjt+jtlQFqji2MXH6ygvWMNPpZCTE5
+        c9nJUk5AbFqraHXBwhqv+wQNoo5VgpuABbDvS5amB7uvNdJKEFRoxzQucSxRSM0T
+        phP7LWBr3SmqcT1VrPWdy2gvMXmJa9m/zwgdn6b8Ls8zKXhwIUZsLvjdtfJPl6o2
+        IQW3bwLJMREK8FNUyQ71ExKzfPnss9f5Bfqr0k6FSTdts53PaO+StUn1ezJkRU7Q
         ==
-X-ME-Sender: <xms:f-5BXkMXSpOODIQl2W1_0K6DAke2HBH7Zct3S0rtnd0kSVsgXuvF7w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgdduhecutefuodetggdotefrodftvf
+X-ME-Sender: <xms:du9BXrjrEmO6EdnJ_pc7WI-NfG5m8OGt-ycdBihJj8Ja4VmZPwMncQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgdduiecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenog
-    fthfevqddqhfhrohhmqdetuggurhhsqdfpohfuvghnuggvrhculdeftddmnecujfgurhep
-    fffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgvshcuhfhrvg
-    hunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqedpucffrghvihguucfjohif
-    vghllhhsuceoughhohifvghllhhssehrvgguhhgrthdrtghomheqnecuffhomhgrihhnpe
-    hkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnh
-    grrhgriigvlhdruggv
-X-ME-Proxy: <xmx:f-5BXpkN5kNaOyvoDHP9OGOYA9CXtpAlHkUjyuZXNBuvvFrWuMzwsQ>
-    <xmx:f-5BXq7P8RTKfK6Q_Q7qjo4kY09jfbgLkaOTcieLthmWr5iR8mBvgg>
-    <xmx:f-5BXi4ifQQdmmYydXqhZRrFnk-2I40Ps3IsGc0N7w008nVPWnyAeg>
-    <xmx:gO5BXpYIU68N8AiEv9An3LL5qTPVUjsD-YtjKOWeZ-u6H3YCH9z9ZB6fVcM>
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghsse
+    grnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:du9BXsSimq3cbHRr3nc7ziO8uEVPm-gCoNUp0Sc3HNWbBnhCGcXD7w>
+    <xmx:du9BXmFSbp83JHg_MPLSAqletsvqFPURC73kAGM22v6nxALTg7iZcA>
+    <xmx:du9BXslCZx5yOxfoh1xo5J6slwBt3PXipUO1qeaFCyK4aloLpYHYaQ>
+    <xmx:d-9BXrMAhFwi34YIb3KXjcE38Y_2CmGLQ_gAFji5DgsVihsWlPpNJRDrZu0>
 Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5DF383060717;
-        Mon, 10 Feb 2020 18:59:59 -0500 (EST)
-Date:   Mon, 10 Feb 2020 15:59:57 -0800
-From:   Andres Freund <andres@anarazel.de>,
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5A45830606FB;
+        Mon, 10 Feb 2020 19:04:06 -0500 (EST)
+Date:   Mon, 10 Feb 2020 16:04:05 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Dave Chinner <david@fromorbit.com>,
         David Howells <dhowells@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
 Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-api@vger.kernel.org, willy@infradead.org,
@@ -67,7 +64,7 @@ Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org
 Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
  writeback errors
-Message-ID: <20200210235957.zwtozoml3bcbrerl@alap3.anarazel.de>
+Message-ID: <20200211000405.5fohxgpt554gmnhu@alap3.anarazel.de>
 References: <20200207170423.377931-1-jlayton@kernel.org>
  <20200207205243.GP20628@dread.disaster.area>
  <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
@@ -82,6 +79,8 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi,
+
+(sorry if somebody got this twice)
 
 David added you, because there's discussion about your notify work
 below.
