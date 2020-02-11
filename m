@@ -2,99 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E10D15984B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 19:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FAD1598B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 19:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731329AbgBKSVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 13:21:01 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35421 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730333AbgBKSU5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:20:57 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n17so8710727qtv.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 10:20:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=d6/Te+6lAVYFK89u5s4ITvONIuwvEzCRENBRMlel8AM=;
-        b=aLYA6QD7r8l7BRmVYCdYFhLJ6+BTNSmfcsvcr1NKaO2FUg7e2sB0f5KZcSPi6p74nR
-         6O933w7cbNN+FMz4YGCHH4AVN9pElo92zZlPlGuW0gSBq93BAPgEVr601eiAKnaapD/P
-         GrnClfjV4wYOcuftH0Q5ekckpEe3ICyZVzmuNt9p75AlrUcLSUbK/YzbcYm34mH8OxqT
-         SfQIEy8AuBFAXjI1EbnHUegO1y6lcC3eyPs+Uqaoqt4qUKVp8fvgx9LN7qxXVuWu884y
-         xs/XxkT5R1DXkbm4qW8hogIMuJAsKO58D/GM+ADGdFgzSYgN2zco6ccBy5HHxO5WoFvi
-         2Zwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d6/Te+6lAVYFK89u5s4ITvONIuwvEzCRENBRMlel8AM=;
-        b=MRh4gom3ukqrdPXmQBsDnQgQFap/ZJxme9vCtWsYwH8Twog2wUgYs24+r2Squ6B/BE
-         7KvAlPey52sg8K8HJ+cODR4RbT0tk3xEahhc20ALY+uqyik5UFn11VfaKmfKsmGNSZqC
-         HkmLtrkzxAkVvkQEkDw21Bd2TAlJK9lBDXwlhRGUfxBbFRry0ks8SzHoCwookZtIpDx/
-         j8TWgB0zH5zTj6hULGodcH/nGS1AhF6ooLp+1KRHjHkRLce+Zzbk8xnz3sNBrc2dhTDK
-         z8M9EbfqXqeSXpet+zl7xJG7wuWlvpfr0E8LU/TRgSNejychCHmSQDxNZmOY0MOYr+X8
-         Sg/Q==
-X-Gm-Message-State: APjAAAVO1X4NqSxkxjYGoq1wOKbXj/kNwxqYcaT/kWHJc0tkUs2ySlnv
-        GKrST6eV7NamBDBOvNxXrNsPRDk+P1c=
-X-Google-Smtp-Source: APXvYqwDVs8B12ktsqqe14aSoG5G5O9rjJ6O2GFDhj+2bdU0bqJzMwN1LLweA+J2YzGHbm2yyex9eQ==
-X-Received: by 2002:ac8:4410:: with SMTP id j16mr3712001qtn.261.1581445256183;
-        Tue, 11 Feb 2020 10:20:56 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::3:3189])
-        by smtp.gmail.com with ESMTPSA id r37sm2562886qtj.44.2020.02.11.10.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 10:20:55 -0800 (PST)
-Date:   Tue, 11 Feb 2020 13:20:54 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200211182054.GA178155@cmpxchg.org>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
+        id S1730447AbgBKSeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 13:34:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60564 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727361AbgBKSeK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 13:34:10 -0500
+Received: from localhost (unknown [104.133.9.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02286206D6;
+        Tue, 11 Feb 2020 18:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581446050;
+        bh=LZkvVxuLaqcYosE8lpGU/19SJTjKBBWO1F+j8oX0KOA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M2M03d2olXiAMtg2enugDIdCtj2HkFcdNOYmXqITJKwXkSbp3s+ppzpLpRBXarylN
+         cpipXTA/2F4uz80G8cfH0+myldr2adPBDVEZKllfQDsmiUJK9Cuc+iHZbvG1qkJ8pT
+         ASXSFlIGNinPoj1/jM1I7MF4h0ZKfSRzYsck3sHE=
+Date:   Tue, 11 Feb 2020 10:34:09 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Taehee Yoo <ap420073@gmail.com>
+Cc:     rafael@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] debugfs: Check module state before warning in
+ {full/open}_proxy_open()
+Message-ID: <20200211183409.GB1938663@kroah.com>
+References: <20200206064757.10726-1-ap420073@gmail.com>
+ <20200210214050.GA1579465@kroah.com>
+ <CAMArcTXxkyWnXZW8u0v-YtdWrEb2V-j=cCXxE4qzdr3gNRu3ng@mail.gmail.com>
+ <20200211122819.GA1858119@kroah.com>
+ <CAMArcTVVWxrNXUzJFEkuD-RjXHDxWZ96i-agvgfQDHhQnLX_TA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211175507.178100-1-hannes@cmpxchg.org>
+In-Reply-To: <CAMArcTVVWxrNXUzJFEkuD-RjXHDxWZ96i-agvgfQDHhQnLX_TA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 12:55:07PM -0500, Johannes Weiner wrote:
-> However, this change had to be reverted in 69056ee6a8a3 ("Revert "mm:
-> don't reclaim inodes with many attached pages"") because it caused
-> severe reclaim performance problems: Inodes that sit on the shrinker
-> LRU are attracting reclaim pressure away from the page cache and
-> toward the VFS. If we then permanently exempt sizable portions of this
-> pool from actually getting reclaimed when looked at, this pressure
-> accumulates as deferred shrinker work (a mechanism for *temporarily*
-> unreclaimable objects) until it causes mayhem in the VFS cache pools.
+On Wed, Feb 12, 2020 at 02:18:38AM +0900, Taehee Yoo wrote:
+> On Tue, 11 Feb 2020 at 21:28, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
 > 
-> In the bug quoted in 69056ee6a8a3 in particular, the excessive
-> pressure drove the XFS shrinker into dirty objects, where it caused
-> synchronous, IO-bound stalls, even as there was plenty of clean page
-> cache that should have been reclaimed instead.
+> Hi Greg!
+> 
+> > On Tue, Feb 11, 2020 at 03:09:13PM +0900, Taehee Yoo wrote:
+> > > On Tue, 11 Feb 2020 at 06:40, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > >
+> > > Hi Greg,
+> > > Thank you for your review!
+> > >
+> > > > On Thu, Feb 06, 2020 at 06:47:56AM +0000, Taehee Yoo wrote:
+> > > > > When the module is being removed, the module state is set to
+> > > > > MODULE_STATE_GOING. At this point, try_module_get() fails.
+> > > > > And when {full/open}_proxy_open() is being called,
+> > > > > it calls try_module_get() to try to hold module reference count.
+> > > > > If it fails, it warns about the possibility of debugfs file leak.
+> > > > >
+> > > > > If {full/open}_proxy_open() is called while the module is being removed,
+> > > > > it fails to hold the module.
+> > > > > So, It warns about debugfs file leak. But it is not the debugfs file
+> > > > > leak case. So, this patch just adds module state checking routine
+> > > > > in the {full/open}_proxy_open().
+> > > > >
+> > > > > Test commands:
+> > > > >     #SHELL1
+> > > > >     while :
+> > > > >     do
+> > > > >         modprobe netdevsim
+> > > > >         echo 1 > /sys/bus/netdevsim/new_device
+> > > > >         modprobe -rv netdevsim
+> > > > >     done
+> > > > >
+> > > > >     #SHELL2
+> > > > >     while :
+> > > > >     do
+> > > > >         cat /sys/kernel/debug/netdevsim/netdevsim1/ports/0/ipsec
+> > > > >     done
+> > > > >
+> > > > > Splat looks like:
+> > > > > [  298.766738][T14664] debugfs file owner did not clean up at exit: ipsec
+> > > > > [  298.766766][T14664] WARNING: CPU: 2 PID: 14664 at fs/debugfs/file.c:312 full_proxy_open+0x10f/0x650
+> > > > > [  298.768595][T14664] Modules linked in: netdevsim(-) openvswitch nsh nf_conncount nf_nat nf_conntrack nf_defrag_ipv6 n][  298.771343][T14664] CPU: 2 PID: 14664 Comm: cat Tainted: G        W         5.5.0+ #1
+> > > > > [  298.772373][T14664] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+> > > > > [  298.773545][T14664] RIP: 0010:full_proxy_open+0x10f/0x650
+> > > > > [  298.774247][T14664] Code: 48 c1 ea 03 80 3c 02 00 0f 85 c1 04 00 00 49 8b 3c 24 e8 e4 b5 78 ff 84 c0 75 2d 4c 89 ee 48
+> > > > > [  298.776782][T14664] RSP: 0018:ffff88805b7df9b8 EFLAGS: 00010282[  298.777583][T14664] RAX: dffffc0000000008 RBX: ffff8880511725c0 RCX: 0000000000000000
+> > > > > [  298.778610][T14664] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff8880540c5c14
+> > > > > [  298.779637][T14664] RBP: 0000000000000000 R08: fffffbfff15235ad R09: 0000000000000000
+> > > > > [  298.780664][T14664] R10: 0000000000000001 R11: 0000000000000000 R12: ffffffffc06b5000
+> > > > > [  298.781702][T14664] R13: ffff88804c234a88 R14: ffff88804c22dd00 R15: ffffffff8a1b5660
+> > > > > [  298.782722][T14664] FS:  00007fafa13a8540(0000) GS:ffff88806c800000(0000) knlGS:0000000000000000
+> > > > > [  298.783845][T14664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > [  298.784672][T14664] CR2: 00007fafa0e9cd10 CR3: 000000004b286005 CR4: 00000000000606e0
+> > > > > [  298.785739][T14664] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > [  298.786769][T14664] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > [  298.787785][T14664] Call Trace:
+> > > > > [  298.788237][T14664]  do_dentry_open+0x63c/0xf50
+> > > > > [  298.788872][T14664]  ? open_proxy_open+0x270/0x270
+> > > > > [  298.789524][T14664]  ? __x64_sys_fchdir+0x180/0x180
+> > > > > [  298.790169][T14664]  ? inode_permission+0x65/0x390
+> > > > > [  298.790832][T14664]  path_openat+0xc45/0x2680
+> > > > > [  298.791425][T14664]  ? save_stack+0x69/0x80
+> > > > > [  298.791988][T14664]  ? save_stack+0x19/0x80
+> > > > > [  298.792544][T14664]  ? path_mountpoint+0x2e0/0x2e0
+> > > > > [  298.793233][T14664]  ? check_chain_key+0x236/0x5d0
+> > > > > [  298.793910][T14664]  ? sched_clock_cpu+0x18/0x170
+> > > > > [  298.794527][T14664]  ? find_held_lock+0x39/0x1d0
+> > > > > [  298.795153][T14664]  do_filp_open+0x16a/0x260
+> > > > > [ ... ]
+> > > > >
+> > > > > Fixes: 9fd4dcece43a ("debugfs: prevent access to possibly dead file_operations at file open")
+> > > > > Reported-by: kbuild test robot <lkp@intel.com>
+> > > > > Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+> > > > > ---
+> > > > >
+> > > > > v1 -> v2:
+> > > > >  - Fix compile error
+> > > > >
+> > > > >  fs/debugfs/file.c | 18 ++++++++++++++----
+> > > > >  1 file changed, 14 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+> > > > > index 634b09d18b77..e3075389fba0 100644
+> > > > > --- a/fs/debugfs/file.c
+> > > > > +++ b/fs/debugfs/file.c
+> > > > > @@ -175,8 +175,13 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
+> > > > >       if (r)
+> > > > >               goto out;
+> > > > >
+> > > > > -     real_fops = fops_get(real_fops);
+> > > > > -     if (!real_fops) {
+> > > > > +     if (!fops_get(real_fops)) {
+> > > > > +#ifdef MODULE
+> > > > > +             if (real_fops->owner &&
+> > > > > +                 real_fops->owner->state == MODULE_STATE_GOING)
+> > > > > +                     goto out;
+> > > > > +#endif
+> > > >
+> > > > Why is this in a #ifdef?
+> > > >
+> > > > The real_fops->owner field will be present if MODULE is not enabled,
+> > > > right?  Shouldn't this just work the same for that case?
+> > > >
+> > >
+> > > The reason for the #ifdef is to avoid compile error
+> > > MODULE_STATE_GOING is defined if CONFIG_MODULES is enabled.
+> >
+> > We should fix that in the .h file where that is defined so that we don't
+> > have to mess with stuff like this in a .c file.
+> >
+> > > So, If the #ifdef doesn't exist, compile will errors.
+> > > But honestly, I'm not sure whether CONFIG_MODULES should be used
+> > > here instead of MODULE or not.
+> >
+> > Neither, #ifdefs shouldn't be in .c files :)
+> >
+> 
+> Thank you for the review.
+> I would like to move MODULE_STATE_XXX flags to outside of CONFIG_MODULES.
 
-A note on testing: the patch behaves much better on my machine and the
-inode shrinker doesn't drop hot page cache anymore, without noticable
-downsides so far.
+That would be good.
 
-However, I tried to reproduce the xfs case that caused the
-69056ee6a8a3 revert and haven't managed to do so yet on 5.5 plus the
-reverted patch. I cannot provoke higher inode sync stalls in the xfs
-shrinker regardless of shrinker strategy. Maybe something else changed
-since 4.19 and it's less of a concern now.
+> In addition, I think a new inline function, which checks modules state
+> would be helpful for this case.
+> The inline function code would like this.
+> 
+> +static inline bool module_is_going(struct module *mod)
+> +{
+> +       return mod->state == MODULE_STATE_GOING;
+> +}
 
-Nonetheless, I'm interested in opinions on the premise of this
-patch. And Yafang is working on his memcg-specific fix for this issue,
-so I wanted to put this proposal on the table sooner than later.
+That too would be good, as there are a number of places in the kernel
+that could be cleaned up to use this.  Same for MODULE_STATE_COMING,
+right?
 
-Thanks
+So a patch series with all of this would be appreciated.
+
+thanks,
+
+greg k-h
