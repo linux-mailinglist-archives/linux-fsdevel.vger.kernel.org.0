@@ -2,77 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 178B115866E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C471586AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:16:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbgBKAK4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 19:10:56 -0500
-Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:35883 "EHLO
-        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727455AbgBKAK4 (ORCPT
+        id S1727632AbgBKAPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 19:15:40 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4084 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbgBKAPj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 19:10:56 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id 30ABA664;
-        Mon, 10 Feb 2020 19:04:08 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 10 Feb 2020 19:04:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=+YWviiEypY4/uSM7a/KOZGTlyXo
-        Sv+afDb7oMnLU4Ew=; b=MZYF0oN+qiSGhEtb1doYqf263EKGpRuUZQ6vmRnGSJY
-        +LnaukjCb+JPyKVzeqBqFDSL4Ze5UGigIJe7GkEbPVF2PAJ1hZin2Zb2aAKaRbgY
-        uIicwBeblBGJF5GHf7YaN26mwCMCUqEBILPaVW2eyHPWgAjt+uau49tEwjs2kDAw
-        +klTO0G95XTkcryioGbN/U7iLAbPXrIrue/LznK9A+tMk2EK8ah3FNxw3cZI2ETv
-        4azPneN9A6F1V2fhG3/DCFcz/vrmFVXlwQs4TEylPEK7Q64Y874i+Sy9BIrHkRCT
-        jhsnV+Zw4r7QcrnR8OzT6YlTHHP8eb6b9eqS/KsfLqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=+YWvii
-        EypY4/uSM7a/KOZGTlyXoSv+afDb7oMnLU4Ew=; b=LMi7uQsdhZcpFyxYXa4hPx
-        Xx8GnZwxIZO+lTki/ZSVbZRlCb72kNRLIAiH1THDEGfjH92d2pge0rPnb798ffFu
-        oWo0psgjieDdbX9n+6IRUzeyJlkcTbMuqPVjt+jtlQFqji2MXH6ygvWMNPpZCTE5
-        c9nJUk5AbFqraHXBwhqv+wQNoo5VgpuABbDvS5amB7uvNdJKEFRoxzQucSxRSM0T
-        phP7LWBr3SmqcT1VrPWdy2gvMXmJa9m/zwgdn6b8Ls8zKXhwIUZsLvjdtfJPl6o2
-        IQW3bwLJMREK8FNUyQ71ExKzfPnss9f5Bfqr0k6FSTdts53PaO+StUn1ezJkRU7Q
-        ==
-X-ME-Sender: <xms:du9BXrjrEmO6EdnJ_pc7WI-NfG5m8OGt-ycdBihJj8Ja4VmZPwMncQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgdduiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
-    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuffhomhgrih
-    hnpehkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghsse
-    grnhgrrhgriigvlhdruggv
-X-ME-Proxy: <xmx:du9BXsSimq3cbHRr3nc7ziO8uEVPm-gCoNUp0Sc3HNWbBnhCGcXD7w>
-    <xmx:du9BXmFSbp83JHg_MPLSAqletsvqFPURC73kAGM22v6nxALTg7iZcA>
-    <xmx:du9BXslCZx5yOxfoh1xo5J6slwBt3PXipUO1qeaFCyK4aloLpYHYaQ>
-    <xmx:d-9BXrMAhFwi34YIb3KXjcE38Y_2CmGLQ_gAFji5DgsVihsWlPpNJRDrZu0>
-Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5A45830606FB;
-        Mon, 10 Feb 2020 19:04:06 -0500 (EST)
-Date:   Mon, 10 Feb 2020 16:04:05 -0800
-From:   Andres Freund <andres@anarazel.de>
-To:     Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, willy@infradead.org,
-        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
-        akpm@linux-foundation.org
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-Message-ID: <20200211000405.5fohxgpt554gmnhu@alap3.anarazel.de>
-References: <20200207170423.377931-1-jlayton@kernel.org>
- <20200207205243.GP20628@dread.disaster.area>
- <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
- <20200210214657.GA10776@dread.disaster.area>
+        Mon, 10 Feb 2020 19:15:39 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e41f21c0000>; Mon, 10 Feb 2020 16:15:24 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Feb 2020 16:15:38 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 16:15:38 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb
+ 2020 00:15:37 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 11 Feb 2020 00:15:37 +0000
+Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e41f2290003>; Mon, 10 Feb 2020 16:15:37 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v6 00/12] mm/gup: track FOLL_PIN pages
+Date:   Mon, 10 Feb 2020 16:15:24 -0800
+Message-ID: <20200211001536.1027652-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210214657.GA10776@dread.disaster.area>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581380124; bh=fE97Xn2xxKSqQsPdBSSUaXOYVTqIn+ii/hEQLxsKvjA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Type:
+         Content-Transfer-Encoding;
+        b=UemJy1oQM42wM9h1KOJ0YRtqLqLTwjltPvxvNuV6xFEN/alKCH4FVBqq/iZpjYjOU
+         DoS3ThqgOHgvxjBLPgpcfd5Gw95juRNdiT9RiMz2V0pRmmNbVGJ+JAYMWkvyUNcdIW
+         YwUERwve3lMcN1Q3ab0QWuE5CENvnSHZjqysU2LBc9TpuCBl1H0ZRmbmwFAfnB3bkW
+         R3qEPd1D1PJaoava8LuKVeTAbeHNmHkcTFijxnBWMXZ5HRQ/OnLRrEQSv/QIIkEr3Y
+         kvdP0ZiZQIRi2l1DADG2AJUt/0SPIufyM0Wswi20jqfd5wrfFI31F/4y1D0STfgkUP
+         OGo4RbAE0HUdw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -80,183 +73,249 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi,
 
-(sorry if somebody got this twice)
+Jan and Kirill: I've tentatively removed your review and ACK,
+respectively, for patch 12 (the last dump_page patch), because even
+though they are logically the same as what you reviewed in v5, the
+base is Matthew's new patch instead of my earlier patch. (Trying to err
+on the side of caution with these tags.)
 
-David added you, because there's discussion about your notify work
-below.
+There is a git repo and branch, for convenience in reviewing:
 
-On 2020-02-11 08:46:57 +1100, Dave Chinner wrote:
-> On Fri, Feb 07, 2020 at 01:20:12PM -0800, Andres Freund wrote:
-> > Hi,
-> > 
-> > On 2020-02-08 07:52:43 +1100, Dave Chinner wrote:
-> > > On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> > > > You're probably wondering -- Where are v1 and v2 sets?
-> > 
-> > > > The basic idea is to track writeback errors at the superblock level,
-> > > > so that we can quickly and easily check whether something bad happened
-> > > > without having to fsync each file individually. syncfs is then changed
-> > > > to reliably report writeback errors, and a new ioctl is added to allow
-> > > > userland to get at the current errseq_t value w/o having to sync out
-> > > > anything.
-> > > 
-> > > So what, exactly, can userspace do with this error? It has no idea
-> > > at all what file the writeback failure occurred on or even
-> > > what files syncfs() even acted on so there's no obvious error
-> > > recovery that it could perform on reception of such an error.
-> > 
-> > Depends on the application.  For e.g. postgres it'd to be to reset
-> > in-memory contents and perform WAL replay from the last checkpoint.
-> 
-> What happens if a user runs 'sync -f /path/to/postgres/data' instead
-> of postgres? All the writeback errors are consumed at that point by
-> reporting them to the process that ran syncfs()...
+    git@github.com:johnhubbard/linux.git  track_user_pages_v6
 
-We'd have to keep an fd open from *before* we start durable operations,
-which has a sampled errseq_t from before we rely on seeing errors.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v5:
+
+* Rebased onto Linux 5.6.0-rc1.
+
+* Swapped in Matthew Wilcox's more comprehensive dump_page() patch, and
+  moved it later in this series so that it immediately precedes my
+  subsequent dump_page() patch, for slightly easier reviews and commit
+  log history.
+
+* Fixed "the last bug!" in the /proc/vmstat patch, by moving the
+  mod_node_page_state() call in put_compound_page() so that it only
+  happens in the FOLL_PIN case.
+
+* Added a couple more ACKs from Kirill.
+
+* Tweaked the "Future steps" in this cover letter to add a little
+  detail about what comes next.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v4:
+
+* Added documentation about the huge page behavior of the new
+  /proc/vmstat items.
+
+* Added a missing mode_node_page_state() call to put_compound_head().
+
+* Fixed a tracepoint call in page_ref_sub_return().
+
+* Added a trailing underscore to a URL in pin_user_pages.rst, to fix
+  a broken generated link.
+
+* Added ACKs and reviewed-by's from Jan Kara and Kirill Shutemov.
+
+* Rebased onto today's linux.git, and
+
+* I am experimenting here with "git format-patch --base=3D<commit>".
+  This generated the "base-commit:" tag you'll see at the end of this
+  cover letter.  I was inspired to do so after trying out a new
+  get-lore-mbox.py tool (it's very nice), mentioned in a recent LWN
+  article (https://lwn.net/Articles/811528/ ). That tool relies on the
+  base-commit tag for some things.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v3:
+
+* Rebased onto latest linux.git
+
+* Added ACKs and reviewed-by's from Kirill Shutemov and Jan Kara.
+
+* /proc/vmstat:
+    * Renamed items, after realizing that I hate the previous names:
+         nr_foll_pin_requested --> nr_foll_pin_acquired
+         nr_foll_pin_returned  --> nr_foll_pin_released
+
+    * Removed the CONFIG_DEBUG_VM guard, and collapsed away a wrapper
+      routine: now just calls mod_node_page_state() directly.
+
+* Tweaked the WARN_ON_ONCE() statements in mm/hugetlb.c to be more
+  informative, and added comments above them as well.
+
+* Fixed gup_benchmark: signed int --> unsigned long.
+
+* One or two minor formatting changes.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v2:
+
+* Rebased onto linux.git, because the akpm tree for 5.6 has been merged.
+
+* Split the tracking patch into even more patches, as requested.
+
+* Merged Matthew Wilcox's dump_page() changes into mine, as part of the
+  first patch.
+
+* Renamed: page_dma_pinned() --> page_maybe_dma_pinned(), in response to
+  Kirill Shutemov's review.
+
+* Moved a WARN to the top of a routine, and fixed a typo in the commit
+  description of patch #7, also as suggested by Kirill.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Changes since v1:
+
+* Split the tracking patch into 6 smaller patches
+
+* Rebased onto today's linux-next/akpm (there weren't any conflicts).
+
+* Fixed an "unsigned int" vs. "int" problem in gup_benchmark, reported
+  by Nathan Chancellor. (I don't see it in my local builds, probably
+  because they use gcc, but an LLVM test found the mismatch.)
+
+* Fixed a huge page pincount problem (add/subtract vs.
+  increment/decrement), spotted by Jan Kara.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+There is a reasonable case to be made for merging two of the patches
+(patches 7 and 8), given that patch 7 provides tracking that has upper
+limits on the number of pins that can be done with huge pages. Let me
+know if anyone wants those merged, but unless there is some weird chance
+of someone grabbing patch 7 and not patch 8, I don't really see the
+need. Meanwhile, it's easier to review in this form.
+
+Also, patch 3 has been revived. Earlier reviewers asked for it to be
+merged into the tracking patch (one cannot please everyone, heh), but
+now it's back out on it's own.
+
+This activates tracking of FOLL_PIN pages. This is in support of fixing
+the get_user_pages()+DMA problem described in [1]-[4].
+
+FOLL_PIN support is now in the main linux tree. However, the
+patch to use FOLL_PIN to track pages was *not* submitted, because Leon
+saw an RDMA test suite failure that involved (I think) page refcount
+overflows when huge pages were used.
+
+This patch definitively solves that kind of overflow problem, by adding
+an exact pincount, for compound pages (of order > 1), in the 3rd struct
+page of a compound page. If available, that form of pincounting is used,
+instead of the GUP_PIN_COUNTING_BIAS approach. Thanks again to Jan Kara
+for that idea.
+
+Other interesting changes:
+
+* dump_page(): added one, or two new things to report for compound
+  pages: head refcount (for all compound pages), and map_pincount (for
+  compound pages of order > 1).
+
+* Documentation/core-api/pin_user_pages.rst: removed the "TODO" for the
+  huge page refcount upper limit problems, and added notes about how it
+  works now. Also added a note about the dump_page() enhancements.
+
+* Added some comments in gup.c and mm.h, to explain that there are two
+  ways to count pinned pages: exact (for compound pages of order > 1)
+  and fuzzy (GUP_PIN_COUNTING_BIAS: for all other pages).
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General notes about the tracking patch:
+
+This is a prerequisite to solving the problem of proper interactions
+between file-backed pages, and [R]DMA activities, as discussed in [1],
+[2], [3], [4] and in a remarkable number of email threads since about
+2017. :)
+
+In contrast to earlier approaches, the page tracking can be
+incrementally applied to the kernel call sites that, until now, have
+been simply calling get_user_pages() ("gup"). In other words, opt-in by
+changing from this:
+
+    get_user_pages() (sets FOLL_GET)
+    put_page()
+
+to this:
+    pin_user_pages() (sets FOLL_PIN)
+    unpin_user_page()
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Future steps:
+
+* Convert more subsystems from get_user_pages() to pin_user_pages().
+  The first probably needs to be bio/biovecs, because any filesystem
+  testing is too difficult without those in place.
+
+* Change VFS and filesystems to respond appropriately when encountering
+  dma-pinned pages.
+
+* Work with Ira and others to connect this all up with file system
+  leases.
+
+[1] Some slow progress on get_user_pages() (Apr 2, 2019):
+    https://lwn.net/Articles/784574/
+
+[2] DMA and get_user_pages() (LPC: Dec 12, 2018):
+    https://lwn.net/Articles/774411/
+
+[3] The trouble with get_user_pages() (Apr 30, 2018):
+    https://lwn.net/Articles/753027/
+
+[4] LWN kernel index: get_user_pages()
+    https://lwn.net/Kernel/Index/#Memory_management-get_user_pages
 
 
-> > Due to various reasons* it's very hard for us (without major performance
-> > and/or reliability impact) to fully guarantee that by the time we fsync
-> > specific files we do so on an old enough fd to guarantee that we'd see
-> > the an error triggered by background writeback.  But keeping track of
-> > all potential filesystems data resides on (with one fd open permanently
-> > for each) and then syncfs()ing them at checkpoint time is quite doable.
-> 
-> Oh, you have to keep an fd permanently open to every superblock that
-> application holds data on so that errors detected by other users of
-> that filesystem are also reported to the application?
+John Hubbard (11):
+  mm/gup: split get_user_pages_remote() into two routines
+  mm/gup: pass a flags arg to __gup_device_* functions
+  mm: introduce page_ref_sub_return()
+  mm/gup: pass gup flags to two more routines
+  mm/gup: require FOLL_GET for get_user_pages_fast()
+  mm/gup: track FOLL_PIN pages
+  mm/gup: page->hpage_pinned_refcount: exact pin counts for huge pages
+  mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN) reporting
+  mm/gup_benchmark: support pin_user_pages() and related calls
+  selftests/vm: run_vmtests: invoke gup_benchmark with basic FOLL_PIN
+    coverage
+  mm: dump_page(): additional diagnostics for huge pinned pages
 
-Right
+Matthew Wilcox (Oracle) (1):
+  mm: Improve dump_page() for compound pages
 
-Currently it's much worse (you probably now?):
-
-Without error reporting capabilities in syncfs or such you have to keep
-an fd open to *every* single inode you want to reliably get errors
-for. Fds have an errseq_t to keep track of which errors have been seen
-by that fd, so if you have one open from *before* an error is triggered,
-you can be sure to detect that. But if the fd is not guaranteed to be
-old enough you can hit two cases:
-
-1) Some other application actually sees an error, address_space->wb_err
-   is marked ERRSEQ_SEEN. Any new fd will not see a report the problem
-   anymore.
-2) The inode with the error gets evicted (memory pressure on a database
-   server isn't rare) while there is no fd open. Nobody might see the
-   error.
-
-If there were a reliable (i.e. it may not wrap around or such) error
-counter available *somewhere*, we could just keep track of that, instead
-of actually needing an "old" open fd in the right process.
-
-
-> This seems like a fairly important requirement for applications to
-> ensure this error reporting is "reliable" and that certainly wasn't
-> apparent from the patches or their description.  i.e. the API has an
-> explicit userspace application behaviour requirement for reliable
-> functioning, and that was not documented.  "we suck at APIs" and all
-> that..
-
-Yup.
+ Documentation/core-api/pin_user_pages.rst  |  86 ++--
+ include/linux/mm.h                         | 108 ++++-
+ include/linux/mm_types.h                   |   7 +-
+ include/linux/mmzone.h                     |   2 +
+ include/linux/page_ref.h                   |   9 +
+ mm/debug.c                                 |  44 +-
+ mm/gup.c                                   | 451 ++++++++++++++++-----
+ mm/gup_benchmark.c                         |  71 +++-
+ mm/huge_memory.c                           |  29 +-
+ mm/hugetlb.c                               |  60 ++-
+ mm/page_alloc.c                            |   2 +
+ mm/rmap.c                                  |   6 +
+ mm/vmstat.c                                |   2 +
+ tools/testing/selftests/vm/gup_benchmark.c |  15 +-
+ tools/testing/selftests/vm/run_vmtests     |  22 +
+ 15 files changed, 734 insertions(+), 180 deletions(-)
 
 
-> It also seems to me as useful only to applications that have a
-> "rollback and replay" error recovery mechanism. If the application
-> doesn't have the ability to go back in time to before the
-> "unfindable" writeback error occurred, then this error is largely
-> useless to those applications because they can't do anything with
-> it, and so....
+base-commit: bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9
+--=20
+2.25.0
 
-That's a pretty common thing these days for applications that actually
-care about data to some degree. Either they immediately f[data]sync
-after writing, or they use some form of storage that has journalling
-capabilities. Which e.g. sqlite provides for the myriad of cases that
-don't want a separate server.
-
-And even if they can't recover from the error, there's a huge difference
-between not noticing that shit has hit the fan and happily continuing to
-accept further data , and telling the user that something has gone wrong
-with data integrity without details.
-
-
-> .... most applications will still require users to scrape their
-> logs to find out what error actually occurred. IOWs, we haven't
-> really changed the status quo with this new mechanism.
-
-I think there's a huge practical difference between having to do so in
-case there was an actual error (on the relevant FSs), and having to do
-so continually.
-
-
-> FWIW, explicit userspace error notifications for data loss events is
-> one of the features that David Howell's generic filesystem
-> notification mechanism is intended to provide.  Hence I'm not sure
-> that there's a huge amount of value in providing a partial solution
-> that only certain applications can use when there's a fully generic
-> mechanism for error notification just around the corner.
-
-Interesting. I largely missed that work, unfortunately. It's hard to
-keep up with all kernel things, while also maintaining / developing an
-RDBMS :/
-
-I assume the last state that includes the superblock layer stuff is at
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications
-whereas there's a newer
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications-core
-not including that. There do seem to be some significant changes between
-the two.
-
-As far as I can tell the superblock based stuff does *not* actually
-report any errors yet (contrast to READONLY, EDQUOT). Is the plan here
-to include writeback errors as well? Or just filesystem metadata/journal
-IO?
-
-I don't think that block layer notifications would be sufficient for an
-individual userspace application's data integrity purposes? For one,
-it'd need to map devices to relevant filesystems afaictl. And there's
-also errors above the block layer.
-
-
-Based on skimming the commits in those two trees, I'm not quite sure I
-understand what the permission model will be for accessing the
-notifications will be? Seems anyone, even within a container or
-something, will see blockdev errors from everywhere?  The earlier
-superblock support (I'm not sure I like that name btw, hard to
-understand for us userspace folks), seems to have required exec
-permission, but nothing else.
-
-For it to be usable for integrity purposes delivery has to be reliable
-and there needs to be a clear ordering, in the sense that reading
-notification needs to return all errors that occured timewise before the
-last pending notification has been read. Looks like that's largely the
-case, although I'm a bit scared after seeing:
-
-+void __post_watch_notification(struct watch_list *wlist,
-+			       struct watch_notification *n,
-+			       const struct cred *cred,
-+			       u64 id)
-+
-+		if (security_post_notification(watch->cred, cred, n) < 0)
-+			continue;
-+
-
-if an LSM module just decides to hide notifications that relied upon for
-integrity, we'll be in trouble.
-
-
-> > I'm not sure it makes sense to
-> > expose the errseq_t bits straight though - seems like it'd
-> > enshrine them in userspace ABI too much?
-> 
-> Even a little is way too much. Userspace ABI needs to be completely
-> independent of the kernel internal structures and implementation.
-> This is basic "we suck at APIs 101" stuff...
-
-Well, if it were just a counter of errors that gets stuck at some well
-defined max, it seems like it'd be ok. But I agree that it'd not be the
-best possible interface, and that the notify API seems like it could
-turn into that.
-
-Greetings,
-
-Andres Freund
