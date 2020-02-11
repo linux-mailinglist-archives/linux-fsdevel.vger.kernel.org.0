@@ -2,133 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B641593BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 16:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030CF15942F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 17:03:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729258AbgBKPuL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 10:50:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31028 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728655AbgBKPuL (ORCPT
+        id S1729665AbgBKQDC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 11:03:02 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51222 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728389AbgBKQDC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 10:50:11 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BFmwIu047949
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 10:50:10 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y1tn3yj3u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 10:50:09 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-        Tue, 11 Feb 2020 15:50:00 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Feb 2020 15:49:57 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01BFnusZ53411946
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 15:49:56 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27AD9A4051;
-        Tue, 11 Feb 2020 15:49:56 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CCA2DA404D;
-        Tue, 11 Feb 2020 15:49:55 +0000 (GMT)
-Received: from thinkpad (unknown [9.152.96.111])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Feb 2020 15:49:55 +0000 (GMT)
-Date:   Tue, 11 Feb 2020 16:49:54 +0100
-From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com, dm-devel@redhat.com,
-        vishal.l.verma@intel.com, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] s390,dcssblk,dax: Add dax zero_page_range
- operation to dcssblk driver
-In-Reply-To: <20200211151114.GA8590@redhat.com>
-References: <20200207202652.1439-1-vgoyal@redhat.com>
-        <20200207202652.1439-5-vgoyal@redhat.com>
-        <20200210215315.27b7e310@thinkpad>
-        <20200211151114.GA8590@redhat.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 11 Feb 2020 11:03:02 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1j1Y03-0005vu-A1; Tue, 11 Feb 2020 16:02:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] io_uring: fix return of an uninitialized variable ret
+Date:   Tue, 11 Feb 2020 16:02:59 +0000
+Message-Id: <20200211160259.90660-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021115-0008-0000-0000-00000351EC9C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021115-0009-0000-0000-00004A728E57
-Message-Id: <20200211164954.4df79b8b@thinkpad>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_04:2020-02-10,2020-02-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002110114
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 11 Feb 2020 10:11:14 -0500
-Vivek Goyal <vgoyal@redhat.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Mon, Feb 10, 2020 at 09:53:15PM +0100, Gerald Schaefer wrote:
-> > On Fri,  7 Feb 2020 15:26:49 -0500
-> > Vivek Goyal <vgoyal@redhat.com> wrote:
-> > 
-> > > Add dax operation zero_page_range for dcssblk driver.
-> > > 
-> > > CC: linux-s390@vger.kernel.org
-> > > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > > ---
-> > >  drivers/s390/block/dcssblk.c | 17 +++++++++++++++++
-> > >  1 file changed, 17 insertions(+)
-> > > 
-> > > diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
-> > > index 63502ca537eb..331abab5d066 100644
-> > > --- a/drivers/s390/block/dcssblk.c
-> > > +++ b/drivers/s390/block/dcssblk.c
-> > > @@ -57,11 +57,28 @@ static size_t dcssblk_dax_copy_to_iter(struct dax_device *dax_dev,
-> > >  	return copy_to_iter(addr, bytes, i);
-> > >  }
-> > >  
-> > > +static int dcssblk_dax_zero_page_range(struct dax_device *dax_dev, u64 offset,
-> > > +				       size_t len)
-> > > +{
-> > > +	long rc;
-> > > +	void *kaddr;
-> > > +	pgoff_t pgoff = offset >> PAGE_SHIFT;
-> > > +	unsigned page_offset = offset_in_page(offset);
-> > > +
-> > > +	rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
-> > 
-> > Why do you pass only 1 page as nr_pages argument for dax_direct_access()?
-> > In some other patch in this series there is a comment that this will
-> > currently only be used for one page, but support for more pages might be
-> > added later. Wouldn't it make sense to rather use something like
-> > PAGE_ALIGN(page_offset + len) >> PAGE_SHIFT instead of 1 here, so that
-> > this won't have to be changed when callers will be ready to use it
-> > with more than one page?
-> > 
-> > Of course, I guess then we'd also need some check on the return value
-> > from dax_direct_access(), i.e. if the returned available range is
-> > large enough for the requested range.
-> 
-> I left it at 1 page because that's the current limitation of this
-> interface and there are no callers which are zeroing across page
-> boundaries.
-> 
-> I prefer to keep it this way and modify it when we are extending this
-> interface to allow zeroing across page boundaries. Because even if I add
-> that logic, I can't test it.
+Currently variable ret is not initialized and this value is being
+returned at the end of the function io_poll_double_wake.  Since
+ret is not being used anywhere else remove it and just return 0.
 
-OK, fine with me.
+Addresses-Coverity: ("Uninitialized scalar variable")
+Fixes: f6e84af0767f ("io_uring: allow POLL_ADD with double poll_wait() users")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/io_uring.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 72bc378edebc..5c6a899b51d8 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3707,7 +3707,6 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+ 	struct io_poll_iocb *poll = (void *) req->io;
+ 	__poll_t mask = key_to_poll(key);
+ 	bool done = true;
+-	int ret;
+ 
+ 	/* for instances that support it check for an event match first: */
+ 	if (mask && !(mask & poll->events))
+@@ -3725,7 +3724,7 @@ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+ 	if (!done)
+ 		__io_poll_wake(req, poll, mask);
+ 	refcount_dec(&req->refs);
+-	return ret;
++	return 0;
+ }
+ 
+ struct io_poll_table {
+-- 
+2.25.0
 
