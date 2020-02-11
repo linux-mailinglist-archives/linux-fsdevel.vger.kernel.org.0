@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7803D158784
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 02:05:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CADA615878E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 02:05:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbgBKBDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727901AbgBKBDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 10 Feb 2020 20:03:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54740 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:54736 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbgBKBDy (ORCPT
+        with ESMTP id S1727695AbgBKBDy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 10 Feb 2020 20:03:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=pH5LFtlmOrFfMRG0qpJp1Yog2+5WC4QJAZDPBwZZUFQ=; b=WYDhnMYb2Tl4xEYpfY2Ku86VXL
-        FI/V0kmlpCs1KHRO35xmh+JKDrQMAEC2a25oQ9BygbUIHc0PYTN7FG/TumtQJ+kUp1O3OHsdm2haz
-        hhEkhbx7SOE6j08H5VRVSHsnGE+ExUvbUQojTzl55uokP3eAI6x7olxu2lddAMOmqOny931og4gai
-        VgiCC9cKCaXR15L83kZWcgQeZ0a5wsc3LFjHAjj0kTRlTOW+lLChKb6KWREqxkWZaagtfhYE9EiFR
-        wECqSjkjhjQbWw5xKUEDD5X8x+mDovm6ZDsjY7BYvt+CQ33FjwZUVX3fAQDKwOducVwUJV4OnKGzp
-        HTa7QHMQ==;
+        bh=MOOCl0kElclaL12Bo2vdDIW4gCL68Y7X1xBVMIbuM80=; b=Isw5m/tToyqF5hw2BHaQc66txg
+        PLpadc/3h5L6eAeruvyIBlnGL1PP7HBjXzQGHBrgDRT079Q3r/xXZRoyDxjg9eYDqeL9RoWbECgEm
+        IViGYNLoYxC8uf/tZ96aGfepdrMqdPmTsRd0IMjX/2KZemd3naXkvF6oAY3AtJ8V4hqLrYX9oKGei
+        WdFEds4K+gW630ResAlErqadDoitOedK0m1LuInhQW/SaVHIon6X3nGWBFlKNaEWcziZjkDcH9c4A
+        MYXX/W4UN0+2jmsJlL97B3nSSMEXmyOgLqdqFqdm+QN3vnSEn0/Zyg8JczgtVc92uJp3BUxRQVhaa
+        4qj969Yw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1Jxu-0001nh-AM; Tue, 11 Feb 2020 01:03:50 +0000
+        id 1j1Jxu-0001nl-BQ; Tue, 11 Feb 2020 01:03:50 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -32,9 +32,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
         linux-xfs@vger.kernel.org
-Subject: [PATCH v5 01/13] mm: Fix the return type of __do_page_cache_readahead
-Date:   Mon, 10 Feb 2020 17:03:36 -0800
-Message-Id: <20200211010348.6872-2-willy@infradead.org>
+Subject: [PATCH v5 02/13] mm: Ignore return value of ->readpages
+Date:   Mon, 10 Feb 2020 17:03:37 -0800
+Message-Id: <20200211010348.6872-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200211010348.6872-1-willy@infradead.org>
 References: <20200211010348.6872-1-willy@infradead.org>
@@ -47,53 +47,51 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-ra_submit() which is a wrapper around __do_page_cache_readahead() already
-returns an unsigned long, and the 'nr_to_read' parameter is an unsigned
-long, so fix __do_page_cache_readahead() to return an unsigned long,
-even though I'm pretty sure we're not going to readahead more than 2^32
-pages ever.
+We used to assign the return value to a variable, which we then ignored.
+Remove the pretence of caring.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/internal.h  | 2 +-
- mm/readahead.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ mm/readahead.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 3cf20ab3ca01..41b93c4b3ab7 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -49,7 +49,7 @@ void unmap_page_range(struct mmu_gather *tlb,
- 			     unsigned long addr, unsigned long end,
- 			     struct zap_details *details);
- 
--extern unsigned int __do_page_cache_readahead(struct address_space *mapping,
-+extern unsigned long __do_page_cache_readahead(struct address_space *mapping,
- 		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
- 		unsigned long lookahead_size);
- 
 diff --git a/mm/readahead.c b/mm/readahead.c
-index 2fe72cd29b47..6bf73ef33b7e 100644
+index 6bf73ef33b7e..fc77d13af556 100644
 --- a/mm/readahead.c
 +++ b/mm/readahead.c
-@@ -152,7 +152,7 @@ static int read_pages(struct address_space *mapping, struct file *filp,
-  *
-  * Returns the number of pages requested, or the maximum amount of I/O allowed.
-  */
--unsigned int __do_page_cache_readahead(struct address_space *mapping,
-+unsigned long __do_page_cache_readahead(struct address_space *mapping,
- 		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
- 		unsigned long lookahead_size)
- {
-@@ -161,7 +161,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
- 	unsigned long end_index;	/* The last page we want to read */
- 	LIST_HEAD(page_pool);
- 	int page_idx;
--	unsigned int nr_pages = 0;
-+	unsigned long nr_pages = 0;
- 	loff_t isize = i_size_read(inode);
- 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+@@ -113,17 +113,16 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
  
+ EXPORT_SYMBOL(read_cache_pages);
+ 
+-static int read_pages(struct address_space *mapping, struct file *filp,
++static void read_pages(struct address_space *mapping, struct file *filp,
+ 		struct list_head *pages, unsigned int nr_pages, gfp_t gfp)
+ {
+ 	struct blk_plug plug;
+ 	unsigned page_idx;
+-	int ret;
+ 
+ 	blk_start_plug(&plug);
+ 
+ 	if (mapping->a_ops->readpages) {
+-		ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
++		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+ 		/* Clean up the remaining pages */
+ 		put_pages_list(pages);
+ 		goto out;
+@@ -136,12 +135,9 @@ static int read_pages(struct address_space *mapping, struct file *filp,
+ 			mapping->a_ops->readpage(filp, page);
+ 		put_page(page);
+ 	}
+-	ret = 0;
+ 
+ out:
+ 	blk_finish_plug(&plug);
+-
+-	return ret;
+ }
+ 
+ /*
 -- 
 2.25.0
 
