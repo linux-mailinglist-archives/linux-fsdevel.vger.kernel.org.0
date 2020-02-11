@@ -2,106 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3DD1159516
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 17:38:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E93F15959E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 18:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbgBKQid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 11:38:33 -0500
-Received: from mga06.intel.com ([134.134.136.31]:63625 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728049AbgBKQid (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:38:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:38:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="405993172"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga005.jf.intel.com with ESMTP; 11 Feb 2020 08:38:31 -0800
-Date:   Tue, 11 Feb 2020 08:38:31 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 05/12] fs: remove unneeded IS_DAX() check
-Message-ID: <20200211163831.GC12866@iweiny-DESK2.sc.intel.com>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
- <20200208193445.27421-6-ira.weiny@intel.com>
- <20200211053401.GE10776@dread.disaster.area>
+        id S1731092AbgBKRAV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 12:00:21 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53435 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730163AbgBKQ7h (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:59:37 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j1YsW-00014T-Df; Tue, 11 Feb 2020 16:59:16 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
+Cc:     smbarber@chromium.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 11/24] open: chown_common(): handle fsid mappings
+Date:   Tue, 11 Feb 2020 17:57:40 +0100
+Message-Id: <20200211165753.356508-12-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <20200211165753.356508-1-christian.brauner@ubuntu.com>
+References: <20200211165753.356508-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211053401.GE10776@dread.disaster.area>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 04:34:01PM +1100, Dave Chinner wrote:
-> On Sat, Feb 08, 2020 at 11:34:38AM -0800, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > The IS_DAX() check in io_is_direct() causes a race between changing the
-> > DAX state and creating the iocb flags.
-> > 
-> > Remove the check because DAX now emulates the page cache API and
-> > therefore it does not matter if the file state is DAX or not when the
-> > iocb flags are created.
-> 
-> This statement is ... weird.
-> 
-> DAX doesn't "emulate" the page cache API at all
+Switch chown_common() to lookup fsids in the fsid mappings. If no fsid
+mappings are setup the behavior is unchanged, i.e. fsids are looked up in the
+id mappings.
 
-ah...  yea emulate is a bad word here.
+Filesystems that share a superblock in all user namespaces they are mounted in
+will retain their old semantics even with the introduction of fsidmappings.
 
-> - it has it's own
-> read/write methods that filesystems call based on the iomap
-> infrastructure (dax_iomap_rw()). i.e. there are 3 different IO paths
-> through the filesystems: the DAX IO path, the direct IO path, and
-> the buffered IO path.
-> 
-> Indeed, it seems like this works a bit by luck: Ext4 and XFS always
-> check IS_DAX(inode) in the read/write_iter methods before checking
-> for IOCB_DIRECT, and hence the IOCB_DIRECT flag is ignored by the
-> filesystems. i.e. when we got rid of the O_DIRECT paths from DAX, we
-> forgot to clean up io_is_direct() and it's only due to the ordering
-> of checks that we went down the DAX path correctly....
-> 
-> That said, the code change is good, but the commit message needs a
-> rewrite.
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/open.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-How about?
+diff --git a/fs/open.c b/fs/open.c
+index b62f5c0923a8..e5154841152c 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -32,6 +32,7 @@
+ #include <linux/ima.h>
+ #include <linux/dnotify.h>
+ #include <linux/compat.h>
++#include <linux/fsuidgid.h>
+ 
+ #include "internal.h"
+ 
+@@ -626,8 +627,13 @@ static int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	kuid_t uid;
+ 	kgid_t gid;
+ 
+-	uid = make_kuid(current_user_ns(), user);
+-	gid = make_kgid(current_user_ns(), group);
++	if (is_userns_visible(inode->i_sb->s_iflags)) {
++		uid = make_kuid(current_user_ns(), user);
++		gid = make_kgid(current_user_ns(), group);
++	} else {
++		uid = make_kfsuid(current_user_ns(), user);
++		gid = make_kfsgid(current_user_ns(), group);
++	}
+ 
+ retry_deleg:
+ 	newattrs.ia_valid =  ATTR_CTIME;
+-- 
+2.25.0
 
-<commit msg>
-  fs: Remove unneeded IS_DAX() check
-  
-  The IS_DAX() check in io_is_direct() causes a race between changing the
-  DAX state and creating the iocb flags.
-
-  Remove the check because DAX now has it's own read/write methods and
-  file systems which support DAX check IS_DAX() prior to IOCB_DIRECT.
-  Therefore, it does not matter if the file state is DAX when the iocb
-  flags are created, and we can avoid the race.
-
-  Reviewed-by: Jan Kara <jack@suse.cz>
-  Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-</commit msg>
-
-Ira
-
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
