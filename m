@@ -2,125 +2,365 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB42158B2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 09:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2CAD158BAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 10:15:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgBKITR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 03:19:17 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:27006 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbgBKITR (ORCPT
+        id S1727795AbgBKJPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 04:15:23 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:37404 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727582AbgBKJPX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 03:19:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581409157; x=1612945157;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=FDQF7YmUbf7aiT8pwm9gfOrtDMSYksmXliNItnHvbJM=;
-  b=ii6MWg1HKZX+3NNN5/LQ0JC1jWrdLKgnKm0P3SAyC9CFyMKHUXKXLgIn
-   W0Xx7xCEuMUMaRMLD/DhNeEigBrEeN6+TNAYwggwbYpEJ6/5qbp3mCiOE
-   YdR/DVl2nrlU5shgxFn7N239YROdgPQ1HLFR2KXNxxcRf1oRE5WxcnRMd
-   b6ctcXE84bDt7OZEkblWo9/5McGjkXDLMoXPF7fi+Y2HD2I/gJCy+VjPh
-   rflejigzhd//R1d8bm3mUy2x5w4DDfPQWECLubsPQmVJDprBxY3aezhJO
-   U75hOZF+x4jZC+H0LaCgxiPCCXs/VDkqPyL2yXvGiQA0hoq+O5+J2L+8O
-   Q==;
-IronPort-SDR: TTpGiZ+CrPrMqQD08kY+UMnaQ1VC8AGR3aneqoIUUY8TfLa6+gcKWb/1LnnK2sf5VVJpNfwodD
- eprhvkWp2D1y/As6LgwFt3RkNXQxROHtkx4jMzzq2dBDB1cytEO8cGS3akB+WaKNt8yrJkbpj1
- zT0ezXDptkOTRqEcQHdOzE/cfAUd5swPx02ua+4uNLHkxGkhvTzn5PlkNbyziR0tAnVQudOrXx
- PQTfZviWsfowVKubfDgGAxm3k1l4SLnUaZ45XNsnA1nGNnC+rLBrqC2Xyf9me48/6WhV6Eh+5+
- wJY=
-X-IronPort-AV: E=Sophos;i="5.70,428,1574092800"; 
-   d="scan'208";a="130107720"
-Received: from mail-mw2nam12lp2049.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.49])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Feb 2020 16:19:16 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DbOZ8PGX+pHGj8jZlYa7H686mXG5I5hjC92WnaqgN4AaL1gNhTtl9g7728BhIL67Pa0SEs1xZAyZAGhEQTofn5LAFhTdska0A0PzVs6pGyB1XgR/LCfyB6uGVWIuSGnL5qUFNBrtePvKSatxT9R3CdxPvlAvj40OFIEQYeF2Oo7BTj9ik96CBmVvuYLJiPOTyO7zaQhEHWp+ChZN9m6YA2j1WApo9+wqzAPG5cLPt7R4oSOCxigfzlOyrKE2dPYb4Syn/UBTKOOE7pTe2ZtcFP+rV5U8LLsnlfd7uswgujETcxbAq1xcN6PJboAI7yit67u/PIGryqHT4d6nivZY8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDQF7YmUbf7aiT8pwm9gfOrtDMSYksmXliNItnHvbJM=;
- b=alcXa2EsGIL1Z1u/bimwyTA7Z1Gty5+WjaSIQpFBB4K9SRRxxKCP2vYM00yM+hHWb+rQEhkqX9Mm69yJdDGCIDH8Qq15nK31VXN73KaKL9u9gqbR7kEkBOmM852kPwJ/9T28xpwxHsiHXZahx5Ur+S5/SOIlrCtM2cmkVGYHl1ADIsMVFJahFmAJo51uFIAHT0QfeMSuaYrgJXFEgGc30FC9URtbi7lk6yddTRk2o/a3VGsopKE/9U/BC/O2/zjJL2VbgJp4JOo8wNq3qM0VBAAiLyziETvtJ6T54/vgOTszX0Qw9P5trPAli3mSLfXHlw7Y+6Iuo309lC5cCyFJ+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Tue, 11 Feb 2020 04:15:23 -0500
+Received: by mail-il1-f193.google.com with SMTP id v13so2824692iln.4;
+        Tue, 11 Feb 2020 01:15:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FDQF7YmUbf7aiT8pwm9gfOrtDMSYksmXliNItnHvbJM=;
- b=IE59z5+qfoiES6btuEYw/qK3SrBZJVRQBphYhK1Uw3zNftDlj6VNzH1BRJ/yIyu/BKfKxpJWUYdnjofN5YZFl0xUfRoZXWvJQ/sZzWWAakENjX/lLozVrqWiPsn83F7FeohsxPsQw6bb89DWHJS5tPdZl9XZr98kEnwJbxW5UG0=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com (10.167.139.149) by
- SN4PR0401MB3600.namprd04.prod.outlook.com (10.167.133.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.23; Tue, 11 Feb 2020 08:19:14 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::e5f5:84d2:cabc:da32]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::e5f5:84d2:cabc:da32%5]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
- 08:19:14 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v5 01/13] mm: Fix the return type of
- __do_page_cache_readahead
-Thread-Topic: [PATCH v5 01/13] mm: Fix the return type of
- __do_page_cache_readahead
-Thread-Index: AQHV4HdLtCSr29ig40CbWBOKZ39/Iw==
-Date:   Tue, 11 Feb 2020 08:19:14 +0000
-Message-ID: <SN4PR0401MB3598602411B75B46F5267B829B180@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200211010348.6872-1-willy@infradead.org>
- <20200211010348.6872-2-willy@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 783a7c5e-dfd1-4f05-3ff8-08d7aecb14cd
-x-ms-traffictypediagnostic: SN4PR0401MB3600:
-x-microsoft-antispam-prvs: <SN4PR0401MB3600BE4DF5FBBC2A07AC38609B180@SN4PR0401MB3600.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
-x-forefront-prvs: 0310C78181
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(366004)(136003)(396003)(346002)(199004)(189003)(8936002)(9686003)(86362001)(110136005)(55016002)(52536014)(5660300002)(7416002)(66446008)(54906003)(8676002)(64756008)(66556008)(558084003)(81156014)(81166006)(316002)(76116006)(91956017)(66946007)(66476007)(26005)(33656002)(53546011)(6506007)(7696005)(71200400001)(478600001)(186003)(2906002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3600;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: J13A6ReA9TSTt1c6bdBpTxtzneb1Ofpyc3HHteWqvtuXD5BIp25wWX5Jj9rty+z8IuBPjt/gIuHTYUfEoYTkHZrnnDILfKSy45g6ryMvZTy61yO2Q+D6ULUDMigsCCjurNntAWZl0Xm/OPaC21h9Uhg9UsfGDU8yRR7pJp/4RtZPLu8Aa+pkHWfnddkRl+me9f0vLAAtyn91TZCvcIqa+pIWQqEAD41sQwhxTwrZ9YYK66o/AOKckkO5BFfhPOEMko2jHkIElHDKQ2xLih2gDaEWxDyXVbnwiNcDQ14fDOc61glpj0fPDXD9wLRF+uURWIoMWc/4/v/xEcylXlRAUCkkC3JGDfLGO5P1vDoTTsL8HhGcdLdCMRrLdg1L3yxaPXNcB6PpBTBIbmB1SpRGyXF5mmIccM3isWoZ/4rvj3nw9fQi+IKdlplFkQzhShVs
-x-ms-exchange-antispam-messagedata: gfEyOKrwkPk8qghET5Arq6HHfBJaC0LBjYfYag1yvJsZYT4ZAH1sGnViMxzNGt5I12U+7zjXvc7zduxy+tXWxZcvuxjY2ApX92T48YFRi0PQXQLlLzOjG4KsqnzrprU7tnMP+4Gc0+BVeUyg7Qnipg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sdIlZUjUiU9Et+TLRdOE3MZltBw9dwJzx4JE2mijFcw=;
+        b=vAzh8AIn/myfslUNkQhS0VSXss0Lr8ulQmFfaCTUDXGkAucLfzIxaN2uTJJE0wgGes
+         4ZDlE3vpfToIbqFOSo9RiOT7CsilTQ2LLz3xN86S4leU8cf/t5E6cGoyV+yoiWxyAGQ7
+         SesIuynVStDzK5WSMXQ8rQZPniP8b9LDZHE1Wta6u+bJLK1q/ZoRXhlql4Evqw+B5nMe
+         aN7NCp1Gqm4G3ZJbNfMO2F3iPeLj5syEJYeE4abTk2Ne4xgOs61Og4UW2v00ycF/LTwb
+         ZuH5P3dwxBB9bZPfO9ab7lgPhTu113Z3fDo5deDSRup9fIBGDfsmLJokIxMVobuWVyGS
+         26Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sdIlZUjUiU9Et+TLRdOE3MZltBw9dwJzx4JE2mijFcw=;
+        b=PnqsKPY/wDT89T5cxNYDdXWUhhyOBfMPXEBUf18/U0VidFi3AMOl50z/8R+YqD4fnB
+         bGneubYBP6imWTmkl/WKjlPFBNM4BTAAek94z3ZKCaWmmo29IfFcedaiVrf8AwMZ0Ohi
+         OS/VCgfabxibeVkt3Ontm/SAFiJcWL5BtQUpLOzNFLd5sj5vUzHJ4E8i4oh5wi1UYFNy
+         Dcpkhq8kXU2RZgeLI2J3YaTBKzB39JiIdc5d96fRQsY5FcTr0iHX39DLTeSrlQmCEQYJ
+         EwfZm5MR8cnwurw5dvvJ5PfLj7mgrJp5TE2NMYMNf3BORhL/iLLXGaLVaPrO4I2vXh8L
+         Fk8g==
+X-Gm-Message-State: APjAAAWvLnPX27MoWXc5ScVZBzJ3KE40PXu8vYD15+V+AFS/0ALesYwU
+        rp+x/+s01caZ8/0Sgsb5y9ai7/7FM8+WgHQECLI=
+X-Google-Smtp-Source: APXvYqwxH0MRKWbVi9LF/FoS86IWI88iWJvc+h1fAl/sYAxz77xQva2vuGHZH8OmP5XBBqDHauboTH/jr5BS0j0Ef1U=
+X-Received: by 2002:a92:d7c6:: with SMTP id g6mr5423861ilq.282.1581412522484;
+ Tue, 11 Feb 2020 01:15:22 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 783a7c5e-dfd1-4f05-3ff8-08d7aecb14cd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 08:19:14.6094
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +UkunN43yImZCGMmfIBExV/09gy+m2seRDcVr8m/zRykHkafS94C2sa/Bp5+xgnFqs3xnQdRlYKfhKG8VEjtTHo39tQdr+ZsU+hlmizKQRg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3600
+References: <20200207214948.1073419-1-jlayton@kernel.org>
+In-Reply-To: <20200207214948.1073419-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 11 Feb 2020 10:15:41 +0100
+Message-ID: <CAOi1vP-z4+NKMMhCz19Ld_=X5B7nvzVbS-fErS9MA3cq+SMvGg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix allocation under spinlock in mount option parsing
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Xiubo Li <xiubli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/02/2020 02:05, Matthew Wilcox wrote:=0A=
-> even though I'm pretty sure we're not going to readahead more than 2^32=
-=0A=
-> pages ever.=0A=
-=0A=
-And 640K is more memory than anyone will ever need on a computer *scnr*=0A=
-=0A=
+On Fri, Feb 7, 2020 at 10:49 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Al and syzbot reported that 4fbc0c711b24 (ceph: remove the extra slashes
+> in the server path) had caused a regression where an allocation could be
+> done under spinlock.
+>
+> Fix this by keeping a canonicalized version of the path in the mount
+> options. Then we can simply compare those without making copies at all
+> during the comparison.
+>
+> Fixes: 4fbc0c711b24 ("ceph: remove the extra slashes in the server path")
+> Reported-by: syzbot+98704a51af8e3d9425a9@syzkaller.appspotmail.com
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/super.c | 170 ++++++++++++++++++++++--------------------------
+>  fs/ceph/super.h |   1 +
+>  2 files changed, 79 insertions(+), 92 deletions(-)
+>
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 5fa28e98d2b8..196d547c7054 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -208,6 +208,69 @@ struct ceph_parse_opts_ctx {
+>         struct ceph_mount_options       *opts;
+>  };
+>
+> +/**
+> + * canonicalize_path - Remove the extra slashes in the server path
+> + * @server_path: the server path and could be NULL
+
+Hi Jeff,
+
+It doesn't look like server_path can be NULL, and the code doesn't
+handle that either.
+
+> + *
+> + * Return NULL if the path is NULL or only consists of "/", or a string
+> + * without any extra slashes including the leading slash(es) and the
+
+It can return an error, so this should say "string, NULL or error", but
+see below.
+
+> + * slash(es) at the end of the server path, such as:
+> + * "//dir1////dir2///" --> "dir1/dir2"
+> + */
+> +static char *canonicalize_path(const char *server_path)
+> +{
+> +       const char *path = server_path;
+> +       const char *cur, *end;
+> +       char *buf, *p;
+> +       int len;
+> +
+> +       /* remove all the leading slashes */
+> +       while (*path == '/')
+> +               path++;
+> +
+> +       /* if the server path only consists of slashes */
+> +       if (*path == '\0')
+> +               return NULL;
+> +
+> +       len = strlen(path);
+> +
+> +       buf = kmalloc(len + 1, GFP_KERNEL);
+> +       if (!buf)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       end = path + len;
+> +       p = buf;
+> +       do {
+> +               cur = strchr(path, '/');
+> +               if (!cur)
+> +                       cur = end;
+> +
+> +               len = cur - path;
+> +
+> +               /* including one '/' */
+> +               if (cur != end)
+> +                       len += 1;
+> +
+> +               memcpy(p, path, len);
+> +               p += len;
+> +
+> +               while (cur <= end && *cur == '/')
+> +                       cur++;
+> +               path = cur;
+> +       } while (path < end);
+> +
+> +       *p = '\0';
+> +
+> +       /*
+> +        * remove the last slash if there has and just to make sure that
+> +        * we will get something like "dir1/dir2"
+> +        */
+> +       if (*(--p) == '/')
+> +               *p = '\0';
+> +
+> +       return buf;
+> +}
+
+I realize that you just adapted the existing function, but it really
+looks like a mouthful -- both the signature (string, NULL or error)
+and the code.  It could be a lot more concise...
+
+> +
+>  /*
+>   * Parse the source parameter.  Distinguish the server list from the path.
+>   *
+> @@ -230,15 +293,23 @@ static int ceph_parse_source(struct fs_parameter *param, struct fs_context *fc)
+>
+>         dev_name_end = strchr(dev_name, '/');
+>         if (dev_name_end) {
+> -               kfree(fsopt->server_path);
+>
+
+Blank line.
+
+>                 /*
+>                  * The server_path will include the whole chars from userland
+>                  * including the leading '/'.
+>                  */
+> +               kfree(fsopt->server_path);
+>                 fsopt->server_path = kstrdup(dev_name_end, GFP_KERNEL);
+>                 if (!fsopt->server_path)
+>                         return -ENOMEM;
+> +
+> +               kfree(fsopt->canon_path);
+> +               fsopt->canon_path = canonicalize_path(fsopt->server_path);
+> +               if (fsopt->canon_path && IS_ERR(fsopt->canon_path)) {
+> +                       ret = PTR_ERR(fsopt->canon_path);
+> +                       fsopt->canon_path = NULL;
+> +                       return ret;
+> +               }
+>         } else {
+>                 dev_name_end = dev_name + strlen(dev_name);
+>         }
+> @@ -447,6 +518,7 @@ static void destroy_mount_options(struct ceph_mount_options *args)
+>         kfree(args->snapdir_name);
+>         kfree(args->mds_namespace);
+>         kfree(args->server_path);
+> +       kfree(args->canon_path);
+>         kfree(args->fscache_uniq);
+>         kfree(args);
+>  }
+> @@ -462,73 +534,6 @@ static int strcmp_null(const char *s1, const char *s2)
+>         return strcmp(s1, s2);
+>  }
+>
+> -/**
+> - * path_remove_extra_slash - Remove the extra slashes in the server path
+> - * @server_path: the server path and could be NULL
+> - *
+> - * Return NULL if the path is NULL or only consists of "/", or a string
+> - * without any extra slashes including the leading slash(es) and the
+> - * slash(es) at the end of the server path, such as:
+> - * "//dir1////dir2///" --> "dir1/dir2"
+> - */
+> -static char *path_remove_extra_slash(const char *server_path)
+> -{
+> -       const char *path = server_path;
+> -       const char *cur, *end;
+> -       char *buf, *p;
+> -       int len;
+> -
+> -       /* if the server path is omitted */
+> -       if (!path)
+> -               return NULL;
+> -
+> -       /* remove all the leading slashes */
+> -       while (*path == '/')
+> -               path++;
+> -
+> -       /* if the server path only consists of slashes */
+> -       if (*path == '\0')
+> -               return NULL;
+> -
+> -       len = strlen(path);
+> -
+> -       buf = kmalloc(len + 1, GFP_KERNEL);
+> -       if (!buf)
+> -               return ERR_PTR(-ENOMEM);
+> -
+> -       end = path + len;
+> -       p = buf;
+> -       do {
+> -               cur = strchr(path, '/');
+> -               if (!cur)
+> -                       cur = end;
+> -
+> -               len = cur - path;
+> -
+> -               /* including one '/' */
+> -               if (cur != end)
+> -                       len += 1;
+> -
+> -               memcpy(p, path, len);
+> -               p += len;
+> -
+> -               while (cur <= end && *cur == '/')
+> -                       cur++;
+> -               path = cur;
+> -       } while (path < end);
+> -
+> -       *p = '\0';
+> -
+> -       /*
+> -        * remove the last slash if there has and just to make sure that
+> -        * we will get something like "dir1/dir2"
+> -        */
+> -       if (*(--p) == '/')
+> -               *p = '\0';
+> -
+> -       return buf;
+> -}
+> -
+>  static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>                                  struct ceph_options *new_opt,
+>                                  struct ceph_fs_client *fsc)
+> @@ -536,7 +541,6 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>         struct ceph_mount_options *fsopt1 = new_fsopt;
+>         struct ceph_mount_options *fsopt2 = fsc->mount_options;
+>         int ofs = offsetof(struct ceph_mount_options, snapdir_name);
+> -       char *p1, *p2;
+>         int ret;
+>
+>         ret = memcmp(fsopt1, fsopt2, ofs);
+> @@ -546,21 +550,12 @@ static int compare_mount_options(struct ceph_mount_options *new_fsopt,
+>         ret = strcmp_null(fsopt1->snapdir_name, fsopt2->snapdir_name);
+>         if (ret)
+>                 return ret;
+> +
+>         ret = strcmp_null(fsopt1->mds_namespace, fsopt2->mds_namespace);
+>         if (ret)
+>                 return ret;
+>
+> -       p1 = path_remove_extra_slash(fsopt1->server_path);
+> -       if (IS_ERR(p1))
+> -               return PTR_ERR(p1);
+> -       p2 = path_remove_extra_slash(fsopt2->server_path);
+> -       if (IS_ERR(p2)) {
+> -               kfree(p1);
+> -               return PTR_ERR(p2);
+> -       }
+> -       ret = strcmp_null(p1, p2);
+> -       kfree(p1);
+> -       kfree(p2);
+> +       ret = strcmp_null(fsopt1->canon_path, fsopt2->canon_path);
+>         if (ret)
+>                 return ret;
+>
+> @@ -963,7 +958,9 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>         mutex_lock(&fsc->client->mount_mutex);
+>
+>         if (!fsc->sb->s_root) {
+> -               const char *path, *p;
+> +               const char *path = fsc->mount_options->canon_path ?
+> +                                       fsc->mount_options->canon_path : "";
+> +
+>                 err = __ceph_open_session(fsc->client, started);
+>                 if (err < 0)
+>                         goto out;
+> @@ -975,22 +972,11 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>                                 goto out;
+>                 }
+>
+> -               p = path_remove_extra_slash(fsc->mount_options->server_path);
+> -               if (IS_ERR(p)) {
+> -                       err = PTR_ERR(p);
+> -                       goto out;
+> -               }
+> -               /* if the server path is omitted or just consists of '/' */
+> -               if (!p)
+> -                       path = "";
+> -               else
+> -                       path = p;
+>                 dout("mount opening path '%s'\n", path);
+>
+>                 ceph_fs_debugfs_init(fsc);
+>
+>                 root = open_root_dentry(fsc, path, started);
+> -               kfree(p);
+>                 if (IS_ERR(root)) {
+>                         err = PTR_ERR(root);
+>                         goto out;
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index e8f891770f9d..70aa32cfb64d 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -94,6 +94,7 @@ struct ceph_mount_options {
+>         char *snapdir_name;   /* default ".snap" */
+>         char *mds_namespace;  /* default NULL */
+>         char *server_path;    /* default  "/" */
+> +       char *canon_path;     /* default "/" */
+
+Why keep both the original and canon_path around?  It looks like
+the only remaining use of server_path is in create_session_open_msg().
+Since that's just metadata, I think we can safely switch it over.
+
+Also, the comment is misleading.  The default is NULL (which _means_
+"/" for metadata purposes but "/" is never stored here).
+
+I'll post what I have in mind as a patch shortly.
+
+Thanks,
+
+                Ilya
