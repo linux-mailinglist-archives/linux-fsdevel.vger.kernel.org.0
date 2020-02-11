@@ -2,182 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C508A158F4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 13:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF213158FBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 14:21:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgBKM5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 07:57:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727567AbgBKM5E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:57:04 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEC842082F;
-        Tue, 11 Feb 2020 12:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581425822;
-        bh=DoZwkXpi/2D9yx996XJ8ce1s5ncn9GFWNjxut6Ifr7o=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=1qmmckEuNFffmetSwQbN5k1DW8SZ/2dYpDp2oSEkbeJeJdaEDoN1V+Ip/50VPL/un
-         3AEKZY/t0ZrA6unBAfSnMDYSThUTP3bOh5+4k7aLt9PBbw+IjGNYCwm1iH7/XiEHxS
-         5Jqq6YHjRzq4vpJ3ExwU85smarLPgzHt/suJWC2Q=
-Message-ID: <538b41c956c3b69900c9166464d9621b2537d877.camel@kernel.org>
-Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
- writeback errors
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>,
-        Andres Freund <andres@anarazel.de>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        willy@infradead.org, dhowells@redhat.com, hch@infradead.org,
-        jack@suse.cz, akpm@linux-foundation.org
-Date:   Tue, 11 Feb 2020 07:57:00 -0500
-In-Reply-To: <20200210214657.GA10776@dread.disaster.area>
-References: <20200207170423.377931-1-jlayton@kernel.org>
-         <20200207205243.GP20628@dread.disaster.area>
-         <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
-         <20200210214657.GA10776@dread.disaster.area>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1729019AbgBKNVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 08:21:46 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37876 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728309AbgBKNVo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 08:21:44 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b15so6999610lfc.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 05:21:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Hr4RM1uoMUp4PqitGEd8DPH0BhvKXrOmDlEYhlDDK/I=;
+        b=bFc+jsaX1bV6Bl3CuP+Cavm+epSok3Y8YuARU6618UpGWA+riHbOEsKSpMLVF0ZXnU
+         bY7fqdQ0bEnWWZfLd6Oqd9qX1D757FrAYb+O8BaQ+LQhdXMTPs51Hy2WUXzJ4Ad24uj4
+         cvUYk6SVn5+//nUOhXYL42dvCGwEwZFRn+X4g8zbG1FE0jal/OsaVU08xzOzzjWLIm0D
+         8MwIcgxr3JmYIH/VoOmj8XDIQ6QhVzIhQMilukMtaXwupCH3WebHq6ULuGRH9rDVgw9o
+         yY56NRlMCQ15lfK+PifbXajl/TM4KUteetaHmFwDIJm5VG8+ct0cSww9niJRGFLxEBTQ
+         oHNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Hr4RM1uoMUp4PqitGEd8DPH0BhvKXrOmDlEYhlDDK/I=;
+        b=PLocg2ZVAB5XnHcNkU7fo+janFw+e3WA2BZxq3FrjZi/ysou8p/ovvFZrj7z1m6xIF
+         fyYqj52HbzTxRrtUE7eR2XhRaXti8caZqT2tbmGjqswpwhCiERh0yeUU3yWF4IuMpfOd
+         qBK8jFZl7UqCs/r+xGhxnpwOrPDKEB4Nj1Lcnfjy10wFNKFfq5NDsn0uwbB4lqkW5yTy
+         2FoJl9Yy3HZGubVLzfegAxJkqqPr21TBKB8iA7exCiiLHScSpdFKuhdaLzJ0zPADLx0I
+         KzMVZW32tkD1aq8uAW/jbG9a+YwKKFxx7LGW3HF4Gvbsglw/h18X0iAbpeMK6pJNE9EV
+         0Gxw==
+X-Gm-Message-State: APjAAAUJb3JYVspT6lOobsn+xTPUmt/C3FBROZs8YxF0OuSlBhoAH8eU
+        dlYw/ZbgOzwMqKUJse3UMYnKsA==
+X-Google-Smtp-Source: APXvYqxV3rctot+0vYRe7IkamEeOz1L1i7WPyibLsi5dvBCjvN0112ivhIa5RgpfbLebu0hWGg8rAw==
+X-Received: by 2002:a19:8c4d:: with SMTP id i13mr3655524lfj.42.1581427301828;
+        Tue, 11 Feb 2020 05:21:41 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id a8sm2166091ljn.74.2020.02.11.05.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 05:21:41 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id D76B5100AFB; Tue, 11 Feb 2020 16:21:59 +0300 (+03)
+Date:   Tue, 11 Feb 2020 16:21:59 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v6 12/12] mm: dump_page(): additional diagnostics for
+ huge pinned pages
+Message-ID: <20200211132159.pii2x5pssifemgaz@box>
+References: <20200211001536.1027652-1-jhubbard@nvidia.com>
+ <20200211001536.1027652-13-jhubbard@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211001536.1027652-13-jhubbard@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-02-11 at 08:46 +1100, Dave Chinner wrote:
-> On Fri, Feb 07, 2020 at 01:20:12PM -0800, Andres Freund wrote:
-> > Hi,
-> > 
-> > On 2020-02-08 07:52:43 +1100, Dave Chinner wrote:
-> > > On Fri, Feb 07, 2020 at 12:04:20PM -0500, Jeff Layton wrote:
-> > > > You're probably wondering -- Where are v1 and v2 sets?
-> > > > The basic idea is to track writeback errors at the superblock level,
-> > > > so that we can quickly and easily check whether something bad happened
-> > > > without having to fsync each file individually. syncfs is then changed
-> > > > to reliably report writeback errors, and a new ioctl is added to allow
-> > > > userland to get at the current errseq_t value w/o having to sync out
-> > > > anything.
-> > > 
-> > > So what, exactly, can userspace do with this error? It has no idea
-> > > at all what file the writeback failure occurred on or even
-> > > what files syncfs() even acted on so there's no obvious error
-> > > recovery that it could perform on reception of such an error.
-> > 
-> > Depends on the application.  For e.g. postgres it'd to be to reset
-> > in-memory contents and perform WAL replay from the last checkpoint.
+On Mon, Feb 10, 2020 at 04:15:36PM -0800, John Hubbard wrote:
+> As part of pin_user_pages() and related API calls, pages are
+> "dma-pinned". For the case of compound pages of order > 1, the per-page
+> accounting of dma pins is accomplished via the 3rd struct page in the
+> compound page. In order to support debugging of any pin_user_pages()-
+> related problems, enhance dump_page() so as to report the pin count
+> in that case.
 > 
-> What happens if a user runs 'sync -f /path/to/postgres/data' instead
-> of postgres? All the writeback errors are consumed at that point by
-> reporting them to the process that ran syncfs()...
+> Documentation/core-api/pin_user_pages.rst is also updated accordingly.
 > 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  Documentation/core-api/pin_user_pages.rst |  7 +++++++
+>  mm/debug.c                                | 21 ++++++++++++++++-----
+>  2 files changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
+> index 5c8a5f89756b..2e939ff10b86 100644
+> --- a/Documentation/core-api/pin_user_pages.rst
+> +++ b/Documentation/core-api/pin_user_pages.rst
+> @@ -238,6 +238,13 @@ long-term [R]DMA pins in place, or during pin/unpin transitions.
+>  (...unless it was already out of balance due to a long-term RDMA pin being in
+>  place.)
+>  
+> +Other diagnostics
+> +=================
+> +
+> +dump_page() has been enhanced slightly, to handle these new counting fields, and
+> +to better report on compound pages in general. Specifically, for compound pages
+> +with order > 1, the exact (hpage_pinned_refcount) pincount is reported.
+> +
+>  References
+>  ==========
+>  
+> diff --git a/mm/debug.c b/mm/debug.c
+> index f5ffb0784559..2189357f0987 100644
+> --- a/mm/debug.c
+> +++ b/mm/debug.c
+> @@ -85,11 +85,22 @@ void __dump_page(struct page *page, const char *reason)
+>  	mapcount = PageSlab(head) ? 0 : page_mapcount(page);
+>  
+>  	if (compound)
+> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+> -			"index:%#lx head:%px order:%u compound_mapcount:%d\n",
+> -			page, page_ref_count(head), mapcount,
+> -			mapping, page_to_pgoff(page), head,
+> -			compound_order(head), compound_mapcount(page));
+> +		if (hpage_pincount_available(page)) {
+> +			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+> +				"index:%#lx head:%px order:%u "
+> +				"compound_mapcount:%d compound_pincount:%d\n",
+> +				page, page_ref_count(head), mapcount,
+> +				mapping, page_to_pgoff(page), head,
+> +				compound_order(head), compound_mapcount(page),
+> +				compound_pincount(page));
+> +		} else {
+> +			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+> +				"index:%#lx head:%px order:%u "
+> +				"compound_mapcount:%d\n",
+> +				page, page_ref_count(head), mapcount,
+> +				mapping, page_to_pgoff(page), head,
+> +				compound_order(head), compound_mapcount(page));
+> +		}
 
-Well, no. If you keep a fd open, then you can be sure that you'll see
-any errors that occurred since that open at syncfs time, regardless of
-who else is issuing syncfs calls(). That's basically how errseq_t works.
+Have you considered using pr_cont() here. I guess it would be easier to
+read.
 
-I guess I figured that part was obvious and didn't point it out here --
-mea culpa.
+You can use my Ack anyway.
 
-> > Due
-> > to various reasons* it's very hard for us (without major performance
-> > and/or reliability impact) to fully guarantee that by the time we fsync
-> > specific files we do so on an old enough fd to guarantee that we'd see
-> > the an error triggered by background writeback.  But keeping track of
-> > all potential filesystems data resides on (with one fd open permanently
-> > for each) and then syncfs()ing them at checkpoint time is quite doable.
-> 
-> Oh, you have to keep an fd permanently open to every superblock that
-> application holds data on so that errors detected by other users of
-> that filesystem are also reported to the application?
-> 
-> This seems like a fairly important requirement for applications to
-> ensure this error reporting is "reliable" and that certainly wasn't
-> apparent from the patches or their description.  i.e. the API has an
-> explicit userspace application behaviour requirement for reliable
-> functioning, and that was not documented.  "we suck at APIs" and all
-> that..
-> 
-> It also seems to me as useful only to applications that have a
-> "rollback and replay" error recovery mechanism. If the application
-> doesn't have the ability to go back in time to before the
-> "unfindable" writeback error occurred, then this error is largely
-> useless to those applications because they can't do anything with
-> it, and so....
-> 
 
-Just knowing that an error occurred is still a better situation than
-letting the application obliviously chug along.
-
-In a sense I see the above argument as circular. Our error reporting
-mechanisms have historically sucked, and applications have been written
-accordingly. Unless we improve how errors are reported then applications
-will never improve.
-
-It is true that we can't reasonably report which inodes failed writeback
-with this interface, but syncfs only returns int. That's really the best
-we can do with it.
-
-> > > > - This adds a new generic fs ioctl to allow userland to scrape
-> > > > the current superblock's errseq_t value. It may be best to
-> > > > present this to userland via fsinfo() instead (once that's
-> > > > merged). I'm fine with dropping the last patch for now and
-> > > > reworking it for fsinfo if so.
-> > > 
-> > > What, exactly, is this useful for? Why would we consider
-> > > exposing an internal implementation detail to userspace like
-> > > this?
-> > 
-> > There is, as far as I can tell, so far no way but scraping the
-> > kernel log to figure out if there have been data loss errors on a
-> > machine/fs.
+>  	else
+>  		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p index:%#lx\n",
+>  			page, page_ref_count(page), mapcount,
+> -- 
+> 2.25.0
 > 
-> .... most applications will still require users to scrape their
-> logs to find out what error actually occurred. IOWs, we haven't
-> really changed the status quo with this new mechanism.
-> 
-> FWIW, explicit userspace error notifications for data loss events is
-> one of the features that David Howell's generic filesystem
-> notification mechanism is intended to provide.  Hence I'm not sure
-> that there's a huge amount of value in providing a partial solution
-> that only certain applications can use when there's a fully generic
-> mechanism for error notification just around the corner.
-> 
-
-David's notification work is great, but it's quite a bit more
-heavyweight than just allowing syncfs to return better errors. The
-application would need to register to be notified and watch a pipe. Not
-all application are going to want or need to do that.
-
-> > Even besides app specific reactions like outlined above,
-> > just generally being able to alert whenever there error count
-> > increases seems extremely useful.
-> 
-> Yup, a generic filesystem notification mechanism is perfect for
-> that, plus it can provide more explicit details of where the error
-> actually occurred rather than jsut a handwavy "some error occurred
-> some where" report....
-> 
-> > I'm not sure it makes sense to
-> > expose the errseq_t bits straight though - seems like it'd
-> > enshrine them in userspace ABI too much?
-> 
-> Even a little is way too much. Userspace ABI needs to be completely
-> independent of the kernel internal structures and implementation.
-> This is basic "we suck at APIs 101" stuff...
-> 
-
-Yeah, I've already self-NAK'ed that patch.
-
-If we are going to expose that info, we'll probably do it via fsinfo(),
-and put it in a struct with two fields: last reported error code, and an
-opaque token that you can use to see whether new errors have been
-recorded since you last checked. I think that should be enough to ensure
-that we don't tie this too closely to the internal kernel mplementation.
 
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+ Kirill A. Shutemov
