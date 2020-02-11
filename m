@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E46C15867F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3901158679
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 01:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbgBKAPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 19:15:42 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4281 "EHLO
+        id S1727721AbgBKAPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 19:15:43 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4283 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbgBKAPm (ORCPT
+        with ESMTP id S1727669AbgBKAPm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 10 Feb 2020 19:15:42 -0500
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e41f1eb0001>; Mon, 10 Feb 2020 16:14:35 -0800
+        id <B5e41f1eb0003>; Mon, 10 Feb 2020 16:14:35 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
   Mon, 10 Feb 2020 16:15:38 -0800
 X-PGP-Universal: processed;
         by hqpgpgate101.nvidia.com on Mon, 10 Feb 2020 16:15:38 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL101.nvidia.com
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 11 Feb
- 2020 00:15:37 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 11 Feb 2020 00:15:37 +0000
+ 2020 00:15:38 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 11 Feb 2020 00:15:38 +0000
 Received: from blueforge.nvidia.com (Not Verified[10.110.48.28]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e41f2290006>; Mon, 10 Feb 2020 16:15:37 -0800
+        id <B5e41f2290007>; Mon, 10 Feb 2020 16:15:37 -0800
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 CC:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -48,155 +48,70 @@ CC:     Al Viro <viro@zeniv.linux.org.uk>,
         <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v6 02/12] mm/gup: pass a flags arg to __gup_device_* functions
-Date:   Mon, 10 Feb 2020 16:15:26 -0800
-Message-ID: <20200211001536.1027652-3-jhubbard@nvidia.com>
+Subject: [PATCH v6 03/12] mm: introduce page_ref_sub_return()
+Date:   Mon, 10 Feb 2020 16:15:27 -0800
+Message-ID: <20200211001536.1027652-4-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200211001536.1027652-1-jhubbard@nvidia.com>
 References: <20200211001536.1027652-1-jhubbard@nvidia.com>
 MIME-Version: 1.0
 X-NVConfidentiality: public
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581380075; bh=9vUvR7MWlrDY2h3QHPZ14a3zjGRWS++CvrjGW0mNfqY=;
+        t=1581380075; bh=Q5fLaghgFbabRh4AhaE8eo4PFQNGOCfHUCuIQWHMtww=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Type:Content-Transfer-Encoding;
-        b=hglMjuCCYEGU0yZbY0/BPbJq4WZ9o9Q5NLX4SCaR+x2jgXCKSDaP+jTdmyV1QdEFv
-         22PeL91w5TJie8gGLTliMTLTsxi1lcEsg2iIrfH3HkWpKRhznH2uxT3SnHsYecigfE
-         lG0bUQoBejWhNDJArjM4gN9TqTgTLrPGJTe1Z1ENDiPmStScEguN95g5k5LZ74Xnfa
-         2HdrcUOE3iIx3KUNt5uhf4tkktv5tZM2LNXCSlDiOJt6NRzrRAQWL1gIwWO4do7O2W
-         Dt/0wia46hSMMbP6QqrOjNunpYszmb08i7fXSz07YlOrA4HcSzxh+fvjyaqoMcfqXM
-         7wylm7FMPrSBQ==
+         Content-Transfer-Encoding:Content-Type;
+        b=E4saXd/rsLx1Jd/Hqpfy2VR1S/vr6n2rRE1yCnca9yyLBq3F/vV2Uet6L0Qye+uny
+         KskQcpVdF+AdJ+aBTiA76vt9on1GhUmtZ/Yor21Z4R5H4hlfmezMPLqM7E25P+s671
+         cmmX3OaOw0WDUhKOEo0U0jtUnUlP6JPfrSXPqGjjTwLdNo90pH6CBuxc2qNtKlsM1X
+         1m5Pu0ViUqfmn/8U6Vqlw/EnO0zebRmhN7fZrn8sfVJXJv08CjeAEu+RFaEPCVYhLQ
+         XF0F2/tQt6EJyet8TXxIxsHCwyYLKXvCCEyG2wV+VjoRJaF5eKMH3ao9VPkV4HBQNS
+         ZxLBFKa29DTig==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A subsequent patch requires access to gup flags, so pass the flags
-argument through to the __gup_device_* functions.
+An upcoming patch requires subtracting a large chunk of refcounts from
+a page, and checking what the resulting refcount is. This is a little
+different than the usual "check for zero refcount" that many of the
+page ref functions already do. However, it is similar to a few other
+routines that (like this one) are generally useful for things such as
+1-based refcounting.
 
-Also placate checkpatch.pl by shortening a nearby line.
+Add page_ref_sub_return(), that subtracts a chunk of refcounts
+atomically, and returns an atomic snapshot of the result.
 
 Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- mm/gup.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ include/linux/page_ref.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index b699500da077..9e117998274c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1963,7 +1963,8 @@ static int gup_pte_range(pmd_t pmd, unsigned long add=
-r, unsigned long end,
-=20
- #if defined(CONFIG_ARCH_HAS_PTE_DEVMAP) && defined(CONFIG_TRANSPARENT_HUGE=
-PAGE)
- static int __gup_device_huge(unsigned long pfn, unsigned long addr,
--		unsigned long end, struct page **pages, int *nr)
-+			     unsigned long end, unsigned int flags,
-+			     struct page **pages, int *nr)
- {
- 	int nr_start =3D *nr;
- 	struct dev_pagemap *pgmap =3D NULL;
-@@ -1989,13 +1990,14 @@ static int __gup_device_huge(unsigned long pfn, uns=
-igned long addr,
+diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+index 14d14beb1f7f..d27701199a4d 100644
+--- a/include/linux/page_ref.h
++++ b/include/linux/page_ref.h
+@@ -102,6 +102,15 @@ static inline void page_ref_sub(struct page *page, int=
+ nr)
+ 		__page_ref_mod(page, -nr);
  }
 =20
- static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long ad=
-dr,
--		unsigned long end, struct page **pages, int *nr)
-+				 unsigned long end, unsigned int flags,
-+				 struct page **pages, int *nr)
++static inline int page_ref_sub_return(struct page *page, int nr)
++{
++	int ret =3D atomic_sub_return(nr, &page->_refcount);
++
++	if (page_ref_tracepoint_active(__tracepoint_page_ref_mod_and_return))
++		__page_ref_mod_and_return(page, -nr, ret);
++	return ret;
++}
++
+ static inline void page_ref_inc(struct page *page)
  {
- 	unsigned long fault_pfn;
- 	int nr_start =3D *nr;
-=20
- 	fault_pfn =3D pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
- 		return 0;
-=20
- 	if (unlikely(pmd_val(orig) !=3D pmd_val(*pmdp))) {
-@@ -2006,13 +2008,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t =
-*pmdp, unsigned long addr,
- }
-=20
- static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long ad=
-dr,
--		unsigned long end, struct page **pages, int *nr)
-+				 unsigned long end, unsigned int flags,
-+				 struct page **pages, int *nr)
- {
- 	unsigned long fault_pfn;
- 	int nr_start =3D *nr;
-=20
- 	fault_pfn =3D pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--	if (!__gup_device_huge(fault_pfn, addr, end, pages, nr))
-+	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
- 		return 0;
-=20
- 	if (unlikely(pud_val(orig) !=3D pud_val(*pudp))) {
-@@ -2023,14 +2026,16 @@ static int __gup_device_huge_pud(pud_t orig, pud_t =
-*pudp, unsigned long addr,
- }
- #else
- static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long ad=
-dr,
--		unsigned long end, struct page **pages, int *nr)
-+				 unsigned long end, unsigned int flags,
-+				 struct page **pages, int *nr)
- {
- 	BUILD_BUG();
- 	return 0;
- }
-=20
- static int __gup_device_huge_pud(pud_t pud, pud_t *pudp, unsigned long add=
-r,
--		unsigned long end, struct page **pages, int *nr)
-+				 unsigned long end, unsigned int flags,
-+				 struct page **pages, int *nr)
- {
- 	BUILD_BUG();
- 	return 0;
-@@ -2146,7 +2151,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsi=
-gned long addr,
- 	if (pmd_devmap(orig)) {
- 		if (unlikely(flags & FOLL_LONGTERM))
- 			return 0;
--		return __gup_device_huge_pmd(orig, pmdp, addr, end, pages, nr);
-+		return __gup_device_huge_pmd(orig, pmdp, addr, end, flags,
-+					     pages, nr);
- 	}
-=20
- 	page =3D pmd_page(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
-@@ -2167,7 +2173,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsi=
-gned long addr,
- }
-=20
- static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
--		unsigned long end, unsigned int flags, struct page **pages, int *nr)
-+			unsigned long end, unsigned int flags,
-+			struct page **pages, int *nr)
- {
- 	struct page *head, *page;
- 	int refs;
-@@ -2178,7 +2185,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsi=
-gned long addr,
- 	if (pud_devmap(orig)) {
- 		if (unlikely(flags & FOLL_LONGTERM))
- 			return 0;
--		return __gup_device_huge_pud(orig, pudp, addr, end, pages, nr);
-+		return __gup_device_huge_pud(orig, pudp, addr, end, flags,
-+					     pages, nr);
- 	}
-=20
- 	page =3D pud_page(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
+ 	atomic_inc(&page->_refcount);
 --=20
 2.25.0
 
