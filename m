@@ -2,78 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35A671599B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 20:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C6171599BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 20:26:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgBKT0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 14:26:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728365AbgBKT0Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 14:26:16 -0500
-Received: from localhost (unknown [104.133.9.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729133AbgBKT0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 14:26:41 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48205 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728202AbgBKT0l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 14:26:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581449200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+        bh=u+0GYiep1QB0KPutSBZqydXJKykgwUd1aiyZ3fQymnw=;
+        b=TCigELLDwGakr2++TAX6674A2nGKWL0HeURfyxo+JkypZxoqoJnTM0j6kaT8Ub7EJU5hZr
+        NnM75KmjzkQcfWj0eNjW9AVXfWQKYKUB/fuX9KQZDJGmsY0z4vcYpNp3ZwpWgKeEgC8S2j
+        +7ik7zIkdQQjNkMnPuprTPCY8K8Q9Xs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-143-CWooVX0WOK27TOLNEmxwcQ-1; Tue, 11 Feb 2020 14:26:36 -0500
+X-MC-Unique: CWooVX0WOK27TOLNEmxwcQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59D8320637;
-        Tue, 11 Feb 2020 19:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581449176;
-        bh=BP1X49GBVhtO7J9Mxx4rEnC2+jALec49Ut+zDmtg/6U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GzVg36cvpotIo2pYXPWTFNNRLfCgZLYTwIYZkLi6ZbGVoBZtjOZ498AzvS5KyfVIA
-         LcxMoMYp3XK3bePOVonxsPpNPUaaA6GnTeUszsLUo5Pno2ZcLaQ+ObcGD1x2vcTFlC
-         qjsmCbKk98a6yqPdV0Zip823GubPQ8GC2CRZWRBU=
-Date:   Tue, 11 Feb 2020 11:26:15 -0800
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pragat Pandya <pragat.pandya@gmail.com>
-Cc:     valdis.kletnieks@vt.edu, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2 00/19] Renaming some identifiers.
-Message-ID: <20200211192615.GA1967960@kroah.com>
-References: <20200207094612.GA562325@kroah.com>
- <20200210183558.11836-1-pragat.pandya@gmail.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E7B6800D41;
+        Tue, 11 Feb 2020 19:26:35 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0103D5D9E2;
+        Tue, 11 Feb 2020 19:26:34 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id C950D866BE;
+        Tue, 11 Feb 2020 19:26:34 +0000 (UTC)
+Date:   Tue, 11 Feb 2020 14:26:34 -0500 (EST)
+From:   Bob Peterson <rpeterso@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, Andreas Gruenbacher <agruenba@redhat.com>
+Message-ID: <1350360444.7695146.1581449194730.JavaMail.zimbra@redhat.com>
+In-Reply-To: <1527244171.7695063.1581449058353.JavaMail.zimbra@redhat.com>
+Subject: [PATCH] fs: clean up __block_commit_write
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200210183558.11836-1-pragat.pandya@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.36.116.223, 10.4.195.18]
+Thread-Topic: clean up __block_commit_write
+Thread-Index: eBERf7LiVHkczv0v1pxcMer2hXYuOQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 12:05:39AM +0530, Pragat Pandya wrote:
-> This patchset renames following nineteen variables in exfat.h
-> Fix checkpatch warning: Avoid CamelCase
->  -Year->year
->  -Day->day
->  -Hour->hour
->  -Minute->minute
->  -Second->second
->  -Millisecond->millisecond
->  -FatType->fat_type
->  -ClusterSize->cluster_size
->  -NumClusters->num_clusters
->  -FreeClusters->free_clusters
->  -UsedClusters->used_clusters
->  -Name->name
->  -ShortName->short_name
->  -Attr->attr
->  -NumSubdirs->num_subdirs
->  -CreateTimestamp->create_timestamp
->  -ModifyTimestamp->modify_timestamp
->  -AccessTimestamp->access_timestamp
-> 
-> v2:
->  -Correct misplaced quatation character in subject line(s).
->  -Remove unnecessary '_'(underscore) character in renaming of identifier
->   MilliSecond.
->  -Drop commits renaming unused structure members.
+Hi,
 
-Not all of these patches applied, so can you please rebase against my
-testing tree and resend the remaining patches?
+Function __block_commit_write did nothing with the inode passed in
+and it always returned 0. This patch changes it to a void and gets
+rid of the overhead needed to pass in the inode.
 
-thanks,
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+---
+ fs/buffer.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-greg k-h
+diff --git a/fs/buffer.c b/fs/buffer.c
+index b8d28370cfd7..19bfc86e6a8f 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2059,8 +2059,7 @@ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
+ }
+ EXPORT_SYMBOL(__block_write_begin);
+ 
+-static int __block_commit_write(struct inode *inode, struct page *page,
+-		unsigned from, unsigned to)
++static void __block_commit_write(struct page *page, unsigned from, unsigned to)
+ {
+ 	unsigned block_start, block_end;
+ 	int partial = 0;
+@@ -2094,7 +2093,6 @@ static int __block_commit_write(struct inode *inode, struct page *page,
+ 	 */
+ 	if (!partial)
+ 		SetPageUptodate(page);
+-	return 0;
+ }
+ 
+ /*
+@@ -2130,7 +2128,6 @@ int block_write_end(struct file *file, struct address_space *mapping,
+ 			loff_t pos, unsigned len, unsigned copied,
+ 			struct page *page, void *fsdata)
+ {
+-	struct inode *inode = mapping->host;
+ 	unsigned start;
+ 
+ 	start = pos & (PAGE_SIZE - 1);
+@@ -2156,7 +2153,7 @@ int block_write_end(struct file *file, struct address_space *mapping,
+ 	flush_dcache_page(page);
+ 
+ 	/* This could be a short (even 0-length) commit */
+-	__block_commit_write(inode, page, start, start+copied);
++	__block_commit_write(page, start, start+copied);
+ 
+ 	return copied;
+ }
+@@ -2469,8 +2466,7 @@ EXPORT_SYMBOL(cont_write_begin);
+ 
+ int block_commit_write(struct page *page, unsigned from, unsigned to)
+ {
+-	struct inode *inode = page->mapping->host;
+-	__block_commit_write(inode,page,from,to);
++	__block_commit_write(page, from, to);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(block_commit_write);
+
