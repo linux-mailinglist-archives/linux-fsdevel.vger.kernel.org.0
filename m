@@ -2,105 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1841A158C22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 10:53:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19F69158CFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 11:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbgBKJxG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 04:53:06 -0500
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:34933 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727947AbgBKJxF (ORCPT
+        id S1728465AbgBKK4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 05:56:00 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:43265 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727805AbgBKKz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 04:53:05 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id E360C53A;
-        Tue, 11 Feb 2020 04:53:04 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 11 Feb 2020 04:53:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        uoSAaTDVRkZ03ZmpHVTxZKngYYjWmZxYh7No4lON9Ig=; b=PPK1ZkDcEeVRkfmG
-        PgkvX6I0yPQriaM+fS26m+Y7oiQYeybUoJbZZueKCPf59pzom1xN9hzY4aB6WWhy
-        7RHjaQ/WCjQoaiPJtAY395L+0VSQn7F0NGqahYSotfU7JEen10GVeAF5aTtsZy+9
-        KD372VNiHhxDHghrXFuD2EKL1zxu3xq8UF/FqX/wL5gKssVBtIFNqBHr3PQl97aA
-        MU0NXog3xuudyaLuJjcXpONSVcnbSmAvkGtGDQrF0bn6JraNueXEevnto8RoOqeg
-        YcYxs+6gcjsmhwqM4DMEKrl490ZHpvd+A4ZnLAiK7+l6Gu+RzBnnnltAYEueKx8D
-        EwTuVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=uoSAaTDVRkZ03ZmpHVTxZKngYYjWmZxYh7No4lON9
-        Ig=; b=WD1+Z50sj4DGX/sEUmSn1NssCCrqUSL01uUVR57/eOYGTX5/8xFJka/p5
-        RBGUv2hxr9QbQvMa/OtrxN+tUC3pBPTy/nH3yELv7zCnrM9rcNwtT4yfEkObX9TU
-        +Vvyqqs7oI/pTVh/mU2V2huGZO+Tq7YyAtcWTeem+3O+yLMbFU8J8ar7zwIhqd5c
-        O/VHb7K0UNkjFU0R33gdR6A6M9t6QP/Tp1CG+fPinKO0BrX2M86kAO0WSUgK4fr6
-        QO0QmvIFOMMg7x8FSQnaS7FMcmEWXglJammDHRwVqQOuAT6azx6gIns3rNpX8rW4
-        5VupBsgfvXSQRUEv2WfGQRXST5l3w==
-X-ME-Sender: <xms:gHlCXvmfpXFPr5ACykbqPPFbk_IyyR1FbmvxC-NaTDnjqz-04mwGig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieefgddutdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdelrd
-    dujeejrdduledtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:gHlCXhVbNbh6j3JDhc5vmftdIq5HF585A8dLpQP1xdnkoiZ9Wqk23w>
-    <xmx:gHlCXhLlBipgmiG54k_5d4o7tdFF-NPHPH7L-rFuI6beGbvKIg5kjg>
-    <xmx:gHlCXhtI0cEGLdIVdTEqNylS8dHeK7LD_4JdyWvyLIE8dbGJhu6iPQ>
-    <xmx:gHlCXg2Vd9mOnlujpk-O7qSyYzx5vn7rjS0DH7Mnz8K4tzMs_DQFTA>
-Received: from mickey.themaw.net (unknown [118.209.177.190])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 82F3A328005D;
-        Tue, 11 Feb 2020 04:53:02 -0500 (EST)
-Message-ID: <30e120fdaee4234fcacea2c2fd1cc0aa95f755d3.camel@themaw.net>
-Subject: Re: [patch] fs: fix use after free in get_tree_bdev
-From:   Ian Kent <raven@themaw.net>
-To:     Jeff Moyer <jmoyer@redhat.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 11 Feb 2020 17:52:58 +0800
-In-Reply-To: <x49a75q1fg8.fsf@segfault.boston.devel.redhat.com>
-References: <x49a75q1fg8.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        Tue, 11 Feb 2020 05:55:59 -0500
+Received: by mail-il1-f193.google.com with SMTP id o13so3038432ilg.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 02:55:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/ip/rGfkF7G/a6O30OvCDbXytusxYnQXnVEqCr+9FAQ=;
+        b=k6I0EA0094zzaaYZwbZeS99DaTzpQusIutEmeqRj1UtEdjv0Vh3LOf6XO1D0Bm/peU
+         5D5r3PKLynXB0MvhlV0ILEuPXhlx0Z/pp7Zu4XZGdcRfCKrwOliMh7ZPi4sedDdBcid/
+         zqQBSheUtB8mg8pvzIlBj7yOuJb19GWr7//Kk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/ip/rGfkF7G/a6O30OvCDbXytusxYnQXnVEqCr+9FAQ=;
+        b=k7a1EaV8mRgc/8f47eaQ7UXLZ42vCzDjFBq67BRkY4UBhXxPqI9ekT4UHcNT5YJTaz
+         I1wYHQI1XpNZawwA3sLyzh11kVEunlNE5SpgEPZBPcl6s1jptYTxdfA0uLEc7KVjYKl8
+         PgvTHdxW8bEda1wR87XMZu7tWUoVUkhqKNbY9ppr8s8W5eYCl8NMNkYSqCvgL1Xi+Pdn
+         bXnVVdl/8PrYDoWPZkokraKt14pVOcCQ+0gnCeVtxs9OWxMwv4tT2Hfp4fN6BmiElusV
+         xZ+iEU03jjWDv7Fiqt439/5FFIIIDA0d5ZEF4G50aSAPID3WMLpta9wsfuKdW6NlJJXr
+         RKRA==
+X-Gm-Message-State: APjAAAULZRNM1IAPYGyuhVLIoci1ivHSib9S63LfKqaKTEb65+YOo3nz
+        4PFgfX0JTVSt3Kat9y+Y6z/lcTXqeghiW6N11wYxV4Qu
+X-Google-Smtp-Source: APXvYqyG1RSF3lCIDiXWjx7JsJ8UmF3VhDB5MzH7ll4xhEJWj8zjGQdeG4rb9OxDTACRSBDR6cbzpWfO3/2tQV7BEV8=
+X-Received: by 2002:a92:5d8d:: with SMTP id e13mr5633269ilg.285.1581418557300;
+ Tue, 11 Feb 2020 02:55:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAJfpegtUAHPL9tsFB85ZqjAfy0xwz7ATRcCtLbzFBo8=WnCvLw@mail.gmail.com>
+ <20200209080918.1562823-1-michael+lkml@stapelberg.ch>
+In-Reply-To: <20200209080918.1562823-1-michael+lkml@stapelberg.ch>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 11 Feb 2020 11:55:46 +0100
+Message-ID: <CAJfpegv4iL=bW3TXP3F9w1z6-LUox8KiBmw7UBcWE-0jiK0YsA@mail.gmail.com>
+Subject: Re: Still a pretty bad time on 5.4.6 with fuse_request_end.
+To:     michael+lkml@stapelberg.ch
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kyle Sanderson <kyle.leet@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-02-10 at 13:10 -0500, Jeff Moyer wrote:
-> Commit 6fcf0c72e4b9 ("vfs: add missing blkdev_put() in
-> get_tree_bdev()")
-> introduced a use-after-free of the bdev.  This was caught by fstests
-> generic/085, which now results in a kernel panic.  Fix it.
+On Sun, Feb 9, 2020 at 9:09 AM <michael+lkml@stapelberg.ch> wrote:
+>
+> From: Michael Stapelberg <michael+lkml@stapelberg.ch>
+>
+> Hey,
+>
+> I recently ran into this, too. The symptom for me is that processes using=
+ the
+> affected FUSE file system hang indefinitely, sync(2) system calls hang
+> indefinitely, and even triggering an abort via echo 1 >
+> /sys/fs/fuse/connections/*/abort does not get the file system unstuck (th=
+ere is
+> always 1 request still pending). Only removing power will get the machine
+> unstuck.
+>
+> I=E2=80=99m triggering this when building packages for https://distr1.org=
+/, which uses a
+> FUSE daemon (written in Go using the jacobsa/fuse package) to provide pac=
+kage
+> contents.
+>
+> I bisected the issue to commit
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D2b319d1f6f92a4ced9897678113d176ee16ae85d
+>
+> With that commit, I run into a kernel oops within =E2=89=881 minute after=
+ starting my
+> batch build. With the commit before, I can batch build for many minutes w=
+ithout
+> issues.
 
-Oops!
-Thanks Jeff.
+Pretty weird.   I'm not seeing how this could change behavior, as the
+args->end value is not changed after being initialized, and so moving
+the test later should not make a difference.
 
-Acked-by: Ian Kent <raven@themaw.net>
+Could you print out the complete contents of req->args?
 
-> 
-> Cc: stable@vger.kernel.org # v5.4+
-> Fixes: 6fcf0c72e4b9 ("vfs: add missing blkdev_put() in
-> get_tree_bdev()")
-> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
-> 
-> diff --git a/fs/super.c b/fs/super.c
-> index cd352530eca9..a288cd60d2ae 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -1302,8 +1302,8 @@ int get_tree_bdev(struct fs_context *fc,
->  	mutex_lock(&bdev->bd_fsfreeze_mutex);
->  	if (bdev->bd_fsfreeze_count > 0) {
->  		mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -		blkdev_put(bdev, mode);
->  		warnf(fc, "%pg: Can't mount, blockdev is frozen",
-> bdev);
-> +		blkdev_put(bdev, mode);
->  		return -EBUSY;
->  	}
->  
-> 
-
+Thanks,
+Miklos
