@@ -2,107 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF774158EA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 13:40:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 657FC158EA6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 13:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbgBKMkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 07:40:20 -0500
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:38572 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbgBKMkT (ORCPT
+        id S1728857AbgBKMkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 07:40:25 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:36788 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728851AbgBKMkY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:40:19 -0500
-Received: by mail-pf1-f178.google.com with SMTP id x185so5455087pfc.5;
-        Tue, 11 Feb 2020 04:40:19 -0800 (PST)
+        Tue, 11 Feb 2020 07:40:24 -0500
+Received: by mail-pj1-f67.google.com with SMTP id gv17so1208378pjb.1;
+        Tue, 11 Feb 2020 04:40:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yA+BWfC41v7sN7/FMQVxmCc56IvmN2Onydier90xRBM=;
-        b=AlZ44Cp4EzAxC2mEOY/YZHa3XOpAJLbuIfGtgIWpvcF6J6Ed06XGvOKNAg+HmDfEb1
-         qUNtu3CuK7ekpsHnvbJ/EKmMkYE3dd6Qyilg4++kHOZa6yX4vsq80LhXrVA9Hrgv+WwT
-         hmiweLgrtE36m/JxfHudCMLI8DkJParLFafOqEVjd45z8UoGY/DzyHAl5UaC2sdpeg9u
-         nQXKDH6a2KI29Z0+SUEKcMeRBvztYJpYY88lXBOIhoSg6+jKPbQ3S1S58uPhtMZ2qyy1
-         2LEJ7J5sXeb22E4gMDVYcDZpav8MkkdRjorrTrz+UC+YoqAa+SwcQt83Hcr5Ggk1SgNP
-         80yA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=9H40xTTNCEsSBuL3ApPQZ/FNZOtUwfhSHYivqLcrKf4=;
+        b=KtZReSJpi3hWMVUhVmGnsinGiYUf0C3wrVLmHcj8YOnQN00ZBNeg7ueov/o9R5IvSL
+         5/ok1SzC0S5syDcxJ+TV8EMfFeK2zaKTRhcbtTOFTSYRcB4am2GjP/b5929l3JhqpTiQ
+         2QxrYKr07w8d3EREuK9+r9/a3anfq6R5fUOESSyXhb1+EkdDlQFpWEfxahRcGPIDs+0j
+         hYw9leuV/VjttbV8rG3/GtVta76Z9FlCRhSa+at+u3YBpGYilCKWX2WyFQNrgEVSB5kV
+         eaH7697f5/sKFqZ1f9z2VmQI1GKMHN2frUtieyDUgmHp6b/BO7r6F4CsjAumMY75U/Ip
+         c9vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yA+BWfC41v7sN7/FMQVxmCc56IvmN2Onydier90xRBM=;
-        b=jD5YgO0riUbX8XCjdDjnif3W9KIpp8RZccfCAvGLYDxrukdcZDrGkvrKHV47kZefwn
-         NHLtY2RD3Ja7f0Y331tiiyNT+n5lB4A4R049RFOfrCLzwSFOxevMd1T9fKqJu6OPL3bI
-         vifcoZSvH8MFcVYD3w8erlNdnuTnv83sA0KZntLnAp4mvalZ8xa2GV8fKQIX50hvyy8p
-         d1UAPHcJuYyR61Jnssixc+MxjHqsPSwoKRE1NA92w0Xo/VPTyRqhTvykGu7PdsNCFPsM
-         jfdXSJnfiiPTfVW5GRcqcvabbBau+Jd1qVOOBM9wX/cEx1C3uXrjQ3j1l+KL9BzOkMzA
-         QXAA==
-X-Gm-Message-State: APjAAAXj+k3qdoxgUv/15MjOmXbxHlzRm+zKIEoMl1MDIgqXjzKz9a0s
-        3nfDXrYjBdwZlvs0r2pKFZ0=
-X-Google-Smtp-Source: APXvYqyjoLPV52xzZXhOjrAFGK0sL31ZJwLKBgzsG7aHUr7465yvu6d8LIlHbK/SEBvE4Ee5t1FJmw==
-X-Received: by 2002:aa7:8755:: with SMTP id g21mr6303821pfo.36.1581424819139;
-        Tue, 11 Feb 2020 04:40:19 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9H40xTTNCEsSBuL3ApPQZ/FNZOtUwfhSHYivqLcrKf4=;
+        b=fWsnSAgIdiOXM1P+HTvJvAW/C6NvI8azv70PViRVmrS2YRJeqeX5UyDYjHQS/JC2hl
+         DIZWEvQgCCf4BkZGwFKACEMeHuPN4TSiWauB3aJFnuylkFPjFigYzbO63M1HCeyPAFze
+         haZ1GFaNQGOc58RL0hvUUuTBjNbClzVJHmkcmeGHX6bCxttL9HgIsadoIej89eiFN4Az
+         K8uMxbmUQo/5iQEtb9sVIiDdvzcCrydw+SZ1Cphd8M29o+2jlT6BCcW+fy7fRJDd2tum
+         J7E0bb8dPG1mTb0qMCMr/+JQmP/ovKtx74g+tp0InzdMnzVU/f77DNCRCSNkfuSa0TJt
+         Lpkg==
+X-Gm-Message-State: APjAAAU/cr6h827D377wYK6Gv6ikUj3b9Ha0JVjzAVdW1xxbXvUckO7f
+        VhaFwIigPjdQMbWL/MN6Ikc=
+X-Google-Smtp-Source: APXvYqzkKkB8gpAgfQcowQA+Dx9hPXNvUSm0I0FKqxTW41hc3TNLAMLf938qjCxJbY6020GLeFrINQ==
+X-Received: by 2002:a17:902:223:: with SMTP id 32mr3044488plc.167.1581424824262;
+        Tue, 11 Feb 2020 04:40:24 -0800 (PST)
 Received: from localhost.localdomain ([2409:4041:69c:214f:144f:bb39:afc3:51b0])
-        by smtp.gmail.com with ESMTPSA id d1sm3876789pgj.79.2020.02.11.04.40.12
+        by smtp.gmail.com with ESMTPSA id d1sm3876789pgj.79.2020.02.11.04.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 04:40:18 -0800 (PST)
+        Tue, 11 Feb 2020 04:40:23 -0800 (PST)
 From:   Pragat Pandya <pragat.pandya@gmail.com>
 To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
 Cc:     devel@driverdev.osuosl.or, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH 00/18] Rename some identifier and functions.
-Date:   Tue, 11 Feb 2020 18:08:41 +0530
-Message-Id: <20200211123859.10429-1-pragat.pandya@gmail.com>
+Subject: [PATCH 01/18] staging: exfat: Rename function "ffsUmountVol" to "ffs_umount_vol"
+Date:   Tue, 11 Feb 2020 18:08:42 +0530
+Message-Id: <20200211123859.10429-2-pragat.pandya@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200211123859.10429-1-pragat.pandya@gmail.com>
+References: <20200211123859.10429-1-pragat.pandya@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset renames following variable and fucntions in source
 Fix checkpatch warning: Avoid CamelCase
- -ffsUmountVol->ffs_umount_vol
- -ffsGetVolInfo->ffs_get_vol_info
- -ffsSyncVol->ffs_sync_vol
- -ffsLookupFile->ffs_lookup_file
- -ffsCreateFile->ffs_create_file
- -ffsReadFile->ffs_read_file
- -LogSector->log_sector
- -ffsWriteFile->ffs_write_file
- -ffsTruncateFile->ffs_truncate_file
- -ffsMoveFile->ffs_move_file
- -ffsRemoveFile->ffs_remove_file
- -ffsMountVol->ffs_mount_vol
- -ffsReadStat->ffs_read_stat
- -ffsWriteStat->ffs_write_stat
- -ffsMapCluster->ffs_map_cluster
- -ffsCreateDir->ffs_create_dir
- -ffsReadDir->ffs_read_dir
- -ffsRemoveDir->ffs_remove_dir
+Change all occurrences of function "ffsUmountVol" to "ffs_umount_vol"
+in the source.
 
-Pragat Pandya (18):
-  staging: exfat: Rename function "ffsUmountVol" to "ffs_umount_vol"
-  staging: exfat: Rename function "ffsGetVolInfo" to "ffs_get_vol_info"
-  staging: exfat: Rename function "ffsSyncVol" to "ffs_sync_vol"
-  staging: exfat: Rename function "ffsLookupFile" to "ffs_lookup_file"
-  staging: exfat: Rename function "ffsCreateFile" to "ffs_create_file"
-  staging: exfat: Rename function "ffsReadFile" to "ffs_read_file"
-  staging: exfat: Rename variable "LogSector" to "log_sector"
-  staging: exfat: Rename function "ffsWriteFile" to "ffs_write_file"
-  staging: exfat: Rename function "ffsTruncateFile" to
-    "ffs_truncate_file"
-  staging: exfat: Rename function "ffsMoveFile" to "ffs_move_file"
-  staging: exfat: Rename function "ffsRemoveFile" to "ffs_remove_file"
-  staging: exfat: Rename function "ffsMountVol" to "ffs_mount_vol"
-  staging: exfat: Rename function "ffsReadStat" to "ffs_read_stat"
-  staging: exfat: Rename function "ffsWriteStat" to "ffs_write_stat"
-  staging: exfat: Rename function "ffsMapCluster" to "ffs_map_cluster"
-  staging: exfat: Rename function "ffsCreateDir" to "ffs_create_dir"
-  staging: exfat: Rename function "ffsReadDir" to "ffs_read_dir"
-  staging: exfat: Rename function "ffsRemoveDir" to "ffs_remove_dir"
+Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
+---
+ drivers/staging/exfat/exfat_super.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/staging/exfat/exfat_super.c | 114 ++++++++++++++--------------
- 1 file changed, 57 insertions(+), 57 deletions(-)
-
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index b81d2a87b82e..1e47bfcebed5 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -439,7 +439,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	return ret;
+ }
+ 
+-static int ffsUmountVol(struct super_block *sb)
++static int ffs_umount_vol(struct super_block *sb)
+ {
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 	int err = 0;
+@@ -3301,7 +3301,7 @@ static void exfat_put_super(struct super_block *sb)
+ 	if (__is_sb_dirty(sb))
+ 		exfat_write_super(sb);
+ 
+-	ffsUmountVol(sb);
++	ffs_umount_vol(sb);
+ 
+ 	sb->s_fs_info = NULL;
+ 	exfat_free_super(sbi);
+@@ -3753,7 +3753,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	return 0;
+ 
+ out_fail2:
+-	ffsUmountVol(sb);
++	ffs_umount_vol(sb);
+ out_fail:
+ 	if (root_inode)
+ 		iput(root_inode);
 -- 
 2.17.1
 
