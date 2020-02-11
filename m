@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40812159494
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 17:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E500C1594EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 17:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbgBKQNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 11:13:50 -0500
-Received: from mga05.intel.com ([192.55.52.43]:58156 "EHLO mga05.intel.com"
+        id S1730842AbgBKQ2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 11:28:32 -0500
+Received: from mga01.intel.com ([192.55.52.88]:50955 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbgBKQNu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 11:13:50 -0500
+        id S1729650AbgBKQ2c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 11:28:32 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:13:49 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 08:28:31 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,428,1574150400"; 
-   d="scan'208";a="347303924"
+   d="scan'208";a="233501271"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Feb 2020 08:13:49 -0800
-Date:   Tue, 11 Feb 2020 08:13:49 -0800
+  by orsmga003.jf.intel.com with ESMTP; 11 Feb 2020 08:28:30 -0800
+Date:   Tue, 11 Feb 2020 08:28:30 -0800
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -32,89 +32,62 @@ Cc:     linux-kernel@vger.kernel.org,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 03/12] fs/xfs: Separate functionality of
- xfs_inode_supports_dax()
-Message-ID: <20200211161348.GA12866@iweiny-DESK2.sc.intel.com>
+Subject: Re: [PATCH v3 04/12] fs/xfs: Clean up DAX support check
+Message-ID: <20200211162830.GB12866@iweiny-DESK2.sc.intel.com>
 References: <20200208193445.27421-1-ira.weiny@intel.com>
- <20200208193445.27421-4-ira.weiny@intel.com>
- <20200211054748.GF10776@dread.disaster.area>
+ <20200208193445.27421-5-ira.weiny@intel.com>
+ <20200211055745.GG10776@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200211054748.GF10776@dread.disaster.area>
+In-Reply-To: <20200211055745.GG10776@dread.disaster.area>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 04:47:48PM +1100, Dave Chinner wrote:
-> On Sat, Feb 08, 2020 at 11:34:36AM -0800, ira.weiny@intel.com wrote:
+On Tue, Feb 11, 2020 at 04:57:45PM +1100, Dave Chinner wrote:
+> On Sat, Feb 08, 2020 at 11:34:37AM -0800, ira.weiny@intel.com wrote:
 > > From: Ira Weiny <ira.weiny@intel.com>
 > > 
-
-[snip]
-
-> >  
-> > +static bool
-> > +xfs_inode_is_dax(
-> > +	struct xfs_inode *ip)
-> > +{
-> > +	return (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX) == XFS_DIFLAG2_DAX;
-> > +}
+> > Rather than open coding xfs_inode_supports_dax() in
+> > xfs_ioctl_setattr_dax_invalidate() export xfs_inode_supports_dax() and
+> > call it in preparation for swapping dax flags.
+> > 
+> > This also means updating xfs_inode_supports_dax() to return true for a
+> > directory.
 > 
-> I don't think these wrappers add any value at all - the naming of
-> them is entirely confusing, too. e.g. "inode is dax" doesn't tell me
-> that it is checking the on disk flags - it doesn't tell me how it is
-> different to IS_DAX, or why I'd use one versus the other. And then
-> xfs_inode_mount_is_dax() is just... worse.
-> 
-> Naming is hard. :)
+> That's not correct. This now means S_DAX gets set on directory inodes
+> because both xfs_inode_supports_dax() and the on-disk inode flag
+> checks return true in xfs_diflags_to_iflags(). Hence when we
+> instantiate a directory inode with a DAX inherit hint set on it
+> we'll set S_DAX on the inode and so IS_DAX() will return true for
+> directory inodes...
 
-Sure...  I'm particularly bad as well...
+I'm not following.  Don't we want S_DAX to get set on directory inodes?
 
-FWIW I don't see how xfs_inode_mount_is_dax() is worse, I rather think that is
-pretty clear but I'm not going to quibble over names because I know I'm rubbish
-at it and I'm certainly not enough of a FS person to make them clear...  ;-)
+IIRC what we wanted was something like this where IS_DAX is the current state
+and "dax" is the inode flag:
 
-> 
-> > +
-> > +static bool
-> > +xfs_inode_use_dax(
-> > +	struct xfs_inode *ip)
-> > +{
-> > +	return xfs_inode_supports_dax(ip) &&
-> > +		(xfs_inode_mount_is_dax(ip) ||
-> > +		 xfs_inode_is_dax(ip));
-> > +}
-> 
-> Urk. Naming - we're not "using dax" here, we are checkign to see if
-> we should enable DAX on this inode. IOWs:
+/ <IS_DAX=0 dax=0>
+	dir1 <IS_DAX=0 dax=0>
+		f0 <IS_DAX=0 dax=0>
+		f1 <IS_DAX=1 dax=1>
+	dir2 <IS_DAX=1 dax=1>
+		f2 <IS_DAX=1 dax=1>
+		f3 <IS_DAX=0 dax=0>
+		dir3 <IS_DAX=1 dax=1>
+			f4 <IS_DAX=1 dax=1>
+		dir4 <IS_DAX=0 dax=0>
+			f5 <IS_DAX=0 dax=0>
+		f6 <IS_DAX=1 dax=1>
 
-Well just to defend myself a little bit.  My thought was:
+Where f1, dir2, f3, and dir4 required explicit state changes when they were
+created.  Because they inherited their dax state from the parent.  All the
+other creations happened based on the DAX state of the parent directory.  So we
+need to store and know the state of the directories.  What am I missing?
 
-"When setting i_flags, should I use dax?"
-
-> 
-> static bool
-> xfs_inode_enable_dax(
-> 	struct xfs_inode *ip)
-> {
-> 	if (!xfs_inode_supports_dax(ip))
-> 		return false;
-> 
-> 	if (ip->i_d.di_flags2 & XFS_DIFLAG2_DAX)
-> 		return true;
-> 	if (ip->i_mount->m_flags & XFS_MOUNT_DAX)
-> 		return true;
-> 	return false;
-> }
-
-Anyway, I'm good with this.
-
-Changed for V4.
-
-Thanks!
 Ira
 
 > 
