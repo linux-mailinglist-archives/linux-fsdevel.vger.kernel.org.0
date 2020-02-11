@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9239C158EA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 13:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C09158EAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 13:40:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbgBKMkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 07:40:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46155 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728851AbgBKMkb (ORCPT
+        id S1728884AbgBKMkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 07:40:37 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35644 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728553AbgBKMkh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 07:40:31 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y8so4216218pll.13;
-        Tue, 11 Feb 2020 04:40:30 -0800 (PST)
+        Tue, 11 Feb 2020 07:40:37 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y73so5462462pfg.2;
+        Tue, 11 Feb 2020 04:40:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SOR+aKlva87N2LUyxGO5pVucYWF1MeR0uphILcdbOm8=;
-        b=GBIPPwdsCRN3EQUw+tg1pYinlqmFaQ2LCe+yWdIr9kLe8wyTCahjNIwYJDDbkSQdYx
-         xoQofGXwIiEWhQ6pAMgYpev0EtK86hOw9lKrJe3o/aVZjVeZIiTuK+egEegvivvrK6iq
-         bPBKoc1e/tyQDsWGH7R/RF0g3p5fJKAXW57719D2/b/ZOWSsE3PvNMohO1aTdG85GGcq
-         8cXAN6WD4dgmJMmUWDEilGwjjf1Ud2kzBJB50TblDPyaOnuTs9GkbwIjvgiJiPxK36iP
-         tnwoc+0GHn4e65yo/9jHX2eGSeg/esPzl8v4Gk1SiXUSyUKel47MUOJdljU/muN/K50l
-         +lfA==
+        bh=vNB8GaKg9O+94+m+JhhyWqrlwA28PBFjXIy3V7eDens=;
+        b=L2wK2FU299w7KfCcc083qXSVft0zlc6j373IdYsP+mvhUqBf/w/r4V3BP9F1QGYFgP
+         3ZVsvOK5jn012+WlILfEfHn5BCnmV6+ZHYHDMqqKIHwen/1JyCDzVI+3YXmbl6xjlQvX
+         oN26eAAWuXcRs7gHEEc0oq55MddUp/XEfSEsZVV/QiqcB3jWyKhhwnHE2nGTbVOdPrks
+         vNcRiIR8w3lBfF2bamPhR9BQN5oaZNsk8uROEpJCJsnsB7ZFTGuxyfSaYg1wIejfWklW
+         G0M0eWs3cJ6lK71N1mOtHWHzDzJKOIYqBvgX2mbxPo3UfdI2peE6Aqe0/PL2iTLjWpyU
+         xjow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SOR+aKlva87N2LUyxGO5pVucYWF1MeR0uphILcdbOm8=;
-        b=WMguW7PD412r7LCT4XFySI17W+WdP4K6lmX9T+jbh8RV6oUPZsoc6481wjqjIhM+Su
-         MNc6cGU+hL0DCp0Zveo4VfSEUANYOpRM1m1IyAlLMCrryw05r/zQ0EnmWTbqqnObMWnS
-         88bYz84unsbmGdUVUOa+37XcEQBS2lKrPwawKE0TUC60KJjPo7B2VEfHef3xk4Y1DhR0
-         moUx+D5om7OzneL9w9Ti+0QAtD1StnvfFCk8dGL9wh12IiCmL5EGOdu0DnCCwGRdBO/g
-         mGAGb1It38GDFsFPZnJUt+x+QS08UqOMI9ofANFHb+XAA5FN48Qsru5PSgIP5XW81gWa
-         9/pg==
-X-Gm-Message-State: APjAAAUjf88vHMlAhmz7REV/gX3MoNoxoQ3zgBos36iPk87kJlUnSY7I
-        tj6PASEkV6u7DfUewecWJQw=
-X-Google-Smtp-Source: APXvYqweTIzwmY3XCYmc6xk2SBo4/l4bIJllHhaBfOQNJbtfyOCIyKaohxgUpKHYvwZiddGNpoFnvw==
-X-Received: by 2002:a17:90a:d986:: with SMTP id d6mr3487035pjv.78.1581424829845;
-        Tue, 11 Feb 2020 04:40:29 -0800 (PST)
+        bh=vNB8GaKg9O+94+m+JhhyWqrlwA28PBFjXIy3V7eDens=;
+        b=Z1msMYSqYe0cp/8sJztZGre7MKDL3KLkY4JXa/b9t3ziBGV+QOtrdmEHFrCNooTXXn
+         LRv5gHpZYDsz89J/I1fOYCoDI58vbrzlyU0dRbPGqBZmhrvbRmZ9W8uXbEcas/1kXrAS
+         7wuomWNQI+DF1xtWtqkRW+0R8vhj9P9TC1yywbF5LrBVXc2T9E26ePaHt0FlyD9VFQ/8
+         E+wRUHP0JMO+c1E36ailGKIjPsJUvN/UwNu0GppCOiOnjFuXatnRPkO3Rzf/M5oPHWJf
+         cYcBzuGeJrR0jdKcmKxS372pTgSzHP0pTlXtxgREpK9VsnA3U9ZuMfxy5DR14J6GOZdy
+         Sd5Q==
+X-Gm-Message-State: APjAAAVSSn0A4AAmiWjeJLbWq2hD3EMNMlkAIJwXtMlXkeqNRc9Ws+MG
+        J+GVLZ1eilQLS8vq2Ek12+k=
+X-Google-Smtp-Source: APXvYqzcSqNMjz3nfB8nCri6G1335AxVHlRIBYjnheU+zhYu6CGK6skN+HVh4/my0CPHaqzKio5NTw==
+X-Received: by 2002:aa7:85d9:: with SMTP id z25mr3115945pfn.223.1581424835462;
+        Tue, 11 Feb 2020 04:40:35 -0800 (PST)
 Received: from localhost.localdomain ([2409:4041:69c:214f:144f:bb39:afc3:51b0])
-        by smtp.gmail.com with ESMTPSA id d1sm3876789pgj.79.2020.02.11.04.40.24
+        by smtp.gmail.com with ESMTPSA id d1sm3876789pgj.79.2020.02.11.04.40.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2020 04:40:29 -0800 (PST)
+        Tue, 11 Feb 2020 04:40:34 -0800 (PST)
 From:   Pragat Pandya <pragat.pandya@gmail.com>
 To:     gregkh@linuxfoundation.org, valdis.kletnieks@vt.edu
 Cc:     devel@driverdev.osuosl.or, linux-kernel@vger.kernel.org,
         skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
         linux-kernel-mentees@lists.linuxfoundation.org,
         Pragat Pandya <pragat.pandya@gmail.com>
-Subject: [PATCH 02/18] staging: exfat: Rename function "ffsGetVolInfo" to "ffs_get_vol_info"
-Date:   Tue, 11 Feb 2020 18:08:43 +0530
-Message-Id: <20200211123859.10429-3-pragat.pandya@gmail.com>
+Subject: [PATCH 03/18] staging: exfat: Rename function "ffsSyncVol" to "ffs_sync_vol"
+Date:   Tue, 11 Feb 2020 18:08:44 +0530
+Message-Id: <20200211123859.10429-4-pragat.pandya@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211123859.10429-1-pragat.pandya@gmail.com>
 References: <20200211123859.10429-1-pragat.pandya@gmail.com>
@@ -62,36 +62,54 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Fix checkpatch warning: Avoid CamelCase
-Change all occurrences of function "ffsGetVolInfo" to "ffs_get_vol_info"
-in the source.
+Change all occurrences of function "ffsSyncVol" to "ffs_sync_vol" in
+source.
 
 Signed-off-by: Pragat Pandya <pragat.pandya@gmail.com>
 ---
- drivers/staging/exfat/exfat_super.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/exfat/exfat_super.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index 1e47bfcebed5..06d8e3d60e9e 100644
+index 06d8e3d60e9e..ba86ca572f32 100644
 --- a/drivers/staging/exfat/exfat_super.c
 +++ b/drivers/staging/exfat/exfat_super.c
-@@ -479,7 +479,7 @@ static int ffs_umount_vol(struct super_block *sb)
+@@ -509,7 +509,7 @@ static int ffs_get_vol_info(struct super_block *sb, struct vol_info_t *info)
  	return err;
  }
  
--static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
-+static int ffs_get_vol_info(struct super_block *sb, struct vol_info_t *info)
+-static int ffsSyncVol(struct super_block *sb, bool do_sync)
++static int ffs_sync_vol(struct super_block *sb, bool do_sync)
  {
  	int err = 0;
  	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
-@@ -3341,7 +3341,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	struct vol_info_t info;
+@@ -2899,7 +2899,7 @@ static int exfat_file_release(struct inode *inode, struct file *filp)
+ 	struct super_block *sb = inode->i_sb;
  
- 	if (p_fs->used_clusters == UINT_MAX) {
--		if (ffsGetVolInfo(sb, &info) == -EIO)
-+		if (ffs_get_vol_info(sb, &info) == -EIO)
- 			return -EIO;
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+-	ffsSyncVol(sb, false);
++	ffs_sync_vol(sb, false);
+ 	return 0;
+ }
  
- 	} else {
+@@ -3314,7 +3314,7 @@ static void exfat_write_super(struct super_block *sb)
+ 	__set_sb_clean(sb);
+ 
+ 	if (!sb_rdonly(sb))
+-		ffsSyncVol(sb, true);
++		ffs_sync_vol(sb, true);
+ 
+ 	__unlock_super(sb);
+ }
+@@ -3326,7 +3326,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
+ 	if (__is_sb_dirty(sb)) {
+ 		__lock_super(sb);
+ 		__set_sb_clean(sb);
+-		err = ffsSyncVol(sb, true);
++		err = ffs_sync_vol(sb, true);
+ 		__unlock_super(sb);
+ 	}
+ 
 -- 
 2.17.1
 
