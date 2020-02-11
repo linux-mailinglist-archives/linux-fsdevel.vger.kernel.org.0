@@ -2,308 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A8615877E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 02:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 364E41587F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Feb 2020 02:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727887AbgBKBDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Feb 2020 20:03:54 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54746 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727878AbgBKBDy (ORCPT
+        id S1727742AbgBKBbW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Feb 2020 20:31:22 -0500
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:57241 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727599AbgBKBbW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Feb 2020 20:03:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=1dXuDju5JRWmjlcVoAkP1ul1VTvdi0JVblEml7uSJoM=; b=hZxZ5ibZOjv0I1qiI+AVi2nTKK
-        hpGcGwwYmWFWh3IFV0C+o6xy6XYDCbDiKdICPAUFsACd8DLFim6u+4PKkb1AeC/UFnJodx7iYBYNY
-        MElmAvv8GXfKX8r5Q0oMHLTug2GeIbECLtIhOmQRNn/I5TScAukruDEAkaF63lFqv8wen/8i1+DzO
-        qBOBRbB9k49a/i8nUdpTX0AJsQ83C/6mXxGYVrHx19o/glQZ65+r8/HSelaCzn5KU5XwED/RdFLZZ
-        3wHeWBmq4ICEEZ+jlotpOi7t90K4Fl+rI13KnEOCivMxLwdMFWWetARJP2YV83XNXfRIP4sUNL/Vu
-        5idhh80w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1Jxu-0001oT-Nw; Tue, 11 Feb 2020 01:03:50 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH v5 13/13] iomap: Convert from readpages to readahead
-Date:   Mon, 10 Feb 2020 17:03:48 -0800
-Message-Id: <20200211010348.6872-14-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200211010348.6872-1-willy@infradead.org>
-References: <20200211010348.6872-1-willy@infradead.org>
+        Mon, 10 Feb 2020 20:31:22 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id 99B2C3BE;
+        Mon, 10 Feb 2020 20:31:20 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 10 Feb 2020 20:31:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=y/Fnv943LYH/Lk/Amb909SmXxb/
+        iCqOAVAq5vX+rEoY=; b=Kox7VrMJzfNc2khvsfALGd1cFbgRBrSDWo6qp6J61v2
+        nzeoWKK5l+oxPo9FfDJ3fp0jNo5O9l18csC2riph4GT4yQexFQ9hf4ogWY9NGZTx
+        Jp07f/0z4S5KZQ9Kmj+Kn6SMtzrAnOUrS+3lNFKXYT79ROzauxkMR8mD/PDLzvJf
+        DNcoIR4KJY++Q65g50oBJovqnzDPwZhD6PRaIfowSjaeOf3y8QQZHEYArr0ZNY6B
+        hG5K2CIoge9O9NkRskXBzIKLLDM1+Z3Mbi9YIU0DcC1Wpk/YTLcJ4AUtSwTJMc39
+        iKv2aM6LU5JDyym40rlNh7u9sJQP+GIDaS2ZVpkn9Tw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=y/Fnv9
+        43LYH/Lk/Amb909SmXxb/iCqOAVAq5vX+rEoY=; b=LTniJWHNoESl1lWEuvhOBU
+        7RKw/FDmw2nT+BEB8ggI9dwN19EtHAGHXlzNJKgP4ngoG/W/3IyNL6a33+uEcYqT
+        J/smPupvfhqOw7jOQz4/wYXuvfA3RtykQ1DUFuWkEkqrEiNOB4eq5OzLzT9KayEl
+        xv+WeJLpEk8zm5Yp2t/ToRAxnVLLngDzmZBSSVRL3/xfd85xK8rVfd3PVlWxSOmg
+        BXeZAJNdAj/liIyda28t7LbYHNPf+euDANMrM44if88GUEGVgPe3Yyz9vHRHQyFU
+        /woGQKMHHKeDDAyRVvyoVzbE4wFaw7h0zv4a+sl32BdVFi7HVDXgtQt5fh8RpBtA
+        ==
+X-ME-Sender: <xms:5wNCXvO681y0lBQ83HzlcDhjEvLwcS36QYdVId9-kshO_6nzGLaRTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedriedvgdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehnughrvghs
+    ucfhrhgvuhhnugcuoegrnhgurhgvshesrghnrghrrgiivghlrdguvgeqnecuffhomhgrih
+    hnpehkvghrnhgvlhdrohhrghenucfkphepieejrdduiedtrddvudejrddvhedtnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghsse
+    grnhgrrhgriigvlhdruggv
+X-ME-Proxy: <xmx:5wNCXkBLDvIU_vcO5IbCFrc3Nnm51eYlnhpXSWdyJUs8tAx1won64w>
+    <xmx:5wNCXuLlizr61gtKenj4P440ZodRX7olVZZGPl_L6rgjjkSi7KC4qg>
+    <xmx:5wNCXlPo2hQG4n_hkwMubKV04fYO-TnIRuLQwQbSW-pYyPyuLKF_yA>
+    <xmx:6ANCXhbpsSt17C0cfaY-P4sugOTox2SfJafTar2Rn2YBMjqdUxo25RFLAcc>
+Received: from intern.anarazel.de (c-67-160-217-250.hsd1.ca.comcast.net [67.160.217.250])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E8F9F3060840;
+        Mon, 10 Feb 2020 20:31:18 -0500 (EST)
+Date:   Mon, 10 Feb 2020 17:31:17 -0800
+From:   Andres Freund <andres@anarazel.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, willy@infradead.org, hch@infradead.org,
+        jack@suse.cz, akpm@linux-foundation.org
+Subject: Re: [PATCH v3 0/3] vfs: have syncfs() return error when there are
+ writeback errors
+Message-ID: <20200211013117.23z3ftgeorx6a3qk@alap3.anarazel.de>
+References: <20200207170423.377931-1-jlayton@kernel.org>
+ <20200207205243.GP20628@dread.disaster.area>
+ <20200207212012.7jrivg2bvuvvful5@alap3.anarazel.de>
+ <20200210214657.GA10776@dread.disaster.area>
+ <20200211000405.5fohxgpt554gmnhu@alap3.anarazel.de>
+ <20200211004830.GB10737@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211004830.GB10737@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Hi,
 
-Use the new readahead operation in iomap.  Convert XFS and ZoneFS to
-use it.
+I shortly after this found a thread where Linus was explicitly asking
+for potential userspace users of the feature, so I also responded there:
+https://lore.kernel.org/linux-fsdevel/20200211005626.7yqjf5rbs3vbwagd@alap3.anarazel.de/
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 101 ++++++++++++-----------------------------
- fs/iomap/trace.h       |   2 +-
- fs/xfs/xfs_aops.c      |  13 ++----
- fs/zonefs/super.c      |   7 ++-
- include/linux/iomap.h  |   3 +-
- 5 files changed, 39 insertions(+), 87 deletions(-)
+On 2020-02-11 11:48:30 +1100, Dave Chinner wrote:
+> On Mon, Feb 10, 2020 at 04:04:05PM -0800, Andres Freund wrote:
+> > On 2020-02-11 08:46:57 +1100, Dave Chinner wrote:
+> > As far as I can tell the superblock based stuff does *not* actually
+> > report any errors yet (contrast to READONLY, EDQUOT). Is the plan here
+> > to include writeback errors as well? Or just filesystem metadata/journal
+> > IO?
+> 
+> Right, that part hasn't been implemented yet, though it's repeatedly
+> mentioned as intended to be supported functionality. It will depend
+> on the filesystem to what it is going to report
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index cb3511eb152a..e40eb45230fa 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -214,9 +214,8 @@ iomap_read_end_io(struct bio *bio)
- struct iomap_readpage_ctx {
- 	struct page		*cur_page;
- 	bool			cur_page_in_bio;
--	bool			is_readahead;
- 	struct bio		*bio;
--	struct list_head	*pages;
-+	struct readahead_control *rac;
- };
- 
- static void
-@@ -307,11 +306,11 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		if (ctx->bio)
- 			submit_bio(ctx->bio);
- 
--		if (ctx->is_readahead) /* same as readahead_gfp_mask */
-+		if (ctx->rac) /* same as readahead_gfp_mask */
- 			gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 		ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
- 		ctx->bio->bi_opf = REQ_OP_READ;
--		if (ctx->is_readahead)
-+		if (ctx->rac)
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
- 		bio_set_dev(ctx->bio, iomap->bdev);
-@@ -367,104 +366,62 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
- }
- EXPORT_SYMBOL_GPL(iomap_readpage);
- 
--static struct page *
--iomap_next_page(struct inode *inode, struct list_head *pages, loff_t pos,
--		loff_t length, loff_t *done)
--{
--	while (!list_empty(pages)) {
--		struct page *page = lru_to_page(pages);
--
--		if (page_offset(page) >= (u64)pos + length)
--			break;
--
--		list_del(&page->lru);
--		if (!add_to_page_cache_lru(page, inode->i_mapping, page->index,
--				GFP_NOFS))
--			return page;
--
--		/*
--		 * If we already have a page in the page cache at index we are
--		 * done.  Upper layers don't care if it is uptodate after the
--		 * readpages call itself as every page gets checked again once
--		 * actually needed.
--		 */
--		*done += PAGE_SIZE;
--		put_page(page);
--	}
--
--	return NULL;
--}
--
- static loff_t
--iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-+iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
- 		void *data, struct iomap *iomap, struct iomap *srcmap)
- {
- 	struct iomap_readpage_ctx *ctx = data;
--	loff_t done, ret;
-+	loff_t ret, done = 0;
- 
--	for (done = 0; done < length; done += ret) {
--		if (ctx->cur_page && offset_in_page(pos + done) == 0) {
--			if (!ctx->cur_page_in_bio)
--				unlock_page(ctx->cur_page);
--			put_page(ctx->cur_page);
--			ctx->cur_page = NULL;
--		}
-+	while (done < length) {
- 		if (!ctx->cur_page) {
--			ctx->cur_page = iomap_next_page(inode, ctx->pages,
--					pos, length, &done);
--			if (!ctx->cur_page)
--				break;
-+			ctx->cur_page = readahead_page(ctx->rac);
- 			ctx->cur_page_in_bio = false;
- 		}
- 		ret = iomap_readpage_actor(inode, pos + done, length - done,
- 				ctx, iomap, srcmap);
-+		if (WARN_ON(ret == 0))
-+			break;
-+		done += ret;
-+		if (offset_in_page(pos + done) == 0) {
-+			ctx->rac->nr_pages -= ctx->rac->batch_count;
-+			if (!ctx->cur_page_in_bio)
-+				unlock_page(ctx->cur_page);
-+			put_page(ctx->cur_page);
-+			ctx->cur_page = NULL;
-+		}
- 	}
- 
- 	return done;
- }
- 
--int
--iomap_readpages(struct address_space *mapping, struct list_head *pages,
--		unsigned nr_pages, const struct iomap_ops *ops)
-+void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- {
-+	struct inode *inode = rac->mapping->host;
- 	struct iomap_readpage_ctx ctx = {
--		.pages		= pages,
--		.is_readahead	= true,
-+		.rac	= rac,
- 	};
--	loff_t pos = page_offset(list_entry(pages->prev, struct page, lru));
--	loff_t last = page_offset(list_entry(pages->next, struct page, lru));
--	loff_t length = last - pos + PAGE_SIZE, ret = 0;
-+	loff_t pos = readahead_offset(rac);
-+	loff_t length = readahead_length(rac);
- 
--	trace_iomap_readpages(mapping->host, nr_pages);
-+	trace_iomap_readahead(inode, readahead_count(rac));
- 
- 	while (length > 0) {
--		ret = iomap_apply(mapping->host, pos, length, 0, ops,
--				&ctx, iomap_readpages_actor);
-+		loff_t ret = iomap_apply(inode, pos, length, 0, ops,
-+				&ctx, iomap_readahead_actor);
- 		if (ret <= 0) {
- 			WARN_ON_ONCE(ret == 0);
--			goto done;
-+			break;
- 		}
- 		pos += ret;
- 		length -= ret;
- 	}
--	ret = 0;
--done:
-+
- 	if (ctx.bio)
- 		submit_bio(ctx.bio);
--	if (ctx.cur_page) {
--		if (!ctx.cur_page_in_bio)
--			unlock_page(ctx.cur_page);
--		put_page(ctx.cur_page);
--	}
--
--	/*
--	 * Check that we didn't lose a page due to the arcance calling
--	 * conventions..
--	 */
--	WARN_ON_ONCE(!ret && !list_empty(ctx.pages));
--	return ret;
-+	BUG_ON(ctx.cur_page);
- }
--EXPORT_SYMBOL_GPL(iomap_readpages);
-+EXPORT_SYMBOL_GPL(iomap_readahead);
- 
- /*
-  * iomap_is_partially_uptodate checks whether blocks within a page are
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 6dc227b8c47e..d6ba705f938a 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -39,7 +39,7 @@ DEFINE_EVENT(iomap_readpage_class, name,	\
- 	TP_PROTO(struct inode *inode, int nr_pages), \
- 	TP_ARGS(inode, nr_pages))
- DEFINE_READPAGE_EVENT(iomap_readpage);
--DEFINE_READPAGE_EVENT(iomap_readpages);
-+DEFINE_READPAGE_EVENT(iomap_readahead);
- 
- DECLARE_EVENT_CLASS(iomap_page_class,
- 	TP_PROTO(struct inode *inode, struct page *page, unsigned long off,
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 3a688eb5c5ae..0897dd71c622 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -621,14 +621,11 @@ xfs_vm_readpage(
- 	return iomap_readpage(page, &xfs_read_iomap_ops);
- }
- 
--STATIC int
--xfs_vm_readpages(
--	struct file		*unused,
--	struct address_space	*mapping,
--	struct list_head	*pages,
--	unsigned		nr_pages)
-+STATIC void
-+xfs_vm_readahead(
-+	struct readahead_control	*rac)
- {
--	return iomap_readpages(mapping, pages, nr_pages, &xfs_read_iomap_ops);
-+	iomap_readahead(rac, &xfs_read_iomap_ops);
- }
- 
- static int
-@@ -644,7 +641,7 @@ xfs_iomap_swapfile_activate(
- 
- const struct address_space_operations xfs_address_space_operations = {
- 	.readpage		= xfs_vm_readpage,
--	.readpages		= xfs_vm_readpages,
-+	.readahead		= xfs_vm_readahead,
- 	.writepage		= xfs_vm_writepage,
- 	.writepages		= xfs_vm_writepages,
- 	.set_page_dirty		= iomap_set_page_dirty,
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 8bc6ef82d693..8327a01d3bac 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -78,10 +78,9 @@ static int zonefs_readpage(struct file *unused, struct page *page)
- 	return iomap_readpage(page, &zonefs_iomap_ops);
- }
- 
--static int zonefs_readpages(struct file *unused, struct address_space *mapping,
--			    struct list_head *pages, unsigned int nr_pages)
-+static void zonefs_readahead(struct readahead_control *rac)
- {
--	return iomap_readpages(mapping, pages, nr_pages, &zonefs_iomap_ops);
-+	iomap_readahead(rac, &zonefs_iomap_ops);
- }
- 
- /*
-@@ -128,7 +127,7 @@ static int zonefs_writepages(struct address_space *mapping,
- 
- static const struct address_space_operations zonefs_file_aops = {
- 	.readpage		= zonefs_readpage,
--	.readpages		= zonefs_readpages,
-+	.readahead		= zonefs_readahead,
- 	.writepage		= zonefs_writepage,
- 	.writepages		= zonefs_writepages,
- 	.set_page_dirty		= iomap_set_page_dirty,
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 8b09463dae0d..bc20bd04c2a2 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -155,8 +155,7 @@ loff_t iomap_apply(struct inode *inode, loff_t pos, loff_t length,
- ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- 		const struct iomap_ops *ops);
- int iomap_readpage(struct page *page, const struct iomap_ops *ops);
--int iomap_readpages(struct address_space *mapping, struct list_head *pages,
--		unsigned nr_pages, const struct iomap_ops *ops);
-+void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
- int iomap_set_page_dirty(struct page *page);
- int iomap_is_partially_uptodate(struct page *page, unsigned long from,
- 		unsigned long count);
--- 
-2.25.0
+There really ought to be some clear guidelines what is expected to be
+reported though. Otherwise we'll just end up with a hodgepodge of
+different semantics, which'd be, ummm, not good.
 
+
+> but I would expect that it will initially be focussed on reporting
+> user data errors (e.g. writeback errors, block device gone bad data
+> loss reports, etc). It may not be possible to do anything sane with
+> metadata/journal IO errors as they typically cause the filesystem to
+> shutdown.
+
+I was mostly referencing the metadata/journal errors because it's what a
+number of filesystems seem to treat as errors (cf errors=remount-ro
+etc), and I just wanted to be sure that more than just those get
+reported up...
+
+I think the patch already had support for getting a separate type of
+notification for SBs remounted ro, shouldn't be too hard to change that
+so it'd report error shutdowns / remount-ro as a different
+category. Without
+
+
+> Of course, a filesystem shutdown is likely to result in a thundering
+> herd of userspace IO error notifications (think hundreds of GB of
+> dirty page cache getting EIO errors). Hence individual filesystems
+> will have to put some thought into how critical filesystem error
+> notifications are handled.
+
+Probably would make sense to stop reporting them individually once the
+whole FS is shutdown/remounted due to errors, and a notification about
+that fact has been sent.
+
+
+> That said, we likely want userspace notification of metadata IO
+> errors for our own purposes. e.g. so we can trigger the online
+> filesystem repair code to start trying to fix whatever went wrong. I
+> doubt there's much userspace can do with things like "bad freespace
+> btree block" notifications, whilst the filesystem's online repair
+> tool can trigger a free space scan and rebuild/repair it without
+> userspace applications even being aware that we just detected and
+> corrected a critical metadata corruption....
+
+Neat.
+
+
+> > I don't think that block layer notifications would be sufficient for an
+> > individual userspace application's data integrity purposes? For one,
+> > it'd need to map devices to relevant filesystems afaictl. And there's
+> > also errors above the block layer.
+> 
+> Block device errors separate notifications to the superblock
+> notifications. If you want the notification of raw block device
+> errors, then that's what you listen for. If you want the filesystem
+> to actually tell you what file and offset that EIO was generated
+> for, then you'd get that through the superblock notifier, not the
+> block device notifier...
+
+Not something we urgently need, but it might come in handy at a later
+point.
+
+Thanks,
+
+Andres
