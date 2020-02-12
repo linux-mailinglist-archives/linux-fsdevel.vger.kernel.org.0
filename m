@@ -2,153 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4E1115B0D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A99E15B10D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:30:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbgBLTSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 14:18:39 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:49190 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBLTSi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:18:38 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1xWr-0003Xk-B0; Wed, 12 Feb 2020 12:18:33 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j1xWq-0000bg-Ky; Wed, 12 Feb 2020 12:18:33 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S1728947AbgBLT3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 14:29:13 -0500
+Received: from foss.arm.com ([217.140.110.172]:36884 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727361AbgBLT3M (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:29:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B6FF30E;
+        Wed, 12 Feb 2020 11:29:12 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A353A3F68E;
+        Wed, 12 Feb 2020 11:29:11 -0800 (PST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
         Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
-        <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-Date:   Wed, 12 Feb 2020 13:16:38 -0600
-In-Reply-To: <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-        (Linus Torvalds's message of "Wed, 12 Feb 2020 10:45:06 -0800")
-Message-ID: <87v9obipk9.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v6 00/11] arm64: Branch Target Identification support
+Date:   Wed, 12 Feb 2020 19:28:55 +0000
+Message-Id: <20200212192906.53366-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j1xWq-0000bg-Ky;;;mid=<87v9obipk9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+FpT+28WqNfECAgpxZXu0sEMmAMmxCfO0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4994]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 286 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 2.8 (1.0%), b_tie_ro: 1.84 (0.6%), parse: 0.87
-        (0.3%), extract_message_metadata: 14 (5.1%), get_uri_detail_list: 1.39
-        (0.5%), tests_pri_-1000: 17 (5.9%), tests_pri_-950: 1.29 (0.5%),
-        tests_pri_-900: 1.04 (0.4%), tests_pri_-90: 25 (8.7%), check_bayes: 23
-        (8.1%), b_tokenize: 8 (2.9%), b_tok_get_all: 8 (2.6%), b_comp_prob:
-        2.4 (0.8%), b_tok_touch_all: 2.9 (1.0%), b_finish: 0.65 (0.2%),
-        tests_pri_0: 212 (73.9%), check_dkim_signature: 0.54 (0.2%),
-        check_dkim_adsp: 10 (3.4%), poll_dns_idle: 0.42 (0.1%), tests_pri_10:
-        2.0 (0.7%), tests_pri_500: 8 (2.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+This patch implements support for ARMv8.5-A Branch Target Identification
+(BTI), which is a control flow integrity protection feature introduced
+as part of the ARMv8.5-A extensions.
 
-> On Wed, Feb 12, 2020 at 7:01 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Fundamentally proc_flush_task is an optimization.  Just getting rid of
->> dentries earlier.  At least at one point it was an important
->> optimization because the old process dentries would just sit around
->> doing nothing for anyone.
->
-> I'm pretty sure it's still important. It's very easy to generate a
-> _ton_ of dentries with /proc.
->
->> I wonder if instead of invalidating specific dentries we could instead
->> fire wake up a shrinker and point it at one or more instances of proc.
->
-> It shouldn't be the dentries themselves that are a freeing problem.
-> They're being RCU-free'd anyway because of lookup. It's the
-> proc_mounts list that is the problem, isn't it?
->
-> So it's just fs_info that needs to be rcu-delayed because it contains
-> that list. Or is there something else?
+Changes:
 
-The fundamental dcache thing we are playing with is:
+v6:
+ - Rebase onto v5.6-rc1.
+ - Fix typos s/BYTPE/BTYPE/ in commit log for "arm64: BTI: Decode BYTPE
+   bits when printing PSTATE".
+v5:
+ - Changed a bunch of -EIO to -ENOEXEC in the ELF parsing code.
+ - Move PSR_BTYPE defines to UAPI.
+ - Use compat_user_mode() rather than open coding.
+ - Fix a typo s/BYTPE/BTYPE/ in syscall.c
+v4:
+ - Dropped patch fixing existing documentation as it has already been merged.
+ - Convert WARN_ON() to WARN_ON_ONCE() in "ELF: Add ELF program property
+   parsing support".
+ - Added display of guarded pages to ptdump.
+ - Updated for conversion of exception handling from assembler to C.
 
-	dentry = d_hash_and_lookup(proc_root, &name);
-	if (dentry) {
-		d_invalidate(dentry);
-		dput(dentry);
-	}
+Notes:
 
-As Al pointed out upthread dput and d_invalidate can both sleep.
+ * GCC 9 can compile backwards-compatible BTI-enabled code with
+   -mbranch-protection=bti or -mbranch-protection=standard.
 
-The dput can potentially go away if we use __d_lookup_rcu instead of
-d_lookup.
+ * Binutils trunk supports the new ELF note, but this wasn't in a release
+   the last time I posted this series.  (The situation _might_ have changed
+   in the meantime...)
 
-The challenge is d_invalidate.
+   Creation of a BTI-enabled binary requires _everything_ linked in to
+   be BTI-enabled.  For now ld --force-bti can be used to override this,
+   but some things may break until the required C library support is in
+   place.
 
-It has the fundamentally sleeping detach_mounts loop.  Even
-shrink_dcache_parent has a cond_sched() in there to ensure it doesn't
-live lock the system.
+   There is no straightforward way to mark a .s file as BTI-enabled:
+   scraping the output from gcc -S works as a quick hack for now.
 
-We could and arguabley should set DCACHE_CANT_MOUNT on the proc pid
-dentries.  Which will prevent having to deal with mounts.
+   readelf -n can be used to examing the program properties in an ELF
+   file.
 
-But I don't see an easy way of getting shrink_dcache_parent to run
-without sleeping.  Ideas?
+ * Runtime mmap() and mprotect() can be used to enable BTI on a
+   page-by-page basis using the new PROT_BTI, but the code in the
+   affected pages still needs to be written or compiled to contain the
+   appopriate BTI landing pads.
 
+Dave Martin (10):
+  ELF: UAPI and Kconfig additions for ELF program properties
+  ELF: Add ELF program property parsing support
+  arm64: Basic Branch Target Identification support
+  elf: Allow arch to tweak initial mmap prot flags
+  arm64: elf: Enable BTI at exec based on ELF program properties
+  arm64: BTI: Decode BTYPE bits when printing PSTATE
+  arm64: unify native/compat instruction skipping
+  arm64: traps: Shuffle code to eliminate forward declarations
+  arm64: BTI: Reset BTYPE when skipping emulated instructions
+  KVM: arm64: BTI: Reset BTYPE when skipping emulated instructions
 
-Eric
+Mark Brown (1):
+  arm64: mm: Display guarded pages in ptdump
 
+ Documentation/arm64/cpu-feature-registers.rst |   2 +
+ Documentation/arm64/elf_hwcaps.rst            |   5 +
+ arch/arm64/Kconfig                            |  25 +++
+ arch/arm64/include/asm/cpucaps.h              |   3 +-
+ arch/arm64/include/asm/cpufeature.h           |   6 +
+ arch/arm64/include/asm/elf.h                  |  50 ++++++
+ arch/arm64/include/asm/esr.h                  |   2 +-
+ arch/arm64/include/asm/exception.h            |   1 +
+ arch/arm64/include/asm/hwcap.h                |   1 +
+ arch/arm64/include/asm/kvm_emulate.h          |   6 +-
+ arch/arm64/include/asm/mman.h                 |  37 +++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |   1 +
+ arch/arm64/include/asm/pgtable.h              |   2 +-
+ arch/arm64/include/asm/ptrace.h               |   1 +
+ arch/arm64/include/asm/sysreg.h               |   4 +
+ arch/arm64/include/uapi/asm/hwcap.h           |   1 +
+ arch/arm64/include/uapi/asm/mman.h            |   9 ++
+ arch/arm64/include/uapi/asm/ptrace.h          |   9 ++
+ arch/arm64/kernel/cpufeature.c                |  33 ++++
+ arch/arm64/kernel/cpuinfo.c                   |   1 +
+ arch/arm64/kernel/entry-common.c              |  11 ++
+ arch/arm64/kernel/process.c                   |  36 ++++-
+ arch/arm64/kernel/ptrace.c                    |   2 +-
+ arch/arm64/kernel/signal.c                    |  16 ++
+ arch/arm64/kernel/syscall.c                   |  18 +++
+ arch/arm64/kernel/traps.c                     | 127 +++++++--------
+ arch/arm64/mm/dump.c                          |   5 +
+ fs/Kconfig.binfmt                             |   6 +
+ fs/binfmt_elf.c                               | 145 +++++++++++++++++-
+ fs/compat_binfmt_elf.c                        |   4 +
+ include/linux/elf.h                           |  43 ++++++
+ include/linux/mm.h                            |   3 +
+ include/uapi/linux/elf.h                      |  11 ++
+ 33 files changed, 551 insertions(+), 75 deletions(-)
+ create mode 100644 arch/arm64/include/asm/mman.h
+ create mode 100644 arch/arm64/include/uapi/asm/mman.h
 
-
-
-
-
+-- 
+2.20.1
 
