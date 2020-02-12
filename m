@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C198215A015
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B52FC15A00F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:20:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbgBLEUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728373AbgBLEUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 11 Feb 2020 23:20:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53876 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:53880 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727960AbgBLESq (ORCPT
+        with ESMTP id S1727961AbgBLESq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 11 Feb 2020 23:18:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=G02P3NwoSCoisXgQ/IS2rHa3w6ThGczr5ALv3SgsGPE=; b=si99YFEQ0elcNaPbG1Sa7xumtX
-        V7eGl8RRqn/ROGpPEuHPSmuTWjQIm5vo7lQlpOZyNr13m5VvzeRnukA8bO75KMxjKUMkqCvVFh9RC
-        bAGhuFS7oXGvdVwJlWCSFVy2qtN1ME4nHd27PKLOLRcFpRUQbNZhMNAwiN2REv3fDHGKextlNerDD
-        AakK2U6Jo2OqyZdebCrhKzIsfldMP9qoKNsSszalDBnlEhAMnq5Knq12SDN/Xf2sQKEbysUiSHdRV
-        Xn/xPbEVn5qH1t/ema2JlwYjN6p69/bDPnkIZG02tw99eCasVDKlwm2YRsUoTroeE1jDg5M3G8Pfg
-        rq46tHlQ==;
+        bh=1UKSv/uR1gizoUM2UndkwewM2cMbtXFX9L0k4TgJeuY=; b=R3nxxPSWtj03IZA6Q60snyIzPC
+        GEXcItmVPJlJHpYTVYajKyGL+Oah/pLRMZoM0pxNVjAmV17PEmygBknVi6eaUTjjKoN9cpq4+JHXL
+        RL1UbPTwnKrsk8GpNs8cRGurbpDDDUdN3l81jSG+bIPO5ZbdY7TCErTlS6AdU1B8FLHKB17Xe3ARX
+        +aT0Jn9aCjuKj/9UzBhjJdNoBuCU8PsSWEVj2v1aZQiKQVHYA2abifN36GqiA25Zw1l7OsXPbSN3+
+        fEL/2JM3lAN5lWKlWRJNGCA+CDJ3KnkVMySNLAc80+BzEgDx27JeWSIwm+clccZuD90m53fWyXXjY
+        D2CNc58w==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU6-0006mQ-Hd; Wed, 12 Feb 2020 04:18:46 +0000
+        id 1j1jU6-0006mU-JQ; Wed, 12 Feb 2020 04:18:46 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/25] mm: Optimise find_subpage for !THP
-Date:   Tue, 11 Feb 2020 20:18:22 -0800
-Message-Id: <20200212041845.25879-3-willy@infradead.org>
+Subject: [PATCH v2 03/25] mm: Use VM_BUG_ON_PAGE in clear_page_dirty_for_io
+Date:   Tue, 11 Feb 2020 20:18:23 -0800
+Message-Id: <20200212041845.25879-4-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -43,26 +43,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-If THP is disabled, find_subpage can become a no-op.
+Dumping the page information in this circumstance helps for debugging.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 2 +-
+ mm/page-writeback.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 75bdfec49710..0842622cca90 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -340,7 +340,7 @@ static inline struct page *find_subpage(struct page *page, pgoff_t offset)
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 2caf780a42e7..9173c25cf8e6 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2655,7 +2655,7 @@ int clear_page_dirty_for_io(struct page *page)
+ 	struct address_space *mapping = page_mapping(page);
+ 	int ret = 0;
  
- 	VM_BUG_ON_PAGE(PageTail(page), page);
+-	BUG_ON(!PageLocked(page));
++	VM_BUG_ON_PAGE(!PageLocked(page), page);
  
--	return page + (offset & (compound_nr(page) - 1));
-+	return page + (offset & (hpage_nr_pages(page) - 1));
- }
- 
- struct page *find_get_entry(struct address_space *mapping, pgoff_t offset);
+ 	if (mapping && mapping_cap_account_dirty(mapping)) {
+ 		struct inode *inode = mapping->host;
 -- 
 2.25.0
 
