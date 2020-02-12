@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA89E15A056
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 06:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321E915A0C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 06:47:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbgBLFKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 00:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35112 "EHLO mail.kernel.org"
+        id S1728078AbgBLFrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 00:47:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725601AbgBLFKQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 00:10:16 -0500
+        id S1725843AbgBLFrY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 00:47:24 -0500
 Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F0782073C;
-        Wed, 12 Feb 2020 05:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D15620714;
+        Wed, 12 Feb 2020 05:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581484215;
-        bh=SoSyxp3A0UA/8Dnh/f7bNxJ3PKh7YiP5yN7Miz0urew=;
+        s=default; t=1581486442;
+        bh=vfQCzX8Gzst/DyzbbP8Yb9hEeqTup17d6ibCA2atEQk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NJ4hV4Xer0eG0SHiCiwOzByKd5JyUN7uZA4Ev57RCddYfHiQhVYc1ZP6Nu/jQiKeI
-         sM/IB+kbGDo4+3rniEtpM5HWck5ZfygaFJlCh2p31egPYqFLRTnuG6Vzno8r8uusGN
-         eqTOJ2fXAIxq3MOi1WPwMBn/MfIrQVYZVrO20sdk=
-Date:   Tue, 11 Feb 2020 21:10:13 -0800
+        b=16O0AgpGnIblG8wXcW2EbHRzkj93++0mtvCGjFsyUCV76OVBn3s08Rm0Tzv10tDKX
+         lVogvBzynO1bch/RJ/BUyPtnWFQPHyHktHkoCQZmBDMm5mY+WEzsP8LNaRpna7Nlxp
+         fGy1pIz8XmPZ5U7MkLYBItDm8Mu67V3uwnIqWsJk=
+Date:   Tue, 11 Feb 2020 21:47:20 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Daniel Rosenberg <drosen@google.com>
 Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
@@ -39,7 +39,7 @@ Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel-team@android.com
 Subject: Re: [PATCH v7 6/8] f2fs: Handle casefolding with Encryption
-Message-ID: <20200212051013.GG870@sol.localdomain>
+Message-ID: <20200212054720.GH870@sol.localdomain>
 References: <20200208013552.241832-1-drosen@google.com>
  <20200208013552.241832-7-drosen@google.com>
 MIME-Version: 1.0
@@ -52,149 +52,99 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, Feb 07, 2020 at 05:35:50PM -0800, Daniel Rosenberg wrote:
-> This expands f2fs's casefolding support to include encrypted
-> directories. For encrypted directories, we use the siphash of the
-> casefolded name. This ensures there is no direct way to go from an
-> unencrypted name to the stored hash on disk without knowledge of the
-> encryption policy keys.
-> 
-> Additionally, we switch to using the vfs layer's casefolding support
-> instead of storing this information inside of f2fs's private data.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> ---
->  fs/f2fs/dir.c    | 65 ++++++++++++++++++++++++++++++++----------------
->  fs/f2fs/f2fs.h   |  8 +++---
->  fs/f2fs/hash.c   | 23 +++++++++++------
->  fs/f2fs/inline.c |  9 ++++---
->  fs/f2fs/super.c  |  6 -----
->  5 files changed, 68 insertions(+), 43 deletions(-)
-> 
-> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> index 38c0e6d589be4..3517dd4060341 100644
-> --- a/fs/f2fs/dir.c
-> +++ b/fs/f2fs/dir.c
-> @@ -112,30 +112,50 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
->   * doesn't match or less than zero on error.
->   */
->  int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
-> -				const struct qstr *entry, bool quick)
-> +		    unsigned char *name2, size_t len, bool quick)
+> @@ -173,24 +193,24 @@ static inline bool f2fs_match_name(struct f2fs_dentry_ptr *d,
 >  {
->  	const struct super_block *sb = parent->i_sb;
->  	const struct unicode_map *um = sb->s_encoding;
-> +	const struct fscrypt_str crypt_entry = FSTR_INIT(name2, len);
-> +	struct fscrypt_str decrypted_entry;
-> +	struct qstr decrypted;
-> +	struct qstr entry = QSTR_INIT(name2, len);
-> +	struct qstr *tocheck;
->  	int ret;
+>  #ifdef CONFIG_UNICODE
+>  	struct inode *parent = d->inode;
+> -	struct super_block *sb = parent->i_sb;
+> -	struct qstr entry;
+> +	unsigned char *name;
+> +	int len;
+>  #endif
 >  
-> +	decrypted_entry.name = NULL;
-> +
-> +	if (IS_ENCRYPTED(parent) && fscrypt_has_encryption_key(parent)) {
-> +		decrypted_entry.name = kmalloc(len, GFP_ATOMIC);
-> +		decrypted.name = decrypted_entry.name;
-> +		decrypted_entry.len = len;
-> +		decrypted.len = len;
-> +		if (!decrypted.name)
-> +			return -ENOMEM;
-> +		ret = fscrypt_fname_disk_to_usr(parent, 0, 0, &crypt_entry,
-> +							&decrypted_entry);
-> +		if (ret < 0)
-> +			goto out;
+>  	if (de->hash_code != namehash)
+>  		return false;
+>  
+>  #ifdef CONFIG_UNICODE
+> -	entry.name = d->filename[bit_pos];
+> -	entry.len = de->name_len;
+> +	name = d->filename[bit_pos];
+> +	len = de->name_len;
+
+This is missing le16_to_cpu().
+
+>  int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+>  				const struct qstr *orig_name,
+> +				f2fs_hash_t dentry_hash,
+>  				struct inode *inode, nid_t ino, umode_t mode)
+>  {
+>  	unsigned int bit_pos;
+>  	unsigned int level;
+>  	unsigned int current_depth;
+>  	unsigned long bidx, block;
+> -	f2fs_hash_t dentry_hash;
+>  	unsigned int nbucket, nblock;
+>  	struct page *dentry_page = NULL;
+>  	struct f2fs_dentry_block *dentry_blk = NULL;
+> @@ -632,7 +652,6 @@ int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
+>  
+>  	level = 0;
+>  	slots = GET_DENTRY_SLOTS(new_name->len);
+> -	dentry_hash = f2fs_dentry_hash(dir, new_name, NULL);
+
+Why was the call to f2fs_dentry_hash() moved to the caller, but for
+f2fs_add_inline_entry() a different approach was taken?
+
+> @@ -718,17 +737,19 @@ int f2fs_add_dentry(struct inode *dir, struct fscrypt_name *fname,
+>  				struct inode *inode, nid_t ino, umode_t mode)
+>  {
+>  	struct qstr new_name;
+> +	f2fs_hash_t dentry_hash;
+>  	int err = -EAGAIN;
+>  
+>  	new_name.name = fname_name(fname);
+>  	new_name.len = fname_len(fname);
+>  
+>  	if (f2fs_has_inline_dentry(dir))
+> -		err = f2fs_add_inline_entry(dir, &new_name, fname->usr_fname,
+> +		err = f2fs_add_inline_entry(dir, &new_name, fname,
+>  							inode, ino, mode);
+
+I'm really confused.  Why are you passing around both new_name and fname?
+We already have new_name == fname.disk_name.  So isn't just the
+'struct fscrypt_name' sufficient?
+
+> +static f2fs_hash_t __f2fs_dentry_hash(const struct inode *dir,
+> +				const struct qstr *name_info,
+> +				const struct fscrypt_name *fname)
+>  {
+>  	__u32 hash;
+>  	f2fs_hash_t f2fs_hash;
+> @@ -85,6 +86,11 @@ static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
+>  	if (is_dot_dotdot(name_info))
+>  		return 0;
+>  
+> +	if (IS_CASEFOLDED(dir) && IS_ENCRYPTED(dir)) {
+> +		f2fs_hash = fscrypt_fname_siphash(dir, name_info);
+> +		return f2fs_hash;
 > +	}
-> +	tocheck = decrypted_entry.name ? &decrypted : &entry;
-> +
->  	if (quick)
-> -		ret = utf8_strncasecmp_folded(um, name, entry);
-> +		ret = utf8_strncasecmp_folded(um, name, tocheck);
->  	else
-> -		ret = utf8_strncasecmp(um, name, entry);
-> -
-> +		ret = utf8_strncasecmp(um, name, tocheck);
->  	if (ret < 0) {
->  		/* Handle invalid character sequence as either an error
->  		 * or as an opaque byte sequence.
->  		 */
->  		if (sb_has_enc_strict_mode(sb))
-> -			return -EINVAL;
-> -
-> -		if (name->len != entry->len)
-> -			return 1;
-> -
-> -		return !!memcmp(name->name, entry->name, name->len);
-> +			ret = -EINVAL;
-> +		else if (name->len != len)
-> +			ret = 1;
-> +		else
-> +			ret = !!memcmp(name->name, tocheck->name, len);
->  	}
-> -
-> +out:
-> +	kfree(decrypted_entry.name);
->  	return ret;
->  }
 
-The case-sensitive fallback is broken with encrypted filenames; it's checking
-the length of the encrypted filename rather than the decrypted filename.  The
-decrypted name may be shorter.
+This is missing cpu_to_le32().
 
-Can you please improve your testing to catch bugs like this?
+Also, above we have:
 
-IMO, part of the problem is that there are multiple lengths here, so the
-variable named 'len' is ambiguous.  Can you please clean this function up to
-name things properly?  Also, the 'tocheck' variable is unnecessary, and it's
-confusing having both 'decrypted' and 'decrypted_entry', and to decrypt
-conditionally when fscrypt_has_encryption_key() since that's already required.
+        /* encrypted bigname case */
+        if (fname && !fname->disk_name.name)
+                return cpu_to_le32(fname->hash);
 
-How about:
+That won't work with encrypted+casefolded directories without the key, because
+now sometimes the hash from the no-key name is needed even when the disk_name is
+available.  This will cause a crash in fscrypt_fname_siphash() being called
+without the key.  I think you want:
 
-int f2fs_ci_compare(const struct inode *parent, const struct qstr *name,
-		    u8 *de_name, size_t de_name_len, bool quick)
-{
-	const struct super_block *sb = parent->i_sb;
-	const struct unicode_map *um = sb->s_encoding;
-	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
-	struct qstr entry = QSTR_INIT(de_name, de_name_len);
-	int ret;
+        if (fname && fname->is_ciphertext_name)
+                return cpu_to_le32(fname->hash);
 
-	if (IS_ENCRYPTED(parent)) {
-		const struct fscrypt_str encrypted_name =
-			FSTR_INIT(de_name, de_name_len);
-
-		decrypted_name.name = kmalloc(de_name_len, GFP_ATOMIC);
-		if (!decrypted_name.name)
-			return -ENOMEM;
-		ret = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-						&decrypted_name);
-		if (ret < 0)
-			goto out;
-		entry.name = decrypted_name.name;
-		entry.len = decrypted_name.len;
-	}
-
-	if (quick)
-		ret = utf8_strncasecmp_folded(um, name, &entry);
-	else
-		ret = utf8_strncasecmp(um, name, &entry);
-	if (ret < 0) {
-		/* Handle invalid character sequence as either an error
-		 * or as an opaque byte sequence.
-		 */
-		if (sb_has_enc_strict_mode(sb))
-			ret = -EINVAL;
-		else if (name->len != entry.len)
-			ret = 1;
-		else
-			ret = !!memcmp(name->name, entry.name, entry.len);
-	}
-out:
-	kfree(decrypted_name.name);
-	return ret;
-}
-
-
-Of course, all this applies to ext4_ci_compare() as well.
+Can you please write xfstests for encrypt+casefold?
 
 - Eric
