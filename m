@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7DC15B0FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B629D15B113
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbgBLT3W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 14:29:22 -0500
-Received: from foss.arm.com ([217.140.110.172]:36998 "EHLO foss.arm.com"
+        id S1729120AbgBLT3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 14:29:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:37026 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729083AbgBLT3V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:29:21 -0500
+        id S1729099AbgBLT3Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 14:29:24 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDC4B30E;
-        Wed, 12 Feb 2020 11:29:20 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B73FFEC;
+        Wed, 12 Feb 2020 11:29:23 -0800 (PST)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4CA3F68E;
-        Wed, 12 Feb 2020 11:29:20 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E73F3F68E;
+        Wed, 12 Feb 2020 11:29:22 -0800 (PST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Dave Martin <Dave.Martin@arm.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH v6 04/11] elf: Allow arch to tweak initial mmap prot flags
-Date:   Wed, 12 Feb 2020 19:28:59 +0000
-Message-Id: <20200212192906.53366-5-broonie@kernel.org>
+Subject: [PATCH v6 05/11] arm64: elf: Enable BTI at exec based on ELF program properties
+Date:   Wed, 12 Feb 2020 19:29:00 +0000
+Message-Id: <20200212192906.53366-6-broonie@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200212192906.53366-1-broonie@kernel.org>
 References: <20200212192906.53366-1-broonie@kernel.org>
@@ -57,128 +57,199 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Martin <Dave.Martin@arm.com>
 
-An arch may want to tweak the mmap prot flags for an
-ELFexecutable's initial mappings.  For example, arm64 is going to
-need to add PROT_BTI for executable pages in an ELF process whose
-executable is marked as using Branch Target Identification (an
-ARMv8.5-A control flow integrity feature).
+For BTI protection to be as comprehensive as possible, it is
+desirable to have BTI enabled from process startup.  If this is not
+done, the process must use mprotect() to enable BTI for each of its
+executable mappings, but this is painful to do in the libc startup
+code.  It's simpler and more sound to have the kernel do it
+instead.
 
-So that this can be done in a generic way, add a hook
-arch_elf_adjust_prot() to modify the prot flags as desired: arches
-can select CONFIG_HAVE_ELF_PROT and implement their own backend
-where necessary.
-
-By default, leave the prot flags unchanged.
+To this end, detect BTI support in the executable (or ELF
+interpreter, as appropriate), via the
+NT_GNU_PROGRAM_PROPERTY_TYPE_0 note, and tweak the initial prot
+flags for the process' executable pages to include PROT_BTI as
+appropriate.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- fs/Kconfig.binfmt   |  3 +++
- fs/binfmt_elf.c     | 18 ++++++++++++------
- include/linux/elf.h | 12 ++++++++++++
- 3 files changed, 27 insertions(+), 6 deletions(-)
+ arch/arm64/Kconfig           |  3 +++
+ arch/arm64/include/asm/elf.h | 50 ++++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/process.c  | 19 ++++++++++++++
+ include/linux/elf.h          |  6 ++++-
+ include/uapi/linux/elf.h     |  6 +++++
+ 5 files changed, 83 insertions(+), 1 deletion(-)
 
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index d2cfe0729a73..2358368319b8 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -36,6 +36,9 @@ config COMPAT_BINFMT_ELF
- config ARCH_BINFMT_ELF_STATE
- 	bool
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index e37f4f07b990..d65d226a77ec 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -9,6 +9,7 @@ config ARM64
+ 	select ACPI_MCFG if (ACPI && PCI)
+ 	select ACPI_SPCR_TABLE if ACPI
+ 	select ACPI_PPTT if ACPI
++	select ARCH_BINFMT_ELF_STATE
+ 	select ARCH_CLOCKSOURCE_DATA
+ 	select ARCH_HAS_DEBUG_VIRTUAL
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
+@@ -33,6 +34,7 @@ config ARM64
+ 	select ARCH_HAS_SYSCALL_WRAPPER
+ 	select ARCH_HAS_TEARDOWN_DMA_OPS if IOMMU_SUPPORT
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
++	select ARCH_HAVE_ELF_PROT
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select ARCH_INLINE_READ_LOCK if !PREEMPTION
+ 	select ARCH_INLINE_READ_LOCK_BH if !PREEMPTION
+@@ -62,6 +64,7 @@ config ARM64
+ 	select ARCH_INLINE_SPIN_UNLOCK_IRQRESTORE if !PREEMPTION
+ 	select ARCH_KEEP_MEMBLOCK
+ 	select ARCH_USE_CMPXCHG_LOCKREF
++	select ARCH_USE_GNU_PROPERTY if BINFMT_ELF
+ 	select ARCH_USE_QUEUED_RWLOCKS
+ 	select ARCH_USE_QUEUED_SPINLOCKS
+ 	select ARCH_SUPPORTS_MEMORY_FAILURE
+diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
+index b618017205a3..fca3a48e9db5 100644
+--- a/arch/arm64/include/asm/elf.h
++++ b/arch/arm64/include/asm/elf.h
+@@ -114,7 +114,11 @@
  
-+config ARCH_HAVE_ELF_PROT
-+	bool
+ #ifndef __ASSEMBLY__
+ 
++#include <uapi/linux/elf.h>
+ #include <linux/bug.h>
++#include <linux/errno.h>
++#include <linux/fs.h>
++#include <linux/types.h>
+ #include <asm/processor.h> /* for signal_minsigstksz, used by ARCH_DLINFO */
+ 
+ typedef unsigned long elf_greg_t;
+@@ -224,6 +228,52 @@ extern int aarch32_setup_additional_pages(struct linux_binprm *bprm,
+ 
+ #endif /* CONFIG_COMPAT */
+ 
++struct arch_elf_state {
++	int flags;
++};
 +
- config ARCH_USE_GNU_PROPERTY
- 	bool
- 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 1fb67e506b68..cceb29d6ef1d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -544,7 +544,8 @@ static inline int arch_check_elf(struct elfhdr *ehdr, bool has_interp,
- 
- #endif /* !CONFIG_ARCH_BINFMT_ELF_STATE */
- 
--static inline int make_prot(u32 p_flags)
-+static inline int make_prot(u32 p_flags, struct arch_elf_state *arch_state,
-+			    bool has_interp, bool is_interp)
- {
- 	int prot = 0;
- 
-@@ -554,7 +555,8 @@ static inline int make_prot(u32 p_flags)
- 		prot |= PROT_WRITE;
- 	if (p_flags & PF_X)
- 		prot |= PROT_EXEC;
--	return prot;
++#define ARM64_ELF_BTI		(1 << 0)
 +
-+	return arch_elf_adjust_prot(prot, arch_state, has_interp, is_interp);
- }
- 
- /* This is much more generalized than the library routine read function,
-@@ -564,7 +566,8 @@ static inline int make_prot(u32 p_flags)
- 
- static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
- 		struct file *interpreter,
--		unsigned long no_base, struct elf_phdr *interp_elf_phdata)
-+		unsigned long no_base, struct elf_phdr *interp_elf_phdata,
-+		struct arch_elf_state *arch_state)
- {
- 	struct elf_phdr *eppnt;
- 	unsigned long load_addr = 0;
-@@ -596,7 +599,8 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
- 	for (i = 0; i < interp_elf_ex->e_phnum; i++, eppnt++) {
- 		if (eppnt->p_type == PT_LOAD) {
- 			int elf_type = MAP_PRIVATE | MAP_DENYWRITE;
--			int elf_prot = make_prot(eppnt->p_flags);
-+			int elf_prot = make_prot(eppnt->p_flags, arch_state,
-+						 true, true);
- 			unsigned long vaddr = 0;
- 			unsigned long k, map_addr;
- 
-@@ -1041,7 +1045,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			}
- 		}
- 
--		elf_prot = make_prot(elf_ppnt->p_flags);
-+		elf_prot = make_prot(elf_ppnt->p_flags, &arch_state,
-+				     !!interpreter, false);
- 
- 		elf_flags = MAP_PRIVATE | MAP_DENYWRITE | MAP_EXECUTABLE;
- 
-@@ -1184,7 +1189,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	if (interpreter) {
- 		elf_entry = load_elf_interp(&loc->interp_elf_ex,
- 					    interpreter,
--					    load_bias, interp_elf_phdata);
-+					    load_bias, interp_elf_phdata,
-+					    &arch_state);
- 		if (!IS_ERR((void *)elf_entry)) {
- 			/*
- 			 * load_elf_interp() returns relocation
-diff --git a/include/linux/elf.h b/include/linux/elf.h
-index 7bdc6da160c7..1b6e8955c597 100644
---- a/include/linux/elf.h
-+++ b/include/linux/elf.h
-@@ -83,4 +83,16 @@ extern int arch_parse_elf_property(u32 type, const void *data, size_t datasz,
- 				   bool compat, struct arch_elf_state *arch);
- #endif
- 
-+#ifdef CONFIG_ARCH_HAVE_ELF_PROT
-+int arch_elf_adjust_prot(int prot, const struct arch_elf_state *state,
-+			 bool has_interp, bool is_interp);
-+#else
-+static inline int arch_elf_adjust_prot(int prot,
-+				       const struct arch_elf_state *state,
-+				       bool has_interp, bool is_interp)
++#define INIT_ARCH_ELF_STATE {			\
++	.flags = 0,				\
++}
++
++static inline int arch_parse_elf_property(u32 type, const void *data,
++					  size_t datasz, bool compat,
++					  struct arch_elf_state *arch)
 +{
++	/* No known properties for AArch32 yet */
++	if (IS_ENABLED(CONFIG_COMPAT) && compat)
++		return 0;
++
++	if (type == GNU_PROPERTY_AARCH64_FEATURE_1_AND) {
++		const u32 *p = data;
++
++		if (datasz != sizeof(*p))
++			return -ENOEXEC;
++
++		if (IS_ENABLED(CONFIG_ARM64_BTI) &&
++		    (*p & GNU_PROPERTY_AARCH64_FEATURE_1_BTI))
++			arch->flags |= ARM64_ELF_BTI;
++	}
++
++	return 0;
++}
++
++static inline int arch_elf_pt_proc(void *ehdr, void *phdr,
++				   struct file *f, bool is_interp,
++				   struct arch_elf_state *state)
++{
++	return 0;
++}
++
++static inline int arch_check_elf(void *ehdr, bool has_interp,
++				 void *interp_ehdr,
++				 struct arch_elf_state *state)
++{
++	return 0;
++}
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index bbb0f0c145f6..7545a3f743c4 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/compat.h>
+ #include <linux/efi.h>
++#include <linux/elf.h>
+ #include <linux/export.h>
+ #include <linux/sched.h>
+ #include <linux/sched/debug.h>
+@@ -18,6 +19,7 @@
+ #include <linux/sched/task_stack.h>
+ #include <linux/kernel.h>
+ #include <linux/lockdep.h>
++#include <linux/mman.h>
+ #include <linux/mm.h>
+ #include <linux/stddef.h>
+ #include <linux/sysctl.h>
+@@ -649,3 +651,20 @@ asmlinkage void __sched arm64_preempt_schedule_irq(void)
+ 	if (system_capabilities_finalized())
+ 		preempt_schedule_irq();
+ }
++
++#ifdef CONFIG_BINFMT_ELF
++int arch_elf_adjust_prot(int prot, const struct arch_elf_state *state,
++			 bool has_interp, bool is_interp)
++{
++	if (is_interp != has_interp)
++		return prot;
++
++	if (!(state->flags & ARM64_ELF_BTI))
++		return prot;
++
++	if (prot & PROT_EXEC)
++		prot |= PROT_BTI;
++
 +	return prot;
 +}
 +#endif
+diff --git a/include/linux/elf.h b/include/linux/elf.h
+index 1b6e8955c597..5d5b0321da0b 100644
+--- a/include/linux/elf.h
++++ b/include/linux/elf.h
+@@ -63,7 +63,11 @@ extern int elf_coredump_extra_notes_size(void);
+ extern int elf_coredump_extra_notes_write(struct coredump_params *cprm);
+ #endif
+ 
+-/* NT_GNU_PROPERTY_TYPE_0 header */
++/*
++ * NT_GNU_PROPERTY_TYPE_0 header:
++ * Keep this internal until/unless there is an agreed UAPI definition.
++ * pr_type values (GNU_PROPERTY_*) are public and defined in the UAPI header.
++ */
+ struct gnu_property {
+ 	u32 pr_type;
+ 	u32 pr_datasz;
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index 20900f4496b7..c6dd0215482e 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -448,4 +448,10 @@ typedef struct elf64_note {
+   Elf64_Word n_type;	/* Content type */
+ } Elf64_Nhdr;
+ 
++/* .note.gnu.property types for EM_AARCH64: */
++#define GNU_PROPERTY_AARCH64_FEATURE_1_AND	0xc0000000
 +
- #endif /* _LINUX_ELF_H */
++/* Bits for GNU_PROPERTY_AARCH64_FEATURE_1_BTI */
++#define GNU_PROPERTY_AARCH64_FEATURE_1_BTI	(1U << 0)
++
+ #endif /* _UAPI_LINUX_ELF_H */
 -- 
 2.20.1
 
