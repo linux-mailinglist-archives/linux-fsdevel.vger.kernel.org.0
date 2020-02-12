@@ -2,92 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B149E15A5CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 11:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E5715A655
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 11:29:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbgBLKKx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 05:10:53 -0500
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:43153 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727641AbgBLKKu (ORCPT
+        id S1727414AbgBLK3R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 05:29:17 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43175 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbgBLK3R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 05:10:50 -0500
-Received: by mail-wr1-f45.google.com with SMTP id r11so1450574wrq.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 02:10:48 -0800 (PST)
+        Wed, 12 Feb 2020 05:29:17 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r11so1525282wrq.10;
+        Wed, 12 Feb 2020 02:29:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=BRjPfJMR3gBxSakZef/gb/VnG6S48JJMLp21pszTisM=;
-        b=oIYghL86GjmBaZilXF+NzQT9lOVQeHyGOnfORubKlbqH2iHU7BCSA111X2860O0xpd
-         xGNHdmxZssKmctutn4kX661YkGatIdrzulNTw7wbyOgnXjJjXnhcoDiqHmgBqN3Ny9qJ
-         ASsAGoV/RF1dmxCblipJbc6Gxfea7uFhHmL2kqEy/A44EZkxHGKQjf5FXxfE8psVl7Tj
-         i307gSCqJmhW5OidVecNv1TqhoGOh+Z4wLmmImlIG5ttGqK51zDwKXnXGIXYwCvrrVmk
-         75Sf94b7eU3ePGeBV0al97ts/xD+tIZCvOkPK1Qb+DlFEBF/GcSGKLYjRwSahwT32uPt
-         YYsw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/a19wkw5zcAUXXARw7C4Q+g5Zk5wzezKFPbsaOb+NUQ=;
+        b=UfDri8LbvztPbTDcHA+Zi+Uj0sTIpaqy55Kppxj0FpCOAAtVxDSjDYmk0SGos18Bo+
+         YAEPsFN0LwqYTSC24Y7spRmt7K3a+qNcCEtOPoH8Ab8fFbuGIjssthutA4JINZ0Xk8uK
+         F7h9tChSZl6y5Y2J7qGRbTofvcqyY3FKqxLBMWfxwpWnWMPKcCj/N91b6TXxoon1ZaEV
+         q67VnO66YoCbuviGa3G6BAGfdsafgqSrNaP4J5Co1k+KpyJelhHYmedo/EldAIvQoxtl
+         If2j6vYmdZlK0w6s83dN1cQJa+yGBkJNoyjFtmPFCOHckZd4nEiLquKu9Rx5LPoNiyrP
+         ndfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=BRjPfJMR3gBxSakZef/gb/VnG6S48JJMLp21pszTisM=;
-        b=Mu+HGKURF8MJlHHHLPzBzOMYsxVM7wEDlK7JIeMnadoA8diQiupSvNLW1rEnERTK2Y
-         K1u1Z9IzDSIgHupwN+og01EDAFQq21HGeAOGNMvDjk6voqUQgqeWGbsymAY2iIf4GfV9
-         DwwnIeTCNQDWjQflEHCtshsC6kseMrIFgapHVhani6+pe8A81bQxZBiutRsHYC5An/5v
-         9zHD1froRqcn6O0t3USx0iYNvOw10FdUSKdubAo4mFZEuhElmWEiEy830kcaBAlHh5mG
-         OylmPzySwJ51vM0/lC1vfTzJ05r7wG6vnOXY9jTrCR3/oyFTeTRh6isKxRkUzXGJ6EiS
-         sGYg==
-X-Gm-Message-State: APjAAAVYEtUigPf1xA2ObX/A7IyEgC/m1qb1VLU82kiTTuJF97wnrlAl
-        4BbZvdZo84iVaCAuZ4M0V/6Msw==
-X-Google-Smtp-Source: APXvYqyWd2HdsaijUMG4L8+DcCi4FCuU37UJqFhSImYWBPcv+G2F0q676xQm6nEE4PLfYcclMx8kEA==
-X-Received: by 2002:adf:f012:: with SMTP id j18mr14411599wro.314.1581502248098;
-        Wed, 12 Feb 2020 02:10:48 -0800 (PST)
-Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
-        by smtp.gmail.com with ESMTPSA id x6sm37396wmi.44.2020.02.12.02.10.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Feb 2020 02:10:46 -0800 (PST)
-Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/a19wkw5zcAUXXARw7C4Q+g5Zk5wzezKFPbsaOb+NUQ=;
+        b=Lmfag5DMvceNmsZIzYtEin+/KhO9dmKWJogLWJkVnvAZL3+QeCOqVIl9x4VJZqtERW
+         wDGWt3I7jHY2nDk0HELkSjAm1+Z5+7dQMco0PG0mTd7P3xjtD7Jo2f7oaWXwBFWnrcmp
+         9MDGlpTXmKDGywwcnvA5rwtQecDQs3IcUpIpjFlaBEgZ1Ug4Nn2tioYdIL1PtZ37hXj6
+         g6zQR32Lih1yHsPpsVTfNP4HwQeqTK0HF3pIS1l5fetqxFv5sM+u5LssBnq671kQUnyv
+         mXh6N3NqlG12JBPBbzcdjDsmSmg7eV5Zhy/Wbhw3rf7yZOlaDkbqdJgnQlcrURc45qDl
+         DZIw==
+X-Gm-Message-State: APjAAAXlpBWGct19bvnuwKcFa8Be3c2WsJ+MWq89boH9huZHdjXHTa1J
+        dvDWvsLCtFNpektCtwWmMTWZxxsKC2qfwA==
+X-Google-Smtp-Source: APXvYqxpuZLPw68k9p6/ZtX2wMIGZBzLwo30raerKBjVddvIqtIKF6Z0rPJOrkjwCt6B4lDtlfEVuQ==
+X-Received: by 2002:adf:f787:: with SMTP id q7mr14445406wrp.297.1581503355024;
+        Wed, 12 Feb 2020 02:29:15 -0800 (PST)
+Received: from localhost ([51.15.41.238])
+        by smtp.gmail.com with ESMTPSA id f65sm137374wmf.29.2020.02.12.02.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 02:29:14 -0800 (PST)
+Date:   Wed, 12 Feb 2020 10:29:12 +0000
+From:   Stefan Hajnoczi <stefanha@gmail.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Avi Kivity <avi@scylladb.com>,
         Davide Libenzi <davidel@xmailserver.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
+Message-ID: <20200212102912.GA464050@stefanha-x1.localdomain>
 References: <20200129172010.162215-1-stefanha@redhat.com>
  <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
-From:   Avi Kivity <avi@scylladb.com>
-Organization: ScyllaDB
-Message-ID: <a5299230-4e86-43d1-7f99-cc1f455a39c7@scylladb.com>
-Date:   Wed, 12 Feb 2020 12:10:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Content-Disposition: inline
 In-Reply-To: <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 12/02/2020 10.31, Paolo Bonzini wrote:
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Feb 12, 2020 at 09:31:32AM +0100, Paolo Bonzini wrote:
 > On 29/01/20 18:20, Stefan Hajnoczi wrote:
->> +	/* Semaphore semantics don't make sense when autoreset is enabled */
->> +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
->> +		return -EINVAL;
->> +
+> > +	/* Semaphore semantics don't make sense when autoreset is enabled */
+> > +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
+> > +		return -EINVAL;
+> > +
+>=20
 > I think they do, you just want to subtract 1 instead of setting the
 > count to 0.  This way, writing 1 would be the post operation on the
 > semaphore, while poll() would be the wait operation.
 
+True!  Then EFD_AUTORESET is not a fitting name.  EFD_AUTOREAD or
+EFD_POLL_READS?
 
-poll() is usually idempotent. Both resetting to zero and subtracting one 
-goes against the grain.
+Stefan
 
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Better to use uring async read. This way you get the value just as you 
-do with with poll+read, and the syscall cost is amortized away by uring.
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5D03gACgkQnKSrs4Gr
+c8iXugf+J/YVpTHlkSA/Kk71x6qq43BnfiE9Yr7zaoyLZXe/OLqZOPuFh9W1Zd7p
+vL7xjXxzNfZj+h2rQtmvQTzioivvhfYERHsiyYwgFbdC1Ju9oB4gDOsOrHF9bk8n
+nj13JoaUBvzFdWlOW1Rml++wH6gJSZUGkerjuchEF8nFmE2HOip+tcRWlt4iB0Ym
+X6Fj02m4EO6Jyj5q+2AyhiNqzkCpOzgAN0VerGQoKT81K1rWIjMPgxjAuv70vFza
+YolBmujVzhmKdGScHQ2rOBQlVc0sJc0RNzciojGdw9NqkSXl/3jwoEoeD8nkfUFC
+NegsoHXoW0Afqg27Tp6bdKfR/p0m2w==
+=XDwI
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
