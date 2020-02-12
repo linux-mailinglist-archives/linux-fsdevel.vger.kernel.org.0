@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15719159FF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B2915A004
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbgBLETR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 23:19:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53934 "EHLO
+        id S1727989AbgBLET5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 23:19:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53938 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbgBLESr (ORCPT
+        with ESMTP id S1727983AbgBLESr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 11 Feb 2020 23:18:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=E2LjqBszgquKpJquZnIE6WmTb8rlYH+KCAsDdBVlwlw=; b=qNLJwgF/rnW8ybxq8FcTESoXmR
-        kVdQKbpxEeeKJQu4bjlaz4jNso3rZZfpN+vBHnd47cUEq2I8jusmAt5TLAumk5so/nas2pJ7J/Y5k
-        eOf8j1QpTmlsBsAsHjljLv+G6VSZh+CGIlvZHd6hNXqBL2DYe0OdSNGoc0ONtr5emMxK1XPxHeVbf
-        0H9JwJFkSY11MVcB+hNkT8blC7dR/PCRxNKR91Qm1BeU3gPD8W7hudcYZZhBMM6Pat4MrZooqucUj
-        aH3/mxaJvgYuCgOx6Qd6GMVTUGgF1bxXVUjbyYpknlqN5J4POdJQ+lLl5MPzOry8xFTjX158hclxi
-        ZgMszcVA==;
+        bh=NvMfSbwCSPQiuZsVqZ+gREFLXJWQ8lHxQALsTybal28=; b=dkvEEjgLlJHt5AUjH/hWPpXsBM
+        lvuxoe/UOq8JMvoe4+4d2BIvo6eOU/p/MgXsXq4YB7gYbXgFFo0Mu5apYDAh2dsrW5vd4BgV6XZJE
+        YAFMVpJO0SUtPSCPR1Ykw3uoryiy98Elgl14DBpGG6bYlMS6ug+xx/vw5p4m8wSxkDae6nxACaB50
+        JyFVlMdaM6MyG1iN+HegUPoASXD8Q2wsxrpX0158WABia1lrxdNI7Zpo0FAGwy6cRUJgzoU5k4yox
+        Br/r/CtwEdK8t6TEE56VC4g60V3GKDvaqMOHo24Eom5/5TB54IhcZiwEx+OLv0zJDjDwU+OoEiizA
+        j5WW+MTw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU6-0006ng-V3; Wed, 12 Feb 2020 04:18:46 +0000
+        id 1j1jU7-0006nq-13; Wed, 12 Feb 2020 04:18:47 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/25] mm: Add file_offset_of_ helpers
-Date:   Tue, 11 Feb 2020 20:18:32 -0800
-Message-Id: <20200212041845.25879-13-willy@infradead.org>
+Subject: [PATCH v2 13/25] fs: Add zero_user_large
+Date:   Tue, 11 Feb 2020 20:18:33 -0800
+Message-Id: <20200212041845.25879-14-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -43,76 +43,47 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-The page_offset function is badly named for people reading the functions
-which call it.  The natural meaning of a function with this name would
-be 'offset within a page', not 'page offset in bytes within a file'.
-Dave Chinner suggests file_offset_of_page() as a replacement function
-name and I'm also adding file_offset_of_next_page() as a helper for the
-large page work.  Also add kernel-doc for these functions so they show
-up in the kernel API book.
-
-page_offset() is retained as a compatibility define for now.
+We can't kmap() a THP, so add a wrapper around zero_user() for large
+pages.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- drivers/net/ethernet/ibm/ibmveth.c |  2 --
- include/linux/pagemap.h            | 25 ++++++++++++++++++++++---
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ include/linux/highmem.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
-index 84121aab7ff1..4cad94ac9bc9 100644
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -978,8 +978,6 @@ static int ibmveth_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
- 	return -EOPNOTSUPP;
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index ea5cdbd8c2c3..4465b8784353 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -245,6 +245,28 @@ static inline void zero_user(struct page *page,
+ 	zero_user_segments(page, start, start + size, 0, 0);
  }
  
--#define page_offset(v) ((unsigned long)(v) & ((1 << 12) - 1))
--
- static int ibmveth_send(struct ibmveth_adapter *adapter,
- 			union ibmveth_buf_desc *descs, unsigned long mss)
- {
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2ec33aabdbf6..497197315b73 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -432,14 +432,33 @@ static inline pgoff_t page_to_pgoff(struct page *page)
- 	return page_to_index(page);
- }
- 
--/*
-- * Return byte-offset into filesystem object for page.
-+/**
-+ * file_offset_of_page - File offset of this page.
-+ * @page: Page cache page.
-+ *
-+ * Context: Any context.
-+ * Return: The offset of the first byte of this page.
-  */
--static inline loff_t page_offset(struct page *page)
-+static inline loff_t file_offset_of_page(struct page *page)
- {
- 	return ((loff_t)page->index) << PAGE_SHIFT;
- }
- 
-+/* Legacy; please convert callers */
-+#define page_offset(page)	file_offset_of_page(page)
-+
-+/**
-+ * file_offset_of_next_page - File offset of the next page.
-+ * @page: Page cache page.
-+ *
-+ * Context: Any context.
-+ * Return: The offset of the first byte after this page.
-+ */
-+static inline loff_t file_offset_of_next_page(struct page *page)
++static inline void zero_user_large(struct page *page,
++		unsigned start, unsigned size)
 +{
-+	return file_offset_of_page(page) + thp_size(page);
++	unsigned int i;
++
++	for (i = 0; i < thp_order(page); i++) {
++		if (start > PAGE_SIZE) {
++			start -= PAGE_SIZE;
++		} else {
++			unsigned this_size = size;
++
++			if (size > (PAGE_SIZE - start))
++				this_size = PAGE_SIZE - start;
++			zero_user(page + i, start, this_size);
++			start = 0;
++			size -= this_size;
++			if (!size)
++				break;
++		}
++	}
 +}
 +
- static inline loff_t page_file_offset(struct page *page)
- {
- 	return ((loff_t)page_index(page)) << PAGE_SHIFT;
+ #ifndef __HAVE_ARCH_COPY_USER_HIGHPAGE
+ 
+ static inline void copy_user_highpage(struct page *to, struct page *from,
 -- 
 2.25.0
 
