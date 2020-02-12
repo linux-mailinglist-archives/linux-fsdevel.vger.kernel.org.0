@@ -2,56 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE57C15A21D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B65015A229
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbgBLHe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 02:34:58 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35138 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbgBLHe6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:34:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VxRUapHd7o/hPw0/UoJoo3K3tLVDD3iUiQQ+YB+fPrU=; b=OqCYBmBVgZgY2PVrufwv58UlCA
-        e+gVjjox/snuJ/bOm/aXA7TljNw4yq8StckvefQVj9cnX2lfVUvtbcxLLKHzEmQ0XdPUBNK5y228v
-        4AIUFcFEx8cTkHRynBy9jPFLPJcQU7yQo6978V89mjkJutdx6T4bzl1jchS93B8oNX/KC8Iia1VdD
-        uvL0xSRjO6GOhkrgVwrgTJwgvpgT1lVkS25py7QDJ1Hru9JAY+98dtDw5ULGuAm/2FhiUHT9QR3rV
-        aTlLegX/iWzNNsz2b9/xZFspNczK3TYOwIE1gw7LD/qVgMuvt0RjOSEIrnjK8VME9zZrat5zHVGlB
-        on3Ahb+A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1mXu-0003wy-H1; Wed, 12 Feb 2020 07:34:57 +0000
-Date:   Tue, 11 Feb 2020 23:34:54 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v2 01/25] mm: Use vm_fault error code directly
-Message-ID: <20200212073454.GB7068@infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-2-willy@infradead.org>
+        id S1728331AbgBLHhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 02:37:21 -0500
+Received: from verein.lst.de ([213.95.11.211]:36725 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727669AbgBLHhU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 02:37:20 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id BD9B868B05; Wed, 12 Feb 2020 08:37:17 +0100 (CET)
+Date:   Wed, 12 Feb 2020 08:37:17 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Naohiro Aota <naohiro.aota@wdc.com>
+Subject: Re: [PATCH 01/12] mm: fix a comment in sys_swapon
+Message-ID: <20200212073717.GB25555@lst.de>
+References: <20200114161225.309792-1-hch@lst.de> <20200114161225.309792-2-hch@lst.de> <20200210152942.2ec4d0b71851feccb7387266@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212041845.25879-2-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200210152942.2ec4d0b71851feccb7387266@linux-foundation.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 08:18:21PM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon, Feb 10, 2020 at 03:29:42PM -0800, Andrew Morton wrote:
+> On Tue, 14 Jan 2020 17:12:14 +0100 Christoph Hellwig <hch@lst.de> wrote:
 > 
-> Use VM_FAULT_OOM instead of indirecting through vmf_error(-ENOMEM).
+> > claim_swapfile now always takes i_rwsem.
+> > 
+> > ...
+> >
+> > --- a/mm/swapfile.c
+> > +++ b/mm/swapfile.c
+> > @@ -3157,7 +3157,7 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+> >  	mapping = swap_file->f_mapping;
+> >  	inode = mapping->host;
+> >  
+> > -	/* If S_ISREG(inode->i_mode) will do inode_lock(inode); */
+> > +	/* will take i_rwsem; */
+> >  	error = claim_swapfile(p, inode);
+> >  	if (unlikely(error))
+> >  		goto bad_swap;
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> http://lkml.kernel.org/r/20200206090132.154869-1-naohiro.aota@wdc.com
+> removes this comment altogether.  Please check that this is OK?
 
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Killing it is fine with me.  Just the fact that the comment was wrong
+while I did an audit of the area really thew me off.
