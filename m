@@ -2,232 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0989A15A475
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 10:18:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A206B15A503
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 10:39:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbgBLJRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 04:17:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47802 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJRs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:17:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5A7EDAC16;
-        Wed, 12 Feb 2020 09:17:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 132C61E0E01; Wed, 12 Feb 2020 10:17:43 +0100 (CET)
-Date:   Wed, 12 Feb 2020 10:17:43 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v6 08/12] mm/gup: /proc/vmstat: pin_user_pages (FOLL_PIN)
- reporting
-Message-ID: <20200212091743.GC25573@quack2.suse.cz>
-References: <20200211001536.1027652-1-jhubbard@nvidia.com>
- <20200211001536.1027652-9-jhubbard@nvidia.com>
+        id S1728928AbgBLJir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 04:38:47 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:33792 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728731AbgBLJir (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 04:38:47 -0500
+Received: by mail-oi1-f177.google.com with SMTP id l136so1434938oig.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 01:38:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mIiapcw2qY11tt9ZC1FJxtTmrsdn4un9X7oox81xbp0=;
+        b=xIQqMJZiBbTwqKfqhbIBV8cPsjP0fB9ODjH3UlNW47f/KQGuR5LFmez888vOfWtrgx
+         hHzFz3tEzyCn6T6KIuQStJtkVI0qMygIbWwrjF0tagXMv4fEBuIM6bBQs2lOC7hc17XA
+         j25098U0iL4LjQokTeZsIEps7PMv+J9ST/pw7B+IH8kdBSetzPsRjd65RtygwqC9kG6J
+         zGzRWsaXvM+7mx1QKkmfPTrh9c76C7S1y7ItyjNDjXCiO3nYxw2tcRoyB2OqXfZR4a83
+         EOckv3TbvBMl2eipVhcUUBB+dIz1yLD8LKDVdpMnRNojyka69+JamCvqctzEuNboLjQ5
+         SvhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mIiapcw2qY11tt9ZC1FJxtTmrsdn4un9X7oox81xbp0=;
+        b=dHHEdQElaCb2SMxJWnOHoP7BsFcUbTm/V/8K/3E3OaeB5XogOwNoFNdipcrFD56WOu
+         HCqhWJL9rKvJQvjXlXJLLss+eH77sys1v3CoSOaNGtQ9oS7r6dcW4XLVnQj7ROJsq0ir
+         nIqLrMIGQSkl5O34CaM0voAwKkQWK0RBWljGKYBelVYvclmweO+O1j3p+zKcbzqYDWx+
+         IQlUF7k2lCxroGSe/yZI8uJrvWK/piFC7phw4F56PXSAJhZt0yVesiSDwSUtje1oVLMz
+         QaVV/ZaiRCKKVpbYsIaScvIIwl1QYuR++RqwtBzmmCeUELkHRj0OvNqvkP/L8WgUXFTW
+         skfA==
+X-Gm-Message-State: APjAAAWsO+L+aKy0if8uiVkKuPweGsgurrdb6EtTzANX0gXScbMDUnzI
+        RPDUgYXI9K8Ut3lDBwJiqoBFxCCxn3dttNPZZN307A==
+X-Google-Smtp-Source: APXvYqwE/sMJX5ePegfwW/KgqcLC2oPJAKKTz2Nu51sp1Q0ZQgEywIjx8jgBjgEwGDKmUND0vtCRy1M3lHRYMiYtuRQ=
+X-Received: by 2002:a05:6808:8ca:: with SMTP id k10mr5623635oij.164.1581500325196;
+ Wed, 12 Feb 2020 01:38:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211001536.1027652-9-jhubbard@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAJfpegtUAHPL9tsFB85ZqjAfy0xwz7ATRcCtLbzFBo8=WnCvLw@mail.gmail.com>
+ <20200209080918.1562823-1-michael+lkml@stapelberg.ch> <CAJfpegv4iL=bW3TXP3F9w1z6-LUox8KiBmw7UBcWE-0jiK0YsA@mail.gmail.com>
+ <CANnVG6kYh6M30mwBHcGeFf=fhqKmWKPeUj2GYbvNgtq0hm=gXQ@mail.gmail.com> <CAJfpegtX0Z3_OZFG50epWGHkW5aOMfYmn61WmqYC67aBmJyDMA@mail.gmail.com>
+In-Reply-To: <CAJfpegtX0Z3_OZFG50epWGHkW5aOMfYmn61WmqYC67aBmJyDMA@mail.gmail.com>
+From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
+Date:   Wed, 12 Feb 2020 10:38:33 +0100
+Message-ID: <CANnVG6=s1C7LSDGD1-Ato-sfaKi1LQvW3GM5wfAiUqWXibEohw@mail.gmail.com>
+Subject: Re: Still a pretty bad time on 5.4.6 with fuse_request_end.
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kyle Sanderson <kyle.leet@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 10-02-20 16:15:32, John Hubbard wrote:
-> Now that pages are "DMA-pinned" via pin_user_page*(), and unpinned via
-> unpin_user_pages*(), we need some visibility into whether all of this is
-> working correctly.
-> 
-> Add two new fields to /proc/vmstat:
-> 
->     nr_foll_pin_acquired
->     nr_foll_pin_released
-> 
-> These are documented in Documentation/core-api/pin_user_pages.rst.
-> They represent the number of pages (since boot time) that have been
-> pinned ("nr_foll_pin_acquired") and unpinned ("nr_foll_pin_released"),
-> via pin_user_pages*() and unpin_user_pages*().
-> 
-> In the absence of long-running DMA or RDMA operations that hold pages
-> pinned, the above two fields will normally be equal to each other.
-> 
-> Also: update Documentation/core-api/pin_user_pages.rst, to remove an
-> earlier (now confirmed untrue) claim about a performance problem with
-> /proc/vmstat.
-> 
-> Also: updated Documentation/core-api/pin_user_pages.rst to rename the
-> new /proc/vmstat entries, to the names listed here.
-> 
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Unfortunately not: when I change the code like so:
 
-The patch looks good to me now. You can add:
+    bool async;
+    uint32_t opcode_early =3D req->args->opcode;
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+    if (test_and_set_bit(FR_FINISHED, &req->flags))
+        goto put_request;
 
-								Honza
+    async =3D req->args->end;
 
-> ---
->  Documentation/core-api/pin_user_pages.rst | 33 +++++++++++++++++++----
->  include/linux/mmzone.h                    |  2 ++
->  mm/gup.c                                  | 13 +++++++++
->  mm/vmstat.c                               |  2 ++
->  4 files changed, 45 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
-> index 7e5dd8b1b3f2..5c8a5f89756b 100644
-> --- a/Documentation/core-api/pin_user_pages.rst
-> +++ b/Documentation/core-api/pin_user_pages.rst
-> @@ -208,12 +208,35 @@ has the following new calls to exercise the new pin*() wrapper functions:
->  You can monitor how many total dma-pinned pages have been acquired and released
->  since the system was booted, via two new /proc/vmstat entries: ::
->  
-> -    /proc/vmstat/nr_foll_pin_requested
-> -    /proc/vmstat/nr_foll_pin_requested
-> +    /proc/vmstat/nr_foll_pin_acquired
-> +    /proc/vmstat/nr_foll_pin_released
->  
-> -Those are both going to show zero, unless CONFIG_DEBUG_VM is set. This is
-> -because there is a noticeable performance drop in unpin_user_page(), when they
-> -are activated.
-> +Under normal conditions, these two values will be equal unless there are any
-> +long-term [R]DMA pins in place, or during pin/unpin transitions.
-> +
-> +* nr_foll_pin_acquired: This is the number of logical pins that have been
-> +  acquired since the system was powered on. For huge pages, the head page is
-> +  pinned once for each page (head page and each tail page) within the huge page.
-> +  This follows the same sort of behavior that get_user_pages() uses for huge
-> +  pages: the head page is refcounted once for each tail or head page in the huge
-> +  page, when get_user_pages() is applied to a huge page.
-> +
-> +* nr_foll_pin_released: The number of logical pins that have been released since
-> +  the system was powered on. Note that pages are released (unpinned) on a
-> +  PAGE_SIZE granularity, even if the original pin was applied to a huge page.
-> +  Becaused of the pin count behavior described above in "nr_foll_pin_acquired",
-> +  the accounting balances out, so that after doing this::
-> +
-> +    pin_user_pages(huge_page);
-> +    for (each page in huge_page)
-> +        unpin_user_page(page);
-> +
-> +...the following is expected::
-> +
-> +    nr_foll_pin_released == nr_foll_pin_acquired
-> +
-> +(...unless it was already out of balance due to a long-term RDMA pin being in
-> +place.)
->  
->  References
->  ==========
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 462f6873905a..4bca42eeb439 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -243,6 +243,8 @@ enum node_stat_item {
->  	NR_DIRTIED,		/* page dirtyings since bootup */
->  	NR_WRITTEN,		/* page writings since bootup */
->  	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
-> +	NR_FOLL_PIN_ACQUIRED,	/* via: pin_user_page(), gup flag: FOLL_PIN */
-> +	NR_FOLL_PIN_RELEASED,	/* pages returned via unpin_user_page() */
->  	NR_VM_NODE_STAT_ITEMS
->  };
->  
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 4d0d94405639..441f7a48f370 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -86,6 +86,8 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
->  	if (flags & FOLL_GET)
->  		return try_get_compound_head(page, refs);
->  	else if (flags & FOLL_PIN) {
-> +		int orig_refs = refs;
-> +
->  		/*
->  		 * When pinning a compound page of order > 1 (which is what
->  		 * hpage_pincount_available() checks for), use an exact count to
-> @@ -104,6 +106,9 @@ static __maybe_unused struct page *try_grab_compound_head(struct page *page,
->  		if (hpage_pincount_available(page))
->  			hpage_pincount_add(page, refs);
->  
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED,
-> +				    orig_refs);
-> +
->  		return page;
->  	}
->  
-> @@ -158,6 +163,8 @@ bool __must_check try_grab_page(struct page *page, unsigned int flags)
->  		 * once, so that the page really is pinned.
->  		 */
->  		page_ref_add(page, refs);
-> +
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED, 1);
->  	}
->  
->  	return true;
-> @@ -178,6 +185,7 @@ static bool __unpin_devmap_managed_user_page(struct page *page)
->  
->  	count = page_ref_sub_return(page, refs);
->  
-> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, 1);
->  	/*
->  	 * devmap page refcounts are 1-based, rather than 0-based: if
->  	 * refcount is 1, then the page is free and the refcount is
-> @@ -228,6 +236,8 @@ void unpin_user_page(struct page *page)
->  
->  	if (page_ref_sub_and_test(page, refs))
->  		__put_page(page);
-> +
-> +	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED, 1);
->  }
->  EXPORT_SYMBOL(unpin_user_page);
->  
-> @@ -2259,6 +2269,9 @@ static int record_subpages(struct page *page, unsigned long addr,
->  static void put_compound_head(struct page *page, int refs, unsigned int flags)
->  {
->  	if (flags & FOLL_PIN) {
-> +		mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_RELEASED,
-> +				    refs);
-> +
->  		if (hpage_pincount_available(page))
->  			hpage_pincount_sub(page, refs);
->  		else
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 78d53378db99..c9c0d71f917f 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1168,6 +1168,8 @@ const char * const vmstat_text[] = {
->  	"nr_dirtied",
->  	"nr_written",
->  	"nr_kernel_misc_reclaimable",
-> +	"nr_foll_pin_acquired",
-> +	"nr_foll_pin_released",
->  
->  	/* enum writeback_stat_item counters */
->  	"nr_dirty_threshold",
-> -- 
-> 2.25.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+=E2=80=A6gdb only reports:
+
+(gdb) bt
+#0  0x000000a700000001 in ?? ()
+#1  0xffffffff8137fc99 in fuse_copy_finish (cs=3D0x20000ffffffff) at
+fs/fuse/dev.c:681
+Backtrace stopped: previous frame inner to this frame (corrupt stack?)
+
+But maybe that=E2=80=99s a hint in and of itself?
+
+On Wed, Feb 12, 2020 at 9:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Wed, Feb 12, 2020 at 8:58 AM Michael Stapelberg
+> <michael+lkml@stapelberg.ch> wrote:
+>
+> > (gdb) p *req->args
+> > $5 =3D {
+> >   nodeid =3D 18446683600620026424,
+> >   opcode =3D 2167928246,
+> >   in_numargs =3D 65535,
+> >   out_numargs =3D 65535,
+> >   force =3D false,
+> >   noreply =3D false,
+> >   nocreds =3D false,
+> >   in_pages =3D false,
+> >   out_pages =3D false,
+> >   out_argvar =3D true,
+> >   page_zeroing =3D true,
+> >   page_replace =3D false,
+> >   in_args =3D {{
+> >       size =3D 978828800,
+> >       value =3D 0x2fafce0
+> >     }, {
+> >       size =3D 978992728,
+> >       value =3D 0xffffffff8138efaa <fuse_alloc_forget+26>
+> >     }, {
+> >       size =3D 50002688,
+> >       value =3D 0xffffffff8138635f <fuse_lookup_name+255>
+> >     }},
+> >   out_args =3D {{
+> >       size =3D 570,
+> >       value =3D 0xffffc90002fafb10
+> >     }, {
+> >       size =3D 6876,
+> >       value =3D 0x3000000001adc
+> >     }},
+> >   end =3D 0x1000100000001
+> > }
+>
+> Okay, that looks like rubbish, the request was possibly freed and overwri=
+tten.
+>
+> > Independently, as a separate test, I have also modified the source like=
+ this:
+> >
+> > bool async;
+> > bool async_early =3D req->args->end;
+> >
+> > if (test_and_set_bit(FR_FINISHED, &req->flags))
+> > goto put_request;
+> >
+> > async =3D req->args->end;
+> >
+> > =E2=80=A6and printed the value of async and async_early. async is true,
+> > async_early is false.
+>
+> Can you save and print out the value of req->opcode before the
+> test_and_set_bit()?
+>
+> Thanks,
+> Miklos
