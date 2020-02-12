@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAB4715AF25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 18:54:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC00B15AF72
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 19:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbgBLRyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 12:54:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33400 "EHLO
+        id S1727279AbgBLSLe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 13:11:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39696 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbgBLRyp (ORCPT
+        with ESMTP id S1727054AbgBLSLe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:54:45 -0500
+        Wed, 12 Feb 2020 13:11:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7XNKwAQCe0wWD09kLZnG/QEn+5bffeFhq6ruL0n9m7M=; b=qHhw+JIqRJlFPo9Hs7xaQi3qIj
-        Jg2LHudVqRZys2sFoRHD7Qb/sJmBBUXyE6FarlkHqm6U+h7L4UcbNCd3FJMQ/zI4ajl25XX07JpIt
-        Af13uKlDkd2uiD/27TuEMsRcgFliRvCXUGZvQBML2ahaeNR8AP5o34VVM0BfZeRBxmNZJXT1popJX
-        BtQlWvxj8C5lMaDgDVN7JYbuUfXtA/McOdBV2QdrXUUuG0FC+FOT1eHpHpOWvLWoK+f0s5e59/r9m
-        8DXpQAKt2Lo6Sncqwuc8HVMkcCy1T7qlYRhmOdVN9LecwtySaL05IeohtS9fhNHcu1+Jbmy133RHI
-        fjtPt/XQ==;
+        bh=SDGebcBZHID8LpZZbm6nPP5pL+pTi5Gy+oz6oeMbB30=; b=iUEJucP8cWJa828U4KRd5B2hjX
+        oYsvvmKJYefqo4Ex57Z/KDJoeVzEDBKNdi++O+PTkUglx/znZAFfffQcf/Luds9L8CDvqSIw6h1Ll
+        K6LPt+UMf0FposzjUf/1hjGM5VYePEXYvbfYTiZCxIC5c7YSk7PSKBKwbrSnzkfIH4PDdUf+ZYQyc
+        jCVdL4K7V1V2VvekXtm0Y2muHnLXqeJFzKBl6kG8H51ukWc45W92mQ/zj/mbwTiFfsxIm6Jy1WBUL
+        GYORC5FHmsTCxyhQfq7wGrtBq37H3S3eReGek5GUfFa5aFz+Rru8o1zlAKWNdBcv6llsZTy6pHzFo
+        dZYUeXyA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1wDl-0003lq-Ey; Wed, 12 Feb 2020 17:54:45 +0000
-Date:   Wed, 12 Feb 2020 09:54:45 -0800
+        id 1j1wTx-0002VF-0G; Wed, 12 Feb 2020 18:11:29 +0000
+Date:   Wed, 12 Feb 2020 10:11:28 -0800
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
-Message-ID: <20200212175445.GB11424@infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-11-willy@infradead.org>
- <20200212074453.GH7068@infradead.org>
- <20200212150540.GE7778@bombadil.infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Florian Weimer <fw@deneb.enyo.de>, linux-xfs@vger.kernel.org,
+        libc-alpha@sourceware.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: XFS reports lchmod failure, but changes file system contents
+Message-ID: <20200212181128.GA31394@infradead.org>
+References: <874kvwowke.fsf@mid.deneb.enyo.de>
+ <20200212161604.GP6870@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212150540.GE7778@bombadil.infradead.org>
+In-Reply-To: <20200212161604.GP6870@magnolia>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 07:05:40AM -0800, Matthew Wilcox wrote:
-> > > + * Return: The number of filesystem blocks covered by this page.
-> > > + */
-> > > +static inline
-> > > +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
-> > 
-> > static inline unisnged int
-> > i_blocks_per_page(struct inode *inode, struct page *page)
+On Wed, Feb 12, 2020 at 08:16:04AM -0800, Darrick J. Wong wrote:
+> xfs_setattr_nonsize calls posix_acl_chmod which returns EOPNOTSUPP
+> because the xfs symlink inode_operations do not include a ->set_acl
+> pointer.
 > 
-> That's XFS coding style.  Linus has specifically forbidden that:
+> I /think/ that posix_acl_chmod code exists to enforce that the file mode
+> reflects any acl that might be set on the inode, but in this case the
+> inode is a symbolic link.
 > 
-> https://lore.kernel.org/lkml/1054519757.161606@palladium.transmeta.com/
+> I don't remember off the top of my head if ACLs are supposed to apply to
+> symlinks, but what do you think about adding get_acl/set_acl pointers to
+> xfs_symlink_inode_operations and xfs_inline_symlink_inode_operations ?
 
-Not just xfs but lots of places.  But if you don't like that follow
-the real Linus style we use elsewhere:
+Symlinks don't have permissions or ACLs, so adding them makes no
+sense.
 
-static inline unsigned int i_blocks_per_page(struct inode *inode,
-		struct page *page)
+xfs doesn't seem all that different from the other file systems,
+so I suspect you'll also see it with other on-disk file systems.
+We probably need a check high up in the chmod and co code to reject
+the operation early for O_PATH file descriptors pointing to symlinks.
