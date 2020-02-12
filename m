@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D216E15A1D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D45815A1D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:22:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbgBLHVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 02:21:30 -0500
+        id S1728430AbgBLHVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 02:21:31 -0500
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:31635 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728392AbgBLHV2 (ORCPT
+        with ESMTP id S1728392AbgBLHVa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:21:28 -0500
+        Wed, 12 Feb 2020 02:21:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581492097; x=1613028097;
+  t=1581492100; x=1613028100;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Ab5eMBEpbu7bGdHKONG6/oUFBqo8yqc01K4cqzOTxQI=;
-  b=Upyi4n1eQ4sfTnpx0hJIwwYEtRsjEDBiXlIBzJ3+Unt87cj3XT+W7Sh2
-   W0FdDAYubT+gZq72B0Z7wniBz0dfgC9FpIdT9F67iiAf5RX0YTNvBP3Gu
-   xIF4/H/JNmlbqIocXiYTyVGjH7B7eVFmABYxkJ6sJ8eyGIUv/CnFHxC59
-   J1Q0xtGcQieIinGIIkzftavAs0H2p9B43HVdkl292BHxzPOmFU7+jyHTt
-   BP3SYi+CbyIV4KJj0VhItGjwrXZNpXfTuX1UZjxDnM4JAIHkCYPvoXkfk
-   RSA2k8sE9z3LfQYoyoNwn7q4xQx2y6RvIokquHPUayT5wbvFECf8O2s+U
-   A==;
-IronPort-SDR: zdEUoMI1kJaR4kDDK3mOW4T8/yHKkUpkz/dFHOyW7OG+PcJJiCOcUrX9bY+eg7i4ztVsWWRcVb
- m3gIFfvGepVU3bMj2rHwR/S3tzAmPGDgUJfirnzjBIj9X+ygVzYyxzRy+uAjyeg20L0LZts37M
- /0GFctAzAAWbaUe5GyFfR9RrC4uyIqG8THnAkbayc72FI65xDDAwzq5PWFDqUr6h9Qu5GSUaTO
- v+7EKS9+ZVt6SyOSl07Q50wCMz7dnX+JQG28CVmvh+jYDyILKn0PzxlJ3vgw1eJ2Ok26Gi2Pt2
- uSM=
+  bh=sKKMbBUq06x3XlUxvd0H3BtwariMwcOhdgYDbALvWYg=;
+  b=psYEEPYt9eQZ4z9EUPunTNOe7VBOBoRmMFzP3blf0VsZ/kRh4IHAyf8M
+   UnvJiMEzU+AlsScz1juU87MMB08sLtlbkv5Dd/pHkJ+fAicn1KKVFZIwG
+   gEZND7Le6MmiNjCQDnEvkqWDROW8fUpxNMyQVvh5SCI8WFVINqb3DAazK
+   THHhKa1T6tc4OF0sF9XtV7WztBD/oX9wXH81/mS84UkWkTRWL4zKl9s5e
+   s/GxHhxECJOh4HKc1fdy6uvQ2WIkHxGZGtHQP27muUrVq1SlY08UCHt0g
+   uWMADOZb+rypfMtW9fchhMEteO/2w4++6Zmt0rCgfO2mW6JU9Z4El5I4q
+   w==;
+IronPort-SDR: ufS8WLDrzodLumPZJYbHaY1ohyS+MYnXQXR4cyactjpbNQGjwqRrJrEj7sP+Jd399RNeznBa3b
+ a8Qq7kfO3QdSo82UBkcQVzDSV8Cp+6wzVWUoJ03O/dosw8UDRRtCURDCaBGZbJdbnNC5iiInQd
+ clyimo90ulTwcb5RZlWtwVTh2z1Kz6PtSJnh5Z5Rw+QcHYC/rUoJZJxDlRnnH5iV6jvaxIk+Nu
+ w4qgY3fqr+5eZq3pr3s95PZI7fcXk9bLW2HZJTlY2qpUmkMMXqZdXYlYWh87/gMF7RjvebSfl7
+ CUU=
 X-IronPort-AV: E=Sophos;i="5.70,428,1574092800"; 
-   d="scan'208";a="231448940"
+   d="scan'208";a="231448942"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:37 +0800
-IronPort-SDR: qScDbLueH7K/K41pJb4kNAe+hUUqEx6a1QiHk+PUhpcNNBcO5N1xvYw/LIc4KBhAuw/Lop6CM+
- T+AScgNvfMFYoLsh1b25xLAP+uAgWX+WG5+6YcYmOnNGekLH0TchWeOXeQT1gr9swmkMUGbcUQ
- EHgoFgHdHyNggvobSYtMsz4WYJOZvWI/b7FkHNbL9ExnJw2GfQOIXwZoFI2ftQ516SnXgZDjif
- APJ0BEM8iiiMlLSx23sh7jdtLcrxSyduQvaSOlJty0rUN1I4zBTREAMrQ8e6DYKmY7sw0B1oBG
- 4XuT/PPTz4g3o9HP9hSUnCHu
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:40 +0800
+IronPort-SDR: rrFDwAiAcQieAkDbcWKOa8AUjX9NE3b7TWcxYl01fTE7lFd4hti5jRgeJgUB7TnInE0CZqxkp7
+ Ma37ifpllDXnTw+nhHbMKAnBkQL6NF4DaOiWjAZGxmZS4KlTbs0ipqd6mLNPjvz4aZmaHQltqh
+ e4D8Z67D4swJ42UCBRjBI7TuQuVEwjkQzRgihKPAwKwdn4ufPZlaWYk5G/OZA9XYJThqEBXnjk
+ 4mO3Vu5tIMiYVd9JLhOEmTKxqkM0Xyye4q0r8Njcg9JXegBnEfoMAV+1c26F41RPYIqe8WZlR3
+ GGTon05WFzvnmJapEgnopAo5
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:14:17 -0800
-IronPort-SDR: 7Oiczw4ygFeEckWSbfLSu2n+WjTqp69FXJ7A/uoWD6j1L/0QzxIPYH397uvq7dUQI2EirV1gFe
- nSHmb1YWtxzHM6cXTOEovCbuqLl/CBnsld2YRpQjYAx4Hx1dSCsp+LZSdOTxAVBX786wA9gbYl
- ZPrzulPB0mUUpBfwaPfDO9icak5HHhEe5o8sVl4dOVmT279C2X2cQKh7Of08w5gcne58QDfMTc
- KRBqdzby+adKpoT714c9bedcXumddV7iy1y4mZoxcolbPXzOxd+tiWGHhyS6Mlw+vyMvafmacr
- ovM=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:14:19 -0800
+IronPort-SDR: lnFZFpzGm6HOlofahB3IVz9SaDZCJbSXwIIL1MOgeP39Q1COCtNt3u5LCz+XOoaG7rBOqR+Ttk
+ 1YTj7Ta0lgUYQik92jwddaw3C3HjqT8gYDi8LLpOSzgl1tbaHyC+Cyo2RCCDIeDieDcydUdriS
+ csVQnXTVfAFzMDhag3xVWP1tQ7xw1tVnXN1XtSgQMZrOuawq8JsOhVu1D6onhWX6jlL7tTHVjX
+ HHLx8VKUFUvMq80rkEJCvJSG94wZnWbisIPQO2TQxYnH3LZiUTi1zVvIwr1fg87Wcnzm9lGjuR
+ gvA=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:21:26 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:21:28 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -58,9 +58,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v2 16/21] btrfs: factor out release_block_group()
-Date:   Wed, 12 Feb 2020 16:20:43 +0900
-Message-Id: <20200212072048.629856-17-naohiro.aota@wdc.com>
+Subject: [PATCH v2 17/21] btrfs: factor out found_extent()
+Date:   Wed, 12 Feb 2020 16:20:44 +0900
+Message-Id: <20200212072048.629856-18-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200212072048.629856-1-naohiro.aota@wdc.com>
 References: <20200212072048.629856-1-naohiro.aota@wdc.com>
@@ -71,58 +71,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Factor out release_block_group() from find_free_extent(). This function is
-called when it gives up an allocation from a block group. Each allocation
-policy should reset their information for an allocation in the next block
-group.
+Factor out found_extent() from find_free_extent_update_loop(). This
+function is called when a proper extent is found and before returning from
+find_free_extent().  Hook functions like found_extent_clustered() should
+save information for a next allocation.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/extent-tree.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ fs/btrfs/extent-tree.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
 diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 3dee6a385137..276c12392a85 100644
+index 276c12392a85..f3fa7869389b 100644
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -3706,6 +3706,24 @@ static int do_allocation(struct btrfs_block_group *block_group,
- 	}
+@@ -3724,6 +3724,30 @@ static void release_block_group(struct btrfs_block_group *block_group,
+ 	btrfs_release_block_group(block_group, delalloc);
  }
  
-+static void release_block_group(struct btrfs_block_group *block_group,
-+				struct find_free_extent_ctl *ffe_ctl,
-+				int delalloc)
++static void found_extent_clustered(struct find_free_extent_ctl *ffe_ctl,
++				   struct btrfs_key *ins)
++{
++	struct btrfs_free_cluster *last_ptr = ffe_ctl->last_ptr;
++
++	if (!ffe_ctl->use_cluster && last_ptr) {
++		spin_lock(&last_ptr->lock);
++		last_ptr->window_start = ins->objectid;
++		spin_unlock(&last_ptr->lock);
++	}
++}
++
++static void found_extent(struct find_free_extent_ctl *ffe_ctl,
++			 struct btrfs_key *ins)
 +{
 +	switch (ffe_ctl->policy) {
 +	case BTRFS_EXTENT_ALLOC_CLUSTERED:
-+		ffe_ctl->retry_clustered = false;
-+		ffe_ctl->retry_unclustered = false;
++		found_extent_clustered(ffe_ctl, ins);
 +		break;
 +	default:
 +		BUG();
 +	}
-+
-+	BUG_ON(btrfs_bg_flags_to_raid_index(block_group->flags) !=
-+		ffe_ctl->index);
-+	btrfs_release_block_group(block_group, delalloc);
 +}
 +
  /*
   * Return >0 means caller needs to re-search for free extent
   * Return 0 means we have the needed free extent.
-@@ -4083,11 +4101,7 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
- 		btrfs_release_block_group(block_group, delalloc);
- 		break;
- loop:
--		ffe_ctl.retry_clustered = false;
--		ffe_ctl.retry_unclustered = false;
--		BUG_ON(btrfs_bg_flags_to_raid_index(block_group->flags) !=
--		       ffe_ctl.index);
--		btrfs_release_block_group(block_group, delalloc);
-+		release_block_group(block_group, &ffe_ctl, delalloc);
- 		cond_resched();
+@@ -3750,11 +3774,7 @@ static int find_free_extent_update_loop(struct btrfs_fs_info *fs_info,
+ 		return 1;
+ 
+ 	if (ins->objectid) {
+-		if (!use_cluster && last_ptr) {
+-			spin_lock(&last_ptr->lock);
+-			last_ptr->window_start = ins->objectid;
+-			spin_unlock(&last_ptr->lock);
+-		}
++		found_extent(ffe_ctl, ins);
+ 		return 0;
  	}
- 	up_read(&space_info->groups_sem);
+ 
 -- 
 2.25.0
 
