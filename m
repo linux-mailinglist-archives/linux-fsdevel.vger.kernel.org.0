@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9284C159FFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BF23159FFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbgBLETl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 23:19:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53950 "EHLO
+        id S1728289AbgBLETj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 23:19:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53956 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727989AbgBLESr (ORCPT
+        with ESMTP id S1727991AbgBLESr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 11 Feb 2020 23:18:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=3yymKC5HofjIktaqISxer59WHRLOSzpRhrvUFUGt25s=; b=gyhDgfflQ7Z5TXmu97SKt/yc1b
-        KDPf0SRcDenzPcvfPOEkDtLj9omcH8T1hdZS8YivupCAPmJ9G78E7iHIGNdaluqG+aVhdHDEKZlOg
-        NHdnQMZ7BOOG9hY64LAmrmFJz+zPSZpMota5fUPkyWk4kQWxaEonw+5HiO+xMJZok/SuMjs4qP60j
-        iabs20AExdfeQWu/OEQ9gZeSj8OpKkybOVKrLTQ2Zrm9/Lsxb8OptwZXi67dOUrSi8NK96uP/c2yZ
-        YSU6DSRhTI12htrS5PlsrdVPpVJHNJ8huIugXWso03h5k5FTX+4hz9qYeo2vj0j+s/WwelTTvQpQb
-        0f593Iig==;
+        bh=OHiH3KAgiS8rCXh8VJ0556v4ieZAW8VpEHQUzRQYEA4=; b=Mzmo0k/aq/GOLignpIcekDR9ml
+        +jfxQ5r99fcTR6tkjKnQv+GQzMNXmc1WCJ/KNHxG8Ve3zMTQOW7l6i1FbOfnKUZI3Eiw5yhla3ueI
+        4FfrnVuwbS4gv0rvuZ18fFl0Euri8VR5EPuXEGBEDeAcPvpg5GTjUj60tLCPgl1Nw54UJqhAHdv8J
+        ZfNRECkJVehwyOcfB2jd5qI1K47e7PzpVG0LUyaRIm/FokguXb3RRqxW7pFJsuk7FQ1D5aVxZP+lr
+        32PV2qGten9T2IY8nyUPJKyF9akRp/1wZ/4x0PfXzZR6tRcDH/B3GpgY4cadVwioBtChkzABhkqI0
+        7bOQ4Uuw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU7-0006o1-3E; Wed, 12 Feb 2020 04:18:47 +0000
+        id 1j1jU7-0006oB-4o; Wed, 12 Feb 2020 04:18:47 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/25] iomap: Support large pages in iomap_adjust_read_range
-Date:   Tue, 11 Feb 2020 20:18:35 -0800
-Message-Id: <20200212041845.25879-16-willy@infradead.org>
+Subject: [PATCH v2 16/25] iomap: Support large pages in read paths
+Date:   Tue, 11 Feb 2020 20:18:36 -0800
+Message-Id: <20200212041845.25879-17-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -43,92 +43,94 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Pass the struct page instead of the iomap_page so we can determine the
-size of the page.  Introduce offset_in_this_page() and use thp_size()
-instead of PAGE_SIZE.
+Use thp_size() instead of PAGE_SIZE, use offset_in_this_page() and
+abstract away how to access the list of readahead pages.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 16 +++++++++-------
- include/linux/mm.h     |  2 ++
- 2 files changed, 11 insertions(+), 7 deletions(-)
+ fs/iomap/buffered-io.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 5e5a6b038fc3..e522039f627f 100644
+index e522039f627f..68f8903ecd6d 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -83,15 +83,16 @@ iomap_page_release(struct page *page)
-  * Calculate the range inside the page that we actually need to read.
-  */
+@@ -179,14 +179,16 @@ iomap_read_finish(struct iomap_page *iop, struct page *page)
  static void
--iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
-+iomap_adjust_read_range(struct inode *inode, struct page *page,
- 		loff_t *pos, loff_t length, unsigned *offp, unsigned *lenp)
+ iomap_read_page_end_io(struct bio_vec *bvec, int error)
  {
-+	struct iomap_page *iop = to_iomap_page(page);
- 	loff_t orig_pos = *pos;
- 	loff_t isize = i_size_read(inode);
- 	unsigned block_bits = inode->i_blkbits;
- 	unsigned block_size = (1 << block_bits);
--	unsigned poff = offset_in_page(*pos);
--	unsigned plen = min_t(loff_t, PAGE_SIZE - poff, length);
-+	unsigned poff = offset_in_this_page(page, *pos);
-+	unsigned plen = min_t(loff_t, thp_size(page) - poff, length);
- 	unsigned first = poff >> block_bits;
- 	unsigned last = (poff + plen - 1) >> block_bits;
+-	struct page *page = bvec->bv_page;
++	struct page *page = compound_head(bvec->bv_page);
+ 	struct iomap_page *iop = to_iomap_page(page);
++	unsigned offset = bvec->bv_offset +
++				PAGE_SIZE * (bvec->bv_page - page);
  
-@@ -129,7 +130,8 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
- 	 * page cache for blocks that are entirely outside of i_size.
- 	 */
- 	if (orig_pos <= isize && orig_pos + length > isize) {
--		unsigned end = offset_in_page(isize - 1) >> block_bits;
-+		unsigned end = offset_in_this_page(page, isize - 1) >>
-+				block_bits;
- 
- 		if (first <= end && last > end)
- 			plen -= (last - end) * block_size;
-@@ -256,7 +258,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	if (unlikely(error)) {
+ 		ClearPageUptodate(page);
+ 		SetPageError(page);
+ 	} else {
+-		iomap_set_range_uptodate(page, bvec->bv_offset, bvec->bv_len);
++		iomap_set_range_uptodate(page, offset, bvec->bv_len);
  	}
  
- 	/* zero post-eof blocks as the page may be mapped */
--	iomap_adjust_read_range(inode, iop, &pos, length, &poff, &plen);
-+	iomap_adjust_read_range(inode, page, &pos, length, &poff, &plen);
- 	if (plen == 0)
+ 	iomap_read_finish(iop, page);
+@@ -239,6 +241,16 @@ static inline bool iomap_block_needs_zeroing(struct inode *inode,
+ 		pos >= i_size_read(inode);
+ }
+ 
++/*
++ * Estimate the number of vectors we need based on the current page size;
++ * if we're wrong we'll end up doing an overly large allocation or needing
++ * to do a second allocation, neither of which is a big deal.
++ */
++static unsigned int iomap_nr_vecs(struct page *page, loff_t length)
++{
++	return (length + thp_size(page) - 1) >> page_shift(page);
++}
++
+ static loff_t
+ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		struct iomap *iomap, struct iomap *srcmap)
+@@ -263,7 +275,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
  		goto done;
  
-@@ -547,7 +549,6 @@ static int
- __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 		struct page *page, struct iomap *srcmap)
- {
--	struct iomap_page *iop = iomap_page_create(inode, page);
- 	loff_t block_size = i_blocksize(inode);
- 	loff_t block_start = pos & ~(block_size - 1);
- 	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
-@@ -556,9 +557,10 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+ 	if (iomap_block_needs_zeroing(inode, iomap, pos)) {
+-		zero_user(page, poff, plen);
++		zero_user_large(page, poff, plen);
+ 		iomap_set_range_uptodate(page, poff, plen);
+ 		goto done;
+ 	}
+@@ -294,7 +306,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
  
- 	if (PageUptodate(page))
- 		return 0;
-+	iomap_page_create(inode, page);
+ 	if (!ctx->bio || !is_contig || bio_full(ctx->bio, plen)) {
+ 		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+-		int nr_vecs = (length + PAGE_SIZE - 1) >> PAGE_SHIFT;
++		int nr_vecs = iomap_nr_vecs(page, length);
  
- 	do {
--		iomap_adjust_read_range(inode, iop, &block_start,
-+		iomap_adjust_read_range(inode, page, &block_start,
- 				block_end - block_start, &poff, &plen);
- 		if (plen == 0)
+ 		if (ctx->bio)
+ 			submit_bio(ctx->bio);
+@@ -331,9 +343,9 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+ 
+ 	trace_iomap_readpage(page->mapping->host, 1);
+ 
+-	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+-		ret = iomap_apply(inode, page_offset(page) + poff,
+-				PAGE_SIZE - poff, 0, ops, &ctx,
++	for (poff = 0; poff < thp_size(page); poff += ret) {
++		ret = iomap_apply(inode, file_offset_of_page(page) + poff,
++				thp_size(page) - poff, 0, ops, &ctx,
+ 				iomap_readpage_actor);
+ 		if (ret <= 0) {
+ 			WARN_ON_ONCE(ret == 0);
+@@ -376,7 +388,7 @@ iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		if (WARN_ON(ret == 0))
  			break;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 52269e56c514..b4bf86590096 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1387,6 +1387,8 @@ static inline void clear_page_pfmemalloc(struct page *page)
- extern void pagefault_out_of_memory(void);
- 
- #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
-+#define offset_in_this_page(page, p)	\
-+	((unsigned long)(p) & (thp_size(page) - 1))
- 
- /*
-  * Flags passed to show_mem() and show_free_areas() to suppress output in
+ 		done += ret;
+-		if (offset_in_page(pos + done) == 0) {
++		if (offset_in_this_page(ctx->cur_page, pos + done) == 0) {
+ 			ctx->rac->nr_pages -= ctx->rac->batch_count;
+ 			if (!ctx->cur_page_in_bio)
+ 				unlock_page(ctx->cur_page);
 -- 
 2.25.0
 
