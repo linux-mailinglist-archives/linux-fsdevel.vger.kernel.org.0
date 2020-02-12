@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BEFA159FEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA8E159FFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbgBLESt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 23:18:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53998 "EHLO
+        id S1728276AbgBLETe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 23:19:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54010 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbgBLESr (ORCPT
+        with ESMTP id S1728021AbgBLESr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 11 Feb 2020 23:18:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=F5NU3oCRsJ/VRewPgyFmDI/jOyoaYvHI3EnYnqICXs0=; b=lTq6KvZ25CFBn20eSyRhQz+xt4
-        xZ5E0flMQSOELfzqd57XfcPrr/jsPgY5r7h5VGuLF8q8wml2MDikHBD1nkHZxF9oGnyYdmwD/nBOJ
-        5rSiKXMb5QcGERIaLQXM/T9RTt7f8B/4vli/UrD3Y4uEBPB3+vbbi0uGsbBVDvmcJx6IzRE9lSdH3
-        IBqUNVplisHwBmiOyYmef8UmsYF2HfbbPUQasNPZXwcFJfxaTuFUqdY1Z0wwSVA0k60KQ1LbCJzdH
-        E4aajx9ShctTRRA6nl9E05t9s7BupBssLXhxgL+gGIqri1khlJg9vlNER8XmyWjsAcqS0QZMbGckM
-        gIRtseLQ==;
+        bh=rIiQdfF70UH/NrhNrIlb2hDhHJTI1cNopc0LJtiqgNw=; b=QgJ8JI65whKFKU40aTGC2KbUv3
+        BOdg/4SyM3pmx8HK0RKR0bP0589Kia3x6ulK2ToRDjDsrVpakDyE40tBu88D3EmHYynUa5oa0x+vc
+        P/Vjoatctq97kYIa2S2vMPDKfP4r2k/f0gNCt62+MxHeqanSZ8qOyxEvD2jNCUdjh46X0lt5y8esb
+        S7OVD4wbUosgzfkOI/s3dIYt8CU6AWifyjf0xFKTHvPILoi7jnbFXffxzvggiwGWHV/hRquBL2D9O
+        O0T4AU04ap+pZLPolLLlUVH51OTrxxe90oEQdd1CP0m62bmrSIRBjfQKMvVWSLqAbqIE3StRc5Ces
+        IvgLH8Tw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU7-0006pC-HQ; Wed, 12 Feb 2020 04:18:47 +0000
+        id 1j1jU7-0006pL-Ic; Wed, 12 Feb 2020 04:18:47 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 24/25] mm: Add large page readahead
-Date:   Tue, 11 Feb 2020 20:18:44 -0800
-Message-Id: <20200212041845.25879-25-willy@infradead.org>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2 25/25] mm: Align THP mappings for non-DAX
+Date:   Tue, 11 Feb 2020 20:18:45 -0800
+Message-Id: <20200212041845.25879-26-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -41,161 +41,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: William Kucharski <william.kucharski@oracle.com>
 
-If the filesystem supports large pages, allocate larger pages in the
-readahead code when it seems worth doing.  The heuristic for choosing
-larger page sizes will surely need some tuning, but this aggressive
-ramp-up seems good for testing.
+When we have the opportunity to use transparent huge pages to map a
+file, we want to follow the same rules as DAX.
 
+Signed-off-by: William Kucharski <william.kucharski@oracle.com>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- mm/readahead.c | 98 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 93 insertions(+), 5 deletions(-)
+ mm/huge_memory.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 29ca25c8f01e..b582f09aa7e3 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -406,13 +406,96 @@ static int try_context_readahead(struct address_space *mapping,
- 	return 1;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index b52e007f0856..b8d9e0d76062 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -577,13 +577,10 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+ 	unsigned long ret;
+ 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+ 
+-	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+-		goto out;
+-
+ 	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
+ 	if (ret)
+ 		return ret;
+-out:
++
+ 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
  }
- 
-+static inline int ra_alloc_page(struct address_space *mapping, pgoff_t offset,
-+		pgoff_t mark, unsigned int order, gfp_t gfp)
-+{
-+	int err;
-+	struct page *page = __page_cache_alloc_order(gfp, order);
-+
-+	if (!page)
-+		return -ENOMEM;
-+	if (mark - offset < (1UL << order))
-+		SetPageReadahead(page);
-+	err = add_to_page_cache_lru(page, mapping, offset, gfp);
-+	if (err)
-+		put_page(page);
-+	return err;
-+}
-+
-+#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
-+
-+static unsigned long page_cache_readahead_order(struct address_space *mapping,
-+		struct file_ra_state *ra, struct file *file, unsigned int order)
-+{
-+	struct readahead_control rac = {
-+		.mapping = mapping,
-+		.file = file,
-+		.start = ra->start,
-+		.nr_pages = 0,
-+	};
-+	unsigned int old_order = order;
-+	pgoff_t offset = ra->start;
-+	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
-+	pgoff_t mark = offset + ra->size - ra->async_size;
-+	int err = 0;
-+	gfp_t gfp = readahead_gfp_mask(mapping);
-+
-+	limit = min(limit, offset + ra->size - 1);
-+
-+	/* Grow page size up to PMD size */
-+	if (order < PMD_ORDER) {
-+		order += 2;
-+		if (order > PMD_ORDER)
-+			order = PMD_ORDER;
-+		while ((1 << order) > ra->size)
-+			order--;
-+	}
-+
-+	/* If size is somehow misaligned, fill with order-0 pages */
-+	while (!err && offset & ((1UL << old_order) - 1)) {
-+		err = ra_alloc_page(mapping, offset++, mark, 0, gfp);
-+		if (!err)
-+			rac.nr_pages++;
-+	}
-+
-+	while (!err && offset & ((1UL << order) - 1)) {
-+		err = ra_alloc_page(mapping, offset, mark, old_order, gfp);
-+		if (!err)
-+			rac.nr_pages += 1UL << old_order;
-+		offset += 1UL << old_order;
-+	}
-+
-+	while (!err && offset <= limit) {
-+		err = ra_alloc_page(mapping, offset, mark, order, gfp);
-+		if (!err)
-+			rac.nr_pages += 1UL << order;
-+		offset += 1UL << order;
-+	}
-+
-+	if (offset > limit) {
-+		ra->size += offset - limit - 1;
-+		ra->async_size += offset - limit - 1;
-+	}
-+
-+	read_pages(&rac, NULL);
-+
-+	/*
-+	 * If there were already pages in the page cache, then we may have
-+	 * left some gaps.  Let the regular readahead code take care of this
-+	 * situation.
-+	 */
-+	if (err)
-+		return ra_submit(ra, mapping, file);
-+	return 0;
-+}
-+
- /*
-  * A minimal readahead algorithm for trivial sequential/random reads.
-  */
- static unsigned long
- ondemand_readahead(struct address_space *mapping,
- 		   struct file_ra_state *ra, struct file *filp,
--		   bool hit_readahead_marker, pgoff_t offset,
-+		   struct page *page, pgoff_t offset,
- 		   unsigned long req_size)
- {
- 	struct backing_dev_info *bdi = inode_to_bdi(mapping->host);
-@@ -451,7 +534,7 @@ ondemand_readahead(struct address_space *mapping,
- 	 * Query the pagecache for async_size, which normally equals to
- 	 * readahead size. Ramp it up and use it as the new readahead size.
- 	 */
--	if (hit_readahead_marker) {
-+	if (page) {
- 		pgoff_t start;
- 
- 		rcu_read_lock();
-@@ -520,7 +603,12 @@ ondemand_readahead(struct address_space *mapping,
- 		}
- 	}
- 
--	return ra_submit(ra, mapping, filp);
-+	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) || !page ||
-+	    !(mapping->host->i_sb->s_type->fs_flags & FS_LARGE_PAGES))
-+		return ra_submit(ra, mapping, filp);
-+
-+	return page_cache_readahead_order(mapping, ra, filp,
-+						compound_order(page));
- }
- 
- /**
-@@ -555,7 +643,7 @@ void page_cache_sync_readahead(struct address_space *mapping,
- 	}
- 
- 	/* do read-ahead */
--	ondemand_readahead(mapping, ra, filp, false, offset, req_size);
-+	ondemand_readahead(mapping, ra, filp, NULL, offset, req_size);
- }
- EXPORT_SYMBOL_GPL(page_cache_sync_readahead);
- 
-@@ -602,7 +690,7 @@ page_cache_async_readahead(struct address_space *mapping,
- 		return;
- 
- 	/* do read-ahead */
--	ondemand_readahead(mapping, ra, filp, true, offset, req_size);
-+	ondemand_readahead(mapping, ra, filp, page, offset, req_size);
- }
- EXPORT_SYMBOL_GPL(page_cache_async_readahead);
- 
+ EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
 -- 
 2.25.0
 
