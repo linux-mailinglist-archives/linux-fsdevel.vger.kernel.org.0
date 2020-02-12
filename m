@@ -2,112 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B1BA15B278
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 22:08:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E44D15B2AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 22:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbgBLVIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 16:08:18 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42422 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbgBLVIS (ORCPT
+        id S1728447AbgBLVVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 16:21:30 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:38118 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbgBLVV3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 16:08:18 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o28so2189848qkj.9;
-        Wed, 12 Feb 2020 13:08:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=5skQ4pXUf/HDFGAeb5bLaBWEPVpcuLwc5TmCpIE/Zyo=;
-        b=RSaubYsu2PWhj6d5WiWqImtwe+11ZkV5ynHfHfILKjiCGuE++75mluwkFvI8SVZwZ2
-         FVcajjueWqco3jr0Ow8mWAloqkkz/nZRTVvMCaxsWYaaozSBLYtlqBPDl2d4JuFAqNKT
-         4eM2bs0OP/sfoQPzSkrUIs84Z3nu+rJZqi4v7IUXscqVEZZbW98vR/RBjUUqx2TtekX0
-         TdKQebQLkAL6NS0smHmAjLDkyMj9kl1d3gbFGuxjAksiARkiSvUrHsLzvzMMSA61Tl7B
-         H3vZG2gITk1NdYTBU9v+AdkE/hfM87Q4MMY58PzHJjTjgVBPmQ+ApC8uSo0XfEPwidZz
-         KPfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=5skQ4pXUf/HDFGAeb5bLaBWEPVpcuLwc5TmCpIE/Zyo=;
-        b=ZgokC7Y6FrXXjUb8B8PX2v5SAVc7i2e2srbpkKx3dM/zoKuJtZcFHD4jcw4AgT7BEc
-         n5aTpNgi5prO6A02lnr8BHCUySwzQkJ67y1fi0IsxtnnRnjO5Y+0EFguVEBzBhQmDi+K
-         9iRJcM95OOZzryonGPlvAYNVRB7hvQl4E5XZSgPYcYN7qnhUJX5d97lrhAt/LFDtsgni
-         HfXHUvIixJTJFCMutMhNBfuQz2V+65Q7taw0EHPKhzrNpNYWGVwpHkL+gPzydyqQrVvT
-         bgULXjYshikcMmdinIvOrzdMIXokg1B6GPwDa+W1AUC6E5ofotQdf1EcKfDTMq3qZn8m
-         d+5Q==
-X-Gm-Message-State: APjAAAVbjcMtDHiT6nSQcz1jAfYIGa+6b+IlMAGA7dxzsbpS6gKxmwni
-        RII/Kfa6Fk7KSB1sTKZgSKY=
-X-Google-Smtp-Source: APXvYqxNOTEW/N3+A4eKLqICOc+Xj7XuhY3/asbxxLTsVO2pIzik8Myh1FUcd23UCDxfesq9IpEl8Q==
-X-Received: by 2002:ae9:e10a:: with SMTP id g10mr9186036qkm.493.1581541697333;
-        Wed, 12 Feb 2020 13:08:17 -0800 (PST)
-Received: from localhost.localdomain (pool-74-108-111-89.nycmny.fios.verizon.net. [74.108.111.89])
-        by smtp.gmail.com with ESMTPSA id t7sm32885qkm.136.2020.02.12.13.08.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 13:08:16 -0800 (PST)
-Message-ID: <6b787049b965c8056d0e27360e2eaa8fa2f38b35.camel@gmail.com>
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   david.safford@gmail.com
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     Ken Goldman <kgold@linux.ibm.com>, monty.wiseman@ge.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Wed, 12 Feb 2020 16:08:15 -0500
-In-Reply-To: <1581462616.5125.69.camel@linux.ibm.com>
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-         <1580998432.5585.411.camel@linux.ibm.com>
-         <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
-         <1581366258.5585.891.camel@linux.ibm.com>
-         <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
-         <1581462616.5125.69.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        Wed, 12 Feb 2020 16:21:29 -0500
+X-Greylist: delayed 385 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Feb 2020 16:21:27 EST
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 7666A22882CB;
+        Wed, 12 Feb 2020 22:15:01 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bCFkDBKXADtd; Wed, 12 Feb 2020 22:14:57 +0100 (CET)
+Received: from latitude (x4e367a0e.dyn.telefonica.de [78.54.122.14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Wed, 12 Feb 2020 22:14:57 +0100 (CET)
+Date:   Wed, 12 Feb 2020 22:14:52 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Kai =?utf-8?B?TcOka2lzYXJh?= <Kai.Makisara@kolumbus.fi>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        John Garry <john.garry@huawei.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ira Weiny <ira.weiny@intel.com>, Iustin Pop <iustin@k1024.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 13/22] compat_ioctl: scsi: move ioctl handling into
+ drivers
+Message-ID: <20200212211452.GA5726@latitude>
+References: <20200102145552.1853992-1-arnd@arndb.de>
+ <20200102145552.1853992-14-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200102145552.1853992-14-arnd@arndb.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-02-11 at 18:10 -0500, Mimi Zohar wrote:
-> On Tue, 2020-02-11 at 11:10 -0500, david.safford@gmail.com wrote:
-
-> > <snip>
-> > 
-> This new feature will require setting up some infrastructure for
-> storing the partial measurement list(s) in order to validate a TPM
-> quote.  Userspace already can save partial measurement list(s) without
-> any kernel changes.  The entire measurement list does not need to be
-> read each time.  lseek can read past the last record previously read.
->  The only new aspect is truncating the in kernel measurement list in
-> order to free kernel memory.
-
-This is a pretty important new feature.
-A lot of people can't use IMA because of the memory issue.
-Also, I really think we need to let administrators choose the tradeoffs
-of keeping the list in memory, on a local file, or only on the 
-attestation server, as best fits their use cases.
+On 2020 Jan 02, Arnd Bergmann wrote:
+> Each driver calling scsi_ioctl() gets an equivalent compat_ioctl()
+> handler that implements the same commands by calling scsi_compat_ioctl().
 > 
-> < snip> 
+> The scsi_cmd_ioctl() and scsi_cmd_blk_ioctl() functions are compatible
+> at this point, so any driver that calls those can do so for both native
+> and compat mode, with the argument passed through compat_ptr().
 > 
-> Until there is proof that the measurement list can be exported to a
-> file before kexec, instead of carrying the measurement list across
-> kexec, and a TPM quote can be validated after the kexec, there isn't a
-> compelling reason for the kernel needing to truncate the measurement
-> list.
-
-If this approach doesn't work with all the kexec use cases, then it is 
-useless, and the ball is in my court to prove that it does. Fortunately
-I have to test that anyway for the coming TLV support.
-
-Working on it...
-
-dave
-
-> Mimi
+> With this, we can remove the entries from fs/compat_ioctl.c.  The new
+> code is larger, but should be easier to maintain and keep updated with
+> newly added commands.
 > 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/block/virtio_blk.c |   3 +
+>  drivers/scsi/ch.c          |   9 ++-
+>  drivers/scsi/sd.c          |  50 ++++++--------
+>  drivers/scsi/sg.c          |  44 ++++++++-----
+>  drivers/scsi/sr.c          |  57 ++++++++++++++--
+>  drivers/scsi/st.c          |  51 ++++++++------
+>  fs/compat_ioctl.c          | 132 +------------------------------------
+>  7 files changed, 142 insertions(+), 204 deletions(-)
+> 
+
+This breaks libcdio. cd-info now results in:
+
+cd-info version 2.1.0 x86_64-pc-linux-gnu
+Copyright (c) 2003-2005, 2007-2008, 2011-2015, 2017 R. Bernstein
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+CD location   : /dev/cdrom
+CD driver name: GNU/Linux
+   access mode: IOCTL
+
+Error in getting drive hardware properties
+Error in getting drive reading properties
+Error in getting drive writing properties
+__________________________________
+
+Disc mode is listed as: CD-DA
+++ WARN: error in ioctl CDROMREADTOCHDR: Bad address
+
+cd-info: Can't get first track number. I give up.
+
+
+-- 
+Regards,
+  Johannes Hirte
 
