@@ -2,91 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5658015B152
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 081C415B156
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 20:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgBLTt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 14:49:58 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30750 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727548AbgBLTt4 (ORCPT
+        id S1729054AbgBLTuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 14:50:20 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39115 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728767AbgBLTuT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 14:49:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581536994;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=U+GXIvAMcn/l9xGhAfn01B4ypUvtlhAuMLYkyfgVwcY=;
-        b=fIM9sQtUEZKNa9LeRJ7RIadgaOxd5lTIBt8v/Ag//QH56CpgKzcccMn+bv4hPlm05PAiPP
-        Sdk34PCTT4Zh+Bd7STF+51NzAAL6RWZSSwfLCsEWOhxuB6mURTuYCLqXrokw+tUxYXqr60
-        dtjeJbbxLBYRXzmSOJ/CL+hbGawRmJc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-430-tJPaTru3NKio2wfOesUvGg-1; Wed, 12 Feb 2020 14:49:52 -0500
-X-MC-Unique: tJPaTru3NKio2wfOesUvGg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81E12800EB2;
-        Wed, 12 Feb 2020 19:49:50 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 01CED60BF4;
-        Wed, 12 Feb 2020 19:49:48 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
-References: <20200208193445.27421-1-ira.weiny@intel.com>
-        <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
-        <20200211201718.GF12866@iweiny-DESK2.sc.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Wed, 12 Feb 2020 14:49:48 -0500
-In-Reply-To: <20200211201718.GF12866@iweiny-DESK2.sc.intel.com> (Ira Weiny's
-        message of "Tue, 11 Feb 2020 12:17:18 -0800")
-Message-ID: <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 12 Feb 2020 14:50:19 -0500
+Received: by mail-lj1-f194.google.com with SMTP id o15so3760834ljg.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 11:50:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CHXH6o1ncLcAF0HeWBgC/IvihmP9toR2+/NwDUguxaw=;
+        b=F1RTR2Mk3atysxi94JEv4Vc5seMqqx02k5CmzRHPSL9IrjapbyqOHw2Fl4dXiCvUEV
+         ncTWbgP69pZD/8vVK6OQciM9WRN9WfMjKk6TsKRj9cuZUdWmWVaikWPX14ZlXYji3kdw
+         CWzsabp8eT8r94ZjWLxWvcikM9+qEZil4HvcY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CHXH6o1ncLcAF0HeWBgC/IvihmP9toR2+/NwDUguxaw=;
+        b=QajI/kY/8sqtHc3GdqfSJ8eOYVJNhJWzWlcq2N3Y0OeAOv0y/8x2m8ixAtuH0EtI42
+         mgVUdwiqfTgNkQJyZT4aYUfSSAqDNqmPfWN9ygS64lSdUHeNgsxom7ZWe3VHPkzLJfVz
+         ZZVGLqjO2mXYm9Mo7oO6WlY0nLxiEik1sFJTLenHHZFA4IxN2OHzU0aBPHbNFQY43QP4
+         MWOLBrUFak+CEiCq2wXdWhP7k6wudg5i6lTHqojQr3ZyyuZLjDDT9IXK372Wt1r1qxJj
+         Mx2KVR+U1kTWCTm0GtHmdqRzcCKk1aPoNo9Ear7n8k6MWsug5XfLB9RJy3dU6cHPN/YP
+         ybBA==
+X-Gm-Message-State: APjAAAUVHQMklVwirrzcauHRPGCgudprLC0vCDbV7ZJWtFkWh1GOzLwP
+        i0npLvDhdZ4TcvJK4bIv2n4Fs+QiOWs=
+X-Google-Smtp-Source: APXvYqz60mfvE/smMZ29T+8/8YewGacpVm9QLMvIz0fS42UCYQunDjHMKzpEgdgy5hVFDeLRdvXtqg==
+X-Received: by 2002:a05:651c:d4:: with SMTP id 20mr8502141ljr.269.1581537016567;
+        Wed, 12 Feb 2020 11:50:16 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id j7sm86889ljg.25.2020.02.12.11.50.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 11:50:15 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id r14so2475452lfm.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 11:50:15 -0800 (PST)
+X-Received: by 2002:a19:c82:: with SMTP id 124mr7333707lfm.152.1581537014849;
+ Wed, 12 Feb 2020 11:50:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+ <20200210150519.538333-8-gladkov.alexey@gmail.com> <87v9odlxbr.fsf@x220.int.ebiederm.org>
+ <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+ <87tv3vkg1a.fsf@x220.int.ebiederm.org> <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+ <87v9obipk9.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87v9obipk9.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 11:49:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+Message-ID: <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ira Weiny <ira.weiny@intel.com> writes:
-
-> On Mon, Feb 10, 2020 at 10:15:47AM -0500, Jeff Moyer wrote:
->> Hi, Ira,
->> 
->> Could you please include documentation patches as part of this series?
+On Wed, Feb 12, 2020 at 11:18 AM Eric W. Biederman
+<ebiederm@xmission.com> wrote:
 >
-> I do have an update to the vfs.rst doc in
+> > So it's just fs_info that needs to be rcu-delayed because it contains
+> > that list. Or is there something else?
 >
-> 	fs: Add locking for a dynamic DAX state
+> The fundamental dcache thing we are playing with is:
 >
-> I'm happy to do more but was there something specific you would like to see?
-> Or documentation in xfs perhaps?
+>         dentry = d_hash_and_lookup(proc_root, &name);
+>         if (dentry) {
+>                 d_invalidate(dentry);
+>                 dput(dentry);
+>         }
 
-Sorry, I was referring to your statx man page addition.  It would be
-nice if we could find a home for the information in your cover letter,
-too.  Right now, I'm not sure how application developers are supposed to
-figure out how to use the per-inode settings.
+Ahh. And we can't do that part under the RCU read lock. So it's not
+the freeing, it's the list traversal itself.
 
-If I read your cover letter correctly, the mount option overrides any
-on-disk setting.  Is that right?  Given that we document the dax mount
-option as "the way to get dax," it may be a good idea to allow for a
-user to selectively disable dax, even when -o dax is specified.  Is that
-possible?
+Fair enough.
 
--Jeff
+Hmm.
 
+I wonder if we could split up d_invalidate(). It already ends up being
+two phases: first the unhashing under the d_lock, and then the
+recursive shrinking of parents and children.
+
+The recursive shrinking of the parent isn't actually interesting for
+the proc shrinking case: we just looked up one child, after all. So we
+only care about the d_walk of the children.
+
+So if we only did the first part under the RCU lock, and just
+collected the dentries (can we perhaps then re-use the hash list to
+collect them to another list?) and then did the child d_walk
+afterwards?
+
+             Linus
