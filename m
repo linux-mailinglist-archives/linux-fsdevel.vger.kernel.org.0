@@ -2,196 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6682515A178
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 07:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E4615A1AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:20:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbgBLG6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 01:58:38 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33592 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728148AbgBLG6i (ORCPT
+        id S1728279AbgBLHU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 02:20:56 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:31626 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728234AbgBLHU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 01:58:38 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01C6wRNH066873;
-        Wed, 12 Feb 2020 06:58:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Sr20t6Xix01NZSffARVrwrh9AtL2X5oyFM2Mcr1ZOHE=;
- b=cJQPjXx6NYjKn3RGwxLh+zMhkjJfwlM1gS6wtkyyAa/Q6p+t81AtwoRDvlIet2UUmDvk
- 01pON0OmeueVJUGFt7BnKCynhlbTSMrRanC7A2MPsYYn5dxP4b8o8Q2oRoRs1g4BjvW9
- jhQKlFiBHvAKqf7MlOli60imd6LP5OENHi5DKaIknh60DuMyjM7VLudFTSVUlVwvpPAS
- VQHfEAv8Eeqgr6VkGfxwBUtSCJBb5nRtZhGH4JueQi1KTeukTytHFvWFHoKeu59iYtDC
- 7mZj6i7KQFgnMHEHIeInxdGXKNYPb9CiyApw+eDtGrHs2vvPWS7catzdNFUAhCywWt1+ fg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2y2k888aje-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 06:58:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01C6uUdF009757;
-        Wed, 12 Feb 2020 06:58:26 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2y26sva4g9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Feb 2020 06:58:26 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01C6wOPD014397;
-        Wed, 12 Feb 2020 06:58:25 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Feb 2020 22:58:24 -0800
-Date:   Tue, 11 Feb 2020 22:58:23 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Allison Collins <allison.henderson@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
-Message-ID: <20200212065823.GI6874@magnolia>
-References: <20200131052520.GC6869@magnolia>
- <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
- <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
- <20200202214620.GA20628@dread.disaster.area>
- <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
- <87sgjg7j0t.fsf@notabene.neil.brown.name>
+        Wed, 12 Feb 2020 02:20:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581492099; x=1613028099;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=IT7FA9ji/SmSNpqNLKBz7saQuq/9BPl6QOaLXZJYA3s=;
+  b=feEjUqfT6NPNxqla81Rxtv7FRQyWffW96WB1iUvqd9m9Kw5c27F8aKE+
+   pVfeq1EMYjJoorYOp19DeSbLGCIxdYuF6xjRUT1H5DTfCqR/Es96LnuAy
+   wICBTgt9SUDddDeaX5NDreo3jM166EtqviDmntbsyeR5XQkz6U9sWtLmk
+   +U9mxE9awuZGG2AkpS26oleNRWieiZvNJT0Zg+CNo2/aVgdF94XnM9bw3
+   Cz++/Xz1KTRqie1Ym8hdjU49Q/syfpSCflw3Js5UgtMK6quzzXo/dxnxy
+   JRe7/WEIhPYTBp4WULdjvdlrQOR/xE+BCgydEHpbcJz8M7SBOVvDhVjO6
+   Q==;
+IronPort-SDR: L9iHCVfY2wBkQLkMnxlZinTaV5yv5rw9s0VPEw841WcXZpIdfOaaKrQ1sCvxf3yJQZN44gYBFM
+ IHUFLkd6V2f1siTqVfwtkAS71FswyweCJivBRAWS33lr3qAe/qo4BiEbW1sXWEmUNdjP0XFvGN
+ Uk70RfOeGk8QJtuXBJi938FpFGFEfNokSUjXNRcOaPgA5zHySrfhxCh6Z9R7ZLNKGoIzpH1zPY
+ RGHpF1mFoMRTqyOXHhoXSXgRmpxrcTDV0R8LmAO1fUv+okrlkeplQKMWnBTIi1rDkHbg0u12Br
+ YyQ=
+X-IronPort-AV: E=Sophos;i="5.70,428,1574092800"; 
+   d="scan'208";a="231448887"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:39 +0800
+IronPort-SDR: d9i4lFQEpHOF3AeN4YkeNBBhdzz/u1yMeh7UI88axrHLfwKwrRJ6yVcA8EjFzSrld3of9IEqHN
+ rMpPFXX4l8JOJ1/O3oB5HbOyyLXLWFoP0bb0WTl9ZfmmvkRgHYQbFOOunfA+ijEA+z2c3Yr17E
+ a9IcFA/mXo2f6Uhn5FNTvHgCAKCHMP+urbY9bankllscpd+Hy62uLsz+M23yIAI/PU3PRUDO1e
+ cuP5HVL0gaK2eQ6JUKnpBu88ff0utk3nuJUHgJsmIij6Myfj5KPYLqxXAUndHeZNOz/g/g555b
+ nXqKdw6CKrQy01CkCn6RaLo8
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:13:45 -0800
+IronPort-SDR: U3JT+P1urQRiejHXY4Zgb22LAz0q3/OsdbslY40i2FHRSXsnmwAthMbZBlEHu24RuVzxd8F1RL
+ 06ha44Zw5vXBVjpca5Ab+D2QdIv76sDvPHA+SlBtWXSGdfYeQ5v7HGEVuA/mUEK9DhqKfcfMQE
+ PJzP+2wZcaveVBILjZXmZwtYHdZpAY0Et8RZLDI+9wEEQy6lVIxihakqLX4UJDAGVAtgRywQ3J
+ bHMHpDQ2lkEVg2N66vtuELAebZryUU/QsUU/fPiIKZKOGV320wpqC4VRTFm/ubz0G6dss/v5h2
+ Aeo=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:20:54 -0800
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
+Subject: [PATCH v2 00/21] btrfs: refactor and generalize chunk/dev_extent/extent allocation
+Date:   Wed, 12 Feb 2020 16:20:27 +0900
+Message-Id: <20200212072048.629856-1-naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sgjg7j0t.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 mlxscore=0
- malwarescore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002120055
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9528 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 impostorscore=0 clxscore=1011 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002120055
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 11:21:06AM +1100, NeilBrown wrote:
-> On Sun, Feb 09 2020, Allison Collins wrote:
-> 
-> > Well, I can see the response is meant to be encouraging, and you are 
-> > right that everyone needs to give to receive :-)
-> >
-> > I have thought a lot about this, and I do have some opinions about it 
-> > how the process is described to work vs how it ends up working though. 
-> > There has quite been a few times I get conflicting reviews from multiple 
-> > reviewers. I suspect either because reviewers are not seeing each others 
-> > reviews,
+This series refactors chunk allocation, device_extent allocation and
+extent allocation functions and make them generalized to be able to
+implement other allocation policy easily.
 
-Yes, I've been caught in email storms with hch before, where we're both
-firing off emails at the same time and not quite seeing each other's
-replies to the same thread.
+On top of this series, we can simplify some part of the "btrfs: zoned
+block device support" series as adding a new type of chunk allocator
+and extent allocator for zoned block devices. Furthermore, we will be
+able to implement and test some other allocator in the idea page of
+the wiki e.g. SSD caching, dedicated metadata drive, chunk allocation
+groups, and so on.
 
-> > or because it is difficult for people to recall or even find
-> > discussions on prior revisions.
+This series has no functional changes except introducing "enum
+btrfs_chunk_allocation_policy" and "enum
+btrfs_extent_allocation_policy".
 
-Oh gosh yes, lore has been a useful tool for that, but we only got lore
-working for linux-xfs (and previous lists) recently.
+* Refactoring chunk/dev_extent allocator
 
-> > And so at times, I find myself puzzling 
-> > a bit trying to extrapolate what the community as a whole really wants.
+Two functions are separated from find_free_dev_extent_start().
+dev_extent_search_start() decides the starting position of the search.
+dev_extent_hole_check() checks if a hole found is suitable for device
+extent allocation.
 
-The bigger problem here is that there are multiple reviewers, each
-building slightly different conceptions about a problem and how to solve
-that problem, and that's how an author ends up ping-ponging between
-reviewers.  Sometimes you can appeal to the maintainer to decide if
-integrating the proposed patches are better than not having them, but
-sometimes the maintainer is trapped in the M***can standoff.
+__btrfs_alloc_chunk() is split into four functions. set_parameters()
+initializes the parameters of an allocation. gather_device_info()
+loops over devices and gather information of
+them. decide_stripe_size() decides the size of chunk and
+device_extent. And, create_chunk() creates a chunk and device extents.
 
-> The "community as a whole" is not a person and does not have a coherent
-> opinion.  You will never please everyone and as you've suggested below,
-> it can be hard to tell how strongly people really hold the opinions they
-> reveal.
-> 
-> You need to give up trying to please "the community", but instead develop
-> your own sense of taste that aligns with the concrete practice of the
-> community, and then please yourself.
+* Refactoring extent allocator
 
-The "community as a whole" is not a person and does not have a totally
-uniform concrete practice, just like we don't collectively have
-identical opinions.  Given a problem description, different people will
-choose and reject different high level structures based on their own
-experience and biases to solve the problem.  That is how we end up in
-the pickle.
+Three functions are introduced in
+find_free_extent(). prepare_allocation() initializes the parameters
+and gives a hint byte to start the allocation with. do_allocation()
+handles the actual allocation in a given block group.
+release_block_group() is called when it gives up an allocation from a
+block group, so the allocation context should be reset.
 
-> Then when someone criticizes your code, you need to decide for yourself
-> whether it is a useful criticism or not.  This might involve hunting
-> through the existing body of code to see what patterns are most common.
+Two functions are introduced in find_free_extent_update_loop().
+found_extent() is called when the allocator finally find a proper
+extent. chunk_allocation_failed() is called when it failed to allocate
+a new chunk. An allocator implementation can use this hook to set the
+next stage to try e.g. LOOP_NO_EMPTY_SIZE.
 
-Our design pattern language changes over time.  For example, we used to
-sprinkle indirect function calls everywhere, then I***l screwed us all
-over and now those are going away.
+Furthermore, LOOP_NO_EMPTY_SIZE stage is tweaked so that other
+allocator than the current clustered allocator skips this stage.
 
-> The end result is that either you defend your code, or you change your
-> opinion (both can be quite appropriate).  If you change your opinion,
-> then you probably change your code too.
-> 
-> Your goal isn't to ensure everyone is happy, only to ensure that no-one
-> is justifiably angry.
+* Patch organization
 
-Counterpoint: "DAX".
+Patch 1 is a trivial patch to fix the type of an argument of
+find_free_extent_update_loop().
 
-(Allison: I will continue working my way through the rest of your reply
-tomorrow morning.)
+Patch 2 removes a BUG_ON from __btrfs_alloc_chunk().
 
---D
+Patches 3-10 refactors chunk and device_extent allocation functions:
+find_free_dev_extent_start() and __btrfs_alloc_chunk().
 
-> NeilBrown
-> 
-> >
-> > For example: a reviewer may propose a minor change, perhaps a style 
-> > change, and as long as it's not terrible I assume this is just how 
-> > people are used to seeing things implemented.  So I amend it, and in the 
-> > next revision someone expresses that they dislike it and makes a 
-> > different proposition.  Generally I'll mention that this change was 
-> > requested, but if anyone feels particularly strongly about it, to please 
-> > chime in.  Most of the time I don't hear anything, I suspect because 
-> > either the first reviewer isn't around, or they don't have time to 
-> > revisit it?  Maybe they weren't strongly opinionated about it to begin 
-> > with?  It could have been they were feeling pressure to generate 
-> > reviews, or maybe an employer is measuring their engagement?  In any 
-> > case, if it goes around a third time, I'll usually start including links 
-> > to prior reviews to try and get people on the same page, but most of the 
-> > time I've found the result is that it just falls silent.
-> >
-> > At this point though it feels unclear to me if everyone is happy?  Did 
-> > we have a constructive review?  Maybe it's not a very big deal and I 
-> > should just move on.  And in many scenarios like the one above, the 
-> > exact outcome appears to be of little concern to people in the greater 
-> > scheme of things.  But this pattern does not always scale well in all 
-> > cases.  Complex issues that persist over time generally do so because no 
-> > one yet has a clear idea of what a correct solution even looks like, or 
-> > perhaps cannot agree on one.  In my experience, getting people to come 
-> > together on a common goal requires a sort of exploratory coding effort. 
-> > Like a prototype that people can look at, learn from, share ideas, and 
-> > then adapt the model from there.  But for that to work, they need to 
-> > have been engaged with the history of it.  They need the common 
-> > experience of seeing what has worked and what hasn't.  It helps people 
-> > to let go of theories that have not performed well in practice, and 
-> > shift to alternate approaches that have.  In a way, reviewers that have 
-> > been historically more involved with a particular effort start to become 
-> > a little integral to it as its reviewers.  Which I *think* is what 
-> > Darrick may be eluding to in his initial proposition.  People request 
-> > for certain reviewers, or perhaps the reviewers can volunteer to be sort 
-> > of assigned to it in an effort to provide more constructive reviews.  In 
-> > this way, reviewers allocate their efforts where they are most 
-> > effective, and in doing so better distribute the work load as well.  Did 
-> > I get that about right?  Thoughts?
-> >
-> > Allison
+Patches 11-21 refactors extent allocation function: find_free_extent()
+and find_free_extent_update_loop().
 
+* Changelog
+
+ - v2
+   - Stop separating "clustered_alloc_info" from find_free_extent_ctl
+   - Change return type of dev_extent_hole_check() to bool
+   - Rename set_parameters() to init_alloc_chunk_ctl()
+   - Add a patch to remove BUG_ON from __btrfs_alloc_chunk()
+
+Naohiro Aota (21):
+  btrfs: change type of full_search to bool
+  btrfs: do not BUG_ON with invalid profile
+  btrfs: introduce chunk allocation policy
+  btrfs: refactor find_free_dev_extent_start()
+  btrfs: introduce alloc_chunk_ctl
+  btrfs: factor out init_alloc_chunk_ctl
+  btrfs: factor out gather_device_info()
+  btrfs: factor out decide_stripe_size()
+  btrfs: factor out create_chunk()
+  btrfs: parameterize dev_extent_min
+  btrfs: introduce extent allocation policy
+  btrfs: move hint_byte into find_free_extent_ctl
+  btrfs: move vairalbes for clustered allocation into
+    find_free_extent_ctl
+  btrfs: factor out do_allocation()
+  btrfs: drop unnecessary arguments from clustered allocation functions
+  btrfs: factor out release_block_group()
+  btrfs: factor out found_extent()
+  btrfs: drop unnecessary arguments from find_free_extent_update_loop()
+  btrfs: factor out chunk_allocation_failed()
+  btrfs: skip LOOP_NO_EMPTY_SIZE if not clustered allocation
+  btrfs: factor out prepare_allocation()
+
+ fs/btrfs/extent-tree.c | 313 +++++++++++++++++++++-----------
+ fs/btrfs/volumes.c     | 398 +++++++++++++++++++++++++++--------------
+ fs/btrfs/volumes.h     |   6 +
+ 3 files changed, 481 insertions(+), 236 deletions(-)
+
+-- 
+2.25.0
 
