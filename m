@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590AB15A1B1
+	by mail.lfdr.de (Postfix) with ESMTP id CFC8715A1B2
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:21:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbgBLHVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 02:21:02 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:31629 "EHLO
+        id S1728311AbgBLHVD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 02:21:03 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:31635 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728287AbgBLHVA (ORCPT
+        with ESMTP id S1728287AbgBLHVC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:21:00 -0500
+        Wed, 12 Feb 2020 02:21:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581492105; x=1613028105;
+  t=1581492063; x=1613028063;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sg3sw0GwYM5quUvcsTSk5b2keVv2g1tE2y9XafdPsiQ=;
-  b=rXZn3K3AEjZdpqsrEIze6M+GlJ73S+ql2YEV460su3HugjuNf7OtfRst
-   dNRExq3EZ6v7FtaiiuW2sE2C/QpnI+Z8R6InvokMRV2aUixfH9FS6TcTN
-   KNqM0QlAOJfd0D449mzb2ZHa8H7lcOkMHJwBqivmETEIOkyGyRD7mLgrJ
-   GiDb3HPLzB2H9MS3c7M185N0HuqWPdYC6Nluv01Sc6D7+d4FRgwceCV/v
-   x61y2U2ALbzV3Khvu4dAotRDhib3+Hb061HltzQBZA3x+VRxZQQ0b/q+i
-   8dsaIpv8lTeDDojd2fKMEiimJcUi5lQPP3IyR5HZ3SxG329MhGMslcaQU
+  bh=rrs1IxCVFhT+utMagPkDYWaurfisiAV/cxE++oBN2Pc=;
+  b=euxG0phg9jHq0BTXx+a+yL6HpmebmNpn9juhHZV7vA+l0sCTY77JvWTn
+   AACtsPLRmxMxYHblCxPVRAgvbDFKPad5D15446pZqhFHiXYTr0SYZeIMo
+   kfV8kVOVpM3mE9H9uhwzL4YIlR7crrVBSr6y8T6I5LFPYPr8NQXcFDM1s
+   kevVesL4hLP2Ic7sGMyzzGE0IYm0v2dK3ez09stwXIBsAWnT6id3acxDo
+   NJNOp5P7ke3kngeZ7IPJMocPX2LZaFpc/MYK/a0J9hATXvx2WKQm4JckY
+   W5mNj7mUaJhHUXNlVZcCdxznOBEtmmpXZGSwHyQvueDXdKsPXsIKILdry
    A==;
-IronPort-SDR: 5foFczpggHzay0f8OWCbmt38SRxPM5ghg6Q9tX2HuBnM0YilUD/R1v6UcbQ8DcwKxUB440VH+R
- 9xwF4hUKCJi9n8E+xw1g7fKUJhdGqLaCdHw65yH/EWAcCbMxAsAUh8pZvrtd8D0XmkvWNwgzp4
- SvNmKx/lsY2lXbFed2vNNKghVhDGHAoEE2nuWraYyWqtbJIOAwpu4WYYBgo0VLdSUKmEO+GfYK
- br8CYhyqCXAsePzUWY0UEsmQNYtVkqBlva9AkdM6EEnDKqzoZzBaoiUvmFDGxHcyWsOaz1nGJX
- gAg=
+IronPort-SDR: xRD45+cnoUE2tz+ompH0p6L5MppypSY9HKvnoZDydoo8GB+p3dniRb83dCyxeeQz+QKgcx2dTM
+ VAio4NNfnhutoxa3TVxdlpm4upFQgUHQ3G5P9805u611VCD+Y+aeXHsrZuahP39cDCG+ujbeNA
+ Mdi+3zo5ey7FA+KlirHX3YWEPGJihpTeMhpN/ozv8nWvVaA5bXf7YPhFCa5+c17LaRGJIN+qLn
+ Bg42jPDis8yp1qagdwvFy7p5Wb52FQwG76PyGVx5acI+EuwqIvpsp/Pb4sEXB6TSS1paD71EvQ
+ nMg=
 X-IronPort-AV: E=Sophos;i="5.70,428,1574092800"; 
-   d="scan'208";a="231448889"
+   d="scan'208";a="231448895"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:45 +0800
-IronPort-SDR: 773n2juG0ihvzeyJGobH9bURr8YLqu8Q/8bjrg3leSthwpVxIlxeExow3SnAPDT2QEQhsKkXtc
- UVil69CahpgFmqYsjZtQjAE1LiuRHtyAQMDh1jf6sHxCypJqwcYjIDg4VVuag8zPjOMg05wEqF
- MKTkQdVyxc44FD8A1YUfnC4Q/1FegsKh7HzDU1Crn41voJa4IiZyamEgdjiX0vZTh0E0y7o92Y
- PhHqf3KywwUF6FS/0bqgHXYc/Daoia+2VOfSvVjrIN4CZEUabg1jytZea/xUl1EAhxkk4mdeXc
- HvXOqG52JIbxAtHTxRpkySw4
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:03 +0800
+IronPort-SDR: hH6bS46+1DiK06inmBoSMAx+pKTkToiNUuFPgitqkS0Rial3/qOhXew9IDJ/HH0bIVTAjWhhi5
+ eLsd0CM2vNHCp2UG9EGM9GD6LV3R1feZK1+IwTr8XgpG66udtE5fEZaIfuRYCLvP0k/y4zYFEY
+ MbhoBGZ05h8/e+WhhEkObVlTWsSVGndyYCOJ3L5eSOfV6E/YyMxhvT8nOh7/dijcen6exk5UkU
+ kY0qTZaGAvVob4ISEBpXmRTMYOotnd/DTm8f9ikwjN6Tw9ZZKv1iEJoOYuuV3HN9TWmTSL8yt9
+ P/LrPYZhfyZPMAxYVlIDXLDj
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:13:49 -0800
-IronPort-SDR: g4S4aosLn0WZQChAyQ15wsyAz91PX9T83SFra3sB2KZ7Yk99+Z3nCMPteEhweUu8+j9a3NgVm/
- gfk7ET5yb17oqK+6w1z78lxNP7QlOrHNGYOsUA0V2ajTjLF6UPxd7BFZK1tc2cVyDBzVlhxwyN
- fsEQMswO5zQb9zJi5jwGA8vDQ+7tu4TNv71q/dvdF4FooAKXmCXUWLiK9fGLPbDmmbM1mMNkje
- +eBdUnDqfJVQXe34kDfD52nJTR3wA6YRGlwfGbfmwVgANG6kh+J0RzVGFD7dxEYV2nJZXgN7BC
- nCA=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:13:51 -0800
+IronPort-SDR: azjS0I6T1A5C/SZTHI6nZWsHm3m4KCXLJZCCyBTzZbK79szA/+9gbk2UA+HiNZu757tvXIVOuD
+ pl+5oyW1bZNuoJb8uTIcJJ9ux/8m1l1wawh4TLQapdd7qNK3smtc1IMGYWoBeWmFrB6/iSF6Xj
+ 7fc4klFgV5caiV+5Sr/lf8YRlu1gM/VeRjKOrbbOnplKo+oBGWnZ29KjK4pFqqTgiw4WViBNY7
+ D17/SreAvpZY5ccD5faaNSn92C/oU9bAJTmej7O95rEjtjic5jETILdYiwJSowg3wlD0oSQs1f
+ 17M=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:20:58 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:21:00 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -57,10 +57,11 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v2 02/21] btrfs: do not BUG_ON with invalid profile
-Date:   Wed, 12 Feb 2020 16:20:29 +0900
-Message-Id: <20200212072048.629856-3-naohiro.aota@wdc.com>
+        linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v2 03/21] btrfs: introduce chunk allocation policy
+Date:   Wed, 12 Feb 2020 16:20:30 +0900
+Message-Id: <20200212072048.629856-4-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200212072048.629856-1-naohiro.aota@wdc.com>
 References: <20200212072048.629856-1-naohiro.aota@wdc.com>
@@ -71,32 +72,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Do not BUG_ON() when an invalid profile is passed to __btrfs_alloc_chunk().
-Instead return -EINVAL with ASSERT() to catch a bug in the development
-stage.
+This commit introduces chunk allocation policy for btrfs. This policy
+controls how btrfs allocate a chunk and device extents from devices.
 
-Suggested-by: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+There is no functional change introduced with this commit.
+
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/volumes.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c | 1 +
+ fs/btrfs/volumes.h | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
 diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 9cfc668f91f4..911c6b7c650b 100644
+index 911c6b7c650b..9fcbed9b57f9 100644
 --- a/fs/btrfs/volumes.c
 +++ b/fs/btrfs/volumes.c
-@@ -4809,7 +4809,10 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
- 	int j;
- 	int index;
+@@ -1209,6 +1209,7 @@ static int open_fs_devices(struct btrfs_fs_devices *fs_devices,
+ 	fs_devices->opened = 1;
+ 	fs_devices->latest_bdev = latest_dev->bdev;
+ 	fs_devices->total_rw_bytes = 0;
++	fs_devices->chunk_alloc_policy = BTRFS_CHUNK_ALLOC_REGULAR;
+ out:
+ 	return ret;
+ }
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 690d4f5a0653..f07e1c4240b9 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -209,6 +209,10 @@ BTRFS_DEVICE_GETSET_FUNCS(total_bytes);
+ BTRFS_DEVICE_GETSET_FUNCS(disk_total_bytes);
+ BTRFS_DEVICE_GETSET_FUNCS(bytes_used);
  
--	BUG_ON(!alloc_profile_is_valid(type, 0));
-+	if (!alloc_profile_is_valid(type, 0)) {
-+		ASSERT(0);
-+		return -EINVAL;
-+	}
++enum btrfs_chunk_allocation_policy {
++	BTRFS_CHUNK_ALLOC_REGULAR,
++};
++
+ struct btrfs_fs_devices {
+ 	u8 fsid[BTRFS_FSID_SIZE]; /* FS specific uuid */
+ 	u8 metadata_uuid[BTRFS_FSID_SIZE];
+@@ -259,6 +263,8 @@ struct btrfs_fs_devices {
+ 	struct kobject fsid_kobj;
+ 	struct kobject *devices_kobj;
+ 	struct completion kobj_unregister;
++
++	enum btrfs_chunk_allocation_policy chunk_alloc_policy;
+ };
  
- 	if (list_empty(&fs_devices->alloc_list)) {
- 		if (btrfs_test_opt(info, ENOSPC_DEBUG))
+ #define BTRFS_BIO_INLINE_CSUM_SIZE	64
 -- 
 2.25.0
 
