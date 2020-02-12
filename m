@@ -2,100 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316ED15A2ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 09:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC9515A2F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 09:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbgBLIJv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 03:09:51 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40145 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728250AbgBLIJv (ORCPT
+        id S1728388AbgBLILu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 03:11:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33868 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728290AbgBLILu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 03:09:51 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t3so1006527wru.7;
-        Wed, 12 Feb 2020 00:09:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mWNR8NSNpO0Bl2CKSRCvCBTWEWrxN6txmVC2QQsJvlA=;
-        b=nQQoFjqhZGz2y/YBr+MqQtgdOgTNLZ9qqfOGfCdZ6/Az340eyQOlci2sVCJJIxPEOG
-         xpIOqZzL3XaTT/yYOmvw0+13WHFx2tukYWPg7dN6VH/YT9TEw6sTkAiRjl9lnP+2gs1z
-         ETku8OAl4pw0pbA11i5kISmCJjOHa0mVOqIgiAinXmwnk38+TEfauf2Rq9vdzVn+73vh
-         gJXvmPDZY3c4XgyMRdTzJ9v9KUUtuBh+vjywCdluxQVUJREbFlZlavD/EMYczAgXyVoD
-         n7PJuXXJGcxd2l+eA0DiZbmDhSuMICyWO/F2RMG+iUXhmqfp+jIf2E0+QfgkRIRDLJfq
-         uULw==
-X-Gm-Message-State: APjAAAVdkmWl57sgOzFagQmU+WTOfU0qmLU43i88J7Y5/x/hCXthaJHe
-        JsTrMSbl94DoaBdOVjqfEgY=
-X-Google-Smtp-Source: APXvYqxTXKnfx3FFH0goWGtL6x0SsQ17kWIazgeliJhAHrEul9Tz4kkhx2jJG3D6HaU43bOvI0ZwWw==
-X-Received: by 2002:a5d:670a:: with SMTP id o10mr13711467wru.227.1581494987979;
-        Wed, 12 Feb 2020 00:09:47 -0800 (PST)
-Received: from localhost (ip-37-188-227-72.eurotel.cz. [37.188.227.72])
-        by smtp.gmail.com with ESMTPSA id t13sm8590070wrw.19.2020.02.12.00.09.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 00:09:47 -0800 (PST)
-Date:   Wed, 12 Feb 2020 09:09:45 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Rik van Riel <riel@surriel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200212080945.GA11353@dhcp22.suse.cz>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
- <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
- <20200211193101.GA178975@cmpxchg.org>
- <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
- <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+        Wed, 12 Feb 2020 03:11:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=CFFumfzArLwyhPSt9zEmKyULA8GHCnRz4sG9emhEO3w=; b=YovItmSpQwaHYsOGEhsmnjhy2v
+        tKidHjLiClOhzBczlh80j4+QUmlTbg2xU8NXXuj2nGbdr00TYZh4KbHhx8umfF1XBxOjv4nyh4qCO
+        u8IF8bU/BWuTNuyotXaEhVlsNJboyRjyfKSorb2pXlVV3DUs1PkozB1rcYeMMv+YO6cokIdT62jEj
+        mA47Vg6CSQhv2LOPMiRZBHA9e5rx2kE81aghjYvVcMf0FWyrh0N6Y2I/4wqXZT8D/sBUlpO59NoEq
+        59XadIPx3mVgDfdvH1ejtQFcKyAw7NT94ttXERNOjBUY9w1u6E9/LqR+1IKL7B1T4/roPLlq/2uCX
+        z5t0OxOw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1n7d-00050d-DU; Wed, 12 Feb 2020 08:11:49 +0000
+Date:   Wed, 12 Feb 2020 00:11:49 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 15/25] iomap: Support large pages in
+ iomap_adjust_read_range
+Message-ID: <20200212081149.GC24497@infradead.org>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-16-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+In-Reply-To: <20200212041845.25879-16-willy@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 11-02-20 16:28:39, Linus Torvalds wrote:
-> On Tue, Feb 11, 2020 at 3:44 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > Testing this will be a challenge, but the issue was real - a 7GB
-> > highmem machine isn't crazy and I expect the inode has become larger
-> > since those days.
-> 
-> Hmm. I would say that in the intening years a 7GB highmem machine has
-> indeed become crazy.
+>  __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  		struct page *page, struct iomap *srcmap)
+>  {
+> -	struct iomap_page *iop = iomap_page_create(inode, page);
+>  	loff_t block_size = i_blocksize(inode);
+>  	loff_t block_start = pos & ~(block_size - 1);
+>  	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
+> @@ -556,9 +557,10 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  
+>  	if (PageUptodate(page))
+>  		return 0;
+> +	iomap_page_create(inode, page);
 
-Absolutely agreed.
+FYI, I have a similar change in a pending series that only creates
+the iomap_page if a page isn't actually mapped by a contiguous extent.
+Lets see which series goes in first, but the conflicts shouldn't be too
+bad.
 
-> It used to be something we kind of supported.
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 52269e56c514..b4bf86590096 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1387,6 +1387,8 @@ static inline void clear_page_pfmemalloc(struct page *page)
+>  extern void pagefault_out_of_memory(void);
+>  
+>  #define offset_in_page(p)	((unsigned long)(p) & ~PAGE_MASK)
+> +#define offset_in_this_page(page, p)	\
+> +	((unsigned long)(p) & (thp_size(page) - 1))
 
-And it's been few years since we have been actively discouraging people
-from using 32b kernels with a lot of memory. There are bug reports
-popping out from time to time but I do not remember any case where using
-64b kernel would be a no-go. So my strong suspicion is that people
-simply keep their kernels on 32b without a good reason because it tends
-to work most of the time until they hit one of the lowmem problems and
-they move over to 64b.
-
-> But we really should consider HIGHMEM to be something that is on the
-> deprecation list. In this day and age, there is no excuse for running
-> a 32-bit kernel with lots of physical memory.
-> 
-> And if you really want to do that, and have some legacy hardware with
-> a legacy use case, maybe you should be using a legacy kernel.
-> 
-> I'd personally be perfectly happy to start removing HIGHMEM support again.
-
-I wouldn't be opposed at all.
--- 
-Michal Hocko
-SUSE Labs
+I think this should go int oa separate patch.
