@@ -2,75 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86072159DD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 01:13:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D246C159DE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 01:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbgBLANq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 19:13:46 -0500
-Received: from smtp-out05.msg.oleane.net ([62.161.7.49]:16065 "EHLO
-        smtp-out05.msg.oleane.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728005AbgBLANp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:13:45 -0500
-X-Greylist: delayed 2103 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Feb 2020 19:13:44 EST
-Received: from smtp06.msg.oleane.net ([172.17.20.115]) 
-        by smtp-out05.msg.oleane.net with ESMTP id 01BNXlG4029917;
-        Wed, 12 Feb 2020 00:33:47 +0100
-Received: from webmail.orange-business.com (webmail02-ng.msg.oleane.net [62.161.7.242]) (authenticated)
-        by smtp06.msg.oleane.net (MTA) with ESMTP id 01BMxR9l028680;
-        Tue, 11 Feb 2020 23:59:27 +0100
-X-Oleane-Rep: REPA
-Received: from www.9mobile.com.ng ([41.190.30.193])
- via rpwm03.dmz-bslb.hex.oleane.net ([62.161.0.153])
- by webmail.orange-business.com
- with HTTP (HTTP/1.1 POST); Tue, 11 Feb 2020 23:59:27 +0100
+        id S1728025AbgBLAVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 19:21:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40864 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727985AbgBLAVS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Feb 2020 19:21:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2EA60AFF4;
+        Wed, 12 Feb 2020 00:21:16 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     Allison Collins <allison.henderson@oracle.com>,
+        Dave Chinner <david@fromorbit.com>
+Date:   Wed, 12 Feb 2020 11:21:06 +1100
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
+In-Reply-To: <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
+References: <20200131052520.GC6869@magnolia> <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com> <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com> <20200202214620.GA20628@dread.disaster.area> <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
+Message-ID: <87sgjg7j0t.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 11 Feb 2020 23:59:27 +0100
-From:   Hilda Hancock <accueil@abbayedubec.com>
-To:     undisclosed-recipients:;
-Subject: Greetings From Mrs. Hilda Kickett Hancock.
-Reply-To: hildhancock@yahoo.com
-Mail-Reply-To: hildhancock@yahoo.com
-Message-ID: <02b65f7bfcadb694689f378eeac96561@abbayeup.fr.fto>
-X-Sender: accueil@abbayedubec.com
-User-Agent: Roundcube Webmail/1.1.12
-X-Backend: vm-smtp-sophos-mta03
-X-PMX-Backend: PMX 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2020.2.11.224217, AntiVirus-Engine: 5.70.0, AntiVirus-Data: 2020.1.29.5700000 running on vm-smtp-sophos-mta03
-X-PMX-VirusScan: no virus found
-X-PFSI-Info: PMX 6.3.3.2656215, Antispam-Engine: 2.7.2.2107409, Antispam-Data: 2020.2.11.224217, AntiVirus-Engine: 5.70.0, AntiVirus-Data: 2020.1.29.5700000 (no virus found)
-X-Spam-Level: XXXXX
-X-Spam-Flag: NO
-X-PMX-Spam: Probability=55%
-X-PMX-SpamScan: NO 55% XXXXX
-X-Orange-Auth: YWNjdWVpbEBhYmJheWV1cC5mci5mdG8=
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Feb 09 2020, Allison Collins wrote:
 
--- 
-Greetings From Mrs. Hilda Hancock.
+> Well, I can see the response is meant to be encouraging, and you are=20
+> right that everyone needs to give to receive :-)
+>
+> I have thought a lot about this, and I do have some opinions about it=20
+> how the process is described to work vs how it ends up working though.=20
+> There has quite been a few times I get conflicting reviews from multiple=
+=20
+> reviewers. I suspect either because reviewers are not seeing each others=
+=20
+> reviews, or because it is difficult for people to recall or even find=20
+> discussions on prior revisions.  And so at times, I find myself puzzling=
+=20
+> a bit trying to extrapolate what the community as a whole really wants.
 
-May this day bring you peace, happiness, prosperity, good health and 
-every blessings from above, may all of your wishes and dreams come true!
+The "community as a whole" is not a person and does not have a coherent
+opinion.  You will never please everyone and as you've suggested below,
+it can be hard to tell how strongly people really hold the opinions they
+reveal.
 
-I was touched to send this message to you after I have carefully gone 
-through your profile that speaks good of you in your country.
+You need to give up trying to please "the community", but instead develop
+your own sense of taste that aligns with the concrete practice of the
+community, and then please yourself.
 
-I am Dr. Mrs. Hilda Kickett Hancock a 69 years old woman from Australia, 
-I am writing this message to let you know my heart desire to establish a 
-charity foundation in your country through your noble assistance.
+Then when someone criticizes your code, you need to decide for yourself
+whether it is a useful criticism or not.  This might involve hunting
+through the existing body of code to see what patterns are most common.
+The end result is that either you defend your code, or you change your
+opinion (both can be quite appropriate).  If you change your opinion,
+then you probably change your code too.
 
-For more information, please respond to me immediately.
+Your goal isn't to ensure everyone is happy, only to ensure that no-one
+is justifiably angry.
 
-The future belongs to those who believe in the beauty of their dreams.
+NeilBrown
 
-Yours respectfully,
+>
+> For example: a reviewer may propose a minor change, perhaps a style=20
+> change, and as long as it's not terrible I assume this is just how=20
+> people are used to seeing things implemented.  So I amend it, and in the=
+=20
+> next revision someone expresses that they dislike it and makes a=20
+> different proposition.  Generally I'll mention that this change was=20
+> requested, but if anyone feels particularly strongly about it, to please=
+=20
+> chime in.  Most of the time I don't hear anything, I suspect because=20
+> either the first reviewer isn't around, or they don't have time to=20
+> revisit it?  Maybe they weren't strongly opinionated about it to begin=20
+> with?  It could have been they were feeling pressure to generate=20
+> reviews, or maybe an employer is measuring their engagement?  In any=20
+> case, if it goes around a third time, I'll usually start including links=
+=20
+> to prior reviews to try and get people on the same page, but most of the=
+=20
+> time I've found the result is that it just falls silent.
+>
+> At this point though it feels unclear to me if everyone is happy?  Did=20
+> we have a constructive review?  Maybe it's not a very big deal and I=20
+> should just move on.  And in many scenarios like the one above, the=20
+> exact outcome appears to be of little concern to people in the greater=20
+> scheme of things.  But this pattern does not always scale well in all=20
+> cases.  Complex issues that persist over time generally do so because no=
+=20
+> one yet has a clear idea of what a correct solution even looks like, or=20
+> perhaps cannot agree on one.  In my experience, getting people to come=20
+> together on a common goal requires a sort of exploratory coding effort.=20
+> Like a prototype that people can look at, learn from, share ideas, and=20
+> then adapt the model from there.  But for that to work, they need to=20
+> have been engaged with the history of it.  They need the common=20
+> experience of seeing what has worked and what hasn't.  It helps people=20
+> to let go of theories that have not performed well in practice, and=20
+> shift to alternate approaches that have.  In a way, reviewers that have=20
+> been historically more involved with a particular effort start to become=
+=20
+> a little integral to it as its reviewers.  Which I *think* is what=20
+> Darrick may be eluding to in his initial proposition.  People request=20
+> for certain reviewers, or perhaps the reviewers can volunteer to be sort=
+=20
+> of assigned to it in an effort to provide more constructive reviews.  In=
+=20
+> this way, reviewers allocate their efforts where they are most=20
+> effective, and in doing so better distribute the work load as well.  Did=
+=20
+> I get that about right?  Thoughts?
+>
+> Allison
 
-Mrs. Hilda Hancock
-Email: hildakicketthancock@gmail.com
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl5DRPIACgkQOeye3VZi
+gblS/w/9G22cXKdF3gAdoK7fIqVMQh+iHtqwgRsIC7TjyJYBcUTz2yUy/5Io+pc6
+4hpYZu571QOF2rOBgUjS3MnWWfi+vpiBcV6LQm14ulvAFTKkdKYTCZx/3UV3acjX
+xaInjDJ5LIrluvO2H3SW9NZ/SP5BhFpRoCIE29X9+Skjw2KtLJRvz1JbM3ab7Lpv
+k0ZciQn9UIbB8B3bDI0LzqYGcj6F8euWClHWbi5ky+hVdxpMB5N6cFI027b6aMGZ
+g1tje4SiHxTy5Y3w4eLaS9q+71NnP4meIc1MDtYAa1Ue5Jrel7Bp3wxl2wMMWj8r
+gjEWzLyx9Jm7Yi85XDAqjk7mIC1pnHt3flEAvyk954cfE4DrSyDlA/pExJDmDiX5
+rMgssFzTb0F+xVbq/NLgP+CD4n86gi+ZxAmk+rVRAVN2VtZOYKzNK7f3a5nrLzCI
+bKoKnqGusPBRjalsF7ArVlrMvpefD5xWH4i9rkDXGVF0L2MDdmzL3z2R5vt5hnMy
+xHzkyyFd9FnD3R4zWJuQq9wT5S1RaPk87vRiR8PMQYb7xZaJCYSw7+LSj1NcY98J
+VJkKtdV09AAs4rWj55eQeiS7OhsNfju5l0DklkXL5a61xhHxRqDqF+xUWhA/4l3U
+AthJTMTHomkB8NrKJGlRZE75p2bCCrzmmsp8rjt7lejcgGnkBsE=
+=NQr4
+-----END PGP SIGNATURE-----
+--=-=-=--
