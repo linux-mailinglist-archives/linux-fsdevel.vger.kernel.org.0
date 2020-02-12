@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEF7E15A002
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 116DB159FF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbgBLETk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 23:19:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53964 "EHLO
+        id S1728079AbgBLESs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 23:18:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53972 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgBLESr (ORCPT
+        with ESMTP id S1728000AbgBLESr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 11 Feb 2020 23:18:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ANdAmaI1jIMT7Kwn6UD2dfCdUamGTMd6IuFM7yo8vDk=; b=rW9y0pa0OQFs6gEXOFm+WZ7xoP
-        5IcA4fr74GkQErjTNoTojWCu6XC1fZGO2XlfB24Lj/WkRXWUHrg78jdigHj21Zy6E6yb1Vn8CYYM7
-        hFOvs8CgYis/6cUWwendKQCRbsv5WAEeswEP10V4HWjCKjlVS9uTdrvezHOQpbxDiP7snhLAYxPiL
-        UcO/W0Tbt5EzhntD1alLZv5XUsmt0BuoFlO8uf7OtMkvzs+r729MqD4PQP0UPBilNrcdFuqQpS1UH
-        o/+6pZ4hXSumJS+ET+UKTkyAn1/YO1T2aLKmwRFarmeX3zCjkk4WyxLMvDjdXX3aVf+B6g5qoB5I4
-        Qncws1VA==;
+        bh=d1v/EAEwBpaURPMR3I6ceII7qxa5d8ZtTLZ0hbWs6Do=; b=mL1CBG80IxbXJemxmEvSnYtTcS
+        jYbOFspXS4vCYLmFZxFeRFpnGVZaarDxMd7Zx+A8+xxrnI/aishDN6KV0ZRQZROXgV1Cp6uVe1Dpu
+        KzhB6+ext1celPSo5Z0vh9t3I/hRW3rWlxqaAxl8mqwFupAxs0uB7s2YDAbnHrjogOJqWwwf7boXG
+        ly1pmQBs6c8rZjvaWLBsxfK393ZA74eipLEmBsvi+ikjWyb5Ch0Mgh9Z6ZSt/qZoCvgB46ANSITp3
+        p1K8PsoM75X6l/12/Kp9JbJbPBIMh0sTN9j8a/0STfTGw6GQjet2BxKwuMUYSJBnQEmjC9u4gGXE4
+        oD05T5Eg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU7-0006oS-8C; Wed, 12 Feb 2020 04:18:47 +0000
+        id 1j1jU7-0006oZ-9e; Wed, 12 Feb 2020 04:18:47 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/25] iomap: Inline data shouldn't see large pages
-Date:   Tue, 11 Feb 2020 20:18:38 -0800
-Message-Id: <20200212041845.25879-19-willy@infradead.org>
+Subject: [PATCH v2 19/25] xfs: Support large pages
+Date:   Tue, 11 Feb 2020 20:18:39 -0800
+Message-Id: <20200212041845.25879-20-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -43,34 +43,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Assert that we're not seeing large pages in functions that read/write
-inline data, rather than zeroing out the tail.
+There is one place which assumes the size of a page; fix it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/xfs/xfs_aops.c  | 2 +-
+ fs/xfs/xfs_super.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index af1f56408fcd..a7a21b99b3a0 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -224,6 +224,7 @@ iomap_read_inline_data(struct inode *inode, struct page *page,
- 		return;
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 5573bf2957dd..0c10fd799f8c 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -548,7 +548,7 @@ xfs_discard_page(
+ 	if (error && !XFS_FORCED_SHUTDOWN(mp))
+ 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
+ out_invalidate:
+-	iomap_invalidatepage(page, 0, PAGE_SIZE);
++	iomap_invalidatepage(page, 0, thp_size(page));
+ }
  
- 	BUG_ON(page->index);
-+	BUG_ON(PageCompound(page));
- 	BUG_ON(size > PAGE_SIZE - offset_in_page(iomap->inline_data));
+ static const struct iomap_writeback_ops xfs_writeback_ops = {
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 2094386af8ac..a02efa1f72af 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1779,7 +1779,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= kill_block_super,
+-	.fs_flags		= FS_REQUIRES_DEV,
++	.fs_flags		= FS_REQUIRES_DEV | FS_LARGE_PAGES,
+ };
+ MODULE_ALIAS_FS("xfs");
  
- 	addr = kmap_atomic(page);
-@@ -710,6 +711,7 @@ iomap_write_end_inline(struct inode *inode, struct page *page,
- 	void *addr;
- 
- 	WARN_ON_ONCE(!PageUptodate(page));
-+	BUG_ON(PageCompound(page));
- 	BUG_ON(pos + copied > PAGE_SIZE - offset_in_page(iomap->inline_data));
- 
- 	addr = kmap_atomic(page);
 -- 
 2.25.0
 
