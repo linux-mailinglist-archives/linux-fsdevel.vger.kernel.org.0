@@ -2,165 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E27B15ACFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 17:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DD0915AD7B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 17:35:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgBLQQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 11:16:27 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:40060 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbgBLQQ0 (ORCPT
+        id S1728681AbgBLQfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 11:35:44 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:34211 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727372AbgBLQfo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:16:26 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01CGCUaI130268;
-        Wed, 12 Feb 2020 16:16:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2020-01-29;
- bh=ZKviGbG6lw2iau5Hqm1fy3bel52R6i6RXmJNtHiASNs=;
- b=q5ZCTtO4hYeSba9O57u3LaJ2Pv525jWQJi0hjIGQH0vfQgnOkQuFrNOFLLI5PJ+h+yTR
- VXpvp1kfBidK839BuAkBfFFZoQzv2fyzJGEVFo17dfQ9VpHyBJlrVThJt+9X3OP73z/V
- /RvPend6q59q2SaXkXaT7yXt/L9btOEJUKwKzoGDKieVwEsNDyl9flbyPhP6Ii+ZNzCU
- 1Qh6x3UUMpcjr8xBCoaeFiSJTxnqLV7M6SbXi1TlrUtlaeBdY+/Wc4s55jhBHNJ9TJNy
- Np7+s4gFPxBUFmEGjueytYHaov4BdEvxh6n8XNMCeUyyBFkhlxwbCEikVsnNye+7rilA 4Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2y2jx6c7d5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Feb 2020 16:16:09 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01CGD7CO083542;
-        Wed, 12 Feb 2020 16:16:08 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2y4kagecjw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Feb 2020 16:16:08 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01CGG6w0031881;
-        Wed, 12 Feb 2020 16:16:06 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Feb 2020 08:16:05 -0800
-Date:   Wed, 12 Feb 2020 08:16:04 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     linux-xfs@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: XFS reports lchmod failure, but changes file system contents
-Message-ID: <20200212161604.GP6870@magnolia>
-References: <874kvwowke.fsf@mid.deneb.enyo.de>
+        Wed, 12 Feb 2020 11:35:44 -0500
+Received: by mail-qv1-f68.google.com with SMTP id o18so1211135qvf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 08:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ErEqPgupRH9qwXigutRb5nRU2tSqdRNtaUNrXot3qOY=;
+        b=0FY3OSQjod8BNoUEE6WvqGkSCWhPWM3K8BmwU/xQaGFTN8p9yFt2mHhxAOX75eeZyk
+         DVMjTyvPE8pvY2ZqP64Brq457RoQ6jYk1pKorcRKj8GJJD4sHvICh9n1uJUGRnV3Vr5V
+         sdn784FgS9mZtHy5hvfaIwQJDVfTOIW7bbCmJNTVPmRvAICfTREbDWXf59G0ZS6x4XhA
+         Nsks2kBCro1QtPJaPIAuk3GR4iKPqaX6AJyEWTYDqXAP4MJbuMBYWExSjtJj00capEQR
+         1/gvmrdfzH2Jxgq9V98XVBX8JND00CcKBROg6UOCiB7q62uZdSEL9KTIsMjoEIyT6TTD
+         YQ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ErEqPgupRH9qwXigutRb5nRU2tSqdRNtaUNrXot3qOY=;
+        b=SCMai2M8p+GjPVBLdPmazgh7Jg1nyte6ZHZW7IwkIH+nhvt0fLeiU7+8j0M3jEdSac
+         0pQIPZqeW9WsRcUkg/VnD2ptVrIkC/EuFPuHVyCcAz5j1++1l3XXHX/ytJGe+x1tD3YW
+         oPr/9vYry5ednvLiitwKXoqjNaiSZ3EwrtfhGgN7zM4FB+czoh0LKTuACmfAzn1OcFcv
+         QkrljGd4aRTsw2658s7gJpRNob4i805AAbf47pnaswwp55u0If42A3KRveCD6JhJDr9v
+         dOS6YWqQCYe++7sHaIWiCf5dnWHPebYGKP4NmhZRXLTkZi1+o26+szoCBez/KlTcNNyX
+         qH5w==
+X-Gm-Message-State: APjAAAWUkEWnGZVu5mQyfZ6Yu/47A1h/Hl/P6DCMgwpsbokHu1juIEJN
+        rBhF2N24xWhADfDBWc2zNuHfgg==
+X-Google-Smtp-Source: APXvYqwUxExxKSsaixRm6IofspdH+NUspdRSMq4om9NxqPMEW40z/llLitVs6aIvlb+AwVfAPgGiKg==
+X-Received: by 2002:a05:6214:108a:: with SMTP id o10mr7757297qvr.246.1581525342222;
+        Wed, 12 Feb 2020 08:35:42 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::2:26be])
+        by smtp.gmail.com with ESMTPSA id v78sm469947qkb.48.2020.02.12.08.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2020 08:35:41 -0800 (PST)
+Date:   Wed, 12 Feb 2020 11:35:40 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Rik van Riel <riel@surriel.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <david@fromorbit.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200212163540.GA180867@cmpxchg.org>
+References: <20200211175507.178100-1-hannes@cmpxchg.org>
+ <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
+ <20200211193101.GA178975@cmpxchg.org>
+ <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <874kvwowke.fsf@mid.deneb.enyo.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9529 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=2 mlxscore=0 malwarescore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002120125
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9529 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=2 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002120125
+In-Reply-To: <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 12:48:49PM +0100, Florian Weimer wrote:
-> In principle, Linux supports lchmod via O_PATH descriptors and chmod
-> on /proc/self/fd.  (lchmod is the non-symbolic-link-following variant
-> of chmod.)
+On Tue, Feb 11, 2020 at 03:44:38PM -0800, Andrew Morton wrote:
+> On Tue, 11 Feb 2020 14:31:01 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
 > 
-> This helper program can be used to do this:
+> > On Tue, Feb 11, 2020 at 02:05:38PM -0500, Rik van Riel wrote:
+> > > On Tue, 2020-02-11 at 12:55 -0500, Johannes Weiner wrote:
+> > > > The VFS inode shrinker is currently allowed to reclaim inodes with
+> > > > populated page cache. As a result it can drop gigabytes of hot and
+> > > > active page cache on the floor without consulting the VM (recorded as
+> > > > "inodesteal" events in /proc/vmstat).
+> > > > 
+> > > > This causes real problems in practice. Consider for example how the
+> > > > VM
+> > > > would cache a source tree, such as the Linux git tree. As large parts
+> > > > of the checked out files and the object database are accessed
+> > > > repeatedly, the page cache holding this data gets moved to the active
+> > > > list, where it's fully (and indefinitely) insulated from one-off
+> > > > cache
+> > > > moving through the inactive list.
+> > > 
+> > > > This behavior of invalidating page cache from the inode shrinker goes
+> > > > back to even before the git import of the kernel tree. It may have
+> > > > been less noticeable when the VM itself didn't have real workingset
+> > > > protection, and floods of one-off cache would push out any active
+> > > > cache over time anyway. But the VM has come a long way since then and
+> > > > the inode shrinker is now actively subverting its caching strategy.
+> > > 
+> > > Two things come to mind when looking at this:
+> > > - highmem
+> > > - NUMA
+> > > 
+> > > IIRC one of the reasons reclaim is done in this way is
+> > > because a page cache page in one area of memory (highmem,
+> > > or a NUMA node) can end up pinning inode slab memory in
+> > > another memory area (normal zone, other NUMA node).
+> > 
+> > That's a good point, highmem does ring a bell now that you mention it.
 > 
-> #define _GNU_SOURCE
-> #include <err.h>
-> #include <fcntl.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <sys/stat.h>
-> #include <unistd.h>
+> Yup, that's why this mechanism exists.  Here:
 > 
-> int
-> main (int argc, char **argv)
-> {
->   if (argc != 3)
->     {
->       fprintf (stderr, "usage: %s MODE FILE\n", argv[0]);
->       return 2;
->     }
-> 
->   unsigned int mode;
->   if (sscanf (argv[1], "%o", &mode) != 1
->       || mode != (mode_t) mode)
->     errx (1, "invalid mode: %s", argv[1]);
-> 
->   int fd = open (argv[2], O_PATH | O_NOFOLLOW);
->   if (fd < 0)
->     err (1, "open");
-> 
->   char *fd_path;
->   if (asprintf (&fd_path, "/proc/self/fd/%d", fd) < 0)
->     err (1, "asprintf");
-> 
->   if (chmod (fd_path, mode) != 0)
->     err (1, "chmod");
-> 
->   free (fd_path);
->   if (close (fd) != 0)
->     err (1, "close");
-> 
->   return 0;
-> }
-> 
-> When changing the permissions of on XFS in this way, the chmod
-> operation fails:
-> 
-> $ ln -s does-not-exist /var/tmp/symlink
-> $ ls -l /var/tmp/symlink 
-> lrwxrwxrwx. 1 fweimer fweimer 14 Feb 12 12:41 /var/tmp/symlink -> does-not-exist
-> $ strace ./lchmod 0 /var/tmp/symlink
-> […]
-> openat(AT_FDCWD, "/var/tmp/symlink", O_RDONLY|O_NOFOLLOW|O_PATH) = 3
-> […]
-> chmod("/proc/self/fd/3", 000)           = -1 EOPNOTSUPP (Operation not supported)
-> write(2, "lchmod: ", 8lchmod: )                 = 8
-> write(2, "chmod", 5chmod)                    = 5
-> write(2, ": Operation not supported\n", 26: Operation not supported
-> ) = 26
-> exit_group(1)                           = ?
-> 
-> But the file system contents has changed nevertheless:
-> 
-> $ ls -l /var/tmp/symlink 
-> l---------. 1 fweimer fweimer 14 Feb 12 12:41 /var/tmp/symlink -> does-not-exist
-> $ echo 3 | sudo tee /proc/sys/vm/drop_caches 
-> $ ls -l /var/tmp/symlink 
-> l---------. 1 fweimer fweimer 14 Feb 12 12:41 /var/tmp/symlink -> does-not-exist
-> 
-> This looks like an XFS bug to me.  With tmpfs, the chmod succeeds and
-> is reflected in the file system.
-> 
-> This bug also affects regular files, not just symbolic links.
-> 
-> It causes the io/tst-lchmod glibc test to fail (after it has been
-> fixed, the in-tree version has another bug).
+> https://marc.info/?l=git-commits-head&m=103646757213266&w=2
 
-xfs_setattr_nonsize calls posix_acl_chmod which returns EOPNOTSUPP
-because the xfs symlink inode_operations do not include a ->set_acl
-pointer.
+Ah, thanks for digging that up, I did not know that.
 
-I /think/ that posix_acl_chmod code exists to enforce that the file mode
-reflects any acl that might be set on the inode, but in this case the
-inode is a symbolic link.
+> > If we still care, I think this could be solved by doing something
+> > similar to what we do with buffer_heads_over_limit: allow a lowmem
+> > allocation to reclaim page cache inside the highmem zone if the bhs
+> > (or inodes in this case) have accumulated excessively.
+> 
+> Well, reclaiming highmem pagecache at random would be a painful way to
+> reclaim lowmem inodes.  Better to pick an inode then shoot down all its
+> pagecache.  Perhaps we could take its pagecache's aging into account.
 
-I don't remember off the top of my head if ACLs are supposed to apply to
-symlinks, but what do you think about adding get_acl/set_acl pointers to
-xfs_symlink_inode_operations and xfs_inline_symlink_inode_operations ?
+That reminds me of trying to correlate inode pages in reclaim to batch
+the cache tree lock, slab page objects in the shrinker to free whole
+pages etc. We never managed to actually do that. :-)
 
---D
+> Testing this will be a challenge, but the issue was real - a 7GB
+> highmem machine isn't crazy and I expect the inode has become larger
+> since those days.
+
+Since the cache purging code was written for highmem scenarios, how
+about making it specific to CONFIG_HIGHMEM at least?
+
+That way we improve the situation for the more common setups, without
+regressing highmem configurations. And if somebody wanted to improve
+the CONFIG_HIGHMEM behavior as well, they could still do so.
+
+Somethig like the below delta on top of my patch?
+
+---
+ fs/inode.c         | 44 ++++++++++++++++++++++++++++++++++++++++----
+ include/linux/fs.h |  5 +++++
+ 2 files changed, 45 insertions(+), 4 deletions(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 575b780fa9bb..45b2abd4fef6 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -454,6 +454,18 @@ bool inode_add_lru(struct inode *inode)
+ 	return true;
+ }
+ 
++/*
++ * Usually, inodes become reclaimable when they are no longer
++ * referenced and their page cache has been reclaimed. The following
++ * API allows the VM to communicate cache population state to the VFS.
++ *
++ * However, on CONFIG_HIGHMEM we can't wait for the page cache to go
++ * away: cache pages allocated in a large highmem zone could pin
++ * struct inode memory allocated in relatively small lowmem zones. So
++ * when CONFIG_HIGHMEM is enabled, we tie cache to the inode lifetime.
++ */
++
++#ifndef CONFIG_HIGHMEM
+ /**
+  * inode_pages_set - mark the inode as holding page cache
+  * @inode: the inode whose first cache page was just added
+@@ -512,6 +524,7 @@ void inode_pages_clear(struct inode *inode)
+ 
+ 	spin_unlock(&inode->i_lock);
+ }
++#endif /* !CONFIG_HIGHMEM */
+ 
+ /**
+  * inode_sb_list_add - add inode to the superblock list of inodes
+@@ -826,16 +839,39 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
+ 	}
+ 
+ 	/*
+-	 * Populated inodes shouldn't be on the shrinker LRU, but they
+-	 * can be briefly visible when a new page is added to an inode
+-	 * that was already linked but inode_pages_set() hasn't run
+-	 * yet to move them off.
++	 * Usually, populated inodes shouldn't be on the shrinker LRU,
++	 * but they can be briefly visible when a new page is added to
++	 * an inode that was already linked but inode_pages_set()
++	 * hasn't run yet to move them off.
++	 *
++	 * The other exception is on HIGHMEM systems: highmem cache
++	 * can pin lowmem struct inodes, and we might be in dire
++	 * straits in the lower zones. Purge cache to free the inode.
+ 	 */
+ 	if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
++#ifdef CONFIG_HIGHMEM
++		__iget(inode);
++		spin_unlock(&inode->i_lock);
++		spin_unlock(lru_lock);
++		if (remove_inode_buffers(inode)) {
++			unsigned long reap;
++			reap = invalidate_mapping_pages(&inode->i_data, 0, -1);
++			if (current_is_kswapd())
++				__count_vm_events(KSWAPD_INODESTEAL, reap);
++			else
++				__count_vm_events(PGINODESTEAL, reap);
++			if (current->reclaim_state)
++				current->reclaim_state->reclaimed_slab += reap;
++		}
++		iput(inode);
++		spin_lock(lru_lock);
++		return LRU_RETRY;
++#else
+ 		list_lru_isolate(lru, &inode->i_lru);
+ 		spin_unlock(&inode->i_lock);
+ 		this_cpu_dec(nr_unused);
+ 		return LRU_REMOVED;
++#endif
+ 	}
+ 
+ 	WARN_ON(inode->i_state & I_NEW);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a98d9dee39f4..abdb3fd3432f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3106,8 +3106,13 @@ static inline void remove_inode_hash(struct inode *inode)
+ 		__remove_inode_hash(inode);
+ }
+ 
++#ifndef CONFIG_HIGHMEM
+ extern void inode_pages_set(struct inode *inode);
+ extern void inode_pages_clear(struct inode *inode);
++#else
++static inline void inode_pages_set(struct inode *inode) {}
++static inline void inode_pages_clear(struct inode *inode) {}
++#endif
+ 
+ extern void inode_sb_list_add(struct inode *inode);
+ 
+-- 
+2.24.1
+
