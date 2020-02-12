@@ -2,73 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BED15AF1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 18:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB4715AF25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 18:54:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbgBLRwu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 12:52:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60560 "EHLO
+        id S1727372AbgBLRyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 12:54:45 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33400 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbgBLRwu (ORCPT
+        with ESMTP id S1727054AbgBLRyp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 12:52:50 -0500
+        Wed, 12 Feb 2020 12:54:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=PC1JYyytBxzYVOWjA8HahlODsHQReOcYQHnl2qvSG/I=; b=G4041bdkHZ6mUZsGWvbHmafyzc
-        d8eKGbikKMu1/Xs3Vqe19YzLl3Bc4o+/WsXU/5dPCcWBWTq57avYyMJBVo7HDek6/QMWnfeCw+suV
-        PA1t+NZ9QDXVj+3SNEGLQRMv3wUIj2goGXRQeN7YL3IqICljs1egL/JFlg78R3bHPmltupujDXOOV
-        mg44/ZCaRx+qFQTT/WuFlZ3yrT8O/GggnQHIT0wSGf0fgckbd8hsibPPqbi2opqVz3mwlktH2ZY5+
-        a5QIEnYFgYTnaZ4AoG0SXjFcKQADdnZqPgRWpOazSvbj0J8M9WKPqR8Qk4EcYmGg+oUDbKoxOnOJ2
-        cIuAvtDQ==;
+        bh=7XNKwAQCe0wWD09kLZnG/QEn+5bffeFhq6ruL0n9m7M=; b=qHhw+JIqRJlFPo9Hs7xaQi3qIj
+        Jg2LHudVqRZys2sFoRHD7Qb/sJmBBUXyE6FarlkHqm6U+h7L4UcbNCd3FJMQ/zI4ajl25XX07JpIt
+        Af13uKlDkd2uiD/27TuEMsRcgFliRvCXUGZvQBML2ahaeNR8AP5o34VVM0BfZeRBxmNZJXT1popJX
+        BtQlWvxj8C5lMaDgDVN7JYbuUfXtA/McOdBV2QdrXUUuG0FC+FOT1eHpHpOWvLWoK+f0s5e59/r9m
+        8DXpQAKt2Lo6Sncqwuc8HVMkcCy1T7qlYRhmOdVN9LecwtySaL05IeohtS9fhNHcu1+Jbmy133RHI
+        fjtPt/XQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1wBu-0003U1-93; Wed, 12 Feb 2020 17:52:50 +0000
-Date:   Wed, 12 Feb 2020 09:52:50 -0800
+        id 1j1wDl-0003lq-Ey; Wed, 12 Feb 2020 17:54:45 +0000
+Date:   Wed, 12 Feb 2020 09:54:45 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/25] mm: Optimise find_subpage for !THP
-Message-ID: <20200212175250.GA11424@infradead.org>
+Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
+Message-ID: <20200212175445.GB11424@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-3-willy@infradead.org>
- <20200212074105.GE7068@infradead.org>
- <20200212130200.GC7778@bombadil.infradead.org>
+ <20200212041845.25879-11-willy@infradead.org>
+ <20200212074453.GH7068@infradead.org>
+ <20200212150540.GE7778@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212130200.GC7778@bombadil.infradead.org>
+In-Reply-To: <20200212150540.GE7778@bombadil.infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 05:02:00AM -0800, Matthew Wilcox wrote:
-> > Can you add comments describing the use case of this function and why
-> > it does all these checks?  It looks like black magic to me.
+On Wed, Feb 12, 2020 at 07:05:40AM -0800, Matthew Wilcox wrote:
+> > > + * Return: The number of filesystem blocks covered by this page.
+> > > + */
+> > > +static inline
+> > > +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
+> > 
+> > static inline unisnged int
+> > i_blocks_per_page(struct inode *inode, struct page *page)
 > 
-> Would this help?
+> That's XFS coding style.  Linus has specifically forbidden that:
 > 
-> -static inline struct page *find_subpage(struct page *page, pgoff_t offset)
-> +/*
-> + * Given the page we found in the page cache, return the page corresponding
-> + * to this offset in the file
-> + */
-> +static inline struct page *find_subpage(struct page *head, pgoff_t offset)
->  {
-> -       if (PageHuge(page))
-> -               return page;
-> +       /* HugeTLBfs wants the head page regardless */
-> +       if (PageHuge(head))
-> +               return head;
->  
-> -       VM_BUG_ON_PAGE(PageTail(page), page);
-> +       VM_BUG_ON_PAGE(PageTail(head), head);
->  
-> -       return page + (offset & (hpage_nr_pages(page) - 1));
-> +       return head + (offset & (hpage_nr_pages(head) - 1));
+> https://lore.kernel.org/lkml/1054519757.161606@palladium.transmeta.com/
 
-Much better.
+Not just xfs but lots of places.  But if you don't like that follow
+the real Linus style we use elsewhere:
+
+static inline unsigned int i_blocks_per_page(struct inode *inode,
+		struct page *page)
