@@ -2,98 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB3B15AB7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 15:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 277CD15AB81
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 15:59:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbgBLO6E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 09:58:04 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:56832 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbgBLO6E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:58:04 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id E4866C61AB0;
-        Wed, 12 Feb 2020 14:58:00 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 15:57:59 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 05/11] proc: add helpers to set and get proc hidepid
- and gid mount options
-Message-ID: <20200212145759.7dwtgnsetk7osycw@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-6-gladkov.alexey@gmail.com>
- <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+        id S1727698AbgBLO7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 09:59:01 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43082 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbgBLO7B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 09:59:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FgFLJTvBuzlIrLf1DK1nejj+RgbkbMvjMUWGEtVxYBg=; b=MuERL3OdmrQeEWKpBpT5VAehhz
+        E+6+xkiw+s2UiGXu4mgWVmfRQUEEx0E+R2LkMpxjsWrcgNO272pjwNAilmDIs6pRP7LpIOIVSrppB
+        +cJxC/+5C92Ltp45Y44BZREyDIcmQA/0q2W9yM1CVfLzV47+uuvXamcQZiE5X5iMtsaPhzK09IFDp
+        VvG5tlIqNJVKdy+Xia1dyAEdco37dyFinfTUo7ppecnZ2DFYWqzKTUss7QKuBW5Mgh4Vvtdp7ZmPy
+        ZNbfBuZ4qnIKBWqAOucnmyaBhHnqPAohxYyPsvE3dB+LsqqmKfX6vvyHw5tlVMkhsKXS+n/YlJX+r
+        zogXuURQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1tTg-0004Q9-RN; Wed, 12 Feb 2020 14:59:00 +0000
+Date:   Wed, 12 Feb 2020 06:59:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/25] fs: Add a filesystem flag for large pages
+Message-ID: <20200212145900.GD7778@bombadil.infradead.org>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-10-willy@infradead.org>
+ <20200212074318.GG7068@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrVjv04OOdzGNf7sRmRR-KUgY7xdMXA236nHZ1arn0KwVQ@mail.gmail.com>
+In-Reply-To: <20200212074318.GG7068@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:30:45AM -0800, Andy Lutomirski wrote:
-> On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > This is a cleaning patch to add helpers to set and get proc mount
-> > options instead of directly using them. This make it easy to track
-> > what's happening and easy to update in future.
+On Tue, Feb 11, 2020 at 11:43:18PM -0800, Christoph Hellwig wrote:
+> On Tue, Feb 11, 2020 at 08:18:29PM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > The page cache needs to know whether the filesystem supports pages >
+> > PAGE_SIZE.
 > 
-> On a cursory inspection, this looks like it obfuscates the code, and I
-> don't see where it does something useful later in the series.  What is
-> this abstraction for?
+> Does it make sense to set this flag on the file_system_type, which
+> is rather broad scope, or a specific superblock or even inode?
+> 
+> For some file systems we might require on-disk flags that aren't set
+> for all instances.
 
-To be honest, this part is from Djalal Harouni. For me, these wrappers
-exist for a slight increase in readability.
-
-I will not cry if you tell me to remove them :)
-
--- 
-Rgrds, legion
-
+I don't see why we'd need on-disk flags or need to control this on a
+per-inode or per-sb basis.  My intent for this flag is to represent
+whether the filesystem understands large pages; how the file is cached
+should make no difference to the on-disk layout.
