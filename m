@@ -2,95 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBB015B1F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 21:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 637F615B1F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 21:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbgBLUi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 15:38:26 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:50594 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbgBLUi0 (ORCPT
+        id S1728575AbgBLUik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 15:38:40 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43838 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbgBLUik (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 15:38:26 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1j1ylw-0004xz-00; Wed, 12 Feb 2020 20:38:12 +0000
-Date:   Wed, 12 Feb 2020 15:38:12 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: XFS reports lchmod failure, but changes file system contents
-Message-ID: <20200212203812.GE1663@brightrain.aerifal.cx>
-References: <874kvwowke.fsf@mid.deneb.enyo.de>
- <20200212161604.GP6870@magnolia>
- <20200212181128.GA31394@infradead.org>
- <20200212183718.GQ6870@magnolia>
- <87d0ajmxc3.fsf@mid.deneb.enyo.de>
- <20200212195118.GN23230@ZenIV.linux.org.uk>
- <87wo8rlgml.fsf@mid.deneb.enyo.de>
- <87wo8r1rx6.fsf@igel.home>
- <20200212201951.GC1663@brightrain.aerifal.cx>
- <87sgjflfh8.fsf@mid.deneb.enyo.de>
+        Wed, 12 Feb 2020 15:38:40 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1ymH-00BamE-5t; Wed, 12 Feb 2020 20:38:33 +0000
+Date:   Wed, 12 Feb 2020 20:38:33 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
+ instances
+Message-ID: <20200212203833.GQ23230@ZenIV.linux.org.uk>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+ <20200210150519.538333-8-gladkov.alexey@gmail.com>
+ <87v9odlxbr.fsf@x220.int.ebiederm.org>
+ <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+ <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+ <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+ <87v9obipk9.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+ <20200212200335.GO23230@ZenIV.linux.org.uk>
+ <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87sgjflfh8.fsf@mid.deneb.enyo.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 09:26:11PM +0100, Florian Weimer wrote:
-> * Rich Felker:
-> 
-> > On Wed, Feb 12, 2020 at 09:17:41PM +0100, Andreas Schwab wrote:
-> >> On Feb 12 2020, Florian Weimer wrote:
-> >> 
-> >> > * Al Viro:
-> >> >
-> >> >> On Wed, Feb 12, 2020 at 08:15:08PM +0100, Florian Weimer wrote:
-> >> >>
-> >> >>> | Further, I've found some inconsistent behavior with ext4: chmod on the
-> >> >>> | magic symlink fails with EOPNOTSUPP as in Florian's test, but fchmod
-> >> >>> | on the O_PATH fd succeeds and changes the symlink mode. This is with
-> >> >>> | 5.4. Cany anyone else confirm this? Is it a problem?
-> >> >>> 
-> >> >>> It looks broken to me because fchmod (as an inode-changing operation)
-> >> >>> is not supposed to work on O_PATH descriptors.
-> >> >>
-> >> >> Why?  O_PATH does have an associated inode just fine; where does
-> >> >> that "not supposed to" come from?
-> >> >
-> >> > It fails on most file systems right now.  I thought that was expected.
-> >> > Other system calls (fsetxattr IIRC) do not work on O_PATH descriptors,
-> >> > either.  I assumed that an O_PATH descriptor was not intending to
-> >> > confer that capability.  Even openat fails.
-> >> 
-> >> According to open(2), this is expected:
-> >> 
-> >>        O_PATH (since Linux 2.6.39)
-> >>               Obtain a file descriptor that can be used for two  purposes:  to
-> >>               indicate a location in the filesystem tree and to perform opera-
-> >>               tions that act purely at the file descriptor  level.   The  file
-> >>               itself  is not opened, and other file operations (e.g., read(2),
-> >>               write(2), fchmod(2), fchown(2), fgetxattr(2), ioctl(2), mmap(2))
-> >>               fail with the error EBADF.
+On Wed, Feb 12, 2020 at 12:35:04PM -0800, Linus Torvalds wrote:
+> On Wed, Feb 12, 2020 at 12:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 > >
-> > That text is outdated and should be corrected. Fixing fchmod fchown,
-> > fstat, etc. to operate on O_PATH file descriptors was a very
-> > intentional change in the kernel.
+> > What's to prevent racing with fs shutdown while you are doing the second part?
 > 
-> I suppose we could do the S_ISLNK check, try fchmod, and if that
-> fails, go via /proc.  Is this the direction you want to go in?
+> I was thinking that only the proc_flush_task() code would do this.
+> 
+> And that holds a ref to the vfsmount through upid->ns.
+> 
+> So I wasn't suggesting doing this in general - just splitting up the
+> implementation of d_invalidate() so that proc_flush_task_mnt() could
+> delay the complex part to after having traversed the RCU-protected
+> list.
+> 
+> But hey - I missed this part of the problem originally, so maybe I'm
+> just missing something else this time. Wouldn't be the first time.
 
-It was, but Al Viro just pointed out to me that I was wrong. I think
-we could use fstat (which AIUI now works) to do the S_ISLNK check, so
-that it doesn't depend on /proc, but I don't see a way to do the chmod
-operation without /proc at this time.
-
-Rich
+Wait, I thought the whole point of that had been to allow multiple
+procfs instances for the same userns?  Confused...
