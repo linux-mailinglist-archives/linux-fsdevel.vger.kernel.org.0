@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8958715A1C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0244A15A1C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 08:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbgBLHVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 02:21:21 -0500
+        id S1728389AbgBLHVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 02:21:23 -0500
 Received: from esa2.hgst.iphmx.com ([68.232.143.124]:31635 "EHLO
         esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728381AbgBLHVU (ORCPT
+        with ESMTP id S1728381AbgBLHVW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 02:21:20 -0500
+        Wed, 12 Feb 2020 02:21:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1581492085; x=1613028085;
+  t=1581492088; x=1613028088;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=7kSGCvaay2SG1nIxMcRDLO5KnT8tOtaO/l1P1KJNuCY=;
-  b=jgej6GfwZJwzlZN43sE5PtTkqIhkzijeUGIHmYwSOVbMZUDLIAH2J0DZ
-   AS73VJKJG/CpYhNeDvZG/5qGrlef/QpoAxPCilV51YCwDQvbKZcDQKakR
-   BwhfWBFFEkVtNhdne1il2yJCw+eVd1UyyTjIGrWAjmz8/kU+vpB2sDbej
-   vOJFoO7HLmhvWpYRvGdebPv5QUrpvtyszStFxA/64jvnVT+w2xnMnqEax
-   PiAio9/3bth3d22ksKDCmS4qRZoasMrIur3so/J4aeB2DeToUAo/M72Iz
-   cPIHvdgTUthoOEGIW/jMAxeZNm7XI4B2Ok5usoXqiRof9XeCpoFt61Pbw
-   Q==;
-IronPort-SDR: u0nV+EjUa/vVH4tK7EdG5XagoCWUhbSnwiJjr8t9bIR+rLMqi0PJT90fTaVDw0B1em3F66jJw4
- usxRanZgXRWsH+DfqcIyt/CaBH48xkhSvnfKDvCsEtl1eM+0B/6gNvyoJrtLCeZcX7jdcMpMNC
- 91lwbLdULVdRXYWyffd5yEw1EFj3UOvXpcWnixAKq9iH0QSquY6QKp1vhXM4/4BpANpWHlIPvL
- h74g80/YMlGjXy163CD1lllqAZPp91i92eoa0NOfY5GVyp7D+OUXYP9jpYF7hUPAKntMn4p2OB
- 0qQ=
+  bh=5IdcOaURlYsqdA8UKxMqeUbogEQ8ynMq18DJFOr9sXg=;
+  b=Ffluu8OKUYsvXwhga9pMbi6YiTVEakqX3JX0L+Nd2dZTfGeYdNJETyqx
+   V5MRjNvvKqo1EIUqCMRRaRvCLcn2AhgpUD0tBr11P6syMPM0G6vOPAQj9
+   dgytZ1td/sRf/inHIpzEwfgiBMhp1Yewi9xRUG0vD6ebGDjP/lolD+F53
+   Z0gb0KZHKvFvbU3UAnTIZwFgSsuD1Jtka6qqs1kMiWdEsqNUr6/FmY+yz
+   p2lYQu/BqZpes2T7XG21THKt7lwe3bAkimagdejbN7YyNk5eFMhjjXOke
+   L8jq0TtOIaux3GDr9I5BcnV2DHU1xAS4KZi7iuy0k2a7x87niLeuDIXys
+   w==;
+IronPort-SDR: DRUDxoXvm5KxWxclm1KJybZT2qqh75zRbgVPQCnYH2GBvEDQ0Li5CSviHfjjlvypIqEaZ7KlIf
+ RlgC4FiQ47+sJYp0eoKnsTrzYp24JDxSpf2Tc62SLsizJV6o8Mq/6+nXp59Ka4nRyQ5L91Iwuu
+ mtA772qYqLDYgMkFcuOkeQ4Aaue9NbS+8OcLtXhhVr9FCvwCIx23mWxBfgtUINBZ6GsqxlUE4q
+ 8HjHv42gjaDSmOJaSAaEUdIC2YRKW9NFqCw9Ly/DsTJ5bsFa6vnjdMs7jmfPCTr1HZk2i19zuA
+ tfY=
 X-IronPort-AV: E=Sophos;i="5.70,428,1574092800"; 
-   d="scan'208";a="231448925"
+   d="scan'208";a="231448930"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:25 +0800
-IronPort-SDR: CtsvS/RgUg15OKI/y+yEoRPL/kv+AT+S4DPmz0hv8xlzDBt3tFL7uZL5m3fnBiz7YRYIuWiJTX
- HnaE9XnfGqTBimm4JpS347nZgqORpWLXu7lknuyGRFuSyH946Gppc2oUlA86wmSIn4V9vFREAW
- fVTRrEpN/iepc6IvG7nVOm2aDU1OIKElLt6xoTZ5fwxEMCRfrxXke6nhXbPq9fCxu/be2j66xg
- gUIJQCjJtFpYGUfP2/W7Y4gm2FxW1+Oi+w1P8LN6r2ayDcVfg2iLpDZ4xKj1lThyqFyF9nVFTd
- SddsTZd0c0cn6+o9fpyeVjKS
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 15:21:28 +0800
+IronPort-SDR: NfWUvDFLu6qV7FlH9Ycz+sQStrn6FHWQxbnsxkZlXasqFAebXueiIyTaxe17rbU7RHigiUwiq5
+ kHcdHyCHHKzLbhzqb6MJkwMwyQx07jeb/xoEN6Mhriqdml9kaZ074hj5cLFYcciW8i2a3to5v6
+ aKj6D9XecUpkna0EU6D6e/MvZqFPyTfH7O3cQO/NH9MjcnMgBDpLu6iNEwihO9NVPPg3dpwELN
+ QTFXW5DheDLR3YPtLvFrd3KMdSjdL4n6SG4ewFYbjHHDZthE4fic/VeXbxpbL3b6M26Vtzv30J
+ xDfYFNvHYtpPslSY7FtyvJjP
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:14:09 -0800
-IronPort-SDR: R6slTFA/MnQuZ+l6STq8NcXTpIjBlHDwwiFNiqj7qqLawoDFpBc0GbzPnPLxI8ug0Rx6wO7DNO
- vlk2lRdbeNeF4LLpmZyaXARROKQ/BynfdTBItaEkZNt1H49xX8KGs/2VD55qvGKE1b7n8yydoH
- SPbWV9ULhs36Fd5ACFz+kTIZefhSNk32v+5comUQcyniDys/+J70lKPC2LzkiOPPSIoUsJ4NXL
- 1z4oBO+ErFg+plaJ0lxaXyUCHGlZcMZvj6ThI007J1nxlPKd0oTNGJxuz29GzpNnBa18JyW2NL
- Gi0=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2020 23:14:11 -0800
+IronPort-SDR: zpv4Yais84UKgy7C6tKbL4j8z3/A2kKNYaBteQ5iPxPbLSfJKgtfphKUgIpSZ5XNSvb03Osl5G
+ Fxn/dOZJ82G8gGKo4Ka/5/RXWuO38cZMtd/1ds7uI7QHOmHNgXRyQWbgbV2J7aQYkyKZePcWwe
+ aUqvAViuHffEnGsEW5UoN/pNrQzxv5yGpPvzgLrPDJt9wbx9/C4asEitleRo54yZUlzbT4BMzt
+ n9Fq1S7Ipj8uPnTtC1cWOfHEwr5OEUiMyNer4fMlBXr9I2m34B3gzcoZvzUXBmQUsH4P3TOOPf
+ rWo=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:21:18 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Feb 2020 23:21:20 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -58,9 +58,9 @@ Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>,
         Anand Jain <anand.jain@oracle.com>,
         linux-fsdevel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v2 12/21] btrfs: move hint_byte into find_free_extent_ctl
-Date:   Wed, 12 Feb 2020 16:20:39 +0900
-Message-Id: <20200212072048.629856-13-naohiro.aota@wdc.com>
+Subject: [PATCH v2 13/21] btrfs: move vairalbes for clustered allocation into find_free_extent_ctl
+Date:   Wed, 12 Feb 2020 16:20:40 +0900
+Message-Id: <20200212072048.629856-14-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200212072048.629856-1-naohiro.aota@wdc.com>
 References: <20200212072048.629856-1-naohiro.aota@wdc.com>
@@ -71,75 +71,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit moves hint_byte into find_free_extent_ctl, so that we can
-modify the hint_byte in the other functions. This will help us split
-find_free_extent further. This commit also renames the function argument
-"hint_byte" to "hint_byte_orig" to avoid misuse.
+Move "last_ptr" and "use_cluster" into struct find_free_extent_ctl, so that
+hook functions for clustered allocator can use these variables.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/extent-tree.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ fs/btrfs/extent-tree.c | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
 diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-index 247d68eb4735..b1f52eee24fe 100644
+index b1f52eee24fe..fb62842ff3e6 100644
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -3494,6 +3494,9 @@ struct find_free_extent_ctl {
- 	/* Found result */
- 	u64 found_offset;
+@@ -3458,6 +3458,8 @@ struct find_free_extent_ctl {
  
-+	/* Hint byte to start looking for an empty space */
-+	u64 hint_byte;
-+
- 	/* Allocation policy */
- 	enum btrfs_extent_allocation_policy policy;
- };
-@@ -3808,7 +3811,7 @@ static int find_free_extent_update_loop(struct btrfs_fs_info *fs_info,
-  */
- static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
- 				u64 ram_bytes, u64 num_bytes, u64 empty_size,
--				u64 hint_byte, struct btrfs_key *ins,
-+				u64 hint_byte_orig, struct btrfs_key *ins,
- 				u64 flags, int delalloc)
+ 	/* For clustered allocation */
+ 	u64 empty_cluster;
++	struct btrfs_free_cluster *last_ptr;
++	bool use_cluster;
+ 
+ 	bool have_caching_bg;
+ 	bool orig_have_caching_bg;
+@@ -3816,11 +3818,9 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
  {
  	int ret = 0;
-@@ -3833,6 +3836,7 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 	int cache_block_group_error = 0;
+-	struct btrfs_free_cluster *last_ptr = NULL;
+ 	struct btrfs_block_group *block_group = NULL;
+ 	struct find_free_extent_ctl ffe_ctl = {0};
+ 	struct btrfs_space_info *space_info;
+-	bool use_cluster = true;
+ 	bool full_search = false;
+ 
+ 	WARN_ON(num_bytes < fs_info->sectorsize);
+@@ -3829,8 +3829,6 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 	ffe_ctl.empty_size = empty_size;
+ 	ffe_ctl.flags = flags;
+ 	ffe_ctl.search_start = 0;
+-	ffe_ctl.retry_clustered = false;
+-	ffe_ctl.retry_unclustered = false;
+ 	ffe_ctl.delalloc = delalloc;
+ 	ffe_ctl.index = btrfs_bg_flags_to_raid_index(flags);
  	ffe_ctl.have_caching_bg = false;
- 	ffe_ctl.orig_have_caching_bg = false;
- 	ffe_ctl.found_offset = 0;
-+	ffe_ctl.hint_byte = hint_byte_orig;
+@@ -3839,6 +3837,12 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 	ffe_ctl.hint_byte = hint_byte_orig;
  	ffe_ctl.policy = BTRFS_EXTENT_ALLOC_CLUSTERED;
  
++	/* For clustered allocation */
++	ffe_ctl.retry_clustered = false;
++	ffe_ctl.retry_unclustered = false;
++	ffe_ctl.last_ptr = NULL;
++	ffe_ctl.use_cluster = true;
++
  	ins->type = BTRFS_EXTENT_ITEM_KEY;
-@@ -3875,14 +3879,14 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
- 	if (last_ptr) {
+ 	ins->objectid = 0;
+ 	ins->offset = 0;
+@@ -3869,14 +3873,16 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 			spin_unlock(&space_info->lock);
+ 			return -ENOSPC;
+ 		} else if (space_info->max_extent_size) {
+-			use_cluster = false;
++			ffe_ctl.use_cluster = false;
+ 		}
+ 		spin_unlock(&space_info->lock);
+ 	}
+ 
+-	last_ptr = fetch_cluster_info(fs_info, space_info,
+-				      &ffe_ctl.empty_cluster);
+-	if (last_ptr) {
++	ffe_ctl.last_ptr = fetch_cluster_info(fs_info, space_info,
++					      &ffe_ctl.empty_cluster);
++	if (ffe_ctl.last_ptr) {
++		struct btrfs_free_cluster *last_ptr = ffe_ctl.last_ptr;
++
  		spin_lock(&last_ptr->lock);
  		if (last_ptr->block_group)
--			hint_byte = last_ptr->window_start;
-+			ffe_ctl.hint_byte = last_ptr->window_start;
- 		if (last_ptr->fragmented) {
- 			/*
- 			 * We still set window_start so we can keep track of the
- 			 * last place we found an allocation to try and save
+ 			ffe_ctl.hint_byte = last_ptr->window_start;
+@@ -3887,7 +3893,7 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
  			 * some time.
  			 */
--			hint_byte = last_ptr->window_start;
-+			ffe_ctl.hint_byte = last_ptr->window_start;
- 			use_cluster = false;
+ 			ffe_ctl.hint_byte = last_ptr->window_start;
+-			use_cluster = false;
++			ffe_ctl.use_cluster = false;
  		}
  		spin_unlock(&last_ptr->lock);
-@@ -3890,8 +3894,8 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 	}
+@@ -4000,10 +4006,11 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 		 * Ok we want to try and use the cluster allocator, so
+ 		 * lets look there
+ 		 */
+-		if (last_ptr && use_cluster) {
++		if (ffe_ctl.last_ptr && ffe_ctl.use_cluster) {
+ 			struct btrfs_block_group *cluster_bg = NULL;
  
- 	ffe_ctl.search_start = max(ffe_ctl.search_start,
- 				   first_logical_byte(fs_info, 0));
--	ffe_ctl.search_start = max(ffe_ctl.search_start, hint_byte);
--	if (ffe_ctl.search_start == hint_byte) {
-+	ffe_ctl.search_start = max(ffe_ctl.search_start, ffe_ctl.hint_byte);
-+	if (ffe_ctl.search_start == ffe_ctl.hint_byte) {
- 		block_group = btrfs_lookup_block_group(fs_info,
- 						       ffe_ctl.search_start);
- 		/*
+-			ret = find_free_extent_clustered(block_group, last_ptr,
++			ret = find_free_extent_clustered(block_group,
++							 ffe_ctl.last_ptr,
+ 							 &ffe_ctl, &cluster_bg);
+ 
+ 			if (ret == 0) {
+@@ -4021,8 +4028,8 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 			/* ret == -ENOENT case falls through */
+ 		}
+ 
+-		ret = find_free_extent_unclustered(block_group, last_ptr,
+-						   &ffe_ctl);
++		ret = find_free_extent_unclustered(block_group,
++						   ffe_ctl.last_ptr, &ffe_ctl);
+ 		if (ret == -EAGAIN)
+ 			goto have_block_group;
+ 		else if (ret > 0)
+@@ -4071,8 +4078,9 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
+ 	}
+ 	up_read(&space_info->groups_sem);
+ 
+-	ret = find_free_extent_update_loop(fs_info, last_ptr, ins, &ffe_ctl,
+-					   full_search, use_cluster);
++	ret = find_free_extent_update_loop(fs_info, ffe_ctl.last_ptr, ins,
++					   &ffe_ctl, full_search,
++					   ffe_ctl.use_cluster);
+ 	if (ret > 0)
+ 		goto search;
+ 
 -- 
 2.25.0
 
