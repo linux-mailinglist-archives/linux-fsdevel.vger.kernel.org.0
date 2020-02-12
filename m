@@ -2,158 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CDFA15ACA4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 17:03:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D352015ACBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 17:04:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgBLQDo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 11:03:44 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:58634 "EHLO mail.unsafe.ru"
+        id S1728721AbgBLQEb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 11:04:31 -0500
+Received: from mga09.intel.com ([134.134.136.24]:18375 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbgBLQDn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 11:03:43 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id DC5BFC61AB0;
-        Wed, 12 Feb 2020 16:03:40 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 17:03:39 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
+        id S1728708AbgBLQEb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 11:04:31 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2020 08:04:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,433,1574150400"; 
+   d="scan'208";a="251951787"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 12 Feb 2020 08:04:29 -0800
+Date:   Wed, 12 Feb 2020 08:04:29 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 10/11] docs: proc: add documentation for "hidepid=4"
- and "subset=pidfs" options and new mount behavior
-Message-ID: <20200212160339.q6pm5zmjy5mfnvcr@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-11-gladkov.alexey@gmail.com>
- <CALCETrWOXXYy5fo+D0wVBEviyk38ACqvO5Fep_oTEY6+UrS=4g@mail.gmail.com>
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 05/12] fs: remove unneeded IS_DAX() check
+Message-ID: <20200212160428.GD20214@iweiny-DESK2.sc.intel.com>
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+ <20200208193445.27421-6-ira.weiny@intel.com>
+ <20200211053401.GE10776@dread.disaster.area>
+ <20200211163831.GC12866@iweiny-DESK2.sc.intel.com>
+ <20200211204107.GM10776@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWOXXYy5fo+D0wVBEviyk38ACqvO5Fep_oTEY6+UrS=4g@mail.gmail.com>
+In-Reply-To: <20200211204107.GM10776@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:29:23AM -0800, Andy Lutomirski wrote:
-> On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> > ---
-> >  Documentation/filesystems/proc.txt | 53 ++++++++++++++++++++++++++++++
-> >  1 file changed, 53 insertions(+)
-> >
-> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> > index 99ca040e3f90..4741fd092f36 100644
-> > --- a/Documentation/filesystems/proc.txt
-> > +++ b/Documentation/filesystems/proc.txt
-> > @@ -50,6 +50,8 @@ Table of Contents
-> >    4    Configuring procfs
-> >    4.1  Mount options
-> >
-> > +  5    Filesystem behavior
-> > +
-> >  ------------------------------------------------------------------------------
-> >  Preface
-> >  ------------------------------------------------------------------------------
-> > @@ -2021,6 +2023,7 @@ The following mount options are supported:
-> >
-> >         hidepid=        Set /proc/<pid>/ access mode.
-> >         gid=            Set the group authorized to learn processes information.
-> > +       subset=         Show only the specified subset of procfs.
-> >
-> >  hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
-> >  (default).
-> > @@ -2042,6 +2045,56 @@ information about running processes, whether some daemon runs with elevated
-> >  privileges, whether other user runs some sensitive program, whether other users
-> >  run any program at all, etc.
-> >
-> > +hidepid=4 means that procfs should only contain /proc/<pid>/ directories
-> > +that the caller can ptrace.
+On Wed, Feb 12, 2020 at 07:41:07AM +1100, Dave Chinner wrote:
+> On Tue, Feb 11, 2020 at 08:38:31AM -0800, Ira Weiny wrote:
+> > On Tue, Feb 11, 2020 at 04:34:01PM +1100, Dave Chinner wrote:
+> > > On Sat, Feb 08, 2020 at 11:34:38AM -0800, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > 
+> > > > The IS_DAX() check in io_is_direct() causes a race between changing the
+> > > > DAX state and creating the iocb flags.
+> > > > 
+> > > > Remove the check because DAX now emulates the page cache API and
+> > > > therefore it does not matter if the file state is DAX or not when the
+> > > > iocb flags are created.
+> > > 
+> > > This statement is ... weird.
+> > > 
+> > > DAX doesn't "emulate" the page cache API at all
+> > 
+> > ah...  yea emulate is a bad word here.
+> > 
+> > > - it has it's own
+> > > read/write methods that filesystems call based on the iomap
+> > > infrastructure (dax_iomap_rw()). i.e. there are 3 different IO paths
+> > > through the filesystems: the DAX IO path, the direct IO path, and
+> > > the buffered IO path.
+> > > 
+> > > Indeed, it seems like this works a bit by luck: Ext4 and XFS always
+> > > check IS_DAX(inode) in the read/write_iter methods before checking
+> > > for IOCB_DIRECT, and hence the IOCB_DIRECT flag is ignored by the
+> > > filesystems. i.e. when we got rid of the O_DIRECT paths from DAX, we
+> > > forgot to clean up io_is_direct() and it's only due to the ordering
+> > > of checks that we went down the DAX path correctly....
+> > > 
+> > > That said, the code change is good, but the commit message needs a
+> > > rewrite.
+> > 
+> > How about?
+> > 
+> > <commit msg>
+> >   fs: Remove unneeded IS_DAX() check
+> >   
+> >   The IS_DAX() check in io_is_direct() causes a race between changing the
+> >   DAX state and creating the iocb flags.
 > 
-> I have a couple of minor nits here.
+> This is irrelevant - the check is simply wrong and has been since
+> ~2016 when we moved DAX to use the iomap infrastructure...
+
+Deleted.
+Ira
+
 > 
-> First, perhaps we could stop using magic numbers and use words.
-> hidepid=ptraceable is actually comprehensible, whereas hidepid=4
-> requires looking up what '4' means.
-
-Do you mean to add string aliases for the values?
-
-hidepid=0 == hidepid=default
-hidepid=1 == hidepid=restrict
-hidepid=2 == hidepid=ownonly
-hidepid=4 == hidepid=ptraceable
-
-Something like that ?
-
-> Second, there is PTRACE_MODE_ATTACH and PTRACE_MODE_READ.  Which is it?
-
-This is PTRACE_MODE_READ.
-
-> > +
-> >  gid= defines a group authorized to learn processes information otherwise
-> >  prohibited by hidepid=.  If you use some daemon like identd which needs to learn
-> >  information about processes information, just add identd to this group.
+> Cheers,
 > 
-> How is this better than just creating an entirely separate mount a
-> different hidepid and a different gid owning it?
-
-I'm not sure I understand the question. Now you cannot have two proc with
-different hidepid in the same pid_namespace. 
-
-> In any event,
-> usually gid= means that this gid is the group owner of inodes.  Let's
-> call it something different.  gid_override_hidepid might be credible.
-> But it's also really weird -- do different groups really see different
-> contents when they read a directory?
-
-If you use hidepid=2,gid=wheel options then the user is not in the wheel
-group will see only their processes and the user in the wheel group will
-see whole tree. The gid= is a kind of whitelist for hidepid=1|2.
-
--- 
-Rgrds, legion
-
+> Dave.
+> 
+> -- 
+> Dave Chinner
+> david@fromorbit.com
