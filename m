@@ -2,108 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A656159E79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 02:03:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABD2159F03
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 03:11:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbgBLBDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 20:03:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39365 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbgBLBDY (ORCPT
+        id S1727579AbgBLCKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 21:10:54 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10912 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727535AbgBLCKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 20:03:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id o15so302684ljg.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 17:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zy6kGEEkqAsEiZzWHqRtvxnsI6DtM6n9AdiuD2GudTU=;
-        b=fBxG1HcrByKfPtNty2DhtyD54YlVBt8nIN51NK2VPpgZ7L26CoMAQYrrNez+Edd1Gn
-         KLAHlVWkm3Q8uZOGQqKfncW351w+GkpekQ1AxurxF26lO2WmqXR1y7xwYNvUiRUf7dX7
-         p/ZI6Bsp5G+eMc0JFhnEsMBjvUERkEUAYwFn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zy6kGEEkqAsEiZzWHqRtvxnsI6DtM6n9AdiuD2GudTU=;
-        b=Td9jUoR29yEQMKuxNU8mqDX6F7bDyiSM+D6MfqrtDU8LBEoLRd/myETtj3in43gyNe
-         fDYweggvT3RUc3Sk3VUFo9NURUOBDtJPuvau97gvwSPfDxa6nNnU7EQAGqagmovukriw
-         WfOArXw9z+NpV1y/upjmQTeweyqAlwJ0GTnF6aohJkuqe8Mhz5nVCm9NXp6qgbmwnO00
-         ZtzKw4NzQBpOCH7fu+v+j6ecMAsb6PTQU2JafSVe7lWOGxBwlyOf/H95g4sxbUBc6W8L
-         U3x4CCFIwGhuVvSNjk1N4JxDgmLYTEF4J1jrog3cpIFPdSo6sUvQ2uMoJuTaqpSF1tXc
-         1k3Q==
-X-Gm-Message-State: APjAAAWSvqp/0haBBJWz5+fxaLN/ic/nOsGJ1ilpt6VauNNSRj6omNYB
-        Ax8BneFs1IxHErKE9BC/cVUa3+Uidg8=
-X-Google-Smtp-Source: APXvYqzRMRnEN2tCQNvTDWNIB9omu1oK6yvQU/OJoi6Ab8afDUEm1MBoQKmXnAcsY6c1QcxAyYT6pw==
-X-Received: by 2002:a2e:5357:: with SMTP id t23mr5774629ljd.227.1581469401713;
-        Tue, 11 Feb 2020 17:03:21 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id v13sm2609178lfq.69.2020.02.11.17.03.20
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Feb 2020 17:03:20 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id v17so313035ljg.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Feb 2020 17:03:20 -0800 (PST)
-X-Received: by 2002:a2e:580c:: with SMTP id m12mr6104508ljb.150.1581469398565;
- Tue, 11 Feb 2020 17:03:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20200211175507.178100-1-hannes@cmpxchg.org> <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
- <20200211193101.GA178975@cmpxchg.org> <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
- <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com> <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
-In-Reply-To: <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Feb 2020 17:03:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
-Message-ID: <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Rik van Riel <riel@surriel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tue, 11 Feb 2020 21:10:54 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e435e6b0000>; Tue, 11 Feb 2020 18:09:47 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 11 Feb 2020 18:10:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 11 Feb 2020 18:10:51 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 12 Feb
+ 2020 02:10:51 +0000
+Subject: Re: [PATCH v6 12/12] mm: dump_page(): additional diagnostics for huge
+ pinned pages
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20200211001536.1027652-1-jhubbard@nvidia.com>
+ <20200211001536.1027652-13-jhubbard@nvidia.com>
+ <20200211132159.pii2x5pssifemgaz@box>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <909f4ad5-128f-b4bd-e4cb-787885167a97@nvidia.com>
+Date:   Tue, 11 Feb 2020 18:10:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <20200211132159.pii2x5pssifemgaz@box>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1581473388; bh=zCZhatfwPo+VLNp+cEurTVm8c4ASNzi1xPIVnn9hsG4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=KPfg4MObEIiKHoeHFaJJrWQ8njdIGT3atUWt2b4jjTApxYejTmazQdE0YwMrBuFKU
+         3i/G5o9jjd6ioP0Qi2W/rUjSr00msSRFXATO/5rNEQ7DmoOJMKI37ZOJVs8SZHCmVU
+         blSLD+y8cV0ai0JTOpf3gRqP3613aMkN7Wiqb69HyX0DDCJPPKFj/TYL7jfNr87yWY
+         q37kkzihJidOZqNjw1XmMcIbjHjswPB2bRGry8NZkq9bXL4NReTx1MJk/Z1MLjIDdG
+         YKIMBb2eV93ApkPqaCI7R9IFDMlf3cKAs3qmM6FxY0PkH5G8/SVcHRa8M4LKHCtWB+
+         EblOFHEBRSltw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 4:47 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> What's the situation with highmem on ARM?
+On 2/11/20 5:21 AM, Kirill A. Shutemov wrote:
+...
+>> diff --git a/mm/debug.c b/mm/debug.c
+>> index f5ffb0784559..2189357f0987 100644
+>> --- a/mm/debug.c
+>> +++ b/mm/debug.c
+>> @@ -85,11 +85,22 @@ void __dump_page(struct page *page, const char *reason)
+>>  	mapcount = PageSlab(head) ? 0 : page_mapcount(page);
+>>  
+>>  	if (compound)
+>> -		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+>> -			"index:%#lx head:%px order:%u compound_mapcount:%d\n",
+>> -			page, page_ref_count(head), mapcount,
+>> -			mapping, page_to_pgoff(page), head,
+>> -			compound_order(head), compound_mapcount(page));
+>> +		if (hpage_pincount_available(page)) {
+>> +			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+>> +				"index:%#lx head:%px order:%u "
+>> +				"compound_mapcount:%d compound_pincount:%d\n",
+>> +				page, page_ref_count(head), mapcount,
+>> +				mapping, page_to_pgoff(page), head,
+>> +				compound_order(head), compound_mapcount(page),
+>> +				compound_pincount(page));
+>> +		} else {
+>> +			pr_warn("page:%px refcount:%d mapcount:%d mapping:%p "
+>> +				"index:%#lx head:%px order:%u "
+>> +				"compound_mapcount:%d\n",
+>> +				page, page_ref_count(head), mapcount,
+>> +				mapping, page_to_pgoff(page), head,
+>> +				compound_order(head), compound_mapcount(page));
+>> +		}
+> 
+> Have you considered using pr_cont() here. I guess it would be easier to
+> read.
 
-Afaik it's exactly the same as highmem on x86 - only 32-bit ARM ever
-needed it, and I was ranting at some people for repeating all the
-mistakes Intel did.
+Yes, and it does have the advantage of removing some of the code duplication above. 
+On the other hand, though, it leaves the end result (the long lines being printed) 
+the same, and introduces a window in which the output can get garbled by another 
+thread that is printk'-ing. And actually, what I'd really like is to shorten the
+printed output lines, as I mentioned in [1].
 
-But arm64 doesn't need it, and while 32-bit arm is obviosuly still
-selling, I think that in many ways the switch-over to 64-bit has been
-quicker on ARM than it was on x86. Partly because it happened later
-(so all the 64-bit teething pains were dealt with), but largely
-because everybody ended up actively discouraging 32-bit on the Android
-side.
+So overall, given that this series has been fairly difficult to get finalized, 
+and it's now in Andrew's tree at last, I'd *really* like to leave it as-is right 
+now, and build on top of it. So I will submit a follow-on patch to formally propose
+shortening the printed lines, and that can live or die independently of this series,
+which is hopefully over now.
 
-There were a couple of unfortunate early 32-bit arm server attempts,
-but they were - predictably - complete garbage and nobody bought them.
-They don't exist any more.
+> 
+> You can use my Ack anyway.
 
-So at least my gut feel is that the arm people don't have any big
-reason to push for maintaining HIGHMEM support either.
 
-But I'm adding a couple of arm people and the arm list just in case
-they have some input.
+Thanks, and I appreciate all of your reviews and bug spotting and ideas for improvements 
+on this series, it's been really helpful.
 
-[ Obvious background for newly added people: we're talking about
-making CONFIG_HIGHMEM a deprecated feature and saying that if you want
-to run with lots of memory on a 32-bit kernel, you're doing legacy
-stuff and can use a legacy kernel ]
 
-              Linus
+> 
+> 
+>>  	else
+>>  		pr_warn("page:%px refcount:%d mapcount:%d mapping:%p index:%#lx\n",
+>>  			page, page_ref_count(page), mapcount,
+>> -- 
+>> 2.25.0
+>>
+> 
+
+
+[1] https://lore.kernel.org/r/96e1f693-0e7b-2817-f13d-1946ff7654a1@nvidia.com
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
