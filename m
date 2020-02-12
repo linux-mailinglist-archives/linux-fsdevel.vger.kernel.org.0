@@ -2,191 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4B415AB48
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 15:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9478615AB4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 15:51:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbgBLOt0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 09:49:26 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:46690 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbgBLOt0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 09:49:26 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id AFA2DC61AB0;
-        Wed, 12 Feb 2020 14:49:22 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 15:49:21 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-8-gladkov.alexey@gmail.com>
- <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        id S1728260AbgBLOu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 09:50:58 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:17769 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbgBLOu6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 09:50:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581519057; x=1613055057;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=ZmyVsgOtsoaLZWUrjGVMMDmSvb/cMujw43VHLfRLChImQBaS2oRCavoN
+   gkm56qUQf8yNNIJzCSXZNa449hgwdNZW4GbY9ZHz48c8wDBBpky96UGGv
+   Rf+sE8wMAGjM26/nv2Tl185u6mQz5V9Nnk0eVEZ9VsAvRXyrk55kK+Bj9
+   oiKVnLD6RN8alv6nwU+ZJ5OOR2dJ/DIH4f9SS25wOmJuuaf18V+kdqVGf
+   FyxkQFmeUpWSyeOa+EBygbZaf86gCIKskFgDGja+wEA//A7h6ZHZp1a1r
+   xIAAJ9NVqEI5benvxSyLnACwRZV9HUnDJfYqIqYNCEFInGA62GO8xIVWP
+   A==;
+IronPort-SDR: 4yBuQevx3qgSODa0hb6CmtLd3kZCQ2vpU2WiZD5HX/Qm2rLjmqllfXlBQ4tJ6CJ0gjla8Eqg9t
+ Rv3YKwD6/tL0UCHmmrNQztYIDL6jU93PinmUEjFXI4bl921kG7KU35mYQRRRJ6Or9t73jnExKD
+ K0t5U/CTpNpPZ5Nmuh/YSGcj0vfSWyvn7aHM79Ua9bTy0xhfe8OW/9zoPV8aPvmGzEqrTrlpAV
+ 0D478Qw1JKhC5Fq6VbZO6ZJmrtlx7CcndNls5+X0qDoqh4aV5eP6N9xv30apbDnVsuTssVOSbp
+ u9E=
+X-IronPort-AV: E=Sophos;i="5.70,433,1574092800"; 
+   d="scan'208";a="129679311"
+Received: from mail-dm6nam11lp2175.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.175])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Feb 2020 22:50:56 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oR9WByOuhIz4sDcJ1zq264SHrrlQ7UtvIWhcsCSd7bgkKCGFMfczvCsDsvyW8/ImPpB9VhkDmbCuO89yR9EEaLarAIfRXhd0551P/3FoXH9R3qs/Gktl/YxqV3GRn+pCtpypklpW94+iReA4ogSvqglMiImXYQRWz8oBBGvVfUK85ki9xa3rWTeEzNbJ8dwlet2PRMWK8A8fEBwu5JDST/gZbGOIm5Xcl7eEhvEfnfOxWpafpVuAC3/jbgJ9zBL66GNAVbPW+Wm+Bk3DVAjZfEV8Px13/ndIv5EMWzwJPcko0GzHmdvZKu2PCFjfCpqpvl2aWkBCoaBH0YK8M2t8xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=Mge9QeNAf5Wp/PppYyzLR4IpQRlaWGra+yPulNxYz62zhPVO+f3eYt5o9xtoYm4hUGJey+6gcIDgVs+uFDP8+laoZoUbEMz7rBnbOyvYfUtU3XSSyXB2tmp7RuUXdajdRGil0ITrPefSHHLVc8n65uHoSvHaWXoIHLEOq9y8ksMzFVD0wFOumKLwzZYY+iuJ2AKZJT8WAHJVDXTAcv2CxxH4DKmbBrnCRsu14cQgTYH5fdZictmjapXpmK2uywX/8Ni01ky0RY7J2askyWGmqtnmQRASc55PK1FUKSRenbr5xFpQpR9VPb5kORfksEL5uJOc9dr4eXcTAjC/e+66LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=JSBzT+NZY9Pv5Qq3mZgQ9CCLOzP2tSZFQb0QUWdD7S+qiav3+UXHTQIbRY6hnA565JNgpg36wzpk1pqFUBSFKvY4l+eA5vZ9szNKzZa2raBlZtV7kXKpcsBKt5bg3ios9ohHRrVBXJ1p4BtvGKF38uE95sueA05LaKlwP5uA3O4=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com (10.167.139.149) by
+ SN4PR0401MB3711.namprd04.prod.outlook.com (10.167.150.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.29; Wed, 12 Feb 2020 14:50:56 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32%5]) with mapi id 15.20.2707.030; Wed, 12 Feb 2020
+ 14:50:56 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>
+CC:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 17/21] btrfs: factor out found_extent()
+Thread-Topic: [PATCH v2 17/21] btrfs: factor out found_extent()
+Thread-Index: AQHV4XUOLDYNa4s+I0GICPILOs3mjw==
+Date:   Wed, 12 Feb 2020 14:50:56 +0000
+Message-ID: <SN4PR0401MB35984C7911E491F39BADF47D9B1B0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200212072048.629856-1-naohiro.aota@wdc.com>
+ <20200212072048.629856-18-naohiro.aota@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 71cf156a-0db4-4cee-7e5d-08d7afcaf741
+x-ms-traffictypediagnostic: SN4PR0401MB3711:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN4PR0401MB3711005F059F0E278477EA599B1B0@SN4PR0401MB3711.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-forefront-prvs: 0311124FA9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(396003)(39860400002)(376002)(346002)(189003)(199004)(9686003)(52536014)(5660300002)(2906002)(4326008)(4270600006)(110136005)(186003)(316002)(26005)(7696005)(71200400001)(8936002)(478600001)(55016002)(81166006)(81156014)(8676002)(86362001)(33656002)(6506007)(558084003)(66476007)(66556008)(54906003)(64756008)(66446008)(91956017)(19618925003)(66946007)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3711;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: lit9EbeMn7jIuzHPQnYHNECtoZVzEEj6ou3Pr7YBpYrGM5V0IA8s4L6WZ0eBjacvOSCo6BfcWp3XO/IvVtN+AQd7ks1xOhODs88j2GCw+i5UT9H0/qpaCa/e4yPtSY3b3u35nNdvm9mJiXy53IZLYhECHS/SlAeRY00OHWJqAkZH+zeryl1/ushMjj6jIdHg0z6nPR1d7u0umee2T8pNzpNEL79h9OWyvSTCgWtyIqHUwi51Ivzd4Jkcjijk2aLD2aqlDfLIEduI3ZJym0d/fvOU606/o/X9HkDfQjbcwQhuO676MD2GoocLcFYoegztMvumjbwwMZ+h3xPrEWW+3uWaBrMxk+QlBD+q/GlyeuYGpYmBGDzKKkQm8ZPoOrTlZeFsUN3fklrGu7n+4Wc5NwlAQAsdi6zcKG30T1EeckmKWtgJRzeT84XJFLBbjiWg
+x-ms-exchange-antispam-messagedata: 9bHXxc0H927n//cVPRv9aEmDEWa1EyRbXFGYLhLBGwPZivG6SSTlzyfH51AdBjYotqhcqEc1X3Grmuzipv3kQU7g0e8J+wfLBokB25W3LoqwI+3uEPTFnkYJP3KV47kqtdm2FOI+3tdwhqa3KEptow==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v9odlxbr.fsf@x220.int.ebiederm.org>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71cf156a-0db4-4cee-7e5d-08d7afcaf741
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Feb 2020 14:50:56.1884
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bRNdT2j+kM+0f+RjNTBhZZIFQeEnKsrHdDaa1xNirBLNku4YHihodDhCGuvwz+Hg/UgjMYMKjvUJta8Wa27UHfWFjoGM/09hWkJr4Eq1wWU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3711
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 07:36:08PM -0600, Eric W. Biederman wrote:
-> Alexey Gladkov <gladkov.alexey@gmail.com> writes:
-> 
-> > This allows to flush dcache entries of a task on multiple procfs mounts
-> > per pid namespace.
-> >
-> > The RCU lock is used because the number of reads at the task exit time
-> > is much larger than the number of procfs mounts.
-> 
-> A couple of quick comments.
-> 
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
-> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> > ---
-> >  fs/proc/base.c                | 20 +++++++++++++++-----
-> >  fs/proc/root.c                | 27 ++++++++++++++++++++++++++-
-> >  include/linux/pid_namespace.h |  2 ++
-> >  include/linux/proc_fs.h       |  2 ++
-> >  4 files changed, 45 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 4ccb280a3e79..24b7c620ded3 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -3133,7 +3133,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
-> >  	.permission	= proc_pid_permission,
-> >  };
-> >  
-> > -static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
-> > +static void proc_flush_task_mnt_root(struct dentry *mnt_root, pid_t pid, pid_t tgid)
-> Perhaps just rename things like:
-> > +static void proc_flush_task_root(struct dentry *root, pid_t pid, pid_t tgid)
-> >  {
-> 
-> I don't think the mnt_ prefix conveys any information, and it certainly
-> makes everything longer and more cumbersome.
-> 
-> >  	struct dentry *dentry, *leader, *dir;
-> >  	char buf[10 + 1];
-> > @@ -3142,7 +3142,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
-> >  	name.name = buf;
-> >  	name.len = snprintf(buf, sizeof(buf), "%u", pid);
-> >  	/* no ->d_hash() rejects on procfs */
-> > -	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
-> > +	dentry = d_hash_and_lookup(mnt_root, &name);
-> >  	if (dentry) {
-> >  		d_invalidate(dentry);
-> >  		dput(dentry);
-> > @@ -3153,7 +3153,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
-> >  
-> >  	name.name = buf;
-> >  	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
-> > -	leader = d_hash_and_lookup(mnt->mnt_root, &name);
-> > +	leader = d_hash_and_lookup(mnt_root, &name);
-> >  	if (!leader)
-> >  		goto out;
-> >  
-> > @@ -3208,14 +3208,24 @@ void proc_flush_task(struct task_struct *task)
-> >  	int i;
-> >  	struct pid *pid, *tgid;
-> >  	struct upid *upid;
-> > +	struct dentry *mnt_root;
-> > +	struct proc_fs_info *fs_info;
-> >  
-> >  	pid = task_pid(task);
-> >  	tgid = task_tgid(task);
-> >  
-> >  	for (i = 0; i <= pid->level; i++) {
-> >  		upid = &pid->numbers[i];
-> > -		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
-> > -					tgid->numbers[i].nr);
-> > +
-> > +		rcu_read_lock();
-> > +		list_for_each_entry_rcu(fs_info, &upid->ns->proc_mounts, pidns_entry) {
-> > +			mnt_root = fs_info->m_super->s_root;
-> > +			proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
-> > +		}
-> > +		rcu_read_unlock();
-> > +
-> > +		mnt_root = upid->ns->proc_mnt->mnt_root;
-> > +		proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
-> 
-> I don't think this following of proc_mnt is needed.  It certainly
-> shouldn't be.  The loop through all of the super blocks should be
-> enough.
-
-Yes, thanks!
-
-> Once this change goes through.  UML can be given it's own dedicated
-> proc_mnt for the initial pid namespace, and proc_mnt can be removed
-> entirely.
-
-After you deleted the old sysctl syscall we could probably do it.
-
-> Unless something has changed recently UML is the only other user of
-> pid_ns->proc_mnt.  That proc_mnt really only exists to make the loop in
-> proc_flush_task easy to write.
-
-Now I think, is there any way to get rid of proc_mounts or even
-proc_flush_task somehow.
-
-> It also probably makes sense to take the rcu_read_lock() over
-> that entire for loop.
-
-Al Viro pointed out to me that I cannot use rcu locks here :(
-
--- 
-Rgrds, legion
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
