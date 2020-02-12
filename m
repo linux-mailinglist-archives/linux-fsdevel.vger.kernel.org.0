@@ -2,102 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 298B515AB9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 16:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0FDC15ABAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 16:05:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbgBLPAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 10:00:43 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:59254 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbgBLPAn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 10:00:43 -0500
-Received: from comp-core-i7-2640m-0182e6 (nat-pool-brq-t.redhat.com [213.175.37.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 9F5EFC61AB0;
-        Wed, 12 Feb 2020 15:00:39 +0000 (UTC)
-Date:   Wed, 12 Feb 2020 16:00:38 +0100
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 03/11] proc: move /proc/{self|thread-self} dentries to
- proc_fs_info
-Message-ID: <20200212150038.rr364l5kjcgbmr3g@comp-core-i7-2640m-0182e6>
-Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
- <20200210150519.538333-4-gladkov.alexey@gmail.com>
- <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
+        id S1728247AbgBLPFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 10:05:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43404 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727531AbgBLPFl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Feb 2020 10:05:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=R27uEzmvp31adlnkqQRzsQ6H2g7fBN8gFQSD+LxBf6E=; b=Hz/3Aibqu2QROGvLCaHh06rM8E
+        Yfb6NbCsXryt/BFtAU9rfe0bem9ABTYfLoj6lbuCJw63ozFBFbWDItsSARxoIlDqsLdmhEOMgAAIQ
+        qMiHHLAHg06nuQ8EvntsoYMO3ck9OwEBrhsZkglC9A2Kp2i+girvA4S6vF/FVH0OalUbyJhCvV4hc
+        PM/6+R+g9sla1QNFkp3Obqlzokt5hcFu1aZKpcz3AqpxsTpuc5FCRaYZPsLrHc4jZIdBEJOwopD5X
+        tS/jirDX6LwfWBfqHYJkFqdh+y1ERUCFp9Q/9qrwLv5BVxTwA1KWQtaH59zin/o5uZXT9DjAs8zAb
+        Opd2LwwA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j1ta8-0007QS-Qc; Wed, 12 Feb 2020 15:05:40 +0000
+Date:   Wed, 12 Feb 2020 07:05:40 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
+Message-ID: <20200212150540.GE7778@bombadil.infradead.org>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-11-willy@infradead.org>
+ <20200212074453.GH7068@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrWGpRr86tVKJU-sEMcg+x0Yzp+TbiBhrAc71RaO8=DYGQ@mail.gmail.com>
+In-Reply-To: <20200212074453.GH7068@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 10, 2020 at 10:23:23AM -0800, Andy Lutomirski wrote:
-> On Mon, Feb 10, 2020 at 7:06 AM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
-> >
-> > This is a preparation patch that moves /proc/{self|thread-self} dentries
-> > to be stored inside procfs fs_info struct instead of making them per pid
-> > namespace. Since we want to support multiple procfs instances we need to
-> > make sure that these dentries are also per-superblock instead of
-> > per-pidns,
+On Tue, Feb 11, 2020 at 11:44:53PM -0800, Christoph Hellwig wrote:
+> Looks good modulo some nitpicks below:
 > 
-> The changelog makes perfect sense so far...
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > 
-> > unmounting a private procfs won't clash with other procfs
-> > mounts.
+> > + * Context: Any context.
 > 
-> This doesn't parse as part of the previous sentence.  I'm also not
-> convinced that this really involves unmounting per se.  Maybe just
-> delete these words.
+> Does this add any value for a trivial helper like this?
 
-Sure. I will remove this part.
+I think it's good to put them in to remind people they should be putting
+them in for more complex functions.  Just like the Return: section.
 
--- 
-Rgrds, legion
+> > + * Return: The number of filesystem blocks covered by this page.
+> > + */
+> > +static inline
+> > +unsigned int i_blocks_per_page(struct inode *inode, struct page *page)
+> 
+> static inline unisnged int
+> i_blocks_per_page(struct inode *inode, struct page *page)
 
+That's XFS coding style.  Linus has specifically forbidden that:
+
+https://lore.kernel.org/lkml/1054519757.161606@palladium.transmeta.com/
