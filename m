@@ -2,36 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F85159FEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:19:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C198215A015
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Feb 2020 05:20:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbgBLETD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Feb 2020 23:19:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54106 "EHLO
+        id S1728377AbgBLEUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Feb 2020 23:20:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53876 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbgBLESu (ORCPT
+        with ESMTP id S1727960AbgBLESq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Feb 2020 23:18:50 -0500
+        Tue, 11 Feb 2020 23:18:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=hIDhhEou9RiUJDaLZAeECfggSk3sIeZ9QeAjOR5EQ34=; b=o+4Q+Lx3BQoXdB6pmIZNMe2aUb
-        CZi3KzFXiBXqjCzC5E0v34MYMxbcmJu3Rrncx01PU9cwODwDLM1dClFtq5oqCLkulOMhhBVCwFQQK
-        O7gK1YrssQJSLR/N2MFpNRVO2Ps52v5EPJNgcxPSJ21lMydKV4fn5OeGP5HFe+0KqDluiMhr1V5vX
-        bb2mpuVTh9W6rq+6ruMUc7V8iK5X13IWLX8A2Zyh/r87S7Gg3R2VmAgJuMtNHbggNG+d3TY2DSdXy
-        uco25ofA+Usz+g9M8rzzYYkIgZFCFuK8TtxGMYwsVRZ5JkQ2iy6Z5kXrYwDXZrnQ6X2yNM6EG5bOW
-        tEJkZUrA==;
+        bh=G02P3NwoSCoisXgQ/IS2rHa3w6ThGczr5ALv3SgsGPE=; b=si99YFEQ0elcNaPbG1Sa7xumtX
+        V7eGl8RRqn/ROGpPEuHPSmuTWjQIm5vo7lQlpOZyNr13m5VvzeRnukA8bO75KMxjKUMkqCvVFh9RC
+        bAGhuFS7oXGvdVwJlWCSFVy2qtN1ME4nHd27PKLOLRcFpRUQbNZhMNAwiN2REv3fDHGKextlNerDD
+        AakK2U6Jo2OqyZdebCrhKzIsfldMP9qoKNsSszalDBnlEhAMnq5Knq12SDN/Xf2sQKEbysUiSHdRV
+        Xn/xPbEVn5qH1t/ema2JlwYjN6p69/bDPnkIZG02tw99eCasVDKlwm2YRsUoTroeE1jDg5M3G8Pfg
+        rq46tHlQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j1jU6-0006mM-Gc; Wed, 12 Feb 2020 04:18:46 +0000
+        id 1j1jU6-0006mQ-Hd; Wed, 12 Feb 2020 04:18:46 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v2 01/25] mm: Use vm_fault error code directly
-Date:   Tue, 11 Feb 2020 20:18:21 -0800
-Message-Id: <20200212041845.25879-2-willy@infradead.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/25] mm: Optimise find_subpage for !THP
+Date:   Tue, 11 Feb 2020 20:18:22 -0800
+Message-Id: <20200212041845.25879-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.1
 In-Reply-To: <20200212041845.25879-1-willy@infradead.org>
 References: <20200212041845.25879-1-willy@infradead.org>
@@ -44,27 +43,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Use VM_FAULT_OOM instead of indirecting through vmf_error(-ENOMEM).
+If THP is disabled, find_subpage can become a no-op.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- mm/filemap.c | 2 +-
+ include/linux/pagemap.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1784478270e1..1beb7716276b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2491,7 +2491,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		if (!page) {
- 			if (fpin)
- 				goto out_retry;
--			return vmf_error(-ENOMEM);
-+			return VM_FAULT_OOM;
- 		}
- 	}
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 75bdfec49710..0842622cca90 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -340,7 +340,7 @@ static inline struct page *find_subpage(struct page *page, pgoff_t offset)
  
+ 	VM_BUG_ON_PAGE(PageTail(page), page);
+ 
+-	return page + (offset & (compound_nr(page) - 1));
++	return page + (offset & (hpage_nr_pages(page) - 1));
+ }
+ 
+ struct page *find_get_entry(struct address_space *mapping, pgoff_t offset);
 -- 
 2.25.0
 
