@@ -2,99 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5D815CE0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 23:24:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC3D15CE16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 23:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbgBMWYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 17:24:00 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35034 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727347AbgBMWYA (ORCPT
+        id S1727519AbgBMWdN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 17:33:13 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46214 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726780AbgBMWdN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:24:00 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2Mti-00CGBO-G2; Thu, 13 Feb 2020 22:23:50 +0000
-Date:   Thu, 13 Feb 2020 22:23:50 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200213222350.GU23230@ZenIV.linux.org.uk>
-References: <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <20200213055527.GS23230@ZenIV.linux.org.uk>
- <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com>
+        Thu, 13 Feb 2020 17:33:13 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DMWc6H152983;
+        Thu, 13 Feb 2020 22:33:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : from : subject :
+ cc : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=NpjRCzo2rTzOe6HlOeVL9C/0xrjNS70JovCKzVWJyq0=;
+ b=JOiMFR202QcuvnkGB0LI7wqPmJyOzy1cavZz2aE7epm5ZZGzKLnJLQHipLUeWnxHBNXY
+ 2erB1gPLr2S3DRivQuVHHg6zAbT+AuHsoOEFAOLmqxnU7LWxeb/u3Saqw3dDYysYbLZ6
+ 7Gn3W8djCqRC/3uUmjQXc64w2j+6mh5YLajFonjhDkIRPobBMnqOctvD3VcWs6agxirQ
+ lawgdAztqwjZfc5+I/uBZvAL86MAFuONSXcoO8Ue2+rTkJdort5OXzHXbr9R0Q8N3q9N
+ tvmQpLJ6aWUhefqnVL2mJi53IhcGtbXag1hyZhMEILpoTRC33EJMf8KAoyw89Y5MHZbh 1Q== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2y2k88np70-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 22:33:11 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01DMRwR0061667;
+        Thu, 13 Feb 2020 22:33:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2y4k38nsqx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Feb 2020 22:33:10 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01DMX9vD015102;
+        Thu, 13 Feb 2020 22:33:09 GMT
+Received: from [192.168.1.223] (/67.1.3.112)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 14:33:09 -0800
+To:     lsf-pc@lists.linux-foundation.org
+From:   Allison Collins <allison.henderson@oracle.com>
+Subject: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com>
+Date:   Thu, 13 Feb 2020 15:33:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=979 adultscore=0
+ bulkscore=0 malwarescore=0 phishscore=0 suspectscore=1 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002130160
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=1 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002130160
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 01:30:11PM -0800, Linus Torvalds wrote:
-> On Wed, Feb 12, 2020 at 9:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > What I don't understand is the insistence on getting those dentries
-> > via dcache lookups.
-> 
-> I don't think that's an "insistence", it's more of a "historical
-> behavior" together with "several changes over the years to deal with
-> dentry-level cleanups and updates".
-> 
-> > _IF_ we are willing to live with cacheline
-> > contention (on ->d_lock of root dentry, if nothing else), why not
-> > do the following:
-> >         * put all dentries of such directories ([0-9]* and [0-9]*/task/*)
-> > into a list anchored in task_struct; have non-counting reference to
-> > task_struct stored in them (might simplify part of get_proc_task() users,
-> 
-> Hmm.
-> 
-> Right now I don't think we actually create any dentries at all for the
-> short-lived process case.
-> 
-> Wouldn't your suggestion make fork/exit rather worse?
-> 
-> Or would you create the dentries dynamically still at lookup time, and
-> then attach them to the process at that point?
-> 
-> What list would you use for the dentry chaining? Would you play games
-> with the dentry hashing, and "hash" them off the process, and never
-> hit in the lookup cache?
+Hi all,
 
-I'd been thinking of ->d_fsdata pointing to a structure with list_head
-and a (non-counting) task_struct pointer for those guys.  Allocated
-on lookup, of course (as well as readdir ;-/) and put on the list
-at the same time.
+I know there's a lot of discussion on the list right now, but I'd like 
+to get this out before too much time gets away.  I would like to propose 
+the topic of atomic writes.  I realize the topic has been discussed 
+before, but I have not found much activity for it recently so perhaps we 
+can revisit it.  We do have a customer who may have an interest, so I 
+would like to discuss the current state of things, and how we can move 
+forward.  If efforts are in progress, and if not, what have we learned 
+from the attempt.
 
-IOW, for short-lived process we simply have an empty (h)list anchored
-in task_struct and that's it.
+I also understand there are multiple ways to solve this problem that 
+people may have opinions on.  I've noticed some older patch sets trying 
+to use a flag to control when dirty pages are flushed, though I think 
+our customer would like to see a hardware solution via NVMe devices.  So 
+I would like to see if others have similar interests as well and what 
+their thoughts may be.  Thanks everyone!
+
+Allison
