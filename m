@@ -2,170 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DEB715B5A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 01:07:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C88715B5AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 01:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbgBMAG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 19:06:59 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35475 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbgBMAG7 (ORCPT
+        id S1729220AbgBMAJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 19:09:49 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36981 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727117AbgBMAJt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:06:59 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w12so4537427wrt.2;
-        Wed, 12 Feb 2020 16:06:58 -0800 (PST)
+        Wed, 12 Feb 2020 19:09:49 -0500
+Received: by mail-ed1-f65.google.com with SMTP id s3so4576630edy.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 16:09:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=O1BPoQAiHeJ08USRykHnfve8Vnu0iANnJABo4Mj2ZQI=;
-        b=tj+mP1zAB0okAO0Qbox6Xr40Gl5RTa+LpO0tTucHh94zQmdcttrnjSmMPggZL7Omrb
-         KMOQpssxKHuklM1GatXDJm/OIJ1Hj0hcl2w1gBsTG7XPXZrsUhXK0Qozxx4wLFVIiSuC
-         U+oeBNUpHfdI+RxZg+rcxzbaus5JnNeWAUJaohS54mXtOJDT+jsI95qDeCvPsbQ0hEKY
-         a2b6cXiLn7pWr58zqzByitCv3K7G02nmeNyZmTGT78Fs0zdIy2atCDnXto9ZTYIMWCQi
-         nus08pk1xSiCZfN/FWJ/MF8z6qo5fIvCEmhg+mTxUFr5Q3faUkLvNnmsJy3REklo0F2T
-         pyvA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HglMhRV1r3SlCbyh50p8XWXMifi0DbV0medDPmHPWIY=;
+        b=cgZdKtHSkw6wGlofy5ORamY4majYp5ZL8xVC4i2IAjxKZ+DIoA+RHnKzW5rqBgKYhH
+         gYPFParo3CDZbz5ML9ncCpAGxaZIqwx9I1HFgW7sEUl7WXlTFQtoX17ClMgO6pBPOyvF
+         U+UR9ZzRqd3M0HuauEVRrm6SsbkzDwCTV0jTOz2x48ia2WVNYy7+UwckGmY7T5U21yyp
+         p+2nblF0CL7Gywq8jeENvPPsr4unR99eYMqiQBn4r8CfJZzu/+Sh4crQxD06V5Xtfp6z
+         BNvTs4R1mnuLI2tUL4OGNyHhlSKD8k9P4AuCDtX3Yp6Wk3ra+TvmSr/YUAo0vI0Ah2ld
+         YzmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=O1BPoQAiHeJ08USRykHnfve8Vnu0iANnJABo4Mj2ZQI=;
-        b=EsZnyryA5n7xQk9/2oQ/v1QYcRhuFxD7+rV9gkWCkLQhRO2LWCIQaptv2SunVwyyr6
-         i7V7LCOYRiiDKeYCbgy1ll/46qXqe1D/7zdN0KzgIKfwLeO39lmGPXVwUUEXdjkpNfpO
-         c5QbzM3o+Yl766d0UefyoFn2/tpZVHaqh6eNDry7HK2RHgNCs9tW56sEX3zbyRZB3AKr
-         J6ktTrMVHbkv4u97sl0FoWf4O2SCEcLvS5Rm7LajNQr4EAPL4jZ6BCKl3Rr/zphBJfYC
-         Qs2MbcXam0e6xj8t+WfM/VDY9zB5aLgacmt1/REp6ZPo3HExvTeCnYsdvVpfPl9NlyOY
-         Wd4Q==
-X-Gm-Message-State: APjAAAXHofPyf70m5Wi0Gjed5DVpJNHn6Ng58/wnFwIqqD0Sj0AflHTc
-        fiUH/MfP3+UY5a/54cG+VHY=
-X-Google-Smtp-Source: APXvYqzDTIe/LANGqzA7FtUhatpdgNkWPN6BGhpgz26N4uJtntPDqrvFQ8Zm6hEdzXfBDuOlod1mDQ==
-X-Received: by 2002:adf:ffc5:: with SMTP id x5mr18300916wrs.92.1581552417568;
-        Wed, 12 Feb 2020 16:06:57 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id z19sm504912wmi.43.2020.02.12.16.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 16:06:56 -0800 (PST)
-Date:   Thu, 13 Feb 2020 01:06:56 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20200213000656.hx5wdofkcpg7aoyo@pali>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190829205631.uhz6jdboneej3j3c@pali>
- <184209.1567120696@turing-police>
- <20190829233506.GT5281@sasha-vm>
- <20190830075647.wvhrx4asnkrfkkwk@pali>
- <20191016140353.4hrncxa5wkx47oau@pali>
- <20191016143113.GS31224@sasha-vm>
- <20191016160349.pwghlg566hh2o7id@pali>
- <20191016203317.GU31224@sasha-vm>
- <20191017075008.2uqgdimo3hrktj3i@pali>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HglMhRV1r3SlCbyh50p8XWXMifi0DbV0medDPmHPWIY=;
+        b=gwj84KZb25HV4EoAcQw6LrX2zrZlU61rbIwidn7V8GD8EadHUxDr8/cm21ZWwMOBTL
+         tSK0+G08lsBztpyHB1Atzcm7hqe8KtF6UKMkqMeDx9/3WCBLgxcKOcFlU4BDCFZ6hTc2
+         JZgoZitWAIWJfZ0H0VToygXb0vI1wvRqXb2l5v2rGH+DMJSj8HQ90JFtWW0OqaOzda1h
+         DdGjwl3Q9GsTZsOH++X59+RoeF1mlZcsNDDD09sEBDsP+eO50fOsJkrALcA6yxSAa6vm
+         x7X3EPp69K/AM7S5wMvYFKyj8awH0PPPH/sklPVIodUFhwhpZN45FaBsGYnBZwH8jMbu
+         +zuw==
+X-Gm-Message-State: APjAAAUCdWb/xkggym/pGFBrO4eRaS9vwAbO7mky6sbeoxMcpNjaFVLD
+        6LutOerkqAEaIFiM4jcOUHNZET5h2iHQMfuATOyM
+X-Google-Smtp-Source: APXvYqxZzJWTQkF0MyAR/0hvazcgtPMpLBtZbyavM6j8WQ0AcCQg2H9RMuC42u9/Eg9eKGj3MTNxtdWkgRhqZAMYJww=
+X-Received: by 2002:a50:e108:: with SMTP id h8mr11996848edl.196.1581552586354;
+ Wed, 12 Feb 2020 16:09:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191017075008.2uqgdimo3hrktj3i@pali>
-User-Agent: NeoMutt/20180716
+References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com> <3142237.YMNxv0uec1@x2>
+In-Reply-To: <3142237.YMNxv0uec1@x2>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 Feb 2020 19:09:35 -0500
+Message-ID: <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
-
-On Thursday 17 October 2019 09:50:08 Pali Rohár wrote:
-> On Wednesday 16 October 2019 16:33:17 Sasha Levin wrote:
-> > On Wed, Oct 16, 2019 at 06:03:49PM +0200, Pali Rohár wrote:
-> > > On Wednesday 16 October 2019 10:31:13 Sasha Levin wrote:
-> > > > On Wed, Oct 16, 2019 at 04:03:53PM +0200, Pali Rohár wrote:
-> > > > > On Friday 30 August 2019 09:56:47 Pali Rohár wrote:
-> > > > > > On Thursday 29 August 2019 19:35:06 Sasha Levin wrote:
-> > > > > > > With regards to missing specs/docs/whatever - our main concern with this
-> > > > > > > release was that we want full interoperability, which is why the spec
-> > > > > > > was made public as-is without modifications from what was used
-> > > > > > > internally. There's no "secret sauce" that Microsoft is hiding here.
-> > > > > >
-> > > > > > Ok, if it was just drop of "current version" of documentation then it
-> > > > > > makes sense.
-> > > > > >
-> > > > > > > How about we give this spec/code time to get soaked and reviewed for a
-> > > > > > > bit, and if folks still feel (in a month or so?) that there are missing
-> > > > > > > bits of information related to exfat, I'll be happy to go back and try
-> > > > > > > to get them out as well.
+On Wed, Feb 12, 2020 at 5:39 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> On Wednesday, February 5, 2020 5:50:28 PM EST Paul Moore wrote:
+> > > > > > ... When we record the audit container ID in audit_signal_info() we
+> > > > > > take an extra reference to the audit container ID object so that it
+> > > > > > will not disappear (and get reused) until after we respond with an
+> > > > > > AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
+> > > > > > AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took
+> > > > > > in
+> > > > > > audit_signal_info().  Unless I'm missing some other change you
+> > > > > > made,
+> > > > > > this *shouldn't* affect the syscall records, all it does is
+> > > > > > preserve
+> > > > > > the audit container ID object in the kernel's ACID store so it
+> > > > > > doesn't
+> > > > > > get reused.
 > > > > >
-> > > > > Hello Sasha!
+> > > > > This is exactly what I had understood.  I hadn't considered the extra
+> > > > > details below in detail due to my original syscall concern, but they
+> > > > > make sense.
 > > > > >
-> > > > > Now one month passed, so do you have some information when missing parts
-> > > > > of documentation like TexFAT would be released to public?
-> > > > 
-> > > > Sure, I'll see if I can get an approval to open it up.
-> > > 
-> > > Ok!
-> > > 
-> > > > Can I assume you will be implementing TexFAT support once the spec is
-> > > > available?
-> > > 
-> > > I cannot promise that I would implement something which I do not know
-> > > how is working... It depends on how complicated TexFAT is and also how
-> > > future exfat support in kernel would look like.
-> > > 
-> > > But I'm interesting in implementing it.
-> > 
-> > It looks like the reason this wasn't made public along with the exFAT
-> > spec is that TexFAT is pretty much dead - it's old, there are no users
-> > we are aware of, and digging it out of it's grave to make it public is
-> > actually quite the headache.
-> > 
-> > Is this something you actually have a need for? an entity that has a
-> > requirement for TexFAT?
-> 
-> Hi!
-> 
-> I do not have device with requirements for TexFAT. The first reason why
-> I wanted to use TexFAT was that it it the only way how to use more FAT
-> tables (e.g. secondary for backup) and information for that is missing
-> in released exFAT specification. This could bring better data recovery.
-> 
-> > I'd would rather spend my time elsewhere than digging TexFAT out of it's grave.
-> 
-> Ok.
-> 
-> I was hoping that it would be possible to easily use secondary FAT table
-> (from TexFAT extension) for redundancy without need to implement full
-> TexFAT, which could be also backward compatible with systems which do
-> not implement TexFAT extension at all. Similarly like using FAT32 disk
-> with two FAT tables is possible also on system which use first FAT
-> table.
+> > > > > The syscall I refer to is the one connected with the drop of the
+> > > > > audit container identifier by the last process that was in that
+> > > > > container in patch 5/16.  The production of this record is contingent
+> > > > > on
+> > > > > the last ref in a contobj being dropped.  So if it is due to that ref
+> > > > > being maintained by audit_signal_info() until the AUDIT_SIGNAL_INFO2
+> > > > > record it fetched, then it will appear that the fetch action closed
+> > > > > the
+> > > > > container rather than the last process in the container to exit.
+> > > > >
+> > > > > Does this make sense?
+> > > >
+> > > > More so than your original reply, at least to me anyway.
+> > > >
+> > > > It makes sense that the audit container ID wouldn't be marked as
+> > > > "dead" since it would still be very much alive and available for use
+> > > > by the orchestrator, the question is if that is desirable or not.  I
+> > > > think the answer to this comes down the preserving the correctness of
+> > > > the audit log.
+> > > >
+> > > > If the audit container ID reported by AUDIT_SIGNAL_INFO2 has been
+> > > > reused then I think there is a legitimate concern that the audit log
+> > > > is not correct, and could be misleading.  If we solve that by grabbing
+> > > > an extra reference, then there could also be some confusion as
+> > > > userspace considers a container to be "dead" while the audit container
+> > > > ID still exists in the kernel, and the kernel generated audit
+> > > > container ID death record will not be generated until much later (and
+> > > > possibly be associated with a different event, but that could be
+> > > > solved by unassociating the container death record).
+> > >
+> > > How does syscall association of the death record with AUDIT_SIGNAL_INFO2
+> > > possibly get associated with another event?  Or is the syscall
+> > > association with the fetch for the AUDIT_SIGNAL_INFO2 the other event?
+> >
+> > The issue is when does the audit container ID "die".  If it is when
+> > the last task in the container exits, then the death record will be
+> > associated when the task's exit.  If the audit container ID lives on
+> > until the last reference of it in the audit logs, including the
+> > SIGNAL_INFO2 message, the death record will be associated with the
+> > related SIGNAL_INFO2 syscalls, or perhaps unassociated depending on
+> > the details of the syscalls/netlink.
+> >
+> > > Another idea might be to bump the refcount in audit_signal_info() but
+> > > mark tht contid as dead so it can't be reused if we are concerned that
+> > > the dead contid be reused?
+> >
+> > Ooof.  Yes, maybe, but that would be ugly.
+> >
+> > > There is still the problem later that the reported contid is incomplete
+> > > compared to the rest of the contid reporting cycle wrt nesting since
+> > > AUDIT_SIGNAL_INFO2 will need to be more complex w/2 variable length
+> > > fields to accommodate a nested contid list.
+> >
+> > Do we really care about the full nested audit container ID list in the
+> > SIGNAL_INFO2 record?
+> >
+> > > > Of the two
+> > > > approaches, I think the latter is safer in that it preserves the
+> > > > correctness of the audit log, even though it could result in a delay
+> > > > of the container death record.
+> > >
+> > > I prefer the former since it strongly indicates last task in the
+> > > container.  The AUDIT_SIGNAL_INFO2 msg has the pid and other subject
+> > > attributes and the contid to strongly link the responsible party.
+> >
+> > Steve is the only one who really tracks the security certifications
+> > that are relevant to audit, see what the certification requirements
+> > have to say and we can revisit this.
+>
+> Sever Virtualization Protection Profile is the closest applicable standard
+>
+> https://www.niap-ccevs.org/Profile/Info.cfm?PPID=408&id=408
+>
+> It is silent on audit requirements for the lifecycle of a VM. I assume that
+> all that is needed is what the orchestrator says its doing at the high level.
+> So, if an orchestrator wants to shutdown a container, the orchestrator must
+> log that intent and its results. In a similar fashion, systemd logs that it's
+> killing a service and we don't actually hook the exit syscall of the service
+> to record that.
+>
+> Now, if a container was being used as a VPS, and it had a fully functioning
+> userspace, it's own services, and its very own audit daemon, then in this
+> case it would care who sent a signal to its auditd. The tenant of that
+> container may have to comply with PCI-DSS or something else. It would log the
+> audit service is being terminated and systemd would record that its tearing
+> down the environment. The OS doesn't need to do anything.
 
-By the chance, is there any possibility to release TexFAT specification?
-Usage of more FAT tables (even for Linux) could help with data recovery.
+This latter case is the case of interest here, since the host auditd
+should only be killed from a process on the host itself, not a process
+running in a container.  If we work under the assumption (and this may
+be a break in our approach to not defining "container") that an auditd
+instance is only ever signaled by a process with the same audit
+container ID (ACID), is this really even an issue?  Right now it isn't
+as even with this patchset we will still really only support one
+auditd instance, presumably on the host, so this isn't a significant
+concern.  Moving forward, once we add support for multiple auditd
+instances we will likely need to move the signal info into
+(potentially) s per-ACID struct, a struct whose lifetime would match
+that of the associated container by definition; as the auditd
+container died, the struct would die, the refcounts dropped, and any
+ACID held only the signal info refcount would be dropped/killed.
 
-> > Is there anything else in the exFAT spec that is missing (and someone
-> > actually wants/uses)?
-> 
-> Currently I do not know.
-
-I found one missing thing:
-
-In released exFAT specification is not written how are Unicode code
-points above U+FFFF represented in exFAT upcase table. Normally in
-UTF-16 are Unicode code points above U+FFFF represented by surrogate
-pairs but compression format of exFAT upcase table is not clear how to
-do it there.
-
-Are you able to send question about this problem to relevant MS people?
-
-New Linux implementation of exfat which is waiting on mailing list just
-do not support Unicode code points above U+FFFF in exFAT upcase table.
+However, making this assumption would mean that we are expecting a
+"container" to provide some level of isolation such that processes
+with a different audit container ID do not signal each other.  From a
+practical perspective I think that fits with the most (all?)
+definitions of "container", but I can't say that for certain.  In
+those cases where the assumption is not correct and processes can
+signal each other across audit container ID boundaries, perhaps it is
+enough to explain that an audit container ID may not fully disappear
+until it has been fetched with a SIGNAL_INFO2 message.
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+paul moore
+www.paul-moore.com
