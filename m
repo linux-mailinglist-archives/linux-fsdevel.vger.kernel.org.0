@@ -2,122 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD00515B697
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 02:23:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 959A915B6D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 02:48:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbgBMBXw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 20:23:52 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58452 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727071AbgBMBXw (ORCPT
+        id S1729366AbgBMBsG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 20:48:06 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45755 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729289AbgBMBsG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 20:23:52 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9A34C821B49;
-        Thu, 13 Feb 2020 12:23:32 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j23Dx-0004dh-3T; Thu, 13 Feb 2020 12:23:25 +1100
-Date:   Thu, 13 Feb 2020 12:23:25 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Eryu Guan <guaneryu@gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
-Message-ID: <20200213012325.GT10776@dread.disaster.area>
-References: <20200131052520.GC6869@magnolia>
- <20200207220333.GI8731@bombadil.infradead.org>
- <20200212222118.GT6870@magnolia>
+        Wed, 12 Feb 2020 20:48:06 -0500
+Received: by mail-io1-f67.google.com with SMTP id i11so4576630ioi.12;
+        Wed, 12 Feb 2020 17:48:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NcupujMoNZ+lhM7+9GoPlR+Ij7mhzM+rhSEsy6lC7Ik=;
+        b=Ss6Lnwurj/uXI0dVZEJyGvlmTQz36Vl5AU9orRG34T+RQ/yrm8Sa/Pyjqc03UKVRiZ
+         NwZsF052DjppBJaKpAY2JiyDZWKz1nKX0olUFwP2ddsxBW+iK0U4vTunmy1rxO7c6v1B
+         qRzLV/Rlct/AbvpVx4BhaSqsOmcy9UhqRwQqtID7p5gaKk9qHQfASNQYzuLCn8RZrvW9
+         lBUkoPPdBwahHCL3uIYZW4EeIxT62fsE4iFR5R8gbjhT028SJFzGLdoXuHFdRMfJofuD
+         tdS/o6Y37PwBdAOXm1ZfnXxwL0inuKGDQoIpET6WWcooE0xDu9SaHh3BSzP9B/PN/+Ab
+         0zIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NcupujMoNZ+lhM7+9GoPlR+Ij7mhzM+rhSEsy6lC7Ik=;
+        b=FOPMwRGNJ/ISWzBGdM/Atnl3xLaMLWdpuwsQ/FEkveBvg5JrnWosDEFKyE1RtQG/mG
+         rwPciRyXj8NsQs7oBx2jYlTWhJI5lETT2uY9bSMnY778FSjHj0POqIbjcNA8KwSFq64L
+         M1wJoW0DiKJwS/IDZSevWEtGBumzfT83+vYpnjgwUCJCVaSkm+CXVbeCssYmtrXul3mT
+         ZfhwvrvOBUU9F3YOaJ50DfMijXrNPPBY+u4usuCHhLLhFZtfhek6sILmluAr6V3N8ved
+         9AxMNggbBhDmPt+w4zKhQUhEhkGQ2JIb5+Gwv4p3ixPjofxuCz5A4/4FoQ6DIeFTTx90
+         hckQ==
+X-Gm-Message-State: APjAAAWh6TvJo+oi1TuAIQi2KEBBGrAd8Bb44JzuQS4Aaj86K7X3XReH
+        jz6AFwj3RZPcv5brWwqolTjZlJ01eXr4ktslMbU=
+X-Google-Smtp-Source: APXvYqxb42gp94oWdM1n869TeR04MYPvf28xXFK13g9YzcEdKofl2Cxbd8zU9kffQASjNIdmEHHyaF4qdiijGBOLbuk=
+X-Received: by 2002:a5d:8146:: with SMTP id f6mr19522873ioo.93.1581558485520;
+ Wed, 12 Feb 2020 17:48:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212222118.GT6870@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=Yh2a_DI0EpWPktm9UrYA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200211175507.178100-1-hannes@cmpxchg.org> <CALOAHbC3Bx3E7fwt35zuiHfuC8YyhVWA1tDh2KP+gQJoMtED3w@mail.gmail.com>
+ <20200212164235.GB180867@cmpxchg.org>
+In-Reply-To: <20200212164235.GB180867@cmpxchg.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 13 Feb 2020 09:47:29 +0800
+Message-ID: <CALOAHbCiBqdZzZVC7_c3Um_vDUu9ECsDYUebOL4+=MP9owA_Og@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 02:21:18PM -0800, Darrick J. Wong wrote:
-> On Fri, Feb 07, 2020 at 02:03:33PM -0800, Matthew Wilcox wrote:
-> > Third, I hear from people who work on a specific filesystem "Of the
-> > twenty or so slots for the FS part of the conference, there are about
-> > half a dozen generic filesystem people who'll get an invite, then maybe
-> > six filesystems who'll get two slots each, but what we really want to
-> > do is get everybody working on this filesystem in a room and go over
-> > our particular problem areas".
-> 
-> Yes!  One thousand times yes!  The best value I've gotten from LSF has
-> been the in-person interlocks with the XFS/ext4/btrfs developers, even
-> if the thing we discuss in the hallway BOFs have not really been
-> "cross-subsystem topics".
+On Thu, Feb 13, 2020 at 12:42 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> On Wed, Feb 12, 2020 at 08:25:45PM +0800, Yafang Shao wrote:
+> > On Wed, Feb 12, 2020 at 1:55 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > Another variant of this problem was recently observed, where the
+> > > kernel violates cgroups' memory.low protection settings and reclaims
+> > > page cache way beyond the configured thresholds. It was followed by a
+> > > proposal of a modified form of the reverted commit above, that
+> > > implements memory.low-sensitive shrinker skipping over populated
+> > > inodes on the LRU [1]. However, this proposal continues to run the
+> > > risk of attracting disproportionate reclaim pressure to a pool of
+> > > still-used inodes,
+> >
+> > Hi Johannes,
+> >
+> > If you really think that is a risk, what about bellow additional patch
+> > to fix this risk ?
+> >
+> > diff --git a/fs/inode.c b/fs/inode.c
+> > index 80dddbc..61862d9 100644
+> > --- a/fs/inode.c
+> > +++ b/fs/inode.c
+> > @@ -760,7 +760,7 @@ static bool memcg_can_reclaim_inode(struct inode *inode,
+> >                 goto out;
+> >
+> >         cgroup_size = mem_cgroup_size(memcg);
+> > -       if (inode->i_data.nrpages + protection >= cgroup_size)
+> > +       if (inode->i_data.nrpages)
+> >                 reclaimable = false;
+> >
+> >  out:
+> >
+> > With this additional patch, we skip all inodes in this memcg until all
+> > its page cache pages are reclaimed.
+>
+> Well that's something we've tried and had to revert because it caused
+> issues in slab reclaim. See the History part of my changelog.
+>
 
-On that note, I think the rigid "3 streams and half hour timeslot"
-format of LSFMM is really the biggest issues LSFMM has. Most of the
-time there are only 3-4 people discussing whatever topic is
-scheduled, and the other 15-20 people in the room either have no
-knowledge, no interest or no interactions with the issue/code being
-discussed. That has always struck me as a massive waste of valuable
-face-to-face time that could be put to much better use.
+You misuderstood it.
+The reverted patch skips all inodes in the system, while this patch
+only works when you turn on memcg.{min, low} protection.
+IOW, that is not a default behavior, while it only works when you want
+it and only effect your targeted memcg rather than the whole system.
 
-Making LSFMM bigger doesn't fix this problem, either. it just makes
-it worse because there's more people sitting around twiddling their
-thumbs while the same 3-4 people talk across the room at each other.
+> > > while not addressing the more generic reclaim
+> > > inversion problem outside of a very specific cgroup application.
+> > >
+> >
+> > But I have a different understanding.  This method works like a
+> > knob. If you really care about your workingset (data), you should
+> > turn it on (i.e. by using memcg protection to protect them), while
+> > if you don't care about your workingset (data) then you'd better
+> > turn it off. That would be more flexible.  Regaring your case in the
+> > commit log, why not protect your linux git tree with memcg
+> > protection ?
+>
+> I can't imagine a scenario where I *wouldn't* care about my
+> workingset, though. Why should it be opt-in, not the default?
 
-Then there's the stream topics that overlap and the complete lack of
-recording of the discussions. i.e. you get a schedule conflict, and
-you miss out on a critically important discussion completely. You
-can't even go watch it back later in the day when you're sitting
-waiting for some talk you have no interest in to complete....
+Because the default behavior has caused the XFS performace hit.
+(I haven't  checked your patch carefully, so I don't know whehter your
+patch fix it yet.)
 
-Further, there is no real scope to allow groups of developers to
-self organise and sit down and solve a problem they need solved that
-is not on the schedule. There are no small "breakout" rooms with
-tables, power, and whiteboards, etc, and hence people who aren't
-engaged in the scheduled topics have nowhere they can get together
-and work through problems they need solved with other developers.
 
-If you do need to skip scheduled discussions to get a group together
-to solve problems not on the schedule, then everyone loses because
-there's no recordings of the discussions they missed....
+Thanks
 
-Unfortunately LSFMM hasn't really attempted to facilitate this sort
-of face-to-face collaboration for some time - LSFMM is for talking,
-not doing. What we need are better ways of doing, not talking...
-
-> > This kills me because LSFMM has been such a critically important part of
-> > Linux development for over a decade, but I think at this point it is at
-> > least not serving us the way we want it to, and may even be doing more
-> > harm than good.
-> 
-> I don't think I'd go quite that far, but it's definitely underserving
-> the people who can't get in, the people who can't go, and the people who
-> are too far away but gosh it would be nice to pull them in even if it's
-> only for 30 minutes over a conference call.
-
-A live stream and a restricted access IRC channel for all local and
-remote participants would be just fine for all the scheduled
-"talking heads" discussions....
-
-e.g. a small group of devs are in a breakout room working on
-something directly relevant to them, and they a laptop playing the
-live stream of a discussion they are interested in but less
-important than what they are currently doing.  Someone hears
-something they need to comment on, so they quickly jump onto IRC and
-their comment is noticed by everyone in the main discussion room....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Yafang
