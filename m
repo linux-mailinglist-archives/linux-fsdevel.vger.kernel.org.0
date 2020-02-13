@@ -2,61 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4936615C831
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 17:26:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B311615C836
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 17:28:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbgBMQ0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 11:26:34 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbgBMQ0e (ORCPT
+        id S1728021AbgBMQ2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 11:28:03 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34945 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbgBMQ2C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 11:26:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kPlH775QJbn8K8wfZvzjHNcv5oOWudjwxkPvsWLCDdo=; b=pKHqdBZNcGOP2X9I4VB4N1ffkS
-        uHSTE8nJ9E7WizXgntstiRRYSrviUpXs1vBBmeRLtkiabYM/ubpN9XzjZVNoB2HvdOx/aUMq9GzN8
-        8GyruXlfqehb9BGPhPuFUltDTUnqND8t0lZk4rJKs0A2yVcBDc4IHNPrnXAdDFV8t/kPFzCs1/Y1t
-        yAdbsetEYihXJND5jjiVgTLbYB2PR7JLiNJFPAYXzW67zzYtIaWZp0FZ4DaC4BbdIIYPhzQfeai4V
-        lgw+riNojZsfj7fpMymUqwS3rH9WgBebiPxCLgY7EHokbSXVYb2/UgNVET6ykW2yzN94zqEctDzWG
-        0yeWSo+Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2HJy-0003UA-0l; Thu, 13 Feb 2020 16:26:34 +0000
-Date:   Thu, 13 Feb 2020 08:26:33 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/25] fs: Make page_mkwrite_check_truncate thp-aware
-Message-ID: <20200213162633.GP7778@bombadil.infradead.org>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-12-willy@infradead.org>
- <20200213154419.szxgd5tv2tjxmlz7@box>
+        Thu, 13 Feb 2020 11:28:02 -0500
+Received: by mail-qk1-f193.google.com with SMTP id v2so6259093qkj.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 08:28:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rzSjLwScU3C0NfLuecC9tfePijAPGMVcmjqq68FTKTg=;
+        b=PyekYUld5wcs4QcXnfetLPQNI7ojLkz5bmlbEHoQpAfGDE0BrIqnbBNyexN9So6zjJ
+         T3wGW7piRcT3qbNcov2Ebygh1GYsEWpBlNsIrRxIBtrV/dYBLkV6x0P2v1axfrwaPmAK
+         m2/D3xFFJcmBSQMKL8cqX4Wa/R8ZHWZWmxQDgJzxBpkT9R2imb/pd7PNj6nW0tIMf+Ld
+         YeSPSQaYhbzDDUNOIzh0hG0429Y9N+OoqToBdXTXKFCLIFg5liTgdwlBDEGek0ubTQR/
+         ldyRvLLCd43OyYWgxPEKaPE+AmrH5Nys+i8co8ojKTV0h2pLC1qqbOiRxxzw8aoIdheZ
+         9xSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rzSjLwScU3C0NfLuecC9tfePijAPGMVcmjqq68FTKTg=;
+        b=WLfdfucdz+EW/D4IP/k0zBWkEji0huZelaf8x3SGLCgSaLIBNPNVxqrmzBlGYHrYgu
+         U47aURiW/VVvlvmV8cLCPn/7nAeoCumk3DGb0zusiB0Ed1slDzqNpjjuNglcyKpv4lUj
+         W37zbAZ0r1I115gg4Xl0vlJfW6O0WMkDGkF2bWaON0ItCkYbbMviCFra5mysZd+oan8U
+         Mf1yu/FDUz4QRKQI3AXsas3jv5U+UXF+LJVEu2sAjVeSXa8fhgMG7iy6rcHBcTZpQUQp
+         h+276dVB52BX2J3qme7rcrwY8F7Xtoe3S1tc2H9Hcd3DmLqoawNAdnXnShM2WdfAwAm/
+         iOJw==
+X-Gm-Message-State: APjAAAX5sTpJguM2dpzVbMEKV6Z8uXRqIagflvjhROMA3grCA1kXbAJx
+        YVdyoc9+j1AmI7pSAseKHg8V2HIh/pU=
+X-Google-Smtp-Source: APXvYqysNcRyJQkCepzB17Bhn4T8+paNKZwum3UsR+NEbj367KSpL7oU2QpNJwlkOx41cp3zwNL3Gg==
+X-Received: by 2002:a37:7bc7:: with SMTP id w190mr16314505qkc.193.1581611280826;
+        Thu, 13 Feb 2020 08:28:00 -0800 (PST)
+Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::edcc])
+        by smtp.gmail.com with ESMTPSA id c25sm1557670qkc.12.2020.02.13.08.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Feb 2020 08:27:59 -0800 (PST)
+Subject: Re: [PATCH v2 10/21] btrfs: parameterize dev_extent_min
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20200212072048.629856-1-naohiro.aota@wdc.com>
+ <20200212072048.629856-11-naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <a987d02b-e9ee-7e76-29b2-d9851fe4f479@toxicpanda.com>
+Date:   Thu, 13 Feb 2020 11:27:58 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213154419.szxgd5tv2tjxmlz7@box>
+In-Reply-To: <20200212072048.629856-11-naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 06:44:19PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Feb 11, 2020 at 08:18:31PM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > If the page is compound, check the appropriate indices and return the
-> > appropriate sizes.
+On 2/12/20 2:20 AM, Naohiro Aota wrote:
+> Currently, we ignore a device whose available space is less than
+> "BTRFS_STRIPE_LEN * dev_stripes". This is a lower limit for current
+> allocation policy (to maximize the number of stripes). This commit
+> parameterizes dev_extent_min, so that other policies can set their own
+> lower limitation to ignore a device with an insufficient space.
 > 
-> Is it guarnteed that the page is never called on tail page?
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I think so.  page_mkwrite_check_truncate() is only called on pages
-which belong to a particular filesystem.  Only filesystems which have
-the FS_LARGE_PAGES flag set will have compound pages allocated in the
-page cache for their files.  As filesystems are converted, they will
-only see large head pages.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-I'll happily put in a VM_BUG_ON(PageTail(page), page); to ensure we
-don't screw that up.
+Thanks,
+
+Josef
