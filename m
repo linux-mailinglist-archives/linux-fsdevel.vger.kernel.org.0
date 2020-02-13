@@ -2,201 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C88715B5AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 01:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF87115B63B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 01:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbgBMAJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Feb 2020 19:09:49 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36981 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbgBMAJt (ORCPT
+        id S1729409AbgBMA4l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Feb 2020 19:56:41 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38725 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbgBMA4l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Feb 2020 19:09:49 -0500
-Received: by mail-ed1-f65.google.com with SMTP id s3so4576630edy.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 16:09:47 -0800 (PST)
+        Wed, 12 Feb 2020 19:56:41 -0500
+Received: by mail-ed1-f67.google.com with SMTP id p23so4682569edr.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 16:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HglMhRV1r3SlCbyh50p8XWXMifi0DbV0medDPmHPWIY=;
-        b=cgZdKtHSkw6wGlofy5ORamY4majYp5ZL8xVC4i2IAjxKZ+DIoA+RHnKzW5rqBgKYhH
-         gYPFParo3CDZbz5ML9ncCpAGxaZIqwx9I1HFgW7sEUl7WXlTFQtoX17ClMgO6pBPOyvF
-         U+UR9ZzRqd3M0HuauEVRrm6SsbkzDwCTV0jTOz2x48ia2WVNYy7+UwckGmY7T5U21yyp
-         p+2nblF0CL7Gywq8jeENvPPsr4unR99eYMqiQBn4r8CfJZzu/+Sh4crQxD06V5Xtfp6z
-         BNvTs4R1mnuLI2tUL4OGNyHhlSKD8k9P4AuCDtX3Yp6Wk3ra+TvmSr/YUAo0vI0Ah2ld
-         YzmA==
+        bh=kqI0VbPVaJfcsCTXac52W5YMJCYaSOj7FaTDjIsxYoQ=;
+        b=RRc0XamveMQXj/q8pfpDyw3+6RSQiI77zx4rXZCf1ovpx19fhSLX9IAuu7EAbdT6D5
+         hRgPzQzTBFhOQsMCJ5pC8fUtChqlceueXHqMOFdtZldjIC/GLh+J70scUbbfpK2vng/u
+         uee+XaR52NHzT1hMiW+QFymxjV6nraNw8Kd1U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HglMhRV1r3SlCbyh50p8XWXMifi0DbV0medDPmHPWIY=;
-        b=gwj84KZb25HV4EoAcQw6LrX2zrZlU61rbIwidn7V8GD8EadHUxDr8/cm21ZWwMOBTL
-         tSK0+G08lsBztpyHB1Atzcm7hqe8KtF6UKMkqMeDx9/3WCBLgxcKOcFlU4BDCFZ6hTc2
-         JZgoZitWAIWJfZ0H0VToygXb0vI1wvRqXb2l5v2rGH+DMJSj8HQ90JFtWW0OqaOzda1h
-         DdGjwl3Q9GsTZsOH++X59+RoeF1mlZcsNDDD09sEBDsP+eO50fOsJkrALcA6yxSAa6vm
-         x7X3EPp69K/AM7S5wMvYFKyj8awH0PPPH/sklPVIodUFhwhpZN45FaBsGYnBZwH8jMbu
-         +zuw==
-X-Gm-Message-State: APjAAAUCdWb/xkggym/pGFBrO4eRaS9vwAbO7mky6sbeoxMcpNjaFVLD
-        6LutOerkqAEaIFiM4jcOUHNZET5h2iHQMfuATOyM
-X-Google-Smtp-Source: APXvYqxZzJWTQkF0MyAR/0hvazcgtPMpLBtZbyavM6j8WQ0AcCQg2H9RMuC42u9/Eg9eKGj3MTNxtdWkgRhqZAMYJww=
-X-Received: by 2002:a50:e108:: with SMTP id h8mr11996848edl.196.1581552586354;
- Wed, 12 Feb 2020 16:09:46 -0800 (PST)
+        bh=kqI0VbPVaJfcsCTXac52W5YMJCYaSOj7FaTDjIsxYoQ=;
+        b=t4gghcPT5e1aDS2MVbAGVLGjQEqlAK7sy5Dok9JYbj+CL9c9oresZwCr3hgvn6EexR
+         opQy8D+vYQpBlYN+dHWkPgryxPKP62BEtjzsxaN8524f5pfZX4YKDtmBmYdvyI9+JfhY
+         ityQYDQc+OCG0tIVSJLzm1P5uQTW+NtFrKmE9yl6AgWUsNq9KrXISgPrfBQgkqaoNwtR
+         bMPjRYRn5dqFTvIJwVuf9Usz/GnkVw/o5/2OoNv6XamtAMuYhcO07AkvXxE1JT5IPY2n
+         1FvhYjcP6npgD8m2TzU+cwL2O2nyR+poo2ygpKcY3enHakIjHxUunMutui1Pr1Dx6gRl
+         SUaQ==
+X-Gm-Message-State: APjAAAV3LRqAlcUlrsfLh24xNWapV670Kp82yLlYPsC5k/rAw3HISVOJ
+        Iv7VALh0JEQBNVjxAibNWBIA0FDNVzA=
+X-Google-Smtp-Source: APXvYqz8eiuYj22pb98NnBZgdWt1+0CjhhVg+4Rx15AMadkrFqhLXzhYGVuhuH/JO/UolOIjTNvRzw==
+X-Received: by 2002:a17:906:1697:: with SMTP id s23mr13909956ejd.355.1581555399154;
+        Wed, 12 Feb 2020 16:56:39 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id d1sm52208ejy.3.2020.02.12.16.56.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Feb 2020 16:56:38 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id e10so4655130edv.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 16:56:38 -0800 (PST)
+X-Received: by 2002:a2e:580c:: with SMTP id m12mr9459753ljb.150.1581554910763;
+ Wed, 12 Feb 2020 16:48:30 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com> <3142237.YMNxv0uec1@x2>
-In-Reply-To: <3142237.YMNxv0uec1@x2>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 12 Feb 2020 19:09:35 -0500
-Message-ID: <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     linux-audit@redhat.com, Richard Guy Briggs <rgb@redhat.com>,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
+ <87v9odlxbr.fsf@x220.int.ebiederm.org> <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+ <87tv3vkg1a.fsf@x220.int.ebiederm.org> <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+ <87v9obipk9.fsf@x220.int.ebiederm.org> <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+ <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+ <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
+ <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com> <87lfp7h422.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87lfp7h422.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 12 Feb 2020 16:48:14 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+Message-ID: <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 5:39 PM Steve Grubb <sgrubb@redhat.com> wrote:
-> On Wednesday, February 5, 2020 5:50:28 PM EST Paul Moore wrote:
-> > > > > > ... When we record the audit container ID in audit_signal_info() we
-> > > > > > take an extra reference to the audit container ID object so that it
-> > > > > > will not disappear (and get reused) until after we respond with an
-> > > > > > AUDIT_SIGNAL_INFO2.  In audit_receive_msg() when we do the
-> > > > > > AUDIT_SIGNAL_INFO2 processing we drop the extra reference we took
-> > > > > > in
-> > > > > > audit_signal_info().  Unless I'm missing some other change you
-> > > > > > made,
-> > > > > > this *shouldn't* affect the syscall records, all it does is
-> > > > > > preserve
-> > > > > > the audit container ID object in the kernel's ACID store so it
-> > > > > > doesn't
-> > > > > > get reused.
-> > > > >
-> > > > > This is exactly what I had understood.  I hadn't considered the extra
-> > > > > details below in detail due to my original syscall concern, but they
-> > > > > make sense.
-> > > > >
-> > > > > The syscall I refer to is the one connected with the drop of the
-> > > > > audit container identifier by the last process that was in that
-> > > > > container in patch 5/16.  The production of this record is contingent
-> > > > > on
-> > > > > the last ref in a contobj being dropped.  So if it is due to that ref
-> > > > > being maintained by audit_signal_info() until the AUDIT_SIGNAL_INFO2
-> > > > > record it fetched, then it will appear that the fetch action closed
-> > > > > the
-> > > > > container rather than the last process in the container to exit.
-> > > > >
-> > > > > Does this make sense?
-> > > >
-> > > > More so than your original reply, at least to me anyway.
-> > > >
-> > > > It makes sense that the audit container ID wouldn't be marked as
-> > > > "dead" since it would still be very much alive and available for use
-> > > > by the orchestrator, the question is if that is desirable or not.  I
-> > > > think the answer to this comes down the preserving the correctness of
-> > > > the audit log.
-> > > >
-> > > > If the audit container ID reported by AUDIT_SIGNAL_INFO2 has been
-> > > > reused then I think there is a legitimate concern that the audit log
-> > > > is not correct, and could be misleading.  If we solve that by grabbing
-> > > > an extra reference, then there could also be some confusion as
-> > > > userspace considers a container to be "dead" while the audit container
-> > > > ID still exists in the kernel, and the kernel generated audit
-> > > > container ID death record will not be generated until much later (and
-> > > > possibly be associated with a different event, but that could be
-> > > > solved by unassociating the container death record).
-> > >
-> > > How does syscall association of the death record with AUDIT_SIGNAL_INFO2
-> > > possibly get associated with another event?  Or is the syscall
-> > > association with the fetch for the AUDIT_SIGNAL_INFO2 the other event?
-> >
-> > The issue is when does the audit container ID "die".  If it is when
-> > the last task in the container exits, then the death record will be
-> > associated when the task's exit.  If the audit container ID lives on
-> > until the last reference of it in the audit logs, including the
-> > SIGNAL_INFO2 message, the death record will be associated with the
-> > related SIGNAL_INFO2 syscalls, or perhaps unassociated depending on
-> > the details of the syscalls/netlink.
-> >
-> > > Another idea might be to bump the refcount in audit_signal_info() but
-> > > mark tht contid as dead so it can't be reused if we are concerned that
-> > > the dead contid be reused?
-> >
-> > Ooof.  Yes, maybe, but that would be ugly.
-> >
-> > > There is still the problem later that the reported contid is incomplete
-> > > compared to the rest of the contid reporting cycle wrt nesting since
-> > > AUDIT_SIGNAL_INFO2 will need to be more complex w/2 variable length
-> > > fields to accommodate a nested contid list.
-> >
-> > Do we really care about the full nested audit container ID list in the
-> > SIGNAL_INFO2 record?
-> >
-> > > > Of the two
-> > > > approaches, I think the latter is safer in that it preserves the
-> > > > correctness of the audit log, even though it could result in a delay
-> > > > of the container death record.
-> > >
-> > > I prefer the former since it strongly indicates last task in the
-> > > container.  The AUDIT_SIGNAL_INFO2 msg has the pid and other subject
-> > > attributes and the contid to strongly link the responsible party.
-> >
-> > Steve is the only one who really tracks the security certifications
-> > that are relevant to audit, see what the certification requirements
-> > have to say and we can revisit this.
+On Wed, Feb 12, 2020 at 1:48 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> Sever Virtualization Protection Profile is the closest applicable standard
->
-> https://www.niap-ccevs.org/Profile/Info.cfm?PPID=408&id=408
->
-> It is silent on audit requirements for the lifecycle of a VM. I assume that
-> all that is needed is what the orchestrator says its doing at the high level.
-> So, if an orchestrator wants to shutdown a container, the orchestrator must
-> log that intent and its results. In a similar fashion, systemd logs that it's
-> killing a service and we don't actually hook the exit syscall of the service
-> to record that.
->
-> Now, if a container was being used as a VPS, and it had a fully functioning
-> userspace, it's own services, and its very own audit daemon, then in this
-> case it would care who sent a signal to its auditd. The tenant of that
-> container may have to comply with PCI-DSS or something else. It would log the
-> audit service is being terminated and systemd would record that its tearing
-> down the environment. The OS doesn't need to do anything.
+> The good news is proc_flush_task isn't exactly called from process exit.
+> proc_flush_task is called during zombie clean up. AKA release_task.
 
-This latter case is the case of interest here, since the host auditd
-should only be killed from a process on the host itself, not a process
-running in a container.  If we work under the assumption (and this may
-be a break in our approach to not defining "container") that an auditd
-instance is only ever signaled by a process with the same audit
-container ID (ACID), is this really even an issue?  Right now it isn't
-as even with this patchset we will still really only support one
-auditd instance, presumably on the host, so this isn't a significant
-concern.  Moving forward, once we add support for multiple auditd
-instances we will likely need to move the signal info into
-(potentially) s per-ACID struct, a struct whose lifetime would match
-that of the associated container by definition; as the auditd
-container died, the struct would die, the refcounts dropped, and any
-ACID held only the signal info refcount would be dropped/killed.
+Yeah, that at least avoids some of the nasty locking while dying debug problems.
 
-However, making this assumption would mean that we are expecting a
-"container" to provide some level of isolation such that processes
-with a different audit container ID do not signal each other.  From a
-practical perspective I think that fits with the most (all?)
-definitions of "container", but I can't say that for certain.  In
-those cases where the assumption is not correct and processes can
-signal each other across audit container ID boundaries, perhaps it is
-enough to explain that an audit container ID may not fully disappear
-until it has been fetched with a SIGNAL_INFO2 message.
+But the one I was more worried about was actually the lock contention
+issue with lots of processes. The lock is basically a single global
+lock in many situations - yes, it's technically per-ns, but in a lot
+of cases you really only have one namespace anyway.
 
--- 
-paul moore
-www.paul-moore.com
+And we've had problems with global locks in this area before, notably
+the one you call out:
+
+> Further after proc_flush_task does it's thing the code goes
+> and does "write_lock_irq(&task_list_lock);"
+
+Yeah, so it's not introducing a new issue, but it is potentially
+making something we already know is bad even worse.
+
+> What would be downside of having a mutex for a list of proc superblocks?
+> A mutex that is taken for both reading and writing the list.
+
+That's what the original patch actually was, and I was hoping we could
+avoid that thing.
+
+An rwsem would be possibly better, since most cases by far are likely
+about reading.
+
+And yes, I'm very aware of the task_list_lock, but it's literally why
+I don't want to make a new one.
+
+I'm _hoping_ we can some day come up with something better than task_list_lock.
+
+            Linus
