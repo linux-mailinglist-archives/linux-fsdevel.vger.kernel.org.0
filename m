@@ -2,90 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DFA215B9B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 07:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0417F15B9CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 07:53:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbgBMGmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 01:42:01 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38240 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgBMGmB (ORCPT
+        id S1729782AbgBMGxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 01:53:33 -0500
+Received: from freki.datenkhaos.de ([81.7.17.101]:48960 "EHLO
+        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgBMGxc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:42:01 -0500
-Received: by mail-lj1-f195.google.com with SMTP id w1so5263987ljh.5;
-        Wed, 12 Feb 2020 22:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mMmuNpdrddhrOWh+4K56L0YF6Be/7s8PGs+t3nQ9XBc=;
-        b=q/D+kHXKQDgR3fVVwhifALKcssH8rymF8OkkigRJ302Sa9VjPP4heu3ZtnMqMs8SWS
-         XLPb3FgDKBPMSWeu6sBU2k7bJZZY5mxwdfBDKVH2vG+qwbJUgymN/AujzSnIagkpxI8B
-         6IwKRdth3Zw+n5TUFfbmmfKzR43Iv0b79GWIjqXfELXZy4lQWLgLSvuy+Pe+SinogQXV
-         DFIka3jUmL7L2OdQDyh8pzvkFvrUGmOHBHsiW5GIFzJzlVvItSTQyyKNlBqhglDkJW36
-         l35RuZ+o9SfVEpIwM2nUIAoj4Qaz+IBhHPe25z+ffapxWwPj6Bx2eMsdnxjwbVhuIx65
-         MLnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mMmuNpdrddhrOWh+4K56L0YF6Be/7s8PGs+t3nQ9XBc=;
-        b=RiZIQs4OWwu9m4IJjhLdOiAYiZyTlE1hsSMXQhh8y0O4aCyeK6zlP6F5KD+71WQpBX
-         94cLd3pxZs6R+pnPb42pIcWPWnHzZI7MA9JXB+Kyu3KgXGpkB8yRiicSsMprPYY5MfKS
-         g3s/oI+4jM45qopXkbpQ/IH+0tAXgDo0ZcUp3kSp4JWiUTgprhrvYtEem0hKYd7EKZBE
-         DBZVUhgXffgNFpveEzxAxoTe4l8dlTzrjgQx12yZtmaq0EO3Zb1wexeA2uMjGcB4rzBf
-         M4120sTV426pJTJq0qYpT/zIfSx3oxR3JQpT7S92hJeJaqjxBxAQ/ZnntPGWy+/y7Hk/
-         RiLQ==
-X-Gm-Message-State: APjAAAU3Fu+qJ6qvArydgSkF5EbriArZJTCr61ZrV3Yln/wN/CTu3UGP
-        iHtaUOe1jC84OuZ+A5WCXAs54L44Kh4xU2btrAw=
-X-Google-Smtp-Source: APXvYqxCY8Esw9mb9wmG/UGxD0UUKDvMB5s9SYeKowx88j1tinMMSnQmnoAJmOf7qqFYYldszD00sy05EvzJKFOoz2U=
-X-Received: by 2002:a2e:a553:: with SMTP id e19mr5046527ljn.64.1581576118811;
- Wed, 12 Feb 2020 22:41:58 -0800 (PST)
+        Thu, 13 Feb 2020 01:53:32 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by freki.datenkhaos.de (Postfix) with ESMTP id 7193C2288D32;
+        Thu, 13 Feb 2020 07:53:30 +0100 (CET)
+Received: from freki.datenkhaos.de ([127.0.0.1])
+        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ip891DUpbuya; Thu, 13 Feb 2020 07:53:26 +0100 (CET)
+Received: from latitude (vpn136.rz.tu-ilmenau.de [141.24.172.136])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by freki.datenkhaos.de (Postfix) with ESMTPSA;
+        Thu, 13 Feb 2020 07:53:26 +0100 (CET)
+Date:   Thu, 13 Feb 2020 07:53:21 +0100
+From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Doug Gilbert <dgilbert@interlog.com>,
+        Kai =?utf-8?B?TcOka2lzYXJh?= <Kai.Makisara@kolumbus.fi>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Hannes Reinecke <hare@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        John Garry <john.garry@huawei.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ira Weiny <ira.weiny@intel.com>, Iustin Pop <iustin@k1024.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-block <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 13/22] compat_ioctl: scsi: move ioctl handling into
+ drivers
+Message-ID: <20200213065321.GA8696@latitude>
+References: <20200102145552.1853992-1-arnd@arndb.de>
+ <20200102145552.1853992-14-arnd@arndb.de>
+ <20200212211452.GA5726@latitude>
+ <CAK8P3a0oPpMC8367sEs+9Ae=wFH30BHAq+aRDbWLyeVLuNOnEw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
- <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
- <1580998432.5585.411.camel@linux.ibm.com> <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
- <1581366258.5585.891.camel@linux.ibm.com> <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
- <1581462616.5125.69.camel@linux.ibm.com> <6b787049b965c8056d0e27360e2eaa8fa2f38b35.camel@gmail.com>
- <1581555796.8515.130.camel@linux.ibm.com>
-In-Reply-To: <1581555796.8515.130.camel@linux.ibm.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 13 Feb 2020 08:41:47 +0200
-Message-ID: <CAE=NcrYwBZVT+xTn384K3fit6UFUES62zsibL=7A5C8_nYaq8A@mail.gmail.com>
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     david.safford@gmail.com, linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0oPpMC8367sEs+9Ae=wFH30BHAq+aRDbWLyeVLuNOnEw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 3:03 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On 2020 Feb 12, Arnd Bergmann wrote:
+> On Wed, Feb 12, 2020 at 10:15 PM Johannes Hirte
+> <johannes.hirte@datenkhaos.de> wrote:
+> >
+> > On 2020 Jan 02, Arnd Bergmann wrote:
+> 
+> >
+> > Error in getting drive hardware properties
+> > Error in getting drive reading properties
+> > Error in getting drive writing properties
+> > __________________________________
+> >
+> > Disc mode is listed as: CD-DA
+> > ++ WARN: error in ioctl CDROMREADTOCHDR: Bad address
+> >
+> > cd-info: Can't get first track number. I give up.
+> 
+> Right, there was also a report about breaking the Fedora installer,
+> see https://bugzilla.redhat.com/show_bug.cgi?id=1801353
+> 
+> There is a preliminary patch that should fix this, I'll post a
+> version with more references tomorrow:
+> https://www.happyassassin.net/temp/0001-Replace-.ioctl-with-.compat_ioctl-in-three-appropria.patch
 
-> > This is a pretty important new feature.
-> > A lot of people can't use IMA because of the memory issue.
-> > Also, I really think we need to let administrators choose the tradeoffs
-> > of keeping the list in memory, on a local file, or only on the
-> > attestation server, as best fits their use cases.
->
-> Dave, I understand that some use cases require the ability of
-> truncating the measurement list.  We're discussing how to truncate the
-> measurement list.  For example, in addition to the existing securityfs
-> binary_runtime_measurements file, we could define a new securityfs
-> file indicating the number of records to delete.
+Yes, I can confirm that the patch fix it.
 
-I don't have strong opinions either way, just let me know how to adapt
-the patch and we will get it done asap. I'd prefer a solution where
-the kernel can initiate the flush, but if not then not.
+-- 
+Regards,
+  Johannes Hirte
 
-Thanks everyone for all the help.
-
-
---
-Janne
