@@ -2,74 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9233615BC0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 10:50:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89EAB15BCA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 11:21:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgBMJut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 04:50:49 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:45287 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729653AbgBMJut (ORCPT
+        id S1729732AbgBMKVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 05:21:53 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36628 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729662AbgBMKVx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 04:50:49 -0500
-Received: by mail-il1-f194.google.com with SMTP id p8so4406355iln.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 01:50:47 -0800 (PST)
+        Thu, 13 Feb 2020 05:21:53 -0500
+Received: by mail-io1-f68.google.com with SMTP id d15so5870831iog.3;
+        Thu, 13 Feb 2020 02:21:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IvHiB786hyXMz9+mRm3V1jaQi9rh7eAtkp5fjK9oQpc=;
-        b=dro2BDY8dm9jeWkM6tJLCUicRS2wiaxHeuHw/Jo8PypTHwNBMstEpIyo6m825x6J1/
-         W7qATYCETJ8nOzLulY5tNGWI2aJCwHKd0Y6MaP8kddDYmcvcAuhqqGNprAdOzXaJWQLy
-         pIWUQw0vnTlBRYQ6UIPNBdEr2Gj4bzsDZCARQ=
+        bh=QSvL+5phxy32YJK5uQRteesTVaa2PPbKzaoTbXUhlzM=;
+        b=YPSEiQCJMUNngVzlJJvKIBi3cfBrRXx/m8Pox/3aONguDpdMVvnlGalwbIPE7N38a1
+         3APjQ7Kam7hJ814w65Irskn3XYGOEjmGhgN2tJBk8NQBV1pSZxEiYswBET47H8kdCgCY
+         EvnlkBxLU/aZ85lgw4zsO5adVXpMd0bWkXugzEN3k2UpwcOsX9IYV0YzGOE0cYKbQHaz
+         deoeqH0JB1BkESmFTrdA1hM0wRedAcqLhUpvuUV5WrpS6JzdyHA7hWZmIp50befQ+JJ6
+         IiJkf71+s0Ntc/vWSApQbwPTsUOjkmj24q8BQYB575rrwMzDucsPi8qwYi3+BVersnQH
+         Y3rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IvHiB786hyXMz9+mRm3V1jaQi9rh7eAtkp5fjK9oQpc=;
-        b=bpqjxSqOzAHeuTwg27EqzwZsocOR4ktQ9DYBhk1WQYdVjE9dur28ybUZP0nZWq/9GM
-         jSI7uXYaSuSmyhq4JXQArKM7J5k40HvVVqoCy0VtbIApSIEm1GdIOdqBrddHsiUIey5/
-         s2Z8jJd5oRWeCVQK9/2U1Z8rdyppDvsvV27UU3CQXH/rPLKROV1qW8UcK/dZDb02ClIg
-         U/DAfe/NB/7yB94yMrAB4gN+RsEWih8+KfyFVQUORksDBKogwFs8Q/e0ZjlesXtUf0gj
-         f7o51kARgaWg/pMZIJNkrt4IxBT1dZdehCJVhm/UwH5bJkiNVClPqPKckpEvd2xYmtKd
-         FFww==
-X-Gm-Message-State: APjAAAUrr15Vn5BnJ5ZzsTWMUVGKt2wMqIWL6v98ix9gV59m8RbUlWSx
-        TGoq9qgMt24/hKygAxPPJ2wzg9p6G0xDKF9IjQg6LQ==
-X-Google-Smtp-Source: APXvYqzPLyJuiUk2YFOhc26hrDS3dr/fVN/SUfieTZuZUy05TLW5Qd5IdMYr7oO8bYEjT0St9vYd2sTrYMX3nsEWWRA=
-X-Received: by 2002:a92:8847:: with SMTP id h68mr14775650ild.212.1581587447525;
- Thu, 13 Feb 2020 01:50:47 -0800 (PST)
+        bh=QSvL+5phxy32YJK5uQRteesTVaa2PPbKzaoTbXUhlzM=;
+        b=HBgbE/PxkF7X2AX93n//gQSsfMSyBNLKWTtxw1lFqU3md0zX6qCI+TT8pBPnjCPQ1/
+         Y44gHPamdtwdkOMG2ouU98yeFZZTkEj6e0XYoF2tZgxPJm7I/+bacRQ154iq0wNl9JPv
+         XibRJ8RqMX+81BeizGhzKjdBYwqblVo4qHlGhzEutlSqbBFQLycoJ+YYdyGlfRrURBUP
+         Cvnkvr7EBpTCKxZE1c7BqQwydc3rd/omqHYJCXZagSG/fZidOsVYCZEyKtw4dK+WeIYa
+         hPGIyuuj6V37UzDdKFRkaugQq843c1DHSlN2VRatheXlkKrojlijvMNIW4y95BesUGLJ
+         qPEg==
+X-Gm-Message-State: APjAAAXxl951sr9J7yRW3JnuNOxMqfuYxsa7ymbMwuxLuB4Y37qlGpbR
+        pxWSSqGCkI36gcyoxAyhorDr4zYs6NP9QYab1WY=
+X-Google-Smtp-Source: APXvYqzSPy+3SjGPIrUXGx43QrVG8Fgwgvb9/7u5baa9dl+XWDCy6Hyf/dm9k9hXwInjoAzOrbhnyeYpzpR38MNXaBY=
+X-Received: by 2002:a02:c558:: with SMTP id g24mr22281827jaj.81.1581589312246;
+ Thu, 13 Feb 2020 02:21:52 -0800 (PST)
 MIME-Version: 1.0
-References: <1580536171-27838-1-git-send-email-qiwuchen55@gmail.com>
- <668fc86f-4214-f315-9b41-40368ba91022@fastmail.fm> <20200202020817.GA14887@cqw-OptiPlex-7050>
- <aafd8abf-832b-6348-7b74-4d65451a1eb6@fastmail.fm>
-In-Reply-To: <aafd8abf-832b-6348-7b74-4d65451a1eb6@fastmail.fm>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 13 Feb 2020 10:50:36 +0100
-Message-ID: <CAJfpegvmeQf=AiO3PXph=Ghj0Hf5f93xfn6ovmWmunf9=FZiYw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix inode rwsem regression
-To:     Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc:     chenqiwu <qiwuchen55@gmail.com>, linux-fsdevel@vger.kernel.org,
-        chenqiwu <chenqiwu@xiaomi.com>,
-        Matthew Wilcox <willy@infradead.org>
+References: <20200131052520.GC6869@magnolia> <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
+ <20200212224234.GV6870@magnolia>
+In-Reply-To: <20200212224234.GV6870@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 13 Feb 2020 12:21:40 +0200
+Message-ID: <CAOQ4uxgH0os2t=jZezLqsz-Y01v=AsdDXWSYXLervdHVheXo2Q@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        Eric Sandeen <sandeen@redhat.com>,
+        Eryu Guan <guaneryu@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 2, 2020 at 10:18 PM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
-> For network file systems it also common to globally enforce fuse
-> direct-io to reduce/avoid cache coherency issues - the application
-> typically doesn't ask for that on its own. And that is where this lock
-> is badly hurting.  Hmm, maybe we should differentiate between
-> fuse-internal direct-io and application direct-io requests here?
+> >
+> > Eryu usually posts a weekly status of xfstests review queue, often with
+> > a call for reviewers, sometimes with specific patch series mentioned.
+> > That helps me as a developer to monitor the status of my own work
+> > and it helps me as a reviewer to put the efforts where the maintainer
+> > needs me the most.
+>
+> I wasn't aware of that, I'll ask him to put me on the list.
+>
 
-I'm not against optionally removing the locking for direct write.
-Theoretically that should be doable.  But we need to be very careful
-about not breaking any assumptions in the kernel and libfuse code.
-Obviously this would need to be enabled with a flag (e.g.
-FOPEN_PARALLEL_WRITES).
+I was talking about the weekly xfstests ANNOUNCE email.
+Most of the time, review information amounts to "there are still patches
+in my review backlog", but sometimes the information is more
+specific with call for specific reviews:
+https://lore.kernel.org/fstests/5ddaafc5.1c69fb81.7e284.ad99@mx.google.com/
 
 Thanks,
-Miklos
+Amir.
