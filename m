@@ -2,76 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEDC15C3BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 16:44:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E743415C45F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 16:53:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387722AbgBMPoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 10:44:04 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36922 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbgBMPoA (ORCPT
+        id S2387816AbgBMPqi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 10:46:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39772 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387796AbgBMPqg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:44:00 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b15so4599522lfc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 07:43:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
-        b=h1O9Lk/39Nx/ytmuPKvu48NGNZk+XUil67BnaQeOVqW/Cxkpqv48zOF9nGwuUWlurM
-         xa/u43X71SKX6da2a5fB2v7S6PgQbQBl2ssMQ94F9rVUv8LKIUdVh9zDvGRo4D5v6+nh
-         LuEjK1SL9jGH9n9oTsRgAnTMwm6XTkEOF5/XYPKhJ4cpujsioAoAN8FERx3YESyPw37h
-         9NEXptd6Gt16Vof39x76tD1yi5FL8D3RgfFYOqkR73ihPA21YsLTzKCgkmtI+79zgECg
-         sL1BpHotERgS2c80OI6FTeoS+pGgJOQg0Eiig6Hakw1DtvSJOGUrK1sCxYJwoULIUzjm
-         1cnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
-        b=Pn8IC7jafAOkdZDN29VzK7i5fjN9Gfr1skHnXQGZiA3qRs8D3ZkY2IMszwXxIkcCZX
-         NrB5fgY9pGvi+XMzIWIf88YumhaLj5k8UsW/4a9Ym1FPeWZOR7mNc1+iMGgvLK0OVIEk
-         Ql0kWMS8YpD9xJIb34e4+tChJ7Sz+RblSPSoKpTFjsgi6i8c6REec0rcSNWMP0INv7Gy
-         NY2r7zo4nMUHisT/ULsknbpcIdTIYojTtki4V9oSoCHBLX1dx/DsMhAB+ok3UoswwVw9
-         9yZREZ3jakc4P+35o6pmNTbJs48vHxPn4f9jECKqqU+IhtwBmjWpBSfbV5EtUGr9u1cR
-         pu5g==
-X-Gm-Message-State: APjAAAUNuAfumrgfGdCEK5GsmEUcAxBiK5+i5QIc/0UWMazZ5uLKdGxi
-        w1axtRaW5ULUwbw9X+FciZNLUFgVu0U=
-X-Google-Smtp-Source: APXvYqxrBJSTTk3KS21AJKxD2y7eTX8gC2feRkJ1tSpYCm6mG9Y6yhHM7jH/gQZsD+JKdEUN74SLWA==
-X-Received: by 2002:a19:cb17:: with SMTP id b23mr9726567lfg.201.1581608638158;
-        Thu, 13 Feb 2020 07:43:58 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id u16sm1695370ljo.22.2020.02.13.07.43.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:43:57 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C4400100F25; Thu, 13 Feb 2020 18:44:19 +0300 (+03)
-Date:   Thu, 13 Feb 2020 18:44:19 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/25] fs: Make page_mkwrite_check_truncate thp-aware
-Message-ID: <20200213154419.szxgd5tv2tjxmlz7@box>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-12-willy@infradead.org>
+        Thu, 13 Feb 2020 10:46:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=TQwUz2ZkaJ8gecpPtXHrS+wN7NxFdfsIuWKZZP0lIr8=; b=JIt6e8oqK/nTNJlPp83LkGsSZJ
+        dQ14bOkbG4OWoPG257sbE/Sl2DFk69M/VsOV3tskZnsjZlUXQHrRS/bTLZBKq9owsAGxL0cfFkO+h
+        9L5JaxOudrERYCw64A6HBVfFSWdw2V6UFVoMgRzfaZaN10jmxVRIZua2dESe/O/z8gtSpHmLyiBm4
+        sbM1cMP2AkePgAHZYdP96KqSXRPnBqjB208zm6dy0tLOBYFiZCWDNcr72u/rm7PFBXTCImj/HZycT
+        wKkmbpYm9zhveLSC8dAGHK0wifrdTNVY6+WBZq+yx6P+dHpaFuYgSRKoXEDpQXrnS78pW2moZDfwh
+        ou6/2wgQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j2GhF-0006W8-2K; Thu, 13 Feb 2020 15:46:33 +0000
+Date:   Thu, 13 Feb 2020 07:46:32 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
+Message-ID: <20200213154632.GN7778@bombadil.infradead.org>
+References: <20200131052520.GC6869@magnolia>
+ <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
+ <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
+ <20200202214620.GA20628@dread.disaster.area>
+ <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
+ <20200212220600.GS6870@magnolia>
+ <20200213151100.GC6548@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212041845.25879-12-willy@infradead.org>
+In-Reply-To: <20200213151100.GC6548@bfoster>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 08:18:31PM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Thu, Feb 13, 2020 at 10:11:00AM -0500, Brian Foster wrote:
+> With regard to the burnout thing, ISTM the core functionality of the
+> maintainer is to maintain the integrity of the subtree. That involves
+> things like enforcing development process (i.e., requiring r-b tags on
+> all patches to merge), but not necessarily being obligated to resolve
+> conflicts or to review every patch that comes through in detail, or
+> guarantee that everything sent to the list makes it into the next
+> release, etc. If certain things aren't being reviewed in time or making
+> progress and that somehow results in additional pressure on the
+> maintainer, ISTM that something is wrong there..?
 > 
-> If the page is compound, check the appropriate indices and return the
-> appropriate sizes.
+> On a more logistical note, didn't we (XFS) discuss the idea of a
+> rotating maintainership at one point? I know Dave had dealt with burnout
+> after doing this job for quite some time, Darrick stepped in and it
+> sounds like he is now feeling it as well (and maybe Eric, having to hold
+> down the xfsprogs fort). I'm not maintainer nor do I really want to be,
+> but I'd be willing to contribute to maintainer like duties on a limited
+> basis if there's a need. For example, if we had a per-release rotation
+> of 3+ people willing to contribute, perhaps that could spread the pain
+> around sufficiently..? Just a thought, and of course not being a
+> maintainer I have no idea how realistic something like that might be..
 
-Is it guarnteed that the page is never called on tail page?
+Not being an XFS person, I don't want to impose anything, but have
+you read/seen Dan Vetter's talk on this subject?
+https://blog.ffwll.ch/2017/01/maintainers-dont-scale.html (plenty of
+links to follow, including particularly https://lwn.net/Articles/705228/ )
 
--- 
- Kirill A. Shutemov
+It seems like the XFS development community might benefit from a
+group maintainer model.
