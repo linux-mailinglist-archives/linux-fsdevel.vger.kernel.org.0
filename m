@@ -2,134 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F8515B93D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 06:55:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DFA215B9B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 07:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbgBMFzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 00:55:37 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49902 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgBMFzg (ORCPT
+        id S1729526AbgBMGmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 01:42:01 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38240 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbgBMGmB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 00:55:36 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j27TD-00Bp5a-8k; Thu, 13 Feb 2020 05:55:27 +0000
-Date:   Thu, 13 Feb 2020 05:55:27 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20200213055527.GS23230@ZenIV.linux.org.uk>
-References: <87v9obipk9.fsf@x220.int.ebiederm.org>
- <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
- <20200212200335.GO23230@ZenIV.linux.org.uk>
- <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        Thu, 13 Feb 2020 01:42:01 -0500
+Received: by mail-lj1-f195.google.com with SMTP id w1so5263987ljh.5;
+        Wed, 12 Feb 2020 22:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mMmuNpdrddhrOWh+4K56L0YF6Be/7s8PGs+t3nQ9XBc=;
+        b=q/D+kHXKQDgR3fVVwhifALKcssH8rymF8OkkigRJ302Sa9VjPP4heu3ZtnMqMs8SWS
+         XLPb3FgDKBPMSWeu6sBU2k7bJZZY5mxwdfBDKVH2vG+qwbJUgymN/AujzSnIagkpxI8B
+         6IwKRdth3Zw+n5TUFfbmmfKzR43Iv0b79GWIjqXfELXZy4lQWLgLSvuy+Pe+SinogQXV
+         DFIka3jUmL7L2OdQDyh8pzvkFvrUGmOHBHsiW5GIFzJzlVvItSTQyyKNlBqhglDkJW36
+         l35RuZ+o9SfVEpIwM2nUIAoj4Qaz+IBhHPe25z+ffapxWwPj6Bx2eMsdnxjwbVhuIx65
+         MLnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mMmuNpdrddhrOWh+4K56L0YF6Be/7s8PGs+t3nQ9XBc=;
+        b=RiZIQs4OWwu9m4IJjhLdOiAYiZyTlE1hsSMXQhh8y0O4aCyeK6zlP6F5KD+71WQpBX
+         94cLd3pxZs6R+pnPb42pIcWPWnHzZI7MA9JXB+Kyu3KgXGpkB8yRiicSsMprPYY5MfKS
+         g3s/oI+4jM45qopXkbpQ/IH+0tAXgDo0ZcUp3kSp4JWiUTgprhrvYtEem0hKYd7EKZBE
+         DBZVUhgXffgNFpveEzxAxoTe4l8dlTzrjgQx12yZtmaq0EO3Zb1wexeA2uMjGcB4rzBf
+         M4120sTV426pJTJq0qYpT/zIfSx3oxR3JQpT7S92hJeJaqjxBxAQ/ZnntPGWy+/y7Hk/
+         RiLQ==
+X-Gm-Message-State: APjAAAU3Fu+qJ6qvArydgSkF5EbriArZJTCr61ZrV3Yln/wN/CTu3UGP
+        iHtaUOe1jC84OuZ+A5WCXAs54L44Kh4xU2btrAw=
+X-Google-Smtp-Source: APXvYqxCY8Esw9mb9wmG/UGxD0UUKDvMB5s9SYeKowx88j1tinMMSnQmnoAJmOf7qqFYYldszD00sy05EvzJKFOoz2U=
+X-Received: by 2002:a2e:a553:: with SMTP id e19mr5046527ljn.64.1581576118811;
+ Wed, 12 Feb 2020 22:41:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pnejf6fz.fsf@x220.int.ebiederm.org>
+References: <20200108111743.23393-1-janne.karhunen@gmail.com>
+ <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
+ <1580998432.5585.411.camel@linux.ibm.com> <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
+ <1581366258.5585.891.camel@linux.ibm.com> <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
+ <1581462616.5125.69.camel@linux.ibm.com> <6b787049b965c8056d0e27360e2eaa8fa2f38b35.camel@gmail.com>
+ <1581555796.8515.130.camel@linux.ibm.com>
+In-Reply-To: <1581555796.8515.130.camel@linux.ibm.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 13 Feb 2020 08:41:47 +0200
+Message-ID: <CAE=NcrYwBZVT+xTn384K3fit6UFUES62zsibL=7A5C8_nYaq8A@mail.gmail.com>
+Subject: Re: [PATCH v2] ima: export the measurement list when needed
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     david.safford@gmail.com, linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 10:37:52PM -0600, Eric W. Biederman wrote:
+On Thu, Feb 13, 2020 at 3:03 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-> I think I have an alternate idea that could work.  Add some extra code
-> into proc_task_readdir, that would look for dentries that no longer
-> point to tasks and d_invalidate them.  With the same logic probably
-> being called from a few more places as well like proc_pid_readdir,
-> proc_task_lookup, and proc_pid_lookup.
-> 
-> We could even optimize it and have a process died flag we set in the
-> superblock.
-> 
-> That would would batch up the freeing work until the next time someone
-> reads from proc in a way that would create more dentries.  So it would
-> prevent dentries from reaped zombies from growing without bound.
-> 
-> Hmm.  Given the existence of proc_fill_cache it would really be a good
-> idea if readdir and lookup performed some of the freeing work as well.
-> As on readdir we always populate the dcache for all of the directory
-> entries.
+> > This is a pretty important new feature.
+> > A lot of people can't use IMA because of the memory issue.
+> > Also, I really think we need to let administrators choose the tradeoffs
+> > of keeping the list in memory, on a local file, or only on the
+> > attestation server, as best fits their use cases.
+>
+> Dave, I understand that some use cases require the ability of
+> truncating the measurement list.  We're discussing how to truncate the
+> measurement list.  For example, in addition to the existing securityfs
+> binary_runtime_measurements file, we could define a new securityfs
+> file indicating the number of records to delete.
 
-First of all, that won't do a damn thing when nobody is accessing
-given superblock.  What's more, readdir in root of that procfs instance
-is not enough - you need it in task/ of group leader.
+I don't have strong opinions either way, just let me know how to adapt
+the patch and we will get it done asap. I'd prefer a solution where
+the kernel can initiate the flush, but if not then not.
 
-What I don't understand is the insistence on getting those dentries
-via dcache lookups.  _IF_ we are willing to live with cacheline
-contention (on ->d_lock of root dentry, if nothing else), why not
-do the following:
-	* put all dentries of such directories ([0-9]* and [0-9]*/task/*)
-into a list anchored in task_struct; have non-counting reference to
-task_struct stored in them (might simplify part of get_proc_task() users,
-BTW - avoids pid-to-task_struct lookups if we have a dentry and not just
-the inode; many callers do)
-	* have ->d_release() remove from it (protecting per-task_struct lock
-nested outside of all ->d_lock)
-	* on exit:
-	lock the (per-task_struct) list
-	while list is non-empty
-		pick the first dentry
-		remove from the list
-		sb = dentry->d_sb
-		try to bump sb->s_active (if non-zero, that is).
-		if failed
-			continue // move on to the next one - nothing to do here
-		grab ->d_lock
-		res = handle_it(dentry, &temp_list)
-		drop ->d_lock
-		unlock the list
-		if (!list_empty(&temp_list))
-			shrink_dentry_list(&temp_list)
-		if (res)
-			d_invalidate(dentry)
-			dput(dentry)
-		deactivate_super(sb)
-		lock the list
-	unlock the list
+Thanks everyone for all the help.
 
-handle_it(dentry, temp_list) // ->d_lock held; that one should be in dcache.c
-	if ->d_count is negative // unlikely
-		return 0;
-	if ->d_count is positive,
-		increment ->d_count
-		return 1;
-	// OK, it's still alive, but ->d_count is 0
-	__d_drop	// equivalent of d_invalidate in this case
-	if not on a shrink list // otherwise it's not our headache
-		if on lru list
-			d_lru_del
-		d_shrink_add dentry to temp_list
-	return 0;
 
-And yeah, that'll dirty ->s_active for each procfs superblock that
-has dentry for our process present in dcache.  On exit()...
+--
+Janne
