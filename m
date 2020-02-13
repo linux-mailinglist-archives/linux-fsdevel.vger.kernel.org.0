@@ -2,100 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0417F15B9CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 07:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBA8615B9FB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 08:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbgBMGxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 01:53:33 -0500
-Received: from freki.datenkhaos.de ([81.7.17.101]:48960 "EHLO
-        freki.datenkhaos.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgBMGxc (ORCPT
+        id S1729830AbgBMHXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 02:23:21 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36634 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729364AbgBMHXU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 01:53:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by freki.datenkhaos.de (Postfix) with ESMTP id 7193C2288D32;
-        Thu, 13 Feb 2020 07:53:30 +0100 (CET)
-Received: from freki.datenkhaos.de ([127.0.0.1])
-        by localhost (freki.datenkhaos.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ip891DUpbuya; Thu, 13 Feb 2020 07:53:26 +0100 (CET)
-Received: from latitude (vpn136.rz.tu-ilmenau.de [141.24.172.136])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by freki.datenkhaos.de (Postfix) with ESMTPSA;
-        Thu, 13 Feb 2020 07:53:26 +0100 (CET)
-Date:   Thu, 13 Feb 2020 07:53:21 +0100
-From:   Johannes Hirte <johannes.hirte@datenkhaos.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        Kai =?utf-8?B?TcOka2lzYXJh?= <Kai.Makisara@kolumbus.fi>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dongli Zhang <dongli.zhang@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Hannes Reinecke <hare@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        John Garry <john.garry@huawei.com>,
-        Martin Wilck <mwilck@suse.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ira Weiny <ira.weiny@intel.com>, Iustin Pop <iustin@k1024.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-block <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 13/22] compat_ioctl: scsi: move ioctl handling into
- drivers
-Message-ID: <20200213065321.GA8696@latitude>
-References: <20200102145552.1853992-1-arnd@arndb.de>
- <20200102145552.1853992-14-arnd@arndb.de>
- <20200212211452.GA5726@latitude>
- <CAK8P3a0oPpMC8367sEs+9Ae=wFH30BHAq+aRDbWLyeVLuNOnEw@mail.gmail.com>
+        Thu, 13 Feb 2020 02:23:20 -0500
+Received: by mail-oi1-f193.google.com with SMTP id c16so4819789oic.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Feb 2020 23:23:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=muyZ7YMznir5WH5exT0RbBmxdQ/Z+Ljlf7z/NaG6Agg=;
+        b=L61FooOwf9pKuM2tfav43uuzApo0o0TxSOJOE8dnOlQ2hvwEnOdmfFgEZ9qB3fIp8r
+         2pmCCAJR5/24PQuRFSN8Bva5hmG31QIxHh81GHBe5gqIeMmvV182MBY4wKMq2nsPBYlN
+         z/fjVcD813zY1x8Mnu0IlyjefBRM5kPjRfL8r7FOspda6BVKzYeat4nC571OE/yz0Azz
+         VDm3z2c+NGuF7fFrXMXkXQGm8Lv6JykpaZONh26d+TPoK+l1dOvEqJeXmHQrbwApcyri
+         0zOeQlWzlQTkeMPMlqFbG2uoodOvV8f3yD783BxTbMazdQtkiE7N0osbll+5OSSQ62kp
+         CY0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=muyZ7YMznir5WH5exT0RbBmxdQ/Z+Ljlf7z/NaG6Agg=;
+        b=kJm6MqEbjl7FsF+EAqARZH98FAgahIyJNMGoYMbKvoqChCGG0wy6+JMgoLzYkWbJtQ
+         Pi+mWzxCxLN9gxfmP2ABHQ0wZ2JglnEpqxC+q2s0Mgec1+fMYmOB/BH6M+0PVAP99djp
+         OIjYMbn5AiAKOV0zUoTslse2DhGV6qz7AOtpjOR30UD1qPA3V6TfoWrAYkVSUiBhOLo9
+         4KiT8hYcyEvCvh7IxEhqKvzVfgWU+zbkjqqgmZ2FV9mdwjaeV4PHoZrgcoXD6HI6Hltw
+         CvLiHDQ0xJ/A4pnMOao8IWFvBZj9Y6wTLuTJhvhcZukkFaGGjWBz5i/LR6t6wTe44tji
+         IA+w==
+X-Gm-Message-State: APjAAAWWJHi7S1qAZxHUc76FrhQrXQKg/eNDHeNUNBy/O9HT7jkkCHMX
+        tYC2qCVrZfeUVgWvUiJHSZKT2ozY2XoI/ylOlOefxQ==
+X-Google-Smtp-Source: APXvYqyYzxgFIan1kewGLG3nqH4OvVo1xRGOuRgd1gmRmamEyn7pbXlvPBmnd0zoDYbsyql132fSHcS/xRA08u5VJ5s=
+X-Received: by 2002:a05:6808:8ca:: with SMTP id k10mr2012050oij.164.1581578598795;
+ Wed, 12 Feb 2020 23:23:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0oPpMC8367sEs+9Ae=wFH30BHAq+aRDbWLyeVLuNOnEw@mail.gmail.com>
+References: <CAJfpegtUAHPL9tsFB85ZqjAfy0xwz7ATRcCtLbzFBo8=WnCvLw@mail.gmail.com>
+ <20200209080918.1562823-1-michael+lkml@stapelberg.ch> <CAJfpegv4iL=bW3TXP3F9w1z6-LUox8KiBmw7UBcWE-0jiK0YsA@mail.gmail.com>
+ <CANnVG6kYh6M30mwBHcGeFf=fhqKmWKPeUj2GYbvNgtq0hm=gXQ@mail.gmail.com>
+ <CAJfpegtX0Z3_OZFG50epWGHkW5aOMfYmn61WmqYC67aBmJyDMA@mail.gmail.com>
+ <CANnVG6=s1C7LSDGD1-Ato-sfaKi1LQvW3GM5wfAiUqWXibEohw@mail.gmail.com> <CAJfpegvBguKcNZk-p7sAtSuNH_7HfdCyYvo8Wh7X6P=hT=kPrA@mail.gmail.com>
+In-Reply-To: <CAJfpegvBguKcNZk-p7sAtSuNH_7HfdCyYvo8Wh7X6P=hT=kPrA@mail.gmail.com>
+From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
+Date:   Thu, 13 Feb 2020 08:23:07 +0100
+Message-ID: <CANnVG6=u8drSyKhF9Gjd-Y-saN8gdOSOsmEJenyWXsQE9QYmVQ@mail.gmail.com>
+Subject: Re: Still a pretty bad time on 5.4.6 with fuse_request_end.
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kyle Sanderson <kyle.leet@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020 Feb 12, Arnd Bergmann wrote:
-> On Wed, Feb 12, 2020 at 10:15 PM Johannes Hirte
-> <johannes.hirte@datenkhaos.de> wrote:
-> >
-> > On 2020 Jan 02, Arnd Bergmann wrote:
-> 
-> >
-> > Error in getting drive hardware properties
-> > Error in getting drive reading properties
-> > Error in getting drive writing properties
-> > __________________________________
-> >
-> > Disc mode is listed as: CD-DA
-> > ++ WARN: error in ioctl CDROMREADTOCHDR: Bad address
-> >
-> > cd-info: Can't get first track number. I give up.
-> 
-> Right, there was also a report about breaking the Fedora installer,
-> see https://bugzilla.redhat.com/show_bug.cgi?id=1801353
-> 
-> There is a preliminary patch that should fix this, I'll post a
-> version with more references tomorrow:
-> https://www.happyassassin.net/temp/0001-Replace-.ioctl-with-.compat_ioctl-in-three-appropria.patch
+I confirm that the patch fixes the issue I was seeing. Thanks a lot!
 
-Yes, I can confirm that the patch fix it.
-
--- 
-Regards,
-  Johannes Hirte
-
+On Wed, Feb 12, 2020 at 8:36 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Wed, Feb 12, 2020 at 10:38 AM Michael Stapelberg
+> <michael+lkml@stapelberg.ch> wrote:
+> >
+> > Unfortunately not: when I change the code like so:
+> >
+> >     bool async;
+> >     uint32_t opcode_early =3D req->args->opcode;
+> >
+> >     if (test_and_set_bit(FR_FINISHED, &req->flags))
+> >         goto put_request;
+> >
+> >     async =3D req->args->end;
+> >
+> > =E2=80=A6gdb only reports:
+> >
+> > (gdb) bt
+> > #0  0x000000a700000001 in ?? ()
+> > #1  0xffffffff8137fc99 in fuse_copy_finish (cs=3D0x20000ffffffff) at
+> > fs/fuse/dev.c:681
+> > Backtrace stopped: previous frame inner to this frame (corrupt stack?)
+> >
+> > But maybe that=E2=80=99s a hint in and of itself?
+>
+> Yep, it's a stack use after return bug.   Attached patch should fix
+> it, though I haven't tested it.
+>
+> Thanks,
+> Miklos
