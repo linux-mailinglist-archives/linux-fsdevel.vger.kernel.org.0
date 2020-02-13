@@ -2,88 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB0615CBB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 21:10:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A428215CC55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 21:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbgBMUKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 15:10:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbgBMUKb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:10:31 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727797AbgBMUYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 15:24:33 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57371 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727609AbgBMUYd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Feb 2020 15:24:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1581625472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=SkhWaIZ18aMaJ7Wk9+3f6WYB8fb4IbtJavOpp6sl/as=;
+        b=B4DlyDoh1IcrfWIgiJws7IS8HEf+4TxwLUSqrcxCLefiSjI3PbJXviu/TOzh6imsph4f1U
+        nWeDCCbRm+acfIOe9QqQ/o4DEH+K0b2RJBYRV59jmbJBVWbsTdePvJ7stbsYlpIF3R7Cgh
+        PASuJlFAjeP7szc5obKO7aSso4RCqh8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-212-udg9qeCJMX-le8RoneTrRw-1; Thu, 13 Feb 2020 15:24:30 -0500
+X-MC-Unique: udg9qeCJMX-le8RoneTrRw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB6E424673;
-        Thu, 13 Feb 2020 20:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581624631;
-        bh=wCa5vRNZGSPGzqcXpTyE+mHqN/Ye42Xpuhgjo/0QB/s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nviCRg1g4MZAo0jKL456uD4cVnAykwAnapNmSYMDXqWZJw1ziRRyAUYClXejO8gEk
-         qljLS/l1HBJwOPpefFXMCgNASTZ7WCRkVRpjiFV36MpTyl1JRIS+9HbQTeAZWD+uOU
-         9V8/fJLMmUxaNNLCaix5dKc1eZtd9CCuONPTjs+Q=
-Subject: Re: [PATCH] selftests: openat2: fix build error on newer glibc
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20200213072656.15611-1-cyphar@cyphar.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <0126e205-e11e-f107-24b8-3673b1c749e3@kernel.org>
-Date:   Thu, 13 Feb 2020 13:10:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5288E1857344;
+        Thu, 13 Feb 2020 20:24:28 +0000 (UTC)
+Received: from max.home.com (ovpn-204-60.brq.redhat.com [10.40.204.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA5B2100032E;
+        Thu, 13 Feb 2020 20:24:25 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH 0/7] Switch to page_mkwrite_check_truncate
+Date:   Thu, 13 Feb 2020 21:24:16 +0100
+Message-Id: <20200213202423.23455-1-agruenba@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200213072656.15611-1-cyphar@cyphar.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/13/20 12:26 AM, Aleksa Sarai wrote:
-> It appears that newer glibcs check that openat(O_CREAT) was provided a
-> fourth argument (rather than passing garbage), resulting in the
-> following build error:
-> 
->> In file included from /usr/include/fcntl.h:301,
->>                   from helpers.c:9:
->> In function 'openat',
->>      inlined from 'touchat' at helpers.c:49:11:
->> /usr/include/x86_64-linux-gnu/bits/fcntl2.h:126:4: error: call to
->> '__openat_missing_mode' declared with attribute error: openat with O_CREAT
->> or O_TMPFILE in third argument needs 4 arguments
->>    126 |    __openat_missing_mode ();
->>        |    ^~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Reported-by: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->   tools/testing/selftests/openat2/helpers.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/openat2/helpers.c b/tools/testing/selftests/openat2/helpers.c
-> index e9a6557ab16f..5074681ffdc9 100644
-> --- a/tools/testing/selftests/openat2/helpers.c
-> +++ b/tools/testing/selftests/openat2/helpers.c
-> @@ -46,7 +46,7 @@ int sys_renameat2(int olddirfd, const char *oldpath,
->   
->   int touchat(int dfd, const char *path)
->   {
-> -	int fd = openat(dfd, path, O_CREAT);
-> +	int fd = openat(dfd, path, O_CREAT, 0700);
->   	if (fd >= 0)
->   		close(fd);
->   	return fd;
-> 
+Hi,
 
-Thanks for a quick patch. It compiles now.
+Darrick ended up not merge these changes through the xfs tree, so could
+you please pick them up and put them in your trees for the next merge
+window?  Luckily the changes are all independend of each other.
 
-I will take this through kselftest tree.
+Thanks,
+Andreas
 
-thanks,
--- Shuah
+Andreas Gruenbacher (7):
+  fs: Un-inline page_mkwrite_check_truncate
+  fs: Switch to page_mkwrite_check_truncate in block_page_mkwrite
+  ubifs: Switch to page_mkwrite_check_truncate in ubifs_vm_page_mkwrite
+  ext4: Switch to page_mkwrite_check_truncate in ext4_page_mkwrite
+  f2fs: Switch to page_mkwrite_check_truncate in f2fs_vm_page_mkwrite
+  ceph: Switch to page_mkwrite_check_truncate in ceph_page_mkwrite
+  btrfs: Switch to page_mkwrite_check_truncate in btrfs_page_mkwrite
 
+ fs/btrfs/inode.c        | 16 +++++-----------
+ fs/buffer.c             | 16 +++-------------
+ fs/ceph/addr.c          |  2 +-
+ fs/ext4/inode.c         | 15 ++++-----------
+ fs/f2fs/file.c          | 19 +++++++------------
+ fs/ubifs/file.c         |  3 +--
+ include/linux/pagemap.h | 28 +---------------------------
+ mm/filemap.c            | 28 ++++++++++++++++++++++++++++
+ 8 files changed, 50 insertions(+), 77 deletions(-)
+
+--=20
+2.24.1
 
