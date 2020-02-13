@@ -2,111 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9C4F15CE4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 23:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1FE615CEA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 00:29:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbgBMWsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 17:48:10 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35473 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbgBMWsK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 17:48:10 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q8so8532686ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 14:48:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rVdHJ1r/9FxJmwhDqRkVHSIn1Ry+lO3z+KpnaUuqwYk=;
-        b=dRYW8MemR37cE0uru6NTUES5Od7vEqzfZmb/KMY93QEjURoq6DE5QcXLZ6JJL9HB8V
-         KfvM/ZKQbYsF7Zy+x1PnUgqdmV3x1lbxpWU+BFmhJglL6UqALgYvF3IltbUH8c3PxzFq
-         KRLtkM5e8bHrUc0004IuGa/Hy6940Rjrv4zzw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rVdHJ1r/9FxJmwhDqRkVHSIn1Ry+lO3z+KpnaUuqwYk=;
-        b=JDC/w2mnE06o1Apg+OW2QJXf2jHUPkk2CakDhlEAvra1NamXkG42J4S3x4e3H1SEKN
-         sI9ThGKG35b7qsVOhmkTN9bfShQ0ye9983AvrQ9DkMB/6ks0OYvpkxobHmKX/Ualolwr
-         oGPMDph0DuHjoqIR1VUwcDsobfDmQ15wbjWSpdABmm1beSpeKrbGhk9+XW1ip26lRSZ4
-         czFlA11utFP20Bu5AUC/ppp5Fkfk3uBmonSBlWTzhP477YVSunQWhIgcS35vjKRKewbT
-         N8xJViAilkq6Efn0q1YRGRQvSCbUCYnzcl9P22DG80j4KOveOOWdQt5Winpgstlrv6tN
-         1Vtw==
-X-Gm-Message-State: APjAAAVc2LsZi69mS1EMCoXA+ZFkmV+9g/7xBBpPcK0xsRx7wWdQJ51P
-        7CuU4nS6QC6GLEuZ2WaYFfmBYzwiieA=
-X-Google-Smtp-Source: APXvYqyCnzNWrp/WWfxKN40kv7ge5us0qFcW6gfMZnOxWEahe/r8VX/9a3Ocd1uqee7EzeXQgNf56A==
-X-Received: by 2002:a2e:914d:: with SMTP id q13mr53349ljg.198.1581634086497;
-        Thu, 13 Feb 2020 14:48:06 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id m16sm2401054ljb.47.2020.02.13.14.48.05
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2020 14:48:05 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id h23so8514085ljc.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 14:48:05 -0800 (PST)
-X-Received: by 2002:a2e:88c5:: with SMTP id a5mr35496ljk.201.1581634084790;
- Thu, 13 Feb 2020 14:48:04 -0800 (PST)
+        id S1727754AbgBMX3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 18:29:25 -0500
+Received: from mga11.intel.com ([192.55.52.93]:62149 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727519AbgBMX3Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Feb 2020 18:29:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 15:29:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,438,1574150400"; 
+   d="scan'208";a="227412724"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga008.jf.intel.com with ESMTP; 13 Feb 2020 15:29:24 -0800
+Date:   Thu, 13 Feb 2020 15:29:24 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
+Message-ID: <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
+References: <20200208193445.27421-1-ira.weiny@intel.com>
+ <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
+ <20200211201718.GF12866@iweiny-DESK2.sc.intel.com>
+ <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
+ <20200213190156.GA22854@iweiny-DESK2.sc.intel.com>
+ <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
+ <20200213195839.GG6870@magnolia>
 MIME-Version: 1.0
-References: <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org> <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org> <20200213055527.GS23230@ZenIV.linux.org.uk>
- <CAHk-=wgQnNHYxV7-SyRP=g9vTHyNAK9g1juLLB=eho4=DHVZEQ@mail.gmail.com> <20200213222350.GU23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200213222350.GU23230@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 13 Feb 2020 14:47:48 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjePLiQqUfQGCrNb0wp+EtgRddQbcK-pHH=6rxbdYNNOA@mail.gmail.com>
-Message-ID: <CAHk-=wjePLiQqUfQGCrNb0wp+EtgRddQbcK-pHH=6rxbdYNNOA@mail.gmail.com>
-Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213195839.GG6870@magnolia>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 2:23 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Thu, Feb 13, 2020 at 11:58:39AM -0800, Darrick J. Wong wrote:
+> On Thu, Feb 13, 2020 at 11:05:13AM -0800, Ira Weiny wrote:
+> > On Thu, Feb 13, 2020 at 11:01:57AM -0800, 'Ira Weiny' wrote:
+> > > On Wed, Feb 12, 2020 at 02:49:48PM -0500, Jeff Moyer wrote:
+> > > > Ira Weiny <ira.weiny@intel.com> writes:
+> > > > 
+> >  
+> > [snip]
+> > 
+> > > > Given that we document the dax mount
+> > > > option as "the way to get dax," it may be a good idea to allow for a
+> > > > user to selectively disable dax, even when -o dax is specified.  Is that
+> > > > possible?
+> > > 
+> > > Not with this patch set.  And I'm not sure how that would work.  The idea was
+> > > that -o dax was simply an override for users who were used to having their
+> > > entire FS be dax.  We wanted to depreciate the use of "-o dax" in general.  The
+> > > individual settings are saved so I don't think it makes sense to ignore the -o
+> > > dax in favor of those settings.  Basically that would IMO make the -o dax
+> > > useless.
+> > 
+> > Oh and I forgot to mention that setting 'dax' on the root of the FS basically
+> > provides '-o dax' functionality by default with the ability to "turn it off"
+> > for files.
+> 
+> Please don't further confuse FS_XFLAG_DAX and S_DAX.
+
+Yes...  the above text is wrong WRT statx.  But setting the physical
+XFS_DIFLAG2_DAX flag on the root directory will by default cause all files and
+directories created there to be XFS_DIFLAG2_DAX and so forth on down the tree
+unless explicitly changed.  This will be the same as mounting with '-o dax' but
+with the ability to turn off dax for individual files.  Which I think is the
+functionality Jeff is wanting.
+
 >
-> I'd been thinking of ->d_fsdata pointing to a structure with list_head
-> and a (non-counting) task_struct pointer for those guys.  Allocated
-> on lookup, of course (as well as readdir ;-/) and put on the list
-> at the same time.
+> They are two
+> separate flags with two separate behaviors:
+> 
+> FS_XFLAG_DAX is a filesystem inode metadata flag.
+> 
+> Setting FS_XFLAG_DAX on a directory causes all files and directories
+> created within that directory to inherit FS_XFLAG_DAX.
+> 
+> Mounting with -o dax causes all files and directories created to have
+> FS_XFLAG_DAX set regardless of the parent's status.
 
-Hmm. That smells like potentially a lot of small allocations, and
-making readdir() even nastier.
+I don't believe this is true, either before _or_ after this patch set.
 
-Do we really want to create the dentries at readdir time? We do now
-(with proc_fill_cache()) but do we actually _need_ to?
+'-o dax' only causes XFS_MOUNT_DAX to be set which then cause S_DAX to be set.
+It does not affect FS_XFLAG_DAX.  This is important because we don't want '-o
+dax' to suddenly convert all files to DAX if '-o dax' is not used.
 
-I guess a lot of readdir users end up doing a stat on it immediately
-afterwards. I think right now we do it to get the inode number, and
-maybe that is a basic requirement (even if I don't think it's really
-stable - an inode could be evicted and then the ino changes, no?)
+> 
+> The FS_XFLAG_DAX can be get and set via the fs[g]etxattr ioctl.
 
-Ho humm. This all doesn't make me happy. But I guess the proof is in
-the pudding - and if you come up with a good patch, I won't complain.
+Right statx was the wrong tool...
 
-              Linus
+fs[g|s]etattr via the xfs_io -c 'chatttr|lsattr' is the correct tool.
+
+> 
+> -------
+> 
+> S_DAX is the flag that controls the IO path in the kernel for a given
+> inode.
+> 
+> Loading a file inode into the kernel (via _iget) with FS_XFLAG_DAX set
+> or creating a file inode that inherits FS_XFLAG_DAX causes the incore
+> inode to have the S_DAX flag set if the storage device supports it.
+
+Yes after reworking "Clean up DAX support check" I believe I've got it correct
+now.  Soon to be in V4.
+
+> 
+> Files with S_DAX set use the dax IO paths through the kernel.
+> 
+> The S_DAX flag can be queried via statx.
+
+Yes as a verification that the file is at that moment operating as dax.  It
+will not return true for a directory ever.  My bad for saying that.  Sorry I
+got my tools flags mixed up...
+
+Ira
+
