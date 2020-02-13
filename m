@@ -2,120 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECCB415BF97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 14:43:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95ECE15BFA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 14:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbgBMNnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 08:43:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51498 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729801AbgBMNnW (ORCPT
+        id S1729971AbgBMNqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 08:46:30 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34888 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729931AbgBMNqa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 08:43:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=57P4Q/GU2ra8qTXmZpI2Z/3+4gqtkjqSHRcsBClNQtg=; b=rSzaYz7/rumIfdFG+MdlTwtWLq
-        KJDbhGYitV4p48O5SGrNFqm7b6XrkzPNvpJkvwLsbmPzqOjljvrrI/kGme5i39kPjSCbZwMVJj/gp
-        /vZh8pgUFXWHWX8sVicFVEOt39rpppNWYqPj6hi4J8dYGEOsWyymiKiHcRkxOz883kzq6ZSKHqjk3
-        fsehuyu0gDewtgLxKPXDc7teJpZ6SJQvrPw6Tb1R8zCLV/rYe5SP5WtC5ElJI7KBaqIo6dB7dEuoo
-        fa9oGjFgIiPAK7v7SmERxvNZ+0wRUV+dCDxCmPFGbyPDr/p1ZkogJK5cSzTw9SfomXbDVvK3/M17m
-        Yx42/x7g==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2Elw-0008Pa-QR; Thu, 13 Feb 2020 13:43:16 +0000
-Date:   Thu, 13 Feb 2020 05:43:16 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [PATCH 00/12] Change readahead API
-Message-ID: <20200213134316.GK7778@bombadil.infradead.org>
-References: <20200125013553.24899-1-willy@infradead.org>
- <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
+        Thu, 13 Feb 2020 08:46:30 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n17so4386367qtv.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 05:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aw5WCdrOr580cO7oznYIDuNtsM6o28rEuLnOqaeZRwU=;
+        b=QQCi3sJYPmlDH0+08h7f5QPcRZToa2l5Ay1lqldX9AFSHlwpwDsg9zFpn3G+maFQb1
+         mxBkqapaVf2GFKPujVvHLUkAYazoB0Os3g9DsFUvav9VA8rFnOGGxWUZxDtPAgWpIfgC
+         GErz0RmyTRICexIwjowvev80sx/HOUOqk6TBAtsCzsCfB3HOoxQKHvihfzetImr1HD9t
+         jLGvuV0WSaG64pJGFlYkiEOEpvEu2SNFogeViOCAdem+ae2b8DT3MpvtrflblclDHDoB
+         wDnUksoT2vuKaPMEav/3Zb+xiPr6RmO36fOMMzmGEagJ67X8FfdqIDritqGsxr2bJb2Q
+         pP+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aw5WCdrOr580cO7oznYIDuNtsM6o28rEuLnOqaeZRwU=;
+        b=Ki+Qe3ac+8QFro0D8A93GCcV/yJ+/jM1vnVxyMpcuBRbgug255jZnvpQ+H4zY2fZGG
+         PxTlpnLCEPxP6uB/4vWMewgxZqjIoM9yX9TI2q81Ibq/OnPOrDUyqM9fByMdPmATm3Wt
+         xzTrlMgZeOzf/tdsmWkfRKvrZPAl2SS52H0YwKmbFL5suyyjl4nBUZu0cIdrzXxDB18Y
+         lfmlKeIxMc8vb5uBs5QH4M7wWnzn8Hxs4bLD+KlVvj5Re0T7nQBHjAvS/jvsAWClaUnR
+         cS1WkjMRYvXgFIOGm0i+8abfNvGrjXFQlbcs8sLwj6tRiZ6iG5T8InV0weg3TRbse36T
+         qkxw==
+X-Gm-Message-State: APjAAAVS46S/OI2oW8GPVlF4PSIuIAjNcyhna+5M+3kTZYsyMcyhKPAj
+        xt6JejrhSHlEffSRL15kjX/8wyom2qs=
+X-Google-Smtp-Source: APXvYqyljAHy/xbcfUXzeaELTJkaqzwbXM/XyIPBZMe3LaVIHVB/IUQ8bhpTzXW6tq+JBV6tz2RgXg==
+X-Received: by 2002:ac8:7152:: with SMTP id h18mr11642514qtp.349.1581601588915;
+        Thu, 13 Feb 2020 05:46:28 -0800 (PST)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id z21sm1331911qka.122.2020.02.13.05.46.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 05:46:28 -0800 (PST)
+Date:   Thu, 13 Feb 2020 08:46:27 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200213134627.GB208501@cmpxchg.org>
+References: <20200211175507.178100-1-hannes@cmpxchg.org>
+ <CALOAHbC3Bx3E7fwt35zuiHfuC8YyhVWA1tDh2KP+gQJoMtED3w@mail.gmail.com>
+ <20200212164235.GB180867@cmpxchg.org>
+ <CALOAHbCiBqdZzZVC7_c3Um_vDUu9ECsDYUebOL4+=MP9owA_Og@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212203852.8b7e0b28974e41227bd97329@linux-foundation.org>
+In-Reply-To: <CALOAHbCiBqdZzZVC7_c3Um_vDUu9ECsDYUebOL4+=MP9owA_Og@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 08:38:52PM -0800, Andrew Morton wrote:
-> On Fri, 24 Jan 2020 17:35:41 -0800 Matthew Wilcox <willy@infradead.org> wrote:
+On Thu, Feb 13, 2020 at 09:47:29AM +0800, Yafang Shao wrote:
+> On Thu, Feb 13, 2020 at 12:42 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > On Wed, Feb 12, 2020 at 08:25:45PM +0800, Yafang Shao wrote:
+> > > On Wed, Feb 12, 2020 at 1:55 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > > Another variant of this problem was recently observed, where the
+> > > > kernel violates cgroups' memory.low protection settings and reclaims
+> > > > page cache way beyond the configured thresholds. It was followed by a
+> > > > proposal of a modified form of the reverted commit above, that
+> > > > implements memory.low-sensitive shrinker skipping over populated
+> > > > inodes on the LRU [1]. However, this proposal continues to run the
+> > > > risk of attracting disproportionate reclaim pressure to a pool of
+> > > > still-used inodes,
+> > >
+> > > Hi Johannes,
+> > >
+> > > If you really think that is a risk, what about bellow additional patch
+> > > to fix this risk ?
+> > >
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index 80dddbc..61862d9 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -760,7 +760,7 @@ static bool memcg_can_reclaim_inode(struct inode *inode,
+> > >                 goto out;
+> > >
+> > >         cgroup_size = mem_cgroup_size(memcg);
+> > > -       if (inode->i_data.nrpages + protection >= cgroup_size)
+> > > +       if (inode->i_data.nrpages)
+> > >                 reclaimable = false;
+> > >
+> > >  out:
+> > >
+> > > With this additional patch, we skip all inodes in this memcg until all
+> > > its page cache pages are reclaimed.
+> >
+> > Well that's something we've tried and had to revert because it caused
+> > issues in slab reclaim. See the History part of my changelog.
 > 
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > This series adds a readahead address_space operation to eventually
-> > replace the readpages operation.  The key difference is that
-> > pages are added to the page cache as they are allocated (and
-> > then looked up by the filesystem) instead of passing them on a
-> > list to the readpages operation and having the filesystem add
-> > them to the page cache.  It's a net reduction in code for each
-> > implementation, more efficient than walking a list, and solves
-> > the direct-write vs buffered-read problem reported by yu kuai at
-> > https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+> You misuderstood it.
+> The reverted patch skips all inodes in the system, while this patch
+> only works when you turn on memcg.{min, low} protection.
+> IOW, that is not a default behavior, while it only works when you want
+> it and only effect your targeted memcg rather than the whole system.
+
+I understand perfectly well.
+
+Keeping unreclaimable inodes on the shrinker LRU causes the shrinker
+to build up excessive pressure on all VFS objects. This is a
+bug. Making it cgroup-specific doesn't make it less of a bug, it just
+means you only hit the bug when you use cgroup memory protection.
+
+> > > > while not addressing the more generic reclaim
+> > > > inversion problem outside of a very specific cgroup application.
+> > > >
+> > >
+> > > But I have a different understanding.  This method works like a
+> > > knob. If you really care about your workingset (data), you should
+> > > turn it on (i.e. by using memcg protection to protect them), while
+> > > if you don't care about your workingset (data) then you'd better
+> > > turn it off. That would be more flexible.  Regaring your case in the
+> > > commit log, why not protect your linux git tree with memcg
+> > > protection ?
+> >
+> > I can't imagine a scenario where I *wouldn't* care about my
+> > workingset, though. Why should it be opt-in, not the default?
 > 
-> Unclear which patch fixes this and how it did it?
+> Because the default behavior has caused the XFS performace hit.
 
-I suppose the problem isn't fixed until patch 13/13 is applied.
-What yu kuai is seeing is a race where readahead allocates a page,
-then passes it to iomap_readpages, which calls xfs_read_iomap_begin()
-which looks up the extent.  Then thread 2 does DIO which modifies the
-extent, because there's nothing to say that thread 1 is still using it.
-With this patch series, the readpages code puts the locked pages in the
-cache before calling iomap_readpages, so any racing write will block on
-the locked page until readahead is completed.
+That means that with your proposal you cannot use cgroup memory
+protection for workloads that run on xfs.
 
-If you're tempted to put this into -mm, I have a couple of new changes;
-one to fix a kernel-doc warning for mpage_readahead() and one to add
-kernel-doc for iomap_readahead():
+(And if I remember the bug report correctly, this wasn't just xfs. It
+also caused metadata caches on other filesystems to get trashed. xfs
+was just more pronounced because it does sync inode flushing from the
+shrinker, adding write stalls to the mix of metadata cache misses.)
 
-+++ b/fs/mpage.c
-@@ -339,9 +339,7 @@
- 
- /**
-  * mpage_readahead - start reads against pages
-- * @mapping: the address_space
-- * @start: The number of the first page to read.
-- * @nr_pages: The number of consecutive pages to read.
-+ * @rac: Describes which pages to read.
-  * @get_block: The filesystem's block mapper function.
-  *
-  * This function walks the pages and the blocks within each page, building and
-
-+++ b/fs/iomap/buffered-io.c
-@@ -395,6 +395,21 @@
- 	return done;
- }
- 
-+/**
-+ * iomap_readahead - Attempt to read pages from a file.
-+ * @rac: Describes the pages to be read.
-+ * @ops: The operations vector for the filesystem.
-+ *
-+ * This function is for filesystems to call to implement their readahead
-+ * address_space operation.
-+ *
-+ * Context: The file is pinned by the caller, and the pages to be read are
-+ * all locked and have an elevated refcount.  This function will unlock
-+ * the pages (once I/O has completed on them, or I/O has been determined to
-+ * not be necessary).  It will also decrease the refcount once the pages
-+ * have been submitted for I/O.  After this point, the page may be removed
-+ * from the page cache, and should not be referenced.
-+ */
- void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- {
- 	struct inode *inode = rac->mapping->host;
-
-I'll do a v6 with those changes soon, but I would really like a bit more
-review from filesystem people, particularly ocfs2 and gfs2.
+What I'm proposing is an implementation that protects hot page cache
+without causing excessive shrinker pressure and rotations.
