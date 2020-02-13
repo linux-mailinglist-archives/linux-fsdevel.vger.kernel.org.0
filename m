@@ -2,78 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B64B15C34D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 16:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FEDC15C3BF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Feb 2020 16:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbgBMPj4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 10:39:56 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43827 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbgBMPjw (ORCPT
+        id S2387722AbgBMPoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 10:44:04 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36922 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbgBMPoA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:39:52 -0500
-Received: by mail-lj1-f193.google.com with SMTP id a13so7110678ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 07:39:50 -0800 (PST)
+        Thu, 13 Feb 2020 10:44:00 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b15so4599522lfc.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 07:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=NHktFnZlX6uKMwJC+qraMNZiHbiScODIMZ6tmW6mHl4=;
-        b=NftAHAky8nG3HwoLsfo/A8XP/u8putXbTgMDGVG58zTqt/ANXlRTYfcUpPXIjIulCW
-         F3frpsniYt6j0+nbWgw7d9lx35BuGxO/FG96mRE8mhOsVGxY+XQjoPIrnqIMuOrN1/sT
-         E7/82AQpay1JLLCwW1jOIPaRMJa4OX3nkjmTI4lbVG1YQPVm1h54D4/xbiKtRvEweF0T
-         48Vwo0nYCFVEAsONA2QnyFuiJknvu7JV84/cePCypvp5ncTwBb82VdR5tASR8Om68/Xx
-         IVLOFu/1sRo6fR4cGOO5EzsJQn35BxU+zKuSxG+WjrfJHZfuceELhp+8PnpUHRqeb8ZM
-         UHLw==
+        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
+        b=h1O9Lk/39Nx/ytmuPKvu48NGNZk+XUil67BnaQeOVqW/Cxkpqv48zOF9nGwuUWlurM
+         xa/u43X71SKX6da2a5fB2v7S6PgQbQBl2ssMQ94F9rVUv8LKIUdVh9zDvGRo4D5v6+nh
+         LuEjK1SL9jGH9n9oTsRgAnTMwm6XTkEOF5/XYPKhJ4cpujsioAoAN8FERx3YESyPw37h
+         9NEXptd6Gt16Vof39x76tD1yi5FL8D3RgfFYOqkR73ihPA21YsLTzKCgkmtI+79zgECg
+         sL1BpHotERgS2c80OI6FTeoS+pGgJOQg0Eiig6Hakw1DtvSJOGUrK1sCxYJwoULIUzjm
+         1cnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=NHktFnZlX6uKMwJC+qraMNZiHbiScODIMZ6tmW6mHl4=;
-        b=XrnEuKg1oUdeRTiRonJY9sdTAZpmT6oSPtpzuZ/3EWUD1spX7wFvnxXGbrDaDFQYPy
-         bNQyz0Ho+iVPu1Y2ps17LF+iwWZZuOyq6xfgkTtmd711Qj1PhK2u2sKnDopKHAyhlhr4
-         TpapKgnfxhZaVXgUmLxKBu4r4Nsnq0SJLSbQqtZpOTUJsQ/jw93rp8JBk4YJsW0qeZ7c
-         sTxOY4iK1RhngNJ6tQhtSMFF7KWGFrw8WhgVz4KsFxABdxH4fdVp+yPQz/mFnENAShE/
-         yQToiX/iyAb97L4MopNyTKykCFjpZ9jDL1ZWGo+y7OoNmcDo+w9Kn6wN3dqiPcahOdiF
-         4++w==
-X-Gm-Message-State: APjAAAXPVi1JgXL/bj5rRDiVsUYveK04OF3ojkOb5z0NJDgTe0N5fqYE
-        JbT/0MBRlRBPhGT+oE0Aex9hxQ==
-X-Google-Smtp-Source: APXvYqwEQWxVztZsHujLgYXUzp80jKlSTGmzeS7kguAQ03NeSNKI0seeS7EaeHwwCRbzQupO4lEBBQ==
-X-Received: by 2002:a2e:93c5:: with SMTP id p5mr10069149ljh.192.1581608389545;
-        Thu, 13 Feb 2020 07:39:49 -0800 (PST)
+        bh=K6511DdGifH8XUHZx9YT0KbpkCqEo3UTWf5Na2Wavuk=;
+        b=Pn8IC7jafAOkdZDN29VzK7i5fjN9Gfr1skHnXQGZiA3qRs8D3ZkY2IMszwXxIkcCZX
+         NrB5fgY9pGvi+XMzIWIf88YumhaLj5k8UsW/4a9Ym1FPeWZOR7mNc1+iMGgvLK0OVIEk
+         Ql0kWMS8YpD9xJIb34e4+tChJ7Sz+RblSPSoKpTFjsgi6i8c6REec0rcSNWMP0INv7Gy
+         NY2r7zo4nMUHisT/ULsknbpcIdTIYojTtki4V9oSoCHBLX1dx/DsMhAB+ok3UoswwVw9
+         9yZREZ3jakc4P+35o6pmNTbJs48vHxPn4f9jECKqqU+IhtwBmjWpBSfbV5EtUGr9u1cR
+         pu5g==
+X-Gm-Message-State: APjAAAUNuAfumrgfGdCEK5GsmEUcAxBiK5+i5QIc/0UWMazZ5uLKdGxi
+        w1axtRaW5ULUwbw9X+FciZNLUFgVu0U=
+X-Google-Smtp-Source: APXvYqxrBJSTTk3KS21AJKxD2y7eTX8gC2feRkJ1tSpYCm6mG9Y6yhHM7jH/gQZsD+JKdEUN74SLWA==
+X-Received: by 2002:a19:cb17:: with SMTP id b23mr9726567lfg.201.1581608638158;
+        Thu, 13 Feb 2020 07:43:58 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id p12sm1474818lfc.43.2020.02.13.07.39.48
+        by smtp.gmail.com with ESMTPSA id u16sm1695370ljo.22.2020.02.13.07.43.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 07:39:48 -0800 (PST)
+        Thu, 13 Feb 2020 07:43:57 -0800 (PST)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id F34E7100F25; Thu, 13 Feb 2020 18:40:10 +0300 (+03)
-Date:   Thu, 13 Feb 2020 18:40:10 +0300
+        id C4400100F25; Thu, 13 Feb 2020 18:44:19 +0300 (+03)
+Date:   Thu, 13 Feb 2020 18:44:19 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/25] fs: Introduce i_blocks_per_page
-Message-ID: <20200213154010.skb5ut6fixd36cxr@box>
+Subject: Re: [PATCH v2 11/25] fs: Make page_mkwrite_check_truncate thp-aware
+Message-ID: <20200213154419.szxgd5tv2tjxmlz7@box>
 References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-11-willy@infradead.org>
+ <20200212041845.25879-12-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200212041845.25879-11-willy@infradead.org>
+In-Reply-To: <20200212041845.25879-12-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 08:18:30PM -0800, Matthew Wilcox wrote:
+On Tue, Feb 11, 2020 at 08:18:31PM -0800, Matthew Wilcox wrote:
 > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> This helper is useful for both large pages in the page cache and for
-> supporting block size larger than page size.  Convert some example
-> users (we have a few different ways of writing this idiom).
+> If the page is compound, check the appropriate indices and return the
+> appropriate sizes.
 
-Maybe we should list what was converted and what wasn't. Like it's
-important to know that fs/buffer.c is not covered.
+Is it guarnteed that the page is never called on tail page?
 
 -- 
  Kirill A. Shutemov
