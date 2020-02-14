@@ -2,135 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FE615CEA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 00:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB4D15CED1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 01:00:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbgBMX3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 18:29:25 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62149 "EHLO mga11.intel.com"
+        id S1727604AbgBNAAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 19:00:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbgBMX3Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 18:29:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2020 15:29:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,438,1574150400"; 
-   d="scan'208";a="227412724"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga008.jf.intel.com with ESMTP; 13 Feb 2020 15:29:24 -0800
-Date:   Thu, 13 Feb 2020 15:29:24 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jeff Moyer <jmoyer@redhat.com>, linux-kernel@vger.kernel.org,
+        id S1727594AbgBNAAD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Feb 2020 19:00:03 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A0C3217F4;
+        Fri, 14 Feb 2020 00:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581638402;
+        bh=UrQXyz0IZ/cGcPKAlIBURYOtW8z0qfZYmQlNNIYIwpc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=z4nVqULA1zvW6NLruLoW9TDfkuasPT2hrS6aLGCtOeXqKx0DukDj9BzmAfl2IAFJh
+         fo7SKZVY+3L0hXglVoLuoihHFtxO75nN1SiNWXpdrQ7FM2N5Q4ZqnljY5RZCEGbFg4
+         hKWaD3wDPeavW75hOLdZT8KH8TSY7LNxOaWd0M04=
+Message-ID: <9988adaa3849d526bfefdebccccef20dc3e7d696.camel@kernel.org>
+Subject: Re: [PATCH 6/7] ceph: Switch to page_mkwrite_check_truncate in
+ ceph_page_mkwrite
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
-Message-ID: <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
-References: <20200208193445.27421-1-ira.weiny@intel.com>
- <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
- <20200211201718.GF12866@iweiny-DESK2.sc.intel.com>
- <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
- <20200213190156.GA22854@iweiny-DESK2.sc.intel.com>
- <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
- <20200213195839.GG6870@magnolia>
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Chao Yu <chao@kernel.org>, Richard Weinberger <richard@nod.at>
+Cc:     linux-fsdevel@vger.kernel.org
+Date:   Thu, 13 Feb 2020 19:00:00 -0500
+In-Reply-To: <20200213202423.23455-7-agruenba@redhat.com>
+References: <20200213202423.23455-1-agruenba@redhat.com>
+         <20200213202423.23455-7-agruenba@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213195839.GG6870@magnolia>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:58:39AM -0800, Darrick J. Wong wrote:
-> On Thu, Feb 13, 2020 at 11:05:13AM -0800, Ira Weiny wrote:
-> > On Thu, Feb 13, 2020 at 11:01:57AM -0800, 'Ira Weiny' wrote:
-> > > On Wed, Feb 12, 2020 at 02:49:48PM -0500, Jeff Moyer wrote:
-> > > > Ira Weiny <ira.weiny@intel.com> writes:
-> > > > 
-> >  
-> > [snip]
-> > 
-> > > > Given that we document the dax mount
-> > > > option as "the way to get dax," it may be a good idea to allow for a
-> > > > user to selectively disable dax, even when -o dax is specified.  Is that
-> > > > possible?
-> > > 
-> > > Not with this patch set.  And I'm not sure how that would work.  The idea was
-> > > that -o dax was simply an override for users who were used to having their
-> > > entire FS be dax.  We wanted to depreciate the use of "-o dax" in general.  The
-> > > individual settings are saved so I don't think it makes sense to ignore the -o
-> > > dax in favor of those settings.  Basically that would IMO make the -o dax
-> > > useless.
-> > 
-> > Oh and I forgot to mention that setting 'dax' on the root of the FS basically
-> > provides '-o dax' functionality by default with the ability to "turn it off"
-> > for files.
+On Thu, 2020-02-13 at 21:24 +0100, Andreas Gruenbacher wrote:
+> Use the "page has been truncated" logic in page_mkwrite_check_truncate
+> instead of reimplementing it here.  Other than with the existing code,
+> fail with -EFAULT / VM_FAULT_NOPAGE when page_offset(page) == size here
+> as well, as should be expected.
 > 
-> Please don't further confuse FS_XFLAG_DAX and S_DAX.
-
-Yes...  the above text is wrong WRT statx.  But setting the physical
-XFS_DIFLAG2_DAX flag on the root directory will by default cause all files and
-directories created there to be XFS_DIFLAG2_DAX and so forth on down the tree
-unless explicitly changed.  This will be the same as mounting with '-o dax' but
-with the ability to turn off dax for individual files.  Which I think is the
-functionality Jeff is wanting.
-
->
-> They are two
-> separate flags with two separate behaviors:
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> FS_XFLAG_DAX is a filesystem inode metadata flag.
-> 
-> Setting FS_XFLAG_DAX on a directory causes all files and directories
-> created within that directory to inherit FS_XFLAG_DAX.
-> 
-> Mounting with -o dax causes all files and directories created to have
-> FS_XFLAG_DAX set regardless of the parent's status.
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 7ab616601141..ef958aa4adb4 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>  	do {
+>  		lock_page(page);
+>  
+> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
+> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
+>  			unlock_page(page);
+>  			ret = VM_FAULT_NOPAGE;
+>  			break;
 
-I don't believe this is true, either before _or_ after this patch set.
+Thanks Andreas. Merged into the ceph-client/testing branch and should
+make v5.7.
 
-'-o dax' only causes XFS_MOUNT_DAX to be set which then cause S_DAX to be set.
-It does not affect FS_XFLAG_DAX.  This is important because we don't want '-o
-dax' to suddenly convert all files to DAX if '-o dax' is not used.
-
-> 
-> The FS_XFLAG_DAX can be get and set via the fs[g]etxattr ioctl.
-
-Right statx was the wrong tool...
-
-fs[g|s]etattr via the xfs_io -c 'chatttr|lsattr' is the correct tool.
-
-> 
-> -------
-> 
-> S_DAX is the flag that controls the IO path in the kernel for a given
-> inode.
-> 
-> Loading a file inode into the kernel (via _iget) with FS_XFLAG_DAX set
-> or creating a file inode that inherits FS_XFLAG_DAX causes the incore
-> inode to have the S_DAX flag set if the storage device supports it.
-
-Yes after reworking "Clean up DAX support check" I believe I've got it correct
-now.  Soon to be in V4.
-
-> 
-> Files with S_DAX set use the dax IO paths through the kernel.
-> 
-> The S_DAX flag can be queried via statx.
-
-Yes as a verification that the file is at that moment operating as dax.  It
-will not return true for a directory ever.  My bad for saying that.  Sorry I
-got my tools flags mixed up...
-
-Ira
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
