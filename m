@@ -2,157 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2DE15E8C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 18:03:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72AA715EB42
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 18:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392649AbgBNRCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 12:02:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34684 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394040AbgBNRCt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:02:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 18392B15A;
-        Fri, 14 Feb 2020 17:02:48 +0000 (UTC)
-From:   Roman Penyaev <rpenyaev@suse.de>
-Cc:     Roman Penyaev <rpenyaev@suse.de>,
-        Max Neunhoeffer <max@arangodb.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Christopher Kohlhoff <chris.kohlhoff@clearpool.io>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] kselftest: introduce new epoll test case
-Date:   Fri, 14 Feb 2020 18:02:11 +0100
-Message-Id: <20200214170211.561524-2-rpenyaev@suse.de>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200214170211.561524-1-rpenyaev@suse.de>
-References: <20200214170211.561524-1-rpenyaev@suse.de>
+        id S2403931AbgBNRTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 12:19:23 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38132 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391605AbgBNRTP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Feb 2020 12:19:15 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EHIl1w183931;
+        Fri, 14 Feb 2020 17:18:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=b3JxBw2+JQ0qP9VNf1U9eTy2/JfMhi+NgCpxMvdxhCs=;
+ b=ERrhO+T/qTntFQ7zVkd8ooGG6YvB1SUOUneZw0ar/2dGVBURK+CRf1L+whcz+uEnD9XV
+ djcaXwXVe6GWn2SssE618ivCy5fwEuQ1zgHkWByFj2fMD7nwlA7EntOKrfioiA52Xur2
+ FUbn6OKAbVUe+dPonvaQuQ64UwivQ7DBzS4sPRl8MtNg2HTUUxMFrdKwZEVI6hV+cVJo
+ emHf/Lp5s9hnCciSkzDW1tu2JD/X3MOmzWCTTgfTRbqhRi3JmUrsh4utAFQxt99Wd3Ct
+ kQMUvwiPBaoO322mlr9ifAQ9blxR4ldss5C3G39TFNXhFLLQRK6QP6hTbin5BG592If7 Sg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2y2jx6tvq2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 17:18:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EHI0lS120979;
+        Fri, 14 Feb 2020 17:18:47 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2y4k82fnq5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 17:18:47 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01EHIiXG027884;
+        Fri, 14 Feb 2020 17:18:44 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 14 Feb 2020 09:18:44 -0800
+Subject: Re: mmotm 2020-02-13-22-26 uploaded (mm/hugetlb.c)
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Matthew Wilcox <willy@infradead.org>,
+        Mina Almasry <almasrymina@google.com>
+References: <20200214062647.A2Mb_X-mP%akpm@linux-foundation.org>
+ <8e1e8f6e-0da1-e9e0-fa1b-bfd792256604@infradead.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <7ff9e944-1c6c-f7c1-d812-e12817c7a317@oracle.com>
+Date:   Fri, 14 Feb 2020 09:18:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <8e1e8f6e-0da1-e9e0-fa1b-bfd792256604@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002140130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002140130
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This testcase repeats epollbug.c from the bug:
++ Mina
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=205933
+Andrew, you might want to remove those hugetlb cgroup patches from mmotm
+as they are not yet fully reviewed and have some build issues.
 
-What it tests? It tests the race between epoll_ctl() and epoll_wait().
-New event mask passed to epoll_ctl() triggers wake up, which can be
-missed because of the bug described in the link.  Reproduction is 100%,
-so easy to fix. Kudos, Max, for wonderful test case.
-
-Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-Cc: Max Neunhoeffer <max@arangodb.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Christopher Kohlhoff <chris.kohlhoff@clearpool.io>
-Cc: Davidlohr Bueso <dbueso@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- Nothing was changed in v3
- Nothing interesting in v2:
-     changed the comment a bit
-
- .../filesystems/epoll/epoll_wakeup_test.c     | 67 ++++++++++++++++++-
- 1 file changed, 66 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-index 37a04dab56f0..11eee0b60040 100644
---- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-+++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-@@ -7,13 +7,14 @@
- #include <pthread.h>
- #include <sys/epoll.h>
- #include <sys/socket.h>
-+#include <sys/eventfd.h>
- #include "../../kselftest_harness.h"
- 
- struct epoll_mtcontext
- {
- 	int efd[3];
- 	int sfd[4];
--	int count;
-+	volatile int count;
- 
- 	pthread_t main;
- 	pthread_t waiter;
-@@ -3071,4 +3072,68 @@ TEST(epoll58)
- 	close(ctx.sfd[3]);
- }
- 
-+static void *epoll59_thread(void *ctx_)
-+{
-+	struct epoll_mtcontext *ctx = ctx_;
-+	struct epoll_event e;
-+	int i;
-+
-+	for (i = 0; i < 100000; i++) {
-+		while (ctx->count == 0)
-+			;
-+
-+		e.events = EPOLLIN | EPOLLERR | EPOLLET;
-+		epoll_ctl(ctx->efd[0], EPOLL_CTL_MOD, ctx->sfd[0], &e);
-+		ctx->count = 0;
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ *        t0
-+ *      (p) \
-+ *           e0
-+ *     (et) /
-+ *        e0
-+ *
-+ * Based on https://bugzilla.kernel.org/show_bug.cgi?id=205933
-+ */
-+TEST(epoll59)
-+{
-+	pthread_t emitter;
-+	struct pollfd pfd;
-+	struct epoll_event e;
-+	struct epoll_mtcontext ctx = { 0 };
-+	int i, ret;
-+
-+	signal(SIGUSR1, signal_handler);
-+
-+	ctx.efd[0] = epoll_create1(0);
-+	ASSERT_GE(ctx.efd[0], 0);
-+
-+	ctx.sfd[0] = eventfd(1, 0);
-+	ASSERT_GE(ctx.sfd[0], 0);
-+
-+	e.events = EPOLLIN | EPOLLERR | EPOLLET;
-+	ASSERT_EQ(epoll_ctl(ctx.efd[0], EPOLL_CTL_ADD, ctx.sfd[0], &e), 0);
-+
-+	ASSERT_EQ(pthread_create(&emitter, NULL, epoll59_thread, &ctx), 0);
-+
-+	for (i = 0; i < 100000; i++) {
-+		ret = epoll_wait(ctx.efd[0], &e, 1, 1000);
-+		ASSERT_GT(ret, 0);
-+
-+		while (ctx.count != 0)
-+			;
-+		ctx.count = 1;
-+	}
-+	if (pthread_tryjoin_np(emitter, NULL) < 0) {
-+		pthread_kill(emitter, SIGUSR1);
-+		pthread_join(emitter, NULL);
-+	}
-+	close(ctx.efd[0]);
-+	close(ctx.sfd[0]);
-+}
-+
- TEST_HARNESS_MAIN
 -- 
-2.24.1
+Mike Kravetz
 
+On 2/14/20 8:29 AM, Randy Dunlap wrote:
+> On 2/13/20 10:26 PM, Andrew Morton wrote:
+>> The mm-of-the-moment snapshot 2020-02-13-22-26 has been uploaded to
+>>
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> mmotm-readme.txt says
+>>
+>> README for mm-of-the-moment:
+>>
+>> http://www.ozlabs.org/~akpm/mmotm/
+>>
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>>
+> 
+> on x86_64:
+> 
+>   CC      mm/hugetlb.o
+> In file included from ../include/linux/kernel.h:15:0,
+>                  from ../include/linux/list.h:9,
+>                  from ../mm/hugetlb.c:6:
+> ../mm/hugetlb.c: In function ‘dump_resv_map’:
+> ../mm/hugetlb.c:301:30: error: ‘struct file_region’ has no member named ‘reservation_counter’
+>           rg->from, rg->to, rg->reservation_counter, rg->css);
+>                               ^
+> ../include/linux/printk.h:304:33: note: in definition of macro ‘pr_err’
+>   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+>                                  ^~~~~~~~~~~
+> ../mm/hugetlb.c:301:55: error: ‘struct file_region’ has no member named ‘css’
+>           rg->from, rg->to, rg->reservation_counter, rg->css);
+>                                                        ^
+> ../include/linux/printk.h:304:33: note: in definition of macro ‘pr_err’
+>   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+>                                  ^~~~~~~~~~~
+> ../mm/hugetlb.c: In function ‘check_coalesce_bug’:
+> ../mm/hugetlb.c:320:10: error: ‘struct file_region’ has no member named ‘reservation_counter’
+>    if (nrg->reservation_counter && nrg->from == rg->to &&
+>           ^~
+> ../mm/hugetlb.c:321:10: error: ‘struct file_region’ has no member named ‘reservation_counter’
+>        nrg->reservation_counter == rg->reservation_counter &&
+>           ^~
+> ../mm/hugetlb.c:321:37: error: ‘struct file_region’ has no member named ‘reservation_counter’
+>        nrg->reservation_counter == rg->reservation_counter &&
+>                                      ^~
+> ../mm/hugetlb.c:322:10: error: ‘struct file_region’ has no member named ‘css’
+>        nrg->css == rg->css) {
+>           ^~
+> ../mm/hugetlb.c:322:21: error: ‘struct file_region’ has no member named ‘css’
+>        nrg->css == rg->css) {
+>                      ^~
+> 
+> 
+> Full randconfig file is attached.
+> 
