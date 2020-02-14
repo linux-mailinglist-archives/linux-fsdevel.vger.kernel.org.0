@@ -2,80 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE79815F8BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 22:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F1415F8ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 22:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388252AbgBNVbm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 16:31:42 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59117 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728062AbgBNVbm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 16:31:42 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2020 13:31:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,441,1574150400"; 
-   d="scan'208";a="267699836"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Feb 2020 13:31:38 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1j2iYk-000GfE-3Y; Sat, 15 Feb 2020 05:31:38 +0800
-Date:   Sat, 15 Feb 2020 05:30:42 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, kernel-team@fb.com
-Subject: [PATCH] vfs: fix boolreturn.cocci warnings
-Message-ID: <20200214213042.GA92577@9560152b1213>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
+        id S1730436AbgBNVrx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 16:47:53 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36187 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730464AbgBNVrv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Feb 2020 16:47:51 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so12301207ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 13:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ULvgOcWtqQoiiZTQEcdkHo/hzvR0mDvJVo9JBCmHaro=;
+        b=UghfVcGD99QDVJvEji3DwtzpIp/PGb7GJofQVdGg87wpeWgj5k1fmihFbyHJDkzhXm
+         S1NEmhmLvIIspUxPsjqWYv+g8q0cgFqkqJsqk6YpKTd6xRAfC/+pRYqVa+LT/zHudhSe
+         ezPpARw61nPYCHiuMSRuvAH2pkTlrESq7Y0NpQrB9ACMChfUqXxp93LrOIYT2VYUQCJo
+         gmb8qcWUBCD71s/4fRxFDy4T3zhcDp/8yu4ZXGH549/K9U19OlbHknT8fxAAk5duXcIa
+         zBQ+s0+fPCvaocHwCtDCGP4wFwcvFTeDl1IPB9yATUIb5hn70+tb0HH0Q6XBRHaUjClO
+         2Vvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ULvgOcWtqQoiiZTQEcdkHo/hzvR0mDvJVo9JBCmHaro=;
+        b=UlfT4aE4GChtvMKV6kEtLLjGK45U81Ye2ETvqhkbY5x798XEJ9/2j9s1UW0CEVW/ab
+         9++s+RxGHSpn7fERiDCHi4cjhGAMA8MoHtUM0fyb+69P5n32h8WgC0TvIl5MOdnCbqLn
+         gGXdofzYufl6kQBwJtv8RwY9MyGCTkpVFV1hm2e033y5q3DqrCn5iqj+m1x251eq0MFc
+         9AhYQdN3FMq/PgtKruHHCIzOXqXw+6b7eZROiyyYp1feRoBithxbUfQo5S0oVVy+HlH0
+         co2THvb2vkcFRahkvwbW+mD4a333J8dkLBBEZeoNlC3o7G8n5+BuIb1QAajrSEB2unXa
+         4ZkQ==
+X-Gm-Message-State: APjAAAV0IY4E85zV1dpaPPqv5airn4nV0hjH+j/cOY76jTDoBF0U5rSg
+        EslyOS3CHlTBt3Y00maGjkc2tNRekdX7lkcErttiUg==
+X-Google-Smtp-Source: APXvYqwOnenDJydesgZENHJdVpOerGyyRYO7zjT1GE3p1T0WHWXpqjZg+ov2CAwduAn/RxPssJiAJvJqDMAmNkptrfI=
+X-Received: by 2002:a2e:85cd:: with SMTP id h13mr3415670ljj.191.1581716868386;
+ Fri, 14 Feb 2020 13:47:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211175507.178100-1-hannes@cmpxchg.org>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200208013552.241832-1-drosen@google.com> <20200208013552.241832-2-drosen@google.com>
+ <20200212033800.GC870@sol.localdomain>
+In-Reply-To: <20200212033800.GC870@sol.localdomain>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Fri, 14 Feb 2020 13:47:37 -0800
+Message-ID: <CA+PiJmT_8EzyFO283_E62+UC6vtCGOJXKHAFqnH3QM9LA+PHAw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/8] unicode: Add utf8_casefold_iter
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
+On Tue, Feb 11, 2020 at 7:38 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Indirect function calls are expensive these days for various reasons, including
+> Spectre mitigations and CFI.  Are you sure it's okay from a performance
+> perspective to make an indirect call for every byte of the pathname?
+>
+> > +typedef int (*utf8_itr_actor_t)(struct utf8_itr_context *, int byte, int pos);
+>
+> The byte argument probably should be 'u8', to avoid confusion about whether it's
+> a byte or a Unicode codepoint.
+>
+> - Eric
 
-mm/truncate.c:41:9-10: WARNING: return of 0/1 in function '__clear_shadow_entry' with return type bool
-
- Return statements in functions returning bool should use
- true/false instead of 1/0.
-Generated by: scripts/coccinelle/misc/boolreturn.cocci
-
-Fixes: 98e2565539a0 ("vfs: keep inodes with page cache off the inode shrinker LRU")
-CC: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
-
-url:    https://github.com/0day-ci/linux/commits/Johannes-Weiner/vfs-keep-inodes-with-page-cache-off-the-inode-shrinker-LRU/20200214-083756
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
-
- truncate.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -38,7 +38,7 @@ static bool __must_check __clear_shadow_
- 
- 	xas_set_update(&xas, workingset_update_node);
- 	if (xas_load(&xas) != entry)
--		return 0;
-+		return false;
- 	xas_store(&xas, NULL);
- 	mapping->nrexceptional--;
- 
+Gabriel, what do you think here? I could change it to either exposing
+the things necessary to do the hashing in libfs, or instead of the
+general purpose iterator, just have a hash function inside of unicode
+that will compute the hash given a seed value.
+-Daniel
