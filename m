@@ -2,141 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72AA715EB42
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 18:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4D315EB97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 18:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403931AbgBNRTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 12:19:23 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38132 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391605AbgBNRTP (ORCPT
+        id S2390699AbgBNRVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 12:21:45 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41096 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391360AbgBNRVn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 12:19:15 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EHIl1w183931;
-        Fri, 14 Feb 2020 17:18:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=b3JxBw2+JQ0qP9VNf1U9eTy2/JfMhi+NgCpxMvdxhCs=;
- b=ERrhO+T/qTntFQ7zVkd8ooGG6YvB1SUOUneZw0ar/2dGVBURK+CRf1L+whcz+uEnD9XV
- djcaXwXVe6GWn2SssE618ivCy5fwEuQ1zgHkWByFj2fMD7nwlA7EntOKrfioiA52Xur2
- FUbn6OKAbVUe+dPonvaQuQ64UwivQ7DBzS4sPRl8MtNg2HTUUxMFrdKwZEVI6hV+cVJo
- emHf/Lp5s9hnCciSkzDW1tu2JD/X3MOmzWCTTgfTRbqhRi3JmUrsh4utAFQxt99Wd3Ct
- kQMUvwiPBaoO322mlr9ifAQ9blxR4ldss5C3G39TFNXhFLLQRK6QP6hTbin5BG592If7 Sg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2y2jx6tvq2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 17:18:47 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01EHI0lS120979;
-        Fri, 14 Feb 2020 17:18:47 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2y4k82fnq5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 14 Feb 2020 17:18:47 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01EHIiXG027884;
-        Fri, 14 Feb 2020 17:18:44 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 14 Feb 2020 09:18:44 -0800
-Subject: Re: mmotm 2020-02-13-22-26 uploaded (mm/hugetlb.c)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Matthew Wilcox <willy@infradead.org>,
-        Mina Almasry <almasrymina@google.com>
-References: <20200214062647.A2Mb_X-mP%akpm@linux-foundation.org>
- <8e1e8f6e-0da1-e9e0-fa1b-bfd792256604@infradead.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <7ff9e944-1c6c-f7c1-d812-e12817c7a317@oracle.com>
-Date:   Fri, 14 Feb 2020 09:18:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 14 Feb 2020 12:21:43 -0500
+Received: by mail-oi1-f196.google.com with SMTP id i1so10095626oie.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 09:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lyrhKNeMU7eJT6PQUqEykdJHGU1Beqa7yTElEjUp1E0=;
+        b=Vrn2eOFlzFF/53jUFp1t0oYF9TfJcGmQyncWKIriM2ZXKwsnnVwXyPEwMYBT9SoOvv
+         M9+pzijsccF6LKpwqVNwH7arNG/hJkR82XFRmVPyeQfsr2WEzgiC7PjODsswCoLGSpaY
+         LaKRFh+AbvxODIzDTc9/KjTYvCJBjUXvMcY0lndjCM6xdnpAlg8uqBx3b/me3q46lm3g
+         3BVL3n1uIIzcduNMraAfMFs20elqdxaKxcGWiqzInJy8oFts0UuFlfQstgm5hh/nVuyG
+         KEqS6DZpZ/3ejce9GGRl8uDlBf7GeSu1Ldi9wOUcn9yptQaljIzYAeog+BBmqeGJgZ48
+         s6NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lyrhKNeMU7eJT6PQUqEykdJHGU1Beqa7yTElEjUp1E0=;
+        b=sBXfSb/0ItecucH78+d+3jFezzJP32uFvfrJeRIjlvTD7ZfjTs5+BRmWHZppdWYoU4
+         gMb1MPr5HnGOgKSlAPJco6+iZuvkH+FLk9edp/vRHlODS7RsI5jq/rb1sfsAx7IOObbJ
+         1l0qOvrZN7MM9KGC0Rkel0JlP0w8/29SnYiu30ymt/nkXmjxs7AvKhfXD7pvpd7AKK+d
+         9XWoPiIbrLgpI0/y1F6bDjd0H8k50pBVt+++l+9fKrT0ALx0qrUSEPNBjb+q7TSECVmr
+         F+SLOr+In92jCBjYG3KZA4UjQNwPtq6kHhnXK1JcKuar56qbtF7iQE8cJhBly4Dwz/3o
+         nBxw==
+X-Gm-Message-State: APjAAAVFMtD2wVnP/bbo1aub22EUZwtbPBGwcoSzgzp1Pkh5qL3s+fTw
+        Q224ffNnl9jHQ5huHpucfFYkowYNIYRiDtEnK3m4Bg==
+X-Google-Smtp-Source: APXvYqzW5wCMUPDZUW8FlhlD0lFevf/gsf9pfcTNJvNRaLJB2Qb+Yl5ryjulc4AOX27A438sIlR0pFuhqlw/4hCWscQ=
+X-Received: by 2002:a54:458d:: with SMTP id z13mr2670272oib.32.1581700902393;
+ Fri, 14 Feb 2020 09:21:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8e1e8f6e-0da1-e9e0-fa1b-bfd792256604@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002140130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9531 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 impostorscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002140130
+References: <20200211225547.235083-1-dancol@google.com> <20200214032635.75434-1-dancol@google.com>
+ <20200214032635.75434-3-dancol@google.com> <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
+In-Reply-To: <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Fri, 14 Feb 2020 09:21:04 -0800
+Message-ID: <CAKOZuev-=7Lgu35E3tzpHQn0m_KAvvrqi+ZJr1dpqRjHERRSqg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] Teach SELinux about anonymous inodes
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Tim Murray <timmurray@google.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>, paul@paul-moore.com,
+        Nick Kralevich <nnk@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+ Mina
+On Fri, Feb 14, 2020 at 8:38 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+>
+> On 2/13/20 10:26 PM, Daniel Colascione wrote:
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 1659b59fb5d7..6de0892620b3 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2915,6 +2915,62 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> >       return 0;
+> >   }
+> >
+> > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > +                                         const struct qstr *name,
+> > +                                         const struct file_operations *fops,
+> > +                                         const struct inode *context_inode)
+> > +{
+> > +     const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > +     struct common_audit_data ad;
+> > +     struct inode_security_struct *isec;
+> > +     int rc;
+> > +
+> > +     if (unlikely(IS_PRIVATE(inode)))
+> > +             return 0;
+>
+> This is not possible since the caller clears S_PRIVATE before calling
+> and it would be a bug to call the hook on an inode that was intended to
+> be private, so we shouldn't check it here.
+>
+> > +
+> > +     if (unlikely(!selinux_state.initialized))
+> > +             return 0;
+>
+> Are we doing this to defer initialization until selinux_complete_init()
+> - that's normally why we bail in the !initialized case?  Not entirely
+> sure what will happen in such a situation since we won't have the
+> context_inode or the allocating task information at that time, so we
+> certainly won't get the same result - probably they would all be labeled
+> with whatever anon_inodefs is assigned via genfscon or
+> SECINITSID_UNLABELED by default.
+> If we instead just drop this test and
+> proceed, we'll inherit the context inode SID if specified or we'll call
+> security_transition_sid(), which in the !initialized case will just
+> return the tsid i.e. tsec->sid, so it will be labeled with the creating
+> task SID (SECINITSID_KERNEL prior to initialization).  Then the
+> avc_has_perm() call will pass because everything gets allowed until
+> initialization. So you could drop this check and userfaultfds created
+> before policy load would get the kernel SID, or you can keep it and they
+> will get the unlabeled SID.  Preference?
 
-Andrew, you might want to remove those hugetlb cgroup patches from mmotm
-as they are not yet fully reviewed and have some build issues.
+The kernel SID seems safer. Thanks for the explanation!
 
--- 
-Mike Kravetz
+> > +
+> > +     isec = selinux_inode(inode);
+> > +
+> > +     /*
+> > +      * We only get here once per ephemeral inode.  The inode has
+> > +      * been initialized via inode_alloc_security but is otherwise
+> > +      * untouched.
+> > +      */
+> > +
+> > +     if (context_inode) {
+> > +             struct inode_security_struct *context_isec =
+> > +                     selinux_inode(context_inode);
+> > +             if (IS_ERR(context_isec))
+> > +                     return PTR_ERR(context_isec);
+>
+> This isn't possible AFAICT so you don't need to test for it or handle
+> it.  In fact, even the test for NULL in selinux_inode() is bogus and
+> should get dropped AFAICT; we always allocate an inode security blob
+> even before policy load so it would be a bug if we ever had a NULL there.
 
-On 2/14/20 8:29 AM, Randy Dunlap wrote:
-> On 2/13/20 10:26 PM, Andrew Morton wrote:
->> The mm-of-the-moment snapshot 2020-02-13-22-26 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
-> 
-> on x86_64:
-> 
->   CC      mm/hugetlb.o
-> In file included from ../include/linux/kernel.h:15:0,
->                  from ../include/linux/list.h:9,
->                  from ../mm/hugetlb.c:6:
-> ../mm/hugetlb.c: In function ‘dump_resv_map’:
-> ../mm/hugetlb.c:301:30: error: ‘struct file_region’ has no member named ‘reservation_counter’
->           rg->from, rg->to, rg->reservation_counter, rg->css);
->                               ^
-> ../include/linux/printk.h:304:33: note: in definition of macro ‘pr_err’
->   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
->                                  ^~~~~~~~~~~
-> ../mm/hugetlb.c:301:55: error: ‘struct file_region’ has no member named ‘css’
->           rg->from, rg->to, rg->reservation_counter, rg->css);
->                                                        ^
-> ../include/linux/printk.h:304:33: note: in definition of macro ‘pr_err’
->   printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
->                                  ^~~~~~~~~~~
-> ../mm/hugetlb.c: In function ‘check_coalesce_bug’:
-> ../mm/hugetlb.c:320:10: error: ‘struct file_region’ has no member named ‘reservation_counter’
->    if (nrg->reservation_counter && nrg->from == rg->to &&
->           ^~
-> ../mm/hugetlb.c:321:10: error: ‘struct file_region’ has no member named ‘reservation_counter’
->        nrg->reservation_counter == rg->reservation_counter &&
->           ^~
-> ../mm/hugetlb.c:321:37: error: ‘struct file_region’ has no member named ‘reservation_counter’
->        nrg->reservation_counter == rg->reservation_counter &&
->                                      ^~
-> ../mm/hugetlb.c:322:10: error: ‘struct file_region’ has no member named ‘css’
->        nrg->css == rg->css) {
->           ^~
-> ../mm/hugetlb.c:322:21: error: ‘struct file_region’ has no member named ‘css’
->        nrg->css == rg->css) {
->                      ^~
-> 
-> 
-> Full randconfig file is attached.
-> 
+Thanks. Will fix.
+
+> > +             isec->sid = context_isec->sid;
+> > +     } else {
+> > +             rc = security_transition_sid(
+> > +                     &selinux_state, tsec->sid, tsec->sid,
+> > +                     SECCLASS_FILE, name, &isec->sid);
+> > +             if (rc)
+> > +                     return rc;
+> > +     }
+>
+> Since you switched to using security_transition_sid(), you are not using
+> the fops parameter anymore nor comparing with userfaultfd_fops, so you
+> could drop the parameter from the hook and leave the latter static in
+> the first patch.
+
+That's true, but I figured different LSMs might want different rules
+that depend on the fops. I'm also okay with removing this parameter
+for now, since we're not using it.
+
+> That's assuming you are ok with having to define these type_transition
+> rules for the userfaultfd case instead of having your own separate
+> security class.  Wondering how many different anon inode names/classes
+> there are in the kernel today and how much they change over time; for a
+> small, relatively stable set, separate classes might be ok; for a large,
+> dynamic set, type transitions should scale better.
+
+I think we can get away without a class per anonymous-inode-type. I do
+wonder whether we need a class for all anonymous inodes, though: if we
+just give them the file class and use the anon inode type name for the
+type_transition rule, isn't it possible that the type_transition rule
+might also fire for plain files with the same names in the last path
+component and the same originating sid? (Maybe I'm not understanding
+type_transition rules properly.) Using a class to encompass all
+anonymous inodes would address this problem (assuming the problem
+exists in the first place).
+
+> We might still need
+> to create a mapping table in SELinux from the names to some stable
+> identifier for the policy lookup if we can't rely on the names being stable.
+
+Sure. The anonymous inode type names have historically been stable,
+though, so maybe we can just use the names from anon_inodes directly
+for now and then add some kind of remapping if we want to change those
+names in the core, remaping to the old name for SELinux
+type_transition purposes.
