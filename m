@@ -2,79 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB4D15CED1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 01:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2809215CEF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 01:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbgBNAAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 19:00:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbgBNAAD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 19:00:03 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A0C3217F4;
-        Fri, 14 Feb 2020 00:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581638402;
-        bh=UrQXyz0IZ/cGcPKAlIBURYOtW8z0qfZYmQlNNIYIwpc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=z4nVqULA1zvW6NLruLoW9TDfkuasPT2hrS6aLGCtOeXqKx0DukDj9BzmAfl2IAFJh
-         fo7SKZVY+3L0hXglVoLuoihHFtxO75nN1SiNWXpdrQ7FM2N5Q4ZqnljY5RZCEGbFg4
-         hKWaD3wDPeavW75hOLdZT8KH8TSY7LNxOaWd0M04=
-Message-ID: <9988adaa3849d526bfefdebccccef20dc3e7d696.camel@kernel.org>
-Subject: Re: [PATCH 6/7] ceph: Switch to page_mkwrite_check_truncate in
- ceph_page_mkwrite
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Chao Yu <chao@kernel.org>, Richard Weinberger <richard@nod.at>
-Cc:     linux-fsdevel@vger.kernel.org
-Date:   Thu, 13 Feb 2020 19:00:00 -0500
-In-Reply-To: <20200213202423.23455-7-agruenba@redhat.com>
-References: <20200213202423.23455-1-agruenba@redhat.com>
-         <20200213202423.23455-7-agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.3 (3.34.3-1.fc31) 
+        id S1727848AbgBNAQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 19:16:29 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42417 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbgBNAQ3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 13 Feb 2020 19:16:29 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 66so7461530otd.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Feb 2020 16:16:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rG1vX77YtWxx+qL8zmiC+QnNHHiP3NTzOqE4AoDqMAw=;
+        b=WakEy6F3ApIgrFEWOBecDIpNAJVCgyi10fdF/akTwcUGBT/IeipHX+cR+pausx7Txa
+         7UpvycLmRq/nijUulx4THHko9/h9P66nE9yegW2DJCw2lEvpbFoDPpSvlzVjjiK591cd
+         Rr8x4FzuhApsMQUcyzM7pwdPWH/+KQEHO4p6WX9coLltDx4n8+EjOgxAzocqEWD9Df9/
+         rPtRsNJJzJI1Py506R6OpDFKhaBhiR5AjgFkWd2SJsdLuIPHg1eM0z3wbdPTifRofxTb
+         2VGRsxRz3JGMjoX7iNlz5pPilqd3IezNtke3awlEFoLYQ2S5V+EoX29v6ejvmx44X62I
+         Wc7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rG1vX77YtWxx+qL8zmiC+QnNHHiP3NTzOqE4AoDqMAw=;
+        b=MiR0v1gF4z5R8G0GpOjMhETcyLuSt5bgQZiOD4l/Yv6+fB913fAS+r23rWPEYAlagf
+         jH+hQs4YqGKiJL7cZylxaEG2JmHyhXRtg+4ehLRQfzX90js/j1V5QFH/YXRHrAc6ztSn
+         r2CWvwlcqy58eu/2Zk5zFVQCqzG9LKOfPZZxSwcRB3k5RXNms4bMuImagaN36Jt7xPrC
+         +1IaTEQqC3i/K3cdm06mQUgHYfaiSaxg0d+AtzQMWRnGbRoOy8W2kwehJ2CeC2a3gAkG
+         6m5esMrNgx2gveOTOUQdjE2vHC3xF4KY6r2X6rOECcIMWeQnvrrN6DtSPAC1usoxWmVc
+         Z1lQ==
+X-Gm-Message-State: APjAAAUXvBHLzMpMhIXtKiV33NR/GNav3bzLyC1TT8DUBBIlTpNbcKlx
+        A79vjpDiYhWzn2oSo73RNTMwBgd8H30XDOu3qEDFRA==
+X-Google-Smtp-Source: APXvYqyUhkfNbR0RFLXIH6LAygeGDOeEqqLcdiUcZRMmfqVyLefKN3yOki9UTAHgFJxWwXRQBZtdbLe4rMpJWfAsWb0=
+X-Received: by 2002:a9d:7852:: with SMTP id c18mr89938otm.247.1581639389017;
+ Thu, 13 Feb 2020 16:16:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200208193445.27421-1-ira.weiny@intel.com> <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
+ <20200211201718.GF12866@iweiny-DESK2.sc.intel.com> <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
+ <20200213190156.GA22854@iweiny-DESK2.sc.intel.com> <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
+ <20200213195839.GG6870@magnolia> <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 13 Feb 2020 16:16:17 -0800
+Message-ID: <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
+Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-02-13 at 21:24 +0100, Andreas Gruenbacher wrote:
-> Use the "page has been truncated" logic in page_mkwrite_check_truncate
-> instead of reimplementing it here.  Other than with the existing code,
-> fail with -EFAULT / VM_FAULT_NOPAGE when page_offset(page) == size here
-> as well, as should be expected.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 7ab616601141..ef958aa4adb4 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1575,7 +1575,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
->  	do {
->  		lock_page(page);
->  
-> -		if ((off > size) || (page->mapping != inode->i_mapping)) {
-> +		if (page_mkwrite_check_truncate(page, inode) < 0) {
->  			unlock_page(page);
->  			ret = VM_FAULT_NOPAGE;
->  			break;
+On Thu, Feb 13, 2020 at 3:29 PM Ira Weiny <ira.weiny@intel.com> wrote:
+>
+> On Thu, Feb 13, 2020 at 11:58:39AM -0800, Darrick J. Wong wrote:
+> > On Thu, Feb 13, 2020 at 11:05:13AM -0800, Ira Weiny wrote:
+> > > On Thu, Feb 13, 2020 at 11:01:57AM -0800, 'Ira Weiny' wrote:
+> > > > On Wed, Feb 12, 2020 at 02:49:48PM -0500, Jeff Moyer wrote:
+> > > > > Ira Weiny <ira.weiny@intel.com> writes:
+> > > > >
+> > >
+> > > [snip]
+> > >
+> > > > > Given that we document the dax mount
+> > > > > option as "the way to get dax," it may be a good idea to allow for a
+> > > > > user to selectively disable dax, even when -o dax is specified.  Is that
+> > > > > possible?
+> > > >
+> > > > Not with this patch set.  And I'm not sure how that would work.  The idea was
+> > > > that -o dax was simply an override for users who were used to having their
+> > > > entire FS be dax.  We wanted to depreciate the use of "-o dax" in general.  The
+> > > > individual settings are saved so I don't think it makes sense to ignore the -o
+> > > > dax in favor of those settings.  Basically that would IMO make the -o dax
+> > > > useless.
+> > >
+> > > Oh and I forgot to mention that setting 'dax' on the root of the FS basically
+> > > provides '-o dax' functionality by default with the ability to "turn it off"
+> > > for files.
+> >
+> > Please don't further confuse FS_XFLAG_DAX and S_DAX.
+>
+> Yes...  the above text is wrong WRT statx.  But setting the physical
+> XFS_DIFLAG2_DAX flag on the root directory will by default cause all files and
+> directories created there to be XFS_DIFLAG2_DAX and so forth on down the tree
+> unless explicitly changed.  This will be the same as mounting with '-o dax' but
+> with the ability to turn off dax for individual files.  Which I think is the
+> functionality Jeff is wanting.
 
-Thanks Andreas. Merged into the ceph-client/testing branch and should
-make v5.7.
+To be clear you mean turn off XFS_DIFLAG2_DAX, not mask S_DAX when you
+say "turn off dax", right?
 
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+The mount option simply forces "S_DAX" on all regular files as long as
+the underlying device (or soon to be superblock for virtiofs) supports
+it. There is no method to mask S_DAX when the filesystem was mounted
+with -o dax. Otherwise we would seem to need yet another physical flag
+to "always disable" dax.
