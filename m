@@ -2,127 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84B615DA5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 16:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EE6815DA5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 16:11:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729470AbgBNPLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 10:11:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46740 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbgBNPLK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:11:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=s9JdTXWZ0Xda8rN1p02Y37deVkj9XnXOSrh2WxBj85E=; b=XmOW4ijskd7BidiCCrgHxhtiwE
-        ljqycWpiW1m3T3OM0p0MqTQA3o25Im4l4gkTiI4PhOXC9eK2OxckYmWozQI8h3BcwslXhhJTlHMlS
-        cPQOHZ7Rw60ySnVd50dVtVsYhB7w8Oh34LydDkfBDB4u/22ZTQdoX0y9hLsCMixaWNYQEP5NXZtuN
-        ky+s2Z7ZOMSgdN+WayN/VLnuEtSPSbj06flTCZALgJMK4/GJbJ5lzG2IEH0lzqFa8zql86Wv24CJ5
-        gAxsrA467dMb4nyEJeFiMkkjLE4d8qXgTwjzy8GopzkANXyKTfZn7nk3WBmZYIKjuzl/LODOXjTZz
-        xtiak40Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j2ccI-0004CC-3q; Fri, 14 Feb 2020 15:10:54 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EBAC0300606;
-        Fri, 14 Feb 2020 16:08:58 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EE97720254E63; Fri, 14 Feb 2020 16:10:48 +0100 (CET)
-Date:   Fri, 14 Feb 2020 16:10:48 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     =?utf-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
- locality info
-Message-ID: <20200214151048.GL14914@hirez.programming.kicks-ass.net>
-References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
- <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+        id S1729338AbgBNPLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 10:11:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51764 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727822AbgBNPLh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:11:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 945B2AE2C;
+        Fri, 14 Feb 2020 15:11:34 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D3C961E0B38; Fri, 14 Feb 2020 16:11:33 +0100 (CET)
+Date:   Fri, 14 Feb 2020 16:11:33 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Sterba <dsterba@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/7] fs: Un-inline page_mkwrite_check_truncate
+Message-ID: <20200214151133.GB22815@quack2.suse.cz>
+References: <20200213202423.23455-1-agruenba@redhat.com>
+ <20200213202423.23455-2-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+In-Reply-To: <20200213202423.23455-2-agruenba@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 11:35:30AM +0800, 王贇 wrote:
-> Currently there are no good approach to monitoring the per-cgroup NUMA
-> efficiency, this could be a trouble especially when groups are sharing
-> CPUs, we don't know which one introduced remote-memory accessing.
+On Thu 13-02-20 21:24:17, Andreas Gruenbacher wrote:
+> Per review comments from Jan and Ted, un-inline page_mkwrite_check_truncate
+> and move it to mm/filemap.c.  This function doesn't seem worth inlining.
 > 
-> Although the per-task NUMA accessing info from PMU is good for further
-> debuging, but not light enough for daily monitoring, especial on a box
-> with thousands of tasks.
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Theodore Y. Ts'o <tytso@mit.edu>
+
+Looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > 
-> Fortunately, when NUMA Balancing enabled, it will periodly trigger page
-> fault and try to increase the NUMA locality, by tracing the results we
-> will be able to estimate the NUMA efficiency.
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index ccb14b6a16b5..6c9c5b88924d 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -636,32 +636,6 @@ static inline unsigned long dir_pages(struct inode *inode)
+>  			       PAGE_SHIFT;
+>  }
+>  
+> -/**
+> - * page_mkwrite_check_truncate - check if page was truncated
+> - * @page: the page to check
+> - * @inode: the inode to check the page against
+> - *
+> - * Returns the number of bytes in the page up to EOF,
+> - * or -EFAULT if the page was truncated.
+> - */
+> -static inline int page_mkwrite_check_truncate(struct page *page,
+> -					      struct inode *inode)
+> -{
+> -	loff_t size = i_size_read(inode);
+> -	pgoff_t index = size >> PAGE_SHIFT;
+> -	int offset = offset_in_page(size);
+> -
+> -	if (page->mapping != inode->i_mapping)
+> -		return -EFAULT;
+> -
+> -	/* page is wholly inside EOF */
+> -	if (page->index < index)
+> -		return PAGE_SIZE;
+> -	/* page is wholly past EOF */
+> -	if (page->index > index || !offset)
+> -		return -EFAULT;
+> -	/* page is partially inside EOF */
+> -	return offset;
+> -}
+> +int page_mkwrite_check_truncate(struct page *page, struct inode *inode);
+>  
+>  #endif /* _LINUX_PAGEMAP_H */
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 1784478270e1..edcb4a8a6121 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2678,6 +2678,34 @@ const struct vm_operations_struct generic_file_vm_ops = {
+>  	.page_mkwrite	= filemap_page_mkwrite,
+>  };
+>  
+> +/**
+> + * page_mkwrite_check_truncate - check if page was truncated
+> + * @page: the page to check
+> + * @inode: the inode to check the page against
+> + *
+> + * Returns the number of bytes in the page up to EOF,
+> + * or -EFAULT if the page was truncated.
+> + */
+> +int page_mkwrite_check_truncate(struct page *page, struct inode *inode)
+> +{
+> +	loff_t size = i_size_read(inode);
+> +	pgoff_t index = size >> PAGE_SHIFT;
+> +	int offset = offset_in_page(size);
+> +
+> +	if (page->mapping != inode->i_mapping)
+> +		return -EFAULT;
+> +
+> +	/* page is wholly inside EOF */
+> +	if (page->index < index)
+> +		return PAGE_SIZE;
+> +	/* page is wholly past EOF */
+> +	if (page->index > index || !offset)
+> +		return -EFAULT;
+> +	/* page is partially inside EOF */
+> +	return offset;
+> +}
+> +EXPORT_SYMBOL(page_mkwrite_check_truncate);
+> +
+>  /* This is used for a general mmap of a disk file */
+>  
+>  int generic_file_mmap(struct file * file, struct vm_area_struct * vma)
+> -- 
+> 2.24.1
 > 
-> On each page fault of NUMA Balancing, when task's executing CPU is from
-> the same node of pages, we call this a local page accessing, otherwise
-> a remote page accessing.
-> 
-> By updating task's accessing counter into it's cgroup on ticks, we get
-> the per-cgroup numa locality info.
-> 
-> For example the new entry 'cpu.numa_stat' show:
->   page_access local=1231412 remote=53453
-> 
-> Here we know the workloads in hierarchy have totally been traced 1284865
-> times of page accessing, and 1231412 of them are local page access, which
-> imply a good NUMA efficiency.
-> 
-> By monitoring the increments, we will be able to locate the per-cgroup
-> workload which NUMA Balancing can't helpwith (usually caused by wrong
-> CPU and memory node bindings), then we got chance to fix that in time.
-> 
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Michal Koutný <mkoutny@suse.com>
-> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-
-So here:
-
-  https://lkml.kernel.org/r/20191127101932.GN28938@suse.de
-
-Mel argues that the information exposed is fairly implementation
-specific and hard to use without understanding how NUMA balancing works.
-
-By exposing it to userspace, we tie ourselves to these particulars. We
-can no longer change these NUMA balancing details if we wanted to, due
-to UAPI concerns.
-
-Mel, I suspect you still feel that way, right?
-
-In the document (patch 2/2) you write:
-
-> +However, there are no hardware counters for per-task local/remote accessing
-> +info, we don't know how many remote page accesses have occurred for a
-> +particular task.
-
-We can of course 'fix' that by adding a tracepoint.
-
-Mel, would you feel better by having a tracepoint in task_numa_fault() ?
-
-Now I'm not really a fan of tracepoints myself, since they also
-establish a UAPI, but perhaps it is a lesser evil in this case.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
