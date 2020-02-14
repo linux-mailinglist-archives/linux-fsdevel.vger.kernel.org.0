@@ -2,139 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE6815DA5E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 16:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 835C915DDCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 17:01:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbgBNPLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 10:11:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51764 "EHLO mx2.suse.de"
+        id S2388190AbgBNQA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 11:00:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727822AbgBNPLh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:11:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 945B2AE2C;
-        Fri, 14 Feb 2020 15:11:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D3C961E0B38; Fri, 14 Feb 2020 16:11:33 +0100 (CET)
-Date:   Fri, 14 Feb 2020 16:11:33 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Sterba <dsterba@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/7] fs: Un-inline page_mkwrite_check_truncate
-Message-ID: <20200214151133.GB22815@quack2.suse.cz>
-References: <20200213202423.23455-1-agruenba@redhat.com>
- <20200213202423.23455-2-agruenba@redhat.com>
+        id S2388865AbgBNQAZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:00:25 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE62A24681;
+        Fri, 14 Feb 2020 16:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581696024;
+        bh=xMt+/WZJ7JX4l2wXXyGzZfDgtpkGtXEWwqSlZvxiJAE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rx6mkqGWxAHwdCNRTfdUGPJadnEtgMPpi0d6UMgE8reZWCyt9oOtxeOj+diLI3U09
+         mR8X+DbLPcX37szpOTYS9cf/mipxe/rh6+vsHadmsgEr1EgsePw3TXwMlQuhVM6JoM
+         IXAbIdN+GuDCt0WShqaWnzJGE5/V3qqTV1IPvIaY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Xiao Yang <ice_yangxiao@163.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 539/542] fuse: don't overflow LLONG_MAX with end offset
+Date:   Fri, 14 Feb 2020 10:48:51 -0500
+Message-Id: <20200214154854.6746-539-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200213202423.23455-2-agruenba@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 13-02-20 21:24:17, Andreas Gruenbacher wrote:
-> Per review comments from Jan and Ted, un-inline page_mkwrite_check_truncate
-> and move it to mm/filemap.c.  This function doesn't seem worth inlining.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Theodore Y. Ts'o <tytso@mit.edu>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-Looks good to me. You can add:
+[ Upstream commit 2f1398291bf35fe027914ae7a9610d8e601fbfde ]
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Handle the special case of fuse_readpages() wanting to read the last page
+of a hugest file possible and overflowing the end offset in the process.
 
-								Honza
+This is basically to unbreak xfstests:generic/525 and prevent filesystems
+from doing bad things with an overflowing offset.
 
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index ccb14b6a16b5..6c9c5b88924d 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -636,32 +636,6 @@ static inline unsigned long dir_pages(struct inode *inode)
->  			       PAGE_SHIFT;
->  }
->  
-> -/**
-> - * page_mkwrite_check_truncate - check if page was truncated
-> - * @page: the page to check
-> - * @inode: the inode to check the page against
-> - *
-> - * Returns the number of bytes in the page up to EOF,
-> - * or -EFAULT if the page was truncated.
-> - */
-> -static inline int page_mkwrite_check_truncate(struct page *page,
-> -					      struct inode *inode)
-> -{
-> -	loff_t size = i_size_read(inode);
-> -	pgoff_t index = size >> PAGE_SHIFT;
-> -	int offset = offset_in_page(size);
-> -
-> -	if (page->mapping != inode->i_mapping)
-> -		return -EFAULT;
-> -
-> -	/* page is wholly inside EOF */
-> -	if (page->index < index)
-> -		return PAGE_SIZE;
-> -	/* page is wholly past EOF */
-> -	if (page->index > index || !offset)
-> -		return -EFAULT;
-> -	/* page is partially inside EOF */
-> -	return offset;
-> -}
-> +int page_mkwrite_check_truncate(struct page *page, struct inode *inode);
->  
->  #endif /* _LINUX_PAGEMAP_H */
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 1784478270e1..edcb4a8a6121 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2678,6 +2678,34 @@ const struct vm_operations_struct generic_file_vm_ops = {
->  	.page_mkwrite	= filemap_page_mkwrite,
->  };
->  
-> +/**
-> + * page_mkwrite_check_truncate - check if page was truncated
-> + * @page: the page to check
-> + * @inode: the inode to check the page against
-> + *
-> + * Returns the number of bytes in the page up to EOF,
-> + * or -EFAULT if the page was truncated.
-> + */
-> +int page_mkwrite_check_truncate(struct page *page, struct inode *inode)
-> +{
-> +	loff_t size = i_size_read(inode);
-> +	pgoff_t index = size >> PAGE_SHIFT;
-> +	int offset = offset_in_page(size);
-> +
-> +	if (page->mapping != inode->i_mapping)
-> +		return -EFAULT;
-> +
-> +	/* page is wholly inside EOF */
-> +	if (page->index < index)
-> +		return PAGE_SIZE;
-> +	/* page is wholly past EOF */
-> +	if (page->index > index || !offset)
-> +		return -EFAULT;
-> +	/* page is partially inside EOF */
-> +	return offset;
-> +}
-> +EXPORT_SYMBOL(page_mkwrite_check_truncate);
-> +
->  /* This is used for a general mmap of a disk file */
->  
->  int generic_file_mmap(struct file * file, struct vm_area_struct * vma)
-> -- 
-> 2.24.1
-> 
+Reported-by: Xiao Yang <ice_yangxiao@163.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/file.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 695369f46f92d..3dd37a998ea93 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -803,6 +803,10 @@ static int fuse_do_readpage(struct file *file, struct page *page)
+ 
+ 	attr_ver = fuse_get_attr_version(fc);
+ 
++	/* Don't overflow end offset */
++	if (pos + (desc.length - 1) == LLONG_MAX)
++		desc.length--;
++
+ 	fuse_read_args_fill(&ia, file, pos, desc.length, FUSE_READ);
+ 	res = fuse_simple_request(fc, &ia.ap.args);
+ 	if (res < 0)
+@@ -888,6 +892,14 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ 	ap->args.out_pages = true;
+ 	ap->args.page_zeroing = true;
+ 	ap->args.page_replace = true;
++
++	/* Don't overflow end offset */
++	if (pos + (count - 1) == LLONG_MAX) {
++		count--;
++		ap->descs[ap->num_pages - 1].length--;
++	}
++	WARN_ON((loff_t) (pos + count) < 0);
++
+ 	fuse_read_args_fill(ia, file, pos, count, FUSE_READ);
+ 	ia->read.attr_ver = fuse_get_attr_version(fc);
+ 	if (fc->async_read) {
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
