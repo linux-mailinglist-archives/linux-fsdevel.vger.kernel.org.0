@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A7F15F5B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DAE15F5AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390101AbgBNSic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 13:38:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33720 "EHLO
+        id S2389861AbgBNSi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 13:38:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33727 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388660AbgBNSiI (ORCPT
+        with ESMTP id S2389485AbgBNSiJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:38:08 -0500
+        Fri, 14 Feb 2020 13:38:09 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j2fqV-0000uO-RM; Fri, 14 Feb 2020 18:37:47 +0000
+        id 1j2fqX-0000uO-CI; Fri, 14 Feb 2020 18:37:49 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 13/28] sys:__sys_setresuid(): handle fsid mappings
-Date:   Fri, 14 Feb 2020 19:35:39 +0100
-Message-Id: <20200214183554.1133805-14-christian.brauner@ubuntu.com>
+Subject: [PATCH v2 14/28] sys:__sys_setresgid(): handle fsid mappings
+Date:   Fri, 14 Feb 2020 19:35:40 +0100
+Message-Id: <20200214183554.1133805-15-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
 References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
@@ -46,15 +46,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch setresuid() to lookup fsids in the fsid mappings. If no fsid mappings
-are setup the behavior is unchanged, i.e. fsids are looked up in the id
-mappings.
+Switch setresgid() to lookup fsids in the fsid mappings. If no fsid mappings are
+setup the behavior is unchanged, i.e. fsids are looked up in the id mappings.
 
-During setresuid() the kfsuid is set to the keuid corresponding the euid that is
-requested by userspace. If the requested euid is -1 the kfsuid is reset to the
-current keuid. For the latter case this means we need to lookup the
-corresponding userspace euid corresponding to the current keuid in the id
-mappings and translate this euid into the corresponding kfsuid in the fsid
+During setresgid() the kfsgid is set to the kegid corresponding the egid that is
+requested by userspace. If the requested egid is -1 the kfsgid is reset to the
+current kegid. For the latter case this means we need to lookup the
+corresponding userspace egid corresponding to the current kegid in the id
+mappings and translate this egid into the corresponding kfsgid in the fsid
 mappings.
 
 The kfsid to cleanly handle userns visible filesystem is set as before.
@@ -72,42 +71,42 @@ Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
  1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sys.c b/kernel/sys.c
-index 22eea030d9e7..54e072145146 100644
+index 54e072145146..78592deee2d8 100644
 --- a/kernel/sys.c
 +++ b/kernel/sys.c
-@@ -654,7 +654,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+@@ -756,7 +756,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
  	const struct cred *old;
  	struct cred *new;
  	int retval;
--	kuid_t kruid, keuid, ksuid;
-+	kuid_t kruid, keuid, ksuid, kfsuid;
+-	kgid_t krgid, kegid, ksgid;
++	kgid_t krgid, kegid, ksgid, kfsgid;
  
- 	kruid = make_kuid(ns, ruid);
- 	keuid = make_kuid(ns, euid);
-@@ -696,11 +696,21 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
- 				goto error;
- 		}
- 	}
--	if (euid != (uid_t) -1)
-+	if (euid != (uid_t) -1) {
- 		new->euid = keuid;
-+		kfsuid = make_kfsuid(ns, euid);
+ 	krgid = make_kgid(ns, rgid);
+ 	kegid = make_kgid(ns, egid);
+@@ -789,11 +789,21 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+ 
+ 	if (rgid != (gid_t) -1)
+ 		new->gid = krgid;
+-	if (egid != (gid_t) -1)
++	if (egid != (gid_t) -1) {
+ 		new->egid = kegid;
++		kfsgid = make_kfsgid(ns, egid);
 +	} else {
-+		kfsuid = kuid_to_kfsuid(new->user_ns, new->euid);
++		kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
 +	}
-+	if (!uid_valid(kfsuid)) {
-+		return -EINVAL;
++	if (!gid_valid(kfsgid)) {
++		retval = -EINVAL;
 +		goto error;
 +	}
 +
- 	if (suid != (uid_t) -1)
- 		new->suid = ksuid;
--	new->fsuid = new->euid;
-+	new->kfsuid = new->euid;
-+	new->fsuid = kfsuid;
+ 	if (sgid != (gid_t) -1)
+ 		new->sgid = ksgid;
+-	new->fsgid = new->egid;
++	new->kfsgid = new->egid;
++	new->fsgid = kfsgid;
  
- 	retval = security_task_fix_setuid(new, old, LSM_SETID_RES);
- 	if (retval < 0)
+ 	return commit_creds(new);
+ 
 -- 
 2.25.0
 
