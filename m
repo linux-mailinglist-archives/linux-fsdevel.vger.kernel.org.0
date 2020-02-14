@@ -2,124 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3424315D7D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 13:57:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EFDF15D8C9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 14:52:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbgBNM5b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 07:57:31 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:30566 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbgBNM5b (ORCPT
+        id S1729252AbgBNNw2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 08:52:28 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37737 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728452AbgBNNw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 07:57:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581685049;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=M0W1G09myWqh7xVsLTycq4q1u2+SorrNYLpq3JdGz7g=;
-        b=cNRyr18x3rPBeg/qyly5zjWSnGajPSY/wqcn7EZTpl/reEIL/eftVydqylzIbqFqH/tzNT
-        cF+S3pyWqtqrpqZLoty0ssG4Gs6G01ROgVUlC8pLi5RasJIbiTLvPGWdMKDo6ovGPl1F31
-        JxbqtkMkw2ttKKnaof1HGL45ChOgtWI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-18-L4pxzCI4MtmRVwXtGSPurA-1; Fri, 14 Feb 2020 07:57:21 -0500
-X-MC-Unique: L4pxzCI4MtmRVwXtGSPurA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7ACF8107B267;
-        Fri, 14 Feb 2020 12:57:20 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CCC978ECFA;
-        Fri, 14 Feb 2020 12:57:17 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 4BD172257D2; Fri, 14 Feb 2020 07:57:17 -0500 (EST)
-Date:   Fri, 14 Feb 2020 07:57:17 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com
-Cc:     dm-devel@redhat.com, vishal.l.verma@intel.com
-Subject: Re: [PATCH v3 0/7] dax,pmem: Provide a dax operation to zero range
- of memory
-Message-ID: <20200214125717.GA18654@redhat.com>
-References: <20200207202652.1439-1-vgoyal@redhat.com>
+        Fri, 14 Feb 2020 08:52:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b15so6814799lfc.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 05:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=tdtqJsclM4uhuI49pOeI8DovFeuAeipuZdS8MF+ZWv4=;
+        b=2TKMT+CYVGT6tGMCX3C6ArI+zF6FCg+KFoCVV+Dp1uBA+j0Bypp6RS3QcMMgk9JKK2
+         +5FkZGsWlh+c73qUM1dgCbXrCaIDpNSxv5yZ4QZGVultrVfS0230WquGpTX7bWMQZwRL
+         Itk86oLVC12ZSIKyd+5Sx5M0SqXlOC3Y1FMECprDAznUARuH7ImGLSbmH4a9xgwU8KDC
+         H7AaI8p81Izim+CXybf3/U1g3yEyxDRIfmr7NBAeUS+PpoX/CPSvou/vpz3us8w80e0/
+         CgqPwGd05MoNEx6XvJl4K5/6Pn2O/mUOFIQN+NUEkqVeV/p3NW0POTievY/0WitDLk0/
+         XyNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tdtqJsclM4uhuI49pOeI8DovFeuAeipuZdS8MF+ZWv4=;
+        b=FcPM/QuL7MPp5Po789Hs3kN0Etd3N5m+N/lhLm7rdHiKT2t1mOGR0550ibGZ+C8/hY
+         zv+OSOZA188S2ITArMFVOL/Fy0B53Fbzh87i+rPkvsU6YwcQENQvongbXqo+k+WGPAEf
+         RbOyr4RUNMHlfGjant717lWD61utNz6StWrmic4lUhRiNAddHqP8/WwfgcDsVBK5Kb4/
+         +0DYAeWMJvLluB68FDnDYkWCKV/zz+pWg5XHN4PO/bSWKgHzvLZQIP0FzxCAUvcyzEEo
+         v6q8fVmo8iuUohQ4DBRP2ymt9TPhARuNnruEvIiEVLOidpxCdGnL5z0u3+ZawCmf/odx
+         3VtQ==
+X-Gm-Message-State: APjAAAXcVn1b1Igtj+megofbH1Wp/gZEZz6sbLKdfs5aM/p9tbim4t5N
+        9MW+nyITbKcGlwchXaSwoOHn/g==
+X-Google-Smtp-Source: APXvYqxKZSFPG4dqXvYMd4rmSifXuXeg3DODSZO8QZQljvwGRQPXEzK9MqFBoZOwwF5DbIqRkuXUEQ==
+X-Received: by 2002:a05:6512:4c6:: with SMTP id w6mr1721466lfq.157.1581688346526;
+        Fri, 14 Feb 2020 05:52:26 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id 23sm3661546ljw.31.2020.02.14.05.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 05:52:25 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 3DAEF100F7E; Fri, 14 Feb 2020 16:52:48 +0300 (+03)
+Date:   Fri, 14 Feb 2020 16:52:48 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/25] fs: Add zero_user_large
+Message-ID: <20200214135248.zqcqx3erb4pnlvmu@box>
+References: <20200212041845.25879-1-willy@infradead.org>
+ <20200212041845.25879-14-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200207202652.1439-1-vgoyal@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200212041845.25879-14-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 03:26:45PM -0500, Vivek Goyal wrote:
-> Hi,
+On Tue, Feb 11, 2020 at 08:18:33PM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> This is V3 of patches. I have dropped RFC tag from the series as it
-> looks like there is agreement on the interface. These patches are also
-> available at.
+> We can't kmap() a THP, so add a wrapper around zero_user() for large
+> pages.
 
-Hi Dan, Christoph,
-
-Ping for this patch series. How does it look? Do you have concerns?
-If not, it will be good if this is merged.
-
-Thanks
-Vivek
+I would rather address it closer to the root: make zero_user_segments()
+handle compound pages.
 
 > 
-> https://github.com/rhvgoyal/linux/commits/dax-zero-range-v3
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/highmem.h | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> I posted previous versions here.
-> 
-> v2:
-> https://lore.kernel.org/linux-fsdevel/20200203200029.4592-1-vgoyal@redhat.com/
-> v1:
-> https://lore.kernel.org/linux-fsdevel/20200123165249.GA7664@redhat.com/
-> 
-> Changes since V2:
-> 
-> Primarily took care of comments from Christoph.
-> 
-> - Changed zero_copy_range() parameters to pass dax device offset as u64.
-> - Fixed comment which says current interface only supports zeroing
->   with-in page.
-> - Refactored pmem_do_bvec() and reused write side of code in
->   zero_page_range().
-> - Removed generic_dax_zero_page_range()
-> - Fixed s390 dcssblk.c compilation issue.
-> 
-> Please review. 
-> 
-> Thanks
-> Vivek
-> 
-> Vivek Goyal (7):
->   pmem: Add functions for reading/writing page to/from pmem
->   pmem: Enable pmem_do_write() to deal with arbitrary ranges
->   dax, pmem: Add a dax operation zero_page_range
->   s390,dcssblk,dax: Add dax zero_page_range operation to dcssblk driver
->   dm,dax: Add dax zero_page_range operation
->   dax,iomap: Start using dax native zero_page_range()
->   dax,iomap: Add helper dax_iomap_zero() to zero a range
-> 
->  drivers/dax/super.c           |  19 ++++++
->  drivers/md/dm-linear.c        |  21 +++++++
->  drivers/md/dm-log-writes.c    |  19 ++++++
->  drivers/md/dm-stripe.c        |  26 ++++++++
->  drivers/md/dm.c               |  31 ++++++++++
->  drivers/nvdimm/pmem.c         | 112 ++++++++++++++++++++++++----------
->  drivers/s390/block/dcssblk.c  |  17 ++++++
->  fs/dax.c                      |  53 ++++------------
->  fs/iomap/buffered-io.c        |   9 +--
->  include/linux/dax.h           |  20 ++----
->  include/linux/device-mapper.h |   3 +
->  11 files changed, 235 insertions(+), 95 deletions(-)
-> 
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index ea5cdbd8c2c3..4465b8784353 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -245,6 +245,28 @@ static inline void zero_user(struct page *page,
+>  	zero_user_segments(page, start, start + size, 0, 0);
+>  }
+>  
+> +static inline void zero_user_large(struct page *page,
+> +		unsigned start, unsigned size)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < thp_order(page); i++) {
+> +		if (start > PAGE_SIZE) {
+
+Off-by-one? >= ?
+
+> +			start -= PAGE_SIZE;
+> +		} else {
+> +			unsigned this_size = size;
+> +
+> +			if (size > (PAGE_SIZE - start))
+> +				this_size = PAGE_SIZE - start;
+> +			zero_user(page + i, start, this_size);
+> +			start = 0;
+> +			size -= this_size;
+> +			if (!size)
+> +				break;
+> +		}
+> +	}
+> +}
+> +
+>  #ifndef __HAVE_ARCH_COPY_USER_HIGHPAGE
+>  
+>  static inline void copy_user_highpage(struct page *to, struct page *from,
 > -- 
-> 2.20.1
+> 2.25.0
+> 
 > 
 
+-- 
+ Kirill A. Shutemov
