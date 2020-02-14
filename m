@@ -2,102 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F345315D108
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 05:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A462C15D134
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 05:42:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbgBNEdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 23:33:25 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:4698 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbgBNEdZ (ORCPT
+        id S1728616AbgBNEmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 23:42:46 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38288 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728100AbgBNEmp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 23:33:25 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4622f70001>; Thu, 13 Feb 2020 20:32:55 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 13 Feb 2020 20:33:24 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 13 Feb 2020 20:33:24 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb
- 2020 04:33:23 +0000
-Subject: Re: [PATCH v5 01/13] mm: Fix the return type of
- __do_page_cache_readahead
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200211010348.6872-1-willy@infradead.org>
- <20200211010348.6872-2-willy@infradead.org>
- <e0f459af-bb5d-58b9-78be-5adf687477c0@nvidia.com>
- <20200214042137.GX7778@bombadil.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <ab9d0e43-3fb4-cb14-4974-ad4a8ab57a83@nvidia.com>
-Date:   Thu, 13 Feb 2020 20:33:23 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 13 Feb 2020 23:42:45 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01E4cfR1003955;
+        Fri, 14 Feb 2020 04:42:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Vt2JG8SKw/M51Zfuq7txuyPTL4CLm0EQro+mCUIsYDA=;
+ b=x5ocLDyorfKbyb0khXcYQf1Sq9sJWnfDYJ6EEIJFpFi1AxpXz7S7olWe+ybaB/n0tbBS
+ hJ6ErR3LdaZ5o8c+ZLl91lKAqLvtZHiFy4UqAPoDNd+SyvIEiPANpFF25VgXn87srP2R
+ +/rE44XyLHSJX8d73hrXvszb4nFUxsqrMhUZgGACPSVP76yveoY1wwQl8gwTWrCUQaua
+ +WWh0Hb3Hc0HoeyQK1bhXuBNpaOQfEsJ16rrSWJ1yMajiljC3p20M9VaYjMB2307eVzF
+ RvWz11el+2x8VYFJcE61nh2uzgx97dUtxGdijJp5f+5a3zRZYK/hBP8cx2bCdfzLNMQ1 aQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2y2k88ppdr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 04:42:43 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01E4frYp156698;
+        Fri, 14 Feb 2020 04:42:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2y4k817up4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Feb 2020 04:42:42 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01E4gfEQ014549;
+        Fri, 14 Feb 2020 04:42:41 GMT
+Received: from localhost (/67.161.8.12)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Feb 2020 20:42:41 -0800
+Date:   Thu, 13 Feb 2020 20:42:42 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Allison Collins <allison.henderson@oracle.com>
+Cc:     lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
+Message-ID: <20200214044242.GI6870@magnolia>
+References: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20200214042137.GX7778@bombadil.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581654775; bh=5Ey5GwVWyIBJt/+/393UO7Nx1GdweRJOgsCbjE7KjIY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=NkFTEsbm+clHOSZCX0RL5RspOQeT9W3sLbBgRbLhccmBpDH8wbMqpmqavt71lE50T
-         W0r4zoHadn/onXtCLtu33Jw1Lnyb1YLti6uKH/Lqwf3oKwHkMffvnhuXXDp4172iVb
-         4JyT1BsemqkZI0x+rarEzerLgE4K30Jj4Akyi8ysj6gTn3vHY411VUJmo07oEAtkVb
-         F3culDDOf6MNtFaLukiw3rjiqUenq4Bmkyg4nv/QsS2hRa5xNWUMGZeZaUGVNkKf9z
-         beXaG1Dega77Ip/IbGAbpMTTVOuKI2MlLNC56slZlFuJWg4VS8NUVScDIxpxkukqfs
-         g+TKG5YT2eP6A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002140036
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9530 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 impostorscore=0 clxscore=1015 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002140035
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/13/20 8:21 PM, Matthew Wilcox wrote:
-> On Thu, Feb 13, 2020 at 07:19:53PM -0800, John Hubbard wrote:
->> On 2/10/20 5:03 PM, Matthew Wilcox wrote:
->>> @@ -161,7 +161,7 @@ unsigned int __do_page_cache_readahead(struct address_space *mapping,
->>>  	unsigned long end_index;	/* The last page we want to read */
->>>  	LIST_HEAD(page_pool);
->>>  	int page_idx;
->>
->>
->> What about page_idx, too? It should also have the same data type as nr_pages, as long as
->> we're trying to be consistent on this point.
->>
->> Just want to ensure we're ready to handle those 2^33+ page readaheads... :)
+On Thu, Feb 13, 2020 at 03:33:08PM -0700, Allison Collins wrote:
+> Hi all,
 > 
-> Nah, this is just a type used internally to the function.  Getting the
-> API right for the callers is the important part.
+> I know there's a lot of discussion on the list right now, but I'd like to
+> get this out before too much time gets away.  I would like to propose the
+> topic of atomic writes.  I realize the topic has been discussed before, but
+> I have not found much activity for it recently so perhaps we can revisit it.
+> We do have a customer who may have an interest, so I would like to discuss
+> the current state of things, and how we can move forward.  If efforts are in
+> progress, and if not, what have we learned from the attempt.
 > 
+> I also understand there are multiple ways to solve this problem that people
+> may have opinions on.  I've noticed some older patch sets trying to use a
+> flag to control when dirty pages are flushed, though I think our customer
+> would like to see a hardware solution via NVMe devices.  So I would like to
+> see if others have similar interests as well and what their thoughts may be.
+> Thanks everyone!
 
-Agreed that the real point of this is to match up the API, but why not finish the job
-by going all the way through? It's certainly not something we need to lose sleep over,
-but it does seem like you don't want to have code like this:
+Hmmm well there are a number of different ways one could do this--
 
-        for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
+1) Userspace allocates an O_TMPFILE file, clones all the file data to
+it, makes whatever changes it wants (thus invoking COW writes), and then
+calls some ioctl to swap the differing extent maps atomically.  For XFS
+we have most of those pieces, but we'd have to add a log intent item to
+track the progress of the remap so that we can complete the remap if the
+system goes down.  This has potentially the best flexibility (multiple
+processes can coordinate to stage multiple updates to non-overlapping
+ranges of the file) but is also a nice foot bazooka.
 
-...with the ability, technically, to overflow page_idx due to it being an int,
-while nr_to_read is an unsigned long. (And the new sanitizers and checkers are
-apt to complain about it, btw.)
+2) Set O_ATOMIC on the file, ensure that all writes are staged via COW,
+and defer the cow remap step until we hit the synchronization point.
+When that happens, we persist the new mappings somewhere (e.g. well
+beyond all possible EOF in the XFS case) and then start an atomic remap
+operation to move the new blocks into place in the file.  (XFS would
+still have to add a new log intent item here to finish the remapping if
+the system goes down.)  Less foot bazooka but leaves lingering questions
+like what do you do if multiple processes want to run their own atomic
+updates?
 
-(Apologies if there is some kernel coding idiom that I still haven't learned, about this 
-sort of thing.)
+(Note that I think you have some sort of higher level progress tracking
+of the remap operation because we can't leave a torn write just because
+the computer crashed.)
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+3) Magic pwritev2 API that lets userspace talk directly to hardware
+atomic writes, though I don't know how userspace discovers what the
+hardware limits are.   I'm assuming the usual sysfs knobs?
+
+Note that #1 and #2 are done entirely in software, which makes them less
+performant but OTOH there's effectively no limit (besides available
+physical space) on how much data or how many non-contiguous extents we
+can stage and commit.
+
+--D
+
+> Allison
