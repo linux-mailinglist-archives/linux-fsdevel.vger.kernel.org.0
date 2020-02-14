@@ -2,111 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7FA15F93A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 23:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B91515F94B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 23:16:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbgBNWGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 17:06:24 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22916 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbgBNWGW (ORCPT
+        id S1727572AbgBNWQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 17:16:28 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:45732 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725440AbgBNWQ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 17:06:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581717980;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ED47G1L+n80TagZ7/QhjmhFUqcbeULxGEF5xm1xsbo0=;
-        b=eG+BWXD1rTBrMNxX0aXPFhH0Bcr1Zb6Aakw9OWKmgo7QXfaujMrnKLdYCtu5jONF33yvtg
-        eoR3Z/AXqvgTaALhHrGAu501NKf4bCYkjQ0Lagx9g9QT2H5UZaF6m9aFNn+AWok1h1DO4E
-        PAvBDhUkwEJX/vWPFtfQtJjPYecw3rs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-19-zchCvi3dOTeu5iY-2b37nw-1; Fri, 14 Feb 2020 17:06:16 -0500
-X-MC-Unique: zchCvi3dOTeu5iY-2b37nw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 01CC41B2C981;
-        Fri, 14 Feb 2020 22:06:14 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 409971001DC2;
-        Fri, 14 Feb 2020 22:06:12 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
-References: <x49imke1nj0.fsf@segfault.boston.devel.redhat.com>
-        <20200211201718.GF12866@iweiny-DESK2.sc.intel.com>
-        <x49sgjf1t7n.fsf@segfault.boston.devel.redhat.com>
-        <20200213190156.GA22854@iweiny-DESK2.sc.intel.com>
-        <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
-        <20200213195839.GG6870@magnolia>
-        <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
-        <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
-        <20200214200607.GA18593@iweiny-DESK2.sc.intel.com>
-        <x4936bcdfso.fsf@segfault.boston.devel.redhat.com>
-        <20200214215759.GA20548@iweiny-DESK2.sc.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 14 Feb 2020 17:06:10 -0500
-In-Reply-To: <20200214215759.GA20548@iweiny-DESK2.sc.intel.com> (Ira Weiny's
-        message of "Fri, 14 Feb 2020 13:58:00 -0800")
-Message-ID: <x49y2t4bz8t.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Fri, 14 Feb 2020 17:16:28 -0500
+Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 01EMGRa3029159
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 17:16:27 -0500
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 01EMGMJ9003708
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 17:16:27 -0500
+Received: by mail-qt1-f200.google.com with SMTP id c22so6828506qtn.23
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Feb 2020 14:16:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=eJQfIN4vckK3hUkjct5X1Ay1QWrTD3wdbdr+ZOUlltA=;
+        b=Kw2gIDksozgLTYtjLGbvtFSZL1nK8BTumMI4s8/jYq5FsF+hxBSqSfb9XP6kiA1FEF
+         9Sce0OUvRtCKWJghCFYfPsyTPoG5bA9ZIBAtpn/0uG5LNEUAOupoARnigaqp4/66GciU
+         F2PTzVq9S/qIo5Dp3jgUBI4ivBmhiJ/cij7BDLeziFObyX51kOTRfA91iPkUa3Nn4BXI
+         AR5dMhvB22+ybgil6sNQw7mStrYdAxbueDQiOBkxBMJMVIa66XppxTmJAv8BOO8lGS5d
+         Lsdmv4tPip90Ad1jjyMnG4G10GDgBhdV3PI5d/PNfFgLswgLELqXYglBXIFdRwG56SUc
+         gkLA==
+X-Gm-Message-State: APjAAAXxlXXGyWI3Kbk3oSB87J9tA6VqADw9RQXob8FveD9PcvJ+hOma
+        t5z/4/iZ8KoCFHVLkFlb4GWBFY1lSktyKaz+4gMJpLFcFD2ON98AfQRCIZHs3TdbtfaS8roJ6S7
+        3JuTRT45oVEKW6zPsnIF9UcNZvEZhUJkZ9fCy
+X-Received: by 2002:ae9:dc85:: with SMTP id q127mr4618888qkf.460.1581718581952;
+        Fri, 14 Feb 2020 14:16:21 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyyXhf9ySjiOcoYhCw3Npb8sBi+pCL4GfySWR4dtPZqBKpxKv5rWOUxYeNMQvsuo/hmv53Wiw==
+X-Received: by 2002:ae9:dc85:: with SMTP id q127mr4618857qkf.460.1581718581514;
+        Fri, 14 Feb 2020 14:16:21 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id m204sm4224406qke.35.2020.02.14.14.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 14:16:19 -0800 (PST)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+In-Reply-To: <20200213211847.GA1734@sasha-vm>
+References: <20190829205631.uhz6jdboneej3j3c@pali> <184209.1567120696@turing-police> <20190829233506.GT5281@sasha-vm> <20190830075647.wvhrx4asnkrfkkwk@pali> <20191016140353.4hrncxa5wkx47oau@pali> <20191016143113.GS31224@sasha-vm> <20191016160349.pwghlg566hh2o7id@pali> <20191016203317.GU31224@sasha-vm> <20191017075008.2uqgdimo3hrktj3i@pali> <20200213000656.hx5wdofkcpg7aoyo@pali>
+ <20200213211847.GA1734@sasha-vm>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1581718578_27211P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 14 Feb 2020 17:16:18 -0500
+Message-ID: <86151.1581718578@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ira Weiny <ira.weiny@intel.com> writes:
+--==_Exmh_1581718578_27211P
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, Feb 14, 2020 at 04:23:19PM -0500, Jeff Moyer wrote:
->> Ira Weiny <ira.weiny@intel.com> writes:
->> 
->> > [disclaimer: the following assumes the underlying 'device' (superblock)
->> > supports DAX]
->> >
->> > ... which results in S_DAX == false when the file is opened without the mount
->> > option.  The key would be that all directories/files created under a root with
->> > XFS_DIFLAG2_DAX == true would inherit their flag and be XFS_DIFLAG2_DAX == true
->> > all the way down the tree.  Any file not wanting DAX would need to set
->> > XFS_DIFLAG2_DAX == false.  And setting false could be used on a directory to
->> > allow a user or group to not use dax on files in that sub-tree.
->> >
->> > Then without '-o dax' (XFS_MOUNT_DAX == false) all files when opened set S_DAX
->> > equal to XFS_DIFLAG2_DAX value.  (Directories, as of V4, never get S_DAX set.)
->> >
->> > If '-o dax' (XFS_MOUNT_DAX == true) then S_DAX is set on all files.
->> 
->> One more clarifying question.  Let's say I set XFS_DIFLAG2_DAX on an
->> inode.  I then open the file, and perform mmap/load/store/etc.  I close
->> the file, and I unset XFS_DIFLAG2_DAX.  Will the next open treat the
->> file as S_DAX or not?  My guess is the inode won't be evicted, and so
->> S_DAX will remain set.
+On Thu, 13 Feb 2020 16:18:47 -0500, Sasha Levin said:
+
+> >> I was hoping that it would be possible to easily use secondary FAT t=
+able
+> >> (from TexFAT extension) for redundancy without need to implement ful=
+l
+> >> TexFAT, which could be also backward compatible with systems which d=
+o
+> >> not implement TexFAT extension at all. Similarly like using FAT32 di=
+sk
+> >> with two FAT tables is possible also on system which use first FAT
+> >> table.
+
+OK.. maybe I'm not sufficiently caffeinated, but how do you use 2 FAT tab=
+les on
+a physical device and expect it to work properly on a system that uses ju=
+st the
+first FAT table, if the device is set to =22use second table=22 when you =
+mount it?
+That sounds just too much like the failure modes of running fsck on a mou=
+nted
+filesystem....
+
+> >By the chance, is there any possibility to release TexFAT specificatio=
+n?
+> >Usage of more FAT tables (even for Linux) could help with data recover=
+y.
 >
-> The inode will not be evicted, or even it happens to be xfs_io will reload it
-> to unset the XFS_DIFLAG2_DAX flag.  And the S_DAX flag changes _with_ the
-> XFS_DIFLAG2_DAX change when it can (when the underlying storage supports
-> S_DAX).
+> This would be a major pain in the arse to pull off (even more that
+> releasing exFAT itself) because TexFAT is effectively dead and no one
+> here cares about it. It's not even the case that there are devices whic=
+h
+> are now left unsupported, the whole TexFAT scheme is just dead and gone=
+.
+>
+> Could I point you to the TexFAT patent instead
+> (https://patents.google.com/patent/US7613738B2/en)? It describes well
+> how TexFAT used to work.
 
-OK, so it will be possible to change the effective mode.
+I don't think anybody wants the full TexFAT support - but having a backup=
+ copy
+of the FAT would be nice in some circumstances.
 
-I'll try to get some testing in on this series, now.
+Actually, that raises an question....
 
-Thanks!
-Jeff
+What the published spec says:
 
+The File Allocation Table (FAT) region may contain up to two FATs, one in=
+ the
+First FAT sub-region and another in the Second FAT sub-region. The Number=
+OfFats
+field describes how many FATs this region contains. The valid values for =
+the
+NumberOfFats field are 1 and 2. Therefore, the First FAT sub-region alway=
+s
+contains a FAT. If the NumberOfFats field is two, then the Second FAT
+sub-region also contains a FAT.
+
+The ActiveFat field of the VolumeFlags field describes which FAT is activ=
+e.
+Only the VolumeFlags field in the Main Boot Sector is current. Implementa=
+tions
+shall treat the FAT which is not active as stale. Use of the inactive FAT=
+ and
+switching between FATs is implementation specific.
+
+Sasha:  can you find out what the Windows implementation does regarding t=
+hat
+last sentence?  Does it actively use both FAT sub-regions and switch betw=
+een
+them (probably not), or does it read the ActiveFAT value and use that one=
+, or
+does Windows just use NumberOfFats =3D=3D 1?
+
+I'm assuming that the fact the doc also says =22NumberOfFats =3D=3D 2 is =
+only valid
+for TexFAT volumes=22 possibly means =22Microsoft thinks that's hardcoded=
+ at 1=22
+given the death of TexFAT.  That would make adding alternate FAT support =
+a
+major challenge.
+
+On the other hand, if Windows actually looks at the NumberOfFats value, f=
+inds
+a 2, and ActiveFAT =3D=3D1 (meaning use second table) and says =22OK, wha=
+tever=22 and
+just uses the second table from there on out, it becomes a lot easier.
+
+
+
+--==_Exmh_1581718578_27211P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXkccMgdmEQWDXROgAQJrXg//bPrYDkf+/qHxzc4KiI24Rxtqdm4U7Az9
+dKL7V6gOwwbrxTrr+xIZvmIKJv49976Gx1CTVDVrWaXt8TssINoO9jmJlQOHMQ4P
+DzgVhXgkzZuLbiJ5mFMMrNT5JLiCnx3clSkgSTVXxKXXsfKNFFtC3N6RqExxSB8R
+mh3bU2o5kyu3+iIwstusdTjHOc6pyUDSTmJ4IgptP1GCiVxUmvzpeNR3MxcPPt0Y
+y8gI2si8AxK9koQHPxmQxrfviTvcBhqZ9dnR+Ap+aLgdPCea1MgXW9/zReficgj/
+sUsdqKOrKvS8lyIZbninbaXqht6jUdnyHmENqvmGfKDz0b5OZjFaS62OAkd1DHPM
+2rtFlgRCNMVcbu3p+pxbl1QiGb+xgakOzYiQEHjKFKQRcsXNcHUp/wstMOQsboF+
+SdnxDhKdK4Vagwur9ZyPeGZfHEOk1CCM4/VCNCOqs+qZo+YBqZbxC8uhMd53/fUl
+231KAF796DKrCeIsMdoGSinaGJOqXvuHzQoXTPKYcpGglnvvje35DYxhkVs33WFU
+U+b0IIoofQhzNBIJeniKpqNai5AsNNHjA4Mrnpp72sb5DA/Zll36RgXIn/+CG52/
+aF2BJpOWIJdCa1X3KGoae3dNdU6n95ZHdTsKqh54ZeITB+El0BwB1uNyzHhgVjhI
+e9fqc6Jcr+8=
+=pN4u
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1581718578_27211P--
