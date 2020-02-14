@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6081F15F5CF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B98B15F5D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbgBNSjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 13:39:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33781 "EHLO
+        id S1730625AbgBNSkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 13:40:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33818 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729659AbgBNSjg (ORCPT
+        with ESMTP id S1729781AbgBNSkX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:39:36 -0500
+        Fri, 14 Feb 2020 13:40:23 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j2fqk-0000uO-FR; Fri, 14 Feb 2020 18:38:02 +0000
+        id 1j2fql-0000uO-JW; Fri, 14 Feb 2020 18:38:03 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 23/28] commoncap: cap_bprm_set_creds(): handle fsid mappings
-Date:   Fri, 14 Feb 2020 19:35:49 +0100
-Message-Id: <20200214183554.1133805-24-christian.brauner@ubuntu.com>
+Subject: [PATCH v2 24/28] commoncap: cap_task_fix_setuid(): handle fsid mappings
+Date:   Fri, 14 Feb 2020 19:35:50 +0100
+Message-Id: <20200214183554.1133805-25-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
 References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
@@ -46,57 +46,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-During exec the kfsids are currently reset to the effective kids. To retain the
-same semantics with the introduction of fsid mappings, we lookup the userspace
-effective id in the id mappings and translate the effective id into the
-corresponding kfsid in the fsidmapping. This means, the behavior is unchanged
-when no fsid mappings are setup and the semantics stay the same even when fsid
-mappings are setup.
+Switch cap_task_fix_setuid() to lookup fsids in the fsid mappings. If no fsid
+mappings are setup the behavior is unchanged, i.e. fsids are looked up in the
+id mappings.
 
-Cc: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - Reset kfsids used for userns visible filesystems such as proc too.
+unchanged
 ---
- security/commoncap.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ security/commoncap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/security/commoncap.c b/security/commoncap.c
-index f4ee0ae106b2..9641695d8383 100644
+index 9641695d8383..0581c6aa8bdc 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
-@@ -810,7 +810,10 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 	struct cred *new = bprm->cred;
- 	bool effective = false, has_fcap = false, is_setid;
- 	int ret;
--	kuid_t root_uid;
-+	kuid_t root_uid, kfsuid;
-+	kgid_t kfsgid;
-+	uid_t fsuid;
-+	gid_t fsgid;
+@@ -24,6 +24,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/binfmts.h>
+ #include <linux/personality.h>
++#include <linux/fsuidgid.h>
  
- 	if (WARN_ON(!cap_ambient_invariant_ok(old)))
- 		return -EPERM;
-@@ -847,8 +850,15 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 						   old->cap_permitted);
- 	}
- 
--	new->suid = new->fsuid = new->euid;
--	new->sgid = new->fsgid = new->egid;
-+	fsuid = from_kuid_munged(new->user_ns, new->euid);
-+	kfsuid = make_kfsuid(new->user_ns, fsuid);
-+	new->suid = new->kfsuid = new->euid;
-+	new->fsuid = kfsuid;
-+
-+	fsgid = from_kgid_munged(new->user_ns, new->egid);
-+	kfsgid = make_kfsgid(new->user_ns, fsgid);
-+	new->sgid = new->kfsgid = new->egid;
-+	new->fsgid = kfsgid;
- 
- 	/* File caps or setid cancels ambient. */
- 	if (has_fcap || is_setid)
+ /*
+  * If a non-root user executes a setuid-root binary in
+@@ -1061,7 +1062,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
+ 		 *          if not, we might be a bit too harsh here.
+ 		 */
+ 		if (!issecure(SECURE_NO_SETUID_FIXUP)) {
+-			kuid_t root_uid = make_kuid(old->user_ns, 0);
++			kuid_t root_uid = make_kfsuid(old->user_ns, 0);
+ 			if (uid_eq(old->fsuid, root_uid) && !uid_eq(new->fsuid, root_uid))
+ 				new->cap_effective =
+ 					cap_drop_fs_set(new->cap_effective);
 -- 
 2.25.0
 
