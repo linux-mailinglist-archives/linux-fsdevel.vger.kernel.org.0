@@ -2,456 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EFCD15DDD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 17:01:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A763115E619
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 17:46:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389159AbgBNQAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 11:00:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389146AbgBNQA2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:00:28 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81B3224676;
-        Fri, 14 Feb 2020 16:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696028;
-        bh=MSE7utoJDPW0F/LxXZ1D6HdgdqkSVBIeMYZCmb0AFL8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1IAxnMvbneFram/WHGP1exM2vE1dERfRgIPN6QxyJEN3bXsi3zx7rbM0TtlU+suAB
-         R4KYtW76iin+iTmLz73YGIcm1JB6Fm8z4sQ+Obq/uTBAUzEhCwKb/XRjHQQf2deSnk
-         cMvPAfGxpTXa6sGrRVyq/nGXtcOs199YcXeMztbE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when reading or writing
-Date:   Fri, 14 Feb 2020 10:48:54 -0500
-Message-Id: <20200214154854.6746-542-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        id S2406310AbgBNQps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 11:45:48 -0500
+Received: from USFB19PA33.eemsg.mail.mil ([214.24.26.196]:29315 "EHLO
+        USFB19PA33.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404428AbgBNQps (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:45:48 -0500
+X-Greylist: delayed 430 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Feb 2020 11:45:47 EST
+X-EEMSG-check-017: 56169778|USFB19PA33_ESA_OUT03.csd.disa.mil
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="56169778"
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USFB19PA33.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Feb 2020 16:38:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1581698315; x=1613234315;
+  h=subject:to:references:from:message-id:date:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=A18DncqTUADO2fhOFmzTsoqfMTabU6XL5YSHf/8ms1w=;
+  b=a1zr0kKpzxGgSHWX6okpoNSsd7f4AS9AtJ9ZedcG7Km/2cnZi6LXHli+
+   LzCyW9FDlPhwhbFLItBVXyuNqIEWj1LbahAY7uiQ1AMUvAFIJ9PxK59Qo
+   h0W09PFZ3wiCA2OnuG/llsvNxockueHX9fqv7QA7jVdtT9VptGw8wsRMp
+   xgFbEDe1lSSKWQ0tEzQjVDIk4loo8Rhlcg//8weHOtyajYQ0lxXSSwmx0
+   2/nYyV2f63qBkTE9UQaSMhUTDQMXIS0I3mYcTCDcXNEI9Q+OZaXRHoWjI
+   Yl5i3N9+gN6ZZ3zZgaIx7Lr7Pmqkyvj6aUN2DlKcYNAxO1J6HkKxBK51Z
+   w==;
+X-IronPort-AV: E=Sophos;i="5.70,441,1574121600"; 
+   d="scan'208";a="33082497"
+IronPort-PHdr: =?us-ascii?q?9a23=3Aa5cC6RMIUkbScbcd//ol6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K/v7pcbcNUDSrc9gkEXOFd2Cra4d16yJ6+uxASQp2tWojjMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIxi6twfcutUZjYZmNqo61w?=
+ =?us-ascii?q?fErGZPd+lKymxkIk6ekQzh7cmq5p5j9CpQu/Ml98FeVKjxYro1Q79FAjk4Km?=
+ =?us-ascii?q?45/MLkuwXNQguJ/XscT34ZkgFUDAjf7RH1RYn+vy3nvedgwiaaPMn2TbcpWT?=
+ =?us-ascii?q?S+6qpgVRHlhDsbOzM/7WrakdJ7gr5Frx29phx/24/Ub5+TNPpiZaPWYNcWSX?=
+ =?us-ascii?q?NcUspNSyBNB4WxYIUVD+oFIO1WsY/zqVUTphe6HAWhBOfixjpOi3Tr36M1zv?=
+ =?us-ascii?q?4hHBnb0gI+EdIAsHfaotv7O6gdU++60KbGwC7fb/5Uwzrx9JTEfx4jrPyKQL?=
+ =?us-ascii?q?l+cdDRyU4qFw7dk1uQtZLqPyuV1usTtWiQ8vduVee1hG4jrwF+vDiuzdorh4?=
+ =?us-ascii?q?nSm40V0UvJ9Tl5wYkpJd24T1R3Ydi/EJRKrS2aOIx2Qt07TmxupS00yaUGtI?=
+ =?us-ascii?q?amcCUFx5kr3R7SZ+Gdf4SW7R/vSvydLSp+iXl4YrywnQyy/lKlyuDkU8m010?=
+ =?us-ascii?q?tFoTRdn9nXs3ANywTT6s+aSvth5kuh2SiA1wTU6uxcPUA7j7DbK588wr4rjJ?=
+ =?us-ascii?q?YTsELDHiHxmEXtkqCZal8o+vSo6uv7YrXmoYWQN4lohQHlLqsigMm/AeU8Mg?=
+ =?us-ascii?q?QWXmib//qz1KH78EHkT7hHgec6n6nEvJzAO8gWqbC1DxVI3oo77hawFTam0N?=
+ =?us-ascii?q?AWnXkdK1JFfQqKj5P0NFHVO/34Efe+jEiskDds3fzGOKbhDY/XInjMl7fhY6?=
+ =?us-ascii?q?5x61RAxwor0dBf+5VUB6kcL/3pXE/+qNvYDhsiPgy7xObnD9p91ocAVm6VHq?=
+ =?us-ascii?q?CZN6bSu0eS5u0zO+mMeJMVuDHlJvg55v7uiHo5mUIHfamzx5QWaGu1HvthI0?=
+ =?us-ascii?q?WebnrshskOHX0WsQo5SezgkEeCXiJLZ3auQ6I84Sk2CJm4AofHR4CthqGB3S?=
+ =?us-ascii?q?igE51IaWBJFEqMHW3rd4qaQfcMbjydIst7njwDT7ihRJcr1Quyuw/i17pnMu?=
+ =?us-ascii?q?3U9zUctZLi0th1+uLSmQgp9TNqE8udznuNT2BonmIIXjM22ad/rlFgyleHz6?=
+ =?us-ascii?q?d1mOJYFdNN6PNTSAs6NoDTz/Z8C9/sXgLNZNCJSEypQt++GzE+Usoxw8MSY0?=
+ =?us-ascii?q?Z6A9iiihHD3yy3A74ajrCLCoc0/b/C0HjvOcl9z23L1Lcuj1Y4WMtDL26mib?=
+ =?us-ascii?q?Bl9wjVGYHJl1+Vl6GwdaQTxCTN7nuMzXKSvEFEVw59SaHFXXEZZkvLotX1/0?=
+ =?us-ascii?q?DCQKG0CbQhLARBzdWPKrVFatL3l1VKXvTjN8rEY2K3hWiwAQyExrSWbIrlY2?=
+ =?us-ascii?q?8dxjnSCFAYkwAP+naLLQs+Bjmko2/FEjxuGkzgY1n2/el9tny7VEk0wB+Ob0?=
+ =?us-ascii?q?F70Lq14BEVj+SGS/wPxrIEpDshqzJsEVaj3tLWEd2AqhFgfapCZ9M94UlH2X?=
+ =?us-ascii?q?jdtwx8OJygMq9jikQZcwRtsEPizQh3CoZYm8gwsHwq1BZyKb6f0F5ZbzOXx4?=
+ =?us-ascii?q?3wOrnMJ2nq5h+vdqrW1kjb0NaR/acP8uo3p0//swGuE0oo629n3MVN03uA+p?=
+ =?us-ascii?q?XKCxIfUZT3UkY07BV6qLbaYi4y54PQy3JgK7W7sjjH29gxHusq1g6gf8tDMK?=
+ =?us-ascii?q?ODDALyF8oaB8uwJ+wxm1ipYRMEM/1I9KEuJM6mePyG2KmkPOZkgj2ql3hI4I?=
+ =?us-ascii?q?d40hHEyy0pZufO3psBi9qf2gKcXDb7ilrp5sz+n4tDYRkdGW2wzSWiD4lUMO?=
+ =?us-ascii?q?k6YYcODHq0OcSm7tp5gJHpVjhT81vnT0gL3M6vZAq6cVPwx0tT2F4RrHjhnj?=
+ =?us-ascii?q?G3i3Rwkjc0vu+E0SfT2eX+ZV8CPWJWQGRKk1jhO863gsocUUzuaBIm0FOh5E?=
+ =?us-ascii?q?Dn1+1Vv6hyMWTXaVlHcjKwLGx4VKa08L2YbIoH7JIurDUSU+mmZ12eYqDyrg?=
+ =?us-ascii?q?Fc0C75GWZagjcheHXiuYv8twJ1hXjbL3tpqnfdP8ZqylOX+t3GQtZD0zwHWm?=
+ =?us-ascii?q?98iD/KFh67Jdbv4NbQ34/Kr+SWT2u8UthWdi7xwMWLsy7/rWtsAjWwmPe8nt?=
+ =?us-ascii?q?ChGg8/lWf/0NpnTiXHrRrma6Hk0KO1Ne8hdU5tV3Hm7M8vIZ1zios9gtkr3H?=
+ =?us-ascii?q?EegpiEtS4cnXzbLcRQ2aW4amEEAzEM3YiGs0DexER/IyfRlMrCXXKHz54kPo?=
+ =?us-ascii?q?Trbw=3D=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CeBAAszEZe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgXsCg?=
+ =?us-ascii?q?XYFgW0gEoQ+iQOGWQEBBAaBEiWJcJFKCQEBAQEBAQEBATcEAQGEQAKCJTgTA?=
+ =?us-ascii?q?hABAQEFAQEBAQEFAwEBbIVDQhYBgWIpAYMCAQUjBBFRCw4KAgImAgJXBgEMC?=
+ =?us-ascii?q?AEBgmM/glclri5/M4VKg0uBPoEOKgGMPXmBB4ERJwwDgl0+hEuDEIJeBI1gM?=
+ =?us-ascii?q?4hQZEaXbYJEgk+TfAYcmxiOaJ0/IoFYKwgCGAghD4MoTxgNjikXjWxVIwONM?=
+ =?us-ascii?q?oNWAQE?=
+Received: from tarius.tycho.ncsc.mil (HELO tarius.infosec.tycho.ncsc.mil) ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 14 Feb 2020 16:38:31 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.infosec.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 01EGbXVq185655;
+        Fri, 14 Feb 2020 11:37:34 -0500
+Subject: Re: [PATCH 2/3] Teach SELinux about anonymous inodes
+To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, lokeshgidra@google.com
+References: <20200211225547.235083-1-dancol@google.com>
+ <20200214032635.75434-1-dancol@google.com>
+ <20200214032635.75434-3-dancol@google.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <9ca03838-8686-0007-0971-ee63bf5031da@tycho.nsa.gov>
+Date:   Fri, 14 Feb 2020 11:39:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200214032635.75434-3-dancol@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+On 2/13/20 10:26 PM, Daniel Colascione wrote:
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 1659b59fb5d7..6de0892620b3 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2915,6 +2915,62 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+>   	return 0;
+>   }
+>   
+> +static int selinux_inode_init_security_anon(struct inode *inode,
+> +					    const struct qstr *name,
+> +					    const struct file_operations *fops,
+> +					    const struct inode *context_inode)
+> +{
+> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
+> +	struct common_audit_data ad;
+> +	struct inode_security_struct *isec;
+> +	int rc;
+> +
+> +	if (unlikely(IS_PRIVATE(inode)))
+> +		return 0;
 
-[ Upstream commit 0ddad21d3e99c743a3aa473121dc5561679e26bb ]
+This is not possible since the caller clears S_PRIVATE before calling 
+and it would be a bug to call the hook on an inode that was intended to 
+be private, so we shouldn't check it here.
 
-This makes the pipe code use separate wait-queues and exclusive waiting
-for readers and writers, avoiding a nasty thundering herd problem when
-there are lots of readers waiting for data on a pipe (or, less commonly,
-lots of writers waiting for a pipe to have space).
+> +
+> +	if (unlikely(!selinux_state.initialized))
+> +		return 0;
 
-While this isn't a common occurrence in the traditional "use a pipe as a
-data transport" case, where you typically only have a single reader and
-a single writer process, there is one common special case: using a pipe
-as a source of "locking tokens" rather than for data communication.
+Are we doing this to defer initialization until selinux_complete_init() 
+- that's normally why we bail in the !initialized case?  Not entirely 
+sure what will happen in such a situation since we won't have the 
+context_inode or the allocating task information at that time, so we 
+certainly won't get the same result - probably they would all be labeled 
+with whatever anon_inodefs is assigned via genfscon or 
+SECINITSID_UNLABELED by default.  If we instead just drop this test and 
+proceed, we'll inherit the context inode SID if specified or we'll call 
+security_transition_sid(), which in the !initialized case will just 
+return the tsid i.e. tsec->sid, so it will be labeled with the creating 
+task SID (SECINITSID_KERNEL prior to initialization).  Then the 
+avc_has_perm() call will pass because everything gets allowed until 
+initialization. So you could drop this check and userfaultfds created 
+before policy load would get the kernel SID, or you can keep it and they 
+will get the unlabeled SID.  Preference?
 
-In particular, the GNU make jobserver code ends up using a pipe as a way
-to limit parallelism, where each job consumes a token by reading a byte
-from the jobserver pipe, and releases the token by writing a byte back
-to the pipe.
+> +
+> +	isec = selinux_inode(inode);
+> +
+> +	/*
+> +	 * We only get here once per ephemeral inode.  The inode has
+> +	 * been initialized via inode_alloc_security but is otherwise
+> +	 * untouched.
+> +	 */
+> +
+> +	if (context_inode) {
+> +		struct inode_security_struct *context_isec =
+> +			selinux_inode(context_inode);
+> +		if (IS_ERR(context_isec))
+> +			return PTR_ERR(context_isec);
 
-This pattern is fairly traditional on Unix, and works very well, but
-will waste a lot of time waking up a lot of processes when only a single
-reader needs to be woken up when a writer releases a new token.
+This isn't possible AFAICT so you don't need to test for it or handle 
+it.  In fact, even the test for NULL in selinux_inode() is bogus and 
+should get dropped AFAICT; we always allocate an inode security blob 
+even before policy load so it would be a bug if we ever had a NULL there.
 
-A simplified test-case of just this pipe interaction is to create 64
-processes, and then pass a single token around between them (this
-test-case also intentionally passes another token that gets ignored to
-test the "wake up next" logic too, in case anybody wonders about it):
+> +		isec->sid = context_isec->sid;
+> +	} else {
+> +		rc = security_transition_sid(
+> +			&selinux_state, tsec->sid, tsec->sid,
+> +			SECCLASS_FILE, name, &isec->sid);
+> +		if (rc)
+> +			return rc;
+> +	}
 
-    #include <unistd.h>
-
-    int main(int argc, char **argv)
-    {
-        int fd[2], counters[2];
-
-        pipe(fd);
-        counters[0] = 0;
-        counters[1] = -1;
-        write(fd[1], counters, sizeof(counters));
-
-        /* 64 processes */
-        fork(); fork(); fork(); fork(); fork(); fork();
-
-        do {
-                int i;
-                read(fd[0], &i, sizeof(i));
-                if (i < 0)
-                        continue;
-                counters[0] = i+1;
-                write(fd[1], counters, (1+(i & 1)) *sizeof(int));
-        } while (counters[0] < 1000000);
-        return 0;
-    }
-
-and in a perfect world, passing that token around should only cause one
-context switch per transfer, when the writer of a token causes a
-directed wakeup of just a single reader.
-
-But with the "writer wakes all readers" model we traditionally had, on
-my test box the above case causes more than an order of magnitude more
-scheduling: instead of the expected ~1M context switches, "perf stat"
-shows
-
-        231,852.37 msec task-clock                #   15.857 CPUs utilized
-        11,250,961      context-switches          #    0.049 M/sec
-           616,304      cpu-migrations            #    0.003 M/sec
-             1,648      page-faults               #    0.007 K/sec
- 1,097,903,998,514      cycles                    #    4.735 GHz
-   120,781,778,352      instructions              #    0.11  insn per cycle
-    27,997,056,043      branches                  #  120.754 M/sec
-       283,581,233      branch-misses             #    1.01% of all branches
-
-      14.621273891 seconds time elapsed
-
-       0.018243000 seconds user
-       3.611468000 seconds sys
-
-before this commit.
-
-After this commit, I get
-
-          5,229.55 msec task-clock                #    3.072 CPUs utilized
-         1,212,233      context-switches          #    0.232 M/sec
-           103,951      cpu-migrations            #    0.020 M/sec
-             1,328      page-faults               #    0.254 K/sec
-    21,307,456,166      cycles                    #    4.074 GHz
-    12,947,819,999      instructions              #    0.61  insn per cycle
-     2,881,985,678      branches                  #  551.096 M/sec
-        64,267,015      branch-misses             #    2.23% of all branches
-
-       1.702148350 seconds time elapsed
-
-       0.004868000 seconds user
-       0.110786000 seconds sys
-
-instead. Much better.
-
-[ Note! This kernel improvement seems to be very good at triggering a
-  race condition in the make jobserver (in GNU make 4.2.1) for me. It's
-  a long known bug that was fixed back in June 2017 by GNU make commit
-  b552b0525198 ("[SV 51159] Use a non-blocking read with pselect to
-  avoid hangs.").
-
-  But there wasn't a new release of GNU make until 4.3 on Jan 19 2020,
-  so a number of distributions may still have the buggy version. Some
-  have backported the fix to their 4.2.1 release, though, and even
-  without the fix it's quite timing-dependent whether the bug actually
-  is hit. ]
-
-Josh Triplett says:
- "I've been hammering on your pipe fix patch (switching to exclusive
-  wait queues) for a month or so, on several different systems, and I've
-  run into no issues with it. The patch *substantially* improves
-  parallel build times on large (~100 CPU) systems, both with parallel
-  make and with other things that use make's pipe-based jobserver.
-
-  All current distributions (including stable and long-term stable
-  distributions) have versions of GNU make that no longer have the
-  jobserver bug"
-
-Tested-by: Josh Triplett <josh@joshtriplett.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/coredump.c             |  4 +--
- fs/pipe.c                 | 67 +++++++++++++++++++++++++--------------
- fs/splice.c               |  8 ++---
- include/linux/pipe_fs_i.h |  2 +-
- 4 files changed, 51 insertions(+), 30 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b1ea7dfbd1494..f8296a82d01df 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -517,7 +517,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	pipe_lock(pipe);
- 	pipe->readers++;
- 	pipe->writers--;
--	wake_up_interruptible_sync(&pipe->wait);
-+	wake_up_interruptible_sync(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	pipe_unlock(pipe);
- 
-@@ -525,7 +525,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	 * We actually want wait_event_freezable() but then we need
- 	 * to clear TIF_SIGPENDING and improve dump_interrupted().
- 	 */
--	wait_event_interruptible(pipe->wait, pipe->readers == 1);
-+	wait_event_interruptible(pipe->rd_wait, pipe->readers == 1);
- 
- 	pipe_lock(pipe);
- 	pipe->readers--;
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 57502c3c0fba1..5a34d6c22d4ce 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -108,16 +108,19 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- /* Drop the inode semaphore and wait for a pipe event, atomically */
- void pipe_wait(struct pipe_inode_info *pipe)
- {
--	DEFINE_WAIT(wait);
-+	DEFINE_WAIT(rdwait);
-+	DEFINE_WAIT(wrwait);
- 
- 	/*
- 	 * Pipes are system-local resources, so sleeping on them
- 	 * is considered a noninteractive wait:
- 	 */
--	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->rd_wait, &rdwait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->wr_wait, &wrwait, TASK_INTERRUPTIBLE);
- 	pipe_unlock(pipe);
- 	schedule();
--	finish_wait(&pipe->wait, &wait);
-+	finish_wait(&pipe->rd_wait, &rdwait);
-+	finish_wait(&pipe->wr_wait, &wrwait);
- 	pipe_lock(pipe);
- }
- 
-@@ -286,7 +289,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	size_t total_len = iov_iter_count(to);
- 	struct file *filp = iocb->ki_filp;
- 	struct pipe_inode_info *pipe = filp->private_data;
--	bool was_full;
-+	bool was_full, wake_next_reader = false;
- 	ssize_t ret;
- 
- 	/* Null read succeeds. */
-@@ -344,10 +347,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->wait.lock);
-+				spin_lock_irq(&pipe->rd_wait.lock);
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -384,7 +387,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * no data.
- 		 */
- 		if (unlikely(was_full)) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 		}
- 
-@@ -394,18 +397,23 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * since we've done any required wakeups and there's no need
- 		 * to mark anything accessed. And we've dropped the lock.
- 		 */
--		if (wait_event_interruptible(pipe->wait, pipe_readable(pipe)) < 0)
-+		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
- 			return -ERESTARTSYS;
- 
- 		__pipe_lock(pipe);
- 		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-+		wake_next_reader = true;
- 	}
-+	if (pipe_empty(pipe->head, pipe->tail))
-+		wake_next_reader = false;
- 	__pipe_unlock(pipe);
- 
- 	if (was_full) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-+	if (wake_next_reader)
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	if (ret > 0)
- 		file_accessed(filp);
- 	return ret;
-@@ -437,6 +445,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	size_t total_len = iov_iter_count(from);
- 	ssize_t chars;
- 	bool was_empty = false;
-+	bool wake_next_writer = false;
- 
- 	/* Null write succeeds. */
- 	if (unlikely(total_len == 0))
-@@ -515,16 +524,16 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->wait.lock);
-+			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->wait.lock);
-+			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -576,14 +585,17 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 */
- 		__pipe_unlock(pipe);
- 		if (was_empty) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		}
--		wait_event_interruptible(pipe->wait, pipe_writable(pipe));
-+		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
- 		__pipe_lock(pipe);
- 		was_empty = pipe_empty(pipe->head, pipe->tail);
-+		wake_next_writer = true;
- 	}
- out:
-+	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+		wake_next_writer = false;
- 	__pipe_unlock(pipe);
- 
- 	/*
-@@ -596,9 +608,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * wake up pending jobs
- 	 */
- 	if (was_empty) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	}
-+	if (wake_next_writer)
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
- 		int err = file_update_time(filp);
- 		if (err)
-@@ -642,12 +656,15 @@ pipe_poll(struct file *filp, poll_table *wait)
- 	unsigned int head, tail;
- 
- 	/*
--	 * Reading only -- no need for acquiring the semaphore.
-+	 * Reading pipe state only -- no need for acquiring the semaphore.
- 	 *
- 	 * But because this is racy, the code has to add the
- 	 * entry to the poll table _first_ ..
- 	 */
--	poll_wait(filp, &pipe->wait, wait);
-+	if (filp->f_mode & FMODE_READ)
-+		poll_wait(filp, &pipe->rd_wait, wait);
-+	if (filp->f_mode & FMODE_WRITE)
-+		poll_wait(filp, &pipe->wr_wait, wait);
- 
- 	/*
- 	 * .. and only then can you do the racy tests. That way,
-@@ -706,7 +723,8 @@ pipe_release(struct inode *inode, struct file *file)
- 		pipe->writers--;
- 
- 	if (pipe->readers || pipe->writers) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLOUT | EPOLLRDNORM | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-@@ -789,7 +807,8 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 			     GFP_KERNEL_ACCOUNT);
- 
- 	if (pipe->bufs) {
--		init_waitqueue_head(&pipe->wait);
-+		init_waitqueue_head(&pipe->rd_wait);
-+		init_waitqueue_head(&pipe->wr_wait);
- 		pipe->r_counter = pipe->w_counter = 1;
- 		pipe->max_usage = pipe_bufs;
- 		pipe->ring_size = pipe_bufs;
-@@ -1007,7 +1026,8 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
- 
- static void wake_up_partner(struct pipe_inode_info *pipe)
- {
--	wake_up_interruptible(&pipe->wait);
-+	wake_up_interruptible(&pipe->rd_wait);
-+	wake_up_interruptible(&pipe->wr_wait);
- }
- 
- static int fifo_open(struct inode *inode, struct file *filp)
-@@ -1118,13 +1138,13 @@ static int fifo_open(struct inode *inode, struct file *filp)
- 
- err_rd:
- 	if (!--pipe->readers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->wr_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
- err_wr:
- 	if (!--pipe->writers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->rd_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
-@@ -1251,7 +1271,8 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
- 	pipe->max_usage = nr_slots;
- 	pipe->tail = tail;
- 	pipe->head = head;
--	wake_up_interruptible_all(&pipe->wait);
-+	wake_up_interruptible_all(&pipe->rd_wait);
-+	wake_up_interruptible_all(&pipe->wr_wait);
- 	return pipe->max_usage * PAGE_SIZE;
- 
- out_revert_acct:
-diff --git a/fs/splice.c b/fs/splice.c
-index 3009652a41c85..d671936d0aad6 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -165,8 +165,8 @@ static const struct pipe_buf_operations user_page_pipe_buf_ops = {
- static void wakeup_pipe_readers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->rd_wait))
-+		wake_up_interruptible(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- }
- 
-@@ -462,8 +462,8 @@ static int pipe_to_sendpage(struct pipe_inode_info *pipe,
- static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->wr_wait))
-+		wake_up_interruptible(&pipe->wr_wait);
- 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- }
- 
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index dbcfa68923842..d5765039652a5 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -47,7 +47,7 @@ struct pipe_buffer {
-  **/
- struct pipe_inode_info {
- 	struct mutex mutex;
--	wait_queue_head_t wait;
-+	wait_queue_head_t rd_wait, wr_wait;
- 	unsigned int head;
- 	unsigned int tail;
- 	unsigned int max_usage;
--- 
-2.20.1
-
+Since you switched to using security_transition_sid(), you are not using 
+the fops parameter anymore nor comparing with userfaultfd_fops, so you 
+could drop the parameter from the hook and leave the latter static in 
+the first patch.
+That's assuming you are ok with having to define these type_transition 
+rules for the userfaultfd case instead of having your own separate 
+security class.  Wondering how many different anon inode names/classes 
+there are in the kernel today and how much they change over time; for a 
+small, relatively stable set, separate classes might be ok; for a large, 
+dynamic set, type transitions should scale better.  We might still need 
+to create a mapping table in SELinux from the names to some stable 
+identifier for the policy lookup if we can't rely on the names being stable.
