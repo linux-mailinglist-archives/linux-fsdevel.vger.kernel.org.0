@@ -2,230 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D44B15D09E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 04:36:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBAEA15D0B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 04:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgBNDgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 22:36:40 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8151 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbgBNDgk (ORCPT
+        id S1728261AbgBNDqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 22:46:32 -0500
+Received: from mx05.melco.co.jp ([192.218.140.145]:48485 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728141AbgBNDqc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 22:36:40 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4615b90000>; Thu, 13 Feb 2020 19:36:25 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Feb 2020 19:36:39 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Feb 2020 19:36:39 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb
- 2020 03:36:39 +0000
-Subject: Re: [PATCH v5 03/13] mm: Put readahead pages in cache earlier
-To:     Matthew Wilcox <willy@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200211010348.6872-1-willy@infradead.org>
- <20200211010348.6872-4-willy@infradead.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <b0cdd7b4-e103-a884-d8f7-2378905f7b3b@nvidia.com>
-Date:   Thu, 13 Feb 2020 19:36:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thu, 13 Feb 2020 22:46:32 -0500
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id D09053A40CE;
+        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 48JfSP5NR6zRk0n;
+        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 48JfSP54CdzRjnP;
+        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48JfSP4nv9zRk7m;
+        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.54])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 48JfSP4T5JzRk7k;
+        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vwi7IoGVopFr9I7L6hLPJmPKDdxQfvZPnxjh06p0SXxsmhq3vyjYOmX+KfKrV60WsIaRiqWkH6WE7VDx4t3C0vmKt1jxPaz0vP9qGSFjQ9UON4/1TjbmnpRsmSL9xjtrmquf6MNGkPlUpnYA/AQBe+KdIiy7QzXBySx59x8gm5Sveh/7td0J/7JxL7O9lpIVHZbB+kQA8E3Z2VGoeKnG8zm054ZJsypou3ysNXAFoNA58IMF5MAj9Q+jkm1fzrHkr4TbJZ0ubA/l1yHmXztMT7q+VpSjo+qcJDSa2n1PZ+mdTGSEiqJXJfjWaGDUI4b4sr6Yu0nOaHoDNOP21SpOEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j+deLld9dKlsVmWuJZBwllpUgINlW9EIDYGavbM4QHQ=;
+ b=YwmXETKue+AQdr2rGYaMf/roTuZLAXAnDNHZQ2ywva+vE/MXf4FzJSN1uricE2VP7AgcPVuOoZXYX3uY8heyiRrVgsgqCngkW9ZwKVeiub1y6JRyIkwayA70TXfOd+cNOruziWaFbtZD/bfXL9XR4T9oekSIz3B9uuI4sMewJGh1ISI+5Qt1jK69olNoLB7Gnqvb2j0pgK3ToKcwLfBIERYIwG0gkZS/ijUQ0uVPIaGNX4YwEbkWxbA6AFa6kf40g6Py+111JzzeKHi9DvHCHrzUqccCvPysdHqYD0GnGwnEWITzBSAoqC61vp1rSDSeTUzMpeA8ALkIGa2dhYFA/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j+deLld9dKlsVmWuJZBwllpUgINlW9EIDYGavbM4QHQ=;
+ b=B595uorOcft7r3YXa6NOBZnAf1thS9WwVQDwdHOZGxAPA7Qfg4j5YenLV+FOqEcAODFBOYIDRWfTHfjbDKYwnbwyAFvbsbGHsS0l4Mn7Z9pyjhzc75dLeAibemNOf9bxn2EQyFfOjUm//wSWmjZpz3smj5UV3a0yVPCcadzziYM=
+Received: from OSAPR01MB1569.jpnprd01.prod.outlook.com (52.134.230.138) by
+ OSAPR01MB2770.jpnprd01.prod.outlook.com (52.134.249.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.24; Fri, 14 Feb 2020 03:46:27 +0000
+Received: from OSAPR01MB1569.jpnprd01.prod.outlook.com
+ ([fe80::bc6c:d572:daca:8f1b]) by OSAPR01MB1569.jpnprd01.prod.outlook.com
+ ([fe80::bc6c:d572:daca:8f1b%6]) with mapi id 15.20.2729.025; Fri, 14 Feb 2020
+ 03:46:27 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: RE: [PATCH v2] staging: exfat: remove 'vol_type' variable.
+Thread-Topic: [PATCH v2] staging: exfat: remove 'vol_type' variable.
+Thread-Index: AQHV1zvwbjXKe/w93UiTyU574kgrv6gPh3YAgAqZUmA=
+Date:   Fri, 14 Feb 2020 03:44:59 +0000
+Deferred-Delivery: Fri, 14 Feb 2020 03:45:59 +0000
+Message-ID: <OSAPR01MB15691A38EB1AD276507733D290150@OSAPR01MB1569.jpnprd01.prod.outlook.com>
+References: <20200130070614.11999-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <20200207094252.GA537561@kroah.com>
+In-Reply-To: <20200207094252.GA537561@kroah.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.163]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 75d4ab6b-3f10-4c69-3546-08d7b100787b
+x-ms-traffictypediagnostic: OSAPR01MB2770:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSAPR01MB27706C95792A7AF02B176B2790150@OSAPR01MB2770.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 03137AC81E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(346002)(396003)(39860400002)(189003)(199004)(186003)(558084003)(86362001)(55016002)(81166006)(8676002)(81156014)(9686003)(8936002)(5660300002)(316002)(4326008)(66446008)(64756008)(52536014)(66946007)(54906003)(76116006)(7696005)(478600001)(6506007)(2906002)(6916009)(33656002)(26005)(71200400001)(66476007)(6666004)(66556008)(95630200002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2770;H:OSAPR01MB1569.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: PTxTxag8ys2nNrZEbFlg6Bn5Pl6uIq0ClhH+Ii0fXZX9B0R9HM24V0RwbCU1mQVlAJBuBC25O9iYQuznWbm8P4paUkaunWeH/XF1wdTnhMHX8WbEr3Mu0MEAc6brfDWPVD8eZHB3tciKYEtLwZkgiRs02xg8hT4i7YsXYOHGPLs87hhumymW/ApX52HVVefGvIvvvbglKOLKxC/zk8ARztc6OlE9wY1eWFjg4AGJOa/GkfD+NDWqdIdwM7Pa+f/+ImvZ82Lbdq1pZ9b4v04jje6Z6TpLXXGBilzC3rGkGtH19iO5EUf9ewhhnOZJDACVglanXgxLaevbu3gDKyXe5CZBFninuiQZO7r91tgwgthXp7A2BNQpUI2lCuVyISBhRwIt0MUOFfxXFtFaWgQyIhotvfShr+rtZGgtRhaMR0leKojv7lhPMInX9+Tul7onkMVuoOKR8w5P0VhML5fqpXUQHRNzCkUqRJdveY/BGoOSMBcyFgipDOoUDbCMJRDU
+x-ms-exchange-antispam-messagedata: 3vhgTCtbiWYeNtsnz2uMEIXSz3AbhohsGVoYUhqhnaSMRZhaaeOmYph2Ja6IjIBmJDioawMSOYR2rb/xH2I/0KcdXrHXy7DJewLDWfnkvVFW4kAi3dEqQ2kZ8r1GILEAlMYrDz5xV/rbhkcMZy0JLQ==
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20200211010348.6872-4-willy@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581651385; bh=jodX0tIvBxH/fc59T73o9SPk6S3e+yDpKWnaNwpeJKk=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=TZf2FK1bESe06GQrr3QWPstwI5CI6ADgd3ekfkEEBCxsznAzp/43OrXvLIdUwk6v9
-         4PvhXV9KA2GzBIO5FVXywx6Yx4JZowfMDze3Z/5j54bStQRS61QiScPwZCgRgQ9xzt
-         7ai4uLewCJr+qbdYGw8j6AC1KIuz1sHeXguO+TyPFfs/5Cwmjn/6ETP0ytHeXfze8x
-         aZXVC6Py5XJwaXp8pJ7Om4/J3JPHPE/2VYV1PRSOmD236D2IEEGhBl9TBFg0OLQxCY
-         GWBBoVBH3FzkluFiC7gp+exF/Tlgdi2RCth1YbNLQQ91aeVldSsZAblIBpXwiH2ihX
-         ePKdIST/oKi4w==
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75d4ab6b-3f10-4c69-3546-08d7b100787b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2020 03:46:27.4362
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 10lUdhMJLxotAFv0ltyAFDnYpwzKdLcFf9AbShLIwMgHcaIfQn2rhq4iF6yWaNst9/r+vc+Ob6FCc7PNebuHxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2770
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/10/20 5:03 PM, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> At allocation time, put the pages in the cache unless we're using
-> ->readpages.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/readahead.c | 66 ++++++++++++++++++++++++++++++++------------------
->  1 file changed, 42 insertions(+), 24 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index fc77d13af556..96c6ca68a174 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -114,10 +114,10 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
->  EXPORT_SYMBOL(read_cache_pages);
->  
->  static void read_pages(struct address_space *mapping, struct file *filp,
-> -		struct list_head *pages, unsigned int nr_pages, gfp_t gfp)
-> +		struct list_head *pages, pgoff_t start,
-> +		unsigned int nr_pages)
->  {
->  	struct blk_plug plug;
-> -	unsigned page_idx;
->  
->  	blk_start_plug(&plug);
->  
-> @@ -125,18 +125,17 @@ static void read_pages(struct address_space *mapping, struct file *filp,
->  		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
->  		/* Clean up the remaining pages */
->  		put_pages_list(pages);
-> -		goto out;
-> -	}
-> +	} else {
-> +		struct page *page;
-> +		unsigned long index;
->  
-> -	for (page_idx = 0; page_idx < nr_pages; page_idx++) {
-> -		struct page *page = lru_to_page(pages);
-> -		list_del(&page->lru);
-> -		if (!add_to_page_cache_lru(page, mapping, page->index, gfp))
-> +		xa_for_each_range(&mapping->i_pages, index, page, start,
-> +				start + nr_pages - 1) {
->  			mapping->a_ops->readpage(filp, page);
-> -		put_page(page);
-> +			put_page(page);
-> +		}
->  	}
->  
-> -out:
->  	blk_finish_plug(&plug);
->  }
->  
-> @@ -149,17 +148,18 @@ static void read_pages(struct address_space *mapping, struct file *filp,
->   * Returns the number of pages requested, or the maximum amount of I/O allowed.
->   */
->  unsigned long __do_page_cache_readahead(struct address_space *mapping,
-> -		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
-> +		struct file *filp, pgoff_t start, unsigned long nr_to_read,
->  		unsigned long lookahead_size)
->  {
->  	struct inode *inode = mapping->host;
-> -	struct page *page;
->  	unsigned long end_index;	/* The last page we want to read */
->  	LIST_HEAD(page_pool);
->  	int page_idx;
-> +	pgoff_t page_offset = start;
->  	unsigned long nr_pages = 0;
->  	loff_t isize = i_size_read(inode);
->  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
-> +	bool use_list = mapping->a_ops->readpages;
->  
->  	if (isize == 0)
->  		goto out;
-> @@ -170,7 +170,7 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
->  	 * Preallocate as many pages as we will need.
->  	 */
->  	for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
-> -		pgoff_t page_offset = offset + page_idx;
-> +		struct page *page;
+> Always run checkpatch on your patches :(
+Oops. It is a mistake when changing to v2.
+Next time I will be careful.
 
-I see two distinct things happening in this patch, and I think they want to each be
-in their own patch:
-
-1) A significant refactoring of the page loop, and
-
-2) Changing the place where the page is added to the page cache. (Only this one is 
-   mentioned in the commit description.)
-
-We'll be more likely to spot any errors if these are teased apart.
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
->  
->  		if (page_offset > end_index)
->  			break;
-> @@ -178,25 +178,43 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
->  		page = xa_load(&mapping->i_pages, page_offset);
->  		if (page && !xa_is_value(page)) {
->  			/*
-> -			 * Page already present?  Kick off the current batch of
-> -			 * contiguous pages before continuing with the next
-> -			 * batch.
-> +			 * Page already present?  Kick off the current batch
-> +			 * of contiguous pages before continuing with the
-> +			 * next batch.
-> +			 * It's possible this page is the page we should
-> +			 * be marking with PageReadahead.  However, we
-> +			 * don't have a stable ref to this page so it might
-> +			 * be reallocated to another user before we can set
-> +			 * the bit.  There's probably another page in the
-> +			 * cache marked with PageReadahead from the other
-> +			 * process which accessed this file.
->  			 */
-> -			if (nr_pages)
-> -				read_pages(mapping, filp, &page_pool, nr_pages,
-> -						gfp_mask);
-> -			nr_pages = 0;
-> -			continue;
-> +			goto skip;
->  		}
->  
->  		page = __page_cache_alloc(gfp_mask);
->  		if (!page)
->  			break;
-> -		page->index = page_offset;
-> -		list_add(&page->lru, &page_pool);
-> +		if (use_list) {
-> +			page->index = page_offset;
-> +			list_add(&page->lru, &page_pool);
-> +		} else if (add_to_page_cache_lru(page, mapping, page_offset,
-> +					gfp_mask) < 0) {
-> +			put_page(page);
-> +			goto skip;
-> +		}
-> +
->  		if (page_idx == nr_to_read - lookahead_size)
->  			SetPageReadahead(page);
->  		nr_pages++;
-> +		page_offset++;
-> +		continue;
-> +skip:
-> +		if (nr_pages)
-> +			read_pages(mapping, filp, &page_pool, start, nr_pages);
-> +		nr_pages = 0;
-> +		page_offset++;
-> +		start = page_offset;
->  	}
->  
->  	/*
-> @@ -205,7 +223,7 @@ unsigned long __do_page_cache_readahead(struct address_space *mapping,
->  	 * will then handle the error.
->  	 */
->  	if (nr_pages)
-> -		read_pages(mapping, filp, &page_pool, nr_pages, gfp_mask);
-> +		read_pages(mapping, filp, &page_pool, start, nr_pages);
->  	BUG_ON(!list_empty(&page_pool));
->  out:
->  	return nr_pages;
-> 
+> I've fixed this trailing whitespace up on my own...
+Thanks for fixing.
+--
+Best regards,
+Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
