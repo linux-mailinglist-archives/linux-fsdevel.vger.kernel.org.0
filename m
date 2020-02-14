@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0581D15F5C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA6215F5C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390707AbgBNSiw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 13:38:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33659 "EHLO
+        id S2390840AbgBNSi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 13:38:58 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33657 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730491AbgBNSiB (ORCPT
+        with ESMTP id S1730489AbgBNSiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:38:01 -0500
+        Fri, 14 Feb 2020 13:38:00 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j2fqN-0000uO-MI; Fri, 14 Feb 2020 18:37:39 +0000
+        id 1j2fqO-0000uO-Jh; Fri, 14 Feb 2020 18:37:40 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 06/28] cred: add kfs{g,u}id
-Date:   Fri, 14 Feb 2020 19:35:32 +0100
-Message-Id: <20200214183554.1133805-7-christian.brauner@ubuntu.com>
+Subject: [PATCH v2 07/28] sys: __sys_setfsuid(): handle fsid mappings
+Date:   Fri, 14 Feb 2020 19:35:33 +0100
+Message-Id: <20200214183554.1133805-8-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
 References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
@@ -46,47 +46,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After the introduction of fsid mappings we need to carefully handle
-single-superblock filesystems that are visible in user namespaces. This
-specifically concerns proc and sysfs. For those filesystems we want to continue
-looking up fsid in the id mappings of the relevant user namespace. We can
-either do this by dynamically translating between these fsids or we simply keep
-them around with the other creds. The latter option is not just simpler but
-also more performant since we don't need to do the translation from fsid
-mappings into id mappings on the fly.
+Switch setfsuid() to lookup fsids in the fsid mappings. If no fsid mappings are
+setup the behavior is unchanged, i.e. fsids are looked up in the id mappings.
 
-Link: https://lore.kernel.org/r/20200212145149.zohmc6d3x52bw6j6@wittgenstein
-Cc: Jann Horn <jannh@google.com>
+A caller can only setfs{g,u}id() to a given id if the id maps to a valid kid in
+both the id and fsid maps of the caller's user namespace. This is always the
+case when no id mappings and fsid mappings have been written. It is also always
+the case when an id mapping has been written which includes the target id and
+but no fsid mappings have been written. All non-fsid mapping aware workloads
+will thus work just as before.
+Requiring a valid mapping for the target id in both the id and fsid mappings of
+the container simplifies permission checking for userns visible filesystems
+such as proc.
+
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch added
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - Set unmapped fsid as well.
 ---
- include/linux/cred.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/sys.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 18639c069263..604914d3fd51 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -125,6 +125,8 @@ struct cred {
- 	kgid_t		egid;		/* effective GID of the task */
- 	kuid_t		fsuid;		/* UID for VFS ops */
- 	kgid_t		fsgid;		/* GID for VFS ops */
-+	kuid_t		kfsuid;		/* UID for VFS ops for userns visible filesystems */
-+	kgid_t		kfsgid;		/* GID for VFS ops for userns visible filesystems */
- 	unsigned	securebits;	/* SUID-less security management */
- 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
- 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
-@@ -384,6 +386,8 @@ static inline void put_cred(const struct cred *_cred)
- #define current_sgid()		(current_cred_xxx(sgid))
- #define current_fsuid() 	(current_cred_xxx(fsuid))
- #define current_fsgid() 	(current_cred_xxx(fsgid))
-+#define current_kfsuid() 	(current_cred_xxx(kfsuid))
-+#define current_kfsgid() 	(current_cred_xxx(kfsgid))
- #define current_cap()		(current_cred_xxx(cap_effective))
- #define current_user()		(current_cred_xxx(user))
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f9bc5c303e3f..13f790dbda71 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -59,6 +59,7 @@
+ #include <linux/sched/cputime.h>
+ #include <linux/rcupdate.h>
+ #include <linux/uidgid.h>
++#include <linux/fsuidgid.h>
+ #include <linux/cred.h>
  
+ #include <linux/nospec.h>
+@@ -799,15 +800,19 @@ long __sys_setfsuid(uid_t uid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	uid_t old_fsuid;
+-	kuid_t kuid;
++	kuid_t kuid, kfsuid;
+ 
+ 	old = current_cred();
+-	old_fsuid = from_kuid_munged(old->user_ns, old->fsuid);
++	old_fsuid = from_kfsuid_munged(old->user_ns, old->fsuid);
+ 
+-	kuid = make_kuid(old->user_ns, uid);
++	kuid = make_kfsuid(old->user_ns, uid);
+ 	if (!uid_valid(kuid))
+ 		return old_fsuid;
+ 
++	kfsuid = make_kuid(old->user_ns, uid);
++	if (!uid_valid(kfsuid))
++		return old_fsuid;
++
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return old_fsuid;
+@@ -817,6 +822,7 @@ long __sys_setfsuid(uid_t uid)
+ 	    ns_capable_setid(old->user_ns, CAP_SETUID)) {
+ 		if (!uid_eq(kuid, old->fsuid)) {
+ 			new->fsuid = kuid;
++			new->kfsuid = kfsuid;
+ 			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
+ 				goto change_okay;
+ 		}
 -- 
 2.25.0
 
