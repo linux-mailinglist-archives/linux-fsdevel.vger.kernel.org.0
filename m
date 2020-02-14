@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DAE15F5AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BD015F59F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 19:40:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389861AbgBNSi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Feb 2020 13:38:27 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33727 "EHLO
+        id S1730798AbgBNSiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Feb 2020 13:38:11 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33734 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389485AbgBNSiJ (ORCPT
+        with ESMTP id S1730561AbgBNSiK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Feb 2020 13:38:09 -0500
+        Fri, 14 Feb 2020 13:38:10 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j2fqX-0000uO-CI; Fri, 14 Feb 2020 18:37:49 +0000
+        id 1j2fqZ-0000uO-2n; Fri, 14 Feb 2020 18:37:51 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 14/28] sys:__sys_setresgid(): handle fsid mappings
-Date:   Fri, 14 Feb 2020 19:35:40 +0100
-Message-Id: <20200214183554.1133805-15-christian.brauner@ubuntu.com>
+Subject: [PATCH v2 15/28] fs: add is_userns_visible() helper
+Date:   Fri, 14 Feb 2020 19:35:41 +0100
+Message-Id: <20200214183554.1133805-16-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
 References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
@@ -46,67 +46,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Switch setresgid() to lookup fsids in the fsid mappings. If no fsid mappings are
-setup the behavior is unchanged, i.e. fsids are looked up in the id mappings.
-
-During setresgid() the kfsgid is set to the kegid corresponding the egid that is
-requested by userspace. If the requested egid is -1 the kfsgid is reset to the
-current kegid. For the latter case this means we need to lookup the
-corresponding userspace egid corresponding to the current kegid in the id
-mappings and translate this egid into the corresponding kfsgid in the fsid
-mappings.
-
-The kfsid to cleanly handle userns visible filesystem is set as before.
-
-We require that a user must have a valid fsid mapping for the target id. This
-is consistent with how the setid calls work today without fsid mappings.
+Introduce a helper which makes it possible to detect fileystems whose
+superblock is visible in multiple user namespace. This currently only
+means proc and sys. Such filesystems usually have special semantics so their
+behavior will not be changed with the introduction of fsid mappings.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christian Brauner <christian.brauner@ubuntu.com>:
-  - set kfsid which is used when dealing with proc permission checking
+unchanged
 ---
- kernel/sys.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ include/linux/fs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 54e072145146..78592deee2d8 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -756,7 +756,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 	const struct cred *old;
- 	struct cred *new;
- 	int retval;
--	kgid_t krgid, kegid, ksgid;
-+	kgid_t krgid, kegid, ksgid, kfsgid;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3cd4fe6b845e..fdc8fb2d786b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3651,4 +3651,9 @@ static inline int inode_drain_writes(struct inode *inode)
+ 	return filemap_write_and_wait(inode->i_mapping);
+ }
  
- 	krgid = make_kgid(ns, rgid);
- 	kegid = make_kgid(ns, egid);
-@@ -789,11 +789,21 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 
- 	if (rgid != (gid_t) -1)
- 		new->gid = krgid;
--	if (egid != (gid_t) -1)
-+	if (egid != (gid_t) -1) {
- 		new->egid = kegid;
-+		kfsgid = make_kfsgid(ns, egid);
-+	} else {
-+		kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
-+	}
-+	if (!gid_valid(kfsgid)) {
-+		retval = -EINVAL;
-+		goto error;
-+	}
++static inline bool is_userns_visible(unsigned long iflags)
++{
++	return (iflags & SB_I_USERNS_VISIBLE);
++}
 +
- 	if (sgid != (gid_t) -1)
- 		new->sgid = ksgid;
--	new->fsgid = new->egid;
-+	new->kfsgid = new->egid;
-+	new->fsgid = kfsgid;
- 
- 	return commit_creds(new);
- 
+ #endif /* _LINUX_FS_H */
 -- 
 2.25.0
 
