@@ -2,121 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBAEA15D0B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 04:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9062515D0C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Feb 2020 04:51:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbgBNDqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Feb 2020 22:46:32 -0500
-Received: from mx05.melco.co.jp ([192.218.140.145]:48485 "EHLO
-        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728141AbgBNDqc (ORCPT
+        id S1728527AbgBNDvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Feb 2020 22:51:17 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:35780 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728154AbgBNDvR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Feb 2020 22:46:32 -0500
-Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
-        by mx05.melco.co.jp (Postfix) with ESMTP id D09053A40CE;
-        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
-Received: from mr05.melco.co.jp (unknown [127.0.0.1])
-        by mr05.imss (Postfix) with ESMTP id 48JfSP5NR6zRk0n;
-        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
-Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
-        by mr05.melco.co.jp (Postfix) with ESMTP id 48JfSP54CdzRjnP;
-        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
-Received: from mf03.melco.co.jp (unknown [133.141.98.183])
-        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48JfSP4nv9zRk7m;
-        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
-Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.54])
-        by mf03.melco.co.jp (Postfix) with ESMTP id 48JfSP4T5JzRk7k;
-        Fri, 14 Feb 2020 12:46:29 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Vwi7IoGVopFr9I7L6hLPJmPKDdxQfvZPnxjh06p0SXxsmhq3vyjYOmX+KfKrV60WsIaRiqWkH6WE7VDx4t3C0vmKt1jxPaz0vP9qGSFjQ9UON4/1TjbmnpRsmSL9xjtrmquf6MNGkPlUpnYA/AQBe+KdIiy7QzXBySx59x8gm5Sveh/7td0J/7JxL7O9lpIVHZbB+kQA8E3Z2VGoeKnG8zm054ZJsypou3ysNXAFoNA58IMF5MAj9Q+jkm1fzrHkr4TbJZ0ubA/l1yHmXztMT7q+VpSjo+qcJDSa2n1PZ+mdTGSEiqJXJfjWaGDUI4b4sr6Yu0nOaHoDNOP21SpOEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j+deLld9dKlsVmWuJZBwllpUgINlW9EIDYGavbM4QHQ=;
- b=YwmXETKue+AQdr2rGYaMf/roTuZLAXAnDNHZQ2ywva+vE/MXf4FzJSN1uricE2VP7AgcPVuOoZXYX3uY8heyiRrVgsgqCngkW9ZwKVeiub1y6JRyIkwayA70TXfOd+cNOruziWaFbtZD/bfXL9XR4T9oekSIz3B9uuI4sMewJGh1ISI+5Qt1jK69olNoLB7Gnqvb2j0pgK3ToKcwLfBIERYIwG0gkZS/ijUQ0uVPIaGNX4YwEbkWxbA6AFa6kf40g6Py+111JzzeKHi9DvHCHrzUqccCvPysdHqYD0GnGwnEWITzBSAoqC61vp1rSDSeTUzMpeA8ALkIGa2dhYFA/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
- header.from=dc.mitsubishielectric.co.jp; dkim=pass
- header.d=dc.mitsubishielectric.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mitsubishielectricgroup.onmicrosoft.com;
- s=selector2-mitsubishielectricgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j+deLld9dKlsVmWuJZBwllpUgINlW9EIDYGavbM4QHQ=;
- b=B595uorOcft7r3YXa6NOBZnAf1thS9WwVQDwdHOZGxAPA7Qfg4j5YenLV+FOqEcAODFBOYIDRWfTHfjbDKYwnbwyAFvbsbGHsS0l4Mn7Z9pyjhzc75dLeAibemNOf9bxn2EQyFfOjUm//wSWmjZpz3smj5UV3a0yVPCcadzziYM=
-Received: from OSAPR01MB1569.jpnprd01.prod.outlook.com (52.134.230.138) by
- OSAPR01MB2770.jpnprd01.prod.outlook.com (52.134.249.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2707.24; Fri, 14 Feb 2020 03:46:27 +0000
-Received: from OSAPR01MB1569.jpnprd01.prod.outlook.com
- ([fe80::bc6c:d572:daca:8f1b]) by OSAPR01MB1569.jpnprd01.prod.outlook.com
- ([fe80::bc6c:d572:daca:8f1b%6]) with mapi id 15.20.2729.025; Fri, 14 Feb 2020
- 03:46:27 +0000
-From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
-        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
-        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
-        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: RE: [PATCH v2] staging: exfat: remove 'vol_type' variable.
-Thread-Topic: [PATCH v2] staging: exfat: remove 'vol_type' variable.
-Thread-Index: AQHV1zvwbjXKe/w93UiTyU574kgrv6gPh3YAgAqZUmA=
-Date:   Fri, 14 Feb 2020 03:44:59 +0000
-Deferred-Delivery: Fri, 14 Feb 2020 03:45:59 +0000
-Message-ID: <OSAPR01MB15691A38EB1AD276507733D290150@OSAPR01MB1569.jpnprd01.prod.outlook.com>
-References: <20200130070614.11999-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
- <20200207094252.GA537561@kroah.com>
-In-Reply-To: <20200207094252.GA537561@kroah.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-melpop: 1
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
-x-originating-ip: [121.80.0.163]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 75d4ab6b-3f10-4c69-3546-08d7b100787b
-x-ms-traffictypediagnostic: OSAPR01MB2770:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <OSAPR01MB27706C95792A7AF02B176B2790150@OSAPR01MB2770.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 03137AC81E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(346002)(396003)(39860400002)(189003)(199004)(186003)(558084003)(86362001)(55016002)(81166006)(8676002)(81156014)(9686003)(8936002)(5660300002)(316002)(4326008)(66446008)(64756008)(52536014)(66946007)(54906003)(76116006)(7696005)(478600001)(6506007)(2906002)(6916009)(33656002)(26005)(71200400001)(66476007)(6666004)(66556008)(95630200002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2770;H:OSAPR01MB1569.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
- not designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PTxTxag8ys2nNrZEbFlg6Bn5Pl6uIq0ClhH+Ii0fXZX9B0R9HM24V0RwbCU1mQVlAJBuBC25O9iYQuznWbm8P4paUkaunWeH/XF1wdTnhMHX8WbEr3Mu0MEAc6brfDWPVD8eZHB3tciKYEtLwZkgiRs02xg8hT4i7YsXYOHGPLs87hhumymW/ApX52HVVefGvIvvvbglKOLKxC/zk8ARztc6OlE9wY1eWFjg4AGJOa/GkfD+NDWqdIdwM7Pa+f/+ImvZ82Lbdq1pZ9b4v04jje6Z6TpLXXGBilzC3rGkGtH19iO5EUf9ewhhnOZJDACVglanXgxLaevbu3gDKyXe5CZBFninuiQZO7r91tgwgthXp7A2BNQpUI2lCuVyISBhRwIt0MUOFfxXFtFaWgQyIhotvfShr+rtZGgtRhaMR0leKojv7lhPMInX9+Tul7onkMVuoOKR8w5P0VhML5fqpXUQHRNzCkUqRJdveY/BGoOSMBcyFgipDOoUDbCMJRDU
-x-ms-exchange-antispam-messagedata: 3vhgTCtbiWYeNtsnz2uMEIXSz3AbhohsGVoYUhqhnaSMRZhaaeOmYph2Ja6IjIBmJDioawMSOYR2rb/xH2I/0KcdXrHXy7DJewLDWfnkvVFW4kAi3dEqQ2kZ8r1GILEAlMYrDz5xV/rbhkcMZy0JLQ==
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Feb 2020 22:51:17 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2S0a-0007Cp-F5; Thu, 13 Feb 2020 20:51:16 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j2S0Z-0006vA-4D; Thu, 13 Feb 2020 20:51:16 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Solar Designer <solar@openwall.com>
+References: <20200210150519.538333-1-gladkov.alexey@gmail.com>
+        <20200210150519.538333-8-gladkov.alexey@gmail.com>
+        <87v9odlxbr.fsf@x220.int.ebiederm.org>
+        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
+        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
+        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
+        <87v9obipk9.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
+        <20200212200335.GO23230@ZenIV.linux.org.uk>
+        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
+        <20200212203833.GQ23230@ZenIV.linux.org.uk>
+Date:   Thu, 13 Feb 2020 21:49:20 -0600
+In-Reply-To: <20200212203833.GQ23230@ZenIV.linux.org.uk> (Al Viro's message of
+        "Wed, 12 Feb 2020 20:38:33 +0000")
+Message-ID: <87sgjdde0v.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: dc.MitsubishiElectric.co.jp
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75d4ab6b-3f10-4c69-3546-08d7b100787b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2020 03:46:27.4362
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 10lUdhMJLxotAFv0ltyAFDnYpwzKdLcFf9AbShLIwMgHcaIfQn2rhq4iF6yWaNst9/r+vc+Ob6FCc7PNebuHxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2770
+Content-Type: text/plain
+X-XM-SPF: eid=1j2S0Z-0006vA-4D;;;mid=<87sgjdde0v.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18hwn2iY2MOovMvLUTHlMeKjuKGlG2T5jo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_XMDrugObfuBody_00,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.0832]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 T_XMDrugObfuBody_00 obfuscated drug references
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 338 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.2 (1.0%), b_tie_ro: 2.3 (0.7%), parse: 1.16
+        (0.3%), extract_message_metadata: 12 (3.5%), get_uri_detail_list: 1.98
+        (0.6%), tests_pri_-1000: 8 (2.3%), tests_pri_-950: 1.00 (0.3%),
+        tests_pri_-900: 0.85 (0.3%), tests_pri_-90: 23 (6.9%), check_bayes: 22
+        (6.5%), b_tokenize: 7 (2.0%), b_tok_get_all: 8 (2.3%), b_comp_prob:
+        1.93 (0.6%), b_tok_touch_all: 3.1 (0.9%), b_finish: 0.67 (0.2%),
+        tests_pri_0: 275 (81.5%), check_dkim_signature: 0.38 (0.1%),
+        check_dkim_adsp: 2.7 (0.8%), poll_dns_idle: 0.65 (0.2%), tests_pri_10:
+        2.8 (0.8%), tests_pri_500: 7 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v8 07/11] proc: flush task dcache entries from all procfs instances
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Always run checkpatch on your patches :(
-Oops. It is a mistake when changing to v2.
-Next time I will be careful.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-> I've fixed this trailing whitespace up on my own...
-Thanks for fixing.
---
-Best regards,
-Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+> On Wed, Feb 12, 2020 at 12:35:04PM -0800, Linus Torvalds wrote:
+>> On Wed, Feb 12, 2020 at 12:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> >
+>> > What's to prevent racing with fs shutdown while you are doing the second part?
+>> 
+>> I was thinking that only the proc_flush_task() code would do this.
+>> 
+>> And that holds a ref to the vfsmount through upid->ns.
+>> 
+>> So I wasn't suggesting doing this in general - just splitting up the
+>> implementation of d_invalidate() so that proc_flush_task_mnt() could
+>> delay the complex part to after having traversed the RCU-protected
+>> list.
+>> 
+>> But hey - I missed this part of the problem originally, so maybe I'm
+>> just missing something else this time. Wouldn't be the first time.
+>
+> Wait, I thought the whole point of that had been to allow multiple
+> procfs instances for the same userns?  Confused...
+
+Multiple procfs instances for the same pidns.  Exactly.
+
+Which would let people have their own set of procfs mount
+options without having to worry about stomping on someone else.
+
+The fundamental problem with multiple procfs instances per pidns
+is there isn't an obvous place to put a vfs mount.
+
+
+...
+
+
+Which means we need some way to keep the file system from going away
+while anyone in the kernel is running proc_flush_task.
+
+One was I can see to solve this that would give us cheap readers, is to
+have a percpu count of the number of processes in proc_flush_task.
+That would work something like mnt_count.
+
+Then forbid proc_kill_sb from removing any super block from the list
+or otherwise making progress until the proc_flush_task_count goes
+to zero.
+
+
+f we wanted cheap readers and an expensive writer
+kind of flag that proc_kill_sb can
+
+Thinking out loud perhaps we have add a list_head on task_struct
+and a list_head in proc_inode.  That would let us find the inodes
+and by extention the dentries we care about quickly.
+
+Then in evict_inode we could remove the proc_inode from the list.
+
+
+Eric
+
