@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C945D15FEFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 16:37:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB61A15FF00
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 16:37:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbgBOPhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Feb 2020 10:37:22 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53036 "EHLO
+        id S1726273AbgBOPhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Feb 2020 10:37:55 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53064 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726233AbgBOPhW (ORCPT
+        by vger.kernel.org with ESMTP id S1726233AbgBOPhz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Feb 2020 10:37:22 -0500
+        Sat, 15 Feb 2020 10:37:55 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 00A8C8EE302;
-        Sat, 15 Feb 2020 07:37:22 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C15A48EE302;
+        Sat, 15 Feb 2020 07:37:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1581781042;
-        bh=79DNQJtOLsrjgopN00pLq0OrcdjMW6qBZk2QT7VtPZE=;
+        s=20151216; t=1581781074;
+        bh=g1xQnKvgTT/Bp3YFWXKHmacREUxY5RF57sqz/uo5Hy4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KPs3QwUKaPn1qc9mNJE+QOHktDoaSjwhcnh71y5HrJHvRJ51MAdm2LFOWX11EIzBa
-         MlOX1w2tM+Lm5tyTJfQc8GqclHYHoIXTeU1doO6k/holNsXuv1yKk2bgXlxpwbIVTr
-         mJO91K0NX9tvRQaOCNCpCufTlzNRGOyEwrWpWofg=
+        b=ceaIPTZst+klnMBYIeE2D4KTbAb9VZBgxvTJl7JDpeV4Aii/gB2jU3WA16NVnPt0u
+         ou6svuHnosTDS8/OQxALydBFDU1QR37LzfYqZ+yy3e9+PwAgT/g/SzgMwT6a/+cwGk
+         V0oHAZwF1yUQlEDVjWFtCu6HoRaaJf5/8dApvuRA=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ijlHIV3axbNQ; Sat, 15 Feb 2020 07:37:21 -0800 (PST)
+        with ESMTP id 1vLRYk4ZX36h; Sat, 15 Feb 2020 07:37:54 -0800 (PST)
 Received: from jarvis.lan (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7101E8EE121;
-        Sat, 15 Feb 2020 07:37:20 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 87DB78EE121;
+        Sat, 15 Feb 2020 07:37:53 -0800 (PST)
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     David Howells <dhowells@redhat.com>,
         Christian Brauner <christian@brauner.io>,
         Al Viro <viro@ZenIV.linux.org.uk>,
         Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH v3 2/6] configfd: add generic file descriptor based configuration parser
-Date:   Sat, 15 Feb 2020 10:36:05 -0500
-Message-Id: <20200215153609.23797-3-James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v3 3/6] configfd: syscall: wire up configfd syscalls
+Date:   Sat, 15 Feb 2020 10:36:06 -0500
+Message-Id: <20200215153609.23797-4-James.Bottomley@HansenPartnership.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20200215153609.23797-1-James.Bottomley@HansenPartnership.com>
 References: <20200215153609.23797-1-James.Bottomley@HansenPartnership.com>
@@ -45,589 +45,268 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This code is based on the original filesystem context based
-configuration parser by David Howells, but lifted up so it can apply
-to anything rather than only filesystem contexts.
-
 Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
 ---
 
-v3: use prefix logger
+v3: Changed numbering to avoid clash with pidfd calls
 ---
- fs/Makefile                   |   3 +-
- fs/configfd.c                 | 451 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/configfd.h      |  61 ++++++
- include/uapi/linux/configfd.h |  20 ++
- 4 files changed, 534 insertions(+), 1 deletion(-)
- create mode 100644 fs/configfd.c
- create mode 100644 include/linux/configfd.h
- create mode 100644 include/uapi/linux/configfd.h
+ arch/alpha/kernel/syscalls/syscall.tbl      | 2 ++
+ arch/arm/tools/syscall.tbl                  | 2 ++
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 4 ++++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/m68k/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/microblaze/kernel/syscalls/syscall.tbl | 2 ++
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 2 ++
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 2 ++
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 2 ++
+ arch/parisc/kernel/syscalls/syscall.tbl     | 2 ++
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 2 ++
+ arch/s390/kernel/syscalls/syscall.tbl       | 2 ++
+ arch/sh/kernel/syscalls/syscall.tbl         | 2 ++
+ arch/sparc/kernel/syscalls/syscall.tbl      | 2 ++
+ arch/x86/entry/syscalls/syscall_32.tbl      | 2 ++
+ arch/x86/entry/syscalls/syscall_64.tbl      | 2 ++
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 2 ++
+ include/linux/syscalls.h                    | 5 +++++
+ include/uapi/asm-generic/unistd.h           | 9 +++++++--
+ 20 files changed, 49 insertions(+), 3 deletions(-)
 
-diff --git a/fs/Makefile b/fs/Makefile
-index 505e51166973..2c078355fdf5 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -13,7 +13,8 @@ obj-y :=	open.o read_write.o file_table.o super.o \
- 		seq_file.o xattr.o libfs.o fs-writeback.o \
- 		pnode.o splice.o sync.o utimes.o d_path.o \
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
--		fs_types.o fs_context.o fs_parser.o fsopen.o
-+		fs_types.o fs_context.o fs_parser.o fsopen.o \
-+		configfd.o
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 36d42da7466a..657c9cd71307 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -477,3 +477,5 @@
+ # 545 reserved for clone3
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
++549	common	configfd_open			configfd_open
++550	common	configfd_action			configfd_action
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 4d1cf74a2caa..43cbcfe14e38 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -451,3 +451,5 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 1dd22da1c3a9..bc0f923e0e04 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
  
- ifeq ($(CONFIG_BLOCK),y)
- obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
-diff --git a/fs/configfd.c b/fs/configfd.c
-new file mode 100644
-index 000000000000..50421ddbef11
---- /dev/null
-+++ b/fs/configfd.c
-@@ -0,0 +1,451 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Generic configuration file descriptor handling
-+ *
-+ * Copyright (C) 2019 James.Bottomley@HansenPartnership.com
-+ */
-+
-+#include <linux/anon_inodes.h>
-+#include <linux/configfd.h>
-+#include <linux/namei.h>
-+#include <linux/slab.h>
-+#include <linux/syscalls.h>
-+#include <linux/rwlock.h>
-+#include <linux/uaccess.h>
-+
-+
-+static struct configfd_type *configfds;
-+static DEFINE_RWLOCK(configfds_lock);
-+
-+static ssize_t configfd_read(struct file *file,
-+			     char __user *buf, size_t len, loff_t *pos)
-+{
-+	struct configfd_context *cfc = file->private_data;
-+
-+	return logger_read(cfc->log.log, buf, len);
-+}
-+
-+static void configfd_type_put(const struct configfd_type *cft)
-+{
-+	module_put(cft->owner);
-+}
-+
-+static void configfd_context_free(struct configfd_context *cfc)
-+{
-+	if (cfc->cft->ops->free)
-+		cfc->cft->ops->free(cfc);
-+	logger_put(&cfc->log.log);
-+	configfd_type_put(cfc->cft);
-+	kfree(cfc);
-+}
-+
-+static int configfd_release(struct inode *inode, struct file *file)
-+{
-+	struct configfd_context *cfc = file->private_data;
-+
-+	if (cfc) {
-+		file->private_data = NULL;
-+		configfd_context_free(cfc);
-+	}
-+	return 0;
-+}
-+
-+const struct file_operations configfd_context_fops = {
-+	.read		= configfd_read,
-+	.release	= configfd_release,
-+	.llseek		= no_llseek,
-+};
-+
-+static int configfd_create_fd(struct configfd_context *cfc,
-+			      unsigned int flags)
-+{
-+	int fd;
-+
-+	fd = anon_inode_getfd("[configfd]", &configfd_context_fops, cfc,
-+			      O_RDWR | flags);
-+	if (fd < 0)
-+		configfd_context_free(cfc);
-+	return fd;
-+}
-+
-+static struct configfd_type **configfd_type_find(const char *name)
-+{
-+	struct configfd_type **c;
-+
-+	for (c = &configfds; *c; c = &(*c)->next) {
-+		if (strcmp((*c)->name, name) == 0)
-+			break;
-+	}
-+
-+	return c;
-+}
-+
-+static struct configfd_type *configfd_type_get(const char *name)
-+{
-+	struct configfd_type *cft;
-+
-+	read_lock(&configfds_lock);
-+	cft = *(configfd_type_find(name));
-+	if (cft && !try_module_get(cft->owner))
-+		cft = NULL;
-+	read_unlock(&configfds_lock);
-+
-+	return cft;
-+}
-+
-+struct configfd_context *configfd_context_alloc(const struct configfd_type *cft,
-+						unsigned int op)
-+{
-+	struct configfd_context *cfc;
-+	struct logger *log;
-+	int ret;
-+
-+	cfc = kzalloc(sizeof(*cfc) + cft->data_size, GFP_KERNEL);
-+	if (!cfc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (cft->data_size)
-+		cfc->data = &cfc[1];
-+
-+	cfc->cft = cft;
-+	cfc->op = op;
-+	log = logger_alloc(cft->owner);
-+	if (IS_ERR(log)) {
-+		ret = PTR_ERR(log);
-+		goto out_free;
-+	}
-+
-+	cfc->log.log = log;
-+	cfc->log.prefix = NULL;
-+	if (cft->ops->alloc) {
-+		ret = cft->ops->alloc(cfc);
-+		if (ret)
-+			goto out_put;
-+	}
-+
-+	return cfc;
-+ out_put:
-+	logger_put(&cfc->log.log);
-+ out_free:
-+	kfree(cfc);
-+	return ERR_PTR(ret);
-+}
-+
-+int kern_configfd_open(const char *config_name, unsigned int flags,
-+			unsigned int op)
-+{
-+	const struct configfd_type *cft;
-+	struct configfd_context *cfc;
-+
-+	if (flags & ~O_CLOEXEC)
-+		return -EINVAL;
-+	if (op != CONFIGFD_CMD_CREATE && op != CONFIGFD_CMD_RECONFIGURE)
-+		return -EINVAL;
-+
-+	cft = configfd_type_get(config_name);
-+	if (!cft)
-+		return -ENODEV;
-+	cfc = configfd_context_alloc(cft, op);
-+	if (IS_ERR(cfc)) {
-+		configfd_type_put(cft);
-+		return PTR_ERR(cfc);
-+	}
-+
-+	return configfd_create_fd(cfc, flags);
-+}
-+
-+long ksys_configfd_open(const char __user *_config_name, unsigned int flags,
-+			unsigned int op)
-+{
-+	const char *config_name = strndup_user(_config_name, PAGE_SIZE);
-+	int ret;
-+
-+	if (IS_ERR(config_name))
-+		return PTR_ERR(config_name);
-+	ret = kern_configfd_open(config_name, flags, op);
-+	kfree(config_name);
-+
-+	return ret;
-+}
-+
-+SYSCALL_DEFINE3(configfd_open,
-+		const char __user *, _config_name,
-+		unsigned int, flags,
-+		unsigned int, op)
-+{
-+	return ksys_configfd_open(_config_name, flags, op);
-+}
-+
-+int kern_configfd_action(int fd, struct configfd_param *p)
-+{
-+	struct fd f = fdget(fd);
-+	struct configfd_context *cfc;
-+	const struct configfd_ops *ops;
-+	int ret = -EINVAL;
-+	/* upper 24 bits are available to consumers */
-+	u8 our_cmd = p->cmd & 0xff;
-+
-+	if (!f.file)
-+		return -EBADF;
-+	if (f.file->f_op != &configfd_context_fops)
-+		goto out_f;
-+	cfc = f.file->private_data;
-+
-+	ops = cfc->cft->ops;
-+
-+	/* check allowability */
-+	ret = -EOPNOTSUPP;
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_FLAG:
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+	case CONFIGFD_SET_INT:
-+		if (!ops->set)
-+			goto out_f;
-+		break;
-+	case CONFIGFD_GET_FD:
-+		if (!ops->get)
-+			goto out_f;
-+		break;
-+	case CONFIGFD_CMD_CREATE:
-+	case CONFIGFD_CMD_RECONFIGURE:
-+		if (our_cmd != cfc->op) {
-+			plogger_err(&cfc->log, "Wrong operation, we were opened for %d", cfc->op);
-+			goto out_f;
-+		}
-+		if (!ops->act)
-+			goto out_f;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	/*
-+	 * Execute
-+	 */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+	case CONFIGFD_SET_FD:
-+	case CONFIGFD_SET_FLAG:
-+	case CONFIGFD_SET_INT:
-+		ret = ops->set(cfc, p);
-+		break;
-+	case CONFIGFD_GET_FD:
-+		ret = ops->get(cfc, p);
-+		if (ret == 0) {
-+			int fd;
-+
-+			fd = get_unused_fd_flags(p->aux & O_CLOEXEC);
-+			if (fd < 0) {
-+				ret = fd;
-+				break;
-+			}
-+			fd_install(fd, p->file);
-+			p->file = NULL; /* consume the file */
-+			p->aux = fd;
-+		}
-+		break;
-+	case CONFIGFD_CMD_RECONFIGURE:
-+	case CONFIGFD_CMD_CREATE:
-+		ret = ops->act(cfc, p->cmd);
-+		break;
-+	default:
-+		break;
-+	}
-+out_f:
-+	fdput(f);
-+	return ret;
-+}
-+
-+long ksys_configfd_action(int fd, unsigned int cmd, const char __user *_key,
-+			  void __user *_value, int aux)
-+{
-+	struct configfd_param param = {
-+		.cmd = cmd,
-+	};
-+	u8 our_cmd = cmd & 0xff;
-+	int ret;
-+
-+	/* check parameters required for action */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_FLAG:
-+		if (!_key || _value || aux)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_GET_FD:
-+		if (!_key || !_value)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_BINARY:
-+		if (!_key || !_value || aux <= 0 || aux > 1024 * 1024)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		if (!_key || !_value || (aux != AT_FDCWD && aux < 0))
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_FD:
-+		if (!_key || _value || aux < 0)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_SET_INT:
-+		if (!_key)
-+			return -EINVAL;
-+		break;
-+	case CONFIGFD_CMD_CREATE:
-+	case CONFIGFD_CMD_RECONFIGURE:
-+		if (_key || _value || aux)
-+			return -EINVAL;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (_key) {
-+		param.key = strndup_user(_key, 256);
-+		if (IS_ERR(param.key))
-+			return PTR_ERR(param.key);
-+	}
-+
-+	/* now pull the parameters into the kernel */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+		param.string = strndup_user(_value, 256);
-+		if (IS_ERR(param.string)) {
-+			ret = PTR_ERR(param.string);
-+			goto out_key;
-+		}
-+		param.size = strlen(param.string);
-+		break;
-+	case CONFIGFD_SET_BINARY:
-+		param.size = aux;
-+		param.blob = memdup_user_nul(_value, aux);
-+		if (IS_ERR(param.blob)) {
-+			ret = PTR_ERR(param.blob);
-+			goto out_key;
-+		}
-+		break;
-+	case CONFIGFD_SET_PATH:
-+		param.name = getname_flags(_value, 0, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.aux = aux;
-+		param.size = strlen(param.name->name);
-+		break;
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		param.name = getname_flags(_value, LOOKUP_EMPTY, NULL);
-+		if (IS_ERR(param.name)) {
-+			ret = PTR_ERR(param.name);
-+			goto out_key;
-+		}
-+		param.aux = aux;
-+		param.size = strlen(param.name->name);
-+		break;
-+	case CONFIGFD_SET_FD:
-+		ret = -EBADF;
-+		param.file = fget_raw(aux);
-+		if (!param.file)
-+			goto out_key;
-+		break;
-+	case CONFIGFD_SET_INT:
-+		param.aux = aux;
-+		break;
-+	default:
-+		break;
-+	}
-+	ret = kern_configfd_action(fd, &param);
-+	/* clean up unconsumed parameters */
-+	switch (our_cmd) {
-+	case CONFIGFD_SET_STRING:
-+	case CONFIGFD_SET_BINARY:
-+		kfree(param.string);
-+		break;
-+	case CONFIGFD_SET_PATH:
-+	case CONFIGFD_SET_PATH_EMPTY:
-+		if (param.name)
-+			putname(param.name);
-+		break;
-+	case CONFIGFD_GET_FD:
-+		if (!ret)
-+			ret = put_user(param.aux, (int __user *)_value);
-+		/* FALL THROUGH */
-+	case CONFIGFD_SET_FD:
-+		if (param.file)
-+			fput(param.file);
-+		break;
-+	default:
-+		break;
-+	}
-+ out_key:
-+	kfree(param.key);
-+
-+	return ret;
-+}
-+
-+
-+SYSCALL_DEFINE5(configfd_action,
-+		int, fd, unsigned int, cmd,
-+		const char __user *, _key,
-+		void __user *, _value,
-+		int, aux)
-+{
-+	return ksys_configfd_action(fd, cmd, _key, _value, aux);
-+}
-+
-+int configfd_type_register(struct configfd_type *cft)
-+{
-+	int ret = 0;
-+	struct configfd_type **c;
-+
-+	if (WARN(cft->next,
-+		 "BUG: registering already registered configfd_type: %s",
-+		 cft->name))
-+		return -EBUSY;
-+
-+	if (WARN(cft->ops == NULL,
-+		 "BUG: configfd_type has no ops set: %s", cft->name))
-+		return -EINVAL;
-+
-+	if (WARN(cft->ops->alloc && (!cft->ops->free),
-+		 "BUG: if configfd ops alloc is set, free must also be"))
-+		return -EINVAL;
-+
-+	if (WARN(cft->name == NULL || cft->name[0] == '\0',
-+		 "BUG: configfd_type has no name"))
-+		return -EINVAL;
-+
-+	write_lock(&configfds_lock);
-+	c = configfd_type_find(cft->name);
-+	if (WARN(*c, "BUG: configfd_type name already exists: %s",
-+		 cft->name))
-+		ret = -EBUSY;
-+	else
-+		*c = cft;
-+	write_unlock(&configfds_lock);
-+
-+	return ret;
-+}
-+
-+void configfd_type_unregister(struct configfd_type *cft)
-+{
-+	struct configfd_type **c;
-+
-+	write_lock(&configfds_lock);
-+	c = configfd_type_find(cft->name);
-+	if (WARN(*c != cft, "BUG: trying to register %s from wrong structure",
-+		 cft->name))
-+		goto out;
-+	*c = cft->next;
-+	cft->next = NULL;
-+ out:
-+	write_unlock(&configfds_lock);
-+}
-diff --git a/include/linux/configfd.h b/include/linux/configfd.h
-new file mode 100644
-index 000000000000..7ef31f3da916
---- /dev/null
-+++ b/include/linux/configfd.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+#ifndef _LINUX_CONFIGFD_H
-+#define _LINUX_CONFIGFD_H
-+
-+#include <linux/logger.h>
-+
-+#include <uapi/linux/configfd.h>
-+
-+struct configfd_context;
-+
-+struct configfd_param {
-+	const char			*key;
-+	union {
-+		char			*string;
-+		void			*blob;
-+		struct filename		*name;
-+		struct file		*file;
-+	};
-+	int				aux;
-+	unsigned int			cmd;
-+	size_t				size;
-+};
-+
-+struct configfd_ops {
-+	int (*alloc)(struct configfd_context *cfc);
-+	void (*free)(const struct configfd_context *cfc);
-+	int (*set)(const struct configfd_context *cfc,
-+		   struct configfd_param *p);
-+	int (*get)(const struct configfd_context *cfc,
-+		   struct configfd_param *p);
-+	int (*act)(const struct configfd_context *cfc, unsigned int cmd);
-+};
-+
-+struct configfd_type {
-+	const char		*name;
-+	size_t			data_size;
-+	struct module		*owner;
-+	struct configfd_ops	*ops;
-+	struct configfd_type	*next;
-+};
-+
-+struct configfd_context {
-+	const struct configfd_type	*cft;
-+	struct plogger			log;
-+	void				*data;
-+	unsigned int			op;
-+};
-+
-+int configfd_type_register(struct configfd_type *cft);
-+void configfd_type_unregister(struct configfd_type *cft);
-+
-+long ksys_configfd_open(const char __user *config_name, unsigned int flags,
-+			unsigned int op);
-+long ksys_configfd_action(int fd, unsigned int cmd, const char __user *key,
-+			  void __user *value, int aux);
-+int kern_configfd_action(int fd, struct configfd_param *p);
-+int kern_configfd_open(const char *name, unsigned int flags,
-+		       unsigned int op);
-+
+-#define __NR_compat_syscalls		439
++#define __NR_compat_syscalls		441
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index c1c61635f89c..46881451186e 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -883,6 +883,10 @@ __SYSCALL(__NR_clone3, sys_clone3)
+ __SYSCALL(__NR_openat2, sys_openat2)
+ #define __NR_pidfd_getfd 438
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
++#define __NR_configfd_open 439
++__SYSCALL(__NR_configfd_open, sys_configfd_open)
++#define __NR_configfd_action 440
++__SYSCALL(__NR_configfd_action, sys_configfd_action)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index 042911e670b8..e9c143d99b96 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -358,3 +358,5 @@
+ # 435 reserved for clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index f4f49fcb76d0..d9b54e720918 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,5 @@
+ 435	common	clone3				__sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 4c67b11f9c9e..4431f66cb9a6 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -443,3 +443,5 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 1f9e8ad636cc..51523527fe88 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -376,3 +376,5 @@
+ 435	n32	clone3				__sys_clone3
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
++439	n32	configfd_open			sys_configfd_open
++440	n32	configfd_action			sys_configfd_action
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index c0b9d802dbf6..eae82af997c2 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -352,3 +352,5 @@
+ 435	n64	clone3				__sys_clone3
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
++439	n64	configfd_open			sys_configfd_open
++440	n64	configfd_action			sys_configfd_action
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index ac586774c980..d813d89521a3 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -425,3 +425,5 @@
+ 435	o32	clone3				__sys_clone3
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
++439	o32	configfd_open			sys_configfd_open
++440	o32	configfd_action			sys_configfd_action
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index 52a15f5cd130..f24f48b7123a 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -435,3 +435,5 @@
+ 435	common	clone3				sys_clone3_wrapper
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 35b61bfc1b1a..4586f9c5a76c 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -519,3 +519,5 @@
+ 435	nospu	clone3				ppc_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index bd7bd3581a0f..a047a75ed6e7 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -440,3 +440,5 @@
+ 435  common	clone3			sys_clone3			sys_clone3
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
++439  common	configfd_open		sys_configfd_open		sys_configfd_open
++440  common	configfd_action		sys_configfd_action		sys_configfd_action
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index c7a30fcd135f..435bf5ce7be0 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -440,3 +440,5 @@
+ # 435 reserved for clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index f13615ecdecc..4f73a7d80c4a 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -483,3 +483,5 @@
+ # 435 reserved for clone3
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index c17cb77eb150..fc5101e9e6c4 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -442,3 +442,5 @@
+ 435	i386	clone3			sys_clone3			__ia32_sys_clone3
+ 437	i386	openat2			sys_openat2			__ia32_sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd			__ia32_sys_pidfd_getfd
++436	i386	configfd_open		sys_configfd_open		__ia32_sys_configfd_open
++437	i386	configfd_action		sys_configfd_action		__ia32_sys_configfd_action
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 44d510bc9b78..3dc52c1329dc 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -359,6 +359,8 @@
+ 435	common	clone3			__x64_sys_clone3/ptregs
+ 437	common	openat2			__x64_sys_openat2
+ 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
++439	common	configfd_open		__x64_sys_configfd_open
++440	common	configfd_action		__x64_sys_configfd_action
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 85a9ab1bc04d..b023e36c4964 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -408,3 +408,5 @@
+ 435	common	clone3				sys_clone3
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
++439	common	configfd_open			sys_configfd_open
++440	common	configfd_action			sys_configfd_action
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 1815065d52f3..298d56120470 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1003,6 +1003,11 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+ 				       siginfo_t __user *info,
+ 				       unsigned int flags);
+ asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
++asmlinkage long sys_configfd_open(const char __user *config_name,
++				  unsigned int flags, unsigned int op);
++asmlinkage long sys_configfd_action(int fd, unsigned int cmd,
++				    const char __user *key, void __user *value,
++				    int aux);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 3a3201e4618e..29c55ef11fb1 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -849,15 +849,20 @@ __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
+ #ifdef __ARCH_WANT_SYS_CLONE3
+ #define __NR_clone3 435
+ __SYSCALL(__NR_clone3, sys_clone3)
+-#endif
+ 
 +#endif
-diff --git a/include/uapi/linux/configfd.h b/include/uapi/linux/configfd.h
-new file mode 100644
-index 000000000000..3e54cfef0182
---- /dev/null
-+++ b/include/uapi/linux/configfd.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note */
+ #define __NR_openat2 437
+ __SYSCALL(__NR_openat2, sys_openat2)
+ #define __NR_pidfd_getfd 438
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
++#define __NR_configfd_open 439
++__SYSCALL(__NR_configfd_open, sys_configfd_open)
++#define __NR_configfd_action 440
++__SYSCALL(__NR_configfd_action, sys_configfd_action)
 +
-+#ifndef _UAPI_LINUX_CONFIGFD_H
-+#define _UAPI_LINUX_CONFIGFD_H
-+
-+enum configfd_cmd {
-+	CONFIGFD_SET_FLAG		= 0,
-+	CONFIGFD_SET_STRING		= 1,
-+	CONFIGFD_SET_BINARY		= 2,
-+	CONFIGFD_SET_PATH		= 3,
-+	CONFIGFD_SET_PATH_EMPTY		= 4,
-+	CONFIGFD_SET_FD			= 5,
-+	CONFIGFD_CMD_CREATE		= 6,
-+	CONFIGFD_CMD_RECONFIGURE	= 7,
-+	/* gap for 30 other commands */
-+	CONFIGFD_SET_INT		= 38,
-+	CONFIGFD_GET_FD			= 39,
-+};
-+
-+#endif
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 439
++#define __NR_syscalls 441
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
 2.16.4
 
