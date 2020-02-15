@@ -2,94 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C04A415FE43
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 12:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0472215FEFB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 16:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbgBOL42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Feb 2020 06:56:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbgBOL42 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Feb 2020 06:56:28 -0500
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F105E2072D;
-        Sat, 15 Feb 2020 11:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581767788;
-        bh=NaAHvFuU+ylYPII07/Q0dVeLaamkxwl2owLhdZmF30s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=c/I4lBS0EkFioir+ydtfPPjtntwsQIPJ7gsuAA3lo46+qwOcC4aMnOKMd0Z3INdXb
-         +XXx9hsOBFemgKcDam3c13z6zdZPka+UYQI4oclDwsHzdHpDY/hsKWrKryaYlalWJW
-         y8S7mdF0AnUzkD5yhE5BODnxSJSI/dNdTVzG8774=
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <maz@kernel.org>)
-        id 1j2w3e-005RK7-1L; Sat, 15 Feb 2020 11:56:26 +0000
-Date:   Sat, 15 Feb 2020 11:56:24 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?UTF-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v6 10/11] KVM: arm64: BTI: Reset BTYPE when skipping
- emulated instructions
-Message-ID: <20200215115624.2afbf55c@why>
-In-Reply-To: <20200212192906.53366-11-broonie@kernel.org>
-References: <20200212192906.53366-1-broonie@kernel.org>
-        <20200212192906.53366-11-broonie@kernel.org>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, viro@zeniv.linux.org.uk, paul.elliott@arm.com, peterz@infradead.org, yu-cheng.yu@intel.com, amit.kachhap@arm.com, vincenzo.frascino@arm.com, esyr@redhat.com, szabolcs.nagy@arm.com, hjl.tools@gmail.com, drjones@redhat.com, keescook@chromium.org, arnd@arndb.de, jannh@google.com, richard.henderson@linaro.org, kristina.martsenko@arm.com, tglx@linutronix.de, fweimer@redhat.com, sudi.das@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, Dave.Martin@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        id S1726275AbgBOPgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Feb 2020 10:36:15 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52956 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726233AbgBOPgO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 15 Feb 2020 10:36:14 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 204AE8EE306;
+        Sat, 15 Feb 2020 07:36:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1581780974;
+        bh=yHtGVHids/u1MoVbYrLPD+uad3BTMyTy/oqqLOM7Ji8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YFQflOSN1QdOIJqVtGieVZ/uHv6DCI4bXxHxIqGRCwgFEjdDKr6Jy+jJMy4T+jaAX
+         XWz9Up3QQxOf/UsD6Z821CGWcyKjPUcS6kmekgemzGwJ7Y87OkSIiKr0vyBFWQ/cze
+         Q/+qxSOUXbsLNy+w8F4ejBoiO5TRH2cnGoz01zt4=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id a2MNEU59LUnz; Sat, 15 Feb 2020 07:36:13 -0800 (PST)
+Received: from jarvis.lan (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EE3BF8EE121;
+        Sat, 15 Feb 2020 07:36:12 -0800 (PST)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: [PATCH v3 0/6] introduce configfd as generalisation of fsconfig
+Date:   Sat, 15 Feb 2020 10:36:03 -0500
+Message-Id: <20200215153609.23797-1-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 12 Feb 2020 19:29:05 +0000
-Mark Brown <broonie@kernel.org> wrote:
+fsconfig is a very powerful configuration mechanism except that it
+only works for filesystems with superblocks.  This patch series
+generalises the useful concept of a multiple step configurational
+mechanism carried by a file descriptor.  The object of this patch
+series is to get bind mounts to be configurable in the same way that
+superblock based ones are, but it should have utility beyond the
+filesytem realm.  Patch 4 also reimplements fsconfig in terms of
+configfd, but that's not a strictly necessary patch, it is merely a
+useful demonstration that configfd is a superset of the properties of
+fsconfig.
 
-> From: Dave Martin <Dave.Martin@arm.com>
-> 
-> Since normal execution of any non-branch instruction resets the
-> PSTATE BTYPE field to 0, so do the same thing when emulating a
-> trapped instruction.
-> 
-> Branches don't trap directly, so we should never need to assign a
-> non-zero value to BTYPE here.
-> 
-> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+in v3, I swept up Al's prefix generalisation of the log that he
+expanded to use with ceph and rbd, because it's a nice extension to
+the original fsconfig log.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+The main reason I'm strongly pushing this, is that by my background I
+dislike abstractions that aren't abstract enough (have unnecessary
+ties to concrete features like fsconfig does to the superblock), so
+the physicist in me likes to make them as abstract as possible.  The
+objection, in the email replies to v2 is that making something so
+powerful too abstract is going to encourage incorrect reuse and thus
+cause problems because using an interface of huge power on something
+that doesn't need it damages the API confinement and makes unintended
+and unexpected uses easy.  I still think this is a wrongheaded
+argument because we do have subsystems that need powerful config
+interfaces and we should have the taste to ensure the full power is
+only used there, but I think it's a useful debate to have.  For
+instance, I think the entire annoying keyctl API could usefully deploy
+this.
 
-	M.
+Note: v1 of this patch series was originally sent as an rfc in reply
+to a thread about feature bugs with the new mount API:
+
+https://lore.kernel.org/linux-fsdevel/1574295100.17153.25.camel@HansenPartnership.com/
+
+James
+
+---
+
+James Bottomley (6):
+  logger: add a limited buffer logging facility
+  configfd: add generic file descriptor based configuration parser
+  configfd: syscall: wire up configfd syscalls
+  fs: implement fsconfig via configfd
+  fs: expose internal interfaces open_detached_copy and
+    do_reconfigure_mount
+  fs: bind: add configfs type for bind mounts
+
+ arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+ arch/arm/tools/syscall.tbl                  |   2 +
+ arch/arm64/include/asm/unistd.h             |   2 +-
+ arch/arm64/include/asm/unistd32.h           |   4 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+ drivers/block/rbd.c                         |   2 +-
+ fs/Makefile                                 |   3 +-
+ fs/bind.c                                   | 232 ++++++++++++
+ fs/ceph/super.c                             |   4 +-
+ fs/configfd.c                               | 451 ++++++++++++++++++++++++
+ fs/filesystems.c                            |   8 +-
+ fs/fs_context.c                             |  97 +----
+ fs/fs_parser.c                              |  24 +-
+ fs/fsopen.c                                 | 529 ++++++++++++++--------------
+ fs/internal.h                               |   7 +
+ fs/namespace.c                              | 115 +++---
+ include/linux/ceph/libceph.h                |   5 +-
+ include/linux/configfd.h                    |  61 ++++
+ include/linux/fs.h                          |   2 +
+ include/linux/fs_context.h                  |  58 ++-
+ include/linux/fs_parser.h                   |   9 +-
+ include/linux/logger.h                      |  45 +++
+ include/linux/syscalls.h                    |   5 +
+ include/uapi/asm-generic/unistd.h           |   9 +-
+ include/uapi/linux/configfd.h               |  20 ++
+ lib/Makefile                                |   3 +-
+ lib/logger.c                                | 190 ++++++++++
+ net/ceph/ceph_common.c                      |  26 +-
+ 41 files changed, 1457 insertions(+), 486 deletions(-)
+ create mode 100644 fs/bind.c
+ create mode 100644 fs/configfd.c
+ create mode 100644 include/linux/configfd.h
+ create mode 100644 include/linux/logger.h
+ create mode 100644 include/uapi/linux/configfd.h
+ create mode 100644 lib/logger.c
+
 -- 
-Jazz is not dead. It just smells funny...
+2.16.4
+
