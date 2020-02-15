@@ -2,81 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35910160055
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 20:53:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C751600D7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 23:07:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgBOTxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Feb 2020 14:53:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43226 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbgBOTxH (ORCPT
+        id S1726734AbgBOWGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Feb 2020 17:06:40 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40564 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbgBOWGj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Feb 2020 14:53:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=BpDKtc5YdvqyWLynXykgKLWaF9sL2fROoHx5x/evTK0=; b=Vxhy9E/fi+Z7E4jyxUIC1eZezB
-        leCSOEmo0l5bNzoRNmuFF9D08GYbS8pxAS/IyXjE5auf4Sfdslr2Fj8ixSoNCppJADHagxfWwKA46
-        v4OorH6lvAWAIVpllsXwrrW5wWnWcg0vmvSifBRw/zVcKqXJyX5fP1yj6BieRX9ye00WLtEq1JTVf
-        tdczB9ncC4TDvwDWWI8KCMNAgxHbVzSSczUm/XWMMwj6azNLBGVbmL+f9CxG6EptOVrf8gJTTkg/K
-        cHSNS7Q6tfiPz+L627aMphGz5LP6qAaUwk9g7Ko42lxfVSL44JFWOUHltaY9xO0zn1USxQLTdePOY
-        1WymFetQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j33Ux-0006H5-8C; Sat, 15 Feb 2020 19:53:07 +0000
-Date:   Sat, 15 Feb 2020 11:53:07 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Allison Collins <allison.henderson@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
-Message-ID: <20200215195307.GI7778@bombadil.infradead.org>
-References: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com>
- <20200214044242.GI6870@magnolia>
+        Sat, 15 Feb 2020 17:06:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t3so15173907wru.7;
+        Sat, 15 Feb 2020 14:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5PAtRNcVxW/VF6EOqrI1mG5nx7P/Aj/JQzV9Ywd9Gb0=;
+        b=aT7aTwikQ0TjDBO1Fp6EA0Q58m3aARsTc7eQiBxDFGUHHBILDXPqSIz+HK5BlJhf8H
+         yHd/H9oT+0uOvCHdJdBbxZ7a7hK4168/TtHCde4hEz+HP6eZpEJoyZ9RxBmPbPOpqzZ0
+         UMCQJvzLH+Ss5N+jX5C4ZII+XU1pmfcTspV2rfrWA0X2Iu6oyWAIy2RWvHVKPYlC3Gdb
+         T8pBS2aIQyhZnSXXq297M+IdpftbkSHJYCsECqrophtEcenilJ8cpM34/9d+ZoBtBPEw
+         YDOMRZmUv3wkcbYQDJdlawze7KKgur69y3iaXmKKPdCApb4moqQX7CkY6OE9Gexskgyd
+         woew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5PAtRNcVxW/VF6EOqrI1mG5nx7P/Aj/JQzV9Ywd9Gb0=;
+        b=FUqmbjdKRoIsp3/nvAn2PVhXlP5QrCqR2yjHzCQWRdjNcU3KyQMzJVq7vsFw7hqdOe
+         VhQm1Gy2ImP/bOXR1fbQhkhgD4dIr/IrjbnKOlvE+7sSt+s2gNoP4EIMyrcWczK6DkGl
+         e5NrqkSTSiQGrsMBDNUMsf/uCyzc9/Hi0M1iF1JZraTu/8tkRT5R7o7w0tBWnR9yLGOE
+         9nBjSSCjW6zW8YYBQxUGziUpBbdu3Ea0SxVcR6DUdHIZzVQK3PEP4bcLKMRmqvimMq9a
+         Nt4vvOkAnwFcleUOUhABerPWkXbf1G31cDA1WKQCF1Rj5Utx9GLQOoWJC6J0bQkooOR8
+         Cl8w==
+X-Gm-Message-State: APjAAAVmeLYOXXqOso55szjAgCOoiYMgphFB2THhu3x/SLBGvR/QBnFK
+        TJ6D6U9hYjzon+BiDMmSjnY=
+X-Google-Smtp-Source: APXvYqyoqCmaihQvHVPahs0XFCz2CwAiEkp8P2WunXP835AFf8umZWvAQrspwopzPD6jeSdaMGE2Ig==
+X-Received: by 2002:a5d:474d:: with SMTP id o13mr11516779wrs.309.1581804396880;
+        Sat, 15 Feb 2020 14:06:36 -0800 (PST)
+Received: from localhost.localdomain ([109.126.146.5])
+        by smtp.gmail.com with ESMTPSA id v15sm13281923wrf.7.2020.02.15.14.06.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2020 14:06:36 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] io_uring: add splice(2) support
+Date:   Sun, 16 Feb 2020 01:05:38 +0300
+Message-Id: <cover.1581802973.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200214044242.GI6870@magnolia>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 08:42:42PM -0800, Darrick J. Wong wrote:
-> On Thu, Feb 13, 2020 at 03:33:08PM -0700, Allison Collins wrote:
-> > I also understand there are multiple ways to solve this problem that people
-> > may have opinions on.  I've noticed some older patch sets trying to use a
-> > flag to control when dirty pages are flushed, though I think our customer
-> > would like to see a hardware solution via NVMe devices.  So I would like to
-> > see if others have similar interests as well and what their thoughts may be.
-> > Thanks everyone!
-> 
-> Hmmm well there are a number of different ways one could do this--
+Probably, not the fastets implementation, but I'd need to stir up/duplicate
+splice.c bits to do it more efficiently.
 
-Interesting.  Your answer implies a question of "How do we expose
-a filesystem's ability to do atomic writes to userspace", whereas I
-thought Allison's question was "What spec do we write to give to the
-NVMe vendors so that filesystems can optimise their atomic writes".
+note: rebase on top of the recent inflight patchset.
 
-I am very interested in the question of atomic writes, but I don't
-know that we're going to have the right people in the room to design
-a userspace API.  Maybe this is more of a Plumbers topic?  I think
-the two main users of a userspace API would be databases (sqlite,
-mysql, postgres, others) and package managers (dpkg, rpm, others?).
-Then there would be the miscellaneous users who just want things to work
-and don't really care about performance (writing a game's high score file,
-updating /etc/sudoers).
+v2:
+- u32 len and SQE layout changes (Jens)
+- output file is in sqe->fd for automatic hash_reg_file support
+- handle unbound_nonreg_file for the second fd
+- file leaks fixed with REQ_F_NEED_CLEANUP
+- place SPLICE_F_FD_IN_FIXED in splice flags (Jens)
+- loff_t* -> loff_t, -1 means not specified offset
 
-That might argue in favour of having two independent APIs, one that's
-simple, probably quite slow, but safe, and one that's complex, fast
-and safe.  There's also an option for simple, fast and unsafe, but,
-y'know, we already have that ...
 
-Your response also implies that atomic writes are only done to a single
-file at a time, which isn't true for either databases or for package
-managers.  I wonder if the snapshot/reflink paradigm is the right one
-for multi-file atomic updates, or if we can use the same underlying
-mechanism to implement an API which better fits how userspace actually
-wants to do atomic updates.
+Pavel Begunkov (3):
+  splice: make do_splice public
+  io_uring: add interface for getting files
+  io_uring: add splice(2) support
+
+ fs/io_uring.c                 | 172 +++++++++++++++++++++++++++++-----
+ fs/splice.c                   |   6 +-
+ include/linux/splice.h        |   3 +
+ include/uapi/linux/io_uring.h |  14 ++-
+ 4 files changed, 166 insertions(+), 29 deletions(-)
+
+-- 
+2.24.0
 
