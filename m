@@ -2,101 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 518FA15FF54
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 17:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35910160055
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Feb 2020 20:53:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbgBOQ7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Feb 2020 11:59:24 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:37753 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbgBOQ7Y (ORCPT
+        id S1726411AbgBOTxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Feb 2020 14:53:08 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43226 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbgBOTxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Feb 2020 11:59:24 -0500
-Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MirX2-1jhrut2cnk-00erXF; Sat, 15 Feb 2020 17:59:19 +0100
-Received: by mail-qt1-f169.google.com with SMTP id r5so9165819qtt.9;
-        Sat, 15 Feb 2020 08:59:19 -0800 (PST)
-X-Gm-Message-State: APjAAAUU7V/VEjh08tJsUgR9jtV806ehyTj0lohYm7hcYVBEQD2aiLeL
-        DvdQZNNCger7oMDwEZay9s1jhh270/NuDvriPRQ=
-X-Google-Smtp-Source: APXvYqyjkaMRW1i6+nG6Xmmiwkn07p7cDmjHpBuvGvwJKBe8csT7ZhEBB5nRrhRTCOtne+pNbnl2kdB0/zhmsFwcHpI=
-X-Received: by 2002:ac8:1977:: with SMTP id g52mr6981067qtk.18.1581785958432;
- Sat, 15 Feb 2020 08:59:18 -0800 (PST)
+        Sat, 15 Feb 2020 14:53:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BpDKtc5YdvqyWLynXykgKLWaF9sL2fROoHx5x/evTK0=; b=Vxhy9E/fi+Z7E4jyxUIC1eZezB
+        leCSOEmo0l5bNzoRNmuFF9D08GYbS8pxAS/IyXjE5auf4Sfdslr2Fj8ixSoNCppJADHagxfWwKA46
+        v4OorH6lvAWAIVpllsXwrrW5wWnWcg0vmvSifBRw/zVcKqXJyX5fP1yj6BieRX9ye00WLtEq1JTVf
+        tdczB9ncC4TDvwDWWI8KCMNAgxHbVzSSczUm/XWMMwj6azNLBGVbmL+f9CxG6EptOVrf8gJTTkg/K
+        cHSNS7Q6tfiPz+L627aMphGz5LP6qAaUwk9g7Ko42lxfVSL44JFWOUHltaY9xO0zn1USxQLTdePOY
+        1WymFetQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j33Ux-0006H5-8C; Sat, 15 Feb 2020 19:53:07 +0000
+Date:   Sat, 15 Feb 2020 11:53:07 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Allison Collins <allison.henderson@oracle.com>,
+        lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
+Message-ID: <20200215195307.GI7778@bombadil.infradead.org>
+References: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com>
+ <20200214044242.GI6870@magnolia>
 MIME-Version: 1.0
-References: <20200211175507.178100-1-hannes@cmpxchg.org> <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
- <20200211193101.GA178975@cmpxchg.org> <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
- <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
- <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <CAMuHMdV8-=dj5n-FM1nHjXq1DhkJVOh4rLFxERt33jAQmU4h_A@mail.gmail.com>
-In-Reply-To: <CAMuHMdV8-=dj5n-FM1nHjXq1DhkJVOh4rLFxERt33jAQmU4h_A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 15 Feb 2020 17:59:02 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0m574dHYuKBPLf6q2prnbFxX1w7xe4-JX-drN6dqH6TQ@mail.gmail.com>
-Message-ID: <CAK8P3a0m574dHYuKBPLf6q2prnbFxX1w7xe4-JX-drN6dqH6TQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>, kernel-team@fb.com,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:wnLkh62oA9Yjc9Ym349XbhSeygty7EwrKi7YllCXkP9M5H6i9wg
- F5Uua1nv3gvu0s2M9m2kK5vM6fYhZiwVW+nGqpySnfj4nBQscb4zTh3JPWdkL8QKFX/0Sta
- JLWwOwv+o/rDSB3AvfipOidUwmF9Ucpr6BgG6DSObtUt20mF2C0vwH/y4zeS14Hb93ZHNeZ
- eS93xr6yTncDZaD7uwr1w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VHHCUnWwrnY=:eLDhdH48i9tz/1z7XjpRgv
- MJOz4odIDmTcTmYRYm5+EbzH6QJfTS7m0LJzkQt2ovwHy+FGOuqzr06qmEG6p5hvKN7f93ZY0
- f+kgqbdE37+Ru5WWssnThfH0qVYZvt4JEeNe960VxVZx4B2F4PvwMPzwJC7vVZ58IfqwnO1ZO
- RZgESkc5//k0yBFYkrvodcMLNQRsn2QyAYVPCRldX+T4zcxjrppBAibFj/krZdtaszvW1Jjpp
- uV1kWMfVHjnN9p0+uVKabu9KYf/xOFETX1L51/5d/z5HS0mSmDcVuTw7o7iqhYrYa+D83/u9D
- YhQvkJUkbtEyp5ytH1fCGZKcOCPFjN4ZiUttgmXQjPuqT6ARTsEKAFYN31bsqOoBua6RmFYWV
- yQvW3ems0wEObdVeTJqBMw8D+hJJuNgRYNwom+bcHVz3gbfcUXhMmRUIDfWqyNQP2X4z16Gx0
- 4m6KuBlk2TPB0aSaEWOeq9gk1e6XjKlRVk3X/r+QkD/8NJHyEiQ/RIjGtCwlOKk5DEXY0CGvu
- jEk3V5h7FJJN7IeJ4cHRts3ehgiPYAmO/y3L+v3Q2nkRqa/DlnPr70ZNR35OgxcqsumbIF7nm
- nEUVn6H5cZYeT/uJ6tit3r37SjQWAatcKgpAKBf+WQ3TOcOiAiqGwf+Y3bCYZy2CG033R3cKO
- Dsl7ct/OhNCrkUN2K5hztoLFQpZYBX5+KUhIPPVwDYGuxQlH2bl8UjzA0ZVOd60k5WEsSmzFX
- zvPQ9+KaKdgGVq2dCEYfdMhkXPHnX43MCOo7llYtjTl6FzVpBvv47ziqtNofENZ32a+TA0Kzh
- kZm3asfEpHL+EcKD+ejbNwiHIRwXknR/EMZZGhe69OkEMREP+w=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200214044242.GI6870@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 15, 2020 at 12:25 PM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Feb 13, 2020 at 5:54 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wed, Feb 12, 2020 at 9:50 AM Russell King - ARM Linux admin
-> > <linux@armlinux.org.uk> wrote:
->
-> The CIP-supported RZ/G1 SoCs can have up to 4 GiB, typically split (even
-> for 1 GiB or 2 GiB configurations) in two parts, one below and one above
-> the 32-bit physical limit.
+On Thu, Feb 13, 2020 at 08:42:42PM -0800, Darrick J. Wong wrote:
+> On Thu, Feb 13, 2020 at 03:33:08PM -0700, Allison Collins wrote:
+> > I also understand there are multiple ways to solve this problem that people
+> > may have opinions on.  I've noticed some older patch sets trying to use a
+> > flag to control when dirty pages are flushed, though I think our customer
+> > would like to see a hardware solution via NVMe devices.  So I would like to
+> > see if others have similar interests as well and what their thoughts may be.
+> > Thanks everyone!
+> 
+> Hmmm well there are a number of different ways one could do this--
 
-Good to know. I think there are several other chips that have dual-channel
-DDR3 and thus /can/ support this configuration, but this rarely happens.
-Are you aware of commercial products that use a 4GB configuration, aside from
-the reference board?
+Interesting.  Your answer implies a question of "How do we expose
+a filesystem's ability to do atomic writes to userspace", whereas I
+thought Allison's question was "What spec do we write to give to the
+NVMe vendors so that filesystems can optimise their atomic writes".
 
-For TI AM54x, there is apparently a variant of the Dragonbox Pyro with 4G,
-which is said to be shipping in the near future, see
-https://en.wikipedia.org/wiki/DragonBox_Pyra
+I am very interested in the question of atomic writes, but I don't
+know that we're going to have the right people in the room to design
+a userspace API.  Maybe this is more of a Plumbers topic?  I think
+the two main users of a userspace API would be databases (sqlite,
+mysql, postgres, others) and package managers (dpkg, rpm, others?).
+Then there would be the miscellaneous users who just want things to work
+and don't really care about performance (writing a game's high score file,
+updating /etc/sudoers).
 
-     Arnd
+That might argue in favour of having two independent APIs, one that's
+simple, probably quite slow, but safe, and one that's complex, fast
+and safe.  There's also an option for simple, fast and unsafe, but,
+y'know, we already have that ...
+
+Your response also implies that atomic writes are only done to a single
+file at a time, which isn't true for either databases or for package
+managers.  I wonder if the snapshot/reflink paradigm is the right one
+for multi-file atomic updates, or if we can use the same underlying
+mechanism to implement an API which better fits how userspace actually
+wants to do atomic updates.
+
