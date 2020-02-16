@@ -2,111 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C342160179
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2020 04:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B165F16032E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2020 10:44:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbgBPDAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Feb 2020 22:00:53 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:32802 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726533AbgBPDAx (ORCPT
+        id S1726650AbgBPJo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Feb 2020 04:44:56 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41631 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbgBPJo4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Feb 2020 22:00:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9CF298EE302;
-        Sat, 15 Feb 2020 19:00:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1581822052;
-        bh=cTM4up6ZHWt6uvFdR9pTu6vFaE8kPAInf9FaNsvghgM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oVxp8hYp4moaQyeb7yWg+sGEeGWSNh4wuMSb/MeirpKFJ8Ey5ned5jdFCOwb9yOYo
-         7t5KemaarhAW8Z8ayffy80Af+yjTGW0pEH8WYPMrJ638cr2DL3ZtYtlj6XCWMZHHxh
-         SPhzA3t7EC1vgtAnv2JcIMuifW8B2qSSXakAKRgA=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id I7F1e5gXOGAD; Sat, 15 Feb 2020 19:00:52 -0800 (PST)
-Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ABC098EE121;
-        Sat, 15 Feb 2020 19:00:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1581822052;
-        bh=cTM4up6ZHWt6uvFdR9pTu6vFaE8kPAInf9FaNsvghgM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oVxp8hYp4moaQyeb7yWg+sGEeGWSNh4wuMSb/MeirpKFJ8Ey5ned5jdFCOwb9yOYo
-         7t5KemaarhAW8Z8ayffy80Af+yjTGW0pEH8WYPMrJ638cr2DL3ZtYtlj6XCWMZHHxh
-         SPhzA3t7EC1vgtAnv2JcIMuifW8B2qSSXakAKRgA=
-Message-ID: <1581822026.3847.7.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 3/6] configfd: syscall: wire up configfd syscalls
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Date:   Sat, 15 Feb 2020 22:00:26 -0500
-In-Reply-To: <20200216021615.letuocbf4jvqk6nj@yavin>
-References: <20200215153609.23797-1-James.Bottomley@HansenPartnership.com>
-         <20200215153609.23797-4-James.Bottomley@HansenPartnership.com>
-         <20200216021615.letuocbf4jvqk6nj@yavin>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-iSmJS3JGUDs+hD7+BPsx"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        Sun, 16 Feb 2020 04:44:56 -0500
+Received: by mail-ot1-f65.google.com with SMTP id r27so13279248otc.8;
+        Sun, 16 Feb 2020 01:44:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wxad/rW0ARD7ILkeeK41v/OzIsUc8vRXWXFBEAQPs0M=;
+        b=ZTBvD/AFYZIQgiWXwyhy0A+I34zglPuLyv+30dzVibBq+OBjXyn3UuTz0odwhnf5nB
+         j2xASm7scX6DfxSOJSGPG2pcOIov0+IxJjwr3HyyYbQXyNMhPPEFOAVvTPTbEGWNB9GE
+         DhNfBbH4oiJyW68R3lsbdQLdz7Zs3rttr7/OA0BUwkuUh7abGn5FWYCTuNBm1BpmZjMj
+         laaFqE8flXA/zy3ct/gXqVZoYkH+Kkfqu3Df6DcYbaH3kH9Ywl+YTlvNKW9hbehm1tFd
+         CxgkgkFwGq99i31oVqMh5Ot+Cw2WTE7J0S8Nr/hjPmNQFKm11d+lIIzf3mp70yF2pBoV
+         qLgw==
+X-Gm-Message-State: APjAAAWH/hRjrclubD6DJ6pqDxld+o57cjW1wtQkrSlNNZeF9vpZ0hmC
+        8yeul0aoG2zmyCVywdi62zTI8X9oxRC+9vVF4fI=
+X-Google-Smtp-Source: APXvYqxGgw2AMExBCXV20bfh1/5LPO7zAfx126+WuiZFxkn1B98Q92ANdmMo6uPnqnouDbk/Nip7wbyNSUuEMPTQI4c=
+X-Received: by 2002:a05:6830:1d55:: with SMTP id p21mr8308018oth.145.1581846294102;
+ Sun, 16 Feb 2020 01:44:54 -0800 (PST)
+MIME-Version: 1.0
+References: <20200211175507.178100-1-hannes@cmpxchg.org> <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
+ <20200211193101.GA178975@cmpxchg.org> <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
+ <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+ <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <CAMuHMdV8-=dj5n-FM1nHjXq1DhkJVOh4rLFxERt33jAQmU4h_A@mail.gmail.com> <CAK8P3a0m574dHYuKBPLf6q2prnbFxX1w7xe4-JX-drN6dqH6TQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a0m574dHYuKBPLf6q2prnbFxX1w7xe4-JX-drN6dqH6TQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 16 Feb 2020 10:44:42 +0100
+Message-ID: <CAMuHMdVpTngVXUnLzpS3hZWuVg97GVTf2Y3X8md--41AtaD1Ug@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>, kernel-team@fb.com,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        cip-dev@lists.cip-project.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Arnd,
 
---=-iSmJS3JGUDs+hD7+BPsx
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Sat, Feb 15, 2020 at 5:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Sat, Feb 15, 2020 at 12:25 PM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+> > On Thu, Feb 13, 2020 at 5:54 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Wed, Feb 12, 2020 at 9:50 AM Russell King - ARM Linux admin
+> > > <linux@armlinux.org.uk> wrote:
+> >
+> > The CIP-supported RZ/G1 SoCs can have up to 4 GiB, typically split (even
+> > for 1 GiB or 2 GiB configurations) in two parts, one below and one above
+> > the 32-bit physical limit.
+>
+> Good to know. I think there are several other chips that have dual-channel
+> DDR3 and thus /can/ support this configuration, but this rarely happens.
+> Are you aware of commercial products that use a 4GB configuration, aside from
+> the reference board?
 
-On Sun, 2020-02-16 at 13:16 +1100, Aleksa Sarai wrote:
-> On 2020-02-15, James Bottomley <James.Bottomley@HansenPartnership.com
-> > wrote:
-> > diff --git a/arch/x86/entry/syscalls/syscall_32.tbl
-> > b/arch/x86/entry/syscalls/syscall_32.tbl
-> > index c17cb77eb150..fc5101e9e6c4 100644
-> > --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> > @@ -442,3 +442,5 @@
-> >  435	i386	clone3			sys_clone3=09
-> > 		__ia32_sys_clone3
-> >  437	i386	openat2			sys_openat2=09
-> > 		__ia32_sys_openat2
-> >  438	i386	pidfd_getfd		sys_pidfd_getfd=09
-> > 		__ia32_sys_pidfd_getfd
-> > +436	i386	configfd_open		sys_configfd_o
-> > pen		__ia32_sys_configfd_open
-> > +437	i386	configfd_action		sys_configfd
-> > _action		__ia32_sys_configfd_action
->=20
-> Did you mean:
->=20
-> +439	i386	configfd_open		sys_configfd_ope
-> n		__ia32_sys_configfd_open
-> +440	i386	configfd_action		sys_configfd_a
-> ction		__ia32_sys_configfd_action
+Unfortunately I don't know.
+Chris Paterson might know.
 
-Yes, I obviously screwed up the rebase on that one.
+Gr{oetje,eeting}s,
 
-James
+                        Geert
 
---=-iSmJS3JGUDs+hD7+BPsx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCXkiwSgAKCRDnQslM7pis
-hYwxAP9p5gY2q0aN7fbQKZ+ieX8qRWdNtIda4eqBK2DC/VsUdwEA5veSVnw6Af0e
-V71nURr6OwiIujLnXAQM41Y7hWsNp8U=
-=TQQ5
------END PGP SIGNATURE-----
-
---=-iSmJS3JGUDs+hD7+BPsx--
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
