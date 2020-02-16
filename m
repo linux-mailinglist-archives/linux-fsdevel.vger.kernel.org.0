@@ -2,81 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 273DC1604DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2020 17:41:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 871D81604E6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Feb 2020 17:56:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbgBPQlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Feb 2020 11:41:18 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48353 "EHLO
+        id S1728474AbgBPQz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Feb 2020 11:55:57 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48536 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbgBPQlS (ORCPT
+        with ESMTP id S1728370AbgBPQz5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Feb 2020 11:41:18 -0500
+        Sun, 16 Feb 2020 11:55:57 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j3MyN-0000uq-KZ; Sun, 16 Feb 2020 16:40:47 +0000
-Date:   Sun, 16 Feb 2020 17:40:46 +0100
+        id 1j3NCh-0001oq-38; Sun, 16 Feb 2020 16:55:35 +0000
+Date:   Sun, 16 Feb 2020 17:55:33 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fw@deneb.enyo.de>
+To:     Jann Horn <jannh@google.com>
 Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Serge Hallyn <serge@hallyn.com>,
         James Morris <jmorris@namei.org>,
         Kees Cook <keescook@chromium.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v2 00/28] user_namespace: introduce fsid mappings
-Message-ID: <20200216164046.3g2nqvyrd6nis5tm@wittgenstein>
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 04/28] fsuidgid: add fsid mapping helpers
+Message-ID: <20200216165533.z2n2fjs3onlna526@wittgenstein>
 References: <20200214183554.1133805-1-christian.brauner@ubuntu.com>
- <87pneesf0a.fsf@mid.deneb.enyo.de>
+ <20200214183554.1133805-5-christian.brauner@ubuntu.com>
+ <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87pneesf0a.fsf@mid.deneb.enyo.de>
+In-Reply-To: <CAG48ez2o81ZwwL9muYyheN9vY69vJR5sB9LsLh=nk6wB4iuUgw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 16, 2020 at 04:55:49PM +0100, Florian Weimer wrote:
-> * Christian Brauner:
+On Fri, Feb 14, 2020 at 08:11:36PM +0100, Jann Horn wrote:
+> On Fri, Feb 14, 2020 at 7:37 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> > This adds a set of helpers to translate between kfsuid/kfsgid and their
+> > userspace fsuid/fsgid counter parts relative to a given user namespace.
+> >
+> > - kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
+> >   Maps a user-namespace fsuid pair into a kfsuid.
+> >   If no fsuid mappings have been written it behaves identical to calling
+> >   make_kuid(). This ensures backwards compatibility for workloads unaware
+> >   or not in need of fsid mappings.
+> [...]
+> > +#ifdef CONFIG_USER_NS_FSID
+> > +/**
+> > + *     make_kfsuid - Map a user-namespace fsuid pair into a kuid.
+> > + *     @ns:  User namespace that the fsuid is in
+> > + *     @fsuid: User identifier
+> > + *
+> > + *     Maps a user-namespace fsuid pair into a kernel internal kfsuid,
+> > + *     and returns that kfsuid.
+> > + *
+> > + *     When there is no mapping defined for the user-namespace kfsuid
+> > + *     pair INVALID_UID is returned.  Callers are expected to test
+> > + *     for and handle INVALID_UID being returned.  INVALID_UID
+> > + *     may be tested for using uid_valid().
+> > + */
+> > +kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
+> > +{
+> > +       unsigned extents = ns->fsuid_map.nr_extents;
+> > +       smp_rmb();
+> > +
+> > +       /* Map the fsuid to a global kernel fsuid */
+> > +       if (extents == 0)
+> > +               return KUIDT_INIT(map_id_down(&ns->uid_map, fsuid));
+> > +
+> > +       return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
+> > +}
+> > +EXPORT_SYMBOL(make_kfsuid);
 > 
-> > With fsid mappings we can solve this by writing an id mapping of 0
-> > 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> > access the kernel will now lookup the mapping for 300000 in the fsid
-> > mapping tables of the user namespace. And since such a mapping exists,
-> > the corresponding files will have correct ownership.
+> What effect is this fallback going to have for nested namespaces?
 > 
-> I'm worried that this is a bit of a management nightmare because the
-> data about the mapping does not live within the file system (it's
-> externally determined, static, but crucial to the interpretation of
-> file system content).  I expect that many organizations have
-
-Iiuc, that's already the case with user namespaces right now e.g. when
-you have an on-disk mapping that doesn't match your user namespace
-mapping.
-
-> centralized allocation of user IDs, but centralized allocation of the
-> static mapping does not appear feasible.
-
-I thought we're working on this right now with the new nss
-infrastructure to register id mappings aka the shadow discussion we've
-been having.
-
+> Let's say we have an outer namespace N1 with this uid_map:
 > 
-> Have you considered a more complex design, where untranslated nested
-> user IDs are store in a file attribute (or something like that)?  This
+>     0 100000 65535
+> 
+> and with this fsuid_map:
+> 
+>     0 300000 65535
+> 
+> Now from in there, a process that is not aware of the existence of
+> fsuid mappings creates a new user namespace N2 with the following
+> uid_map:
+> 
+>     0 1000 1
+> 
+> At this point, if a process in N2 does chown("foo", 0, 0), is that
+> going to make "foo" owned by kuid 101000, which isn't even mapped in
+> N1?
 
-That doesn't sound like it would be feasible especially in the nesting
-case wrt. to performance.
+So Jann just made a clever suggestion that would solve this problem fsid
+maps can only be written if the corresponding id mapping has been
+written and fsid mappings will only have an effect once the
+corresponding id mapping has been written. That sounds rather sane to
+me.
 
 Christian
