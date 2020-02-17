@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EBB11612FC
+	by mail.lfdr.de (Postfix) with ESMTP id B8C4E1612FD
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgBQNPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1729202AbgBQNPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 17 Feb 2020 08:15:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32966 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729164AbgBQNP1 (ORCPT
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36173 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729166AbgBQNPa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:15:27 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u6so19738037wrt.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2020 05:15:26 -0800 (PST)
+        Mon, 17 Feb 2020 08:15:30 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so18420317wma.1;
+        Mon, 17 Feb 2020 05:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YXRsI1FLp1ez4RjlBLLPoXSAG6JY/ciFQ8Zwwl8DhpQ=;
-        b=FpWJATGo8c/CR2bW6pMfuLl6VrkmKJvAzcnijzkNY3Y/15t0rMmUOjPFPnduL95qGR
-         uVvyYScKAmo3wyfhplZnBtwMudnp4bVIj3MMlMNaXULGTPxwyuF2nTC8MPVXVxWjWCR5
-         tKHesXdt+ybvPkHxbhpGZ+w4URvqhNkXL3hLXOsbYwj5YXY686P50oY8Xei4gKqNSX6p
-         fSdYj1mjqKdl+ggo30w3qvJhaVX50TsLYjSsWUhFmTX8NM7BpoPDFchZY23zTvZpwP/P
-         En0k3vq45sgLK8UYq0Uae3oiZIjDfZsljTR2O6ai8Pdj46TnodwKaGa68HIz2VZDekR0
-         +KWw==
+        bh=MPopq/7KWlkqXSzsgjde6MGol3l+YXrmzEp29RmzokU=;
+        b=qDRAcOHUX9VxeSvORk3o+sADAPDgCaqhH5cSU8Ru9a3zXMNofts+XQywJQHur123ht
+         F47i/iTUfHJy0OSgmKcaQFUeO17lDZF4dfBmVZmUlB7Lp2LqrUvQoIhLKecoOx8Yl8d4
+         52q48KWGlFQBoFuIUchnYhlVtfasWp235JSqCUXOfa9AhqgqEN0QUetFW522XMWQ0ag9
+         J21beKFPPsRpIiEcu5oMOcTmjpHGS7BUrftl2uhISJsmK/BLU/QYid0dBUUpOKGmmd3Q
+         69Gyqvxu1g0lJfDI8NgmJpgOx47EnRq5ks+0wHyEP/9/2hYUHRWF30/+8s6KeZbm9PMc
+         2zVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YXRsI1FLp1ez4RjlBLLPoXSAG6JY/ciFQ8Zwwl8DhpQ=;
-        b=f8V29AUeu1ESbHhr7aBUN2HkwlMC6OMDZuc7t62xBToBNnzlpRNC2kapM/OfzyYPAY
-         HQartAEBFnmjAarzo7U6Ho79w5oPOzjWIy/RWQzDnSx3NeNX5q4/VH5AFGlxi8ZkDZ+Z
-         VMx5vYwQUDGKMqyZN2AiE1xXJnKWyoPQjkAtUwnHo5UitFTY6asJgzHGRDzvHSg1o5KL
-         108k4vAHFjeC/R2rZ7/9u8bnAn82Jnyixmd4cyblqYaVwQU+2dVcAah0c4ObELWEHVcX
-         hFguIrfSoRidgpe/6SG/3/+XLD9JC1nXA5e8j9T1scfO6DD3EiHAPewI6YLRQruPoGp1
-         QKzg==
-X-Gm-Message-State: APjAAAUXjzNpc3/F5hNYQFhRbO8mNDrUnQyMqO527BU2ZjX6F9yOz/B7
-        GkLnunZdgtFSj6xCQnvnpls=
-X-Google-Smtp-Source: APXvYqzjf6eu5g4GcuyYd36C8PfXQ0wLum0xFgMEGT8Xlga9X7WDZkt6OcdL2O+ne/R6FD9eXRoojg==
-X-Received: by 2002:adf:df83:: with SMTP id z3mr22070045wrl.389.1581945325564;
-        Mon, 17 Feb 2020 05:15:25 -0800 (PST)
+        bh=MPopq/7KWlkqXSzsgjde6MGol3l+YXrmzEp29RmzokU=;
+        b=fcUkeqENTApv5gIhKhOYGGg16cCrbZQFG/p0i2PJ+joM9WkDOx5mTJxOi/W7DV9Ina
+         Jje1pmiU/7sMcFbipgAjbbXUfOo4bpHxKl9iTyUUHggouz+kSg6WFTNlqt6SSPTE8G1c
+         vEtAk2lyxLFPsMPEZy0WAu06nP5iu2fvd2YSpENjf+w+gVBlZiaQEEC2/81hh33TJ3PB
+         9LqhqJDPMvYTgLVdjHxUeJF3bHZHYwZcdOxSntlh+VALFkAt54oALQcu2q8MNmx7kGiC
+         4jkSu877LCGwszThasx3Xc/zb+C4oyVXK0NbWnUn1Jlh2FtWHxULJ9UzfdcbpyQ5nGA1
+         X7Yg==
+X-Gm-Message-State: APjAAAU5OFG8Xg6kglpgJjgmMMb27Lyrr/z3Y4RubIGPAEnc8j18tOI5
+        XIoBStrwrGIVOYy51cmgZyA=
+X-Google-Smtp-Source: APXvYqxt5XPM/viO/n6hl+qybwvNVOoVNy2BqL1jaE0LIpXLtnI56oDVdrqcCyar5IFH1m6SHQfBmA==
+X-Received: by 2002:a7b:c084:: with SMTP id r4mr21117319wmh.99.1581945326868;
+        Mon, 17 Feb 2020 05:15:26 -0800 (PST)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id m21sm545745wmi.27.2020.02.17.05.15.24
+        by smtp.gmail.com with ESMTPSA id m21sm545745wmi.27.2020.02.17.05.15.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 05:15:25 -0800 (PST)
+        Mon, 17 Feb 2020 05:15:26 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 15/16] fanotify: refine rules for when name is reported
-Date:   Mon, 17 Feb 2020 15:14:54 +0200
-Message-Id: <20200217131455.31107-16-amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: [BONUS][PATCH v2 16/16] fanotify: support limited functionality for unprivileged users
+Date:   Mon, 17 Feb 2020 15:14:55 +0200
+Message-Id: <20200217131455.31107-17-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200217131455.31107-1-amir73il@gmail.com>
 References: <20200217131455.31107-1-amir73il@gmail.com>
@@ -58,97 +59,173 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With FAN_REPORT_NAME, name will be reported if event is in the mask of a
-watching parent or filesystem mark.
+Add support for new fanotify_init() flag FAN_UNPRIVILEGED.
+User may request an unprivileged event listener using this flag even if
+user is privileged.
 
-Name will not be reported if event is only in the mask of a mark on the
-victim inode itself.
+An unprivileged event listener does not get an open file descriptor in
+the event nor the process pid of another process.  An unprivileged event
+listener cannot request permission events, cannot set mount/filesystem
+marks and cannot request unlimited queue/marks.
 
-If event is only in the mask of a marked mount, name will be reported if
-the victim inode is not the mount's root.  Note that the mount's root
-could be a non-directory in case of bind mount.
+This enables the limited functionality similar to inotify when watching a
+set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
+requiring SYS_CAP_ADMIN privileges.
 
+The FAN_DIR_MODIFY event and FAN_REPORT_FID_NAME init flag, provide a
+method for an unprivileged event listener watching a set of directories
+(with FAN_EVENT_ON_CHILD) to monitor all changes inside those directories.
+
+This typically requires that the listener keeps a map of watched
+directory fid to dirfd (O_PATH), where fid is obtained with
+name_to_handle_at() before starting to watch for changes.
+
+When getting an event, the reported fid of the parent should be resolved
+to dirfd and fstatsat(2) with dirfd and name should be used to query the
+state of the filesystem entry.
+
+Note that even though events do not report the event creator pid,
+fanotify does not merge similar events on the same object that were
+generated by different processes. This is aligned with exiting behavior
+when generating processes are outside of the listener pidns (which
+results in reporting 0 pid to listener).
+
+Cc: <linux-api@vger.kernel.org>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c | 37 +++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 42 ++++++++++++++++++++++++++----
+ include/linux/fanotify.h           | 16 +++++++++++-
+ include/uapi/linux/fanotify.h      |  1 +
+ 3 files changed, 53 insertions(+), 6 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 43c338a8a2f1..45203c1484b9 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -202,6 +202,32 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		     !(mark->mask & FS_EVENT_ON_CHILD)))
- 			continue;
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 5d369aa5d1bc..ac2cdb5287fe 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -328,11 +328,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+ 	metadata.vers = FANOTIFY_METADATA_VERSION;
+ 	metadata.reserved = 0;
+ 	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
+-	metadata.pid = pid_vnr(event->pid);
++	/*
++	 * An unprivileged event listener does not get an open file descriptor
++	 * in the event nor another generating process pid. If the event was
++	 * generated by the unprivileged process itself, self pid is reported.
++	 */
++	if (!FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) ||
++	    task_tgid(current) == event->pid)
++		metadata.pid = pid_vnr(event->pid);
++	else
++		metadata.pid = 0;
  
+ 	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
+ 		metadata.event_len += fanotify_event_info_len(event);
+-	} else if (fanotify_event_has_path(event)) {
++	} else if (!FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) &&
++		   fanotify_event_has_path(event)) {
+ 		fd = create_fd(group, event, &f);
+ 		if (fd < 0)
+ 			return fd;
+@@ -845,12 +855,26 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	int f_flags, fd;
+ 	struct user_struct *user;
+ 	struct fanotify_event *oevent;
++	unsigned int class = flags & FANOTIFY_CLASS_BITS;
+ 
+ 	pr_debug("%s: flags=%x event_f_flags=%x\n",
+ 		 __func__, flags, event_f_flags);
+ 
+-	if (!capable(CAP_SYS_ADMIN))
++	if (flags & FAN_UNPRIVILEGED) {
 +		/*
-+		 * fanotify_alloc_event() uses the "on child" flag as indication
-+		 * for reporting name, but the flag will be masked out before
-+		 * reporting to user.
-+		 *
-+		 * With FAN_REPORT_NAME, name will be reported if event is in
-+		 * the mask of a watching parent or filesystem mark.
-+		 * name will not be reported if event is only in the mask of a
-+		 * mark on the victim inode itself.
-+		 * If event is only in the mask of a marked mount, name will be
-+		 * reported if the victim inode is not the mount's root. Note
-+		 * that the mount's root could be a non-directory in case of
-+		 * bind mount.
++		 * User can request an unprivileged event listener even if
++		 * user is privileged. An unprivileged event listener does not
++		 * get an open file descriptor in the event nor the proccess id
++		 * of another process. An unprivileged event listener and cannot
++		 * request permission events, cannot set mount/filesystem marks
++		 * and cannot request unlimited queue/marks.
 +		 */
-+		if (FAN_GROUP_FLAG(group, FAN_REPORT_NAME) &&
-+		    event_mask & mark->mask & FS_EVENTS_POSS_ON_CHILD) {
-+			user_mask |= FS_EVENT_ON_CHILD;
-+			if (type == FSNOTIFY_OBJ_TYPE_SB ||
-+			    (type == FSNOTIFY_OBJ_TYPE_VFSMOUNT &&
-+			     !WARN_ON_ONCE(data_type != FSNOTIFY_EVENT_PATH) &&
-+			     path->dentry != path->mnt->mnt_root)) {
-+				event_mask |= FS_EVENT_ON_CHILD;
-+				marks_mask |= FS_EVENT_ON_CHILD;
-+			}
-+		}
++		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
++		    class != FAN_CLASS_NOTIF)
++			return -EINVAL;
++	} else if (!capable(CAP_SYS_ADMIN)) {
+ 		return -EPERM;
++	}
+ 
+ #ifdef CONFIG_AUDITSYSCALL
+ 	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
+@@ -916,7 +940,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	group->fanotify_data.f_flags = event_f_flags;
+ 	init_waitqueue_head(&group->fanotify_data.access_waitq);
+ 	INIT_LIST_HEAD(&group->fanotify_data.access_list);
+-	switch (flags & FANOTIFY_CLASS_BITS) {
++	switch (class) {
+ 	case FAN_CLASS_NOTIF:
+ 		group->priority = FS_PRIO_0;
+ 		break;
+@@ -1101,6 +1125,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	    group->priority == FS_PRIO_0)
+ 		goto fput_and_out;
+ 
++	/*
++	 * An unprivileged event listener is not allowed to watch a mount
++	 * point nor a filesystem.
++	 */
++	if (FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) &&
++	    mark_type != FAN_MARK_INODE)
++		goto fput_and_out;
 +
- 		marks_mask |= mark->mask;
- 		marks_ignored_mask |= mark->ignored_mask;
- 	}
-@@ -344,9 +370,8 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 	 * With flag FAN_REPORT_NAME, we report the parent fid and name for
- 	 * events possible "on child" in addition to reporting the child fid.
- 	 * If parent is unknown (dentry is disconnected) or parent is not on the
--	 * same filesystem as child (dentry is sb root), only "child" fid is
--	 * reported. Events are reported the same way when reported to sb, mount
--	 * or inode marks and when reported to a directory watching children.
-+	 * same filesystem/mount as child (dentry is sb/mount root), only the
-+	 * "child" fid is reported.
- 	 * Allocate an fanotify_name_event struct and copy the name.
- 	 */
- 	if (mask & FAN_DIR_MODIFY && !(WARN_ON_ONCE(!file_name))) {
-@@ -357,7 +382,7 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 		id = NULL;
- 		dir = inode;
- 	} else if (FAN_GROUP_FLAG(group, FAN_REPORT_NAME) &&
--		   mask & FS_EVENTS_POSS_ON_CHILD &&
-+		   mask & FS_EVENT_ON_CHILD &&
- 		   likely(dentry && !IS_ROOT(dentry))) {
- 		parent = dget_parent(dentry);
- 		dir = d_inode(parent);
-@@ -400,7 +425,7 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
- 	 * directory and child watches exist.
- 	 */
- 	fsnotify_init_event(&event->fse, (void *)dentry ?: inode);
--	event->mask = mask;
-+	event->mask = mask & FANOTIFY_OUTGOING_EVENTS;
- 	if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
- 		event->pid = get_pid(task_pid(current));
- 	else
-@@ -503,7 +528,7 @@ static int fanotify_handle_event(struct fsnotify_group *group,
+ 	/*
+ 	 * Events with data type inode do not carry enough information to report
+ 	 * event->fd, so we do not allow setting a mask for inode events unless
+@@ -1214,7 +1246,7 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+  */
+ static int __init fanotify_user_setup(void)
+ {
+-	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 9);
++	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
  
- 	mask = fanotify_group_event_mask(group, iter_info, mask, data,
- 					 data_type);
--	if (!mask)
-+	if (!(mask & FANOTIFY_OUTGOING_EVENTS))
- 		return 0;
+ 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index 5412a25c54c0..93107b44e4e1 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -21,7 +21,21 @@
+ #define FANOTIFY_INIT_FLAGS	(FANOTIFY_CLASS_BITS | \
+ 				 FAN_REPORT_TID | FAN_REPORT_FID_NAME | \
+ 				 FAN_CLOEXEC | FAN_NONBLOCK | \
+-				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
++				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS | \
++				 FAN_UNPRIVILEGED)
++
++/*
++ * fanotify_init() flags allowed for unprivileged listener.
++ * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
++ * but it is the only class we allow for unprivileged listener.
++ * Since unprivileged listener does not provide file descriptors in events,
++ * FAN_REPORT_FID_NAME makes sense, but it is not a must.
++ * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
++ * event->pid only to filter out events generated by listener process itself.
++ */
++#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
++					 FAN_CLASS_NOTIF | FAN_UNPRIVILEGED | \
++					 FAN_REPORT_FID_NAME)
  
- 	pr_debug("%s: group=%p inode=%p mask=%x\n", __func__, group, inode,
+ #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+ 				 FAN_MARK_FILESYSTEM)
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index 04181769bb50..2be673862a43 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -50,6 +50,7 @@
+ #define FAN_UNLIMITED_QUEUE	0x00000010
+ #define FAN_UNLIMITED_MARKS	0x00000020
+ #define FAN_ENABLE_AUDIT	0x00000040
++#define FAN_UNPRIVILEGED	0x00000080
+ 
+ /* Flags to determine fanotify event format */
+ #define FAN_REPORT_TID		0x00000100	/* event->pid is thread id */
 -- 
 2.17.1
 
