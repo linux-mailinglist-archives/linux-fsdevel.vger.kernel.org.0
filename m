@@ -2,54 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F37FD161416
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D66EE16145A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbgBQOCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 09:02:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59942 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727803AbgBQOCv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:02:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i4qarw20lvxrlPR62vHBEFB8tnXHI3FU5InVqT9e8ZI=; b=FCAV8shUiXodtxiHo9lP5Bp1pV
-        GNBVzj54Ym/CArI5JhJ1T5sH1YWOirYDvtC3DaxPsMUCb/ACYKMpJcExr6sprjRC55DO+GLCaiIKo
-        I6jnPaFkzEa0lF3dCq/R69Ayhm4f6szpCMTzPPR3ZmOmJBdqRCa9nRxkWCOS4Fm2+BZt1witgsWJL
-        DABWXuZzKBdnnH9bAZ1fzwJQwPKlGJlQt7qiWoNJO0p1eoD5ejZyRPpqKRAyU6OJBuKqoneaw4DH8
-        78iAvIXVXakwwKhfvvGpVGgZs+X+7i6RUenVD7GZOEuH5UWa7rprLNr/nPpXDvpl4489S4uM8JXl5
-        FUSVvwvQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3gz4-0005ZI-SL; Mon, 17 Feb 2020 14:02:50 +0000
-Date:   Mon, 17 Feb 2020 06:02:50 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com
-Subject: Re: [PATCH] iomap: return partial I/O count on error in direct I/O
-Message-ID: <20200217140250.GA21246@infradead.org>
-References: <20200213192503.17267-1-rgoldwyn@suse.de>
- <20200217131752.GA14490@infradead.org>
- <20200217134417.bxdw4yex5ky44p57@fiona>
+        id S1728444AbgBQOQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 09:16:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51760 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbgBQOQX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Feb 2020 09:16:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 22183B3C2;
+        Mon, 17 Feb 2020 14:16:21 +0000 (UTC)
+Date:   Mon, 17 Feb 2020 14:16:16 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     ?????? <yun.wang@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
+ locality info
+Message-ID: <20200217141616.GB3420@suse.de>
+References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
+ <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+ <20200214151048.GL14914@hirez.programming.kicks-ass.net>
+ <20200217115810.GA3420@suse.de>
+ <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20200217134417.bxdw4yex5ky44p57@fiona>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 07:44:17AM -0600, Goldwyn Rodrigues wrote:
-> > Haven't we traditionally failed direct I/O syscalls that don't fully
-> > complete and never supported short writes (or reads)?
+On Mon, Feb 17, 2020 at 09:23:52PM +0800, ?????? wrote:
 > 
-> Yes, but I think that decision should be with the filesystem what to do
-> with it and not the iomap layer.
+> 
+> On 2020/2/17 ??????7:58, Mel Gorman wrote:
+> [snip]
+> >> Mel, I suspect you still feel that way, right?
+> >>
+> > 
+> > Yes, I still think it would be a struggle to interpret the data
+> > meaningfully without very specific knowledge of the implementation. If
+> > the scan rate was constant, it would be easier but that would make NUMA
+> > balancing worse overall. Similarly, the stat might get very difficult to
+> > interpret when NUMA balancing is failing because of a load imbalance,
+> > pages are shared and being interleaved or NUMA groups span multiple
+> > active nodes.
+> 
+> Hi, Mel, appreciated to have you back on the table :-)
+> 
+> IMHO the scan period changing should not be a problem now, since the
+> maximum period is defined by user, so monitoring at maximum period
+> on the accumulated page accessing counters is always meaningful, correct?
+> 
 
-But then you also need to fix up the existing callers to do the
-conversion.
+It has meaning but the scan rate drives the fault rate which is the basis
+for the stats you accumulate. If the scan rate is high when accesses
+are local, the stats can be skewed making it appear the task is much
+more local than it may really is at a later point in time. The scan rate
+affects the accuracy of the information. The counters have meaning but
+they needs careful interpretation.
+
+> FYI, by monitoring locality, we found that the kvm vcpu thread is not
+> covered by NUMA Balancing, whatever how many maximum period passed, the
+> counters are not increasing, or very slowly, although inside guest we are
+> copying memory.
+> 
+> Later we found such task rarely exit to user space to trigger task
+> work callbacks, and NUMA Balancing scan depends on that, which help us
+> realize the importance to enable NUMA Balancing inside guest, with the
+> correct NUMA topo, a big performance risk I'll say :-P
+> 
+
+Which is a very interesting corner case in itself but also one that
+could have potentially have been inferred from monitoring /proc/vmstat
+numa_pte_updates or on a per-task basis by monitoring /proc/PID/sched and
+watching numa_scan_seq and total_numa_faults. Accumulating the information
+on a per-cgroup basis would require a bit more legwork.
+
+> Maybe not a good example, but we just try to highlight that NUMA Balancing
+> could have issue in some cases, and we want them to be exposed, somehow,
+> maybe by the locality.
+> 
+
+Again, I'm somewhat neutral on the patch simply because I would not use
+the information for debugging problems with NUMA balancing. I would try
+using tracepoints and if the tracepoints were not good enough, I'd add or
+fix them -- similar to what I had to do with sched_stick_numa recently.
+The caveat is that I mostly look at this sort of problem as a developer.
+Sysadmins have very different requirements, especially simplicity even
+if the simplicity in this case is an illusion.
+
+-- 
+Mel Gorman
+SUSE Labs
