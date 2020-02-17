@@ -2,230 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C4E1612FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:16:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78FB416131F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:18:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbgBQNPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 08:15:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36173 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbgBQNPa (ORCPT
+        id S1726528AbgBQNRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 08:17:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35416 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBQNRx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:15:30 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p17so18420317wma.1;
-        Mon, 17 Feb 2020 05:15:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MPopq/7KWlkqXSzsgjde6MGol3l+YXrmzEp29RmzokU=;
-        b=qDRAcOHUX9VxeSvORk3o+sADAPDgCaqhH5cSU8Ru9a3zXMNofts+XQywJQHur123ht
-         F47i/iTUfHJy0OSgmKcaQFUeO17lDZF4dfBmVZmUlB7Lp2LqrUvQoIhLKecoOx8Yl8d4
-         52q48KWGlFQBoFuIUchnYhlVtfasWp235JSqCUXOfa9AhqgqEN0QUetFW522XMWQ0ag9
-         J21beKFPPsRpIiEcu5oMOcTmjpHGS7BUrftl2uhISJsmK/BLU/QYid0dBUUpOKGmmd3Q
-         69Gyqvxu1g0lJfDI8NgmJpgOx47EnRq5ks+0wHyEP/9/2hYUHRWF30/+8s6KeZbm9PMc
-         2zVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MPopq/7KWlkqXSzsgjde6MGol3l+YXrmzEp29RmzokU=;
-        b=fcUkeqENTApv5gIhKhOYGGg16cCrbZQFG/p0i2PJ+joM9WkDOx5mTJxOi/W7DV9Ina
-         Jje1pmiU/7sMcFbipgAjbbXUfOo4bpHxKl9iTyUUHggouz+kSg6WFTNlqt6SSPTE8G1c
-         vEtAk2lyxLFPsMPEZy0WAu06nP5iu2fvd2YSpENjf+w+gVBlZiaQEEC2/81hh33TJ3PB
-         9LqhqJDPMvYTgLVdjHxUeJF3bHZHYwZcdOxSntlh+VALFkAt54oALQcu2q8MNmx7kGiC
-         4jkSu877LCGwszThasx3Xc/zb+C4oyVXK0NbWnUn1Jlh2FtWHxULJ9UzfdcbpyQ5nGA1
-         X7Yg==
-X-Gm-Message-State: APjAAAU5OFG8Xg6kglpgJjgmMMb27Lyrr/z3Y4RubIGPAEnc8j18tOI5
-        XIoBStrwrGIVOYy51cmgZyA=
-X-Google-Smtp-Source: APXvYqxt5XPM/viO/n6hl+qybwvNVOoVNy2BqL1jaE0LIpXLtnI56oDVdrqcCyar5IFH1m6SHQfBmA==
-X-Received: by 2002:a7b:c084:: with SMTP id r4mr21117319wmh.99.1581945326868;
-        Mon, 17 Feb 2020 05:15:26 -0800 (PST)
-Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id m21sm545745wmi.27.2020.02.17.05.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 05:15:26 -0800 (PST)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: [BONUS][PATCH v2 16/16] fanotify: support limited functionality for unprivileged users
-Date:   Mon, 17 Feb 2020 15:14:55 +0200
-Message-Id: <20200217131455.31107-17-amir73il@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200217131455.31107-1-amir73il@gmail.com>
-References: <20200217131455.31107-1-amir73il@gmail.com>
+        Mon, 17 Feb 2020 08:17:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=m99idTVz6j5X391tgL2V4vZc3QX+neDzRSEZQxuFrDw=; b=plmw6BFvypCQyzRuR51HPo/4RO
+        pEGFnlYHf4eSIEqgio/Pris9HqcgWXGSi9sT02zq95eh7vcCWD5kMzHJTx5LvWI9qvm47asaWBSIB
+        rclJpvNUZl7Xg5tA7AxZmkUFbSSgzpO+5d8xid6K+ZDDnaVF34VEBuXGyMOqOCuKTqX+degOg5Bc0
+        d9s+0XVI9ujCO+nJZfn+p/TuKssKtCaNk4Std8LlS/+B9G1tPB0Y9AszjXcBBQEp130SiBBjskIp7
+        kxmzyo+cR1bOil/J4+4HyiEqyzxHc5fBGZqgwXWJpD7hb9nJpGoQrPxXKEuVOM4yoQH7x81EnbXiU
+        yp0vnZ1g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j3gHZ-0000at-0p; Mon, 17 Feb 2020 13:17:53 +0000
+Date:   Mon, 17 Feb 2020 05:17:52 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH] iomap: return partial I/O count on error in direct I/O
+Message-ID: <20200217131752.GA14490@infradead.org>
+References: <20200213192503.17267-1-rgoldwyn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200213192503.17267-1-rgoldwyn@suse.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support for new fanotify_init() flag FAN_UNPRIVILEGED.
-User may request an unprivileged event listener using this flag even if
-user is privileged.
+On Thu, Feb 13, 2020 at 01:25:03PM -0600, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> In case of a block device error, iomap code returns 0 as opposed to
+> the amount of submitted I/O, which may have completed before the
+> error occurred. Return the count of submitted I/O for correct
+> accounting.
 
-An unprivileged event listener does not get an open file descriptor in
-the event nor the process pid of another process.  An unprivileged event
-listener cannot request permission events, cannot set mount/filesystem
-marks and cannot request unlimited queue/marks.
-
-This enables the limited functionality similar to inotify when watching a
-set of files and directories for OPEN/ACCESS/MODIFY/CLOSE events, without
-requiring SYS_CAP_ADMIN privileges.
-
-The FAN_DIR_MODIFY event and FAN_REPORT_FID_NAME init flag, provide a
-method for an unprivileged event listener watching a set of directories
-(with FAN_EVENT_ON_CHILD) to monitor all changes inside those directories.
-
-This typically requires that the listener keeps a map of watched
-directory fid to dirfd (O_PATH), where fid is obtained with
-name_to_handle_at() before starting to watch for changes.
-
-When getting an event, the reported fid of the parent should be resolved
-to dirfd and fstatsat(2) with dirfd and name should be used to query the
-state of the filesystem entry.
-
-Note that even though events do not report the event creator pid,
-fanotify does not merge similar events on the same object that were
-generated by different processes. This is aligned with exiting behavior
-when generating processes are outside of the listener pidns (which
-results in reporting 0 pid to listener).
-
-Cc: <linux-api@vger.kernel.org>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify_user.c | 42 ++++++++++++++++++++++++++----
- include/linux/fanotify.h           | 16 +++++++++++-
- include/uapi/linux/fanotify.h      |  1 +
- 3 files changed, 53 insertions(+), 6 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 5d369aa5d1bc..ac2cdb5287fe 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -328,11 +328,21 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	metadata.vers = FANOTIFY_METADATA_VERSION;
- 	metadata.reserved = 0;
- 	metadata.mask = event->mask & FANOTIFY_OUTGOING_EVENTS;
--	metadata.pid = pid_vnr(event->pid);
-+	/*
-+	 * An unprivileged event listener does not get an open file descriptor
-+	 * in the event nor another generating process pid. If the event was
-+	 * generated by the unprivileged process itself, self pid is reported.
-+	 */
-+	if (!FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) ||
-+	    task_tgid(current) == event->pid)
-+		metadata.pid = pid_vnr(event->pid);
-+	else
-+		metadata.pid = 0;
- 
- 	if (FAN_GROUP_FLAG(group, FAN_REPORT_FID)) {
- 		metadata.event_len += fanotify_event_info_len(event);
--	} else if (fanotify_event_has_path(event)) {
-+	} else if (!FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) &&
-+		   fanotify_event_has_path(event)) {
- 		fd = create_fd(group, event, &f);
- 		if (fd < 0)
- 			return fd;
-@@ -845,12 +855,26 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	int f_flags, fd;
- 	struct user_struct *user;
- 	struct fanotify_event *oevent;
-+	unsigned int class = flags & FANOTIFY_CLASS_BITS;
- 
- 	pr_debug("%s: flags=%x event_f_flags=%x\n",
- 		 __func__, flags, event_f_flags);
- 
--	if (!capable(CAP_SYS_ADMIN))
-+	if (flags & FAN_UNPRIVILEGED) {
-+		/*
-+		 * User can request an unprivileged event listener even if
-+		 * user is privileged. An unprivileged event listener does not
-+		 * get an open file descriptor in the event nor the proccess id
-+		 * of another process. An unprivileged event listener and cannot
-+		 * request permission events, cannot set mount/filesystem marks
-+		 * and cannot request unlimited queue/marks.
-+		 */
-+		if ((flags & ~FANOTIFY_UNPRIV_INIT_FLAGS) ||
-+		    class != FAN_CLASS_NOTIF)
-+			return -EINVAL;
-+	} else if (!capable(CAP_SYS_ADMIN)) {
- 		return -EPERM;
-+	}
- 
- #ifdef CONFIG_AUDITSYSCALL
- 	if (flags & ~(FANOTIFY_INIT_FLAGS | FAN_ENABLE_AUDIT))
-@@ -916,7 +940,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	group->fanotify_data.f_flags = event_f_flags;
- 	init_waitqueue_head(&group->fanotify_data.access_waitq);
- 	INIT_LIST_HEAD(&group->fanotify_data.access_list);
--	switch (flags & FANOTIFY_CLASS_BITS) {
-+	switch (class) {
- 	case FAN_CLASS_NOTIF:
- 		group->priority = FS_PRIO_0;
- 		break;
-@@ -1101,6 +1125,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	    group->priority == FS_PRIO_0)
- 		goto fput_and_out;
- 
-+	/*
-+	 * An unprivileged event listener is not allowed to watch a mount
-+	 * point nor a filesystem.
-+	 */
-+	if (FAN_GROUP_FLAG(group, FAN_UNPRIVILEGED) &&
-+	    mark_type != FAN_MARK_INODE)
-+		goto fput_and_out;
-+
- 	/*
- 	 * Events with data type inode do not carry enough information to report
- 	 * event->fd, so we do not allow setting a mask for inode events unless
-@@ -1214,7 +1246,7 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-  */
- static int __init fanotify_user_setup(void)
- {
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 9);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 5412a25c54c0..93107b44e4e1 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -21,7 +21,21 @@
- #define FANOTIFY_INIT_FLAGS	(FANOTIFY_CLASS_BITS | \
- 				 FAN_REPORT_TID | FAN_REPORT_FID_NAME | \
- 				 FAN_CLOEXEC | FAN_NONBLOCK | \
--				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS)
-+				 FAN_UNLIMITED_QUEUE | FAN_UNLIMITED_MARKS | \
-+				 FAN_UNPRIVILEGED)
-+
-+/*
-+ * fanotify_init() flags allowed for unprivileged listener.
-+ * FAN_CLASS_NOTIF in this mask is purely semantic because it is zero,
-+ * but it is the only class we allow for unprivileged listener.
-+ * Since unprivileged listener does not provide file descriptors in events,
-+ * FAN_REPORT_FID_NAME makes sense, but it is not a must.
-+ * FAN_REPORT_TID does not make sense for unprivileged listener, which uses
-+ * event->pid only to filter out events generated by listener process itself.
-+ */
-+#define FANOTIFY_UNPRIV_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
-+					 FAN_CLASS_NOTIF | FAN_UNPRIVILEGED | \
-+					 FAN_REPORT_FID_NAME)
- 
- #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
- 				 FAN_MARK_FILESYSTEM)
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 04181769bb50..2be673862a43 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -50,6 +50,7 @@
- #define FAN_UNLIMITED_QUEUE	0x00000010
- #define FAN_UNLIMITED_MARKS	0x00000020
- #define FAN_ENABLE_AUDIT	0x00000040
-+#define FAN_UNPRIVILEGED	0x00000080
- 
- /* Flags to determine fanotify event format */
- #define FAN_REPORT_TID		0x00000100	/* event->pid is thread id */
--- 
-2.17.1
-
+Haven't we traditionally failed direct I/O syscalls that don't fully
+complete and never supported short writes (or reads)?
