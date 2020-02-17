@@ -2,116 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D66EE16145A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9867316147D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:24:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbgBQOQY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 09:16:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51760 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbgBQOQX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:16:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 22183B3C2;
-        Mon, 17 Feb 2020 14:16:21 +0000 (UTC)
-Date:   Mon, 17 Feb 2020 14:16:16 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     ?????? <yun.wang@linux.alibaba.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Michal Koutn? <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
- locality info
-Message-ID: <20200217141616.GB3420@suse.de>
-References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
- <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
- <20200214151048.GL14914@hirez.programming.kicks-ass.net>
- <20200217115810.GA3420@suse.de>
- <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+        id S1728724AbgBQOYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 09:24:15 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:37950 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728605AbgBQOYP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Feb 2020 09:24:15 -0500
+Received: by mail-il1-f200.google.com with SMTP id i67so14449568ilf.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2020 06:24:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hnJSDbHMcnssCWRWqbDwgLrcjj0vFs982qQBvNrf2ss=;
+        b=ZScvUG0ZCSWMXs2pwOlpa5kCfnFoPVo2qUVms1W5CYeP4uVuK8KPDI2uYGfIPbRk2S
+         uEJ7BKaIxGt0M0EcgsDPRj2JCeVBdhobPf3k7gwebKaDgZiUX6LbrmIpXA5cbte92DxI
+         I0KNbGk8Lcpi0LHQ/4HMwLtWKqOy2uGyzD0wIfrULViKfnIGcX8X9Ivu7EFBdNXU7i6S
+         3Za1L3c9pfJdag2GqUMyzk5KZ11tD4uKQJ2WmycLWg8z6xEuSuXrWTVcjTvnoEUHC/uI
+         9KBW+1ugaOru5IzwaEM6HH8GReJ86H85aCqQ972kuMTV8IcEiUqti2sxsAOb6YKn1Pfj
+         1VMw==
+X-Gm-Message-State: APjAAAXihfpZHoTIDSSd/GEHRMOHS7vp9sOHZ1MmNaSkY86ZGp2c3Wbd
+        zXOfYwpTgFByPUn2i9rF1qxCC2nYsugOl0zTqw1fVzaSW2MQ
+X-Google-Smtp-Source: APXvYqzQL2hTxR8fMdsQoHup4xu8dl9sqNfHTiHzCiY90UAocR1Gr7POyZuAlFVK/7/Mkv0/MM2rRcrQmNZs92PfptY7+Wzm0o1k
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a02:cd12:: with SMTP id g18mr12660761jaq.76.1581949453102;
+ Mon, 17 Feb 2020 06:24:13 -0800 (PST)
+Date:   Mon, 17 Feb 2020 06:24:13 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003474b5059ec64f30@google.com>
+Subject: KASAN: use-after-free Read in evict
+From:   syzbot <syzbot+6ef7546f7398f3f97609@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 09:23:52PM +0800, ?????? wrote:
-> 
-> 
-> On 2020/2/17 ??????7:58, Mel Gorman wrote:
-> [snip]
-> >> Mel, I suspect you still feel that way, right?
-> >>
-> > 
-> > Yes, I still think it would be a struggle to interpret the data
-> > meaningfully without very specific knowledge of the implementation. If
-> > the scan rate was constant, it would be easier but that would make NUMA
-> > balancing worse overall. Similarly, the stat might get very difficult to
-> > interpret when NUMA balancing is failing because of a load imbalance,
-> > pages are shared and being interleaved or NUMA groups span multiple
-> > active nodes.
-> 
-> Hi, Mel, appreciated to have you back on the table :-)
-> 
-> IMHO the scan period changing should not be a problem now, since the
-> maximum period is defined by user, so monitoring at maximum period
-> on the accumulated page accessing counters is always meaningful, correct?
-> 
+Hello,
 
-It has meaning but the scan rate drives the fault rate which is the basis
-for the stats you accumulate. If the scan rate is high when accesses
-are local, the stats can be skewed making it appear the task is much
-more local than it may really is at a later point in time. The scan rate
-affects the accuracy of the information. The counters have meaning but
-they needs careful interpretation.
+syzbot found the following crash on:
 
-> FYI, by monitoring locality, we found that the kvm vcpu thread is not
-> covered by NUMA Balancing, whatever how many maximum period passed, the
-> counters are not increasing, or very slowly, although inside guest we are
-> copying memory.
-> 
-> Later we found such task rarely exit to user space to trigger task
-> work callbacks, and NUMA Balancing scan depends on that, which help us
-> realize the importance to enable NUMA Balancing inside guest, with the
-> correct NUMA topo, a big performance risk I'll say :-P
-> 
+HEAD commit:    fdfa3a67 Merge tag 'scsi-misc' of git://git.kernel.org/pub..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d4c07ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=71f1d0a1df5278ab
+dashboard link: https://syzkaller.appspot.com/bug?extid=6ef7546f7398f3f97609
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Which is a very interesting corner case in itself but also one that
-could have potentially have been inferred from monitoring /proc/vmstat
-numa_pte_updates or on a per-task basis by monitoring /proc/PID/sched and
-watching numa_scan_seq and total_numa_faults. Accumulating the information
-on a per-cgroup basis would require a bit more legwork.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> Maybe not a good example, but we just try to highlight that NUMA Balancing
-> could have issue in some cases, and we want them to be exposed, somehow,
-> maybe by the locality.
-> 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6ef7546f7398f3f97609@syzkaller.appspotmail.com
 
-Again, I'm somewhat neutral on the patch simply because I would not use
-the information for debugging problems with NUMA balancing. I would try
-using tracepoints and if the tracepoints were not good enough, I'd add or
-fix them -- similar to what I had to do with sched_stick_numa recently.
-The caveat is that I mostly look at this sort of problem as a developer.
-Sysadmins have very different requirements, especially simplicity even
-if the simplicity in this case is an illusion.
+==================================================================
+BUG: KASAN: use-after-free in __list_del_entry_valid+0xdc/0xf5 lib/list_debug.c:54
+Read of size 8 at addr ffff888096b35650 by task syz-executor.2/16535
 
--- 
-Mel Gorman
-SUSE Labs
+CPU: 0 PID: 16535 Comm: syz-executor.2 Not tainted 5.5.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x197/0x210 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
+ __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
+ kasan_report+0x12/0x20 mm/kasan/common.c:641
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+ __list_del_entry_valid+0xdc/0xf5 lib/list_debug.c:54
+ __list_del_entry include/linux/list.h:132 [inline]
+ list_del_init include/linux/list.h:204 [inline]
+ inode_io_list_del_locked+0x8b/0x200 fs/fs-writeback.c:148
+ inode_io_list_del+0x32/0x40 fs/fs-writeback.c:1126
+ evict+0x11d/0x680 fs/inode.c:562
+ iput_final fs/inode.c:1571 [inline]
+ iput+0x55d/0x900 fs/inode.c:1597
+ dentry_unlink_inode+0x2d9/0x400 fs/dcache.c:374
+ d_delete fs/dcache.c:2451 [inline]
+ d_delete+0x128/0x160 fs/dcache.c:2440
+ vfs_rmdir fs/namei.c:3966 [inline]
+ vfs_rmdir+0x41f/0x4f0 fs/namei.c:3931
+ do_rmdir+0x39e/0x420 fs/namei.c:4014
+ __do_sys_rmdir fs/namei.c:4032 [inline]
+ __se_sys_rmdir fs/namei.c:4030 [inline]
+ __x64_sys_rmdir+0x36/0x40 fs/namei.c:4030
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45b127
+Code: 00 66 90 b8 57 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 2d b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 54 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 0d b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff57350a28 EFLAGS: 00000207 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 000000000045b127
+RDX: 0000000000000000 RSI: 000000000071e698 RDI: 00007fff57351b60
+RBP: 0000000000000102 R08: 0000000000000000 R09: 0000000000000001
+R10: 000000000000000a R11: 0000000000000207 R12: 00007fff57351b60
+R13: 0000000001773940 R14: 0000000000000000 R15: 00007fff57351b60
+
+Allocated by task 18898:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ __kasan_kmalloc mm/kasan/common.c:515 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
+ kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:523
+ slab_post_alloc_hook mm/slab.h:584 [inline]
+ slab_alloc mm/slab.c:3320 [inline]
+ kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
+ ext4_alloc_inode+0x1f/0x5c0 fs/ext4/super.c:1119
+ alloc_inode+0x68/0x1e0 fs/inode.c:231
+ new_inode_pseudo+0x19/0xf0 fs/inode.c:927
+ new_inode+0x1f/0x40 fs/inode.c:956
+ __ext4_new_inode+0x3d5/0x4fa0 fs/ext4/ialloc.c:827
+ ext4_create+0x38a/0x520 fs/ext4/namei.c:2606
+ lookup_open+0x12d5/0x1a90 fs/namei.c:3309
+ do_last fs/namei.c:3401 [inline]
+ path_openat+0xf2c/0x3490 fs/namei.c:3607
+ do_filp_open+0x192/0x260 fs/namei.c:3637
+ do_sys_openat2+0x5eb/0x7e0 fs/open.c:1149
+ do_sys_open+0xf2/0x180 fs/open.c:1165
+ __do_sys_openat fs/open.c:1179 [inline]
+ __se_sys_openat fs/open.c:1174 [inline]
+ __x64_sys_openat+0x9d/0x100 fs/open.c:1174
+ do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 9:
+ save_stack+0x23/0x90 mm/kasan/common.c:72
+ set_track mm/kasan/common.c:80 [inline]
+ kasan_set_free_info mm/kasan/common.c:337 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+ __cache_free mm/slab.c:3426 [inline]
+ kmem_cache_free+0x86/0x320 mm/slab.c:3694
+ ext4_free_in_core_inode+0x28/0x30 fs/ext4/super.c:1164
+ i_callback+0x44/0x80 fs/inode.c:220
+ rcu_do_batch kernel/rcu/tree.c:2186 [inline]
+ rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
+ rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
+ __do_softirq+0x262/0x98c kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff888096b352c0
+ which belongs to the cache ext4_inode_cache(49:syz2) of size 2008
+The buggy address is located 912 bytes inside of
+ 2008-byte region [ffff888096b352c0, ffff888096b35a98)
+The buggy address belongs to the page:
+page:ffffea00025acd40 refcount:1 mapcount:0 mapping:ffff8880a7474380 index:0xffff888096b35fff
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00025a66c8 ffff888091161e48 ffff8880a7474380
+raw: ffff888096b35fff ffff888096b352c0 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888096b35500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888096b35580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888096b35600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                 ^
+ ffff888096b35680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888096b35700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
