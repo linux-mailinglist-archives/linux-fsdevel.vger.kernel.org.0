@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B73661612ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:16:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 976A81612EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:16:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbgBQNPR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 08:15:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52519 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729125AbgBQNPR (ORCPT
+        id S1729142AbgBQNPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 08:15:19 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41429 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729043AbgBQNPS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:15:17 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so17108700wmc.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2020 05:15:16 -0800 (PST)
+        Mon, 17 Feb 2020 08:15:18 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c9so19706023wrw.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2020 05:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FrjWKs7Er54lWDwKu5pX+EDCsHByz98RF1MpRiqTebk=;
-        b=qA4IWowtwl2jLWou4xMwEV+yb9H/TxGLCnzvNRdJK3JQcpf1Fl7LPWnaoMvk460o9/
-         jXH36M8acBDuhOo4hxpGqDOIyk/kLD2VXgEMSyGWZ3WRJoEOdMpGNzWLgmirwujsLUYO
-         eYEBDoBeLx7LF2fd0tEywhQBNAMPZmpgQkP5rFNIiIez9I/T9R0irgAWjoLguiUdfX5B
-         v707zB+cE//ZbvPLJ1CFemenAEkZ8srDTTYoBwes59sj3LJ08PRIkzMqSpHFh5FP5zAe
-         XJ9rHAIHaj4/hifdhpNaiVnFdt4KrfkEX/15Q79TeHzw/hi+xRUgZZZ6K8B+jQfRx9B1
-         YAPw==
+        bh=mp/NZJhDpTVTKOe7pgjJLtK1WnKPYZUsnP23pwfKWw8=;
+        b=kuUuOup7VeeeOqe1tdVqZ18/1b1s9aQAntaEngYN8UUvm78utGpmZzDIUJ+1wpjbwu
+         /YKviWALtol6zNhA9zIBjQ28S2IXogGLUrxP+7MJxP2ehsDTYAFYa3DCAcqnV+/eEMUf
+         SRCHUQm/b9a96YUBdI/NC2aQ7tj7ovzqyzYIfGXrdPaJxJzC5q2iXIDy4SPXxo87/WA0
+         M7HuSMaW+7y8mnO+bg3CNRSyntbBZfXRlADOQ8lhPtxUnd1kLRHKxp+d/ckubYYZ7hpc
+         Etr9+73GIgeBPTVGFxOXs+HOQisPsy68CNmqEZzW6juvXkxWEJ2mhCEgTfdQgtCN2ZwI
+         aBRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FrjWKs7Er54lWDwKu5pX+EDCsHByz98RF1MpRiqTebk=;
-        b=B/Rjawm1SxUgEBzQtrZweLr79g/v5Tl0DghYM9ajDMxO2vRU3PzR2WJUnBUMVESi23
-         xPh2h/Is4Sv+cCDB19LNNRazd8Yjjl7o+RhQTA6je5plJcVkk5Ji+DAQqJ/sPbmUS3kl
-         Au7ZcSiOuNN37pdojnAA+fAZl89fojV8XskENs1XXoDsX9hLfcohzZt5KckMe1RYrtB4
-         qItDle+dY33j934CA2xtckgt+6VHfk11VyJyHt/ulyZDQ7F8vVejpcg8FHAvbQXLgXVq
-         8hhUoxK4v34LG+b1lZFYKKPrVx0krC40i/6XViUA2lgZ48s+jLWu5+vLtr/SQCzPX8mH
-         3ifQ==
-X-Gm-Message-State: APjAAAXo+NDOYn5TEkCxr0/Q+hoVEH9CMAACxaA1Yu51zGmClj5HNWSf
-        0hYgIW8aAezQH8edN8mhLS5c6o+r
-X-Google-Smtp-Source: APXvYqw0cZeYxrZGXo0U2aCRtMlHwLJacIImiocV43N1xQx4KJmGrJYLovHs7rNuEDYLCL+PaDd5PQ==
-X-Received: by 2002:a1c:1f51:: with SMTP id f78mr22084484wmf.60.1581945315439;
-        Mon, 17 Feb 2020 05:15:15 -0800 (PST)
+        bh=mp/NZJhDpTVTKOe7pgjJLtK1WnKPYZUsnP23pwfKWw8=;
+        b=FpdGhJ7YZO+BiDEvxZJQtHQnaSjz9o02J+KicAJihK+CVThdjXcGkZhm87S5viTZU0
+         Grh9t0LkxEJpqDdTbOAswOtLRPahKRSXz1ZJ+u/XhFQgrOYyB+iwuHZa/n8JUWNnl0Ko
+         yce1q19o6xLvYA+7kZdS8jCAsFz+5Lsce63Sc78QMze2OZk+bWfau9Y6ygeUWzr+x1gE
+         3qzZsE8Gy+3Sktcr+e/FOUNYS4oFyvgwbtARniHvibmPPeIOyG5wtFN9xuacBkrKJfYb
+         NYuaJxmfZzueoP9O3yxmqvpxli5XhckTOpyWsqb7bhvg9NrSzHmE25Mk5+CyW2n6nYJY
+         gwcg==
+X-Gm-Message-State: APjAAAVTVQK9ZhSwuLD3Pwhs1t1YBP2/HBIH5s2k3u6iTYFmy31ram1o
+        BGZCYzRwC8gjdIopTBgMf7o=
+X-Google-Smtp-Source: APXvYqwkXESPAbAWFag7TpqSQ75UK2h9ppcC9Q9VDwE4CX01B6WTFByB4BJLIrhOL1Ar82m08gwSzA==
+X-Received: by 2002:a05:6000:4:: with SMTP id h4mr23487272wrx.403.1581945316694;
+        Mon, 17 Feb 2020 05:15:16 -0800 (PST)
 Received: from amir-ThinkPad-T480.ctera.local (bzq-166-168-31-246.red.bezeqint.net. [31.168.166.246])
-        by smtp.gmail.com with ESMTPSA id m21sm545745wmi.27.2020.02.17.05.15.14
+        by smtp.gmail.com with ESMTPSA id m21sm545745wmi.27.2020.02.17.05.15.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 05:15:14 -0800 (PST)
+        Mon, 17 Feb 2020 05:15:16 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 07/16] fsnotify: replace inode pointer with tag
-Date:   Mon, 17 Feb 2020 15:14:46 +0200
-Message-Id: <20200217131455.31107-8-amir73il@gmail.com>
+Subject: [PATCH v2 08/16] fanotify: merge duplicate events on parent and child
+Date:   Mon, 17 Feb 2020 15:14:47 +0200
+Message-Id: <20200217131455.31107-9-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200217131455.31107-1-amir73il@gmail.com>
 References: <20200217131455.31107-1-amir73il@gmail.com>
@@ -58,74 +58,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The event inode field is used only for comparison in queue merges and
-cannot be dereferenced after handle_event(), because it does not hold a
-refcount on the inode.
+With inotify, when a watch is set on a directory and on its child, an
+event on the child is reported twice, once with wd of the parent watch
+and once with wd of the child watch without the filename.
 
-Replace it with an abstract tag do to the same thing. We are going to
-set this tag for values other than inode pointer in fanotify.
+With fanotify, when a watch is set on a directory and on its child, an
+event on the child is reported twice, but it has the exact same
+information - either an open file descriptor of the child or an encoded
+fid of the child.
+
+The reason that the two identical events are not merged is because the
+tag used for merging events in the queue is the child inode in one event
+and parent inode in the other.
+
+For events with path or dentry data, use the dentry instead of inode as
+the tag for event merging, so that the event reported on parent will be
+merged with the event reported on the child.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c        | 2 +-
- fs/notify/inotify/inotify_fsnotify.c | 2 +-
- include/linux/fsnotify_backend.h     | 8 +++-----
- 3 files changed, 5 insertions(+), 7 deletions(-)
+ fs/notify/fanotify/fanotify.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 19ec7a4f4d50..98c3cbf29003 100644
+index 98c3cbf29003..dab7e9895e02 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -26,7 +26,7 @@ static bool should_merge(struct fsnotify_event *old_fsn,
- 	old = FANOTIFY_E(old_fsn);
- 	new = FANOTIFY_E(new_fsn);
+@@ -282,6 +282,7 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT;
+ 	struct inode *id = fanotify_fid_inode(inode, mask, data, data_type);
+ 	const struct path *path = fsnotify_data_path(data, data_type);
++	struct dentry *dentry = fsnotify_data_dentry(data, data_type);
  
--	if (old_fsn->inode != new_fsn->inode || old->pid != new->pid ||
-+	if (old_fsn->tag != new_fsn->tag || old->pid != new->pid ||
- 	    old->fh_type != new->fh_type || old->fh_len != new->fh_len)
- 		return false;
- 
-diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-index 6bb98522bbfd..4f42ea7b7fdd 100644
---- a/fs/notify/inotify/inotify_fsnotify.c
-+++ b/fs/notify/inotify/inotify_fsnotify.c
-@@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
- 	if (old->mask & FS_IN_IGNORED)
- 		return false;
- 	if ((old->mask == new->mask) &&
--	    (old_fsn->inode == new_fsn->inode) &&
-+	    (old_fsn->tag == new_fsn->tag) &&
- 	    (old->name_len == new->name_len) &&
- 	    (!old->name_len || !strcmp(old->name, new->name)))
- 		return true;
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index bd3f6114a7a9..cd106b5c87a4 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -132,8 +132,7 @@ struct fsnotify_ops {
-  */
- struct fsnotify_event {
- 	struct list_head list;
--	/* inode may ONLY be dereferenced during handle_event(). */
--	struct inode *inode;	/* either the inode the event happened to or its parent */
-+	unsigned long tag;	/* identifier for queue merges */
- };
- 
- /*
-@@ -542,11 +541,10 @@ extern void fsnotify_put_mark(struct fsnotify_mark *mark);
- extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
- extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
- 
--static inline void fsnotify_init_event(struct fsnotify_event *event,
--				       struct inode *inode)
-+static inline void fsnotify_init_event(struct fsnotify_event *event, void *tag)
- {
- 	INIT_LIST_HEAD(&event->list);
--	event->inode = inode;
-+	event->tag = (unsigned long)tag;
- }
- 
- #else
+ 	/*
+ 	 * For queues with unlimited length lost events are not expected and
+@@ -312,7 +313,12 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	if (!event)
+ 		goto out;
+ init: __maybe_unused
+-	fsnotify_init_event(&event->fse, inode);
++	/*
++	 * Use the dentry instead of inode as tag for event queue, so event
++	 * reported on parent is merged with event reported on child when both
++	 * directory and child watches exist.
++	 */
++	fsnotify_init_event(&event->fse, (void *)dentry ?: inode);
+ 	event->mask = mask;
+ 	if (FAN_GROUP_FLAG(group, FAN_REPORT_TID))
+ 		event->pid = get_pid(task_pid(current));
 -- 
 2.17.1
 
