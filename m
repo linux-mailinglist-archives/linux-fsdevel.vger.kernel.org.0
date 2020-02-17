@@ -2,136 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1177C1609C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 06:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42162160A18
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 06:32:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgBQFE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 00:04:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:57548 "EHLO foss.arm.com"
+        id S1725958AbgBQFcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 00:32:54 -0500
+Received: from len.romanrm.net ([91.121.86.59]:54424 "EHLO len.romanrm.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbgBQFE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 00:04:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE0E81063;
-        Sun, 16 Feb 2020 21:04:25 -0800 (PST)
-Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.16.95])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BC20F3F703;
-        Sun, 16 Feb 2020 21:04:20 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH 3/5] mm/vma: Replace all remaining open encodings with is_vm_hugetlb_page()
-Date:   Mon, 17 Feb 2020 10:33:51 +0530
-Message-Id: <1581915833-21984-4-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581915833-21984-1-git-send-email-anshuman.khandual@arm.com>
-References: <1581915833-21984-1-git-send-email-anshuman.khandual@arm.com>
+        id S1725873AbgBQFcy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Feb 2020 00:32:54 -0500
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Feb 2020 00:32:53 EST
+Received: from natsu (natsu.40.romanrm.net [IPv6:fd39:aa:c499:6515:e99e:8f1b:cfc9:ccb8])
+        by len.romanrm.net (Postfix) with SMTP id 7A69E40503;
+        Mon, 17 Feb 2020 05:26:11 +0000 (UTC)
+Date:   Mon, 17 Feb 2020 10:26:10 +0500
+From:   Roman Mamedov <rm@romanrm.net>
+To:     Chris Murphy <lists@colorremedies.com>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>
+Subject: Re: dev loop ~23% slower?
+Message-ID: <20200217102610.6e92da97@natsu>
+In-Reply-To: <CAJCQCtSUzj4V__vo5LxrF1Jv2MgUNux=d8JwXq6H_VN=sYunvA@mail.gmail.com>
+References: <CAJCQCtSUzj4V__vo5LxrF1Jv2MgUNux=d8JwXq6H_VN=sYunvA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This replaces all remaining open encodings with is_vm_hugetlb_page().
+On Sun, 16 Feb 2020 20:18:05 -0700
+Chris Murphy <lists@colorremedies.com> wrote:
 
-Cc: Paul Mackerras <paulus@ozlabs.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Will Deacon <will@kernel.org>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nick Piggin <npiggin@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: kvm-ppc@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-mm@kvack.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/powerpc/kvm/e500_mmu_host.c | 2 +-
- fs/binfmt_elf.c                  | 2 +-
- include/asm-generic/tlb.h        | 2 +-
- kernel/events/core.c             | 3 ++-
- 4 files changed, 5 insertions(+), 4 deletions(-)
+> I don't think file system over accounts for much more than a couple
+> percent of this, so I'm curious where the slow down might be
+> happening? The "hosting" Btrfs file system is not busy at all at the
+> time of the loop mounted filesystem's scrub. I did issue 'echo 3 >
+> /proc/sys/vm/drop_caches' before the loop mount image being scrubbed,
+> otherwise I get ~1.72GiB/s scrubs which exceeds the performance of the
+> SSD (which is in the realm of 550MiB/s max)
 
-diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
-index 425d13806645..3922575a1c31 100644
---- a/arch/powerpc/kvm/e500_mmu_host.c
-+++ b/arch/powerpc/kvm/e500_mmu_host.c
-@@ -422,7 +422,7 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
- 				break;
- 			}
- 		} else if (vma && hva >= vma->vm_start &&
--			   (vma->vm_flags & VM_HUGETLB)) {
-+			   (is_vm_hugetlb_page(vma))) {
- 			unsigned long psize = vma_kernel_pagesize(vma);
- 
- 			tsize = (gtlbe->mas1 & MAS1_TSIZE_MASK) >>
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index f4713ea76e82..6bc97ede10ba 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1317,7 +1317,7 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
- 	}
- 
- 	/* Hugetlb memory check */
--	if (vma->vm_flags & VM_HUGETLB) {
-+	if (is_vm_hugetlb_page(vma)) {
- 		if ((vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_SHARED))
- 			goto whole;
- 		if (!(vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_PRIVATE))
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index f391f6b500b4..d42c236d4965 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -398,7 +398,7 @@ tlb_update_vma_flags(struct mmu_gather *tlb, struct vm_area_struct *vma)
- 	 * We rely on tlb_end_vma() to issue a flush, such that when we reset
- 	 * these values the batch is empty.
- 	 */
--	tlb->vma_huge = !!(vma->vm_flags & VM_HUGETLB);
-+	tlb->vma_huge = is_vm_hugetlb_page(vma);
- 	tlb->vma_exec = !!(vma->vm_flags & VM_EXEC);
- }
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e453589da97c..eb0ee3c5f322 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -28,6 +28,7 @@
- #include <linux/export.h>
- #include <linux/vmalloc.h>
- #include <linux/hardirq.h>
-+#include <linux/hugetlb_inline.h>
- #include <linux/rculist.h>
- #include <linux/uaccess.h>
- #include <linux/syscalls.h>
-@@ -7693,7 +7694,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
- 		flags |= MAP_EXECUTABLE;
- 	if (vma->vm_flags & VM_LOCKED)
- 		flags |= MAP_LOCKED;
--	if (vma->vm_flags & VM_HUGETLB)
-+	if (is_vm_hugetlb_page(vma))
- 		flags |= MAP_HUGETLB;
- 
- 	if (file) {
+Try comparing just simple dd read speed of that FS image, compared to dd speed
+from the underlying device of the host filesystem. With scrubs you might be
+testing the same metric, but it's a rather elaborate way to do so -- and also
+to exclude any influence from the loop device driver, or at least to figure
+out the extent of it.
+
+For me on 5.4.20:
+
+dd if=zerofile iflag=direct of=/dev/null bs=1M
+2048+0 records in
+2048+0 records out
+2147483648 bytes (2.1 GB, 2.0 GiB) copied, 3.68213 s, 583 MB/s
+
+dd if=/dev/mapper/cryptohome iflag=direct of=/dev/null bs=1M count=2048
+2048+0 records in
+2048+0 records out
+2147483648 bytes (2.1 GB, 2.0 GiB) copied, 3.12917 s, 686 MB/s
+
+Personally I am not really surprised by this difference, of course going
+through a filesystem is going to introduce overhead when compared to reading
+directly from the block device that it sits on. Although briefly testing the
+same on XFS, it does seem to have less of it, about 6% instead of 15% here.
+
 -- 
-2.20.1
-
+With respect,
+Roman
