@@ -2,113 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2ADA16133F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:24:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D673161341
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 14:26:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbgBQNYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 08:24:14 -0500
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:35205 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728124AbgBQNYN (ORCPT
+        id S1728044AbgBQN0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 08:26:08 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37694 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbgBQN0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 08:24:13 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TqAk0uJ_1581945832;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TqAk0uJ_1581945832)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 17 Feb 2020 21:23:53 +0800
-Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
- locality info
-To:     Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Michal Koutn? <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
- <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
- <20200214151048.GL14914@hirez.programming.kicks-ass.net>
- <20200217115810.GA3420@suse.de>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
-Date:   Mon, 17 Feb 2020 21:23:52 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
- Gecko/20100101 Thunderbird/68.4.1
+        Mon, 17 Feb 2020 08:26:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=1g8gUNk4QZmb7qpe3MRgs3En9cghrTnYOXb1h6i0Ozs=; b=CsdmLYjlaqfr0EqLEfYRnKiJhP
+        pWnSzFoQnJ8J5UvRzZRX+G66HYFWsdbr7qBCzeKS3YbJaTqEyuPcXGIvM/wFq+7Ut/uhXvyizvHvP
+        vVDjeOz6fMPUJIk54s3ccJS11CQtA71624DOqRLNUq5+xlzxiiQ7itTaGLljzFMnSSQgVrI9LcGLC
+        /zb4sy5Bn53taswxhaTb1RtfLSYgwuihnLC5dpxhjHURhY90aMPtDYtHE/B9VZV6T1umevGaTD1ub
+        zwvG0Ur1qOWcax7mfUGhyjrmDPIDrsk5UTEp2r65Be4OkkpaUBv4iZdSby44qAI+XdkUJf6RpE/6R
+        8aVypBvw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j3gPX-0004Yx-6K; Mon, 17 Feb 2020 13:26:07 +0000
+Date:   Mon, 17 Feb 2020 05:26:07 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        hch@infradead.org, dan.j.williams@intel.com, dm-devel@redhat.com,
+        vishal.l.verma@intel.com
+Subject: Re: [PATCH v3 3/7] dax, pmem: Add a dax operation zero_page_range
+Message-ID: <20200217132607.GD14490@infradead.org>
+References: <20200207202652.1439-1-vgoyal@redhat.com>
+ <20200207202652.1439-4-vgoyal@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200217115810.GA3420@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207202652.1439-4-vgoyal@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> +	int rc;
+> +	struct pmem_device *pmem = dax_get_private(dax_dev);
+> +	struct page *page = ZERO_PAGE(0);
 
+Nit: I tend to find code easier to read if variable declarations
+with assignments are above those without.
 
-On 2020/2/17 下午7:58, Mel Gorman wrote:
-[snip]
->> Mel, I suspect you still feel that way, right?
->>
-> 
-> Yes, I still think it would be a struggle to interpret the data
-> meaningfully without very specific knowledge of the implementation. If
-> the scan rate was constant, it would be easier but that would make NUMA
-> balancing worse overall. Similarly, the stat might get very difficult to
-> interpret when NUMA balancing is failing because of a load imbalance,
-> pages are shared and being interleaved or NUMA groups span multiple
-> active nodes.
+Also I don't think we need the page variable here.
 
-Hi, Mel, appreciated to have you back on the table :-)
+> +	rc = pmem_do_write(pmem, page, 0, offset, len);
+> +	if (rc > 0)
+> +		return -EIO;
 
-IMHO the scan period changing should not be a problem now, since the
-maximum period is defined by user, so monitoring at maximum period
-on the accumulated page accessing counters is always meaningful, correct?
-
-FYI, by monitoring locality, we found that the kvm vcpu thread is not
-covered by NUMA Balancing, whatever how many maximum period passed, the
-counters are not increasing, or very slowly, although inside guest we are
-copying memory.
-
-Later we found such task rarely exit to user space to trigger task
-work callbacks, and NUMA Balancing scan depends on that, which help us
-realize the importance to enable NUMA Balancing inside guest, with the
-correct NUMA topo, a big performance risk I'll say :-P
-
-Maybe not a good example, but we just try to highlight that NUMA Balancing
-could have issue in some cases, and we want them to be exposed, somehow,
-maybe by the locality.
-
-Regards,
-Michael Wang
-
-> 
-> For example, the series that reconciles NUMA and CPU balancers may look
-> worse in these stats even though the overall performance may be better.
-> 
->> In the document (patch 2/2) you write:
->>
->>> +However, there are no hardware counters for per-task local/remote accessing
->>> +info, we don't know how many remote page accesses have occurred for a
->>> +particular task.
->>
->> We can of course 'fix' that by adding a tracepoint.
->>
->> Mel, would you feel better by having a tracepoint in task_numa_fault() ?
->>
-> 
-> A bit, although interpreting the data would still be difficult and the
-> tracepoint would have to include information about the cgroup. While
-> I've never tried, this seems like the type of thing that would be suited
-> to a BPF script that probes task_numa_fault and extract the information
-> it needs.
-
-> 
+pmem_do_write returns a blk_status_t, so the type of rc and the > check
+seem odd.  But I think pmem_do_write (and pmem_do_read) might be better
+off returning a normal errno anyway.
