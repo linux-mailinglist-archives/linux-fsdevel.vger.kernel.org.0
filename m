@@ -2,43 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45EEF16171E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6AFA161765
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbgBQQMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 11:12:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47412 "EHLO
+        id S1729828AbgBQQNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 11:13:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47142 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729723AbgBQQMi (ORCPT
+        with ESMTP id S1729682AbgBQQMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:12:38 -0500
+        Mon, 17 Feb 2020 11:12:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=8ve1EdRGT1AOdRBBer85+9QRZqy+lJPvusfJVzOT22E=; b=NK5G7rjy/2utgRFINiJJInCGhW
-        RuRc3TtcskV73Vl+cJD+ZToPaAl9y73ZpUp8WKmV+okPqje3UNvpHQQfNrnY3mtZ4lLTXeQYuW2Yt
-        fn6n60qGx+HNzMR0sRu2kY251Pw+UeD2CuW4Cgy8A7tRpKvp7ldXWnNviTzPGBQrFGTPOxF9VuoyL
-        S6d7b3H9btpQfAaLgvaDhqrwGyvuDtmsKto/AYIWWuAKJF/BcBjbWg2RBWzc/PDdPs3U5KvZaH0N6
-        447mi5czOtSC/zj1xvSr+cgaF0XOmSiBRyD61bvTYXlSmbX7iJ6SPXOfLBzneuHBky5xE1H90qNNx
-        4nCY/xGg==;
+        bh=vHNzFRvF7pskLSoBthZ/AINIY4LSd6XD26U4I0If7Qk=; b=GWhNVSCjep+mlWR91cjO3e+qSQ
+        zHjWzJBlrnixQ64H4M46th3FjFiHBJQwOxO4DmFOe7QtxZG7RkBaHfAQPMllw4rbu1Q1tz/7rSt+C
+        irnUmJVt9OAcUQHDWjq2BeshgfMLR5KskaUhkp4DXhjl74BfTfX6vOvLxu9JJI2tfrx13EoaVPphS
+        VF3Rt0EfqYhTxKDcN6R4GV8jp/GZ2IS+Is4JXA5irLlGbL0Lqcy8P3XUvHYMmvsXijYKRvObdoTVB
+        xkL03LKgNivkKSBgzv8tntbMr18BDarmwXF8x7xvbOlMYBT00rfYxWp+466e9wKXD0tOfTarLnUN9
+        ZJgNFCpA==;
 Received: from tmo-109-126.customers.d1-online.com ([80.187.109.126] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3j0c-0006uX-3Z; Mon, 17 Feb 2020 16:12:34 +0000
+        id 1j3j0c-0006uY-5Z; Mon, 17 Feb 2020 16:12:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1j3j0Z-000fZr-Vl; Mon, 17 Feb 2020 17:12:31 +0100
+        id 1j3j0a-000fZw-0N; Mon, 17 Feb 2020 17:12:32 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        ocfs2-devel@oss.oracle.com
-Subject: [PATCH 12/44] docs: filesystems: convert dlmfs.txt to ReST
-Date:   Mon, 17 Feb 2020 17:11:58 +0100
-Message-Id: <efc9e59925723e17d1a4741b11049616c221463e.1581955849.git.mchehab+huawei@kernel.org>
+        linux-fsdevel@vger.kernel.org, Tyler Hicks <code@tyhicks.com>,
+        ecryptfs@vger.kernel.org
+Subject: [PATCH 13/44] docs: filesystems: convert ecryptfs.txt to ReST
+Date:   Mon, 17 Feb 2020 17:11:59 +0100
+Message-Id: <6e13841ebd00c8d988027115c75c58821bb41a0c.1581955849.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1581955849.git.mchehab+huawei@kernel.org>
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
@@ -50,8 +48,8 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 - Add a SPDX header;
-- Use copyright symbol;
-- Adjust document title;
+- Add a document title;
+- use :field: markup;
 - Some whitespace fixes and new line breaks;
 - Mark literal blocks as such;
 - Add table markups;
@@ -59,82 +57,115 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../filesystems/{dlmfs.txt => dlmfs.rst}      | 28 +++++++++++++------
+ .../{ecryptfs.txt => ecryptfs.rst}            | 44 ++++++++++++-------
  Documentation/filesystems/index.rst           |  1 +
- 2 files changed, 20 insertions(+), 9 deletions(-)
- rename Documentation/filesystems/{dlmfs.txt => dlmfs.rst} (86%)
+ 2 files changed, 28 insertions(+), 17 deletions(-)
+ rename Documentation/filesystems/{ecryptfs.txt => ecryptfs.rst} (70%)
 
-diff --git a/Documentation/filesystems/dlmfs.txt b/Documentation/filesystems/dlmfs.rst
-similarity index 86%
-rename from Documentation/filesystems/dlmfs.txt
-rename to Documentation/filesystems/dlmfs.rst
-index fcf4d509d118..68daaa7facf9 100644
---- a/Documentation/filesystems/dlmfs.txt
-+++ b/Documentation/filesystems/dlmfs.rst
-@@ -1,20 +1,25 @@
--dlmfs
--==================
+diff --git a/Documentation/filesystems/ecryptfs.txt b/Documentation/filesystems/ecryptfs.rst
+similarity index 70%
+rename from Documentation/filesystems/ecryptfs.txt
+rename to Documentation/filesystems/ecryptfs.rst
+index 01d8a08351ac..7236172300ef 100644
+--- a/Documentation/filesystems/ecryptfs.txt
++++ b/Documentation/filesystems/ecryptfs.rst
+@@ -1,14 +1,18 @@
 +.. SPDX-License-Identifier: GPL-2.0
-+.. include:: <isonum.txt>
 +
++======================================================
+ eCryptfs: A stacked cryptographic filesystem for Linux
++======================================================
+ 
+ eCryptfs is free software. Please see the file COPYING for details.
+ For documentation, please see the files in the doc/ subdirectory.  For
+ building and installation instructions please see the INSTALL file.
+ 
+-Maintainer: Phillip Hellewell
+-Lead developer: Michael A. Halcrow <mhalcrow@us.ibm.com>
+-Developers: Michael C. Thompson
+-            Kent Yoder
+-Web Site: http://ecryptfs.sf.net
++:Maintainer: Phillip Hellewell
++:Lead developer: Michael A. Halcrow <mhalcrow@us.ibm.com>
++:Developers: Michael C. Thompson
++             Kent Yoder
++:Web Site: http://ecryptfs.sf.net
+ 
+ This software is currently undergoing development. Make sure to
+ maintain a backup copy of any data you write into eCryptfs.
+@@ -19,13 +23,15 @@ SourceForge site:
+ http://sourceforge.net/projects/ecryptfs/
+ 
+ Userspace requirements include:
+- - David Howells' userspace keyring headers and libraries (version
+-   1.0 or higher), obtainable from
+-   http://people.redhat.com/~dhowells/keyutils/
+- - Libgcrypt
+ 
++- David Howells' userspace keyring headers and libraries (version
++  1.0 or higher), obtainable from
++  http://people.redhat.com/~dhowells/keyutils/
++- Libgcrypt
+ 
+-NOTES
++
++Notes
 +=====
-+DLMFS
+ 
+ In the beta/experimental releases of eCryptfs, when you upgrade
+ eCryptfs, you should copy the files to an unencrypted location and
+@@ -33,20 +39,21 @@ then copy the files back into the new eCryptfs mount to migrate the
+ files.
+ 
+ 
+-MOUNT-WIDE PASSPHRASE
++Mount-wide Passphrase
++=====================
+ 
+ Create a new directory into which eCryptfs will write its encrypted
+ files (i.e., /root/crypt).  Then, create the mount point directory
+-(i.e., /mnt/crypt).  Now it's time to mount eCryptfs:
++(i.e., /mnt/crypt).  Now it's time to mount eCryptfs::
+ 
+-mount -t ecryptfs /root/crypt /mnt/crypt
++    mount -t ecryptfs /root/crypt /mnt/crypt
+ 
+ You should be prompted for a passphrase and a salt (the salt may be
+ blank).
+ 
+-Try writing a new file:
++Try writing a new file::
+ 
+-echo "Hello, World" > /mnt/crypt/hello.txt
++    echo "Hello, World" > /mnt/crypt/hello.txt
+ 
+ The operation will complete.  Notice that there is a new file in
+ /root/crypt that is at least 12288 bytes in size (depending on your
+@@ -59,10 +66,13 @@ keyctl clear @u
+ Then umount /mnt/crypt and mount again per the instructions given
+ above.
+ 
+-cat /mnt/crypt/hello.txt
++::
+ 
++    cat /mnt/crypt/hello.txt
+ 
+-NOTES
++
++Notes
 +=====
-+
- A minimal DLM userspace interface implemented via a virtual file
- system.
  
- dlmfs is built with OCFS2 as it requires most of its infrastructure.
- 
--Project web page:    http://ocfs2.wiki.kernel.org
--Tools web page:      https://github.com/markfasheh/ocfs2-tools
--OCFS2 mailing lists: http://oss.oracle.com/projects/ocfs2/mailman/
-+:Project web page:    http://ocfs2.wiki.kernel.org
-+:Tools web page:      https://github.com/markfasheh/ocfs2-tools
-+:OCFS2 mailing lists: http://oss.oracle.com/projects/ocfs2/mailman/
- 
- All code copyright 2005 Oracle except when otherwise noted.
- 
--CREDITS
-+Credits
- =======
- 
--Some code taken from ramfs which is Copyright (C) 2000 Linus Torvalds
-+Some code taken from ramfs which is Copyright |copy| 2000 Linus Torvalds
- and Transmeta Corp.
- 
- Mark Fasheh <mark.fasheh@oracle.com>
-@@ -96,14 +101,19 @@ operation. If the lock succeeds, you'll get an fd.
- open(2) with O_CREAT to ensure the resource inode is created - dlmfs does
- not automatically create inodes for existing lock resources.
- 
-+============  ===========================
- Open Flag     Lock Request Type
-----------     -----------------
-+============  ===========================
- O_RDONLY      Shared Read
- O_RDWR        Exclusive
-+============  ===========================
- 
-+
-+============  ===========================
- Open Flag     Resulting Locking Behavior
-----------     --------------------------
-+============  ===========================
- O_NONBLOCK    Trylock operation
-+============  ===========================
- 
- You must provide exactly one of O_RDONLY or O_RDWR.
- 
+ eCryptfs version 0.1 should only be mounted on (1) empty directories
+ or (2) directories containing files only created by eCryptfs. If you
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index ab3b656bbe60..c6885c7ef781 100644
+index c6885c7ef781..d6d69f1c9287 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -58,6 +58,7 @@ Documentation for filesystem implementations.
-    ceph
+@@ -59,6 +59,7 @@ Documentation for filesystem implementations.
     cramfs
     debugfs
-+   dlmfs
+    dlmfs
++   ecryptfs
     fuse
     overlayfs
     virtiofs
