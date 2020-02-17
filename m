@@ -2,42 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A32161776
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A26161722
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbgBQQNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 11:13:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47150 "EHLO
+        id S1729751AbgBQQMn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 11:12:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47880 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729683AbgBQQMe (ORCPT
+        with ESMTP id S1729733AbgBQQMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:12:34 -0500
+        Mon, 17 Feb 2020 11:12:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=n3OHHKHQGHUcansjehJKA6e6cfXC7iQMHoNdNp59CMg=; b=bYrIFGs8GrTjw4I8PIA47Wqa3i
-        orFDB1PWN0qzOUKmTiNGKZthhhYaKvlY9vBOffJZbvw4YwYzQqomUT7jMvkEunfgAoWlG7vsrErH+
-        yjhxDUU0BvCgGmd3HLYVVc98wr47Mc2tTt1DfGwyqg9K64MAhyGn9g6ee9rtv9/K5KD36Zg2RnDwg
-        1kHkB6Zvusy84duZfkCVksCYxkWDydlxGozS5v8BsRkrC6J03jT+oAgOlbpj0X+GVdXivsHXmBxhB
-        n7N2sjZoAVnl1V8JOU42uNSH/KiUzTsflOG3HqyIPv5S02Y27Swkw9oiALpJnbZq+WDBQOPdNwmsB
-        xDPiPOiw==;
-Received: from tmo-109-126.customers.d1-online.com ([80.187.109.126] helo=bombadil.infradead.org)
+        bh=5DlpRIloU7pI1YpL6w1ZXXbafs7gsZdrZscTv4RqZFQ=; b=dwYGjObNeijAYFiIsUEj3n9hlC
+        ucZ2RllIy3E1UF/0HGAyluCTq8faku0QpvG2WAl/QfWiObw8F/UMVtDQfc01/YjfvfeIdsj99Tptn
+        OcTAvq/jacn6m6M4ZH7ewiK/GU8Stjt9XBRP2JsNJgZmnaH8xkMPqQ6YNSF4xtqj7xHz8cjr9q+UR
+        5nRqzE9SEncfWdVhpBIXSZjlpFdzv23zf456vefODM08EibgiERk6v5ttF9YYW+0vKp+JV+2yYgg4
+        cefTTxes/Nl58WsBpvs/HN8vfC5EtR7PJ134lE3TF2Rt1/F/v/ggUHo3ZqfLyYSovq9cJARohmLW5
+        1F/QMCcg==;
+Received: from x2f7f83d.dyn.telefonica.de ([2.247.248.61] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3j0c-0006uR-6R; Mon, 17 Feb 2020 16:12:34 +0000
+        id 1j3j0e-0006uS-OG; Mon, 17 Feb 2020 16:12:42 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1j3j0Z-000fZN-Nk; Mon, 17 Feb 2020 17:12:31 +0100
+        id 1j3j0Z-000fZS-Oe; Mon, 17 Feb 2020 17:12:31 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         linux-fsdevel@vger.kernel.org,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>
-Subject: [PATCH 06/44] docs: filesystems: convert befs.txt to ReST
-Date:   Mon, 17 Feb 2020 17:11:52 +0100
-Message-Id: <3e29ea6df6cd569021cfa953ccb8ed7dfc146f3d.1581955849.git.mchehab+huawei@kernel.org>
+        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>
+Subject: [PATCH 07/44] docs: filesystems: convert bfs.txt to ReST
+Date:   Mon, 17 Feb 2020 17:11:53 +0100
+Message-Id: <93991bcc05e419368ee1e585c81057fb2c7c8d2b.1581955849.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1581955849.git.mchehab+huawei@kernel.org>
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
@@ -49,172 +48,104 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 - Add a SPDX header;
-- Adjust document and section titles;
+- Adjust document title;
 - Some whitespace fixes and new line breaks;
 - Mark literal blocks as such;
-- Add table markups;
 - Add it to filesystems/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../filesystems/{befs.txt => befs.rst}        | 59 +++++++++++--------
+ .../filesystems/{bfs.txt => bfs.rst}          | 37 ++++++++++---------
  Documentation/filesystems/index.rst           |  1 +
- 2 files changed, 36 insertions(+), 24 deletions(-)
- rename Documentation/filesystems/{befs.txt => befs.rst} (83%)
+ 2 files changed, 21 insertions(+), 17 deletions(-)
+ rename Documentation/filesystems/{bfs.txt => bfs.rst} (71%)
 
-diff --git a/Documentation/filesystems/befs.txt b/Documentation/filesystems/befs.rst
-similarity index 83%
-rename from Documentation/filesystems/befs.txt
-rename to Documentation/filesystems/befs.rst
-index da45e6c842b8..79f9740d76ff 100644
---- a/Documentation/filesystems/befs.txt
-+++ b/Documentation/filesystems/befs.rst
-@@ -1,48 +1,54 @@
+diff --git a/Documentation/filesystems/bfs.txt b/Documentation/filesystems/bfs.rst
+similarity index 71%
+rename from Documentation/filesystems/bfs.txt
+rename to Documentation/filesystems/bfs.rst
+index 843ce91a2e40..ce14b9018807 100644
+--- a/Documentation/filesystems/bfs.txt
++++ b/Documentation/filesystems/bfs.rst
+@@ -1,4 +1,7 @@
+-BFS FILESYSTEM FOR LINUX
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+=========================
- BeOS filesystem for Linux
-+=========================
++========================
++BFS Filesystem for Linux
+ ========================
  
- Document last updated: Dec 6, 2001
+ The BFS filesystem is used by SCO UnixWare OS for the /stand slice, which
+@@ -9,22 +12,22 @@ In order to access /stand partition under Linux you obviously need to
+ know the partition number and the kernel must support UnixWare disk slices
+ (CONFIG_UNIXWARE_DISKLABEL config option). However BFS support does not
+ depend on having UnixWare disklabel support because one can also mount
+-BFS filesystem via loopback:
++BFS filesystem via loopback::
  
--WARNING
-+Warning
- =======
- Make sure you understand that this is alpha software.  This means that the
--implementation is neither complete nor well-tested. 
-+implementation is neither complete nor well-tested.
+-# losetup /dev/loop0 stand.img
+-# mount -t bfs /dev/loop0 /mnt/stand
++    # losetup /dev/loop0 stand.img
++    # mount -t bfs /dev/loop0 /mnt/stand
  
- I DISCLAIM ALL RESPONSIBILITY FOR ANY POSSIBLE BAD EFFECTS OF THIS CODE!
+-where stand.img is a file containing the image of BFS filesystem. 
++where stand.img is a file containing the image of BFS filesystem.
+ When you have finished using it and umounted you need to also deallocate
+-/dev/loop0 device by:
++/dev/loop0 device by::
  
--LICENSE
--=====
--This software is covered by the GNU General Public License. 
-+License
-+=======
-+This software is covered by the GNU General Public License.
- See the file COPYING for the complete text of the license.
- Or the GNU website: <http://www.gnu.org/licenses/licenses.html>
+-# losetup -d /dev/loop0
++    # losetup -d /dev/loop0
  
--AUTHOR
--=====
-+Author
-+======
- The largest part of the code written by Will Dyson <will_dyson@pobox.com>
- He has been working on the code since Aug 13, 2001. See the changelog for
- details.
+-You can simplify mounting by just typing:
++You can simplify mounting by just typing::
  
- Original Author: Makoto Kato <m_kato@ga2.so-net.ne.jp>
-+
- His original code can still be found at:
- <http://hp.vector.co.jp/authors/VA008030/bfs/>
-+
- Does anyone know of a more current email address for Makoto? He doesn't
- respond to the address given above...
+-# mount -t bfs -o loop stand.img /mnt/stand
++    # mount -t bfs -o loop stand.img /mnt/stand
  
- This filesystem doesn't have a maintainer.
+-this will allocate the first available loopback device (and load loop.o 
++this will allocate the first available loopback device (and load loop.o
+ kernel module if necessary) automatically. If the loopback driver is not
+ loaded automatically, make sure that you have compiled the module and
+ that modprobe is functioning. Beware that umount will not deallocate
+@@ -33,21 +36,21 @@ that modprobe is functioning. Beware that umount will not deallocate
+ losetup(8). Read losetup(8) manpage for more info.
  
--WHAT IS THIS DRIVER?
--==================
--This module implements the native filesystem of BeOS http://www.beincorporated.com/ 
-+What is this Driver?
-+====================
-+This module implements the native filesystem of BeOS http://www.beincorporated.com/
- for the linux 2.4.1 and later kernels. Currently it is a read-only
- implementation.
+ To create the BFS image under UnixWare you need to find out first which
+-slice contains it. The command prtvtoc(1M) is your friend:
++slice contains it. The command prtvtoc(1M) is your friend::
  
- Which is it, BFS or BEFS?
--================
--Be, Inc said, "BeOS Filesystem is officially called BFS, not BeFS". 
-+=========================
-+Be, Inc said, "BeOS Filesystem is officially called BFS, not BeFS".
- But Unixware Boot Filesystem is called bfs, too. And they are already in
- the kernel. Because of this naming conflict, on Linux the BeOS
- filesystem is called befs.
+-# prtvtoc /dev/rdsk/c0b0t0d0s0
++    # prtvtoc /dev/rdsk/c0b0t0d0s0
  
--HOW TO INSTALL
-+How to Install
- ==============
- step 1.  Install the BeFS  patch into the source code tree of linux.
+ (assuming your root disk is on target=0, lun=0, bus=0, controller=0). Then you
+ look for the slice with tag "STAND", which is usually slice 10. With this
+-information you can use dd(1) to create the BFS image:
++information you can use dd(1) to create the BFS image::
  
-@@ -54,16 +60,16 @@ is called patch-befs-xxx, you would do the following:
- 	patch -p1 < /path/to/patch-befs-xxx
+-# umount /stand
+-# dd if=/dev/rdsk/c0b0t0d0sa of=stand.img bs=512
++    # umount /stand
++    # dd if=/dev/rdsk/c0b0t0d0sa of=stand.img bs=512
  
- if the patching step fails (i.e. there are rejected hunks), you can try to
--figure it out yourself (it shouldn't be hard), or mail the maintainer 
-+figure it out yourself (it shouldn't be hard), or mail the maintainer
- (Will Dyson <will_dyson@pobox.com>) for help.
+ Just in case, you can verify that you have done the right thing by checking
+-the magic number:
++the magic number::
  
- step 2.  Configuration & make kernel
+-# od -Ad -tx4 stand.img | more
++    # od -Ad -tx4 stand.img | more
  
- The linux kernel has many compile-time options. Most of them are beyond the
- scope of this document. I suggest the Kernel-HOWTO document as a good general
--reference on this topic. http://www.linuxdocs.org/HOWTOs/Kernel-HOWTO-4.html 
-+reference on this topic. http://www.linuxdocs.org/HOWTOs/Kernel-HOWTO-4.html
- 
--However, to use the BeFS module, you must enable it at configure time.
-+However, to use the BeFS module, you must enable it at configure time::
- 
- 	cd /foo/bar/linux
- 	make menuconfig (or xconfig)
-@@ -82,35 +88,40 @@ step 3.  Install
- See the kernel howto <http://www.linux.com/howto/Kernel-HOWTO.html> for
- instructions on this critical step.
- 
--USING BFS
-+Using BFS
- =========
- To use the BeOS filesystem, use filesystem type 'befs'.
- 
--ex)
-+ex::
-+
-     mount -t befs /dev/fd0 /beos
- 
--MOUNT OPTIONS
-+Mount Options
- =============
-+
-+=============  ===========================================================
- uid=nnn        All files in the partition will be owned by user id nnn.
- gid=nnn	       All files in the partition will be in group nnn.
- iocharset=xxx  Use xxx as the name of the NLS translation table.
- debug          The driver will output debugging information to the syslog.
-+=============  ===========================================================
- 
--HOW TO GET LASTEST VERSION
-+How to Get Lastest Version
- ==========================
- 
- The latest version is currently available at:
- <http://befs-driver.sourceforge.net/>
- 
--ANY KNOWN BUGS?
--===========
-+Any Known Bugs?
-+===============
- As of Jan 20, 2002:
--	
-+
- 	None
- 
--SPECIAL THANKS
-+Special Thanks
- ==============
- Dominic Giampalo ... Writing "Practical file system design with Be filesystem"
-+
- Hiroyuki Yamada  ... Testing LinuxPPC.
- 
+ The first 4 bytes should be 0x1badface.
  
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index c9480138d47e..98de437f5500 100644
+index 98de437f5500..f74e6b273d9f 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -52,6 +52,7 @@ Documentation for filesystem implementations.
-    afs
+@@ -53,6 +53,7 @@ Documentation for filesystem implementations.
     autofs
     autofs-mount-control
-+   befs
+    befs
++   bfs
     fuse
     overlayfs
     virtiofs
