@@ -2,119 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74DB51607D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 02:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C3A1607E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 02:55:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbgBQBlb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Feb 2020 20:41:31 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:34758 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726723AbgBQBlb (ORCPT
+        id S1726591AbgBQBzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Feb 2020 20:55:24 -0500
+Received: from mx05.melco.co.jp ([192.218.140.145]:59186 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbgBQBzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Feb 2020 20:41:31 -0500
-Received: from mr3.cc.vt.edu (mr3.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 01H1fUpU026546
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Feb 2020 20:41:30 -0500
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 01H1fOe5016079
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Feb 2020 20:41:29 -0500
-Received: by mail-qk1-f199.google.com with SMTP id t186so10932957qkf.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Feb 2020 17:41:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=sv2ceZp1op4PModOTmniGKJ7V5g03pJcc68F5eGW640=;
-        b=Nj6UiXDywEa+I8++R3VmQNL8bwzW+JLBq0iOrBaT3M8pGnFuMhXFSYdqf2idMx4779
-         jbKJrlDVtedVE/McN33z0lxi6YP3zxiK35ovlgP38K9FYRLe/Yuhbv51NLmLagfSpLz5
-         WZOaz/otA6zNFEArkjyUy++2KPQAHMa5MwQ3KbDt6rhxYXWxYAt9MHHVnMZoCFCJ7SFr
-         WRvVdQV312jQZ9hx/1kGdy/cLIdmSpZUruCZPY5k3wou5cowZKJQUA2EehY20I1RQblI
-         3EP5bMhiMVfteX6/ASQvMH+CkI8cz0owUSwNCuO9Y6i9VrThgsngyg5PPaXfKD0GbUfp
-         1NFw==
-X-Gm-Message-State: APjAAAXfTNLrOmQ6b6/zFNeQKKyXKvALCMI5CjV7l73QBeN9KHBMEcDV
-        iX2R3nRey0qJ3dJj9o2vl5B6rolAa8+yOGWEJ4hpnmaQQj+eGxtgK3SPSjAwPwJxEiR8azgNoKr
-        w+4NNhAr7EmoGjveUC4GHQ7HWxDSs8XFVSVCE
-X-Received: by 2002:a37:a5cc:: with SMTP id o195mr12277342qke.25.1581903684497;
-        Sun, 16 Feb 2020 17:41:24 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz7bWoxPayu8kgU2Bhg/GlzNU2d7s9SpWB7AsfKmq7sORME7CHUPB+YiVTvKi5yRIFYIJPPrA==
-X-Received: by 2002:a37:a5cc:: with SMTP id o195mr12277322qke.25.1581903684177;
-        Sun, 16 Feb 2020 17:41:24 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id o19sm7721193qkh.135.2020.02.16.17.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2020 17:41:22 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     "Namjae Jeon" <namjae.jeon@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, hch@lst.de, sj1557.seo@samsung.com,
-        pali.rohar@gmail.com, arnd@arndb.de, viro@zeniv.linux.org.uk,
-        "'Namjae Jeon'" <linkinjeon@gmail.com>,
-        "'Sasha Levin'" <sashal@kernel.org>
-Subject: Re: [PATCH] exfat: tighten down num_fats check
-In-Reply-To: <001b01d5e52a$7f029340$7d07b9c0$@samsung.com>
-References: <CGME20200214232853epcas1p241e47cdc4e0b9b5c603cc6eaa6182360@epcas1p2.samsung.com> <89603.1581722921@turing-police>
- <001b01d5e52a$7f029340$7d07b9c0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1581903681_14173P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 16 Feb 2020 20:41:21 -0500
-Message-ID: <83075.1581903681@turing-police>
+        Sun, 16 Feb 2020 20:55:24 -0500
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id 85F303A2B08;
+        Mon, 17 Feb 2020 10:55:22 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 48LRrp2xZyzRkBj;
+        Mon, 17 Feb 2020 10:55:22 +0900 (JST)
+Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 48LRrp2dVzzRk3D;
+        Mon, 17 Feb 2020 10:55:22 +0900 (JST)
+Received: from mf04.melco.co.jp (unknown [133.141.98.184])
+        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48LRrp2fpRzRk9w;
+        Mon, 17 Feb 2020 10:55:22 +0900 (JST)
+Received: from JPN01-OS2-obe.outbound.protection.outlook.com (unknown [104.47.92.50])
+        by mf04.melco.co.jp (Postfix) with ESMTP id 48LRrp29fnzRkBK;
+        Mon, 17 Feb 2020 10:55:22 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y6w0cP+WRCzMVna60X2e3r71uQjtLr7O4gbEp8ldaWIKxve6ANOVGpcOzFWmjWFCatvAFnOzzvxZSnnn36vZtPEGRzwogQmcqvA/3ugxKdDjmOHprFvGP25N0L29zzc0sFCBibDZtlmmLAk6DegrlQYB7kyikz5wFeIfvqRO0ZjNOgN0QNuYL0Bp/3E/y06fXy4D3aoSkA8G41qaMogRQs/AD/QKny27VGmpBHhuy5IWF7IuVt4eYqqbkNaSLzjaGdx5G4LWAZlVpwRHoLVfeOCrssDJKpboiGA4RyiaGQLLlDvgKrVZNWc8xSmZiuwHC2z0cf0GIxwdyVQWn6AfGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C/0Va6Y5vbElOQECQb5B9Kh1bpbXR4t682vZZKVvXoc=;
+ b=khabfELbbcOR4Q8g7MQlBT3Juv+Po01LTurc2A9PfXDKqH+QA69XCfL2pyZOQNmNEi0bLqcg+6nMBRNy1DEsI46hHY8nBloKiJn0nYoB3oCWU/ytYX7GQTUsvUIt5Db9OKjyOrNzRejNAX20uf5fmhWbzGBUSe4V4fowXW4uDJvAkBWQ+bthDSUzQt8OwRJEL+Pqc27l5XceHpzuEyycJX1pPyhnMJRVuC/LWNDXxGFxtONJAfJxS0SmaQpe5enQVryJIYqTnAW0jgwY6+R7PGxKQeInWw+wuH9Lu75X/YsMA0iVjitmvJGvPBFIcYDVO2h1l5gP2N4QzLVU5HnX4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C/0Va6Y5vbElOQECQb5B9Kh1bpbXR4t682vZZKVvXoc=;
+ b=K0OvCWnpSIJJJo8zmX4VphT+ehuiSvypurtNtUSLBg1Z4Tj1YxnhzFbwU08YeExmQHJpVCxiBn/3XCpUo2nEqyfXrdRyq7rMH30H91tImrj55DPKeuxz8F/XH3qG1iw3mBH2e8r5cZffcaQ2IawriBN1rzCv1r5aZwZQMdGHruE=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY1PR01MB1595.jpnprd01.prod.outlook.com (52.133.162.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.25; Mon, 17 Feb 2020 01:55:21 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b%7]) with mapi id 15.20.2729.031; Mon, 17 Feb 2020
+ 01:55:21 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+CC:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>
+Subject: RE: [PATCH v2 1/2] staging: exfat: remove DOSNAMEs.
+Thread-Topic: [PATCH v2 1/2] staging: exfat: remove DOSNAMEs.
+Thread-Index: AQHV4udJFqNx/CzTgECwKnDOEdxsgqga3uMAgAPDczA=
+Date:   Mon, 17 Feb 2020 01:54:07 +0000
+Deferred-Delivery: Mon, 17 Feb 2020 01:55:06 +0000
+Message-ID: <TY1PR01MB1578EA0B95FE3C29D0F9A64190160@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <20200214033140.72339-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <20200214161810.GA3964830@kroah.com>
+In-Reply-To: <20200214161810.GA3964830@kroah.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 65551ed3-38f0-421d-ea56-08d7b34c72a4
+x-ms-traffictypediagnostic: TY1PR01MB1595:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB15957267285B79678107B54E90160@TY1PR01MB1595.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 0316567485
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(376002)(39860400002)(396003)(366004)(199004)(189003)(64756008)(66476007)(66556008)(7696005)(8676002)(66446008)(558084003)(478600001)(33656002)(8936002)(54906003)(5660300002)(186003)(76116006)(81156014)(81166006)(66946007)(52536014)(316002)(4326008)(6506007)(9686003)(6916009)(2906002)(71200400001)(55016002)(26005)(6666004)(86362001)(107886003)(95630200002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1595;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: aEFhtxwV4ouI5PI00pVDpdYiM0b2S2CGHSm1VXAxZlPVZ9KDnHCIHB/BF4H0SOLs2sNhJ8bDzYrs3N9DaNIgLr54NZycAcRJmE4TD4PbUFIXCyJKkOzsERQ6vJ3MZUGuxJVAKs3cxY7pkJ8oKSDJ8ROEhoeFXrNyJ2xJAmpUw7mslVZKtL2aWpRmwt50nrmI5ETYRtxPNpXGI6G0/tQwsD4WRVxtXJFWMjPhDC8BK95assrtA2zp6XjxT5x0RrZ7mqhQOSIVH4WZ+BoS0HGxX/HuGFiwwrqjyaiChv0HSFkZKmPj35We35t/7lMd+N1IQsgIQzSFmyzZv1XBI6smEQgtuAyl36tJwKXyTA9fCdCyyYiJeGpHjpZThLa+Hkx+yD0u2L+PKu7gdQw7Igs1wCKETpeqXaShvyLWN6Fe3ovnFH2g/CQSrPmZMaI7vs2ycOS7ZVfzGLUCqMBaObKhC5nHBW7uW3+yXD7XnRlIb+QSQcYM9AR3dX2JtugSj2DG
+x-ms-exchange-antispam-messagedata: AX9PGy5Wo65VUV/ps4mZab59qaYaomhWsgPFS9Ebj2zV/Hhdt0dWryOL8X+SKk3o0oZ6edhFGytAOHx+eFQm3xi66VnWbKvJQGKKMNcQg4pMyIDL1d6LbVFZ6MGNPkLKRf6DluoPjA3NKFgG6+TGHw==
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65551ed3-38f0-421d-ea56-08d7b34c72a4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Feb 2020 01:55:21.7741
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7vpXUzu30QOxEfbXz3EZqTLSFUccsV7c3uSKvXIusmE4eaWQQj9gXO35OZa1fGDIflSL5ZAXAtcrmP5a1o77nA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1595
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1581903681_14173P
-Content-Type: text/plain; charset=us-ascii
+> I think you might need to rebase again, this patch doesn't apply at all t=
+o my tree :(
 
-On Mon, 17 Feb 2020 09:37:55 +0900, "Namjae Jeon" said:
+Thanks for your comments.
+I'll try to rebase with 'staging-next' branch.
+Is this correct?
 
-> Could you please update error message for the reason why num_fats is allowed
-> only 1?
-
-Sure.. No problem..
-
-> >  		ret = -EINVAL;
-> >  		goto free_bh;
-> Let's remove exfat_mirror_bh(), FAT2_start_sector variable and the below
-> related codes together.
->
-> sbi->FAT2_start_sector = p_bpb->bsx.num_fats == 1 ?
->                 sbi->FAT1_start_sector :
->                         sbi->FAT1_start_sector + sbi->num_FAT_sectors;
-
-You might want to hold off on that part for a bit - I've asked Sasha Levin for
-input on what exactly Windows does with this, and Pali has a not-obviously-wrong
-suggestion on using the second FAT table.  The code tracking FAT2_start_sector
-looks OK - what would be missing is doing a similar versioning on the FAT
-the rest of the code references.
-
-We may end up heaving that code over the side in the end, but let's make
-sure we're doing it with more information in hand....
-
-
---==_Exmh_1581903681_14173P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXknvQAdmEQWDXROgAQLx9hAArGcsQ4heaHoCkYlLQykrtoFHMf3RgBv1
-1SxDyx4wEynQMiX7+x3wmRD7Gq4QGEfQSmBBMwEDaPNtbSpFnFwIyJapareTl1zU
-+r+ulf5h2/6Kbeglly89Kn+6HcH0aZ5QktqtLkgohr7x4MfZ16Tr6qCQP9w8Aovt
-16hob7ql94iygjTppeE6F99tTQBY7oRHTJGuwB17RsoOrSM6XXuAb/8HKhTOjXW8
-RsyxYBw4R8RNlu/qjmYqs9kk3tXJX3Vc1lG2JVMZQnSIe/Yp1nx4c79OPGPuhGqG
-iKLmgOz8jiG74hOCykFctZDfoNX0CJpvRfmBRz4WkYcu1MwFxW/7LN7PJROM5Ixr
-JQG32p0lzDqm7fxvUzvE+5sw+E5M5ioigPfSTfOI683QJ/kUaUOy9de/90Um8g3v
-lyYKu3MdWOq5Zqtz/aBT7/BTI0FK0QjMbu+jYSXm8oDoTx6adeJEytGFpG/D2asA
-B95CfG3Rh14EPxCWfXp9i+7nQ/mtHlN7qtEPHumxaHFgJXK3Irvj5P5qLRw6mQG2
-PH1bLCUrbX1SF8mroSho364cdQ8J/j3vLwE2HltcXaLk+cPuKkaZbbYB3iwWYkB9
-zws0G+WKsVXBPVOoeFkWfaHCGFT/7xvAY2zNM1MbPLQXG5KrZa+DIlnYRCFfbUVG
-Snmb2rUl6oY=
-=SS6+
------END PGP SIGNATURE-----
-
---==_Exmh_1581903681_14173P--
+--
+Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
