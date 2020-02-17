@@ -2,174 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 174B3161991
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 19:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE0E161AC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 19:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgBQSRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 13:17:18 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45580 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728857AbgBQSRR (ORCPT
+        id S1729660AbgBQSsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 13:48:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48148 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729896AbgBQSqW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 13:17:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1581963435;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2GzqxUysJp77BafIkGkM9UKjB5x/duPjdTnwyoWtsCE=;
-        b=NRAjtCawVqGNUNvEcvezN+feaLwjf/9OwmHHaK733evReDRvIjMAxnr45l+1lOZvhrdd4s
-        s9a2o9NjZEIyqvZBIPDjRSnvApvIHyhSlVHzaNSf66Q9/p7KKoYVcdrvyS/7U016vb63Of
-        JxeuJTWAtB3QN/iC+XZKx6Pi8koBBrg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-364-OdHrqrOlNd6TEsIUM4fQLA-1; Mon, 17 Feb 2020 13:17:13 -0500
-X-MC-Unique: OdHrqrOlNd6TEsIUM4fQLA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A51910CE78D;
-        Mon, 17 Feb 2020 18:17:12 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D6C9360BE1;
-        Mon, 17 Feb 2020 18:17:11 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 20D4A2257D9; Mon, 17 Feb 2020 13:17:08 -0500 (EST)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com
-Cc:     dm-devel@redhat.com, vishal.l.verma@intel.com, vgoyal@redhat.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 7/7] dax,iomap: Add helper dax_iomap_zero() to zero a range
-Date:   Mon, 17 Feb 2020 13:16:53 -0500
-Message-Id: <20200217181653.4706-8-vgoyal@redhat.com>
-In-Reply-To: <20200217181653.4706-1-vgoyal@redhat.com>
-References: <20200217181653.4706-1-vgoyal@redhat.com>
+        Mon, 17 Feb 2020 13:46:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=T1hWdYf0rB2BfBCCA/ycayjeULcD1RhEgE660nEF24U=; b=sDP0FQJf/K4vAFf0xbBt1NG5yU
+        BQo1zx2sDVZ4f5cBkmFWO1G5RYV/E561hS2Td5IkHpV55ScSQW46Pj3wPG/gZaXv5iWHZLxlFtSnT
+        BjLdIL++tZJlAw+Xzc28cr0VXtl8dDkruXjAEG9us+5NgJF/WpeRWy/LlJXX4j3I+4+SEJhRWETgz
+        Pc3A3JXDX5ggpPhYiDZYGDq58my+Q7ybdYT8YK8UL/adpWVgbm5fu+cJicN73uRbmjyuszU+cwKHN
+        CfFecxgyQQHpcERi6MFkYvGkiqN5jvoxW64RDHCkUV7Phh5O9263P2GEglbrJexeT6DAt54eb4wHq
+        2EZUCDbw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j3lPL-00058b-99; Mon, 17 Feb 2020 18:46:15 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH v6 00/19] Change readahead API
+Date:   Mon, 17 Feb 2020 10:45:41 -0800
+Message-Id: <20200217184613.19668-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper dax_ioamp_zero() to zero a range. This patch basically
-merges __dax_zero_page_range() and iomap_dax_zero().
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/dax.c               | 12 ++++++------
- fs/iomap/buffered-io.c |  9 +--------
- include/linux/dax.h    | 17 +++--------------
- 3 files changed, 10 insertions(+), 28 deletions(-)
+This series adds a readahead address_space operation to eventually
+replace the readpages operation.  The key difference is that
+pages are added to the page cache as they are allocated (and
+then looked up by the filesystem) instead of passing them on a
+list to the readpages operation and having the filesystem add
+them to the page cache.  It's a net reduction in code for each
+implementation, more efficient than walking a list, and solves
+the direct-write vs buffered-read problem reported by yu kuai at
+https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 6757e12b86b2..f6c4788ba764 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1044,23 +1044,23 @@ static vm_fault_t dax_load_hole(struct xa_state *=
-xas,
- 	return ret;
- }
-=20
--int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int size)
-+int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-+		   struct iomap *iomap)
- {
- 	pgoff_t pgoff;
- 	long rc, id;
-+	sector_t sector =3D iomap_sector(iomap, pos & PAGE_MASK);
-=20
--	rc =3D bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
-+	rc =3D bdev_dax_pgoff(iomap->bdev, sector, PAGE_SIZE, &pgoff);
- 	if (rc)
- 		return rc;
-=20
- 	id =3D dax_read_lock();
--	rc =3D dax_zero_page_range(dax_dev, (pgoff << PAGE_SHIFT) + offset, siz=
-e);
-+	rc =3D dax_zero_page_range(iomap->dax_dev, (pgoff << PAGE_SHIFT) + offs=
-et,
-+				 size);
- 	dax_read_unlock(id);
- 	return rc;
- }
--EXPORT_SYMBOL_GPL(__dax_zero_page_range);
-=20
- static loff_t
- dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *da=
-ta,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 7c84c4c027c4..6f750da545e5 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -974,13 +974,6 @@ static int iomap_zero(struct inode *inode, loff_t po=
-s, unsigned offset,
- 	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
- }
-=20
--static int iomap_dax_zero(loff_t pos, unsigned offset, unsigned bytes,
--		struct iomap *iomap)
--{
--	return __dax_zero_page_range(iomap->bdev, iomap->dax_dev,
--			iomap_sector(iomap, pos & PAGE_MASK), offset, bytes);
--}
--
- static loff_t
- iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
- 		void *data, struct iomap *iomap, struct iomap *srcmap)
-@@ -1000,7 +993,7 @@ iomap_zero_range_actor(struct inode *inode, loff_t p=
-os, loff_t count,
- 		bytes =3D min_t(loff_t, PAGE_SIZE - offset, count);
-=20
- 		if (IS_DAX(inode))
--			status =3D iomap_dax_zero(pos, offset, bytes, iomap);
-+			status =3D dax_iomap_zero(pos, offset, bytes, iomap);
- 		else
- 			status =3D iomap_zero(inode, pos, offset, bytes, iomap,
- 					srcmap);
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index a555f0aeb7bd..31d0e6fc3023 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -13,6 +13,7 @@
- typedef unsigned long dax_entry_t;
-=20
- struct iomap_ops;
-+struct iomap;
- struct dax_device;
- struct dax_operations {
- 	/*
-@@ -223,20 +224,8 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vm=
-f,
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t inde=
-x);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
--
--#ifdef CONFIG_FS_DAX
--int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int length);
--#else
--static inline int __dax_zero_page_range(struct block_device *bdev,
--		struct dax_device *dax_dev, sector_t sector,
--		unsigned int offset, unsigned int length)
--{
--	return -ENXIO;
--}
--#endif
--
-+int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-+			struct iomap *iomap);
- static inline bool dax_mapping(struct address_space *mapping)
- {
- 	return mapping->host && IS_DAX(mapping->host);
---=20
-2.20.1
+The only unconverted filesystems are those which use fscache.
+Their conversion is pending Dave Howells' rewrite which will make the
+conversion substantially easier.
+
+v6:
+ - Name the private members of readahead_control with a leading underscore
+   (suggested by Christoph Hellwig)
+ - Fix whitespace in rst file
+ - Remove misleading comment in btrfs patch
+ - Add readahead_next() API and use it in iomap
+ - Add iomap_readahead kerneldoc.
+ - Fix the mpage_readahead kerneldoc
+ - Make various readahead functions return void
+ - Keep readahead_index() and readahead_offset() pointing to the start of
+   this batch through the body.  No current user requires this, but it's
+   less surprising.
+ - Add kerneldoc for page_cache_readahead_limit
+ - Make page_idx an unsigned long, and rename it to just 'i'
+ - Get rid of page_offset local variable
+ - Add patch to call memalloc_nofs_save() before allocating pages (suggested
+   by Michal Hocko)
+ - Resplit a lot of patches for more logical progression and easier review
+   (suggested by John Hubbard)
+ - Added sign-offs where received, and I deemed still relevant
+
+v5 switched to passing a readahead_control struct (mirroring the
+writepages_control struct passed to writepages).  This has a number of
+advantages:
+ - It fixes a number of bugs in various implementations, eg forgetting to
+   increment 'start', an off-by-one error in 'nr_pages' or treating 'start'
+   as a byte offset instead of a page offset.
+ - It allows us to change the arguments without changing all the
+   implementations of ->readahead which just call mpage_readahead() or
+   iomap_readahead()
+ - Figuring out which pages haven't been attempted by the implementation
+   is more natural this way.
+ - There's less code in each implementation.
+
+Matthew Wilcox (Oracle) (19):
+  mm: Return void from various readahead functions
+  mm: Ignore return value of ->readpages
+  mm: Use readahead_control to pass arguments
+  mm: Rearrange readahead loop
+  mm: Remove 'page_offset' from readahead loop
+  mm: rename readahead loop variable to 'i'
+  mm: Put readahead pages in cache earlier
+  mm: Add readahead address space operation
+  mm: Add page_cache_readahead_limit
+  fs: Convert mpage_readpages to mpage_readahead
+  btrfs: Convert from readpages to readahead
+  erofs: Convert uncompressed files from readpages to readahead
+  erofs: Convert compressed files from readpages to readahead
+  ext4: Convert from readpages to readahead
+  f2fs: Convert from readpages to readahead
+  fuse: Convert from readpages to readahead
+  iomap: Restructure iomap_readpages_actor
+  iomap: Convert from readpages to readahead
+  mm: Use memalloc_nofs_save in readahead path
+
+ Documentation/filesystems/locking.rst |   6 +-
+ Documentation/filesystems/vfs.rst     |  13 ++
+ drivers/staging/exfat/exfat_super.c   |   7 +-
+ fs/block_dev.c                        |   7 +-
+ fs/btrfs/extent_io.c                  |  46 ++-----
+ fs/btrfs/extent_io.h                  |   3 +-
+ fs/btrfs/inode.c                      |  16 +--
+ fs/erofs/data.c                       |  39 ++----
+ fs/erofs/zdata.c                      |  29 ++--
+ fs/ext2/inode.c                       |  10 +-
+ fs/ext4/ext4.h                        |   3 +-
+ fs/ext4/inode.c                       |  23 ++--
+ fs/ext4/readpage.c                    |  22 ++-
+ fs/ext4/verity.c                      |  35 +----
+ fs/f2fs/data.c                        |  50 +++----
+ fs/f2fs/f2fs.h                        |   5 +-
+ fs/f2fs/verity.c                      |  35 +----
+ fs/fat/inode.c                        |   7 +-
+ fs/fuse/file.c                        |  46 +++----
+ fs/gfs2/aops.c                        |  23 ++--
+ fs/hpfs/file.c                        |   7 +-
+ fs/iomap/buffered-io.c                | 118 +++++++----------
+ fs/iomap/trace.h                      |   2 +-
+ fs/isofs/inode.c                      |   7 +-
+ fs/jfs/inode.c                        |   7 +-
+ fs/mpage.c                            |  38 ++----
+ fs/nilfs2/inode.c                     |  15 +--
+ fs/ocfs2/aops.c                       |  34 ++---
+ fs/omfs/file.c                        |   7 +-
+ fs/qnx6/inode.c                       |   7 +-
+ fs/reiserfs/inode.c                   |   8 +-
+ fs/udf/inode.c                        |   7 +-
+ fs/xfs/xfs_aops.c                     |  13 +-
+ fs/zonefs/super.c                     |   7 +-
+ include/linux/fs.h                    |   2 +
+ include/linux/iomap.h                 |   3 +-
+ include/linux/mpage.h                 |   4 +-
+ include/linux/pagemap.h               |  90 +++++++++++++
+ include/trace/events/erofs.h          |   6 +-
+ include/trace/events/f2fs.h           |   6 +-
+ mm/internal.h                         |   8 +-
+ mm/migrate.c                          |   2 +-
+ mm/readahead.c                        | 184 +++++++++++++++++---------
+ 43 files changed, 474 insertions(+), 533 deletions(-)
+
+
+base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
+-- 
+2.25.0
 
