@@ -2,41 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96904161769
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C656116174C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729825AbgBQQNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 11:13:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47174 "EHLO
+        id S1729791AbgBQQNA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 11:13:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47198 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729694AbgBQQMe (ORCPT
+        with ESMTP id S1729697AbgBQQMf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:12:34 -0500
+        Mon, 17 Feb 2020 11:12:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=6OBIEyGeC8GGKqnKGwL1+V0v9tkJKSySR1o7CWTaj+Y=; b=O1kOqDcTn4lLO5x8zG6VdNLHV1
-        ad8mt3jTMPWEOUZQ2LvGt+rjHTpf78NEf7Rk7XepFltFNoQDBa5p9SYKOlZn7frpHr5VgYWGO0f4M
-        Gwcy3FOs3NE3JAT5lT00HIxDUFz8YbvAKn/vrVyXZwACpm8J7/fI7ToKvTqHkSjVYboNwxrNVuiaI
-        iuCDP911Lo+uzze1RPoEQFRyGO0xBUl2Yq3g17B5c1BjhPmZaSPrVnM8lMZ4KuXfspgb75ERlR31B
-        qsJMO6EZPZXPVqhhF5wioxLGCpaRkdrreeD2eX5BMl7yDFArYavRWmqc1Q3Gnt2zYTF1hVs8UR8WI
-        C0Xsy9UA==;
+        bh=N/9Z33HoMcMHaeifzNVULrHTVj9SAYN1jD9RU93RDJo=; b=snP3OGI8Remel3KchHkJrb8b13
+        Rci+R4BM9wzkRsCF9Jt2+MbMEV0vN/PuZIg3f2W0h+o0b3t5+cOEeeqoIavDxwbNAkWXJfXdEEan8
+        GbLIF1vOtnf3eiGbHFiBsr+NFWahuJ53SjtHjeET4SkVaBOCQnbT36zh2CVUDF0bL5vBcV9W2OXXx
+        Ro+GA/SN9zPuRTR5enBIw0f6jsgpbkoL4sjPqHrkW2Wamd4x2jXms0w6g/4wFaz5DPcyUxhIzT/pb
+        YopwZUaxdi5wJrnYNWvY+qWUcNjBdsmGidfwQvDE3MNcgIDnh/RFrg9iZ8SZD7b07zTvGwS0gKtTS
+        Cjfp1lTw==;
 Received: from tmo-109-126.customers.d1-online.com ([80.187.109.126] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3j0c-0006um-I5; Mon, 17 Feb 2020 16:12:34 +0000
+        id 1j3j0c-0006un-K1; Mon, 17 Feb 2020 16:12:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1j3j0a-000far-Kn; Mon, 17 Feb 2020 17:12:32 +0100
+        id 1j3j0a-000faw-MG; Mon, 17 Feb 2020 17:12:32 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH 24/44] docs: filesystems: convert inotify.txt to ReST
-Date:   Mon, 17 Feb 2020 17:12:10 +0100
-Message-Id: <8f846843ecf1914988feb4d001e3a53d27dc1a65.1581955849.git.mchehab+huawei@kernel.org>
+        Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 25/44] docs: filesystems: convert isofs.txt to ReST
+Date:   Mon, 17 Feb 2020 17:12:11 +0100
+Message-Id: <ec16dc09d0c23bb0c1af3d3f33a96896083a1d36.1581955849.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1581955849.git.mchehab+huawei@kernel.org>
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
@@ -49,106 +47,156 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 - Add a SPDX header;
 - Add a document title;
-- Adjust document title;
-- Fix list markups;
 - Some whitespace fixes and new line breaks;
+- Add table markups;
+- Add lists markups;
 - Add it to filesystems/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- Documentation/filesystems/index.rst           |  1 +
- .../filesystems/{inotify.txt => inotify.rst}  | 33 ++++++++++++-------
- 2 files changed, 23 insertions(+), 11 deletions(-)
- rename Documentation/filesystems/{inotify.txt => inotify.rst} (83%)
+ Documentation/filesystems/index.rst |  1 +
+ Documentation/filesystems/isofs.rst | 64 +++++++++++++++++++++++++++++
+ Documentation/filesystems/isofs.txt | 48 ----------------------
+ 3 files changed, 65 insertions(+), 48 deletions(-)
+ create mode 100644 Documentation/filesystems/isofs.rst
+ delete mode 100644 Documentation/filesystems/isofs.txt
 
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 3fbe2fa0b5c5..5a737722652c 100644
+index 5a737722652c..8c8813ada53f 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -70,6 +70,7 @@ Documentation for filesystem implementations.
-    hfs
+@@ -71,6 +71,7 @@ Documentation for filesystem implementations.
     hfsplus
     hpfs
-+   inotify
+    inotify
++   isofs
     fuse
     overlayfs
     virtiofs
-diff --git a/Documentation/filesystems/inotify.txt b/Documentation/filesystems/inotify.rst
-similarity index 83%
-rename from Documentation/filesystems/inotify.txt
-rename to Documentation/filesystems/inotify.rst
-index 51f61db787fb..7f7ef8af0e1e 100644
---- a/Documentation/filesystems/inotify.txt
-+++ b/Documentation/filesystems/inotify.rst
-@@ -1,27 +1,36 @@
--				   inotify
--	    a powerful yet simple file change notification system
+diff --git a/Documentation/filesystems/isofs.rst b/Documentation/filesystems/isofs.rst
+new file mode 100644
+index 000000000000..08fd469091d4
+--- /dev/null
++++ b/Documentation/filesystems/isofs.rst
+@@ -0,0 +1,64 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
-+===============================================================
-+Inotify - A Powerful yet Simple File Change Notification System
-+===============================================================
- 
- 
- 
- Document started 15 Mar 2005 by Robert Love <rml@novell.com>
++==================
++ISO9660 Filesystem
++==================
 +
- Document updated 4 Jan 2015 by Zhang Zhen <zhenzhang.zhang@huawei.com>
--	--Deleted obsoleted interface, just refer to manpages for user interface.
++Mount options that are the same as for msdos and vfat partitions.
 +
-+	- Deleted obsoleted interface, just refer to manpages for user interface.
- 
- (i) Rationale
- 
--Q: What is the design decision behind not tying the watch to the open fd of
-+Q:
-+   What is the design decision behind not tying the watch to the open fd of
-    the watched object?
- 
--A: Watches are associated with an open inotify device, not an open file.
-+A:
-+   Watches are associated with an open inotify device, not an open file.
-    This solves the primary problem with dnotify: keeping the file open pins
-    the file and thus, worse, pins the mount.  Dnotify is therefore infeasible
-    for use on a desktop system with removable media as the media cannot be
-    unmounted.  Watching a file should not require that it be open.
- 
--Q: What is the design decision behind using an-fd-per-instance as opposed to
-+Q:
-+   What is the design decision behind using an-fd-per-instance as opposed to
-    an fd-per-watch?
- 
--A: An fd-per-watch quickly consumes more file descriptors than are allowed,
-+A:
-+   An fd-per-watch quickly consumes more file descriptors than are allowed,
-    more fd's than are feasible to manage, and more fd's than are optimally
-    select()-able.  Yes, root can bump the per-process fd limit and yes, users
-    can use epoll, but requiring both is a silly and extraneous requirement.
-@@ -29,8 +38,8 @@ A: An fd-per-watch quickly consumes more file descriptors than are allowed,
-    spaces is thus sensible.  The current design is what user-space developers
-    want: Users initialize inotify, once, and add n watches, requiring but one
-    fd and no twiddling with fd limits.  Initializing an inotify instance two
--   thousand times is silly.  If we can implement user-space's preferences 
--   cleanly--and we can, the idr layer makes stuff like this trivial--then we 
-+   thousand times is silly.  If we can implement user-space's preferences
-+   cleanly--and we can, the idr layer makes stuff like this trivial--then we
-    should.
- 
-    There are other good arguments.  With a single fd, there is a single
-@@ -65,9 +74,11 @@ A: An fd-per-watch quickly consumes more file descriptors than are allowed,
-    need not be a one-fd-per-process mapping; it is one-fd-per-queue and a
-    process can easily want more than one queue.
- 
--Q: Why the system call approach?
-+Q:
-+   Why the system call approach?
- 
--A: The poor user-space interface is the second biggest problem with dnotify.
-+A:
-+   The poor user-space interface is the second biggest problem with dnotify.
-    Signals are a terrible, terrible interface for file notification.  Or for
-    anything, for that matter.  The ideal solution, from all perspectives, is a
-    file descriptor-based one that allows basic file I/O and poll/select.
++  =========	========================================================
++  gid=nnn	All files in the partition will be in group nnn.
++  uid=nnn	All files in the partition will be owned by user id nnn.
++  umask=nnn	The permission mask (see umask(1)) for the partition.
++  =========	========================================================
++
++Mount options that are the same as vfat partitions. These are only useful
++when using discs encoded using Microsoft's Joliet extensions.
++
++ ==============	=============================================================
++ iocharset=name Character set to use for converting from Unicode to
++		ASCII.  Joliet filenames are stored in Unicode format, but
++		Unix for the most part doesn't know how to deal with Unicode.
++		There is also an option of doing UTF-8 translations with the
++		utf8 option.
++  utf8          Encode Unicode names in UTF-8 format. Default is no.
++ ==============	=============================================================
++
++Mount options unique to the isofs filesystem.
++
++ ================= ============================================================
++  block=512        Set the block size for the disk to 512 bytes
++  block=1024       Set the block size for the disk to 1024 bytes
++  block=2048       Set the block size for the disk to 2048 bytes
++  check=relaxed    Matches filenames with different cases
++  check=strict     Matches only filenames with the exact same case
++  cruft            Try to handle badly formatted CDs.
++  map=off          Do not map non-Rock Ridge filenames to lower case
++  map=normal       Map non-Rock Ridge filenames to lower case
++  map=acorn        As map=normal but also apply Acorn extensions if present
++  mode=xxx         Sets the permissions on files to xxx unless Rock Ridge
++		   extensions set the permissions otherwise
++  dmode=xxx        Sets the permissions on directories to xxx unless Rock Ridge
++		   extensions set the permissions otherwise
++  overriderockperm Set permissions on files and directories according to
++		   'mode' and 'dmode' even though Rock Ridge extensions are
++		   present.
++  nojoliet         Ignore Joliet extensions if they are present.
++  norock           Ignore Rock Ridge extensions if they are present.
++  hide		   Completely strip hidden files from the file system.
++  showassoc	   Show files marked with the 'associated' bit
++  unhide	   Deprecated; showing hidden files is now default;
++		   If given, it is a synonym for 'showassoc' which will
++		   recreate previous unhide behavior
++  session=x        Select number of session on multisession CD
++  sbsector=xxx     Session begins from sector xxx
++ ================= ============================================================
++
++Recommended documents about ISO 9660 standard are located at:
++
++- http://www.y-adagio.com/
++- ftp://ftp.ecma.ch/ecma-st/Ecma-119.pdf
++
++Quoting from the PDF "This 2nd Edition of Standard ECMA-119 is technically
++identical with ISO 9660.", so it is a valid and gratis substitute of the
++official ISO specification.
+diff --git a/Documentation/filesystems/isofs.txt b/Documentation/filesystems/isofs.txt
+deleted file mode 100644
+index ba0a93384de0..000000000000
+--- a/Documentation/filesystems/isofs.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-Mount options that are the same as for msdos and vfat partitions.
+-
+-  gid=nnn	All files in the partition will be in group nnn.
+-  uid=nnn	All files in the partition will be owned by user id nnn.
+-  umask=nnn	The permission mask (see umask(1)) for the partition.
+-
+-Mount options that are the same as vfat partitions. These are only useful
+-when using discs encoded using Microsoft's Joliet extensions.
+-  iocharset=name Character set to use for converting from Unicode to
+-		ASCII.  Joliet filenames are stored in Unicode format, but
+-		Unix for the most part doesn't know how to deal with Unicode.
+-		There is also an option of doing UTF-8 translations with the
+-		utf8 option.
+-  utf8          Encode Unicode names in UTF-8 format. Default is no.
+-
+-Mount options unique to the isofs filesystem.
+-  block=512     Set the block size for the disk to 512 bytes
+-  block=1024    Set the block size for the disk to 1024 bytes
+-  block=2048    Set the block size for the disk to 2048 bytes
+-  check=relaxed Matches filenames with different cases
+-  check=strict  Matches only filenames with the exact same case
+-  cruft         Try to handle badly formatted CDs.
+-  map=off       Do not map non-Rock Ridge filenames to lower case
+-  map=normal    Map non-Rock Ridge filenames to lower case
+-  map=acorn     As map=normal but also apply Acorn extensions if present
+-  mode=xxx      Sets the permissions on files to xxx unless Rock Ridge
+-		extensions set the permissions otherwise
+-  dmode=xxx     Sets the permissions on directories to xxx unless Rock Ridge
+-		extensions set the permissions otherwise
+-  overriderockperm Set permissions on files and directories according to
+-		'mode' and 'dmode' even though Rock Ridge extensions are
+-		present.
+-  nojoliet      Ignore Joliet extensions if they are present.
+-  norock        Ignore Rock Ridge extensions if they are present.
+-  hide		Completely strip hidden files from the file system.
+-  showassoc	Show files marked with the 'associated' bit
+-  unhide	Deprecated; showing hidden files is now default;
+-		If given, it is a synonym for 'showassoc' which will
+-		recreate previous unhide behavior
+-  session=x     Select number of session on multisession CD
+-  sbsector=xxx  Session begins from sector xxx
+-
+-Recommended documents about ISO 9660 standard are located at:
+-http://www.y-adagio.com/
+-ftp://ftp.ecma.ch/ecma-st/Ecma-119.pdf
+-Quoting from the PDF "This 2nd Edition of Standard ECMA-119 is technically 
+-identical with ISO 9660.", so it is a valid and gratis substitute of the
+-official ISO specification.
 -- 
 2.24.1
 
