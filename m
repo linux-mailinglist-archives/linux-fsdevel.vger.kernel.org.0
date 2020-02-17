@@ -2,41 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705E1161713
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C270161768
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbgBQQMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 11:12:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47190 "EHLO
+        id S1729833AbgBQQNS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 11:13:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47118 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729696AbgBQQMf (ORCPT
+        with ESMTP id S1729672AbgBQQMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 11:12:35 -0500
+        Mon, 17 Feb 2020 11:12:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2WSAgbalKoJi48MBVBQl1Gh1grIgegQP+YR8aKAMr5s=; b=XOlgfN3TOhu5J/XQ9KvYjTLORg
-        TTBpg5jWgVN0KRejF5RHFfofViLs+arf1q+9yOvv/W4au5GQaLZm4JGIpDxPyaaq8pDNoP3sxh3wA
-        4vTWuEaYLJrOygTwrn0hiWVR4Hp03TgnMyARupMO70pjk8+BfUOuGi7rKquxm0yc5mw9kLpUMyy8a
-        ePA33SsZS+oYHdrQinoWsKoni0a79WBzBBXDukCn6tkVqPki1U7ABYTPFkQ0N/WdGiNpqsRF8HGZi
-        Q2qBceWh8WvJ19vwxPh+vO7rZ+hZD8EdV/hryYvp6fIRwGGR8TkP+LW1MS2kG5GoMROFPCbZvATfq
-        0K7W1AHQ==;
+        bh=XL0RC242yGEdYAKvPtjJDxMTTmgPVKj+8fzli+YYpH4=; b=dOiW/9AHKHJnUcSFfGGlb+zMxk
+        hDQcxfzbbLJptfRTAJNfT6pSxEvXJOECqnKhYWljDVZiOh721ZgW6C6xtua0b7PnYlY4XXrA7Ida6
+        FiOWQQpVaWtRdMfsFieofJJURufmTvZ0Ao6vHrXy3rarGlXwdeqdzyggHJ0p6Lc5i1Leie+eQBP8S
+        aM38b8VxkgxPRizvCUPN0lPMbwDWw7VxGPs3msKt/SpGuLng/g3RIeX+u1hvRXJHezvIy6Svsitqy
+        Sn8o6Vsd6CkGMOrRu8gh34lkRNvTxZIZfWS8cpn7l3CxA6e/SrMqY9aUOujof9Qt83DwgbnUikvVZ
+        gYZDU2iw==;
 Received: from tmo-109-126.customers.d1-online.com ([80.187.109.126] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3j0c-0006uN-6k; Mon, 17 Feb 2020 16:12:34 +0000
+        id 1j3j0c-0006uQ-4n; Mon, 17 Feb 2020 16:12:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1j3j0Z-000fZC-Ls; Mon, 17 Feb 2020 17:12:31 +0100
+        id 1j3j0Z-000fZH-Mm; Mon, 17 Feb 2020 17:12:31 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-afs@lists.infradead.org
-Subject: [PATCH 04/44] docs: filesystems: convert afs.txt to ReST
-Date:   Mon, 17 Feb 2020 17:11:50 +0100
-Message-Id: <d77f5afdb5da0f8b0ec3dbe720aef23f1ce73bb5.1581955849.git.mchehab+huawei@kernel.org>
+        Jonathan Corbet <corbet@lwn.net>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 05/44] docs: filesystems: convert autofs-mount-control.txt to ReST
+Date:   Mon, 17 Feb 2020 17:11:51 +0100
+Message-Id: <8cae057ae244d0f5b58d3c209bcdae5ed82bc52c.1581955849.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1581955849.git.mchehab+huawei@kernel.org>
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
@@ -48,256 +46,184 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 - Add a SPDX header;
-- Adjust document and section titles;
-- Comment out text-only ToC;
+- Adjust document title;
+- Some whitespace fixes and new line breaks;
 - Mark literal blocks as such;
 - Add it to filesystems/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../filesystems/{afs.txt => afs.rst}          | 73 +++++++++----------
- Documentation/filesystems/index.rst           |  1 +
- 2 files changed, 34 insertions(+), 40 deletions(-)
- rename Documentation/filesystems/{afs.txt => afs.rst} (90%)
+ ...t-control.txt => autofs-mount-control.rst} | 102 +++++++++---------
+ Documentation/filesystems/index.rst           |   1 +
+ 2 files changed, 53 insertions(+), 50 deletions(-)
+ rename Documentation/filesystems/{autofs-mount-control.txt => autofs-mount-control.rst} (89%)
 
-diff --git a/Documentation/filesystems/afs.txt b/Documentation/filesystems/afs.rst
-similarity index 90%
-rename from Documentation/filesystems/afs.txt
-rename to Documentation/filesystems/afs.rst
-index 8c6ea7b41048..c4ec39a5966e 100644
---- a/Documentation/filesystems/afs.txt
-+++ b/Documentation/filesystems/afs.rst
-@@ -1,8 +1,10 @@
--			     ====================
--			     kAFS: AFS FILESYSTEM
--			     ====================
+diff --git a/Documentation/filesystems/autofs-mount-control.txt b/Documentation/filesystems/autofs-mount-control.rst
+similarity index 89%
+rename from Documentation/filesystems/autofs-mount-control.txt
+rename to Documentation/filesystems/autofs-mount-control.rst
+index acc02fc57993..2903aed92316 100644
+--- a/Documentation/filesystems/autofs-mount-control.txt
++++ b/Documentation/filesystems/autofs-mount-control.rst
+@@ -1,4 +1,6 @@
 +.. SPDX-License-Identifier: GPL-2.0
  
--Contents:
-+====================
-+kAFS: AFS FILESYSTEM
-+====================
-+
-+.. Contents:
++====================================================================
+ Miscellaneous Device control operations for the autofs kernel module
+ ====================================================================
  
-  - Overview.
-  - Usage.
-@@ -14,8 +16,7 @@ Contents:
-  - The @sys substitution.
+@@ -36,24 +38,24 @@ For example, there are two types of automount maps, direct (in the kernel
+ module source you will see a third type called an offset, which is just
+ a direct mount in disguise) and indirect.
  
+-Here is a master map with direct and indirect map entries:
++Here is a master map with direct and indirect map entries::
  
--========
--OVERVIEW
-+Overview
- ========
+-/-      /etc/auto.direct
+-/test   /etc/auto.indirect
++    /-      /etc/auto.direct
++    /test   /etc/auto.indirect
  
- This filesystem provides a fairly simple secure AFS filesystem driver. It is
-@@ -35,35 +36,33 @@ It does not yet support the following AFS features:
-  (*) pioctl() system call.
+-and the corresponding map files:
++and the corresponding map files::
  
+-/etc/auto.direct:
++    /etc/auto.direct:
  
--===========
--COMPILATION
-+Compilation
- ===========
+-/automount/dparse/g6  budgie:/autofs/export1
+-/automount/dparse/g1  shark:/autofs/export1
+-and so on.
++    /automount/dparse/g6  budgie:/autofs/export1
++    /automount/dparse/g1  shark:/autofs/export1
++    and so on.
  
- The filesystem should be enabled by turning on the kernel configuration
--options:
-+options::
+-/etc/auto.indirect:
++/etc/auto.indirect::
  
- 	CONFIG_AF_RXRPC		- The RxRPC protocol transport
- 	CONFIG_RXKAD		- The RxRPC Kerberos security handler
- 	CONFIG_AFS		- The AFS filesystem
+-g1    shark:/autofs/export1
+-g6    budgie:/autofs/export1
+-and so on.
++    g1    shark:/autofs/export1
++    g6    budgie:/autofs/export1
++    and so on.
  
--Additionally, the following can be turned on to aid debugging:
-+Additionally, the following can be turned on to aid debugging::
+ For the above indirect map an autofs file system is mounted on /test and
+ mounts are triggered for each sub-directory key by the inode lookup
+@@ -69,23 +71,23 @@ use the follow_link inode operation to trigger the mount.
+ But, each entry in direct and indirect maps can have offsets (making
+ them multi-mount map entries).
  
- 	CONFIG_AF_RXRPC_DEBUG	- Permit AF_RXRPC debugging to be enabled
- 	CONFIG_AFS_DEBUG	- Permit AFS debugging to be enabled
+-For example, an indirect mount map entry could also be:
++For example, an indirect mount map entry could also be::
  
- They permit the debugging messages to be turned on dynamically by manipulating
--the masks in the following files:
-+the masks in the following files::
+-g1  \
+-   /        shark:/autofs/export5/testing/test \
+-   /s1      shark:/autofs/export/testing/test/s1 \
+-   /s2      shark:/autofs/export5/testing/test/s2 \
+-   /s1/ss1  shark:/autofs/export1 \
+-   /s2/ss2  shark:/autofs/export2
++    g1  \
++    /        shark:/autofs/export5/testing/test \
++    /s1      shark:/autofs/export/testing/test/s1 \
++    /s2      shark:/autofs/export5/testing/test/s2 \
++    /s1/ss1  shark:/autofs/export1 \
++    /s2/ss2  shark:/autofs/export2
  
- 	/sys/module/af_rxrpc/parameters/debug
- 	/sys/module/kafs/parameters/debug
+-and a similarly a direct mount map entry could also be:
++and a similarly a direct mount map entry could also be::
  
+-/automount/dparse/g1 \
+-    /       shark:/autofs/export5/testing/test \
+-    /s1     shark:/autofs/export/testing/test/s1 \
+-    /s2     shark:/autofs/export5/testing/test/s2 \
+-    /s1/ss1 shark:/autofs/export2 \
+-    /s2/ss2 shark:/autofs/export2
++    /automount/dparse/g1 \
++	/       shark:/autofs/export5/testing/test \
++	/s1     shark:/autofs/export/testing/test/s1 \
++	/s2     shark:/autofs/export5/testing/test/s2 \
++	/s1/ss1 shark:/autofs/export2 \
++	/s2/ss2 shark:/autofs/export2
  
--=====
--USAGE
-+Usage
- =====
+ One of the issues with version 4 of autofs was that, when mounting an
+ entry with a large number of offsets, possibly with nesting, we needed
+@@ -170,32 +172,32 @@ autofs Miscellaneous Device mount control interface
+ The control interface is opening a device node, typically /dev/autofs.
  
- When inserting the driver modules the root cell must be specified along with a
--list of volume location server IP addresses:
-+list of volume location server IP addresses::
+ All the ioctls use a common structure to pass the needed parameter
+-information and return operation results:
++information and return operation results::
  
- 	modprobe rxrpc
- 	modprobe kafs rootcell=cambridge.redhat.com:172.16.18.73:172.16.18.91
-@@ -77,14 +76,14 @@ The second module is the kerberos RxRPC security driver, and the third module
- is the actual filesystem driver for the AFS filesystem.
+-struct autofs_dev_ioctl {
+-	__u32 ver_major;
+-	__u32 ver_minor;
+-	__u32 size;             /* total size of data passed in
+-				 * including this struct */
+-	__s32 ioctlfd;          /* automount command fd */
++    struct autofs_dev_ioctl {
++	    __u32 ver_major;
++	    __u32 ver_minor;
++	    __u32 size;             /* total size of data passed in
++				    * including this struct */
++	    __s32 ioctlfd;          /* automount command fd */
  
- Once the module has been loaded, more modules can be added by the following
--procedure:
-+procedure::
+-	/* Command parameters */
+-	union {
+-		struct args_protover		protover;
+-		struct args_protosubver		protosubver;
+-		struct args_openmount		openmount;
+-		struct args_ready		ready;
+-		struct args_fail		fail;
+-		struct args_setpipefd		setpipefd;
+-		struct args_timeout		timeout;
+-		struct args_requester		requester;
+-		struct args_expire		expire;
+-		struct args_askumount		askumount;
+-		struct args_ismountpoint	ismountpoint;
+-	};
++	    /* Command parameters */
++	    union {
++		    struct args_protover		protover;
++		    struct args_protosubver		protosubver;
++		    struct args_openmount		openmount;
++		    struct args_ready		ready;
++		    struct args_fail		fail;
++		    struct args_setpipefd		setpipefd;
++		    struct args_timeout		timeout;
++		    struct args_requester		requester;
++		    struct args_expire		expire;
++		    struct args_askumount		askumount;
++		    struct args_ismountpoint	ismountpoint;
++	    };
  
- 	echo add grand.central.org 18.9.48.14:128.2.203.61:130.237.48.87 >/proc/fs/afs/cells
+-	char path[0];
+-};
++	    char path[0];
++    };
  
- Where the parameters to the "add" command are the name of a cell and a list of
- volume location servers within that cell, with the latter separated by colons.
+ The ioctlfd field is a mount point file descriptor of an autofs mount
+ point. It is returned by the open call and is used by all calls except
+@@ -212,7 +214,7 @@ is used account for the increased structure length when translating the
+ structure sent from user space.
  
--Filesystems can be mounted anywhere by commands similar to the following:
-+Filesystems can be mounted anywhere by commands similar to the following::
+ This structure can be initialized before setting specific fields by using
+-the void function call init_autofs_dev_ioctl(struct autofs_dev_ioctl *).
++the void function call init_autofs_dev_ioctl(``struct autofs_dev_ioctl *``).
  
- 	mount -t afs "%cambridge.redhat.com:root.afs." /afs
- 	mount -t afs "#cambridge.redhat.com:root.cell." /afs/cambridge
-@@ -104,8 +103,7 @@ named volume will be looked up in the cell specified during modprobe.
- Additional cells can be added through /proc (see later section).
- 
- 
--===========
--MOUNTPOINTS
-+Mountpoints
- ===========
- 
- AFS has a concept of mountpoints. In AFS terms, these are specially formatted
-@@ -123,42 +121,40 @@ culled first.  If all are culled, then the requested volume will also be
- unmounted, otherwise error EBUSY will be returned.
- 
- This can be used by the administrator to attempt to unmount the whole AFS tree
--mounted on /afs in one go by doing:
-+mounted on /afs in one go by doing::
- 
- 	umount /afs
- 
- 
--============
--DYNAMIC ROOT
-+Dynamic Root
- ============
- 
- A mount option is available to create a serverless mount that is only usable
--for dynamic lookup.  Creating such a mount can be done by, for example:
-+for dynamic lookup.  Creating such a mount can be done by, for example::
- 
- 	mount -t afs none /afs -o dyn
- 
- This creates a mount that just has an empty directory at the root.  Attempting
- to look up a name in this directory will cause a mountpoint to be created that
--looks up a cell of the same name, for example:
-+looks up a cell of the same name, for example::
- 
- 	ls /afs/grand.central.org/
- 
- 
--===============
--PROC FILESYSTEM
-+Proc Filesystem
- ===============
- 
- The AFS modules creates a "/proc/fs/afs/" directory and populates it:
- 
-   (*) A "cells" file that lists cells currently known to the afs module and
--      their usage counts:
-+      their usage counts::
- 
- 	[root@andromeda ~]# cat /proc/fs/afs/cells
- 	USE NAME
- 	  3 cambridge.redhat.com
- 
-   (*) A directory per cell that contains files that list volume location
--      servers, volumes, and active servers known within that cell.
-+      servers, volumes, and active servers known within that cell::
- 
- 	[root@andromeda ~]# cat /proc/fs/afs/cambridge.redhat.com/servers
- 	USE ADDR            STATE
-@@ -171,8 +167,7 @@ The AFS modules creates a "/proc/fs/afs/" directory and populates it:
- 	  1 Val 20000000 20000001 20000002 root.afs
- 
- 
--=================
--THE CELL DATABASE
-+The Cell Database
- =================
- 
- The filesystem maintains an internal database of all the cells it knows and the
-@@ -181,7 +176,7 @@ the system belongs is added to the database when modprobe is performed by the
- "rootcell=" argument or, if compiled in, using a "kafs.rootcell=" argument on
- the kernel command line.
- 
--Further cells can be added by commands similar to the following:
-+Further cells can be added by commands similar to the following::
- 
- 	echo add CELLNAME VLADDR[:VLADDR][:VLADDR]... >/proc/fs/afs/cells
- 	echo add grand.central.org 18.9.48.14:128.2.203.61:130.237.48.87 >/proc/fs/afs/cells
-@@ -189,8 +184,7 @@ Further cells can be added by commands similar to the following:
- No other cell database operations are available at this time.
- 
- 
--========
--SECURITY
-+Security
- ========
- 
- Secure operations are initiated by acquiring a key using the klog program.  A
-@@ -198,17 +192,17 @@ very primitive klog program is available at:
- 
- 	http://people.redhat.com/~dhowells/rxrpc/klog.c
- 
--This should be compiled by:
-+This should be compiled by::
- 
- 	make klog LDLIBS="-lcrypto -lcrypt -lkrb4 -lkeyutils"
- 
--And then run as:
-+And then run as::
- 
- 	./klog
- 
- Assuming it's successful, this adds a key of type RxRPC, named for the service
- and cell, eg: "afs@<cellname>".  This can be viewed with the keyctl program or
--by cat'ing /proc/keys:
-+by cat'ing /proc/keys::
- 
- 	[root@andromeda ~]# keyctl show
- 	Session Keyring
-@@ -232,20 +226,19 @@ socket), then the operations on the file will be made with key that was used to
- open the file.
- 
- 
--=====================
--THE @SYS SUBSTITUTION
-+The @sys Substitution
- =====================
- 
- The list of up to 16 @sys substitutions for the current network namespace can
--be configured by writing a list to /proc/fs/afs/sysname:
-+be configured by writing a list to /proc/fs/afs/sysname::
- 
- 	[root@andromeda ~]# echo foo amd64_linux_26 >/proc/fs/afs/sysname
- 
--or cleared entirely by writing an empty list:
-+or cleared entirely by writing an empty list::
- 
- 	[root@andromeda ~]# echo >/proc/fs/afs/sysname
- 
--The current list for current network namespace can be retrieved by:
-+The current list for current network namespace can be retrieved by::
- 
- 	[root@andromeda ~]# cat /proc/fs/afs/sysname
- 	foo
+ All of the ioctls perform a copy of this structure from user space to
+ kernel space and return -EINVAL if the size parameter is smaller than
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 273d802ad5fb..0598bc52abdc 100644
+index 0598bc52abdc..c9480138d47e 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -49,6 +49,7 @@ Documentation for filesystem implementations.
-    9p
-    adfs
+@@ -51,6 +51,7 @@ Documentation for filesystem implementations.
     affs
-+   afs
+    afs
     autofs
++   autofs-mount-control
     fuse
     overlayfs
+    virtiofs
 -- 
 2.24.1
 
