@@ -2,173 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9867316147D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDDA1614D4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 15:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbgBQOYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 09:24:15 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:37950 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728605AbgBQOYP (ORCPT
+        id S1728958AbgBQOj5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 09:39:57 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:46622 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728838AbgBQOj5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 09:24:15 -0500
-Received: by mail-il1-f200.google.com with SMTP id i67so14449568ilf.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Feb 2020 06:24:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hnJSDbHMcnssCWRWqbDwgLrcjj0vFs982qQBvNrf2ss=;
-        b=ZScvUG0ZCSWMXs2pwOlpa5kCfnFoPVo2qUVms1W5CYeP4uVuK8KPDI2uYGfIPbRk2S
-         uEJ7BKaIxGt0M0EcgsDPRj2JCeVBdhobPf3k7gwebKaDgZiUX6LbrmIpXA5cbte92DxI
-         I0KNbGk8Lcpi0LHQ/4HMwLtWKqOy2uGyzD0wIfrULViKfnIGcX8X9Ivu7EFBdNXU7i6S
-         3Za1L3c9pfJdag2GqUMyzk5KZ11tD4uKQJ2WmycLWg8z6xEuSuXrWTVcjTvnoEUHC/uI
-         9KBW+1ugaOru5IzwaEM6HH8GReJ86H85aCqQ972kuMTV8IcEiUqti2sxsAOb6YKn1Pfj
-         1VMw==
-X-Gm-Message-State: APjAAAXihfpZHoTIDSSd/GEHRMOHS7vp9sOHZ1MmNaSkY86ZGp2c3Wbd
-        zXOfYwpTgFByPUn2i9rF1qxCC2nYsugOl0zTqw1fVzaSW2MQ
-X-Google-Smtp-Source: APXvYqzQL2hTxR8fMdsQoHup4xu8dl9sqNfHTiHzCiY90UAocR1Gr7POyZuAlFVK/7/Mkv0/MM2rRcrQmNZs92PfptY7+Wzm0o1k
+        Mon, 17 Feb 2020 09:39:57 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01HEdTud037611;
+        Mon, 17 Feb 2020 14:39:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=/RsUM0cYVyqA/cCWPFMFhh+8+wcAeB1+dhDPB6wI3fY=;
+ b=Xlm7iKCs5Apv3gic8QeuL8eyx80DfWe7Jxpz4b+XjZaTUnmYWJdLqsKBJL+sQtVI+MQr
+ HPA8++HxloMX54apnYaRjk/NDTDm27t8yuF9zh5nRHuWBpJmnEC6sVzM83aSztd+9jhB
+ i3bW0kDaPI9pkGzpqXpEhOym2IvfFGxHAXWv1887QnGvD8HwuVWTxeM2NplDZzqyc31W
+ e5i5lT/Hkxh7zrQKZ7F/SirWov5JF6FT+wPPG2nA8AFNsqD+9I9pBHE9U+3AvCCdzy8W
+ pgt6r5A2oChPTjXc9skhpwOhbA33sylU7YwMrn7a88AmOYKNRMchk4kN/e6ef8hDjTXE DA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2y68kqrkj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Feb 2020 14:39:54 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01HEc6MD082315;
+        Mon, 17 Feb 2020 14:39:53 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2y6t4g775e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Feb 2020 14:39:53 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01HEdqwE016983;
+        Mon, 17 Feb 2020 14:39:52 GMT
+Received: from kili.mountain (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Feb 2020 06:39:52 -0800
+Date:   Mon, 17 Feb 2020 17:39:45 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: remove unnecessary NULL checks
+Message-ID: <20200217143945.ua4lawkg22ggfihr@kili.mountain>
 MIME-Version: 1.0
-X-Received: by 2002:a02:cd12:: with SMTP id g18mr12660761jaq.76.1581949453102;
- Mon, 17 Feb 2020 06:24:13 -0800 (PST)
-Date:   Mon, 17 Feb 2020 06:24:13 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003474b5059ec64f30@google.com>
-Subject: KASAN: use-after-free Read in evict
-From:   syzbot <syzbot+6ef7546f7398f3f97609@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9533 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=989 phishscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002170121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9533 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501
+ clxscore=1011 mlxscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002170121
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+The "kmsg" pointer can't be NULL and we have already dereferenced it so
+a check here would be useless.
 
-syzbot found the following crash on:
-
-HEAD commit:    fdfa3a67 Merge tag 'scsi-misc' of git://git.kernel.org/pub..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d4c07ee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=71f1d0a1df5278ab
-dashboard link: https://syzkaller.appspot.com/bug?extid=6ef7546f7398f3f97609
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6ef7546f7398f3f97609@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in __list_del_entry_valid+0xdc/0xf5 lib/list_debug.c:54
-Read of size 8 at addr ffff888096b35650 by task syz-executor.2/16535
-
-CPU: 0 PID: 16535 Comm: syz-executor.2 Not tainted 5.5.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x197/0x210 lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
- __kasan_report.cold+0x1b/0x32 mm/kasan/report.c:506
- kasan_report+0x12/0x20 mm/kasan/common.c:641
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
- __list_del_entry_valid+0xdc/0xf5 lib/list_debug.c:54
- __list_del_entry include/linux/list.h:132 [inline]
- list_del_init include/linux/list.h:204 [inline]
- inode_io_list_del_locked+0x8b/0x200 fs/fs-writeback.c:148
- inode_io_list_del+0x32/0x40 fs/fs-writeback.c:1126
- evict+0x11d/0x680 fs/inode.c:562
- iput_final fs/inode.c:1571 [inline]
- iput+0x55d/0x900 fs/inode.c:1597
- dentry_unlink_inode+0x2d9/0x400 fs/dcache.c:374
- d_delete fs/dcache.c:2451 [inline]
- d_delete+0x128/0x160 fs/dcache.c:2440
- vfs_rmdir fs/namei.c:3966 [inline]
- vfs_rmdir+0x41f/0x4f0 fs/namei.c:3931
- do_rmdir+0x39e/0x420 fs/namei.c:4014
- __do_sys_rmdir fs/namei.c:4032 [inline]
- __se_sys_rmdir fs/namei.c:4030 [inline]
- __x64_sys_rmdir+0x36/0x40 fs/namei.c:4030
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45b127
-Code: 00 66 90 b8 57 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 2d b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 54 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 0d b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff57350a28 EFLAGS: 00000207 ORIG_RAX: 0000000000000054
-RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 000000000045b127
-RDX: 0000000000000000 RSI: 000000000071e698 RDI: 00007fff57351b60
-RBP: 0000000000000102 R08: 0000000000000000 R09: 0000000000000001
-R10: 000000000000000a R11: 0000000000000207 R12: 00007fff57351b60
-R13: 0000000001773940 R14: 0000000000000000 R15: 00007fff57351b60
-
-Allocated by task 18898:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- __kasan_kmalloc mm/kasan/common.c:515 [inline]
- __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:488
- kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:523
- slab_post_alloc_hook mm/slab.h:584 [inline]
- slab_alloc mm/slab.c:3320 [inline]
- kmem_cache_alloc+0x121/0x710 mm/slab.c:3484
- ext4_alloc_inode+0x1f/0x5c0 fs/ext4/super.c:1119
- alloc_inode+0x68/0x1e0 fs/inode.c:231
- new_inode_pseudo+0x19/0xf0 fs/inode.c:927
- new_inode+0x1f/0x40 fs/inode.c:956
- __ext4_new_inode+0x3d5/0x4fa0 fs/ext4/ialloc.c:827
- ext4_create+0x38a/0x520 fs/ext4/namei.c:2606
- lookup_open+0x12d5/0x1a90 fs/namei.c:3309
- do_last fs/namei.c:3401 [inline]
- path_openat+0xf2c/0x3490 fs/namei.c:3607
- do_filp_open+0x192/0x260 fs/namei.c:3637
- do_sys_openat2+0x5eb/0x7e0 fs/open.c:1149
- do_sys_open+0xf2/0x180 fs/open.c:1165
- __do_sys_openat fs/open.c:1179 [inline]
- __se_sys_openat fs/open.c:1174 [inline]
- __x64_sys_openat+0x9d/0x100 fs/open.c:1174
- do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 9:
- save_stack+0x23/0x90 mm/kasan/common.c:72
- set_track mm/kasan/common.c:80 [inline]
- kasan_set_free_info mm/kasan/common.c:337 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/common.c:476
- kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
- __cache_free mm/slab.c:3426 [inline]
- kmem_cache_free+0x86/0x320 mm/slab.c:3694
- ext4_free_in_core_inode+0x28/0x30 fs/ext4/super.c:1164
- i_callback+0x44/0x80 fs/inode.c:220
- rcu_do_batch kernel/rcu/tree.c:2186 [inline]
- rcu_core+0x5e1/0x1390 kernel/rcu/tree.c:2410
- rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
- __do_softirq+0x262/0x98c kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff888096b352c0
- which belongs to the cache ext4_inode_cache(49:syz2) of size 2008
-The buggy address is located 912 bytes inside of
- 2008-byte region [ffff888096b352c0, ffff888096b35a98)
-The buggy address belongs to the page:
-page:ffffea00025acd40 refcount:1 mapcount:0 mapping:ffff8880a7474380 index:0xffff888096b35fff
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00025a66c8 ffff888091161e48 ffff8880a7474380
-raw: ffff888096b35fff ffff888096b352c0 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888096b35500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888096b35580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888096b35600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                 ^
- ffff888096b35680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888096b35700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 72bc378edebc..e9f339453ddb 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3065,7 +3065,7 @@ static int io_sendmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			if (req->io)
+ 				return -EAGAIN;
+ 			if (io_alloc_async_ctx(req)) {
+-				if (kmsg && kmsg->iov != kmsg->fast_iov)
++				if (kmsg->iov != kmsg->fast_iov)
+ 					kfree(kmsg->iov);
+ 				return -ENOMEM;
+ 			}
+@@ -3219,7 +3219,7 @@ static int io_recvmsg(struct io_kiocb *req, struct io_kiocb **nxt,
+ 			if (req->io)
+ 				return -EAGAIN;
+ 			if (io_alloc_async_ctx(req)) {
+-				if (kmsg && kmsg->iov != kmsg->fast_iov)
++				if (kmsg->iov != kmsg->fast_iov)
+ 					kfree(kmsg->iov);
+ 				return -ENOMEM;
+ 			}
+-- 
+2.11.0
+
