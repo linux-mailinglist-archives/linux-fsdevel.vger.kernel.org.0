@@ -2,42 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A49161773
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D9D0161733
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Feb 2020 17:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbgBQQNV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 11:13:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47130 "EHLO
+        id S1729707AbgBQQMf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 11:12:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47104 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729678AbgBQQMe (ORCPT
+        with ESMTP id S1728558AbgBQQMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 17 Feb 2020 11:12:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=TM/+7vTfsHEpAcMOa4KfCqPtaCRKLvnimk7V2AMAhG0=; b=V++KkF0d64mYaGGULeC86er3Wg
-        5SP0kc5Dy192a6DY1BBdzNNGtl09YaMGZOKrpon2hWxcYyNL2Fe76jDMM73bVOh8ru5m43bqfaxC2
-        YpoxHOc54y/Hj1Qn5ekcRjSlRg+X5V/dohW1TfMd0ROAdy0cpERv9EEcBVl9xUcWmM1q+LO5NbsG1
-        CnqsnOIsLox7YvT09kaINO7gLBqUdsuLy9+uEh4OueS5v5VKp1y7APScXBgtLiwIc/C7me71emwFB
-        JYfyeUQAaEPXsTlTfV0hubuh3g88NPXCKnpmPhPhtlfU/Ltmsynrj6uZn168bvqp3rXVqMO/ZGIsb
-        YIg5VRxQ==;
+        bh=pC2Kdws7/dJrAGMxfHCu3O5kowUF2j4tKeDRoxGmqB4=; b=FNbMJy/q7I/MN8EXdIcAtS+kKV
+        ARZCMyVpIrZ1ugf5WbKNEvjDMwUrffTxxFioku0aD08ukEy+GLMD53dyesax/RiXdfNqK39M6WOwo
+        qfX8+MOWgtqZmD1QteIKalZnVmo+Xmzf5qsFaz+f8uVRsCc+xaCSKgX5aEIwjSJboxfGxiPMfy0o/
+        bvo0+3bOS0TtNvXCBICYpOtCWiivcxdCgYcx3t5FH+GqF/r/B9SUY2Y7L33A1d95kI1yH1LODLiZ/
+        IquqaemblntHvL7dCp12vXxgTN1cvBgC5P/H80/29KzOPUk2lfHp+qpEjr2AMmDfjchRKtmLUQJs4
+        yDcn3L1w==;
 Received: from ip-109-41-129-189.web.vodafone.de ([109.41.129.189] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3j0b-0006uU-P4; Mon, 17 Feb 2020 16:12:33 +0000
+        id 1j3j0b-0006uV-Q9; Mon, 17 Feb 2020 16:12:33 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.3)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1j3j0Z-000fZc-Ra; Mon, 17 Feb 2020 17:12:31 +0100
+        id 1j3j0Z-000fZh-TD; Mon, 17 Feb 2020 17:12:31 +0100
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Sage Weil <sage@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH 09/44] docs: filesystems: convert ceph.txt to ReST
-Date:   Mon, 17 Feb 2020 17:11:55 +0100
-Message-Id: <df2f142b5ca5842e030d8209482dfd62dcbe020f.1581955849.git.mchehab+huawei@kernel.org>
+        linux-fsdevel@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>
+Subject: [PATCH 10/44] docs: filesystems: convert cramfs.txt to ReST
+Date:   Mon, 17 Feb 2020 17:11:56 +0100
+Message-Id: <e87b267e71f99974b7bb3fc0a4a08454ff58165e.1581955849.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.1581955849.git.mchehab+huawei@kernel.org>
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
@@ -52,105 +50,91 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 - Adjust document title;
 - Some whitespace fixes and new line breaks;
 - Mark literal blocks as such;
+- Add table markups;
 - Add it to filesystems/index.rst.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- .../filesystems/{ceph.txt => ceph.rst}        | 26 +++++++++++--------
+ .../filesystems/{cramfs.txt => cramfs.rst}    | 19 ++++++++++++-------
  Documentation/filesystems/index.rst           |  1 +
- 2 files changed, 16 insertions(+), 11 deletions(-)
- rename Documentation/filesystems/{ceph.txt => ceph.rst} (91%)
+ 2 files changed, 13 insertions(+), 7 deletions(-)
+ rename Documentation/filesystems/{cramfs.txt => cramfs.rst} (88%)
 
-diff --git a/Documentation/filesystems/ceph.txt b/Documentation/filesystems/ceph.rst
-similarity index 91%
-rename from Documentation/filesystems/ceph.txt
-rename to Documentation/filesystems/ceph.rst
-index b19b6a03f91c..b46a7218248f 100644
---- a/Documentation/filesystems/ceph.txt
-+++ b/Documentation/filesystems/ceph.rst
-@@ -1,3 +1,6 @@
+diff --git a/Documentation/filesystems/cramfs.txt b/Documentation/filesystems/cramfs.rst
+similarity index 88%
+rename from Documentation/filesystems/cramfs.txt
+rename to Documentation/filesystems/cramfs.rst
+index 8e19a53d648b..afbdbde98bd2 100644
+--- a/Documentation/filesystems/cramfs.txt
++++ b/Documentation/filesystems/cramfs.rst
+@@ -1,12 +1,15 @@
 +.. SPDX-License-Identifier: GPL-2.0
-+
-+============================
- Ceph Distributed File System
- ============================
  
-@@ -15,6 +18,7 @@ Basic features include:
-  * Easy deployment: most FS components are userspace daemons
+-	Cramfs - cram a filesystem onto a small ROM
++===========================================
++Cramfs - cram a filesystem onto a small ROM
++===========================================
  
- Also,
-+
-  * Flexible snapshots (on any directory)
-  * Recursive accounting (nested files, directories, bytes)
+-cramfs is designed to be simple and small, and to compress things well. 
++cramfs is designed to be simple and small, and to compress things well.
  
-@@ -63,7 +67,7 @@ no 'du' or similar recursive scan of the file system is required.
- Finally, Ceph also allows quotas to be set on any directory in the system.
- The quota can restrict the number of bytes or the number of files stored
- beneath that point in the directory hierarchy.  Quotas can be set using
--extended attributes 'ceph.quota.max_files' and 'ceph.quota.max_bytes', eg:
-+extended attributes 'ceph.quota.max_files' and 'ceph.quota.max_bytes', eg::
+ It uses the zlib routines to compress a file one page at a time, and
+ allows random page access.  The meta-data is not compressed, but is
+ expressed in a very terse representation to make it use much less
+-diskspace than traditional filesystems. 
++diskspace than traditional filesystems.
  
-  setfattr -n ceph.quota.max_bytes -v 100000000 /some/dir
-  getfattr -n ceph.quota.max_bytes /some/dir
-@@ -76,7 +80,7 @@ from writing as much data as it needs.
- Mount Syntax
- ============
+ You can't write to a cramfs filesystem (making it compressible and
+ compact also makes it _very_ hard to update on-the-fly), so you have to
+@@ -28,9 +31,9 @@ issue.
+ Hard links are supported, but hard linked files
+ will still have a link count of 1 in the cramfs image.
  
--The basic mount syntax is:
-+The basic mount syntax is::
+-Cramfs directories have no `.' or `..' entries.  Directories (like
++Cramfs directories have no ``.`` or ``..`` entries.  Directories (like
+ every other file on cramfs) always have a link count of 1.  (There's
+-no need to use -noleaf in `find', btw.)
++no need to use -noleaf in ``find``, btw.)
  
-  # mount -t ceph monip[:port][,monip2[:port]...]:/[subdir] mnt
+ No timestamps are stored in a cramfs, so these default to the epoch
+ (1970 GMT).  Recently-accessed files may have updated timestamps, but
+@@ -70,9 +73,9 @@ MTD drivers are cfi_cmdset_0001 (Intel/Sharp CFI flash) or physmap
+ (Flash device in physical memory map). MTD partitions based on such devices
+ are fine too. Then that device should be specified with the "mtd:" prefix
+ as the mount device argument. For example, to mount the MTD device named
+-"fs_partition" on the /mnt directory:
++"fs_partition" on the /mnt directory::
  
-@@ -84,7 +88,7 @@ You only need to specify a single monitor, as the client will get the
- full list when it connects.  (However, if the monitor you specify
- happens to be down, the mount won't succeed.)  The port can be left
- off if the monitor is using the default.  So if the monitor is at
--1.2.3.4,
-+1.2.3.4::
+-$ mount -t cramfs mtd:fs_partition /mnt
++    $ mount -t cramfs mtd:fs_partition /mnt
  
-  # mount -t ceph 1.2.3.4:/ /mnt/ceph
+ To boot a kernel with this as root filesystem, suffice to specify
+ something like "root=mtd:fs_partition" on the kernel command line.
+@@ -90,6 +93,7 @@ https://github.com/npitre/cramfs-tools
+ For /usr/share/magic
+ --------------------
  
-@@ -163,14 +167,14 @@ Mount Options
- 	available modes are "no" and "clean". The default is "no".
++=====	=======================	=======================
+ 0	ulelong	0x28cd3d45	Linux cramfs offset 0
+ >4	ulelong	x		size %d
+ >8	ulelong	x		flags 0x%x
+@@ -110,6 +114,7 @@ For /usr/share/magic
+ >552	ulelong	x		fsid.blocks %d
+ >556	ulelong	x		fsid.files %d
+ >560	string	>\0		name "%.16s"
++=====	=======================	=======================
  
- 	* no: never attempt to reconnect when client detects that it has been
--	blacklisted. Operations will generally fail after being blacklisted.
-+	  blacklisted. Operations will generally fail after being blacklisted.
  
- 	* clean: client reconnects to the ceph cluster automatically when it
--	detects that it has been blacklisted. During reconnect, client drops
--	dirty data/metadata, invalidates page caches and writable file handles.
--	After reconnect, file locks become stale because the MDS loses track
--	of them. If an inode contains any stale file locks, read/write on the
--	inode is not allowed until applications release all stale file locks.
-+	  detects that it has been blacklisted. During reconnect, client drops
-+	  dirty data/metadata, invalidates page caches and writable file handles.
-+	  After reconnect, file locks become stale because the MDS loses track
-+	  of them. If an inode contains any stale file locks, read/write on the
-+	  inode is not allowed until applications release all stale file locks.
- 
- More Information
- ================
-@@ -179,8 +183,8 @@ For more information on Ceph, see the home page at
- 	https://ceph.com/
- 
- The Linux kernel client source tree is available at
--	https://github.com/ceph/ceph-client.git
--	git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
-+	- https://github.com/ceph/ceph-client.git
-+	- git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
- 
- and the source for the full system is at
- 	https://github.com/ceph/ceph.git
+ Hacker Notes
 diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index dae862cf167e..ddd8f7b2bb25 100644
+index ddd8f7b2bb25..8fe848ea04af 100644
 --- a/Documentation/filesystems/index.rst
 +++ b/Documentation/filesystems/index.rst
-@@ -55,6 +55,7 @@ Documentation for filesystem implementations.
-    befs
+@@ -56,6 +56,7 @@ Documentation for filesystem implementations.
     bfs
     btrfs
-+   ceph
+    ceph
++   cramfs
     fuse
     overlayfs
     virtiofs
