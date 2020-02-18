@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 243F4162D1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 18:36:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CB7162D85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 18:55:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgBRRg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 12:36:29 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34930 "EHLO
+        id S1726549AbgBRRzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 12:55:20 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46725 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbgBRRg2 (ORCPT
+        with ESMTP id S1726415AbgBRRzU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 12:36:28 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q8so23924845ljb.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 09:36:27 -0800 (PST)
+        Tue, 18 Feb 2020 12:55:20 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x14so23985770ljd.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 09:55:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ejn5UstmxF7lmN2AxfPRiO0l5wA0+kUDkpk4DTP/TNk=;
-        b=BEZGdGO+K+CM8dnG/8KD7hitd4IDxMiSPgHJkRRJZDw97o+11Qbkvzpk38q2jJLsNY
-         e8Xmr0kLH1BOqKRkok7gyQ3yQLJRWJmKpMsYQtr8L29SkIwjSlGqDIcKEmg/lRvanhR0
-         YwYWAY6jQ3nzi1dL3iFw6Ug12aGV1djv1Up9k=
+        bh=IxPM9qbKacJo32I7q0izB6enJdesl8gGck2uZJzx0m4=;
+        b=bPkzFbVoN988JuGgeawOfoYtQ3gEIUluZ6B4429WQYWTNA5rdi1w1Od57v6QxoSd8a
+         JbppmaXMsRLVxcyP/uKNUgCnX/ZXBWzvXBp1KF/k8T15bCdwWDEac5TmDEUl8iHL6Y6t
+         XkfktNTFPje1RtVnpB8nqi0NDZmgBx0gPF4HU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ejn5UstmxF7lmN2AxfPRiO0l5wA0+kUDkpk4DTP/TNk=;
-        b=AVTt/1udo49YLjXfzCEOqHmZ1XKTF3TjT9dovyA1sL57JIzfytYYxUCGWa9lVKolLl
-         bnntwjHtTZX8fGHqIXkyT9o5ZRXBeZHQaxm4ekxANvueYb2QjsYi12RF6Ki+wgGWL+gu
-         8TcQZ6wzwjPel2xtQRR7+sgykFmOxM2Iz6ZE0klhhOSv4fO96KpI+PPPbAAxWlZ4ETSb
-         EKU8OsSjgSuaZllrWZTv/wNZdNKIOrpJWzEEbTsGQTP1FTxFlCPEBLZmNe2aYYCrJg89
-         PT6KrOwwkiITea3+y5o+/ors+RLsVVvm/zO38Rfevkxdj6I0rNB/tRn8Offuy2PXQlb3
-         v05g==
-X-Gm-Message-State: APjAAAVgxb2vF7YiCLiDcsfC3kb5uwOopR2ddSr9f3CPDu3G5zkZFRXt
-        nzBjQ3m7BAHxnbVUYcfrv4skeP5/pgY=
-X-Google-Smtp-Source: APXvYqzNygLHtP0cVGVDzgoNPheU1Co8V9dslyC4Xqu51ThFc2VoTOoKNjURtZuIwMn8aRPjT10ruA==
-X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr14012464ljc.158.1582047386397;
-        Tue, 18 Feb 2020 09:36:26 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id v9sm2947878lfe.18.2020.02.18.09.36.25
+        bh=IxPM9qbKacJo32I7q0izB6enJdesl8gGck2uZJzx0m4=;
+        b=qNXDfok17LBIwMxyl8SqH9mBOeV6qvkdt3FNoD8nek61anttTIVQLhiG/jptffIc9i
+         VQ2p6DFMf3RVwESQQpQbAclmfaOlL8WL5gA7kpVSh4ID7kEqc+dSp3lRGVkhQoQyGSGT
+         z3lxLp8N3YuwNK3GLW7gbLidH3vy4Cfco6FuODBD7XWduLLGPBTqG2sFvmQ4ZiPmDr8F
+         pLo5BbHHYgONOptFwVKvnHuyektp7OyrubRPbawOLRMt3zIQUqyvX9n3OyGGiIgTATz/
+         JQW/u5EDRH5qvNdjC67lPDTdPsLN3CUSjS5G13qYI/Dlr6zHzJJ/3fKXWSGhFIYMw8w1
+         vBBg==
+X-Gm-Message-State: APjAAAUYriUADgakq9TgSg+yYcide/DwtspFKje8xeItS/ZfPfO4g0D/
+        gyhdNaP6L/14QAhZCyNgG17qNe3TbYc=
+X-Google-Smtp-Source: APXvYqwMerXCViRvuxNEYxdC1X7pSltn/5McU7KYDfpHqY9vhwKlWXpf3nW8scHskytrVeKus22Stg==
+X-Received: by 2002:a2e:96c6:: with SMTP id d6mr13762040ljj.4.1582048517009;
+        Tue, 18 Feb 2020 09:55:17 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id r10sm3249329ljk.9.2020.02.18.09.55.14
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 09:36:25 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id b15so15150471lfc.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 09:36:25 -0800 (PST)
-X-Received: by 2002:a19:f514:: with SMTP id j20mr11135556lfb.31.1582047384649;
- Tue, 18 Feb 2020 09:36:24 -0800 (PST)
+        Tue, 18 Feb 2020 09:55:15 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id q8so23952003ljj.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 09:55:14 -0800 (PST)
+X-Received: by 2002:a2e:97cc:: with SMTP id m12mr13232782ljj.241.1582048514190;
+ Tue, 18 Feb 2020 09:55:14 -0800 (PST)
 MIME-Version: 1.0
 References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
-In-Reply-To: <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
+ <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com> <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 18 Feb 2020 09:36:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
-Message-ID: <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
+Date:   Tue, 18 Feb 2020 09:54:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
+Message-ID: <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
 Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
  reading or writing
 To:     Andrei Vagin <avagin@gmail.com>
@@ -63,65 +63,84 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         stable <stable@vger.kernel.org>,
         Josh Triplett <josh@joshtriplett.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000616ba8059edd1c62"
+Content-Type: multipart/mixed; boundary="000000000000b4dda2059edd5fc7"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000616ba8059edd1c62
+--000000000000b4dda2059edd5fc7
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 18, 2020 at 1:51 AM Andrei Vagin <avagin@gmail.com> wrote:
+On Tue, Feb 18, 2020 at 9:36 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> This patch breaks one of CRIU tests. Here is a small reproducer:
+> The things that change the number of readers or writers should simply
+> use "wake_up_all()".
+>
+> So I think the right fix is the attached patch. Since you had such a
+> lovely test-case, let me go test it too ;)
 
-Good catch.
+Good that I did. I missed the _real_ case of this - pipe_release().
+Because that used a different wakeup function.
 
-> The quick fix looks like this:
+In fact, that case uses wake_up_interruptible_sync_poll(), which
+doesn't have the "all" version.
 
-That one works, but is not really right.
+But it doesn't actually need that fancy thing, since it's only meant
+for "let's avoid waking up things that don't need these poll keys",
+and the whole point is that now we're closing the pipe so we should
+wake up everybody.
 
-The things that change the number of readers or writers should simply
-use "wake_up_all()".
+And in fact the test for "are there readers or writers" was
+nonsensical. We shouldn't wake up readers just because they still
+exist. We should wake up readers only if they exist, _and_ there are
+no writers left (and vice versa).
 
-I thought we did that already, but no - there _was_ one place where we
-did it, but that was for the pipe buffer size case, and in that case
-it's actually pointless. That case acts just like a "new space or data
-was added"
+Anyway, new patch attached. This hasn't been tested either, but I'll
+let you know if it's broken too ;)
 
-So I think the right fix is the attached patch. Since you had such a
-lovely test-case, let me go test it too ;)
+                  Linus
 
-                Linus
-
---000000000000616ba8059edd1c62
+--000000000000b4dda2059edd5fc7
 Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
 Content-Disposition: attachment; filename="patch.diff"
 Content-Transfer-Encoding: base64
-Content-ID: <f_k6s65iuv0>
-X-Attachment-Id: f_k6s65iuv0
+Content-ID: <f_k6s6tp0o0>
+X-Attachment-Id: f_k6s6tp0o0
 
-IGZzL3BpcGUuYyB8IDEwICsrKysrLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMo
-KyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvcGlwZS5jIGIvZnMvcGlwZS5jCmlu
-ZGV4IDVhMzRkNmMyMmQ0Yy4uNzZlN2Y2NmZlMmZlIDEwMDY0NAotLS0gYS9mcy9waXBlLmMKKysr
-IGIvZnMvcGlwZS5jCkBAIC0xMDI2LDggKzEwMjYsOCBAQCBzdGF0aWMgaW50IHdhaXRfZm9yX3Bh
-cnRuZXIoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWduZWQgaW50ICpjbnQpCiAK
-IHN0YXRpYyB2b2lkIHdha2VfdXBfcGFydG5lcihzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBl
-KQogewotCXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+cmRfd2FpdCk7Ci0Jd2FrZV91cF9p
-bnRlcnJ1cHRpYmxlKCZwaXBlLT53cl93YWl0KTsKKwl3YWtlX3VwX2ludGVycnVwdGlibGVfYWxs
-KCZwaXBlLT5yZF93YWl0KTsKKwl3YWtlX3VwX2ludGVycnVwdGlibGVfYWxsKCZwaXBlLT53cl93
-YWl0KTsKIH0KIAogc3RhdGljIGludCBmaWZvX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3Ry
-dWN0IGZpbGUgKmZpbHApCkBAIC0xMTQ0LDcgKzExNDQsNyBAQCBzdGF0aWMgaW50IGZpZm9fb3Bl
-bihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlscCkKIAogZXJyX3dyOgogCWlm
-ICghLS1waXBlLT53cml0ZXJzKQotCQl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPnJkX3dh
-aXQpOworCQl3YWtlX3VwX2ludGVycnVwdGlibGVfYWxsKCZwaXBlLT5yZF93YWl0KTsKIAlyZXQg
-PSAtRVJFU1RBUlRTWVM7CiAJZ290byBlcnI7CiAKQEAgLTEyNzEsOCArMTI3MSw4IEBAIHN0YXRp
-YyBsb25nIHBpcGVfc2V0X3NpemUoc3RydWN0IHBpcGVfaW5vZGVfaW5mbyAqcGlwZSwgdW5zaWdu
-ZWQgbG9uZyBhcmcpCiAJcGlwZS0+bWF4X3VzYWdlID0gbnJfc2xvdHM7CiAJcGlwZS0+dGFpbCA9
-IHRhaWw7CiAJcGlwZS0+aGVhZCA9IGhlYWQ7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRpYmxlX2FsbCgm
-cGlwZS0+cmRfd2FpdCk7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRpYmxlX2FsbCgmcGlwZS0+d3Jfd2Fp
-dCk7CisJd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKKwl3YWtlX3VwX2lu
-dGVycnVwdGlibGUoJnBpcGUtPndyX3dhaXQpOwogCXJldHVybiBwaXBlLT5tYXhfdXNhZ2UgKiBQ
-QUdFX1NJWkU7CiAKIG91dF9yZXZlcnRfYWNjdDoK
---000000000000616ba8059edd1c62--
+IGZzL3BpcGUuYyB8IDE3ICsrKysrKysrKy0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOSBpbnNl
+cnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL3BpcGUuYyBiL2ZzL3Bp
+cGUuYwppbmRleCA1YTM0ZDZjMjJkNGMuLjg5ZDU0YzE5MTFmZSAxMDA2NDQKLS0tIGEvZnMvcGlw
+ZS5jCisrKyBiL2ZzL3BpcGUuYwpAQCAtNzIyLDkgKzcyMiwxMCBAQCBwaXBlX3JlbGVhc2Uoc3Ry
+dWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbGUpCiAJaWYgKGZpbGUtPmZfbW9kZSAm
+IEZNT0RFX1dSSVRFKQogCQlwaXBlLT53cml0ZXJzLS07CiAKLQlpZiAocGlwZS0+cmVhZGVycyB8
+fCBwaXBlLT53cml0ZXJzKSB7Ci0JCXdha2VfdXBfaW50ZXJydXB0aWJsZV9zeW5jX3BvbGwoJnBp
+cGUtPnJkX3dhaXQsIEVQT0xMSU4gfCBFUE9MTFJETk9STSB8IEVQT0xMRVJSIHwgRVBPTExIVVAp
+OwotCQl3YWtlX3VwX2ludGVycnVwdGlibGVfc3luY19wb2xsKCZwaXBlLT53cl93YWl0LCBFUE9M
+TE9VVCB8IEVQT0xMV1JOT1JNIHwgRVBPTExFUlIgfCBFUE9MTEhVUCk7CisJLyogV2FzIHRoYXQg
+dGhlIGxhc3QgcmVhZGVyIG9yIHdyaXRlciwgYnV0IG5vdCB0aGUgb3RoZXIgc2lkZT8gKi8KKwlp
+ZiAoIXBpcGUtPnJlYWRlcnMgIT0gIXBpcGUtPndyaXRlcnMpIHsKKwkJd2FrZV91cF9pbnRlcnJ1
+cHRpYmxlX2FsbCgmcGlwZS0+cmRfd2FpdCk7CisJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9hbGwo
+JnBpcGUtPndyX3dhaXQpOwogCQlraWxsX2Zhc3luYygmcGlwZS0+ZmFzeW5jX3JlYWRlcnMsIFNJ
+R0lPLCBQT0xMX0lOKTsKIAkJa2lsbF9mYXN5bmMoJnBpcGUtPmZhc3luY193cml0ZXJzLCBTSUdJ
+TywgUE9MTF9PVVQpOwogCX0KQEAgLTEwMjYsOCArMTAyNyw4IEBAIHN0YXRpYyBpbnQgd2FpdF9m
+b3JfcGFydG5lcihzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlLCB1bnNpZ25lZCBpbnQgKmNu
+dCkKIAogc3RhdGljIHZvaWQgd2FrZV91cF9wYXJ0bmVyKHN0cnVjdCBwaXBlX2lub2RlX2luZm8g
+KnBpcGUpCiB7Ci0Jd2FrZV91cF9pbnRlcnJ1cHRpYmxlKCZwaXBlLT5yZF93YWl0KTsKLQl3YWtl
+X3VwX2ludGVycnVwdGlibGUoJnBpcGUtPndyX3dhaXQpOworCXdha2VfdXBfaW50ZXJydXB0aWJs
+ZV9hbGwoJnBpcGUtPnJkX3dhaXQpOworCXdha2VfdXBfaW50ZXJydXB0aWJsZV9hbGwoJnBpcGUt
+PndyX3dhaXQpOwogfQogCiBzdGF0aWMgaW50IGZpZm9fb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2Rl
+LCBzdHJ1Y3QgZmlsZSAqZmlscCkKQEAgLTExNDQsNyArMTE0NSw3IEBAIHN0YXRpYyBpbnQgZmlm
+b19vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxwKQogCiBlcnJfd3I6
+CiAJaWYgKCEtLXBpcGUtPndyaXRlcnMpCi0JCXdha2VfdXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+
+cmRfd2FpdCk7CisJCXdha2VfdXBfaW50ZXJydXB0aWJsZV9hbGwoJnBpcGUtPnJkX3dhaXQpOwog
+CXJldCA9IC1FUkVTVEFSVFNZUzsKIAlnb3RvIGVycjsKIApAQCAtMTI3MSw4ICsxMjcyLDggQEAg
+c3RhdGljIGxvbmcgcGlwZV9zZXRfc2l6ZShzdHJ1Y3QgcGlwZV9pbm9kZV9pbmZvICpwaXBlLCB1
+bnNpZ25lZCBsb25nIGFyZykKIAlwaXBlLT5tYXhfdXNhZ2UgPSBucl9zbG90czsKIAlwaXBlLT50
+YWlsID0gdGFpbDsKIAlwaXBlLT5oZWFkID0gaGVhZDsKLQl3YWtlX3VwX2ludGVycnVwdGlibGVf
+YWxsKCZwaXBlLT5yZF93YWl0KTsKLQl3YWtlX3VwX2ludGVycnVwdGlibGVfYWxsKCZwaXBlLT53
+cl93YWl0KTsKKwl3YWtlX3VwX2ludGVycnVwdGlibGUoJnBpcGUtPnJkX3dhaXQpOworCXdha2Vf
+dXBfaW50ZXJydXB0aWJsZSgmcGlwZS0+d3Jfd2FpdCk7CiAJcmV0dXJuIHBpcGUtPm1heF91c2Fn
+ZSAqIFBBR0VfU0laRTsKIAogb3V0X3JldmVydF9hY2N0Ogo=
+--000000000000b4dda2059edd5fc7--
