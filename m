@@ -2,82 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1B821634B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 22:21:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AE971634E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 22:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbgBRVVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 16:21:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59890 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbgBRVVP (ORCPT
+        id S1727762AbgBRV06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 16:26:58 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50224 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726339AbgBRV06 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:21:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0HtJTFPkdLwAcbGGhAHyzxa8a1mSgpc758IYlfDOg/k=; b=L9ufQZtGybPYd67zmz67Xgy4Tn
-        mZsneK5DIi4+EdZSTDy3qMq6jC4G9yjF4A0m3HKQqgfmPcf89rxgAlz7TflzrDt+lPKQjG8DBB0Nc
-        hFwG4XwkG9NeYBz6KYBZ58AKe0IfPIrYhHeqqinr+nlcKs9GdGtB8jhCcawcvPy3icitqNTTzH4jP
-        ZCAGflog5kL6wL3IvL71BWNMv5PaAXyucj7tYF+EQU4HI4NEjXGWh1T+shXyemzhRpUXmIabqr29C
-        5LaP21DN5DNYTONx+gIE3+S5Zr0Asg51I2iJBLolcYDkCch1kyQ608fu1c/WOZsk9fwFBAcPrEAy8
-        FZTOuLoQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4AIt-0003y5-Bi; Tue, 18 Feb 2020 21:21:15 +0000
-Date:   Tue, 18 Feb 2020 13:21:15 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
+        Tue, 18 Feb 2020 16:26:58 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0B3B97EA1A6;
+        Wed, 19 Feb 2020 08:26:54 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j4AOK-0003K5-Rm; Wed, 19 Feb 2020 08:26:52 +1100
+Date:   Wed, 19 Feb 2020 08:26:52 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 01/19] mm: Return void from various readahead functions
-Message-ID: <20200218212115.GG24185@bombadil.infradead.org>
+Subject: Re: [PATCH v6 00/19] Change readahead API
+Message-ID: <20200218212652.GR10776@dread.disaster.area>
 References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-2-willy@infradead.org>
- <29d2d7ca-7f2b-7eb4-78bc-f2af36c4c426@nvidia.com>
+ <20200218045633.GH10776@dread.disaster.area>
+ <20200218134230.GN7778@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <29d2d7ca-7f2b-7eb4-78bc-f2af36c4c426@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200218134230.GN7778@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=13k90lvrXjaGpILklQQA:9 a=QEXdDO2ut3YA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 01:05:29PM -0800, John Hubbard wrote:
-> This is an easy review and obviously correct, so:
+On Tue, Feb 18, 2020 at 05:42:30AM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 18, 2020 at 03:56:33PM +1100, Dave Chinner wrote:
+> > Latest version in your git tree:
+> > 
+> > $ ▶ glo -n 5 willy/readahead
+> > 4be497096c04 mm: Use memalloc_nofs_save in readahead path
+> > ff63497fcb98 iomap: Convert from readpages to readahead
+> > 26aee60e89b5 iomap: Restructure iomap_readpages_actor
+> > 8115bcca7312 fuse: Convert from readpages to readahead
+> > 3db3d10d9ea1 f2fs: Convert from readpages to readahead
+> > $
+> > 
+> > merged into a 5.6-rc2 tree fails at boot on my test vm:
+> > 
+> > [    2.423116] ------------[ cut here ]------------
+> > [    2.424957] list_add double add: new=ffffea000efff4c8, prev=ffff8883bfffee60, next=ffffea000efff4c8.
+> > [    2.428259] WARNING: CPU: 4 PID: 1 at lib/list_debug.c:29 __list_add_valid+0x67/0x70
+> > [    2.457484] Call Trace:
+> > [    2.458171]  __pagevec_lru_add_fn+0x15f/0x2c0
+> > [    2.459376]  pagevec_lru_move_fn+0x87/0xd0
+> > [    2.460500]  ? pagevec_move_tail_fn+0x2d0/0x2d0
+> > [    2.461712]  lru_add_drain_cpu+0x8d/0x160
+> > [    2.462787]  lru_add_drain+0x18/0x20
 > 
->     Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Are you sure that was 4be497096c04 ?  I ask because there was a
 
-Thanks
+Yes, because it's the only version I've actually merged into my
+working tree, compiled and tried to run. :P
 
-> Thoughts for the future of the API:
-> 
-> I will add that I could envision another patchset that went in the
-> opposite direction, and attempted to preserve the information about
-> how many pages were successfully read ahead. And that would be nice
-> to have (at least IMHO), even all the way out to the syscall level,
-> especially for the readahead syscall.
+> version pushed to that git tree that did contain a list double-add
+> (due to a mismerge when shuffling patches).  I noticed it and fixed
+> it, and 4be497096c04 doesn't have that problem.  I also test with
+> CONFIG_DEBUG_LIST turned on, but this problem you hit is going to be
+> probabilistic because it'll depend on the timing between whatever other
+> list is being used and the page actually being added to the LRU.
 
-Right, and that was where I went initially.  It turns out to be a
-non-trivial aount of work to do the book-keeping to find out how many
-pages were _attempted_, and since we don't wait for the I/O to complete,
-we don't know how many _succeeded_, and we also don't know how many
-weren't attempted because they were already there, and how many weren't
-attempted because somebody else has raced with us and is going to attempt
-them themselves, and how many weren't attempted because we just ran out
-of memory, and decided to give up.
+I'll see if I can reproduce it.
 
-Also, we don't know how many pages were successfully read, and then the
-system decided to evict before the program found out how many were read,
-let alone before it did any action based on that.
+Cheers,
 
-So, given all that complexity, and the fact that nobody actually does
-anything with the limited and incorrect information we tried to provide
-today, I think it's fair to say that anybody who wants to start to do
-anything with that information can delve into all the complexity around
-"what number should we return, and what does it really mean".  In the
-meantime, let's just ditch the complexity and pretense that this number
-means anything.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
