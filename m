@@ -2,112 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A60B6163667
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15152163680
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbgBRWsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 17:48:33 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57094 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726556AbgBRWsc (ORCPT
+        id S1726801AbgBRWxw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 17:53:52 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34704 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726461AbgBRWxv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 17:48:32 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D144F7E9387;
-        Wed, 19 Feb 2020 09:48:29 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4BfJ-0003lA-7e; Wed, 19 Feb 2020 09:48:29 +1100
-Date:   Wed, 19 Feb 2020 09:48:29 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 04/19] mm: Rearrange readahead loop
-Message-ID: <20200218224829.GU10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-5-willy@infradead.org>
- <20200218050824.GJ10776@dread.disaster.area>
- <20200218135736.GP7778@bombadil.infradead.org>
+        Tue, 18 Feb 2020 17:53:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IMlx4S125643;
+        Tue, 18 Feb 2020 22:53:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=1Q62cPH1Xp8kxiw0GhNYjhX3s5Y04bDzwFnSLddrOUc=;
+ b=l3++8akYe9ElvfQqjWDQpEwvdV8wwfreMQoxJcVn6Cllni9gF7QvrNJ+RVYjlZRt2Z5n
+ pq7UQtB3EqR1bDBymj1nXZ8LyK2bS1TMkl/R6t0Ezvz9opnRvXqaodmsmOXZrgI+Q4vL
+ nsicuYfBVVyTgmWGVXNEbXIT0vs1HkCBXqD/y2cLW5b2NUzDRuGisU8Zzz023OITk1x+
+ 8K+xhKeT9AxfztuI3IzZokmKhZwkrHVgGn7/b/xx2PxJo/qCk4eZ09T66IexBR2OwTj0
+ h00TZXEntmvNNfCpqIv7x0WbanZiLxZKAJ07oljB/c/3rVg4kp/w/MZvSN7bn5QiURlO RQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2y699rsdny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 22:53:41 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IMrewJ108538;
+        Tue, 18 Feb 2020 22:53:40 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2y6tc393hb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 22:53:40 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01IMrS6Y020383;
+        Tue, 18 Feb 2020 22:53:29 GMT
+Received: from [10.132.96.37] (/10.132.96.37)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Feb 2020 14:50:44 -0800
+Subject: Re: [RFC][PATCH] dax: Do not try to clear poison for partial pages
+To:     Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "JANE.CHU" <jane.chu@oracle.com>
+References: <20200129210337.GA13630@redhat.com>
+ <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
+ <CAPcyv4ittXHkEV4eH_4F5vCfwRLoTTtDqEU1SmCs5DYUdZxBOA@mail.gmail.com>
+ <x49v9o3brom.fsf@segfault.boston.devel.redhat.com>
+ <583b5fc2-0358-ea9d-20eb-1323c8cedce2@oracle.com>
+From:   jane.chu@oracle.com
+Organization: Oracle Corporation
+Message-ID: <17c0d27e-c23f-b686-1d47-a0ccace03211@oracle.com>
+Date:   Tue, 18 Feb 2020 14:50:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200218135736.GP7778@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=alOI8opFAFPe2SRtgw8A:9
-        a=xQkswpi2j_EUEYvS:21 a=GSRXKHwoUNCfdhKr:21 a=CjuIK1q_8ugA:10
-        a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <583b5fc2-0358-ea9d-20eb-1323c8cedce2@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002180156
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
+ malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002180155
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:57:36AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 04:08:24PM +1100, Dave Chinner wrote:
-> > On Mon, Feb 17, 2020 at 10:45:45AM -0800, Matthew Wilcox wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > Move the declaration of 'page' to inside the loop and move the 'kick
-> > > off a fresh batch' code to the end of the function for easier use in
-> > > subsequent patches.
-> > 
-> > Stale? the "kick off" code is moved to the tail of the loop, not the
-> > end of the function.
+On 2/18/20 12:45 PM, jane.chu@oracle.com wrote:
+> On 2/18/20 11:50 AM, Jeff Moyer wrote:
+>> Dan Williams <dan.j.williams@intel.com> writes:
+>>
+>>> Right now the kernel does not install a pte on faults that land on a
+>>> page with known poison, but only because the error clearing path is so
+>>> convoluted and could only claim that fallocate(PUNCH_HOLE) cleared
+>>> errors because that was guaranteed to send 512-byte aligned zero's
+>>> down the block-I/O path when the fs-blocks got reallocated. In a world
+>>> where native cpu instructions can clear errors the dax write() syscall
+>>> case could be covered (modulo 64-byte alignment), and the kernel could
+>>> just let the page be mapped so that the application could attempt it's
+>>> own fine-grained clearing without calling back into the kernel.
+>>
+>> I'm not sure we'd want to do allow mapping the PTEs even if there was
+>> support for clearing errors via CPU instructions.  Any load from a
+>> poisoned page will result in an MCE, and there exists the possiblity
+>> that you will hit an unrecoverable error (Processor Context Corrupt).
+>> It's just safer to catch these cases by not mapping the page, and
+>> forcing recovery through the driver.
+>>
+>> -Jeff
+>>
 > 
-> Braino; I meant to write end of the loop.
+> I'm still in the process of trying a number of things before making an
+> attempt to respond to Dan's response. But I'm too slow, so I'd like
+> to share some concerns I have here.
 > 
-> > > @@ -183,14 +183,14 @@ void __do_page_cache_readahead(struct address_space *mapping,
-> > >  		page = xa_load(&mapping->i_pages, page_offset);
-> > >  		if (page && !xa_is_value(page)) {
-> > >  			/*
-> > > -			 * Page already present?  Kick off the current batch of
-> > > -			 * contiguous pages before continuing with the next
-> > > -			 * batch.
-> > > +			 * Page already present?  Kick off the current batch
-> > > +			 * of contiguous pages before continuing with the
-> > > +			 * next batch.  This page may be the one we would
-> > > +			 * have intended to mark as Readahead, but we don't
-> > > +			 * have a stable reference to this page, and it's
-> > > +			 * not worth getting one just for that.
-> > >  			 */
-> > > -			if (readahead_count(&rac))
-> > > -				read_pages(&rac, &page_pool, gfp_mask);
-> > > -			rac._nr_pages = 0;
-> > > -			continue;
-> > > +			goto read;
-> > >  		}
-> > >  
-> > >  		page = __page_cache_alloc(gfp_mask);
-> > > @@ -201,6 +201,11 @@ void __do_page_cache_readahead(struct address_space *mapping,
-> > >  		if (page_idx == nr_to_read - lookahead_size)
-> > >  			SetPageReadahead(page);
-> > >  		rac._nr_pages++;
-> > > +		continue;
-> > > +read:
-> > > +		if (readahead_count(&rac))
-> > > +			read_pages(&rac, &page_pool, gfp_mask);
-> > > +		rac._nr_pages = 0;
-> > >  	}
-> > 
-> > Also, why? This adds a goto from branched code that continues, then
-> > adds a continue so the unbranched code doesn't execute the code the
-> > goto jumps to. In absence of any explanation, this isn't an
-> > improvement and doesn't make any sense...
+> If a poison in a file is consumed, and the signal handle does the
+> repair and recover as follow: punch a hole the size at least 4K, then
+> pwrite the correct data in to the 'hole', then resume the operation.
+> However, because the newly allocated pmem block (due to pwrite to the 
+> 'hole') is a different clean physical pmem block while the poisoned
+> block remain unfixed, so we have a provisioning problem, because
+>   1. DCPMEM is expensive hence there is likely little provision being
+> provided by users;
+>   2. lack up API between dax-filesystem and pmem driver for clearing
+> poison at each legitimate point, such as when the filesystem tries
+> to allocate a pmem block, or zeroing out a range >
+> As DCPMM is used for its performance and capacity in cloud application,
+> which translates to that the performance code paths include the error
+> handling and recovery code path...
 > 
-> I thought I was explaining it ... "for easier use in subsequent patches".
+> With respect to the new cpu instruction, my concern is about the API 
+> including the error blast radius as reported in the signal payload.
+> Is there a venue where we could discuss more in detail ?
 
-Sorry, my braino there. :) I commented on the problem with the first
-part of the sentence, then the rest of the sentence completely
-failed to sink in.
+For all the quarantined poison blocks, it's not practical to clear them 
+poisons via ndctl/libndctl on a per namespace granularity for fear of
+poisons occurred in valid pmem blocks during data at rest.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+How to ultimately clear poisons in a dax-fs in current framework?
+it seems to me poisons need to be cleared on the go automatically.
+
+Regards,
+-jane
+
+> 
+> Regards,
+> -jane
+> 
+> 
+> 
