@@ -2,150 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B65EB163624
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:33:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C975163630
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbgBRWdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 17:33:21 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:18969 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726352AbgBRWdV (ORCPT
+        id S1726776AbgBRWda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 17:33:30 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:35935 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbgBRWda (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 17:33:21 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4c65e90000>; Tue, 18 Feb 2020 14:32:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Feb 2020 14:33:20 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 14:33:20 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
- 2020 22:33:19 +0000
-Subject: Re: [PATCH v6 04/19] mm: Rearrange readahead loop
-To:     Matthew Wilcox <willy@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>
-CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-5-willy@infradead.org>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <6ecedc28-a999-8673-e4b1-349b0c23fdfd@nvidia.com>
-Date:   Tue, 18 Feb 2020 14:33:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Tue, 18 Feb 2020 17:33:30 -0500
+Received: by mail-pj1-f66.google.com with SMTP id gv17so1629186pjb.1;
+        Tue, 18 Feb 2020 14:33:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Ao1rrYj1H0zRksEUEqAme5C6lEjb904ensDRNheQK20=;
+        b=vPmZ2aJ18jzSVQ8YIoEAysedZOU82k34+gaeB7WykgbG2teu7j+joqZllEOkppWT5i
+         VFLVIRqlIwMK/fIGvbqTns/mHxwTxY7a9+PTIlWpSS6JzCU2EcYO0G1FT9+6rQ/ybtsQ
+         T6sB4qLRVc2qoI/a2p0X8HHx8Smujml+K3fIL+fqzIqfTyx/mXQHtrjTqzihCVu9Te2Q
+         +rcquj6uDJbQloNRyKSfNcfw7prEgGvEW4YiydcqCrliXLQn2eXfFsMkmaWpl7mx4/uu
+         IF6LTK3YzgRp3tKgDu5VIkNRH168Wjlkxf+a+m2dEdLlIHX8MCamP8b8oruy0fDH6JWt
+         bwuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ao1rrYj1H0zRksEUEqAme5C6lEjb904ensDRNheQK20=;
+        b=VQ88NdvKdKEiFBx3Q+eJi3nHemW4wlgiH+qxnKVrpPOH6arPTPVRtkoUOwLNTk60tP
+         uuaCBZkKKBIP/azJzmN5KMjuzC3KN9gBlk0wkwz3CpaE6P5cop0Qso9ddOd9Q1x34ogR
+         b+1lYFpI/ayilzR88jt4doz2cLoyGwSMGNs6ck3aZFZ987YR3jFocqF/f7tKFDjNUlhj
+         b2D28xBhECzY9Tv5n7/uuMWD8sXcsODBx0fiVMXTfSkwyF3V2pr9ZK1n3x05gBiTCuOE
+         Vuz9sMqvaQBO7Ipi4z0ndbwbdGcZjShijpir05j+YST0z07VHXEf/R2nBuhSYMi9izlE
+         VXWw==
+X-Gm-Message-State: APjAAAXGWewLg7yjH1zbCGAyF0CH8nHokb3ac8b/YD0lR5EjqxvdJvYj
+        S6svpzKa72yH6E7JRX3Yodc=
+X-Google-Smtp-Source: APXvYqx5Gf+hUMerX5qr+HlwdoEd+NvK/lpti4mRRuvDUzSNfzI14C1R1JMMJQAkkA6yDdtkN6SPoQ==
+X-Received: by 2002:a17:902:7c88:: with SMTP id y8mr23321086pll.321.1582065208792;
+        Tue, 18 Feb 2020 14:33:28 -0800 (PST)
+Received: from gmail.com ([2620:0:1008:fd00:25a6:3140:768c:a64d])
+        by smtp.gmail.com with ESMTPSA id l26sm5686616pgn.46.2020.02.18.14.33.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 14:33:27 -0800 (PST)
+Date:   Tue, 18 Feb 2020 14:33:25 -0800
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
+ reading or writing
+Message-ID: <20200218223325.GA143300@gmail.com>
+References: <20200214154854.6746-1-sashal@kernel.org>
+ <20200214154854.6746-542-sashal@kernel.org>
+ <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
+ <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
+ <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
+ <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
+ <20200218182041.GB24185@bombadil.infradead.org>
+ <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200217184613.19668-5-willy@infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582065129; bh=yWG75TuvaIkixcYjAReAuF+49IUj/8WtcUdupEFzEyw=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=klykhDzbfDnFoiAzHG0F/sl3+zuD/yu0U05wkkG5YL25K0mXMn/SZDKS/OPYoMjVi
-         mBSMyFlXKKo4UAQQuQv/lsdIWAvE7WxiS+oOmcGMSJDykk7YuHI6JFzdcykchFj71k
-         zIa5A9cfCBqyTcR6zGjigkGmcGSCKI7dxvmn+IuKHqErApkB59r3L/Gj+RxcTKKVSI
-         +btrOqRw+4ZZVhqAz1RhfcawzguTRlv7l99v2wGxH6VlakfW2nQLeICs16ez9TeiWQ
-         ZpdA450G/HarSR+IiezZDL9QVYoCyXag0rX4h00yKEt9Soza8Wdn/b85Sc2AMZZmq3
-         fR1BnLTnbzkPg==
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/17/20 10:45 AM, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Tue, Feb 18, 2020 at 10:28:23AM -0800, Linus Torvalds wrote:
+> On Tue, Feb 18, 2020 at 10:20 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > You don't want to move wake_up_partner() up and call it from pipe_release()?
 > 
-> Move the declaration of 'page' to inside the loop and move the 'kick
-> off a fresh batch' code to the end of the function for easier use in
-> subsequent patches.
+> I was actually thinking of going the other way - two of three users of
+> wake_up_partner() are redundantly waking up the wrong side, and the
+> third user is pointlessly written too.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  mm/readahead.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
+> So I was _thinking_ of a patch like the appended (which is on top of
+> the previous patch), but ended up not doing it. Until you brought it
+> up.
 > 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 15329309231f..3eca59c43a45 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -154,7 +154,6 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  		unsigned long lookahead_size)
+> But I won't bother committing this, since it shouldn't really matter.
+
+I run CRIU tests on the kernel with both these patches. Everything work
+as expected. Thank you for the fix.
+
+> 
+>                  Linus
+
+>  fs/pipe.c | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 2144507447c5..79ba61430f9c 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -1025,12 +1025,6 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
+>  	return cur == *cnt ? -ERESTARTSYS : 0;
+>  }
+>  
+> -static void wake_up_partner(struct pipe_inode_info *pipe)
+> -{
+> -	wake_up_interruptible_all(&pipe->rd_wait);
+> -	wake_up_interruptible_all(&pipe->wr_wait);
+> -}
+> -
+>  static int fifo_open(struct inode *inode, struct file *filp)
 >  {
->  	struct inode *inode = mapping->host;
-> -	struct page *page;
->  	unsigned long end_index;	/* The last page we want to read */
->  	LIST_HEAD(page_pool);
->  	int page_idx;
-> @@ -175,6 +174,7 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  	 * Preallocate as many pages as we will need.
+>  	struct pipe_inode_info *pipe;
+> @@ -1078,7 +1072,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
 >  	 */
->  	for (page_idx = 0; page_idx < nr_to_read; page_idx++) {
-> +		struct page *page;
->  		pgoff_t page_offset = offset + page_idx;
+>  		pipe->r_counter++;
+>  		if (pipe->readers++ == 0)
+> -			wake_up_partner(pipe);
+> +			wake_up_interruptible_all(&pipe->wr_wait);
 >  
->  		if (page_offset > end_index)
-> @@ -183,14 +183,14 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  		page = xa_load(&mapping->i_pages, page_offset);
->  		if (page && !xa_is_value(page)) {
->  			/*
-> -			 * Page already present?  Kick off the current batch of
-> -			 * contiguous pages before continuing with the next
-> -			 * batch.
-> +			 * Page already present?  Kick off the current batch
-> +			 * of contiguous pages before continuing with the
-> +			 * next batch.  This page may be the one we would
-> +			 * have intended to mark as Readahead, but we don't
-> +			 * have a stable reference to this page, and it's
-> +			 * not worth getting one just for that.
->  			 */
-> -			if (readahead_count(&rac))
-> -				read_pages(&rac, &page_pool, gfp_mask);
-> -			rac._nr_pages = 0;
-> -			continue;
-
-
-A fine point:  you'll get better readability and a less complex function by
-factoring that into a static subroutine, instead of jumping around with 
-goto's. (This clearly wants to be a subroutine, and in fact you've effectively 
-created one inside this function, at the "read:" label. Either way, though...
-
-
-> +			goto read;
->  		}
+>  		if (!is_pipe && !pipe->writers) {
+>  			if ((filp->f_flags & O_NONBLOCK)) {
+> @@ -1104,7 +1098,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
 >  
->  		page = __page_cache_alloc(gfp_mask);
-> @@ -201,6 +201,11 @@ void __do_page_cache_readahead(struct address_space *mapping,
->  		if (page_idx == nr_to_read - lookahead_size)
->  			SetPageReadahead(page);
->  		rac._nr_pages++;
-> +		continue;
-> +read:
-> +		if (readahead_count(&rac))
-> +			read_pages(&rac, &page_pool, gfp_mask);
-> +		rac._nr_pages = 0;
->  	}
+>  		pipe->w_counter++;
+>  		if (!pipe->writers++)
+> -			wake_up_partner(pipe);
+> +			wake_up_interruptible_all(&pipe->rd_wait);
 >  
->  	/*
-> 
+>  		if (!is_pipe && !pipe->readers) {
+>  			if (wait_for_partner(pipe, &pipe->r_counter))
+> @@ -1120,12 +1114,12 @@ static int fifo_open(struct inode *inode, struct file *filp)
+>  	 *  the process can at least talk to itself.
+>  	 */
+>  
+> -		pipe->readers++;
+> -		pipe->writers++;
+> +		if (pipe->readers++ == 0)
+> +			wake_up_interruptible_all(&pipe->wr_wait);
+> +		if (pipe->writers++ == 0)
+> +			wake_up_interruptible_all(&pipe->rd_wait);
+>  		pipe->r_counter++;
+>  		pipe->w_counter++;
+> -		if (pipe->readers == 1 || pipe->writers == 1)
+> -			wake_up_partner(pipe);
+>  		break;
+>  
+>  	default:
 
-...no errors spotted, I'm confident that this patch is correct,
-
-    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
