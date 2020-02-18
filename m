@@ -2,353 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E531630A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 20:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5122163200
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 21:06:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgBRTyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 14:54:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60854 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRTyF (ORCPT
+        id S1728695AbgBRUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 15:04:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:34615 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729151AbgBRUDt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:54:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0fbPHabH5rtRjpop0nvOgXSZPwl/5hzmmLwctoYuLtg=; b=O1En3UG2/SWLTrMtnpJrjjgjSj
-        eDzVzRDQGtNtvubDjDkjRGIJMAo2/GoMR9u4cwrm8+0raSMb0Dy9hL/V3FpFf/NmyWWubRiI9r+hm
-        MvOlhqGPP2nSWK8OHRdeyCeOjeD1HWTFC623D5HCt0pjipMPDmuypyH+NFt9zlecrKxRdrer+o3u3
-        pi3Enpw1YLfghmY62DGTbp2PLvGeLps7dpV1mZuLhZpmvdT2mfnn1muQ0TCMLV4/avuAAjtPVLxIY
-        Zyl5nqtrsKk/bKNP/w3WTu5SkxFkRP5G2N41SHaU+CoUG3Z05IW3gfMCxRt4E82CyQ0E1TCT81pxh
-        cxgZHRXg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j48wW-0003Wd-Ia; Tue, 18 Feb 2020 19:54:04 +0000
-Date:   Tue, 18 Feb 2020 11:54:04 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 09/19] mm: Add page_cache_readahead_limit
-Message-ID: <20200218195404.GD24185@bombadil.infradead.org>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-16-willy@infradead.org>
- <20200218063110.GO10776@dread.disaster.area>
+        Tue, 18 Feb 2020 15:03:49 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j495r-0000Zv-GH; Tue, 18 Feb 2020 20:03:43 +0000
+Date:   Tue, 18 Feb 2020 21:03:41 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>, stgraber@ubuntu.com
+Subject: Re: [PATCH v3 0/3] introduce a uid/gid shifting bind mount
+Message-ID: <20200218200341.tzrehiapskznovx5@wittgenstein>
+References: <20200217205307.32256-1-James.Bottomley@HansenPartnership.com>
+ <CAOQ4uxjtp7d_xL20pGwvbFKqgAbyQhE=Pbw+e9Kj24wqF2hPfQ@mail.gmail.com>
+ <1582042260.3416.19.camel@HansenPartnership.com>
+ <20200218172606.ohlj6prhpmhodzqu@wittgenstein>
+ <1582052748.16681.34.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200218063110.GO10776@dread.disaster.area>
+In-Reply-To: <1582052748.16681.34.camel@HansenPartnership.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:31:10PM +1100, Dave Chinner wrote:
-> On Mon, Feb 17, 2020 at 10:45:56AM -0800, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Tue, Feb 18, 2020 at 11:05:48AM -0800, James Bottomley wrote:
+> On Tue, 2020-02-18 at 18:26 +0100, Christian Brauner wrote:
+> > On Tue, Feb 18, 2020 at 08:11:00AM -0800, James Bottomley wrote:
+> > > On Tue, 2020-02-18 at 09:18 +0200, Amir Goldstein wrote:
+> > > > On Mon, Feb 17, 2020 at 10:56 PM James Bottomley
+> > > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > > > 
+> > > > > The object of this series is to replace shiftfs with a proper
+> > > > > uid/gid shifting bind mount instead of the shiftfs hack of
+> > > > > introducing something that looks similar to an overlay
+> > > > > filesystem to do it.
+> > > > > 
+> > > > > The VFS still has the problem that in order to tell what
+> > > > > vfsmount a dentry belongs to, struct path would have to be
+> > > > > threaded everywhere struct dentry currently is.  However, this
+> > > > > patch is structured only to require a rethreading of
+> > > > > notify_change.  The rest of the knowledge that a shift is in
+> > > > > operation is carried in the task structure by caching the
+> > > > > unshifted credentials.
+> > > > > 
+> > > > > Note that although it is currently dependent on the new
+> > > > > configfd interface for bind mounts, only patch 3/3 relies on
+> > > > > this, and the whole thing could be redone as a syscall or any
+> > > > > other mechanism (depending on how people eventually want to fix
+> > > > > the problem with the new fsconfig mechanism being unable to
+> > > > > reconfigure bind mounts).
+> > > > > 
+> > > > > The changes from v2 are I've added Amir's reviewed-by for the
+> > > > > notify_change rethreading and I've implemented Serge's request
+> > > > > for a base offset shift for the image.  It turned out to be
+> > > > > much harder to implement a simple linear shift than simply to
+> > > > > do it through a different userns, so that's how I've done
+> > > > > it.  The userns you need to set up for the offset shifted image
+> > > > > is one where the interior uid would see the shifted image as
+> > > > > fake root.  I've introduced an additional "ns" config
+> > > > > parameter, which must be specified when building the allow
+> > > > > shift mount point (so it's done by the admin, not by the
+> > > > > unprivileged user).  I've also taken care that the image
+> > > > > shifted to zero (real root) is never visible in the
+> > > > > filesystem.  Patch 3/3 explains how to use the additional "ns"
+> > > > > parameter.
+> > > > > 
+> > > > > 
+> > > > 
+> > > > James,
+> > > > 
+> > > > To us common people who do not breath containers, your proposal
+> > > > seems like a competing implementation to Christian's proposal
+> > > > [1].
+> > > 
+> > > I think we have three things that swirl around this space and
+> > > aren't quite direct copies of each other's use cases but aren't
+> > > entirely disjoint either: the superblock user namespace, this and
+> > > the user namespace fsid mapping.
+> > > 
+> > > >  If it were a competing implementation, I think Christian's
+> > > > proposal would have won by points for being less intrusive to
+> > > > VFS.
+> > > 
+> > > Heh, that one's subjective.  I think the current fsid code is
+> > > missing
 > > 
-> > ext4 and f2fs have duplicated the guts of the readahead code so
-> > they can read past i_size.  Instead, separate out the guts of the
-> > readahead code so they can call it directly.
+> > I honestly don't think it is subjective. Leaving aside that the patch
+> > here is more invasive to the vfs just in how it needs to alter it,
+> > you currently require a whole new set of syscalls for this feature. 
 > 
-> Gross and nasty (hosting non-stale data beyond EOF in the page
-> cache, that is).
-
-I thought you meant sneaking changes into the VFS (that were rejected) by
-copying VFS code and modifying it ...
-
-> > +/**
-> > + * page_cache_readahead_limit - Start readahead beyond a file's i_size.
-> > + * @mapping: File address space.
-> > + * @file: This instance of the open file; used for authentication.
-> > + * @offset: First page index to read.
-> > + * @end_index: The maximum page index to read.
-> > + * @nr_to_read: The number of pages to read.
-> > + * @lookahead_size: Where to start the next readahead.
-> > + *
-> > + * This function is for filesystems to call when they want to start
-> > + * readahead potentially beyond a file's stated i_size.  If you want
-> > + * to start readahead on a normal file, you probably want to call
-> > + * page_cache_async_readahead() or page_cache_sync_readahead() instead.
-> > + *
-> > + * Context: File is referenced by caller.  Mutexes may be held by caller.
-> > + * May sleep, but will not reenter filesystem to reclaim memory.
-> >   */
-> > -void __do_page_cache_readahead(struct address_space *mapping,
-> > -		struct file *filp, pgoff_t offset, unsigned long nr_to_read,
-> > -		unsigned long lookahead_size)
-> > +void page_cache_readahead_limit(struct address_space *mapping,
+> Well I really don't ... I'd like to replace about four existing
+> syscalls (fspick/fsopen/fsconfig/fsmount) with two more general ones
+> (configfd_open/configfd_action), but I kept the original four to
+> demonstrate the two new ones could subsume their work.  However, I
+> really think we should leave aside the activation mechanism discussion
+> and concentrate on the internal implementation.
 > 
-> ... I don't think the function name conveys it's purpose. It's
-> really a ranged readahead that ignores where i_size lies. i.e
+> > The syscalls themselves even introduce a whole new API and
+> > complicated semantics in the kernel and it's completely unclear
+> > whether they will make it or not.
 > 
-> 	page_cache_readahead_range(mapping, start, end, nr_to_read)
+> As I said in the cover letter.  I'm entirely mechanism agnostic. 
+> Whatever solves our current rebind reconfigure problem will be usable
+> for shifting bind mounts.  I like the idea of using the same fsconfig
+> mechanism, but this patch isn't wedded to it, that's why 2/3 is
+> implementation and 3/3 is activation.  The activation patch can be
+> completely replaced without affecting the implementation mechanism.
 > 
-> seems like a better API to me, and then you can drop the "start
-> readahead beyond i_size" comments and replace it with "Range is not
-> limited by the inode's i_size and hence can be used to read data
-> stored beyond EOF into the page cache."
+> >  Even if not, this feature will be tied to the new mount api making
+> > it way harder and a longer process to adopt for userspace given that
+> > not even all bits and pieces userspace needs are currently in
+> > any released kernel.
+> 
+> Well, given that this problem and various proposed solutions have been
+> around for years, I really don't think we're suddenly in any rush to
+> get it out of the door and into user hands.
+> 
+> > But way more important: what Amir got right is that your approach and
+> > fsid mappings don't stand in each others way at all. Shiftfed
+> > bind-mounts can be implemented completely independent of fsid
+> > mappings after the fact on top of it.
+> > 
+> > Your example, does this:
+> > 
+> > nsfd = open("/proc/567/ns/user", O_RDONLY);  /* note: not O_PATH */
+> > configfd_action(fd, CONFIGFD_SET_FD, "ns", NULL, nsfd);
+> > 
+> > as the ultimate step. Essentially marking a mountpoint as shifted
+> > relative to that user namespace. Once fsid mappings are in all that
+> > you need to do is replace your
+> > make_kuid()/from_kuid()/from_kuid_munged() calls and so on in your
+> > patchset with make_kfsuid()/from_kfsuid()/from_kfsuid_munged() and
+> > you're done. So I honestly don't currently see any need to block the
+> > patchsets on each other. 
+> 
+> Can I repeat: there's no rush to get upstream on this.  Let's pause to
+> get the kernel implementation (the thing we have to maintain) right.  I
+> realise we could each work around the other and get our implementations
+> bent around each other so they all work independently thus making our
+> disjoint user cabals happy but I don't think that would lead to the
+> best outcome for kernel maintainability.
 
-I'm concerned that calling it 'range' implies "I want to read between
-start and end" rather than "I want to read nr_to_read at start, oh but
-don't go past end".
+We have had the discussion with all major stakeholders in a single room
+on what we need at LPC 2019. We agreed on what we need and fsids are a
+concrete proposal for an implementation that appears to solve all discussed
+major use-cases in a simple and elegant manner, which can also be cleanly
+extended to cover your approach later.
+Imho, there is no need to have the same discussion again at an
+invite-only event focussed on kernel developers where most of the major
+stakeholders are unlikely to be able to participate. The patch proposals
+are here on all relevant list where everyone can participate and we can discuss
+them right here.
+I have not yet heard a concrete technical reason why the patch proposal is
+inadequate and I see no reason to stall this.
 
-Maybe the right way to do this is have the three callers cap nr_to_read.
-Well, the one caller ... after all, f2fs and ext4 have no desire to
-cap the length.  Then we can call it page_cache_readahead_exceed() or
-page_cache_readahead_dangerous() or something else like that to make it
-clear that you shouldn't be calling it.
+> 
+> I already think that history shows us that s_user_ns went upstream too
+> fast and the fact that unprivileged fuse has yet to make it (and the
 
-> Also: "This is almost certainly not the function you want to call.
-> Use page_cache_async_readahead or page_cache_sync_readahead()
-> instead."
+We've established on the other patchset that fsid mappings in no way interfere
+nor care about s_user_ns so I'm not going to go into this again here. But for
+the record, unprivileged fuse mounts are supported since:
 
-+1 to that ;-)
+commit 4ad769f3c346ec3d458e255548dec26ca5284cf6
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Tue May 29 09:04:46 2018 -0500
 
-Here's what I currently have:
+    fuse: Allow fully unprivileged mounts
 
-From d202dda7a92566496fe9e233ee7855fb560324ce Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Mon, 10 Feb 2020 18:31:15 -0500
-Subject: [PATCH] mm: Add page_cache_readahead_exceed
+    Now that the fuse and the vfs work is complete.  Allow the fuse filesystem
+    to be mounted by the root user in a user namespace.
 
-ext4 and f2fs have duplicated the guts of the readahead code so
-they can read past i_size.  Instead, separate out the guts of the
-readahead code so they can call it directly.
+    Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+    Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/ext4/verity.c        | 35 ++--------------------
- fs/f2fs/verity.c        | 35 ++--------------------
- include/linux/pagemap.h |  3 ++
- mm/readahead.c          | 66 ++++++++++++++++++++++++++++-------------
- 4 files changed, 52 insertions(+), 87 deletions(-)
-
-diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-index dc5ec724d889..172ebf860014 100644
---- a/fs/ext4/verity.c
-+++ b/fs/ext4/verity.c
-@@ -342,37 +342,6 @@ static int ext4_get_verity_descriptor(struct inode *inode, void *buf,
- 	return desc_size;
- }
- 
--/*
-- * Prefetch some pages from the file's Merkle tree.
-- *
-- * This is basically a stripped-down version of __do_page_cache_readahead()
-- * which works on pages past i_size.
-- */
--static void ext4_merkle_tree_readahead(struct address_space *mapping,
--				       pgoff_t start_index, unsigned long count)
--{
--	LIST_HEAD(pages);
--	unsigned int nr_pages = 0;
--	struct page *page;
--	pgoff_t index;
--	struct blk_plug plug;
--
--	for (index = start_index; index < start_index + count; index++) {
--		page = xa_load(&mapping->i_pages, index);
--		if (!page || xa_is_value(page)) {
--			page = __page_cache_alloc(readahead_gfp_mask(mapping));
--			if (!page)
--				break;
--			page->index = index;
--			list_add(&page->lru, &pages);
--			nr_pages++;
--		}
--	}
--	blk_start_plug(&plug);
--	ext4_mpage_readpages(mapping, &pages, NULL, nr_pages, true);
--	blk_finish_plug(&plug);
--}
--
- static struct page *ext4_read_merkle_tree_page(struct inode *inode,
- 					       pgoff_t index,
- 					       unsigned long num_ra_pages)
-@@ -386,8 +355,8 @@ static struct page *ext4_read_merkle_tree_page(struct inode *inode,
- 		if (page)
- 			put_page(page);
- 		else if (num_ra_pages > 1)
--			ext4_merkle_tree_readahead(inode->i_mapping, index,
--						   num_ra_pages);
-+			page_cache_readahead_exceed(inode->i_mapping, NULL,
-+					index, num_ra_pages, 0);
- 		page = read_mapping_page(inode->i_mapping, index, NULL);
- 	}
- 	return page;
-diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
-index d7d430a6f130..f240ad087162 100644
---- a/fs/f2fs/verity.c
-+++ b/fs/f2fs/verity.c
-@@ -222,37 +222,6 @@ static int f2fs_get_verity_descriptor(struct inode *inode, void *buf,
- 	return size;
- }
- 
--/*
-- * Prefetch some pages from the file's Merkle tree.
-- *
-- * This is basically a stripped-down version of __do_page_cache_readahead()
-- * which works on pages past i_size.
-- */
--static void f2fs_merkle_tree_readahead(struct address_space *mapping,
--				       pgoff_t start_index, unsigned long count)
--{
--	LIST_HEAD(pages);
--	unsigned int nr_pages = 0;
--	struct page *page;
--	pgoff_t index;
--	struct blk_plug plug;
--
--	for (index = start_index; index < start_index + count; index++) {
--		page = xa_load(&mapping->i_pages, index);
--		if (!page || xa_is_value(page)) {
--			page = __page_cache_alloc(readahead_gfp_mask(mapping));
--			if (!page)
--				break;
--			page->index = index;
--			list_add(&page->lru, &pages);
--			nr_pages++;
--		}
--	}
--	blk_start_plug(&plug);
--	f2fs_mpage_readpages(mapping, &pages, NULL, nr_pages, true);
--	blk_finish_plug(&plug);
--}
--
- static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
- 					       pgoff_t index,
- 					       unsigned long num_ra_pages)
-@@ -266,8 +235,8 @@ static struct page *f2fs_read_merkle_tree_page(struct inode *inode,
- 		if (page)
- 			put_page(page);
- 		else if (num_ra_pages > 1)
--			f2fs_merkle_tree_readahead(inode->i_mapping, index,
--						   num_ra_pages);
-+			page_cache_readahead_exceed(inode->i_mapping, NULL,
-+					index, num_ra_pages, 0);
- 		page = read_mapping_page(inode->i_mapping, index, NULL);
- 	}
- 	return page;
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 48c3bca57df6..1f7964d2b8ca 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -623,6 +623,9 @@ void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
- void page_cache_async_readahead(struct address_space *, struct file_ra_state *,
- 		struct file *, struct page *, pgoff_t index,
- 		unsigned long req_count);
-+void page_cache_readahead_exceed(struct address_space *, struct file *,
-+		pgoff_t index, unsigned long nr_to_read,
-+		unsigned long lookahead_count);
- 
- /*
-  * Like add_to_page_cache_locked, but used to add newly allocated pages:
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 9dd431fa16c9..cad26287ad8b 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -142,45 +142,43 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages)
- 	blk_finish_plug(&plug);
- }
- 
--/*
-- * __do_page_cache_readahead() actually reads a chunk of disk.  It allocates
-- * the pages first, then submits them for I/O. This avoids the very bad
-- * behaviour which would occur if page allocations are causing VM writeback.
-- * We really don't want to intermingle reads and writes like that.
-+/**
-+ * page_cache_readahead_exceed - Start unchecked readahead.
-+ * @mapping: File address space.
-+ * @file: This instance of the open file; used for authentication.
-+ * @index: First page index to read.
-+ * @nr_to_read: The number of pages to read.
-+ * @lookahead_size: Where to start the next readahead.
-+ *
-+ * This function is for filesystems to call when they want to start
-+ * readahead beyond a file's stated i_size.  This is almost certainly
-+ * not the function you want to call.  Use page_cache_async_readahead()
-+ * or page_cache_sync_readahead() instead.
-+ *
-+ * Context: File is referenced by caller.  Mutexes may be held by caller.
-+ * May sleep, but will not reenter filesystem to reclaim memory.
-  */
--void __do_page_cache_readahead(struct address_space *mapping,
--		struct file *filp, pgoff_t index, unsigned long nr_to_read,
-+void page_cache_readahead_exceed(struct address_space *mapping,
-+		struct file *file, pgoff_t index, unsigned long nr_to_read,
- 		unsigned long lookahead_size)
- {
--	struct inode *inode = mapping->host;
--	unsigned long end_index;	/* The last page we want to read */
- 	LIST_HEAD(page_pool);
- 	unsigned long i;
--	loff_t isize = i_size_read(inode);
- 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
- 	bool use_list = mapping->a_ops->readpages;
- 	struct readahead_control rac = {
- 		.mapping = mapping,
--		.file = filp,
-+		.file = file,
- 		._start = index,
- 		._nr_pages = 0,
- 	};
- 
--	if (isize == 0)
--		return;
--
--	end_index = ((isize - 1) >> PAGE_SHIFT);
--
- 	/*
- 	 * Preallocate as many pages as we will need.
- 	 */
- 	for (i = 0; i < nr_to_read; i++) {
--		struct page *page;
--
--		if (index > end_index)
--			break;
-+		struct page *page = xa_load(&mapping->i_pages, index);
- 
--		page = xa_load(&mapping->i_pages, index);
- 		if (page && !xa_is_value(page)) {
- 			/*
- 			 * Page already present?  Kick off the current batch
-@@ -225,6 +223,32 @@ void __do_page_cache_readahead(struct address_space *mapping,
- 		read_pages(&rac, &page_pool);
- 	BUG_ON(!list_empty(&page_pool));
- }
-+EXPORT_SYMBOL_GPL(page_cache_readahead_exceed);
-+
-+/*
-+ * __do_page_cache_readahead() actually reads a chunk of disk.  It allocates
-+ * the pages first, then submits them for I/O. This avoids the very bad
-+ * behaviour which would occur if page allocations are causing VM writeback.
-+ * We really don't want to intermingle reads and writes like that.
-+ */
-+void __do_page_cache_readahead(struct address_space *mapping,
-+		struct file *file, pgoff_t index, unsigned long nr_to_read,
-+		unsigned long lookahead_size)
-+{
-+	struct inode *inode = mapping->host;
-+	loff_t isize = i_size_read(inode);
-+	pgoff_t end_index;
-+
-+	if (isize == 0)
-+		return;
-+
-+	end_index = (isize - 1) >> PAGE_SHIFT;
-+	if (end_index < index + nr_to_read)
-+		nr_to_read = end_index - index;
-+
-+	page_cache_readahead_exceed(mapping, file, index, nr_to_read,
-+			lookahead_size);
-+}
- 
- /*
-  * Chunk the readahead into 2 megabyte units, so that we don't pin too much
--- 
-2.25.0
-
+Christian
