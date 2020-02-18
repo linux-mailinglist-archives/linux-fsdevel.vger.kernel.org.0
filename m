@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43AE916286F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:36:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 046B8162898
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:38:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgBROgX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 09:36:23 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53041 "EHLO
+        id S1727277AbgBROhH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 09:37:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52967 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbgBROfj (ORCPT
+        with ESMTP id S1726569AbgBROfe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:35:39 -0500
+        Tue, 18 Feb 2020 09:35:34 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43xw-0000fF-2o; Tue, 18 Feb 2020 14:35:12 +0000
+        id 1j43xx-0000fF-20; Tue, 18 Feb 2020 14:35:13 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 08/25] cred: add kfs{g,u}id
-Date:   Tue, 18 Feb 2020 15:33:54 +0100
-Message-Id: <20200218143411.2389182-9-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 09/25] fs: add is_userns_visible() helper
+Date:   Tue, 18 Feb 2020 15:33:55 +0100
+Message-Id: <20200218143411.2389182-10-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -46,50 +46,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After the introduction of fsid mappings we need to carefully handle
-single-superblock filesystems that are visible in user namespaces. This
-specifically concerns proc and sysfs. For those filesystems we want to continue
-looking up fsid in the id mappings of the relevant user namespace. We can
-either do this by dynamically translating between these fsids or we simply keep
-them around with the other creds. The latter option is not just simpler but
-also more performant since we don't need to do the translation from fsid
-mappings into id mappings on the fly.
+Introduce a helper which makes it possible to detect fileystems whose
+superblock is visible in multiple user namespace. This currently only
+means proc and sys. Such filesystems usually have special semantics so their
+behavior will not be changed with the introduction of fsid mappings.
 
-Link: https://lore.kernel.org/r/20200212145149.zohmc6d3x52bw6j6@wittgenstein
-Cc: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch added
+unchanged
 
 /* v3 */
 unchanged
 ---
- include/linux/cred.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/fs.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 18639c069263..604914d3fd51 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -125,6 +125,8 @@ struct cred {
- 	kgid_t		egid;		/* effective GID of the task */
- 	kuid_t		fsuid;		/* UID for VFS ops */
- 	kgid_t		fsgid;		/* GID for VFS ops */
-+	kuid_t		kfsuid;		/* UID for VFS ops for userns visible filesystems */
-+	kgid_t		kfsgid;		/* GID for VFS ops for userns visible filesystems */
- 	unsigned	securebits;	/* SUID-less security management */
- 	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
- 	kernel_cap_t	cap_permitted;	/* caps we're permitted */
-@@ -384,6 +386,8 @@ static inline void put_cred(const struct cred *_cred)
- #define current_sgid()		(current_cred_xxx(sgid))
- #define current_fsuid() 	(current_cred_xxx(fsuid))
- #define current_fsgid() 	(current_cred_xxx(fsgid))
-+#define current_kfsuid() 	(current_cred_xxx(kfsuid))
-+#define current_kfsgid() 	(current_cred_xxx(kfsgid))
- #define current_cap()		(current_cred_xxx(cap_effective))
- #define current_user()		(current_cred_xxx(user))
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3cd4fe6b845e..fdc8fb2d786b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3651,4 +3651,9 @@ static inline int inode_drain_writes(struct inode *inode)
+ 	return filemap_write_and_wait(inode->i_mapping);
+ }
  
++static inline bool is_userns_visible(unsigned long iflags)
++{
++	return (iflags & SB_I_USERNS_VISIBLE);
++}
++
+ #endif /* _LINUX_FS_H */
 -- 
 2.25.0
 
