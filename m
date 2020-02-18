@@ -2,197 +2,367 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8299E161F00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 03:35:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBBD161FA5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 04:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgBRCfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Feb 2020 21:35:40 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62720 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbgBRCfk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Feb 2020 21:35:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2020 18:35:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,454,1574150400"; 
-   d="scan'208";a="223996330"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga007.jf.intel.com with ESMTP; 17 Feb 2020 18:35:36 -0800
-Date:   Mon, 17 Feb 2020 18:35:36 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/12] Enable per-file/directory DAX operations V3
-Message-ID: <20200218023535.GA14509@iweiny-DESK2.sc.intel.com>
-References: <20200213190156.GA22854@iweiny-DESK2.sc.intel.com>
- <20200213190513.GB22854@iweiny-DESK2.sc.intel.com>
- <20200213195839.GG6870@magnolia>
- <20200213232923.GC22854@iweiny-DESK2.sc.intel.com>
- <CAPcyv4hkWoC+xCqicH1DWzmU2DcpY0at_A6HaBsrdLbZ6qzWow@mail.gmail.com>
- <20200214200607.GA18593@iweiny-DESK2.sc.intel.com>
- <x4936bcdfso.fsf@segfault.boston.devel.redhat.com>
- <20200214215759.GA20548@iweiny-DESK2.sc.intel.com>
- <x49y2t4bz8t.fsf@segfault.boston.devel.redhat.com>
- <x49tv3sbwu5.fsf@segfault.boston.devel.redhat.com>
+        id S1726283AbgBRDqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Feb 2020 22:46:37 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:9809 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbgBRDqg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Feb 2020 22:46:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1581997595; x=1613533595;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=wXfaSZCeSNxTy3FkTII7UTLfc0aIQW1qIv2A/zko3tQ=;
+  b=LgMnBp+TjtM5lP/8H9yBYM9/2UHySX374cbqD+n4VRHPpdKs1JNSBi+R
+   LXhxNuhZWsbUs3IK34mcsHtGbCLZSIIDQ6cY2QMhyLDxAK62TF1QXFLSZ
+   vxjjmH6etHkvt1GB4+X5IoKKXfOPcfB2o0x31h18miIHW+numTNhY/rJt
+   KwoExsX7LyJyLqKF7xNgBoIx+s2hGIlDddvsCQQ7vvI1ETkLS8RcCWatJ
+   YQ0QMPpBurUlmYR5CyYImapRVB+VgmbWGq1H1Q9HcHlQyX+5elMD1Jbd+
+   oQhdzcDuRZcYWobggNQBJC6ViVSw2c/vd4OeA6m7ojpgD0u6T80Rsgf6F
+   Q==;
+IronPort-SDR: dnlKyu4cQC6ZGYQgZU9x/w4bxNWCUsQfLcXNOPfcEBxWZC4fHexv/Z/0A7XzKqsM9oB04mpjUx
+ jNEl8iBxb/gJ+2d9xu8Ng7JmjI3wf8AAeSfNwF/4GH3ktRHCrucQu9sdsleVmbpJEwanzdSgXQ
+ 3IHd61nPcJ9dNvA9AaWfWD9gwGV3uL6hWwhz/g1RrxFqNSdytukjliifhF7Swfo0dbHoTNrq8C
+ aMZNrJHWbAfcQwmG8n1Zmhl7kB4axPk+Jc3qECvVgSGDGOy8gAU6iyrkCPmH8R1EKxecI2gOrC
+ Pj4=
+X-IronPort-AV: E=Sophos;i="5.70,455,1574092800"; 
+   d="scan'208";a="130053896"
+Received: from mail-bn7nam10lp2102.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.102])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Feb 2020 11:46:34 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jGL8y0aYDiIK7AzpmlUMHqg7NSLnzU1SoU8MEd9HpuZwCWu+39zuJgluq0rWWrYcMlZxQjNPop39+lCvkSFJgSRq4GOHc5AtqMvgzrhGiQmC3VzD85NWaESzBpdmFCq7g1ooNDXBXH5gnVIxBS6n6U+DFzrUKF6ltzS0/yiJVMOf2VsbMA4pahSOWLuyZ8tignZ3cc7I54AYrdJJ1iZcyauciyUT8AWfvkA+S147gYvASTo3EeIwnn/LxRKeZl2hqh3fk+39M/Imk6qy05Vi67DHYCk8F2MO3pxfHtz/7lCozGSc240AbIUUx0H5pox7LSb1fpEnQYVslY+INx6CNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xe1e2BJu1Q5HRI5wJ/T8kuhiqXk+7695gjrWHqIwU4k=;
+ b=Z3EmK8y7TNOnWvk32vKkzfOFLbkNHtwd6wglX3OS2UjseYpiguirnB93CNrDJxin+T38j6ypCxSz7Sm9Y7gIoz7XTT/VcntanvH+sDxW/7PEJhhJLqSePo7kTuLyosHANUvLptVEl8Sj30+59ddpT3QsRE/TLy9Mxtweu/nF/iD9WxHL7CXxCvqOAbnkIN+wkQg4ZDgqe1S/SEp++dlNybyTdgXz886peYx7JWv56UVy7wZH9iisNSG7OH7fIowAktLxukWTItCRomlMe9queKxTmFWchye5lfVO5vth7tS1LZ0BJ1RZLVJVflk2jJbyPZ4Aulk3AI2nNh+cN3YJcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xe1e2BJu1Q5HRI5wJ/T8kuhiqXk+7695gjrWHqIwU4k=;
+ b=tSkikbmXB7gIUwjkH1ZouvmvVkqd3ZKWjAot8o/NNmAiVzRqeZK+gBXZNZvOa+uzOXl0H7CMkDyqq1/tKfZPv7YZ0VDIC6C75MQkZBK1VUFQ7uNfpZz/cjGxAXHc8GVlrDs9kHpLVHxHVeddPJ7WcdxhSSf4ZYTDOgi3PGac5F0=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.59.16) by
+ BYAPR04MB5287.namprd04.prod.outlook.com (20.178.48.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.25; Tue, 18 Feb 2020 03:46:33 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::6daf:1b7c:1a61:8cb2]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::6daf:1b7c:1a61:8cb2%6]) with mapi id 15.20.2729.032; Tue, 18 Feb 2020
+ 03:46:33 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+CC:     Jonathan Corbet <corbet@lwn.net>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>
+Subject: Re: [PATCH 44/44] docs: filesystems: convert zonefs.txt to ReST
+Thread-Topic: [PATCH 44/44] docs: filesystems: convert zonefs.txt to ReST
+Thread-Index: AQHV5a0X87AdVAFJLEWETcsvId33Ig==
+Date:   Tue, 18 Feb 2020 03:46:32 +0000
+Message-ID: <BYAPR04MB581677BD8AB65AFEE14E50DFE7110@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <cover.1581955849.git.mchehab+huawei@kernel.org>
+ <42a7cfcd19f6b904a9a3188fd4af71bed5050052.1581955849.git.mchehab+huawei@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [199.255.47.9]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4f8b6c55-6c19-4404-acfd-08d7b4252570
+x-ms-traffictypediagnostic: BYAPR04MB5287:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB5287BA84D2B25440727EE83EE7110@BYAPR04MB5287.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:3276;
+x-forefront-prvs: 031763BCAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(39860400002)(376002)(396003)(346002)(199004)(189003)(9686003)(81166006)(81156014)(8676002)(66946007)(76116006)(26005)(8936002)(66446008)(66476007)(64756008)(91956017)(66556008)(86362001)(7696005)(316002)(186003)(478600001)(53546011)(52536014)(5660300002)(4001150100001)(33656002)(54906003)(4326008)(2906002)(71200400001)(6506007)(110136005)(55016002)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5287;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9+bWCTL1MQbIGs7LpXrRdFC9b/qQf1s+Wh2QnIluvpINS3CRlMpexM9QYjQehBtMgArCqwfOh0APbISHd9PBGIts8aAqldxKl9jzvnum1gJsbzm/OiSQr6CLnrkmZatCjF8N+x0PLx7orN+r81iakGRRASByg/TvvM9H2MWpSPw/2v5dX/xLv+VOOwGL7+g14sRLl+Nh6jTb17tByCsbLatsV6zrq78zZFPcLm/PogSrejVRb/pDXyJ2/L7eQ+X5pG2IJwETNqCZefie4fsDOZ64g4JKCnvNF+ncy4/x0yK7JGjy+hE+Z5a4Pu59v3qPXUVWuc/MX4f5R/+DbOAtNScGEEo15kfZa8AH8hkFnbMmUmgY70Rcv3jjCYJP0iE9e1hwRl/3PBeQQL05tvrNsAgWXzlzLsyiz5UaoNZS4SVBXfYDOVF1vqvd3fejn1FakU4Z/DgRmJdx4f1uMZALXeIdNos2r0eeElviKMvCV97z/0IfnhyNEFbAWt0Aofxb
+x-ms-exchange-antispam-messagedata: JNK1iUXFyz7uukW7EUaw7SEPU6xPtaN3VY3867ml15dP4305vKKkNV/+snU0H/vY8qh0jp8XzMrGVzEog18+coQKQOWL1kZEIAhhsb9owKrVFftmzvuT8jB8H5eJk9dzbMcHlUDegv8rT2yC51/yFg==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x49tv3sbwu5.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f8b6c55-6c19-4404-acfd-08d7b4252570
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2020 03:46:32.9436
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Kw8Kbx8d57s+Ggnb2pw99pAqW9D6Pee3zPHXsejkLIL305vOx/wSgeGM3GaAnSffLF3SWWaf9otBDgbBxMEcxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5287
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 05:58:10PM -0500, Jeff Moyer wrote:
-> Hi, Ira,
-> 
-> Jeff Moyer <jmoyer@redhat.com> writes:
-> 
-> > I'll try to get some testing in on this series, now.
-> 
-> This series panics in xfstests generic/013, when run like so:
-> 
-> MKFS_OPTIONS="-m reflink=0" MOUNT_OPTIONS="-o dax" ./check -g auto
-> 
-> I'd dig in further, but it's late on a Friday.  You understand.  :)
-
-Yep...  and a long weekend if you are in the US...  I ran the test with V4 and
-got the panic below.
-
-Is this similar to what you see?  If so I'll work on it in V4.  FWIW with '-o
-dax' specified I don't see how fsstress is causing an issue with my patch set.
-Does fsstress attempt to change dax states?  I don't see that in the test but
-I'm not real familiar with generic/013 and fsstress.
-
-If my disassembly of read_pages is correct it looks like readpage is null which
-makes sense because all files should be IS_DAX() == true due to the mount option...
-
-But tracing code indicates that the patch:
-
-	fs: remove unneeded IS_DAX() check
-
-... may be the culprit and the following fix may work...
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 3a7863ba51b9..7eaf74a2a39b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2257,7 +2257,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-        if (!count)
-                goto out; /* skip atime */
- 
--       if (iocb->ki_flags & IOCB_DIRECT) {
-+       if (iocb->ki_flags & IOCB_DIRECT || IS_DAX(inode)) {
-                struct file *file = iocb->ki_filp;
-                struct address_space *mapping = file->f_mapping;
-                struct inode *inode = mapping->host;
-
-And of course now my server is not responding so I can't reboot to test it...
-:-(
-
-I'll continue tomorrow after I go press the power button on the machine since
-IPMI has decided not to work...  :-(
-
-Ira
-
-[ 1204.461801] BUG: kernel NULL pointer dereference, address: 0000000000000000
-[ 1204.472375] #PF: supervisor instruction fetch in kernel mode
-[ 1204.481440] #PF: error_code(0x0010) - not-present page
-[ 1204.489920] PGD 80000003c273d067 P4D 80000003c273d067 PUD 36a73b067 PMD 0 
-[ 1204.500396] Oops: 0010 [#1] SMP KASAN PTI
-[ 1204.507617] CPU: 6 PID: 15714 Comm: fsstress Not tainted 5.5.0-next-20200207+ #1
-[ 1204.518632] Hardware name: Intel Corporation SandyBridge Platform/00, BIOS SE5C600.86B.02.04.0003.102320141138 10/23/2014
-[ 1204.533715] RIP: 0010:0x0
-[ 1204.539444] Code: Bad RIP value.
-[ 1204.545813] RSP: 0018:ffff88837dedf528 EFLAGS: 00010246
-[ 1204.554454] RAX: 0000000000000000 RBX: ffffea000cb6ae08 RCX: ffffffff813765fc
-[ 1204.565223] RDX: dffffc0000000000 RSI: ffffea000cb6ae00 RDI: ffff8887b032a800
-[ 1204.575943] RBP: ffff88837dedf618 R08: fffff9400196d5c1 R09: fffff9400196d5c1
-[ 1204.586657] R10: fffff9400196d5c0 R11: ffffea000cb6ae07 R12: ffffea000cb6ae00
-[ 1204.597362] R13: ffffffffa0ac3da0 R14: 0000000000000000 R15: ffff888342a14040
-[ 1204.608061] FS:  00007fc47c0a8b80(0000) GS:ffff8883c7100000(0000) knlGS:0000000000000000
-[ 1204.619869] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1204.629010] CR2: ffffffffffffffd6 CR3: 0000000325892002 CR4: 00000000000606e0
-[ 1204.639695] Call Trace:
-[ 1204.645128]  read_pages+0x23d/0x2f0
-[ 1204.651691]  ? read_cache_pages+0x2b0/0x2b0
-[ 1204.659030]  ? policy_node+0x56/0x60
-[ 1204.665675]  __do_page_cache_readahead+0x28b/0x2b0
-[ 1204.673641]  ? read_pages+0x2f0/0x2f0
-[ 1204.680286]  ondemand_readahead+0x2bf/0x5d0
-[ 1204.687561]  generic_file_buffered_read+0x992/0x1170
-[ 1204.695703]  ? read_cache_page_gfp+0x20/0x20
-[ 1204.703052]  ? down_read_nested+0x10b/0x2d0
-[ 1204.710266]  ? downgrade_write+0x270/0x270
-[ 1204.717399]  ? lock_acquire+0x101/0x200
-[ 1204.724171]  ? generic_file_splice_read+0x20d/0x350
-[ 1204.732067]  ? generic_file_read_iter+0x3b/0x220
-[ 1204.739736]  ? xfs_file_buffered_aio_read+0x87/0x1d0 [xfs]
-[ 1204.748351]  xfs_file_buffered_aio_read+0x92/0x1d0 [xfs]
-[ 1204.756759]  xfs_file_read_iter+0x120/0x1f0 [xfs]
-[ 1204.764420]  generic_file_splice_read+0x239/0x350
-[ 1204.772072]  ? pipe_to_user+0x80/0x80
-[ 1204.778476]  splice_direct_to_actor+0x1d8/0x460
-[ 1204.785831]  ? pipe_to_sendpage+0x1a0/0x1a0
-[ 1204.792769]  ? do_splice_to+0xc0/0xc0
-[ 1204.799144]  ? selinux_file_permission+0x1d2/0x210
-[ 1204.806734]  do_splice_direct+0x10c/0x170
-[ 1204.813393]  ? splice_direct_to_actor+0x460/0x460
-[ 1204.820830]  ? debug_lockdep_rcu_enabled+0x23/0x60
-[ 1204.828349]  ? __sb_start_write+0x12c/0x1f0
-[ 1204.835177]  vfs_copy_file_range+0x309/0x5c0
-[ 1204.842085]  ? __x64_sys_sendfile+0x160/0x160
-[ 1204.849039]  ? from_kgid+0xa0/0xa0
-[ 1204.854879]  ? _copy_to_user+0x6a/0x80
-[ 1204.861067]  ? cp_new_stat+0x271/0x2c0
-[ 1204.867238]  ? __ia32_sys_lstat+0x30/0x30
-[ 1204.873672]  ? down_read_non_owner+0x2e0/0x2e0
-[ 1204.880579]  __x64_sys_copy_file_range+0x17a/0x310
-[ 1204.887844]  ? __ia32_sys_copy_file_range+0x320/0x320
-[ 1204.895369]  ? lockdep_hardirqs_off+0x1a/0x140
-[ 1204.902142]  do_syscall_64+0x78/0x300
-[ 1204.908056]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 1204.915507] RIP: 0033:0x7fc47c1a1d6d
-[ 1204.921283] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d eb 80 0c 00 f7 d8 64 89 01 48
-[ 1204.946109] RSP: 002b:00007ffd9cc4cc08 EFLAGS: 00000202 ORIG_RAX: 0000000000000146
-[ 1204.956531] RAX: ffffffffffffffda RBX: 0000000000000047 RCX: 00007fc47c1a1d6d
-[ 1204.966477] RDX: 0000000000000004 RSI: 00007ffd9cc4cc40 RDI: 0000000000000003
-[ 1204.976394] RBP: 000000000061a35e R08: 000000000000f15b R09: 0000000000000000
-[ 1204.986279] R10: 00007ffd9cc4cc48 R11: 0000000000000202 R12: 0000000000000003
-[ 1204.996142] R13: 000000000000f15b R14: 00000000000326f7 R15: 0000000000159373
-[ 1205.005983] Modules linked in: vfat fat isofs rfkill ib_isert
-iscsi_target_mod ib_srpt target_core_mod ib_srp scsi_transport_srp opa_vnic
-rpcrdma sunrpc rdma_ucm ib_iser ib_umad rdma_cm ib_ipoib iw_cm dax_pmem_compat
-libiscsi iTCO_wdt device_dax nd_pmem ib_cm dax_pmem_core nd_btt
-iTCO_vendor_support scsi_transport_iscsi snd_hda_codec_realtek
-snd_hda_codec_generic ledtrig_audio sb_edac x86_pkg_temp_thermal
-intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel
-snd_hda_intel hfi1 snd_intel_dspcfg snd_hda_codec snd_hda_core aesni_intel
-snd_hwdep crypto_simd snd_pcm rdmavt snd_timer nd_e820 ib_uverbs cryptd
-libnvdimm snd ib_core soundcore glue_helper ipmi_si mei_me ipmi_devintf pcspkr
-mei i2c_i801 ipmi_msghandler lpc_ich mfd_core ioatdma wmi acpi_cpufreq
-sch_fq_codel xfs libcrc32c mlx4_en sr_mod cdrom sd_mod t10_pi mgag200
-drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm_vram_helper
-drm_ttm_helper ahci ttm crc32c_intel libahci mlx4_core isci igb libsas drm
-[ 1205.006047]  dca scsi_transport_sas firewire_ohci i2c_algo_bit firewire_core
-crc_itu_t libata i2c_core dm_mod [last unloaded: mlx4_ib]
-[ 1205.140277] CR2: 0000000000000000
-[ 1205.146689] ---[ end trace cf133ac3f2876827 ]---
-
-> 
-> Cheers,
-> Jeff
-> 
+On 2020/02/18 1:12, Mauro Carvalho Chehab wrote:=0A=
+> - Add a SPDX header;=0A=
+> - Add a document title;=0A=
+> - Some whitespace fixes and new line breaks;=0A=
+> - Mark literal blocks as such;=0A=
+> - Add it to filesystems/index.rst.=0A=
+> =0A=
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>=0A=
+=0A=
+Acked-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
+=0A=
+> ---=0A=
+>  Documentation/filesystems/index.rst           |   1 +=0A=
+>  .../filesystems/{zonefs.txt =3D> zonefs.rst}    | 106 ++++++++++--------=
+=0A=
+>  2 files changed, 58 insertions(+), 49 deletions(-)=0A=
+>  rename Documentation/filesystems/{zonefs.txt =3D> zonefs.rst} (90%)=0A=
+> =0A=
+> diff --git a/Documentation/filesystems/index.rst b/Documentation/filesyst=
+ems/index.rst=0A=
+> index ec03cb4d7353..53f46a88e6ec 100644=0A=
+> --- a/Documentation/filesystems/index.rst=0A=
+> +++ b/Documentation/filesystems/index.rst=0A=
+> @@ -95,3 +95,4 @@ Documentation for filesystem implementations.=0A=
+>     udf=0A=
+>     virtiofs=0A=
+>     vfat=0A=
+> +   zonefs=0A=
+> diff --git a/Documentation/filesystems/zonefs.txt b/Documentation/filesys=
+tems/zonefs.rst=0A=
+> similarity index 90%=0A=
+> rename from Documentation/filesystems/zonefs.txt=0A=
+> rename to Documentation/filesystems/zonefs.rst=0A=
+> index 935bf22031ca..7e733e751e98 100644=0A=
+> --- a/Documentation/filesystems/zonefs.txt=0A=
+> +++ b/Documentation/filesystems/zonefs.rst=0A=
+> @@ -1,4 +1,8 @@=0A=
+> +.. SPDX-License-Identifier: GPL-2.0=0A=
+> +=0A=
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
+>  ZoneFS - Zone filesystem for Zoned block devices=0A=
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
+>  =0A=
+>  Introduction=0A=
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0A=
+> @@ -29,6 +33,7 @@ Zoned block devices=0A=
+>  Zoned storage devices belong to a class of storage devices with an addre=
+ss=0A=
+>  space that is divided into zones. A zone is a group of consecutive LBAs =
+and all=0A=
+>  zones are contiguous (there are no LBA gaps). Zones may have different t=
+ypes.=0A=
+> +=0A=
+>  * Conventional zones: there are no access constraints to LBAs belonging =
+to=0A=
+>    conventional zones. Any read or write access can be executed, similarl=
+y to a=0A=
+>    regular block device.=0A=
+> @@ -158,6 +163,7 @@ Format options=0A=
+>  --------------=0A=
+>  =0A=
+>  Several optional features of zonefs can be enabled at format time.=0A=
+> +=0A=
+>  * Conventional zone aggregation: ranges of contiguous conventional zones=
+ can be=0A=
+>    aggregated into a single larger file instead of the default one file p=
+er zone.=0A=
+>  * File ownership: The owner UID and GID of zone files is by default 0 (r=
+oot)=0A=
+> @@ -249,7 +255,7 @@ permissions.=0A=
+>  Further action taken by zonefs I/O error recovery can be controlled by t=
+he user=0A=
+>  with the "errors=3Dxxx" mount option. The table below summarizes the res=
+ult of=0A=
+>  zonefs I/O error processing depending on the mount option and on the zon=
+e=0A=
+> -conditions.=0A=
+> +conditions::=0A=
+>  =0A=
+>      +--------------+-----------+----------------------------------------=
+-+=0A=
+>      |              |           |            Post error state            =
+ |=0A=
+> @@ -275,6 +281,7 @@ conditions.=0A=
+>      +--------------+-----------+----------------------------------------=
+-+=0A=
+>  =0A=
+>  Further notes:=0A=
+> +=0A=
+>  * The "errors=3Dremount-ro" mount option is the default behavior of zone=
+fs I/O=0A=
+>    error processing if no errors mount option is specified.=0A=
+>  * With the "errors=3Dremount-ro" mount option, the change of the file ac=
+cess=0A=
+> @@ -302,6 +309,7 @@ Mount options=0A=
+>  zonefs define the "errors=3D<behavior>" mount option to allow the user t=
+o specify=0A=
+>  zonefs behavior in response to I/O errors, inode size inconsistencies or=
+ zone=0A=
+>  condition chages. The defined behaviors are as follow:=0A=
+> +=0A=
+>  * remount-ro (default)=0A=
+>  * zone-ro=0A=
+>  * zone-offline=0A=
+> @@ -325,78 +333,78 @@ Examples=0A=
+>  --------=0A=
+>  =0A=
+>  The following formats a 15TB host-managed SMR HDD with 256 MB zones=0A=
+> -with the conventional zones aggregation feature enabled.=0A=
+> +with the conventional zones aggregation feature enabled::=0A=
+>  =0A=
+> -# mkzonefs -o aggr_cnv /dev/sdX=0A=
+> -# mount -t zonefs /dev/sdX /mnt=0A=
+> -# ls -l /mnt/=0A=
+> -total 0=0A=
+> -dr-xr-xr-x 2 root root     1 Nov 25 13:23 cnv=0A=
+> -dr-xr-xr-x 2 root root 55356 Nov 25 13:23 seq=0A=
+> +    # mkzonefs -o aggr_cnv /dev/sdX=0A=
+> +    # mount -t zonefs /dev/sdX /mnt=0A=
+> +    # ls -l /mnt/=0A=
+> +    total 0=0A=
+> +    dr-xr-xr-x 2 root root     1 Nov 25 13:23 cnv=0A=
+> +    dr-xr-xr-x 2 root root 55356 Nov 25 13:23 seq=0A=
+>  =0A=
+>  The size of the zone files sub-directories indicate the number of files=
+=0A=
+>  existing for each type of zones. In this example, there is only one=0A=
+>  conventional zone file (all conventional zones are aggregated under a si=
+ngle=0A=
+> -file).=0A=
+> +file)::=0A=
+>  =0A=
+> -# ls -l /mnt/cnv=0A=
+> -total 137101312=0A=
+> --rw-r----- 1 root root 140391743488 Nov 25 13:23 0=0A=
+> +    # ls -l /mnt/cnv=0A=
+> +    total 137101312=0A=
+> +    -rw-r----- 1 root root 140391743488 Nov 25 13:23 0=0A=
+>  =0A=
+> -This aggregated conventional zone file can be used as a regular file.=0A=
+> +This aggregated conventional zone file can be used as a regular file::=
+=0A=
+>  =0A=
+> -# mkfs.ext4 /mnt/cnv/0=0A=
+> -# mount -o loop /mnt/cnv/0 /data=0A=
+> +    # mkfs.ext4 /mnt/cnv/0=0A=
+> +    # mount -o loop /mnt/cnv/0 /data=0A=
+>  =0A=
+>  The "seq" sub-directory grouping files for sequential write zones has in=
+ this=0A=
+> -example 55356 zones.=0A=
+> +example 55356 zones::=0A=
+>  =0A=
+> -# ls -lv /mnt/seq=0A=
+> -total 14511243264=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:23 0=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:23 1=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:23 2=0A=
+> -...=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:23 55354=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:23 55355=0A=
+> +    # ls -lv /mnt/seq=0A=
+> +    total 14511243264=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:23 0=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:23 1=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:23 2=0A=
+> +    ...=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:23 55354=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:23 55355=0A=
+>  =0A=
+>  For sequential write zone files, the file size changes as data is append=
+ed at=0A=
+> -the end of the file, similarly to any regular file system.=0A=
+> +the end of the file, similarly to any regular file system::=0A=
+>  =0A=
+> -# dd if=3D/dev/zero of=3D/mnt/seq/0 bs=3D4096 count=3D1 conv=3Dnotrunc o=
+flag=3Ddirect=0A=
+> -1+0 records in=0A=
+> -1+0 records out=0A=
+> -4096 bytes (4.1 kB, 4.0 KiB) copied, 0.00044121 s, 9.3 MB/s=0A=
+> +    # dd if=3D/dev/zero of=3D/mnt/seq/0 bs=3D4096 count=3D1 conv=3Dnotru=
+nc oflag=3Ddirect=0A=
+> +    1+0 records in=0A=
+> +    1+0 records out=0A=
+> +    4096 bytes (4.1 kB, 4.0 KiB) copied, 0.00044121 s, 9.3 MB/s=0A=
+>  =0A=
+> -# ls -l /mnt/seq/0=0A=
+> --rw-r----- 1 root root 4096 Nov 25 13:23 /mnt/seq/0=0A=
+> +    # ls -l /mnt/seq/0=0A=
+> +    -rw-r----- 1 root root 4096 Nov 25 13:23 /mnt/seq/0=0A=
+>  =0A=
+>  The written file can be truncated to the zone size, preventing any furth=
+er=0A=
+> -write operation.=0A=
+> +write operation::=0A=
+>  =0A=
+> -# truncate -s 268435456 /mnt/seq/0=0A=
+> -# ls -l /mnt/seq/0=0A=
+> --rw-r----- 1 root root 268435456 Nov 25 13:49 /mnt/seq/0=0A=
+> +    # truncate -s 268435456 /mnt/seq/0=0A=
+> +    # ls -l /mnt/seq/0=0A=
+> +    -rw-r----- 1 root root 268435456 Nov 25 13:49 /mnt/seq/0=0A=
+>  =0A=
+>  Truncation to 0 size allows freeing the file zone storage space and rest=
+art=0A=
+> -append-writes to the file.=0A=
+> +append-writes to the file::=0A=
+>  =0A=
+> -# truncate -s 0 /mnt/seq/0=0A=
+> -# ls -l /mnt/seq/0=0A=
+> --rw-r----- 1 root root 0 Nov 25 13:49 /mnt/seq/0=0A=
+> +    # truncate -s 0 /mnt/seq/0=0A=
+> +    # ls -l /mnt/seq/0=0A=
+> +    -rw-r----- 1 root root 0 Nov 25 13:49 /mnt/seq/0=0A=
+>  =0A=
+>  Since files are statically mapped to zones on the disk, the number of bl=
+ocks of=0A=
+> -a file as reported by stat() and fstat() indicates the size of the file =
+zone.=0A=
+> +a file as reported by stat() and fstat() indicates the size of the file =
+zone::=0A=
+>  =0A=
+> -# stat /mnt/seq/0=0A=
+> -  File: /mnt/seq/0=0A=
+> -  Size: 0         	Blocks: 524288     IO Block: 4096   regular empty fil=
+e=0A=
+> -Device: 870h/2160d	Inode: 50431       Links: 1=0A=
+> -Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    root)=
+=0A=
+> -Access: 2019-11-25 13:23:57.048971997 +0900=0A=
+> -Modify: 2019-11-25 13:52:25.553805765 +0900=0A=
+> -Change: 2019-11-25 13:52:25.553805765 +0900=0A=
+> - Birth: -=0A=
+> +    # stat /mnt/seq/0=0A=
+> +    File: /mnt/seq/0=0A=
+> +    Size: 0         	Blocks: 524288     IO Block: 4096   regular empty f=
+ile=0A=
+> +    Device: 870h/2160d	Inode: 50431       Links: 1=0A=
+> +    Access: (0640/-rw-r-----)  Uid: (    0/    root)   Gid: (    0/    r=
+oot)=0A=
+> +    Access: 2019-11-25 13:23:57.048971997 +0900=0A=
+> +    Modify: 2019-11-25 13:52:25.553805765 +0900=0A=
+> +    Change: 2019-11-25 13:52:25.553805765 +0900=0A=
+> +    Birth: -=0A=
+>  =0A=
+>  The number of blocks of the file ("Blocks") in units of 512B blocks give=
+s the=0A=
+>  maximum file size of 524288 * 512 B =3D 256 MB, corresponding to the dev=
+ice zone=0A=
+> =0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
