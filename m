@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C21CE16286E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:36:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45DB1162877
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:36:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgBROgX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 09:36:23 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53030 "EHLO
+        id S1727755AbgBROgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 09:36:22 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53031 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbgBROfj (ORCPT
+        with ESMTP id S1726840AbgBROfj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 18 Feb 2020 09:35:39 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43xs-0000fF-2l; Tue, 18 Feb 2020 14:35:08 +0000
+        id 1j43xt-0000fF-2o; Tue, 18 Feb 2020 14:35:09 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 04/25] fsuidgid: add fsid mapping helpers
-Date:   Tue, 18 Feb 2020 15:33:50 +0100
-Message-Id: <20200218143411.2389182-5-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 05/25] user_namespace: refactor map_write()
+Date:   Tue, 18 Feb 2020 15:33:51 +0100
+Message-Id: <20200218143411.2389182-6-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -46,387 +46,192 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a set of helpers to translate between kfsuid/kfsgid and their
-userspace fsuid/fsgid counter parts relative to a given user namespace.
-
-- kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
-  Maps a user-namespace fsuid pair into a kfsuid.
-  If no fsuid mappings have been written it behaves identical to calling
-  make_kuid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- kgid_t make_kfsgid(struct user_namespace *from, gid_t fsgid)
-  Maps a user-namespace fsgid pair into a kfsgid.
-  If no fsgid mappings have been written it behaves identical to calling
-  make_kgid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- uid_t from_kfsuid(struct user_namespace *to, kuid_t fsuid)
-  Creates a fsuid from a kfsuid user-namespace pair if possible.
-  If no fsuid mappings have been written it behaves identical to calling
-  from_kuid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- gid_t from_kfsgid(struct user_namespace *to, kgid_t fsgid)
-  Creates a fsgid from a kfsgid user-namespace pair if possible.
-  If no fsgid mappings have been written it behaves identical to calling
-  make_kgid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- uid_t from_kfsuid_munged(struct user_namespace *to, kuid_t fsuid)
-  Always creates a fsuid from a kfsuid user-namespace pair.
-  If no fsuid mappings have been written it behaves identical to calling
-  from_kuid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- gid_t from_kfsgid_munged(struct user_namespace *to, kgid_t fsgid)
-  Always creates a fsgid from a kfsgid user-namespace pair if possible.
-  If no fsgid mappings have been written it behaves identical to calling
-  make_kgid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- bool kfsuid_has_mapping(struct user_namespace *ns, kuid_t uid)
-  Check whether this kfsuid has a mapping in the provided user namespace.
-  If no fsuid mappings have been written it behaves identical to calling
-  from_kuid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- bool kfsgid_has_mapping(struct user_namespace *ns, kgid_t gid)
-  Check whether this kfsgid has a mapping in the provided user namespace.
-  If no fsgid mappings have been written it behaves identical to calling
-  make_kgid(). This ensures backwards compatibility for workloads unaware
-  or not in need of fsid mappings.
-
-- kuid_t kfsuid_to_kuid(struct user_namespace *to, kuid_t kfsuid)
-  Translate from a kfsuid into a kuid.
-
-- kgid_t kfsgid_to_kgid(struct user_namespace *to, kgid_t kfsgid)
-  Translate from a kfsgid into a kgid.
-
-- kuid_t kuid_to_kfsuid(struct user_namespace *to, kuid_t kuid)
-  Translate from a kuid into a kfsuid.
-
-- kgid_t kgid_to_kfsuid(struct user_namespace *to, kgid_t kgid)
-  Translate from a kgid into a kfsgid.
+Refactor map_write() to prepare for adding fsid mappings support. This mainly
+factors out various open-coded parts into helpers that can be reused in the
+follow up patch.
 
 Cc: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+patch not present
 
 /* v3 */
+patch added
 - Jann Horn <jannh@google.com>:
   - Split changes to map_write() to implement fsid mappings into three separate
     patches: basic fsid helpers, preparatory changes to map_write(), actual
     fsid mapping support in map_write().
 ---
- include/linux/fsuidgid.h | 122 +++++++++++++++++++++++++++++++++
- kernel/user_namespace.c  | 141 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 261 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/fsuidgid.h
+ kernel/user_namespace.c | 117 +++++++++++++++++++++++++---------------
+ 1 file changed, 74 insertions(+), 43 deletions(-)
 
-diff --git a/include/linux/fsuidgid.h b/include/linux/fsuidgid.h
-new file mode 100644
-index 000000000000..46763591f4e6
---- /dev/null
-+++ b/include/linux/fsuidgid.h
-@@ -0,0 +1,122 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_FSUIDGID_H
-+#define _LINUX_FSUIDGID_H
-+
-+#include <linux/uidgid.h>
-+
-+#ifdef CONFIG_USER_NS_FSID
-+
-+extern kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid);
-+extern kgid_t make_kfsgid(struct user_namespace *from, gid_t fsgid);
-+extern uid_t from_kfsuid(struct user_namespace *to, kuid_t kfsuid);
-+extern gid_t from_kfsgid(struct user_namespace *to, kgid_t kfsgid);
-+extern uid_t from_kfsuid_munged(struct user_namespace *to, kuid_t kfsuid);
-+extern gid_t from_kfsgid_munged(struct user_namespace *to, kgid_t kfsgid);
-+
-+static inline bool kfsuid_has_mapping(struct user_namespace *ns, kuid_t kfsuid)
-+{
-+	return from_kfsuid(ns, kfsuid) != (uid_t) -1;
-+}
-+
-+static inline bool kfsgid_has_mapping(struct user_namespace *ns, kgid_t kfsgid)
-+{
-+	return from_kfsgid(ns, kfsgid) != (gid_t) -1;
-+}
-+
-+static inline kuid_t kfsuid_to_kuid(struct user_namespace *to, kuid_t kfsuid)
-+{
-+	uid_t fsuid = from_kfsuid(to, kfsuid);
-+	if (fsuid == (uid_t) -1)
-+		return INVALID_UID;
-+	return make_kuid(to, fsuid);
-+}
-+
-+static inline kgid_t kfsgid_to_kgid(struct user_namespace *to, kgid_t kfsgid)
-+{
-+	gid_t fsgid = from_kfsgid(to, kfsgid);
-+	if (fsgid == (gid_t) -1)
-+		return INVALID_GID;
-+	return make_kgid(to, fsgid);
-+}
-+
-+static inline kuid_t kuid_to_kfsuid(struct user_namespace *to, kuid_t kuid)
-+{
-+	uid_t uid = from_kuid(to, kuid);
-+	if (uid == (uid_t) -1)
-+		return INVALID_UID;
-+	return make_kfsuid(to, uid);
-+}
-+
-+static inline kgid_t kgid_to_kfsgid(struct user_namespace *to, kgid_t kgid)
-+{
-+	gid_t gid = from_kgid(to, kgid);
-+	if (gid == (gid_t) -1)
-+		return INVALID_GID;
-+	return make_kfsgid(to, gid);
-+}
-+
-+#else
-+
-+static inline kuid_t make_kfsuid(struct user_namespace *from, uid_t fsuid)
-+{
-+	return make_kuid(from, fsuid);
-+}
-+
-+static inline kgid_t make_kfsgid(struct user_namespace *from, gid_t fsgid)
-+{
-+	return make_kgid(from, fsgid);
-+}
-+
-+static inline uid_t from_kfsuid(struct user_namespace *to, kuid_t kfsuid)
-+{
-+	return from_kuid(to, kfsuid);
-+}
-+
-+static inline gid_t from_kfsgid(struct user_namespace *to, kgid_t kfsgid)
-+{
-+	return from_kgid(to, kfsgid);
-+}
-+
-+static inline uid_t from_kfsuid_munged(struct user_namespace *to, kuid_t kfsuid)
-+{
-+	return from_kuid_munged(to, kfsuid);
-+}
-+
-+static inline gid_t from_kfsgid_munged(struct user_namespace *to, kgid_t kfsgid)
-+{
-+	return from_kgid_munged(to, kfsgid);
-+}
-+
-+static inline bool kfsuid_has_mapping(struct user_namespace *ns, kuid_t kfsuid)
-+{
-+	return kuid_has_mapping(ns, kfsuid);
-+}
-+
-+static inline bool kfsgid_has_mapping(struct user_namespace *ns, kgid_t kfsgid)
-+{
-+	return kgid_has_mapping(ns, kfsgid);
-+}
-+
-+static inline kuid_t kfsuid_to_kuid(struct user_namespace *to, kuid_t kfsuid)
-+{
-+	return kfsuid;
-+}
-+
-+static inline kgid_t kfsgid_to_kgid(struct user_namespace *to, kgid_t kfsgid)
-+{
-+	return kfsgid;
-+}
-+
-+static inline kuid_t kuid_to_kfsuid(struct user_namespace *to, kuid_t kuid)
-+{
-+	return kuid;
-+}
-+
-+static inline kgid_t kgid_to_kfsgid(struct user_namespace *to, kgid_t kgid)
-+{
-+	return kgid;
-+}
-+
-+#endif /* CONFIG_USER_NS_FSID */
-+
-+#endif /* _LINUX_FSUIDGID_H */
 diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index cbdf456f95f0..2cfd1e519cc4 100644
+index 2cfd1e519cc4..e91141262bcc 100644
 --- a/kernel/user_namespace.c
 +++ b/kernel/user_namespace.c
-@@ -20,6 +20,7 @@
- #include <linux/fs_struct.h>
- #include <linux/bsearch.h>
- #include <linux/sort.h>
-+#include <linux/fsuidgid.h>
- 
- static struct kmem_cache *user_ns_cachep __read_mostly;
- static DEFINE_MUTEX(userns_state_mutex);
-@@ -583,6 +584,142 @@ projid_t from_kprojid_munged(struct user_namespace *targ, kprojid_t kprojid)
+@@ -1038,10 +1038,10 @@ static int cmp_extents_reverse(const void *a, const void *b)
  }
- EXPORT_SYMBOL(from_kprojid_munged);
  
-+#ifdef CONFIG_USER_NS_FSID
-+/**
-+ *	make_kfsuid - Map a user-namespace fsuid pair into a kuid.
-+ *	@ns:  User namespace that the fsuid is in
-+ *	@fsuid: User identifier
-+ *
-+ *	Maps a user-namespace fsuid pair into a kernel internal kfsuid,
-+ *	and returns that kfsuid.
-+ *
-+ *	When there is no mapping defined for the user-namespace kfsuid
-+ *	pair INVALID_UID is returned.  Callers are expected to test
-+ *	for and handle INVALID_UID being returned.  INVALID_UID
-+ *	may be tested for using uid_valid().
-+ */
-+kuid_t make_kfsuid(struct user_namespace *ns, uid_t fsuid)
-+{
-+	/* Map the fsuid to a global kernel fsuid */
-+	return KUIDT_INIT(map_id_down(&ns->fsuid_map, fsuid));
-+}
-+EXPORT_SYMBOL(make_kfsuid);
-+
-+/**
-+ *	from_kfsuid - Create a fsuid from a kfsuid user-namespace pair.
-+ *	@targ: The user namespace we want a fsuid in.
-+ *	@kfsuid: The kernel internal fsuid to start with.
-+ *
-+ *	Map @kfsuid into the user-namespace specified by @targ and
-+ *	return the resulting fsuid.
-+ *
-+ *	There is always a mapping into the initial user_namespace.
-+ *
-+ *	If @kfsuid has no mapping in @targ (uid_t)-1 is returned.
-+ */
-+uid_t from_kfsuid(struct user_namespace *targ, kuid_t kfsuid)
-+{
-+	/* Map the fsuid from a global kernel fsuid */
-+	return map_id_up(&targ->fsuid_map, __kuid_val(kfsuid));
-+}
-+EXPORT_SYMBOL(from_kfsuid);
-+
-+/**
-+ *	from_kfsuid_munged - Create a fsuid from a kfsuid user-namespace pair.
-+ *	@targ: The user namespace we want a fsuid in.
-+ *	@kfsuid: The kernel internal fsuid to start with.
-+ *
-+ *	Map @kfsuid into the user-namespace specified by @targ and
-+ *	return the resulting fsuid.
-+ *
-+ *	There is always a mapping into the initial user_namespace.
-+ *
-+ *	Unlike from_kfsuid from_kfsuid_munged never fails and always
-+ *	returns a valid fsuid.  This makes from_kfsuid_munged appropriate
-+ *	for use in syscalls like stat and getuid where failing the
-+ *	system call and failing to provide a valid fsuid are not an
-+ *	options.
-+ *
-+ *	If @kfsuid has no mapping in @targ overflowuid is returned.
-+ */
-+uid_t from_kfsuid_munged(struct user_namespace *targ, kuid_t kfsuid)
-+{
-+	uid_t fsuid;
-+	fsuid = from_kfsuid(targ, kfsuid);
-+
-+	if (fsuid == (uid_t) -1)
-+		fsuid = overflowuid;
-+	return fsuid;
-+}
-+EXPORT_SYMBOL(from_kfsuid_munged);
-+
-+/**
-+ *	make_kfsgid - Map a user-namespace fsgid pair into a kfsgid.
-+ *	@ns:  User namespace that the fsgid is in
-+ *	@fsgid: User identifier
-+ *
-+ *	Maps a user-namespace fsgid pair into a kernel internal kfsgid,
-+ *	and returns that kfsgid.
-+ *
-+ *	When there is no mapping defined for the user-namespace fsgid
-+ *	pair INVALID_GID is returned.  Callers are expected to test
-+ *	for and handle INVALID_GID being returned.  INVALID_GID
-+ *	may be tested for using gid_valid().
-+ */
-+kgid_t make_kfsgid(struct user_namespace *ns, gid_t fsgid)
-+{
-+	/* Map the fsgid to a global kernel fsgid */
-+	return KGIDT_INIT(map_id_down(&ns->fsgid_map, fsgid));
-+}
-+EXPORT_SYMBOL(make_kfsgid);
-+
-+/**
-+ *	from_kfsgid - Create a fsgid from a kfsgid user-namespace pair.
-+ *	@targ: The user namespace we want a fsgid in.
-+ *	@kfsgid: The kernel internal fsgid to start with.
-+ *
-+ *	Map @kfsgid into the user-namespace specified by @targ and
-+ *	return the resulting fsgid.
-+ *
-+ *	There is always a mapping into the initial user_namespace.
-+ *
-+ *	If @kfsgid has no mapping in @targ (gid_t)-1 is returned.
-+ */
-+gid_t from_kfsgid(struct user_namespace *targ, kgid_t kfsgid)
-+{
-+	/* Map the fsgid from a global kernel fsgid */
-+	return map_id_up(&targ->fsgid_map, __kgid_val(kfsgid));
-+}
-+EXPORT_SYMBOL(from_kfsgid);
-+
-+/**
-+ *	from_kfsgid_munged - Create a fsgid from a kfsgid user-namespace pair.
-+ *	@targ: The user namespace we want a fsgid in.
-+ *	@kfsgid: The kernel internal fsgid to start with.
-+ *
-+ *	Map @kfsgid into the user-namespace specified by @targ and
-+ *	return the resulting fsgid.
-+ *
-+ *	There is always a mapping into the initial user_namespace.
-+ *
-+ *	Unlike from_kfsgid from_kfsgid_munged never fails and always
-+ *	returns a valid fsgid.  This makes from_kfsgid_munged appropriate
-+ *	for use in syscalls like stat and getgid where failing the
-+ *	system call and failing to provide a valid fsgid are not options.
-+ *
-+ *	If @kfsgid has no mapping in @targ overflowgid is returned.
-+ */
-+gid_t from_kfsgid_munged(struct user_namespace *targ, kgid_t kfsgid)
-+{
-+	gid_t fsgid;
-+	fsgid = from_kfsgid(targ, kfsgid);
-+
-+	if (fsgid == (gid_t) -1)
-+		fsgid = overflowgid;
-+	return fsgid;
-+}
-+EXPORT_SYMBOL(from_kfsgid_munged);
-+#endif /* CONFIG_USER_NS_FSID */
- 
- static int uid_m_show(struct seq_file *seq, void *v)
+ /**
+- * sort_idmaps - Sorts an array of idmap entries.
++ * sort_map - Sorts an array of idmap entries.
+  * Can only be called if number of mappings exceeds UID_GID_MAP_MAX_BASE_EXTENTS.
+  */
+-static int sort_idmaps(struct uid_gid_map *map)
++static int sort_map(struct uid_gid_map *map)
  {
-@@ -659,7 +796,7 @@ static int fsuid_m_show(struct seq_file *seq, void *v)
- 	if ((lower_ns == ns) && lower_ns->parent)
- 		lower_ns = lower_ns->parent;
+ 	if (map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+ 		return 0;
+@@ -1064,6 +1064,71 @@ static int sort_idmaps(struct uid_gid_map *map)
+ 	return 0;
+ }
  
--	lower = from_kuid(lower_ns, KUIDT_INIT(extent->lower_first));
-+	lower = from_kfsuid(lower_ns, KUIDT_INIT(extent->lower_first));
++static int sort_idmaps(struct uid_gid_map *map)
++{
++	return sort_map(map);
++}
++
++static int map_from_parent(struct uid_gid_map *new_map,
++			   struct uid_gid_map *parent_map)
++{
++	unsigned idx;
++
++	/* Map the lower ids from the parent user namespace to the
++	 * kernel global id space.
++	 */
++	for (idx = 0; idx < new_map->nr_extents; idx++) {
++		struct uid_gid_extent *e;
++		u32 lower_first;
++
++		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
++			e = &new_map->extent[idx];
++		else
++			e = &new_map->forward[idx];
++
++		lower_first = map_id_range_down(parent_map, e->lower_first, e->count);
++
++		/* Fail if we can not map the specified extent to
++		 * the kernel global id space.
++		 */
++		if (lower_first == (u32)-1)
++			return -EPERM;
++
++		e->lower_first = lower_first;
++	}
++
++	return 0;
++}
++
++static int map_into_kids(struct uid_gid_map *id_map,
++			 struct uid_gid_map *parent_id_map)
++{
++	return map_from_parent(id_map, parent_id_map);
++}
++
++static void install_idmaps(struct uid_gid_map *id_map,
++			   struct uid_gid_map *new_id_map)
++{
++	if (new_id_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
++		memcpy(id_map->extent, new_id_map->extent,
++		       new_id_map->nr_extents * sizeof(new_id_map->extent[0]));
++	} else {
++		id_map->forward = new_id_map->forward;
++		id_map->reverse = new_id_map->reverse;
++	}
++}
++
++static void free_idmaps(struct uid_gid_map *new_id_map)
++{
++	if (new_id_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
++		kfree(new_id_map->forward);
++		kfree(new_id_map->reverse);
++		new_id_map->forward = NULL;
++		new_id_map->reverse = NULL;
++		new_id_map->nr_extents = 0;
++	}
++}
++
+ static ssize_t map_write(struct file *file, const char __user *buf,
+ 			 size_t count, loff_t *ppos,
+ 			 int cap_setid,
+@@ -1073,7 +1138,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 	struct seq_file *seq = file->private_data;
+ 	struct user_namespace *ns = seq->private;
+ 	struct uid_gid_map new_map;
+-	unsigned idx;
+ 	struct uid_gid_extent extent;
+ 	char *kbuf = NULL, *pos, *next_line;
+ 	ssize_t ret;
+@@ -1191,61 +1255,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+ 	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
+ 		goto out;
  
- 	seq_printf(seq, "%10u %10u %10u\n",
- 		extent->first,
-@@ -680,7 +817,7 @@ static int fsgid_m_show(struct seq_file *seq, void *v)
- 	if ((lower_ns == ns) && lower_ns->parent)
- 		lower_ns = lower_ns->parent;
+-	ret = -EPERM;
+-	/* Map the lower ids from the parent user namespace to the
+-	 * kernel global id space.
+-	 */
+-	for (idx = 0; idx < new_map.nr_extents; idx++) {
+-		struct uid_gid_extent *e;
+-		u32 lower_first;
+-
+-		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+-			e = &new_map.extent[idx];
+-		else
+-			e = &new_map.forward[idx];
+-
+-		lower_first = map_id_range_down(parent_map,
+-						e->lower_first,
+-						e->count);
+-
+-		/* Fail if we can not map the specified extent to
+-		 * the kernel global id space.
+-		 */
+-		if (lower_first == (u32) -1)
+-			goto out;
+-
+-		e->lower_first = lower_first;
+-	}
++	ret = map_into_kids(&new_map, parent_map);
++	if (ret)
++		goto out;
  
--	lower = from_kgid(lower_ns, KGIDT_INIT(extent->lower_first));
-+	lower = from_kfsgid(lower_ns, KGIDT_INIT(extent->lower_first));
+ 	/*
+ 	 * If we want to use binary search for lookup, this clones the extent
+ 	 * array and sorts both copies.
+ 	 */
+ 	ret = sort_idmaps(&new_map);
+-	if (ret < 0)
++	if (ret)
+ 		goto out;
  
- 	seq_printf(seq, "%10u %10u %10u\n",
- 		extent->first,
+ 	/* Install the map */
+-	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		memcpy(map->extent, new_map.extent,
+-		       new_map.nr_extents * sizeof(new_map.extent[0]));
+-	} else {
+-		map->forward = new_map.forward;
+-		map->reverse = new_map.reverse;
+-	}
++	install_idmaps(map, &new_map);
+ 	smp_wmb();
+ 	map->nr_extents = new_map.nr_extents;
+ 
+ 	*ppos = count;
+ 	ret = count;
+ out:
+-	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+-		kfree(new_map.forward);
+-		kfree(new_map.reverse);
+-		map->forward = NULL;
+-		map->reverse = NULL;
+-		map->nr_extents = 0;
+-	}
++	if (ret < 0)
++		free_idmaps(&new_map);
+ 
+ 	mutex_unlock(&userns_state_mutex);
+ 	kfree(kbuf);
 -- 
 2.25.0
 
