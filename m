@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D5C2162879
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C220116289E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 15:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbgBROgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 09:36:35 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53123 "EHLO
+        id S1727434AbgBROh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 09:37:26 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53168 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbgBROgf (ORCPT
+        with ESMTP id S1726569AbgBROhZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 09:36:35 -0500
+        Tue, 18 Feb 2020 09:37:25 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j43yC-0000fF-K3; Tue, 18 Feb 2020 14:35:28 +0000
+        id 1j43yD-0000fF-W8; Tue, 18 Feb 2020 14:35:30 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -33,9 +33,9 @@ Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
         containers@lists.linux-foundation.org,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v3 23/25] keys: handle fsid mappings
-Date:   Tue, 18 Feb 2020 15:34:09 +0100
-Message-Id: <20200218143411.2389182-24-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 24/25] sys: handle fsid mappings in set*id() calls
+Date:   Tue, 18 Feb 2020 15:34:10 +0100
+Message-Id: <20200218143411.2389182-25-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
@@ -46,152 +46,314 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Similar to proc and sysfs let keys use kfsids which are always mapped according
-to id mappings.
+Switch set*id() calls to lookup fsids in the fsid mappings. If no fsid mappings
+are setup the behavior is unchanged, i.e. fsids are looked up in the id
+mappings.
 
-Suggested-by: Jann Horn <jannh@google.com>
+A caller can only setid() to a given id if the id maps to a valid kid in
+both the id and fsid maps of the caller's user namespace. This is always the
+case when no id mappings and fsid mappings have been written. It is also always
+the case when an id mapping has been written which includes the target id and
+but no fsid mappings have been written. All non-fsid mapping aware workloads
+will thus work just as before.
+
+During setr*id() calls the kfsid is set to the keid corresponding to the eid
+that is requested by userspace. If the requested eid is -1 the kfsid is reset
+to the current keid. For the latter case this means we need to lookup the
+corresponding userspace eid corresponding to the current keid in the id
+mappings and translate this eid into the corresponding kfsid in the fsid
+mappings.
+
+We require that a user must have a valid fsid mapping for the target id. This
+is consistent with how the setid calls work today without fsid mappings.
+
+The kfsid to cleanly handle userns visible filesystem is set as before.
+
+Cc: Jann Horn <jannh@google.com>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch not present
+- Christian Brauner <christian.brauner@ubuntu.com>:
+  - set kfsid which is used when dealing with proc permission checking
 
 /* v3 */
-patch added
 - Jann Horn <jannh@google.com>:
-  - Add patch to handle the keyrings.
+  - Squash all set*id() patches into a single patch and move this to be the
+    last patch so we don't expose a half-done feature in the middle of this
+    series.
 ---
- security/keys/key.c              |  2 +-
- security/keys/permission.c       |  4 ++--
- security/keys/process_keys.c     |  6 ++++--
- security/keys/request_key.c      | 10 +++++-----
- security/keys/request_key_auth.c |  2 +-
- 5 files changed, 13 insertions(+), 11 deletions(-)
+ kernel/sys.c | 106 ++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 83 insertions(+), 23 deletions(-)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 718bf7217420..bfb17e8210d7 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -923,7 +923,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f9bc5c303e3f..78592deee2d8 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -59,6 +59,7 @@
+ #include <linux/sched/cputime.h>
+ #include <linux/rcupdate.h>
+ #include <linux/uidgid.h>
++#include <linux/fsuidgid.h>
+ #include <linux/cred.h>
  
- 	/* allocate a new key */
- 	key = key_alloc(index_key.type, index_key.description,
--			cred->fsuid, cred->fsgid, cred, perm, flags, NULL);
-+			cred->kfsuid, cred->kfsgid, cred, perm, flags, NULL);
- 	if (IS_ERR(key)) {
- 		key_ref = ERR_CAST(key);
- 		goto error_link_end;
-diff --git a/security/keys/permission.c b/security/keys/permission.c
-index 085f907b64ac..847187ca6b41 100644
---- a/security/keys/permission.c
-+++ b/security/keys/permission.c
-@@ -33,7 +33,7 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
- 	key = key_ref_to_ptr(key_ref);
+ #include <linux/nospec.h>
+@@ -353,7 +354,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kgid_t krgid, kegid;
++	kgid_t krgid, kegid, kfsgid;
  
- 	/* use the second 8-bits of permissions for keys the caller owns */
--	if (uid_eq(key->uid, cred->fsuid)) {
-+	if (uid_eq(key->uid, cred->kfsuid)) {
- 		kperm = key->perm >> 16;
- 		goto use_these_perms;
+ 	krgid = make_kgid(ns, rgid);
+ 	kegid = make_kgid(ns, egid);
+@@ -385,12 +386,20 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+ 			new->egid = kegid;
+ 		else
+ 			goto error;
++		kfsgid = make_kfsgid(ns, egid);
++	} else {
++		kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
++	}
++	if (!gid_valid(kfsgid)) {
++		retval = -EINVAL;
++		goto error;
  	}
-@@ -41,7 +41,7 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
- 	/* use the third 8-bits of permissions for keys the caller has a group
- 	 * membership in common with */
- 	if (gid_valid(key->gid) && key->perm & KEY_GRP_ALL) {
--		if (gid_eq(key->gid, cred->fsgid)) {
-+		if (gid_eq(key->gid, cred->kfsgid)) {
- 			kperm = key->perm >> 8;
- 			goto use_these_perms;
- 		}
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 09541de31f2f..32376f0fbb42 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -379,7 +379,7 @@ void key_fsuid_changed(struct cred *new_cred)
- 	/* update the ownership of the thread keyring */
- 	if (new_cred->thread_keyring) {
- 		down_write(&new_cred->thread_keyring->sem);
--		new_cred->thread_keyring->uid = new_cred->fsuid;
-+		new_cred->thread_keyring->uid = new_cred->kfsuid;
- 		up_write(&new_cred->thread_keyring->sem);
- 	}
- }
-@@ -392,7 +392,7 @@ void key_fsgid_changed(struct cred *new_cred)
- 	/* update the ownership of the thread keyring */
- 	if (new_cred->thread_keyring) {
- 		down_write(&new_cred->thread_keyring->sem);
--		new_cred->thread_keyring->gid = new_cred->fsgid;
-+		new_cred->thread_keyring->gid = new_cred->kfsgid;
- 		up_write(&new_cred->thread_keyring->sem);
- 	}
- }
-@@ -923,10 +923,12 @@ void key_change_session_keyring(struct callback_head *twork)
- 	new-> euid	= old-> euid;
- 	new-> suid	= old-> suid;
- 	new->fsuid	= old->fsuid;
-+	new->kfsuid	= old->kfsuid;
- 	new->  gid	= old->  gid;
- 	new-> egid	= old-> egid;
- 	new-> sgid	= old-> sgid;
- 	new->fsgid	= old->fsgid;
-+	new->kfsgid	= old->kfsgid;
- 	new->user	= get_uid(old->user);
- 	new->user_ns	= get_user_ns(old->user_ns);
- 	new->group_info	= get_group_info(old->group_info);
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 957b9e3e1492..254a7c2f3fde 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -134,7 +134,7 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
- 	sprintf(desc, "_req.%u", key->serial);
  
- 	cred = get_current_cred();
--	keyring = keyring_alloc(desc, cred->fsuid, cred->fsgid, cred,
-+	keyring = keyring_alloc(desc, cred->kfsuid, cred->kfsgid, cred,
- 				KEY_POS_ALL | KEY_USR_VIEW | KEY_USR_READ,
- 				KEY_ALLOC_QUOTA_OVERRUN, NULL, NULL);
- 	put_cred(cred);
-@@ -149,8 +149,8 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
- 		goto error_link;
+ 	if (rgid != (gid_t) -1 ||
+ 	    (egid != (gid_t) -1 && !gid_eq(kegid, old->gid)))
+ 		new->sgid = new->egid;
+-	new->fsgid = new->egid;
++	new->kfsgid = new->egid;
++	new->fsgid = kfsgid;
  
- 	/* record the UID and GID */
--	sprintf(uid_str, "%d", from_kuid(&init_user_ns, cred->fsuid));
--	sprintf(gid_str, "%d", from_kgid(&init_user_ns, cred->fsgid));
-+	sprintf(uid_str, "%d", from_kuid(&init_user_ns, cred->kfsuid));
-+	sprintf(gid_str, "%d", from_kgid(&init_user_ns, cred->kfsgid));
+ 	return commit_creds(new);
  
- 	/* we say which key is under construction */
- 	sprintf(key_str, "%d", key->serial);
-@@ -390,7 +390,7 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 		perm |= KEY_POS_WRITE;
+@@ -415,24 +424,31 @@ long __sys_setgid(gid_t gid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kgid_t kgid;
++	kgid_t kgid, kfsgid;
  
- 	key = key_alloc(ctx->index_key.type, ctx->index_key.description,
--			ctx->cred->fsuid, ctx->cred->fsgid, ctx->cred,
-+			ctx->cred->kfsuid, ctx->cred->kfsgid, ctx->cred,
- 			perm, flags, NULL);
- 	if (IS_ERR(key))
- 		goto alloc_failed;
-@@ -490,7 +490,7 @@ static struct key *construct_key_and_link(struct keyring_search_context *ctx,
- 	if (ret)
+ 	kgid = make_kgid(ns, gid);
+ 	if (!gid_valid(kgid))
+ 		return -EINVAL;
+ 
++	kfsgid = make_kfsgid(ns, gid);
++	if (!gid_valid(kfsgid))
++		return -EINVAL;
++
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+-	if (ns_capable(old->user_ns, CAP_SETGID))
+-		new->gid = new->egid = new->sgid = new->fsgid = kgid;
+-	else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
+-		new->egid = new->fsgid = kgid;
+-	else
++	if (ns_capable(old->user_ns, CAP_SETGID)) {
++		new->gid = new->egid = new->sgid = new->kfsgid = kgid;
++		new->fsgid = kfsgid;
++	} else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid)) {
++		new->egid = new->kfsgid = kgid;
++		new->fsgid = kfsgid;
++	} else {
  		goto error;
++	}
  
--	user = key_user_lookup(current_fsuid());
-+	user = key_user_lookup(current_kfsuid());
- 	if (!user) {
- 		ret = -ENOMEM;
- 		goto error_put_dest_keyring;
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index ecba39c93fd9..26808146897c 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -215,7 +215,7 @@ struct key *request_key_auth_new(struct key *target, const char *op,
- 	sprintf(desc, "%x", target->serial);
+ 	return commit_creds(new);
  
- 	authkey = key_alloc(&key_type_request_key_auth, desc,
--			    cred->fsuid, cred->fsgid, cred,
-+			    cred->kfsuid, cred->kfsgid, cred,
- 			    KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH | KEY_POS_LINK |
- 			    KEY_USR_VIEW, KEY_ALLOC_NOT_IN_QUOTA, NULL);
- 	if (IS_ERR(authkey)) {
+@@ -496,7 +512,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kuid_t kruid, keuid;
++	kuid_t kruid, keuid, kfsuid;
+ 
+ 	kruid = make_kuid(ns, ruid);
+ 	keuid = make_kuid(ns, euid);
+@@ -527,6 +543,13 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+ 		    !uid_eq(old->suid, keuid) &&
+ 		    !ns_capable_setid(old->user_ns, CAP_SETUID))
+ 			goto error;
++		kfsuid = make_kfsuid(new->user_ns, euid);
++	} else {
++		kfsuid = kuid_to_kfsuid(new->user_ns, new->euid);
++	}
++	if (!uid_valid(kfsuid)) {
++		retval = -EINVAL;
++		goto error;
+ 	}
+ 
+ 	if (!uid_eq(new->uid, old->uid)) {
+@@ -537,7 +560,8 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+ 	if (ruid != (uid_t) -1 ||
+ 	    (euid != (uid_t) -1 && !uid_eq(keuid, old->uid)))
+ 		new->suid = new->euid;
+-	new->fsuid = new->euid;
++	new->kfsuid = new->euid;
++	new->fsuid = kfsuid;
+ 
+ 	retval = security_task_fix_setuid(new, old, LSM_SETID_RE);
+ 	if (retval < 0)
+@@ -573,11 +597,16 @@ long __sys_setuid(uid_t uid)
+ 	struct cred *new;
+ 	int retval;
+ 	kuid_t kuid;
++	kuid_t kfsuid;
+ 
+ 	kuid = make_kuid(ns, uid);
+ 	if (!uid_valid(kuid))
+ 		return -EINVAL;
+ 
++	kfsuid = make_kfsuid(ns, uid);
++	if (!uid_valid(kfsuid))
++		return -EINVAL;
++
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return -ENOMEM;
+@@ -595,7 +624,8 @@ long __sys_setuid(uid_t uid)
+ 		goto error;
+ 	}
+ 
+-	new->fsuid = new->euid = kuid;
++	new->kfsuid = new->euid = kuid;
++	new->fsuid = kfsuid;
+ 
+ 	retval = security_task_fix_setuid(new, old, LSM_SETID_ID);
+ 	if (retval < 0)
+@@ -624,7 +654,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kuid_t kruid, keuid, ksuid;
++	kuid_t kruid, keuid, ksuid, kfsuid;
+ 
+ 	kruid = make_kuid(ns, ruid);
+ 	keuid = make_kuid(ns, euid);
+@@ -666,11 +696,21 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 				goto error;
+ 		}
+ 	}
+-	if (euid != (uid_t) -1)
++	if (euid != (uid_t) -1) {
+ 		new->euid = keuid;
++		kfsuid = make_kfsuid(ns, euid);
++	} else {
++		kfsuid = kuid_to_kfsuid(new->user_ns, new->euid);
++	}
++	if (!uid_valid(kfsuid)) {
++		return -EINVAL;
++		goto error;
++	}
++
+ 	if (suid != (uid_t) -1)
+ 		new->suid = ksuid;
+-	new->fsuid = new->euid;
++	new->kfsuid = new->euid;
++	new->fsuid = kfsuid;
+ 
+ 	retval = security_task_fix_setuid(new, old, LSM_SETID_RES);
+ 	if (retval < 0)
+@@ -716,7 +756,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	int retval;
+-	kgid_t krgid, kegid, ksgid;
++	kgid_t krgid, kegid, ksgid, kfsgid;
+ 
+ 	krgid = make_kgid(ns, rgid);
+ 	kegid = make_kgid(ns, egid);
+@@ -749,11 +789,21 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+ 
+ 	if (rgid != (gid_t) -1)
+ 		new->gid = krgid;
+-	if (egid != (gid_t) -1)
++	if (egid != (gid_t) -1) {
+ 		new->egid = kegid;
++		kfsgid = make_kfsgid(ns, egid);
++	} else {
++		kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
++	}
++	if (!gid_valid(kfsgid)) {
++		retval = -EINVAL;
++		goto error;
++	}
++
+ 	if (sgid != (gid_t) -1)
+ 		new->sgid = ksgid;
+-	new->fsgid = new->egid;
++	new->kfsgid = new->egid;
++	new->fsgid = kfsgid;
+ 
+ 	return commit_creds(new);
+ 
+@@ -799,15 +849,19 @@ long __sys_setfsuid(uid_t uid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	uid_t old_fsuid;
+-	kuid_t kuid;
++	kuid_t kuid, kfsuid;
+ 
+ 	old = current_cred();
+-	old_fsuid = from_kuid_munged(old->user_ns, old->fsuid);
++	old_fsuid = from_kfsuid_munged(old->user_ns, old->fsuid);
+ 
+-	kuid = make_kuid(old->user_ns, uid);
++	kuid = make_kfsuid(old->user_ns, uid);
+ 	if (!uid_valid(kuid))
+ 		return old_fsuid;
+ 
++	kfsuid = make_kuid(old->user_ns, uid);
++	if (!uid_valid(kfsuid))
++		return old_fsuid;
++
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return old_fsuid;
+@@ -817,6 +871,7 @@ long __sys_setfsuid(uid_t uid)
+ 	    ns_capable_setid(old->user_ns, CAP_SETUID)) {
+ 		if (!uid_eq(kuid, old->fsuid)) {
+ 			new->fsuid = kuid;
++			new->kfsuid = kfsuid;
+ 			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
+ 				goto change_okay;
+ 		}
+@@ -843,15 +898,19 @@ long __sys_setfsgid(gid_t gid)
+ 	const struct cred *old;
+ 	struct cred *new;
+ 	gid_t old_fsgid;
+-	kgid_t kgid;
++	kgid_t kgid, kfsgid;
+ 
+ 	old = current_cred();
+-	old_fsgid = from_kgid_munged(old->user_ns, old->fsgid);
++	old_fsgid = from_kfsgid_munged(old->user_ns, old->fsgid);
+ 
+-	kgid = make_kgid(old->user_ns, gid);
++	kgid = make_kfsgid(old->user_ns, gid);
+ 	if (!gid_valid(kgid))
+ 		return old_fsgid;
+ 
++	kfsgid = make_kgid(old->user_ns, gid);
++	if (!gid_valid(kfsgid))
++		return old_fsgid;
++
+ 	new = prepare_creds();
+ 	if (!new)
+ 		return old_fsgid;
+@@ -861,6 +920,7 @@ long __sys_setfsgid(gid_t gid)
+ 	    ns_capable(old->user_ns, CAP_SETGID)) {
+ 		if (!gid_eq(kgid, old->fsgid)) {
+ 			new->fsgid = kgid;
++			new->kfsgid = kfsgid;
+ 			goto change_okay;
+ 		}
+ 	}
 -- 
 2.25.0
 
