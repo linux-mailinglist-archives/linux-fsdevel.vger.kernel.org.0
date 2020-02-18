@@ -2,93 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE971634E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 22:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 635B116351A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 22:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbgBRV06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 16:26:58 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50224 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726339AbgBRV06 (ORCPT
+        id S1727680AbgBRVdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 16:33:21 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15423 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbgBRVdV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 16:26:58 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0B3B97EA1A6;
-        Wed, 19 Feb 2020 08:26:54 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4AOK-0003K5-Rm; Wed, 19 Feb 2020 08:26:52 +1100
-Date:   Wed, 19 Feb 2020 08:26:52 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 00/19] Change readahead API
-Message-ID: <20200218212652.GR10776@dread.disaster.area>
+        Tue, 18 Feb 2020 16:33:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4c57d90000>; Tue, 18 Feb 2020 13:32:09 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Feb 2020 13:33:20 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 13:33:20 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
+ 2020 21:33:19 +0000
+Subject: Re: [PATCH v6 02/19] mm: Ignore return value of ->readpages
+To:     Matthew Wilcox <willy@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 References: <20200217184613.19668-1-willy@infradead.org>
- <20200218045633.GH10776@dread.disaster.area>
- <20200218134230.GN7778@bombadil.infradead.org>
+ <20200217184613.19668-3-willy@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <ed5b3635-be1b-c290-0e19-b516e7af2aca@nvidia.com>
+Date:   Tue, 18 Feb 2020 13:33:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200218134230.GN7778@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=13k90lvrXjaGpILklQQA:9 a=QEXdDO2ut3YA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200217184613.19668-3-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582061529; bh=RXve5/fUA3oBILhUm8o+y+17c7pBmRijpBQPJAnmP80=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=f5Iuo6blIXbcDZrM05UIgCY8ANT5xW9HB6FXMMGQCfaHMfBnR1DfaWLTMAYIE7XBP
+         B9QOW8wSO4ij5j+4bCfhLlUR2LpeSTGJV0y8tnLGhP+d4at2LBMPXmcd1007q6GV+V
+         F6nXmc1d8pgAlmrCaaR8bklkj+n7DiCZH8Mj9XZsOl6SUYvt06XEAlqdCtbjrJAqsO
+         JEKRbCwBCkx6iNbCJyyfXN8/DDeOTx/qKgkY7yedkT+Pn0V+QFJNvk6ybzosDhS50D
+         pgn5lvAGlEV280+lBsRM1YfSDahNeoARNWUSdQ6PSTGWm5OdOjiCPRr9K7h5I26KXq
+         jvW6k1ji+T2MA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:42:30AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 03:56:33PM +1100, Dave Chinner wrote:
-> > Latest version in your git tree:
-> > 
-> > $ ▶ glo -n 5 willy/readahead
-> > 4be497096c04 mm: Use memalloc_nofs_save in readahead path
-> > ff63497fcb98 iomap: Convert from readpages to readahead
-> > 26aee60e89b5 iomap: Restructure iomap_readpages_actor
-> > 8115bcca7312 fuse: Convert from readpages to readahead
-> > 3db3d10d9ea1 f2fs: Convert from readpages to readahead
-> > $
-> > 
-> > merged into a 5.6-rc2 tree fails at boot on my test vm:
-> > 
-> > [    2.423116] ------------[ cut here ]------------
-> > [    2.424957] list_add double add: new=ffffea000efff4c8, prev=ffff8883bfffee60, next=ffffea000efff4c8.
-> > [    2.428259] WARNING: CPU: 4 PID: 1 at lib/list_debug.c:29 __list_add_valid+0x67/0x70
-> > [    2.457484] Call Trace:
-> > [    2.458171]  __pagevec_lru_add_fn+0x15f/0x2c0
-> > [    2.459376]  pagevec_lru_move_fn+0x87/0xd0
-> > [    2.460500]  ? pagevec_move_tail_fn+0x2d0/0x2d0
-> > [    2.461712]  lru_add_drain_cpu+0x8d/0x160
-> > [    2.462787]  lru_add_drain+0x18/0x20
+On 2/17/20 10:45 AM, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Are you sure that was 4be497096c04 ?  I ask because there was a
+> We used to assign the return value to a variable, which we then ignored.
+> Remove the pretence of caring.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  mm/readahead.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 
-Yes, because it's the only version I've actually merged into my
-working tree, compiled and tried to run. :P
+Looks good,
 
-> version pushed to that git tree that did contain a list double-add
-> (due to a mismerge when shuffling patches).  I noticed it and fixed
-> it, and 4be497096c04 doesn't have that problem.  I also test with
-> CONFIG_DEBUG_LIST turned on, but this problem you hit is going to be
-> probabilistic because it'll depend on the timing between whatever other
-> list is being used and the page actually being added to the LRU.
+    Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 
-I'll see if I can reproduce it.
-
-Cheers,
-
-Dave.
+thanks,
 -- 
-Dave Chinner
-david@fromorbit.com
+John Hubbard
+NVIDIA
+
+> 
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index 8ce46d69e6ae..12d13b7792da 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -113,17 +113,16 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
+>  
+>  EXPORT_SYMBOL(read_cache_pages);
+>  
+> -static int read_pages(struct address_space *mapping, struct file *filp,
+> +static void read_pages(struct address_space *mapping, struct file *filp,
+>  		struct list_head *pages, unsigned int nr_pages, gfp_t gfp)
+>  {
+>  	struct blk_plug plug;
+>  	unsigned page_idx;
+> -	int ret;
+>  
+>  	blk_start_plug(&plug);
+>  
+>  	if (mapping->a_ops->readpages) {
+> -		ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+> +		mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+>  		/* Clean up the remaining pages */
+>  		put_pages_list(pages);
+>  		goto out;
+> @@ -136,12 +135,9 @@ static int read_pages(struct address_space *mapping, struct file *filp,
+>  			mapping->a_ops->readpage(filp, page);
+>  		put_page(page);
+>  	}
+> -	ret = 0;
+>  
+>  out:
+>  	blk_finish_plug(&plug);
+> -
+> -	return ret;
+>  }
+>  
+>  /*
+> 
