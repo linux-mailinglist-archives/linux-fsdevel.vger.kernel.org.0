@@ -2,198 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5122163200
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 21:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B43163359
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 21:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbgBRUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 15:04:16 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34615 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729151AbgBRUDt (ORCPT
+        id S1726826AbgBRUqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 15:46:25 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45744 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgBRUqZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:03:49 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j495r-0000Zv-GH; Tue, 18 Feb 2020 20:03:43 +0000
-Date:   Tue, 18 Feb 2020 21:03:41 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Tue, 18 Feb 2020 15:46:25 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IKgles145865;
+        Tue, 18 Feb 2020 20:45:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=d+zB9Q+hsQ04tUSy3v9iBkk/iREuKMJdCn9izc5iSwQ=;
+ b=uS871BfP8q44BJQH6VY0wUmXIGo6Ewx4fTUtD7a3X64VQ4i5p4BXta8sm7lARlUyIbC3
+ TIvAwsifWPlSA5mY8l2pu6v4+jRNPk28SfZRgfvqiMghq4JFjmh5dFCQIJNxGayi47pC
+ Q8WxWeJ5ukmvJovBe340zMAYUQLNjQyl5lsCCVMZSGVg0+d+OBtB0GEwdqhscU1He3Ct
+ jKKG84BuCySdPohrWojFNTgNK4Fft2NUaLQatN//uaViGB/qf/vhl5CkJJ7u5IpecrUB
+ C3FLFgJrBiQp1Wd5vRz5tCjY4kN1evzgIHwx4AHe+hrly+RnMvFaxKqQ5qBsgUbiMy8R VA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2y7aq5v1bj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 20:45:37 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IKhZO2188535;
+        Tue, 18 Feb 2020 20:45:36 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2y6tc328cg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Feb 2020 20:45:36 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01IKjZIW026010;
+        Tue, 18 Feb 2020 20:45:35 GMT
+Received: from [10.132.96.37] (/10.132.96.37)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Feb 2020 12:45:35 -0800
+Subject: Re: [RFC][PATCH] dax: Do not try to clear poison for partial pages
+To:     Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>, stgraber@ubuntu.com
-Subject: Re: [PATCH v3 0/3] introduce a uid/gid shifting bind mount
-Message-ID: <20200218200341.tzrehiapskznovx5@wittgenstein>
-References: <20200217205307.32256-1-James.Bottomley@HansenPartnership.com>
- <CAOQ4uxjtp7d_xL20pGwvbFKqgAbyQhE=Pbw+e9Kj24wqF2hPfQ@mail.gmail.com>
- <1582042260.3416.19.camel@HansenPartnership.com>
- <20200218172606.ohlj6prhpmhodzqu@wittgenstein>
- <1582052748.16681.34.camel@HansenPartnership.com>
+        "JANE.CHU" <jane.chu@oracle.com>
+References: <20200129210337.GA13630@redhat.com>
+ <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
+ <CAPcyv4ittXHkEV4eH_4F5vCfwRLoTTtDqEU1SmCs5DYUdZxBOA@mail.gmail.com>
+ <x49v9o3brom.fsf@segfault.boston.devel.redhat.com>
+From:   jane.chu@oracle.com
+Organization: Oracle Corporation
+Message-ID: <583b5fc2-0358-ea9d-20eb-1323c8cedce2@oracle.com>
+Date:   Tue, 18 Feb 2020 12:45:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1582052748.16681.34.camel@HansenPartnership.com>
+In-Reply-To: <x49v9o3brom.fsf@segfault.boston.devel.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002180136
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1011 bulkscore=0
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002180136
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 11:05:48AM -0800, James Bottomley wrote:
-> On Tue, 2020-02-18 at 18:26 +0100, Christian Brauner wrote:
-> > On Tue, Feb 18, 2020 at 08:11:00AM -0800, James Bottomley wrote:
-> > > On Tue, 2020-02-18 at 09:18 +0200, Amir Goldstein wrote:
-> > > > On Mon, Feb 17, 2020 at 10:56 PM James Bottomley
-> > > > <James.Bottomley@hansenpartnership.com> wrote:
-> > > > > 
-> > > > > The object of this series is to replace shiftfs with a proper
-> > > > > uid/gid shifting bind mount instead of the shiftfs hack of
-> > > > > introducing something that looks similar to an overlay
-> > > > > filesystem to do it.
-> > > > > 
-> > > > > The VFS still has the problem that in order to tell what
-> > > > > vfsmount a dentry belongs to, struct path would have to be
-> > > > > threaded everywhere struct dentry currently is.  However, this
-> > > > > patch is structured only to require a rethreading of
-> > > > > notify_change.  The rest of the knowledge that a shift is in
-> > > > > operation is carried in the task structure by caching the
-> > > > > unshifted credentials.
-> > > > > 
-> > > > > Note that although it is currently dependent on the new
-> > > > > configfd interface for bind mounts, only patch 3/3 relies on
-> > > > > this, and the whole thing could be redone as a syscall or any
-> > > > > other mechanism (depending on how people eventually want to fix
-> > > > > the problem with the new fsconfig mechanism being unable to
-> > > > > reconfigure bind mounts).
-> > > > > 
-> > > > > The changes from v2 are I've added Amir's reviewed-by for the
-> > > > > notify_change rethreading and I've implemented Serge's request
-> > > > > for a base offset shift for the image.  It turned out to be
-> > > > > much harder to implement a simple linear shift than simply to
-> > > > > do it through a different userns, so that's how I've done
-> > > > > it.  The userns you need to set up for the offset shifted image
-> > > > > is one where the interior uid would see the shifted image as
-> > > > > fake root.  I've introduced an additional "ns" config
-> > > > > parameter, which must be specified when building the allow
-> > > > > shift mount point (so it's done by the admin, not by the
-> > > > > unprivileged user).  I've also taken care that the image
-> > > > > shifted to zero (real root) is never visible in the
-> > > > > filesystem.  Patch 3/3 explains how to use the additional "ns"
-> > > > > parameter.
-> > > > > 
-> > > > > 
-> > > > 
-> > > > James,
-> > > > 
-> > > > To us common people who do not breath containers, your proposal
-> > > > seems like a competing implementation to Christian's proposal
-> > > > [1].
-> > > 
-> > > I think we have three things that swirl around this space and
-> > > aren't quite direct copies of each other's use cases but aren't
-> > > entirely disjoint either: the superblock user namespace, this and
-> > > the user namespace fsid mapping.
-> > > 
-> > > >  If it were a competing implementation, I think Christian's
-> > > > proposal would have won by points for being less intrusive to
-> > > > VFS.
-> > > 
-> > > Heh, that one's subjective.  I think the current fsid code is
-> > > missing
-> > 
-> > I honestly don't think it is subjective. Leaving aside that the patch
-> > here is more invasive to the vfs just in how it needs to alter it,
-> > you currently require a whole new set of syscalls for this feature. 
+On 2/18/20 11:50 AM, Jeff Moyer wrote:
+> Dan Williams <dan.j.williams@intel.com> writes:
 > 
-> Well I really don't ... I'd like to replace about four existing
-> syscalls (fspick/fsopen/fsconfig/fsmount) with two more general ones
-> (configfd_open/configfd_action), but I kept the original four to
-> demonstrate the two new ones could subsume their work.  However, I
-> really think we should leave aside the activation mechanism discussion
-> and concentrate on the internal implementation.
+>> Right now the kernel does not install a pte on faults that land on a
+>> page with known poison, but only because the error clearing path is so
+>> convoluted and could only claim that fallocate(PUNCH_HOLE) cleared
+>> errors because that was guaranteed to send 512-byte aligned zero's
+>> down the block-I/O path when the fs-blocks got reallocated. In a world
+>> where native cpu instructions can clear errors the dax write() syscall
+>> case could be covered (modulo 64-byte alignment), and the kernel could
+>> just let the page be mapped so that the application could attempt it's
+>> own fine-grained clearing without calling back into the kernel.
 > 
-> > The syscalls themselves even introduce a whole new API and
-> > complicated semantics in the kernel and it's completely unclear
-> > whether they will make it or not.
+> I'm not sure we'd want to do allow mapping the PTEs even if there was
+> support for clearing errors via CPU instructions.  Any load from a
+> poisoned page will result in an MCE, and there exists the possiblity
+> that you will hit an unrecoverable error (Processor Context Corrupt).
+> It's just safer to catch these cases by not mapping the page, and
+> forcing recovery through the driver.
 > 
-> As I said in the cover letter.  I'm entirely mechanism agnostic. 
-> Whatever solves our current rebind reconfigure problem will be usable
-> for shifting bind mounts.  I like the idea of using the same fsconfig
-> mechanism, but this patch isn't wedded to it, that's why 2/3 is
-> implementation and 3/3 is activation.  The activation patch can be
-> completely replaced without affecting the implementation mechanism.
+> -Jeff
 > 
-> >  Even if not, this feature will be tied to the new mount api making
-> > it way harder and a longer process to adopt for userspace given that
-> > not even all bits and pieces userspace needs are currently in
-> > any released kernel.
-> 
-> Well, given that this problem and various proposed solutions have been
-> around for years, I really don't think we're suddenly in any rush to
-> get it out of the door and into user hands.
-> 
-> > But way more important: what Amir got right is that your approach and
-> > fsid mappings don't stand in each others way at all. Shiftfed
-> > bind-mounts can be implemented completely independent of fsid
-> > mappings after the fact on top of it.
-> > 
-> > Your example, does this:
-> > 
-> > nsfd = open("/proc/567/ns/user", O_RDONLY);  /* note: not O_PATH */
-> > configfd_action(fd, CONFIGFD_SET_FD, "ns", NULL, nsfd);
-> > 
-> > as the ultimate step. Essentially marking a mountpoint as shifted
-> > relative to that user namespace. Once fsid mappings are in all that
-> > you need to do is replace your
-> > make_kuid()/from_kuid()/from_kuid_munged() calls and so on in your
-> > patchset with make_kfsuid()/from_kfsuid()/from_kfsuid_munged() and
-> > you're done. So I honestly don't currently see any need to block the
-> > patchsets on each other. 
-> 
-> Can I repeat: there's no rush to get upstream on this.  Let's pause to
-> get the kernel implementation (the thing we have to maintain) right.  I
-> realise we could each work around the other and get our implementations
-> bent around each other so they all work independently thus making our
-> disjoint user cabals happy but I don't think that would lead to the
-> best outcome for kernel maintainability.
 
-We have had the discussion with all major stakeholders in a single room
-on what we need at LPC 2019. We agreed on what we need and fsids are a
-concrete proposal for an implementation that appears to solve all discussed
-major use-cases in a simple and elegant manner, which can also be cleanly
-extended to cover your approach later.
-Imho, there is no need to have the same discussion again at an
-invite-only event focussed on kernel developers where most of the major
-stakeholders are unlikely to be able to participate. The patch proposals
-are here on all relevant list where everyone can participate and we can discuss
-them right here.
-I have not yet heard a concrete technical reason why the patch proposal is
-inadequate and I see no reason to stall this.
+I'm still in the process of trying a number of things before making an
+attempt to respond to Dan's response. But I'm too slow, so I'd like
+to share some concerns I have here.
 
-> 
-> I already think that history shows us that s_user_ns went upstream too
-> fast and the fact that unprivileged fuse has yet to make it (and the
+If a poison in a file is consumed, and the signal handle does the
+repair and recover as follow: punch a hole the size at least 4K, then
+pwrite the correct data in to the 'hole', then resume the operation.
+However, because the newly allocated pmem block (due to pwrite to the 
+'hole') is a different clean physical pmem block while the poisoned
+block remain unfixed, so we have a provisioning problem, because
+  1. DCPMEM is expensive hence there is likely little provision being
+provided by users;
+  2. lack up API between dax-filesystem and pmem driver for clearing
+poison at each legitimate point, such as when the filesystem tries
+to allocate a pmem block, or zeroing out a range.
 
-We've established on the other patchset that fsid mappings in no way interfere
-nor care about s_user_ns so I'm not going to go into this again here. But for
-the record, unprivileged fuse mounts are supported since:
+As DCPMM is used for its performance and capacity in cloud application,
+which translates to that the performance code paths include the error
+handling and recovery code path...
 
-commit 4ad769f3c346ec3d458e255548dec26ca5284cf6
-Author: Eric W. Biederman <ebiederm@xmission.com>
-Date:   Tue May 29 09:04:46 2018 -0500
+With respect to the new cpu instruction, my concern is about the API 
+including the error blast radius as reported in the signal payload.
+Is there a venue where we could discuss more in detail ?
 
-    fuse: Allow fully unprivileged mounts
+Regards,
+-jane
 
-    Now that the fuse and the vfs work is complete.  Allow the fuse filesystem
-    to be mounted by the root user in a user namespace.
 
-    Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-    Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Christian
