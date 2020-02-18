@@ -2,132 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B43163359
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 21:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 553B0163377
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 21:49:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgBRUqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 15:46:25 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45744 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgBRUqZ (ORCPT
+        id S1727476AbgBRUt0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 15:49:26 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3361 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgBRUtZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 15:46:25 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IKgles145865;
-        Tue, 18 Feb 2020 20:45:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=d+zB9Q+hsQ04tUSy3v9iBkk/iREuKMJdCn9izc5iSwQ=;
- b=uS871BfP8q44BJQH6VY0wUmXIGo6Ewx4fTUtD7a3X64VQ4i5p4BXta8sm7lARlUyIbC3
- TIvAwsifWPlSA5mY8l2pu6v4+jRNPk28SfZRgfvqiMghq4JFjmh5dFCQIJNxGayi47pC
- Q8WxWeJ5ukmvJovBe340zMAYUQLNjQyl5lsCCVMZSGVg0+d+OBtB0GEwdqhscU1He3Ct
- jKKG84BuCySdPohrWojFNTgNK4Fft2NUaLQatN//uaViGB/qf/vhl5CkJJ7u5IpecrUB
- C3FLFgJrBiQp1Wd5vRz5tCjY4kN1evzgIHwx4AHe+hrly+RnMvFaxKqQ5qBsgUbiMy8R VA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2y7aq5v1bj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 20:45:37 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01IKhZO2188535;
-        Tue, 18 Feb 2020 20:45:36 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2y6tc328cg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Feb 2020 20:45:36 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01IKjZIW026010;
-        Tue, 18 Feb 2020 20:45:35 GMT
-Received: from [10.132.96.37] (/10.132.96.37)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Feb 2020 12:45:35 -0800
-Subject: Re: [RFC][PATCH] dax: Do not try to clear poison for partial pages
-To:     Jeff Moyer <jmoyer@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "JANE.CHU" <jane.chu@oracle.com>
-References: <20200129210337.GA13630@redhat.com>
- <f97d1ce2-9003-6b46-cd25-a908dc3bd2c6@oracle.com>
- <CAPcyv4ittXHkEV4eH_4F5vCfwRLoTTtDqEU1SmCs5DYUdZxBOA@mail.gmail.com>
- <x49v9o3brom.fsf@segfault.boston.devel.redhat.com>
-From:   jane.chu@oracle.com
-Organization: Oracle Corporation
-Message-ID: <583b5fc2-0358-ea9d-20eb-1323c8cedce2@oracle.com>
-Date:   Tue, 18 Feb 2020 12:45:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 18 Feb 2020 15:49:25 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4c4da80000>; Tue, 18 Feb 2020 12:48:40 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Feb 2020 12:49:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 12:49:11 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Feb
+ 2020 20:49:11 +0000
+Subject: Re: [PATCH v6 00/19] Change readahead API
+To:     Matthew Wilcox <willy@infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+References: <20200217184613.19668-1-willy@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <80d98657-2f93-da92-a541-707429a6fcdf@nvidia.com>
+Date:   Tue, 18 Feb 2020 12:49:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <x49v9o3brom.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200217184613.19668-1-willy@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002180136
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 clxscore=1011 bulkscore=0
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002180136
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582058920; bh=sSzUuAsXGIrXy4vQ0zTAGyf0jed9sNlmwz2tpEx8I1w=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=OYgEBVV/ua9FohonQVxYl3qPPXVMYQG31aVJZXFPu7SkYOwxhtaZfQM11ZRWuKWRn
+         lVI3HR/RIXFrZMOWjvHUihTcKXkE2jgWZqXXGCNxpXb3Nv2SKAT+FXp4fzmW9R+SbR
+         +H8xokJDzpZ6UCukKlMzu/5eKP5axPGrm5jxpyyz73wcaxjN5ykeBaYI4TDMwgMSY8
+         xsZHrBQYyHRUHdXgYU3ZVNQuJpgqlmVcDrdSv4XqikXa55cxrAOxN2l1s5oRfr4SZG
+         EEyk1LdZCMme+4QhBVN+8g/HUCynjQ8e9lz6/YoFujDdaTBOhd1TQ8nXhH+hrOTVqL
+         JwGZHfev+XX/A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/18/20 11:50 AM, Jeff Moyer wrote:
-> Dan Williams <dan.j.williams@intel.com> writes:
+On 2/17/20 10:45 AM, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
->> Right now the kernel does not install a pte on faults that land on a
->> page with known poison, but only because the error clearing path is so
->> convoluted and could only claim that fallocate(PUNCH_HOLE) cleared
->> errors because that was guaranteed to send 512-byte aligned zero's
->> down the block-I/O path when the fs-blocks got reallocated. In a world
->> where native cpu instructions can clear errors the dax write() syscall
->> case could be covered (modulo 64-byte alignment), and the kernel could
->> just let the page be mapped so that the application could attempt it's
->> own fine-grained clearing without calling back into the kernel.
+> This series adds a readahead address_space operation to eventually
+> replace the readpages operation.  The key difference is that
+> pages are added to the page cache as they are allocated (and
+> then looked up by the filesystem) instead of passing them on a
+> list to the readpages operation and having the filesystem add
+> them to the page cache.  It's a net reduction in code for each
+> implementation, more efficient than walking a list, and solves
+> the direct-write vs buffered-read problem reported by yu kuai at
+> https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 > 
-> I'm not sure we'd want to do allow mapping the PTEs even if there was
-> support for clearing errors via CPU instructions.  Any load from a
-> poisoned page will result in an MCE, and there exists the possiblity
-> that you will hit an unrecoverable error (Processor Context Corrupt).
-> It's just safer to catch these cases by not mapping the page, and
-> forcing recovery through the driver.
+> The only unconverted filesystems are those which use fscache.
+> Their conversion is pending Dave Howells' rewrite which will make the
+> conversion substantially easier.
+
+Hi Matthew,
+
+I see that Dave Chinner is reviewing this series, but I'm trying out his recent
+advice about code reviews [1], and so I'm not going to read his comments first.
+So you may see some duplication or contradictions this time around.
+
+
+[1] Somewhere in this thread, "[LSF/MM/BPF TOPIC] FS Maintainers Don't Scale": 
+https://lore.kernel.org/r/20200131052520.GC6869@magnolia
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
 > 
-> -Jeff
+> v6:
+>  - Name the private members of readahead_control with a leading underscore
+>    (suggested by Christoph Hellwig)
+>  - Fix whitespace in rst file
+>  - Remove misleading comment in btrfs patch
+>  - Add readahead_next() API and use it in iomap
+>  - Add iomap_readahead kerneldoc.
+>  - Fix the mpage_readahead kerneldoc
+>  - Make various readahead functions return void
+>  - Keep readahead_index() and readahead_offset() pointing to the start of
+>    this batch through the body.  No current user requires this, but it's
+>    less surprising.
+>  - Add kerneldoc for page_cache_readahead_limit
+>  - Make page_idx an unsigned long, and rename it to just 'i'
+>  - Get rid of page_offset local variable
+>  - Add patch to call memalloc_nofs_save() before allocating pages (suggested
+>    by Michal Hocko)
+>  - Resplit a lot of patches for more logical progression and easier review
+>    (suggested by John Hubbard)
+>  - Added sign-offs where received, and I deemed still relevant
 > 
-
-I'm still in the process of trying a number of things before making an
-attempt to respond to Dan's response. But I'm too slow, so I'd like
-to share some concerns I have here.
-
-If a poison in a file is consumed, and the signal handle does the
-repair and recover as follow: punch a hole the size at least 4K, then
-pwrite the correct data in to the 'hole', then resume the operation.
-However, because the newly allocated pmem block (due to pwrite to the 
-'hole') is a different clean physical pmem block while the poisoned
-block remain unfixed, so we have a provisioning problem, because
-  1. DCPMEM is expensive hence there is likely little provision being
-provided by users;
-  2. lack up API between dax-filesystem and pmem driver for clearing
-poison at each legitimate point, such as when the filesystem tries
-to allocate a pmem block, or zeroing out a range.
-
-As DCPMM is used for its performance and capacity in cloud application,
-which translates to that the performance code paths include the error
-handling and recovery code path...
-
-With respect to the new cpu instruction, my concern is about the API 
-including the error blast radius as reported in the signal payload.
-Is there a venue where we could discuss more in detail ?
-
-Regards,
--jane
-
-
-
+> v5 switched to passing a readahead_control struct (mirroring the
+> writepages_control struct passed to writepages).  This has a number of
+> advantages:
+>  - It fixes a number of bugs in various implementations, eg forgetting to
+>    increment 'start', an off-by-one error in 'nr_pages' or treating 'start'
+>    as a byte offset instead of a page offset.
+>  - It allows us to change the arguments without changing all the
+>    implementations of ->readahead which just call mpage_readahead() or
+>    iomap_readahead()
+>  - Figuring out which pages haven't been attempted by the implementation
+>    is more natural this way.
+>  - There's less code in each implementation.
+> 
+> Matthew Wilcox (Oracle) (19):
+>   mm: Return void from various readahead functions
+>   mm: Ignore return value of ->readpages
+>   mm: Use readahead_control to pass arguments
+>   mm: Rearrange readahead loop
+>   mm: Remove 'page_offset' from readahead loop
+>   mm: rename readahead loop variable to 'i'
+>   mm: Put readahead pages in cache earlier
+>   mm: Add readahead address space operation
+>   mm: Add page_cache_readahead_limit
+>   fs: Convert mpage_readpages to mpage_readahead
+>   btrfs: Convert from readpages to readahead
+>   erofs: Convert uncompressed files from readpages to readahead
+>   erofs: Convert compressed files from readpages to readahead
+>   ext4: Convert from readpages to readahead
+>   f2fs: Convert from readpages to readahead
+>   fuse: Convert from readpages to readahead
+>   iomap: Restructure iomap_readpages_actor
+>   iomap: Convert from readpages to readahead
+>   mm: Use memalloc_nofs_save in readahead path
+> 
+>  Documentation/filesystems/locking.rst |   6 +-
+>  Documentation/filesystems/vfs.rst     |  13 ++
+>  drivers/staging/exfat/exfat_super.c   |   7 +-
+>  fs/block_dev.c                        |   7 +-
+>  fs/btrfs/extent_io.c                  |  46 ++-----
+>  fs/btrfs/extent_io.h                  |   3 +-
+>  fs/btrfs/inode.c                      |  16 +--
+>  fs/erofs/data.c                       |  39 ++----
+>  fs/erofs/zdata.c                      |  29 ++--
+>  fs/ext2/inode.c                       |  10 +-
+>  fs/ext4/ext4.h                        |   3 +-
+>  fs/ext4/inode.c                       |  23 ++--
+>  fs/ext4/readpage.c                    |  22 ++-
+>  fs/ext4/verity.c                      |  35 +----
+>  fs/f2fs/data.c                        |  50 +++----
+>  fs/f2fs/f2fs.h                        |   5 +-
+>  fs/f2fs/verity.c                      |  35 +----
+>  fs/fat/inode.c                        |   7 +-
+>  fs/fuse/file.c                        |  46 +++----
+>  fs/gfs2/aops.c                        |  23 ++--
+>  fs/hpfs/file.c                        |   7 +-
+>  fs/iomap/buffered-io.c                | 118 +++++++----------
+>  fs/iomap/trace.h                      |   2 +-
+>  fs/isofs/inode.c                      |   7 +-
+>  fs/jfs/inode.c                        |   7 +-
+>  fs/mpage.c                            |  38 ++----
+>  fs/nilfs2/inode.c                     |  15 +--
+>  fs/ocfs2/aops.c                       |  34 ++---
+>  fs/omfs/file.c                        |   7 +-
+>  fs/qnx6/inode.c                       |   7 +-
+>  fs/reiserfs/inode.c                   |   8 +-
+>  fs/udf/inode.c                        |   7 +-
+>  fs/xfs/xfs_aops.c                     |  13 +-
+>  fs/zonefs/super.c                     |   7 +-
+>  include/linux/fs.h                    |   2 +
+>  include/linux/iomap.h                 |   3 +-
+>  include/linux/mpage.h                 |   4 +-
+>  include/linux/pagemap.h               |  90 +++++++++++++
+>  include/trace/events/erofs.h          |   6 +-
+>  include/trace/events/f2fs.h           |   6 +-
+>  mm/internal.h                         |   8 +-
+>  mm/migrate.c                          |   2 +-
+>  mm/readahead.c                        | 184 +++++++++++++++++---------
+>  43 files changed, 474 insertions(+), 533 deletions(-)
+> 
+> 
+> base-commit: 11a48a5a18c63fd7621bb050228cebf13566e4d8
+> 
