@@ -2,76 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC2A162452
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 11:13:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F21E162503
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 11:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgBRKN2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 05:13:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37656 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgBRKN1 (ORCPT
+        id S1726402AbgBRKzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 05:55:47 -0500
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:45718 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726327AbgBRKzr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 05:13:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description;
-        bh=klTasm9LzG4RoLivUD2OrerRSmXKijdCremdXLEBvh0=; b=d/MdY8cGRwIIMHUhEvnXgfqz06
-        HdKW+VCqQ6b4XRRaiTe6RIUcQMVKB1BtGQKfWhc4FIv75+rkDeVGNeycCn2X105vziKkk4fZEBmIG
-        CFe5Jwehv4WpArBNCOsbI7y2iR3WCwnmH2SQDA0ttCDvkyOq6yXcRJYwC1AHUODAReSTsPIRM5xhT
-        JetUMlXdAY6+HRm6IuLKv018N2XqlwB+rHxWmOhtvtcvOPCfCzpp2SHRSjxzeAqMFR2WBMAnnCfrR
-        x4nH2WM+A6TpjsqiqPI9j7+z9seTK5PxV0LjRswFXGMdDvJGlIdDzfOZE5DrsbgwCVt9UN9esniUy
-        Psr6buFQ==;
-Received: from ip-109-41-129-189.web.vodafone.de ([109.41.129.189] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j3zsd-0007eU-07; Tue, 18 Feb 2020 10:13:27 +0000
-Date:   Tue, 18 Feb 2020 11:13:23 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Jan Kara <jack@suse.cz>
+        Tue, 18 Feb 2020 05:55:47 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04396;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TqHf9et_1582023340;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TqHf9et_1582023340)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 18 Feb 2020 18:55:40 +0800
+Subject: Re: [PATCH 12/44] docs: filesystems: convert dlmfs.txt to ReST
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.com>
-Subject: Re: [PATCH 43/44] docs: filesystems: convert udf.txt to ReST
-Message-ID: <20200218111138.4e387143@kernel.org>
-In-Reply-To: <20200218071205.GC16121@quack2.suse.cz>
+        linux-fsdevel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com
 References: <cover.1581955849.git.mchehab+huawei@kernel.org>
-        <2887f8a3a813a31170389eab687e9f199327dc7d.1581955849.git.mchehab+huawei@kernel.org>
-        <20200218071205.GC16121@quack2.suse.cz>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+ <efc9e59925723e17d1a4741b11049616c221463e.1581955849.git.mchehab+huawei@kernel.org>
+ <3b40d7d4-3798-08db-220d-b45704ada48a@linux.alibaba.com>
+ <20200218110731.2890658d@kernel.org>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <ce80d0cd-a94f-caa8-b8bd-9788afd3927f@linux.alibaba.com>
+Date:   Tue, 18 Feb 2020 18:55:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200218110731.2890658d@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Tue, 18 Feb 2020 08:12:05 +0100
-Jan Kara <jack@suse.cz> escreveu:
 
-> On Mon 17-02-20 17:12:29, Mauro Carvalho Chehab wrote:
-> > - Add a SPDX header;
-> > - Add a document title;
-> > - Add table markups;
-> > - Add lists markups;
-> > - Add it to filesystems/index.rst.
-> >=20
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org> =20
->=20
-> Thanks! You can add:
->=20
-> Acked-by: Jan Kara <jack@suse.cz>
 
-Thanks for reviewing it!
-=20
-> and I can pickup the patch if you want.
+On 20/2/18 18:07, Mauro Carvalho Chehab wrote:
+> Em Tue, 18 Feb 2020 09:21:51 +0800
+> Joseph Qi <joseph.qi@linux.alibaba.com> escreveu:
+> 
+>> On 20/2/18 00:11, Mauro Carvalho Chehab wrote:
+> 
+>>> @@ -96,14 +101,19 @@ operation. If the lock succeeds, you'll get an fd.
+>>>  open(2) with O_CREAT to ensure the resource inode is created - dlmfs does
+>>>  not automatically create inodes for existing lock resources.
+>>>  
+>>> +============  ===========================
+>>>  Open Flag     Lock Request Type
+>>> ----------     -----------------  
+>>
+>> Better to remove the above line.
+>>
+>>> +============  ===========================
+>>>  O_RDONLY      Shared Read
+>>>  O_RDWR        Exclusive
+>>> +============  ===========================
+>>>  
+>>> +
+>>> +============  ===========================
+>>>  Open Flag     Resulting Locking Behavior
+>>> ----------     --------------------------  
+>>
+>> Ditto.
+> 
+> Ok. So, I guess we can just merge the two tables into one, like:
+> 
+> 	============  =================
+> 	O_RDONLY      Shared Read
+> 	O_RDWR        Exclusive
+> 	O_NONBLOCK    Trylock operation
+> 	============  =================
+> 
+> Right?
+> 
+I think they should be in different section.
+The first two are lock level, while the last is lock behavior.
 
-=46rom my side, it would be ok if you want to pick any patches from this seri=
-es.
-
-Still, as they all touch Documentation/filesystems/index.rst, in order
-to avoid (trivial) conflicts, IMO the best would be to have all of them
-applied at the same tree (either a FS tree or the docs tree).
-
-Cheers,
-Mauro
+Thanks,
+Joseph
