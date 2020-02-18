@@ -2,152 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C975163630
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82B9C163659
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Feb 2020 23:46:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgBRWda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 17:33:30 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35935 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbgBRWda (ORCPT
+        id S1726761AbgBRWqQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 17:46:16 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43265 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726438AbgBRWqQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 17:33:30 -0500
-Received: by mail-pj1-f66.google.com with SMTP id gv17so1629186pjb.1;
-        Tue, 18 Feb 2020 14:33:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ao1rrYj1H0zRksEUEqAme5C6lEjb904ensDRNheQK20=;
-        b=vPmZ2aJ18jzSVQ8YIoEAysedZOU82k34+gaeB7WykgbG2teu7j+joqZllEOkppWT5i
-         VFLVIRqlIwMK/fIGvbqTns/mHxwTxY7a9+PTIlWpSS6JzCU2EcYO0G1FT9+6rQ/ybtsQ
-         T6sB4qLRVc2qoI/a2p0X8HHx8Smujml+K3fIL+fqzIqfTyx/mXQHtrjTqzihCVu9Te2Q
-         +rcquj6uDJbQloNRyKSfNcfw7prEgGvEW4YiydcqCrliXLQn2eXfFsMkmaWpl7mx4/uu
-         IF6LTK3YzgRp3tKgDu5VIkNRH168Wjlkxf+a+m2dEdLlIHX8MCamP8b8oruy0fDH6JWt
-         bwuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ao1rrYj1H0zRksEUEqAme5C6lEjb904ensDRNheQK20=;
-        b=VQ88NdvKdKEiFBx3Q+eJi3nHemW4wlgiH+qxnKVrpPOH6arPTPVRtkoUOwLNTk60tP
-         uuaCBZkKKBIP/azJzmN5KMjuzC3KN9gBlk0wkwz3CpaE6P5cop0Qso9ddOd9Q1x34ogR
-         b+1lYFpI/ayilzR88jt4doz2cLoyGwSMGNs6ck3aZFZ987YR3jFocqF/f7tKFDjNUlhj
-         b2D28xBhECzY9Tv5n7/uuMWD8sXcsODBx0fiVMXTfSkwyF3V2pr9ZK1n3x05gBiTCuOE
-         Vuz9sMqvaQBO7Ipi4z0ndbwbdGcZjShijpir05j+YST0z07VHXEf/R2nBuhSYMi9izlE
-         VXWw==
-X-Gm-Message-State: APjAAAXGWewLg7yjH1zbCGAyF0CH8nHokb3ac8b/YD0lR5EjqxvdJvYj
-        S6svpzKa72yH6E7JRX3Yodc=
-X-Google-Smtp-Source: APXvYqx5Gf+hUMerX5qr+HlwdoEd+NvK/lpti4mRRuvDUzSNfzI14C1R1JMMJQAkkA6yDdtkN6SPoQ==
-X-Received: by 2002:a17:902:7c88:: with SMTP id y8mr23321086pll.321.1582065208792;
-        Tue, 18 Feb 2020 14:33:28 -0800 (PST)
-Received: from gmail.com ([2620:0:1008:fd00:25a6:3140:768c:a64d])
-        by smtp.gmail.com with ESMTPSA id l26sm5686616pgn.46.2020.02.18.14.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 14:33:27 -0800 (PST)
-Date:   Tue, 18 Feb 2020 14:33:25 -0800
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
- reading or writing
-Message-ID: <20200218223325.GA143300@gmail.com>
-References: <20200214154854.6746-1-sashal@kernel.org>
- <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
- <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
- <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
- <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
- <20200218182041.GB24185@bombadil.infradead.org>
- <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
+        Tue, 18 Feb 2020 17:46:16 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2C6AA3A311C;
+        Wed, 19 Feb 2020 09:46:11 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j4Bd4-0003kz-H7; Wed, 19 Feb 2020 09:46:10 +1100
+Date:   Wed, 19 Feb 2020 09:46:10 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v6 03/19] mm: Use readahead_control to pass arguments
+Message-ID: <20200218224610.GT10776@dread.disaster.area>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-4-willy@infradead.org>
+ <20200218050300.GI10776@dread.disaster.area>
+ <20200218135618.GO7778@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
+In-Reply-To: <20200218135618.GO7778@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=-669WvyOGAhHUzcTJR8A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:28:23AM -0800, Linus Torvalds wrote:
-> On Tue, Feb 18, 2020 at 10:20 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > You don't want to move wake_up_partner() up and call it from pipe_release()?
+On Tue, Feb 18, 2020 at 05:56:18AM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 18, 2020 at 04:03:00PM +1100, Dave Chinner wrote:
+> > On Mon, Feb 17, 2020 at 10:45:44AM -0800, Matthew Wilcox wrote:
+> > > +static void read_pages(struct readahead_control *rac, struct list_head *pages,
+> > > +		gfp_t gfp)
+> > >  {
+> > > +	const struct address_space_operations *aops = rac->mapping->a_ops;
+> > >  	struct blk_plug plug;
+> > >  	unsigned page_idx;
+> > 
+> > Splitting out the aops rather than the mapping here just looks
+> > weird, especially as you need the mapping later in the function.
+> > Using aops doesn't even reduce the code side....
 > 
-> I was actually thinking of going the other way - two of three users of
-> wake_up_partner() are redundantly waking up the wrong side, and the
-> third user is pointlessly written too.
-> 
-> So I was _thinking_ of a patch like the appended (which is on top of
-> the previous patch), but ended up not doing it. Until you brought it
-> up.
-> 
-> But I won't bother committing this, since it shouldn't really matter.
+> It does in subsequent patches ... I agree it looks a little weird here,
+> but I think in the final form, it makes sense:
 
-I run CRIU tests on the kernel with both these patches. Everything work
-as expected. Thank you for the fix.
+Ok. Perhaps just an additional commit comment to say "read_pages() is
+changed to be aops centric as @rac abstracts away all other
+implementation details by the end of the patchset."
 
+> > > +			if (readahead_count(&rac))
+> > > +				read_pages(&rac, &page_pool, gfp_mask);
+> > > +			rac._nr_pages = 0;
+> > 
+> > Hmmm. Wondering ig it make sense to move the gfp_mask to the readahead
+> > control structure - if we have to pass the gfp_mask down all the
+> > way along side the rac, then I think it makes sense to do that...
 > 
->                  Linus
-
->  fs/pipe.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
+> So we end up removing it later on in this series, but I do wonder if
+> it would make sense anyway.  By the end of the series, we still have
+> this in iomap:
 > 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 2144507447c5..79ba61430f9c 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -1025,12 +1025,6 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
->  	return cur == *cnt ? -ERESTARTSYS : 0;
->  }
->  
-> -static void wake_up_partner(struct pipe_inode_info *pipe)
-> -{
-> -	wake_up_interruptible_all(&pipe->rd_wait);
-> -	wake_up_interruptible_all(&pipe->wr_wait);
-> -}
-> -
->  static int fifo_open(struct inode *inode, struct file *filp)
->  {
->  	struct pipe_inode_info *pipe;
-> @@ -1078,7 +1072,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
->  	 */
->  		pipe->r_counter++;
->  		if (pipe->readers++ == 0)
-> -			wake_up_partner(pipe);
-> +			wake_up_interruptible_all(&pipe->wr_wait);
->  
->  		if (!is_pipe && !pipe->writers) {
->  			if ((filp->f_flags & O_NONBLOCK)) {
-> @@ -1104,7 +1098,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
->  
->  		pipe->w_counter++;
->  		if (!pipe->writers++)
-> -			wake_up_partner(pipe);
-> +			wake_up_interruptible_all(&pipe->rd_wait);
->  
->  		if (!is_pipe && !pipe->readers) {
->  			if (wait_for_partner(pipe, &pipe->r_counter))
-> @@ -1120,12 +1114,12 @@ static int fifo_open(struct inode *inode, struct file *filp)
->  	 *  the process can at least talk to itself.
->  	 */
->  
-> -		pipe->readers++;
-> -		pipe->writers++;
-> +		if (pipe->readers++ == 0)
-> +			wake_up_interruptible_all(&pipe->wr_wait);
-> +		if (pipe->writers++ == 0)
-> +			wake_up_interruptible_all(&pipe->rd_wait);
->  		pipe->r_counter++;
->  		pipe->w_counter++;
-> -		if (pipe->readers == 1 || pipe->writers == 1)
-> -			wake_up_partner(pipe);
->  		break;
->  
->  	default:
+>                 if (ctx->rac) /* same as readahead_gfp_mask */
+>                         gfp |= __GFP_NORETRY | __GFP_NOWARN;
+> 
+> and we could get rid of that by passing gfp flags down in the rac.  On the
+> other hand, I don't know why it doesn't just use readahead_gfp_mask()
+> here anyway ... Christoph?
 
+mapping->gfp_mask is awful. Is it a mask, or is it a valid set of
+allocation flags? Or both?  Some callers to mapping_gfp_constraint()
+uses it as a mask, some callers to mapping_gfp_constraint() use it
+as base flags that context specific flags get masked out of,
+readahead_gfp_mask() callers use it as the entire set of gfp flags
+for allocation.
+
+That whole API sucks - undocumented as to what it's suposed to do
+and how it's supposed to be used. Hence it's difficult to use
+correctly or understand whether it's being used correctly. And
+reading callers only leads to more confusion and crazy code like in
+do_mpage_readpage() where readahead returns a mask that are used as
+base flags and normal reads return a masked set of base flags...
+
+The iomap code is obviously correct when it comes to gfp flag
+manipulation. We start with GFP_KERNEL context, then constrain it
+via the mask held in mapping->gfp_mask, then if it's readahead we
+allow the allocation to silently fail.
+
+Simple to read and understand code, versus having weird code that
+requires the reader to decipher an undocumented and inconsistent API
+to understand how the gfp flags have been calculated and are valid.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
