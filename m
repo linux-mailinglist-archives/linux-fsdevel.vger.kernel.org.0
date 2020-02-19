@@ -2,119 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 309C9163A39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78138163A42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:35:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbgBSCdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 21:33:46 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:49412 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbgBSCdq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:33:46 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id DB1D4F8F; Tue, 18 Feb 2020 20:33:43 -0600 (CST)
-Date:   Tue, 18 Feb 2020 20:33:43 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 03/25] proc: add /proc/<pid>/fsgid_map
-Message-ID: <20200219023343.GC19144@mail.hallyn.com>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
- <20200218143411.2389182-4-christian.brauner@ubuntu.com>
+        id S1728027AbgBSCfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 21:35:46 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3016 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726768AbgBSCfp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:35:45 -0500
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 83358F8D75B7100BDEA5;
+        Wed, 19 Feb 2020 10:35:42 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 19 Feb 2020 10:35:42 +0800
+Received: from architecture4 (10.160.196.180) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 19 Feb 2020 10:35:41 +0800
+Date:   Wed, 19 Feb 2020 10:34:22 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v6 11/16] erofs: Convert compressed files from readpages
+ to readahead
+Message-ID: <20200219023422.GA83440@architecture4>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-20-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200218143411.2389182-4-christian.brauner@ubuntu.com>
+In-Reply-To: <20200217184613.19668-20-willy@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.160.196.180]
+X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 03:33:49PM +0100, Christian Brauner wrote:
-> The /proc/<pid>/fsgid_map file can be written once to setup an fsgid mapping
-> for a user namespace. Writing to this file has the same restrictions as writing
-> to /proc/<pid>/fsgid_map.
+On Mon, Feb 17, 2020 at 10:46:00AM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> root@e1-vm:/# cat /proc/13023/fsgid_map
->          0     300000     100000
+> Use the new readahead operation in erofs.
 > 
-> Fsid mappings have always been around. They are currently always identical to
-> the id mappings for a user namespace. This means, currently whenever an fsid
-> needs to be looked up the kernel will use the id mapping of the user namespace.
-> With the introduction of fsid mappings the kernel will now lookup fsids in the
-> fsid mappings of the user namespace. If no fsid mapping exists the kernel will
-> continue looking up fsids in the id mappings of the user namespace. Hence, if a
-> system supports fsid mappings through /proc/<pid>/fs*id_map and a container
-> runtime is not aware of fsid mappings it or does not use them it will it will
-> continue to work just as before.
-> 
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+It looks good to me, although some further optimization exists
+but we could make a straight-forward transform first, and
+I haven't tested the whole series for now...
+Will test it later.
+
+Acked-by: Gao Xiang <gaoxiang25@huawei.com>
+
+Thanks,
+Gao Xiang
 
 > ---
-> /* v2 */
-> unchanged
+>  fs/erofs/zdata.c | 29 +++++++++--------------------
+>  1 file changed, 9 insertions(+), 20 deletions(-)
 > 
-> /* v3 */
-> - Christian Brauner <christian.brauner@ubuntu.com>:
->   - Fix grammar in commit message.
-> ---
->  fs/proc/base.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 5fb28004663e..1303cdd2e617 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2975,6 +2975,11 @@ static int proc_fsuid_map_open(struct inode *inode, struct file *file)
->  {
->  	return proc_id_map_open(inode, file, &proc_fsuid_seq_operations);
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 17f45fcb8c5c..7c02015d501d 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -1303,28 +1303,23 @@ static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
+>  	return nr <= sbi->max_sync_decompress_pages;
 >  }
-> +
-> +static int proc_fsgid_map_open(struct inode *inode, struct file *file)
-> +{
-> +	return proc_id_map_open(inode, file, &proc_fsgid_seq_operations);
-> +}
->  #endif
 >  
->  static const struct file_operations proc_uid_map_operations = {
-> @@ -3009,6 +3014,14 @@ static const struct file_operations proc_fsuid_map_operations = {
->  	.llseek		= seq_lseek,
->  	.release	= proc_id_map_release,
+> -static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
+> -			     struct list_head *pages, unsigned int nr_pages)
+> +static void z_erofs_readahead(struct readahead_control *rac)
+>  {
+> -	struct inode *const inode = mapping->host;
+> +	struct inode *const inode = rac->mapping->host;
+>  	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
+>  
+> -	bool sync = should_decompress_synchronously(sbi, nr_pages);
+> +	bool sync = should_decompress_synchronously(sbi, readahead_count(rac));
+>  	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
+> -	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
+> -	struct page *head = NULL;
+> +	struct page *page, *head = NULL;
+>  	LIST_HEAD(pagepool);
+>  
+> -	trace_erofs_readpages(mapping->host, lru_to_page(pages)->index,
+> -			      nr_pages, false);
+> +	trace_erofs_readpages(inode, readahead_index(rac),
+> +			readahead_count(rac), false);
+>  
+> -	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
+> -
+> -	for (; nr_pages; --nr_pages) {
+> -		struct page *page = lru_to_page(pages);
+> +	f.headoffset = readahead_offset(rac);
+>  
+> +	readahead_for_each(rac, page) {
+>  		prefetchw(&page->flags);
+> -		list_del(&page->lru);
+>  
+>  		/*
+>  		 * A pure asynchronous readahead is indicated if
+> @@ -1333,11 +1328,6 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
+>  		 */
+>  		sync &= !(PageReadahead(page) && !head);
+>  
+> -		if (add_to_page_cache_lru(page, mapping, page->index, gfp)) {
+> -			list_add(&page->lru, &pagepool);
+> -			continue;
+> -		}
+> -
+>  		set_page_private(page, (unsigned long)head);
+>  		head = page;
+>  	}
+> @@ -1366,11 +1356,10 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
+>  
+>  	/* clean up the remaining free pages */
+>  	put_pages_list(&pagepool);
+> -	return 0;
+>  }
+>  
+>  const struct address_space_operations z_erofs_aops = {
+>  	.readpage = z_erofs_readpage,
+> -	.readpages = z_erofs_readpages,
+> +	.readahead = z_erofs_readahead,
 >  };
-> +
-> +static const struct file_operations proc_fsgid_map_operations = {
-> +	.open		= proc_fsgid_map_open,
-> +	.write		= proc_fsgid_map_write,
-> +	.read		= seq_read,
-> +	.llseek		= seq_lseek,
-> +	.release	= proc_id_map_release,
-> +};
->  #endif
 >  
->  static int proc_setgroups_open(struct inode *inode, struct file *file)
-> @@ -3195,6 +3208,7 @@ static const struct pid_entry tgid_base_stuff[] = {
->  #ifdef CONFIG_USER_NS
->  #ifdef CONFIG_USER_NS_FSID
->  	REG("fsuid_map",  S_IRUGO|S_IWUSR, proc_fsuid_map_operations),
-> +	REG("fsgid_map",  S_IRUGO|S_IWUSR, proc_fsgid_map_operations),
->  #endif
->  	REG("uid_map",    S_IRUGO|S_IWUSR, proc_uid_map_operations),
->  	REG("gid_map",    S_IRUGO|S_IWUSR, proc_gid_map_operations),
 > -- 
 > 2.25.0
+> 
+> 
