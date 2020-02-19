@@ -2,115 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D4D16493A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:52:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2105D164942
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbgBSPwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 10:52:25 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:40788 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbgBSPwZ (ORCPT
+        id S1726680AbgBSPyO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 10:54:14 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45527 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbgBSPyO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:52:25 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JFlKkn165283;
-        Wed, 19 Feb 2020 15:52:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=+0MKjwYS6o56kZOWus6xPspoxgNogY35LPaujONId3I=;
- b=cg1bMIXWVeTVesVIC7DolETYE7jLDNBF2KZx3Fx8KiAQ4s5MTyUO4dubtOBMrzBmPfVL
- o/rTNkUZGCuIftPwlV1cmEug8HP0B5A1SuFJUiAkaJ6KYMgNKXf9jrCEoVRjyK33VVH6
- kbSCfrqZIJoxaLpm+6EIrXFCyU4gXfLo4+TdOduNQgUou96FKH5CPWVFEU+xX/xzB20X
- tmyhzf1YTMZKZ3lOqsDJ+EtpqgpIXTi4PVUQ13z1/ky0nKmmK23wJnMazIgYVSjUer82
- o2R/92rS67TxO+d5gGzwVuUzKwIK/NxaBmemDyVdawPP7gR53LFzGxbRJ7KLB1X+djoC 7g== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2y8udkc083-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 15:52:17 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JFmEOF030012;
-        Wed, 19 Feb 2020 15:50:16 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2y8udargwy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 15:50:16 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01JFoF96031867;
-        Wed, 19 Feb 2020 15:50:15 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 19 Feb 2020 07:50:15 -0800
-Date:   Wed, 19 Feb 2020 07:50:12 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/19] VFS: Filesystem information and notifications [ver
- #16]
-Message-ID: <20200219155012.GA9496@magnolia>
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <20200219144613.lc5y2jgzipynas5l@wittgenstein>
+        Wed, 19 Feb 2020 10:54:14 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 59so545294otp.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 07:54:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lxARnBor1U+6So+HrMWf9Gk7N+daPrHbJnbZhnhwrnE=;
+        b=hCbOktmi3YliRq0ScBXSNUesHyAqvCL12c5uWO6XJNi9n/y2ahYy8f6c/hN9HhkUp6
+         NtGyeKNDq17KU1oflZcGFavHZ0yak7eV3txHutBNLTY+fhuz//0QGxRkoWIV07omcEfA
+         pV2jnT0owxB53J3tC25KDX6npdI6rpYslOVlEcpoDIMBKSsQQwz65+OTQrTbhk+C91KH
+         1egcT0uxQa4IR7ZPjdBFsZarSM4W8MpTmZQCyLXSB+NtwqZcQBCMtj55+3PKd8Ts8PoK
+         t5d3X57H5eosvrejeqcBMmaMblxiDL8WOSJRKe0vQsPwInYir9WHgpdZ7zxw5ZYJrLkr
+         SE7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lxARnBor1U+6So+HrMWf9Gk7N+daPrHbJnbZhnhwrnE=;
+        b=q1za53Qfw0PznqERrrq7fmzJo7A4Jb5heQpM3JsuLhVK3TdlOoEgorhGnKcZbu9K09
+         zAANZY6kie1NupyCe5T5nQ3jI5KUiexvO251WcoBNHaZUEN49uoc4QmPRDJBiS1dhtXz
+         /mg+nCdnx+oDPSgV7Fw6g7Uw7WuqXUKa1L0IJeZtkSfcCRvkCjhrsqonjIQrKw6TBORP
+         wJz+fGloa/ay2SFMTcPtZTZ7Zpsa7aaBoAv+MxfZXlKZP0XCdkoMBKtBkHiU4QtndEfN
+         Ijps3dAaarFKNZrB65w39P2ROu5/+X7L7+Cr4hs+Mmwp0bIi6m7oS0hwoq/j8Dm3xw7D
+         T+zw==
+X-Gm-Message-State: APjAAAXjBmCrjp2PD7ddft7v/Sm963eRsE8/82sHLjvz6z0yJwat4Muf
+        WKPfOh3/GbK9IJr1CT52pQ0kjKHWx++URbJqT045bg==
+X-Google-Smtp-Source: APXvYqxMNt0Da4orYoVxsQsRxu5xNkMkw0G1x6vghAKafmTT/NokCPoqIr/ZB8PYTJmUP6i//FyBRvrO9SGFwmyS5SI=
+X-Received: by 2002:a05:6830:13c3:: with SMTP id e3mr5336055otq.180.1582127653521;
+ Wed, 19 Feb 2020 07:54:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219144613.lc5y2jgzipynas5l@wittgenstein>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190119
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1011
- malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190119
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com> <20200218143411.2389182-20-christian.brauner@ubuntu.com>
+In-Reply-To: <20200218143411.2389182-20-christian.brauner@ubuntu.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 19 Feb 2020 16:53:47 +0100
+Message-ID: <CAG48ez2ikuZQTctjR0RAXYUFrSsJdyn98cKGn5hGEhYjzWfO8g@mail.gmail.com>
+Subject: Re: [PATCH v3 19/25] commoncap: handle fsid mappings with vfs caps
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 03:46:13PM +0100, Christian Brauner wrote:
-> On Tue, Feb 18, 2020 at 05:04:55PM +0000, David Howells wrote:
-> > 
-> > Here are a set of patches that adds system calls, that (a) allow
-> > information about the VFS, mount topology, superblock and files to be
-> > retrieved and (b) allow for notifications of mount topology rearrangement
-> > events, mount and superblock attribute changes and other superblock events,
-> > such as errors.
-> > 
-> > ============================
-> > FILESYSTEM INFORMATION QUERY
-> > ============================
-> > 
-> > The first system call, fsinfo(), allows information about the filesystem at
-> > a particular path point to be queried as a set of attributes, some of which
-> > may have more than one value.
-> > 
-> > Attribute values are of four basic types:
-> > 
-> >  (1) Version dependent-length structure (size defined by type).
-> > 
-> >  (2) Variable-length string (up to 4096, including NUL).
-> > 
-> >  (3) List of structures (up to INT_MAX size).
-> > 
-> >  (4) Opaque blob (up to INT_MAX size).
-> 
-> I mainly have an organizational question. :) This is a huge patchset
-> with lots and lots of (good) features. Wouldn't it make sense to make
-> the fsinfo() syscall a completely separate patchset from the
-> watch_mount() and watch_sb() syscalls? It seems that they don't need to
-> depend on each other at all. This would make reviewing this so much
-> nicer and likely would mean that fsinfo() could proceed a little faster.
+On Tue, Feb 18, 2020 at 3:35 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> Switch vfs cap helpers to lookup fsids in the fsid mappings. If no fsid
+> mappings are setup the behavior is unchanged, i.e. fsids are looked up in the
+> id mappings.
+[...]
+> diff --git a/security/commoncap.c b/security/commoncap.c
+[...]
+> @@ -328,7 +328,7 @@ static bool rootid_owns_currentns(kuid_t kroot)
+>                 return false;
+>
+>         for (ns = current_user_ns(); ; ns = ns->parent) {
+> -               if (from_kuid(ns, kroot) == 0)
+> +               if (from_kfsuid(ns, kroot) == 0)
+>                         return true;
+>                 if (ns == &init_user_ns)
+>                         break;
 
-Agreed; I was also wondering why it was necessary to have three new
-features in the same large(ish) patchset.
-
---D
-
-> Christian
+Nit: Maybe change the name of this function to something that makes it
+clear that this operates in the fsuid mapping domain.
