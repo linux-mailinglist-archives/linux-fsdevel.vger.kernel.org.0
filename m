@@ -2,86 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB0D163C5D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 06:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE9A163C6F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 06:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbgBSFIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 00:08:43 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39579 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbgBSFIn (ORCPT
+        id S1726210AbgBSFWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 00:22:32 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43950 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbgBSFWb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 00:08:43 -0500
-Received: by mail-qt1-f196.google.com with SMTP id c5so16324249qtj.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 21:08:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=vc6YlYlAOA1rjbOsb82NsogOb2ZpbnqN2uw8PfRTHEY=;
-        b=RgOjpyIfFjR6B0uA5D7zCDTmXyORi0w762l2y9wVQMniaUPR8ADbaN6wIVsjdtf5AE
-         7yMsZGFGNQ1tXXRpZAAOWcYhWyj6zYRrwC7Drxn23pkXSCI0ZS40HofwVn9a3RcgfBUr
-         rcSa/X6PjkllY/Lb2Fo5b66yOrLcldwJtu8bsxATXDPCnzNjb4mYgZsz7mzsrDJMJVva
-         MR7SJyTgQgBZ2l6B/3b8fWxTEQ7Tpk5qkOTYCGUpoxAiLVoXYKAtf3WnsYBI7xwNmiS5
-         cNqtQ05I/5HSP0JTPtk/yqOLuQcPjQ3jwD6woh+qV74hz9xqXPMcqy5q9h+eXyWzsgcG
-         ST+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=vc6YlYlAOA1rjbOsb82NsogOb2ZpbnqN2uw8PfRTHEY=;
-        b=SZ4POXdsrWbwx+yrU23STjgX+yWfrvSYjTupKMmxcCsLPMwozW5nqwegBP4bupiIv6
-         vXorQhBcz8qH4WU6GyqlLf+BvsetqL0di/lnJnEN98hGfZf4SXdNk9iH0Ffpk7ViZZQ7
-         aCODb+kOyUujCB6cM/w43SW/ypmPmHf3H7i7dfZQLagvifyAScf2BIoZ9vhZbj0Ys4PL
-         6dKcN/nvXGu0k2L1aXggt/DRYkhFcUqWvbGMD++Lft+0IV9BMuXsDnSnjRHlwTg1fSew
-         1a2Adkd6hL36rTKM8zUChsjzzUOyhIPP3RY5/e58klOB1D7P8yEdbAOSR4lcq+ZGnrtf
-         KBPQ==
-X-Gm-Message-State: APjAAAVhzzKGxM03gpcXUeKjXsyRjD9Xl3jSCromXyVQDQCHc97ky60t
-        gQiOlXQbiW1B7iYS0WNHAGgoGQ==
-X-Google-Smtp-Source: APXvYqxCqNwfVCmC7sgampv6A9mG/doIeARVc33qlprpJA7If5awjnN8E9j3V1vBlbDoiUhAa+iT2A==
-X-Received: by 2002:aed:3f32:: with SMTP id p47mr20990813qtf.374.1582088922202;
-        Tue, 18 Feb 2020 21:08:42 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id m17sm446719qki.128.2020.02.18.21.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 21:08:41 -0800 (PST)
+        Wed, 19 Feb 2020 00:22:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=v3wjYvTxIvyqdBjcTZbZ6V6XXTZeeNXrItglyOMcggo=; b=Auyp6lhSbAEYNk7jcncbMkY0Ws
+        XinG1c/KH2WIappKRapF9o4axpn9L8oQskBlHlBLw9XQ0nXbJnkDsqfh2SkyzmQK0YhzpKp/QBFO0
+        bpEGyHFQ+YA3qxJU00WEU/tiwjkGuEnVYcW0g3zXVubgFDKWaDvoJvN6VkjVPrCo/uQ+QP9jf8QO3
+        9qiXCqAzx7Awla3qaJlBefBlwM8EQeYBIUB12k8qt69YC/AIm0vwjb3K/41acVQTK6Lg81YYNgtrt
+        gWZkFfEHpJDHCeifbBhNb09jKli8nY0l/0Vau09mO9a0Cb/TiGxAZcwsAaM0Zi6C3GyPPjl+GKcMg
+        Evj5uHjQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4Hoc-0008Pr-3p; Wed, 19 Feb 2020 05:22:30 +0000
+Date:   Tue, 18 Feb 2020 21:22:30 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v6 19/19] mm: Use memalloc_nofs_save in readahead path
+Message-ID: <20200219052230.GM24185@bombadil.infradead.org>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-33-willy@infradead.org>
+ <20200219034324.GG10776@dread.disaster.area>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] fs: fix a data race in i_size_write/i_size_read
-Date:   Wed, 19 Feb 2020 00:08:40 -0500
-Message-Id: <EDCBB5B9-DEE4-4D4B-B2F4-F63179977D6C@lca.pw>
-References: <20200219045228.GO23230@ZenIV.linux.org.uk>
-Cc:     hch@infradead.org, darrick.wong@oracle.com, elver@google.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20200219045228.GO23230@ZenIV.linux.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: iPhone Mail (17D50)
+Content-Disposition: inline
+In-Reply-To: <20200219034324.GG10776@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Feb 19, 2020 at 02:43:24PM +1100, Dave Chinner wrote:
+> On Mon, Feb 17, 2020 at 10:46:13AM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > Ensure that memory allocations in the readahead path do not attempt to
+> > reclaim file-backed pages, which could lead to a deadlock.  It is
+> > possible, though unlikely this is the root cause of a problem observed
+> > by Cong Wang.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
+> > Suggested-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >  mm/readahead.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/mm/readahead.c b/mm/readahead.c
+> > index 94d499cfb657..8f9c0dba24e7 100644
+> > --- a/mm/readahead.c
+> > +++ b/mm/readahead.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/mm_inline.h>
+> >  #include <linux/blk-cgroup.h>
+> >  #include <linux/fadvise.h>
+> > +#include <linux/sched/mm.h>
+> >  
+> >  #include "internal.h"
+> >  
+> > @@ -174,6 +175,18 @@ void page_cache_readahead_limit(struct address_space *mapping,
+> >  		._nr_pages = 0,
+> >  	};
+> >  
+> > +	/*
+> > +	 * Partway through the readahead operation, we will have added
+> > +	 * locked pages to the page cache, but will not yet have submitted
+> > +	 * them for I/O.  Adding another page may need to allocate memory,
+> > +	 * which can trigger memory reclaim.  Telling the VM we're in
+> > +	 * the middle of a filesystem operation will cause it to not
+> > +	 * touch file-backed pages, preventing a deadlock.  Most (all?)
+> > +	 * filesystems already specify __GFP_NOFS in their mapping's
+> > +	 * gfp_mask, but let's be explicit here.
+> > +	 */
+> > +	unsigned int nofs = memalloc_nofs_save();
+> > +
+> 
+> So doesn't this largely remove the need for all the gfp flag futzing
+> in the readahead path? i.e. almost all readahead allocations are now
+> going to be GFP_NOFS | GFP_NORETRY | GFP_NOWARN ?
 
+I don't think it ensures the GFP_NORETRY | GFP_NOWARN, just the GFP_NOFS
+part.  IOW, we'll still need a readahead_gfp() macro at some point ... I
+don't want to add that to this already large series though.
 
-> On Feb 18, 2020, at 11:52 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> If aligned 64bit stores on 64bit host (note the BITS_PER_LONG ifdefs) end u=
-p
-> being split, the kernel is FUBAR anyway.  Details, please - how could that=
-
-> end up happening?
-
-My understanding is the compiler might decide to split the load into saying t=
-wo 4-byte loads. Then, we might have,
-
-Load1
-Store
-Load2
-
-where the load value could be a garbage. Also, Marco (the KCSAN maintainer) w=
-ho knew more of compiler than me mentioned that there is no guarantee that t=
-he store will not be split either. Thus, the WRITE_ONCE().
-
+Michal also wants to kill mapping->gfp_mask, btw.
