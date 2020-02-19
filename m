@@ -2,114 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF3D1651F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:56:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2866616527D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 23:26:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgBSV4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 16:56:33 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40766 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727462AbgBSV4d (ORCPT
+        id S1727787AbgBSW0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 17:26:49 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59444 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727775AbgBSW0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:56:33 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so637204plp.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 13:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Azu2hLv1JxMDvmUxRW44SGEWy8s3ld4pghrW56XCt6M=;
-        b=c7TWOHvdXbs8XVMlR8ak2j2dOVotN58THB1IoCFTfPwhfZYSyCThOf4Uwt/h/YiwTP
-         C4f4cNiGmf3g+/JTB/nmySLtHFkNcbsTdphZ/X3OO5zOvQh31wXuIUh6Td8HLEdp4YOv
-         fslV+YGcPP6RMcuohrbQMoofsTra+Jk2AU22gjMavwfOBgJ74L81QUv6AEgDr5xRGvkA
-         3Ki/uS5ldmhYscfAaN0autLmj3+AAsssZVj4lH2DjcGS/hNAljyhttLK9TX0XHRtl4TP
-         LsjsfAVYCa9xD1tl6Wb8kuejT/AlU9opB8F2FNk7IVwCJO3Dc5E+cFU9JrwID4No3Pkr
-         ATjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Azu2hLv1JxMDvmUxRW44SGEWy8s3ld4pghrW56XCt6M=;
-        b=XimbYECIqxIIi14TRLGcA6RtrRVr8CnUZsJOZJRBIyNbp6doWxWjNhbpH63ZR5vawL
-         PZ7Oa+k8TOBTmu2sWdku8TAixD/gGdfSv2BqdmBWtot8awBdTTcZiqxXgCrfLtb02bdT
-         t+lj1hoV6Xr5VWemmsG9kGQgjFsHsuHRThYD+d1dcWJyKRn/OY4AAaHkZsZPxWDnPKoY
-         blVw4A13zWX1bobmhhcmM6pSO1CBiyS89usw9PhyL2dayxSLCbCqsmmFo/iiJV1CmKEj
-         qbi/9Kubh7ytGSuzDCiKE1Fy3MC2c5Mf4ISC9yuxEFjN88sLLDXFHy3Wb0YcJ7K8IJqf
-         o6vA==
-X-Gm-Message-State: APjAAAXjteiIikL/v4n1E1+W7Dt1KcuqdDvvoGitCacIvnVlyAGRIjD6
-        ukopCBtMsWxPar/3709ZtjVhNg==
-X-Google-Smtp-Source: APXvYqymQ0qEvxoVB2HEtnEL4mIJWhCSks7TQ64jqXAFKrZw2Hqz77cp9KHgLn9ttxGpF6k20Rhu0Q==
-X-Received: by 2002:a17:90a:3841:: with SMTP id l1mr11289750pjf.108.1582149392531;
-        Wed, 19 Feb 2020 13:56:32 -0800 (PST)
-Received: from cisco ([2001:420:c0c8:1007::7a1])
-        by smtp.gmail.com with ESMTPSA id f8sm608035pfn.2.2020.02.19.13.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 13:56:31 -0800 (PST)
-Date:   Wed, 19 Feb 2020 14:56:23 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-Message-ID: <20200219215623.GA11724@cisco>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
- <20200219193558.GA27641@mail.hallyn.com>
- <20200219214837.GA29159@mail.hallyn.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219214837.GA29159@mail.hallyn.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 19 Feb 2020 17:26:48 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C0BE18EE3CD;
+        Wed, 19 Feb 2020 14:26:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582151207;
+        bh=HfjBNpD2Qt+GaWlMj21Bvlc2JIc3+sF9K8fSWDmjU3M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=VlCn7xrsfg8oSw8PolLgzjv9NYhVLFlu3SwPcDfRI/uBgkrT/PuArbELzgAl8IeJZ
+         /O/+WU/kEkcD21+xu1idY+w8gtAFQBt4DIFWK86SN5luHD8yK2I3VWLp+/CywLD76v
+         IgWfF6+RN7QkEsdb5Dwf+FJ23znFC5DuwNJNiACs=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id T7FVyGeyyMJP; Wed, 19 Feb 2020 14:26:47 -0800 (PST)
+Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DBC208EE144;
+        Wed, 19 Feb 2020 14:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582151207;
+        bh=HfjBNpD2Qt+GaWlMj21Bvlc2JIc3+sF9K8fSWDmjU3M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=VlCn7xrsfg8oSw8PolLgzjv9NYhVLFlu3SwPcDfRI/uBgkrT/PuArbELzgAl8IeJZ
+         /O/+WU/kEkcD21+xu1idY+w8gtAFQBt4DIFWK86SN5luHD8yK2I3VWLp+/CywLD76v
+         IgWfF6+RN7QkEsdb5Dwf+FJ23znFC5DuwNJNiACs=
+Message-ID: <1582151205.3301.27.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 0/3] introduce a uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>, stgraber@ubuntu.com
+Date:   Wed, 19 Feb 2020 14:26:45 -0800
+In-Reply-To: <20200219132603.ivuttlgzixis2y2f@wittgenstein>
+References: <20200217205307.32256-1-James.Bottomley@HansenPartnership.com>
+         <CAOQ4uxjtp7d_xL20pGwvbFKqgAbyQhE=Pbw+e9Kj24wqF2hPfQ@mail.gmail.com>
+         <1582042260.3416.19.camel@HansenPartnership.com>
+         <20200218172606.ohlj6prhpmhodzqu@wittgenstein>
+         <1582052748.16681.34.camel@HansenPartnership.com>
+         <20200218200341.tzrehiapskznovx5@wittgenstein>
+         <1582069398.16681.53.camel@HansenPartnership.com>
+         <20200219132603.ivuttlgzixis2y2f@wittgenstein>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 03:48:37PM -0600, Serge E. Hallyn wrote:
-> On Wed, Feb 19, 2020 at 01:35:58PM -0600, Serge E. Hallyn wrote:
-> > On Tue, Feb 18, 2020 at 03:33:46PM +0100, Christian Brauner wrote:
-> > > With fsid mappings we can solve this by writing an id mapping of 0
-> > > 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
-> > > access the kernel will now lookup the mapping for 300000 in the fsid
-> > > mapping tables of the user namespace. And since such a mapping exists,
-> > > the corresponding files will have correct ownership.
+On Wed, 2020-02-19 at 14:26 +0100, Christian Brauner wrote:
+> On Tue, Feb 18, 2020 at 03:43:18PM -0800, James Bottomley wrote:
+> > On Tue, 2020-02-18 at 21:03 +0100, Christian Brauner wrote:
+> > > On Tue, Feb 18, 2020 at 11:05:48AM -0800, James Bottomley wrote:
+> > > > On Tue, 2020-02-18 at 18:26 +0100, Christian Brauner wrote:
 > > 
-> > So if I have
+> > [...]
+> > > > > But way more important: what Amir got right is that your
+> > > > > approach and fsid mappings don't stand in each others way at
+> > > > > all. Shiftfed bind-mounts can be implemented completely
+> > > > > independent of fsid mappings after the fact on top of it.
+> > > > > 
+> > > > > Your example, does this:
+> > > > > 
+> > > > > nsfd = open("/proc/567/ns/user", O_RDONLY);  /* note: not
+> > > > > O_PATH
+> > > > > */
+> > > > > configfd_action(fd, CONFIGFD_SET_FD, "ns", NULL, nsfd);
+> > > > > 
+> > > > > as the ultimate step. Essentially marking a mountpoint as
+> > > > > shifted relative to that user namespace. Once fsid mappings
+> > > > > are in all that you need to do is replace your
+> > > > > make_kuid()/from_kuid()/from_kuid_munged() calls and so on in
+> > > > > your patchset with
+> > > > > make_kfsuid()/from_kfsuid()/from_kfsuid_munged() and you're
+> > > > > done. So I honestly don't currently see any need to block the
+> > > > > patchsets on each other. 
+> > > > 
+> > > > Can I repeat: there's no rush to get upstream on this.  Let's
+> > > > pause to get the kernel implementation (the thing we have to
+> > > > maintain) right.  I realise we could each work around the other
+> > > > and get our implementations bent around each other so they all
+> > > > work independently thus making our disjoint user cabals happy
+> > > > but I don't think that would lead to the best outcome for
+> > > > kernel maintainability.
+> > > 
+> > > We have had the discussion with all major stakeholders in a
+> > > single room on what we need at LPC 2019.
 > > 
-> > /proc/self/uid_map: 0 100000 100000
-> > /proc/self/fsid_map: 1000 1000 1
+> > Well, you didn't invite me, so I think "stakeholders" means people
+> > we
 > 
-> Oh, sorry.  Your explanation in 20/25 i think set me straight, though I need
-> to think through a few more examples.
+> I'm confused as you were in the room with everyone. It's even on the
+> schedule under your name:
+> https://linuxplumbersconf.org/event/4/contributions/474/
 > 
-> ...
+> > selected because we like their use case.  More importantly:
+> > "stakeholders" traditionally means not only people who want to
+> > consume the feature but also people who have to maintain it ... how
+> > many VFS stakeholders were present?
 > 
-> > 3. If I create a new file, as nsuid 1000, what will be the inode owning kuid?
-> 
-> (Note - I edited the quoted txt above to be more precise)
-> 
-> I'm still not quite clear on this.  I believe the fsid mapping will take
-> precedence so it'll be uid 1000 ?  Per mount behavior would be nice there,
-> but perhaps unwieldy.
+> Again, I'm confused you were in the room with at least David and
+> Eric.
 
-The is_userns_visible() bits seems to be an attempt at understanding
-what people would want per-mount, with a policy hard coded in the
-kernel.
+OK, I think we both got different things out of this, but I've now put
+the videos for this on the LPC site so others can judge for themselves.
+ The one for this session is here:
 
-But maybe per-mount behavior can be solved more elegantly with shifted
-bind mounts, so we can drop all that from this series, and ignore
-per-mount settings here?
+https://www.youtube.com/watch?v=LN2CUgp8deo&list=PLVsQ_xZBEyN30ZA3Pc9MZMFzdjwyz26dO&index=9&t=2h12m52s
 
-Tycho
+Although it does make more sense if you watch the Dave Howells session
+on the new mount API first:
+
+https://www.youtube.com/watch?v=LN2CUgp8deo&list=PLVsQ_xZBEyN30ZA3Pc9MZMFzdjwyz26dO&index=9&t=1h45m54s
+
+There is lots of discussion of the shared image use case, but nowhere
+is there any discussion of separating uid from fsuid in the user
+namespace, unless I missed it again in my second viewing?
+
+> In any case, the patches are on the relevant lists. They are actively
+> being discussed and visible to everyone and we'll have time for
+> proper review which is already happening.
+
+The big issue, though, is that while you've produced a patch set that
+covers your use case (shared unprivileged images) it doesn't cover mine
+(privileged images).  However, the patch set I produced does cover both
+use cases.  Safely handling privileged images is a much bigger security
+problem than unprivileged ones, which is why I have more VFS code than
+you do.  While I could, in theory, remove your use case from my patch,
+doing so would really only reduce it by 38 lines (this is the diffstat
+going from v2 to v3).  However, I still need all the code in the v2
+patch to handle the backshifts needed for safe privileged images and I
+pretty much don't use any of the fsid code you add because I need an
+unprivileged fsid and uid, so the shifts are always identical for both
+... which is the default before your patch.
+
+This is what I mean about us getting the VFS implementation correct:  I
+think I can sweep up s_user_ns into my patch (unproven because I've yet
+to write the patch), effectively making it use the mnt_userns I
+introduced and eliminating the superblock additions and, for 38
+additional VFS lines, I also pick up your use case ... although there
+may be subtleties I've missed.
+
+I also think the way I coded it is much easier to use for an
+orchestration system.  Basically you create a user_ns for the unpacker,
+rendering it unprivileged, and it unpacks your images into the
+filesystem so they also become unprivileged and globally shifted.  Then
+whenever you use these images for a container with a separate uid
+shift, you pass the unpacker userns with the "ns" argument and bind
+mount the root into the container's userns: the container gets fake
+root and any writes by fake root are shifted correctly into the
+unprivileged image.  Everything just works and there's no need to
+bother with fsid's.
+
+However, what's still not completely done by any of us is convincing
+the VFS community that we've got the correct and maintainable way of
+adding all this to their VFS layer.
+
+James
+
