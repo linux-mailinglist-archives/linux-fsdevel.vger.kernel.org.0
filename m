@@ -2,94 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8A4164309
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 12:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6F2164313
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 12:11:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgBSLK4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 06:10:56 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:43965 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726497AbgBSLK4 (ORCPT
+        id S1727006AbgBSLLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 06:11:43 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:44262 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbgBSLLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:10:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582110655;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G9ngAADFf0H6tNXWrWk3zBJLW6Dh0uOu2zK7HumFKqU=;
-        b=NYdbTTrMYiXJDJMzEB/CHob6QpOyqtvlq1IgrFcD9CBipInSyUIDU+kGpRUy+ubnt4slYx
-        ilWuSUR6F8rc9PVd+3ytguZ3E/HVYQfzms8Uu2cFMamaJiCEUuPCh0PqNQkqJIjlhYsXzc
-        bU7DGq+oyOTa7BNpd9r0xvbP6r5X+c8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-326-bvt_ygSfMgOqvjdqwvGhjw-1; Wed, 19 Feb 2020 06:10:52 -0500
-X-MC-Unique: bvt_ygSfMgOqvjdqwvGhjw-1
-Received: by mail-wm1-f69.google.com with SMTP id y7so40047wmd.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 03:10:52 -0800 (PST)
+        Wed, 19 Feb 2020 06:11:43 -0500
+Received: by mail-il1-f194.google.com with SMTP id s85so20196375ill.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 03:11:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O3J9sBFZ2g1DpC8eNWx0YGx0xb8tn/oD73qlJiO3TPY=;
+        b=E+gasOfGs6Ar4lrTrGnI1i6XCWHnhi6syTz31qI/z6EyCwpgWLZCTOFoBsFbHxh9j1
+         b71UeV7oE63PcbL7oC48hmbzKTjyQlFLnAGumc3SiktlFQqFhoRYqqeJqPL92OqBJD0D
+         Zjdnm9QAMfJ/RpWQ0lqAPDwUWTJu/1pK7pTcD8nq1CXiKgR6SjovRi7Eg03GSqB5rHMh
+         FQiNSmuIidBtZeDl7UhokLySMGUK+xqfGL8it/sB/gnDxJM1eNIM1e/j+545B3z70Uj+
+         QQV10TRMy58FTayZfqPW1sRQimN/9X5tcDbT3DLAsbd5SrrjlN+POoLRhh0TTXorE8tq
+         bpog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G9ngAADFf0H6tNXWrWk3zBJLW6Dh0uOu2zK7HumFKqU=;
-        b=A29xkfbVI4XpjT9sgDDqVShPJnGfxBSteRX+NvVUoeC7CpYawonuAEYJ0Z7oLIsf94
-         yNYdgX553sOmPvkTRW+64xL6ZsuEWRjHjLcqpqrN0PQlrhDJJandcGvXfyld926Mp2j2
-         rTvZUVzK6zZhbI5JoemT3O9mjG00Eics/uMc6Y8ONupNtSwo+zyJmrZD9J2G8uMjwli1
-         lQw259g0hemdFSgPSpHqSqnJzwN5INijbQgvhQeramwrj2R7kqA5NScGz81+mfFI1kHs
-         BcOu0aEaXuliL7d+mSfT550ONGyND7aOD4pxftErC47RzkolYGaGzr5TxT3Ay0jgSB15
-         FxUw==
-X-Gm-Message-State: APjAAAWjVlx+3mBqX4bluylbFBoQKG3UfY0ENgIDvgc5BYaKlXxpQSFx
-        9hrljwJERml2bvxlyBYkittMNmcdFTqYSFWALrTryH53sDjsKVSCSNoEja+ga+pRIh8VyUlpglX
-        mL2KOTkWyJ0gjdKrZJ48J5p5T0w==
-X-Received: by 2002:a7b:c183:: with SMTP id y3mr8994474wmi.45.1582110651008;
-        Wed, 19 Feb 2020 03:10:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxgHklSoTJAASymtkOJdhkIhiMJIFRI+F05r4Zs/xNP/kGoNa/TNx+0pu+EJD1dPQoyvi+MUw==
-X-Received: by 2002:a7b:c183:: with SMTP id y3mr8994454wmi.45.1582110650820;
-        Wed, 19 Feb 2020 03:10:50 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:ec41:5e57:ff4d:8e51? ([2001:b07:6468:f312:ec41:5e57:ff4d:8e51])
-        by smtp.gmail.com with ESMTPSA id e1sm2438009wrt.84.2020.02.19.03.10.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 03:10:50 -0800 (PST)
-Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
-To:     Avi Kivity <avi@scylladb.com>, Stefan Hajnoczi <stefanha@gmail.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Davide Libenzi <davidel@xmailserver.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20200129172010.162215-1-stefanha@redhat.com>
- <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
- <20200212102912.GA464050@stefanha-x1.localdomain>
- <156cb709-282a-ddb6-6f34-82b4bb211f73@redhat.com>
- <cadb4320-4717-1a41-dfb5-bb782fd0a5da@scylladb.com>
- <20200219103704.GA1076032@stefanha-x1.localdomain>
- <c5ea733d-b766-041b-30b9-a9a9b5167462@scylladb.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <ced21f4f-9e8a-7c61-8f50-cee33b74a210@redhat.com>
-Date:   Wed, 19 Feb 2020 12:10:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O3J9sBFZ2g1DpC8eNWx0YGx0xb8tn/oD73qlJiO3TPY=;
+        b=MzxQPSQ2+TkKRBaAjWvX/0rnsXfmbfw9mWY2XriIz2By3l93FQ0I+MaKnP5fLis0NG
+         GuSNHdcyJ4mbhc+MLKyKU04SO+f+X/5g/GwTPLlkNn0oRtdoiurxwAj87YIaHX2nq0tT
+         Wp6uub+cSYc8yHCFXFiKlv24tXqVD3laKwbCOfejioJQqqOf5FP1QkoYRfwj/g429DFC
+         vbxMvGL9aUnbQB4/qudcW74z9baJFNWHVWGCds8N4H6zrDH7JinQ7asAfLQ112qR/B3I
+         ENqECrR2VF6zh9ndUHdCzDiV7u/qJB87/OoBUJkXRX+Esfngbl9uQ7tsT0siuC/aAGxb
+         Md5w==
+X-Gm-Message-State: APjAAAWQ8ebEiMYgMyeNrFchOo+2+lRZWlctTKDtIM+XiVs/iuX4dNZ0
+        Fdm7QGpRrKb+O6RtHakaXnPkTESMW/aph83vtb/BSA==
+X-Google-Smtp-Source: APXvYqz4kVVGJys4AP7MPfu2Q3gmJDbjnlNxbTjfleC7tGJk/bI/OS7RRZ4eWH5DqrFFX4YjvuOky19atoqNMS7TmNA=
+X-Received: by 2002:a92:d5c3:: with SMTP id d3mr23653057ilq.250.1582110702535;
+ Wed, 19 Feb 2020 03:11:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c5ea733d-b766-041b-30b9-a9a9b5167462@scylladb.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-6-amir73il@gmail.com>
+In-Reply-To: <20200217131455.31107-6-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 19 Feb 2020 13:11:31 +0200
+Message-ID: <CAOQ4uxghADV42ybW0U628ZHs65O0beu7s84msswp_zDAep0p+g@mail.gmail.com>
+Subject: Re: [PATCH v2 05/16] fsnotify: simplify arguments passing to fsnotify_parent()
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19/02/20 11:43, Avi Kivity wrote:
-> 
->> Thanks, that's a nice idea!  I already have experimental io_uring fd
->> monitoring code written for QEMU and will extend it to use
->> IORING_OP_READ.
-> 
-> Note linux-aio can do IOCB_CMD_POLL, starting with 4.19.
+On Mon, Feb 17, 2020 at 3:15 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Instead of passing both dentry and path and having to figure out which
+> one to use, pass data/data_type to simplify the code.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/notify/fsnotify.c             | 15 ++++-----------
+>  include/linux/fsnotify.h         | 14 ++------------
+>  include/linux/fsnotify_backend.h | 13 +++++++------
+>  3 files changed, 13 insertions(+), 29 deletions(-)
+>
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index a5d6467f89a0..193530f57963 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -143,15 +143,13 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+>  }
+>
+>  /* Notify this dentry's parent about a child's events. */
+> -int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
+> +int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> +                   int data_type)
+>  {
+>         struct dentry *parent;
+>         struct inode *p_inode;
+>         int ret = 0;
+>
+> -       if (!dentry)
+> -               dentry = path->dentry;
+> -
+>         if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+>                 return 0;
+>
+> @@ -168,12 +166,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
+>                 mask |= FS_EVENT_ON_CHILD;
+>
+>                 take_dentry_name_snapshot(&name, dentry);
+> -               if (path)
+> -                       ret = fsnotify(p_inode, mask, path, FSNOTIFY_EVENT_PATH,
+> -                                      &name.name, 0);
+> -               else
+> -                       ret = fsnotify(p_inode, mask, dentry->d_inode, FSNOTIFY_EVENT_INODE,
+> -                                      &name.name, 0);
+> +               ret = fsnotify(p_inode, mask, data, data_type, &name.name, 0);
+>                 release_dentry_name_snapshot(&name);
+>         }
+>
+> @@ -181,7 +174,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
+>
+>         return ret;
+>  }
+> -EXPORT_SYMBOL_GPL(__fsnotify_parent);
+> +EXPORT_SYMBOL_GPL(fsnotify_parent);
+>
+>  static int send_to_group(struct inode *to_tell,
+>                          __u32 mask, const void *data,
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index 420aca9fd5f4..af30e0a56f2e 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -38,16 +38,6 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+>         fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
+>  }
+>
+> -/* Notify this dentry's parent about a child's events. */
+> -static inline int fsnotify_parent(const struct path *path,
+> -                                 struct dentry *dentry, __u32 mask)
+> -{
+> -       if (!dentry)
+> -               dentry = path->dentry;
+> -
+> -       return __fsnotify_parent(path, dentry, mask);
+> -}
+> -
+>  /*
+>   * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
+>   * an event is on a file/dentry.
+> @@ -59,7 +49,7 @@ static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
+>         if (S_ISDIR(inode->i_mode))
+>                 mask |= FS_ISDIR;
+>
+> -       fsnotify_parent(NULL, dentry, mask);
+> +       fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
+>         fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
+>  }
+>
+> @@ -75,7 +65,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
+>         if (S_ISDIR(inode->i_mode))
+>                 mask |= FS_ISDIR;
+>
+> -       ret = fsnotify_parent(path, NULL, mask);
+> +       ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
+>         if (ret)
+>                 return ret;
+>
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 5cc838db422a..b1f418cc28e1 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -376,9 +376,10 @@ struct fsnotify_mark {
+>  /* called from the vfs helpers */
+>
+>  /* main fsnotify call to send events */
+> -extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> -                   const struct qstr *name, u32 cookie);
+> -extern int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask);
+> +extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
+> +                   int data_type, const struct qstr *name, u32 cookie);
+> +extern int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> +                          int data_type);
+>  extern void __fsnotify_inode_delete(struct inode *inode);
+>  extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
+>  extern void fsnotify_sb_delete(struct super_block *sb);
+> @@ -533,13 +534,13 @@ static inline void fsnotify_init_event(struct fsnotify_event *event,
+>
+>  #else
+>
+> -static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> -                          const struct qstr *name, u32 cookie)
+> +static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
+> +                          int data_type, const struct qstr *name, u32 cookie)
+>  {
+>         return 0;
+>  }
+>
+> -static inline int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
+> +static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
 
-That was on the todo list, but io_uring came first. :)
+This should be:
 
-Paolo
++static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+const void *data, int data_type)
 
+Will squash the fix.
+
+Thanks kbuild test robot,
+Amir.
