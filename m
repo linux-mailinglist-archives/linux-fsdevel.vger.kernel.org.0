@@ -2,114 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 787E31648BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 678011648F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgBSPge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 10:36:34 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:50724 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726645AbgBSPgd (ORCPT
+        id S1726731AbgBSPm3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 10:42:29 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42483 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbgBSPm2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:36:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C8E7E8EE3C5;
-        Wed, 19 Feb 2020 07:36:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582126592;
-        bh=Olisob633QW5LfExi8a7Lh6PWpLjGpBMyExTbRd7Pdk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sMELI4Dv6IfAbGlqQCjDKaFb+F5bS8Ikx7LEV6RQPYrgTG4tqtMwI5n/x9AHlu21V
-         lji/5z5uQav4OvhsoGGnbM5e7HpCKAkv91/3YIL5FJT1M2FMitGqNkAydb+5BoQaWT
-         gT0awUIFgCzQyD8Bw/W27GG1ZGAzxGF5C2fA5Qro=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DuU4QiKOBDg9; Wed, 19 Feb 2020 07:36:32 -0800 (PST)
-Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DC9F58EE144;
-        Wed, 19 Feb 2020 07:36:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582126592;
-        bh=Olisob633QW5LfExi8a7Lh6PWpLjGpBMyExTbRd7Pdk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sMELI4Dv6IfAbGlqQCjDKaFb+F5bS8Ikx7LEV6RQPYrgTG4tqtMwI5n/x9AHlu21V
-         lji/5z5uQav4OvhsoGGnbM5e7HpCKAkv91/3YIL5FJT1M2FMitGqNkAydb+5BoQaWT
-         gT0awUIFgCzQyD8Bw/W27GG1ZGAzxGF5C2fA5Qro=
-Message-ID: <1582126590.10671.18.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+        Wed, 19 Feb 2020 10:42:28 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j132so24202625oih.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 07:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5m55kfVwkJi2EKe9BNjAoqNwmjnBNj+rhpNNJ8psMf0=;
+        b=m+WyVCnjj1MKoR4h4JIOlgp2fjMP9yF/DEMlRuSkziBg37L/i9PeB+qwHQtq+5TBM6
+         SooNA0Wk6Ljhtp5qSzPtSknsnL4DWgLfrCjYHytGQKdcv6POKVRKZfNj2WLGQm/nydCI
+         tLJnBS44YGa0T/JV/3kNf+/psgr2j9ltjMIFFiTi5//ha9SRMrTDUxEcO7tDYtXyCNU0
+         0W+ISMm5w6/KIDLxt6/6C3JAxunTLQr6+KHCnpMaj0TdKqHVbfPLbNK5F/nDNzZq3/LD
+         fJURS56rYXEp2uY/mJftWB6gjcZlAAKUD1/slAZtFwMjuk9DFgtmJPrszBy2PNb1wk3w
+         XhEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5m55kfVwkJi2EKe9BNjAoqNwmjnBNj+rhpNNJ8psMf0=;
+        b=BQfQv5PIEE3JkkD14Q2GK068L6V5s2pukt0tEf9DFuBm3pZ3PGYl/ufC12m2HY+xzz
+         vgqYaq+UGuGBIN8s+WfMEWbvdaHbSJAlKJGELUVUL87Xz4RsFFJZZBXfGskKEIohcKHN
+         iucCiBRijouBw8XnG/GEDsT910PGX9bE0N3NgweFFEbi2UEo5DFiA/bgq0C48rXokr2W
+         UX/jq4SFzqD5X7+e6yTKkSB05NQvBewRs4mh+H1W4XeF+3zTyFfNBj0mpyAhDwJmOFtD
+         MzeOXToYoc0zSDCUtnH/WIVM9AjiLVMvHO24aiI8OT1unp90HcWIMOGgPiyWLM95Audh
+         Mafw==
+X-Gm-Message-State: APjAAAX03y/IUEdoa+XMxRyYdz0j/amQEhNZcRFveYOj6QLCHsHB/Rb/
+        l/TJvEvlIt0zyejcN0j+xMgtG9iPZKEAu0MXaqNcUg==
+X-Google-Smtp-Source: APXvYqzYVTetcJbLAR2lHbzroMwjo5ViVjvR49a/DJvQymhESORCu2lQOkJU6wuyq4SCG9SAJgJJeWDh3Spsw3GeH0I=
+X-Received: by 2002:aca:484a:: with SMTP id v71mr5008155oia.39.1582126947895;
+ Wed, 19 Feb 2020 07:42:27 -0800 (PST)
+MIME-Version: 1.0
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com> <20200218143411.2389182-25-christian.brauner@ubuntu.com>
+In-Reply-To: <20200218143411.2389182-25-christian.brauner@ubuntu.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 19 Feb 2020 16:42:01 +0100
+Message-ID: <CAG48ez3onfVSYF_qx+jJuz0y+KuZ3U75Or8dxFhiDqMTdXzCZg@mail.gmail.com>
+Subject: Re: [PATCH v3 24/25] sys: handle fsid mappings in set*id() calls
 To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?ISO-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, smbarber@chromium.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
         Seth Forshee <seth.forshee@canonical.com>,
-        linux-security-module@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Date:   Wed, 19 Feb 2020 07:36:30 -0800
-In-Reply-To: <20200219122752.jalnsmsotigwxwsw@wittgenstein>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
-         <1582069856.16681.59.camel@HansenPartnership.com>
-         <20200219122752.jalnsmsotigwxwsw@wittgenstein>
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-02-19 at 13:27 +0100, Christian Brauner wrote:
-> On Tue, Feb 18, 2020 at 03:50:56PM -0800, James Bottomley wrote:
-> > On Tue, 2020-02-18 at 15:33 +0100, Christian Brauner wrote:
+On Tue, Feb 18, 2020 at 3:37 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+> Switch set*id() calls to lookup fsids in the fsid mappings. If no fsid mappings
+> are setup the behavior is unchanged, i.e. fsids are looked up in the id
+> mappings.
 [...]
-> > > With fsid mappings we can solve this by writing an id mapping of
-> > > 0 100000 100000 and an fsid mapping of 0 300000 100000. On
-> > > filesystem access the kernel will now lookup the mapping for
-> > > 300000 in the fsid mapping tables of the user namespace. And
-> > > since such a mapping exists, the corresponding files will have
-> > > correct ownership.
-> > 
-> > So I did compile this up in order to run the shiftfs tests over it
-> > to see how it coped with the various corner cases.  However, what I
-> > find is it simply fails the fsid reverse mapping in the
-> > setup.  Trying to use a simple uid of 0 100000 1000 and a fsid of
-> > 100000 0 1000 fails the entry setuid(0) call because of this code:
-> 
-> This is easy to fix. But what's the exact use-case?
+> @@ -353,7 +354,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+>         const struct cred *old;
+>         struct cred *new;
+>         int retval;
+> -       kgid_t krgid, kegid;
+> +       kgid_t krgid, kegid, kfsgid;
+>
+>         krgid = make_kgid(ns, rgid);
+>         kegid = make_kgid(ns, egid);
+> @@ -385,12 +386,20 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+>                         new->egid = kegid;
+>                 else
+>                         goto error;
+> +               kfsgid = make_kfsgid(ns, egid);
+> +       } else {
+> +               kfsgid = kgid_to_kfsgid(new->user_ns, new->egid);
+> +       }
 
-Well, the use case I'm looking to solve is the same one it's always
-been: getting a deprivileged fake root in a user_ns to be able to write
-an image at fsuid 0.
+Here the "kfsgid" is the new filesystem GID as translated by the
+special fsgid mapping...
 
-I don't think it's solvable in your current framework, although
-allowing the domain to be disjoint might possibly hack around it.  The
-problem with the proposed framework is that there are no backshifts
-from the filesystem view, there are only forward shifts to the
-filesystem view.  This means that to get your framework to write a
-filesystem at fsuid 0 you have to have an identity map for fsuid. Which
-I can do: I tested uid shift 0 100000 1000 and fsuid shift 0 0 1000. 
-It does all work, as you'd expect because the container has real fs
-root not a fake root.  And that's the whole problem:  Firstly, I'm fs
-root for any filesystem my userns can see, so any imprecision in
-setting up the mount namespace of the container and I own your host and
-secondly any containment break and I'm privileged with respect to the
-fs uid wherever I escape to so I will likewise own your host.
+> +       if (!gid_valid(kfsgid)) {
+> +               retval = -EINVAL;
+> +               goto error;
+>         }
+>
+>         if (rgid != (gid_t) -1 ||
+>             (egid != (gid_t) -1 && !gid_eq(kegid, old->gid)))
+>                 new->sgid = new->egid;
+> -       new->fsgid = new->egid;
+> +       new->kfsgid = new->egid;
 
-The only way to keep containment is to have a zero fsuid inside the
-container corresponding to a non-zero one outside.  And the only way to
-solve the imprecision in mount namespace issue is to strictly control
-the entry point at which the writing at fsuid 0 becomes active.
+... but the "kfsgid" of the creds struct is translated by the normal
+gid mapping...
 
-James
+> +       new->fsgid = kfsgid;
 
+... and the local "kfsgid" is stored into the "fsgid" member.
 
-
+This is pretty hard to follow. Can you come up with some naming scheme
+that is clearer and where one name is always used for the
+normally-translated fsgid and another name is always used for the
+specially-translated fsgid? E.g. something like "pfsgid" (with the "p"
+standing for "process", because it uses the same id mappings as used
+for process identities) for the IDs translated via the normal gid
+mapping?
