@@ -2,308 +2,455 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E1616428F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 11:50:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 258E3164292
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 11:51:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgBSKud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 05:50:33 -0500
-Received: from mga11.intel.com ([192.55.52.93]:61771 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbgBSKud (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 05:50:33 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2020 02:50:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
-   d="gz'50?scan'50,208,50";a="258882657"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Feb 2020 02:50:29 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1j4Mw0-0009f2-QS; Wed, 19 Feb 2020 18:50:28 +0800
-Date:   Wed, 19 Feb 2020 18:50:02 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     kbuild-all@lists.01.org, Jan Kara <jack@suse.cz>,
+        id S1726487AbgBSKvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 05:51:23 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47523 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726469AbgBSKvW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 05:51:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582109480;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MzMvwdrBgtYID8g6KcuUt13eQUQdkMY7WmNY+uiPTVY=;
+        b=W3OwH9GwIdXajzWckbXUORrroqmHdmhWddj5sMvul6/pxYzrMVtFz3OZYCfC3C3FiJ+UAN
+        1QA9/xd48X8+TL7iMW4Y65TSqeAYfs+Fz1jK2/D0Ypts0rTRlDUST8dw5Lv+eDWJrDVhyi
+        28gborHk9MrSfyb8G+kwFlsU351tN7Y=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-407-jxf7Hb1zN4CfmYGH-VKc3Q-1; Wed, 19 Feb 2020 05:51:19 -0500
+X-MC-Unique: jxf7Hb1zN4CfmYGH-VKc3Q-1
+Received: by mail-wm1-f72.google.com with SMTP id p2so11086wmi.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 02:51:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=MzMvwdrBgtYID8g6KcuUt13eQUQdkMY7WmNY+uiPTVY=;
+        b=tMUXcG571Mns4q5mToxincmR3/29M0honour9i4m91oNvhy2JZ4zsMGav9jb7slHWs
+         PsIR5qL9ZkYIHgkcp30JBilUKdBPC8M74gxVgnGeapITUjXcBcM0o/v4i+iIytaf88IQ
+         /xPXUWw9iXyi11t8jX33aBWm1QpgrvGnvfQbU7Ci4TG/xSE3Va5JIMJf1sUVQMkm/7M/
+         qqb32S5dO/1slDva60tJDlDFr77HAHbPHg1VlTlEpiAKAWO0/sdrjo2k4vrn8263x/9P
+         RTblSKUOJ/VzQrJAveqat7PW3c5hAEinIfjyEoNkFbvTCehSkLUl4Wwbvt8Lik13iEl0
+         JlpA==
+X-Gm-Message-State: APjAAAUgWLDtAO8YTJrF9cmwG4UJvu1d1ArrFc+YuyFGV4wjeaIgDtwk
+        eQs4147/oj1Oc6iffff5RQDXUQPxL6DnKCgIjsv6PotwXWc6/oh9xAkrcK2BUm5S2e7kZr7dnM1
+        S0TyJK62ctLXLwfp3svoSZGVhng==
+X-Received: by 2002:a7b:c152:: with SMTP id z18mr9244350wmi.70.1582109477681;
+        Wed, 19 Feb 2020 02:51:17 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwueRhhmgy0u1UtdAncUH/xP27A66KA1kRjxl/8TxjTTNoOfQCU3cTNkVAGsOaZg3f4dd8KJA==
+X-Received: by 2002:a7b:c152:: with SMTP id z18mr9244304wmi.70.1582109477228;
+        Wed, 19 Feb 2020 02:51:17 -0800 (PST)
+Received: from andromeda (ip-89-103-126-188.net.upcbroadband.cz. [89.103.126.188])
+        by smtp.gmail.com with ESMTPSA id h205sm2584979wmf.25.2020.02.19.02.51.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 02:51:16 -0800 (PST)
+Date:   Wed, 19 Feb 2020 11:51:14 +0100
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] xfs: remove the icdinode di_uid/di_gid members
+Message-ID: <20200219105114.mzsmf7ksslhmfkix@andromeda>
+Mail-Followup-To: Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 05/16] fsnotify: simplify arguments passing to
- fsnotify_parent()
-Message-ID: <202002191836.KJ7wwO0T%lkp@intel.com>
-References: <20200217131455.31107-6-amir73il@gmail.com>
+References: <20200218210020.40846-1-hch@lst.de>
+ <20200218210020.40846-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="FL5UXtIhxfXey3p5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200217131455.31107-6-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200218210020.40846-3-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Feb 18, 2020 at 01:00:19PM -0800, Christoph Hellwig wrote:
+> Use the Linux inode i_uid/i_gid members everywhere and just convert
+> from/to the scalar value when reading or writing the on-disk inode.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
---FL5UXtIhxfXey3p5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
 
-Hi Amir,
 
-I love your patch! Yet something to improve:
+> ---
+>  fs/xfs/libxfs/xfs_inode_buf.c | 10 ++++-----
+>  fs/xfs/libxfs/xfs_inode_buf.h |  2 --
+>  fs/xfs/xfs_dquot.c            |  4 ++--
+>  fs/xfs/xfs_inode.c            | 14 ++++--------
+>  fs/xfs/xfs_inode_item.c       |  4 ++--
+>  fs/xfs/xfs_ioctl.c            |  6 +++---
+>  fs/xfs/xfs_iops.c             |  6 +-----
+>  fs/xfs/xfs_itable.c           |  4 ++--
+>  fs/xfs/xfs_qm.c               | 40 ++++++++++++++++++++++-------------
+>  fs/xfs/xfs_quota.h            |  4 ++--
+>  fs/xfs/xfs_symlink.c          |  4 +---
+>  11 files changed, 46 insertions(+), 52 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
+> index cc4efd34843a..bc72b575ceed 100644
+> --- a/fs/xfs/libxfs/xfs_inode_buf.c
+> +++ b/fs/xfs/libxfs/xfs_inode_buf.c
+> @@ -222,10 +222,8 @@ xfs_inode_from_disk(
+>  	}
+>  
+>  	to->di_format = from->di_format;
+> -	to->di_uid = be32_to_cpu(from->di_uid);
+> -	inode->i_uid = xfs_uid_to_kuid(to->di_uid);
+> -	to->di_gid = be32_to_cpu(from->di_gid);
+> -	inode->i_gid = xfs_gid_to_kgid(to->di_gid);
+> +	inode->i_uid = xfs_uid_to_kuid(be32_to_cpu(from->di_uid));
+> +	inode->i_gid = xfs_gid_to_kgid(be32_to_cpu(from->di_gid));
+>  	to->di_flushiter = be16_to_cpu(from->di_flushiter);
+>  
+>  	/*
+> @@ -278,8 +276,8 @@ xfs_inode_to_disk(
+>  
+>  	to->di_version = from->di_version;
+>  	to->di_format = from->di_format;
+> -	to->di_uid = cpu_to_be32(from->di_uid);
+> -	to->di_gid = cpu_to_be32(from->di_gid);
+> +	to->di_uid = cpu_to_be32(xfs_kuid_to_uid(inode->i_uid));
+> +	to->di_gid = cpu_to_be32(xfs_kgid_to_gid(inode->i_gid));
+>  	to->di_projid_lo = cpu_to_be16(from->di_projid & 0xffff);
+>  	to->di_projid_hi = cpu_to_be16(from->di_projid >> 16);
+>  
+> diff --git a/fs/xfs/libxfs/xfs_inode_buf.h b/fs/xfs/libxfs/xfs_inode_buf.h
+> index fd94b1078722..2683e1e2c4a6 100644
+> --- a/fs/xfs/libxfs/xfs_inode_buf.h
+> +++ b/fs/xfs/libxfs/xfs_inode_buf.h
+> @@ -19,8 +19,6 @@ struct xfs_icdinode {
+>  	int8_t		di_version;	/* inode version */
+>  	int8_t		di_format;	/* format of di_c data */
+>  	uint16_t	di_flushiter;	/* incremented on flush */
+> -	uint32_t	di_uid;		/* owner's user id */
+> -	uint32_t	di_gid;		/* owner's group id */
+>  	uint32_t	di_projid;	/* owner's project id */
+>  	xfs_fsize_t	di_size;	/* number of bytes in file */
+>  	xfs_rfsblock_t	di_nblocks;	/* # of direct & btree blocks used */
+> diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
+> index d223e1ae90a6..3579de9306c1 100644
+> --- a/fs/xfs/xfs_dquot.c
+> +++ b/fs/xfs/xfs_dquot.c
+> @@ -829,9 +829,9 @@ xfs_qm_id_for_quotatype(
+>  {
+>  	switch (type) {
+>  	case XFS_DQ_USER:
+> -		return ip->i_d.di_uid;
+> +		return xfs_kuid_to_uid(VFS_I(ip)->i_uid);
+>  	case XFS_DQ_GROUP:
+> -		return ip->i_d.di_gid;
+> +		return xfs_kgid_to_gid(VFS_I(ip)->i_gid);
+>  	case XFS_DQ_PROJ:
+>  		return ip->i_d.di_projid;
+>  	}
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index 938b0943bd95..3324e1696354 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -813,18 +813,15 @@ xfs_ialloc(
+>  	inode->i_mode = mode;
+>  	set_nlink(inode, nlink);
+>  	inode->i_uid = current_fsuid();
+> -	ip->i_d.di_uid = xfs_kuid_to_uid(inode->i_uid);
+>  	inode->i_rdev = rdev;
+>  	ip->i_d.di_projid = prid;
+>  
+>  	if (pip && XFS_INHERIT_GID(pip)) {
+>  		inode->i_gid = VFS_I(pip)->i_gid;
+> -		ip->i_d.di_gid = pip->i_d.di_gid;
+>  		if ((VFS_I(pip)->i_mode & S_ISGID) && S_ISDIR(mode))
+>  			inode->i_mode |= S_ISGID;
+>  	} else {
+>  		inode->i_gid = current_fsgid();
+> -		ip->i_d.di_gid = xfs_kgid_to_gid(inode->i_gid);
+>  	}
+>  
+>  	/*
+> @@ -832,9 +829,8 @@ xfs_ialloc(
+>  	 * ID or one of the supplementary group IDs, the S_ISGID bit is cleared
+>  	 * (and only if the irix_sgid_inherit compatibility variable is set).
+>  	 */
+> -	if ((irix_sgid_inherit) &&
+> -	    (inode->i_mode & S_ISGID) &&
+> -	    (!in_group_p(xfs_gid_to_kgid(ip->i_d.di_gid))))
+> +	if (irix_sgid_inherit &&
+> +	    (inode->i_mode & S_ISGID) && !in_group_p(inode->i_gid))
+>  		inode->i_mode &= ~S_ISGID;
+>  
+>  	ip->i_d.di_size = 0;
+> @@ -1162,8 +1158,7 @@ xfs_create(
+>  	/*
+>  	 * Make sure that we have allocated dquot(s) on disk.
+>  	 */
+> -	error = xfs_qm_vop_dqalloc(dp, xfs_kuid_to_uid(current_fsuid()),
+> -					xfs_kgid_to_gid(current_fsgid()), prid,
+> +	error = xfs_qm_vop_dqalloc(dp, current_fsuid(), current_fsgid(), prid,
+>  					XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
+>  					&udqp, &gdqp, &pdqp);
+>  	if (error)
+> @@ -1313,8 +1308,7 @@ xfs_create_tmpfile(
+>  	/*
+>  	 * Make sure that we have allocated dquot(s) on disk.
+>  	 */
+> -	error = xfs_qm_vop_dqalloc(dp, xfs_kuid_to_uid(current_fsuid()),
+> -				xfs_kgid_to_gid(current_fsgid()), prid,
+> +	error = xfs_qm_vop_dqalloc(dp, current_fsuid(), current_fsgid(), prid,
+>  				XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
+>  				&udqp, &gdqp, &pdqp);
+>  	if (error)
+> diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
+> index 8bd5d0de6321..83d7914556ef 100644
+> --- a/fs/xfs/xfs_inode_item.c
+> +++ b/fs/xfs/xfs_inode_item.c
+> @@ -308,8 +308,8 @@ xfs_inode_to_log_dinode(
+>  
+>  	to->di_version = from->di_version;
+>  	to->di_format = from->di_format;
+> -	to->di_uid = from->di_uid;
+> -	to->di_gid = from->di_gid;
+> +	to->di_uid = xfs_kuid_to_uid(inode->i_uid);
+> +	to->di_gid = xfs_kgid_to_gid(inode->i_gid);
+>  	to->di_projid_lo = from->di_projid & 0xffff;
+>  	to->di_projid_hi = from->di_projid >> 16;
+>  
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index d42de92cb283..0f85bedc5977 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -1434,9 +1434,9 @@ xfs_ioctl_setattr(
+>  	 * because the i_*dquot fields will get updated anyway.
+>  	 */
+>  	if (XFS_IS_QUOTA_ON(mp)) {
+> -		code = xfs_qm_vop_dqalloc(ip, ip->i_d.di_uid,
+> -					 ip->i_d.di_gid, fa->fsx_projid,
+> -					 XFS_QMOPT_PQUOTA, &udqp, NULL, &pdqp);
+> +		code = xfs_qm_vop_dqalloc(ip, VFS_I(ip)->i_uid,
+> +				VFS_I(ip)->i_gid, fa->fsx_projid,
+> +				XFS_QMOPT_PQUOTA, &udqp, NULL, &pdqp);
+>  		if (code)
+>  			return code;
+>  	}
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index b818b261918f..a5b7c3100a2f 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -692,9 +692,7 @@ xfs_setattr_nonsize(
+>  		 */
+>  		ASSERT(udqp == NULL);
+>  		ASSERT(gdqp == NULL);
+> -		error = xfs_qm_vop_dqalloc(ip, xfs_kuid_to_uid(uid),
+> -					   xfs_kgid_to_gid(gid),
+> -					   ip->i_d.di_projid,
+> +		error = xfs_qm_vop_dqalloc(ip, uid, gid, ip->i_d.di_projid,
+>  					   qflags, &udqp, &gdqp, NULL);
+>  		if (error)
+>  			return error;
+> @@ -763,7 +761,6 @@ xfs_setattr_nonsize(
+>  				olddquot1 = xfs_qm_vop_chown(tp, ip,
+>  							&ip->i_udquot, udqp);
+>  			}
+> -			ip->i_d.di_uid = xfs_kuid_to_uid(uid);
+>  			inode->i_uid = uid;
+>  		}
+>  		if (!gid_eq(igid, gid)) {
+> @@ -775,7 +772,6 @@ xfs_setattr_nonsize(
+>  				olddquot2 = xfs_qm_vop_chown(tp, ip,
+>  							&ip->i_gdquot, gdqp);
+>  			}
+> -			ip->i_d.di_gid = xfs_kgid_to_gid(gid);
+>  			inode->i_gid = gid;
+>  		}
+>  	}
+> diff --git a/fs/xfs/xfs_itable.c b/fs/xfs/xfs_itable.c
+> index 4b31c29b7e6b..497db4160283 100644
+> --- a/fs/xfs/xfs_itable.c
+> +++ b/fs/xfs/xfs_itable.c
+> @@ -86,8 +86,8 @@ xfs_bulkstat_one_int(
+>  	 */
+>  	buf->bs_projectid = ip->i_d.di_projid;
+>  	buf->bs_ino = ino;
+> -	buf->bs_uid = dic->di_uid;
+> -	buf->bs_gid = dic->di_gid;
+> +	buf->bs_uid = xfs_kuid_to_uid(inode->i_uid);
+> +	buf->bs_gid = xfs_kgid_to_gid(inode->i_gid);
+>  	buf->bs_size = dic->di_size;
+>  
+>  	buf->bs_nlink = inode->i_nlink;
+> diff --git a/fs/xfs/xfs_qm.c b/fs/xfs/xfs_qm.c
+> index 0b0909657bad..54dda7d982c9 100644
+> --- a/fs/xfs/xfs_qm.c
+> +++ b/fs/xfs/xfs_qm.c
+> @@ -326,16 +326,18 @@ xfs_qm_dqattach_locked(
+>  	ASSERT(xfs_isilocked(ip, XFS_ILOCK_EXCL));
+>  
+>  	if (XFS_IS_UQUOTA_ON(mp) && !ip->i_udquot) {
+> -		error = xfs_qm_dqattach_one(ip, ip->i_d.di_uid, XFS_DQ_USER,
+> -				doalloc, &ip->i_udquot);
+> +		error = xfs_qm_dqattach_one(ip,
+> +				xfs_kuid_to_uid(VFS_I(ip)->i_uid),
+> +				XFS_DQ_USER, doalloc, &ip->i_udquot);
+>  		if (error)
+>  			goto done;
+>  		ASSERT(ip->i_udquot);
+>  	}
+>  
+>  	if (XFS_IS_GQUOTA_ON(mp) && !ip->i_gdquot) {
+> -		error = xfs_qm_dqattach_one(ip, ip->i_d.di_gid, XFS_DQ_GROUP,
+> -				doalloc, &ip->i_gdquot);
+> +		error = xfs_qm_dqattach_one(ip,
+> +				xfs_kgid_to_gid(VFS_I(ip)->i_gid),
+> +				XFS_DQ_GROUP, doalloc, &ip->i_gdquot);
+>  		if (error)
+>  			goto done;
+>  		ASSERT(ip->i_gdquot);
+> @@ -1613,8 +1615,8 @@ xfs_qm_dqfree_one(
+>  int
+>  xfs_qm_vop_dqalloc(
+>  	struct xfs_inode	*ip,
+> -	xfs_dqid_t		uid,
+> -	xfs_dqid_t		gid,
+> +	kuid_t			uid,
+> +	kgid_t			gid,
+>  	prid_t			prid,
+>  	uint			flags,
+>  	struct xfs_dquot	**O_udqpp,
+> @@ -1622,6 +1624,7 @@ xfs_qm_vop_dqalloc(
+>  	struct xfs_dquot	**O_pdqpp)
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+> +	struct inode		*inode = VFS_I(ip);
+>  	struct xfs_dquot	*uq = NULL;
+>  	struct xfs_dquot	*gq = NULL;
+>  	struct xfs_dquot	*pq = NULL;
+> @@ -1635,7 +1638,7 @@ xfs_qm_vop_dqalloc(
+>  	xfs_ilock(ip, lockflags);
+>  
+>  	if ((flags & XFS_QMOPT_INHERIT) && XFS_INHERIT_GID(ip))
+> -		gid = ip->i_d.di_gid;
+> +		gid = inode->i_gid;
+>  
+>  	/*
+>  	 * Attach the dquot(s) to this inode, doing a dquot allocation
+> @@ -1650,7 +1653,7 @@ xfs_qm_vop_dqalloc(
+>  	}
+>  
+>  	if ((flags & XFS_QMOPT_UQUOTA) && XFS_IS_UQUOTA_ON(mp)) {
+> -		if (ip->i_d.di_uid != uid) {
+> +		if (!uid_eq(inode->i_uid, uid)) {
+>  			/*
+>  			 * What we need is the dquot that has this uid, and
+>  			 * if we send the inode to dqget, the uid of the inode
+> @@ -1661,7 +1664,8 @@ xfs_qm_vop_dqalloc(
+>  			 * holding ilock.
+>  			 */
+>  			xfs_iunlock(ip, lockflags);
+> -			error = xfs_qm_dqget(mp, uid, XFS_DQ_USER, true, &uq);
+> +			error = xfs_qm_dqget(mp, xfs_kuid_to_uid(uid),
+> +					XFS_DQ_USER, true, &uq);
+>  			if (error) {
+>  				ASSERT(error != -ENOENT);
+>  				return error;
+> @@ -1682,9 +1686,10 @@ xfs_qm_vop_dqalloc(
+>  		}
+>  	}
+>  	if ((flags & XFS_QMOPT_GQUOTA) && XFS_IS_GQUOTA_ON(mp)) {
+> -		if (ip->i_d.di_gid != gid) {
+> +		if (!gid_eq(inode->i_gid, gid)) {
+>  			xfs_iunlock(ip, lockflags);
+> -			error = xfs_qm_dqget(mp, gid, XFS_DQ_GROUP, true, &gq);
+> +			error = xfs_qm_dqget(mp, xfs_kgid_to_gid(gid),
+> +					XFS_DQ_GROUP, true, &gq);
+>  			if (error) {
+>  				ASSERT(error != -ENOENT);
+>  				goto error_rele;
+> @@ -1810,7 +1815,8 @@ xfs_qm_vop_chown_reserve(
+>  			XFS_QMOPT_RES_RTBLKS : XFS_QMOPT_RES_REGBLKS;
+>  
+>  	if (XFS_IS_UQUOTA_ON(mp) && udqp &&
+> -	    ip->i_d.di_uid != be32_to_cpu(udqp->q_core.d_id)) {
+> +	    xfs_kuid_to_uid(VFS_I(ip)->i_uid) !=
+> +			be32_to_cpu(udqp->q_core.d_id)) {
+>  		udq_delblks = udqp;
+>  		/*
+>  		 * If there are delayed allocation blocks, then we have to
+> @@ -1823,7 +1829,8 @@ xfs_qm_vop_chown_reserve(
+>  		}
+>  	}
+>  	if (XFS_IS_GQUOTA_ON(ip->i_mount) && gdqp &&
+> -	    ip->i_d.di_gid != be32_to_cpu(gdqp->q_core.d_id)) {
+> +	    xfs_kgid_to_gid(VFS_I(ip)->i_gid) !=
+> +			be32_to_cpu(gdqp->q_core.d_id)) {
+>  		gdq_delblks = gdqp;
+>  		if (delblks) {
+>  			ASSERT(ip->i_gdquot);
+> @@ -1920,14 +1927,17 @@ xfs_qm_vop_create_dqattach(
+>  
+>  	if (udqp && XFS_IS_UQUOTA_ON(mp)) {
+>  		ASSERT(ip->i_udquot == NULL);
+> -		ASSERT(ip->i_d.di_uid == be32_to_cpu(udqp->q_core.d_id));
+> +		ASSERT(xfs_kuid_to_uid(VFS_I(ip)->i_uid) ==
+> +			be32_to_cpu(udqp->q_core.d_id));
+>  
+>  		ip->i_udquot = xfs_qm_dqhold(udqp);
+>  		xfs_trans_mod_dquot(tp, udqp, XFS_TRANS_DQ_ICOUNT, 1);
+>  	}
+>  	if (gdqp && XFS_IS_GQUOTA_ON(mp)) {
+>  		ASSERT(ip->i_gdquot == NULL);
+> -		ASSERT(ip->i_d.di_gid == be32_to_cpu(gdqp->q_core.d_id));
+> +		ASSERT(xfs_kgid_to_gid(VFS_I(ip)->i_gid) ==
+> +			be32_to_cpu(gdqp->q_core.d_id));
+> +
+>  		ip->i_gdquot = xfs_qm_dqhold(gdqp);
+>  		xfs_trans_mod_dquot(tp, gdqp, XFS_TRANS_DQ_ICOUNT, 1);
+>  	}
+> diff --git a/fs/xfs/xfs_quota.h b/fs/xfs/xfs_quota.h
+> index efe42ae7a2f3..aa8fc1f55fbd 100644
+> --- a/fs/xfs/xfs_quota.h
+> +++ b/fs/xfs/xfs_quota.h
+> @@ -86,7 +86,7 @@ extern int xfs_trans_reserve_quota_bydquots(struct xfs_trans *,
+>  		struct xfs_mount *, struct xfs_dquot *,
+>  		struct xfs_dquot *, struct xfs_dquot *, int64_t, long, uint);
+>  
+> -extern int xfs_qm_vop_dqalloc(struct xfs_inode *, xfs_dqid_t, xfs_dqid_t,
+> +extern int xfs_qm_vop_dqalloc(struct xfs_inode *, kuid_t, kgid_t,
+>  		prid_t, uint, struct xfs_dquot **, struct xfs_dquot **,
+>  		struct xfs_dquot **);
+>  extern void xfs_qm_vop_create_dqattach(struct xfs_trans *, struct xfs_inode *,
+> @@ -109,7 +109,7 @@ extern void xfs_qm_unmount_quotas(struct xfs_mount *);
+>  
+>  #else
+>  static inline int
+> -xfs_qm_vop_dqalloc(struct xfs_inode *ip, xfs_dqid_t uid, xfs_dqid_t gid,
+> +xfs_qm_vop_dqalloc(struct xfs_inode *ip, kuid_t kuid, kgid_t kgid,
+>  		prid_t prid, uint flags, struct xfs_dquot **udqp,
+>  		struct xfs_dquot **gdqp, struct xfs_dquot **pdqp)
+>  {
+> diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
+> index d762d42ed0ff..ea42e25ec1bf 100644
+> --- a/fs/xfs/xfs_symlink.c
+> +++ b/fs/xfs/xfs_symlink.c
+> @@ -182,9 +182,7 @@ xfs_symlink(
+>  	/*
+>  	 * Make sure that we have allocated dquot(s) on disk.
+>  	 */
+> -	error = xfs_qm_vop_dqalloc(dp,
+> -			xfs_kuid_to_uid(current_fsuid()),
+> -			xfs_kgid_to_gid(current_fsgid()), prid,
+> +	error = xfs_qm_vop_dqalloc(dp, current_fsuid(), current_fsgid(), prid,
+>  			XFS_QMOPT_QUOTALL | XFS_QMOPT_INHERIT,
+>  			&udqp, &gdqp, &pdqp);
+>  	if (error)
+> -- 
+> 2.24.1
+> 
 
-[auto build test ERROR on 11a48a5a18c63fd7621bb050228cebf13566e4d8]
+-- 
+Carlos
 
-url:    https://github.com/0day-ci/linux/commits/Amir-Goldstein/Fanotify-event-with-name-info/20200219-160517
-base:    11a48a5a18c63fd7621bb050228cebf13566e4d8
-config: i386-tinyconfig (attached as .config)
-compiler: gcc-7 (Debian 7.5.0-5) 7.5.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h: In function 'fsnotify_dentry':
->> include/linux/fsnotify.h:52:18: warning: passing argument 1 of 'fsnotify_parent' makes integer from pointer without a cast [-Wint-conversion]
-     fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
-                     ^~~~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected '__u32 {aka unsigned int}' but argument is of type 'struct dentry *'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
->> include/linux/fsnotify.h:52:26: warning: passing argument 2 of 'fsnotify_parent' makes pointer from integer without a cast [-Wint-conversion]
-     fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
-                             ^~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected 'const void *' but argument is of type '__u32 {aka unsigned int}'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h:52:32: warning: passing argument 3 of 'fsnotify_parent' makes integer from pointer without a cast [-Wint-conversion]
-     fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
-                                   ^~~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected 'int' but argument is of type 'struct inode *'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
->> include/linux/fsnotify.h:52:2: error: too many arguments to function 'fsnotify_parent'
-     fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
-     ^~~~~~~~~~~~~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: declared here
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h: In function 'fsnotify_file':
-   include/linux/fsnotify.h:68:24: warning: passing argument 1 of 'fsnotify_parent' makes integer from pointer without a cast [-Wint-conversion]
-     ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
-                           ^~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected '__u32 {aka unsigned int}' but argument is of type 'struct dentry * const'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h:68:38: warning: passing argument 2 of 'fsnotify_parent' makes pointer from integer without a cast [-Wint-conversion]
-     ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
-                                         ^~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected 'const void *' but argument is of type '__u32 {aka unsigned int}'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h:68:44: warning: passing argument 3 of 'fsnotify_parent' makes integer from pointer without a cast [-Wint-conversion]
-     ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
-                                               ^~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: expected 'int' but argument is of type 'const struct path *'
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-   In file included from fs///attr.c:15:0:
-   include/linux/fsnotify.h:68:8: error: too many arguments to function 'fsnotify_parent'
-     ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
-           ^~~~~~~~~~~~~~~
-   In file included from include/linux/fsnotify.h:15:0,
-                    from fs///attr.c:15:
-   include/linux/fsnotify_backend.h:543:19: note: declared here
-    static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
-                      ^~~~~~~~~~~~~~~
-
-vim +/fsnotify_parent +52 include/linux/fsnotify.h
-
-    40	
-    41	/*
-    42	 * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
-    43	 * an event is on a file/dentry.
-    44	 */
-    45	static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
-    46	{
-    47		struct inode *inode = d_inode(dentry);
-    48	
-    49		if (S_ISDIR(inode->i_mode))
-    50			mask |= FS_ISDIR;
-    51	
-  > 52		fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
-    53		fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-    54	}
-    55	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-
---FL5UXtIhxfXey3p5
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-AAA=
-
---FL5UXtIhxfXey3p5--
