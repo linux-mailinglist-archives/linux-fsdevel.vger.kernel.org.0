@@ -2,141 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78138163A42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC64163A48
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:35:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbgBSCfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 21:35:46 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3016 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726768AbgBSCfp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:35:45 -0500
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 83358F8D75B7100BDEA5;
-        Wed, 19 Feb 2020 10:35:42 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 19 Feb 2020 10:35:42 +0800
-Received: from architecture4 (10.160.196.180) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Wed, 19 Feb 2020 10:35:41 +0800
-Date:   Wed, 19 Feb 2020 10:34:22 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v6 11/16] erofs: Convert compressed files from readpages
- to readahead
-Message-ID: <20200219023422.GA83440@architecture4>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-20-willy@infradead.org>
+        id S1728144AbgBSCfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 21:35:55 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:49488 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728087AbgBSCfy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:35:54 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 4AFEEFF9; Tue, 18 Feb 2020 20:35:52 -0600 (CST)
+Date:   Tue, 18 Feb 2020 20:35:52 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 05/25] user_namespace: refactor map_write()
+Message-ID: <20200219023552.GD19144@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-6-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200217184613.19668-20-willy@infradead.org>
+In-Reply-To: <20200218143411.2389182-6-christian.brauner@ubuntu.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.160.196.180]
-X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 10:46:00AM -0800, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Tue, Feb 18, 2020 at 03:33:51PM +0100, Christian Brauner wrote:
+> Refactor map_write() to prepare for adding fsid mappings support. This mainly
+> factors out various open-coded parts into helpers that can be reused in the
+> follow up patch.
 > 
-> Use the new readahead operation in erofs.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-It looks good to me, although some further optimization exists
-but we could make a straight-forward transform first, and
-I haven't tested the whole series for now...
-Will test it later.
-
-Acked-by: Gao Xiang <gaoxiang25@huawei.com>
-
-Thanks,
-Gao Xiang
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
 > ---
->  fs/erofs/zdata.c | 29 +++++++++--------------------
->  1 file changed, 9 insertions(+), 20 deletions(-)
+> /* v2 */
+> patch not present
 > 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 17f45fcb8c5c..7c02015d501d 100644
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -1303,28 +1303,23 @@ static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
->  	return nr <= sbi->max_sync_decompress_pages;
+> /* v3 */
+> patch added
+> - Jann Horn <jannh@google.com>:
+>   - Split changes to map_write() to implement fsid mappings into three separate
+>     patches: basic fsid helpers, preparatory changes to map_write(), actual
+>     fsid mapping support in map_write().
+> ---
+>  kernel/user_namespace.c | 117 +++++++++++++++++++++++++---------------
+>  1 file changed, 74 insertions(+), 43 deletions(-)
+> 
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 2cfd1e519cc4..e91141262bcc 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -1038,10 +1038,10 @@ static int cmp_extents_reverse(const void *a, const void *b)
 >  }
 >  
-> -static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
-> -			     struct list_head *pages, unsigned int nr_pages)
-> +static void z_erofs_readahead(struct readahead_control *rac)
+>  /**
+> - * sort_idmaps - Sorts an array of idmap entries.
+> + * sort_map - Sorts an array of idmap entries.
+>   * Can only be called if number of mappings exceeds UID_GID_MAP_MAX_BASE_EXTENTS.
+>   */
+> -static int sort_idmaps(struct uid_gid_map *map)
+> +static int sort_map(struct uid_gid_map *map)
 >  {
-> -	struct inode *const inode = mapping->host;
-> +	struct inode *const inode = rac->mapping->host;
->  	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
->  
-> -	bool sync = should_decompress_synchronously(sbi, nr_pages);
-> +	bool sync = should_decompress_synchronously(sbi, readahead_count(rac));
->  	struct z_erofs_decompress_frontend f = DECOMPRESS_FRONTEND_INIT(inode);
-> -	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
-> -	struct page *head = NULL;
-> +	struct page *page, *head = NULL;
->  	LIST_HEAD(pagepool);
->  
-> -	trace_erofs_readpages(mapping->host, lru_to_page(pages)->index,
-> -			      nr_pages, false);
-> +	trace_erofs_readpages(inode, readahead_index(rac),
-> +			readahead_count(rac), false);
->  
-> -	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
-> -
-> -	for (; nr_pages; --nr_pages) {
-> -		struct page *page = lru_to_page(pages);
-> +	f.headoffset = readahead_offset(rac);
->  
-> +	readahead_for_each(rac, page) {
->  		prefetchw(&page->flags);
-> -		list_del(&page->lru);
->  
->  		/*
->  		 * A pure asynchronous readahead is indicated if
-> @@ -1333,11 +1328,6 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
->  		 */
->  		sync &= !(PageReadahead(page) && !head);
->  
-> -		if (add_to_page_cache_lru(page, mapping, page->index, gfp)) {
-> -			list_add(&page->lru, &pagepool);
-> -			continue;
-> -		}
-> -
->  		set_page_private(page, (unsigned long)head);
->  		head = page;
->  	}
-> @@ -1366,11 +1356,10 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
->  
->  	/* clean up the remaining free pages */
->  	put_pages_list(&pagepool);
-> -	return 0;
+>  	if (map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+>  		return 0;
+> @@ -1064,6 +1064,71 @@ static int sort_idmaps(struct uid_gid_map *map)
+>  	return 0;
 >  }
 >  
->  const struct address_space_operations z_erofs_aops = {
->  	.readpage = z_erofs_readpage,
-> -	.readpages = z_erofs_readpages,
-> +	.readahead = z_erofs_readahead,
->  };
+> +static int sort_idmaps(struct uid_gid_map *map)
+> +{
+> +	return sort_map(map);
+> +}
+> +
+> +static int map_from_parent(struct uid_gid_map *new_map,
+> +			   struct uid_gid_map *parent_map)
+> +{
+> +	unsigned idx;
+> +
+> +	/* Map the lower ids from the parent user namespace to the
+> +	 * kernel global id space.
+> +	 */
+> +	for (idx = 0; idx < new_map->nr_extents; idx++) {
+> +		struct uid_gid_extent *e;
+> +		u32 lower_first;
+> +
+> +		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+> +			e = &new_map->extent[idx];
+> +		else
+> +			e = &new_map->forward[idx];
+> +
+> +		lower_first = map_id_range_down(parent_map, e->lower_first, e->count);
+> +
+> +		/* Fail if we can not map the specified extent to
+> +		 * the kernel global id space.
+> +		 */
+> +		if (lower_first == (u32)-1)
+> +			return -EPERM;
+> +
+> +		e->lower_first = lower_first;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int map_into_kids(struct uid_gid_map *id_map,
+> +			 struct uid_gid_map *parent_id_map)
+> +{
+> +	return map_from_parent(id_map, parent_id_map);
+> +}
+> +
+> +static void install_idmaps(struct uid_gid_map *id_map,
+> +			   struct uid_gid_map *new_id_map)
+> +{
+> +	if (new_id_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +		memcpy(id_map->extent, new_id_map->extent,
+> +		       new_id_map->nr_extents * sizeof(new_id_map->extent[0]));
+> +	} else {
+> +		id_map->forward = new_id_map->forward;
+> +		id_map->reverse = new_id_map->reverse;
+> +	}
+> +}
+> +
+> +static void free_idmaps(struct uid_gid_map *new_id_map)
+> +{
+> +	if (new_id_map->nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> +		kfree(new_id_map->forward);
+> +		kfree(new_id_map->reverse);
+> +		new_id_map->forward = NULL;
+> +		new_id_map->reverse = NULL;
+> +		new_id_map->nr_extents = 0;
+> +	}
+> +}
+> +
+>  static ssize_t map_write(struct file *file, const char __user *buf,
+>  			 size_t count, loff_t *ppos,
+>  			 int cap_setid,
+> @@ -1073,7 +1138,6 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+>  	struct seq_file *seq = file->private_data;
+>  	struct user_namespace *ns = seq->private;
+>  	struct uid_gid_map new_map;
+> -	unsigned idx;
+>  	struct uid_gid_extent extent;
+>  	char *kbuf = NULL, *pos, *next_line;
+>  	ssize_t ret;
+> @@ -1191,61 +1255,28 @@ static ssize_t map_write(struct file *file, const char __user *buf,
+>  	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
+>  		goto out;
 >  
+> -	ret = -EPERM;
+> -	/* Map the lower ids from the parent user namespace to the
+> -	 * kernel global id space.
+> -	 */
+> -	for (idx = 0; idx < new_map.nr_extents; idx++) {
+> -		struct uid_gid_extent *e;
+> -		u32 lower_first;
+> -
+> -		if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
+> -			e = &new_map.extent[idx];
+> -		else
+> -			e = &new_map.forward[idx];
+> -
+> -		lower_first = map_id_range_down(parent_map,
+> -						e->lower_first,
+> -						e->count);
+> -
+> -		/* Fail if we can not map the specified extent to
+> -		 * the kernel global id space.
+> -		 */
+> -		if (lower_first == (u32) -1)
+> -			goto out;
+> -
+> -		e->lower_first = lower_first;
+> -	}
+> +	ret = map_into_kids(&new_map, parent_map);
+> +	if (ret)
+> +		goto out;
+>  
+>  	/*
+>  	 * If we want to use binary search for lookup, this clones the extent
+>  	 * array and sorts both copies.
+>  	 */
+>  	ret = sort_idmaps(&new_map);
+> -	if (ret < 0)
+> +	if (ret)
+>  		goto out;
+>  
+>  	/* Install the map */
+> -	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+> -		memcpy(map->extent, new_map.extent,
+> -		       new_map.nr_extents * sizeof(new_map.extent[0]));
+> -	} else {
+> -		map->forward = new_map.forward;
+> -		map->reverse = new_map.reverse;
+> -	}
+> +	install_idmaps(map, &new_map);
+>  	smp_wmb();
+>  	map->nr_extents = new_map.nr_extents;
+>  
+>  	*ppos = count;
+>  	ret = count;
+>  out:
+> -	if (ret < 0 && new_map.nr_extents > UID_GID_MAP_MAX_BASE_EXTENTS) {
+> -		kfree(new_map.forward);
+> -		kfree(new_map.reverse);
+> -		map->forward = NULL;
+> -		map->reverse = NULL;
+> -		map->nr_extents = 0;
+> -	}
+> +	if (ret < 0)
+> +		free_idmaps(&new_map);
+>  
+>  	mutex_unlock(&userns_state_mutex);
+>  	kfree(kbuf);
 > -- 
 > 2.25.0
-> 
-> 
