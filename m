@@ -2,93 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF5B51651C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:40:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BC21651E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:48:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbgBSVkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 16:40:04 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48586 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727274AbgBSVkE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:40:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582148403;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Akm5nZ5Nk5RDJvPlHXdmc1pTXqzcrHwStmylDtS4kdo=;
-        b=Q7FEeBlmVUh0HfH0GHlPoGXauLp7DnFB6j6lWOhAMobuz6Bvil01pYOrKCVXZ5j+ALZb/6
-        LTf2FDXpJx8MyQCpCZ2xsY8CHR+BzRQ7WRv8ZvriohhuqX/gmjvWSTqAruI+K0vJ8/gueG
-        jIRGGzP2zMHrQa2QbkAMqZVZdGyQhWY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-271-lYV3sqb5NxSus3qboGNwYQ-1; Wed, 19 Feb 2020 16:39:58 -0500
-X-MC-Unique: lYV3sqb5NxSus3qboGNwYQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF399800D50;
-        Wed, 19 Feb 2020 21:39:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A04215C1B0;
-        Wed, 19 Feb 2020 21:39:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com>
-References: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com> <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk> <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com> <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com> <241568.1582134931@warthog.procyon.org.uk> <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com> <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com> <252465.1582142281@warthog.procyon.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, jaltman@auristor.com,
-        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
-        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+        id S1727429AbgBSVsk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 16:48:40 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:41866 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726703AbgBSVsj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 16:48:39 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 947E77DD; Wed, 19 Feb 2020 15:48:37 -0600 (CST)
+Date:   Wed, 19 Feb 2020 15:48:37 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+Message-ID: <20200219214837.GA29159@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200219193558.GA27641@mail.hallyn.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <260917.1582148393.1@warthog.procyon.org.uk>
-Date:   Wed, 19 Feb 2020 21:39:53 +0000
-Message-ID: <260918.1582148393@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200219193558.GA27641@mail.hallyn.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> so you _could_ actually just make the rule be something simple like
+On Wed, Feb 19, 2020 at 01:35:58PM -0600, Serge E. Hallyn wrote:
+> On Tue, Feb 18, 2020 at 03:33:46PM +0100, Christian Brauner wrote:
+> > With fsid mappings we can solve this by writing an id mapping of 0
+> > 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
+> > access the kernel will now lookup the mapping for 300000 in the fsid
+> > mapping tables of the user namespace. And since such a mapping exists,
+> > the corresponding files will have correct ownership.
 > 
->    symlink(target, "//datagoeshere")
+> So if I have
 > 
-> being the "create magic autolink directory using "datagoeshere".
+> /proc/self/uid_map: 0 100000 100000
+> /proc/self/fsid_map: 1000 1000 1
 
-Interesting.  I'll ask around to see if this is feasible.  Some applications
-(emacs being one maybe) sometimes appear to store information in symlink
-bodies - I'm not sure if any of those could be a problem.
+Oh, sorry.  Your explanation in 20/25 i think set me straight, though I need
+to think through a few more examples.
 
-Since the mountpoint body is formulaic:
+...
 
-	[%#](<cellname>:)?<volumename>(.readonly|.backup)?.
+> 3. If I create a new file, as nsuid 1000, what will be the inode owning kuid?
 
-maybe I can use that pattern.
+(Note - I edited the quoted txt above to be more precise)
 
-symlink() would be returning a dentry that appears to be a directory, but it
-doesn't look like that should be a problem.
-
-> So then you could again script things with
-> 
->    mknod dirname c X Y
->    echo "datagoeshere" > dirname
-
-This would be tricky to get right as it's not atomic and the second part could
-fail to happen.  For extra fun, another client could interfere between the
-steps (setxattr would be safer than write here).
-
-David
-
+I'm still not quite clear on this.  I believe the fsid mapping will take
+precedence so it'll be uid 1000 ?  Per mount behavior would be nice there,
+but perhaps unwieldy.
