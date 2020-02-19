@@ -2,164 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F19B1638D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 01:59:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AA811638E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 02:02:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgBSA7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 19:59:23 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53932 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726482AbgBSA7W (ORCPT
+        id S1726716AbgBSBCK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 20:02:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39080 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbgBSBCK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 19:59:22 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 368A83A2380;
-        Wed, 19 Feb 2020 11:59:16 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4Dhr-0004cn-HF; Wed, 19 Feb 2020 11:59:15 +1100
-Date:   Wed, 19 Feb 2020 11:59:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
+        Tue, 18 Feb 2020 20:02:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=dmgQq76s5htd6QK1djoTrZsBDESqx9Po29KnZ84sMso=; b=eAZdgCeC8YnlA9szfqlWljjWDh
+        UQdArvzLM0oiT5XqIC/Q7h5+HeHL9h7cGk8uQK7lBmcw6zYNiJPBANRy3Kwp44uDdtkV2GwprxPbm
+        2qK75Ii01IRiWR/ENG9UpNAtQ6GGFmxoDicA6zhQykS1pxRxOwf5Iqo0m6NjHXkdBzku6LESIgg13
+        MNO5VqW3ruk/ciL+0+OSHHUM0uvKmDauMYS1h6HQC5+eUgS66IZUqnL5ZBn4iPhOROjAMtOQnLmUp
+        r0l8D5tGUQYLIWt9/cYhYmOOb/1dYr6JEJYp93FoEhbgXTOlcGKNkDzg1ltXOO9ME1PREkt7eWceP
+        c68pLuUA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4Dkf-0005UF-KW; Wed, 19 Feb 2020 01:02:09 +0000
+Date:   Tue, 18 Feb 2020 17:02:09 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     John Hubbard <jhubbard@nvidia.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
 Subject: Re: [PATCH v6 07/19] mm: Put readahead pages in cache earlier
-Message-ID: <20200219005915.GV10776@dread.disaster.area>
+Message-ID: <20200219010209.GI24185@bombadil.infradead.org>
 References: <20200217184613.19668-1-willy@infradead.org>
  <20200217184613.19668-12-willy@infradead.org>
- <20200218061459.GM10776@dread.disaster.area>
- <20200218154222.GQ7778@bombadil.infradead.org>
+ <e3671faa-dfb3-ceba-3120-a445b2982a95@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218154222.GQ7778@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=vUdR-S3ouboEXt6xVngA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <e3671faa-dfb3-ceba-3120-a445b2982a95@nvidia.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 07:42:22AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 05:14:59PM +1100, Dave Chinner wrote:
-> > On Mon, Feb 17, 2020 at 10:45:52AM -0800, Matthew Wilcox wrote:
-> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > 
-> > > At allocation time, put the pages in the cache unless we're using
-> > > ->readpages.  Add the readahead_for_each() iterator for the benefit of
-> > > the ->readpage fallback.  This iterator supports huge pages, even though
-> > > none of the filesystems to be converted do yet.
-> > 
-> > This could be better written - took me some time to get my head
-> > around it and the code.
-> > 
-> > "When populating the page cache for readahead, mappings that don't
-> > use ->readpages need to have their pages added to the page cache
-> > before ->readpage is called. Do this insertion earlier so that the
-> > pages can be looked up immediately prior to ->readpage calls rather
-> > than passing them on a linked list. This early insert functionality
-> > is also required by the upcoming ->readahead method that will
-> > replace ->readpages.
-> > 
-> > Optimise and simplify the readpage loop by adding a
-> > readahead_for_each() iterator to provide the pages we need to read.
-> > This iterator also supports huge pages, even though none of the
-> > filesystems have been converted to use them yet."
+On Tue, Feb 18, 2020 at 04:01:43PM -0800, John Hubbard wrote:
+> How about this instead? It uses the "for" loop fully and more naturally,
+> and is easier to read. And it does the same thing:
 > 
-> Thanks, I'll use that.
+> static inline struct page *readahead_page(struct readahead_control *rac)
+> {
+> 	struct page *page;
 > 
-> > > +static inline struct page *readahead_page(struct readahead_control *rac)
-> > > +{
-> > > +	struct page *page;
-> > > +
-> > > +	if (!rac->_nr_pages)
-> > > +		return NULL;
-> > 
-> > Hmmmm.
-> > 
-> > > +
-> > > +	page = xa_load(&rac->mapping->i_pages, rac->_start);
-> > > +	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> > > +	rac->_batch_count = hpage_nr_pages(page);
-> > 
-> > So we could have rac->_nr_pages = 2, and then we get an order 2
-> > large page returned, and so rac->_batch_count = 4.
+> 	if (!rac->_nr_pages)
+> 		return NULL;
 > 
-> Well, no, we couldn't.  rac->_nr_pages is incremented by 4 when we add
-> an order-2 page to the readahead.
-
-I don't see any code that does that. :)
-
-i.e. we aren't actually putting high order pages into the page
-cache here - page_alloc() allocates order-0 pages) - so there's
-nothing in the patch that tells me how rac->_nr_pages behaves
-when allocating large pages...
-
-IOWs, we have an undocumented assumption in the implementation...
-
-> I can put a
-> 	BUG_ON(rac->_batch_count > rac->_nr_pages)
-> in here to be sure to catch any logic error like that.
-
-Definitely necessary given that we don't insert large pages for
-readahead yet. A comment explaining the assumptions that the
-code makes for large pages is probably in order, too.
-
-> > > -		page->index = offset;
-> > > -		list_add(&page->lru, &page_pool);
-> > > +		if (use_list) {
-> > > +			page->index = offset;
-> > > +			list_add(&page->lru, &page_pool);
-> > > +		} else if (add_to_page_cache_lru(page, mapping, offset,
-> > > +					gfp_mask) < 0) {
-> > > +			put_page(page);
-> > > +			goto read;
-> > > +		}
-> > 
-> > Ok, so that's why you put read code at the end of the loop. To turn
-> > the code into spaghetti :/
-> > 
-> > How much does this simplify down when we get rid of ->readpages and
-> > can restructure the loop? This really seems like you're trying to
-> > flatten two nested loops into one by the use of goto....
+> 	page = xa_load(&rac->mapping->i_pages, rac->_start);
+> 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> 	rac->_batch_count = hpage_nr_pages(page);
 > 
-> I see it as having two failure cases in this loop.  One for "page is
-> already present" (which already existed) and one for "allocated a page,
-> but failed to add it to the page cache" (which used to be done later).
-> I didn't want to duplicate the "call read_pages()" code.  So I reshuffled
-> the code rather than add a nested loop.  I don't think the nested loop
-> is easier to read (we'll be at 5 levels of indentation for some statements).
-> Could do it this way ...
+> 	return page;
+> }
+> 
+> static inline struct page *readahead_next(struct readahead_control *rac)
+> {
+> 	rac->_nr_pages -= rac->_batch_count;
+> 	rac->_start += rac->_batch_count;
+> 
+> 	return readahead_page(rac);
+> }
+> 
+> #define readahead_for_each(rac, page)			\
+> 	for (page = readahead_page(rac); page != NULL;	\
+> 	     page = readahead_page(rac))
 
-Can we move the update of @rac inside read_pages()? The next
-start offset^Windex we start at is rac._start + rac._nr_pages, right?
+I'm assuming you mean 'page = readahead_next(rac)' on that second line.
 
-so read_pages() could do:
+If you keep reading all the way to the penultimate patch, it won't work
+for iomap ... at least not in the same way.
 
-{
-	if (readahead_count(rac)) {
-		/* do readahead */
-	}
-
-	/* advance the readahead cursor */
-	rac->_start += rac->_nr_pages;
-	rac._nr_pages = 0;
-}
-
-and then we only need to call read_pages() in these cases and so
-the requirement for avoiding duplicating code is avoided...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
