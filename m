@@ -2,109 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BDB163A4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02031163A5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 03:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbgBSCgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 21:36:22 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:49514 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbgBSCgW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 21:36:22 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id E304F1090; Tue, 18 Feb 2020 20:36:19 -0600 (CST)
-Date:   Tue, 18 Feb 2020 20:36:19 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
-        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v3 07/25] proc: task_state(): use from_kfs{g,u}id_munged
-Message-ID: <20200219023619.GE19144@mail.hallyn.com>
-References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
- <20200218143411.2389182-8-christian.brauner@ubuntu.com>
+        id S1728031AbgBSClN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 21:41:13 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2966 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726799AbgBSClN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:41:13 -0500
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 245B626217D9D6DA7E4E;
+        Wed, 19 Feb 2020 10:41:08 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 19 Feb 2020 10:41:07 +0800
+Received: from architecture4 (10.160.196.180) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 19 Feb 2020 10:41:07 +0800
+Date:   Wed, 19 Feb 2020 10:39:48 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v6 12/19] erofs: Convert uncompressed files from
+ readpages to readahead
+Message-ID: <20200219023948.GB83440@architecture4>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-21-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200218143411.2389182-8-christian.brauner@ubuntu.com>
+In-Reply-To: <20200217184613.19668-21-willy@infradead.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.160.196.180]
+X-ClientProxiedBy: dggeme720-chm.china.huawei.com (10.1.199.116) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 03:33:53PM +0100, Christian Brauner wrote:
-> If fsid mappings have been written, this will cause proc to look at fsid
-> mappings for the user namespace. If no fsid mappings have been written the
-> behavior is as before.
+On Mon, Feb 17, 2020 at 10:46:01AM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Here is part of the output from /proc/<pid>/status from the initial user
-> namespace for systemd running in an unprivileged container as user namespace
-> root with id mapping 0 100000 100000 and fsid mapping 0 300000 100000:
+> Use the new readahead operation in erofs
 > 
-> Name:   systemd
-> Umask:  0000
-> State:  S (sleeping)
-> Tgid:   13023
-> Ngid:   0
-> Pid:    13023
-> PPid:   13008
-> TracerPid:      0
-> Uid:    100000  100000  100000  300000
-> Gid:    100000  100000  100000  300000
-> FDSize: 64
-> Groups:
-> 
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-
-Acked-by: Serge Hallyn <serge@hallyn.com>
-
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
-> /* v2 */
-> unchanged
+
+It looks good to me, and will test it later as well..
+
+Acked-by: Gao Xiang <gaoxiang25@huawei.com>
+
+Thanks,
+Gao Xiang
+
+>  fs/erofs/data.c              | 39 +++++++++++++-----------------------
+>  fs/erofs/zdata.c             |  2 +-
+>  include/trace/events/erofs.h |  6 +++---
+>  3 files changed, 18 insertions(+), 29 deletions(-)
 > 
-> /* v3 */
-> unchanged
-> ---
->  fs/proc/array.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/proc/array.c b/fs/proc/array.c
-> index 5efaf3708ec6..d4a04f85a67e 100644
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -91,6 +91,7 @@
->  #include <linux/string_helpers.h>
->  #include <linux/user_namespace.h>
->  #include <linux/fs_struct.h>
-> +#include <linux/fsuidgid.h>
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> index fc3a8d8064f8..82ebcee9d178 100644
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -280,47 +280,36 @@ static int erofs_raw_access_readpage(struct file *file, struct page *page)
+>  	return 0;
+>  }
 >  
->  #include <asm/pgtable.h>
->  #include <asm/processor.h>
-> @@ -193,11 +194,11 @@ static inline void task_state(struct seq_file *m, struct pid_namespace *ns,
->  	seq_put_decimal_ull(m, "\nUid:\t", from_kuid_munged(user_ns, cred->uid));
->  	seq_put_decimal_ull(m, "\t", from_kuid_munged(user_ns, cred->euid));
->  	seq_put_decimal_ull(m, "\t", from_kuid_munged(user_ns, cred->suid));
-> -	seq_put_decimal_ull(m, "\t", from_kuid_munged(user_ns, cred->fsuid));
-> +	seq_put_decimal_ull(m, "\t", from_kfsuid_munged(user_ns, cred->fsuid));
->  	seq_put_decimal_ull(m, "\nGid:\t", from_kgid_munged(user_ns, cred->gid));
->  	seq_put_decimal_ull(m, "\t", from_kgid_munged(user_ns, cred->egid));
->  	seq_put_decimal_ull(m, "\t", from_kgid_munged(user_ns, cred->sgid));
-> -	seq_put_decimal_ull(m, "\t", from_kgid_munged(user_ns, cred->fsgid));
-> +	seq_put_decimal_ull(m, "\t", from_kfsgid_munged(user_ns, cred->fsgid));
->  	seq_put_decimal_ull(m, "\nFDSize:\t", max_fds);
+> -static int erofs_raw_access_readpages(struct file *filp,
+> -				      struct address_space *mapping,
+> -				      struct list_head *pages,
+> -				      unsigned int nr_pages)
+> +static void erofs_raw_access_readahead(struct readahead_control *rac)
+>  {
+>  	erofs_off_t last_block;
+>  	struct bio *bio = NULL;
+> -	gfp_t gfp = readahead_gfp_mask(mapping);
+> -	struct page *page = list_last_entry(pages, struct page, lru);
+> -
+> -	trace_erofs_readpages(mapping->host, page, nr_pages, true);
+> +	struct page *page;
 >  
->  	seq_puts(m, "\nGroups:\t");
+> -	for (; nr_pages; --nr_pages) {
+> -		page = list_entry(pages->prev, struct page, lru);
+> +	trace_erofs_readpages(rac->mapping->host, readahead_index(rac),
+> +			readahead_count(rac), true);
+>  
+> +	readahead_for_each(rac, page) {
+>  		prefetchw(&page->flags);
+> -		list_del(&page->lru);
+>  
+> -		if (!add_to_page_cache_lru(page, mapping, page->index, gfp)) {
+> -			bio = erofs_read_raw_page(bio, mapping, page,
+> -						  &last_block, nr_pages, true);
+> +		bio = erofs_read_raw_page(bio, rac->mapping, page, &last_block,
+> +				readahead_count(rac), true);
+>  
+> -			/* all the page errors are ignored when readahead */
+> -			if (IS_ERR(bio)) {
+> -				pr_err("%s, readahead error at page %lu of nid %llu\n",
+> -				       __func__, page->index,
+> -				       EROFS_I(mapping->host)->nid);
+> +		/* all the page errors are ignored when readahead */
+> +		if (IS_ERR(bio)) {
+> +			pr_err("%s, readahead error at page %lu of nid %llu\n",
+> +			       __func__, page->index,
+> +			       EROFS_I(rac->mapping->host)->nid);
+>  
+> -				bio = NULL;
+> -			}
+> +			bio = NULL;
+>  		}
+>  
+> -		/* pages could still be locked */
+>  		put_page(page);
+>  	}
+> -	DBG_BUGON(!list_empty(pages));
+>  
+>  	/* the rare case (end in gaps) */
+>  	if (bio)
+>  		submit_bio(bio);
+> -	return 0;
+>  }
+>  
+>  static int erofs_get_block(struct inode *inode, sector_t iblock,
+> @@ -358,7 +347,7 @@ static sector_t erofs_bmap(struct address_space *mapping, sector_t block)
+>  /* for uncompressed (aligned) files and raw access for other files */
+>  const struct address_space_operations erofs_raw_access_aops = {
+>  	.readpage = erofs_raw_access_readpage,
+> -	.readpages = erofs_raw_access_readpages,
+> +	.readahead = erofs_raw_access_readahead,
+>  	.bmap = erofs_bmap,
+>  };
+>  
+> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+> index 80e47f07d946..17f45fcb8c5c 100644
+> --- a/fs/erofs/zdata.c
+> +++ b/fs/erofs/zdata.c
+> @@ -1315,7 +1315,7 @@ static int z_erofs_readpages(struct file *filp, struct address_space *mapping,
+>  	struct page *head = NULL;
+>  	LIST_HEAD(pagepool);
+>  
+> -	trace_erofs_readpages(mapping->host, lru_to_page(pages),
+> +	trace_erofs_readpages(mapping->host, lru_to_page(pages)->index,
+>  			      nr_pages, false);
+>  
+>  	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
+> diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
+> index 27f5caa6299a..bf9806fd1306 100644
+> --- a/include/trace/events/erofs.h
+> +++ b/include/trace/events/erofs.h
+> @@ -113,10 +113,10 @@ TRACE_EVENT(erofs_readpage,
+>  
+>  TRACE_EVENT(erofs_readpages,
+>  
+> -	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
+> +	TP_PROTO(struct inode *inode, pgoff_t start, unsigned int nrpage,
+>  		bool raw),
+>  
+> -	TP_ARGS(inode, page, nrpage, raw),
+> +	TP_ARGS(inode, start, nrpage, raw),
+>  
+>  	TP_STRUCT__entry(
+>  		__field(dev_t,		dev	)
+> @@ -129,7 +129,7 @@ TRACE_EVENT(erofs_readpages,
+>  	TP_fast_assign(
+>  		__entry->dev	= inode->i_sb->s_dev;
+>  		__entry->nid	= EROFS_I(inode)->nid;
+> -		__entry->start	= page->index;
+> +		__entry->start	= start;
+>  		__entry->nrpage	= nrpage;
+>  		__entry->raw	= raw;
+>  	),
 > -- 
 > 2.25.0
+> 
+> 
