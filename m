@@ -2,127 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E779164B7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 18:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A99AA164BB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 18:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgBSRGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 12:06:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37054 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgBSRGn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:06:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6hWL64aU7/cD1s4UTpPss89s1pka8CcWGCJ5BHjUC9M=; b=YD6KASfCXNzBE2g7U8C3OPAIMa
-        RN+ihaDs+TqA1PVmJY/G+571Br5Ulv0XQc9EhsoYwQWJIGDt5eVY3v+7OW0ZDPPydpAvd+XANKK7o
-        Yieli5fHS4G8IkuA6ZGWdtYi3uF69BcBtjkIg1txQfTuEC38FUNQpMva7d6LZIwTpJqOi2eTnjQ26
-        vNRvjsTCftaqhGEu3hEvctNIgYhTUrWaBzOu7hsE+5KmGRNAeS2s5R2DU2EMQh/fz/4XG6YC8Yfkl
-        lb7zA1cZfGKpjcKVeyriFSjz0Jf9srJLBGVWu7kMAFznlMRG+bjJHweFWDFekIpMDNj5yFPnAlDOG
-        rO8cGwug==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4So6-00016p-If; Wed, 19 Feb 2020 17:06:42 +0000
-Date:   Wed, 19 Feb 2020 09:06:42 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 17/19] iomap: Restructure iomap_readpages_actor
-Message-ID: <20200219170642.GS24185@bombadil.infradead.org>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200217184613.19668-31-willy@infradead.org>
- <20200219032900.GE10776@dread.disaster.area>
- <20200219060415.GO24185@bombadil.infradead.org>
- <20200219064005.GL10776@dread.disaster.area>
+        id S1726739AbgBSRTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 12:19:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726613AbgBSRTF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 12:19:05 -0500
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 507C524685
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 17:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582132744;
+        bh=pdkNY2hNSnY9gfk2NzrHjgF6xJM4H9Y/ewvIWmreT30=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vnO2O4ARZ57+m2WKOUb7GhddjqaoDXVsuMXfiNZeEGx2CUEhSrcOLwk7vQ6jehuVY
+         7ZAQf5jzJfdbS7ByhaI5MGieQG5Akj0KliXYRwXHNlnQNEhGb87pr//Tw8tqFq6uyH
+         kyfrK/detgBoqWdOmwxa2BWw5+K7YNOlQZ/t1UXw=
+Received: by mail-wm1-f45.google.com with SMTP id c84so1514526wme.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 09:19:04 -0800 (PST)
+X-Gm-Message-State: APjAAAXcV9pzZRWmCo29C+Tzm37cTa/4bq4ZWVdyG8shUUtwiRCKWzsR
+        OxWBAqgTdE9EJAy8WAd+q8vQFP7jdZokGvi/iuGfJw==
+X-Google-Smtp-Source: APXvYqzBqeT3cBwt5QLq0QxxbNo0Ff+khHeTRw3LvaqWbB7JAMELbBnkX4mD5JEjB+jVyyVW16JjTf+gEg/eDtdINSk=
+X-Received: by 2002:a1c:b0c3:: with SMTP id z186mr10898715wme.36.1582132742597;
+ Wed, 19 Feb 2020 09:19:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219064005.GL10776@dread.disaster.area>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+ <20200218143411.2389182-10-christian.brauner@ubuntu.com> <20200219024233.GA19334@mail.hallyn.com>
+ <20200219120604.vqudwaeppebvisco@wittgenstein>
+In-Reply-To: <20200219120604.vqudwaeppebvisco@wittgenstein>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 19 Feb 2020 09:18:51 -0800
+X-Gmail-Original-Message-ID: <CALCETrW-XPkBMs30vk+Aiv+jA5i7TjHOYCgz0Ud6d0geaYte=g@mail.gmail.com>
+Message-ID: <CALCETrW-XPkBMs30vk+Aiv+jA5i7TjHOYCgz0Ud6d0geaYte=g@mail.gmail.com>
+Subject: Re: [PATCH v3 09/25] fs: add is_userns_visible() helper
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 05:40:05PM +1100, Dave Chinner wrote:
-> Ok, that's what the ctx.cur_page_in_bio check is used to detect i.e.
-> if we've got a page that the readahead cursor points at, and we
-> haven't actually added it to a bio, then we can leave it to the
-> read_pages() to unlock and clean up. If it's in a bio, then IO
-> completion will unlock it and so we only have to drop the submission
-> reference and move the readahead cursor forwards so read_pages()
-> doesn't try to unlock this page. i.e:
-> 
-> 	/* clean up partial page submission failures */
-> 	if (ctx.cur_page && ctx.cur_page_in_bio) {
-> 		put_page(ctx.cur_page);
-> 		readahead_next(rac);
-> 	}
-> 
-> looks to me like it will handle the case of "ret == 0" in the actor
-> function just fine.
+On Wed, Feb 19, 2020 at 4:06 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Tue, Feb 18, 2020 at 08:42:33PM -0600, Serge Hallyn wrote:
+> > On Tue, Feb 18, 2020 at 03:33:55PM +0100, Christian Brauner wrote:
+> > > Introduce a helper which makes it possible to detect fileystems whose
+> > > superblock is visible in multiple user namespace. This currently only
+> > > means proc and sys. Such filesystems usually have special semantics so their
+> > > behavior will not be changed with the introduction of fsid mappings.
+> >
+> > Hi,
+> >
+> > I'm afraid I've got a bit of a hangup about the terminology here.  I
+> > *think* what you mean is that SB_I_USERNS_VISIBLE is an fs whose uids are
+> > always translated per the id mappings, not fsid mappings.  But when I see
+>
+> Correct!
+>
+> > the name it seems to imply that !SB_I_USERNS_VISIBLE filesystems can't
+> > be seen by other namespaces at all.
+> >
+> > Am I right in my first interpretation?  If so, can we talk about the
+> > naming?
+>
+> Yep, your first interpretation is right. What about: wants_idmaps()
 
-Here's what I ended up with:
+Maybe fsidmap_exempt()?
 
-@@ -400,15 +400,9 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-                void *data, struct iomap *iomap, struct iomap *srcmap)
- {
-        struct iomap_readpage_ctx *ctx = data;
--       loff_t done, ret;
--
--       for (done = 0; done < length; done += ret) {
--               if (ctx->cur_page && offset_in_page(pos + done) == 0) {
--                       if (!ctx->cur_page_in_bio)
--                               unlock_page(ctx->cur_page);
--                       put_page(ctx->cur_page);
--                       ctx->cur_page = NULL;
--               }
-+       loff_t ret, done = 0;
-+
-+       while (done < length) {
-                if (!ctx->cur_page) {
-                        ctx->cur_page = iomap_next_page(inode, ctx->pages,
-                                        pos, length, &done);
-@@ -418,6 +412,20 @@ iomap_readpages_actor(struct inode *inode, loff_t pos, loff_t length,
-                }
-                ret = iomap_readpage_actor(inode, pos + done, length - done,
-                                ctx, iomap, srcmap);
-+               done += ret;
-+
-+               /* Keep working on a partial page */
-+               if (ret && offset_in_page(pos + done))
-+                       continue;
-+
-+               if (!ctx->cur_page_in_bio)
-+                       unlock_page(ctx->cur_page);
-+               put_page(ctx->cur_page);
-+               ctx->cur_page = NULL;
-+
-+               /* Don't loop forever if we made no progress */
-+               if (WARN_ON(!ret))
-+                       break;
-        }
- 
-        return done;
-@@ -451,11 +459,7 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
- done:
-        if (ctx.bio)
-                submit_bio(ctx.bio);
--       if (ctx.cur_page) {
--               if (!ctx.cur_page_in_bio)
--                       unlock_page(ctx.cur_page);
--               put_page(ctx.cur_page);
--       }
-+       BUG_ON(ctx.cur_page);
- 
-        /*
-         * Check that we didn't lose a page due to the arcance calling
-
-so we'll WARN if we get a ret == 0 (matching ->readpage), and we'll
-BUG if we ever see a page being leaked out of readpages_actor, which
-is a thing that should never happen and we definitely want to be noisy
-about if it does.
+I still haven't convinced myself that any of the above is actually
+correct behavior, especially when people do things like creating
+setuid binaries.
