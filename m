@@ -2,131 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DDD164242
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 11:37:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F108164274
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 11:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgBSKhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 05:37:09 -0500
-Received: from mail-wm1-f48.google.com ([209.85.128.48]:54617 "EHLO
-        mail-wm1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgBSKhJ (ORCPT
+        id S1726671AbgBSKn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 05:43:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35730 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbgBSKn4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 05:37:09 -0500
-Received: by mail-wm1-f48.google.com with SMTP id n3so17621wmk.4;
-        Wed, 19 Feb 2020 02:37:07 -0800 (PST)
+        Wed, 19 Feb 2020 05:43:56 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b17so76412wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 02:43:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YR8HyDW/1JEJwc8Sq5lAsfNmZdjey8txPG9y+rKXtEo=;
-        b=Q3HPkrlIVqTM5/ph1qsmWRZI8SRyEQ4JRj7tXLmq4B548T01sn2x6P9Rw6eneQW2MI
-         o3xauSlYv17dtcUAuY/Me0JncmDhAUgtFPsXWfaT1pgYc2Zn5IAzoxoRbYitXLn02OAm
-         InoxsdZPJcS7FrJHFrKOEaJM/mzWhSRUXQ/QF9X4yoUAGMECT/vapvXYJPegg9SLfCN8
-         DOfjHO1/5r4aDELgQY2z21kZAZX1+UmK9oQBS2g4RIzEHmAxyx5CR3vvunaEn6MgXtfR
-         h/LsSvB+WcjP1hJBj7MQJ2AieSKcufViVILUsWZVyFBnD5cT1m6w+NPzXUegVOlt6LdE
-         2gQQ==
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=uu178h4Sn9VpLsAwrPceV0KSap9/ps5hFk6MJzLCOtU=;
+        b=02bdATzxAmoFVgM99p2MGiOluR4xHHNS4c5NfrSi5BxO4RkYbZ3BBjd1lob/gTFE92
+         nWHXI33K66qyD+N6M8F+E3140V4WAGc4yJzS9ZHjUEc6UlCzJbBvcs2R9HgVIFm8qxEc
+         WaSoY4g4ZJ6vsivGbNfVQ1tMkz+VkFnfFspX0Z0B4vZvx9IYUJTVztOINVubutus35Qs
+         09Ci8IJE0V/r5OFWfFLh9GjgKLL08p6UjQnc0OYtYEK1u8vsICytra8wXW+0FfK/utAh
+         /YWf8djFy29yAMuz6eDs3EQfZVIRpoffMgSUzReLi4Qaswtnv6vCecBFIQHyIP3RfTK8
+         CqZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YR8HyDW/1JEJwc8Sq5lAsfNmZdjey8txPG9y+rKXtEo=;
-        b=Gk9qFRB0RD9mYxNqxoPKu8wWsoqsDh/dsf2vSwjfCKn3U/rlIYL1nXeracaBo1zJna
-         YSYt1SHWh4jbtlpjURXccXijIXFC7KqEON4FZqjLzRN/SdLGOsx8CihC6heSxU5XqRI6
-         ubZOyGuOeqO3TNq2mrpmAoKUsq8shxJZGPYaDT4hE8ISyUNJZp68NEAB+tkhNb+YD26T
-         xNgugnYPzmgevNR6D5k86W4ulrH3L0jDRS7G3sGVVUgAlxTBGOvQVRoAzHgr2XPMIiH3
-         OpIJet3RspQWnOijdRPvbT94hA5n591PjWPLMC+jGI+BIgLFgPl2Hehs09U8NeAbyzCg
-         P2QA==
-X-Gm-Message-State: APjAAAUtAsyWcPAD0gx1YYNDHEaTnmCTf7iYMLX+5bZeGLAT+FVldyIV
-        UXr896OdapXbmOo9KQIiyO/KY+olQcE=
-X-Google-Smtp-Source: APXvYqxzNgICRLz31TuNCbiNHXiNhH0Lyu27oebKWdTKttePk1LwZrftmpiEAUwwZ9dt0dR5LM8CXQ==
-X-Received: by 2002:a7b:c778:: with SMTP id x24mr3735887wmk.115.1582108626841;
-        Wed, 19 Feb 2020 02:37:06 -0800 (PST)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id d22sm2297956wmd.39.2020.02.19.02.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 02:37:05 -0800 (PST)
-Date:   Wed, 19 Feb 2020 10:37:04 +0000
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Avi Kivity <avi@scylladb.com>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=uu178h4Sn9VpLsAwrPceV0KSap9/ps5hFk6MJzLCOtU=;
+        b=AlDW0nApkZklf/v34bomKbndadf67chvLrDmLjUDJZ52SOP0yLz7gicg5J2MLF9H64
+         H+t6J9NO/hLTofFK/Bvgs2EiDJ6kWlUczTQbEj7/5Q7jpwOJ8zys6O5rrHGHZB2HV+l1
+         DVMFtHL7ZMns7xMdy25Ifq5RiKDwTVw7xYcBcbfOpH4g8KLrKWQrh2MiJ4aiv8pvuZnb
+         JiEP3TXwRi77fRjrjBJXRbMZzRxthk3pBNK8O17zodmrJCxDZEPZfq7SoySb8v/0IKWE
+         fm/lpN9Z4pPoEPqa4kL4ZyWy+Ntyx/AJEjCEAzFGlZyKjmQDYua0pcIrCKCs2xq6mk1U
+         84SQ==
+X-Gm-Message-State: APjAAAWguXizU9JgTDpuFDUdFX67LknoTl7azb/zQICZ4XGfzvQxVop7
+        LGvD7JUAZ2kISofwQ0AZO6Xa9A==
+X-Google-Smtp-Source: APXvYqyGKqyBbQFNU7n7BCFc+gH0YF3RVTIAFIrc3i0FwABXFz2+PyclndFMVuYMcYfqybMtUM4iXA==
+X-Received: by 2002:a7b:cab1:: with SMTP id r17mr9217850wml.116.1582109034556;
+        Wed, 19 Feb 2020 02:43:54 -0800 (PST)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id h2sm2547507wrt.45.2020.02.19.02.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 02:43:53 -0800 (PST)
+Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
+To:     Stefan Hajnoczi <stefanha@gmail.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
         linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Davide Libenzi <davidel@xmailserver.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC] eventfd: add EFD_AUTORESET flag
-Message-ID: <20200219103704.GA1076032@stefanha-x1.localdomain>
 References: <20200129172010.162215-1-stefanha@redhat.com>
  <66566792-58a4-bf65-6723-7d2887c84160@redhat.com>
  <20200212102912.GA464050@stefanha-x1.localdomain>
  <156cb709-282a-ddb6-6f34-82b4bb211f73@redhat.com>
  <cadb4320-4717-1a41-dfb5-bb782fd0a5da@scylladb.com>
+ <20200219103704.GA1076032@stefanha-x1.localdomain>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+Message-ID: <c5ea733d-b766-041b-30b9-a9a9b5167462@scylladb.com>
+Date:   Wed, 19 Feb 2020 12:43:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
-Content-Disposition: inline
-In-Reply-To: <cadb4320-4717-1a41-dfb5-bb782fd0a5da@scylladb.com>
+In-Reply-To: <20200219103704.GA1076032@stefanha-x1.localdomain>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---bp/iNruPH9dso1Pn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 19/02/2020 12.37, Stefan Hajnoczi wrote:
+> On Wed, Feb 12, 2020 at 12:54:30PM +0200, Avi Kivity wrote:
+>> On 12/02/2020 12.47, Paolo Bonzini wrote:
+>>> On 12/02/20 11:29, Stefan Hajnoczi wrote:
+>>>> On Wed, Feb 12, 2020 at 09:31:32AM +0100, Paolo Bonzini wrote:
+>>>>> On 29/01/20 18:20, Stefan Hajnoczi wrote:
+>>>>>> +	/* Semaphore semantics don't make sense when autoreset is enabled */
+>>>>>> +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
+>>>>>> +		return -EINVAL;
+>>>>>> +
+>>>>> I think they do, you just want to subtract 1 instead of setting the
+>>>>> count to 0.  This way, writing 1 would be the post operation on the
+>>>>> semaphore, while poll() would be the wait operation.
+>>>> True!  Then EFD_AUTORESET is not a fitting name.  EFD_AUTOREAD or
+>>>> EFD_POLL_READS?
+>>> Avi's suggestion also makes sense.  Switching the event loop from poll()
+>>> to IORING_OP_POLL_ADD would be good on its own, and then you could make
+>>> it use IORING_OP_READV for eventfds.
+>>>
+>>> In QEMU parlance, perhaps you need a different abstraction than
+>>> EventNotifier (let's call it WakeupNotifier) which would also use
+>>> eventfd but it would provide a smaller API.  Thanks to the smaller API,
+>>> it would not need EFD_NONBLOCK, unlike the regular EventNotifier, and it
+>>> could either set up a poll() handler calling read(), or use
+>>> IORING_OP_READV when io_uring is in use.
+>>>
+>> Just to be clear, for best performance don't use IORING_OP_POLL_ADD, just
+>> IORING_OP_READ. That's what you say in the second paragraph but the first
+>> can be misleading.
 
-On Wed, Feb 12, 2020 at 12:54:30PM +0200, Avi Kivity wrote:
->=20
-> On 12/02/2020 12.47, Paolo Bonzini wrote:
-> > On 12/02/20 11:29, Stefan Hajnoczi wrote:
-> > > On Wed, Feb 12, 2020 at 09:31:32AM +0100, Paolo Bonzini wrote:
-> > > > On 29/01/20 18:20, Stefan Hajnoczi wrote:
-> > > > > +	/* Semaphore semantics don't make sense when autoreset is enabl=
-ed */
-> > > > > +	if ((flags & EFD_SEMAPHORE) && (flags & EFD_AUTORESET))
-> > > > > +		return -EINVAL;
-> > > > > +
-> > > > I think they do, you just want to subtract 1 instead of setting the
-> > > > count to 0.  This way, writing 1 would be the post operation on the
-> > > > semaphore, while poll() would be the wait operation.
-> > > True!  Then EFD_AUTORESET is not a fitting name.  EFD_AUTOREAD or
-> > > EFD_POLL_READS?
-> > Avi's suggestion also makes sense.  Switching the event loop from poll()
-> > to IORING_OP_POLL_ADD would be good on its own, and then you could make
-> > it use IORING_OP_READV for eventfds.
-> >=20
-> > In QEMU parlance, perhaps you need a different abstraction than
-> > EventNotifier (let's call it WakeupNotifier) which would also use
-> > eventfd but it would provide a smaller API.  Thanks to the smaller API,
-> > it would not need EFD_NONBLOCK, unlike the regular EventNotifier, and it
-> > could either set up a poll() handler calling read(), or use
-> > IORING_OP_READV when io_uring is in use.
-> >=20
->=20
-> Just to be clear, for best performance don't use IORING_OP_POLL_ADD, just
-> IORING_OP_READ. That's what you say in the second paragraph but the first
-> can be misleading.
 
-Thanks, that's a nice idea!  I already have experimental io_uring fd
-monitoring code written for QEMU and will extend it to use IORING_OP_READ.
+Actually it turns out that current uring OP_READ throws the work into a 
+workqueue. Jens is fixing that now.
 
-Stefan
 
---bp/iNruPH9dso1Pn
-Content-Type: application/pgp-signature; name="signature.asc"
+> Thanks, that's a nice idea!  I already have experimental io_uring fd
+> monitoring code written for QEMU and will extend it to use IORING_OP_READ.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5ND9AACgkQnKSrs4Gr
-c8gMHAf/f9UuwAwjiMV/pwZZbwcYseAmnQ2FPZYE5HhiWScgJAg19otfE4JxYwR5
-/NhXUNyYhp7sa0+fB+/aHJF/0mpIY70Mn1PX2umT7kb4ZpP6Qel0ZyVRuNOSp+k5
-Wm19LAvKD4AyVu2Kxd4RJpibSu+UYelAT3Nh1d/c8Grrf0zHdcAj4Y4YwfTao1Xo
-kPgrIWGOPS7qxvS+fyg9ifT13LfhwFhpP3679AlOhUozQUrxnM77G8ehAOJQV8mS
-Ae+//m8fs/RVH2SRNgy7uRIr/v8pWdGt241pW8507oFHJChsRLFhNXJIWHP0dlUU
-xHILARbPURoXO+KG1YPtyO2Y+16cZQ==
-=5mbR
------END PGP SIGNATURE-----
+Note linux-aio can do IOCB_CMD_POLL, starting with 4.19.
 
---bp/iNruPH9dso1Pn--
+
