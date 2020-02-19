@@ -2,93 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B8F164EE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 20:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F0A164EFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 20:36:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgBST0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 14:26:40 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36187 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbgBST0j (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 14:26:39 -0500
-Received: by mail-lj1-f193.google.com with SMTP id r19so1611185ljg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 11:26:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1fTub4GYfjONmIT82CPg1N7dCoXEnM2Sw2O8KqYucXw=;
-        b=TTXA143+I9mRmEBx9/1NhLISHKMsH6waUZcmcpT1BguCNEKTR0hF7JmV5HoBZEGz3o
-         db9fi0sUaay+pAz0CQoHWY2cCDHTPEMKkMTVnGzY174vOn3S+TeHtv27+wikNuljtZEX
-         gzePqVGy4l+pJiMwf4qLcoz9ecA3N8Y267gYc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1fTub4GYfjONmIT82CPg1N7dCoXEnM2Sw2O8KqYucXw=;
-        b=q5cIS/HjCOVlhCat1WauTOmp7AY7+ORaQp4LKvuJTvreGSx4mLLZ4u9rJLKONvsACb
-         1Z3OtIblyfCionF427kkwQ1e0tvlmlWzGg8k5G7fS0dkXLx0GtGWxcN8xia95KAWz94S
-         sqvWC0f0twrV/NQa9NZqj4NiKI6vF85DqI0rdp/6Za0cwJOLJJMpQaoGl/qmAiwWHOL1
-         4hZvWouw9Pfjq1X3wG71wc6vJ+3fND1C+L4F0PRfC3OEmHXJjsNmyNZeQIBxgSN20Se4
-         F7rr8sBzZRw39Be0jXY9yk8f7vldgCSJr5N2XcPWJhAPgz9gYMOaVm+Zu9omfnTyJ71f
-         Hxtw==
-X-Gm-Message-State: APjAAAVYxPyxruaEyChyYf5Qe04Lv3dyGfN7gPesv/J9B1Ai6Ihv5t5z
-        Er1sK74VFnAqnSzTE7MdsEw9EX07HVk=
-X-Google-Smtp-Source: APXvYqwFeZXmRM5K2/mO9TDVEOkIZvMQXG6VIHEldMmN5VNc38/VA9rqyc21yMzNCSuDwp9k97uGJw==
-X-Received: by 2002:a2e:b610:: with SMTP id r16mr17365972ljn.33.1582140395853;
-        Wed, 19 Feb 2020 11:26:35 -0800 (PST)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id k12sm310476lfc.33.2020.02.19.11.26.34
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2020 11:26:35 -0800 (PST)
-Received: by mail-lj1-f175.google.com with SMTP id x14so1544793ljd.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 11:26:34 -0800 (PST)
-X-Received: by 2002:a2e:909a:: with SMTP id l26mr16050682ljg.209.1582140394436;
- Wed, 19 Feb 2020 11:26:34 -0800 (PST)
+        id S1726949AbgBSTgB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 14:36:01 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:39468 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726683AbgBSTgA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 14:36:00 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id B6255B4F; Wed, 19 Feb 2020 13:35:58 -0600 (CST)
+Date:   Wed, 19 Feb 2020 13:35:58 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>,
+        smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+Message-ID: <20200219193558.GA27641@mail.hallyn.com>
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
- <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
- <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
- <241568.1582134931@warthog.procyon.org.uk> <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
- <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com>
-In-Reply-To: <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 19 Feb 2020 11:26:18 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whE0uzJy1C5z-GB-s7YioW_yhiEaes4cNa6tLJwyx19gA@mail.gmail.com>
-Message-ID: <CAHk-=whE0uzJy1C5z-GB-s7YioW_yhiEaes4cNa6tLJwyx19gA@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
-        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 11:07 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Actually, since this is apparently a different filetype, the _logical_
-> thing to do is to use "mknod()".
+On Tue, Feb 18, 2020 at 03:33:46PM +0100, Christian Brauner wrote:
+> With fsid mappings we can solve this by writing an id mapping of 0
+> 100000 100000 and an fsid mapping of 0 300000 100000. On filesystem
+> access the kernel will now lookup the mapping for 300000 in the fsid
+> mapping tables of the user namespace. And since such a mapping exists,
+> the corresponding files will have correct ownership.
 
-Btw, don't get me wrong. I realize that you want to send other
-information too in order to fill in all the metadata for what the
-mountpoint then _does_.
+So if I have
 
-So the "mknod()" thing would be just to create a local placeholder
-(and an exclusive name) on the client - and then you do the ioctl on
-that (or whatever) that sends over the metadata to the server along
-with the name.
+/proc/self/uid_map: 0 100000 100000
+/proc/self/fsid_map: 1000 1000 1
 
-Think of it as a way to get a place to hook into things, and a (local
-only) reservation for the name.
+1. If I read files from the rootfs which have host uid 101000, they
+will appear as uid 100 to me?
 
-               Linus
+2. If I read host files with uid 1000, they will appear as uid 1000 to me?
+
+3. If I create a new file, as uid 1000, what will be the inode owning uid?
