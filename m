@@ -2,74 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 787ED16392F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 02:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D407163934
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 02:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbgBSBSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 20:18:01 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50185 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726939AbgBSBSA (ORCPT
+        id S1727561AbgBSBTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 20:19:19 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:37130 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726939AbgBSBTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 20:18:00 -0500
-Received: from callcc.thunk.org (guestnat-104-133-8-109.corp.google.com [104.133.8.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 01J1HfCl025065
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Feb 2020 20:17:43 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8C6F74211EF; Tue, 18 Feb 2020 20:17:41 -0500 (EST)
-Date:   Tue, 18 Feb 2020 20:17:41 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
-Message-ID: <20200219011741.GA330201@mit.edu>
-References: <20200131052520.GC6869@magnolia>
- <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
- <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
- <20200202214620.GA20628@dread.disaster.area>
- <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
- <20200212220600.GS6870@magnolia>
- <20200213151100.GC6548@bfoster>
- <20200213154632.GN7778@bombadil.infradead.org>
- <20200216215556.GZ10776@dread.disaster.area>
- <20200219002916.GB9506@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219002916.GB9506@magnolia>
+        Tue, 18 Feb 2020 20:19:19 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7A0D48EE367;
+        Tue, 18 Feb 2020 17:19:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582075158;
+        bh=xIfqzfucbJWWcKXdQLPFmN/N0pl05ZSNks6ieJmGKoo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Z+KsDrNXQUB3S0tV7krHBqryNLM47vWtBeSFmNshCOdpSN8Cg1FQEuE6HlUIYvpKE
+         zKSlQYpmhcNfhzI8bTHHBpuxcgy6QXBjEF7hNauNou/Gaccbx5+Ymfk78Qsp6b0i1B
+         0bFyOHlGd5kHg/Su47DuR5ZaWR38EYK19xUu4D54=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VTMFlHDLiULv; Tue, 18 Feb 2020 17:19:18 -0800 (PST)
+Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DB4698EE0D5;
+        Tue, 18 Feb 2020 17:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582075158;
+        bh=xIfqzfucbJWWcKXdQLPFmN/N0pl05ZSNks6ieJmGKoo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Z+KsDrNXQUB3S0tV7krHBqryNLM47vWtBeSFmNshCOdpSN8Cg1FQEuE6HlUIYvpKE
+         zKSlQYpmhcNfhzI8bTHHBpuxcgy6QXBjEF7hNauNou/Gaccbx5+Ymfk78Qsp6b0i1B
+         0bFyOHlGd5kHg/Su47DuR5ZaWR38EYK19xUu4D54=
+Message-ID: <1582075157.31675.0.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 2/3] fs: introduce uid/gid shifting bind mount
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        containers@lists.linux-foundation.org,
+        linux-unionfs@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>
+Date:   Tue, 18 Feb 2020 17:19:17 -0800
+In-Reply-To: <20200218223313.GA15846@infradead.org>
+References: <20200217205307.32256-1-James.Bottomley@HansenPartnership.com>
+         <20200217205307.32256-3-James.Bottomley@HansenPartnership.com>
+         <20200218223313.GA15846@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 04:29:16PM -0800, Darrick J. Wong wrote:
-> I kinda wish the LF or someone would open such a program to the kernel
-> maintainers.  I never liked that old maxim, "The maintainer is [the
-> stuckee] with the most testing resources" -- there shouldn't really have
-> to be a djwong cloud and a dchinner cloud. :/
+On Tue, 2020-02-18 at 14:33 -0800, Christoph Hellwig wrote:
+> On Mon, Feb 17, 2020 at 12:53:06PM -0800, James Bottomley wrote:
 
-If there are people who are interested in using gce-xfstests for
-testing their file systems, please contact me off-line.  I can't make
-a promise that I can swing free GCE credits for *everyone*, but for
-maintainers of major file systems, or senior file system developers in
-general, we can probably work something out.
+[...]
+> > diff --git a/include/linux/cred.h b/include/linux/cred.h
+> > index 18639c069263..d29638617844 100644
+> > --- a/include/linux/cred.h
+> > +++ b/include/linux/cred.h
+> > @@ -59,6 +59,7 @@ extern struct group_info *groups_alloc(int);
+> >  extern void groups_free(struct group_info *);
+> >  
+> >  extern int in_group_p(kgid_t);
+> > +extern int in_group_p_shifted(kgid_t);
+> 
+> How do I know when to use in_group_p_shifted vs in_group_p?
+> What about the various other fs callers?
 
-						- Ted
+So this is one I wondered about too.  The problem is that the shifted
+credential (the one representing the fsuid/fsgid the filesystem will
+see) still has cred->group_info representing the kuid/kgid which are
+unshifted from the filesystem perspective.  The solution was to use
+in_group_p_shifted when you're comparing a filesystem view fsgid and
+use in_group_p when you're comparing a kernel kgid.
 
-P.S.  I also have blktests working in gce-xfstests; it's not clear
-it's as useful, and there are a lot of test failures which I think are
-test bugs, but in theory blktests can be used via gce-xfstests.  I
-also have very rough Phoronix Test suite support, and I hope to try to
-get mmtests running out of gce-xfstests as well.  Which probably means
-I should think about renaming it.  :-)
+However, I'm now thinking that's way too complex and what should happen
+is that I should shift every member of cred->group_info so that all
+searches happen on the fs view, meaning the fs always uses in_group_p
+like it does today and only the corner cases that compare a kgid need
+shifting.
+
+James
+
+
