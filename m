@@ -2,219 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA92164B15
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 17:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0E9164B48
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 18:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgBSQxX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 11:53:23 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53274 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbgBSQxW (ORCPT
+        id S1726645AbgBSRAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 12:00:42 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35184 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbgBSRAm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 11:53:22 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JGm2SI120335;
-        Wed, 19 Feb 2020 16:53:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=i5uLS39JyANlwDurEgFWEIXEf4v2bZHjgkeJi7OBk8w=;
- b=c11GXc6dFK9wuGBOzrxfkhyWfF/10Z5pKESRd0Cr6qi4ve4W/bX3uRklwCCd+3dL8z7W
- gw1nVr7wu5p7ZYTSgm5zzSAfODacWnXsv97VJg5fe0QBFUBAm1B4SiF/2oMN7PxyQ55D
- j2PTLMgp157PFTt2RNO06ZIrtrtLHFEkF/4DjTFlZzKQhP5kjCWWUuOA3jVnkCNjkV7m
- OYipxUz+fyTrSMchdsr4uhVdxp9uoMlmYHzAxWmQ0Hl/bRtpnwtMDhRVbq9EeSDwxKyY
- IrDpje7cvp4Oo2oUli8tfSEXFOcVESpy86Skcdt29cvmxh3RQ47659dfcE7XMoKked4T 3w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2y8ud14e71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 16:53:15 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01JGqH7e045746;
-        Wed, 19 Feb 2020 16:53:14 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2y8udaun07-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 16:53:14 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01JGrDMC013093;
-        Wed, 19 Feb 2020 16:53:13 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 19 Feb 2020 08:53:13 -0800
-Date:   Wed, 19 Feb 2020 08:53:12 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
-        christian@brauner.io, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/19] vfs: Introduce a non-repeating system-unique
- superblock ID [ver #16]
-Message-ID: <20200219165312.GD9504@magnolia>
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204553565.3299825.3864357054582488949.stgit@warthog.procyon.org.uk>
+        Wed, 19 Feb 2020 12:00:42 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l16so698788lfg.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 09:00:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+5MHK2yWJoKDFDgFN/xoudtHEVHOYHcak3UXICAOE48=;
+        b=QIshA1U9KR9JH3ePvLT5ZY3Vx07hTFRKDbl+K9mKTvwZGUJgQmsNDzQNHyD8IIWR2d
+         Q0yRg6+HxDrXEGdXe9VGj4GRg91S0SZg3nykCIODKvhX+L/Jppo0cyFJQEhwA9V8JwEk
+         yE0AI/4FI83Suua0qMGWnvqbFXRE2hRE7jPY8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+5MHK2yWJoKDFDgFN/xoudtHEVHOYHcak3UXICAOE48=;
+        b=ACSE+hVDf1BJyrhMTZXq2Ufz7PpUWfo365As4eYvPCAyP0BaQRR4+QCW1I34gZRQF6
+         L01ckDV4hANJ9iJBDF3lAYee80ncEYQimne5eu9EWEmijJLIEDNWHxJsgWzagIG4ejaG
+         iHSB65t+mmGQFYq8DpLL6SAdYRZjRtarVpIaHlpN/gN808Eo1m0bSHugocK2HOIA7Ops
+         wY6qV4d8odKj0h3/n8LyiblSkHmjRGL9W3T7yvWgjHC5+h+l/aTdtplDO3D1NOZUFqps
+         pRL/mIRaGRmmZ52xhAo8y5qbx82Emd57r4oFHIaVs38imvCJvE4dwGphyQQHF20HxUZ2
+         cLOg==
+X-Gm-Message-State: APjAAAXI1uj/MFCPfSFEsFXBMAJ/+SRMihC7wPwDOn95NW6552ureGI6
+        7BSZUs70icbSZnWai6C+GSta5U7qKd0=
+X-Google-Smtp-Source: APXvYqxWJjVvt4hnN9pWhszNR2R/DLuEn8epR6Ey/RoDoSy2JkZAqOdcfVHn5graJilINCRqOdAA1A==
+X-Received: by 2002:a19:c014:: with SMTP id q20mr14029912lff.208.1582131639876;
+        Wed, 19 Feb 2020 09:00:39 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id t29sm67789lfg.84.2020.02.19.09.00.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 09:00:39 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id a13so1094769ljm.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 09:00:38 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr16681270ljk.201.1582131638422;
+ Wed, 19 Feb 2020 09:00:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158204553565.3299825.3864357054582488949.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0
- impostorscore=0 mlxlogscore=999 clxscore=1015 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190127
+References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
+ <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com> <227117.1582124888@warthog.procyon.org.uk>
+In-Reply-To: <227117.1582124888@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Feb 2020 09:00:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+Message-ID: <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@vger.kernel.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:05:35PM +0000, David Howells wrote:
-> Introduce an (effectively) non-repeating system-unique superblock ID that
-> can be used to determine that two object are in the same superblock without
-> risking reuse of the ID in the meantime (as is possible with device IDs).
-> 
-> The ID is time-based to make it harder to use it as a covert communications
-> channel.
-> 
-> Also make it so that this ID can be fetched by the fsinfo() system call.
-> The ID added so that superblock notification messages will also be able to
-> be tagged with it.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  fs/fsinfo.c               |    1 +
->  fs/super.c                |   24 ++++++++++++++++++++++++
->  include/linux/fs.h        |    3 +++
->  samples/vfs/test-fsinfo.c |    1 +
->  4 files changed, 29 insertions(+)
-> 
-> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
-> index 55710d6da327..f8e85762fc47 100644
-> --- a/fs/fsinfo.c
-> +++ b/fs/fsinfo.c
-> @@ -92,6 +92,7 @@ static int fsinfo_generic_ids(struct path *path, struct fsinfo_context *ctx)
->  	p->f_fstype	= sb->s_magic;
->  	p->f_dev_major	= MAJOR(sb->s_dev);
->  	p->f_dev_minor	= MINOR(sb->s_dev);
-> +	p->f_sb_id	= sb->s_unique_id;
+On Wed, Feb 19, 2020 at 7:08 AM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> > The above nicely explains what the patch does.
+> > However, unless I'm missing something, this fails to explain the "why"
+> > (except for the vague "[...] is something that AFS needs ...".
+>
+> I'm not allowed to implement pioctl() for Linux, so I have to find some other
+> 'structured' (to quote Linus) way to implement the extra functions for the
+> in-kernel AFS client.
 
-Ahah, this is what the f_sb_id field is for.  I noticed a few patches
-ago that it was in a header file but was never set.
+Honestly, the "create_mountpoint()" thing isn't any better. It's worse
+and exposes an interface that makes no sense.
 
-I'm losing track of which IDs do what...
+What are the insane pioctl semantics you want?
 
-* f_fsid is that old int[2] thing that we used for statfs.  It sucks but
-  we can't remove it because it's been in statfs since the beginning of
-  time.
+If you can't even open a file on the filesystem, you damn well
+shouldn't be able to to "pioctl" on it.
 
-* f_fs_name is a string coming from s_type, which is the name of the fs
-  (e.g. "XFS")?
+And if you *can* open a file on the filesystem, why can't you just use
+ioctl on it?
 
-* f_fstype comes from s_magic, which (for XFS) is 0x58465342.
+So no, the new system calls make no sense, and your explanation for
+them is lacking too.
 
-* f_sb_id is basically an incore u64 cookie that one can use with the
-  mount events thing that comes later in this patchset?
+Give a very concrete example of what you want to do, and why AFS would
+be so super-duper-magical, and why you can't just use ioctl on an
+existing directory.
 
-* FSINFO_ATTR_VOLUME_ID comes from s_id, which tends to be the block
-  device name (at least for local filesystems)
+And no, "maybe the directories aren't readable" isn't an excuse, as
+mentioned. Why the hell would you want to do pioctl on a non-readable
+path in the first place?
 
-* FSINFO_ATTR_VOLUME_UUID comes from s_uuid, which some filesystems fill
-  in at mount time.
-
-* FSINFO_ATTR_VOLUME_NAME is ... left to individual filesystems to
-  implement, and (AFAICT) can be the label that one uses for things
-  like: "mount LABEL=foo /home" ?
-
-Assuming I got all of that right, can we please capture what all of
-these "IDs" mean in the documentation?
-
-(Assuming I got all that right, the code looks ok.)
-
---D
-
->  
->  	memcpy(&p->f_fsid, &buf.f_fsid, sizeof(p->f_fsid));
->  	strlcpy(p->f_fs_name, path->dentry->d_sb->s_type->name,
-> diff --git a/fs/super.c b/fs/super.c
-> index cd352530eca9..a63073e6127e 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -44,6 +44,8 @@ static int thaw_super_locked(struct super_block *sb);
->  
->  static LIST_HEAD(super_blocks);
->  static DEFINE_SPINLOCK(sb_lock);
-> +static u64 sb_last_identifier;
-> +static u64 sb_identifier_offset;
->  
->  static char *sb_writers_name[SB_FREEZE_LEVELS] = {
->  	"sb_writers",
-> @@ -188,6 +190,27 @@ static void destroy_unused_super(struct super_block *s)
->  	destroy_super_work(&s->destroy_work);
->  }
->  
-> +/*
-> + * Generate a unique identifier for a superblock.
-> + */
-> +static void generate_super_id(struct super_block *s)
-> +{
-> +	u64 id = ktime_to_ns(ktime_get());
-> +
-> +	spin_lock(&sb_lock);
-> +
-> +	id += sb_identifier_offset;
-> +	if (id <= sb_last_identifier) {
-> +		id = sb_last_identifier + 1;
-> +		sb_identifier_offset = sb_last_identifier - id;
-> +	}
-> +
-> +	sb_last_identifier = id;
-> +	spin_unlock(&sb_lock);
-> +
-> +	s->s_unique_id = id;
-> +}
-> +
->  /**
->   *	alloc_super	-	create new superblock
->   *	@type:	filesystem type superblock should belong to
-> @@ -273,6 +296,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
->  		goto fail;
->  	if (list_lru_init_memcg(&s->s_inode_lru, &s->s_shrink))
->  		goto fail;
-> +	generate_super_id(s);
->  	return s;
->  
->  fail:
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f74a4ee36eb3..e5db22d536a3 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1550,6 +1550,9 @@ struct super_block {
->  
->  	spinlock_t		s_inode_wblist_lock;
->  	struct list_head	s_inodes_wb;	/* writeback inodes */
-> +
-> +	/* Superblock event notifications */
-> +	u64			s_unique_id;
->  } __randomize_layout;
->  
->  /* Helper functions so that in most cases filesystems will
-> diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-> index 6fbf0ce099b2..d6ec5713364f 100644
-> --- a/samples/vfs/test-fsinfo.c
-> +++ b/samples/vfs/test-fsinfo.c
-> @@ -140,6 +140,7 @@ static void dump_fsinfo_generic_ids(void *reply, unsigned int size)
->  	printf("\tdev          : %02x:%02x\n", f->f_dev_major, f->f_dev_minor);
->  	printf("\tfs           : type=%x name=%s\n", f->f_fstype, f->f_fs_name);
->  	printf("\tfsid         : %llx\n", (unsigned long long)f->f_fsid);
-> +	printf("\tsbid         : %llx\n", (unsigned long long)f->f_sb_id);
->  }
->  
->  static void dump_fsinfo_generic_limits(void *reply, unsigned int size)
-> 
-> 
+                Linus
