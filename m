@@ -2,91 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA10B1647CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B82431648AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 16:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgBSPIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 10:08:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42512 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726856AbgBSPIS (ORCPT
+        id S1726786AbgBSPd3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 10:33:29 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35283 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbgBSPd3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:08:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582124897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QZq1IwUFsVXgnf+MjVG5on9QRs42gTJtH2m4Vh+19iU=;
-        b=hh57ry5FF6d7yWVwnc1UdjtwLUbBQtVQXSbiBs1xjqoy5e2Z/T9626rObNYwN9sGH0cM1s
-        HF1TCrvzJNvCUV/x3PElnXHZNBtgicdsinfcXl1YlysKhpYhq26aaSMFm2ewhQgZh+ffs9
-        fP/uXKXN9IZc26sZofqiEhJdl16qulU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-185--OMtL3rXM2C--KYVuUt_yg-1; Wed, 19 Feb 2020 10:08:13 -0500
-X-MC-Unique: -OMtL3rXM2C--KYVuUt_yg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB7338024ED;
-        Wed, 19 Feb 2020 15:08:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF7F127061;
-        Wed, 19 Feb 2020 15:08:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
-References: <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com> <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        coda@cs.cmu.edu, linux-afs@vger.kernel.org,
-        linux-cifs@vger.kernel.org,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+        Wed, 19 Feb 2020 10:33:29 -0500
+Received: by mail-ot1-f65.google.com with SMTP id r16so535471otd.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 07:33:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=E1sKBvtd2cVQy85wDQQwaHFMe+BR9oZ60u87YmbbgsA=;
+        b=rkWnytES8w36IUEEtDRL8rezVYVLF3qfXgFjjxsq5fO+3E5345SKZme9Z180HRGxR8
+         eHiL95Ewyfc2QvDvpEY/AONZJWpcGQMcwYK0GODKdShdKRLuQoQJkaIM6OF3NS+qRd+P
+         BEjM7iwYtXIihoNMIf8HqHwZVpJtwyFfpr9tNWgUcIjZO6MxLWTAkA3NdhmyPa+V1tAE
+         jd2/P/S1EGHEw4HtlEWORJBXhpNs+qzm/sYdf+zoBY46UrEKvXU9ynWGwF2p+y+UGnME
+         1EOk8SseFzkw81fh2Kn10sLOz9pLTlLCr+xTG8u+No0GfUuweV59hOowE7GHzVUY4kJ8
+         OqTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=E1sKBvtd2cVQy85wDQQwaHFMe+BR9oZ60u87YmbbgsA=;
+        b=TRElmooSXXH/MDJ3JZBxZ8dptdF2ne+DhxPM9zQPVE4A7DDJIevc94S2xRND2WuGzd
+         BY6A2nIblZbiljARgVTbvWocQCx8vtOf4ikAse4VI2IRUx94Zj2oOLJdiUwDonGvyVPU
+         8wM3xLaVS2Jq9E5Kdaj4tGIeew6LtfnqclSD4i/sgywFiKp87gtVBdXuJO8yxI+fYe2F
+         /SD0uPKboaEMd9S+57E+ywyqEdc7Ss6t2xoMbk7Wh+CjkPPbLW1b51t9Ny8md47kMoJj
+         M/XIVQB2vJuVcgNPLFcNao9CQk8/M8oRtv5Qj2prSQCIs8NxgoT9p/NcmFcZO0iC3n/E
+         tCbg==
+X-Gm-Message-State: APjAAAVyKpivvxOC8kHnqEsw2EjSbZ/Z4HpoOKjMdimEJxOBYcrNwypG
+        m5B8mUny5vCW7rV1F0bzlyDkE9Otiy7eyql5GHpXHA==
+X-Google-Smtp-Source: APXvYqzAPTgQ5P4aqucu1AcBe1mbzC38YJT9N/S1MOlBCev/cgDOUGz6H7VRarOAuw8VuUWRyxlBXSPgB2wK1I5CR9U=
+X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr19506704oti.32.1582126408054;
+ Wed, 19 Feb 2020 07:33:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <227116.1582124888.1@warthog.procyon.org.uk>
-Date:   Wed, 19 Feb 2020 15:08:08 +0000
-Message-ID: <227117.1582124888@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 19 Feb 2020 16:33:00 +0100
+Message-ID: <CAG48ez0mKg-nvcvuU-=a3oi4MTs2eiTQiqtOi89wqUm7uzuSBg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oops... I've just realised that the function names in the subject line don't
-match those in the patch.
+On Tue, Feb 18, 2020 at 3:35 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+[...]
+> - Let the keyctl infrastructure only operate on kfsid which are always
+>   mapped/looked up in the id mappings similar to what we do for
+>   filesystems that have the same superblock visible in multiple user
+>   namespaces.
+>
+> This version also comes with minimal tests which I intend to expand in
+> the future.
+>
+> From pings and off-list questions and discussions at Google Container
+> Security Summit there seems to be quite a lot of interest in this
+> patchset with use-cases ranging from layer sharing for app containers
+> and k8s, as well as data sharing between containers with different id
+> mappings. I haven't Cced all people because I don't have all the email
+> adresses at hand but I've at least added Phil now. :)
+>
+> This is the implementation of shiftfs which was cooked up during lunch at
+> Linux Plumbers 2019 the day after the container's microconference. The
+> idea is a design-stew from St=C3=A9phane, Aleksa, Eric, and myself (and b=
+y
+> now also Jann.
+> Back then we all were quite busy with other work and couldn't really sit
+> down and implement it. But I took a few days last week to do this work,
+> including demos and performance testing.
+> This implementation does not require us to touch the VFS substantially
+> at all. Instead, we implement shiftfs via fsid mappings.
+> With this patch, it took me 20 mins to port both LXD and LXC to support
+> shiftfs via fsid mappings.
+[...]
 
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Can you please grep through the kernel for all uses of ->fsuid and
+->fsgid and fix them up appropriately? Some cases I still see:
 
-> The above nicely explains what the patch does.
-> However, unless I'm missing something, this fails to explain the "why"
-> (except for the vague "[...] is something that AFS needs ...".
 
-I'm not allowed to implement pioctl() for Linux, so I have to find some other
-'structured' (to quote Linus) way to implement the extra functions for the
-in-kernel AFS client.
+The SafeSetID LSM wants to enforce that you can only use CAP_SETUID to
+gain the privileges of a specific set of IDs:
 
-OpenAFS and maybe Coda, for example, create a magic file, I think, and then
-ioctl is done on that - ie. direct pioctl emulation.  All the path lookup and
-security is done inside the filesystem.
+static int safesetid_task_fix_setuid(struct cred *new,
+                                     const struct cred *old,
+                                     int flags)
+{
 
-Another way to do this, at least for these two operations, would be to issue
-an ioctl on the parent directory.  This requires you to be able to open said
-directory in order to perform the ioctl on it - which requires you to have
-read permission, something not required to alter a directory.  This also
-pushes the path lookup and security into the filesystem
+        /* Do nothing if there are no setuid restrictions for our old RUID.=
+ */
+        if (setuid_policy_lookup(old->uid, INVALID_UID) =3D=3D SIDPOL_DEFAU=
+LT)
+                return 0;
 
-So I'm proposing this way.  It's something that can be used by other
-filesystems too, if they support it.  Coda and OpenAFS, for example, might be
-able to make use of it as they want to be able to do the same sort of things.
+        if (uid_permitted_for_cred(old, new->uid) &&
+            uid_permitted_for_cred(old, new->euid) &&
+            uid_permitted_for_cred(old, new->suid) &&
+            uid_permitted_for_cred(old, new->fsuid))
+                return 0;
 
-David
+        /*
+         * Kill this process to avoid potential security vulnerabilities
+         * that could arise from a missing whitelist entry preventing a
+         * privileged process from dropping to a lesser-privileged one.
+         */
+        force_sig(SIGKILL);
+        return -EACCES;
+}
 
+This could theoretically be bypassed through setfsuid() if the kuid
+based on the fsuid mappings is permitted but the kuid based on the
+normal mappings is not.
+
+
+fs/coredump.c in suid dump mode uses "cred->fsuid =3D GLOBAL_ROOT_UID";
+this should probably also fix up the other uid, even if there is no
+scenario in which it would actually be used at the moment?
+
+
+The netfilter xt_owner stuff makes packet filtering decisions based on
+the ->fsuid; it might be better to filter on the ->kfsuid so that you
+can filter traffic from different user namespaces differently?
+
+
+audit_log_task_info() is doing "from_kuid(&init_user_ns, cred->fsuid)".
