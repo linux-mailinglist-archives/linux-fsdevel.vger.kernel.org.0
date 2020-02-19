@@ -2,103 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9383C16511C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:04:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C66BC165111
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbgBSVCs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 16:02:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35924 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbgBSVBG (ORCPT
+        id S1728103AbgBSVCP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 16:02:15 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:35250 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728105AbgBSVCO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:01:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=xVXe2mHxuFlpJauTFAREACgBtskK8JQqv16NulPdwMo=; b=F3kXDDpZ016zj77nzf3xs9HNhB
-        c39hgvEiXMXpDmXJJghRyVbQMd9bQMtSAzeQLHly/ybPqD2ydVSEI4rkiaB9n4MrV5lJMO5TAOHpT
-        LsA4+sqAh3sjH6idXLPtUndMdxvuT67kL2DMo4IotYTvlEvyNqU15dBP/gmtAHMJiYi1zlhefB+pQ
-        okljimRMCao3QCzBUAxBJQKIRfcethiQohvU/9XCsH/VS+Vpp+HAgX2+R1ONMyFmghwTrN6Tmau8B
-        beKkIxg+LolJhz+78XZwS7VZsuxlQ7gLLHa+AyMl78a/LXsGBf7EVWA8feUeASUtSsf4m1jAST6h0
-        JPdvTb6Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4WSv-0008Ve-Kf; Wed, 19 Feb 2020 21:01:05 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, ocfs2-devel@oss.oracle.com,
-        linux-xfs@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v7 24/24] mm: Use memalloc_nofs_save in readahead path
-Date:   Wed, 19 Feb 2020 13:01:03 -0800
-Message-Id: <20200219210103.32400-25-willy@infradead.org>
-X-Mailer: git-send-email 2.21.1
-In-Reply-To: <20200219210103.32400-1-willy@infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
+        Wed, 19 Feb 2020 16:02:14 -0500
+Received: by mail-ot1-f67.google.com with SMTP id r16so1577553otd.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 13:02:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DMA3zBv2A115ds+hzoqNf5TDlp6zZsu8bzv4LFjiJu8=;
+        b=cpQE1OrZGA1xh87Y+uWpubPmTXlJYRti4DUcDQEtqvFdVkENzdZzpZId854qxpcWmO
+         m3Ks9Ivwu2kWRwpi9sDkJMDiROaz365WLRe5JX9h2NC2sGrk6GM0wgREVFAnq7XO/uQb
+         QkyeQ32WU6GKzqc4p6pe5tf1IfZHhkflKdni5X2T/3x4LBtO6F518BKm2bC9AA10hrSA
+         Y3bRFoWjAFlDjlvor5mZXfHpDcDq1TK9de5ZphZrju/ffQjjERRd7n6dQMJbN+dYesOG
+         0rUJ/m/4ZLfBeuEzuyiAcVhoiCNztLJ4jHCwLdMAAlMSvKXLP4ISGQfOcG5BOS6uC1YJ
+         LzvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DMA3zBv2A115ds+hzoqNf5TDlp6zZsu8bzv4LFjiJu8=;
+        b=n2INo+Opjr3Xhz6m8jW42iz9w4nNVTzmRRDL8S+Pn9jGT4Kr170/gG2qUn/4ddi1K7
+         9CRqGZutxlUeRjrFvTQgV4uTxnTPrvTJDDTSY14KuCr7rqP5iUScQ2c0cbxERWoBp/0U
+         97jNJl0WJh1TX6x37JYRd1ubP4P5taPVxYFWIy53fzojtrGOvIpDEkm8BWGpg+xKLRvu
+         53Pp7rlN4+uW19BUFMO+464/Rs+GEWHCjD/79S26mW0l9TgY/TzqeIz/sOQF+CTKV0oO
+         3Se51SwNV7sn5nPIWHLjcekhZW+zS9yTr1dXN9MMWYb8czljDT2MSvWkDTBD3JMYDzxo
+         bB9A==
+X-Gm-Message-State: APjAAAV9ky5298nvszEd6eAfgVnWfUwHoqlyYKfJlTTGj8xGkSz6cKMM
+        31CNtHJ1KQnKxMkOX9SjbYYXievni0lIOAnwv9KAsQ==
+X-Google-Smtp-Source: APXvYqyRsA8WbMF9F4f2P6kxim/bq5zHCtu45yJLdbVFnT0FcSyvm95fJo2P1wZJesmzKXq4rDEttnM3pJxxoeiq8ss=
+X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr20488389oti.32.1582146133397;
+ Wed, 19 Feb 2020 13:02:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
+ <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 19 Feb 2020 22:01:47 +0100
+Message-ID: <CAG48ez0fsB_XTmNfE-2tuabH7JHyQdih8bu7Qwu9HGWJXti7tQ@mail.gmail.com>
+Subject: Re: [PATCH 11/19] afs: Support fsinfo() [ver #16]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Tue, Feb 18, 2020 at 6:07 PM David Howells <dhowells@redhat.com> wrote:
+> Add fsinfo support to the AFS filesystem.
+[...]
+>  static const struct super_operations afs_super_ops = {
+>         .statfs         = afs_statfs,
+> +#ifdef CONFIG_FSINFO
+> +       .fsinfo_attributes = afs_fsinfo_attributes,
+> +#endif
+> +       .alloc_inode    = afs_alloc_inode,
+> +       .drop_inode     = afs_drop_inode,
+> +       .destroy_inode  = afs_destroy_inode,
+> +       .free_inode     = afs_free_inode,
+> +       .evict_inode    = afs_evict_inode,
+> +       .show_devname   = afs_show_devname,
+> +       .show_options   = afs_show_options,
+> +};
+> +
+> +static const struct super_operations afs_dyn_super_ops = {
+> +       .statfs         = afs_statfs,
+> +#ifdef CONFIG_FSINFO
+> +       .fsinfo_attributes = afs_dyn_fsinfo_attributes,
+> +#endif
+>         .alloc_inode    = afs_alloc_inode,
+>         .drop_inode     = afs_drop_inode,
+>         .destroy_inode  = afs_destroy_inode,
+[...]
+> @@ -432,9 +454,12 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+>         sb->s_blocksize_bits    = PAGE_SHIFT;
+>         sb->s_maxbytes          = MAX_LFS_FILESIZE;
+>         sb->s_magic             = AFS_FS_MAGIC;
+> -       sb->s_op                = &afs_super_ops;
+> -       if (!as->dyn_root)
+> +       if (!as->dyn_root) {
+> +               sb->s_op        = &afs_super_ops;
+>                 sb->s_xattr     = afs_xattr_handlers;
+> +       } else {
+> +               sb->s_op        = &afs_dyn_super_ops;
+> +       }
 
-Ensure that memory allocations in the readahead path do not attempt to
-reclaim file-backed pages, which could lead to a deadlock.  It is
-possible, though unlikely this is the root cause of a problem observed
-by Cong Wang.
+Ewww. So basically, having one static set of .fsinfo_attributes is not
+sufficiently flexible for everyone, but instead of allowing the
+filesystem to dynamically provide a list of supported attributes, you
+just duplicate the super_operations? Seems to me like it'd be cleaner
+to add a function pointer to the super_operations that can dynamically
+fill out the supported fsinfo attributes.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
-Suggested-by: Michal Hocko <mhocko@suse.com>
----
- mm/readahead.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+It seems to me like the current API is going to be a dead end if you
+ever want to have decent passthrough of these things for e.g. FUSE, or
+overlayfs, or VirtFS?
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index bbe7208fcc2d..9fb5f77dcf69 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -22,6 +22,7 @@
- #include <linux/mm_inline.h>
- #include <linux/blk-cgroup.h>
- #include <linux/fadvise.h>
-+#include <linux/sched/mm.h>
- 
- #include "internal.h"
- 
-@@ -186,6 +187,18 @@ void page_cache_readahead_unbounded(struct address_space *mapping,
- 	};
- 	unsigned long i;
- 
-+	/*
-+	 * Partway through the readahead operation, we will have added
-+	 * locked pages to the page cache, but will not yet have submitted
-+	 * them for I/O.  Adding another page may need to allocate memory,
-+	 * which can trigger memory reclaim.  Telling the VM we're in
-+	 * the middle of a filesystem operation will cause it to not
-+	 * touch file-backed pages, preventing a deadlock.  Most (all?)
-+	 * filesystems already specify __GFP_NOFS in their mapping's
-+	 * gfp_mask, but let's be explicit here.
-+	 */
-+	unsigned int nofs = memalloc_nofs_save();
-+
- 	/*
- 	 * Preallocate as many pages as we will need.
- 	 */
-@@ -230,6 +243,7 @@ void page_cache_readahead_unbounded(struct address_space *mapping,
- 	 * will then handle the error.
- 	 */
- 	read_pages(&rac, &page_pool);
-+	memalloc_nofs_restore(nofs);
- }
- EXPORT_SYMBOL_GPL(page_cache_readahead_unbounded);
- 
--- 
-2.25.0
+>         ret = super_setup_bdi(sb);
+>         if (ret)
+>                 return ret;
+> @@ -444,7 +469,7 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
+>         if (as->dyn_root) {
+>                 inode = afs_iget_pseudo_dir(sb, true);
+>         } else {
+> -               sprintf(sb->s_id, "%llu", as->volume->vid);
+> +               sprintf(sb->s_id, "%llx", as->volume->vid);
 
+(This is technically a (small) UAPI change for audit logging of AFS
+filesystems, right? You may want to note that in the commit message.)
+
+>                 afs_activate_volume(as->volume);
+>                 iget_data.fid.vid       = as->volume->vid;
+>                 iget_data.fid.vnode     = 1;
+[...]
+> +static int afs_fsinfo_get_supports(struct path *path, struct fsinfo_context *ctx)
+> +{
+> +       struct fsinfo_supports *sup = ctx->buffer;
+> +
+> +       sup = ctx->buffer;
+
+Duplicate assignment to "sup".
+
+> +       sup->stx_mask = (STATX_TYPE | STATX_MODE |
+> +                        STATX_NLINK |
+> +                        STATX_UID | STATX_GID |
+> +                        STATX_MTIME | STATX_INO |
+> +                        STATX_SIZE);
+> +       sup->stx_attributes = STATX_ATTR_AUTOMOUNT;
+> +       return sizeof(*sup);
+> +}
+[...]
+> +static int afs_fsinfo_get_server_address(struct path *path, struct fsinfo_context *ctx)
+> +{
+> +       struct fsinfo_afs_server_address *addr = ctx->buffer;
+> +       struct afs_server_list *slist;
+> +       struct afs_super_info *as = AFS_FS_S(path->dentry->d_sb);
+> +       struct afs_addr_list *alist;
+> +       struct afs_volume *volume = as->volume;
+> +       struct afs_server *server;
+> +       struct afs_net *net = afs_d2net(path->dentry);
+> +       unsigned int i;
+> +       int ret = -ENODATA;
+> +
+> +       read_lock(&volume->servers_lock);
+> +       slist = afs_get_serverlist(volume->servers);
+> +       read_unlock(&volume->servers_lock);
+> +
+> +       if (ctx->Nth >= slist->nr_servers)
+> +               goto put_slist;
+> +       server = slist->servers[ctx->Nth].server;
+> +
+> +       read_lock(&server->fs_lock);
+> +       alist = afs_get_addrlist(rcu_access_pointer(server->addresses));
+
+Documentation for rcu_access_pointer() says:
+
+ * Return the value of the specified RCU-protected pointer, but omit the
+ * lockdep checks for being in an RCU read-side critical section.  This is
+ * useful when the value of this pointer is accessed, but the pointer is
+ * not dereferenced, for example, when testing an RCU-protected pointer
+ * against NULL.  Although rcu_access_pointer() may also be used in cases
+ * where update-side locks prevent the value of the pointer from changing,
+ * you should instead use rcu_dereference_protected() for this use case.
+ *
+ * It is also permissible to use rcu_access_pointer() when read-side
+ * access to the pointer was removed at least one grace period ago, as
+ * is the case in the context of the RCU callback that is freeing up
+ * the data, or after a synchronize_rcu() returns.  This can be useful
+ * when tearing down multi-linked structures after a grace period
+ * has elapsed.
+
+> +       read_unlock(&server->fs_lock);
