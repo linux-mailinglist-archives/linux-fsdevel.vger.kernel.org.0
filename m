@@ -2,89 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83DD7164D1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 18:57:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0E76164E30
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 19:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbgBSR5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 12:57:07 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54091 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726514AbgBSR5H (ORCPT
+        id S1726797AbgBSS4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 13:56:12 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40969 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbgBSS4L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 12:57:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582135026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Yh7d95RBmkGqSBihXJVD+MVFXbFbQjtM5PxfVFGUNSo=;
-        b=Ri2GUfZpwIuZjrsOpYo2Ep9MV9z8stbkoMVNQ5Xotn11SMmblcqV9GLjHmXNm5zGUh3mNc
-        WYELViYnKCuVrGt7w9bD9LsjZHA/KY1M7PCcAURNkeikjG3pOhcI46ESlLDJVV/JZss5oY
-        fctt3BLEY542xL+xPIv5ljSGCMyk0rU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-158-7A4Y6uYuMfq8pYG_9LQTLg-1; Wed, 19 Feb 2020 12:57:00 -0500
-X-MC-Unique: 7A4Y6uYuMfq8pYG_9LQTLg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 73CCC100550E;
-        Wed, 19 Feb 2020 17:56:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 14251196AE;
-        Wed, 19 Feb 2020 17:56:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-In-Reply-To: <SH0PR01MB045873AEEA42B84D442F09028A1B0@SH0PR01MB0458.CHNPR01.prod.partner.outlook.cn>
-References: <SH0PR01MB045873AEEA42B84D442F09028A1B0@SH0PR01MB0458.CHNPR01.prod.partner.outlook.cn>
-To:     "Yang, Lifeng" <lifeng.yang@lenovonetapp.com>
-Cc:     dhowells@redhat.com,
-        "linux-cachefs@redhat.com" <linux-cachefs@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [Linux-cachefs] About the ceph persistent caching with fscache
+        Wed, 19 Feb 2020 13:56:11 -0500
+Received: by mail-lj1-f194.google.com with SMTP id h23so1490366ljc.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 10:56:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4/btNie2yJSHTlvtkEMVrzLJ5p+2iau4ZxcsT8Kh+V8=;
+        b=OANlOLlls14aKMkL1WjVjo8f/tVbYdtb8Nt9MCvon8MWsZkBp2wf0M4h4HkivP25SY
+         Lor+Pn5WeqeFiam04EJmGY4IF6tW7qKCzkRZwxbdgjj0f2w6R9Z2iIpFLl/G1lsUeweh
+         z+TQEaepT45ebjzQ5n9r3U+GEMxGXZG+BGf8c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4/btNie2yJSHTlvtkEMVrzLJ5p+2iau4ZxcsT8Kh+V8=;
+        b=BVBjUZzgFpCV+J4ifSq+Bg3bUWtQUc61VsgCe2WLuXrOa5yRkFJleknfRXm5aoQ8/+
+         KdtKCSRyYLtGqwVtWwclvjIv0YctN7UPsGTSLP7XwjyXT9dT9QHPdA5hlT4ghrnqjjzj
+         BS7LjP7itRDygPnx59FiXqSbv6Saq9J9Ay2GeXc1WM5G5sOjfijywo4Tm9zXgOB6azzU
+         ac3KKMnUZ6U1yP4E4io/R8CwRUFrwy4ueuXoC+jn3qWtpuhdOdhNlnShtwdlq6RZ0bBb
+         GXVE/tttcZHmbfxgGR22fvIzXzJcZkIdtPB1VjSXzF4ool/giA1VV2H4tCYcQTcis8Wb
+         8yZQ==
+X-Gm-Message-State: APjAAAVmj5KvU/ud5N7wqLHsgPOAwRTEPHtZKCs71Oo594b6Lz4R/yCj
+        DZfso6uFs57vEhfCJ/ujGypFaWKfd2U=
+X-Google-Smtp-Source: APXvYqxhOHU5IlEEmxj3RKUbvtfaFmw66Mci8vXTEW5zS9Nlmqdu//nS5WdOzUEtncUcOQPD6pKt7Q==
+X-Received: by 2002:a2e:9842:: with SMTP id e2mr16693991ljj.293.1582138568972;
+        Wed, 19 Feb 2020 10:56:08 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id n2sm320988ljj.1.2020.02.19.10.56.07
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 10:56:08 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id x14so1450391ljd.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 10:56:07 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr16927004ljk.201.1582138567368;
+ Wed, 19 Feb 2020 10:56:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <232278.1582128509.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-From:   David Howells <dhowells@redhat.com>
-Date:   Wed, 19 Feb 2020 17:56:55 +0000
-Message-ID: <241684.1582135015@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
+ <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
+ <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+ <241568.1582134931@warthog.procyon.org.uk>
+In-Reply-To: <241568.1582134931@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Feb 2020 10:55:51 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+Message-ID: <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Yang, Lifeng <lifeng.yang@lenovonetapp.com> wrote:
-
-> I have a question need the consult from the ceph experts. I am the user =
-of
-> CephFS, and would like to use the persist memory to accelerate file IO a=
-nd I
-> found long times ago, the FSCache supports the CephFS:
+On Wed, Feb 19, 2020 at 9:55 AM David Howells <dhowells@redhat.com> wrote:
 >
-> https://lwn.net/Articles/564294/
-> =
+> There's a file type beyond file, dir and symlink that AFS supports:
+> mountpoint.  It appears as a directory with no lookup op in Linux - though it
+> does support readlink.  When a client walks over it, it causes an automount of
+> the volume named by the content of the mountpoint "file" on that point.  NFS
+> and CIFS have similar things.
 
-> I wonder if the FSCache support the user mode CephFS accessing? Because =
-I
-> just see there is only kernel code update, this is might the easy questi=
-on
-> for you.
+Honestly, AFS isn't common or relevant enough to make this worth a new
+special system call etc.
 
-Note that fscache is being heavily rewritten at the moment:
+Why don't you just use mkdir with S_ISVTX set, or something like that?
+Maybe we can even add a new mode bit and allow you to set that one.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dfscache-iter
+And why would removal be any different from rmdir()?
 
-Interfaces now exist that allow it to use direct I/O to the backing filesy=
-stem
-and avoid the need to try to snoop the waitqueues for backing pages to com=
-e
-available (which doesn't always appear to work).
+Or just do a perfectly regular mkdir(), followed by a ioctl().
 
-David
+> Directory, not file.  You can do mkdir (requiring write and execute), for
+> example, in a directory you cannot open (which would require read).  If you
+> cannot open it, you cannot do ioctl on it.
 
+Honestly, who cares?
+
+Seriously. Just make the rule be that you need read permission on the
+directory too in order to do that ioctl() that is your magical "make
+special node".
+
+What makes this all *SO* special, and *SO* important that you need to
+follow somebody elses rules that absolutely nobody cares about?
+
+              Linus
