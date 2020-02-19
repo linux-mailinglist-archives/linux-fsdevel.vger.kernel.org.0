@@ -2,188 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C66BC165111
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B74165158
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbgBSVCP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 16:02:15 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35250 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728105AbgBSVCO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:02:14 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r16so1577553otd.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 13:02:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DMA3zBv2A115ds+hzoqNf5TDlp6zZsu8bzv4LFjiJu8=;
-        b=cpQE1OrZGA1xh87Y+uWpubPmTXlJYRti4DUcDQEtqvFdVkENzdZzpZId854qxpcWmO
-         m3Ks9Ivwu2kWRwpi9sDkJMDiROaz365WLRe5JX9h2NC2sGrk6GM0wgREVFAnq7XO/uQb
-         QkyeQ32WU6GKzqc4p6pe5tf1IfZHhkflKdni5X2T/3x4LBtO6F518BKm2bC9AA10hrSA
-         Y3bRFoWjAFlDjlvor5mZXfHpDcDq1TK9de5ZphZrju/ffQjjERRd7n6dQMJbN+dYesOG
-         0rUJ/m/4ZLfBeuEzuyiAcVhoiCNztLJ4jHCwLdMAAlMSvKXLP4ISGQfOcG5BOS6uC1YJ
-         LzvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DMA3zBv2A115ds+hzoqNf5TDlp6zZsu8bzv4LFjiJu8=;
-        b=n2INo+Opjr3Xhz6m8jW42iz9w4nNVTzmRRDL8S+Pn9jGT4Kr170/gG2qUn/4ddi1K7
-         9CRqGZutxlUeRjrFvTQgV4uTxnTPrvTJDDTSY14KuCr7rqP5iUScQ2c0cbxERWoBp/0U
-         97jNJl0WJh1TX6x37JYRd1ubP4P5taPVxYFWIy53fzojtrGOvIpDEkm8BWGpg+xKLRvu
-         53Pp7rlN4+uW19BUFMO+464/Rs+GEWHCjD/79S26mW0l9TgY/TzqeIz/sOQF+CTKV0oO
-         3Se51SwNV7sn5nPIWHLjcekhZW+zS9yTr1dXN9MMWYb8czljDT2MSvWkDTBD3JMYDzxo
-         bB9A==
-X-Gm-Message-State: APjAAAV9ky5298nvszEd6eAfgVnWfUwHoqlyYKfJlTTGj8xGkSz6cKMM
-        31CNtHJ1KQnKxMkOX9SjbYYXievni0lIOAnwv9KAsQ==
-X-Google-Smtp-Source: APXvYqyRsA8WbMF9F4f2P6kxim/bq5zHCtu45yJLdbVFnT0FcSyvm95fJo2P1wZJesmzKXq4rDEttnM3pJxxoeiq8ss=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr20488389oti.32.1582146133397;
- Wed, 19 Feb 2020 13:02:13 -0800 (PST)
-MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 19 Feb 2020 22:01:47 +0100
-Message-ID: <CAG48ez0fsB_XTmNfE-2tuabH7JHyQdih8bu7Qwu9HGWJXti7tQ@mail.gmail.com>
-Subject: Re: [PATCH 11/19] afs: Support fsinfo() [ver #16]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727827AbgBSVGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 16:06:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727809AbgBSVGB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 16:06:01 -0500
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6330207FD;
+        Wed, 19 Feb 2020 21:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582146361;
+        bh=rZ7SQ0o6VNfFZHTJDCbta5DKG6j09ditK/ObGdXt/q0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=C8yWnPkbKINJuZlJAl2QRUNDti175Hh+LSN0aYGWStOc91VbH2gzdCcGmAFLif1R+
+         9MVXqbcMmNv8hEzKKisZO7IRxeN0Q8mZSqyPoiN9rrsDLqXA1rMqrRpbIgJvU8LEyw
+         oq+AlvbWnFXtMpts5Sv6ziYD6N8LHF+2TVGd99Ok=
+Date:   Wed, 19 Feb 2020 13:06:00 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] proc: faster open/read/close with "permanent" files
+Message-Id: <20200219130600.3cb5cd65fbd696fe43fb7adc@linux-foundation.org>
+In-Reply-To: <20200219191127.GA15115@avx2>
+References: <20200219191127.GA15115@avx2>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 6:07 PM David Howells <dhowells@redhat.com> wrote:
-> Add fsinfo support to the AFS filesystem.
-[...]
->  static const struct super_operations afs_super_ops = {
->         .statfs         = afs_statfs,
-> +#ifdef CONFIG_FSINFO
-> +       .fsinfo_attributes = afs_fsinfo_attributes,
+On Wed, 19 Feb 2020 22:11:27 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+
+> Now that "struct proc_ops" exist we can start putting there stuff which
+> could not fly with VFS "struct file_operations"...
+> 
+> Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
+> in the event of disappearing /proc entries which usually happens if module is
+> getting removed. Files like /proc/cpuinfo which never disappear simply do not
+> need such protection.
+> 
+> Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
+> "permanent" files.
+> 
+> Enable "permanent" flag for
+> 
+> 	/proc/cpuinfo
+> 	/proc/kmsg
+> 	/proc/modules
+> 	/proc/slabinfo
+> 	/proc/stat
+> 	/proc/sysvipc/*
+> 	/proc/swaps
+> 
+> More will come once I figure out foolproof way to prevent out module
+> authors from marking their stuff "permanent" for performance reasons
+> when it is not.
+> 
+> This should help with scalability: benchmark is "read /proc/cpuinfo R times
+> by N threads scattered over the system".
+> 
+> 	N	R	t, s (before)	t, s (after)
+> 	-----------------------------------------------------
+> 	64	4096	1.582458	1.530502	-3.2%
+> 	256	4096	6.371926	6.125168	-3.9%
+> 	1024	4096	25.64888	24.47528	-4.6%
+
+I guess that's significant.
+
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -61,6 +61,7 @@ struct proc_dir_entry {
+>  	struct rb_node subdir_node;
+>  	char *name;
+>  	umode_t mode;
+> +	u8 flags;
+
+Add a comment describing what this is?
+
+>  	u8 namelen;
+>  	char inline_name[];
+>  } __randomize_layout;
+>
+> ...
+>
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -5,6 +5,7 @@
+>  #ifndef _LINUX_PROC_FS_H
+>  #define _LINUX_PROC_FS_H
+>  
+> +#include <linux/compiler.h>
+>  #include <linux/types.h>
+>  #include <linux/fs.h>
+>  
+> @@ -12,7 +13,21 @@ struct proc_dir_entry;
+>  struct seq_file;
+>  struct seq_operations;
+>  
+> +enum {
+> +	/*
+> +	 * All /proc entries using this ->proc_ops instance are never removed.
+> +	 *
+> +	 * If in doubt, ignore this flag.
+> +	 */
+> +#ifdef MODULE
+> +	PROC_ENTRY_PERMANENT = 0U,
+> +#else
+> +	PROC_ENTRY_PERMANENT = 1U << 0,
 > +#endif
-> +       .alloc_inode    = afs_alloc_inode,
-> +       .drop_inode     = afs_drop_inode,
-> +       .destroy_inode  = afs_destroy_inode,
-> +       .free_inode     = afs_free_inode,
-> +       .evict_inode    = afs_evict_inode,
-> +       .show_devname   = afs_show_devname,
-> +       .show_options   = afs_show_options,
 > +};
-> +
-> +static const struct super_operations afs_dyn_super_ops = {
-> +       .statfs         = afs_statfs,
-> +#ifdef CONFIG_FSINFO
-> +       .fsinfo_attributes = afs_dyn_fsinfo_attributes,
-> +#endif
->         .alloc_inode    = afs_alloc_inode,
->         .drop_inode     = afs_drop_inode,
->         .destroy_inode  = afs_destroy_inode,
-[...]
-> @@ -432,9 +454,12 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
->         sb->s_blocksize_bits    = PAGE_SHIFT;
->         sb->s_maxbytes          = MAX_LFS_FILESIZE;
->         sb->s_magic             = AFS_FS_MAGIC;
-> -       sb->s_op                = &afs_super_ops;
-> -       if (!as->dyn_root)
-> +       if (!as->dyn_root) {
-> +               sb->s_op        = &afs_super_ops;
->                 sb->s_xattr     = afs_xattr_handlers;
-> +       } else {
-> +               sb->s_op        = &afs_dyn_super_ops;
-> +       }
 
-Ewww. So basically, having one static set of .fsinfo_attributes is not
-sufficiently flexible for everyone, but instead of allowing the
-filesystem to dynamically provide a list of supported attributes, you
-just duplicate the super_operations? Seems to me like it'd be cleaner
-to add a function pointer to the super_operations that can dynamically
-fill out the supported fsinfo attributes.
+That feels quite hacky.  Is it really needed?  Any module which uses
+this is simply buggy?
 
-It seems to me like the current API is going to be a dead end if you
-ever want to have decent passthrough of these things for e.g. FUSE, or
-overlayfs, or VirtFS?
+Can we just leave this undefined if MODULE and break the build?
 
->         ret = super_setup_bdi(sb);
->         if (ret)
->                 return ret;
-> @@ -444,7 +469,7 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
->         if (as->dyn_root) {
->                 inode = afs_iget_pseudo_dir(sb, true);
->         } else {
-> -               sprintf(sb->s_id, "%llu", as->volume->vid);
-> +               sprintf(sb->s_id, "%llx", as->volume->vid);
+>  struct proc_ops {
+> +	unsigned int proc_flags;
+>  	int	(*proc_open)(struct inode *, struct file *);
+>  	ssize_t	(*proc_read)(struct file *, char __user *, size_t, loff_t *);
+>  	ssize_t	(*proc_write)(struct file *, const char __user *, size_t, loff_t *);
+> @@ -25,7 +40,7 @@ struct proc_ops {
+>  #endif
+>  	int	(*proc_mmap)(struct file *, struct vm_area_struct *);
+>  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+> -};
+> +} __randomize_layout;
 
-(This is technically a (small) UAPI change for audit logging of AFS
-filesystems, right? You may want to note that in the commit message.)
+Unchangelogged, unrelated?
 
->                 afs_activate_volume(as->volume);
->                 iget_data.fid.vid       = as->volume->vid;
->                 iget_data.fid.vnode     = 1;
-[...]
-> +static int afs_fsinfo_get_supports(struct path *path, struct fsinfo_context *ctx)
-> +{
-> +       struct fsinfo_supports *sup = ctx->buffer;
-> +
-> +       sup = ctx->buffer;
+>  #ifdef CONFIG_PROC_FS
+>  
 
-Duplicate assignment to "sup".
-
-> +       sup->stx_mask = (STATX_TYPE | STATX_MODE |
-> +                        STATX_NLINK |
-> +                        STATX_UID | STATX_GID |
-> +                        STATX_MTIME | STATX_INO |
-> +                        STATX_SIZE);
-> +       sup->stx_attributes = STATX_ATTR_AUTOMOUNT;
-> +       return sizeof(*sup);
-> +}
-[...]
-> +static int afs_fsinfo_get_server_address(struct path *path, struct fsinfo_context *ctx)
-> +{
-> +       struct fsinfo_afs_server_address *addr = ctx->buffer;
-> +       struct afs_server_list *slist;
-> +       struct afs_super_info *as = AFS_FS_S(path->dentry->d_sb);
-> +       struct afs_addr_list *alist;
-> +       struct afs_volume *volume = as->volume;
-> +       struct afs_server *server;
-> +       struct afs_net *net = afs_d2net(path->dentry);
-> +       unsigned int i;
-> +       int ret = -ENODATA;
-> +
-> +       read_lock(&volume->servers_lock);
-> +       slist = afs_get_serverlist(volume->servers);
-> +       read_unlock(&volume->servers_lock);
-> +
-> +       if (ctx->Nth >= slist->nr_servers)
-> +               goto put_slist;
-> +       server = slist->servers[ctx->Nth].server;
-> +
-> +       read_lock(&server->fs_lock);
-> +       alist = afs_get_addrlist(rcu_access_pointer(server->addresses));
-
-Documentation for rcu_access_pointer() says:
-
- * Return the value of the specified RCU-protected pointer, but omit the
- * lockdep checks for being in an RCU read-side critical section.  This is
- * useful when the value of this pointer is accessed, but the pointer is
- * not dereferenced, for example, when testing an RCU-protected pointer
- * against NULL.  Although rcu_access_pointer() may also be used in cases
- * where update-side locks prevent the value of the pointer from changing,
- * you should instead use rcu_dereference_protected() for this use case.
- *
- * It is also permissible to use rcu_access_pointer() when read-side
- * access to the pointer was removed at least one grace period ago, as
- * is the case in the context of the RCU callback that is freeing up
- * the data, or after a synchronize_rcu() returns.  This can be useful
- * when tearing down multi-linked structures after a grace period
- * has elapsed.
-
-> +       read_unlock(&server->fs_lock);
