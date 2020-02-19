@@ -2,152 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AD9163889
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 01:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F19B1638D9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 01:59:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbgBSA3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 19:29:31 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48734 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbgBSA3a (ORCPT
+        id S1727553AbgBSA7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 19:59:23 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53932 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726482AbgBSA7W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 19:29:30 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01J0S1ae057927;
-        Wed, 19 Feb 2020 00:29:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=sqwF7YxyL7cLyFhkdS9jnzi78bvnBC3UnJX6iZdJn2g=;
- b=qUzYrzF7wT/oRSOtPX99I9MkJeY82vF+p/zWSCVcnl3INom39+wHW4L28GA8iOU3nIvm
- eqnDYNSR8I1PrJTAWcmK7o8bGQjycA2L92vHpHMKhwN0S0q80cykmwtRsHajHf1ETvoM
- GCLcD/sDj5zVZiMPRyMGHQVaw2roDvGgeTRrLpZk2kaKLMhz1QJsCvbW2dSfdFo+4gPE
- 0U37gX2hOzCU3qcd0YvyMfThIMbt9kyKqfUnfF/LpOXMSnDwVnpaHRC5nQqK19cUiID+
- ihw4rqADgKV/UItIGrhlmr3Ta6TGbEfCtXAeGBhBKSJfxk8SmNG7ZLyt0936z462pJGK pw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2y699rsq54-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 00:29:19 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01J0RflB058003;
-        Wed, 19 Feb 2020 00:29:19 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2y6tc3dg5n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Feb 2020 00:29:18 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01J0THAo016454;
-        Wed, 19 Feb 2020 00:29:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Feb 2020 16:29:17 -0800
-Date:   Tue, 18 Feb 2020 16:29:16 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, Eryu Guan <guaneryu@gmail.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] FS Maintainers Don't Scale
-Message-ID: <20200219002916.GB9506@magnolia>
-References: <20200131052520.GC6869@magnolia>
- <CAOQ4uxh=4DrH_dL3TULcFa+pGk0YhS=TobuGk_+Z0oRWvw63rg@mail.gmail.com>
- <8983ceaa-1fda-f9cc-73c9-8764d010d3e2@oracle.com>
- <20200202214620.GA20628@dread.disaster.area>
- <fc430471-54d2-bb44-d084-a37e7ff9ef50@oracle.com>
- <20200212220600.GS6870@magnolia>
- <20200213151100.GC6548@bfoster>
- <20200213154632.GN7778@bombadil.infradead.org>
- <20200216215556.GZ10776@dread.disaster.area>
+        Tue, 18 Feb 2020 19:59:22 -0500
+Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 368A83A2380;
+        Wed, 19 Feb 2020 11:59:16 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j4Dhr-0004cn-HF; Wed, 19 Feb 2020 11:59:15 +1100
+Date:   Wed, 19 Feb 2020 11:59:15 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 07/19] mm: Put readahead pages in cache earlier
+Message-ID: <20200219005915.GV10776@dread.disaster.area>
+References: <20200217184613.19668-1-willy@infradead.org>
+ <20200217184613.19668-12-willy@infradead.org>
+ <20200218061459.GM10776@dread.disaster.area>
+ <20200218154222.GQ7778@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200216215556.GZ10776@dread.disaster.area>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- mlxscore=0 malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9535 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002190000
+In-Reply-To: <20200218154222.GQ7778@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=vUdR-S3ouboEXt6xVngA:9
+        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 08:55:56AM +1100, Dave Chinner wrote:
-> On Thu, Feb 13, 2020 at 07:46:32AM -0800, Matthew Wilcox wrote:
-> > On Thu, Feb 13, 2020 at 10:11:00AM -0500, Brian Foster wrote:
-> > > With regard to the burnout thing, ISTM the core functionality of the
-> > > maintainer is to maintain the integrity of the subtree. That involves
-> > > things like enforcing development process (i.e., requiring r-b tags on
-> > > all patches to merge), but not necessarily being obligated to resolve
-> > > conflicts or to review every patch that comes through in detail, or
-> > > guarantee that everything sent to the list makes it into the next
-> > > release, etc. If certain things aren't being reviewed in time or making
-> > > progress and that somehow results in additional pressure on the
-> > > maintainer, ISTM that something is wrong there..?
+On Tue, Feb 18, 2020 at 07:42:22AM -0800, Matthew Wilcox wrote:
+> On Tue, Feb 18, 2020 at 05:14:59PM +1100, Dave Chinner wrote:
+> > On Mon, Feb 17, 2020 at 10:45:52AM -0800, Matthew Wilcox wrote:
+> > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > > > 
-> > > On a more logistical note, didn't we (XFS) discuss the idea of a
-> > > rotating maintainership at one point? I know Dave had dealt with burnout
-> > > after doing this job for quite some time, Darrick stepped in and it
-> > > sounds like he is now feeling it as well (and maybe Eric, having to hold
-> > > down the xfsprogs fort). I'm not maintainer nor do I really want to be,
-> > > but I'd be willing to contribute to maintainer like duties on a limited
-> > > basis if there's a need. For example, if we had a per-release rotation
-> > > of 3+ people willing to contribute, perhaps that could spread the pain
-> > > around sufficiently..? Just a thought, and of course not being a
-> > > maintainer I have no idea how realistic something like that might be..
+> > > At allocation time, put the pages in the cache unless we're using
+> > > ->readpages.  Add the readahead_for_each() iterator for the benefit of
+> > > the ->readpage fallback.  This iterator supports huge pages, even though
+> > > none of the filesystems to be converted do yet.
 > > 
-> > Not being an XFS person, I don't want to impose anything, but have
-> > you read/seen Dan Vetter's talk on this subject?
-> > https://blog.ffwll.ch/2017/01/maintainers-dont-scale.html (plenty of
-> > links to follow, including particularly https://lwn.net/Articles/705228/ )
+> > This could be better written - took me some time to get my head
+> > around it and the code.
+> > 
+> > "When populating the page cache for readahead, mappings that don't
+> > use ->readpages need to have their pages added to the page cache
+> > before ->readpage is called. Do this insertion earlier so that the
+> > pages can be looked up immediately prior to ->readpage calls rather
+> > than passing them on a linked list. This early insert functionality
+> > is also required by the upcoming ->readahead method that will
+> > replace ->readpages.
+> > 
+> > Optimise and simplify the readpage loop by adding a
+> > readahead_for_each() iterator to provide the pages we need to read.
+> > This iterator also supports huge pages, even though none of the
+> > filesystems have been converted to use them yet."
 > 
-> Yes, and I've talked to Dan in great detail about it over several
-> past LCAs... :)
+> Thanks, I'll use that.
 > 
-> > It seems like the XFS development community might benefit from a
-> > group maintainer model.
+> > > +static inline struct page *readahead_page(struct readahead_control *rac)
+> > > +{
+> > > +	struct page *page;
+> > > +
+> > > +	if (!rac->_nr_pages)
+> > > +		return NULL;
+> > 
+> > Hmmmm.
+> > 
+> > > +
+> > > +	page = xa_load(&rac->mapping->i_pages, rac->_start);
+> > > +	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> > > +	rac->_batch_count = hpage_nr_pages(page);
+> > 
+> > So we could have rac->_nr_pages = 2, and then we get an order 2
+> > large page returned, and so rac->_batch_count = 4.
 > 
-> Yes, it may well do. The problem is the pool of XFS developers is
-> *much smaller* than the graphics subsystem and so a "group
-> maintainership" if kinda what we do already. I mean, I do have
-> commit rights to the XFS trees kernel.org, even though I'm not a
-> maintainer. I'm essentially the backup at this point - if someone
-> needs to take time off, I'll take over.
-> 
-> I think the biggest barrier to maintaining the XFS tree is the
-> amount of integration testing that the maintainer does on the merged
-> tree.  That's non-trivial, especially with how long it takes to run
-> fstests these days. If you're not set up to run QA 24x7 across a
-> bunch of different configs, then you need to get that into place
-> before being able to do the job of maintaining the XFS kernel
-> tree...
-> 
-> If everyone had that capability and resources at their disposal, then
-> rotating the tree maintenance responsibilities would be much
-> easier...
+> Well, no, we couldn't.  rac->_nr_pages is incremented by 4 when we add
+> an order-2 page to the readahead.
 
-I kinda wish the LF or someone would open such a program to the kernel
-maintainers.  I never liked that old maxim, "The maintainer is [the
-stuckee] with the most testing resources" -- there shouldn't really have
-to be a djwong cloud and a dchinner cloud. :/
+I don't see any code that does that. :)
 
---D
+i.e. we aren't actually putting high order pages into the page
+cache here - page_alloc() allocates order-0 pages) - so there's
+nothing in the patch that tells me how rac->_nr_pages behaves
+when allocating large pages...
 
-> Cheers,
+IOWs, we have an undocumented assumption in the implementation...
+
+> I can put a
+> 	BUG_ON(rac->_batch_count > rac->_nr_pages)
+> in here to be sure to catch any logic error like that.
+
+Definitely necessary given that we don't insert large pages for
+readahead yet. A comment explaining the assumptions that the
+code makes for large pages is probably in order, too.
+
+> > > -		page->index = offset;
+> > > -		list_add(&page->lru, &page_pool);
+> > > +		if (use_list) {
+> > > +			page->index = offset;
+> > > +			list_add(&page->lru, &page_pool);
+> > > +		} else if (add_to_page_cache_lru(page, mapping, offset,
+> > > +					gfp_mask) < 0) {
+> > > +			put_page(page);
+> > > +			goto read;
+> > > +		}
+> > 
+> > Ok, so that's why you put read code at the end of the loop. To turn
+> > the code into spaghetti :/
+> > 
+> > How much does this simplify down when we get rid of ->readpages and
+> > can restructure the loop? This really seems like you're trying to
+> > flatten two nested loops into one by the use of goto....
 > 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> I see it as having two failure cases in this loop.  One for "page is
+> already present" (which already existed) and one for "allocated a page,
+> but failed to add it to the page cache" (which used to be done later).
+> I didn't want to duplicate the "call read_pages()" code.  So I reshuffled
+> the code rather than add a nested loop.  I don't think the nested loop
+> is easier to read (we'll be at 5 levels of indentation for some statements).
+> Could do it this way ...
+
+Can we move the update of @rac inside read_pages()? The next
+start offset^Windex we start at is rac._start + rac._nr_pages, right?
+
+so read_pages() could do:
+
+{
+	if (readahead_count(rac)) {
+		/* do readahead */
+	}
+
+	/* advance the readahead cursor */
+	rac->_start += rac->_nr_pages;
+	rac._nr_pages = 0;
+}
+
+and then we only need to call read_pages() in these cases and so
+the requirement for avoiding duplicating code is avoided...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
