@@ -2,114 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B96D4163BB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 04:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82A8E163BCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 05:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgBSD52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Feb 2020 22:57:28 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:36781 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726492AbgBSD51 (ORCPT
+        id S1726475AbgBSEEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Feb 2020 23:04:47 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44244 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbgBSEEr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Feb 2020 22:57:27 -0500
-Received: from dread.disaster.area (pa49-179-138-28.pa.nsw.optusnet.com.au [49.179.138.28])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A8BC07EB672;
-        Wed, 19 Feb 2020 14:57:21 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4GUC-0005gh-AV; Wed, 19 Feb 2020 14:57:20 +1100
-Date:   Wed, 19 Feb 2020 14:57:20 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 00/19] Change readahead API
-Message-ID: <20200219035720.GI10776@dread.disaster.area>
-References: <20200217184613.19668-1-willy@infradead.org>
- <20200218045633.GH10776@dread.disaster.area>
- <20200218134230.GN7778@bombadil.infradead.org>
- <20200218212652.GR10776@dread.disaster.area>
- <20200219034525.GH10776@dread.disaster.area>
- <20200219034832.GL24185@bombadil.infradead.org>
+        Tue, 18 Feb 2020 23:04:47 -0500
+Received: by mail-qt1-f195.google.com with SMTP id j23so2460635qtr.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Feb 2020 20:04:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oP2MqxukizBRlPC9SfvqBAcpKQDQ39+MBV8Jn9d7IdU=;
+        b=knLDS9RoP4max5hfagxZux9hUSAX4uFXfIJOs4Pl2iD9XJS0gDytXhY535GWwyXKmN
+         GJGwl+8ma/bF3nRhUMOQSPTgsNO/7vN7ewM5h8CkBZnCKRxP101mDXAPZcn6FYdj448X
+         0inKFN/p2mRk2G19n6AB6ukXJyEI6j0DXLgym23pawd/vSoFtufYh7mTtUO6o+y/vjw2
+         e1USu3q3AkJyEWBUdYnDTdoEEfoz03ddfy9+SkuecdjATdIvFhRcOs1uXasqBzGjRHMR
+         vJ1UwDMKKfS0aJHfclnzQaWPADxOLlMObvWb9NCenfbbY11xlpkRGRjdmJZ2WfSEOgkl
+         6KFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oP2MqxukizBRlPC9SfvqBAcpKQDQ39+MBV8Jn9d7IdU=;
+        b=H9Lpmb7WpDHO2knZYyz+ihvg3MEJ79V80uKc2cJU3D7imbQJ4bq+uwryOsKmfIX3l5
+         9jQEuI5YTp0JACm+5NORVKiUOqsZ+y7/vz+7ON0xMmxOv31o6WyPsJVKmwutdJDyjq1V
+         qn5faqdk7e/j7pTgv3ew2MjYlYoPix5rfJbH5EdUPKutzCMWa7fu9CiQoNM8zS+CPil6
+         64uIdazc4iF/g13luyFQOlHvPJZ1qqYJ3FCQ1NtDCqRWuEPCkjkxcyH8k+hJb2TuugPn
+         MxkDM2I9sa7FH7coWno8Dtbmc60xb7RhiyHOaNFoApr133MPkFAtrth9fBQtCi4fe2v9
+         RlDg==
+X-Gm-Message-State: APjAAAVJZCeJq9OOkB6XCQA9DmJg6Psp9h/eYc8Imig9PWWRhUHblKt6
+        jWrEVBPtokZ2NKTfeGZ/T0EcVw==
+X-Google-Smtp-Source: APXvYqyuVmcb2uQ0JQaLq7Vd7ocdcNzzYrdnVg8V+sqphizIq6oakYuSZVaek3e4KcMnvWva5NaWNA==
+X-Received: by 2002:ac8:1b18:: with SMTP id y24mr19970707qtj.158.1582085086153;
+        Tue, 18 Feb 2020 20:04:46 -0800 (PST)
+Received: from ovpn-121-44.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id r6sm323671qtm.63.2020.02.18.20.04.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 20:04:45 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     viro@zeniv.linux.org.uk
+Cc:     hch@infradead.org, darrick.wong@oracle.com, elver@google.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] fs: fix a data race in i_size_write/i_size_read
+Date:   Tue, 18 Feb 2020 23:04:26 -0500
+Message-Id: <20200219040426.1140-1-cai@lca.pw>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122.2)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200219034832.GL24185@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=zAxSp4fFY/GQY8/esVNjqw==:117 a=zAxSp4fFY/GQY8/esVNjqw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=4gE3ddVfANxGN4fhDGwA:9 a=QEXdDO2ut3YA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 07:48:32PM -0800, Matthew Wilcox wrote:
-> On Wed, Feb 19, 2020 at 02:45:25PM +1100, Dave Chinner wrote:
-> > On Wed, Feb 19, 2020 at 08:26:52AM +1100, Dave Chinner wrote:
-> > > On Tue, Feb 18, 2020 at 05:42:30AM -0800, Matthew Wilcox wrote:
-> > > > On Tue, Feb 18, 2020 at 03:56:33PM +1100, Dave Chinner wrote:
-> > > > > Latest version in your git tree:
-> > > > > 
-> > > > > $ ▶ glo -n 5 willy/readahead
-> > > > > 4be497096c04 mm: Use memalloc_nofs_save in readahead path
-> > > > > ff63497fcb98 iomap: Convert from readpages to readahead
-> > > > > 26aee60e89b5 iomap: Restructure iomap_readpages_actor
-> > > > > 8115bcca7312 fuse: Convert from readpages to readahead
-> > > > > 3db3d10d9ea1 f2fs: Convert from readpages to readahead
-> > > > > $
-> > > > > 
-> > > > > merged into a 5.6-rc2 tree fails at boot on my test vm:
-> > > > > 
-> > > > > [    2.423116] ------------[ cut here ]------------
-> > > > > [    2.424957] list_add double add: new=ffffea000efff4c8, prev=ffff8883bfffee60, next=ffffea000efff4c8.
-> > > > > [    2.428259] WARNING: CPU: 4 PID: 1 at lib/list_debug.c:29 __list_add_valid+0x67/0x70
-> > > > > [    2.457484] Call Trace:
-> > > > > [    2.458171]  __pagevec_lru_add_fn+0x15f/0x2c0
-> > > > > [    2.459376]  pagevec_lru_move_fn+0x87/0xd0
-> > > > > [    2.460500]  ? pagevec_move_tail_fn+0x2d0/0x2d0
-> > > > > [    2.461712]  lru_add_drain_cpu+0x8d/0x160
-> > > > > [    2.462787]  lru_add_drain+0x18/0x20
-> > > > 
-> > > > Are you sure that was 4be497096c04 ?  I ask because there was a
-> > > 
-> > > Yes, because it's the only version I've actually merged into my
-> > > working tree, compiled and tried to run. :P
-> > > 
-> > > > version pushed to that git tree that did contain a list double-add
-> > > > (due to a mismerge when shuffling patches).  I noticed it and fixed
-> > > > it, and 4be497096c04 doesn't have that problem.  I also test with
-> > > > CONFIG_DEBUG_LIST turned on, but this problem you hit is going to be
-> > > > probabilistic because it'll depend on the timing between whatever other
-> > > > list is being used and the page actually being added to the LRU.
-> > > 
-> > > I'll see if I can reproduce it.
-> > 
-> > Just updated to a current TOT Linus kernel and your latest branch,
-> > and so far this is 100% reproducable.
-> > 
-> > Not sure how I'm going to debug it yet, because it's init that is
-> > triggering it....
-> 
-> Eric found it ...
+inode::i_size could be accessed concurently as noticed by KCSAN,
 
-Yeah, just saw that and am applying his patch to test it...
+ BUG: KCSAN: data-race in iomap_do_writepage / iomap_write_end
 
-> still not sure why I don't see it.
+ write to 0xffff8bf68fc0cac0 of 8 bytes by task 7484 on cpu 71:
+  iomap_write_end+0xea/0x530
+  i_size_write at include/linux/fs.h:888
+  (inlined by) iomap_write_end at fs/iomap/buffered-io.c:782
+  iomap_write_actor+0x132/0x200
+  iomap_apply+0x245/0x8a5
+  iomap_file_buffered_write+0xbd/0xf0
+  xfs_file_buffered_aio_write+0x1c2/0x790 [xfs]
+  xfs_file_write_iter+0x232/0x2d0 [xfs]
+  new_sync_write+0x29c/0x3b0
+  __vfs_write+0x92/0xa0
+  vfs_write+0x103/0x260
+  ksys_write+0x9d/0x130
+  __x64_sys_write+0x4c/0x60
+  do_syscall_64+0x91/0xb05
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-No readahead configured on your device?
+ read to 0xffff8bf68fc0cac0 of 8 bytes by task 5901 on cpu 70:
+  iomap_do_writepage+0xf4/0x450
+  i_size_read at include/linux/fs.h:866
+  (inlined by) iomap_do_writepage at fs/iomap/buffered-io.c:1558
+  write_cache_pages+0x523/0xb20
+  iomap_writepages+0x47/0x80
+  xfs_vm_writepages+0xc7/0x100 [xfs]
+  do_writepages+0x5e/0x130
+  __writeback_single_inode+0xd5/0xb20
+  writeback_sb_inodes+0x429/0x910
+  __writeback_inodes_wb+0xc4/0x150
+  wb_writeback+0x47b/0x830
+  wb_workfn+0x688/0x930
+  process_one_work+0x54f/0xb90
+  worker_thread+0x80/0x5f0
+  kthread+0x1cd/0x1f0
+  ret_from_fork+0x27/0x50
 
+ Reported by Kernel Concurrency Sanitizer on:
+ CPU: 70 PID: 5901 Comm: kworker/u257:2 Tainted: G             L    5.6.0-rc2-next-20200218+ #2
+ Hardware name: HPE ProLiant DL385 Gen10/ProLiant DL385 Gen10, BIOS A40 07/10/2019
+ Workqueue: writeback wb_workfn (flush-254:0)
 
-Cheers,
+The write is protected by exclusive inode::i_rwsem (in
+xfs_file_buffered_aio_write()) but the read is not. A shattered value
+could introduce a logic bug. Fixed it using a pair of WRITE/READ_ONCE().
 
-Dave.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ include/linux/fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3cd4fe6b845e..25f98da90cf3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -863,7 +863,7 @@ static inline loff_t i_size_read(const struct inode *inode)
+ 	preempt_enable();
+ 	return i_size;
+ #else
+-	return inode->i_size;
++	return READ_ONCE(inode->i_size);
+ #endif
+ }
+ 
+@@ -885,7 +885,7 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
+ 	inode->i_size = i_size;
+ 	preempt_enable();
+ #else
+-	inode->i_size = i_size;
++	WRITE_ONCE(inode->i_size, i_size);
+ #endif
+ }
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.21.0 (Apple Git-122.2)
+
