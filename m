@@ -2,113 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770B516602E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 15:58:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0460C1660B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 16:14:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbgBTO6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 09:58:38 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44493 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgBTO6h (ORCPT
+        id S1728448AbgBTPOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 10:14:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31376 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728264AbgBTPOj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 09:58:37 -0500
-Received: by mail-oi1-f194.google.com with SMTP id d62so27756004oia.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 06:58:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fpwkKx7E4F4iGPP1d6IgP9CAngaHu/jtsv9MUOt6i20=;
-        b=rhM3j0x8usrirIjQD0qjSQ9jCCkuL46j6a4GYkPXKtnSgcJhk6Hx9Th+jZf4OPWbqZ
-         EDZz3oWYIE9EiZWJqp2PUKigyRRw/t6Q8UH8RqgRNGsTWV2dv9mCr2DcH4z2bQQ+xk2z
-         kYwaMe7GObMMSex4qojHOfzhjSgF0C0TaHxJYt1mQa7h1Ewq+OWpkkTj9lDdiomRk5M6
-         rRTAz/AFKDZMNW7yS5X69XPQn0UBAe7qzflPdGZWJ08eh9do95UBp6tUxa/M6BwZpMHp
-         3HF+uapICKyFdhOCgDzsKDrdTMOx5Xl1lWUMDmdY/3QoY8XGcpsi8+IoC8lTU4JBx+35
-         OQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fpwkKx7E4F4iGPP1d6IgP9CAngaHu/jtsv9MUOt6i20=;
-        b=X2hRLS4jmW3B12XM3euNDXR1iyHz6TYFGEs5r4RL020sKCmHmXwToVvJ3nn+cDS12W
-         lpQy5/6vjD/0yKYAIisY7o59JTPlvaK6OWoCzo80VnctT4EZ0C1e2LEXrpeJCrbnXV89
-         +doA5OmHKTI7N8oLT7CtB6WTTTWA4NcYGq1UH6rRGMuJenIVYYjeklbBzbJ3kcjiZXsm
-         /sWeyGQ3iABSzXtVbwGd+jOMdiCX6ezPM8jRxGT+OgAHDgHYzuZ39LH4TL/Xr0RY6Iow
-         n+9ZnNADJVWNh7uRorGIYkMjriyiutOaWz48HKZ37406SvY6xhyXA3qNJEGHm7j6qhAU
-         BU+A==
-X-Gm-Message-State: APjAAAWuYWdruQyMfZpCW0SSmxqs9S1UbSLTIVHwgSxzzj8Hswzd1oGa
-        Sf1e3UYH4CguO+YoJFk4PQRqHMWwtMcW97TNpDvxYg==
-X-Google-Smtp-Source: APXvYqwLZrWv2noarPLEsgl5QTqzBVLNEume/NYspxHkGbrXT7XqrvirpoDtoOYD8R+IEePb15ICBTNX5VckUg08Qbg=
-X-Received: by 2002:aca:b187:: with SMTP id a129mr2344580oif.175.1582210716581;
- Thu, 20 Feb 2020 06:58:36 -0800 (PST)
+        Thu, 20 Feb 2020 10:14:39 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01KF9gJZ075854
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 10:14:38 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y93kg4h3w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 10:14:38 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <chandan@linux.ibm.com>;
+        Thu, 20 Feb 2020 15:14:36 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 20 Feb 2020 15:14:35 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01KFEYap53805128
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 15:14:34 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C1B711C07B;
+        Thu, 20 Feb 2020 15:14:34 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6242611C058;
+        Thu, 20 Feb 2020 15:14:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.61.89])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Feb 2020 15:14:33 +0000 (GMT)
+From:   Chandan Rajendra <chandan@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] xfs: ensure that the inode uid/gid match values match the icdinode ones
+Date:   Wed, 19 Feb 2020 20:17:59 +0530
+Organization: IBM
+In-Reply-To: <20200218210020.40846-2-hch@lst.de>
+References: <20200218210020.40846-1-hch@lst.de> <20200218210020.40846-2-hch@lst.de>
 MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204558110.3299825.5080605285325995873.stgit@warthog.procyon.org.uk>
- <CAG48ez0fsB_XTmNfE-2tuabH7JHyQdih8bu7Qwu9HGWJXti7tQ@mail.gmail.com> <628199.1582203532@warthog.procyon.org.uk>
-In-Reply-To: <628199.1582203532@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 20 Feb 2020 15:58:10 +0100
-Message-ID: <CAG48ez03VMKEmJEmViSkxbF9J5dW=6vny9vKGdenBewtjF+nqQ@mail.gmail.com>
-Subject: Re: [PATCH 11/19] afs: Support fsinfo() [ver #16]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-TM-AS-GCONF: 00
+x-cbid: 20022015-0020-0000-0000-000003ABF918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022015-0021-0000-0000-00002203FF53
+Message-Id: <17408386.h8XSfVsPT9@localhost.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-20_04:2020-02-19,2020-02-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ clxscore=1011 phishscore=0 mlxlogscore=626 impostorscore=0
+ priorityscore=1501 adultscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=1 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200113
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 1:59 PM David Howells <dhowells@redhat.com> wrote:
-> Jann Horn <jannh@google.com> wrote:
+On Wednesday, February 19, 2020 2:30 AM Christoph Hellwig wrote: 
+> Instead of only synchronizing the uid/gid values in xfs_setup_inode,
+> ensure that they always match to prepare for removing the icdinode
+> fields.
 >
-> > Ewww. So basically, having one static set of .fsinfo_attributes is not
-> > sufficiently flexible for everyone, but instead of allowing the
-> > filesystem to dynamically provide a list of supported attributes, you
-> > just duplicate the super_operations? Seems to me like it'd be cleaner
-> > to add a function pointer to the super_operations that can dynamically
-> > fill out the supported fsinfo attributes.
-> >
-> > It seems to me like the current API is going to be a dead end if you
-> > ever want to have decent passthrough of these things for e.g. FUSE, or
-> > overlayfs, or VirtFS?
->
-> Ummm...
->
-> Would it be sufficient to have a function that returns a list of attributes?
-> Or does it need to be able to call to vfs_do_fsinfo() if it supports an
-> attribute?
->
-> There are two things I want to be able to do:
->
->  (1) Do the buffer wrangling in the core - which means the core needs to see
->      the type of the attribute.  That's fine if, say, afs_fsinfo() can call
->      vfs_do_fsinfo() with the definition for any attribute it wants to handle
->      and, say, return -ENOPKG otherways so that the core can then fall back to
->      its private list.
->
->  (2) Be able to retrieve the list of attributes and/or query an attribute.
->      Now, I can probably manage this even through the same interface.  If,
->      say, seeing FSINFO_ATTR_FSINFO_ATTRIBUTES causes the handler to simply
->      append on the IDs of its own supported attributes (a helper can be
->      provided for that).
->
->      If it sees FSINFO_ATR_FSINFO_ATTRIBUTE_INFO, it can just look to see if
->      it has the attribute with the ID matching Nth and return that, else
->      ENOPKG - again a helper could be provided.
->
-> Chaining through overlayfs gets tricky.  You end up with multiple contributory
-> filesystems with different properties - and any one of those layers could
-> perhaps be another overlay.  Overlayfs would probably needs to integrate the
-> info and derive the lowest common set.
 
-Hm - I guess just returning a list of attributes ought to be fine?
-Then AFS can just return one of its two statically-allocated attribute
-lists there, and a filesystem with more complicated circumstances
-(like FUSE or overlayfs or whatever) can compute a heap-allocated list
-on mount that is freed when the superblock goes away, or something
-like that?
+The changes indeed keep the uid and gid values the same across icdinode and
+vfs inode.
+
+Reviewed-by: Chandan Rajendra <chandanrlinux@gmail.com>
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/xfs/libxfs/xfs_inode_buf.c | 2 ++
+>  fs/xfs/xfs_icache.c           | 4 ++++
+>  fs/xfs/xfs_inode.c            | 8 ++++++--
+>  fs/xfs/xfs_iops.c             | 3 ---
+>  4 files changed, 12 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
+> index 8afacfe4be0a..cc4efd34843a 100644
+> --- a/fs/xfs/libxfs/xfs_inode_buf.c
+> +++ b/fs/xfs/libxfs/xfs_inode_buf.c
+> @@ -223,7 +223,9 @@ xfs_inode_from_disk(
+> 
+>  	to->di_format = from->di_format;
+>  	to->di_uid = be32_to_cpu(from->di_uid);
+> +	inode->i_uid = xfs_uid_to_kuid(to->di_uid);
+>  	to->di_gid = be32_to_cpu(from->di_gid);
+> +	inode->i_gid = xfs_gid_to_kgid(to->di_gid);
+>  	to->di_flushiter = be16_to_cpu(from->di_flushiter);
+> 
+>  	/*
+> diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> index 8dc2e5414276..a7be7a9e5c1a 100644
+> --- a/fs/xfs/xfs_icache.c
+> +++ b/fs/xfs/xfs_icache.c
+> @@ -289,6 +289,8 @@ xfs_reinit_inode(
+>  	uint64_t	version = inode_peek_iversion(inode);
+>  	umode_t		mode = inode->i_mode;
+>  	dev_t		dev = inode->i_rdev;
+> +	kuid_t		uid = inode->i_uid;
+> +	kgid_t		gid = inode->i_gid;
+> 
+>  	error = inode_init_always(mp->m_super, inode);
+> 
+> @@ -297,6 +299,8 @@ xfs_reinit_inode(
+>  	inode_set_iversion_queried(inode, version);
+>  	inode->i_mode = mode;
+>  	inode->i_rdev = dev;
+> +	inode->i_uid = uid;
+> +	inode->i_gid = gid;
+>  	return error;
+>  }
+> 
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index c5077e6326c7..938b0943bd95 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -812,15 +812,19 @@ xfs_ialloc(
+> 
+>  	inode->i_mode = mode;
+>  	set_nlink(inode, nlink);
+> -	ip->i_d.di_uid = xfs_kuid_to_uid(current_fsuid());
+> -	ip->i_d.di_gid = xfs_kgid_to_gid(current_fsgid());
+> +	inode->i_uid = current_fsuid();
+> +	ip->i_d.di_uid = xfs_kuid_to_uid(inode->i_uid);
+>  	inode->i_rdev = rdev;
+>  	ip->i_d.di_projid = prid;
+> 
+>  	if (pip && XFS_INHERIT_GID(pip)) {
+> +		inode->i_gid = VFS_I(pip)->i_gid;
+>  		ip->i_d.di_gid = pip->i_d.di_gid;
+>  		if ((VFS_I(pip)->i_mode & S_ISGID) && S_ISDIR(mode))
+>  			inode->i_mode |= S_ISGID;
+> +	} else {
+> +		inode->i_gid = current_fsgid();
+> +		ip->i_d.di_gid = xfs_kgid_to_gid(inode->i_gid);
+>  	}
+> 
+>  	/*
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 81f2f93caec0..b818b261918f 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1304,9 +1304,6 @@ xfs_setup_inode(
+>  	/* make the inode look hashed for the writeback code */
+>  	inode_fake_hash(inode);
+> 
+> -	inode->i_uid    = xfs_uid_to_kuid(ip->i_d.di_uid);
+> -	inode->i_gid    = xfs_gid_to_kgid(ip->i_d.di_gid);
+> -
+>  	i_size_write(inode, ip->i_d.di_size);
+>  	xfs_diflags_to_iflags(inode, ip);
+> 
+> 
+
+
+-- 
+chandan
+
+
+
