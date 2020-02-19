@@ -2,317 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 485D8164F8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 21:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30DE6164FA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 21:13:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbgBSUHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 15:07:41 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37910 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbgBSUHl (ORCPT
+        id S1726980AbgBSUNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 15:13:19 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35952 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgBSUNS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 15:07:41 -0500
-Received: by mail-oi1-f195.google.com with SMTP id r137so5525767oie.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 12:07:38 -0800 (PST)
+        Wed, 19 Feb 2020 15:13:18 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f24so1168228lfh.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 12:13:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zsjzchhhyvUFJIy0oLPVbK5OuRfi6cC0og4QlfYyVOo=;
-        b=LLVJjnUF5S8Fi2UI4Zxvt9/e4fgVq0mM80LYhvtmacBI1WnRfWwwdP/Uc34ENCIVjm
-         VBrcCZy/vWhJaiTSFE7XN6lywqznBDKiJLrcjsTSqXMzHxz6yvmp0eGdE3DK1JwzqbID
-         jKCn+0alTN1JNanidXo7TrdAThlm3zcM2sBna4Rjg6qGDNaxzx6PRyphsYaHHm/IALf0
-         u+iMrDbUNPODuypJgN1LMnAXSl+DlBAD0kYtDRixMD611l01qh57H6eT7D9tzxwkBbTp
-         phO6QkaLdrdok29LrYViPR12E41Y0GHczvjfVEP2oHtx0Ip1tzQMNhV8y3iXMLIdEu5o
-         zlzA==
+        bh=bgq6Y7b2zz3iA7vvFl1zD3iuBLDCnggP0uD/ReDPtoY=;
+        b=L1xcjpv9tg4ovUYUrEvMleJYYGnxMSzUIGeTIEI8pb3Dp4HZy1mT2JTLUJYr+nQrPs
+         RkPEHZFY1/xrXLf8wYx0g7zYXtc/srkM5eYLE0fb8urwD0Hu/6f09qRJUwi9vY+uxkbK
+         MkE8Vg3sCpw9CxMHOqUIpxk4GiRP39hrEEF6A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zsjzchhhyvUFJIy0oLPVbK5OuRfi6cC0og4QlfYyVOo=;
-        b=qXgrI7SRMfNupW9Ez3s9OxFMkH2xIGkvzbJNsfNqUOfpxbA3orFTbJKH5Uz7M1VAUb
-         nWASMBWetHg2Cu+4n6/qG4Y5y8kBJlXBBd6YUyJkASIRRchFtugPZp7cM2dwDWINR2n7
-         xdO6zJiDVS1z5sF93gfkrcC6qJceUJyxsDQyqcXBmuHJbnkl66gfr0DToFATfRtfIZbj
-         CyJINTkPilNksccSM8A5GbJDotG9VcbUL8Hf6Om7KOi/KMEnPpEd3VWgJjG8c3D/GccW
-         bjiz3cKeh3BNVeNzwgv+H5W84wrLiBCKelq8/rC8pH9jCJDctinmrZLAEspQD39qxozV
-         TOug==
-X-Gm-Message-State: APjAAAWUaTt69km2NFMrLVmLvNR0Sr8dBhR+v4S8qijdIa0kfJEkmSCs
-        9rbopFL6+8vJG/d8zJYXKlPnFmYVzJyq3KjX1qFG8A==
-X-Google-Smtp-Source: APXvYqxGb14AZDfGn28Et5c7WU6/PV82oaP46pOorUlMz1aXLbjCmOn8TpEelTga3JSRn8xT+enzbxwYr2tp8IQ5bQc=
-X-Received: by 2002:a05:6808:8d0:: with SMTP id k16mr5750652oij.68.1582142858222;
- Wed, 19 Feb 2020 12:07:38 -0800 (PST)
+        bh=bgq6Y7b2zz3iA7vvFl1zD3iuBLDCnggP0uD/ReDPtoY=;
+        b=rWkUk5/g+ryN/Bukz7ETVdKuIXIhxcz9lFzccWVWLWIn9oP0rFfrLNY/ZJOrNlpGZp
+         vra1DY87+0rAYlCFD9ZHG58sFaxmY6B7b1bPlQ0/XNw7kHdpoS1LGC0P2OFSpjNjnx4O
+         E7B2odmL04qy2t6tR7xLxK8wPpHFdOyLuzim1h4dMC+IW1GtpnX0uaTNawSqM7iuyE7L
+         TrWO/vlxId2oujTlphDJuzZV2PbZSaa/XPEE68q0XGKqMXP8Bvgz6cytI2UYJKTcPdEo
+         TgFpsFKBRMvc4Byyn7Ye+RkbJQSFIWA2Tq58p91kZezHfW0Tm/xtiAj41DRgQvnDbk7a
+         ZfXg==
+X-Gm-Message-State: APjAAAUUvd6hKpLaEAt1IPi5r4h/jDnocJHvrRDtPTTIGUMKCfMOga9p
+        7C1QlMeruDIMac1SVaCS6iA/0w/l8lM=
+X-Google-Smtp-Source: APXvYqxImV7/qCCKi0RtX0aKq1Mj/20XFe/cJU90/67OIdKhC+PePvnEJBfMLrJlBkEe3jaGp4NbFg==
+X-Received: by 2002:a19:ca07:: with SMTP id a7mr14508949lfg.103.1582143196410;
+        Wed, 19 Feb 2020 12:13:16 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id g27sm352032lfh.57.2020.02.19.12.13.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2020 12:13:15 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id x7so1764425ljc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 12:13:15 -0800 (PST)
+X-Received: by 2002:a2e:9d92:: with SMTP id c18mr17708042ljj.265.1582143194731;
+ Wed, 19 Feb 2020 12:13:14 -0800 (PST)
 MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204550281.3299825.6344518327575765653.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158204550281.3299825.6344518327575765653.stgit@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 19 Feb 2020 21:07:11 +0100
-Message-ID: <CAG48ez0o3iHjQJNvh8V2Ao77g0CqfqGsv6caMCOFDy7w-VdtkQ@mail.gmail.com>
-Subject: Re: [PATCH 01/19] vfs: syscall: Add fsinfo() to query filesystem
- information [ver #16]
+References: <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk>
+ <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com>
+ <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com>
+ <241568.1582134931@warthog.procyon.org.uk> <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com>
+ <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com> <252465.1582142281@warthog.procyon.org.uk>
+In-Reply-To: <252465.1582142281@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 19 Feb 2020 12:12:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com>
+Message-ID: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
 To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 6:05 PM David Howells <dhowells@redhat.com> wrote:
-> Add a system call to allow filesystem information to be queried.  A request
-> value can be given to indicate the desired attribute.  Support is provided
-> for enumerating multi-value attributes.
-[...]
-> +static const struct fsinfo_attribute fsinfo_common_attributes[];
-> +
-> +/**
-> + * fsinfo_string - Store a string as an fsinfo attribute value.
-> + * @s: The string to store (may be NULL)
-> + * @ctx: The parameter context
-> + */
-> +int fsinfo_string(const char *s, struct fsinfo_context *ctx)
-> +{
-> +       int ret = 0;
-> +
-> +       if (s) {
-> +               ret = strlen(s);
-> +               memcpy(ctx->buffer, s, ret);
-> +       }
-> +
-> +       return ret;
-> +}
+On Wed, Feb 19, 2020 at 11:58 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Actually, in many ways, they're more akin to symlinks (and are implemented as
+> symlinks with funny attributes).  It's a shame that symlinkat() doesn't have
+> an at_flags parameter.
 
-Please add a check here to ensure that "ret" actually fits into the
-buffer (and use WARN_ON() if you think the check should never fire).
-Otherwise I think this is too fragile.
+Interesting. Then you'd get the metadata as the symlink data. Is the
+size of the available buffer (PATH_MAX) sufficient?
 
-[...]
-> +static int fsinfo_generic_ids(struct path *path, struct fsinfo_context *ctx)
-> +{
-> +       struct fsinfo_ids *p = ctx->buffer;
-> +       struct super_block *sb;
-> +       struct kstatfs buf;
-> +       int ret;
-> +
-> +       ret = vfs_statfs(path, &buf);
-> +       if (ret < 0 && ret != -ENOSYS)
-> +               return ret;
+In fact, would PATH_MAX-2 be sufficient?
 
-What's going on here? If vfs_statfs() returns -ENOSYS, we just use the
-(AFAICS uninitialized) buf.f_fsid anyway in the memcpy() below and
-return it to userspace?
+Because POSIX actually says that a double slash at the beginning of a
+filename is special:
 
-> +       sb = path->dentry->d_sb;
-> +       p->f_fstype     = sb->s_magic;
-> +       p->f_dev_major  = MAJOR(sb->s_dev);
-> +       p->f_dev_minor  = MINOR(sb->s_dev);
-> +
-> +       memcpy(&p->f_fsid, &buf.f_fsid, sizeof(p->f_fsid));
-> +       strlcpy(p->f_fs_name, path->dentry->d_sb->s_type->name,
-> +               sizeof(p->f_fs_name));
-> +       return sizeof(*p);
-> +}
-[...]
-> +static int fsinfo_attribute_info(struct path *path, struct fsinfo_context *ctx)
-> +{
-> +       const struct fsinfo_attribute *attr;
-> +       struct fsinfo_attribute_info *info = ctx->buffer;
-> +       struct dentry *dentry = path->dentry;
-> +
-> +       if (dentry->d_sb->s_op->fsinfo_attributes)
-> +               for (attr = dentry->d_sb->s_op->fsinfo_attributes; attr->get; attr++)
-> +                       if (attr->attr_id == ctx->Nth)
-> +                               goto found;
-> +       for (attr = fsinfo_common_attributes; attr->get; attr++)
-> +               if (attr->attr_id == ctx->Nth)
-> +                       goto found;
-> +       return -ENODATA;
-> +
-> +found:
-> +       info->attr_id           = attr->attr_id;
-> +       info->type              = attr->type;
-> +       info->flags             = attr->flags;
-> +       info->size              = attr->size;
-> +       info->element_size      = attr->element_size;
-> +       return sizeof(*attr);
+ "A pathname consisting of a single slash shall resolve to the root
+directory of the process. A null pathname shall not be successfully
+resolved. A pathname that begins with two successive slashes may be
+interpreted in an implementation-defined manner, although more than
+two leading slashes shall be treated as a single slash"
 
-I think you meant sizeof(*info).
+so you _could_ actually just make the rule be something simple like
 
-[...]
-> +static int fsinfo_attributes(struct path *path, struct fsinfo_context *ctx)
-> +{
-> +       const struct fsinfo_attribute *attr;
-> +       struct super_block *sb = path->dentry->d_sb;
-> +
-> +       if (sb->s_op->fsinfo_attributes)
-> +               for (attr = sb->s_op->fsinfo_attributes; attr->get; attr++)
-> +                       fsinfo_attributes_insert(ctx, attr);
-> +       for (attr = fsinfo_common_attributes; attr->get; attr++)
-> +               fsinfo_attributes_insert(ctx, attr);
-> +       return ctx->usage;
+   symlink(target, "//datagoeshere")
 
-It is kind of weird that you have to return the ctx->usage everywhere
-even though the caller already has ctx...
+being the "create magic autolink directory using "datagoeshere".
 
-> +}
-> +
-> +static const struct fsinfo_attribute fsinfo_common_attributes[] = {
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_STATFS,            fsinfo_generic_statfs),
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_IDS,               fsinfo_generic_ids),
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_LIMITS,            fsinfo_generic_limits),
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_SUPPORTS,          fsinfo_generic_supports),
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_TIMESTAMP_INFO,    fsinfo_generic_timestamp_info),
-> +       FSINFO_STRING   (FSINFO_ATTR_VOLUME_ID,         fsinfo_generic_volume_id),
-> +       FSINFO_VSTRUCT  (FSINFO_ATTR_VOLUME_UUID,       fsinfo_generic_volume_uuid),
-> +       FSINFO_VSTRUCT_N(FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO, fsinfo_attribute_info),
-> +       FSINFO_LIST     (FSINFO_ATTR_FSINFO_ATTRIBUTES, fsinfo_attributes),
-> +       {}
-> +};
-> +
-> +/*
-> + * Retrieve large filesystem information, such as an opaque blob or array of
-> + * struct elements where the value isn't limited to the size of a page.
-> + */
-> +static int vfs_fsinfo_large(struct path *path, struct fsinfo_context *ctx,
-> +                           const struct fsinfo_attribute *attr)
-> +{
-> +       int ret;
-> +
-> +       while (!signal_pending(current)) {
-> +               ctx->usage = 0;
-> +               ret = attr->get(path, ctx);
-> +               if (IS_ERR_VALUE((long)ret))
-> +                       return ret; /* Error */
-> +               if ((unsigned int)ret <= ctx->buf_size)
-> +                       return ret; /* It fitted */
-> +
-> +               /* We need to resize the buffer */
-> +               kvfree(ctx->buffer);
-> +               ctx->buffer = NULL;
-> +               ctx->buf_size = roundup(ret, PAGE_SIZE);
-> +               if (ctx->buf_size > INT_MAX)
-> +                       return -EMSGSIZE;
-> +               ctx->buffer = kvmalloc(ctx->buf_size, GFP_KERNEL);
+The advantage of that interface is that now you can do things from
+simple perl/shell scripts etc, instead of using any magic at all.
 
-ctx->buffer is _almost_ always pre-zeroed (see vfs_do_fsinfo() below),
-except if we have FSINFO_TYPE_OPAQUE or FSINFO_TYPE_LIST with a size
-bigger than what the attribute's ->size field said? Is that
-intentional?
+> mknod() isn't otherwise supported on AFS as there aren't any UNIX special
+> files.
 
-> +               if (!ctx->buffer)
-> +                       return -ENOMEM;
-> +       }
-> +
-> +       return -ERESTARTSYS;
-> +}
-> +
-> +static int vfs_do_fsinfo(struct path *path, struct fsinfo_context *ctx,
-> +                        const struct fsinfo_attribute *attr)
-> +{
-> +       if (ctx->Nth != 0 && !(attr->flags & (FSINFO_FLAGS_N | FSINFO_FLAGS_NM)))
-> +               return -ENODATA;
-> +       if (ctx->Mth != 0 && !(attr->flags & FSINFO_FLAGS_NM))
-> +               return -ENODATA;
-> +
-> +       ctx->buf_size = attr->size;
-> +       if (ctx->want_size_only && attr->type == FSINFO_TYPE_VSTRUCT)
-> +               return attr->size;
-> +
-> +       ctx->buffer = kvzalloc(ctx->buf_size, GFP_KERNEL);
-> +       if (!ctx->buffer)
-> +               return -ENOMEM;
-> +
-> +       switch (attr->type) {
-> +       case FSINFO_TYPE_VSTRUCT:
-> +               ctx->clear_tail = true;
-> +               /* Fall through */
-> +       case FSINFO_TYPE_STRING:
-> +               return attr->get(path, ctx);
-> +
-> +       case FSINFO_TYPE_OPAQUE:
-> +       case FSINFO_TYPE_LIST:
-> +               return vfs_fsinfo_large(path, ctx, attr);
-> +
-> +       default:
-> +               return -ENOPKG;
-> +       }
-> +}
-[...]
-> +SYSCALL_DEFINE5(fsinfo,
-> +               int, dfd, const char __user *, pathname,
-> +               struct fsinfo_params __user *, params,
-> +               void __user *, user_buffer, size_t, user_buf_size)
-> +{
-[...]
-> +       if (ret < 0)
-> +               goto error;
-> +
-> +       result_size = ret;
-> +       if (result_size > user_buf_size)
-> +               result_size = user_buf_size;
+Well, arguably that's a feature. You _could_ decide that a S_IFCHR
+mknod (with a special number pattern too, just as a special check)
+becomes that special node that you can then write the data to to
+create it.
 
-This is "result_size = min_t(size_t, ret, user_buf_size)".
+So then you could again script things with
 
-[...]
-> +/*
-> + * A filesystem information attribute definition.
-> + */
-> +struct fsinfo_attribute {
-> +       unsigned int            attr_id;        /* The ID of the attribute */
-> +       enum fsinfo_value_type  type:8;         /* The type of the attribute's value(s) */
-> +       unsigned int            flags:8;
-> +       unsigned int            size:16;        /* - Value size (FSINFO_STRUCT) */
-> +       unsigned int            element_size:16; /* - Element size (FSINFO_LIST) */
-> +       int (*get)(struct path *path, struct fsinfo_context *params);
-> +};
+   mknod dirname c X Y
+   echo "datagoeshere" > dirname
 
-Why the bitfields? It doesn't look like that's going to help you much,
-you'll just end up with 6 bytes of holes on x86-64:
+if that's what it takes.
 
-$ cat fsinfo_attribute_layout.c
-enum fsinfo_value_type {
-  FSINFO_TYPE_VSTRUCT     = 0,    /* Version-lengthed struct (up to
-4096 bytes) */
-  FSINFO_TYPE_STRING      = 1,    /* NUL-term var-length string (up to
-4095 chars) */
-  FSINFO_TYPE_OPAQUE      = 2,    /* Opaque blob (unlimited size) */
-  FSINFO_TYPE_LIST        = 3,    /* List of ints/structs (unlimited size) */
-};
+But the symlink thing strikes me as not unreasonable. It's POSIXy,
+even if Linux hasn't really traditionally treated two slashes
+specially (we've discussed it, and there may be _tools_ that already
+do, though)
 
-struct fsinfo_attribute {
-  unsigned int            attr_id;        /* The ID of the attribute */
-  enum fsinfo_value_type  type:8;         /* The type of the
-attribute's value(s) */
-  unsigned int            flags:8;
-  unsigned int            size:16;        /* - Value size (FSINFO_STRUCT) */
-  unsigned int            element_size:16; /* - Element size (FSINFO_LIST) */
-  void *get;
-};
-void *blah(struct fsinfo_attribute *p) {
-  return p->get;
-}
-$ gcc -c -o fsinfo_attribute_layout.o fsinfo_attribute_layout.c -ggdb
-$ pahole -C fsinfo_attribute -E --hex fsinfo_attribute_layout.o
-struct fsinfo_attribute {
-        unsigned int               attr_id;          /*     0   0x4 */
-        enum fsinfo_value_type type:8;               /*   0x4: 0 0x4 */
-        unsigned int               flags:8;          /*   0x4:0x8 0x4 */
-        unsigned int               size:16;          /*   0x4:0x10 0x4 */
-        unsigned int               element_size:16;  /*   0x8: 0 0x4 */
-
-        /* XXX 16 bits hole, try to pack */
-        /* XXX 4 bytes hole, try to pack */
-
-        void *                     get;              /*  0x10   0x8 */
-
-        /* size: 24, cachelines: 1, members: 6 */
-        /* sum members: 12, holes: 1, sum holes: 4 */
-        /* sum bitfield members: 48 bits, bit holes: 1, sum bit holes:
-16 bits */
-        /* last cacheline: 24 bytes */
-};
+         Linus
