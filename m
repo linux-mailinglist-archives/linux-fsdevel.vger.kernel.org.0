@@ -2,144 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B74165158
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:07:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5B51651C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 22:40:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgBSVGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 16:06:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbgBSVGB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 16:06:01 -0500
-Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727469AbgBSVkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 16:40:04 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48586 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727274AbgBSVkE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Feb 2020 16:40:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582148403;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Akm5nZ5Nk5RDJvPlHXdmc1pTXqzcrHwStmylDtS4kdo=;
+        b=Q7FEeBlmVUh0HfH0GHlPoGXauLp7DnFB6j6lWOhAMobuz6Bvil01pYOrKCVXZ5j+ALZb/6
+        LTf2FDXpJx8MyQCpCZ2xsY8CHR+BzRQ7WRv8ZvriohhuqX/gmjvWSTqAruI+K0vJ8/gueG
+        jIRGGzP2zMHrQa2QbkAMqZVZdGyQhWY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-271-lYV3sqb5NxSus3qboGNwYQ-1; Wed, 19 Feb 2020 16:39:58 -0500
+X-MC-Unique: lYV3sqb5NxSus3qboGNwYQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6330207FD;
-        Wed, 19 Feb 2020 21:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582146361;
-        bh=rZ7SQ0o6VNfFZHTJDCbta5DKG6j09ditK/ObGdXt/q0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=C8yWnPkbKINJuZlJAl2QRUNDti175Hh+LSN0aYGWStOc91VbH2gzdCcGmAFLif1R+
-         9MVXqbcMmNv8hEzKKisZO7IRxeN0Q8mZSqyPoiN9rrsDLqXA1rMqrRpbIgJvU8LEyw
-         oq+AlvbWnFXtMpts5Sv6ziYD6N8LHF+2TVGd99Ok=
-Date:   Wed, 19 Feb 2020 13:06:00 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] proc: faster open/read/close with "permanent" files
-Message-Id: <20200219130600.3cb5cd65fbd696fe43fb7adc@linux-foundation.org>
-In-Reply-To: <20200219191127.GA15115@avx2>
-References: <20200219191127.GA15115@avx2>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF399800D50;
+        Wed, 19 Feb 2020 21:39:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A04215C1B0;
+        Wed, 19 Feb 2020 21:39:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com>
+References: <CAHk-=wgtAEvD6J_zVPKXHDjZ7rNe3piRzD_bX2HcVgY3AMGhjw@mail.gmail.com> <158212290024.224464.862376690360037918.stgit@warthog.procyon.org.uk> <CAMuHMdV+H0p3qFV=gDz0dssXVhzd+L_eEn6s0jzrU5M79_50HQ@mail.gmail.com> <227117.1582124888@warthog.procyon.org.uk> <CAHk-=wjFwT-fRw0kH-dYS9M5eBz3Jg0FeUfhf6VnGrPMVDDCBg@mail.gmail.com> <241568.1582134931@warthog.procyon.org.uk> <CAHk-=wi=UbOwm8PMQUB1xaXRWEhhoVFdsKDSz=bX++rMQOUj0w@mail.gmail.com> <CAHk-=whfoWHvL29PPXncxV6iprC4e_m6CQWQJ1G4-JtR+uGVUA@mail.gmail.com> <252465.1582142281@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, jaltman@auristor.com,
+        Al Viro <viro@zeniv.linux.org.uk>, coda@cs.cmu.edu,
+        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] vfs: syscalls: Add create_automount() and remove_automount()
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <260917.1582148393.1@warthog.procyon.org.uk>
+Date:   Wed, 19 Feb 2020 21:39:53 +0000
+Message-ID: <260918.1582148393@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 19 Feb 2020 22:11:27 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> Now that "struct proc_ops" exist we can start putting there stuff which
-> could not fly with VFS "struct file_operations"...
+> so you _could_ actually just make the rule be something simple like
 > 
-> Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
-> in the event of disappearing /proc entries which usually happens if module is
-> getting removed. Files like /proc/cpuinfo which never disappear simply do not
-> need such protection.
+>    symlink(target, "//datagoeshere")
 > 
-> Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
-> "permanent" files.
+> being the "create magic autolink directory using "datagoeshere".
+
+Interesting.  I'll ask around to see if this is feasible.  Some applications
+(emacs being one maybe) sometimes appear to store information in symlink
+bodies - I'm not sure if any of those could be a problem.
+
+Since the mountpoint body is formulaic:
+
+	[%#](<cellname>:)?<volumename>(.readonly|.backup)?.
+
+maybe I can use that pattern.
+
+symlink() would be returning a dentry that appears to be a directory, but it
+doesn't look like that should be a problem.
+
+> So then you could again script things with
 > 
-> Enable "permanent" flag for
-> 
-> 	/proc/cpuinfo
-> 	/proc/kmsg
-> 	/proc/modules
-> 	/proc/slabinfo
-> 	/proc/stat
-> 	/proc/sysvipc/*
-> 	/proc/swaps
-> 
-> More will come once I figure out foolproof way to prevent out module
-> authors from marking their stuff "permanent" for performance reasons
-> when it is not.
-> 
-> This should help with scalability: benchmark is "read /proc/cpuinfo R times
-> by N threads scattered over the system".
-> 
-> 	N	R	t, s (before)	t, s (after)
-> 	-----------------------------------------------------
-> 	64	4096	1.582458	1.530502	-3.2%
-> 	256	4096	6.371926	6.125168	-3.9%
-> 	1024	4096	25.64888	24.47528	-4.6%
+>    mknod dirname c X Y
+>    echo "datagoeshere" > dirname
 
-I guess that's significant.
+This would be tricky to get right as it's not atomic and the second part could
+fail to happen.  For extra fun, another client could interfere between the
+steps (setxattr would be safer than write here).
 
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -61,6 +61,7 @@ struct proc_dir_entry {
->  	struct rb_node subdir_node;
->  	char *name;
->  	umode_t mode;
-> +	u8 flags;
-
-Add a comment describing what this is?
-
->  	u8 namelen;
->  	char inline_name[];
->  } __randomize_layout;
->
-> ...
->
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -5,6 +5,7 @@
->  #ifndef _LINUX_PROC_FS_H
->  #define _LINUX_PROC_FS_H
->  
-> +#include <linux/compiler.h>
->  #include <linux/types.h>
->  #include <linux/fs.h>
->  
-> @@ -12,7 +13,21 @@ struct proc_dir_entry;
->  struct seq_file;
->  struct seq_operations;
->  
-> +enum {
-> +	/*
-> +	 * All /proc entries using this ->proc_ops instance are never removed.
-> +	 *
-> +	 * If in doubt, ignore this flag.
-> +	 */
-> +#ifdef MODULE
-> +	PROC_ENTRY_PERMANENT = 0U,
-> +#else
-> +	PROC_ENTRY_PERMANENT = 1U << 0,
-> +#endif
-> +};
-
-That feels quite hacky.  Is it really needed?  Any module which uses
-this is simply buggy?
-
-Can we just leave this undefined if MODULE and break the build?
-
->  struct proc_ops {
-> +	unsigned int proc_flags;
->  	int	(*proc_open)(struct inode *, struct file *);
->  	ssize_t	(*proc_read)(struct file *, char __user *, size_t, loff_t *);
->  	ssize_t	(*proc_write)(struct file *, const char __user *, size_t, loff_t *);
-> @@ -25,7 +40,7 @@ struct proc_ops {
->  #endif
->  	int	(*proc_mmap)(struct file *, struct vm_area_struct *);
->  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
-> -};
-> +} __randomize_layout;
-
-Unchangelogged, unrelated?
-
->  #ifdef CONFIG_PROC_FS
->  
+David
 
