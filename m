@@ -2,54 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6F2164313
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 12:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E398116433E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Feb 2020 12:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbgBSLLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 06:11:43 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44262 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbgBSLLn (ORCPT
+        id S1726636AbgBSLXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 06:23:02 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39068 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgBSLXB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:11:43 -0500
-Received: by mail-il1-f194.google.com with SMTP id s85so20196375ill.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 03:11:43 -0800 (PST)
+        Wed, 19 Feb 2020 06:23:01 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so138991ioh.6;
+        Wed, 19 Feb 2020 03:23:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O3J9sBFZ2g1DpC8eNWx0YGx0xb8tn/oD73qlJiO3TPY=;
-        b=E+gasOfGs6Ar4lrTrGnI1i6XCWHnhi6syTz31qI/z6EyCwpgWLZCTOFoBsFbHxh9j1
-         b71UeV7oE63PcbL7oC48hmbzKTjyQlFLnAGumc3SiktlFQqFhoRYqqeJqPL92OqBJD0D
-         Zjdnm9QAMfJ/RpWQ0lqAPDwUWTJu/1pK7pTcD8nq1CXiKgR6SjovRi7Eg03GSqB5rHMh
-         FQiNSmuIidBtZeDl7UhokLySMGUK+xqfGL8it/sB/gnDxJM1eNIM1e/j+545B3z70Uj+
-         QQV10TRMy58FTayZfqPW1sRQimN/9X5tcDbT3DLAsbd5SrrjlN+POoLRhh0TTXorE8tq
-         bpog==
+        bh=5L5sWTTrZ8wRnU/gy8xHm/c059safDgzJAFGus5OBsE=;
+        b=Q6SaYbVMYY3YOLYKvGdY1N8Mn5Anz+kGLhlnE74xemF53LIVpuKoJYBML9BgbWjHtn
+         7NPk32U7yNgoIwHPpe7s9CW7f3wmip3zqmdtFoJ5OipmQWRJcwRNtPxIFfg7el/3wBNz
+         xSA+5EpKtHxsh42FwuKMc7pijGewjyAz3trqTnJUjE8Kk3LAzwIRMcqQLftTdy0cLMYD
+         yEtjtUEpHhEku6BJe+CyBzQy1tE+REOVicmM80tTNhcHelF6ZYtpdcC4WitKOkmm0c4B
+         qR4e62iFdarqOp2S3fbBWXhDGdvPq1PWJXHBXe0krAlqIJGSXViVXBLy/VIdMW9YDaX8
+         VT2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O3J9sBFZ2g1DpC8eNWx0YGx0xb8tn/oD73qlJiO3TPY=;
-        b=MzxQPSQ2+TkKRBaAjWvX/0rnsXfmbfw9mWY2XriIz2By3l93FQ0I+MaKnP5fLis0NG
-         GuSNHdcyJ4mbhc+MLKyKU04SO+f+X/5g/GwTPLlkNn0oRtdoiurxwAj87YIaHX2nq0tT
-         Wp6uub+cSYc8yHCFXFiKlv24tXqVD3laKwbCOfejioJQqqOf5FP1QkoYRfwj/g429DFC
-         vbxMvGL9aUnbQB4/qudcW74z9baJFNWHVWGCds8N4H6zrDH7JinQ7asAfLQ112qR/B3I
-         ENqECrR2VF6zh9ndUHdCzDiV7u/qJB87/OoBUJkXRX+Esfngbl9uQ7tsT0siuC/aAGxb
-         Md5w==
-X-Gm-Message-State: APjAAAWQ8ebEiMYgMyeNrFchOo+2+lRZWlctTKDtIM+XiVs/iuX4dNZ0
-        Fdm7QGpRrKb+O6RtHakaXnPkTESMW/aph83vtb/BSA==
-X-Google-Smtp-Source: APXvYqz4kVVGJys4AP7MPfu2Q3gmJDbjnlNxbTjfleC7tGJk/bI/OS7RRZ4eWH5DqrFFX4YjvuOky19atoqNMS7TmNA=
-X-Received: by 2002:a92:d5c3:: with SMTP id d3mr23653057ilq.250.1582110702535;
- Wed, 19 Feb 2020 03:11:42 -0800 (PST)
+        bh=5L5sWTTrZ8wRnU/gy8xHm/c059safDgzJAFGus5OBsE=;
+        b=U3xbjFPLkhba3hc6GHdaybjnMJBB0TnU/epmwNNp+/LLa92agRd6LXByunxrcqqKA+
+         J/70TdisZyUP6p4AnprVnE6NzqUt/9jPFo/mC8+P8fp2OMvXW1WXsGR8VL4IFwNFt0E9
+         TigkFuPF+zeuCaa8+VOkytcrd2BB6gz0P3ikP+z+vXzDWI02XEf5cVIUmSJ74UiqyqiY
+         aupCFs9y/9dA5KQGPsBFNFTzmJ3wVIklcggKShr4Gk/+66j4E9OhaKFMFw94soXMz5fF
+         5NWwJ/k7RVtmLWfL9YAEoZ0b+2LsbDeuuwUWDd2QJoAa0OZN7VNvtN4+A2B5wYne2DXn
+         HxqA==
+X-Gm-Message-State: APjAAAX8XhE9TaaJUqtfslYIkMOPqvjGYDn6ysFQomRfnXW7A/KfGi7t
+        HInijoZd5Pmltebalso7RNb/ATk9T2U/uAS040Umgg==
+X-Google-Smtp-Source: APXvYqxNt6ItIaOSBpi7Y6ue/GG+pGKTBHlsENpdVXtm1U0ZAg5utV/ehJqXRybLxRv+RCGmTU523pHQIpMzEPiGvEU=
+X-Received: by 2002:a02:8817:: with SMTP id r23mr20735647jai.120.1582111380779;
+ Wed, 19 Feb 2020 03:23:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-6-amir73il@gmail.com>
-In-Reply-To: <20200217131455.31107-6-amir73il@gmail.com>
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-14-amir73il@gmail.com>
+In-Reply-To: <20200217131455.31107-14-amir73il@gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 19 Feb 2020 13:11:31 +0200
-Message-ID: <CAOQ4uxghADV42ybW0U628ZHs65O0beu7s84msswp_zDAep0p+g@mail.gmail.com>
-Subject: Re: [PATCH v2 05/16] fsnotify: simplify arguments passing to fsnotify_parent()
+Date:   Wed, 19 Feb 2020 13:22:49 +0200
+Message-ID: <CAOQ4uxiMTn6SN-L-2TOFRmV+AU=Of-Jnk=TKtDnkaEVqEnv0Yg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] fanotify: report name info for FAN_DIR_MODIFY event
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,139 +59,131 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Feb 17, 2020 at 3:15 PM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Instead of passing both dentry and path and having to figure out which
-> one to use, pass data/data_type to simplify the code.
+> Report event FAN_DIR_MODIFY with name in a variable length record similar
+> to how fid's are reported.  With name info reporting implemented, setting
+> FAN_DIR_MODIFY in mark mask is now allowed.
+>
+> When events are reported with name, the reported fid identifies the
+> directory and the name follows the fid. The info record type for this
+> event info is FAN_EVENT_INFO_TYPE_DFID_NAME.
+>
+> For now, all reported events have at most one info record which is
+> either FAN_EVENT_INFO_TYPE_FID or FAN_EVENT_INFO_TYPE_DFID_NAME (for
+> FAN_DIR_MODIFY).  Later on, events "on child" will report both records.
+>
+> There are several ways that an application can use this information:
+>
+> 1. When watching a single directory, the name is always relative to
+> the watched directory, so application need to fstatat(2) the name
+> relative to the watched directory.
+>
+> 2. When watching a set of directories, the application could keep a map
+> of dirfd for all watched directories and hash the map by fid obtained
+> with name_to_handle_at(2).  When getting a name event, the fid in the
+> event info could be used to lookup the base dirfd in the map and then
+> call fstatat(2) with that dirfd.
+>
+> 3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
+> directories, the application could use open_by_handle_at(2) with the fid
+> in event info to obtain dirfd for the directory where event happened and
+> call fstatat(2) with this dirfd.
+>
+> The last option scales better for a large number of watched directories.
+> The first two options may be available in the future also for non
+> privileged fanotify watchers, because open_by_handle_at(2) requires
+> the CAP_DAC_READ_SEARCH capability.
 >
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/notify/fsnotify.c             | 15 ++++-----------
->  include/linux/fsnotify.h         | 14 ++------------
->  include/linux/fsnotify_backend.h | 13 +++++++------
->  3 files changed, 13 insertions(+), 29 deletions(-)
+>  fs/notify/fanotify/fanotify.c      |   2 +-
+>  fs/notify/fanotify/fanotify_user.c | 120 ++++++++++++++++++++++-------
+>  include/linux/fanotify.h           |   3 +-
+>  include/uapi/linux/fanotify.h      |   1 +
+>  4 files changed, 98 insertions(+), 28 deletions(-)
 >
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index a5d6467f89a0..193530f57963 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -143,15 +143,13 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
->  }
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index fc75dc53a218..b651c18d3a93 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -478,7 +478,7 @@ static int fanotify_handle_event(struct fsnotify_group *group,
+>         BUILD_BUG_ON(FAN_OPEN_EXEC != FS_OPEN_EXEC);
+>         BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
 >
->  /* Notify this dentry's parent about a child's events. */
-> -int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
-> +int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> +                   int data_type)
+> -       BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
+> +       BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
+>
+>         mask = fanotify_group_event_mask(group, iter_info, mask, data,
+>                                          data_type);
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 284f3548bb79..a1bafc21ebbb 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -51,20 +51,32 @@ struct kmem_cache *fanotify_name_event_cachep __read_mostly;
+>  struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+>
+>  #define FANOTIFY_EVENT_ALIGN 4
+> +#define FANOTIFY_INFO_HDR_LEN \
+> +       (sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
+>
+> -static int fanotify_fid_info_len(struct fanotify_fid_hdr *fh)
+> +static int fanotify_fid_info_len(int fh_len, int name_len)
 >  {
->         struct dentry *parent;
->         struct inode *p_inode;
->         int ret = 0;
->
-> -       if (!dentry)
-> -               dentry = path->dentry;
-> -
->         if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
->                 return 0;
->
-> @@ -168,12 +166,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
->                 mask |= FS_EVENT_ON_CHILD;
->
->                 take_dentry_name_snapshot(&name, dentry);
-> -               if (path)
-> -                       ret = fsnotify(p_inode, mask, path, FSNOTIFY_EVENT_PATH,
-> -                                      &name.name, 0);
-> -               else
-> -                       ret = fsnotify(p_inode, mask, dentry->d_inode, FSNOTIFY_EVENT_INODE,
-> -                                      &name.name, 0);
-> +               ret = fsnotify(p_inode, mask, data, data_type, &name.name, 0);
->                 release_dentry_name_snapshot(&name);
->         }
->
-> @@ -181,7 +174,7 @@ int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask
->
->         return ret;
->  }
-> -EXPORT_SYMBOL_GPL(__fsnotify_parent);
-> +EXPORT_SYMBOL_GPL(fsnotify_parent);
->
->  static int send_to_group(struct inode *to_tell,
->                          __u32 mask, const void *data,
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index 420aca9fd5f4..af30e0a56f2e 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -38,16 +38,6 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
->         fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
+> -       return roundup(sizeof(struct fanotify_event_info_fid) +
+> -                      sizeof(struct file_handle) + fh->len,
+> -                      FANOTIFY_EVENT_ALIGN);
+> +       int info_len = fh_len;
+> +
+> +       if (name_len)
+> +               info_len += name_len + 1;
+> +
+> +       return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
 >  }
 >
-> -/* Notify this dentry's parent about a child's events. */
-> -static inline int fsnotify_parent(const struct path *path,
-> -                                 struct dentry *dentry, __u32 mask)
-> -{
-> -       if (!dentry)
-> -               dentry = path->dentry;
-> -
-> -       return __fsnotify_parent(path, dentry, mask);
-> -}
-> -
+>  static int fanotify_event_info_len(struct fanotify_event *event)
+>  {
+> -       if (!fanotify_event_has_fid(event))
+> -               return 0;
+> +       int info_len = 0;
+> +
+> +       if (fanotify_event_has_fid(event))
+> +               info_len += fanotify_fid_info_len(event->fh.len, 0);
+> +
+> +       if (fanotify_event_has_dfid_name(event)) {
+> +               info_len += fanotify_fid_info_len(event->dfh.len,
+> +                                       fanotify_event_name_len(event));
+> +       }
+>
+> -       return fanotify_fid_info_len(&event->fh);
+> +       return info_len;
+>  }
+>
 >  /*
->   * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
->   * an event is on a file/dentry.
-> @@ -59,7 +49,7 @@ static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
->         if (S_ISDIR(inode->i_mode))
->                 mask |= FS_ISDIR;
->
-> -       fsnotify_parent(NULL, dentry, mask);
-> +       fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
->         fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
+> @@ -210,23 +222,34 @@ static int process_access_response(struct fsnotify_group *group,
+>         return -ENOENT;
 >  }
 >
-> @@ -75,7 +65,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
->         if (S_ISDIR(inode->i_mode))
->                 mask |= FS_ISDIR;
->
-> -       ret = fsnotify_parent(path, NULL, mask);
-> +       ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
->         if (ret)
->                 return ret;
->
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 5cc838db422a..b1f418cc28e1 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -376,9 +376,10 @@ struct fsnotify_mark {
->  /* called from the vfs helpers */
->
->  /* main fsnotify call to send events */
-> -extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
-> -                   const struct qstr *name, u32 cookie);
-> -extern int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask);
-> +extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
-> +                   int data_type, const struct qstr *name, u32 cookie);
-> +extern int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> +                          int data_type);
->  extern void __fsnotify_inode_delete(struct inode *inode);
->  extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
->  extern void fsnotify_sb_delete(struct super_block *sb);
-> @@ -533,13 +534,13 @@ static inline void fsnotify_init_event(struct fsnotify_event *event,
->
->  #else
->
-> -static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
-> -                          const struct qstr *name, u32 cookie)
-> +static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
-> +                          int data_type, const struct qstr *name, u32 cookie)
+> -static int copy_fid_to_user(__kernel_fsid_t *fsid, struct fanotify_fid_hdr *fh,
+> -                           struct fanotify_fid *fid, char __user *buf)
+> +static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fid_hdr *fh,
+> +                            struct fanotify_fid *fid, const struct qstr *name,
+> +                            char __user *buf, size_t count)
 >  {
->         return 0;
->  }
+>         struct fanotify_event_info_fid info = { };
+>         struct file_handle handle = { };
+> -       unsigned char bounce[FANOTIFY_INLINE_FH_LEN], *data;
+> +       unsigned char bounce[max(FANOTIFY_INLINE_FH_LEN, DNAME_INLINE_LEN)];
+> +       const unsigned char *data;
+>         size_t fh_len = fh->len;
+> -       size_t len = fanotify_fid_info_len(fh);
+> +       size_t name_len = name ? name->len : 0;
+> +       size_t info_len = fanotify_fid_info_len(fh_len, name_len);
+> +       size_t len = info_len;
+> +
+> +       pr_debug("%s: fh_len=%lu name_len=%lu, info_len=%lu, count=%lu\n",
+> +                __func__, fh_len, name_len, info_len, count);
 >
-> -static inline int __fsnotify_parent(const struct path *path, struct dentry *dentry, __u32 mask)
-> +static inline int fsnotify_parent(__u32 mask, const void *data, int data_type)
 
-This should be:
-
-+static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
-const void *data, int data_type)
-
-Will squash the fix.
+Changed all %lu above to %zu to print size_t without a warning.
 
 Thanks kbuild test robot,
 Amir.
