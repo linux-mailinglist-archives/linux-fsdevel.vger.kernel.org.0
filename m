@@ -2,128 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A891669DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 22:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8140E1669E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 22:35:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbgBTVa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 16:30:56 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33663 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbgBTVaz (ORCPT
+        id S1727786AbgBTVf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 16:35:28 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:49026 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726670AbgBTVf2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 16:30:55 -0500
-Received: by mail-io1-f68.google.com with SMTP id z8so94393ioh.0;
-        Thu, 20 Feb 2020 13:30:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GbAVtHmxkPYTFEqIzqUxUT4jjajs4dhBUAXZ7917FMM=;
-        b=spnIzN1lczTskeCoM0VtvCL48OYjGv3fiaDwGz/cpccqFQoypntUQFceuRc6Pkpukv
-         MSH1dpjQd/oN6GXkXb3OnrVlKxtGYX3IyWyrshxqpoZhcGIywUO3jv6KpmGbGy64nhwq
-         OFs/Po45yEDLpUiG4439frxSNtXCHbghQ4cX47VxvuCZrSewYu+KEDQQJQmIo+Np5joS
-         MHlDdDD4D80X1+/SgjGR0AEFa03FwwN5loplEyqdjUhUpgm7b0TaEDgaVaK3wIU2Z/kw
-         7czyXm42cH2puCkrecsmRtHrXQpuyK2NChFLPdwFH2jCu7YYsDHqhCWJW5F6bciGHeUm
-         FYLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GbAVtHmxkPYTFEqIzqUxUT4jjajs4dhBUAXZ7917FMM=;
-        b=SlVdsnKSp2npDxFHbMVhKUxURS5j3mdDKw1y395oamrWEKpEe2+6sD71UXYQc8Y3tO
-         aLk4+0a3BxWqZQl0VtdCnDn9CQXL5kcZAFY1A8hmrAxMNwoJ53ShM48g9ZhpAoc216WU
-         O81/i1qIfuUDg0SlnFwXpirHJ/bihN9UqIMVzMHrUfN3f2dU64lcpCtMel0b26GA4r08
-         j7Sc/IMo+OF+5R4viRgxamSdKrwxxP3mLJu6T9Azks1J+PfkLXDdRrM3Hmnts6sRs21T
-         jh9XG+SBPb3T0wVIsEFlbgdoeCDA39M12oHK8udCO9OHPbUHX/JaM2wUhDkE0eH+zxIZ
-         xGQw==
-X-Gm-Message-State: APjAAAW8bxic4Yrb7qS2zl4Riw5bWrft7KyEbRFlWrM0oilc+70piqse
-        cB14q87K5m6VcN1zSPB3CLS6bN+SALJq9HTEgTx4Ew==
-X-Google-Smtp-Source: APXvYqw40LKIf/2R8xKZVZ4VXY6+pk6Cp7e8t1q0/vnMTGx8q7LxEVOIuXKXjVaM+N29QJgHnu73cU9jxhVNGHpz940=
-X-Received: by 2002:a5d:9419:: with SMTP id v25mr26035700ion.3.1582234253502;
- Thu, 20 Feb 2020 13:30:53 -0800 (PST)
+        Thu, 20 Feb 2020 16:35:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582234527;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2EGDSMUcVYyMIaWsWkgoEGQPIxS78ZmR7hXQG4Kq71Y=;
+        b=BF5qPBi0pgH7MJJ/+Ld4QwjGv2dBEg3uxv03akYokIaig3eLVcCu300msvaKtXwuFrhRgf
+        C6/h6h4Siy1Oe9+ks50gY4P120DU2/HK9rtfEU6K7VOvJw5Pz9rftc3SZHO3UIOKSUbMDE
+        ehuk6os5ytP+gaKAwAu3BUprFRbUQpM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-433-uv_izzr0MCWEgLgn0au4Zw-1; Thu, 20 Feb 2020 16:35:23 -0500
+X-MC-Unique: uv_izzr0MCWEgLgn0au4Zw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3EA5D107ACC5;
+        Thu, 20 Feb 2020 21:35:22 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 445C85C114;
+        Thu, 20 Feb 2020 21:35:18 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        hch@infradead.org, dan.j.williams@intel.com, dm-devel@redhat.com
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept arbitrary offset and len
+References: <20200218214841.10076-1-vgoyal@redhat.com>
+        <20200218214841.10076-3-vgoyal@redhat.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 20 Feb 2020 16:35:17 -0500
+In-Reply-To: <20200218214841.10076-3-vgoyal@redhat.com> (Vivek Goyal's message
+        of "Tue, 18 Feb 2020 16:48:35 -0500")
+Message-ID: <x49lfoxj622.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com> <20200214044242.GI6870@magnolia>
-In-Reply-To: <20200214044242.GI6870@magnolia>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 20 Feb 2020 15:30:42 -0600
-Message-ID: <CAH2r5mvGHbibnxzERepYqbG0+yacD+pfLanBz52j16WkNm6-1g@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Allison Collins <allison.henderson@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The idea of using O_TMPFILE is interesting ... but opening an
-O_TMPFILE is awkward for network file systems because it is not an
-atomic operation either ... (create/close then open)
+Vivek Goyal <vgoyal@redhat.com> writes:
 
-On Thu, Feb 13, 2020 at 10:43 PM Darrick J. Wong
-<darrick.wong@oracle.com> wrote:
+> Currently pmem_clear_poison() expects offset and len to be sector aligned.
+> Atleast that seems to be the assumption with which code has been written.
+> It is called only from pmem_do_bvec() which is called only from pmem_rw_page()
+> and pmem_make_request() which will only passe sector aligned offset and len.
 >
-> On Thu, Feb 13, 2020 at 03:33:08PM -0700, Allison Collins wrote:
-> > Hi all,
-> >
-> > I know there's a lot of discussion on the list right now, but I'd like to
-> > get this out before too much time gets away.  I would like to propose the
-> > topic of atomic writes.  I realize the topic has been discussed before, but
-> > I have not found much activity for it recently so perhaps we can revisit it.
-> > We do have a customer who may have an interest, so I would like to discuss
-> > the current state of things, and how we can move forward.  If efforts are in
-> > progress, and if not, what have we learned from the attempt.
-> >
-> > I also understand there are multiple ways to solve this problem that people
-> > may have opinions on.  I've noticed some older patch sets trying to use a
-> > flag to control when dirty pages are flushed, though I think our customer
-> > would like to see a hardware solution via NVMe devices.  So I would like to
-> > see if others have similar interests as well and what their thoughts may be.
-> > Thanks everyone!
->
-> Hmmm well there are a number of different ways one could do this--
->
-> 1) Userspace allocates an O_TMPFILE file, clones all the file data to
-> it, makes whatever changes it wants (thus invoking COW writes), and then
-> calls some ioctl to swap the differing extent maps atomically.  For XFS
-> we have most of those pieces, but we'd have to add a log intent item to
-> track the progress of the remap so that we can complete the remap if the
-> system goes down.  This has potentially the best flexibility (multiple
-> processes can coordinate to stage multiple updates to non-overlapping
-> ranges of the file) but is also a nice foot bazooka.
->
-> 2) Set O_ATOMIC on the file, ensure that all writes are staged via COW,
-> and defer the cow remap step until we hit the synchronization point.
-> When that happens, we persist the new mappings somewhere (e.g. well
-> beyond all possible EOF in the XFS case) and then start an atomic remap
-> operation to move the new blocks into place in the file.  (XFS would
-> still have to add a new log intent item here to finish the remapping if
-> the system goes down.)  Less foot bazooka but leaves lingering questions
-> like what do you do if multiple processes want to run their own atomic
-> updates?
->
-> (Note that I think you have some sort of higher level progress tracking
-> of the remap operation because we can't leave a torn write just because
-> the computer crashed.)
->
-> 3) Magic pwritev2 API that lets userspace talk directly to hardware
-> atomic writes, though I don't know how userspace discovers what the
-> hardware limits are.   I'm assuming the usual sysfs knobs?
->
-> Note that #1 and #2 are done entirely in software, which makes them less
-> performant but OTOH there's effectively no limit (besides available
-> physical space) on how much data or how many non-contiguous extents we
-> can stage and commit.
->
-> --D
->
-> > Allison
+> Soon we want use this function from dax_zero_page_range() code path which
+> can try to zero arbitrary range of memory with-in a page. So update this
+> function to assume that offset and length can be arbitrary and do the
+> necessary alignments as needed.
 
+What caller will try to zero a range that is smaller than a sector?
 
+> nvdimm_clear_poison() seems to assume offset and len to be aligned to
+> clear_err_unit boundary. But this is currently internal detail and is
+> not exported for others to use. So for now, continue to align offset and
+> length to SECTOR_SIZE boundary. Improving it further and to align it
+> to clear_err_unit boundary is a TODO item for future.
 
--- 
-Thanks,
+When there is a poisoned range of persistent memory, it is recorded by
+the badblocks infrastructure, which currently operates on sectors.  So,
+no matter what the error unit is for the hardware, we currently can't
+record/report to userspace anything smaller than a sector, and so that
+is what we expect when clearing errors.
 
-Steve
+Continuing on for completeness, we will currently not map a page with
+badblocks into a process' address space.  So, let's say you have 256
+bytes of bad pmem, we will tell you we've lost 512 bytes, and even if
+you access a valid mmap()d address in the same page as the poisoned
+memory, you will get a segfault.
+
+Userspace can fix up the error by calling write(2) and friends to
+provide new data, or by punching a hole and writing new data to the hole
+(which may result in getting a new block, or reallocating the old block
+and zeroing it, which will clear the error).
+
+More comments below...
+
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  drivers/nvdimm/pmem.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 075b11682192..e72959203253 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -74,14 +74,28 @@ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
+>  	sector_t sector;
+>  	long cleared;
+>  	blk_status_t rc = BLK_STS_OK;
+> +	phys_addr_t start_aligned, end_aligned;
+> +	unsigned int len_aligned;
+>  
+> -	sector = (offset - pmem->data_offset) / 512;
+> +	/*
+> +	 * Callers can pass arbitrary offset and len. But nvdimm_clear_poison()
+> +	 * expects memory offset and length to meet certain alignment
+> +	 * restrction (clear_err_unit). Currently nvdimm does not export
+                                                  ^^^^^^^^^^^^^^^^^^^^^^
+> +	 * required alignment. So align offset and length to sector boundary
+
+What is "nvdimm" in that sentence?  Because the nvdimm most certainly
+does export the required alignment.  Perhaps you meant libnvdimm?
+
+> +	 * before passing it to nvdimm_clear_poison().
+> +	 */
+> +	start_aligned = ALIGN(offset, SECTOR_SIZE);
+> +	end_aligned = ALIGN_DOWN((offset + len), SECTOR_SIZE) - 1;
+> +	len_aligned = end_aligned - start_aligned + 1;
+> +
+> +	sector = (start_aligned - pmem->data_offset) / 512;
+>  
+> -	cleared = nvdimm_clear_poison(dev, pmem->phys_addr + offset, len);
+> -	if (cleared < len)
+> +	cleared = nvdimm_clear_poison(dev, pmem->phys_addr + start_aligned,
+> +				      len_aligned);
+> +	if (cleared < len_aligned)
+>  		rc = BLK_STS_IOERR;
+>  	if (cleared > 0 && cleared / 512) {
+> -		hwpoison_clear(pmem, pmem->phys_addr + offset, cleared);
+> +		hwpoison_clear(pmem, pmem->phys_addr + start_aligned, cleared);
+>  		cleared /= 512;
+>  		dev_dbg(dev, "%#llx clear %ld sector%s\n",
+>  				(unsigned long long) sector, cleared,
+
+We could potentially support clearing less than a sector, but I'd have
+to understand the use cases better before offerring implementation
+suggestions.
+
+-Jeff
+
