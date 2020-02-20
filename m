@@ -2,157 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E44221667F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A81891667F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:06:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbgBTUGl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 15:06:41 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57258 "EHLO
+        id S1729058AbgBTUGo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 15:06:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48059 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728929AbgBTUGl (ORCPT
+        with ESMTP id S1729043AbgBTUGm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 15:06:41 -0500
+        Thu, 20 Feb 2020 15:06:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582229200;
+        s=mimecast20190719; t=1582229201;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=U/oLbx5cHHC38z0dd70vpQOtX19OGfnYLbW8tHaodgw=;
-        b=PbuTM2oRvvi415M15gUwSAZRnE8KNDC6wVxR2R1QElHNOdgvSEcIusLunBreZB6s9Q+9hh
-        tw3NyNBU6vMq6wvrDSellREE7qcMqseTAOqCGgyIftgioFvOthEup/AcGrjuDBvbPUOigl
-        46QEKsedkgOPa6GKuCGGDw2QH+ydKsw=
+        bh=iiv+hFypyOtyHQ75Ev+LMGFV0c8VrCNpawf4WxNY7Yw=;
+        b=It5xKGkQrjbTsrJYd71P6meT3eWGBXwZFaKadHPpnFE02QtYrZriWIu9QaUgF//313eqgN
+        F6jPevt9WGIquqsr1KGwkPgKBgj3UxJtqWLaKlGMsFSIA76iWqf6ZhgpD1VxOApTs3u0LG
+        REQxukUoDm/16XWMX6eroNXmrwkTEEI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-176-oTXoGsccMzS-R5h8VXKLkw-1; Thu, 20 Feb 2020 15:06:36 -0500
-X-MC-Unique: oTXoGsccMzS-R5h8VXKLkw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-76-X4oQB5BTOPe3qAk79UdDpw-1; Thu, 20 Feb 2020 15:06:36 -0500
+X-MC-Unique: X4oQB5BTOPe3qAk79UdDpw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7AC68017CC;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE4E18010E5;
         Thu, 20 Feb 2020 20:06:35 +0000 (UTC)
 Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99CF387B0A;
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9A8EE388;
         Thu, 20 Feb 2020 20:06:35 +0000 (UTC)
 Received: by segfault.boston.devel.redhat.com (Postfix, from userid 3734)
-        id 9602B2015B1C; Thu, 20 Feb 2020 15:06:34 -0500 (EST)
+        id 99542203CFC0; Thu, 20 Feb 2020 15:06:34 -0500 (EST)
 From:   Jeff Moyer <jmoyer@redhat.com>
 To:     fstests@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         Jeff Moyer <jmoyer@redhat.com>
-Subject: [PATCH V2 1/3] dax/dm: disable testing on devices that don't support dax
-Date:   Thu, 20 Feb 2020 15:06:30 -0500
-Message-Id: <20200220200632.14075-2-jmoyer@redhat.com>
+Subject: [PATCH V2 2/3] t_mmap_collision: fix hard-coded page size
+Date:   Thu, 20 Feb 2020 15:06:31 -0500
+Message-Id: <20200220200632.14075-3-jmoyer@redhat.com>
 In-Reply-To: <20200220200632.14075-1-jmoyer@redhat.com>
 References: <20200220200632.14075-1-jmoyer@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the check for dax from the individual target scripts into
-_require_dm_target.  This fixes up a couple of missed tests that are
-failing due to the lack of dax support (such as tests requiring
-dm-snapshot).
+Fix the test to run on non-4k page size systems.
 
 Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
 ---
- common/dmdelay  |  5 -----
- common/dmerror  |  5 -----
- common/dmflakey |  5 -----
- common/dmthin   |  5 -----
- common/rc       | 11 +++++++++++
- 5 files changed, 11 insertions(+), 20 deletions(-)
+ src/t_mmap_collision.c | 40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
-diff --git a/common/dmdelay b/common/dmdelay
-index f1e725b9..66cac1a7 100644
---- a/common/dmdelay
-+++ b/common/dmdelay
-@@ -7,11 +7,6 @@
- DELAY_NONE=3D0
- DELAY_READ=3D1
+diff --git a/src/t_mmap_collision.c b/src/t_mmap_collision.c
+index d547bc05..c872f4e2 100644
+--- a/src/t_mmap_collision.c
++++ b/src/t_mmap_collision.c
+@@ -25,13 +25,12 @@
+ #include <sys/types.h>
+ #include <unistd.h>
 =20
--echo $MOUNT_OPTIONS | grep -q dax
--if [ $? -eq 0 ]; then
--	_notrun "Cannot run tests with DAX on dmdelay devices"
--fi
+-#define PAGE(a) ((a)*0x1000)
+-#define FILE_SIZE PAGE(4)
 -
- _init_delay()
- {
- 	local BLK_DEV_SIZE=3D`blockdev --getsz $SCRATCH_DEV`
-diff --git a/common/dmerror b/common/dmerror
-index 426f1e96..7d12e0a1 100644
---- a/common/dmerror
-+++ b/common/dmerror
-@@ -4,11 +4,6 @@
- #
- # common functions for setting up and tearing down a dmerror device
+ void *dax_data;
+ int nodax_fd;
+ int dax_fd;
+ bool done;
++static int pagesize;
++static int file_size;
 =20
--echo $MOUNT_OPTIONS | grep -q dax
--if [ $? -eq 0 ]; then
--	_notrun "Cannot run tests with DAX on dmerror devices"
--fi
--
- _dmerror_setup()
- {
- 	local dm_backing_dev=3D$SCRATCH_DEV
-diff --git a/common/dmflakey b/common/dmflakey
-index 2af3924d..b4e11ae9 100644
---- a/common/dmflakey
-+++ b/common/dmflakey
-@@ -8,11 +8,6 @@ FLAKEY_ALLOW_WRITES=3D0
- FLAKEY_DROP_WRITES=3D1
- FLAKEY_ERROR_WRITES=3D2
+ #define err_exit(op)                                                    =
+      \
+ {                                                                       =
+      \
+@@ -49,18 +48,18 @@ void punch_hole_fn(void *ptr)
+ 		read =3D 0;
 =20
--echo $MOUNT_OPTIONS | grep -q dax
--if [ $? -eq 0 ]; then
--	_notrun "Cannot run tests with DAX on dmflakey devices"
--fi
--
- _init_flakey()
- {
- 	local BLK_DEV_SIZE=3D`blockdev --getsz $SCRATCH_DEV`
-diff --git a/common/dmthin b/common/dmthin
-index 7946e9a7..61dd6f89 100644
---- a/common/dmthin
-+++ b/common/dmthin
-@@ -21,11 +21,6 @@ DMTHIN_POOL_DEV=3D"/dev/mapper/$DMTHIN_POOL_NAME"
- DMTHIN_VOL_NAME=3D"thin-vol"
- DMTHIN_VOL_DEV=3D"/dev/mapper/$DMTHIN_VOL_NAME"
+ 		do {
+-			rc =3D pread(nodax_fd, dax_data + read, FILE_SIZE - read,
++			rc =3D pread(nodax_fd, dax_data + read, file_size - read,
+ 					read);
+ 			if (rc > 0)
+ 				read +=3D rc;
+ 		} while (rc > 0);
 =20
--echo $MOUNT_OPTIONS | grep -q dax
--if [ $? -eq 0 ]; then
--	_notrun "Cannot run tests with DAX on dmthin devices"
--fi
--
- _dmthin_cleanup()
- {
- 	$UMOUNT_PROG $SCRATCH_MNT > /dev/null 2>&1
-diff --git a/common/rc b/common/rc
-index eeac1355..65cde32b 100644
---- a/common/rc
-+++ b/common/rc
-@@ -1874,6 +1874,17 @@ _require_dm_target()
- 	_require_sane_bdev_flush $SCRATCH_DEV
- 	_require_command "$DMSETUP_PROG" dmsetup
+-		if (read !=3D FILE_SIZE || rc !=3D 0)
++		if (read !=3D file_size || rc !=3D 0)
+ 			err_exit("pread");
 =20
-+	echo $MOUNT_OPTIONS | grep -q dax
-+	if [ $? -eq 0 ]; then
-+		case $target in
-+		stripe|linear|log-writes)
-+			;;
-+		*)
-+			_notrun "Cannot run tests with DAX on $target devices."
-+			;;
-+		esac
-+	fi
+ 		rc =3D fallocate(dax_fd,
+ 				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+-				0, FILE_SIZE);
++				0, file_size);
+ 		if (rc < 0)
+ 			err_exit("fallocate");
+=20
+@@ -81,18 +80,18 @@ void zero_range_fn(void *ptr)
+ 		read =3D 0;
+=20
+ 		do {
+-			rc =3D pread(nodax_fd, dax_data + read, FILE_SIZE - read,
++			rc =3D pread(nodax_fd, dax_data + read, file_size - read,
+ 					read);
+ 			if (rc > 0)
+ 				read +=3D rc;
+ 		} while (rc > 0);
+=20
+-		if (read !=3D FILE_SIZE || rc !=3D 0)
++		if (read !=3D file_size || rc !=3D 0)
+ 			err_exit("pread");
+=20
+ 		rc =3D fallocate(dax_fd,
+ 				FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE,
+-				0, FILE_SIZE);
++				0, file_size);
+ 		if (rc < 0)
+ 			err_exit("fallocate");
+=20
+@@ -113,11 +112,11 @@ void truncate_down_fn(void *ptr)
+=20
+ 		if (ftruncate(dax_fd, 0) < 0)
+ 			err_exit("ftruncate");
+-		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
++		if (fallocate(dax_fd, 0, 0, file_size) < 0)
+ 			err_exit("fallocate");
+=20
+ 		do {
+-			rc =3D pread(nodax_fd, dax_data + read, FILE_SIZE - read,
++			rc =3D pread(nodax_fd, dax_data + read, file_size - read,
+ 					read);
+ 			if (rc > 0)
+ 				read +=3D rc;
+@@ -142,15 +141,15 @@ void collapse_range_fn(void *ptr)
+ 	while (!done) {
+ 		read =3D 0;
+=20
+-		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
++		if (fallocate(dax_fd, 0, 0, file_size) < 0)
+ 			err_exit("fallocate 1");
+-		if (fallocate(dax_fd, FALLOC_FL_COLLAPSE_RANGE, 0, PAGE(1)) < 0)
++		if (fallocate(dax_fd, FALLOC_FL_COLLAPSE_RANGE, 0, pagesize) < 0)
+ 			err_exit("fallocate 2");
+-		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
++		if (fallocate(dax_fd, 0, 0, file_size) < 0)
+ 			err_exit("fallocate 3");
+=20
+ 		do {
+-			rc =3D pread(nodax_fd, dax_data + read, FILE_SIZE - read,
++			rc =3D pread(nodax_fd, dax_data + read, file_size - read,
+ 					read);
+ 			if (rc > 0)
+ 				read +=3D rc;
+@@ -192,6 +191,9 @@ int main(int argc, char *argv[])
+ 		exit(0);
+ 	}
+=20
++	pagesize =3D getpagesize();
++	file_size =3D 4 * pagesize;
 +
- 	modprobe dm-$target >/dev/null 2>&1
+ 	dax_fd =3D open(argv[1], O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+ 	if (dax_fd < 0)
+ 		err_exit("dax_fd open");
+@@ -202,15 +204,15 @@ int main(int argc, char *argv[])
 =20
- 	$DMSETUP_PROG targets 2>&1 | grep -q ^$target
+ 	if (ftruncate(dax_fd, 0) < 0)
+ 		err_exit("dax_fd ftruncate");
+-	if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
++	if (fallocate(dax_fd, 0, 0, file_size) < 0)
+ 		err_exit("dax_fd fallocate");
+=20
+ 	if (ftruncate(nodax_fd, 0) < 0)
+ 		err_exit("nodax_fd ftruncate");
+-	if (fallocate(nodax_fd, 0, 0, FILE_SIZE) < 0)
++	if (fallocate(nodax_fd, 0, 0, file_size) < 0)
+ 		err_exit("nodax_fd fallocate");
+=20
+-	dax_data =3D mmap(NULL, FILE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED,
++	dax_data =3D mmap(NULL, file_size, PROT_READ|PROT_WRITE, MAP_SHARED,
+ 			dax_fd, 0);
+ 	if (dax_data =3D=3D MAP_FAILED)
+ 		err_exit("mmap");
+@@ -220,7 +222,7 @@ int main(int argc, char *argv[])
+ 	run_test(&truncate_down_fn);
+ 	run_test(&collapse_range_fn);
+=20
+-	if (munmap(dax_data, FILE_SIZE) !=3D 0)
++	if (munmap(dax_data, file_size) !=3D 0)
+ 		err_exit("munmap");
+=20
+ 	err =3D close(dax_fd);
 --=20
 2.19.1
 
