@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997B51668D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBD041668E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:50:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbgBTUsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 15:48:30 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:59842 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728969AbgBTUsa (ORCPT
+        id S1728993AbgBTUtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 15:49:50 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:33366 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbgBTUtu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 15:48:30 -0500
+        Thu, 20 Feb 2020 15:49:50 -0500
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.90_1)
         (envelope-from <ebiederm@xmission.com>)
-        id 1j4skE-0001ri-62; Thu, 20 Feb 2020 13:48:26 -0700
+        id 1j4slY-0006CP-Pt; Thu, 20 Feb 2020 13:49:48 -0700
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1j4skD-00085Y-Cz; Thu, 20 Feb 2020 13:48:26 -0700
+        id 1j4slX-0008I9-Sf; Thu, 20 Feb 2020 13:49:48 -0700
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
@@ -60,43 +60,46 @@ References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
         <87lfp7h422.fsf@x220.int.ebiederm.org>
         <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
         <87pnejf6fz.fsf@x220.int.ebiederm.org>
-Date:   Thu, 20 Feb 2020 14:46:25 -0600
-In-Reply-To: <87pnejf6fz.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Wed, 12 Feb 2020 22:37:52 -0600")
-Message-ID: <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+Date:   Thu, 20 Feb 2020 14:47:47 -0600
+In-Reply-To: <871rqpaswu.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Thu, 20 Feb 2020 14:46:25 -0600")
+Message-ID: <87tv3l9ea4.fsf_-_@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1j4skD-00085Y-Cz;;;mid=<871rqpaswu.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/Q6NKhmM+yXD+yJ+hS7KlJi2ul8+5zveY=
+X-XM-SPF: eid=1j4slX-0008I9-Sf;;;mid=<87tv3l9ea4.fsf_-_@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18FKktgO7yeajhH6EwOZZcjcqkyfTCGXi4=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels autolearn=disabled
-        version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: ***
+X-Spam-Status: No, score=3.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TooManySym_01,XMNoVowels,XMSubLong
+        autolearn=disabled version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4907]
+        *      [score: 0.4664]
+        *  0.7 XMSubLong Long Subject
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Linus Torvalds <torvalds@linux-foundation.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 392 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.8 (0.7%), b_tie_ro: 1.97 (0.5%), parse: 1.00
-        (0.3%), extract_message_metadata: 3.0 (0.8%), get_uri_detail_list:
-        0.95 (0.2%), tests_pri_-1000: 4.4 (1.1%), tests_pri_-950: 1.37 (0.4%),
-        tests_pri_-900: 1.07 (0.3%), tests_pri_-90: 28 (7.1%), check_bayes: 26
-        (6.7%), b_tokenize: 9 (2.2%), b_tok_get_all: 7 (1.9%), b_comp_prob:
-        2.5 (0.6%), b_tok_touch_all: 4.3 (1.1%), b_finish: 0.78 (0.2%),
-        tests_pri_0: 334 (85.4%), check_dkim_signature: 0.50 (0.1%),
-        check_dkim_adsp: 3.1 (0.8%), poll_dns_idle: 0.42 (0.1%), tests_pri_10:
-        1.97 (0.5%), tests_pri_500: 6 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 0/7] proc: Dentry flushing without proc_mnt
+X-Spam-Timing: total 494 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 2.9 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.01
+        (0.2%), extract_message_metadata: 11 (2.3%), get_uri_detail_list: 1.65
+        (0.3%), tests_pri_-1000: 14 (2.9%), tests_pri_-950: 1.29 (0.3%),
+        tests_pri_-900: 1.10 (0.2%), tests_pri_-90: 27 (5.4%), check_bayes: 25
+        (5.1%), b_tokenize: 10 (2.0%), b_tok_get_all: 7 (1.5%), b_comp_prob:
+        2.2 (0.5%), b_tok_touch_all: 3.6 (0.7%), b_finish: 0.59 (0.1%),
+        tests_pri_0: 424 (85.8%), check_dkim_signature: 0.54 (0.1%),
+        check_dkim_adsp: 2.6 (0.5%), poll_dns_idle: 0.89 (0.2%), tests_pri_10:
+        2.2 (0.4%), tests_pri_500: 6 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 1/7] proc: Rename in proc_inode rename sysctl_inodes sibling_inodes
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -106,39 +109,82 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Just because it is less of a fundamental change and less testing I went
-and looked at updating proc_flush_task to use a list as Al suggested.
+I about to need and use the same functionality for pid based
+inodes and there is no point in adding a second field when
+this field is already here and serving the same purporse.
 
-If we can stand an sget/deactivate_super pair for every dentry we want
-to invalidate I think I have something.
+Just give the field a generic name so it is clear that
+it is no longer sysctl specific.
 
-Comments from anyone will be appreciated I gave this some light testing
-and the code is based on something similar already present in proc so
-I think there is a high chance this code is correct but I could easily
-be wrong.
+Also for good measure initialize sibling_inodes when
+proc_inode is initialized.
 
-Linus, does this approach look like something you can stand?
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ fs/proc/inode.c       | 1 +
+ fs/proc/internal.h    | 2 +-
+ fs/proc/proc_sysctl.c | 8 ++++----
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-Eric
-
-Eric W. Biederman (7):
-      proc: Rename in proc_inode rename sysctl_inodes sibling_inodes
-      proc: Generalize proc_sys_prune_dcache into proc_prune_siblings_dcache
-      proc: Mov rcu_read_(lock|unlock) in proc_prune_siblings_dcache
-      proc: Use d_invalidate in proc_prune_siblings_dcache
-      proc: Clear the pieces of proc_inode that proc_evict_inode cares about
-      proc: Use a list of inodes to flush from proc
-      proc: Ensure we see the exit of each process tid exactly once
-
- fs/exec.c               |   5 +--
- fs/proc/base.c          | 111 ++++++++++++++++--------------------------------
- fs/proc/inode.c         |  60 +++++++++++++++++++++++---
- fs/proc/internal.h      |   4 +-
- fs/proc/proc_sysctl.c   |  45 +++-----------------
- include/linux/pid.h     |   2 +
- include/linux/proc_fs.h |   4 +-
- kernel/exit.c           |   4 +-
- kernel/pid.c            |  16 +++++++
- 9 files changed, 124 insertions(+), 127 deletions(-)
-
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 6da18316d209..bdae442d5262 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -68,6 +68,7 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
+ 	ei->pde = NULL;
+ 	ei->sysctl = NULL;
+ 	ei->sysctl_entry = NULL;
++	INIT_HLIST_NODE(&ei->sibling_inodes);
+ 	ei->ns_ops = NULL;
+ 	return &ei->vfs_inode;
+ }
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 41587276798e..366cd3aa690b 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -91,7 +91,7 @@ struct proc_inode {
+ 	struct proc_dir_entry *pde;
+ 	struct ctl_table_header *sysctl;
+ 	struct ctl_table *sysctl_entry;
+-	struct hlist_node sysctl_inodes;
++	struct hlist_node sibling_inodes;
+ 	const struct proc_ns_operations *ns_ops;
+ 	struct inode vfs_inode;
+ } __randomize_layout;
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index c75bb4632ed1..42fbb7f3c587 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -279,9 +279,9 @@ static void proc_sys_prune_dcache(struct ctl_table_header *head)
+ 		node = hlist_first_rcu(&head->inodes);
+ 		if (!node)
+ 			break;
+-		ei = hlist_entry(node, struct proc_inode, sysctl_inodes);
++		ei = hlist_entry(node, struct proc_inode, sibling_inodes);
+ 		spin_lock(&sysctl_lock);
+-		hlist_del_init_rcu(&ei->sysctl_inodes);
++		hlist_del_init_rcu(&ei->sibling_inodes);
+ 		spin_unlock(&sysctl_lock);
+ 
+ 		inode = &ei->vfs_inode;
+@@ -483,7 +483,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ 	}
+ 	ei->sysctl = head;
+ 	ei->sysctl_entry = table;
+-	hlist_add_head_rcu(&ei->sysctl_inodes, &head->inodes);
++	hlist_add_head_rcu(&ei->sibling_inodes, &head->inodes);
+ 	head->count++;
+ 	spin_unlock(&sysctl_lock);
+ 
+@@ -514,7 +514,7 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
+ void proc_sys_evict_inode(struct inode *inode, struct ctl_table_header *head)
+ {
+ 	spin_lock(&sysctl_lock);
+-	hlist_del_init_rcu(&PROC_I(inode)->sysctl_inodes);
++	hlist_del_init_rcu(&PROC_I(inode)->sibling_inodes);
+ 	if (!--head->count)
+ 		kfree_rcu(head, rcu);
+ 	spin_unlock(&sysctl_lock);
+-- 
+2.20.1
 
