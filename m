@@ -2,162 +2,282 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FFE116565C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 05:42:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6F2165689
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 06:10:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbgBTEmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 23:42:25 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:41471 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727469AbgBTEmZ (ORCPT
+        id S1726501AbgBTFK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 00:10:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33237 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbgBTFK2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 23:42:25 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id D6A73608;
-        Wed, 19 Feb 2020 23:42:23 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Wed, 19 Feb 2020 23:42:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        gQLg/u8G+UeVHb4xnmxvzs+U+CqS0x1Y3C2s8LsROHc=; b=fXHLIE2xqEA3A3Aa
-        g1483W+2PGufTEyqxEk/5ccDLQJH4544UhukQX9+afLFMR3Xoh9IiuaNCDwBh9od
-        avq9F+BVcovv9yR5pWpEQeBdg7t0s3Zab8SU3h0qoxmDjXDqxf5uRIYJExDzYfw5
-        XBSoUZBZDK5HeWXLkrejATZHXobna36M0m0/SpJH137sfASwhD1c3ZuuWyicGJGV
-        VO3DJN9Eq5qWMuUwKA8AoojRqbn3/aYRjTmS6PMV5KaIhd0NguxAtoQJ8an6+n0P
-        Z04Gwtjp5bSVPd7uzp+aDrPZSS2vpJsm2/J7pbqDULx8VMeD5cg/e9XKzzYgUwFZ
-        E5DZJw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=gQLg/u8G+UeVHb4xnmxvzs+U+CqS0x1Y3C2s8LsRO
-        Hc=; b=IF7UlWxQKaGDh9JIgM2V9a9PWiYklF/X0uDH31JgpFojyd1nqLzln4VVo
-        V1SOJ5FCrSODw0heXdHK1LIy6elEaadyH+Ex10PciJInMu5EkqTyqnuYRP+Su9NE
-        maXuOvKYwauT8qEYAH7gNgyRPOqyebkz1wQDcL3K26HgCS6HDJjVuK1jPkbgsG/6
-        oMlGQAeKqpEzrwyOl4CPi2YVgwqqOK70SsJ6ZvcT6G22Z6ekN6KF/c4RtAL4OqyS
-        rVYIl7/DIg6OLvG15jKJOmaBVjocI+g3ZduMAGspW6CsLpTDy6vllbhZ8CpJOsBG
-        cCRmLxYINJ4mFTjff/xtH0pE4vFvg==
-X-ME-Sender: <xms:Lw5OXsM9kDX4xgW5s00E0n71w8XwKYH93bPxSozMwdtcUpnSurX6iA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkedugdejhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
-    duieefrdefvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:Lw5OXki7WaKdB6a6MDoNeNx_br_EZ3fU9O0WBRKllT4bwUDXPa5_kw>
-    <xmx:Lw5OXigEYhudCQbWOcLuYm4FMyMXCu3zkvObmjES4lHhVYh--gfPzA>
-    <xmx:Lw5OXrKGVmjXQ2Tp5ceV7i33wKBW53VePd6RaIgmdkIQ1v7SBGnblQ>
-    <xmx:Lw5OXlBt-kCZlcKWsoVt2GKPtZ18WSvcAmd9ypYEDJAlEPfRclGtRA>
-Received: from mickey.themaw.net (unknown [118.208.163.32])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DFD023060BD1;
-        Wed, 19 Feb 2020 23:42:19 -0500 (EST)
-Message-ID: <c9a6f929b57e0c21c8845c211d1e3eab09d09633.camel@themaw.net>
-Subject: Re: [PATCH 00/19] VFS: Filesystem information and notifications
- [ver #16]
-From:   Ian Kent <raven@themaw.net>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, mszeredi@redhat.com, christian@brauner.io,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Thu, 20 Feb 2020 00:10:28 -0500
+Received: from mail-pf1-f199.google.com ([209.85.210.199])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <matthew.ruffell@canonical.com>)
+        id 1j4e6T-0001mM-CT
+        for linux-fsdevel@vger.kernel.org; Thu, 20 Feb 2020 05:10:25 +0000
+Received: by mail-pf1-f199.google.com with SMTP id c185so1726332pfb.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 21:10:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E2kvQmkvb81bm+34qLewRFV/m+iH5XOHaaYoAXUsntE=;
+        b=H/6JBwvPmrGRlicl5NaFADUhWJFrkiQZ6As/JMuUBOG+K7xexNQtYLWi6oiM4VDSZI
+         u7qsYT/WhLEfqyvdRNA8QDbEEic7W4F9Y7CyvKQXM9thkAj8QcGMex4r6Uad115sQ7ma
+         wOOcNnnsllSozr0ctKCbBs67s3evR7vm/5GMHSZRH619clmEEmbiE8OhQBSTTFD3M0Vw
+         snMjVkOyPPViPTlzwF4namAUKQQpry1iLfKNsGH/OpFfzX5KSkHvGEw7OHFHRbNdzBtW
+         agJNbuStUpDOXVD1TJm4TFZz3I/DODh8SBmxmxudKF8cFwg0MdidpoiyXsHb5Nlb7+WF
+         piZQ==
+X-Gm-Message-State: APjAAAVpKUqArnKcKmRO0ukT9tumJD+Drv79SnvIb8oT6Q2E04SGf/po
+        i/mDUwPV53jgnBzuEa5plI9NkqtHyPa3DK7SlPjvR54BXEA861CkeR0EkgwlXVlmT1UYMhIe8St
+        9EDhQs3SJKhb7dak/ql2JYmYz+qfmMKF0ZqzurrvxGCg=
+X-Received: by 2002:a17:902:74cc:: with SMTP id f12mr30182179plt.192.1582175423564;
+        Wed, 19 Feb 2020 21:10:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxpv4ToaCrZq27eJx3tmSweCd5e39rD0FKboP3/oMdOKh/N4L3ZGJLecz8fafviyr/+amqp/g==
+X-Received: by 2002:a17:902:74cc:: with SMTP id f12mr30182164plt.192.1582175423112;
+        Wed, 19 Feb 2020 21:10:23 -0800 (PST)
+Received: from localhost.localdomain (222-154-99-146-fibre.sparkbb.co.nz. [222.154.99.146])
+        by smtp.gmail.com with ESMTPSA id p3sm1409714pfg.184.2020.02.19.21.10.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 21:10:22 -0800 (PST)
+From:   Matthew Ruffell <matthew.ruffell@canonical.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Thu, 20 Feb 2020 12:42:15 +0800
-In-Reply-To: <20200219144613.lc5y2jgzipynas5l@wittgenstein>
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
-         <20200219144613.lc5y2jgzipynas5l@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+Cc:     pabs3@bonedaddy.net
+Subject: [PATCH 0/1] coredump: Fix null pointer dereference when kernel.core_pattern is "|"
+Date:   Thu, 20 Feb 2020 18:10:14 +1300
+Message-Id: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-02-19 at 15:46 +0100, Christian Brauner wrote:
-> On Tue, Feb 18, 2020 at 05:04:55PM +0000, David Howells wrote:
-> > Here are a set of patches that adds system calls, that (a) allow
-> > information about the VFS, mount topology, superblock and files to
-> > be
-> > retrieved and (b) allow for notifications of mount topology
-> > rearrangement
-> > events, mount and superblock attribute changes and other superblock
-> > events,
-> > such as errors.
-> > 
-> > ============================
-> > FILESYSTEM INFORMATION QUERY
-> > ============================
-> > 
-> > The first system call, fsinfo(), allows information about the
-> > filesystem at
-> > a particular path point to be queried as a set of attributes, some
-> > of which
-> > may have more than one value.
-> > 
-> > Attribute values are of four basic types:
-> > 
-> >  (1) Version dependent-length structure (size defined by type).
-> > 
-> >  (2) Variable-length string (up to 4096, including NUL).
-> > 
-> >  (3) List of structures (up to INT_MAX size).
-> > 
-> >  (4) Opaque blob (up to INT_MAX size).
-> 
-> I mainly have an organizational question. :) This is a huge patchset
-> with lots and lots of (good) features. Wouldn't it make sense to make
-> the fsinfo() syscall a completely separate patchset from the
-> watch_mount() and watch_sb() syscalls? It seems that they don't need
-> to
-> depend on each other at all. This would make reviewing this so much
-> nicer and likely would mean that fsinfo() could proceed a little
-> faster.
+Hello,
 
-The remainder of the fsinfo() series would need to remain useful
-if this was done.
+A user was setting their kernel.core_pattern to "|" to disable coredumps, and
+encountered the following null pointer dereference on a Ubuntu 5.3.0-29-generic
+kernel:
 
-For context I want work on improving handling of large mount
-tables.
+Steps to reproduce:
+Save the following intentionally broken program, save as socktest.c:
 
-Ultimately I expect to solve a very long standing autofs problem
-of using large direct mount maps without prohibitive performance
-overhead (and there a lot of rather challenging autofs changes to
-do for this too) and I believe the fsinfo() system call, and
-related bits, is the way to do this.
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <string.h>
 
-But improving the handling of large mount tables for autofs
-will have the side effect of improvements for other mount table
-users, even in the early stages of this work.
+int main()
+{
+    int listenfd = 0;
+    struct sockaddr_in serv_addr;
 
-For example I want to use this for mount table handling improvements
-in libmount. Clearly that ultimately needs mount change notification
-in the end but ...
+    listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    memset(&serv_addr, '0', sizeof(serv_addr));
 
-There's a bunch of things that need to be done alone the way
-to even get started.
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(6000);
 
-One thing that's needed is the ability to call fsinfo() to get
-information on a mount to avoid constant reading of the proc based
-mount table, which happens a lot (since the mount info. needs
-to be up to date) so systemd (and others) would see an improvement
-with the fsinfo() system call alone able to be used in libmount.
+    bind(listenfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
 
-But for the fsinfo() system call to be used for this the file
-system specific mount options need to also be obtained when
-using fsinfo(). That means the super block operation fsinfo uses
-to provide this must be implemented for at least most file systems.
+    listen(listenfd, 10);
 
-So separating out the notifications part, leaving whatever is needed
-to still be able to do this, should be fine and the system call
-would be immediately useful once the super operation is implemented
-for the needed file systems.
+    *(int*)33 = 33;
 
-Whether the implementation of the super operation should be done
-as part of this series is another question but would certainly
-be a challenge and make the series more complicated. But is needed
-for the change to be useful in my case.
+    return 0;
+}
 
-Ian
+$ sudo sysctl kernel.core_pattern="|"
+$ gcc -o socktest socktest.c
+$ ./socktest
+<program will hang and will not be killable>
+
+dmesg output:
+
+BUG: kernel NULL pointer dereference, address: 0000000000000020
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0 
+Oops: 0000 [#1] SMP PTI
+CPU: 1 PID: 1026 Comm: socktest Not tainted 5.3.0-29-generic #31-Ubuntu
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.12.0-1 04/01/2014
+RIP: 0010:do_coredump+0x536/0xb30
+Code: 00 48 8b bd 18 ff ff ff 48 85 ff 74 05 e8 c2 47 fa ff 65 48 8b 04 25 c0 6b 01 00 48 8b 00 48 8b 7d a0 a8 04 0f 85 65 05 00 00 <48> 8b 57 20 0f b7 02 66 25 00 f0 66 3d 00 80 0f 84 9b 03 00 00 49
+RSP: 0000:ffffa784c0887ca8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8c5c743caec0 RCX: 00000000000019ab
+RDX: 0000000000000000 RSI: ffffa784c0887c68 RDI: 0000000000000000
+RBP: ffffa784c0887dd8 R08: 0000000000000400 R09: ffffa784c0887be0
+R10: ffff8c5c79c51850 R11: 0000000000000000 R12: ffff8c5c70b869c0
+R13: 0000000000000001 R14: 0000000000000000 R15: ffffffffa4d15920
+FS:  00007f5b7288d540(0000) GS:ffff8c5c7bb00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000020 CR3: 000000017ab8a006 CR4: 0000000000160ee0
+Call Trace:
+? signal_wake_up_state+0x2a/0x30
+? __send_signal+0x1eb/0x3f0
+get_signal+0x159/0x880
+do_signal+0x34/0x280
+? do_user_addr_fault+0x34f/0x450
+exit_to_usermode_loop+0xbf/0x160
+prepare_exit_to_usermode+0x77/0xa0
+retint_user+0x8/0x8
+
+This happens on kernels 5.3 and above. On kernels 5.2 and prior, the user would
+expect to see the following message in dmesg instead:
+
+Core dump to | pipe failed
+
+And the program would terminate on a standard segmentation fault.
+
+Now, do_coredump+0x536 points more or less to the file_start_write() function
+in do_coredump():
+
+565 void do_coredump(const kernel_siginfo_t *siginfo)
+566 {
+...
+788     if (!dump_interrupted()) {
+789         file_start_write(cprm.file);
+...
+810 }
+
+But this is not the "real" cause of the fault.
+
+The problem was introduced in the following commit:
+
+commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03
+Author: Paul Wise <pabs3@bonedaddy.net>
+Date: Fri Aug 2 21:49:05 2019 -0700
+Subject: coredump: split pipe command whitespace before expanding template
+
+Here is the actual fault. When we enter format_corename(), cn->corename[0] is
+set to '\0' after being allocated on the heap:
+
+191 static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+192                size_t **argv, int *argc)
+193 {
+...
+196     int ispipe = (*pat_ptr == '|');
+...
+202     cn->corename = NULL;
+203     if (expand_corename(cn, core_name_size))
+204         return -ENOMEM;
+205     cn->corename[0] = '\0';
+...
+}
+
+ispipe is also 1, since the first character of the core_pattern is "|".
+
+In the next if statement:
+
+207     if (ispipe) {
+208         int argvs = sizeof(core_pattern) / 2;
+209         (*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
+210         if (!(*argv))
+211             return -ENOMEM;
+212         (*argv)[(*argc)++] = 0;
+213         ++pat_ptr;
+214     }
+215 
+216     /* Repeat as long as we have more pattern to process and more output
+217        space */
+218     while (*pat_ptr) {
+
+argv[0] is set to 0, and after, we do not enter the while(*pat_ptr) loop because
+we have already reached the end of the core_pattern string.
+
+Back in do_coredump():
+
+676         for (argi = 0; argi < argc; argi++)
+677             helper_argv[argi] = cn.corename + argv[argi];
+678         helper_argv[argi] = NULL;
+
+helper_argv[0] is set to cn.corename, which still has '\0' at index 0, and
+argv[0] = 0, so helper_argv[0] == cn.corename.
+
+When the call to call_usermodehelper_setup() is issued:
+
+680         retval = -ENOMEM;
+681         sub_info = call_usermodehelper_setup(helper_argv[0],
+682                         helper_argv, NULL, GFP_KERNEL,
+683                         umh_pipe_setup, NULL, &cprm);
+684         if (sub_info)
+685             retval = call_usermodehelper_exec(sub_info,
+686                               UMH_WAIT_EXEC);
+
+sub_info->path is set to helper_argv[0], and in call_usermodehelper_exec():
+
+548 int call_usermodehelper_exec(struct subprocess_info *sub_info, int wait)
+549 {
+550     DECLARE_COMPLETION_ONSTACK(done);
+551     int retval = 0;
+552 
+553     if (!sub_info->path) {
+554         call_usermodehelper_freeinfo(sub_info);
+555         return -EINVAL;
+556     } 
+...
+568     if (strlen(sub_info->path) == 0)
+569         goto out;
+...
+597 out:
+598     call_usermodehelper_freeinfo(sub_info);
+599 unlock:
+600     helper_unlock();
+601     return retval;
+602 }
+
+retval is initially set to 0. sub_info->path is a valid pointer, since it points
+to the '\0' character, the check if (!sub_info->path) fails and we continue on
+to the strlen check. This passes, and we goto out, which returns the retval of 
+0.
+
+Back to do_coredump():
+
+688         kfree(helper_argv);
+689         if (retval) {
+690             printk(KERN_INFO "Core dump to |%s pipe failed\n",
+691                    cn.corename);
+692             goto close_fail;
+693         }
+
+We check to see if retval is nonzero. Since it is zero, we can continue on, and
+get stuck at the null pointer dereference at the call to file_start_write()
+pointed out earlier.
+
+What should happen, is that we keep the same behaviour as kernels before
+commit 315c69261dd3fa12dbc830d4fa00d1fad98d3b03, and enter the "if (retval)"
+statement to print the "Core dump to |%s pipe failed\n" message and goto
+close_fail.
+
+We can add a simple string length check to fix the issue:
+
+689         if (retval || strlen(cn.corename) == 0) {
+690             printk(KERN_INFO "Core dump to |%s pipe failed\n",
+691                    cn.corename);
+692             goto close_fail;
+693         }
+
+Attached is a patch. It keeps the semantics the same as before
+315c69261dd3fa12dbc830d4fa00d1fad98d3b03. Note, cn.corename will never be a
+null pointer, and will always be null terminated.
+
+If you can think of a better fix, please let me know.
+
+Thanks,
+Matthew Ruffell
+Sustaining Engineer @ Canonical
+
+Matthew Ruffell (1):
+  coredump: Fix null pointer dereference when kernel.core_pattern is "|"
+
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.20.1
 
