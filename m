@@ -2,109 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C97166A60
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 23:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1E4166A70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 23:39:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729267AbgBTWdc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 17:33:32 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45841 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729222AbgBTWdc (ORCPT
+        id S1729272AbgBTWjK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 17:39:10 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49450 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbgBTWjK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 17:33:32 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z5so4368698lfd.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 14:33:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
-        b=QiMLUGsRq9HWg+G+gXiEaS3g8vcEPOTXS0nkdYQXIsCA2EjphiI1+TGu1HVJ3od+BY
-         4nIUXqbNSwvfL1zzmPatevn6ccupRjp+aZGa5eL8bOeMqUiv7Bg7Hz5IKilERFOA99sS
-         jMLLQ3OrRmjEMgFi9TJzZnDfd0rXWYetgu1bs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WrNmlOpMVxzFXh2A2oJzXRWZK2fGDe1+SPIAN4gWybk=;
-        b=qdlkAtqv0QPRFcgCw2GGLTy1BAv1ZF1UKkfHaULKeCH9uXxRqBUlj8RCaiiHji7P5W
-         8+M0zCDV/1947+gUcJp2C5OUC4wLHt6qbBgegspQlj1wupZ5m4HQ12HcS+Kgmd3bGHKJ
-         7mIS3/dKl4jKvOeojdIVm4rCwYVrDG0EheHsxcqta6L8rLdDYgrSHzrlfAiAokkKWzmX
-         bRrPATIL5GyfzSnReCnQHHhtKfzgXsZ6j65T07w6N3HcUOiVifI9ZjTDcFLjBGUNjnkj
-         Ze1fc0tcq/PN0gBd5mlGSfX+hRqoPyqDk+q7iEktQhNINOk/sJ0LvIeQjlbNLIEIjUGR
-         LWuw==
-X-Gm-Message-State: APjAAAXqY7r+d5GTAzgBnsucdYA/3fhOIIJ+yGr5hzTW0qw280AEU1rl
-        cpi47YP+ENTqT28DuRK+fRxaRg7dTRw=
-X-Google-Smtp-Source: APXvYqyt4ev1xCkzN6l7zK6LvnI5nBt78AouGTLndT3ksKugbBtvZdBRcaApDsmbMXoytNsvDhomXg==
-X-Received: by 2002:a19:550d:: with SMTP id n13mr18193328lfe.48.1582238008366;
-        Thu, 20 Feb 2020 14:33:28 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id d22sm466754lfi.49.2020.02.20.14.33.26
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 14:33:27 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id n18so138927ljo.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 14:33:26 -0800 (PST)
-X-Received: by 2002:a2e:97cc:: with SMTP id m12mr19716647ljj.241.1582238006401;
- Thu, 20 Feb 2020 14:33:26 -0800 (PST)
+        Thu, 20 Feb 2020 17:39:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PJX15g/idnsbi9mBK4m/qgB4NAR6fjeo4oenehrzb84=; b=tRp/RfyOc8MMAOEnFbjVZPeWaN
+        2KkzEKXiN/S1p09Bqu90S2Z278xQaeJcCcxdgeXrdpytnUBFOLEh/tcVUgBOZ3WDQA1fyr25gzLyH
+        gRM7sCok3nV4KM0JhdGQW17PpL0/Q+08nFcey+vxgYObaAojcT6v9r7vvwC4L45gbM+E1ObajSRbu
+        9fqhh3Le7FzPdJj54Iv5P1uuGStaEN80lg311yLhBq1nMBvGvQ80nBsaseT/97o8elxjyPsMZtK46
+        3NBlICNdJTCPRvVzyFRBHETaOyBq9s1mCrpI3p5mh7mcYzLn6aixyJdO3+xKTmslXOd/sUkUMeqtP
+        kTySNnYQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4uTN-0006hx-9M; Thu, 20 Feb 2020 22:39:09 +0000
+Date:   Thu, 20 Feb 2020 14:39:09 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     dsterba@suse.cz, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 00/23] Change readahead API
+Message-ID: <20200220223909.GB24185@bombadil.infradead.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200220175400.GB2902@twin.jikos.cz>
 MIME-Version: 1.0
-References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
- <87v9odlxbr.fsf@x220.int.ebiederm.org> <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
- <87tv3vkg1a.fsf@x220.int.ebiederm.org> <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
- <87v9obipk9.fsf@x220.int.ebiederm.org> <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
- <20200212200335.GO23230@ZenIV.linux.org.uk> <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
- <20200212203833.GQ23230@ZenIV.linux.org.uk> <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org> <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org> <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
-In-Reply-To: <87h7zl9e7u.fsf_-_@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 20 Feb 2020 14:33:10 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
-Message-ID: <CAHk-=wht3ZWRaYs8QBXuftfuiFGOTjjZ9zj3-Dz7dkiBhJNBrQ@mail.gmail.com>
-Subject: Re: [PATCH 3/7] proc: Mov rcu_read_(lock|unlock) in proc_prune_siblings_dcache
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220175400.GB2902@twin.jikos.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 12:51 PM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Don't make it look like rcu_read_lock is held over the entire loop
-> instead just take the rcu_read_lock over the part of the loop that
-> matters.  This makes the intent of the code a little clearer.
+On Thu, Feb 20, 2020 at 06:54:00PM +0100, David Sterba wrote:
+> On Wed, Feb 19, 2020 at 01:00:39PM -0800, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > This series adds a readahead address_space operation to eventually
+> > replace the readpages operation.  The key difference is that
+> > pages are added to the page cache as they are allocated (and
+> > then looked up by the filesystem) instead of passing them on a
+> > list to the readpages operation and having the filesystem add
+> > them to the page cache.  It's a net reduction in code for each
+> > implementation, more efficient than walking a list, and solves
+> > the direct-write vs buffered-read problem reported by yu kuai at
+> > https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
+> > 
+> > The only unconverted filesystems are those which use fscache.
+> > Their conversion is pending Dave Howells' rewrite which will make the
+> > conversion substantially easier.
+> > 
+> > I want to thank the reviewers; Dave Chinner, John Hubbard and Christoph
+> > Hellwig have done a marvellous job of providing constructive criticism.
+> > Eric Biggers pointed out how I'd broken ext4 (which led to a substantial
+> > change).  I've tried to take it all on board, but I may have missed
+> > something simply because you've done such a thorough job.
+> > 
+> > This series can also be found at
+> > http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/tags/readahead_v7
+> > (I also pushed the readahead_v6 tag there in case anyone wants to diff, and
+> > they're both based on 5.6-rc2 so they're easy to diff)
+> > 
+> > v7:
+> >  - Now passes an xfstests run on ext4!
+> 
+> On btrfs it still chokes on the first test btrfs/001, with the following
+> warning, the test is stuck there.
 
-No, this is horrid.
+Thanks.  The warning actually wasn't the problem, but it did need to
+be addressed.  I got a test system up & running with btrfs, and it's
+currently on generic/027 with the following patch:
 
-Maybe it makes the intent clearer, but it also causes that "continue"
-case to unlock and relock immediately.
-
-And maybe that case never triggers, and that's ok. But then it needs a
-big comment about it.
-
-              Linus
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 9c782c15f7f7..d23a224d2ad2 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -676,7 +676,7 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ 		struct page **array, unsigned int array_sz)
+ {
+ 	unsigned int i = 0;
+-	XA_STATE(xas, &rac->mapping->i_pages, rac->_index);
++	XA_STATE(xas, &rac->mapping->i_pages, 0);
+ 	struct page *page;
+ 
+ 	BUG_ON(rac->_batch_count > rac->_nr_pages);
+@@ -684,6 +684,8 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ 	rac->_index += rac->_batch_count;
+ 	rac->_batch_count = 0;
+ 
++	xas_set(&xas, rac->_index);
++	rcu_read_lock();
+ 	xas_for_each(&xas, page, rac->_index + rac->_nr_pages - 1) {
+ 		VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 		VM_BUG_ON_PAGE(PageTail(page), page);
+@@ -702,6 +704,7 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ 		if (i == array_sz)
+ 			break;
+ 	}
++	rcu_read_unlock();
+ 
+ 	return i;
+ }
