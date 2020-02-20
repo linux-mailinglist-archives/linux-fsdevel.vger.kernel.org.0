@@ -2,267 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE240165B56
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 11:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA6A6165B96
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 11:34:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgBTKUi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 05:20:38 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:31555 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbgBTKUh (ORCPT
+        id S1727167AbgBTKeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 05:34:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25649 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726501AbgBTKen (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 05:20:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1582194036; x=1613730036;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zPIopc4hc9wGtddw/CRNjqDtmaOzXzN+cAoSSvPhd5Y=;
-  b=KT6jBCNbpoDzHIvImi8LRZk4rXv9+hxzTCAdKQpk4TfhYjQ53dyR1m5E
-   Tu9bSpeLjaA0w1Y/7grueieL+0Vul8Bf1R7NJtQmtoRdUHqNfqih5PERK
-   6IkPMr6utSwr6atzYAtaz1usVx2Y611CeDwIxL/A6CUcD5fh26Yf16lPj
-   xc5xtRwI7oJkBH7cWf3Ft5HFBrQKsJNJb0NVM/ZSVWKOnZ7Ueo9Dwqq5b
-   naBNl0clXD+Gvo7wQfzxAOh05MQJ05usuNX+S/Tyy6Ap+AuLukfy1sDmU
-   +sLgJeQXYEwz+U0e8YQRYrv3FKD86Wbgv3J+noHo6yremIiAlG34AP6D8
-   A==;
-IronPort-SDR: yh4vWmd81RIS7DyThAClZb9RCtBlUeeJ5/5iNToTLmYcewl7yKg9SCX7u8JrqjjIachuJNUy2B
- sOpNwUDxlpe9PK6+JuHmbC3IfCCzWQFr7+t137+GZUkWfhSGPR0T5mEd9YsFISgZd3xyu/cbPp
- ftaPMpm/3pqHZCFn6qc0IDd5kbJ8yjsdikSpDRh1+g0ILvwPJnNzCprSepw52vHRIR4Y3b2u6i
- +iL4NlvEOM4eV4W9J0NnRocU1LHyOygcjt3dgC3NHAtGC+pt+/J9hRw2pFe/vyeePosTKocB71
- o4k=
-X-IronPort-AV: E=Sophos;i="5.70,464,1574092800"; 
-   d="scan'208";a="130792440"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Feb 2020 18:17:26 +0800
-IronPort-SDR: +bLrpsWeDprzGqhvwjqBn/aOMSlevnBRXkAMsOGyjV5JS/D4P/aCGSKi2JBo4td41tZqb2iIUx
- D3spfdCcNP14lQCKgsNN0M37QSlEa+mWKGZvEUA9JiCp80kSJ1+t5o+B8G0drncT25cyXcnFhi
- Ih2y0iRRaanf35Xctfi1bo34HfIIKvtMpt8553qtj+orxPu7V+/mN73ZIUIPYO3lmsa/7UJUhH
- Kcb8NlaXJgFWXRjFblqZjq/d1Pb9CbR3M7BaHVRw2oyOJnRa2inLOn83w88egY9qM9bBIdYOvX
- zRwMH1VmigmhqVjnKsa+kBbh
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2020 02:10:01 -0800
-IronPort-SDR: grRjqvjTB5QpQgPGip3ZGDKqykzQva++X5C2OuLyDtTAR53/rcfNVlbnxjBdzqOnaxHDRxKsUY
- et34175jl67zjkf5Q+P7/c1A8/TYNrHo/4l8Sa3bWq8+zNEOVcHCATwwviAJTyG2yv/vsVYYbd
- sNwZaGZx0TwOBgtjvVY+Dp8/j8tObuD0/wpHA5h83dWgWqhMFcKV/fjmWds6/Uade5l53LGWkp
- M8kh1MELAE2JfnffglzogTHo/QfCOgRHmNZ+oOzF31CFIMlhZwGHf7RQIfhrKR/1ZfE25eVNPv
- vOc=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 20 Feb 2020 02:17:23 -0800
-Received: (nullmailer pid 2544450 invoked by uid 1000);
-        Thu, 20 Feb 2020 10:17:23 -0000
-Date:   Thu, 20 Feb 2020 19:17:23 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 09/21] btrfs: factor out create_chunk()
-Message-ID: <20200220101723.5wpidi3wd2a7wvgn@naota.dhcp.fujisawa.hgst.com>
-References: <20200212072048.629856-1-naohiro.aota@wdc.com>
- <20200212072048.629856-10-naohiro.aota@wdc.com>
- <7514070d-b7a8-be1c-c23a-f01b9ee3c7ce@toxicpanda.com>
+        Thu, 20 Feb 2020 05:34:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582194882;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IbRiHn2UAAo1XhaSQjnQaPYh19kM6Kh7056eiuL/Ryo=;
+        b=NjDV+Hdyxg0zMBZB8zr582tLfOk1YjRYU+3uvqFltugQn9LSf5bHAY1Jhol7FQ3zJVF6dN
+        j3OrKzU47eKawxteomPfgxACihDdS8iB+A5wY9xOWT1UzWxSla7cUgDwFirqQBX7wNTKfT
+        idPoF+/t41ftlu5eP4Yj/Clk4E+iLBc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-117-qU9IaiWhN92zMfQkTauxHw-1; Thu, 20 Feb 2020 05:34:40 -0500
+X-MC-Unique: qU9IaiWhN92zMfQkTauxHw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9F8D1801FA6;
+        Thu, 20 Feb 2020 10:34:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBEF85DA76;
+        Thu, 20 Feb 2020 10:34:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200219163128.GB9496@magnolia>
+References: <20200219163128.GB9496@magnolia> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204550281.3299825.6344518327575765653.stgit@warthog.procyon.org.uk>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        mszeredi@redhat.com, christian@brauner.io,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/19] vfs: syscall: Add fsinfo() to query filesystem information [ver #16]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <7514070d-b7a8-be1c-c23a-f01b9ee3c7ce@toxicpanda.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <542410.1582194875.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 20 Feb 2020 10:34:35 +0000
+Message-ID: <542411.1582194875@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 11:24:57AM -0500, Josef Bacik wrote:
->On 2/12/20 2:20 AM, Naohiro Aota wrote:
->>Factor out create_chunk() from __btrfs_alloc_chunk(). This function finally
->>creates a chunk. There is no functional changes.
->>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>---
->>  fs/btrfs/volumes.c | 130 ++++++++++++++++++++++++---------------------
->>  1 file changed, 70 insertions(+), 60 deletions(-)
->>
->>diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
->>index 00085943e4dd..3e2e3896d72a 100644
->>--- a/fs/btrfs/volumes.c
->>+++ b/fs/btrfs/volumes.c
->>@@ -5052,90 +5052,53 @@ static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
->>  	}
->>  }
->>-static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->>-			       u64 start, u64 type)
->>+static int create_chunk(struct btrfs_trans_handle *trans,
->>+			struct alloc_chunk_ctl *ctl,
->>+			struct btrfs_device_info *devices_info)
->>  {
->>  	struct btrfs_fs_info *info = trans->fs_info;
->>-	struct btrfs_fs_devices *fs_devices = info->fs_devices;
->>  	struct map_lookup *map = NULL;
->>  	struct extent_map_tree *em_tree;
->>  	struct extent_map *em;
->>-	struct btrfs_device_info *devices_info = NULL;
->>-	struct alloc_chunk_ctl ctl;
->>+	u64 start = ctl->start;
->>+	u64 type = ctl->type;
->>  	int ret;
->>  	int i;
->>  	int j;
->>-	if (!alloc_profile_is_valid(type, 0)) {
->>-		ASSERT(0);
->>-		return -EINVAL;
->>-	}
->>-
->>-	if (list_empty(&fs_devices->alloc_list)) {
->>-		if (btrfs_test_opt(info, ENOSPC_DEBUG))
->>-			btrfs_debug(info, "%s: no writable device", __func__);
->>-		return -ENOSPC;
->>-	}
->>-
->>-	if (!(type & BTRFS_BLOCK_GROUP_TYPE_MASK)) {
->>-		btrfs_err(info, "invalid chunk type 0x%llx requested", type);
->>-		BUG();
->>-	}
->>-
->>-	ctl.start = start;
->>-	ctl.type = type;
->>-	init_alloc_chunk_ctl(fs_devices, &ctl);
->>-
->>-	devices_info = kcalloc(fs_devices->rw_devices, sizeof(*devices_info),
->>-			       GFP_NOFS);
->>-	if (!devices_info)
->>+	map = kmalloc(map_lookup_size(ctl->num_stripes), GFP_NOFS);
->>+	if (!map)
->>  		return -ENOMEM;
->>+	map->num_stripes = ctl->num_stripes;
->>-	ret = gather_device_info(fs_devices, &ctl, devices_info);
->>-	if (ret < 0)
->>-		goto error;
->>-
->>-	ret = decide_stripe_size(fs_devices, &ctl, devices_info);
->>-	if (ret < 0)
->>-		goto error;
->>-
->>-	map = kmalloc(map_lookup_size(ctl.num_stripes), GFP_NOFS);
->>-	if (!map) {
->>-		ret = -ENOMEM;
->>-		goto error;
->>-	}
->>-
->>-	map->num_stripes = ctl.num_stripes;
->>-
->>-	for (i = 0; i < ctl.ndevs; ++i) {
->>-		for (j = 0; j < ctl.dev_stripes; ++j) {
->>-			int s = i * ctl.dev_stripes + j;
->>+	for (i = 0; i < ctl->ndevs; ++i) {
->>+		for (j = 0; j < ctl->dev_stripes; ++j) {
->>+			int s = i * ctl->dev_stripes + j;
->>  			map->stripes[s].dev = devices_info[i].dev;
->>  			map->stripes[s].physical = devices_info[i].dev_offset +
->>-						   j * ctl.stripe_size;
->>+						   j * ctl->stripe_size;
->>  		}
->>  	}
->>  	map->stripe_len = BTRFS_STRIPE_LEN;
->>  	map->io_align = BTRFS_STRIPE_LEN;
->>  	map->io_width = BTRFS_STRIPE_LEN;
->>  	map->type = type;
->>-	map->sub_stripes = ctl.sub_stripes;
->>+	map->sub_stripes = ctl->sub_stripes;
->>-	trace_btrfs_chunk_alloc(info, map, start, ctl.chunk_size);
->>+	trace_btrfs_chunk_alloc(info, map, start, ctl->chunk_size);
->>  	em = alloc_extent_map();
->>  	if (!em) {
->>  		kfree(map);
->>-		ret = -ENOMEM;
->>-		goto error;
->>+		return -ENOMEM;
->>  	}
->>  	set_bit(EXTENT_FLAG_FS_MAPPING, &em->flags);
->>  	em->map_lookup = map;
->>  	em->start = start;
->>-	em->len = ctl.chunk_size;
->>+	em->len = ctl->chunk_size;
->>  	em->block_start = 0;
->>  	em->block_len = em->len;
->>-	em->orig_block_len = ctl.stripe_size;
->>+	em->orig_block_len = ctl->stripe_size;
->>  	em_tree = &info->mapping_tree;
->>  	write_lock(&em_tree->lock);
->>@@ -5143,11 +5106,11 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->>  	if (ret) {
->>  		write_unlock(&em_tree->lock);
->>  		free_extent_map(em);
->>-		goto error;
->>+		return ret;
->>  	}
->>  	write_unlock(&em_tree->lock);
->>-	ret = btrfs_make_block_group(trans, 0, type, start, ctl.chunk_size);
->>+	ret = btrfs_make_block_group(trans, 0, type, start, ctl->chunk_size);
->>  	if (ret)
->>  		goto error_del_extent;
->>@@ -5155,20 +5118,19 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->>  		struct btrfs_device *dev = map->stripes[i].dev;
->>  		btrfs_device_set_bytes_used(dev,
->>-					    dev->bytes_used + ctl.stripe_size);
->>+					    dev->bytes_used + ctl->stripe_size);
->>  		if (list_empty(&dev->post_commit_list))
->>  			list_add_tail(&dev->post_commit_list,
->>  				      &trans->transaction->dev_update_list);
->>  	}
->>-	atomic64_sub(ctl.stripe_size * map->num_stripes,
->>+	atomic64_sub(ctl->stripe_size * map->num_stripes,
->>  		     &info->free_chunk_space);
->>  	free_extent_map(em);
->>  	check_raid56_incompat_flag(info, type);
->>  	check_raid1c34_incompat_flag(info, type);
->>-	kfree(devices_info);
->>  	return 0;
->>  error_del_extent:
->>@@ -5180,7 +5142,55 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->>  	free_extent_map(em);
->>  	/* One for the tree reference */
->>  	free_extent_map(em);
->>-error:
->>+
->>+	return ret;
->>+}
->>+
->>+static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
->>+			       u64 start, u64 type)
->>+{
->>+	struct btrfs_fs_info *info = trans->fs_info;
->>+	struct btrfs_fs_devices *fs_devices = info->fs_devices;
->>+	struct btrfs_device_info *devices_info = NULL;
->>+	struct alloc_chunk_ctl ctl;
->>+	int ret;
->>+
->>+	if (!alloc_profile_is_valid(type, 0)) {
->>+		ASSERT(0);
->>+		return -EINVAL;
->>+	}
->>+
->>+	if (list_empty(&fs_devices->alloc_list)) {
->>+		if (btrfs_test_opt(info, ENOSPC_DEBUG))
->>+			btrfs_debug(info, "%s: no writable device", __func__);
->>+		return -ENOSPC;
->>+	}
->>+
->>+	if (!(type & BTRFS_BLOCK_GROUP_TYPE_MASK)) {
->>+		btrfs_err(info, "invalid chunk type 0x%llx requested", type);
->>+		BUG();
->>+	}
+Darrick J. Wong <darrick.wong@oracle.com> wrote:
+
+> > +	p->f_blocks.hi	=3D 0;
+> > +	p->f_blocks.lo	=3D buf.f_blocks;
+> =
+
+> Er... are there filesystems (besides that (xfs++)++ one) that require
+> u128 counters?  I suspect that the Very Large Fields are for future
+> expandability, but I also wonder about the whether it's worth the
+> complexity of doing this, since the structures can always be
+> version-revved later.
+
+I'm making a relatively cheap allowance for future expansion.  Dave Chinne=
+r
+has mentioned at one of the LSFs that 16EiB may be exceeded soon (though I
+hate to think of fscking such a beastie).  I know that the YFS variant of =
+AFS
+supports 96-bit vnode numbers (which I translate to inode numbers).  What =
+I'm
+trying to avoid is the problem we have with stat/statfs where under some
+circumstances we have to return an error (ERANGE?) because we can't repres=
+ent
+the number if someone asks for an older version of the struct.
+
+Since the buffer is (meant to be) pre-cleared, the filesystem can just ign=
+ore
+the high word if it's never going to set it.  In fact, fsinfo_generic_stat=
+fs
+doesn't need to set them either.
+
+> XFS inodes are u64 values...
+> ...and the max symlink target length is 1k, not PAGE_SIZE...
+
+Yeah, and AFS(YFS) has 96-bit inode numbers.  The filesystem's fsinfo tabl=
+e is
+read first so that the filesystem can override this.
+
+> ...so is the usage model here that XFS should call fsinfo_generic_limits
+> to fill out the fsinfo_limits structure, modify the values in
+> ctx->buffer as appropriate for XFS, and then return the structure size?
+
+Actually, I should export some these so that you can do that.  I'll export
+fsinfo_generic_{timestamp_info,supports,limits} for now.
+
+> > +#define FSINFO_ATTR_VOLUME_ID		0x05	/* Volume ID (string) */
+> > +#define FSINFO_ATTR_VOLUME_UUID		0x06	/* Volume UUID (LE uuid) */
+> > +#define FSINFO_ATTR_VOLUME_NAME		0x07	/* Volume name (string) */
+> =
+
+> I think I've muttered about the distinction between volume id and
+> volume name before, but I'm still wondering how confusing that will be
+> for users?  Let me check my assumptions, though:
+> =
+
+> Volume ID is whatever's in super_block.s_id, which (at least for xfs and
+> ext4) is the device name (e.g. "sda1").  I guess that's useful for
+> correlating a thing you can call fsinfo() on against strings that were
+> logged in dmesg.
 >
->This is superfluous, alloc_profile_is_valid() handles this check.  Thanks,
->
->Josef
+> Volume name I think is the fs label (e.g. "home"), which I think will
+> have to be implemented separately by each filesystem, and that's why
+> there's no generic vfs implementation.
 
-This checks if at least one block group type (data, metadata or
-system) flag is set. OTOH, alloc_profile_is_valid() checks if profile
-bits are valid.
+Yes.  For AFS, for example, this would be the name of the volume (which ma=
+y be
+changed), whereas the volume ID is the number in the protocol that actuall=
+y
+refers to the volume (which cannot be changed).
 
-Maybe, we can move this check into alloc_profile_is_valid()?
+And, as you say, for blockdev mounts, the ID is the device name and the vo=
+lume
+name is filesystem specific.
 
-Thanks,
+> The 7 -> 0 -> 1 sequence here confused me until I figured out that
+> QUERY_TYPE is the mask for QUERY_{PATH,FD}.
+
+Changed to FSINFO_FLAGS_QUERY_MASK.
+
+> > +struct fsinfo_limits {
+> > +...
+> > +	__u32	__reserved[1];
+> =
+
+> I wonder if these structures ought to reserve more space than a single u=
+32...
+
+No need.  Part of the way the interface is designed is that the version nu=
+mber
+for a particular VSTRUCT-type attribute is also the length.  So a newer
+version is also longer.  All the old fields must be retained and filled in=
+.
+New fields are tagged on the end.
+
+If userspace asks for an older version than is supported, it gets a trunca=
+ted
+return.  If it asks for a newer version, the extra fields it is expecting =
+are
+all set to 0.  Either way, the length (and thus the version) the kernel
+supports is returned - not the length copied.
+
+The __reserved fields are there because they represent padding (the struct=
+ is
+going to be aligned/padded according to __u64 in this case).  Ideally, I'd
+mark the structs __packed, but this messes with the alignment and may make=
+ the
+compiler do funny tricks to get out any field larger than a byte.
+
+I've renamed them to __padding.
+
+> > +struct fsinfo_supports {
+> > +	__u64	stx_attributes;		/* What statx::stx_attributes are supported *=
+/
+> > +	__u32	stx_mask;		/* What statx::stx_mask bits are supported */
+> > +	__u32	ioc_flags;		/* What FS_IOC_* flags are supported */
+> =
+
+> "IOC"?  That just means 'ioctl'.  Is this field supposed to return the
+> supported FS_IOC_GETFLAGS flags, or the supported FS_IOC_FSGETXATTR
+> flags?
+
+FS_IOC_[GS]ETFLAGS is what I meant.
+
+> I suspect it would also be a big help to be able to tell userspace which
+> of the flags can be set, and which can be cleared.
+
+How about:
+
+	__u32	fs_ioc_getflags;	/* What FS_IOC_GETFLAGS may return */
+	__u32	fs_ioc_setflags_set;	/* What FS_IOC_SETFLAGS may set */
+	__u32	fs_ioc_setflags_clear;	/* What FS_IOC_SETFLAGS may clear */
+
+> > +struct fsinfo_timestamp_one {
+> > +	__s64	minimum;	/* Minimum timestamp value in seconds */
+> > +	__u64	maximum;	/* Maximum timestamp value in seconds */
+> =
+
+> Given that time64_t is s64, why is the maximum here u64?
+
+Well, I assume it extremely unlikely that the maximum can be before 1970, =
+so
+there doesn't seem any need to allow the maximum to be negative.  Furtherm=
+ore,
+it would be feasible that you could encounter a filesystem with a u64
+filesystem that doesn't support dates before 1970.
+
+On the other hand, if Linux is still going when __s64 seconds from 1970 wr=
+aps,
+it will be impressive, but I'm not sure we'll be around to see it...  Some=
+one
+will have to cast a resurrection spell on Arnd to fix that one.
+
+However, since signed/unsigned comparisons may have issues, I can turn it =
+into
+an __s64 also if that is preferred.
+
+David
+
