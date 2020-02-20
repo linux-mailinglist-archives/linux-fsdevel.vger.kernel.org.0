@@ -2,63 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407DB16608B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 16:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A371660DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 16:24:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbgBTPKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 10:10:49 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47078 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbgBTPKs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:10:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=G2o7/2wQz4I2bSTa23Jz+2T7ehA7+Qh/DABLcJ7++Gg=; b=rNJKV58kH2Hi3xhQxkLMMzx8lV
-        RipoN223ZmXSatYqltHsRF6idpZbBmyf0GL9X+CH+Ks6Wc6k43+EjLitqhF4xF2b133YQH9ZG5EHi
-        9S2PEh7TBE1weivsELdxeyxuCZbNPOZ2MqqDqE2ZOhY+EIiIxbWx+hcdKp9lxQ0cgIgNcZkczih6K
-        9FdryOmrnuCo9AOOf+joSEfiifv0Cop4iRUq+zKJAofsbwZLBBoyX6i8M/2kx+6/2vGI/vLfIxQw1
-        2Ucmc3/Mow9vozyw390izexHNWNfoWyIucqRv+4NiQ+0nLq6AIcDZr0SBA/Y13JQUbUW+KN6Xz/8C
-        FKW5FgEA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4nTU-00007F-C8; Thu, 20 Feb 2020 15:10:48 +0000
-Date:   Thu, 20 Feb 2020 07:10:48 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Zi Yan <ziy@nvidia.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 10/24] mm: Add readahead address space operation
-Message-ID: <20200220151048.GW24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-11-willy@infradead.org>
- <5D7CE6BD-FABD-4901-AEF0-E0F10FC00EB1@nvidia.com>
+        id S1728356AbgBTPYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 10:24:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50504 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728338AbgBTPYB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 10:24:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 344B8AE1C;
+        Thu, 20 Feb 2020 15:23:59 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 09:23:55 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
+        darrick.wong@oracle.com
+Subject: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200220152355.5ticlkptc7kwrifz@fiona>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5D7CE6BD-FABD-4901-AEF0-E0F10FC00EB1@nvidia.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 10:00:30AM -0500, Zi Yan wrote:
-> > +/* The index of the first page in this readahead block */
-> > +static inline unsigned int readahead_index(struct readahead_control *rac)
-> > +{
-> > +	return rac->_index;
-> > +}
-> 
-> rac->_index is pgoff_t, so readahead_index() should return the same type, right?
-> BTW, pgoff_t is unsigned long.
+In case of a block device error, written parameter in iomap_end()
+is zero as opposed to the amount of submitted I/O.
+Filesystems such as btrfs need to account for the I/O in ordered
+extents, even if it resulted in an error. Having (incomplete)
+submitted bytes in written gives the filesystem the amount of data
+which has been submitted before the error occurred, and the
+filesystem code can choose how to use it.
 
-Oh my goodness!  Thank you for spotting that.  Fortunately, it's only
-currently used by tracepoints, so it wasn't causing any trouble, but
-that's a nasty landmine to leave lying around.  Fixed:
+The final returned error for iomap_dio_rw() is set by
+iomap_dio_complete().
 
-static inline pgoff_t readahead_index(struct readahead_control *rac)
+Partial writes in direct I/O are considered an error. So,
+->iomap_end() using written == 0 as error must be changed
+to written < length. In this case, ext4 is the only user.
+
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+---
+ fs/ext4/inode.c      | 2 +-
+ fs/iomap/direct-io.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index e60aca791d3f..e50e7414351a 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+ 	 * the I/O. Any blocks that may have been allocated in preparation for
+ 	 * the direct I/O will be reused during buffered I/O.
+ 	 */
+-	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
++	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
+ 		return -ENOTBLK;
+ 
+ 	return 0;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 41c1e7c20a1f..01865db1bd09 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		size_t n;
+ 		if (dio->error) {
+ 			iov_iter_revert(dio->submit.iter, copied);
+-			copied = ret = 0;
++			ret = 0;
+ 			goto out;
+ 		}
+ 
+-- 
+2.25.0
 
