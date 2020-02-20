@@ -2,99 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9E61658D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 08:53:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F448165979
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 09:43:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgBTHw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 02:52:58 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:38176 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbgBTHw5 (ORCPT
+        id S1726825AbgBTIn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 03:43:29 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:36242 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbgBTIn3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:52:57 -0500
-Received: by mail-il1-f196.google.com with SMTP id f5so22949792ilq.5;
-        Wed, 19 Feb 2020 23:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m1oB3Q6IOsGJuHSkpjxVpkQ8YE2VHk/UEGZOTbpLfio=;
-        b=TkbVniFyW6q+bRvCNwF6Mt/IOqV2WWLn8V7VNK+KeuRqOgpD52VFlflBwWuKHWfBlR
-         DWS/F0GghTl8OpYUhtBbLTsAZF3VUmVJu/mwTA3F2PTkHzfk3TpWtJ1bRcGkBO3LZww6
-         etZsp+T1IqhnOP622ZEdGC9WqmZOa8Pltkli8s6RLnxXrQOyeoMD3uGaNlG7HRT8qBDl
-         zXHWUGXAiC/B/iyT4yLmizV16fnt/jdmkKgIcwEE63OfBcvSuNpbhTFXSWagxR0QUYrT
-         e9DLkqGGhQtDL+sLlIy9ltuGILbC+uF4T/Ovz/B6QhBUA8R4DyfjDp8G17BmrHcBNdQB
-         cW8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m1oB3Q6IOsGJuHSkpjxVpkQ8YE2VHk/UEGZOTbpLfio=;
-        b=M4p+zA+zWI8AKa06E8KbAwpo+8uLGUf5Pb0DArk1dqEIwcMRxPWFa6bQ5fmjGhD4KN
-         SEfsvh4uEg3iaxYC7/PVA9lEz8Q6Xudgfy1JpIIibXGwrXbxEkKS/x31928HUHaVW7j1
-         gZ2Gp/hZbRGC2v6SszXJkgF6BCM35QKJ3ixB9v0bAT25uqfwxMQGZgDvYXgJbCvS3pRC
-         ke998Q7D9lUsfjCsibAbOemZ18Jpw1MDK8V1cmmuil1lMfHszMzomY/Q4zR8tqrw4NBe
-         lhTkZQ5jCs1Jzy8A0CbOv9a8t2bjh0dfzLkYZXl7D50Z4SownnUI38YjLRHutTKxqBYq
-         rTMw==
-X-Gm-Message-State: APjAAAXCXj2TQjp0PwpS02Vu0lcWynMeWNNrBjm/lJmt1y3DAZkvTIRr
-        2VsrYXZ1EvRllJO/rTgdJo/6uPN7ySCpd39fPO0=
-X-Google-Smtp-Source: APXvYqx6OY5EmxBMVHe2XA4Dyn9uCB3yodVd7TZVKcVVil5nlz5MMARXh5CfRRcI4Bi7mwLw1PEIcICfYsQo0A04JRg=
-X-Received: by 2002:a92:8656:: with SMTP id g83mr29006690ild.9.1582185177120;
- Wed, 19 Feb 2020 23:52:57 -0800 (PST)
+        Thu, 20 Feb 2020 03:43:29 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01K8cv00119896;
+        Thu, 20 Feb 2020 08:43:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=3DBcmRHN7uJqFWQQFJU2jUM8me9GZcXg5MtIEEBW19g=;
+ b=j4caedeSclA+wC5JW86i2YTtdgvD6z7Q21bpuXdgyugzbfmGJ6PlhDKHkjWMPTezuUyA
+ 4lUF0IJ01FpBja8+blyiBMv0tip0G6/yebcmWvfF8/qlY9sP4wQT5Op/tDr7ZnNR3BRH
+ aKDOHjlNRAqOpdu+XN+PRUTZ3wrMr6M/aBqWq9dRfpbyLkeGRCwOeMDd7p1aH6eaIpbJ
+ ytoIF6njfY/t9ju3kSgineXtxaJ0GoniyjbWzBPLiwPlx0gs7LGE0OgL5Hdem3uBeZwr
+ 4i+VeWEmWcVvdn8/X3/NnD0/JhjFZuaZhRCq9yqv2IcQFt4B2MhDAgWCKpTaQ+zghH1p MA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2y8udd881t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 08:43:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01K8bnNp079829;
+        Thu, 20 Feb 2020 08:43:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2y8udbd8vm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Feb 2020 08:43:12 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01K8h8m4010277;
+        Thu, 20 Feb 2020 08:43:08 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Feb 2020 00:43:07 -0800
+Date:   Thu, 20 Feb 2020 11:42:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH v2 3/7] test_firmware: add partial read support for
+ request_firmware_into_buf
+Message-ID: <20200220084255.GW7838@kadam>
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-4-scott.branden@broadcom.com>
 MIME-Version: 1.0
-References: <20200131115004.17410-1-mszeredi@redhat.com> <20200131115004.17410-5-mszeredi@redhat.com>
- <20200204145951.GC11631@redhat.com> <CAJfpegtq4A-m9vOPwUftiotC_Xv6w-dnhCi9=E0t-b1ZPJXPGw@mail.gmail.com>
- <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Feb 2020 09:52:46 +0200
-Message-ID: <CAOQ4uxjFYO28r+0pY+pKxK-dDJcQF2nf2EivnOUBgrgkYTFjPQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ovl: alllow remote upper
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200220004825.23372-4-scott.branden@broadcom.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ phishscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200064
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9536 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002200064
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 4, 2020 at 7:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Feb 4, 2020 at 6:17 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Tue, Feb 4, 2020 at 3:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Fri, Jan 31, 2020 at 12:50:04PM +0100, Miklos Szeredi wrote:
-> > > > No reason to prevent upper layer being a remote filesystem.  Do the
-> > > > revalidation in that case, just as we already do for lower layers.
-> > > >
-> > > > This lets virtiofs be used as upper layer, which appears to be a real use
-> > > > case.
-> > >
-> > > Hi Miklos,
-> > >
-> > > I have couple of very basic questions.
-> > >
-> > > - So with this change, we will allow NFS to be upper layer also?
-> >
-> > I haven't tested, but I think it will fail on the d_type test.
->
-> But we do not fail mount on no d_type support...
-> Besides, I though you were going to add the RENAME_WHITEOUT
-> test to avert untested network fs as upper.
->
+On Wed, Feb 19, 2020 at 04:48:21PM -0800, Scott Branden wrote:
+> +static int test_dev_config_update_size_t(const char *buf,
+> +					 size_t size,
+> +					 size_t *cfg)
+> +{
+> +	int ret;
+> +	long new;
+> +
+> +	ret = kstrtol(buf, 10, &new);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (new > SIZE_MAX)
 
-Pushed strict remote upper check to:
-https://github.com/amir73il/linux/commits/ovl-strict-upper
+This "new" variable is long and SIZE_MAX is ULONG_MAX so the condition
+can't be true.
 
-FWIW, overlayfs-next+ovl-strict-upper passes the quick xfstests,
-except for overlay/031 - it fails because the RENAME_WHITEOUT check
-leaves behind a whiteout in workdir.
-I think it it is not worth to cleanup that whiteout leftover and
-easier to fix the test.
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&test_fw_mutex);
+> +	*(size_t *)cfg = new;
+> +	mutex_unlock(&test_fw_mutex);
+> +
+> +	/* Always return full write size even if we didn't consume all */
+> +	return size;
+> +}
+> +
+> +static ssize_t test_dev_config_show_size_t(char *buf, int cfg)
+> +{
+> +	size_t val;
+> +
+> +	mutex_lock(&test_fw_mutex);
+> +	val = cfg;
+> +	mutex_unlock(&test_fw_mutex);
 
-Thanks,
-Amir.
+Both val and cfg are stack variables so there is no need for locking.
+Probably you meant to pass a pointer to cfg?
+
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%zu\n", val);
+> +}
+> +
+>  static ssize_t test_dev_config_show_int(char *buf, int cfg)
+>  {
+>  	int val;
+
+regards,
+dan carpenter
+
+
