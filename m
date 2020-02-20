@@ -2,131 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C38911669B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 22:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A891669DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 22:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbgBTVVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 16:21:08 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:45248 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbgBTVVH (ORCPT
+        id S1729211AbgBTVa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 16:30:56 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33663 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728993AbgBTVaz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 16:21:07 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KLDQBH177432;
-        Thu, 20 Feb 2020 21:21:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=rsqKEh0pL1pXmrGbqlJK7EdTYPyuGhnK+aAz2dAKN5s=;
- b=w7jcAoEB9r8PUxquGCWiyi+RWpjzh8pFLdbHSOgyVZhpADC4tfIj2UgnI1lj22KzpB3/
- I5/m/D7O+YSRnNOS91m0xywaPxgfp0sqyH7GbG2UwzBLu9yRhBnnMap4RV6jBShpx87W
- O3PfICwu1yzsdcSrY7jGfRItmd913JexmhUUWFs/FA608573lu9E52DgUlMSgA1fFSrj
- 2ytLVEjEf9clNKhcSeWyGLqc+dagb4+8VmlViIgnKoMJkmxmQi8VqkhiBo+z69y332AG
- z1C1eBGJzy1qr6ASUzqrNrba9kQm2H4ptF65O2HE93rSQUATW+aejWX1yELdIZox3zoj Kw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2y8udkmk8g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 21:21:02 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01KLCGua059676;
-        Thu, 20 Feb 2020 21:21:01 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2y8udfkvar-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Feb 2020 21:21:01 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01KLL0Pt013457;
-        Thu, 20 Feb 2020 21:21:00 GMT
-Received: from localhost (/10.145.178.17)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Feb 2020 13:21:00 -0800
-Date:   Thu, 20 Feb 2020 13:21:00 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH V2 0/3] fstests: fixes for 64k pages and dax
-Message-ID: <20200220212100.GC9506@magnolia>
-References: <20200220200632.14075-1-jmoyer@redhat.com>
+        Thu, 20 Feb 2020 16:30:55 -0500
+Received: by mail-io1-f68.google.com with SMTP id z8so94393ioh.0;
+        Thu, 20 Feb 2020 13:30:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GbAVtHmxkPYTFEqIzqUxUT4jjajs4dhBUAXZ7917FMM=;
+        b=spnIzN1lczTskeCoM0VtvCL48OYjGv3fiaDwGz/cpccqFQoypntUQFceuRc6Pkpukv
+         MSH1dpjQd/oN6GXkXb3OnrVlKxtGYX3IyWyrshxqpoZhcGIywUO3jv6KpmGbGy64nhwq
+         OFs/Po45yEDLpUiG4439frxSNtXCHbghQ4cX47VxvuCZrSewYu+KEDQQJQmIo+Np5joS
+         MHlDdDD4D80X1+/SgjGR0AEFa03FwwN5loplEyqdjUhUpgm7b0TaEDgaVaK3wIU2Z/kw
+         7czyXm42cH2puCkrecsmRtHrXQpuyK2NChFLPdwFH2jCu7YYsDHqhCWJW5F6bciGHeUm
+         FYLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GbAVtHmxkPYTFEqIzqUxUT4jjajs4dhBUAXZ7917FMM=;
+        b=SlVdsnKSp2npDxFHbMVhKUxURS5j3mdDKw1y395oamrWEKpEe2+6sD71UXYQc8Y3tO
+         aLk4+0a3BxWqZQl0VtdCnDn9CQXL5kcZAFY1A8hmrAxMNwoJ53ShM48g9ZhpAoc216WU
+         O81/i1qIfuUDg0SlnFwXpirHJ/bihN9UqIMVzMHrUfN3f2dU64lcpCtMel0b26GA4r08
+         j7Sc/IMo+OF+5R4viRgxamSdKrwxxP3mLJu6T9Azks1J+PfkLXDdRrM3Hmnts6sRs21T
+         jh9XG+SBPb3T0wVIsEFlbgdoeCDA39M12oHK8udCO9OHPbUHX/JaM2wUhDkE0eH+zxIZ
+         xGQw==
+X-Gm-Message-State: APjAAAW8bxic4Yrb7qS2zl4Riw5bWrft7KyEbRFlWrM0oilc+70piqse
+        cB14q87K5m6VcN1zSPB3CLS6bN+SALJq9HTEgTx4Ew==
+X-Google-Smtp-Source: APXvYqw40LKIf/2R8xKZVZ4VXY6+pk6Cp7e8t1q0/vnMTGx8q7LxEVOIuXKXjVaM+N29QJgHnu73cU9jxhVNGHpz940=
+X-Received: by 2002:a5d:9419:: with SMTP id v25mr26035700ion.3.1582234253502;
+ Thu, 20 Feb 2020 13:30:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220200632.14075-1-jmoyer@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002200156
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9537 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 adultscore=0 mlxscore=0 clxscore=1015
- malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002200156
+References: <e88c2f96-fdbb-efb5-d7e2-94bfefbe8bfa@oracle.com> <20200214044242.GI6870@magnolia>
+In-Reply-To: <20200214044242.GI6870@magnolia>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 20 Feb 2020 15:30:42 -0600
+Message-ID: <CAH2r5mvGHbibnxzERepYqbG0+yacD+pfLanBz52j16WkNm6-1g@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] Atomic Writes
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Allison Collins <allison.henderson@oracle.com>,
+        lsf-pc@lists.linux-foundation.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 03:06:29PM -0500, Jeff Moyer wrote:
-> This set of patches fixes a few false positives I encountered when
-> testing DAX on ppc64le (which has a 64k page size).
-> 
-> Patch 1 is actually not specific to non-4k page sizes.  Currently,
-> each individual dm rc file checks for the presence of the DAX mount
-> option, and _notruns the test as part of the initializtion.  This
-> doesn't work for the snapshot target.  Moving the check into the
-> _require_dm_target fixes the problem, and keeps from the cut-n-paste
-> of boilerplate.
-> 
-> Patches 2 and 3 get rid of hard coded block/page sizes in the tests.
-> They run just fine on 64k pages and 64k block sizes.
-> 
-> Even after these patches, there are many more tests that fail in the
-> following configuration:
-> 
-> MKFS_OPTIONS="-b size=65536 -m reflink=0" MOUNT_OPTIONS="-o dax"
-> 
-> One class of failures is tests that create a really small file system
-> size.  Some of those tests seem to require the very small size, but
-> others seem like they could live with a slightly bigger size that
-> would then fit the log (the typical failure is a mkfs failure due to
-> not enough blocks for the log).  For the former case, I'm tempted to
-> send patches to _notrun those tests, and for the latter, I'd like to
-> bump the file system sizes up.  300MB seems to be large enough to
-> accommodate the log.  Would folks be opposed to those approaches?
+The idea of using O_TMPFILE is interesting ... but opening an
+O_TMPFILE is awkward for network file systems because it is not an
+atomic operation either ... (create/close then open)
 
-Seems fine to me.  Do we have a helper function to compute (or maybe
-just format) the minimum supported filesystem size for the given
-MKFS_OPTIONS?
+On Thu, Feb 13, 2020 at 10:43 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+>
+> On Thu, Feb 13, 2020 at 03:33:08PM -0700, Allison Collins wrote:
+> > Hi all,
+> >
+> > I know there's a lot of discussion on the list right now, but I'd like to
+> > get this out before too much time gets away.  I would like to propose the
+> > topic of atomic writes.  I realize the topic has been discussed before, but
+> > I have not found much activity for it recently so perhaps we can revisit it.
+> > We do have a customer who may have an interest, so I would like to discuss
+> > the current state of things, and how we can move forward.  If efforts are in
+> > progress, and if not, what have we learned from the attempt.
+> >
+> > I also understand there are multiple ways to solve this problem that people
+> > may have opinions on.  I've noticed some older patch sets trying to use a
+> > flag to control when dirty pages are flushed, though I think our customer
+> > would like to see a hardware solution via NVMe devices.  So I would like to
+> > see if others have similar interests as well and what their thoughts may be.
+> > Thanks everyone!
+>
+> Hmmm well there are a number of different ways one could do this--
+>
+> 1) Userspace allocates an O_TMPFILE file, clones all the file data to
+> it, makes whatever changes it wants (thus invoking COW writes), and then
+> calls some ioctl to swap the differing extent maps atomically.  For XFS
+> we have most of those pieces, but we'd have to add a log intent item to
+> track the progress of the remap so that we can complete the remap if the
+> system goes down.  This has potentially the best flexibility (multiple
+> processes can coordinate to stage multiple updates to non-overlapping
+> ranges of the file) but is also a nice foot bazooka.
+>
+> 2) Set O_ATOMIC on the file, ensure that all writes are staged via COW,
+> and defer the cow remap step until we hit the synchronization point.
+> When that happens, we persist the new mappings somewhere (e.g. well
+> beyond all possible EOF in the XFS case) and then start an atomic remap
+> operation to move the new blocks into place in the file.  (XFS would
+> still have to add a new log intent item here to finish the remapping if
+> the system goes down.)  Less foot bazooka but leaves lingering questions
+> like what do you do if multiple processes want to run their own atomic
+> updates?
+>
+> (Note that I think you have some sort of higher level progress tracking
+> of the remap operation because we can't leave a torn write just because
+> the computer crashed.)
+>
+> 3) Magic pwritev2 API that lets userspace talk directly to hardware
+> atomic writes, though I don't know how userspace discovers what the
+> hardware limits are.   I'm assuming the usual sysfs knobs?
+>
+> Note that #1 and #2 are done entirely in software, which makes them less
+> performant but OTOH there's effectively no limit (besides available
+> physical space) on how much data or how many non-contiguous extents we
+> can stage and commit.
+>
+> --D
+>
+> > Allison
 
-> Another class of failure is tests that either hard-code a block size
-> to trigger a specific error case, or that test a multitude of block
-> sizes.  I'd like to send a patch to _notrun those tests if there is
-> a user-specified block size.  That will require parsing the MKFS_OPTIONS
-> based on the fs type, of course.  Is that something that seems
-> reasonable?
 
-I think it's fine to _notrun a test that requires a specific blocksize
-when when that blocksize is not supported by the system under test.
 
-The ones that cycle through a range of block sizes, not so much--I guess
-the question here is can we distinguish "test only this blocksize" vs
-"default to this block size"?  And do we want to?
+-- 
+Thanks,
 
---D
-
-> I will follow up with a series of patches to implement those changes
-> if there is consensus on the approach.  These first three seemed
-> straight-forward to me, so that's where I'm starting.
-> 
-> Changes in v2:
-> - patch 2: remove the boilerplate from all dm rc files (Zorro Lang)
-> - cc fstests (thanks, Dave)
-> 
-> [PATCH V2 1/3] dax/dm: disable testing on devices that don't support
-> [PATCH V2 2/3] t_mmap_collision: fix hard-coded page size
-> [PATCH V2 3/3] xfs/300: modify test to work on any fs block size
-> 
+Steve
