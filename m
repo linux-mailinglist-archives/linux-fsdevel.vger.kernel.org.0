@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A371660DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 16:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3D91660DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 16:24:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbgBTPYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 10:24:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50504 "EHLO mx2.suse.de"
+        id S1728383AbgBTPYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 10:24:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50744 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728338AbgBTPYB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 10:24:01 -0500
+        id S1728367AbgBTPYk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 10:24:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 344B8AE1C;
-        Thu, 20 Feb 2020 15:23:59 +0000 (UTC)
-Date:   Thu, 20 Feb 2020 09:23:55 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
+        by mx2.suse.de (Postfix) with ESMTP id 23A62AD86;
+        Thu, 20 Feb 2020 15:24:39 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 09:24:35 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-ext4@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
         darrick.wong@oracle.com
 Subject: [PATCH v2] iomap: return partial I/O count on error in
  iomap_dio_bio_actor
-Message-ID: <20200220152355.5ticlkptc7kwrifz@fiona>
+Message-ID: <20200220152435.ynuea43uvm4ewg2w@fiona>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -82,3 +82,6 @@ index 41c1e7c20a1f..01865db1bd09 100644
 -- 
 2.25.0
 
+
+-- 
+Goldwyn
