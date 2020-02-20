@@ -2,103 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 000701667DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7303A1667F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 21:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbgBTUAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 15:00:17 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:36275 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728927AbgBTUAR (ORCPT
+        id S1729050AbgBTUGm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 15:06:42 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58775 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728927AbgBTUGm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 15:00:17 -0500
-Received: by mail-il1-f193.google.com with SMTP id b15so24722515iln.3;
-        Thu, 20 Feb 2020 12:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hz+DKsj82X4tdj83FZa6Kg4xxF0FGCDR16OLCe3Lc5k=;
-        b=KAtcqCNZ4K4H9jRXFSYY2AI5xegS847mVyu/+kOkKrZM/w/U935ZNLfsSbu0e9AKhC
-         /T9DWXwyt9RvfoBkw2Oj+kHIEuxd/nryNGJeR6kDDYArgFAl4mFyp6JVmREm3LpaiqSR
-         SMbUbWYUtTJ9w1MrVmaYWoKTDd9p4OKTAkwe0OxaeufxKW0Ed6P3vFzdoo5uTmJcPZWr
-         6GAgwXlP2mS+/iLtXIJxGr9Z1jNAejfyYwUyTA/o0uHI3ShEybWovcPphY66DZZAqhjl
-         yWjWSp0tYciy9ehjqFP14vJ2DQH3NSwhR8htVH5WQ9s6mZY7Vo4FL90zi3NIkrGIrpxf
-         qIjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hz+DKsj82X4tdj83FZa6Kg4xxF0FGCDR16OLCe3Lc5k=;
-        b=Sf86vikzVPbTLMltn1c/AAURZlJG8WMEFz/Q+wAre4Hbmddh4+LNEhLZMV3Cv9gCWW
-         7mN0ugSG9CJgQvEls67AAamwOQjQswW0yNCuF1AJJ/DLF5x2U45Stfs9nV8gzB49CwAa
-         p1Wio/Vz+XSAU2z82sXPsuvK10sMFc9qElAE16Qoyb3c0o/KfQ7IrYoRazqOfYaVCaif
-         VX7QwYotZb9i5qTGmjsealDp5r5seVeL9YCef3dHtiGTrMNXSXATHID3G6Z0berfzDqb
-         oTE6eteVPcAdtpg4Fq9p94FIz3ix6whJXCnH5BWiGw2Jryg6f7sF8YXefKE5+HsEih12
-         vsgQ==
-X-Gm-Message-State: APjAAAWtvc8SIZ7m9LarHPwmDkwIPS959L+MogTrUNOC88YtRdwbvX/2
-        TWWe5WWhrm8b0/9BXXu3zPZi3+taaySYpX4Lb/Q=
-X-Google-Smtp-Source: APXvYqwXs3IjemdzTD0tPMYGcRBe1+KGJFOflXyX/3N7UcQRkTWgVSGHNqCOaf0cK3nw/kLawCcKZoEUD4Xv4LR2MVY=
-X-Received: by 2002:a92:9c8c:: with SMTP id x12mr31320588ill.275.1582228816324;
- Thu, 20 Feb 2020 12:00:16 -0800 (PST)
+        Thu, 20 Feb 2020 15:06:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582229200;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aLcbxLIEN6WxbwBtj6Q9wHAChnBoKRB6in28M9dpO/0=;
+        b=dGEq1mqEuKTW4LG5PjR2Bic1hyl7tAtTrO45nLFyMhRLX9eFaM8Yo7lDMkDRpZKkS6M9ea
+        rvJfQ7Tbc1pqwjR8AF+MKronFBhgnr4fUbtrGCIZzhi4XpnGX7gO71hP5rfjYSbaF8ZI1j
+        mNlfi57o3Txf4y+brtnDTSaqM7Yoprw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-7lJAB-32OMWUw5RRWVw9qw-1; Thu, 20 Feb 2020 15:06:36 -0500
+X-MC-Unique: 7lJAB-32OMWUw5RRWVw9qw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE385100550E;
+        Thu, 20 Feb 2020 20:06:35 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA5175DA76;
+        Thu, 20 Feb 2020 20:06:35 +0000 (UTC)
+Received: by segfault.boston.devel.redhat.com (Postfix, from userid 3734)
+        id 92E352015B1B; Thu, 20 Feb 2020 15:06:34 -0500 (EST)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     fstests@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: [PATCH V2 0/3] fstests: fixes for 64k pages and dax
+Date:   Thu, 20 Feb 2020 15:06:29 -0500
+Message-Id: <20200220200632.14075-1-jmoyer@redhat.com>
 MIME-Version: 1.0
-References: <20200131115004.17410-1-mszeredi@redhat.com> <20200131115004.17410-5-mszeredi@redhat.com>
- <20200204145951.GC11631@redhat.com> <CAJfpegtq4A-m9vOPwUftiotC_Xv6w-dnhCi9=E0t-b1ZPJXPGw@mail.gmail.com>
- <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com> <CAOQ4uxjFYO28r+0pY+pKxK-dDJcQF2nf2EivnOUBgrgkYTFjPQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjFYO28r+0pY+pKxK-dDJcQF2nf2EivnOUBgrgkYTFjPQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 20 Feb 2020 22:00:05 +0200
-Message-ID: <CAOQ4uxhZ8a2ObfB9sUtrc=95mM70qurLtXkaNyHOXYxGEKvxFw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ovl: alllow remote upper
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 9:52 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Feb 4, 2020 at 7:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Feb 4, 2020 at 6:17 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Tue, Feb 4, 2020 at 3:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Fri, Jan 31, 2020 at 12:50:04PM +0100, Miklos Szeredi wrote:
-> > > > > No reason to prevent upper layer being a remote filesystem.  Do the
-> > > > > revalidation in that case, just as we already do for lower layers.
-> > > > >
-> > > > > This lets virtiofs be used as upper layer, which appears to be a real use
-> > > > > case.
-> > > >
-> > > > Hi Miklos,
-> > > >
-> > > > I have couple of very basic questions.
-> > > >
-> > > > - So with this change, we will allow NFS to be upper layer also?
-> > >
-> > > I haven't tested, but I think it will fail on the d_type test.
-> >
-> > But we do not fail mount on no d_type support...
-> > Besides, I though you were going to add the RENAME_WHITEOUT
-> > test to avert untested network fs as upper.
-> >
->
-> Pushed strict remote upper check to:
-> https://github.com/amir73il/linux/commits/ovl-strict-upper
->
-> FWIW, overlayfs-next+ovl-strict-upper passes the quick xfstests,
-> except for overlay/031 - it fails because the RENAME_WHITEOUT check
-> leaves behind a whiteout in workdir.
-> I think it it is not worth to cleanup that whiteout leftover and
-> easier to fix the test.
+This set of patches fixes a few false positives I encountered when
+testing DAX on ppc64le (which has a 64k page size).
 
-Nevermind. Fixed the whiteout cleanup and re-pushed.
+Patch 1 is actually not specific to non-4k page sizes.  Currently,
+each individual dm rc file checks for the presence of the DAX mount
+option, and _notruns the test as part of the initializtion.  This
+doesn't work for the snapshot target.  Moving the check into the
+_require_dm_target fixes the problem, and keeps from the cut-n-paste
+of boilerplate.
 
-Thanks,
-Amir.
+Patches 2 and 3 get rid of hard coded block/page sizes in the tests.
+They run just fine on 64k pages and 64k block sizes.
+
+Even after these patches, there are many more tests that fail in the
+following configuration:
+
+MKFS_OPTIONS=3D"-b size=3D65536 -m reflink=3D0" MOUNT_OPTIONS=3D"-o dax"
+
+One class of failures is tests that create a really small file system
+size.  Some of those tests seem to require the very small size, but
+others seem like they could live with a slightly bigger size that
+would then fit the log (the typical failure is a mkfs failure due to
+not enough blocks for the log).  For the former case, I'm tempted to
+send patches to _notrun those tests, and for the latter, I'd like to
+bump the file system sizes up.  300MB seems to be large enough to
+accommodate the log.  Would folks be opposed to those approaches?
+
+Another class of failure is tests that either hard-code a block size
+to trigger a specific error case, or that test a multitude of block
+sizes.  I'd like to send a patch to _notrun those tests if there is
+a user-specified block size.  That will require parsing the MKFS_OPTIONS
+based on the fs type, of course.  Is that something that seems
+reasonable?
+
+I will follow up with a series of patches to implement those changes
+if there is consensus on the approach.  These first three seemed
+straight-forward to me, so that's where I'm starting.
+
+Changes in v2:
+- patch 2: remove the boilerplate from all dm rc files (Zorro Lang)
+- cc fstests (thanks, Dave)
+
+[PATCH V2 1/3] dax/dm: disable testing on devices that don't support
+[PATCH V2 2/3] t_mmap_collision: fix hard-coded page size
+[PATCH V2 3/3] xfs/300: modify test to work on any fs block size
+
