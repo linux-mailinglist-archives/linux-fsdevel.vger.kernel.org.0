@@ -2,103 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96709166523
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 18:42:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E67A8166586
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 18:54:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbgBTRm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 12:42:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59712 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbgBTRmz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:42:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Xk7duIwfruDQ+dBn2iPfBjkI6Nd94O7rP64gZJKCsXg=; b=sV7uVruKoJdsSyIXPyxD5cdKOf
-        S7c5ZlqJ1lHh5SPG/NIxX6wrxoQyTzj8DZd1MOhc3hY39Jy0uoTxiBw96FC5N8gA7hW49ASZPqRHY
-        kxYUy/zfWJq8l3wDa8IzDPC0cAMjfqrpZaJ7qJ/X9hxmHZ/NcbQmX2Y3hS8O2h1MNzXVhuNsZJXWm
-        umivrfo/ljI/qs/DH96f2G053kESBMKJTVlcSRTKZBJdBObx3xYLytwP6Ejp8h9aryiSosf9F7eVQ
-        X0lDDeB755GjfNrz4UxuTte7NLaOl5RwTR+dSh/XgCTNbEIWgZCf8Jrw3lu+VTI7REOrLnAF3p8Si
-        VrP8YX6w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4pqh-0007T1-9W; Thu, 20 Feb 2020 17:42:55 +0000
-Date:   Thu, 20 Feb 2020 09:42:55 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com
-Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
- iomap_dio_bio_actor
-Message-ID: <20200220174255.GA24185@bombadil.infradead.org>
-References: <20200220152355.5ticlkptc7kwrifz@fiona>
+        id S1728695AbgBTRyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 12:54:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45190 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727285AbgBTRyV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 12:54:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 56EF1AE79;
+        Thu, 20 Feb 2020 17:54:18 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 2CDCCDA70E; Thu, 20 Feb 2020 18:54:01 +0100 (CET)
+Date:   Thu, 20 Feb 2020 18:54:00 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 00/23] Change readahead API
+Message-ID: <20200220175400.GB2902@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+References: <20200219210103.32400-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220152355.5ticlkptc7kwrifz@fiona>
+In-Reply-To: <20200219210103.32400-1-willy@infradead.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 09:23:55AM -0600, Goldwyn Rodrigues wrote:
-> In case of a block device error, written parameter in iomap_end()
-> is zero as opposed to the amount of submitted I/O.
-> Filesystems such as btrfs need to account for the I/O in ordered
-> extents, even if it resulted in an error. Having (incomplete)
-> submitted bytes in written gives the filesystem the amount of data
-> which has been submitted before the error occurred, and the
-> filesystem code can choose how to use it.
+On Wed, Feb 19, 2020 at 01:00:39PM -0800, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> The final returned error for iomap_dio_rw() is set by
-> iomap_dio_complete().
+> This series adds a readahead address_space operation to eventually
+> replace the readpages operation.  The key difference is that
+> pages are added to the page cache as they are allocated (and
+> then looked up by the filesystem) instead of passing them on a
+> list to the readpages operation and having the filesystem add
+> them to the page cache.  It's a net reduction in code for each
+> implementation, more efficient than walking a list, and solves
+> the direct-write vs buffered-read problem reported by yu kuai at
+> https://lore.kernel.org/linux-fsdevel/20200116063601.39201-1-yukuai3@huawei.com/
 > 
-> Partial writes in direct I/O are considered an error. So,
-> ->iomap_end() using written == 0 as error must be changed
-> to written < length. In this case, ext4 is the only user.
+> The only unconverted filesystems are those which use fscache.
+> Their conversion is pending Dave Howells' rewrite which will make the
+> conversion substantially easier.
+> 
+> I want to thank the reviewers; Dave Chinner, John Hubbard and Christoph
+> Hellwig have done a marvellous job of providing constructive criticism.
+> Eric Biggers pointed out how I'd broken ext4 (which led to a substantial
+> change).  I've tried to take it all on board, but I may have missed
+> something simply because you've done such a thorough job.
+> 
+> This series can also be found at
+> http://git.infradead.org/users/willy/linux-dax.git/shortlog/refs/tags/readahead_v7
+> (I also pushed the readahead_v6 tag there in case anyone wants to diff, and
+> they're both based on 5.6-rc2 so they're easy to diff)
+> 
+> v7:
+>  - Now passes an xfstests run on ext4!
 
-I really had a hard time understanding this.  I think what you meant
-was:
+On btrfs it still chokes on the first test btrfs/001, with the following
+warning, the test is stuck there.
 
-Currently, I/Os that complete with an error indicate this by passing
-written == 0 to the iomap_end function.  However, btrfs needs to know how
-many bytes were written for its own accounting.  Change the convention
-to pass the number of bytes which were actually written, and change the
-only user to check for a short write instead of a zero length write.
-
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/ext4/inode.c      | 2 +-
->  fs/iomap/direct-io.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index e60aca791d3f..e50e7414351a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
->  	 * the I/O. Any blocks that may have been allocated in preparation for
->  	 * the direct I/O will be reused during buffered I/O.
->  	 */
-> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-> +	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
->  		return -ENOTBLK;
->  
->  	return 0;
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 41c1e7c20a1f..01865db1bd09 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		size_t n;
->  		if (dio->error) {
->  			iov_iter_revert(dio->submit.iter, copied);
-> -			copied = ret = 0;
-> +			ret = 0;
->  			goto out;
->  		}
->  
-> -- 
-> 2.25.0
-> 
+[   21.100922] WARNING: suspicious RCU usage
+[   21.103107] 5.6.0-rc2-default+ #996 Not tainted
+[   21.105133] -----------------------------
+[   21.106864] include/linux/xarray.h:1164 suspicious rcu_dereference_check() usage!
+[   21.109948]
+[   21.109948] other info that might help us debug this:
+[   21.109948]
+[   21.113373]
+[   21.113373] rcu_scheduler_active = 2, debug_locks = 1
+[   21.115801] 4 locks held by umount/793:
+[   21.117135]  #0: ffff964a736890e8 (&type->s_umount_key#26){+.+.}, at: deactivate_super+0x2f/0x40
+[   21.120188]  #1: ffff964a7347ba68 (&delayed_node->mutex){+.+.}, at: __btrfs_commit_inode_delayed_items+0x44c/0x4e0 [btrfs]
+[   21.123042]  #2: ffff964a612fe5c8 (&space_info->groups_sem){++++}, at: find_free_extent+0x27d/0xf00 [btrfs]
+[   21.126068]  #3: ffff964a60b93280 (&caching_ctl->mutex){+.+.}, at: btrfs_cache_block_group+0x1f0/0x500 [btrfs]
+[   21.129655]
+[   21.129655] stack backtrace:
+[   21.131943] CPU: 1 PID: 793 Comm: umount Not tainted 5.6.0-rc2-default+ #996
+[   21.134164] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-59-gc9ba527-rebuilt.opensuse.org 04/01/2014
+[   21.138076] Call Trace:
+[   21.139441]  dump_stack+0x71/0xa0
+[   21.140954]  xas_start+0x1a4/0x240
+[   21.142473]  xas_load+0xa/0x50
+[   21.143874]  xas_find+0x226/0x280
+[   21.145298]  extent_readahead+0xcb/0x4f0 [btrfs]
+[   21.146934]  ? mem_cgroup_commit_charge+0x56/0x400
+[   21.148654]  ? rcu_read_lock_sched_held+0x5d/0x90
+[   21.150382]  ? __add_to_page_cache_locked+0x327/0x380
+[   21.152155]  read_pages+0x80/0x1f0
+[   21.153531]  page_cache_readahead_unbounded+0x1b7/0x210
+[   21.155196]  __load_free_space_cache+0x1c1/0x730 [btrfs]
+[   21.157014]  load_free_space_cache+0xb9/0x190 [btrfs]
+[   21.158222]  btrfs_cache_block_group+0x1f8/0x500 [btrfs]
+[   21.159717]  ? finish_wait+0x90/0x90
+[   21.160723]  find_free_extent+0xa17/0xf00 [btrfs]
+[   21.161798]  ? kvm_sched_clock_read+0x14/0x30
+[   21.163022]  ? sched_clock_cpu+0x10/0x120
+[   21.164361]  btrfs_reserve_extent+0x9b/0x180 [btrfs]
+[   21.165952]  btrfs_alloc_tree_block+0xc1/0x350 [btrfs]
+[   21.167680]  ? __lock_acquire+0x272/0x1320
+[   21.169353]  alloc_tree_block_no_bg_flush+0x4a/0x60 [btrfs]
+[   21.171313]  __btrfs_cow_block+0x143/0x7a0 [btrfs]
+[   21.173080]  btrfs_cow_block+0x15f/0x310 [btrfs]
+[   21.174487]  btrfs_search_slot+0x93b/0xf70 [btrfs]
+[   21.175940]  btrfs_lookup_inode+0x3a/0xc0 [btrfs]
+[   21.177419]  ? __btrfs_commit_inode_delayed_items+0x417/0x4e0 [btrfs]
+[   21.179032]  ? __btrfs_commit_inode_delayed_items+0x44c/0x4e0 [btrfs]
+[   21.180787]  __btrfs_update_delayed_inode+0x73/0x260 [btrfs]
+[   21.182174]  __btrfs_commit_inode_delayed_items+0x46c/0x4e0 [btrfs]
+[   21.183907]  ? btrfs_first_delayed_node+0x4c/0x90 [btrfs]
+[   21.185204]  __btrfs_run_delayed_items+0x8e/0x140 [btrfs]
+[   21.186521]  btrfs_commit_transaction+0x312/0xae0 [btrfs]
+[   21.188142]  ? btrfs_attach_transaction_barrier+0x1f/0x50 [btrfs]
+[   21.189684]  sync_filesystem+0x6e/0x90
+[   21.190878]  generic_shutdown_super+0x22/0x100
+[   21.192693]  kill_anon_super+0x14/0x30
+[   21.194389]  btrfs_kill_super+0x12/0x20 [btrfs]
+[   21.196078]  deactivate_locked_super+0x2c/0x70
+[   21.197732]  cleanup_mnt+0x100/0x160
+[   21.199033]  task_work_run+0x90/0xc0
+[   21.200331]  exit_to_usermode_loop+0x96/0xa0
+[   21.201744]  do_syscall_64+0x1df/0x210
+[   21.203187]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
