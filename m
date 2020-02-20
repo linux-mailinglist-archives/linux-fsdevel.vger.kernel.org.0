@@ -2,155 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B61FE1659EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 10:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D882165A5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 10:42:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgBTJLn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 04:11:43 -0500
-Received: from mout.web.de ([212.227.15.3]:33947 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbgBTJLm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 04:11:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1582189845;
-        bh=vbMpoLairqKsk7lsZ4zCd9hpbkL0beCHN/AzVweLNtI=;
-        h=X-UI-Sender-Class:From:Subject:To:Cc:Date;
-        b=hcamI+q/q5SSrm/QLuCC74ywkKTqKsPuKsSkHJmrFFwLCRJWO1khrkPUt8ZcTDN51
-         /fRIw+qs8rpxThXROZz9/i6lbySHlvMZSMG9OS/uSjkL4w79u06hTV3pMXUs9lDGCQ
-         zUtdNTwVATrVlYB6r6XSY2g7gVDw/q9/ln57tpmA=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.175.64]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MLxrY-1j5oJV1UFA-007ifQ; Thu, 20
- Feb 2020 10:10:45 +0100
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [for-next][PATCH 12/26] Documentation: bootconfig: Add a doc for
- extended boot config
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Bird <Tim.Bird@sony.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
-Date:   Thu, 20 Feb 2020 10:10:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1726813AbgBTJmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 04:42:24 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:10305 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbgBTJmX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 04:42:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1582191743; x=1613727743;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=M+nyCipJmvciHSc+ZIPSuyMPQeAWQ1q0jyK4A6QbyLM=;
+  b=MxA8YZ6n5WJZNnpXuaFRkbklr7qBXwrG9uYdCZTVfcsUe8u6y0eVeNu4
+   Oz27YpSy3dSogiOOArdVrkuSYVtLopDlJbUGSXJ6vU4tVVrAiYYiRBPQo
+   a/7zmFBuBnJXuIXfGRFWkxI24k5imt1xMSh2VHYdOpBNQaFmHvpiEBayT
+   6WrUDFh9Dj0C1QZPoZtGjY5DVnqPOpQFHbr7YZ4No2Sf+CA+Cl6sWzqhO
+   XxpqShJw+bJgOE4ecg/IYt4jJnM9QP/cYi93fVbd70EErLCbIENyUPKCJ
+   hLe9t2SJlnN/yXfTGYVuevjv8jryhIOAnLvg+3WbHkqHMtPSLHAq/7nE1
+   Q==;
+IronPort-SDR: rf4RZS02dfBh5eg/Ser8Jycy8iQvg+TkSSxAtv5u02Qd6aGnPcTczKHkApuFeUjmaa5Q0D4v/G
+ gX0lLZZLqzaJ2N11xxrUjesOhwiN8ouTd7EFeqblUXEPle5mjwlk7fG4A/QEIkZ73HcNmKtn/Z
+ gnntC3MWr6gkE+g7ayEIr8rHGlToGcK/GSOVSyztHtVHW73tASiB/Y7qk9ILAfg4C8S9iOwFb6
+ aLC/LSjsd8LXVHUAaV+FI9R6RzXyPa4+NTU6ldgPGl5OqVPAubABx9lnaLhotPdOwVx1PiEt6u
+ 1Z8=
+X-IronPort-AV: E=Sophos;i="5.70,463,1574092800"; 
+   d="scan'208";a="130254905"
+Received: from mail-mw2nam10lp2104.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.104])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Feb 2020 17:42:21 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jgSc1LVfCQE13N/I9GVLU5//QU9A9SBcOAG/111XTiYLiA0gBNQ+rJUj7oZyiIjWT0dBwnVbwwibtKbyuVGkyg7KsFeoMgKLXpC2t5BKsBO9D4EXhbhtH2yFdBCgujFBrhKc/3GA8S+fvjsA1dXuKH1jRhsIHP2EdObhEKJd6C6Z1snOL2Y8xMxjFZJmCKB9Y0nQsiMOabrt1cJYDmfCIbh8aOhN24Ce1QgjIU4S/G4zYotpMyZOOq0qrWh3V5yrxg5jNFS+8PJwZjgjqppH8TpzDpYz9fO1Sm6COxTilJGYOQUu4LLcR/XA948TT+D5SCMee+Soi2dorkiqQvEyNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ChgseISPiUi/nxzwkkFQ1T9mWCaGRstOibBBGyDIMoA=;
+ b=iRU3W/MSmFD7bMtT+yBF3gwh8btxRMCFDcDaids8hbwnbBlGeXPTJgvM/AsSPkoAo6VuZpzpoUoA8LCiBSkcWNWaZlTjnjNil0kHAz9O3zfv2mlk5YpcIVAZC8wXnBAAN0zhvSkv1i5iWxhlKNT48zmyRqWzWZxu3vS52mxuIx9DZaRrJHv7bXn/o/ZY2oxeoS4ScX/H01nD06AV0/6nWdD+55KipWWKuOGz6jyt9c0Keu1tsKJkawlyiiJGRe6SOYv70EGLwGiLGLLMO4lZKMgpQvypOKZF2jGKYDCFg1TiVEC52w1dtODhhTKfNyG/OOrDiWifJqf24hUPm9zAmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ChgseISPiUi/nxzwkkFQ1T9mWCaGRstOibBBGyDIMoA=;
+ b=LmPep1/SEnW8o3O23FL4cRjLFHAH3r4N0C/0nJT1EUMsvJ4UnUMx5yvajyJ096aOPjpPb99qoiaNKEpMJLyPr4f+JkSGPO/u9P3mMYTsunSVzBtnP6efqUGGAKGgoojhiwxqq5nMWjMUX+4fIZ7i5ndfD3HHtGD4JykF0OAmBeQ=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com (10.167.139.149) by
+ SN4PR0401MB3712.namprd04.prod.outlook.com (10.167.140.147) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.34; Thu, 20 Feb 2020 09:42:19 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::e5f5:84d2:cabc:da32%5]) with mapi id 15.20.2729.032; Thu, 20 Feb 2020
+ 09:42:19 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v7 14/24] btrfs: Convert from readpages to readahead
+Thread-Topic: [PATCH v7 14/24] btrfs: Convert from readpages to readahead
+Thread-Index: AQHV52gHXOnz3eutsEej0YiVm6PhQQ==
+Date:   Thu, 20 Feb 2020 09:42:19 +0000
+Message-ID: <SN4PR0401MB35987D7B76007B93B1C5CE5E9B130@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-15-willy@infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1f9f36ad-9c2b-4615-8f76-08d7b5e92dbc
+x-ms-traffictypediagnostic: SN4PR0401MB3712:
+x-microsoft-antispam-prvs: <SN4PR0401MB371296C64FC8338D311C5EC19B130@SN4PR0401MB3712.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 031996B7EF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39860400002)(376002)(136003)(346002)(396003)(189003)(199004)(110136005)(316002)(54906003)(7696005)(71200400001)(81166006)(86362001)(81156014)(9686003)(8936002)(8676002)(55016002)(7416002)(478600001)(6506007)(5660300002)(91956017)(76116006)(52536014)(66556008)(64756008)(66446008)(66946007)(26005)(66476007)(2906002)(186003)(4744005)(53546011)(33656002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3712;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jUs4EXsOJ1h6Mc+meDzlGUyOWASlmGwVcRYbusjWjnYc2N384jN2exjY0BSvFVN0FbrY2HTenQi6UygtEostQlmrd0SQAAIc+uInuE+BWUKNacWm/BEB+H6kMR8IRlR0YJLAKFjSPP0MBUtybF9JS9TKOrSEona/RB9DL3WntLiiqekNqk6BLRFRpG5vk7nKbUDtj9umYVstira3cCP8LCyzU0Huu8qbMYhjogdOcam/WXhBUNpm8gZsCkTtd1+vBlY5iNQ9lJTde0UYlnkuzIch3fxsi/cwtdUY+xKnDy3qiyoUrTq29Pt4gY70yPdOKHv5H1aYjOe/ZaXIqLRGQ/ZdEV1eDkLOgN2VdthJ8MZEMkOt8uPyS0M7mG9uJC0+wHaffPZcYnLWM8FDhnYOwBP7RLfmNgPAtoxsxLIiKlfCzyOjJUevNmnvJudHquy8
+x-ms-exchange-antispam-messagedata: vbv93IQYZbgJP1Z/hVNS1KpHjde+X2GbFSSagnVuEXilWwOZBJ/D3AfJnfwu/zHRERd0cukJswJ4JEgDtj3c7EzoUWFBzGEdzjVjFLKlPOOWx0C4WiG6CDu/hfH6ZouoA7OKc2KGtXg8hiDrQHZ73w==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iz3EHkgef/ISzsnY3CSV+i+tHS29kp3ehQ7OyVu0j3Qh1MRjhD4
- 2kNZozsuSbfAVgfZQ2c1f2reumTrdl+tygGxGYptax/fHEDxIV9ypPacshUWYPuiPbdJ7Xi
- HaDH6A/4rRN83FCKqHZ9p/QzWzFKumXctso507UT6M+uKmV4+RRmqyydQTdtkiDdCLcex8y
- wWaG2+ug23HgJlgjioIMg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GxZTiIb8TFo=:BgRUH9Ab/NRq4bHPkY/hrX
- ItkQAXfW7FOzZhvXJx47bwUUeKd+ouKyyneLmedUiDxakWbNC2yV/gMLLUltUVi3Lkr/JGHGh
- HAFDglKVWnP+7b2a8lladClky+tVXC5jFIuKLE4Bc4bZ7EGyEi7bYZ3t5ISlhl0/RSxpYSFSx
- DCwRbuBmUGfy/h9QQY3WNbrVkqbDDA0us/EeYeNUmDclafQTq6YFPdb+6rxBNwx8aQQJXItnD
- YN/55J6Ht/aVHkBdTm0iOn/Pkafz0cFJROASD29pxoKzj5QE+hpNOwXPFH0JiXLr0QuaJcaYC
- fhm50l3FN18mh4BXC/dYfSwZnHVpZ5R/fh0IWWQkk/feWavBkNzSK/Q5uNVObnN1tcxb2KvTE
- soGVJZ+JoI1DTiNzxkY9he7LoH4RjislsjMAb0oJw6Lhd353h9X/upz5ktZIFW/J8v1ofVHof
- WJmMuFOUNCIMKJlQTNhhqRuf9joLkyVCrlOipcwobSFjgGlkDYTtD+spTyELfvxdKCMnulD/h
- 7eODoGi9o05VhTFHfVMbuAP9IsR0da1D1TG9B18DQo+9gZ6VjyDrbl4t6OvaDWf5X0GlXWhVz
- j/x8XBwvsRnrVzFDvnDSdIq/EbPy6imT7/LFTNusay/cK7n2oE8QglPb7W90nVnGPnTS1Mbt6
- XTDX1cSbMXwH8hbsJRoVrElioQP9RTihacRVKGGMrg84AElwSpAOSLVmZUEXTG7aVobJKTImN
- DYMoixFt+QUM1sc6B7kHNmX+sLc0vqWAB7i5Q+OoGVAyYeK4W8opLinai4+02UmJbzkba314n
- cN2iB2K4DbaaNmitOdrJgp3UbRxohPJwSKTYL2TT0T5LxIizhbGlNQ+VoJARqFJAP5s2wDgQM
- NCW+aH22vdx8rAi5vwwKBe/LV4gl+Ii7/Uza0gf9VMjoZDIh4rsmYhH/JcRV08PkN+4avJkmY
- lWJkg+na3cAnKZ6WgGDge/TnGvhaRuispzGihU9XfTtDmN7V6nKUWTBqkHL5zuUTVH2/910YO
- 3n25tiopO1XpdFQnxsGgKh62VH0dKYu3nFyOr404GExcQRk34zvruHHTGXgwM8Lb3jBpjSOAz
- zGzgkbKcL/VtbhZnegBZWKbrJVH9GSGQHmgROq067ReqM3HxgkxczfcgoBP3wTAxs47d3BqWb
- V0BertZzXThSuFsfsFDxdf43FL4Ns5wt0/Iw8feluBycNpnMJ72pl1NK03tzac5WEa/G4VK40
- giw5iOUp8pffI6ohl
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f9f36ad-9c2b-4615-8f76-08d7b5e92dbc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2020 09:42:19.3955
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: j4ODXpF6prvGYEa2v+nxNMmTpJxN8bgfI7Uj2C391EZvB7+MVwN/HINz4ExXRz1C9miRXVR5mYpe3HK7nZvA0+DRHnOHhAuot8u9Iw21FCQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3712
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I wonder about a few details in the added text.
-
-
-=E2=80=A6
-> +++ b/Documentation/admin-guide/bootconfig.rst
-=E2=80=A6
-> +C onfig File Limitation
-
-How do you think about to omit a space character at the beginning
-of this line?
-
-
-> +Currently the maximum config size size is 32KB =E2=80=A6
-
-Would you like to avoid a word duplication here?
-
-
-> +Note: this is not the number of entries but nodes, an entry must consum=
-e
-> +more than 2 nodes (a key-word and a value). =E2=80=A6
-
-I find the relevance of the term =E2=80=9Cnodes=E2=80=9D unclear at the mo=
-ment.
-
-
-Could an other wording be nicer than the abbreviation =E2=80=9Ca doc for =
-=E2=80=A6 config=E2=80=9D
-in the commit subject?
-
-Regards,
-Markus
+On 19/02/2020 22:03, Matthew Wilcox wrote:=0A=
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>=0A=
+> =0A=
+> Use the new readahead operation in btrfs.  Add a=0A=
+> readahead_for_each_batch() iterator to optimise the loop in the XArray.=
+=0A=
+=0A=
+=0A=
+OK I must admit I haven't followed this series closely, but what =0A=
+happened to said readahead_for_each_batch()?=0A=
+=0A=
+As far as I can see it's now:=0A=
+=0A=
+[...]=0A=
+> +	while ((nr =3D readahead_page_batch(rac, pagepool))) {=0A=
+=0A=
+=0A=
