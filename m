@@ -2,165 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 611C2165C5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 12:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69CCB165CCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 12:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbgBTLEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 06:04:05 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52472 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726825AbgBTLEF (ORCPT
+        id S1727806AbgBTLbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 06:31:05 -0500
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:34625 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726882AbgBTLbF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 06:04:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582196643;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HMa4koWyLSARu7hw4Wcnh7n2N//Bgrplr2DvnwxKML0=;
-        b=GAOxrJoB7D27RTrlwA+hvHrDp2oqzGXEDSlqAPnZpZRF5pAqBV6shkH2RLSq+XV8mt/cWn
-        cHkd/QaUl540VkAQYeOtYu5RAQZZ+07hk5lntzcS+kWeeXGa7+FzLdJ312FvKVW0Y7DSBR
-        EXUeD80o5Q9bYy2TI+tgVAXq4B9oIzI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-141-CG_I3geeMzGOISkcw0L_kg-1; Thu, 20 Feb 2020 06:04:01 -0500
-X-MC-Unique: CG_I3geeMzGOISkcw0L_kg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B27C8800D48;
-        Thu, 20 Feb 2020 11:03:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B12AF5DA60;
-        Thu, 20 Feb 2020 11:03:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez0o3iHjQJNvh8V2Ao77g0CqfqGsv6caMCOFDy7w-VdtkQ@mail.gmail.com>
-References: <CAG48ez0o3iHjQJNvh8V2Ao77g0CqfqGsv6caMCOFDy7w-VdtkQ@mail.gmail.com> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204550281.3299825.6344518327575765653.stgit@warthog.procyon.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        raven@themaw.net, Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] vfs: syscall: Add fsinfo() to query filesystem information [ver #16]
+        Thu, 20 Feb 2020 06:31:05 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 95C1A327;
+        Thu, 20 Feb 2020 06:31:03 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 20 Feb 2020 06:31:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        eLiud/Rsy5p8XN8U+ILzeII/ojMGZfdK4TZW/by/ETA=; b=uM5cDtY+Tk/pn+Nz
+        phelYPraeZgfOzC/O1Gir8zTC4oVFFCl9lqApSg6y/6oZbpNDNcGIctYMXDKzyaz
+        U7xjpMlKdeHKUxXhXwuHgiTKN/2PRHdXFI7mOzzzc3X22Np6QhmWBoAgTGo9YZEj
+        E5gLduzKccjRYQsm/QAm3GHzIlQ+m50hPHY8HJG7rs+uKkfw9XyMJae0MmfDwm90
+        ngYYH3gY9pUGeicxKPpe5GM22LouA/cfcv6v3pxoJ7EtKfkNU3pMWpbS/4LENtGk
+        F4L8pYAR2+T+qVrYnWhgdaVUFiiVqO4da1OE0OWuvt3jMMGmo6Nfq2Ryi6S8P7mD
+        wbzXEw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=eLiud/Rsy5p8XN8U+ILzeII/ojMGZfdK4TZW/by/E
+        TA=; b=HZMTb91bgBRCQ9c0vzNcFiyYPfhFofjwN3wQiIjeJ4GbsXQ1MGE7Qnxha
+        Ja5C18UY0kFMv/WtOTKmU+6nRtXbYSzJc7gfCAMljdwIr8HT5i3rCO3pLuP3EBJo
+        wKmj58K7wlMvS9bB7DerkmnZW0maFDKYOePV/XOeWNylVFGK6L7LmYo+zEP82I6v
+        9grcrvHUYpzHGUWzNcMf6BfY7cUBKipV9qJkgTNE3CKP5eZZbY3elppP3xm1t5mk
+        EiMlwndlvLiJZsU7OG/bd64Lrgh22Dhg3ExJQyQEn2icdg52zM62Nx/cfHszZIqt
+        mPzG8/VobF8+xiIS1HLc8ORKs/FIQ==
+X-ME-Sender: <xms:9m1OXoz2FNs3ecB2yx2tuWzwpEjst1yim2H8UVvIOvR04kCABBUuDw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkedvgddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
+    duieefrdefvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:9m1OXrLo7tHFFS3GpyJEMjGLMHH71J5Fev23zZ0-IFlKxPAVwvAs8w>
+    <xmx:9m1OXquLV81nO7mM6AurtarK5fhBMllap-VqlVPrd4bXK4kinMUXVQ>
+    <xmx:9m1OXrgiq0zZrU_LQHY2DGnlyRJPK-J4xR-mQmDeo-1yUppHcei6jw>
+    <xmx:921OXqnwnjTkgrPApnIVqxjG5gU2VeEXS4tVmbo23cEphWauDJq4tA>
+Received: from mickey.themaw.net (unknown [118.208.163.32])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AAF1F3280060;
+        Thu, 20 Feb 2020 06:30:58 -0500 (EST)
+Message-ID: <80b70aa96c2e386719a7683d7627fc4d5a6caade.camel@themaw.net>
+Subject: Re: [PATCH 00/19] VFS: Filesystem information and notifications
+ [ver #16]
+From:   Ian Kent <raven@themaw.net>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk,
+        mszeredi@redhat.com, christian@brauner.io,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 20 Feb 2020 19:30:54 +0800
+In-Reply-To: <20200220090939.4e2mpmdixcyruzda@wittgenstein>
+References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
+         <20200219144613.lc5y2jgzipynas5l@wittgenstein>
+         <c9a6f929b57e0c21c8845c211d1e3eab09d09633.camel@themaw.net>
+         <20200220090939.4e2mpmdixcyruzda@wittgenstein>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <584178.1582196636.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 20 Feb 2020 11:03:56 +0000
-Message-ID: <584179.1582196636@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jann Horn <jannh@google.com> wrote:
+On Thu, 2020-02-20 at 10:09 +0100, Christian Brauner wrote:
+> On Thu, Feb 20, 2020 at 12:42:15PM +0800, Ian Kent wrote:
+> > On Wed, 2020-02-19 at 15:46 +0100, Christian Brauner wrote:
+> > > On Tue, Feb 18, 2020 at 05:04:55PM +0000, David Howells wrote:
+> > > > Here are a set of patches that adds system calls, that (a)
+> > > > allow
+> > > > information about the VFS, mount topology, superblock and files
+> > > > to
+> > > > be
+> > > > retrieved and (b) allow for notifications of mount topology
+> > > > rearrangement
+> > > > events, mount and superblock attribute changes and other
+> > > > superblock
+> > > > events,
+> > > > such as errors.
+> > > > 
+> > > > ============================
+> > > > FILESYSTEM INFORMATION QUERY
+> > > > ============================
+> > > > 
+> > > > The first system call, fsinfo(), allows information about the
+> > > > filesystem at
+> > > > a particular path point to be queried as a set of attributes,
+> > > > some
+> > > > of which
+> > > > may have more than one value.
+> > > > 
+> > > > Attribute values are of four basic types:
+> > > > 
+> > > >  (1) Version dependent-length structure (size defined by type).
+> > > > 
+> > > >  (2) Variable-length string (up to 4096, including NUL).
+> > > > 
+> > > >  (3) List of structures (up to INT_MAX size).
+> > > > 
+> > > >  (4) Opaque blob (up to INT_MAX size).
+> > > 
+> > > I mainly have an organizational question. :) This is a huge
+> > > patchset
+> > > with lots and lots of (good) features. Wouldn't it make sense to
+> > > make
+> > > the fsinfo() syscall a completely separate patchset from the
+> > > watch_mount() and watch_sb() syscalls? It seems that they don't
+> > > need
+> > > to
+> > > depend on each other at all. This would make reviewing this so
+> > > much
+> > > nicer and likely would mean that fsinfo() could proceed a little
+> > > faster.
+> > 
+> > The remainder of the fsinfo() series would need to remain useful
+> > if this was done.
+> > 
+> > For context I want work on improving handling of large mount
+> > tables.
+> 
+> Yeah, I've talked to David about this; polling on a large mountinfo
+> file
+> is not great, I agree.
+> 
+> > Ultimately I expect to solve a very long standing autofs problem
+> > of using large direct mount maps without prohibitive performance
+> > overhead (and there a lot of rather challenging autofs changes to
+> > do for this too) and I believe the fsinfo() system call, and
+> > related bits, is the way to do this.
+> > 
+> > But improving the handling of large mount tables for autofs
+> > will have the side effect of improvements for other mount table
+> > users, even in the early stages of this work.
+> > 
+> > For example I want to use this for mount table handling
+> > improvements
+> > in libmount. Clearly that ultimately needs mount change
+> > notification
+> > in the end but ...
+> > 
+> > There's a bunch of things that need to be done alone the way
+> > to even get started.
+> > 
+> > One thing that's needed is the ability to call fsinfo() to get
+> > information on a mount to avoid constant reading of the proc based
+> > mount table, which happens a lot (since the mount info. needs
+> > to be up to date) so systemd (and others) would see an improvement
+> > with the fsinfo() system call alone able to be used in libmount.
+> > 
+> > But for the fsinfo() system call to be used for this the file
+> > system specific mount options need to also be obtained when
+> > using fsinfo(). That means the super block operation fsinfo uses
+> > to provide this must be implemented for at least most file systems.
+> > 
+> > So separating out the notifications part, leaving whatever is
+> > needed
+> > to still be able to do this, should be fine and the system call
+> > would be immediately useful once the super operation is implemented
+> > for the needed file systems.
+> > 
+> > Whether the implementation of the super operation should be done
+> > as part of this series is another question but would certainly
+> > be a challenge and make the series more complicated. But is needed
+> > for the change to be useful in my case.
+> 
+> I think what would might work - and what David had already brought up
+> briefly - is to either base the fsinfo branch on top of the mount
+> notificaiton branch or break the notification counters pieces into a
+> separate patch and base both mount notifications and fsinfo on top of
+> it.
 
-> > +int fsinfo_string(const char *s, struct fsinfo_context *ctx)
-> ...
-> Please add a check here to ensure that "ret" actually fits into the
-> buffer (and use WARN_ON() if you think the check should never fire).
-> Otherwise I think this is too fragile.
+Possibly, but I'm pretty sure David has more fsinfo patches.
 
-How about:
+So I suspect there will be a right time to post patches for the
+fsinfo super block operation that David doesn't already have. I'm
+going to have to find time for that ...
 
-	int fsinfo_string(const char *s, struct fsinfo_context *ctx)
-	{
-		unsigned int len;
-		char *p =3D ctx->buffer;
-		int ret =3D 0;
-		if (s) {
-			len =3D strlen(s);
-			if (len > ctx->buf_size - 1)
-				len =3D ctx->buf_size;
-			if (!ctx->want_size_only) {
-				memcpy(p, s, len);
-				p[len] =3D 0;
-			}
-			ret =3D len;
-		}
-		return ret;
-	}
+The post was more to let David know what my first goal is and what
+I need for it, and to let others know there is someone wanting to
+use this for user space improvements and give some initial insight
+into my longer term goals.
 
-I've also added a check to eliminate the copy if userspace didn't actually
-supply a buffer.
-
-> > +       ret =3D vfs_statfs(path, &buf);
-> > +       if (ret < 0 && ret !=3D -ENOSYS)
-> > +               return ret;
-> ...
-> > +       memcpy(&p->f_fsid, &buf.f_fsid, sizeof(p->f_fsid));
-> =
-
-> What's going on here? If vfs_statfs() returns -ENOSYS, we just use the
-> (AFAICS uninitialized) buf.f_fsid anyway in the memcpy() below and
-> return it to userspace?
-
-Good point.  I've made the access to the buffer contingent on ret=3D=3D0. =
- If I
-don't set it, it will just be left pre-cleared.
-
-> > +       return sizeof(*attr);
-> =
-
-> I think you meant sizeof(*info).
-
-Yes.  I've renamed the buffer point to "p" in all cases so that it's more
-obvious.
-
-> > +       return ctx->usage;
-> =
-
-> It is kind of weird that you have to return the ctx->usage everywhere
-> even though the caller already has ctx...
-
-At this point, it's only used and returned by fsinfo_attributes() and real=
-ly
-is only for the use of the attribute getter function.
-
-I could, I suppose, return the amount of data in ctx->usage and then prese=
-t it
-for VSTRUCT-type objects.  Unfortunately, I can't make the getter return v=
-oid
-since it might have to return an error.
-
-> > +               ctx->buffer =3D kvmalloc(ctx->buf_size, GFP_KERNEL);
-> =
-
-> ctx->buffer is _almost_ always pre-zeroed (see vfs_do_fsinfo() below),
-> except if we have FSINFO_TYPE_OPAQUE or FSINFO_TYPE_LIST with a size
-> bigger than what the attribute's ->size field said? Is that
-> intentional?
-
-Fixed.
-
-> > +struct fsinfo_attribute {
-> > +       unsigned int            attr_id;        /* The ID of the attri=
-bute */
-> > +       enum fsinfo_value_type  type:8;         /* The type of the att=
-ribute's value(s) */
-> > +       unsigned int            flags:8;
-> > +       unsigned int            size:16;        /* - Value size (FSINF=
-O_STRUCT) */
-> > +       unsigned int            element_size:16; /* - Element size (FS=
-INFO_LIST) */
-> > +       int (*get)(struct path *path, struct fsinfo_context *params);
-> > +};
-> =
-
-> Why the bitfields? It doesn't look like that's going to help you much,
-> you'll just end up with 6 bytes of holes on x86-64:
-
-Expanding them to non-bitfields will require an extra 10 bytes, making the
-struct 8 bytes bigger with 4 bytes of padding.  I can do that if you'd rat=
-her.
-
-David
+Ian
 
