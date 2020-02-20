@@ -2,60 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA14165402
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 02:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B622816540E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 02:15:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgBTBEp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Feb 2020 20:04:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37714 "EHLO
+        id S1727208AbgBTBPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Feb 2020 20:15:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38018 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbgBTBEo (ORCPT
+        with ESMTP id S1726962AbgBTBPt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Feb 2020 20:04:44 -0500
+        Wed, 19 Feb 2020 20:15:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
         Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=3BHL21ZqYvf4cXWBd1/ab6+pZgwMbOograui/t2in4Q=; b=Y2F8BNU9IGvys2N2MQOenMYNwp
-        +IrnfcmBH0shv9ZUFezaJBrOrMWeJ56kYqWE/S2Co2mp3i1dhZ7D41EsTGAV/yzAHp6kmpl8pMx4y
-        Vz+b2TRxJIDtn63xKBdI/AxAsIUmmRSsdA0yrfu2DcbWpKDkCNyl11/OByWqIF3rNO4EpuEqokqvl
-        A+cSkuI1maBCBJMyQexlSpmMIWzduXQ5i5x6IDABAtR/jrqMXVlFPWizsED2mb2ICNUcnpIu4sfhS
-        DlNmlg3WSV+qRWWX67zw3p/LatenkuXdRZMB4pl0HHOBu8MAy/7r98fbw0e+OLYch2F8b73oqiTyz
-        XcLFyvyA==;
+        bh=dZtuknyoRtx3zb5xuPMfjefBRKNpd+FEygxzTdEPEZg=; b=Hp2eGaSvfeHFfDoYUhD0EfYRjb
+        9TlBqHho2xGQiGFS0Ifi9l5JDoLZFS5y2bdmKHv3WlNzRHDNKYn1zbKPFqnHGKcYmZ43GtWLBuKga
+        1sdYUOSV+gFDedLOwnkNqYZjyS4abn6ceekXlY/xBrIiMzNFBza36vdM/r+k2a/vNpNNj6N2nB8BW
+        MEk5a/E8CXZklfl8BS8Ws2Ej/6rXl/SMAwL8NCCL+AQHGlHLmpqwzitqtlU6wBQdp0UMuHjVSGXPB
+        NULyiWrI/Qa2c15xFjZNocPbFN0n9R2ozzSxsg/4RHe8vx147AdBtrYi5smLhY2MT9pJJx89QIoeg
+        OJpnd4GA==;
 Received: from [2603:3004:32:9a00::4074]
         by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j4aGe-0002wj-9E; Thu, 20 Feb 2020 01:04:40 +0000
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-To:     Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-7-scott.branden@broadcom.com>
+        id 1j4aRN-0007MU-BO; Thu, 20 Feb 2020 01:15:45 +0000
+Subject: Re: [PATCH v13 2/2] zonefs: Add documentation
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Dave Chinner <david@fromorbit.com>
+References: <20200207031606.641231-1-damien.lemoal@wdc.com>
+ <20200207031606.641231-3-damien.lemoal@wdc.com>
+ <a6f0eaf4-933f-8c15-6f0c-18400204791f@infradead.org>
+ <BYAPR04MB58167DDA2AE7B1BC1500D9C4E7130@BYAPR04MB5816.namprd04.prod.outlook.com>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <827a4520-95ce-5264-90d9-ed730e5918e6@infradead.org>
-Date:   Wed, 19 Feb 2020 17:04:38 -0800
+Message-ID: <6f370a74-877a-a709-e7ff-ba7dc1963ece@infradead.org>
+Date:   Wed, 19 Feb 2020 17:15:44 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.2
 MIME-Version: 1.0
-In-Reply-To: <20200220004825.23372-7-scott.branden@broadcom.com>
+In-Reply-To: <BYAPR04MB58167DDA2AE7B1BC1500D9C4E7130@BYAPR04MB5816.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,68 +54,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On 2/19/20 4:59 PM, Damien Le Moal wrote:
+> On 2020/02/20 9:55, Randy Dunlap wrote:
+>> Hi Damien,
+>>
+>> Typo etc. corrections below:
+> 
+> Thanks. Will correct these. Since this is now in the kernel, you can send a
+> patch too :)
 
-On 2/19/20 4:48 PM, Scott Branden wrote:
-> diff --git a/drivers/misc/bcm-vk/Kconfig b/drivers/misc/bcm-vk/Kconfig
-> new file mode 100644
-> index 000000000000..c75dfb89a38d
-> --- /dev/null
-> +++ b/drivers/misc/bcm-vk/Kconfig
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# Broadcom VK device
-> +#
-> +config BCM_VK
-> +	tristate "Support for Broadcom VK Accelerators"
-> +	depends on PCI_MSI
-> +	default m
+oops, sorry, I didn't notice that.
+I'll be glad to send a patch.
 
-Need to justify default m. Normally we don't add drivers as enabled unless
-they are required for basic (boot) operation.
+> 
+>>
+>> On 2/6/20 7:16 PM, Damien Le Moal wrote:
+>>> Add the new file Documentation/filesystems/zonefs.txt to document
+>>> zonefs principles and user-space tool usage.
+>>>
+>>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+>>> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+>>> ---
+>>>  Documentation/filesystems/zonefs.txt | 404 +++++++++++++++++++++++++++
+>>>  MAINTAINERS                          |   1 +
+>>>  2 files changed, 405 insertions(+)
+>>>  create mode 100644 Documentation/filesystems/zonefs.txt
 
-> +	help
-> +	  Select this option to enable support for Broadcom
-> +	  VK Accelerators.  VK is used for performing
-> +	  specific video offload processing.  This driver enables
-> +	  userspace programs to access these accelerators via /dev/bcm-vk.N
-> +	  devices.
-> +
-> +	  If unsure, say N.
-> +
-> +if BCM_VK
-> +
-> +config BCM_VK_H2VK_VERIFY_AND_RETRY
-> +	bool "Host To VK Verifiy Data and Retry"
 
-	                 Verify
-
-> +	help
-> +	  Turn on to verify the data passed down to VK is good,
-> +	  and if not, do a retry until it succeeds.
-
-No timeout on that retry?
-
-> +	  This is a debug/workaround on FPGA PCIe timing issues
-> +	  but may be found useful for debugging other PCIe hardware issues.
-> +	  Small performance loss by enabling this debug config.
-> +	  For properly operating PCIe hardware no need to enable this.
-> +
-> +	  If unsure, say N.
-> +
-> +config BCM_VK_QSTATS
-> +	bool "VK Queue Statistics"
-> +	help
-> +	  Turn on to enable Queue Statistics.
-> +	  These are useful for debugging purposes.
-> +	  Some performance loss by enabling this debug config.
-> +	  For properly operating PCIe hardware no need to enable this.
-> +
-> +	  If unsure, say N.
-> +
-> +endif
-
-cheers.
 -- 
 ~Randy
