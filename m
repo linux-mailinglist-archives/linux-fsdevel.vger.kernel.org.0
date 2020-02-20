@@ -2,221 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 249371658C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 08:50:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9E61658D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 08:53:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgBTHut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 02:50:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbgBTHut (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 02:50:49 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97CDA208C4;
-        Thu, 20 Feb 2020 07:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582185048;
-        bh=v4lODHdZcWtKOq6QBrb3F9koDQfFnRGgdQb407AOT3o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ftUM9+xRUbFzf2UyGuR0/dLsTHYKcURtDGz787L0nfDOAaDHXb98zOde5kRu0f/bX
-         u0TUcYfqcNDlhGo+zynEISCFOynB9qIfWwm4XHEUuhR47QUt7sOHnzyZppmV7abzXu
-         yPaz6fN6orZthXEgwkza7hrppfFQBjU0EqvEObuA=
-Date:   Thu, 20 Feb 2020 08:50:45 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
-Message-ID: <20200220075045.GB3261162@kroah.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-6-scott.branden@broadcom.com>
+        id S1727103AbgBTHw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 02:52:58 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:38176 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbgBTHw5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 02:52:57 -0500
+Received: by mail-il1-f196.google.com with SMTP id f5so22949792ilq.5;
+        Wed, 19 Feb 2020 23:52:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m1oB3Q6IOsGJuHSkpjxVpkQ8YE2VHk/UEGZOTbpLfio=;
+        b=TkbVniFyW6q+bRvCNwF6Mt/IOqV2WWLn8V7VNK+KeuRqOgpD52VFlflBwWuKHWfBlR
+         DWS/F0GghTl8OpYUhtBbLTsAZF3VUmVJu/mwTA3F2PTkHzfk3TpWtJ1bRcGkBO3LZww6
+         etZsp+T1IqhnOP622ZEdGC9WqmZOa8Pltkli8s6RLnxXrQOyeoMD3uGaNlG7HRT8qBDl
+         zXHWUGXAiC/B/iyT4yLmizV16fnt/jdmkKgIcwEE63OfBcvSuNpbhTFXSWagxR0QUYrT
+         e9DLkqGGhQtDL+sLlIy9ltuGILbC+uF4T/Ovz/B6QhBUA8R4DyfjDp8G17BmrHcBNdQB
+         cW8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m1oB3Q6IOsGJuHSkpjxVpkQ8YE2VHk/UEGZOTbpLfio=;
+        b=M4p+zA+zWI8AKa06E8KbAwpo+8uLGUf5Pb0DArk1dqEIwcMRxPWFa6bQ5fmjGhD4KN
+         SEfsvh4uEg3iaxYC7/PVA9lEz8Q6Xudgfy1JpIIibXGwrXbxEkKS/x31928HUHaVW7j1
+         gZ2Gp/hZbRGC2v6SszXJkgF6BCM35QKJ3ixB9v0bAT25uqfwxMQGZgDvYXgJbCvS3pRC
+         ke998Q7D9lUsfjCsibAbOemZ18Jpw1MDK8V1cmmuil1lMfHszMzomY/Q4zR8tqrw4NBe
+         lhTkZQ5jCs1Jzy8A0CbOv9a8t2bjh0dfzLkYZXl7D50Z4SownnUI38YjLRHutTKxqBYq
+         rTMw==
+X-Gm-Message-State: APjAAAXCXj2TQjp0PwpS02Vu0lcWynMeWNNrBjm/lJmt1y3DAZkvTIRr
+        2VsrYXZ1EvRllJO/rTgdJo/6uPN7ySCpd39fPO0=
+X-Google-Smtp-Source: APXvYqx6OY5EmxBMVHe2XA4Dyn9uCB3yodVd7TZVKcVVil5nlz5MMARXh5CfRRcI4Bi7mwLw1PEIcICfYsQo0A04JRg=
+X-Received: by 2002:a92:8656:: with SMTP id g83mr29006690ild.9.1582185177120;
+ Wed, 19 Feb 2020 23:52:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200220004825.23372-6-scott.branden@broadcom.com>
+References: <20200131115004.17410-1-mszeredi@redhat.com> <20200131115004.17410-5-mszeredi@redhat.com>
+ <20200204145951.GC11631@redhat.com> <CAJfpegtq4A-m9vOPwUftiotC_Xv6w-dnhCi9=E0t-b1ZPJXPGw@mail.gmail.com>
+ <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 20 Feb 2020 09:52:46 +0200
+Message-ID: <CAOQ4uxjFYO28r+0pY+pKxK-dDJcQF2nf2EivnOUBgrgkYTFjPQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] ovl: alllow remote upper
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 04:48:23PM -0800, Scott Branden wrote:
-> Add user space api for bcm-vk driver.
-> 
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> ---
->  include/uapi/linux/misc/bcm_vk.h | 117 +++++++++++++++++++++++++++++++
->  1 file changed, 117 insertions(+)
->  create mode 100644 include/uapi/linux/misc/bcm_vk.h
-> 
-> diff --git a/include/uapi/linux/misc/bcm_vk.h b/include/uapi/linux/misc/bcm_vk.h
-> new file mode 100644
-> index 000000000000..56a2178e06f5
-> --- /dev/null
-> +++ b/include/uapi/linux/misc/bcm_vk.h
-> @@ -0,0 +1,117 @@
-> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
-> +/*
-> + * Copyright 2018-2020 Broadcom.
-> + */
-> +
-> +#ifndef __UAPI_LINUX_MISC_BCM_VK_H
-> +#define __UAPI_LINUX_MISC_BCM_VK_H
-> +
-> +#include <linux/ioctl.h>
-> +#include <linux/types.h>
-> +
-> +struct vk_image {
-> +	__u32 type;     /* Type of image */
-> +#define VK_IMAGE_TYPE_BOOT1 1 /* 1st stage (load to SRAM) */
-> +#define VK_IMAGE_TYPE_BOOT2 2 /* 2nd stage (load to DDR) */
-> +	char filename[64]; /* Filename of image */
+On Tue, Feb 4, 2020 at 7:02 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, Feb 4, 2020 at 6:17 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Tue, Feb 4, 2020 at 3:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Fri, Jan 31, 2020 at 12:50:04PM +0100, Miklos Szeredi wrote:
+> > > > No reason to prevent upper layer being a remote filesystem.  Do the
+> > > > revalidation in that case, just as we already do for lower layers.
+> > > >
+> > > > This lets virtiofs be used as upper layer, which appears to be a real use
+> > > > case.
+> > >
+> > > Hi Miklos,
+> > >
+> > > I have couple of very basic questions.
+> > >
+> > > - So with this change, we will allow NFS to be upper layer also?
+> >
+> > I haven't tested, but I think it will fail on the d_type test.
+>
+> But we do not fail mount on no d_type support...
+> Besides, I though you were going to add the RENAME_WHITEOUT
+> test to avert untested network fs as upper.
+>
 
-__u8?
+Pushed strict remote upper check to:
+https://github.com/amir73il/linux/commits/ovl-strict-upper
 
-> +};
-> +
-> +/* default firmware images names */
-> +#define VK_BOOT1_DEF_VALKYRIE_FILENAME	"vk-boot1.bin"
-> +#define VK_BOOT2_DEF_VALKYRIE_FILENAME	"vk-boot2.bin"
-> +
-> +#define VK_BOOT1_DEF_VIPER_FILENAME	"vp-boot1.bin"
-> +#define VK_BOOT2_DEF_VIPER_FILENAME	"vp-boot2.bin"
+FWIW, overlayfs-next+ovl-strict-upper passes the quick xfstests,
+except for overlay/031 - it fails because the RENAME_WHITEOUT check
+leaves behind a whiteout in workdir.
+I think it it is not worth to cleanup that whiteout leftover and
+easier to fix the test.
 
-Why do these need to be in a uapi .h file?  Shouldn't they just be part
-of the normal MODULE_FIRMWARE() macro in the driver itself?
-
-> +
-> +struct vk_access {
-> +	__u8 barno;     /* BAR number to use */
-> +	__u8 type;      /* Type of access */
-> +#define VK_ACCESS_READ 0
-> +#define VK_ACCESS_WRITE 1
-> +	__u32 len;      /* length of data */
-
-Horrible padding issues, are you sure this all works properly?
-
-> +	__u64 offset;   /* offset in BAR */
-> +	__u32 *data;    /* where to read/write data to */
-
-Are you _SURE_ you want a pointer here?  How do you handle the compat
-issues with 32/64 user/kernel space?
-
-> +};
-
-And isn't this just a normal PCI write thing?  Can't you do it from
-userspace using the existing userspace PCI accesses?  Why do you need a
-special ioctl for it?
-
-> +
-> +struct vk_reset {
-> +	__u32 arg1;
-> +	__u32 arg2;
-> +};
-> +
-> +#define VK_MAGIC              0x5E
-> +
-> +/* Load image to Valkyrie */
-> +#define VK_IOCTL_LOAD_IMAGE   _IOW(VK_MAGIC, 0x2, struct vk_image)
-> +
-> +/* Read data from Valkyrie */
-> +#define VK_IOCTL_ACCESS_BAR   _IOWR(VK_MAGIC, 0x3, struct vk_access)
-> +
-> +/* Send Reset to Valkyrie */
-> +#define VK_IOCTL_RESET        _IOW(VK_MAGIC, 0x4, struct vk_reset)
-> +
-> +/*
-> + * message block - basic unit in the message where a message's size is always
-> + *		   N x sizeof(basic_block)
-> + */
-> +struct vk_msg_blk {
-> +	__u8 function_id;
-> +#define VK_FID_TRANS_BUF 5
-> +#define VK_FID_SHUTDOWN  8
-> +	__u8 size;
-> +	__u16 queue_id:4;
-> +	__u16 msg_id:12;
-
-Do not use bitfields in ioctls, they will not work properly on all
-systems.  Use masks and shifts instead.
-
-> +	__u32 context_id;
-> +	__u32 args[2];
-> +#define VK_CMD_PLANES_MASK 0x000F /* number of planes to up/download */
-> +#define VK_CMD_UPLOAD      0x0400 /* memory transfer to vk */
-> +#define VK_CMD_DOWNLOAD    0x0500 /* memory transfer from vk */
-> +#define VK_CMD_MASK        0x0F00 /* command mask */
-> +};
-> +
-> +#define VK_BAR_FWSTS			0x41C
-> +/* VK_FWSTS definitions */
-> +#define VK_FWSTS_RELOCATION_ENTRY	BIT(0)
-> +#define VK_FWSTS_RELOCATION_EXIT	BIT(1)
-> +#define VK_FWSTS_INIT_START		BIT(2)
-> +#define VK_FWSTS_ARCH_INIT_DONE		BIT(3)
-> +#define VK_FWSTS_PRE_KNL1_INIT_DONE	BIT(4)
-> +#define VK_FWSTS_PRE_KNL2_INIT_DONE	BIT(5)
-> +#define VK_FWSTS_POST_KNL_INIT_DONE	BIT(6)
-> +#define VK_FWSTS_INIT_DONE		BIT(7)
-> +#define VK_FWSTS_APP_INIT_START		BIT(8)
-> +#define VK_FWSTS_APP_INIT_DONE		BIT(9)
-
-I do not think that BIT() is exported to userspace properly, is it
-really ok here?
-
-> +#define VK_FWSTS_MASK			0xFFFFFFFF
-> +#define VK_FWSTS_READY			(VK_FWSTS_INIT_START | \
-> +					 VK_FWSTS_ARCH_INIT_DONE | \
-> +					 VK_FWSTS_PRE_KNL1_INIT_DONE | \
-> +					 VK_FWSTS_PRE_KNL2_INIT_DONE | \
-> +					 VK_FWSTS_POST_KNL_INIT_DONE | \
-> +					 VK_FWSTS_INIT_DONE | \
-> +					 VK_FWSTS_APP_INIT_START | \
-> +					 VK_FWSTS_APP_INIT_DONE)
-> +/* Deinit */
-> +#define VK_FWSTS_APP_DEINIT_START	BIT(23)
-> +#define VK_FWSTS_APP_DEINIT_DONE	BIT(24)
-> +#define VK_FWSTS_DRV_DEINIT_START	BIT(25)
-> +#define VK_FWSTS_DRV_DEINIT_DONE	BIT(26)
-> +#define VK_FWSTS_RESET_DONE		BIT(27)
-> +#define VK_FWSTS_DEINIT_TRIGGERED	(VK_FWSTS_APP_DEINIT_START | \
-> +					 VK_FWSTS_APP_DEINIT_DONE  | \
-> +					 VK_FWSTS_DRV_DEINIT_START | \
-> +					 VK_FWSTS_DRV_DEINIT_DONE)
-> +/* Last nibble for reboot reason */
-> +#define VK_FWSTS_RESET_REASON_SHIFT	28
-> +#define VK_FWSTS_RESET_REASON_MASK	(0xF << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_SYS_PWRUP	(0x0 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_MBOX_DB		(0x1 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_M7_WDOG		(0x2 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_TEMP		(0x3 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_PCI_FLR		(0x4 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_PCI_HOT		(0x5 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_PCI_WARM		(0x6 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_PCI_COLD		(0x7 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_L1		(0x8 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_L0		(0x9 << VK_FWSTS_RESET_REASON_SHIFT)
-> +#define VK_FWSTS_RESET_UNKNOWN		(0xF << VK_FWSTS_RESET_REASON_SHIFT)
-
-What are all of these #defines doing in an uapi file?  How is userspace
-going to use them?
-
-thanks,
-
-greg k-h
+Thanks,
+Amir.
