@@ -2,97 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F123216568B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 06:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7BFD165781
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Feb 2020 07:23:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgBTFKa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 00:10:30 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33245 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbgBTFK3 (ORCPT
+        id S1726851AbgBTGXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 01:23:02 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36968 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbgBTGXB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 00:10:29 -0500
-Received: from mail-pl1-f197.google.com ([209.85.214.197])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <matthew.ruffell@canonical.com>)
-        id 1j4e6W-0001mt-6h
-        for linux-fsdevel@vger.kernel.org; Thu, 20 Feb 2020 05:10:28 +0000
-Received: by mail-pl1-f197.google.com with SMTP id t17so1565898ply.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 21:10:28 -0800 (PST)
+        Thu, 20 Feb 2020 01:23:01 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z12so1399114pgl.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Feb 2020 22:22:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KDL37BgDk/5hTL1aygm8F5m/3WsNy7EX3MegTZpHh8A=;
+        b=hE28D14boNTmJ1vj0aiii9wgqR4x726AYt0+Ugz1vZZxyNY/ZjRyjStYJ/E86o9UZQ
+         m+ILEBowROnzV6IEZacRqVHipZV2ubqx1exLZGnLz532+kkOuDI07VE0085ZhhSVT6BX
+         PBBz06hnw5jDBaa5zAzGTaC7k047+cizE829A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kIhfPa7SsfRzn7vx0Oc8RqKMPZYqickShTkap1QavL4=;
-        b=DilajcF7oE+h9IzUbtfIq7CDaYaXMHuWrKQlYJ8lVoNxwjHRabYn9YAYMZJC1JYCUV
-         HYGBsxQ+sY0hjkVm4PDBROAN0wWEPRlevhXSO1A/ZtVMg9sSLmz0ojDObvZk3r2heraG
-         sNMhoveP3u3jJtN1xey39d++R9US1zz5qQyFkGC4EP5xfEEnvM9qRf0q4F1aF/LVMsZS
-         UAlzB+vct+2NAINu4qQKv9CJjyY4q3RY01WqAgl4FRfevu/qK2Ty9iCrn68g4/J9IIjZ
-         OvFXNT5zE8nviEe3SsBbtDP91oxBHSyU3I1MxpPhxg+GyY3+MUzMZHUHuOT0liXc+Rn5
-         GP2A==
-X-Gm-Message-State: APjAAAUGM9j4ZnftrjwYo7FekVMLD5MtWknlOEzWZYI9GAYzvnJAQ0po
-        F3/Ipg/F8BGX4k4fK+4zZwLGwgFFyYz56LYzgYbGZu4RmdF3Tt/nvmRXhhFHm9pJIOf5rVWbv6U
-        xg6NvOsTPUIJiHHAolUM7i1xAy6lCDwo2V+lLr/ctdAE=
-X-Received: by 2002:a17:902:aa45:: with SMTP id c5mr28782370plr.113.1582175426238;
-        Wed, 19 Feb 2020 21:10:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzd1RYHnc2H+TbYIhh7aaMIbahh+S85LBctIlAD5hV6MW5gQodhvbs9eIVwtEbFUXX7FxfknQ==
-X-Received: by 2002:a17:902:aa45:: with SMTP id c5mr28782355plr.113.1582175425973;
-        Wed, 19 Feb 2020 21:10:25 -0800 (PST)
-Received: from localhost.localdomain (222-154-99-146-fibre.sparkbb.co.nz. [222.154.99.146])
-        by smtp.gmail.com with ESMTPSA id p3sm1409714pfg.184.2020.02.19.21.10.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KDL37BgDk/5hTL1aygm8F5m/3WsNy7EX3MegTZpHh8A=;
+        b=qe2OLB3rg40E/bZ+V/5itxkXZL9dpXtRLAipO85CnCNi/qtFpJInSoaAOmpN8Ir0+k
+         2/48qePyEo2ZRD9vOTZymFTg1zSORiEap+56cTHYXd73JdoONMFuiw3PddtDnxRjpfs5
+         bRCsBY1VdscLxR8dHk5nq2IAXdMeBeBRbFjMJlEI1B0/qCvqnh9soG5Mm75L1y0xGdgU
+         ZGtm2f3sILZsbNh6t+P/h85OyMD7HmraJIcH+hqcFtmLor2U5/OLisEGzObeEbklrMur
+         Zr89stwm5ePJPv3pEQ5d9RsQIPd7MzmmO/Hj+6jJ8ZKdSK1CYecZEA12bPM08LXlvFhb
+         9g+g==
+X-Gm-Message-State: APjAAAWVkFSLp7j0gEpHBrna5FxNS35JC96O0IacCz478D38GnVVGfcL
+        /dvRnglL/uIbH/T743xn0h4muJobSOk=
+X-Google-Smtp-Source: APXvYqwClzmaR771bSUMDQ76QXcQ9gHM+Y7s77UVkVWl9nHyOMS3rkIB6M1k/7iT21xhJ1goPJEBhg==
+X-Received: by 2002:a62:1cd6:: with SMTP id c205mr30460282pfc.179.1582179779343;
+        Wed, 19 Feb 2020 22:22:59 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id a35sm1886088pgl.20.2020.02.19.22.22.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 21:10:25 -0800 (PST)
-From:   Matthew Ruffell <matthew.ruffell@canonical.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     pabs3@bonedaddy.net
-Subject: [PATCH 1/1] coredump: Fix null pointer dereference when kernel.core_pattern is "|"
-Date:   Thu, 20 Feb 2020 18:10:15 +1300
-Message-Id: <20200220051015.14971-2-matthew.ruffell@canonical.com>
+        Wed, 19 Feb 2020 22:22:58 -0800 (PST)
+From:   Kees Cook <keescook@chromium.org>
+To:     Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fcntl: Distribute switch variables for initialization
+Date:   Wed, 19 Feb 2020 22:22:43 -0800
+Message-Id: <20200220062243.68809-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220051015.14971-1-matthew.ruffell@canonical.com>
-References: <20200220051015.14971-1-matthew.ruffell@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since 315c692, a null pointer dereference can be triggered when the
-kernel.core_pattern string is set to "|", and a user executes a program which
-crashes.
+Variables declared in a switch statement before any case statements
+cannot be automatically initialized with compiler instrumentation (as
+they are not part of any execution flow). With GCC's proposed automatic
+stack variable initialization feature, this triggers a warning (and they
+don't get initialized). Clang's automatic stack variable initialization
+(via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+doesn't initialize such variables[1]. Note that these warnings (or silent
+skipping) happen before the dead-store elimination optimization phase,
+so even when the automatic initializations are later elided in favor of
+direct initializations, the warnings remain.
 
-This is caused by a subtle change in parameters sent to
-call_usermodehelper_exec(), as sub_info->path will be set to cn.corename, which
-has not changed from its initial value of '\0'. call_usermodehelper_exec()
-will return 0 upon strlen() finding that sub_info->path has zero length.
+To avoid these problems, move such variables into the "case" where
+they're used or lift them up into the main function body.
 
-The fix is to add a length check for cn.corename when we check the return code
-from call_usermodehelper_exec(). This restores the expected semantics as seen
-before 315c692, with the message "Core dump to | pipe failed" output to dmesg
-and the coredump being aborted.
+fs/fcntl.c: In function ‘send_sigio_to_task’:
+fs/fcntl.c:738:20: warning: statement will never be executed [-Wswitch-unreachable]
+  738 |   kernel_siginfo_t si;
+      |                    ^~
 
-Fixes: 315c692 ("coredump: split pipe command whitespace before expanding template")
-Signed-off-by: Matthew Ruffell <matthew.ruffell@canonical.com>
+[1] https://bugs.llvm.org/show_bug.cgi?id=44916
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fcntl.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b1ea7dfbd149..ca5976e81d8a 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -686,7 +686,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 							  UMH_WAIT_EXEC);
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 9bc167562ee8..2e4c0fa2074b 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -735,8 +735,9 @@ static void send_sigio_to_task(struct task_struct *p,
+ 		return;
  
- 		kfree(helper_argv);
--		if (retval) {
-+		if (retval || strlen(cn.corename) == 0) {
- 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
- 			       cn.corename);
- 			goto close_fail;
--- 
-2.20.1
+ 	switch (signum) {
+-		kernel_siginfo_t si;
+-		default:
++		default: {
++			kernel_siginfo_t si;
++
+ 			/* Queue a rt signal with the appropriate fd as its
+ 			   value.  We use SI_SIGIO as the source, not 
+ 			   SI_KERNEL, since kernel signals always get 
+@@ -769,6 +770,7 @@ static void send_sigio_to_task(struct task_struct *p,
+ 			si.si_fd    = fd;
+ 			if (!do_send_sig_info(signum, &si, p, type))
+ 				break;
++		}
+ 		/* fall-through - fall back on the old plain SIGIO signal */
+ 		case 0:
+ 			do_send_sig_info(SIGIO, SEND_SIG_PRIV, p, type);
 
