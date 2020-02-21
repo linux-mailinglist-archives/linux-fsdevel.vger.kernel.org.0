@@ -2,39 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B37167678
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 09:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C64551677DC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 09:45:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732114AbgBUIfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 03:35:14 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:57359 "EHLO
+        id S1731672AbgBUIoz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 03:44:55 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:46791 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729703AbgBUIfN (ORCPT
+        with ESMTP id S1729786AbgBUIoy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 03:35:13 -0500
-Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
- mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mbzdn-1ja00W1B5r-00dSWR; Fri, 21 Feb 2020 09:35:11 +0100
-Received: by mail-qt1-f174.google.com with SMTP id d9so707892qte.12;
-        Fri, 21 Feb 2020 00:35:10 -0800 (PST)
-X-Gm-Message-State: APjAAAXTd9Yo3qP11M/nKjS1oclRFXGQK78xdiuVvehz0Bo4Sf1yDBRR
-        kmGtcWFBJ46Pu/ZGhnxTz+ATQpXD3hLnj1bABS4=
-X-Google-Smtp-Source: APXvYqzMtKpji2kHcAwVfJDYkwxyhgoIO+eLhAK993sRWmxCI9kRi7QXQGVX8kksKrQac1lTZAK5TBBxLKggVruJ36Y=
-X-Received: by 2002:ac8:1977:: with SMTP id g52mr29831842qtk.18.1582274109872;
- Fri, 21 Feb 2020 00:35:09 -0800 (PST)
+        Fri, 21 Feb 2020 03:44:54 -0500
+Received: from mail-qv1-f42.google.com ([209.85.219.42]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mcp3E-1jdZfK1u6s-00Zwen; Fri, 21 Feb 2020 09:44:52 +0100
+Received: by mail-qv1-f42.google.com with SMTP id s6so677553qvq.4;
+        Fri, 21 Feb 2020 00:44:51 -0800 (PST)
+X-Gm-Message-State: APjAAAVAU/ImSor+Ax3laoPhdKX5HRhehG0LGNGTI/C3F2tU/AC+9LXl
+        LPR4Dha7noghjKvkCg8FI3YIhvkEzHm1xzWsFfg=
+X-Google-Smtp-Source: APXvYqzj1wLcyLw4ngVb5K8R3sXCBn2n0mT50jnZtzTAPCNVFsS4L0kHny9k1yvtFZI5LzSCmfqqMbz+qs/vG+JMXNI=
+X-Received: by 2002:ad4:52eb:: with SMTP id p11mr27330655qvu.211.1582274691062;
+ Fri, 21 Feb 2020 00:44:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-6-scott.branden@broadcom.com> <20200220075045.GB3261162@kroah.com>
- <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
-In-Reply-To: <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com> <s5hef1crybq.wl-tiwai@suse.de>
+ <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com> <s5hr258j6ln.wl-tiwai@suse.de>
+ <93b8285a-e5eb-d4a4-545d-426bbbeb8008@broadcom.com> <s5ho90byhnv.wl-tiwai@suse.de>
+ <b440f372-45be-c06c-94a1-44ae6b1e7eb8@broadcom.com> <s5hwoeyj3i5.wl-tiwai@suse.de>
+ <20191011133120.GP16384@42.do-not-panic.com> <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
+In-Reply-To: <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 21 Feb 2020 09:34:53 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
-Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
+Date:   Fri, 21 Feb 2020 09:44:35 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Message-ID: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
 To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>,
@@ -50,63 +53,61 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Colin Ian King <colin.king@canonical.com>,
         Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>
+        <linux-kselftest@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:uKsCb7o+WwoRn2H66DIerL3UeOyZ5PMu17VhbxdEL4me0biPjB6
- o7WZmnQ0rrYrtZccp+dGHRstPYT/AL1SEm/3IYCsEAqVHCgMbQ4ksER5Jxxky8Jnoh51X2G
- /JnrA6gQfGsmJj8e1K4e9enaF7zgs4g/BCYaMmvJ3m+rCoMGhz2lndHIOExjZ86K2oepGhd
- JtCJNVmjLyn1iCoVpAc5w==
+X-Provags-ID: V03:K1:R+5/2IwZLX0GpLbPDDVE48wJ9xBdmfM+8J7qrFfyCmHlAdtRw1R
+ /K5hbg4vcItdPyeaI2gMUPQvAe3KI+g8fgumg/ys5OrFhj8SXXMHDaRwP/jTMjNeqk1Ihux
+ tdMUA47Dtk2OinScdeJ30BbZ6Kq/L/WCgUa4fXW5HpJBIROPbCh5l0wVoloceAtugRhPeXX
+ AmXilR8SPDoKmyxcwyyGA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Vx6+2EQVCCk=:3nyhniYPMKUTdjUW1WlS1X
- dizBB8ISTpfxLCiIjgNUDM13W0KZ67gyO2bh1Md9wdY/kVxGvwYn5gX55onS553yW1D/SV+Ic
- chWqDqJSktTofpps+FghQQa1v46eU7cKssNfN8Yc5x0PxCWaq+Dn/qfZO9DsbuQ8gyxIGaYZX
- vGVVHjT0SaIwbZR8VtUba1pNnpuJshQeY6oNsIEsbUL2lRa2xJZnzvD88GlgA5zM5Om437HEy
- gOaK0KA9PdAzgJOOWU90JqA1J6yt4lf74KKOKl1vCuAK94O3hnFO4F3R5G4SACx4G7udFL8ex
- GA7RPATiwpR4N1jVm2OiTuYBtfHBhc5GTADdJ5FvuoPhcku9U/0rb7kUh22ttL6NtwCWXZuAk
- tXw1kO4kCzWlqYg+iiTw8R4YCq46iHwDp/DUZk5OALtRfeEhaLhzi3F/xL8N1/gxCXoWTKA6g
- 6PpoBgcNI7fvKOcpty/X070DM/shiGQidrOO7rshPTPihkdG3cZS0zqwqq8mR96G2CYmYGPw6
- i9vo7npjwiZczbygEsU+NPQc5JqzPcfnJ6Eagw8FfOhKBlLUUIof6oR45sX8I6NHqevSwKJCd
- 4zcIVZ72l9Rq3yCMGY2sF0QJ/od3s04YZePgn/NksbpSbt1QLDCMweHqD6LI1q543KzCsvfp9
- bOpMBR7BXHdKcJ2lgZYXS5IiWXGGv6LiBx0GbTliLojyx0it0vRXHgAagHJx/HKaHdXGB/XJS
- NCA/yU0Pz+mb4mur480nqWi9BBWKph6RjCG4AG3QPdqHVluVN0h5FBMeycbQlbjO2/APQUko5
- 6umjBaVTqYwERcD6UZfHWF1CEOUkqNWlmw+YmOH0ZTKghgBdMU=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:eW7GHi9pDno=:KM/eM3AxK8K6bT4Ho8Ua8x
+ DoTGO8zJuIuTsCjvL3EX3mLRg/BDoTwyy2kDNAI3C/EFolMNYvPhaOemr5GeZPvaEkZyyrb3P
+ Vtymm4/0ToYA8ChWUkYnYC//AiL6lBLZ1ce4MpOx61HYqLuByrn4dEtFseN/SzMbJhWQB8c6y
+ e12I3t7jcpcF5tTuRUOG5zi5vy7hfgfWxc4lSvmun6RQO7I7Injs0jJICjMhiY+QM4jY8rSyJ
+ twMj/WT9zxXZlKzHJYeyjymFxx5cOSX3uV4K9adpGym4r93DbjjY/aZzYDOauH51rhZV1y4Ow
+ isS71V71BjskgDHI040qtt18alRqXXlmPLpJSBUYtiZ8+As4zojeKOwfKFwANYUnYUU5Ksmh2
+ dyhTXohPPEaWKCWks5K3WK321Pg9ADnjGoQH5z8aeCRXoqJtZcSG5jovP05xjsjz2GT6RBcUn
+ NZA8LRg9eBbu/Y9G+x9inOZ7q2GVnPoofJ0mplDc7ly4Aw+MIFgp7WxOtry6zeN8Z+Eoav75l
+ EnJCA07/eED8AdHSqhuK2KKPagerm1mhIuySFhfhhexH3sIYwMfLrTj7mCvCetuVz6fYgUBb7
+ 6+8789HV4V74skaCgtCwunj/qLwA85KCuZCUxaMCnv1Co126ZNaNLwu11I4pXMawMHeP3t6q6
+ pCW0zHSUHfKwNW7wejLqzdaV1Ya47jba1lRzvDqfNz6MHSLIL0vHS0zbYRQz/Sg2KdaZ6gted
+ 2j5SL4SlxBeg7UtcsUOTP6j+MWHIr7HFSySoxw1nIt6nJldnGFXx3wSd8gworWeqIHaEfKzDv
+ 7z2wxMGTrgTuerVtnbyrJfJ8+2CkBIj0/7pjWy4kNAazDzt7Bk=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 2:16 AM Scott Branden
+On Fri, Feb 21, 2020 at 1:11 AM Scott Branden
 <scott.branden@broadcom.com> wrote:
-
-
-> >> +struct vk_access {
-> >> +    __u8 barno;     /* BAR number to use */
-> >> +    __u8 type;      /* Type of access */
-> >> +#define VK_ACCESS_READ 0
-> >> +#define VK_ACCESS_WRITE 1
-> >> +    __u32 len;      /* length of data */
-> > Horrible padding issues, are you sure this all works properly?
-> Haven't had any issues.
+> On 2019-10-11 6:31 a.m., Luis Chamberlain wrote:
+> > On Tue, Aug 27, 2019 at 12:40:02PM +0200, Takashi Iwai wrote:
+> >> On Mon, 26 Aug 2019 19:24:22 +0200,
+> >> Scott Branden wrote:
+> >>> I will admit I am not familiar with every subtlety of PCI
+> >>> accesses. Any comments to the Valkyrie driver in this patch series are
+> >>> appreciated.
+> >>> But not all drivers need to work on all architectures. I can add a
+> >>> depends on x86 64bit architectures to the driver to limit it to such.
+> >> But it's an individual board on PCIe, and should work no matter which
+> >> architecture is?  Or is this really exclusive to x86?
 > >
-> >> +    __u64 offset;   /* offset in BAR */
-> >> +    __u32 *data;    /* where to read/write data to */
-> > Are you _SURE_ you want a pointer here?  How do you handle the compat
-> > issues with 32/64 user/kernel space?
-> Don't care about 32-bit user space for this driver.
-> I don't think there isn't even enough memory in such systems for the
-> number of streams of video buffers needed for transcoding.
-> This driver is only used in high end 64-bit x86 servers.
+> > Poke Scott.
+>
+> Yes, this is exclusive to x86.
+> In particular, 64-bit x86 server class machines with PCIe gen3 support.
+> There is no reason for these PCIe boards to run in other lower end
+> machines or architectures.
 
-Please see Documentation/core-api/ioctl.rst
-
-All ioctl interfaces should be written in a portable way that works with
-compat user space and avoids all padding in order to not leak kernel
-data into user space.
-
-If the driver is passing video buffers for transcoding, shouldn't the driver
-use the existing drivers/media interfaces for that? If it needs features
-that are not present there, they can probably be added.
+It doesn't really matter that much what you expect your customers to
+do with your product, or what works a particular machine today, drivers
+should generally be written in a portable manner anyway and use
+the documented APIs. memcpy() into an __iomem pointer is not
+portable and while it probably works on any x86 machine today, please
+just don't do it. If you use 'sparse' to check your code, that would normally
+result in an address space warning, unless you add __force and a
+long comment explaining why you cannot just use memcpy_to_io()
+instead. At that point, you are already better off usingn memcpy_to_io() ;-)
 
         Arnd
