@@ -2,144 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4792F16845B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:04:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B964C168465
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbgBUREf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 12:04:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41486 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728028AbgBUREf (ORCPT
+        id S1728072AbgBURGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 12:06:31 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28837 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727329AbgBURGb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:04:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=r3W9uQBOJlV/Av1C4P5QJ8rWtko3f0+LGkNeNqVgIXE=; b=AV6Cw8ovuehrTohFGMfQ7n0kse
-        bjrdnD9nESXI0I3PhTjjlM1TLq5ja8b35TsbwUSuOz6O3K1S8kAcssyZP1MCGHcG4kw/lfza5fkeb
-        QOnZfCeaRELcgK09zo2800vd04X5tYSYTSi6pR24Pv7o7U2qmROm4epqCjmdubnrlnmVFNqKTUfNu
-        87qqVl3NeMxxEMlK1BEUhoafXDd8nMTCXTvOtVD3ptQxLN36wRRJoYUQ/FDv2hQsUqZ5LFEcVCpUg
-        Nt8pMcATyiWCCDn6xIrWVuAgQbk1q7RAv8dNR7WD1b0IYd/UQOWjvoWynx1dI6wC7JPPah9Nr35ng
-        KSATh/Qw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5Bj8-0004qU-9u; Fri, 21 Feb 2020 17:04:34 +0000
-Date:   Fri, 21 Feb 2020 09:04:34 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v7 1/9] block: Keyslot Manager for Inline Encryption
-Message-ID: <20200221170434.GA438@infradead.org>
-References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-2-satyat@google.com>
+        Fri, 21 Feb 2020 12:06:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582304789;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=d+gE6bobfHvUgEPpbnKCxsxKvbbzJfwCBMRpBF3lPck=;
+        b=L7LkB1ecgtPwJku+KKKSKenK31Jq4WtCnfcmSVK4BBvNy2UJmq5kyC5+eGAF3rC/k2Xdz1
+        oenaR5QwhaWiSExP/m1981oDHl5RPKOGml6HBiDtJ7fqDvx9vF1zCOoqXJwiSNvP3ZkaXe
+        px5+TGihgbXipxMEMpv9gd46OtGEgbI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-172-0uMjhGtxP-6dmQbVqLoaRw-1; Fri, 21 Feb 2020 12:06:26 -0500
+X-MC-Unique: 0uMjhGtxP-6dmQbVqLoaRw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50889800EB4;
+        Fri, 21 Feb 2020 17:06:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 652A519E9C;
+        Fri, 21 Feb 2020 17:06:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAG48ez0+_kO_YL6iO9uA+HjjnHRVHVD-bFq0C=ZLeaGtTMss5A@mail.gmail.com>
+References: <CAG48ez0+_kO_YL6iO9uA+HjjnHRVHVD-bFq0C=ZLeaGtTMss5A@mail.gmail.com> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204559631.3299825.5358385352169781990.stgit@warthog.procyon.org.uk> <CAG48ez3ZMg4O5US3n=p1CYK-2AAgLRY+pjnUXp2p5hdwbjCRSA@mail.gmail.com> <1808070.1582287889@warthog.procyon.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        raven@themaw.net, Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/19] vfs: Add a mount-notification facility [ver #16]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221115050.238976-2-satyat@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2113717.1582304782.1@warthog.procyon.org.uk>
+Date:   Fri, 21 Feb 2020 17:06:22 +0000
+Message-ID: <2113718.1582304782@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +#ifdef CONFIG_PM
-> +static inline void blk_ksm_set_dev(struct keyslot_manager *ksm,
-> +				   struct device *dev)
-> +{
-> +	ksm->dev = dev;
-> +}
-> +
-> +/* If there's an underlying device and it's suspended, resume it. */
-> +static inline void blk_ksm_pm_get(struct keyslot_manager *ksm)
-> +{
-> +	if (ksm->dev)
-> +		pm_runtime_get_sync(ksm->dev);
-> +}
-> +
-> +static inline void blk_ksm_pm_put(struct keyslot_manager *ksm)
-> +{
-> +	if (ksm->dev)
-> +		pm_runtime_put_sync(ksm->dev);
-> +}
-> +#else /* CONFIG_PM */
-> +static inline void blk_ksm_set_dev(struct keyslot_manager *ksm,
-> +				   struct device *dev)
-> +{
-> +}
-> +
-> +static inline void blk_ksm_pm_get(struct keyslot_manager *ksm)
-> +{
-> +}
-> +
-> +static inline void blk_ksm_pm_put(struct keyslot_manager *ksm)
-> +{
-> +}
-> +#endif /* !CONFIG_PM */
+Jann Horn <jannh@google.com> wrote:
 
-I think no one is hurt by an unused dev field for the non-pm case.
-I'd suggest to define the field unconditionally, and replace all
-the above with direct calls below.
+> > What's the best way to write a lockdep assertion?
+> >
+> >         BUG_ON(!lockdep_is_held(lock));
+> 
+> lockdep_assert_held(lock) is the normal way, I think - that will
+> WARN() if lockdep is enabled and the lock is not held.
 
-> +/**
-> + * blk_ksm_get_slot() - Increment the refcount on the specified slot.
-> + * @ksm: The keyslot manager that we want to modify.
-> + * @slot: The slot to increment the refcount of.
-> + *
-> + * This function assumes that there is already an active reference to that slot
-> + * and simply increments the refcount. This is useful when cloning a bio that
-> + * already has a reference to a keyslot, and we want the cloned bio to also have
-> + * its own reference.
-> + *
-> + * Context: Any context.
-> + */
-> +void blk_ksm_get_slot(struct keyslot_manager *ksm, unsigned int slot)
+Okay.  But what's the best way with a seqlock_t?  It has two dep maps in it.
+Do I just ignore the one attached to the spinlock?
 
-This function doesn't appear to be used at all in the whole series.
+David
 
-> +/**
-> + * blk_ksm_put_slot() - Release a reference to a slot
-> + * @ksm: The keyslot manager to release the reference from.
-> + * @slot: The slot to release the reference from.
-> + *
-> + * Context: Any context.
-> + */
-> +void blk_ksm_put_slot(struct keyslot_manager *ksm, unsigned int slot)
-> +{
-> +	unsigned long flags;
-> +
-> +	if (WARN_ON(slot >= ksm->num_slots))
-> +		return;
-> +
-> +	if (atomic_dec_and_lock_irqsave(&ksm->slots[slot].slot_refs,
-> +					&ksm->idle_slots_lock, flags)) {
-> +		list_add_tail(&ksm->slots[slot].idle_slot_node,
-> +			      &ksm->idle_slots);
-> +		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
-> +		wake_up(&ksm->idle_slots_wait_queue);
-> +	}
-
-Given that blk_ksm_get_slot_for_key returns a signed keyslot that
-can return errors, and the only callers stores it in a signed variable
-I think this function should take a signed slot as well, and the check
-for a non-negative slot should be moved here from the only caller.
-
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 853d92ceee64..b2103e207ed5 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -8,6 +8,7 @@
->  #include <linux/highmem.h>
->  #include <linux/mempool.h>
->  #include <linux/ioprio.h>
-> +#include <linux/blk-crypto.h>
->  
->  #ifdef CONFIG_BLOCK
->  /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
-
-This doesn't belong here, but into the patch that actually requires
-crypto definitions in bio.h.
