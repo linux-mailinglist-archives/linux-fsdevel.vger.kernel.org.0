@@ -2,161 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FE0E167FF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:20:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBCB167FFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:20:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbgBUOUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 09:20:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41524 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728081AbgBUOUR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:20:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DD6CAB23C;
-        Fri, 21 Feb 2020 14:20:14 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 14:20:10 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     ?????? <yun.wang@linux.alibaba.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Michal Koutn? <mkoutny@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
- locality info
-Message-ID: <20200221142010.GT3420@suse.de>
-References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
- <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
- <20200214151048.GL14914@hirez.programming.kicks-ass.net>
- <20200217115810.GA3420@suse.de>
- <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
- <20200217141616.GB3420@suse.de>
- <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
+        id S1728643AbgBUOUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 09:20:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36952 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728081AbgBUOUT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:20:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=LytBCHQtySSQHC//YYsk3cTp1SDQnnhLtWFiulJBZy8=; b=DZyV9UxLlQ1dXSvWlM5ACgoz8S
+        66UCzAs+/vDp19vCMf/XiGjrgq/QpQ5MSmVm/cq7+gbhKX2cMIX1taXRr/28lPIKdmzmh69nv04Ah
+        jwc9CKCejXv0Yp4mbSM/q3/tDIhqtMMSmNl9pu3s8tg24ZdjHzYMMgLs+rc7QJw5HNC07Z3yyMc8F
+        LrWSlmph5HCQzhVD6l+1jhZTBzUgoCltUXUStnxF/6+NXmWhqg6fe/7W9ZhC1tQlUPJRTzQ06pK5k
+        wVCnFwUDhQ7pTnQaf3ggXDyfYcZZNw61QTbu1cIlLeHfVXYoXnrImvysZ5JDQhd9ynz72vOhOetCJ
+        eJPdKzew==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j59AA-0005Lk-DL; Fri, 21 Feb 2020 14:20:18 +0000
+Date:   Fri, 21 Feb 2020 06:20:18 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v6 0/9] Inline Encryption Support
+Message-ID: <20200221142018.GA27636@infradead.org>
+References: <20200108184305.GA173657@google.com>
+ <20200117085210.GA5473@infradead.org>
+ <20200201005341.GA134917@google.com>
+ <20200203091558.GA28527@infradead.org>
+ <20200204033915.GA122248@google.com>
+ <20200204145832.GA28393@infradead.org>
+ <20200204212110.GA122850@gmail.com>
+ <20200205073601.GA191054@sol.localdomain>
+ <20200205180541.GA32041@infradead.org>
+ <20200221123030.GA253045@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200221123030.GA253045@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 09:39:35AM +0800, ?????? wrote:
-> On 2020/2/17 ??????10:16, Mel Gorman wrote:
-> > On Mon, Feb 17, 2020 at 09:23:52PM +0800, ?????? wrote:
-> [snip]
-> >>
-> >> IMHO the scan period changing should not be a problem now, since the
-> >> maximum period is defined by user, so monitoring at maximum period
-> >> on the accumulated page accessing counters is always meaningful, correct?
-> >>
-> > 
-> > It has meaning but the scan rate drives the fault rate which is the basis
-> > for the stats you accumulate. If the scan rate is high when accesses
-> > are local, the stats can be skewed making it appear the task is much
-> > more local than it may really is at a later point in time. The scan rate
-> > affects the accuracy of the information. The counters have meaning but
-> > they needs careful interpretation.
+On Fri, Feb 21, 2020 at 04:30:30AM -0800, Satya Tangirala wrote:
+> Hi Christoph,
 > 
-> Yeah, to zip so many information from NUMA Balancing to some statistics
-> is a challenge itself, the locality still not so easy to be understood by
-> NUMA newbie :-P
+> I sent out v7 of the patch series. It's at
+> https://lore.kernel.org/linux-fscrypt/20200221115050.238976-1-satyat@google.com/T/#t
 > 
+> It manages keyslots on a per-request basis now - I made it get keyslots
+> in blk_mq_get_request, because that way I wouldn't have to worry about
+> programming keys in an atomic context. What do you think of the new
+> approach?
 
-Indeed and if they do not take into account historical skew into
-account, they still might not understand.
-
-> > 
-> >> FYI, by monitoring locality, we found that the kvm vcpu thread is not
-> >> covered by NUMA Balancing, whatever how many maximum period passed, the
-> >> counters are not increasing, or very slowly, although inside guest we are
-> >> copying memory.
-> >>
-> >> Later we found such task rarely exit to user space to trigger task
-> >> work callbacks, and NUMA Balancing scan depends on that, which help us
-> >> realize the importance to enable NUMA Balancing inside guest, with the
-> >> correct NUMA topo, a big performance risk I'll say :-P
-> >>
-> > 
-> > Which is a very interesting corner case in itself but also one that
-> > could have potentially have been inferred from monitoring /proc/vmstat
-> > numa_pte_updates or on a per-task basis by monitoring /proc/PID/sched and
-> > watching numa_scan_seq and total_numa_faults. Accumulating the information
-> > on a per-cgroup basis would require a bit more legwork.
-> 
-> That's not working for daily monitoring...
-> 
-
-Indeed although at least /proc/vmstat is cheap to monitor and it could
-at least be tracked if the number of NUMA faults are abnormally low or
-the ratio of remote to local hints are problematic.
-
-> Besides, compared with locality, this require much more deeper understand
-> on the implementation, which could even be tough for NUMA developers to
-> assemble all these statistics together.
-> 
-
-My point is that even with the patch, the definition of locality is
-subtle. At a single point in time, the locality might appear to be low
-but it's due to an event that happened far in the past.
-
-> > 
-> >> Maybe not a good example, but we just try to highlight that NUMA Balancing
-> >> could have issue in some cases, and we want them to be exposed, somehow,
-> >> maybe by the locality.
-> >>
-> > 
-> > Again, I'm somewhat neutral on the patch simply because I would not use
-> > the information for debugging problems with NUMA balancing. I would try
-> > using tracepoints and if the tracepoints were not good enough, I'd add or
-> > fix them -- similar to what I had to do with sched_stick_numa recently.
-> > The caveat is that I mostly look at this sort of problem as a developer.
-> > Sysadmins have very different requirements, especially simplicity even
-> > if the simplicity in this case is an illusion.
-> 
-> Fair enough, but I guess PeterZ still want your Ack, so neutral means
-> refuse in this case :-(
-> 
-
-I think the patch is functionally harmless and can be disabled but I also
-would be wary of dealing with a bug report that was based on the numbers
-provided by the locality metric. The bulk of the work related to the bug
-would likely be spent on trying to explain the metric and I've dealt with
-quite a few bugs that were essentially "We don't like this number and think
-something is wrong because of it -- fix it". Even then, I would want the
-workload isolated and then vmstat recorded over time to determine it's
-a persistent problem or not. That's the reason why I'm relucant to ack it.
-
-I fully acknowledge that this may have value for sysadmins and may be a
-good enough reason to merge it for environments that typically build and
-configure their own kernels. I doubt that general distributions would
-enable it but that's a guess.
-
-> BTW, how do you think about the documentation in second patch?
-> 
-
-I think the documentation is great, it's clear and explains itself well.
-
-> Do you think it's necessary to have a doc to explain NUMA related statistics?
-> 
-
-It would be nice but AFAIK, the stats in vmstats are not documented.
-They are there because recording them over time can be very useful when
-dealing with user bug reports.
-
--- 
-Mel Gorman
-SUSE Labs
+I'll try to review it soon, thanks!
