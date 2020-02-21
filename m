@@ -2,139 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A2C16864B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:20:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B16A516865A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:21:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbgBUST5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 13:19:57 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50284 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgBUST5 (ORCPT
+        id S1729477AbgBUSVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 13:21:24 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:36363 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbgBUSVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:19:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so2748158wmb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 10:19:56 -0800 (PST)
+        Fri, 21 Feb 2020 13:21:23 -0500
+Received: by mail-il1-f196.google.com with SMTP id b15so2395227iln.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 10:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=wDHwJafHUYO4eJUK4woQfDUsS2PWqX2xUsdpzcXqvFo=;
-        b=B/Bxn87ldHGPpmiTejB0PK8srG8CJRhgFVKn9I55oBbSoCzibcaXDBEHoNaolzi0Mt
-         ofSZAF5YXhhDTxrcXv/eWWGU6G6/l/ES+cdyBP2XSvO03A7ZAulAFAhqGCg/mucLRFo6
-         FQfnU/k2JlRY2372nKHUW5GEwaCh6dlpk5b9c=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
+        b=EfQDyeEgUQ+Qrg3DR0QoNoIzub5X+GGPRyCL4wxAaHasogsRptEb4Bd3oZsiAj8JJ7
+         lZn/hkEDEXRyzUqAvCl8cr2JD5Etvb+cmEs2s2Cad1bwkk9ILLelnGoUv4F+/saa00vv
+         gqwYX4mkB0NB72J6Qn96FnMf9CGb77Rf7KzjqNz+zrg3cOV3eZQakrvLwdYV9z7bZzYO
+         +RdslPjKKhdH8UD7/xTT4KTldsxXYQouOP/G+Fd35reI8X69P35eURChBNjaWhGNwKVx
+         6IGayzQZ/e/Cpo5wAsHckqVGWuTzf1BXh4Mma+S0NgI9/YX5hK5XBkzCUJ2+ZUe3ael4
+         6PGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=wDHwJafHUYO4eJUK4woQfDUsS2PWqX2xUsdpzcXqvFo=;
-        b=YW8X9iD5w8Ynxt3RHDvByFIn84zVfpLkU5qjSxxsFTJRAJr3a5q9b8FsSTchgICv+2
-         /Umzu2GRkzZ46UPfG3QPU5D+q0rm2BuSVbxRwbtzMi3Roe/SUKB5ue9vE+Ok/ganQO5y
-         DUzWbepecjUFEkNTVaey3jTMM1CWqNPI4tHuC4HlSGfF+3+4IPMePVgYdmDcwfBehlFb
-         KuTm42TdUlfSixXtVzG1iVxFB7anQB2bB+b//3NrgzX5SYKy5cGA9kXHG0pCCh1bVUvx
-         D/gnUfkYCXhATUWAkM8q2TuHvA9zgkiLx5ALAauTSrij2p+MzBMXePIcGbGoc88UHY42
-         UrCA==
-X-Gm-Message-State: APjAAAUTvMqJSIL15I9Dhn3f5SW2Bv3z3TeUJvOmRiWkQH0xqygN4X31
-        XpsTxfK3swCngu0Z/wrZVxhjZg==
-X-Google-Smtp-Source: APXvYqzQllr5uOwYGgFCk0oHK40yf7h67oQJx51bljL82rI3X++tkuZFqlo3TgkHXjrZ1TXYNvDhLg==
-X-Received: by 2002:a7b:c7d2:: with SMTP id z18mr5182272wmk.160.1582309195576;
-        Fri, 21 Feb 2020 10:19:55 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p5sm4789500wrt.79.2020.02.21.10.19.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2020 10:19:51 -0800 (PST)
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
+        b=KMti6uw9nUOZqtOLwu3XNH5X6sA12BTiB+WgZiaF6WxwPdJH5HUOGzpS+ipSlwFiVW
+         d1gBLw55pQgtNcNpplZultgVKVstb6/zYp/ytLofViVHNfD1BlYd+P/4SKiiQyiXoXsy
+         9uJ09ncvRIZ5nJRHwYe0RmNIi8Iabv2uiXOrVkP9zViw4dVfeYMMLwWTQ22Wvi1ExfdG
+         a0WBx3+4kgmah/gy3MQfQPOcfmaQots2y4+WE3N6WWFZ6AMPLG4daAQnA9FyLO3hBPYt
+         /NFtZCIO4W513YcVRsMZodF5nzA/uptEA+KvTElMNnli1NnUJ2sw9b6RBUzRZ6upKYPN
+         a/TQ==
+X-Gm-Message-State: APjAAAVdzVtMFhcgMT0RvXxkyc3zD1jGPFMxWNH4ruos+luVhuVinqol
+        ujISHKDBVy8y0dDH3r1MscFJ6Q==
+X-Google-Smtp-Source: APXvYqzTx1bJI3NV1Je5vKEqfQz6Se6Ip4sz6bG67kElIeHlfVsBUh/m8L5U5SI49Ara8F0hgbMlPQ==
+X-Received: by 2002:a92:d18a:: with SMTP id z10mr39526131ilz.48.1582309281689;
+        Fri, 21 Feb 2020 10:21:21 -0800 (PST)
+Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id f16sm1147037ilq.16.2020.02.21.10.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 10:21:20 -0800 (PST)
+Date:   Fri, 21 Feb 2020 11:21:19 -0700
+From:   Ross Zwisler <zwisler@google.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Raul Rangel <rrangel@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mattias Nissler <mnissler@chromium.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-7-scott.branden@broadcom.com>
- <20200220074711.GA3261162@kroah.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
-Date:   Fri, 21 Feb 2020 10:19:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Benjamin Gordon <bmgordon@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v5] Add a "nosymfollow" mount option.
+Message-ID: <20200221182119.GA89482@google.com>
+References: <20200204215014.257377-1-zwisler@google.com>
+ <CAHQZ30BgsCodGofui2kLwtpgzmpqcDnaWpS4hYf7Z+mGgwxWQw@mail.gmail.com>
+ <CAGRrVHwQimihNNVs434jNGF3BL5_Qov+1eYqBYKPCecQ0yjxpw@mail.gmail.com>
+ <CAGRrVHyzX4zOpO2nniv42BHOCbyCdPV9U7GE3FVhjzeFonb0bQ@mail.gmail.com>
+ <20200205032110.GR8731@bombadil.infradead.org>
+ <20200205034500.x3omkziqwu3g5gpx@yavin>
+ <CAGRrVHxRdLMx5axcB1Fyea8RZhfd-EO3TTpQtOvpOP0yxnAsbQ@mail.gmail.com>
+ <20200213154642.GA38197@google.com>
+ <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20200220074711.GA3261162@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Feb 21, 2020 at 12:21:42PM +1100, Aleksa Sarai wrote:
+> On 2020-02-13, Ross Zwisler <zwisler@google.com> wrote:
+> > On Thu, Feb 06, 2020 at 12:10:45PM -0700, Ross Zwisler wrote:
+<>
+> > > As far as I can tell, SB_SUBMOUNT doesn't actually have any dependence on
+> > > MS_SUBMOUNT. Nothing ever sets or checks MS_SUBMOUNT from within the kernel,
+> > > and whether or not it's set from userspace has no bearing on how SB_SUBMOUNT
+> > > is used.  SB_SUBMOUNT is set independently inside of the kernel in
+> > > vfs_submount().
+> > > 
+> > > I agree that their association seems to be historical, introduced in this
+> > > commit from David Howells:
+> > > 
+> > > e462ec50cb5fa VFS: Differentiate mount flags (MS_*) from internal superblock flags
+> > > 
+> > > In that commit message David notes:
+> > > 
+> > >      (1) Some MS_* flags get translated to MNT_* flags (such as MS_NODEV ->
+> > >          MNT_NODEV) without passing this on to the filesystem, but some
+> > >          filesystems set such flags anyway.
+> > > 
+> > > I think this is sort of what we are trying to do with MS_NOSYMFOLLOW: have a
+> > > userspace flag that translates to MNT_NOSYMFOLLOW, but which doesn't need an
+> > > associated SB_* flag.  Is it okay to reclaim the bit currently owned by
+> > > MS_SUBMOUNT and use it for MS_NOSYMFOLLOW.
+> > > 
+> > > A second option would be to choose one of the unused MS_* values from the
+> > > middle of the range, such as 256 or 512.  Looking back as far as git will let
+> > > me, I don't think that these flags have been used for MS_* values at least
+> > > since v2.6.12:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/fs.h?id=1da177e4c3f41524e886b7f1b8a0c1fc7321cac2
+> > > 
+> > > I think maybe these used to be S_WRITE and S_APPEND, which weren't filesystem
+> > > mount flags?
+> > > 
+> > > https://sites.uclouvain.be/SystInfo/usr/include/sys/mount.h.html
+> > > 
+> > > A third option would be to create this flag using the new mount system:
+> > > 
+> > > https://lwn.net/Articles/753473/
+> > > https://lwn.net/Articles/759499/
+> > > 
+> > > My main concern with this option is that for Chrome OS we'd like to be able to
+> > > backport whatever solution we come up with to a variety of older kernels, and
+> > > if we go with the new mount system this would require us to backport the
+> > > entire new mount system to those kernels, which I think is infeasible.  
+> > > 
+> > > David, what are your thoughts on this?  Of these three options for supporting
+> > > a new MS_NOSYMFOLLOW flag:
+> > > 
+> > > 1) reclaim the bit currently used by MS_SUBMOUNT
+> > > 2) use a smaller unused value for the flag, 256 or 512
+> > > 3) implement the new flag only in the new mount system
+> > > 
+> > > do you think either #1 or #2 are workable?  If so, which would you prefer?
+> > 
+> > Gentle ping on this - do either of the options using the existing mount API
+> > seem possible?  Would it be useful for me to send out example patches in one
+> > of those directions?  Or is it out of the question, and I should spend my time
+> > on making patches using the new mount system?  Thanks!
+> 
+> I think (1) or (2) sound reasonable, but I'm not really the right person
+> to ask.
 
-
-On 2020-02-19 11:47 p.m., Greg Kroah-Hartman wrote:
-> On Wed, Feb 19, 2020 at 04:48:24PM -0800, Scott Branden wrote:
->> Add Broadcom VK driver offload engine.
->> This driver interfaces to the VK PCIe offload engine to perform
->> should offload functions as video transcoding on multiple streams
->> in parallel.  VK device is booted from files loaded using
->> request_firmware_into_buf mechanism.  After booted card status is updated
->> and messages can then be sent to the card.
->> Such messages contain scatter gather list of addresses
->> to pull data from the host to perform operations on.
-> Why is this a tty driver?
-We have a tty driver here as there are (multiple) console interfaces to 
-the card.
-The only viable interface to the card is through the PCIe bus.  We can't 
-hook up cables to the card to get at the consoles.
-As such we implemented a tty driver to access the console via a circular 
-buffer in PCIe BAR space.
-
-It is extremely useful.  You get console access to virtual serial ports 
-connected to each processor inside the VK SoC.
-Future enhancement is to connect the tty driver to use an MSIX interrupt 
-rather than polling.
-Once that is done lrz/sz transfers will be much quicker.  I'd also look 
-at if I could use ser2net to get network access
-for the processors on the VK SoC over this interface as well.
->
-> Have you worked with the V4L developers to tie this into the proper
-> in-kernel apis for this type of functionality?
-We looked at the V4L model doesn't have any support for anything we are 
-doing in this driver.
-We also want a driver that doesn't care about video.  It could be 
-offloading crypto or other operations.
-We talked with Olof about all of this previously and he said leave it as 
-a misc driver for now.
-He was going to discuss at linux plumbers conference that we need some 
-sort of offload engine model that such devices could fit into.
-> Using a tty driver seems like the totally incorrect way to do this, what
-> am I missing?
-tty driver is used to provide console access to the processors running 
-on vk.
-Data is sent using the bcm_vk_msg interface by read/write operations 
-from user space.
-VK then gets the messages and DMA's the data to/from host memory when 
-needed to process.
->
-> Also, do not make up random error values, you return "-1" a lot here,
-> that is not ok.  Please fix up to return the correct -Ewhatever values
-> instead.
-OK.
->
-> thanks,
->
-> greg k-h
-
+Cool, I appreciate the feedback. :)  I'll go ahead and implement #2 and send
+it out, along with example man page updates.
