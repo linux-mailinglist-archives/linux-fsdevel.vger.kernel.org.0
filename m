@@ -2,178 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09270167944
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 10:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86231167990
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 10:37:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbgBUJWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 04:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbgBUJWW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 04:22:22 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727840AbgBUJhl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 04:37:41 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:32112 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726930AbgBUJhl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 04:37:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582277859;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PKgM7vsRrdBwIvm369Whuhz6zJ+JIzSVniKOUJb1bUM=;
+        b=NXpkh35+NCUkywhrgKh0XGZx1flve2igJfsJTpDvD3ysUrCMm8FopQ6IaRSkyOApNS3OYD
+        w+haYz0c5pz9s6YHhpacLUKNsRXXlukBs0KGdsmCMYGgeIZUSyOcW/F1sVS4V9SwQwco+x
+        +MR/1SIiLOU5O4hNp9OLIUaHWWYi3F4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-349-1a6uWXuZP3u46w5NtGZVKg-1; Fri, 21 Feb 2020 04:37:38 -0500
+X-MC-Unique: 1a6uWXuZP3u46w5NtGZVKg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08DDD20722;
-        Fri, 21 Feb 2020 09:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582276940;
-        bh=pjHNbG2oq138uQYds5DJIbJkvhz2l6NkNog/+t1q8Ec=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HxDT8BRhztP2WTX3bgEvllGQp8+PDLoASLjfZ8HWWU07IYw0PXLTO0xQz0QbEbHNn
-         gUUoX8hmkk9yqi41YBvLcS3cD4XH7wCLjhrzYRIescdRlq6C5KJdluJrjiZjDX8hxG
-         0qjFvw7nx1jGT9Wlj74NJcrGyy0msCUCjjlnunGo=
-Date:   Fri, 21 Feb 2020 10:22:17 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
-Message-ID: <20200221092217.GA60193@kroah.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-6-scott.branden@broadcom.com>
- <20200220075045.GB3261162@kroah.com>
- <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 42482800D50;
+        Fri, 21 Feb 2020 09:37:37 +0000 (UTC)
+Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B12A2859A5;
+        Fri, 21 Feb 2020 09:37:36 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 17:48:01 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] dax/dm: disable testing on devices that don't
+ support dax
+Message-ID: <20200221094801.GJ14282@dhcp-12-102.nay.redhat.com>
+Mail-Followup-To: Jeff Moyer <jmoyer@redhat.com>, fstests@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+References: <20200220200632.14075-1-jmoyer@redhat.com>
+ <20200220200632.14075-2-jmoyer@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+In-Reply-To: <20200220200632.14075-2-jmoyer@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 05:15:58PM -0800, Scott Branden wrote:
-> Hi Greg,
+On Thu, Feb 20, 2020 at 03:06:30PM -0500, Jeff Moyer wrote:
+> Move the check for dax from the individual target scripts into
+> _require_dm_target.  This fixes up a couple of missed tests that are
+> failing due to the lack of dax support (such as tests requiring
+> dm-snapshot).
 > 
-> Thanks for the review.  Comments inline.
+> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
+> ---
+>  common/dmdelay  |  5 -----
+>  common/dmerror  |  5 -----
+>  common/dmflakey |  5 -----
+>  common/dmthin   |  5 -----
+>  common/rc       | 11 +++++++++++
+>  5 files changed, 11 insertions(+), 20 deletions(-)
 > 
-> On 2020-02-19 11:50 p.m., Greg Kroah-Hartman wrote:
-> > On Wed, Feb 19, 2020 at 04:48:23PM -0800, Scott Branden wrote:
-> > > Add user space api for bcm-vk driver.
-> > > 
-> > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> > > ---
-> > >   include/uapi/linux/misc/bcm_vk.h | 117 +++++++++++++++++++++++++++++++
-> > >   1 file changed, 117 insertions(+)
-> > >   create mode 100644 include/uapi/linux/misc/bcm_vk.h
-> > > 
-> > > diff --git a/include/uapi/linux/misc/bcm_vk.h b/include/uapi/linux/misc/bcm_vk.h
-> > > new file mode 100644
-> > > index 000000000000..56a2178e06f5
-> > > --- /dev/null
-> > > +++ b/include/uapi/linux/misc/bcm_vk.h
-> > > @@ -0,0 +1,117 @@
-> > > +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
-> > > +/*
-> > > + * Copyright 2018-2020 Broadcom.
-> > > + */
-> > > +
-> > > +#ifndef __UAPI_LINUX_MISC_BCM_VK_H
-> > > +#define __UAPI_LINUX_MISC_BCM_VK_H
-> > > +
-> > > +#include <linux/ioctl.h>
-> > > +#include <linux/types.h>
-> > > +
-> > > +struct vk_image {
-> > > +	__u32 type;     /* Type of image */
-> > > +#define VK_IMAGE_TYPE_BOOT1 1 /* 1st stage (load to SRAM) */
-> > > +#define VK_IMAGE_TYPE_BOOT2 2 /* 2nd stage (load to DDR) */
-> > > +	char filename[64]; /* Filename of image */
-> > __u8?
-> I don't understand why char is not appropriate for a filename.
-> Would like to understand why __u8 is correct to use here vs. char.
+> diff --git a/common/dmdelay b/common/dmdelay
+> index f1e725b9..66cac1a7 100644
+> --- a/common/dmdelay
+> +++ b/common/dmdelay
+> @@ -7,11 +7,6 @@
+>  DELAY_NONE=0
+>  DELAY_READ=1
+>  
+> -echo $MOUNT_OPTIONS | grep -q dax
+> -if [ $? -eq 0 ]; then
+> -	_notrun "Cannot run tests with DAX on dmdelay devices"
+> -fi
+> -
+>  _init_delay()
+>  {
+>  	local BLK_DEV_SIZE=`blockdev --getsz $SCRATCH_DEV`
+> diff --git a/common/dmerror b/common/dmerror
+> index 426f1e96..7d12e0a1 100644
+> --- a/common/dmerror
+> +++ b/common/dmerror
+> @@ -4,11 +4,6 @@
+>  #
+>  # common functions for setting up and tearing down a dmerror device
+>  
+> -echo $MOUNT_OPTIONS | grep -q dax
+> -if [ $? -eq 0 ]; then
+> -	_notrun "Cannot run tests with DAX on dmerror devices"
+> -fi
+> -
+>  _dmerror_setup()
+>  {
+>  	local dm_backing_dev=$SCRATCH_DEV
+> diff --git a/common/dmflakey b/common/dmflakey
+> index 2af3924d..b4e11ae9 100644
+> --- a/common/dmflakey
+> +++ b/common/dmflakey
+> @@ -8,11 +8,6 @@ FLAKEY_ALLOW_WRITES=0
+>  FLAKEY_DROP_WRITES=1
+>  FLAKEY_ERROR_WRITES=2
+>  
+> -echo $MOUNT_OPTIONS | grep -q dax
+> -if [ $? -eq 0 ]; then
+> -	_notrun "Cannot run tests with DAX on dmflakey devices"
+> -fi
+> -
+>  _init_flakey()
+>  {
+>  	local BLK_DEV_SIZE=`blockdev --getsz $SCRATCH_DEV`
+> diff --git a/common/dmthin b/common/dmthin
+> index 7946e9a7..61dd6f89 100644
+> --- a/common/dmthin
+> +++ b/common/dmthin
+> @@ -21,11 +21,6 @@ DMTHIN_POOL_DEV="/dev/mapper/$DMTHIN_POOL_NAME"
+>  DMTHIN_VOL_NAME="thin-vol"
+>  DMTHIN_VOL_DEV="/dev/mapper/$DMTHIN_VOL_NAME"
+>  
+> -echo $MOUNT_OPTIONS | grep -q dax
+> -if [ $? -eq 0 ]; then
+> -	_notrun "Cannot run tests with DAX on dmthin devices"
+> -fi
+> -
+>  _dmthin_cleanup()
+>  {
+>  	$UMOUNT_PROG $SCRATCH_MNT > /dev/null 2>&1
+> diff --git a/common/rc b/common/rc
+> index eeac1355..65cde32b 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -1874,6 +1874,17 @@ _require_dm_target()
+>  	_require_sane_bdev_flush $SCRATCH_DEV
+>  	_require_command "$DMSETUP_PROG" dmsetup
+>  
+> +	echo $MOUNT_OPTIONS | grep -q dax
+> +	if [ $? -eq 0 ]; then
+> +		case $target in
+> +		stripe|linear|log-writes)
 
-Why is __u8 not correct?  It's the data type we use for ioctls.
+I've checked all cases which import ./common/dm.* (without dmapi), they all
+has _require_dm_target. So this patch is good to me.
 
-> > > +};
-> > > +
-> > > +/* default firmware images names */
-> > > +#define VK_BOOT1_DEF_VALKYRIE_FILENAME	"vk-boot1.bin"
-> > > +#define VK_BOOT2_DEF_VALKYRIE_FILENAME	"vk-boot2.bin"
-> > > +
-> > > +#define VK_BOOT1_DEF_VIPER_FILENAME	"vp-boot1.bin"
-> > > +#define VK_BOOT2_DEF_VIPER_FILENAME	"vp-boot2.bin"
-> > Why do these need to be in a uapi .h file?  Shouldn't they just be part
-> > of the normal MODULE_FIRMWARE() macro in the driver itself?
-> ioctl VK_IOCTL_LOAD_IMAGE passes in type of image to load and filename.
-> These are the default names used if the images are autoloaded by the driver.
+And by checking current linux source code:
 
-Then put them in the driver, not in the user api file.
+  0 dm-linear.c      226 .direct_access = linear_dax_direct_access,
+  1 dm-log-writes.c 1016 .direct_access = log_writes_dax_direct_access,
+  2 dm-stripe.c      486 .direct_access = stripe_dax_direct_access,
+  3 dm-target.c      159 .direct_access = io_err_dax_direct_access,
 
-> But if userspace app wishes to load (or reload) the default images then it
-> needs to know the name of the file to pass in ioctl.
+Only linear, stripe and log-writes support direct_access.
 
-That's up to userspace.
+Thanks,
+Zorro
 
-> I guess I could change the API at this point to lookup the default filename
-> if NULL filename passed into ioctl.
-
-Yes please.
-
-> > > +struct vk_access {
-> > > +	__u8 barno;     /* BAR number to use */
-> > > +	__u8 type;      /* Type of access */
-> > > +#define VK_ACCESS_READ 0
-> > > +#define VK_ACCESS_WRITE 1
-> > > +	__u32 len;      /* length of data */
-> > Horrible padding issues, are you sure this all works properly?
-> Haven't had any issues.
-
-Use pahole to see the holes you have in here and please fix that up.
-
-> > > +	__u64 offset;   /* offset in BAR */
-> > > +	__u32 *data;    /* where to read/write data to */
-> > Are you _SURE_ you want a pointer here?  How do you handle the compat
-> > issues with 32/64 user/kernel space?
-> Don't care about 32-bit user space for this driver.
-
-We all do, see the link that Arnd sent you.
-
-> I don't think there isn't even enough memory in such systems for the number
-> of streams of video buffers needed for transcoding.
-
-32bit systems have lots of memory.
-
-> This driver is only used in high end 64-bit x86 servers.
-
-For today, what about in 2 years?
-
-> But, VK_IOCTL_ACCESS_BAR can go away entirely if standard user space
-> approach already exists as you imply.
-
-Yes, please use that interface, as you should never duplicate existing
-functionality.
-
-> > > +};
-> > And isn't this just a normal PCI write thing?  Can't you do it from
-> > userspace using the existing userspace PCI accesses?  Why do you need a
-> > special ioctl for it?
-> This follows how pci_endpoint_test reads and writes BARS via ioctl.
-> It also abstracts the accesses all into the device node being opened.
+> +			;;
+> +		*)
+> +			_notrun "Cannot run tests with DAX on $target devices."
+> +			;;
+> +		esac
+> +	fi
+> +
+>  	modprobe dm-$target >/dev/null 2>&1
+>  
+>  	$DMSETUP_PROG targets 2>&1 | grep -q ^$target
+> -- 
+> 2.19.1
 > 
-> I am not familiar with userspace PCI accesses.  Would this be through some
-> sys entries?
 
-Yes, it can read PCI config space that way, and if you use the uio
-interface, you can read PCI memory.
-
-thanks,
-
-greg k-h
