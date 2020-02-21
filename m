@@ -2,208 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C46C16882D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:18:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9986A168840
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:21:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgBUUSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 15:18:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36164 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726483AbgBUUSJ (ORCPT
+        id S1728145AbgBUUVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 15:21:38 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48276 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726483AbgBUUVi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 15:18:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582316288;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zY/Z8TsLgbtng5kAwEfMEqxDzlskZr1LWc4KnWx4tb8=;
-        b=a/8G+KySqjaOxzazykfVSEO2buZK273lFmAnSF7DHHa9bmUz+iVr7JF60LpqPNwwQgpSH+
-        m+slsxGskn6XHIqfRgK/quDNEoH1qSpe8qncxdu+EUHnjbBeIjevYCKt7dSNK4rZtuHJux
-        0TxLEiPLPQekmkXab6B4Yvx4sZ9Ep4U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-469-HiTKLC89O265FEYHCpbOpQ-1; Fri, 21 Feb 2020 15:18:04 -0500
-X-MC-Unique: HiTKLC89O265FEYHCpbOpQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 21 Feb 2020 15:21:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id B8A788EE3D5;
+        Fri, 21 Feb 2020 12:21:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582316496;
+        bh=X9lwNoA40+rafWitx3M+xWbVDsNdql9HImMtv2QjhWQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MUEts7USA39twCVAZQqCBvLNWZDomXqzMPbZbKIWZih7ENCn3fbWk2hryWh/kMA85
+         kduhunZyO/HM6qqQXRIClt90s5Y5JzhLPjZBxe3Y/bMkg2GOU6VFbTIQQhLEr8mHDE
+         2ZjXS59RN0P0eHFS+Ckn+QhaR+XVgeGORqlHnncM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 2Y69yOA-ybgd; Fri, 21 Feb 2020 12:21:36 -0800 (PST)
+Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C443107ACC5;
-        Fri, 21 Feb 2020 20:18:03 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 63A819077F;
-        Fri, 21 Feb 2020 20:18:00 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 078AA220A24; Fri, 21 Feb 2020 15:17:59 -0500 (EST)
-Date:   Fri, 21 Feb 2020 15:17:59 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com, dm-devel@redhat.com
-Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
- arbitrary offset and len
-Message-ID: <20200221201759.GF25974@redhat.com>
-References: <20200218214841.10076-1-vgoyal@redhat.com>
- <20200218214841.10076-3-vgoyal@redhat.com>
- <x49lfoxj622.fsf@segfault.boston.devel.redhat.com>
- <20200220215707.GC10816@redhat.com>
- <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9607F8EE180;
+        Fri, 21 Feb 2020 12:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1582316496;
+        bh=X9lwNoA40+rafWitx3M+xWbVDsNdql9HImMtv2QjhWQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MUEts7USA39twCVAZQqCBvLNWZDomXqzMPbZbKIWZih7ENCn3fbWk2hryWh/kMA85
+         kduhunZyO/HM6qqQXRIClt90s5Y5JzhLPjZBxe3Y/bMkg2GOU6VFbTIQQhLEr8mHDE
+         2ZjXS59RN0P0eHFS+Ckn+QhaR+XVgeGORqlHnncM=
+Message-ID: <1582316494.3376.45.camel@HansenPartnership.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
+ [ver #17]
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
+        jannh@google.com, darrick.wong@oracle.com,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 21 Feb 2020 12:21:34 -0800
+In-Reply-To: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 01:32:48PM -0500, Jeff Moyer wrote:
-> Vivek Goyal <vgoyal@redhat.com> writes:
+On Fri, 2020-02-21 at 18:01 +0000, David Howells wrote:
+[...]
+> ============================
+> FILESYSTEM INFORMATION QUERY
+> ============================
 > 
-> > On Thu, Feb 20, 2020 at 04:35:17PM -0500, Jeff Moyer wrote:
-> >> Vivek Goyal <vgoyal@redhat.com> writes:
-> >> 
-> >> > Currently pmem_clear_poison() expects offset and len to be sector aligned.
-> >> > Atleast that seems to be the assumption with which code has been written.
-> >> > It is called only from pmem_do_bvec() which is called only from pmem_rw_page()
-> >> > and pmem_make_request() which will only passe sector aligned offset and len.
-> >> >
-> >> > Soon we want use this function from dax_zero_page_range() code path which
-> >> > can try to zero arbitrary range of memory with-in a page. So update this
-> >> > function to assume that offset and length can be arbitrary and do the
-> >> > necessary alignments as needed.
-> >> 
-> >> What caller will try to zero a range that is smaller than a sector?
-> >
-> > Hi Jeff,
-> >
-> > New dax zeroing interface (dax_zero_page_range()) can technically pass
-> > a range which is less than a sector. Or which is bigger than a sector
-> > but start and end are not aligned on sector boundaries.
+> The fsinfo() system call allows information about the filesystem at a
+> particular path point to be queried as a set of attributes, some of
+> which may have more than one value.
 > 
-> Sure, but who will call it with misaligned ranges?
-
-create a file foo.txt of size 4K and then truncate it.
-
-"truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
-4095.
-
-I have also written a test for this.
-
-https://github.com/rhvgoyal/misc/blob/master/pmem-tests/iomap-range-test.sh#L102
-
+> Attribute values are of four basic types:
 > 
-> > At this point of time, all I care about is that case of an arbitrary
-> > range is handeled well. So if a caller passes a range in, we figure
-> > out subrange which is sector aligned in terms of start and end, and
-> > clear poison on those sectors and ignore rest of the range. And
-> > this itself will be an improvement over current behavior where 
-> > nothing is cleared if I/O is not sector aligned.
+>  (1) Version dependent-length structure (size defined by type).
 > 
-> I don't think this makes sense.  The caller needs to know about the
-> blast radius of errors.  This is why I asked for a concrete example.
-> It might make more sense, for example, to return an error if not all of
-> the errors could be cleared.
+>  (2) Variable-length string (up to 4096, including NUL).
 > 
-> >> > nvdimm_clear_poison() seems to assume offset and len to be aligned to
-> >> > clear_err_unit boundary. But this is currently internal detail and is
-> >> > not exported for others to use. So for now, continue to align offset and
-> >> > length to SECTOR_SIZE boundary. Improving it further and to align it
-> >> > to clear_err_unit boundary is a TODO item for future.
-> >> 
-> >> When there is a poisoned range of persistent memory, it is recorded by
-> >> the badblocks infrastructure, which currently operates on sectors.  So,
-> >> no matter what the error unit is for the hardware, we currently can't
-> >> record/report to userspace anything smaller than a sector, and so that
-> >> is what we expect when clearing errors.
-> >> 
-> >> Continuing on for completeness, we will currently not map a page with
-> >> badblocks into a process' address space.  So, let's say you have 256
-> >> bytes of bad pmem, we will tell you we've lost 512 bytes, and even if
-> >> you access a valid mmap()d address in the same page as the poisoned
-> >> memory, you will get a segfault.
-> >> 
-> >> Userspace can fix up the error by calling write(2) and friends to
-> >> provide new data, or by punching a hole and writing new data to the hole
-> >> (which may result in getting a new block, or reallocating the old block
-> >> and zeroing it, which will clear the error).
-> >
-> > Fair enough. I do not need poison clearing at finer granularity. It might
-> > be needed once dev_dax path wants to clear poison. Not sure how exactly
-> > that works.
+>  (3) List of structures (up to INT_MAX size).
 > 
-> It doesn't.  :)
+>  (4) Opaque blob (up to INT_MAX size).
 > 
-> >> > +	/*
-> >> > +	 * Callers can pass arbitrary offset and len. But nvdimm_clear_poison()
-> >> > +	 * expects memory offset and length to meet certain alignment
-> >> > +	 * restrction (clear_err_unit). Currently nvdimm does not export
-> >>                                                   ^^^^^^^^^^^^^^^^^^^^^^
-> >> > +	 * required alignment. So align offset and length to sector boundary
-> >> 
-> >> What is "nvdimm" in that sentence?  Because the nvdimm most certainly
-> >> does export the required alignment.  Perhaps you meant libnvdimm?
-> >
-> > I meant nvdimm_clear_poison() function in drivers/nvdimm/bus.c. Whatever
-> > it is called. It first queries alignement required (clear_err_unit) and
-> > then makes sure range passed in meets that alignment requirement.
+> Attributes can have multiple values either as a sequence of values or
+> a sequence-of-sequences of values and all the values of a particular
+> attribute must be of the same type.
 > 
-> My point was your comment is misleading.
+> Note that the values of an attribute *are* allowed to vary between
+> dentries within a single superblock, depending on the specific dentry
+> that you're looking at, but all the values of an attribute have to be
+> of the same type.
 > 
-> >> We could potentially support clearing less than a sector, but I'd have
-> >> to understand the use cases better before offerring implementation
-> >> suggestions.
-> >
-> > I don't need clearing less than a secotr. Once somebody needs it they
-> > can implement it. All I am doing is making sure current logic is not
-> > broken when dax_zero_page_range() starts using this logic and passes
-> > an arbitrary range. We need to make sure we internally align I/O 
+> I've tried to make the interface as light as possible, so
+> integer/enum attribute selector rather than string and the core does
+> all the allocation and extensibility support work rather than leaving
+> that to the filesystems. That means that for the first two attribute
+> types, the filesystem will always see a sufficiently-sized buffer
+> allocated.  Further, this removes the possibility of the filesystem
+> gaining access to the userspace buffer.
 > 
-> An arbitrary range is the same thing as less than a sector.  :)  Do you
-> know of an instance where the range will not be sector-aligned and sized?
 > 
-> > and carve out an aligned sub-range and pass that subrange to
-> > nvdimm_clear_poison().
+> fsinfo() allows a variety of information to be retrieved about a
+> filesystem and the mount topology:
 > 
-> And what happens to the rest?  The caller is left to trip over the
-> errors?  That sounds pretty terrible.  I really think there needs to be
-> an explicit contract here.
+>  (1) General superblock attributes:
+> 
+>      - Filesystem identifiers (UUID, volume label, device numbers,
+> ...)
+>      - The limits on a filesystem's capabilities
+>      - Information on supported statx fields and attributes and IOC
+> flags.
+>      - A variety single-bit flags indicating supported capabilities.
+>      - Timestamp resolution and range.
+>      - The amount of space/free space in a filesystem (as statfs()).
+>      - Superblock notification counter.
+> 
+>  (2) Filesystem-specific superblock attributes:
+> 
+>      - Superblock-level timestamps.
+>      - Cell name.
+>      - Server names and addresses.
+>      - Filesystem-specific information.
+> 
+>  (3) VFS information:
+> 
+>      - Mount topology information.
+>      - Mount attributes.
+>      - Mount notification counter.
+> 
+>  (4) Information about what the fsinfo() syscall itself supports,
+> including
+>      the type and struct/element size of attributes.
+> 
+> The system is extensible:
+> 
+>  (1) New attributes can be added.  There is no requirement that a
+>      filesystem implement every attribute.  Note that the core VFS
+> keeps a
+>      table of types and sizes so it can handle future extensibility
+> rather
+>      than delegating this to the filesystems.
+> 
+>  (2) Version length-dependent structure attributes can be made larger
+> and
+>      have additional information tacked on the end, provided it keeps
+> the
+>      layout of the existing fields.  If an older process asks for a
+> shorter
+>      structure, it will only be given the bits it asks for.  If a
+> newer
+>      process asks for a longer structure on an older kernel, the
+> extra
+>      space will be set to 0.  In all cases, the size of the data
+> actually
+>      available is returned.
+> 
+>      In essence, the size of a structure is that structure's version:
+> a
+>      smaller size is an earlier version and a later version includes
+>      everything that the earlier version did.
+> 
+>  (3) New single-bit capability flags can be added.  This is a
+> structure-typed
+>      attribute and, as such, (2) applies.  Any bits you wanted but
+> the kernel
+>      doesn't support are automatically set to 0.
+> 
+> fsinfo() may be called like the following, for example:
+> 
+> 	struct fsinfo_params params = {
+> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
+> 		.flags		= FSINFO_FLAGS_QUERY_PATH,
+> 		.request	= FSINFO_ATTR_AFS_SERVER_ADDRESSES,
+> 		.Nth		= 2,
+> 	};
+> 	struct fsinfo_server_address address;
+> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> 		     &address, sizeof(address));
+> 
+> The above example would query an AFS filesystem to retrieve the
+> address
+> list for the 3rd server, and:
+> 
+> 	struct fsinfo_params params = {
+> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
+> 		.flags		= FSINFO_FLAGS_QUERY_PATH,
+> 		.request	= FSINFO_ATTR_AFS_CELL_NAME;
+> 	};
+> 	char cell_name[256];
+> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> 		     &cell_name, sizeof(cell_name));
+> 
+> would retrieve the name of an AFS cell as a string.
+> 
+> In future, I want to make fsinfo() capable of querying a context
+> created by
+> fsopen() or fspick(), e.g.:
+> 
+> 	fd = fsopen("ext4", 0);
+> 	struct fsinfo_params params = {
+> 		.flags		= FSINFO_FLAGS_QUERY_FSCONTEXT,
+> 		.request	= FSINFO_ATTR_PARAMETERS;
+> 	};
+> 	char buffer[65536];
+> 	fsinfo(fd, NULL, &params, &buffer, sizeof(buffer));
+> 
+> even if that context doesn't currently have a superblock attached.  I
+> would prefer this to contain length-prefixed strings so that there's
+> no need to insert escaping, especially as any character, including
+> '\', can be used as the separator in cifs and so that binary
+> parameters can be returned (though that is a lesser issue).
 
-Ok, I think is is the contentious bit. Current interface
-(__dax_zero_page_range()) either clears the poison (if I/O is aligned to
-sector) or expects page to be free of poison.
+Could I make a suggestion about how this should be done in a way that
+doesn't actually require the fsinfo syscall at all: it could just be
+done with fsconfig.  The idea is based on something I've wanted to do
+for configfd but couldn't because otherwise it wouldn't substitute for
+fsconfig, but Christian made me think it was actually essential to the
+ability of the seccomp and other verifier tools in the critique of
+configfd and I belive the same critique applies here.
 
-So in above example, of "truncate -s 23 foo.txt", currently I get an error
-because range being zeroed is not sector aligned. So
-__dax_zero_page_range() falls back to calling direct_access(). Which
-fails because there are poisoned sectors in the page.
+Instead of making fsconfig functionally configure ... as in you pass
+the attribute name, type and parameters down into the fs specific
+handler and the handler does a string match and then verifies the
+parameters and then acts on them, make it table configured, so what
+each fstype does is register a table of attributes which can be got and
+optionally set (with each attribute having a get and optional set
+function).  We'd have multiple tables per fstype, so the generic VFS
+can register a table of attributes it understands for every fstype
+(things like name, uuid and the like) and then each fs type would
+register a table of fs specific attributes following the same pattern. 
+The system would examine the fs specific table before the generic one,
+allowing overrides.  fsconfig would have the ability to both get and
+set attributes, permitting retrieval as well as setting (which is how I
+get rid of the fsinfo syscall), we'd have a global parameter, which
+would retrieve the entire table by name and type so the whole thing is
+introspectable because the upper layer knows a-priori all the
+attributes which can be set for a given fs type and what type they are
+(so we can make more of the parsing generic).  Any attribute which
+doesn't have a set routine would be read only and all attributes would
+have to have a get routine meaning everything is queryable.
 
-With my patches, dax_zero_page_range(), clears the poison from sector 1 to
-7 but leaves sector 0 untouched and just writes zeroes from byte 0 to 511
-and returns success.
+I think I know how to code this up in a way that would be fully
+transparent to the existing syscalls.
 
-So question is, is this better behavior or worse behavior. If sector 0
-was poisoned, it will continue to remain poisoned and caller will come
-to know about it on next read and then it should try to truncate file
-to length 0 or unlink file or restore that file to get rid of poison.
-
-IOW, if a partial block is being zeroed and if it is poisoned, caller
-will not be return an error and poison will not be cleared and memory
-will be zeroed. What do we expect in such cases.
-
-Do we expect an interface where if there are any bad blocks in the range
-being zeroed, then they all should be cleared (and hence all I/O should
-be aligned) otherwise error is returned. If yes, I could make that
-change.
-
-Downside of current interface is that it will clear as many blocks as
-possible in the given range and leave starting and end blocks poisoned
-(if it is unaligned) and not return error. That means a reader will
-get error on these blocks again and they will have to try to clear it
-again.
-
-Thanks
-Vivek
+James
 
