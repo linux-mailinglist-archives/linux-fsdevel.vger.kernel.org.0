@@ -2,221 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 487FC168867
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 109F616887B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 22:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbgBUUkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 15:40:31 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37940 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbgBUUka (ORCPT
+        id S1726731AbgBUVAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 16:00:42 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41251 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbgBUVAm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 15:40:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d6so1572216pgn.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 12:40:29 -0800 (PST)
+        Fri, 21 Feb 2020 16:00:42 -0500
+Received: by mail-oi1-f194.google.com with SMTP id i1so2948517oie.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 13:00:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=j03hnTjPsBfir0Nox78vfTL7k3vASulpASEG8GdxSwA=;
-        b=Gq+a7Tz+yPUi78mKDnBzWnpasIVXPdKKcEWwXocn2dNvN0rLRdSP3mToE8uQLJlUEo
-         TURR7ynWSLemQId2EzzbXQ8benNZg5NWGOglEOBdgy3h1dZf1dTNUvk7x0c9m1RaC0o2
-         k6sx1BcrrO1CUo7AOVCbxEHqmV9MUOOJveR6CUoGsZNRCoIQEMvRD5jTf46l45/Zf0fz
-         poo5/+6eE/zWOHUT4GGmoVezljvrgn2WLuVKmHzAD0yST2dFZ2oqa71fXnSevR8A0YCb
-         /8xbJYEQdupwdIlQIAEEykv/CzbOkLCI+X4HJdHbMOXXoZNzOg0l8euh8hKz0B/r/Ap8
-         Sv5Q==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H9zGqeiAFuU1hz56hby3sLYJSu+5W5mMr3othhbbia0=;
+        b=LGR8SSxjxsz7OwmUqvbysr04iq9GPLpZrVPnhdeyWuwXYL6nR0s7DqdFSHEy7steMk
+         54L4psHjsvpbD6fElTbY9MLZDealwQ3dB3E4H4hRi1QRTwM07LT0lotlbHcd0fO/szMN
+         WrtNGZIBKOq11kZ+zWAQVOmG1SWPQPmyg5OmSnBHEFtj7K2b8p+8xAxCCaVAUKmB66Xk
+         eymuD0trHzIkIpiNTQXoBkg0DxpjEoXpmulW3fNEV1d3fylm0bbtMwJWfO9jhnQzSipx
+         taaEo7YFVu/AcNeABK2ZSDMWP1nrDl/v0DuySFZEdAqq4RDHdVD/rjDUdfzTJ3lAq1dC
+         SwPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=j03hnTjPsBfir0Nox78vfTL7k3vASulpASEG8GdxSwA=;
-        b=fglVOiDliPWRVFBOGmXAmkMA0X2dFvV21ZR3MJNqO3sGclrrxnAezKah/7ibQwuN7U
-         2NFfQFCrCv/Zw08nOh7exAf/lieR9cnJRT3xby4uXy5KFd3tNhzIgq7y0lXc6yOE5g75
-         lKwbaflQWJKqR+1Xbt++RRbisOtwczNSk0VG9CJr+tnkTBNHAmlEP1edlvU0UM/LqkBl
-         YYOZ4wi13gmjZZEaoI1ef7kq+vY+/Fpq59+S+VZye2ulr8iVSmLdTfHlwwGC6FsZ5s+q
-         EhEJzR5GHUYz1IuUQC9uefI+Gi5zzo2j4OAm5GTk4KzpqjKoBQTiulTrb+WBJZx1uc6K
-         fd6w==
-X-Gm-Message-State: APjAAAWgf+QP+eUvqLsEw4zl/fKhTiacPAqTam7hiVM/EuPwaWtTm8MF
-        0vWJj98LUpOUDVyxsf7gdnynkvhk9T5MpQ==
-X-Google-Smtp-Source: APXvYqzu87st5xVU4vqGre8XTaL7l6OCGkHXv/gXyigDrb6WJ57JFQTk03IejRMBiVYUeUNplX4NKA==
-X-Received: by 2002:a63:36c2:: with SMTP id d185mr42016113pga.59.1582317628681;
-        Fri, 21 Feb 2020 12:40:28 -0800 (PST)
-Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id y15sm3254431pgj.78.2020.02.21.12.40.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Feb 2020 12:40:27 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <6B909F7B-2C55-4D5D-AAFA-467F1A852B24@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] ext4: use non-movable memory for superblock readahead
-Date:   Fri, 21 Feb 2020 13:40:02 -0700
-In-Reply-To: <20200221192035.180546-1-guro@fb.com>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Perepechko <andrew.perepechko@seagate.com>,
-        Theodore Ts'o <tytso@mit.edu>, Gioh Kim <gioh.kim@lge.com>,
-        Jan Kara <jack@suse.cz>
-To:     Roman Gushchin <guro@fb.com>
-References: <20200221192035.180546-1-guro@fb.com>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H9zGqeiAFuU1hz56hby3sLYJSu+5W5mMr3othhbbia0=;
+        b=AO8UA1p4fGKQQjoH9nV09wg5oFhFfSiuiG6nHm6BzCUM0y4ge8auVKDUduJn/w44Hj
+         2m8/QuEAztEknal8XNIBQfYW/YlunR8Da99KUV71IMLo+W8IQXQ7HwLb105d7Ba3TwGD
+         mi7kdaV1tYz+nv+/CvGd13Ge+gAgQLDnk09xlrvsOOSJe6dNalMllQq22sl/kgb68miM
+         rXjEz6u6Mm9mxwvRhkiNOOsBpBQsZL18WaZ2MuA81oIR3XXKowWifV/enPrEr5SmrcGU
+         2gpbOdVs1flepk8XeMahfelTPhUsVX1G7Xjo+52gEcCjO8LeBdDxWEDKpLMp3FAhDXiN
+         7OhQ==
+X-Gm-Message-State: APjAAAXRyWN+ESELo4HOsJUeSo3yJyI5o7SbWeHE3PrQfHcy+CqmuAl7
+        Zzt/H2kGWqlwHep6k+Jf+31XnKNhiOE6CqRrvSjcZQ==
+X-Google-Smtp-Source: APXvYqw+sNx+g44a5wUn/igCjTg5OUz/j/7Mm1hjMZw3kTc6+e1Wo0DO9NrmlIQshXvM9KPkC+QIb+hq8ADsgW7KLyA=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr3561886oia.73.1582318840763;
+ Fri, 21 Feb 2020 13:00:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20200218214841.10076-1-vgoyal@redhat.com> <20200218214841.10076-3-vgoyal@redhat.com>
+ <x49lfoxj622.fsf@segfault.boston.devel.redhat.com> <20200220215707.GC10816@redhat.com>
+ <x498skv3i5r.fsf@segfault.boston.devel.redhat.com> <20200221201759.GF25974@redhat.com>
+In-Reply-To: <20200221201759.GF25974@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 21 Feb 2020 13:00:29 -0800
+Message-ID: <CAPcyv4j3BPGvrhuVaQZgvZ0i+M+i-Ab0BH+mAjR_aZzu4_kidQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
+ arbitrary offset and len
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Feb 21, 2020 at 12:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Fri, Feb 21, 2020 at 01:32:48PM -0500, Jeff Moyer wrote:
+> > Vivek Goyal <vgoyal@redhat.com> writes:
+> >
+> > > On Thu, Feb 20, 2020 at 04:35:17PM -0500, Jeff Moyer wrote:
+> > >> Vivek Goyal <vgoyal@redhat.com> writes:
+> > >>
+> > >> > Currently pmem_clear_poison() expects offset and len to be sector aligned.
+> > >> > Atleast that seems to be the assumption with which code has been written.
+> > >> > It is called only from pmem_do_bvec() which is called only from pmem_rw_page()
+> > >> > and pmem_make_request() which will only passe sector aligned offset and len.
+> > >> >
+> > >> > Soon we want use this function from dax_zero_page_range() code path which
+> > >> > can try to zero arbitrary range of memory with-in a page. So update this
+> > >> > function to assume that offset and length can be arbitrary and do the
+> > >> > necessary alignments as needed.
+> > >>
+> > >> What caller will try to zero a range that is smaller than a sector?
+> > >
+> > > Hi Jeff,
+> > >
+> > > New dax zeroing interface (dax_zero_page_range()) can technically pass
+> > > a range which is less than a sector. Or which is bigger than a sector
+> > > but start and end are not aligned on sector boundaries.
+> >
+> > Sure, but who will call it with misaligned ranges?
+>
+> create a file foo.txt of size 4K and then truncate it.
+>
+> "truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
+> 4095.
+>
+> I have also written a test for this.
+>
+> https://github.com/rhvgoyal/misc/blob/master/pmem-tests/iomap-range-test.sh#L102
+>
+> >
+> > > At this point of time, all I care about is that case of an arbitrary
+> > > range is handeled well. So if a caller passes a range in, we figure
+> > > out subrange which is sector aligned in terms of start and end, and
+> > > clear poison on those sectors and ignore rest of the range. And
+> > > this itself will be an improvement over current behavior where
+> > > nothing is cleared if I/O is not sector aligned.
+> >
+> > I don't think this makes sense.  The caller needs to know about the
+> > blast radius of errors.  This is why I asked for a concrete example.
+> > It might make more sense, for example, to return an error if not all of
+> > the errors could be cleared.
+> >
+> > >> > nvdimm_clear_poison() seems to assume offset and len to be aligned to
+> > >> > clear_err_unit boundary. But this is currently internal detail and is
+> > >> > not exported for others to use. So for now, continue to align offset and
+> > >> > length to SECTOR_SIZE boundary. Improving it further and to align it
+> > >> > to clear_err_unit boundary is a TODO item for future.
+> > >>
+> > >> When there is a poisoned range of persistent memory, it is recorded by
+> > >> the badblocks infrastructure, which currently operates on sectors.  So,
+> > >> no matter what the error unit is for the hardware, we currently can't
+> > >> record/report to userspace anything smaller than a sector, and so that
+> > >> is what we expect when clearing errors.
+> > >>
+> > >> Continuing on for completeness, we will currently not map a page with
+> > >> badblocks into a process' address space.  So, let's say you have 256
+> > >> bytes of bad pmem, we will tell you we've lost 512 bytes, and even if
+> > >> you access a valid mmap()d address in the same page as the poisoned
+> > >> memory, you will get a segfault.
+> > >>
+> > >> Userspace can fix up the error by calling write(2) and friends to
+> > >> provide new data, or by punching a hole and writing new data to the hole
+> > >> (which may result in getting a new block, or reallocating the old block
+> > >> and zeroing it, which will clear the error).
+> > >
+> > > Fair enough. I do not need poison clearing at finer granularity. It might
+> > > be needed once dev_dax path wants to clear poison. Not sure how exactly
+> > > that works.
+> >
+> > It doesn't.  :)
+> >
+> > >> > +        /*
+> > >> > +         * Callers can pass arbitrary offset and len. But nvdimm_clear_poison()
+> > >> > +         * expects memory offset and length to meet certain alignment
+> > >> > +         * restrction (clear_err_unit). Currently nvdimm does not export
+> > >>                                                   ^^^^^^^^^^^^^^^^^^^^^^
+> > >> > +         * required alignment. So align offset and length to sector boundary
+> > >>
+> > >> What is "nvdimm" in that sentence?  Because the nvdimm most certainly
+> > >> does export the required alignment.  Perhaps you meant libnvdimm?
+> > >
+> > > I meant nvdimm_clear_poison() function in drivers/nvdimm/bus.c. Whatever
+> > > it is called. It first queries alignement required (clear_err_unit) and
+> > > then makes sure range passed in meets that alignment requirement.
+> >
+> > My point was your comment is misleading.
+> >
+> > >> We could potentially support clearing less than a sector, but I'd have
+> > >> to understand the use cases better before offerring implementation
+> > >> suggestions.
+> > >
+> > > I don't need clearing less than a secotr. Once somebody needs it they
+> > > can implement it. All I am doing is making sure current logic is not
+> > > broken when dax_zero_page_range() starts using this logic and passes
+> > > an arbitrary range. We need to make sure we internally align I/O
+> >
+> > An arbitrary range is the same thing as less than a sector.  :)  Do you
+> > know of an instance where the range will not be sector-aligned and sized?
+> >
+> > > and carve out an aligned sub-range and pass that subrange to
+> > > nvdimm_clear_poison().
+> >
+> > And what happens to the rest?  The caller is left to trip over the
+> > errors?  That sounds pretty terrible.  I really think there needs to be
+> > an explicit contract here.
+>
+> Ok, I think is is the contentious bit. Current interface
+> (__dax_zero_page_range()) either clears the poison (if I/O is aligned to
+> sector) or expects page to be free of poison.
+>
+> So in above example, of "truncate -s 23 foo.txt", currently I get an error
+> because range being zeroed is not sector aligned. So
+> __dax_zero_page_range() falls back to calling direct_access(). Which
+> fails because there are poisoned sectors in the page.
+>
+> With my patches, dax_zero_page_range(), clears the poison from sector 1 to
+> 7 but leaves sector 0 untouched and just writes zeroes from byte 0 to 511
+> and returns success.
+>
+> So question is, is this better behavior or worse behavior. If sector 0
+> was poisoned, it will continue to remain poisoned and caller will come
+> to know about it on next read and then it should try to truncate file
+> to length 0 or unlink file or restore that file to get rid of poison.
+>
+> IOW, if a partial block is being zeroed and if it is poisoned, caller
+> will not be return an error and poison will not be cleared and memory
+> will be zeroed. What do we expect in such cases.
+>
+> Do we expect an interface where if there are any bad blocks in the range
+> being zeroed, then they all should be cleared (and hence all I/O should
+> be aligned) otherwise error is returned. If yes, I could make that
+> change.
 
---Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+This does not strike me as a good idea because it's a false security
+compared to the latent poison case. If the writes to an unknown
+poisoned location would otherwise succeed via a different I/O path
+(dax), it's an unsymmetric surprise to start returning errors just
+because you wrote zeroes as a side effect of truncate.
 
-On Feb 21, 2020, at 12:20 PM, Roman Gushchin <guro@fb.com> wrote:
->=20
-> Since commit a8ac900b8163 ("ext4: use non-movable memory for the
-> superblock") buffers for ext4 superblock were allocated using
-> the sb_bread_unmovable() helper which allocated buffer heads
-> out of non-movable memory blocks. It was necessarily to not block
-> page migrations and do not cause cma allocation failures.
->=20
-> However commit 85c8f176a611 ("ext4: preload block group descriptors")
-> broke this by introducing pre-reading of the ext4 superblock.
-> The problem is that __breadahead() is using __getblk() underneath,
-> which allocates buffer heads out of movable memory.
->=20
-> It resulted in page migration failures I've seen on a machine
-> with an ext4 partition and a preallocated cma area.
->=20
-> Fix this by introducing sb_breadahead_unmovable() and
-> __breadahead_gfp() helpers which use non-movable memory for buffer
-> head allocations and use them for the ext4 superblock readahead.
->=20
-> Fixes: 85c8f176a611 ("ext4: preload block group descriptors")
-> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Downside of current interface is that it will clear as many blocks as
+> possible in the given range and leave starting and end blocks poisoned
+> (if it is unaligned) and not return error. That means a reader will
+> get error on these blocks again and they will have to try to clear it
+> again.
 
-Makes sense.
+I think what you have described in your truncate example is an
+improvement on what we have currently because x86 does not communicate
+write errors. Specifically, writing zeros via dax from userspace over
+unknown poison behaves the same as writing unaligned zeros over known
+poison. In both cases it's a best effort that always succeeds (no cpu
+exception), and may inadvertently clear poison as a side-effect.
+Otherwise, an error-block-aligned hole punch is the only way to
+trigger the kernel to try to clear known poison when the full block is
+reallocated.
 
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+On movdir64b capable cpus the error clearing unit becomes 64-bytes
+rather than 256-bytes because that allows a cacheline to be written
+without triggering a line fill read. So the error clearing granularity
+gets better over time, but unfortunately not synchronous detection in
+the I/O path.
 
-> Cc: Andrew Perepechko <andrew.perepechko@seagate.com>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: Gioh Kim <gioh.kim@lge.com>
-> Cc: Jan Kara <jack@suse.cz>
-> ---
-> fs/buffer.c                 | 11 +++++++++++
-> fs/ext4/super.c             |  2 +-
-> include/linux/buffer_head.h |  8 ++++++++
-> 3 files changed, 20 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 4299e100a05b..25462edd920e 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -1414,6 +1414,17 @@ void __breadahead(struct block_device *bdev, =
-sector_t block, unsigned size)
-> }
-> EXPORT_SYMBOL(__breadahead);
->=20
-> +void __breadahead_gfp(struct block_device *bdev, sector_t block, =
-unsigned size,
-> +		      gfp_t gfp)
-> +{
-> +	struct buffer_head *bh =3D __getblk_gfp(bdev, block, size, gfp);
-> +	if (likely(bh)) {
-> +		ll_rw_block(REQ_OP_READ, REQ_RAHEAD, 1, &bh);
-> +		brelse(bh);
-> +	}
-> +}
-> +EXPORT_SYMBOL(__breadahead_gfp);
-> +
-> /**
->  *  __bread_gfp() - reads a specified block and returns the bh
->  *  @bdev: the block_device to read from
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 3a401f930bca..6a10f7d44719 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4321,7 +4321,7 @@ static int ext4_fill_super(struct super_block =
-*sb, void *data, int silent)
-> 	/* Pre-read the descriptors into the buffer cache */
-> 	for (i =3D 0; i < db_count; i++) {
-> 		block =3D descriptor_loc(sb, logical_sb_block, i);
-> -		sb_breadahead(sb, block);
-> +		sb_breadahead_unmovable(sb, block);
-> 	}
->=20
-> 	for (i =3D 0; i < db_count; i++) {
-> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-> index 7b73ef7f902d..b56cc825f64d 100644
-> --- a/include/linux/buffer_head.h
-> +++ b/include/linux/buffer_head.h
-> @@ -189,6 +189,8 @@ struct buffer_head *__getblk_gfp(struct =
-block_device *bdev, sector_t block,
-> void __brelse(struct buffer_head *);
-> void __bforget(struct buffer_head *);
-> void __breadahead(struct block_device *, sector_t block, unsigned int =
-size);
-> +void __breadahead_gfp(struct block_device *, sector_t block, unsigned =
-int size,
-> +		  gfp_t gfp);
-> struct buffer_head *__bread_gfp(struct block_device *,
-> 				sector_t block, unsigned size, gfp_t =
-gfp);
-> void invalidate_bh_lrus(void);
-> @@ -319,6 +321,12 @@ sb_breadahead(struct super_block *sb, sector_t =
-block)
-> 	__breadahead(sb->s_bdev, block, sb->s_blocksize);
-> }
->=20
-> +static inline void
-> +sb_breadahead_unmovable(struct super_block *sb, sector_t block)
-> +{
-> +	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
-> +}
-> +
-> static inline struct buffer_head *
-> sb_getblk(struct super_block *sb, sector_t block)
-> {
-> --
-> 2.24.1
->=20
-
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl5QQDYACgkQcqXauRfM
-H+BBjxAAlmV92opkdGquanhWcY0p1p8AapfFz1mlRtN3l7J7yyvJ+03hbx5bLKQx
-WbU0QvZQwseMJJAzjJgOeKyTrxUiqimNGsKlqlkXBvEabOtAd9PkkrTV/w8/sdPi
-vAG4KfRm/JypzEnpetYT0YJFNW1OkoCAF2hEmZy7vPBTugPWTQT79VCwKrC8+0VY
-rNkOqCYKs86Z3Mm1ocQboxEq0cNFHWNcFrElU8G5KemhdVACXs4BckEZ/iXFeiQd
-Hx/HWW0Yj0304jvGyDlkh1K9zkZNxj7rV7kPVgEr69N8FWcgQCBft+zljpTTJY/6
-E3ASvp+dd/2OMO+xQrihZbv02EO5TW30K1f4X1NTsG97CRPpiwa3JiFUUGjP9I2s
-/REuj3FhC54qpD487HhK3WN4ji+gaAmYsjghAV/P68Hevd/EWU/k8Fhsq7SXbr2B
-LnkBS9BloRC3Ca14QqG6hJL5KOnUXEcmIHu8eXzb3Yyg3EQhGZ8c/xFqBISNrL58
-JxT2cVaTFXDuhpYWEusXTGsSQke1X/duXJuEMm+VDXGY0DQQlGN2J6jSb7TXvr9r
-+iZuTapW+0Pq1OqSRS/eTKcbH02vSnwoTKMe4Zh/xc+mwDJT6hH8GTikZl3kxaBb
-xi1f+LPwr8/w0BBZfbvJLVUpdufUao+7VFbI3kZVoyjlurXBNu8=
-=nxwv
------END PGP SIGNATURE-----
-
---Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2--
+I think a better way to improve poison handling is the long standing
+idea to integrate the badblock tracking into the filesystem directly.
+That way driver notifications of poison can be ingested into the
+filesystem and notifications sent on filenames rather than the current
+TOCTOU mess of trying to do a reverse lookup of badblock numbers to
+files. If the application can efficiently list and be notified of
+poison it can mitigate it immediately rather than trying to rely on
+write side effects.
