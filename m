@@ -2,53 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C57168516
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F0816851E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:36:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbgBURfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 12:35:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53690 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgBURfj (ORCPT
+        id S1727039AbgBURgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 12:36:53 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:43809 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBURgx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:35:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wf0h9wuAEcKNRqQhK7eYyrG9qa7B8zzOGponbVZ3cRs=; b=qv4T8VovROjkqztEW3g3nhCy5f
-        gufHvXfCuF+Z6HXVdrnqn11v47JRrQd3KMc2Fb/NXQnDX0L8RgKN14XJA2vlmNyMfe8JNpLhmUVxc
-        z25YaTqKCBiGK2Hw+2/bd4pbgopKAf4/ve6jLC7QPgm5ZDn5+iUMGtD+1h9m9riV8t/UT8f4E2FIQ
-        ++ryHJSQL+q4p3uXFau3HwiSPe27IGSZ+hWHJ1wE/QCzd7pdwceRoXgVy0rGkR8NzQA6rJe3DsDAG
-        fBH7BRytlaQRbZINis5xOw58oyyhiPiKjWEb9vUxnB2uZFIru9OjRckeEqfDgK73xZAiXwS1jNsGy
-        osPBEkFQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5CDD-0003J6-9C; Fri, 21 Feb 2020 17:35:39 +0000
-Date:   Fri, 21 Feb 2020 09:35:39 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v7 3/9] block: blk-crypto-fallback for Inline Encryption
-Message-ID: <20200221173539.GA6525@infradead.org>
-References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-4-satyat@google.com>
+        Fri, 21 Feb 2020 12:36:53 -0500
+Received: by mail-oi1-f172.google.com with SMTP id p125so2332404oif.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 09:36:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NTRXYuQ87dvDK9Oz1vWAuaYjsHn0ZemoE8V0xwoz7H0=;
+        b=kXo0h9Gt5NHWtGfZV9IH1vFOGRutjzEa7R2/xU2oUsHRonvAFyHjnro0dqamOexF8z
+         EsiyWR8yFFWMoONokEhG6mOxxYHiJ+iQPuhmpWKiW32liSjm4QrviswEFzhWBSeLEE5w
+         eRujlRgEzoM8eNA+CYFUf2UGSflgLO+Emz02CqJyfadQZotnXRkCQ+l2cGQbdxuRBYyc
+         C8peDwALRlJaHoSjbBAPenvadCC2o2QvOz8CgNr/fTkxiHagEkqE9jDB4/15IuoNRLAZ
+         6z66cy/jd2dxId0AXTVmEfjV3d/4ynIY1vQdorg5LDEUuZqqy6Hu7T8FDaxBieccmRE6
+         muzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NTRXYuQ87dvDK9Oz1vWAuaYjsHn0ZemoE8V0xwoz7H0=;
+        b=U3dit80nX0JmZzaqRtYU0giH0MQRAoCOhB1L+xrYVYvw5FvOtun6PAXhkINTMSlBMA
+         mtF25QFNVraxwozUaAL/LyTDxzpeJ4zQkbuLdBvmrdAzEjiguFug4wFYQg2vWuEn3pee
+         gI4N4fLCYoMCqBu5+PJm0imWjk3dth/ex0h0ksOANlvqhxSx9//A4pHX4yBdd+CDEo+I
+         4/AMszCdTmptA1SnmB5apkD78U6OcmrrrHaZMDtTAtEe+Td7vs7RYr3kSyK4Niqoxb99
+         /jjYPGl391apiXt2m/mG+BPsqKL94T3OaZzPLqkaTBUdYI7+lUXWKj5UWiHO88kMUwuL
+         a2Yw==
+X-Gm-Message-State: APjAAAW+lx7SLb28RGUqUgsRdgzJhO744UQhs0fXBNA7AvjzP267Ezbz
+        amnZHsEMAmrjNupW9CJmzjOnG8wxPXAoiaQN1CPgOQ==
+X-Google-Smtp-Source: APXvYqxCoOJQzNGFh4S6Wf2LwznGZ2gPK7NTphumYq3n31yOSzlLD/AyHuWWgTne7kL2s4mbyiQCCgUXnQwWQXZ8d/8=
+X-Received: by 2002:aca:d954:: with SMTP id q81mr2902469oig.157.1582306612529;
+ Fri, 21 Feb 2020 09:36:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221115050.238976-4-satyat@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
+ <158204559631.3299825.5358385352169781990.stgit@warthog.procyon.org.uk>
+ <CAG48ez3ZMg4O5US3n=p1CYK-2AAgLRY+pjnUXp2p5hdwbjCRSA@mail.gmail.com>
+ <1808070.1582287889@warthog.procyon.org.uk> <CAG48ez0+_kO_YL6iO9uA+HjjnHRVHVD-bFq0C=ZLeaGtTMss5A@mail.gmail.com>
+ <2113718.1582304782@warthog.procyon.org.uk>
+In-Reply-To: <2113718.1582304782@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 21 Feb 2020 18:36:26 +0100
+Message-ID: <CAG48ez14CHMjZS8vCp6h6FnLvcFQq8oy_9JPCd=5qZ52X6w12Q@mail.gmail.com>
+Subject: seq_lock and lockdep_is_held() assertions
+To:     David Howells <dhowells@redhat.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-High-level question:  Does the whole keyslot manager concept even make
-sense for the fallback?  With the work-queue we have item that exectutes
-at a time per cpu.  So just allocatea per-cpu crypto_skcipher for
-each encryption mode and there should never be a slot limitation.  Or
-do I miss something?
+adding some locking folks to the thread...
+
+On Fri, Feb 21, 2020 at 6:06 PM David Howells <dhowells@redhat.com> wrote:
+> Jann Horn <jannh@google.com> wrote:
+> > On Fri, Feb 21, 2020 at 1:24 PM David Howells <dhowells@redhat.com> wrote:
+> > > What's the best way to write a lockdep assertion?
+> > >
+> > >         BUG_ON(!lockdep_is_held(lock));
+> >
+> > lockdep_assert_held(lock) is the normal way, I think - that will
+> > WARN() if lockdep is enabled and the lock is not held.
+>
+> Okay.  But what's the best way with a seqlock_t?  It has two dep maps in it.
+> Do I just ignore the one attached to the spinlock?
+
+Uuuh... very good question. Looking at how the seqlock_t helpers use
+the dep map of the seqlock, I don't think lockdep asserts work for
+asserting that you're in the read side of a seqlock?
+
+read_seqbegin_or_lock() -> read_seqbegin() -> read_seqcount_begin() ->
+seqcount_lockdep_reader_access() does seqcount_acquire_read() (which
+maps to lock_acquire_shared_recursive()), but immediately following
+that calls seqcount_release() (which maps to lock_release())?
+
+So I think lockdep won't consider you to be holding any locks after
+read_seqbegin_or_lock() if the lock wasn't taken?
