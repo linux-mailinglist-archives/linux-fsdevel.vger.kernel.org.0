@@ -2,147 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16A516865A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:21:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86546168663
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:23:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbgBUSVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 13:21:24 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36363 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgBUSVX (ORCPT
+        id S1729318AbgBUSXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 13:23:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40062 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbgBUSXe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:21:23 -0500
-Received: by mail-il1-f196.google.com with SMTP id b15so2395227iln.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 10:21:23 -0800 (PST)
+        Fri, 21 Feb 2020 13:23:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t14so2901239wmi.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 10:23:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
-        b=EfQDyeEgUQ+Qrg3DR0QoNoIzub5X+GGPRyCL4wxAaHasogsRptEb4Bd3oZsiAj8JJ7
-         lZn/hkEDEXRyzUqAvCl8cr2JD5Etvb+cmEs2s2Cad1bwkk9ILLelnGoUv4F+/saa00vv
-         gqwYX4mkB0NB72J6Qn96FnMf9CGb77Rf7KzjqNz+zrg3cOV3eZQakrvLwdYV9z7bZzYO
-         +RdslPjKKhdH8UD7/xTT4KTldsxXYQouOP/G+Fd35reI8X69P35eURChBNjaWhGNwKVx
-         6IGayzQZ/e/Cpo5wAsHckqVGWuTzf1BXh4Mma+S0NgI9/YX5hK5XBkzCUJ2+ZUe3ael4
-         6PGg==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=el0ksJbOaCzUgbQQlOdxCAczDgGJZ08IsAkqI71psIE=;
+        b=JJd2icL1qjAUrXOYho8MTDEJu+K4IobYWsBZeg0w/qRU4Rs1SfWnWRv0Vo09VjqD8X
+         UUdtVwRy2eNM7ZZ5gGp5d4+KME3tnAciw2KQZWZ+H1lGcdWYIXyOYQR/ziz5xaGCD19L
+         gwVfS8Z2Eij1tCyGwa+maXTsvzgfh9scgHCfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G+cK2mC91PpoKPuuQapIOX9FR9b5Qc4ESPnNis4hpgk=;
-        b=KMti6uw9nUOZqtOLwu3XNH5X6sA12BTiB+WgZiaF6WxwPdJH5HUOGzpS+ipSlwFiVW
-         d1gBLw55pQgtNcNpplZultgVKVstb6/zYp/ytLofViVHNfD1BlYd+P/4SKiiQyiXoXsy
-         9uJ09ncvRIZ5nJRHwYe0RmNIi8Iabv2uiXOrVkP9zViw4dVfeYMMLwWTQ22Wvi1ExfdG
-         a0WBx3+4kgmah/gy3MQfQPOcfmaQots2y4+WE3N6WWFZ6AMPLG4daAQnA9FyLO3hBPYt
-         /NFtZCIO4W513YcVRsMZodF5nzA/uptEA+KvTElMNnli1NnUJ2sw9b6RBUzRZ6upKYPN
-         a/TQ==
-X-Gm-Message-State: APjAAAVdzVtMFhcgMT0RvXxkyc3zD1jGPFMxWNH4ruos+luVhuVinqol
-        ujISHKDBVy8y0dDH3r1MscFJ6Q==
-X-Google-Smtp-Source: APXvYqzTx1bJI3NV1Je5vKEqfQz6Se6Ip4sz6bG67kElIeHlfVsBUh/m8L5U5SI49Ara8F0hgbMlPQ==
-X-Received: by 2002:a92:d18a:: with SMTP id z10mr39526131ilz.48.1582309281689;
-        Fri, 21 Feb 2020 10:21:21 -0800 (PST)
-Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
-        by smtp.gmail.com with ESMTPSA id f16sm1147037ilq.16.2020.02.21.10.21.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 10:21:20 -0800 (PST)
-Date:   Fri, 21 Feb 2020 11:21:19 -0700
-From:   Ross Zwisler <zwisler@google.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Raul Rangel <rrangel@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mattias Nissler <mnissler@chromium.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=el0ksJbOaCzUgbQQlOdxCAczDgGJZ08IsAkqI71psIE=;
+        b=fkpwesmvEm7AgSqq0ROC41M83+SE93tUnLQy0EcbraRl1gKFR2m1F4WpxWvHEhB0Uo
+         VvG7X+jqEXZsmF2A38fW+q6/au6Poy2QBpWjPLzPZ7418y8P+jpg1cb1SwyBvWcHU/lw
+         4+jffh1yUtfvTUvVJ0aZjfxUS24W+r4+T1wYiR44dc1PIxkkteLqvsCEGmF+zt1oI+zi
+         n711QaxMijTfYPtzM0nBzlf7K2e1lOsfanEAbLbSvnT5Rrqq/L4ylOiNKibVzq+ct5bC
+         H+KM7s6W6Wxoadj5OVxyuUnIKhKoE+jNMBcb9vBn2mmJyDrmgD5l0QlsKWP+1x1FiyA9
+         BCAA==
+X-Gm-Message-State: APjAAAVviLigM1bOOoLJap48BQUQ5rGEf7cVoeWFD7mCWGlw9HNoDkgt
+        aM/43FpJR5XjtjcAtkztE/ERlQ==
+X-Google-Smtp-Source: APXvYqx4zkQNTAzHsaS1HJ4Q9vOk7i7H0fXR5nL1AHhodIvw7c+ts75n1DYhqiJupD1CUbSs1LvWGQ==
+X-Received: by 2002:a1c:f713:: with SMTP id v19mr4959041wmh.113.1582309410725;
+        Fri, 21 Feb 2020 10:23:30 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id f8sm4696963wru.12.2020.02.21.10.23.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 10:23:27 -0800 (PST)
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Benjamin Gordon <bmgordon@google.com>,
-        Micah Morton <mortonm@google.com>,
-        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v5] Add a "nosymfollow" mount option.
-Message-ID: <20200221182119.GA89482@google.com>
-References: <20200204215014.257377-1-zwisler@google.com>
- <CAHQZ30BgsCodGofui2kLwtpgzmpqcDnaWpS4hYf7Z+mGgwxWQw@mail.gmail.com>
- <CAGRrVHwQimihNNVs434jNGF3BL5_Qov+1eYqBYKPCecQ0yjxpw@mail.gmail.com>
- <CAGRrVHyzX4zOpO2nniv42BHOCbyCdPV9U7GE3FVhjzeFonb0bQ@mail.gmail.com>
- <20200205032110.GR8731@bombadil.infradead.org>
- <20200205034500.x3omkziqwu3g5gpx@yavin>
- <CAGRrVHxRdLMx5axcB1Fyea8RZhfd-EO3TTpQtOvpOP0yxnAsbQ@mail.gmail.com>
- <20200213154642.GA38197@google.com>
- <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com>
+ <s5hef1crybq.wl-tiwai@suse.de>
+ <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com>
+ <s5hr258j6ln.wl-tiwai@suse.de>
+ <93b8285a-e5eb-d4a4-545d-426bbbeb8008@broadcom.com>
+ <s5ho90byhnv.wl-tiwai@suse.de>
+ <b440f372-45be-c06c-94a1-44ae6b1e7eb8@broadcom.com>
+ <s5hwoeyj3i5.wl-tiwai@suse.de> <20191011133120.GP16384@42.do-not-panic.com>
+ <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
+ <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <c3bf2985-78d3-ae98-a19d-a596f42a22ce@broadcom.com>
+Date:   Fri, 21 Feb 2020 10:23:21 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 12:21:42PM +1100, Aleksa Sarai wrote:
-> On 2020-02-13, Ross Zwisler <zwisler@google.com> wrote:
-> > On Thu, Feb 06, 2020 at 12:10:45PM -0700, Ross Zwisler wrote:
-<>
-> > > As far as I can tell, SB_SUBMOUNT doesn't actually have any dependence on
-> > > MS_SUBMOUNT. Nothing ever sets or checks MS_SUBMOUNT from within the kernel,
-> > > and whether or not it's set from userspace has no bearing on how SB_SUBMOUNT
-> > > is used.  SB_SUBMOUNT is set independently inside of the kernel in
-> > > vfs_submount().
-> > > 
-> > > I agree that their association seems to be historical, introduced in this
-> > > commit from David Howells:
-> > > 
-> > > e462ec50cb5fa VFS: Differentiate mount flags (MS_*) from internal superblock flags
-> > > 
-> > > In that commit message David notes:
-> > > 
-> > >      (1) Some MS_* flags get translated to MNT_* flags (such as MS_NODEV ->
-> > >          MNT_NODEV) without passing this on to the filesystem, but some
-> > >          filesystems set such flags anyway.
-> > > 
-> > > I think this is sort of what we are trying to do with MS_NOSYMFOLLOW: have a
-> > > userspace flag that translates to MNT_NOSYMFOLLOW, but which doesn't need an
-> > > associated SB_* flag.  Is it okay to reclaim the bit currently owned by
-> > > MS_SUBMOUNT and use it for MS_NOSYMFOLLOW.
-> > > 
-> > > A second option would be to choose one of the unused MS_* values from the
-> > > middle of the range, such as 256 or 512.  Looking back as far as git will let
-> > > me, I don't think that these flags have been used for MS_* values at least
-> > > since v2.6.12:
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/fs.h?id=1da177e4c3f41524e886b7f1b8a0c1fc7321cac2
-> > > 
-> > > I think maybe these used to be S_WRITE and S_APPEND, which weren't filesystem
-> > > mount flags?
-> > > 
-> > > https://sites.uclouvain.be/SystInfo/usr/include/sys/mount.h.html
-> > > 
-> > > A third option would be to create this flag using the new mount system:
-> > > 
-> > > https://lwn.net/Articles/753473/
-> > > https://lwn.net/Articles/759499/
-> > > 
-> > > My main concern with this option is that for Chrome OS we'd like to be able to
-> > > backport whatever solution we come up with to a variety of older kernels, and
-> > > if we go with the new mount system this would require us to backport the
-> > > entire new mount system to those kernels, which I think is infeasible.  
-> > > 
-> > > David, what are your thoughts on this?  Of these three options for supporting
-> > > a new MS_NOSYMFOLLOW flag:
-> > > 
-> > > 1) reclaim the bit currently used by MS_SUBMOUNT
-> > > 2) use a smaller unused value for the flag, 256 or 512
-> > > 3) implement the new flag only in the new mount system
-> > > 
-> > > do you think either #1 or #2 are workable?  If so, which would you prefer?
-> > 
-> > Gentle ping on this - do either of the options using the existing mount API
-> > seem possible?  Would it be useful for me to send out example patches in one
-> > of those directions?  Or is it out of the question, and I should spend my time
-> > on making patches using the new mount system?  Thanks!
-> 
-> I think (1) or (2) sound reasonable, but I'm not really the right person
-> to ask.
 
-Cool, I appreciate the feedback. :)  I'll go ahead and implement #2 and send
-it out, along with example man page updates.
+
+On 2020-02-21 12:44 a.m., Arnd Bergmann wrote:
+> On Fri, Feb 21, 2020 at 1:11 AM Scott Branden
+> <scott.branden@broadcom.com> wrote:
+>> On 2019-10-11 6:31 a.m., Luis Chamberlain wrote:
+>>> On Tue, Aug 27, 2019 at 12:40:02PM +0200, Takashi Iwai wrote:
+>>>> On Mon, 26 Aug 2019 19:24:22 +0200,
+>>>> Scott Branden wrote:
+>>>>> I will admit I am not familiar with every subtlety of PCI
+>>>>> accesses. Any comments to the Valkyrie driver in this patch series are
+>>>>> appreciated.
+>>>>> But not all drivers need to work on all architectures. I can add a
+>>>>> depends on x86 64bit architectures to the driver to limit it to such.
+>>>> But it's an individual board on PCIe, and should work no matter which
+>>>> architecture is?  Or is this really exclusive to x86?
+>>> Poke Scott.
+>> Yes, this is exclusive to x86.
+>> In particular, 64-bit x86 server class machines with PCIe gen3 support.
+>> There is no reason for these PCIe boards to run in other lower end
+>> machines or architectures.
+> It doesn't really matter that much what you expect your customers to
+> do with your product, or what works a particular machine today, drivers
+> should generally be written in a portable manner anyway and use
+> the documented APIs. memcpy() into an __iomem pointer is not
+> portable and while it probably works on any x86 machine today, please
+> just don't do it. If you use 'sparse' to check your code, that would normally
+> result in an address space warning, unless you add __force and a
+> long comment explaining why you cannot just use memcpy_to_io()
+> instead. At that point, you are already better off usingn memcpy_to_io() ;-)
+We don't want to allocate to intermediate memory and do another memcpy 
+just to write to pcie.
+I will have to look into the linux request_firmware_info_buf code and 
+detect whether the buf being request to is
+in kernel or io memory and perform the operation there.  Hopefully such 
+is possible.
+>
+>          Arnd
+
