@@ -2,70 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DBCB167FFC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB1716801F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:24:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbgBUOUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 09:20:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36952 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbgBUOUT (ORCPT
+        id S1728937AbgBUOYF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 09:24:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58659 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728392AbgBUOYD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:20:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LytBCHQtySSQHC//YYsk3cTp1SDQnnhLtWFiulJBZy8=; b=DZyV9UxLlQ1dXSvWlM5ACgoz8S
-        66UCzAs+/vDp19vCMf/XiGjrgq/QpQ5MSmVm/cq7+gbhKX2cMIX1taXRr/28lPIKdmzmh69nv04Ah
-        jwc9CKCejXv0Yp4mbSM/q3/tDIhqtMMSmNl9pu3s8tg24ZdjHzYMMgLs+rc7QJw5HNC07Z3yyMc8F
-        LrWSlmph5HCQzhVD6l+1jhZTBzUgoCltUXUStnxF/6+NXmWhqg6fe/7W9ZhC1tQlUPJRTzQ06pK5k
-        wVCnFwUDhQ7pTnQaf3ggXDyfYcZZNw61QTbu1cIlLeHfVXYoXnrImvysZ5JDQhd9ynz72vOhOetCJ
-        eJPdKzew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j59AA-0005Lk-DL; Fri, 21 Feb 2020 14:20:18 +0000
-Date:   Fri, 21 Feb 2020 06:20:18 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v6 0/9] Inline Encryption Support
-Message-ID: <20200221142018.GA27636@infradead.org>
-References: <20200108184305.GA173657@google.com>
- <20200117085210.GA5473@infradead.org>
- <20200201005341.GA134917@google.com>
- <20200203091558.GA28527@infradead.org>
- <20200204033915.GA122248@google.com>
- <20200204145832.GA28393@infradead.org>
- <20200204212110.GA122850@gmail.com>
- <20200205073601.GA191054@sol.localdomain>
- <20200205180541.GA32041@infradead.org>
- <20200221123030.GA253045@google.com>
+        Fri, 21 Feb 2020 09:24:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582295042;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=c8mWqxlRjMqzWv3h3wuv1G8u9oII3zP+jyI9+XnLcJA=;
+        b=DSqkQl2P3UzntTwpRcqo73FFC9ujFM/0IySH6Tu36JR2XQa0gcZJ6gWiI5ClXKy5OSYQjr
+        PAWG2CyL7FrzPQN6GVl6Rq5Vb4Ht8Ah506IfNQ2xc86jUPsC39P/SGVCUM91qI+l5qRLzP
+        RcxcAX5Mz/NlYn/3cB2fImae53wtf6k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-295-K3W4URiHOyKQlUHyroESXw-1; Fri, 21 Feb 2020 09:23:58 -0500
+X-MC-Unique: K3W4URiHOyKQlUHyroESXw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 086AF8010EB;
+        Fri, 21 Feb 2020 14:23:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B95A60BE0;
+        Fri, 21 Feb 2020 14:23:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAG48ez2B2J_3-+EjR20ukRu3noPnAccZsOTaea0jtKK4=+bkhQ@mail.gmail.com>
+References: <CAG48ez2B2J_3-+EjR20ukRu3noPnAccZsOTaea0jtKK4=+bkhQ@mail.gmail.com> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204561120.3299825.5242636508455859327.stgit@warthog.procyon.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        raven@themaw.net, Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 15/19] vfs: Add superblock notifications [ver #16]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221123030.GA253045@google.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1897787.1582295034.1@warthog.procyon.org.uk>
+Date:   Fri, 21 Feb 2020 14:23:54 +0000
+Message-ID: <1897788.1582295034@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 04:30:30AM -0800, Satya Tangirala wrote:
-> Hi Christoph,
-> 
-> I sent out v7 of the patch series. It's at
-> https://lore.kernel.org/linux-fscrypt/20200221115050.238976-1-satyat@google.com/T/#t
-> 
-> It manages keyslots on a per-request basis now - I made it get keyslots
-> in blk_mq_get_request, because that way I wouldn't have to worry about
-> programming keys in an atomic context. What do you think of the new
-> approach?
+Jann Horn <jannh@google.com> wrote:
 
-I'll try to review it soon, thanks!
+> > +               if (!s->s_watchers) {
+> 
+> READ_ONCE() ?
+
+I'm not sure it matters.  It can only be set once, and the next time we read
+it we're inside the lock.  And at this point, I don't actually dereference it,
+and if it's non-NULL, it's not going to change.
+
+> > +                       ret = add_watch_to_object(watch, s->s_watchers);
+> > +                       if (ret == 0) {
+> > +                               spin_lock(&sb_lock);
+> > +                               s->s_count++;
+> > +                               spin_unlock(&sb_lock);
+> 
+> Where is the corresponding decrement of s->s_count? I'm guessing that
+> it should be in the ->release_watch() handler, except that there isn't
+> one...
+
+Um.  Good question.  I think this should do the job:
+
+	static void sb_release_watch(struct watch *watch)
+	{
+		put_super(watch->private);
+	}
+
+And this then has to be set later:
+
+	init_watch_list(wlist, sb_release_watch);
+
+> > +       } else {
+> > +               ret = -EBADSLT;
+> > +               if (READ_ONCE(s->s_watchers)) {
+> 
+> (Nit: I don't get why you do a lockless check here before taking the
+> lock - it'd be more straightforward to take the lock first, and it's
+> not like you want to optimize for the case where someone calls
+> sys_watch_sb() with invalid arguments...)
+
+Fair enough.  I'll remove it.
+
+> > +#ifdef CONFIG_SB_NOTIFICATIONS
+> > +       if (unlikely(s->s_watchers)) {
+> 
+> READ_ONCE() ?
+
+Shouldn't matter.  It's only read once and then a decision is made on it
+immediately thereafter.  And if it's non-NULL, the value cannot change
+thereafter.
+
+David
+
