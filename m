@@ -2,109 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB796168627
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC90316862B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:11:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbgBUSKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 13:10:48 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46075 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgBUSKr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:10:47 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 59so2780971otp.12;
-        Fri, 21 Feb 2020 10:10:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qELWbZ3OME+eawe8woS99jFnT/ZWJQ9RWB1O2eshdZI=;
-        b=D0jVYgTJoNaNoh1mzedHxmFllaxGztLRgy/MAXKGcIB3bo0RjTflVa5SjRywnr1kDX
-         oMWNuNqpcL1GiuDg9yQ9HBQa+7405BMCf/nweBlMRwrEFjzCZFwOgmIG/0OtVBT1x6xQ
-         jKXCSrtU7EkiuSRCB5YtURWXLBOleNpP/DL15Fw5zRm3e+i98EwlxIJiyslHWwVlBqCK
-         xY0txbIPdg09rQ8fMtb+VfdyoySRSSpr0SSyZV/vDJb/X48XQEQ9W/ZEctHEfWpdzOJQ
-         j9z5IGaP866h9DGZzIVFbJr9AUTPSrzcECYw8Sdc2xLIzAerqExSTMRtC+DjcZeV9aXk
-         CdHQ==
-X-Gm-Message-State: APjAAAUqCgmLWZ10rkUgbKqpVi8u0KK9qIhhFsYaYiTojSDMwtuDeaAw
-        DKOfFsQUhaD97paX0J8vsGLlPEsnz5pxGZ79IPw=
-X-Google-Smtp-Source: APXvYqxb9cV0wG/g8cyygeZEQ7pZMeU5TFO075xmmuOHqr2e/W1z8hmDsMW9M4REXAbbE3WfdgCvPdrCl0BGKC6R8Ro=
-X-Received: by 2002:a9d:7984:: with SMTP id h4mr29710943otm.297.1582308646955;
- Fri, 21 Feb 2020 10:10:46 -0800 (PST)
+        id S1727966AbgBUSLM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 13:11:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725995AbgBUSLL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 13:11:11 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67F44208E4;
+        Fri, 21 Feb 2020 18:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582308670;
+        bh=+Cb4JLP4AzzeUHtnURjqmhLOWjfrHEnJh6ZcrHPfzIs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CjjOcC1DgFPJx0n0W5Nn6sNEYOnHeArMulQiOCQ4eexPuzr9eFQvsRUz0vIrVkkl1
+         YVEguzqY8Go0OdhJE+DDsByPVTEPPqTi3fX5JPN9j33JL7ACiwqD4Atau7D5PoSDQ6
+         Z/q7kG6l1EuZMlqYb0P1zmwE4APm4LXlkELsQOzE=
+Date:   Fri, 21 Feb 2020 10:11:09 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
+        Parshuram Raju Thombare <pthombar@cadence.com>
+Subject: Re: [PATCH v7 6/9] scsi: ufs: Add inline encryption support to UFS
+Message-ID: <20200221181109.GB925@sol.localdomain>
+References: <20200221115050.238976-1-satyat@google.com>
+ <20200221115050.238976-7-satyat@google.com>
+ <20200221172244.GC438@infradead.org>
 MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204551308.3299825.11782813238111590104.stgit@warthog.procyon.org.uk> <20200221145114.satmwy7u6mqfluzs@wittgenstein>
-In-Reply-To: <20200221145114.satmwy7u6mqfluzs@wittgenstein>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 21 Feb 2020 19:10:35 +0100
-Message-ID: <CAMuHMdX2zjj6CXm9j-+ORAQfLb=VBM_dOsb4wNDzPECzqiXzYQ@mail.gmail.com>
-Subject: Re: [PATCH 02/19] fsinfo: Add syscalls to other arches [ver #16]
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        mszeredi@redhat.com, Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221172244.GC438@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 3:52 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> On Tue, Feb 18, 2020 at 05:05:13PM +0000, David Howells wrote:
-> > Add the fsinfo syscall to the other arches.
->
-> Over the last couple of kernel releases we have established the
-> convention that we wire-up a syscall for all arches at the same time and
-> not e.g. x86 and then the other separately.
+On Fri, Feb 21, 2020 at 09:22:44AM -0800, Christoph Hellwig wrote:
+> On Fri, Feb 21, 2020 at 03:50:47AM -0800, Satya Tangirala wrote:
+> > Wire up ufshcd.c with the UFS Crypto API, the block layer inline
+> > encryption additions and the keyslot manager.
+> > 
+> > Also, introduce UFSHCD_QUIRK_BROKEN_CRYPTO that certain UFS drivers
+> > that don't yet support inline encryption need to use - taken from
+> > patches by John Stultz <john.stultz@linaro.org>
+> > (https://android-review.googlesource.com/c/kernel/common/+/1162224/5)
+> > (https://android-review.googlesource.com/c/kernel/common/+/1162225/5)
+> > (https://android-review.googlesource.com/c/kernel/common/+/1164506/1)
+> 
+> Between all these quirks, with what upstream SOC does this feature
+> actually work?
 
-Indeed.
+It will work on DragonBoard 845c, i.e. Qualcomm's Snapdragon 845 SoC, if we
+apply my patchset
+https://lkml.kernel.org/linux-block/20200110061634.46742-1-ebiggers@kernel.org/.
+It's currently based on Satya's v6 patchset, but I'll be rebasing it onto v7 and
+resending.  It uses all the UFS standard crypto code that Satya is adding except
+for ufshcd_program_key(), which has to be replaced with a vendor-specific
+operation.  It does also add vendor-specific code to ufs-qcom to initialize the
+crypto hardware, but that's in addition to the standard code, not replacing it.
 
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > ---
-> >
-> >  arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
-> >  arch/arm/tools/syscall.tbl                  |    1 +
-> >  arch/arm64/include/asm/unistd.h             |    2 +-
-> >  arch/arm64/include/asm/unistd32.h           |    2 +-
-> >  arch/ia64/kernel/syscalls/syscall.tbl       |    1 +
-> >  arch/m68k/kernel/syscalls/syscall.tbl       |    2 ++
+DragonBoard 845c is a commercially available development board that boots the
+mainline kernel (modulo two arm-smmu IOMMU patches that Linaro is working on),
+so I think it counts as an "upstream SoC".
 
-Suspicious diffstat...
+That's all that we currently have the hardware to verify ourselves, though
+Mediatek says that Satya's patches are working on their hardware too.  And the
+UFS controller on Mediatek SoCs is supported by the upstream kernel via
+ufs-mediatek.  But I don't know whether it just works exactly as-is or whether
+they needed to patch ufs-mediatek too.  Stanley or Kuohong, can you confirm?
 
-> >  arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
-> >  arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
-> >  arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
-> >  arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
-> >  arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
-> >  arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
-> >  arch/s390/kernel/syscalls/syscall.tbl       |    1 +
-> >  arch/sh/kernel/syscalls/syscall.tbl         |    1 +
-> >  arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
-> >  arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
-> >  16 files changed, 17 insertions(+), 2 deletions(-)
+We're also hoping that the patches are usable with the UFS controllers from
+Cadence Design Systems and Synopsys, which have upstream kernel support in
+drivers/scsi/ufs/cdns-pltfrm.c and drivers/scsi/ufs/ufshcd-dwc.c.  But we don't
+currently have a way to verify this.  But in 2018, both companies had tried to
+get the UFS v2.1 standard crypto support upstream, so presumably they must have
+implemented it in their hardware.  +Cc the people who were working on that.
 
-> > --- a/arch/m68k/kernel/syscalls/syscall.tbl
-> > +++ b/arch/m68k/kernel/syscalls/syscall.tbl
-> > @@ -437,3 +437,5 @@
-> >  435  common  clone3                          __sys_clone3
-> >  437  common  openat2                         sys_openat2
-> >  438  common  pidfd_getfd                     sys_pidfd_getfd
-> > +# 435 reserved for clone3
-
-Indeed, bogus line above (bad rebase?).
-
-> > +439  common  fsinfo                          sys_fsinfo
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- Eric
