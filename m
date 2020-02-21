@@ -2,81 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732D91681C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 16:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6353168208
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 16:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgBUPfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 10:35:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42160 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbgBUPfh (ORCPT
+        id S1728712AbgBUPmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 10:42:22 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37495 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728081AbgBUPmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 10:35:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+ZsaQJllFuL8jpNObDQrHmpdC/B73n9RqMvE0qPHxaM=; b=e19h/tTJERLUFpOL5Gva3Nh5/X
-        wd0VH9aVgKh+1Blgs+9Q15ijaVkaoTLAy7WypYckq6maI2+/Qpa5TYpUzL45zkwW6/rKVd4gOa/Q3
-        37XTTlJ3n85F+yMLVB8w0BnbSlS+Y+mVNSOJqRCX3b4kHG/mSGnd+/RHhL7LSbdq0PycpO3gHljyg
-        1ePLpWP66QKkQwSW3hqI4AmWyW4KZvprzI+VqeFwh8xfQgZxihaUIj3MuUi6DWndVunwNc8HfQSPa
-        cJzgSNpVLmszdlcuXvTGALnsMeU2uXmuwM6kJU9UgfbmbAX46oAsryhNENVSPO0btKS8JfbqGc1YR
-        ErE1c+gA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5AL3-00062c-43; Fri, 21 Feb 2020 15:35:37 +0000
-Date:   Fri, 21 Feb 2020 07:35:37 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 11/24] mm: Move end_index check out of readahead loop
-Message-ID: <20200221153537.GE24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-12-willy@infradead.org>
- <e6ef2075-b849-299e-0f11-c6ee82b0a3c7@nvidia.com>
+        Fri, 21 Feb 2020 10:42:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582299741;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=d1xiBHabr0cI0nVkv2W8qe7S3hdWOCkmluHZNS5Fdjo=;
+        b=LQyBJ4J1NTEk80WtxtbOOS250EOJUSGrdk9/V/MFOxMHoZfQEx6h2JvLEaBI3gZpVcoAbv
+        236SoT0QJolujSRa1JjScas/J52yCBQ6+X4+tZM2pk0s8EE5qIruTB+/11B0NBdQIRn6gu
+        iaTr/DHwUpoEMd6Le9iBV6evEPfcxKo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-231-cYxCRCb1MXyGsfs_ymV5DQ-1; Fri, 21 Feb 2020 10:42:19 -0500
+X-MC-Unique: cYxCRCb1MXyGsfs_ymV5DQ-1
+Received: by mail-wr1-f72.google.com with SMTP id r1so1176640wrc.15
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 07:42:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d1xiBHabr0cI0nVkv2W8qe7S3hdWOCkmluHZNS5Fdjo=;
+        b=n8DTFMcx0oCnqjvAkkqz/Tg8xS3LZ40m56UVW3B0/7pO0hJ39Pa5m1X4Mo9c0hcLGH
+         awnXixzOJKpGRorzbxwxZXYaU//66UTAVSGDG2pUjWuYzNmAAbqMptTm/tYimUWw5WNM
+         hm8YLaFRUxPc+VVoNqb1gqZHOoGLQi/jT7Bkp+w7/pDED1rTygyQXw2tx1hEaEAQrTLV
+         WdVFemVH2RqInoFwjJR59WdHpVdrJjrkgWONdrNEAeWsIPIHxWgqabo7XhCwPD1FPE8+
+         6QIddFhJD7q84/d6QDl5x/y5D7QzRBgTut5uiEKlJVgbJfrgustUeyhmyL3yrqIokdFS
+         4p4A==
+X-Gm-Message-State: APjAAAVfa/MhGSDZzIWt/u3ca2hqnFJllqXDT2GQ4MfRsLmyIOhNMhbi
+        HEGDvggE6dGJumoYw28nPjTaXxvVnw4wMVRmzjjPnFCBmKJhBDv1bcwD4SNOs0xGbuaKW6RZIiH
+        iwQpv2AaGo1glmQCOR5Ro50A8Hw==
+X-Received: by 2002:a7b:c753:: with SMTP id w19mr4665158wmk.34.1582299738380;
+        Fri, 21 Feb 2020 07:42:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzSWhT4n2jDvp8FWxa5PtF0QnBD+5CXqoCnpF/WyJoVcrZZSoX+kB/LMcPcy2QzVI9BPmha7Q==
+X-Received: by 2002:a7b:c753:: with SMTP id w19mr4665132wmk.34.1582299738067;
+        Fri, 21 Feb 2020 07:42:18 -0800 (PST)
+Received: from steredhat.redhat.com (host209-4-dynamic.27-79-r.retail.telecomitalia.it. [79.27.4.209])
+        by smtp.gmail.com with ESMTPSA id c9sm4238078wme.41.2020.02.21.07.42.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2020 07:42:17 -0800 (PST)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hannes Reinecke <hare@suse.com>, io-uring@vger.kernel.org
+Subject: [PATCH] io_uring: prevent sq_thread from spinning when it should stop
+Date:   Fri, 21 Feb 2020 16:42:16 +0100
+Message-Id: <20200221154216.206367-1-sgarzare@redhat.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6ef2075-b849-299e-0f11-c6ee82b0a3c7@nvidia.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 07:50:39PM -0800, John Hubbard wrote:
-> This tiny patch made me pause, because I wasn't sure at first of the exact
-> intent of the lines above. Once I worked it out, it seemed like it might
-> be helpful (or overkill??) to add a few hints for the reader, especially since
-> there are no hints in the function's (minimal) documentation header. What
-> do you think of this?
-> 
-> 	/*
-> 	 * If we can't read *any* pages without going past the inodes's isize
-> 	 * limit, give up entirely:
-> 	 */
-> 	if (index > end_index)
-> 		return;
-> 
-> 	/* Cap nr_to_read, in order to avoid overflowing the ULONG type: */
-> 	if (index + nr_to_read < index)
-> 		nr_to_read = ULONG_MAX - index + 1;
-> 
-> 	/* Cap nr_to_read, to avoid reading past the inode's isize limit: */
-> 	if (index + nr_to_read >= end_index)
-> 		nr_to_read = end_index - index + 1;
+This patch drops 'cur_mm' before calling cond_resched(), to prevent
+the sq_thread from spinning even when the user process is finished.
 
-A little verbose for my taste ... How about this?
+Before this patch, if the user process ended without closing the
+io_uring fd, the sq_thread continues to spin until the
+'sq_thread_idle' timeout ends.
 
-        end_index = (isize - 1) >> PAGE_SHIFT;
-        if (index > end_index)
-                return;
-        /* Avoid wrapping to the beginning of the file */
-        if (index + nr_to_read < index)
-                nr_to_read = ULONG_MAX - index + 1;
-        /* Don't read past the page containing the last byte of the file */
-        if (index + nr_to_read >= end_index)
-                nr_to_read = end_index - index + 1;
+In the worst case where the 'sq_thread_idle' parameter is bigger than
+INT_MAX, the sq_thread will spin forever.
+
+Fixes: 6c271ce2f1d5 ("io_uring: add submission polling")
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+
+Hi Jens,
+I'm also sending a test to liburing for this case.
+
+Cheers,
+Stefano
+---
+ fs/io_uring.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5a826017ebb8..f902f77964ef 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5138,6 +5138,18 @@ static int io_sq_thread(void *data)
+ 		 * to enter the kernel to reap and flush events.
+ 		 */
+ 		if (!to_submit || ret == -EBUSY) {
++			/*
++			 * Drop cur_mm before scheduling, we can't hold it for
++			 * long periods (or over schedule()). Do this before
++			 * adding ourselves to the waitqueue, as the unuse/drop
++			 * may sleep.
++			 */
++			if (cur_mm) {
++				unuse_mm(cur_mm);
++				mmput(cur_mm);
++				cur_mm = NULL;
++			}
++
+ 			/*
+ 			 * We're polling. If we're within the defined idle
+ 			 * period, then let us spin without work before going
+@@ -5152,18 +5164,6 @@ static int io_sq_thread(void *data)
+ 				continue;
+ 			}
+ 
+-			/*
+-			 * Drop cur_mm before scheduling, we can't hold it for
+-			 * long periods (or over schedule()). Do this before
+-			 * adding ourselves to the waitqueue, as the unuse/drop
+-			 * may sleep.
+-			 */
+-			if (cur_mm) {
+-				unuse_mm(cur_mm);
+-				mmput(cur_mm);
+-				cur_mm = NULL;
+-			}
+-
+ 			prepare_to_wait(&ctx->sqo_wait, &wait,
+ 						TASK_INTERRUPTIBLE);
+ 
+-- 
+2.24.1
 
