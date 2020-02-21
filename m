@@ -2,112 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01EE616879A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 20:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B7B16881A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbgBUToe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 14:44:34 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15668 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgBUTod (ORCPT
+        id S1728025AbgBUULU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 15:11:20 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45761 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727998AbgBUULU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 14:44:33 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e5033120000>; Fri, 21 Feb 2020 11:44:18 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Feb 2020 11:44:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 11:44:32 -0800
-Received: from [10.2.166.200] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
- 2020 19:44:32 +0000
-Subject: Re: [PATCH v7 11/24] mm: Move end_index check out of readahead loop
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
-        <linux-xfs@vger.kernel.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-12-willy@infradead.org>
- <e6ef2075-b849-299e-0f11-c6ee82b0a3c7@nvidia.com>
- <20200221153537.GE24185@bombadil.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <1fd052ce-cd5e-60ce-e494-cbf6427d3ed3@nvidia.com>
-Date:   Fri, 21 Feb 2020 11:41:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Fri, 21 Feb 2020 15:11:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582315878;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uRP0kTpYUnrOv+Lvd4Y6Qf2YuD8AbSPgX2qmL9GoFeg=;
+        b=aXi7eHQx9CDfzJ2Q3d5YghUiWwfQH0bHC5cOgkNCo0g2wi0GOMF2ttXzCkZ9p3U2XvwJHz
+        TxYExDNcCaZG8uVQLA2CT7NDLil3qljSpPEqLCOUQu00tTwWtMv2902+RRQjHrvfFV3AwD
+        ah5u9JIwObEbTCQUQGqOF4BJ2ttwxXw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-FPdgxLhVMQ2qup8ahp3gwg-1; Fri, 21 Feb 2020 15:11:14 -0500
+X-MC-Unique: FPdgxLhVMQ2qup8ahp3gwg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8E255800D4E;
+        Fri, 21 Feb 2020 20:11:13 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F2F8660499;
+        Fri, 21 Feb 2020 20:11:12 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH V2 0/3] fstests: fixes for 64k pages and dax
+References: <20200220200632.14075-1-jmoyer@redhat.com>
+        <20200220212100.GC9506@magnolia>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 21 Feb 2020 15:11:11 -0500
+In-Reply-To: <20200220212100.GC9506@magnolia> (Darrick J. Wong's message of
+        "Thu, 20 Feb 2020 13:21:00 -0800")
+Message-ID: <x494kvj3dls.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200221153537.GE24185@bombadil.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582314258; bh=pQKOwwEmNmp5lZ+eX1Ols5QNnW+OORTLQJDMCsPxtEc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=lYdo4NH8M7SXphPat6doJg0oOA1V6kLXukQ7JIEh5FVkfFb0/CxKOhHQdMiRNYy87
-         Q6EhPR2Fph1xqpiZaGm+fIV8Ra4pJE8E5H2Ofj6LlTy0+Qb+/+y64EhZcbjIYXrOqI
-         IXR7s2kX4Yi3hnWXNuj2sU2+Joh83jXJxvw8pHXSeKQS/7ccswnLmpLkros2lxWTg/
-         2U8B/Ar6NYNMOQFqfCj3j5XpjUwSHVdi0BMHCh2YVMnazsUm42RddLEt+ZRAKHCaXa
-         IlYO+1WyQ2QxlFvwnZy2R5xtgMwusy7sT9ZlwHQi2bqndUATGT9KLiH14aMZETjP0i
-         ow4Jt857PEIiA==
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/21/20 7:35 AM, Matthew Wilcox wrote:
-> On Thu, Feb 20, 2020 at 07:50:39PM -0800, John Hubbard wrote:
->> This tiny patch made me pause, because I wasn't sure at first of the exact
->> intent of the lines above. Once I worked it out, it seemed like it might
->> be helpful (or overkill??) to add a few hints for the reader, especially since
->> there are no hints in the function's (minimal) documentation header. What
->> do you think of this?
->>
->> 	/*
->> 	 * If we can't read *any* pages without going past the inodes's isize
->> 	 * limit, give up entirely:
->> 	 */
->> 	if (index > end_index)
->> 		return;
->>
->> 	/* Cap nr_to_read, in order to avoid overflowing the ULONG type: */
->> 	if (index + nr_to_read < index)
->> 		nr_to_read = ULONG_MAX - index + 1;
->>
->> 	/* Cap nr_to_read, to avoid reading past the inode's isize limit: */
->> 	if (index + nr_to_read >= end_index)
->> 		nr_to_read = end_index - index + 1;
-> 
-> A little verbose for my taste ... How about this?
+Hi, Darrick,
 
+"Darrick J. Wong" <darrick.wong@oracle.com> writes:
 
-Mine too, actually. :)  I think your version below looks good.
+>> One class of failures is tests that create a really small file system
+>> size.  Some of those tests seem to require the very small size, but
+>> others seem like they could live with a slightly bigger size that
+>> would then fit the log (the typical failure is a mkfs failure due to
+>> not enough blocks for the log).  For the former case, I'm tempted to
+>> send patches to _notrun those tests, and for the latter, I'd like to
+>> bump the file system sizes up.  300MB seems to be large enough to
+>> accommodate the log.  Would folks be opposed to those approaches?
+>
+> Seems fine to me.  Do we have a helper function to compute (or maybe
+> just format) the minimum supported filesystem size for the given
+> MKFS_OPTIONS?
 
+Not that I could find.  I'm not sure how you'd do that, even.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+>> Another class of failure is tests that either hard-code a block size
+>> to trigger a specific error case, or that test a multitude of block
+>> sizes.  I'd like to send a patch to _notrun those tests if there is
+>> a user-specified block size.  That will require parsing the MKFS_OPTIONS
+>> based on the fs type, of course.  Is that something that seems
+>> reasonable?
+>
+> I think it's fine to _notrun a test that requires a specific blocksize
+> when when that blocksize is not supported by the system under test.
 
-> 
->          end_index = (isize - 1) >> PAGE_SHIFT;
->          if (index > end_index)
->                  return;
->          /* Avoid wrapping to the beginning of the file */
->          if (index + nr_to_read < index)
->                  nr_to_read = ULONG_MAX - index + 1;
->          /* Don't read past the page containing the last byte of the file */
->          if (index + nr_to_read >= end_index)
->                  nr_to_read = end_index - index + 1;
-> 
+OK.
+
+> The ones that cycle through a range of block sizes, not so much--I guess
+> the question here is can we distinguish "test only this blocksize" vs
+> "default to this block size"?  And do we want to?
+
+Well, I'd like to prevent false test failures.  In this instance, the
+block size is required in order for the system to function.  I'm
+guessing this is a new and special kind of suck.  If we treat the
+MKFS_OPTIONS as advisory, then there will be false positive failures.
+If we treat MKFS_OPTIONS as mandatory, then there will be less test
+coverage for a given set of options.  I think that's the preferrable
+solution, but I'm probably too focused on this one use case.
+
+-Jeff
 
