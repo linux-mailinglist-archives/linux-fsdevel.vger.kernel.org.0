@@ -2,93 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC90316862B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A2C16864B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:20:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbgBUSLM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 13:11:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbgBUSLL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:11:11 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67F44208E4;
-        Fri, 21 Feb 2020 18:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582308670;
-        bh=+Cb4JLP4AzzeUHtnURjqmhLOWjfrHEnJh6ZcrHPfzIs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CjjOcC1DgFPJx0n0W5Nn6sNEYOnHeArMulQiOCQ4eexPuzr9eFQvsRUz0vIrVkkl1
-         YVEguzqY8Go0OdhJE+DDsByPVTEPPqTi3fX5JPN9j33JL7ACiwqD4Atau7D5PoSDQ6
-         Z/q7kG6l1EuZMlqYb0P1zmwE4APm4LXlkELsQOzE=
-Date:   Fri, 21 Feb 2020 10:11:09 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        id S1729566AbgBUST5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 13:19:57 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50284 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbgBUST5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 13:19:57 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so2748158wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 10:19:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=wDHwJafHUYO4eJUK4woQfDUsS2PWqX2xUsdpzcXqvFo=;
+        b=B/Bxn87ldHGPpmiTejB0PK8srG8CJRhgFVKn9I55oBbSoCzibcaXDBEHoNaolzi0Mt
+         ofSZAF5YXhhDTxrcXv/eWWGU6G6/l/ES+cdyBP2XSvO03A7ZAulAFAhqGCg/mucLRFo6
+         FQfnU/k2JlRY2372nKHUW5GEwaCh6dlpk5b9c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=wDHwJafHUYO4eJUK4woQfDUsS2PWqX2xUsdpzcXqvFo=;
+        b=YW8X9iD5w8Ynxt3RHDvByFIn84zVfpLkU5qjSxxsFTJRAJr3a5q9b8FsSTchgICv+2
+         /Umzu2GRkzZ46UPfG3QPU5D+q0rm2BuSVbxRwbtzMi3Roe/SUKB5ue9vE+Ok/ganQO5y
+         DUzWbepecjUFEkNTVaey3jTMM1CWqNPI4tHuC4HlSGfF+3+4IPMePVgYdmDcwfBehlFb
+         KuTm42TdUlfSixXtVzG1iVxFB7anQB2bB+b//3NrgzX5SYKy5cGA9kXHG0pCCh1bVUvx
+         D/gnUfkYCXhATUWAkM8q2TuHvA9zgkiLx5ALAauTSrij2p+MzBMXePIcGbGoc88UHY42
+         UrCA==
+X-Gm-Message-State: APjAAAUTvMqJSIL15I9Dhn3f5SW2Bv3z3TeUJvOmRiWkQH0xqygN4X31
+        XpsTxfK3swCngu0Z/wrZVxhjZg==
+X-Google-Smtp-Source: APXvYqzQllr5uOwYGgFCk0oHK40yf7h67oQJx51bljL82rI3X++tkuZFqlo3TgkHXjrZ1TXYNvDhLg==
+X-Received: by 2002:a7b:c7d2:: with SMTP id z18mr5182272wmk.160.1582309195576;
+        Fri, 21 Feb 2020 10:19:55 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id p5sm4789500wrt.79.2020.02.21.10.19.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 10:19:51 -0800 (PST)
+Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>,
-        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
-        Parshuram Raju Thombare <pthombar@cadence.com>
-Subject: Re: [PATCH v7 6/9] scsi: ufs: Add inline encryption support to UFS
-Message-ID: <20200221181109.GB925@sol.localdomain>
-References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-7-satyat@google.com>
- <20200221172244.GC438@infradead.org>
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Desmond Yan <desmond.yan@broadcom.com>,
+        James Hu <james.hu@broadcom.com>
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-7-scott.branden@broadcom.com>
+ <20200220074711.GA3261162@kroah.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
+Date:   Fri, 21 Feb 2020 10:19:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221172244.GC438@infradead.org>
+In-Reply-To: <20200220074711.GA3261162@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 09:22:44AM -0800, Christoph Hellwig wrote:
-> On Fri, Feb 21, 2020 at 03:50:47AM -0800, Satya Tangirala wrote:
-> > Wire up ufshcd.c with the UFS Crypto API, the block layer inline
-> > encryption additions and the keyslot manager.
-> > 
-> > Also, introduce UFSHCD_QUIRK_BROKEN_CRYPTO that certain UFS drivers
-> > that don't yet support inline encryption need to use - taken from
-> > patches by John Stultz <john.stultz@linaro.org>
-> > (https://android-review.googlesource.com/c/kernel/common/+/1162224/5)
-> > (https://android-review.googlesource.com/c/kernel/common/+/1162225/5)
-> > (https://android-review.googlesource.com/c/kernel/common/+/1164506/1)
-> 
-> Between all these quirks, with what upstream SOC does this feature
-> actually work?
 
-It will work on DragonBoard 845c, i.e. Qualcomm's Snapdragon 845 SoC, if we
-apply my patchset
-https://lkml.kernel.org/linux-block/20200110061634.46742-1-ebiggers@kernel.org/.
-It's currently based on Satya's v6 patchset, but I'll be rebasing it onto v7 and
-resending.  It uses all the UFS standard crypto code that Satya is adding except
-for ufshcd_program_key(), which has to be replaced with a vendor-specific
-operation.  It does also add vendor-specific code to ufs-qcom to initialize the
-crypto hardware, but that's in addition to the standard code, not replacing it.
 
-DragonBoard 845c is a commercially available development board that boots the
-mainline kernel (modulo two arm-smmu IOMMU patches that Linaro is working on),
-so I think it counts as an "upstream SoC".
+On 2020-02-19 11:47 p.m., Greg Kroah-Hartman wrote:
+> On Wed, Feb 19, 2020 at 04:48:24PM -0800, Scott Branden wrote:
+>> Add Broadcom VK driver offload engine.
+>> This driver interfaces to the VK PCIe offload engine to perform
+>> should offload functions as video transcoding on multiple streams
+>> in parallel.  VK device is booted from files loaded using
+>> request_firmware_into_buf mechanism.  After booted card status is updated
+>> and messages can then be sent to the card.
+>> Such messages contain scatter gather list of addresses
+>> to pull data from the host to perform operations on.
+> Why is this a tty driver?
+We have a tty driver here as there are (multiple) console interfaces to 
+the card.
+The only viable interface to the card is through the PCIe bus.  We can't 
+hook up cables to the card to get at the consoles.
+As such we implemented a tty driver to access the console via a circular 
+buffer in PCIe BAR space.
 
-That's all that we currently have the hardware to verify ourselves, though
-Mediatek says that Satya's patches are working on their hardware too.  And the
-UFS controller on Mediatek SoCs is supported by the upstream kernel via
-ufs-mediatek.  But I don't know whether it just works exactly as-is or whether
-they needed to patch ufs-mediatek too.  Stanley or Kuohong, can you confirm?
+It is extremely useful.  You get console access to virtual serial ports 
+connected to each processor inside the VK SoC.
+Future enhancement is to connect the tty driver to use an MSIX interrupt 
+rather than polling.
+Once that is done lrz/sz transfers will be much quicker.  I'd also look 
+at if I could use ser2net to get network access
+for the processors on the VK SoC over this interface as well.
+>
+> Have you worked with the V4L developers to tie this into the proper
+> in-kernel apis for this type of functionality?
+We looked at the V4L model doesn't have any support for anything we are 
+doing in this driver.
+We also want a driver that doesn't care about video.  It could be 
+offloading crypto or other operations.
+We talked with Olof about all of this previously and he said leave it as 
+a misc driver for now.
+He was going to discuss at linux plumbers conference that we need some 
+sort of offload engine model that such devices could fit into.
+> Using a tty driver seems like the totally incorrect way to do this, what
+> am I missing?
+tty driver is used to provide console access to the processors running 
+on vk.
+Data is sent using the bcm_vk_msg interface by read/write operations 
+from user space.
+VK then gets the messages and DMA's the data to/from host memory when 
+needed to process.
+>
+> Also, do not make up random error values, you return "-1" a lot here,
+> that is not ok.  Please fix up to return the correct -Ewhatever values
+> instead.
+OK.
+>
+> thanks,
+>
+> greg k-h
 
-We're also hoping that the patches are usable with the UFS controllers from
-Cadence Design Systems and Synopsys, which have upstream kernel support in
-drivers/scsi/ufs/cdns-pltfrm.c and drivers/scsi/ufs/ufshcd-dwc.c.  But we don't
-currently have a way to verify this.  But in 2018, both companies had tried to
-get the UFS v2.1 standard crypto support upstream, so presumably they must have
-implemented it in their hardware.  +Cc the people who were working on that.
-
-- Eric
