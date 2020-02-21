@@ -2,237 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C6AE167EE0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 14:43:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE0E167FF9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgBUNnN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 08:43:13 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:40187 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727053AbgBUNnN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 08:43:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582292591;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y9BNANhEy4c+1esbB9J/yf/xmLZ2jQzY8NSIFrPEJSc=;
-        b=cUedEGcwB/2NLSPCgKf+qeKyYeODXolJM+OYnyqE4ylxNccdgnTSUZb7D3TUQctezffZVa
-        MMUGfP5JtuOkbiJfhzp2SLQuL7mh65vZM1AmfMBlaPisCkJdpa9su2LQKLQM52qyt3zOlD
-        k+nU2ieRANSqhZGGyydavWPShrwnqAs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-97-Xm1LPeLcO8WD4ldhzrpbpQ-1; Fri, 21 Feb 2020 08:43:09 -0500
-X-MC-Unique: Xm1LPeLcO8WD4ldhzrpbpQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6903A13E5;
-        Fri, 21 Feb 2020 13:43:08 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D24485D9C5;
-        Fri, 21 Feb 2020 13:43:07 +0000 (UTC)
-Date:   Fri, 21 Feb 2020 21:53:32 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH V2 2/3] t_mmap_collision: fix hard-coded page size
-Message-ID: <20200221135332.GK14282@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: Jeff Moyer <jmoyer@redhat.com>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20200220200632.14075-1-jmoyer@redhat.com>
- <20200220200632.14075-3-jmoyer@redhat.com>
+        id S1728358AbgBUOUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 09:20:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41524 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728081AbgBUOUR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 09:20:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DD6CAB23C;
+        Fri, 21 Feb 2020 14:20:14 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 14:20:10 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     ?????? <yun.wang@linux.alibaba.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
+ locality info
+Message-ID: <20200221142010.GT3420@suse.de>
+References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
+ <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+ <20200214151048.GL14914@hirez.programming.kicks-ass.net>
+ <20200217115810.GA3420@suse.de>
+ <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+ <20200217141616.GB3420@suse.de>
+ <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20200220200632.14075-3-jmoyer@redhat.com>
+In-Reply-To: <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 03:06:31PM -0500, Jeff Moyer wrote:
-> Fix the test to run on non-4k page size systems.
+On Tue, Feb 18, 2020 at 09:39:35AM +0800, ?????? wrote:
+> On 2020/2/17 ??????10:16, Mel Gorman wrote:
+> > On Mon, Feb 17, 2020 at 09:23:52PM +0800, ?????? wrote:
+> [snip]
+> >>
+> >> IMHO the scan period changing should not be a problem now, since the
+> >> maximum period is defined by user, so monitoring at maximum period
+> >> on the accumulated page accessing counters is always meaningful, correct?
+> >>
+> > 
+> > It has meaning but the scan rate drives the fault rate which is the basis
+> > for the stats you accumulate. If the scan rate is high when accesses
+> > are local, the stats can be skewed making it appear the task is much
+> > more local than it may really is at a later point in time. The scan rate
+> > affects the accuracy of the information. The counters have meaning but
+> > they needs careful interpretation.
 > 
-> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
-> ---
-
-This patch looks good to me, and it's really helpful.
-
-Thanks,
-Zorro
-
-Before patched:
-
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/aarch64
-MKFS_OPTIONS  -- -f -b size=65536 -m crc=1,finobt=1,reflink=1,rmapbt=1 -i sparse=1 /dev/sda5
-MOUNT_OPTIONS -- -o context=system_u:object_r:nfs_t:s0 /dev/sda5 /mnt/xfstests/mnt2
-
-generic/503 14s ... - output mismatch (see /root/xfstests-dev/results//generic/503.out.bad)
-    --- tests/generic/503.out   2020-02-21 05:41:37.992675071 -0500
-    +++ /root/xfstests-dev/results//generic/503.out.bad 2020-02-21 08:20:19.736550319 -0500
-    @@ -1,2 +1,4 @@
-     QA output created by 503
-    +collapse_range_fn fallocate 2: Invalid argument
-    +collapse_range_fn fallocate 2: Invalid argument
-...
-
-After patched:
-
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/aarch64
-MKFS_OPTIONS  -- -f -b size=65536 -m crc=1,finobt=1,reflink=1,rmapbt=1 -i sparse=1 /dev/sda5
-MOUNT_OPTIONS -- -o context=system_u:object_r:nfs_t:s0 /dev/sda5 /mnt/xfstests/mnt2
-
-generic/503 16s ...  16s
-Ran: generic/503
-Passed all 1 tests
-
->  src/t_mmap_collision.c | 40 +++++++++++++++++++++-------------------
->  1 file changed, 21 insertions(+), 19 deletions(-)
-> 
-> diff --git a/src/t_mmap_collision.c b/src/t_mmap_collision.c
-> index d547bc05..c872f4e2 100644
-> --- a/src/t_mmap_collision.c
-> +++ b/src/t_mmap_collision.c
-> @@ -25,13 +25,12 @@
->  #include <sys/types.h>
->  #include <unistd.h>
->  
-> -#define PAGE(a) ((a)*0x1000)
-> -#define FILE_SIZE PAGE(4)
-> -
->  void *dax_data;
->  int nodax_fd;
->  int dax_fd;
->  bool done;
-> +static int pagesize;
-> +static int file_size;
->  
->  #define err_exit(op)                                                          \
->  {                                                                             \
-> @@ -49,18 +48,18 @@ void punch_hole_fn(void *ptr)
->  		read = 0;
->  
->  		do {
-> -			rc = pread(nodax_fd, dax_data + read, FILE_SIZE - read,
-> +			rc = pread(nodax_fd, dax_data + read, file_size - read,
->  					read);
->  			if (rc > 0)
->  				read += rc;
->  		} while (rc > 0);
->  
-> -		if (read != FILE_SIZE || rc != 0)
-> +		if (read != file_size || rc != 0)
->  			err_exit("pread");
->  
->  		rc = fallocate(dax_fd,
->  				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> -				0, FILE_SIZE);
-> +				0, file_size);
->  		if (rc < 0)
->  			err_exit("fallocate");
->  
-> @@ -81,18 +80,18 @@ void zero_range_fn(void *ptr)
->  		read = 0;
->  
->  		do {
-> -			rc = pread(nodax_fd, dax_data + read, FILE_SIZE - read,
-> +			rc = pread(nodax_fd, dax_data + read, file_size - read,
->  					read);
->  			if (rc > 0)
->  				read += rc;
->  		} while (rc > 0);
->  
-> -		if (read != FILE_SIZE || rc != 0)
-> +		if (read != file_size || rc != 0)
->  			err_exit("pread");
->  
->  		rc = fallocate(dax_fd,
->  				FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE,
-> -				0, FILE_SIZE);
-> +				0, file_size);
->  		if (rc < 0)
->  			err_exit("fallocate");
->  
-> @@ -113,11 +112,11 @@ void truncate_down_fn(void *ptr)
->  
->  		if (ftruncate(dax_fd, 0) < 0)
->  			err_exit("ftruncate");
-> -		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
-> +		if (fallocate(dax_fd, 0, 0, file_size) < 0)
->  			err_exit("fallocate");
->  
->  		do {
-> -			rc = pread(nodax_fd, dax_data + read, FILE_SIZE - read,
-> +			rc = pread(nodax_fd, dax_data + read, file_size - read,
->  					read);
->  			if (rc > 0)
->  				read += rc;
-> @@ -142,15 +141,15 @@ void collapse_range_fn(void *ptr)
->  	while (!done) {
->  		read = 0;
->  
-> -		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
-> +		if (fallocate(dax_fd, 0, 0, file_size) < 0)
->  			err_exit("fallocate 1");
-> -		if (fallocate(dax_fd, FALLOC_FL_COLLAPSE_RANGE, 0, PAGE(1)) < 0)
-> +		if (fallocate(dax_fd, FALLOC_FL_COLLAPSE_RANGE, 0, pagesize) < 0)
->  			err_exit("fallocate 2");
-> -		if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
-> +		if (fallocate(dax_fd, 0, 0, file_size) < 0)
->  			err_exit("fallocate 3");
->  
->  		do {
-> -			rc = pread(nodax_fd, dax_data + read, FILE_SIZE - read,
-> +			rc = pread(nodax_fd, dax_data + read, file_size - read,
->  					read);
->  			if (rc > 0)
->  				read += rc;
-> @@ -192,6 +191,9 @@ int main(int argc, char *argv[])
->  		exit(0);
->  	}
->  
-> +	pagesize = getpagesize();
-> +	file_size = 4 * pagesize;
-> +
->  	dax_fd = open(argv[1], O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
->  	if (dax_fd < 0)
->  		err_exit("dax_fd open");
-> @@ -202,15 +204,15 @@ int main(int argc, char *argv[])
->  
->  	if (ftruncate(dax_fd, 0) < 0)
->  		err_exit("dax_fd ftruncate");
-> -	if (fallocate(dax_fd, 0, 0, FILE_SIZE) < 0)
-> +	if (fallocate(dax_fd, 0, 0, file_size) < 0)
->  		err_exit("dax_fd fallocate");
->  
->  	if (ftruncate(nodax_fd, 0) < 0)
->  		err_exit("nodax_fd ftruncate");
-> -	if (fallocate(nodax_fd, 0, 0, FILE_SIZE) < 0)
-> +	if (fallocate(nodax_fd, 0, 0, file_size) < 0)
->  		err_exit("nodax_fd fallocate");
->  
-> -	dax_data = mmap(NULL, FILE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED,
-> +	dax_data = mmap(NULL, file_size, PROT_READ|PROT_WRITE, MAP_SHARED,
->  			dax_fd, 0);
->  	if (dax_data == MAP_FAILED)
->  		err_exit("mmap");
-> @@ -220,7 +222,7 @@ int main(int argc, char *argv[])
->  	run_test(&truncate_down_fn);
->  	run_test(&collapse_range_fn);
->  
-> -	if (munmap(dax_data, FILE_SIZE) != 0)
-> +	if (munmap(dax_data, file_size) != 0)
->  		err_exit("munmap");
->  
->  	err = close(dax_fd);
-> -- 
-> 2.19.1
+> Yeah, to zip so many information from NUMA Balancing to some statistics
+> is a challenge itself, the locality still not so easy to be understood by
+> NUMA newbie :-P
 > 
 
+Indeed and if they do not take into account historical skew into
+account, they still might not understand.
+
+> > 
+> >> FYI, by monitoring locality, we found that the kvm vcpu thread is not
+> >> covered by NUMA Balancing, whatever how many maximum period passed, the
+> >> counters are not increasing, or very slowly, although inside guest we are
+> >> copying memory.
+> >>
+> >> Later we found such task rarely exit to user space to trigger task
+> >> work callbacks, and NUMA Balancing scan depends on that, which help us
+> >> realize the importance to enable NUMA Balancing inside guest, with the
+> >> correct NUMA topo, a big performance risk I'll say :-P
+> >>
+> > 
+> > Which is a very interesting corner case in itself but also one that
+> > could have potentially have been inferred from monitoring /proc/vmstat
+> > numa_pte_updates or on a per-task basis by monitoring /proc/PID/sched and
+> > watching numa_scan_seq and total_numa_faults. Accumulating the information
+> > on a per-cgroup basis would require a bit more legwork.
+> 
+> That's not working for daily monitoring...
+> 
+
+Indeed although at least /proc/vmstat is cheap to monitor and it could
+at least be tracked if the number of NUMA faults are abnormally low or
+the ratio of remote to local hints are problematic.
+
+> Besides, compared with locality, this require much more deeper understand
+> on the implementation, which could even be tough for NUMA developers to
+> assemble all these statistics together.
+> 
+
+My point is that even with the patch, the definition of locality is
+subtle. At a single point in time, the locality might appear to be low
+but it's due to an event that happened far in the past.
+
+> > 
+> >> Maybe not a good example, but we just try to highlight that NUMA Balancing
+> >> could have issue in some cases, and we want them to be exposed, somehow,
+> >> maybe by the locality.
+> >>
+> > 
+> > Again, I'm somewhat neutral on the patch simply because I would not use
+> > the information for debugging problems with NUMA balancing. I would try
+> > using tracepoints and if the tracepoints were not good enough, I'd add or
+> > fix them -- similar to what I had to do with sched_stick_numa recently.
+> > The caveat is that I mostly look at this sort of problem as a developer.
+> > Sysadmins have very different requirements, especially simplicity even
+> > if the simplicity in this case is an illusion.
+> 
+> Fair enough, but I guess PeterZ still want your Ack, so neutral means
+> refuse in this case :-(
+> 
+
+I think the patch is functionally harmless and can be disabled but I also
+would be wary of dealing with a bug report that was based on the numbers
+provided by the locality metric. The bulk of the work related to the bug
+would likely be spent on trying to explain the metric and I've dealt with
+quite a few bugs that were essentially "We don't like this number and think
+something is wrong because of it -- fix it". Even then, I would want the
+workload isolated and then vmstat recorded over time to determine it's
+a persistent problem or not. That's the reason why I'm relucant to ack it.
+
+I fully acknowledge that this may have value for sysadmins and may be a
+good enough reason to merge it for environments that typically build and
+configure their own kernels. I doubt that general distributions would
+enable it but that's a guess.
+
+> BTW, how do you think about the documentation in second patch?
+> 
+
+I think the documentation is great, it's clear and explains itself well.
+
+> Do you think it's necessary to have a doc to explain NUMA related statistics?
+> 
+
+It would be nice but AFAIK, the stats in vmstats are not documented.
+They are there because recording them over time can be very useful when
+dealing with user bug reports.
+
+-- 
+Mel Gorman
+SUSE Labs
