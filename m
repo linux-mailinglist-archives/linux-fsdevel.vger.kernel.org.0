@@ -2,76 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C231168069
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F5EA16808A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgBUOhZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 09:37:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728177AbgBUOhY (ORCPT
+        id S1728777AbgBUOnP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 09:43:15 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57683 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728873AbgBUOnP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:37:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=oscywdw1eHVlIX2W4jKP5rlOyLGc6Xdek/JohMwhP9c=; b=aC4K+JQwjIZk73GuOj4mk1djH5
-        uX0k31khjv5eJEOQEhfW5ku1s3QyQWPNql4BamVNlu/tref/kO3x/OVb5OZG4AKjB2QBo7vUZZa8O
-        Bs1HzzhTZxv3OTZghwk12/SKVKnX9F1mcWlbmZ4UTIMiJucbxhkgMW56xs6F6hrPXN65DXSDI2ZRQ
-        2lSTOlmd7uTviYo4XWK/3IvIAI6ek2IuSOvTIQ9FRiDiF2En81Y0uJ1cDC0NQCWgKA6KaI6ZxHXDh
-        T8i1aqPm/qyAn86Xs4mxfF2nqrJxeJBo2EJFsNRlXxuMgqZVkLW16YgNb5k51TJzDXNprNKVdPbnz
-        VEkMOGWw==;
-Received: from [38.126.112.138] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j59Qh-0003c9-Lj; Fri, 21 Feb 2020 14:37:23 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     damien.lemoal@wdc.com, naohiro.aota@wdc.com
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] zonefs: fix IOCB_NOWAIT handling
-Date:   Fri, 21 Feb 2020 06:37:23 -0800
-Message-Id: <20200221143723.482323-1-hch@lst.de>
-X-Mailer: git-send-email 2.24.1
+        Fri, 21 Feb 2020 09:43:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582296195;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=frQbF+c16vD65ZiZEf+lKyTvER21AAYID9Vfs1Sqi8c=;
+        b=Uj/n+57Tn0k+ShU0RUCc6pzI0BQ/DA3sgzpu3bQ7G6/iH1D3QoqAPZkZLm4RlHmD2VVqaQ
+        o/0F6soM+BMh2csWE/OvMMovkkoRHIQG8Ov7tSrSVTTwwH0vg7xrM6+YSuGudl5EdZIORS
+        7Ic5bA52VxIfF+W100cstkEpXTPdhIA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-55-rhZzXX99NbuzYxjCOs-KIg-1; Fri, 21 Feb 2020 09:43:09 -0500
+X-MC-Unique: rhZzXX99NbuzYxjCOs-KIg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8941718C35A0;
+        Fri, 21 Feb 2020 14:43:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E1CAF87B11;
+        Fri, 21 Feb 2020 14:43:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200219170421.GD9496@magnolia>
+References: <20200219170421.GD9496@magnolia> <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk> <158204563445.3299825.13575924510060131783.stgit@warthog.procyon.org.uk>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
+        mszeredi@redhat.com, christian@brauner.io,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/19] ext4: Add example fsinfo information [ver #16]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1899515.1582296185.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 21 Feb 2020 14:43:05 +0000
+Message-ID: <1899516.1582296185@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IOCB_NOWAIT can't just be ignored as it breaks applications expecting
-it not to block.  Just refuse the operation as applications must handle
-that (e.g. by falling back to a thread pool).
+Darrick J. Wong <darrick.wong@oracle.com> wrote:
 
-Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/zonefs/super.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> > +	memcpy(ctx->buffer, es->s_volume_name, sizeof(es->s_volume_name));
+> =
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 8bc6ef82d693..69aee3dfb660 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -601,13 +601,13 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t ret;
- 
- 	/*
--	 * For async direct IOs to sequential zone files, ignore IOCB_NOWAIT
-+	 * For async direct IOs to sequential zone files, refuse IOCB_NOWAIT
- 	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
- 	 * on the inode lock but the second goes through but is now unaligned).
- 	 */
--	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb)
--	    && (iocb->ki_flags & IOCB_NOWAIT))
--		iocb->ki_flags &= ~IOCB_NOWAIT;
-+	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb) &&
-+	    (iocb->ki_flags & IOCB_NOWAIT))
-+		return -EOPNOTSUPP;
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
- 		if (!inode_trylock(inode))
--- 
-2.24.1
+> Shouldn't this be checking that ctx->buffer is large enough to hold
+> s_volume_name?
+
+Well, the buffer is guaranteed to be 4KiB in size.
+
+> > +	return strlen(ctx->buffer);
+> =
+
+> s_volume_name is /not/ a null-terminated string if the label is 16
+> characters long.
+
+And the buffer is precleared, so it's automatically NULL terminated.
+
+> > +#define FSINFO_ATTR_EXT4_TIMESTAMPS	0x400	/* Ext4 superblock timestam=
+ps */
+> =
+
+> I guess each filesystem gets ... 256 different attrs, and the third
+> nibble determines the namespace?
+
+No.  Think of it as allocating namespace in 256-number blocks.  That means
+there are 16 million of them.  If a filesystem uses up an entire block, it=
+ can
+always allocate another one.  I don't think it likely that we'll get
+sufficient filesystems to eat them all.
+
+David
 
