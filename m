@@ -2,133 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0811166EA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 05:51:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 951C6166EAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 06:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbgBUEvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 23:51:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46522 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729371AbgBUEvR (ORCPT
+        id S1725973AbgBUFCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 00:02:20 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46384 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbgBUFCU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 23:51:17 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L4nZGJ041350
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 23:51:16 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y8uc2391g-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 23:51:15 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Fri, 21 Feb 2020 04:51:14 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 04:51:12 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L4pBdM53018724
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 04:51:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F88C52054;
-        Fri, 21 Feb 2020 04:51:11 +0000 (GMT)
-Received: from [9.199.159.36] (unknown [9.199.159.36])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 612705204E;
-        Fri, 21 Feb 2020 04:51:10 +0000 (GMT)
-Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
- iomap_dio_bio_actor
-To:     Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-ext4@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        darrick.wong@oracle.com
-References: <20200220152355.5ticlkptc7kwrifz@fiona>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Fri, 21 Feb 2020 10:21:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 21 Feb 2020 00:02:20 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j50Rx-00GAaV-Pv; Fri, 21 Feb 2020 05:02:05 +0000
+Date:   Fri, 21 Feb 2020 05:02:05 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Florian Weimer <fw@deneb.enyo.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs@vger.kernel.org, libc-alpha@sourceware.org,
+        linux-fsdevel@vger.kernel.org, Rich Felker <dalias@libc.org>
+Subject: Re: XFS reports lchmod failure, but changes file system contents
+Message-ID: <20200221050205.GW23230@ZenIV.linux.org.uk>
+References: <874kvwowke.fsf@mid.deneb.enyo.de>
+ <20200212161604.GP6870@magnolia>
+ <20200212181128.GA31394@infradead.org>
+ <20200212183718.GQ6870@magnolia>
+ <87d0ajmxc3.fsf@mid.deneb.enyo.de>
+ <20200212195118.GN23230@ZenIV.linux.org.uk>
+ <87wo8rlgml.fsf@mid.deneb.enyo.de>
+ <20200221040919.zmsayko3fnbdbmib@yavin.dot.cyphar.com>
 MIME-Version: 1.0
-In-Reply-To: <20200220152355.5ticlkptc7kwrifz@fiona>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022104-0012-0000-0000-00000388D60C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022104-0013-0000-0000-000021C56EC3
-Message-Id: <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002210031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221040919.zmsayko3fnbdbmib@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Feb 21, 2020 at 03:09:19PM +1100, Aleksa Sarai wrote:
 
+>  * open(/proc/self/fd/$n) failing with ELOOP might actually be a bug
+>    (the error is coming from may_open as though the lookup was done with
+>    O_NOFOLLOW) -- the nd_jump_link() jump takes the namei lookup to a
+>    the symlink but it looks like the normal link_path_walk et al
+>    handling doesn't actually try to continue resolving it. I'll look
+>    into this a bit more.
 
-On 2/20/20 8:53 PM, Goldwyn Rodrigues wrote:
-> In case of a block device error, written parameter in iomap_end()
-> is zero as opposed to the amount of submitted I/O.
-> Filesystems such as btrfs need to account for the I/O in ordered
-> extents, even if it resulted in an error. Having (incomplete)
-> submitted bytes in written gives the filesystem the amount of data
-> which has been submitted before the error occurred, and the
-> filesystem code can choose how to use it.
-> 
-> The final returned error for iomap_dio_rw() is set by
-> iomap_dio_complete().
-> 
-> Partial writes in direct I/O are considered an error. So,
-> ->iomap_end() using written == 0 as error must be changed
-> to written < length. In this case, ext4 is the only user.
-> 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->   fs/ext4/inode.c      | 2 +-
->   fs/iomap/direct-io.c | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index e60aca791d3f..e50e7414351a 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
->   	 * the I/O. Any blocks that may have been allocated in preparation for
->   	 * the direct I/O will be reused during buffered I/O.
->   	 */
-> -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-> +	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
->   		return -ENOTBLK;
->   
->   	return 0;
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 41c1e7c20a1f..01865db1bd09 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->   		size_t n;
->   		if (dio->error) {
->   			iov_iter_revert(dio->submit.iter, copied);
-> -			copied = ret = 0;
-> +			ret = 0;
->   			goto out;
->   		}
+Not a bug.  Neither mount nor symlink traversal applies to destinations
+of pure jumps (be it a symlink to "/" or a procfs symlink).  Both are
+deliberate and both for very good reasons.  We'd discussed that last
+year (and I'm going to cover that on LSF); basically, there's no
+good semantics for symlink traversal in such situation.
 
-But if I am seeing this correctly, even after there was a dio->error
-if you return copied > 0, then the loop in iomap_dio_rw will continue
-for next iteration as well. Until the second time it won't copy
-anything since dio->error is set and from there I guess it may return
-0 which will break the loop.
-
-Is this the correct flow? Shouldn't the while loop doing
-iomap_apply in iomap_dio_rw should also break in case of
-dio->error? Or did I miss anything?
-
-
--ritesh
-
+Again, this is absolutely deliberate.  And for sanity sake, don't bother
+with link_path_walk() et.al. state in mainline - see #work.namei or
+#work.do_last in vfs.git; I'm going to repost that series tonight or
+tomorrow.  The logics is easier to follow there.
