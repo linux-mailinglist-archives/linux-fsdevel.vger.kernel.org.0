@@ -2,116 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50BFC167A66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 11:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE0AE167AE1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 11:35:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbgBUKQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 05:16:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50670 "EHLO mail.kernel.org"
+        id S1727932AbgBUKfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 05:35:18 -0500
+Received: from mga07.intel.com ([134.134.136.100]:47673 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727150AbgBUKQo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 05:16:44 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEA8520722;
-        Fri, 21 Feb 2020 10:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582280204;
-        bh=ii1y1YjqosHxxt4ATYrhgawzseb5pMwWOhVXA3CV6yA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fFhtobFbUN6Q/eAsQjW/YIdITh7NFpLSu50CqJ2f/4jKlQ/YQsRLxUX729qW3/p/d
-         oNoq21X0hggp3NP1bRA+5ED1VArkYxT4WH4oelD6IVzaUYsKwh0kFoSxIMJ/jDZp75
-         gfrxAjlJL3JhkWCa2gznXWWvnYe4UXUQUcN6gZy0=
-Date:   Fri, 21 Feb 2020 19:16:37 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Bird <Tim.Bird@sony.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [for-next][PATCH 12/26] Documentation: bootconfig: Add a doc
- for extended boot config
-Message-Id: <20200221191637.e9eed4268ff607a98200628c@kernel.org>
-In-Reply-To: <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
-References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
-        <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
-        <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+        id S1726100AbgBUKfS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 05:35:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 02:35:12 -0800
+X-IronPort-AV: E=Sophos;i="5.70,467,1574150400"; 
+   d="scan'208";a="229811346"
+Received: from jmiler-mobl.ger.corp.intel.com (HELO localhost) ([10.249.38.187])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 02:35:07 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [Intel-gfx] mmotm 2020-02-19-19-51 uploaded (gpu/drm/i915/ + HDRTEST)
+In-Reply-To: <d8112767-4089-4c58-d7d3-2ce03139858a@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200220035155.PempH%akpm@linux-foundation.org> <d8112767-4089-4c58-d7d3-2ce03139858a@infradead.org>
+Date:   Fri, 21 Feb 2020 12:35:13 +0200
+Message-ID: <874kvkz0ri.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 20 Feb 2020 16:00:23 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
+On Thu, 20 Feb 2020, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 2/19/20 7:51 PM, akpm@linux-foundation.org wrote:
+>> The mm-of-the-moment snapshot 2020-02-19-19-51 has been uploaded to
+>> 
+>>    http://www.ozlabs.org/~akpm/mmotm/
+>> 
+>> mmotm-readme.txt says
+>> 
+>> README for mm-of-the-moment:
+>> 
+>> http://www.ozlabs.org/~akpm/mmotm/
+>> 
+>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>> more than once a week.
+>> 
+>
+> on x86_64:
+> when GCOV is set/enabled:
+>
+>   HDRTEST drivers/gpu/drm/i915/display/intel_frontbuffer.h
+> /dev/null:1:0: error: cannot open /dev/null.gcno
+>   HDRTEST drivers/gpu/drm/i915/display/intel_ddi.h
+> /dev/null:1:0: error: cannot open /dev/null.gcno
+> make[5]: *** [../drivers/gpu/drm/i915/Makefile:307: drivers/gpu/drm/i915/display/intel_ddi.hdrtest] Error 1
+> make[5]: *** Waiting for unfinished jobs....
+> make[5]: *** [../drivers/gpu/drm/i915/Makefile:307: drivers/gpu/drm/i915/display/intel_frontbuffer.hdrtest] Error 1
+>
+>
+> Full randconfig file is attached.
 
-> >>> +Currently the maximum config size size is 32KB …
-> >>
-> >> Would you like to avoid a word duplication here?
-> >
-> > Oops, still exist.
-> 
-> Is there a need to separate the number from the following unit?
+We're trying to hide that from the general population, only to be used
+by our developers and CI, with e.g. "depends on !COMPILE_TEST". Can't
+hide from randconfig it seems.
 
-Sorry, I couldn't understand what you pointed here. Would you mean the
-number of file size and nodes?
+Does the below patch help?
 
-> > Indeed, "node" is not well defined. What about this?
-> > ---
-> > Each key consists of words separated by dot, and value also consists of
-> > values separated by comma. Here, each word and each value is generally
-> > called a "node".
-> 
-> I have got still understanding difficulties with such an interpretation.
-> 
-> * Do other contributors find an other word also more appropriate for this use case?
+BR,
+Jani.
 
-No.
 
-> * How will the influence evolve for naming these items?
-
-Node is used in its API, but from the user's point of view, I think it
-is OK to use "key-word" and "value".
-Also, since it is hard to count those numbers by manual, I think user
-can depend on tools/bootconfig which shows the number of node in the
-configuration file now.
-
-> * Is each element just a string (according to specific rules)?
-
-Yes.
-
-> >> Could an other wording be nicer than the abbreviation “a doc for … config”
-> >> in the commit subject?
-> >
-> > OK, I'll try next time.
-> 
-> Will words like “descriptions”and “configuration”be helpful?
-
-Like "descriptions of ..." ?
-
-Thank you,
-
-> 
-> Regards,
-> Markus
+diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
+index b314d44ded5e..bc28c31c4f78 100644
+--- a/drivers/gpu/drm/i915/Makefile
++++ b/drivers/gpu/drm/i915/Makefile
+@@ -301,7 +301,7 @@ extra-$(CONFIG_DRM_I915_WERROR) += \
+ 		$(shell cd $(srctree)/$(src) && find * -name '*.h')))
+ 
+ quiet_cmd_hdrtest = HDRTEST $(patsubst %.hdrtest,%.h,$@)
+-      cmd_hdrtest = $(CC) $(c_flags) -S -o /dev/null -x c /dev/null -include $<; touch $@
++      cmd_hdrtest = $(CC) $(filter-out $(CFLAGS_GCOV), $(c_flags)) -S -o /dev/null -x c /dev/null -include $<; touch $@
+ 
+ $(obj)/%.hdrtest: $(src)/%.h FORCE
+ 	$(call if_changed_dep,hdrtest)
 
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Jani Nikula, Intel Open Source Graphics Center
