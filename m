@@ -2,96 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC539168994
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 22:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED3F168A10
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 23:44:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbgBUVsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 16:48:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52348 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgBUVsz (ORCPT
+        id S1729183AbgBUWo1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 17:44:27 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39462 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726802AbgBUWo1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 16:48:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MjU0vaJ+i1WQ4UQpS8eKlaynh2uwVXzGNQNy57Q9C9k=; b=iCNdT0BZXgtTW3Fw9E7mV20LZ3
-        6bABfCOOFRCJ7uEiieuVoc7VQvPYz9c1AqPQS7RqHIO2SPtmECRCJ7fINKg3kWrEwzycOHzoI2EXq
-        gb8xBz4Q6YqdlmdYSYmNzPYMGLnkARpEro+4SyAMM0qv/bPjVCXcHHSSe2kepGwYnmLclyWoT72Ri
-        xVH+asjJnQ5gia6IN546JKq8u1xVU9xK4MZ7CcV53GDFQceXlwOtV+auqB/eJnS3NjFkIZuYn1p/U
-        bzlnG8k5S9m/fPbCpIe+WYxJl419e2ENRT98jQ6jjA5WKiplo70Ono1aN5F+tvL7N8eBzKyaRDymg
-        11ulvQcg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5GAH-0001lk-Uz; Fri, 21 Feb 2020 21:48:53 +0000
-Date:   Fri, 21 Feb 2020 13:48:53 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 01/24] mm: Move readahead prototypes from mm.h
-Message-ID: <20200221214853.GF24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-2-willy@infradead.org>
- <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
+        Fri, 21 Feb 2020 17:44:27 -0500
+Received: from dread.disaster.area (pa49-195-185-106.pa.nsw.optusnet.com.au [49.195.185.106])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D5E3782097C;
+        Sat, 22 Feb 2020 09:44:21 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j5H1v-0004KQ-A8; Sat, 22 Feb 2020 09:44:19 +1100
+Date:   Sat, 22 Feb 2020 09:44:19 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     ira.weiny@intel.com, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200221224419.GW10776@dread.disaster.area>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-8-ira.weiny@intel.com>
+ <20200221174449.GB11378@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e065679e-222f-7323-9782-0c4471bb9233@nvidia.com>
+In-Reply-To: <20200221174449.GB11378@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=bkRQb8bsQZKWSSj4M57YXw==:117 a=bkRQb8bsQZKWSSj4M57YXw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=dh8Lkc1bKYycxuq4kUYA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 06:43:31PM -0800, John Hubbard wrote:
-> Yes. But I think these files also need a similar change:
+On Fri, Feb 21, 2020 at 06:44:49PM +0100, Christoph Hellwig wrote:
+> On Thu, Feb 20, 2020 at 04:41:28PM -0800, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > DAX requires special address space operations (aops).  Changing DAX
+> > state therefore requires changing those aops.
+> > 
+> > However, many functions require aops to remain consistent through a deep
+> > call stack.
+> > 
+> > Define a vfs level inode rwsem to protect aops throughout call stacks
+> > which require them.
+> > 
+> > Finally, define calls to be used in subsequent patches when aops usage
+> > needs to be quiesced by the file system.
 > 
->     fs/btrfs/disk-io.c
+> I am very much against this.  There is a reason why we don't support
+> changes of ops vectors at runtime anywhere else, because it is
+> horribly complicated and impossible to get right.  IFF we ever want
+> to change the DAX vs non-DAX mode (which I'm still not sold on) the
+> right way is to just add a few simple conditionals and merge the
+> aops, which is much easier to reason about, and less costly in overall
+> overhead.
 
-That gets pagemap.h through ctree.h, so I think it's fine.  It's
-already using mapping_set_gfp_mask(), so it already depends on pagemap.h.
+*cough*
 
->     fs/nfs/super.c
+That's exactly what the original code did. And it was broken
+because page faults call multiple aops that are dependent on the
+result of the previous aop calls setting up the state correctly for
+the latter calls. And when S_DAX changes between those calls, shit
+breaks.
 
-That gets it through linux/nfs_fs.h.
+It's exactly the same problem as switching aops between two
+dependent aops method calls - we don't solve anything by merging
+aops and checking IS_DAX in each method because the race condition
+is still there.
 
-I was reluctant to not add it to blk-core.c because it doesn't seem
-necessarily intuitive that the block device core would include pagemap.h.
+/me throws his hands in the air and walks away
 
-That said, blkdev.h does include pagemap.h, so maybe I don't need to
-include it here.
-
-> ...because they also use VM_READAHEAD_PAGES, and do not directly include
-> pagemap.h yet.
-
-> > +#define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
-> > +
-> > +void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
-> > +		struct file *, pgoff_t index, unsigned long req_count);
-> 
-> Yes, "struct address_space *mapping" is weird, but I don't know if it's
-> "misleading", given that it's actually one of the things you have to learn
-> right from the beginning, with linux-mm, right? Or is that about to change?
-> 
-> I'm not asking to restore this to "struct address_space *mapping", but I thought
-> it's worth mentioning out loud, especially if you or others are planning on
-> changing those names or something. Just curious.
-
-No plans (on my part) to change the name, although I have heard people
-grumbling that there's very little need for it to be a separate struct
-from inode, except for the benefit of coda, which is not exactly a
-filesystem with a lot of users ...
-
-Anyway, no plans to change it.  If there were something _special_ about
-it like a theoretical:
-
-void mapping_dedup(struct address_space *canonical,
-		struct address_space *victim);
-
-then that's useful information and shouldn't be deleted.  But I don't
-think the word 'mapping' there conveys anything useful (other than the
-convention is to call a 'struct address_space' a mapping, which you'll
-see soon enough once you look at any of the .c files).
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
