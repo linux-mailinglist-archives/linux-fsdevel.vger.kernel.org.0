@@ -2,108 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B82F166E56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 05:17:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE21166E6C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 05:20:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbgBUEQ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 23:16:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35428 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729766AbgBUEQy (ORCPT
+        id S1729654AbgBUEUV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 23:20:21 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2518 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729280AbgBUEUV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 23:16:54 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01L4BCLK188307
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 23:16:53 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y8ucnse9p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 23:16:52 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Fri, 21 Feb 2020 04:16:50 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 04:16:46 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01L4GjSd60424362
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 04:16:46 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DECAC52057;
-        Fri, 21 Feb 2020 04:16:45 +0000 (GMT)
-Received: from [9.199.159.36] (unknown [9.199.159.36])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 53A9852052;
-        Fri, 21 Feb 2020 04:16:44 +0000 (GMT)
-Subject: Re: [RFCv2 0/4] ext4: bmap & fiemap conversion to use iomap
-To:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        tytso@mit.edu
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cmaiolino@redhat.com
-References: <cover.1580121790.git.riteshh@linux.ibm.com>
- <20200130160018.GC3445353@magnolia>
- <20200205124750.AE9DDA404D@d06av23.portsmouth.uk.ibm.com>
- <20200205155733.GH6874@magnolia>
- <20200206052619.D4BBCA405F@b06wcsmtp001.portsmouth.uk.ibm.com>
- <20200206102254.GK14001@quack2.suse.cz>
- <20200220170304.80C3E52051@d06av21.portsmouth.uk.ibm.com>
- <20200220170953.GA11221@infradead.org>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Fri, 21 Feb 2020 09:46:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thu, 20 Feb 2020 23:20:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4f5a130002>; Thu, 20 Feb 2020 20:18:27 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 20 Feb 2020 20:19:40 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 20 Feb 2020 20:19:40 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Feb
+ 2020 04:19:40 +0000
+Subject: Re: [PATCH v7 09/24] mm: Put readahead pages in cache earlier
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-btrfs@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <cluster-devel@redhat.com>, <ocfs2-devel@oss.oracle.com>,
+        <linux-xfs@vger.kernel.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-10-willy@infradead.org>
+ <5691442b-56c7-7b0d-d91b-275be52abb42@nvidia.com>
+ <20200221034304.GC24185@bombadil.infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <7abd9e60-bcc0-7474-4535-51ec9fe3be5b@nvidia.com>
+Date:   Thu, 20 Feb 2020 20:19:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200220170953.GA11221@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20200221034304.GC24185@bombadil.infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022104-0016-0000-0000-000002E8D171
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022104-0017-0000-0000-0000334BF058
-Message-Id: <20200221041644.53A9852052@d06av21.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-20_19:2020-02-19,2020-02-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=736
- priorityscore=1501 clxscore=1015 suspectscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002210027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582258708; bh=CIGWblNjMnlEw9Q0Ky7Ta6pH9+iEVsHlBGm1uvPtL0Q=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QAZjj+re8Z5ndHhIjF2VRFDwaG0bhNkGpOaYeLkouTf94ecI4+6g17dWTyJz7DL72
+         DctTTxvPN0tXj5OC1WBEfadH1p8SB7eh3lcLcu68j446CCrhtSL4uR0Ltn3Ly1Ig7V
+         9MIOKaIVmarYhCtpPLNHIDlI6cqfZH9evydC7gODPs5UoOiEpsjkrPxuEgCRzigRaN
+         SKdOa1l/36LLcF3uNxgMwfxno4JatXC+uZhTd8X1u4qKRd8jQXDWHdmWtD/0ORHM/U
+         0tqKAMS7F93WqoI7rh3y7hGnfNIA0Tu4RSaZfJORHjEA0JGLSwgia/FzEoVLZSuAOv
+         zBHfNLpt7rBpQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2/20/20 10:39 PM, Christoph Hellwig wrote:
-> On Thu, Feb 20, 2020 at 10:33:03PM +0530, Ritesh Harjani wrote:
->> So I was making some changes along the above lines and I think we can take
->> below approach for filesystem which could determine the
->> _EXTENT_LAST relatively easily and for cases if it cannot
->> as Jan also mentioned we could keep the current behavior as is and let
->> iomap core decide the last disk extent.
+On 2/20/20 7:43 PM, Matthew Wilcox wrote:
+> On Thu, Feb 20, 2020 at 07:19:58PM -0800, John Hubbard wrote:
+>>> +static inline struct page *readahead_page(struct readahead_control *rac)
+>>> +{
+>>> +	struct page *page;
+>>> +
+>>> +	BUG_ON(rac->_batch_count > rac->_nr_pages);
+>>> +	rac->_nr_pages -= rac->_batch_count;
+>>> +	rac->_index += rac->_batch_count;
+>>> +	rac->_batch_count = 0;
+>>
+>>
+>> Is it intentional, to set rac->_batch_count twice (here, and below)? The
+>> only reason I can see is if a caller needs to use ->_batch_count in the
+>> "return NULL" case, which doesn't seem to come up...
 > 
-> Well, given that _EXTENT_LAST never worked properly on any file system
-> since it was added this actually changes behavior and could break
-> existing users.  I'd rather update the documentation to match reality
-> rather than writing a lot of code for a feature no one obviously cared
-> about for years.
+> Ah, but it does.  Not in this patch, but the next one ...
+> 
+> +       if (aops->readahead) {
+> +               aops->readahead(rac);
+> +               /* Clean up the remaining pages */
+> +               while ((page = readahead_page(rac))) {
+> +                       unlock_page(page);
+> +                       put_page(page);
+> +               }
+> 
+> In the normal case, the ->readahead method will consume all the pages,
+> and we need readahead_page() to do nothing if it is called again.
+> 
+>>> +	if (!rac->_nr_pages)
+>>> +		return NULL;
+> 
+> ... admittedly I could do:
+> 
+> 	if (!rac->_nr_pages) {
+> 		rac->_batch_count = 0;
+> 		return NULL;
+> 	}
+> 
+> which might be less confusing.
 
-Well I agree to this. Since either ways the _EXTENT_LAST has never 
-worked properly or in the same manner across different filesystems.
-In ext4 itself it works differently for extent v/s non-extent based FS.
-So updating the documentation would be a right way to go from here.
 
-Ted/Jan - do you agree here:-
-Shall we move ahead with this patch series in converting ext4_fiemap to
-use iomap APIs, without worrying about how _EXTENT_LAST is being set via
-iomap core code?
+Yes, that would be a nice bit of polish if you end up doing another revision for other
+reasons.
 
 
+> 
+>>> @@ -130,23 +129,23 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages,
+>>>  				readahead_count(rac));
+>>>  		/* Clean up the remaining pages */
+>>>  		put_pages_list(pages);
+>>> -		goto out;
+>>> -	}
+>>> -
+>>> -	for (page_idx = 0; page_idx < readahead_count(rac); page_idx++) {
+>>> -		struct page *page = lru_to_page(pages);
+>>> -		list_del(&page->lru);
+>>> -		if (!add_to_page_cache_lru(page, rac->mapping, page->index,
+>>> -				gfp))
+>>> +		rac->_index += rac->_nr_pages;
+>>> +		rac->_nr_pages = 0;
+>>> +	} else {
+>>> +		while ((page = readahead_page(rac))) {
+>>>  			aops->readpage(rac->file, page);
+>>> -		put_page(page);
+>>> +			put_page(page);
+>>> +		}
+>>>  	}
+>>>  
+>>> -out:
+>>>  	blk_finish_plug(&plug);
+>>>  
+>>>  	BUG_ON(!list_empty(pages));
+>>> -	rac->_nr_pages = 0;
+>>> +	BUG_ON(readahead_count(rac));
+>>> +
+>>> +out:
+>>> +	/* If we were called due to a conflicting page, skip over it */
+>>
+>> Tiny documentation nit: What if we were *not* called due to a conflicting page? 
+>> (And what is a "conflicting page", in this context, btw?) The next line unconditionally 
+>> moves the index ahead, so the "if" part of the comment really confuses me.
+> 
+> By the end of the series, read_pages() is called in three places:
+> 
+> 1.              if (page && !xa_is_value(page)) {
+>                         read_pages(&rac, &page_pool);
+> 
+> 2.              } else if (add_to_page_cache_lru(page, mapping, index + i,
+>                                         gfp_mask) < 0) {
+>                         put_page(page);
+>                         read_pages(&rac, &page_pool);
+> 
+> 3.      read_pages(&rac, &page_pool);
+> 
+> In the first two cases, there's an existing page in the page cache
+> (which conflicts with this readahead operation), and so we need to
+> advance index.  In the third case, we're exiting the function, so it
+> does no harm to advance index one further.
 
--ritesh
 
+OK, I see. As you know, I tend toward maybe over-documenting, but what about
+adding just a *few* hints to help new readers, like this approximately (maybe
+it should be pared down):
+
+
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 9fb5f77dcf69..0dd5b09c376e 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -114,6 +114,10 @@ int read_cache_pages(struct address_space *mapping, struct list_head *pages,
+ 
+ EXPORT_SYMBOL(read_cache_pages);
+ 
++/*
++ * Read pages into the page cache, OR skip over a page if it is already in the
++ * page cache.
++ */
+ static void read_pages(struct readahead_control *rac, struct list_head *pages)
+ {
+        const struct address_space_operations *aops = rac->mapping->a_ops;
+@@ -152,7 +156,11 @@ static void read_pages(struct readahead_control *rac, struct list_head *pages)
+        BUG_ON(readahead_count(rac));
+ 
+ out:
+-       /* If we were called due to a conflicting page, skip over it */
++       /*
++        * This routine might have been called in order to skip over a page
++        * that is already in the page cache. And for other cases, the index is
++        * ignored by the caller. So just increment unconditionally:
++        */
+        rac->_index++;
+ }
+
+
+?
+
+> 
+>>> +		} else if (add_to_page_cache_lru(page, mapping, index + i,
+>>> +					gfp_mask) < 0) {
+>>
+>> I still think you'll want to compare against !=0, rather than < 0, here.
+> 
+> I tend to prefer < 0 when checking for an error value in case the function
+> decides to start using positive numbers to mean something.  I don't think
+> it's a particularly important preference though (after all, returning 1
+> might mean "failed, but for this weird reason rather than an errno").
+> 
+>>> +			put_page(page);
+>>> +			read_pages(&rac, &page_pool);
+>>
+>> Doing a read_pages() in the error case is because...actually, I'm not sure yet.
+>> Why do we do this? Effectively it's a retry?
+> 
+> Same as the reason we call read_pages() if we found a page in the page
+> cache earlier -- we're sending down a set of pages which are consecutive
+> in the file's address space, and now we have to skip one.  At least one ;-)
+> 
+
+Got it. Finally. :)
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
