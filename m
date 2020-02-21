@@ -2,95 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94F0816851E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:36:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C64D4168525
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgBURgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 12:36:53 -0500
-Received: from mail-oi1-f172.google.com ([209.85.167.172]:43809 "EHLO
-        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgBURgx (ORCPT
+        id S1726342AbgBURhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 12:37:38 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53866 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbgBURhi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:36:53 -0500
-Received: by mail-oi1-f172.google.com with SMTP id p125so2332404oif.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 09:36:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NTRXYuQ87dvDK9Oz1vWAuaYjsHn0ZemoE8V0xwoz7H0=;
-        b=kXo0h9Gt5NHWtGfZV9IH1vFOGRutjzEa7R2/xU2oUsHRonvAFyHjnro0dqamOexF8z
-         EsiyWR8yFFWMoONokEhG6mOxxYHiJ+iQPuhmpWKiW32liSjm4QrviswEFzhWBSeLEE5w
-         eRujlRgEzoM8eNA+CYFUf2UGSflgLO+Emz02CqJyfadQZotnXRkCQ+l2cGQbdxuRBYyc
-         C8peDwALRlJaHoSjbBAPenvadCC2o2QvOz8CgNr/fTkxiHagEkqE9jDB4/15IuoNRLAZ
-         6z66cy/jd2dxId0AXTVmEfjV3d/4ynIY1vQdorg5LDEUuZqqy6Hu7T8FDaxBieccmRE6
-         muzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NTRXYuQ87dvDK9Oz1vWAuaYjsHn0ZemoE8V0xwoz7H0=;
-        b=U3dit80nX0JmZzaqRtYU0giH0MQRAoCOhB1L+xrYVYvw5FvOtun6PAXhkINTMSlBMA
-         mtF25QFNVraxwozUaAL/LyTDxzpeJ4zQkbuLdBvmrdAzEjiguFug4wFYQg2vWuEn3pee
-         gI4N4fLCYoMCqBu5+PJm0imWjk3dth/ex0h0ksOANlvqhxSx9//A4pHX4yBdd+CDEo+I
-         4/AMszCdTmptA1SnmB5apkD78U6OcmrrrHaZMDtTAtEe+Td7vs7RYr3kSyK4Niqoxb99
-         /jjYPGl391apiXt2m/mG+BPsqKL94T3OaZzPLqkaTBUdYI7+lUXWKj5UWiHO88kMUwuL
-         a2Yw==
-X-Gm-Message-State: APjAAAW+lx7SLb28RGUqUgsRdgzJhO744UQhs0fXBNA7AvjzP267Ezbz
-        amnZHsEMAmrjNupW9CJmzjOnG8wxPXAoiaQN1CPgOQ==
-X-Google-Smtp-Source: APXvYqxCoOJQzNGFh4S6Wf2LwznGZ2gPK7NTphumYq3n31yOSzlLD/AyHuWWgTne7kL2s4mbyiQCCgUXnQwWQXZ8d/8=
-X-Received: by 2002:aca:d954:: with SMTP id q81mr2902469oig.157.1582306612529;
- Fri, 21 Feb 2020 09:36:52 -0800 (PST)
+        Fri, 21 Feb 2020 12:37:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=VwiptHm1mSl+Vnl+5J3QI8OHF+cEw/TKgSSpZHHbYMI=; b=LA5qn90U2myfLLlKsedRTmorGU
+        bT2GuA/FspJ4A7dMuZXejKpHEFgJvlgjNn2nbs75ie78vCScAoSPLhUQ9BwFVvRdhoKpWSQ4Hty7m
+        E2BkkzFfYyxXHpB2oZc5EI/xDx5fHSlCMv8sbE5NlHPjWGKE2csZJfwXfnkR6DGIt51/5I7swzQxu
+        hgnc3oVGtqTaZ/iObth0fzksWNBADxg1GgVSTZrX60KssEixDTW3wEA5wbYXWrXyAUs0tG3u+AYja
+        rILuvNd8apn7Y32H6EuEaxSveJEjLU890YnYTxA9K2HRdXE/NeSlgzvWe0WUBo7EzG6JxG/ieqjGi
+        V2IOLuLw==;
+Received: from [199.255.44.128] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5CEz-0003UA-4G; Fri, 21 Feb 2020 17:37:29 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     agruenba@redhat.com, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: move the posix_acl_fix_xattr_{to_from}_user out of xattr code
+Date:   Fri, 21 Feb 2020 09:37:22 -0800
+Message-Id: <20200221173722.538788-1-hch@lst.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204559631.3299825.5358385352169781990.stgit@warthog.procyon.org.uk>
- <CAG48ez3ZMg4O5US3n=p1CYK-2AAgLRY+pjnUXp2p5hdwbjCRSA@mail.gmail.com>
- <1808070.1582287889@warthog.procyon.org.uk> <CAG48ez0+_kO_YL6iO9uA+HjjnHRVHVD-bFq0C=ZLeaGtTMss5A@mail.gmail.com>
- <2113718.1582304782@warthog.procyon.org.uk>
-In-Reply-To: <2113718.1582304782@warthog.procyon.org.uk>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 21 Feb 2020 18:36:26 +0100
-Message-ID: <CAG48ez14CHMjZS8vCp6h6FnLvcFQq8oy_9JPCd=5qZ52X6w12Q@mail.gmail.com>
-Subject: seq_lock and lockdep_is_held() assertions
-To:     David Howells <dhowells@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-adding some locking folks to the thread...
+There is no excuse to ever perform actions related to a specific handler
+directly from the generic xattr code as we have handler that understand
+the specific data in given attrs.  As a nice sideeffect this removes
+tons of pointless boilerplate code.
 
-On Fri, Feb 21, 2020 at 6:06 PM David Howells <dhowells@redhat.com> wrote:
-> Jann Horn <jannh@google.com> wrote:
-> > On Fri, Feb 21, 2020 at 1:24 PM David Howells <dhowells@redhat.com> wrote:
-> > > What's the best way to write a lockdep assertion?
-> > >
-> > >         BUG_ON(!lockdep_is_held(lock));
-> >
-> > lockdep_assert_held(lock) is the normal way, I think - that will
-> > WARN() if lockdep is enabled and the lock is not held.
->
-> Okay.  But what's the best way with a seqlock_t?  It has two dep maps in it.
-> Do I just ignore the one attached to the spinlock?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/posix_acl.c                  | 62 ++-------------------------------
+ fs/xattr.c                      |  8 +----
+ include/linux/posix_acl_xattr.h | 12 -------
+ 3 files changed, 3 insertions(+), 79 deletions(-)
 
-Uuuh... very good question. Looking at how the seqlock_t helpers use
-the dep map of the seqlock, I don't think lockdep asserts work for
-asserting that you're in the read side of a seqlock?
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 249672bf54fe..09f1b7d186f0 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -663,64 +663,6 @@ int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
+ }
+ EXPORT_SYMBOL(posix_acl_update_mode);
+ 
+-/*
+- * Fix up the uids and gids in posix acl extended attributes in place.
+- */
+-static void posix_acl_fix_xattr_userns(
+-	struct user_namespace *to, struct user_namespace *from,
+-	void *value, size_t size)
+-{
+-	struct posix_acl_xattr_header *header = value;
+-	struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
+-	int count;
+-	kuid_t uid;
+-	kgid_t gid;
+-
+-	if (!value)
+-		return;
+-	if (size < sizeof(struct posix_acl_xattr_header))
+-		return;
+-	if (header->a_version != cpu_to_le32(POSIX_ACL_XATTR_VERSION))
+-		return;
+-
+-	count = posix_acl_xattr_count(size);
+-	if (count < 0)
+-		return;
+-	if (count == 0)
+-		return;
+-
+-	for (end = entry + count; entry != end; entry++) {
+-		switch(le16_to_cpu(entry->e_tag)) {
+-		case ACL_USER:
+-			uid = make_kuid(from, le32_to_cpu(entry->e_id));
+-			entry->e_id = cpu_to_le32(from_kuid(to, uid));
+-			break;
+-		case ACL_GROUP:
+-			gid = make_kgid(from, le32_to_cpu(entry->e_id));
+-			entry->e_id = cpu_to_le32(from_kgid(to, gid));
+-			break;
+-		default:
+-			break;
+-		}
+-	}
+-}
+-
+-void posix_acl_fix_xattr_from_user(void *value, size_t size)
+-{
+-	struct user_namespace *user_ns = current_user_ns();
+-	if (user_ns == &init_user_ns)
+-		return;
+-	posix_acl_fix_xattr_userns(&init_user_ns, user_ns, value, size);
+-}
+-
+-void posix_acl_fix_xattr_to_user(void *value, size_t size)
+-{
+-	struct user_namespace *user_ns = current_user_ns();
+-	if (user_ns == &init_user_ns)
+-		return;
+-	posix_acl_fix_xattr_userns(user_ns, &init_user_ns, value, size);
+-}
+-
+ /*
+  * Convert from extended attribute to in-memory representation.
+  */
+@@ -851,7 +793,7 @@ posix_acl_xattr_get(const struct xattr_handler *handler,
+ 	if (acl == NULL)
+ 		return -ENODATA;
+ 
+-	error = posix_acl_to_xattr(&init_user_ns, acl, value, size);
++	error = posix_acl_to_xattr(current_user_ns(), acl, value, size);
+ 	posix_acl_release(acl);
+ 
+ 	return error;
+@@ -889,7 +831,7 @@ posix_acl_xattr_set(const struct xattr_handler *handler,
+ 	int ret;
+ 
+ 	if (value) {
+-		acl = posix_acl_from_xattr(&init_user_ns, value, size);
++		acl = posix_acl_from_xattr(current_user_ns(), value, size);
+ 		if (IS_ERR(acl))
+ 			return PTR_ERR(acl);
+ 	}
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 90dd78f0eb27..c31e9a9ea172 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -437,10 +437,7 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
+ 			error = -EFAULT;
+ 			goto out;
+ 		}
+-		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+-		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+-			posix_acl_fix_xattr_from_user(kvalue, size);
+-		else if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
++		if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
+ 			error = cap_convert_nscap(d, &kvalue, size);
+ 			if (error < 0)
+ 				goto out;
+@@ -537,9 +534,6 @@ getxattr(struct dentry *d, const char __user *name, void __user *value,
+ 
+ 	error = vfs_getxattr(d, kname, kvalue, size);
+ 	if (error > 0) {
+-		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+-		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+-			posix_acl_fix_xattr_to_user(kvalue, error);
+ 		if (size && copy_to_user(value, kvalue, error))
+ 			error = -EFAULT;
+ 	} else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
+diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
+index 2387709991b5..8f5e70a1bd05 100644
+--- a/include/linux/posix_acl_xattr.h
++++ b/include/linux/posix_acl_xattr.h
+@@ -32,18 +32,6 @@ posix_acl_xattr_count(size_t size)
+ 	return size / sizeof(struct posix_acl_xattr_entry);
+ }
+ 
+-#ifdef CONFIG_FS_POSIX_ACL
+-void posix_acl_fix_xattr_from_user(void *value, size_t size);
+-void posix_acl_fix_xattr_to_user(void *value, size_t size);
+-#else
+-static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
+-{
+-}
+-static inline void posix_acl_fix_xattr_to_user(void *value, size_t size)
+-{
+-}
+-#endif
+-
+ struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns, 
+ 				       const void *value, size_t size);
+ int posix_acl_to_xattr(struct user_namespace *user_ns,
+-- 
+2.24.1
 
-read_seqbegin_or_lock() -> read_seqbegin() -> read_seqcount_begin() ->
-seqcount_lockdep_reader_access() does seqcount_acquire_read() (which
-maps to lock_acquire_shared_recursive()), but immediately following
-that calls seqcount_release() (which maps to lock_release())?
-
-So I think lockdep won't consider you to be holding any locks after
-read_seqbegin_or_lock() if the lock wasn't taken?
