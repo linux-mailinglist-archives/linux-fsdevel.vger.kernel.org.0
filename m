@@ -2,176 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 826A31685D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 104D51685D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 19:02:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbgBUSCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 13:02:18 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35164 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726066AbgBUSCR (ORCPT
+        id S1729451AbgBUSC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 13:02:29 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26523 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726066AbgBUSC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:02:17 -0500
+        Fri, 21 Feb 2020 13:02:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582308136;
+        s=mimecast20190719; t=1582308145;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Yz1PYlAw+vwqrPPhOUgTLgnA2ip0cR1UD//JiPCA6VE=;
-        b=Rzh1j5kewKtHgqH0l+inNkftPp/LRL+F/gbibNXnmMBY++kFs5Kea0exqpF/UX15rWbT4E
-        W16lRQ4iQmZxtCDlDEiVLxuG+BmLWp1YRbSDUD6Th7EOV5NJNjVUs8nne5a8RaB5wKSwqY
-        AaqHbAhU40nvOnr+l4QDNFhI2eVxtVY=
+        bh=lIl029QxOv3lUsZSV0uRKyqp9AfjU/t4KKE3QbkzNGc=;
+        b=XWTC97dhT65xeiszuJO9FVQJBq692TfLOeAlgZMHrmqT+gMFFf+VbCX3mFL5ZCAssY6kaB
+        ysFdKr+sJJ6/2knCT4nNeOQQt+LEGNyIOE37v858M81Hd2HN/6iH9Hm54068pZiLiTZhEs
+        eFgXLUBwxUZQn6HHGysKBUX4/6q1A8E=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-309-w8iGWSGZMkaykbBOmOtEeQ-1; Fri, 21 Feb 2020 13:02:14 -0500
-X-MC-Unique: w8iGWSGZMkaykbBOmOtEeQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-308-alKxphWwM2y0ny3l0mGNuA-1; Fri, 21 Feb 2020 13:02:22 -0500
+X-MC-Unique: alKxphWwM2y0ny3l0mGNuA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0581B8017DF;
-        Fri, 21 Feb 2020 18:02:13 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D2608017DF;
+        Fri, 21 Feb 2020 18:02:20 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-122-163.rdu2.redhat.com [10.10.122.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 432F392960;
-        Fri, 21 Feb 2020 18:02:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0FFD2708E;
+        Fri, 21 Feb 2020 18:02:18 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/17] watch_queue: sample: Display mount tree change
- notifications [ver #17]
+Subject: [PATCH 04/17] watch_queue: Introduce a non-repeating system-unique
+ superblock ID [ver #17]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, raven@themaw.net, mszeredi@redhat.com,
         christian@brauner.io, jannh@google.com, darrick.wong@oracle.com,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 21 Feb 2020 18:02:10 +0000
-Message-ID: <158230813054.2185128.14599796644062916018.stgit@warthog.procyon.org.uk>
+Date:   Fri, 21 Feb 2020 18:02:18 +0000
+Message-ID: <158230813823.2185128.2640121651515347574.stgit@warthog.procyon.org.uk>
 In-Reply-To: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
 References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.21
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is run like:
+Introduce an (effectively) non-repeating system-unique superblock ID that
+can be used to determine that two object are in the same superblock without
+risking reuse of the ID in the meantime (as is possible with device IDs).
 
-	./watch_test
+The ID is time-based to make it harder to use it as a covert communications
+channel.
 
-and watches "/" for changes to the mount topology and the attributes of
-individual mount objects.
-
-	# mount -t tmpfs none /mnt
-	# mount -o remount,ro /mnt
-	# mount -o remount,rw /mnt
-
-producing:
-
-	# ./watch_test
-	read() = 16
-	NOTIFY[000]: ty=000002 sy=00 i=02000010
-	MOUNT 00000060 change=0[new_mount] aux=416
-	read() = 16
-	NOTIFY[000]: ty=000002 sy=04 i=02010010
-	MOUNT 000001a0 change=4[setattr] aux=0
-	read() = 16
-	NOTIFY[000]: ty=000002 sy=04 i=02010010
-	MOUNT 000001a0 change=4[setattr] aux=0
+In future patches, this ID will be used to tag superblock notification
+messages.  It will also be made queryable.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- samples/watch_queue/watch_test.c |   39 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ fs/super.c         |   24 ++++++++++++++++++++++++
+ include/linux/fs.h |    3 +++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-index 0eaff5dc04c3..49d185150506 100644
---- a/samples/watch_queue/watch_test.c
-+++ b/samples/watch_queue/watch_test.c
-@@ -26,6 +26,9 @@
- #ifndef __NR_watch_devices
- #define __NR_watch_devices -1
- #endif
-+#ifndef __NR_watch_mount
-+#define __NR_watch_mount -1
-+#endif
+diff --git a/fs/super.c b/fs/super.c
+index cd352530eca9..a63073e6127e 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -44,6 +44,8 @@ static int thaw_super_locked(struct super_block *sb);
  
- #define BUF_SIZE 256
+ static LIST_HEAD(super_blocks);
+ static DEFINE_SPINLOCK(sb_lock);
++static u64 sb_last_identifier;
++static u64 sb_identifier_offset;
  
-@@ -58,6 +61,27 @@ static void saw_key_change(struct watch_notification *n, size_t len)
- 	       k->key_id, n->subtype, key_subtypes[n->subtype], k->aux);
+ static char *sb_writers_name[SB_FREEZE_LEVELS] = {
+ 	"sb_writers",
+@@ -188,6 +190,27 @@ static void destroy_unused_super(struct super_block *s)
+ 	destroy_super_work(&s->destroy_work);
  }
  
-+static const char *mount_subtypes[256] = {
-+	[NOTIFY_MOUNT_NEW_MOUNT]	= "new_mount",
-+	[NOTIFY_MOUNT_UNMOUNT]		= "unmount",
-+	[NOTIFY_MOUNT_EXPIRY]		= "expiry",
-+	[NOTIFY_MOUNT_READONLY]		= "readonly",
-+	[NOTIFY_MOUNT_SETATTR]		= "setattr",
-+	[NOTIFY_MOUNT_MOVE_FROM]	= "move_from",
-+	[NOTIFY_MOUNT_MOVE_TO]		= "move_to",
-+};
-+
-+static void saw_mount_change(struct watch_notification *n, size_t len)
++/*
++ * Generate a unique identifier for a superblock.
++ */
++static void generate_super_id(struct super_block *s)
 +{
-+	struct mount_notification *m = (struct mount_notification *)n;
++	u64 id = ktime_to_ns(ktime_get());
 +
-+	if (len != sizeof(struct mount_notification))
-+		return;
++	spin_lock(&sb_lock);
 +
-+	printf("MOUNT %08x change=%u[%s] aux=%u\n",
-+	       m->triggered_on, n->subtype, mount_subtypes[n->subtype], m->changed_mount);
-+}
-+
- /*
-  * Consume and display events.
-  */
-@@ -134,6 +158,9 @@ static void consumer(int fd)
- 			default:
- 				printf("other type\n");
- 				break;
-+			case WATCH_TYPE_MOUNT_NOTIFY:
-+				saw_mount_change(&n.n, len);
-+				break;
- 			}
- 
- 			p += len;
-@@ -142,12 +169,17 @@ static void consumer(int fd)
- }
- 
- static struct watch_notification_filter filter = {
--	.nr_filters	= 1,
-+	.nr_filters	= 2,
- 	.filters = {
- 		[0]	= {
- 			.type			= WATCH_TYPE_KEY_NOTIFY,
- 			.subtype_filter[0]	= UINT_MAX,
- 		},
-+		[1] = {
-+			.type			= WATCH_TYPE_MOUNT_NOTIFY,
-+			// Reject move-from notifications
-+			.subtype_filter[0]	= UINT_MAX & ~(1 << NOTIFY_MOUNT_MOVE_FROM),
-+		},
- 	},
- };
- 
-@@ -181,6 +213,11 @@ int main(int argc, char **argv)
- 		exit(1);
- 	}
- 
-+	if (syscall(__NR_watch_mount, AT_FDCWD, "/", 0, fd, 0x02) == -1) {
-+		perror("watch_mount");
-+		exit(1);
++	id += sb_identifier_offset;
++	if (id <= sb_last_identifier) {
++		id = sb_last_identifier + 1;
++		sb_identifier_offset = sb_last_identifier - id;
 +	}
 +
- 	consumer(fd);
- 	exit(0);
- }
++	sb_last_identifier = id;
++	spin_unlock(&sb_lock);
++
++	s->s_unique_id = id;
++}
++
+ /**
+  *	alloc_super	-	create new superblock
+  *	@type:	filesystem type superblock should belong to
+@@ -273,6 +296,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+ 		goto fail;
+ 	if (list_lru_init_memcg(&s->s_inode_lru, &s->s_shrink))
+ 		goto fail;
++	generate_super_id(s);
+ 	return s;
+ 
+ fail:
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3cd4fe6b845e..9de6bfe41016 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1548,6 +1548,9 @@ struct super_block {
+ 
+ 	spinlock_t		s_inode_wblist_lock;
+ 	struct list_head	s_inodes_wb;	/* writeback inodes */
++
++	/* Superblock event notifications */
++	u64			s_unique_id;
+ } __randomize_layout;
+ 
+ /* Helper functions so that in most cases filesystems will
 
 
