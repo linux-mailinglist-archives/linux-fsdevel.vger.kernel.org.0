@@ -2,66 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF687166C77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 02:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E432A166CAA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 03:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbgBUBma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 20:42:30 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:49144 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727790AbgBUBm3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 20:42:29 -0500
-Received: from dread.disaster.area (pa49-195-185-106.pa.nsw.optusnet.com.au [49.195.185.106])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1878A8204DA;
-        Fri, 21 Feb 2020 12:42:27 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j4xKj-0005Dd-F7; Fri, 21 Feb 2020 12:42:25 +1100
-Date:   Fri, 21 Feb 2020 12:42:25 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 03/13] fs: Remove unneeded IS_DAX() check
-Message-ID: <20200221014225.GV10776@dread.disaster.area>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-4-ira.weiny@intel.com>
+        id S1729371AbgBUCHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 21:07:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47210 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728992AbgBUCHB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Feb 2020 21:07:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 44C7EAE89;
+        Fri, 21 Feb 2020 02:06:59 +0000 (UTC)
+Date:   Thu, 20 Feb 2020 20:06:53 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com
+Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200221020653.ontjbxhorjymsbqx@fiona>
+References: <20200220152355.5ticlkptc7kwrifz@fiona>
+ <20200220174255.GA24185@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200221004134.30599-4-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=bkRQb8bsQZKWSSj4M57YXw==:117 a=bkRQb8bsQZKWSSj4M57YXw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=QyXUC8HyAAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=n2clnvF_oYH8KKarrRoA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200220174255.GA24185@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 04:41:24PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+On  9:42 20/02, Matthew Wilcox wrote:
+> On Thu, Feb 20, 2020 at 09:23:55AM -0600, Goldwyn Rodrigues wrote:
+> > In case of a block device error, written parameter in iomap_end()
+> > is zero as opposed to the amount of submitted I/O.
+> > Filesystems such as btrfs need to account for the I/O in ordered
+> > extents, even if it resulted in an error. Having (incomplete)
+> > submitted bytes in written gives the filesystem the amount of data
+> > which has been submitted before the error occurred, and the
+> > filesystem code can choose how to use it.
+> > 
+> > The final returned error for iomap_dio_rw() is set by
+> > iomap_dio_complete().
+> > 
+> > Partial writes in direct I/O are considered an error. So,
+> > ->iomap_end() using written == 0 as error must be changed
+> > to written < length. In this case, ext4 is the only user.
 > 
-> Remove the check because DAX now has it's own read/write methods and
-> file systems which support DAX check IS_DAX() prior to IOCB_DIRECT on
-> their own.  Therefore, it does not matter if the file state is DAX when
-> the iocb flags are created.
+> I really had a hard time understanding this.  I think what you meant
+> was:
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> Currently, I/Os that complete with an error indicate this by passing
+> written == 0 to the iomap_end function.  However, btrfs needs to know how
+> many bytes were written for its own accounting.  Change the convention
+> to pass the number of bytes which were actually written, and change the
+> only user to check for a short write instead of a zero length write.
 
-Yup, looks good.
+Yes, thats right.  I was trying to cover base from the previous patch
+and made a mess of it all. Thanks..
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+> 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> >  fs/ext4/inode.c      | 2 +-
+> >  fs/iomap/direct-io.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index e60aca791d3f..e50e7414351a 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> >  	 * the I/O. Any blocks that may have been allocated in preparation for
+> >  	 * the direct I/O will be reused during buffered I/O.
+> >  	 */
+> > -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+> > +	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
+> >  		return -ENOTBLK;
+> >  
+> >  	return 0;
+> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > index 41c1e7c20a1f..01865db1bd09 100644
+> > --- a/fs/iomap/direct-io.c
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  		size_t n;
+> >  		if (dio->error) {
+> >  			iov_iter_revert(dio->submit.iter, copied);
+> > -			copied = ret = 0;
+> > +			ret = 0;
+> >  			goto out;
+> >  		}
+> >  
+> > -- 
+> > 2.25.0
+> > 
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Goldwyn
