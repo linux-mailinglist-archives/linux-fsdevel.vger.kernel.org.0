@@ -2,242 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9986A168840
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:21:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 487FC168867
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 21:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbgBUUVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 15:21:38 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48276 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726483AbgBUUVi (ORCPT
+        id S1728312AbgBUUkb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 15:40:31 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37940 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbgBUUka (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 15:21:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id B8A788EE3D5;
-        Fri, 21 Feb 2020 12:21:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582316496;
-        bh=X9lwNoA40+rafWitx3M+xWbVDsNdql9HImMtv2QjhWQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MUEts7USA39twCVAZQqCBvLNWZDomXqzMPbZbKIWZih7ENCn3fbWk2hryWh/kMA85
-         kduhunZyO/HM6qqQXRIClt90s5Y5JzhLPjZBxe3Y/bMkg2GOU6VFbTIQQhLEr8mHDE
-         2ZjXS59RN0P0eHFS+Ckn+QhaR+XVgeGORqlHnncM=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2Y69yOA-ybgd; Fri, 21 Feb 2020 12:21:36 -0800 (PST)
-Received: from jarvis.ext.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9607F8EE180;
-        Fri, 21 Feb 2020 12:21:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1582316496;
-        bh=X9lwNoA40+rafWitx3M+xWbVDsNdql9HImMtv2QjhWQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MUEts7USA39twCVAZQqCBvLNWZDomXqzMPbZbKIWZih7ENCn3fbWk2hryWh/kMA85
-         kduhunZyO/HM6qqQXRIClt90s5Y5JzhLPjZBxe3Y/bMkg2GOU6VFbTIQQhLEr8mHDE
-         2ZjXS59RN0P0eHFS+Ckn+QhaR+XVgeGORqlHnncM=
-Message-ID: <1582316494.3376.45.camel@HansenPartnership.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
- [ver #17]
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
-Cc:     raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, darrick.wong@oracle.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 21 Feb 2020 12:21:34 -0800
-In-Reply-To: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 21 Feb 2020 15:40:30 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d6so1572216pgn.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 12:40:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=j03hnTjPsBfir0Nox78vfTL7k3vASulpASEG8GdxSwA=;
+        b=Gq+a7Tz+yPUi78mKDnBzWnpasIVXPdKKcEWwXocn2dNvN0rLRdSP3mToE8uQLJlUEo
+         TURR7ynWSLemQId2EzzbXQ8benNZg5NWGOglEOBdgy3h1dZf1dTNUvk7x0c9m1RaC0o2
+         k6sx1BcrrO1CUo7AOVCbxEHqmV9MUOOJveR6CUoGsZNRCoIQEMvRD5jTf46l45/Zf0fz
+         poo5/+6eE/zWOHUT4GGmoVezljvrgn2WLuVKmHzAD0yST2dFZ2oqa71fXnSevR8A0YCb
+         /8xbJYEQdupwdIlQIAEEykv/CzbOkLCI+X4HJdHbMOXXoZNzOg0l8euh8hKz0B/r/Ap8
+         Sv5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=j03hnTjPsBfir0Nox78vfTL7k3vASulpASEG8GdxSwA=;
+        b=fglVOiDliPWRVFBOGmXAmkMA0X2dFvV21ZR3MJNqO3sGclrrxnAezKah/7ibQwuN7U
+         2NFfQFCrCv/Zw08nOh7exAf/lieR9cnJRT3xby4uXy5KFd3tNhzIgq7y0lXc6yOE5g75
+         lKwbaflQWJKqR+1Xbt++RRbisOtwczNSk0VG9CJr+tnkTBNHAmlEP1edlvU0UM/LqkBl
+         YYOZ4wi13gmjZZEaoI1ef7kq+vY+/Fpq59+S+VZye2ulr8iVSmLdTfHlwwGC6FsZ5s+q
+         EhEJzR5GHUYz1IuUQC9uefI+Gi5zzo2j4OAm5GTk4KzpqjKoBQTiulTrb+WBJZx1uc6K
+         fd6w==
+X-Gm-Message-State: APjAAAWgf+QP+eUvqLsEw4zl/fKhTiacPAqTam7hiVM/EuPwaWtTm8MF
+        0vWJj98LUpOUDVyxsf7gdnynkvhk9T5MpQ==
+X-Google-Smtp-Source: APXvYqzu87st5xVU4vqGre8XTaL7l6OCGkHXv/gXyigDrb6WJ57JFQTk03IejRMBiVYUeUNplX4NKA==
+X-Received: by 2002:a63:36c2:: with SMTP id d185mr42016113pga.59.1582317628681;
+        Fri, 21 Feb 2020 12:40:28 -0800 (PST)
+Received: from cabot-wlan.adilger.int (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id y15sm3254431pgj.78.2020.02.21.12.40.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Feb 2020 12:40:27 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <6B909F7B-2C55-4D5D-AAFA-467F1A852B24@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] ext4: use non-movable memory for superblock readahead
+Date:   Fri, 21 Feb 2020 13:40:02 -0700
+In-Reply-To: <20200221192035.180546-1-guro@fb.com>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Perepechko <andrew.perepechko@seagate.com>,
+        Theodore Ts'o <tytso@mit.edu>, Gioh Kim <gioh.kim@lge.com>,
+        Jan Kara <jack@suse.cz>
+To:     Roman Gushchin <guro@fb.com>
+References: <20200221192035.180546-1-guro@fb.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-02-21 at 18:01 +0000, David Howells wrote:
-[...]
-> ============================
-> FILESYSTEM INFORMATION QUERY
-> ============================
-> 
-> The fsinfo() system call allows information about the filesystem at a
-> particular path point to be queried as a set of attributes, some of
-> which may have more than one value.
-> 
-> Attribute values are of four basic types:
-> 
->  (1) Version dependent-length structure (size defined by type).
-> 
->  (2) Variable-length string (up to 4096, including NUL).
-> 
->  (3) List of structures (up to INT_MAX size).
-> 
->  (4) Opaque blob (up to INT_MAX size).
-> 
-> Attributes can have multiple values either as a sequence of values or
-> a sequence-of-sequences of values and all the values of a particular
-> attribute must be of the same type.
-> 
-> Note that the values of an attribute *are* allowed to vary between
-> dentries within a single superblock, depending on the specific dentry
-> that you're looking at, but all the values of an attribute have to be
-> of the same type.
-> 
-> I've tried to make the interface as light as possible, so
-> integer/enum attribute selector rather than string and the core does
-> all the allocation and extensibility support work rather than leaving
-> that to the filesystems. That means that for the first two attribute
-> types, the filesystem will always see a sufficiently-sized buffer
-> allocated.  Further, this removes the possibility of the filesystem
-> gaining access to the userspace buffer.
-> 
-> 
-> fsinfo() allows a variety of information to be retrieved about a
-> filesystem and the mount topology:
-> 
->  (1) General superblock attributes:
-> 
->      - Filesystem identifiers (UUID, volume label, device numbers,
-> ...)
->      - The limits on a filesystem's capabilities
->      - Information on supported statx fields and attributes and IOC
-> flags.
->      - A variety single-bit flags indicating supported capabilities.
->      - Timestamp resolution and range.
->      - The amount of space/free space in a filesystem (as statfs()).
->      - Superblock notification counter.
-> 
->  (2) Filesystem-specific superblock attributes:
-> 
->      - Superblock-level timestamps.
->      - Cell name.
->      - Server names and addresses.
->      - Filesystem-specific information.
-> 
->  (3) VFS information:
-> 
->      - Mount topology information.
->      - Mount attributes.
->      - Mount notification counter.
-> 
->  (4) Information about what the fsinfo() syscall itself supports,
-> including
->      the type and struct/element size of attributes.
-> 
-> The system is extensible:
-> 
->  (1) New attributes can be added.  There is no requirement that a
->      filesystem implement every attribute.  Note that the core VFS
-> keeps a
->      table of types and sizes so it can handle future extensibility
-> rather
->      than delegating this to the filesystems.
-> 
->  (2) Version length-dependent structure attributes can be made larger
-> and
->      have additional information tacked on the end, provided it keeps
-> the
->      layout of the existing fields.  If an older process asks for a
-> shorter
->      structure, it will only be given the bits it asks for.  If a
-> newer
->      process asks for a longer structure on an older kernel, the
-> extra
->      space will be set to 0.  In all cases, the size of the data
-> actually
->      available is returned.
-> 
->      In essence, the size of a structure is that structure's version:
-> a
->      smaller size is an earlier version and a later version includes
->      everything that the earlier version did.
-> 
->  (3) New single-bit capability flags can be added.  This is a
-> structure-typed
->      attribute and, as such, (2) applies.  Any bits you wanted but
-> the kernel
->      doesn't support are automatically set to 0.
-> 
-> fsinfo() may be called like the following, for example:
-> 
-> 	struct fsinfo_params params = {
-> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
-> 		.flags		= FSINFO_FLAGS_QUERY_PATH,
-> 		.request	= FSINFO_ATTR_AFS_SERVER_ADDRESSES,
-> 		.Nth		= 2,
-> 	};
-> 	struct fsinfo_server_address address;
-> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
-> 		     &address, sizeof(address));
-> 
-> The above example would query an AFS filesystem to retrieve the
-> address
-> list for the 3rd server, and:
-> 
-> 	struct fsinfo_params params = {
-> 		.at_flags	= AT_SYMLINK_NOFOLLOW,
-> 		.flags		= FSINFO_FLAGS_QUERY_PATH,
-> 		.request	= FSINFO_ATTR_AFS_CELL_NAME;
-> 	};
-> 	char cell_name[256];
-> 	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
-> 		     &cell_name, sizeof(cell_name));
-> 
-> would retrieve the name of an AFS cell as a string.
-> 
-> In future, I want to make fsinfo() capable of querying a context
-> created by
-> fsopen() or fspick(), e.g.:
-> 
-> 	fd = fsopen("ext4", 0);
-> 	struct fsinfo_params params = {
-> 		.flags		= FSINFO_FLAGS_QUERY_FSCONTEXT,
-> 		.request	= FSINFO_ATTR_PARAMETERS;
-> 	};
-> 	char buffer[65536];
-> 	fsinfo(fd, NULL, &params, &buffer, sizeof(buffer));
-> 
-> even if that context doesn't currently have a superblock attached.  I
-> would prefer this to contain length-prefixed strings so that there's
-> no need to insert escaping, especially as any character, including
-> '\', can be used as the separator in cifs and so that binary
-> parameters can be returned (though that is a lesser issue).
 
-Could I make a suggestion about how this should be done in a way that
-doesn't actually require the fsinfo syscall at all: it could just be
-done with fsconfig.  The idea is based on something I've wanted to do
-for configfd but couldn't because otherwise it wouldn't substitute for
-fsconfig, but Christian made me think it was actually essential to the
-ability of the seccomp and other verifier tools in the critique of
-configfd and I belive the same critique applies here.
+--Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Instead of making fsconfig functionally configure ... as in you pass
-the attribute name, type and parameters down into the fs specific
-handler and the handler does a string match and then verifies the
-parameters and then acts on them, make it table configured, so what
-each fstype does is register a table of attributes which can be got and
-optionally set (with each attribute having a get and optional set
-function).  We'd have multiple tables per fstype, so the generic VFS
-can register a table of attributes it understands for every fstype
-(things like name, uuid and the like) and then each fs type would
-register a table of fs specific attributes following the same pattern. 
-The system would examine the fs specific table before the generic one,
-allowing overrides.  fsconfig would have the ability to both get and
-set attributes, permitting retrieval as well as setting (which is how I
-get rid of the fsinfo syscall), we'd have a global parameter, which
-would retrieve the entire table by name and type so the whole thing is
-introspectable because the upper layer knows a-priori all the
-attributes which can be set for a given fs type and what type they are
-(so we can make more of the parsing generic).  Any attribute which
-doesn't have a set routine would be read only and all attributes would
-have to have a get routine meaning everything is queryable.
+On Feb 21, 2020, at 12:20 PM, Roman Gushchin <guro@fb.com> wrote:
+>=20
+> Since commit a8ac900b8163 ("ext4: use non-movable memory for the
+> superblock") buffers for ext4 superblock were allocated using
+> the sb_bread_unmovable() helper which allocated buffer heads
+> out of non-movable memory blocks. It was necessarily to not block
+> page migrations and do not cause cma allocation failures.
+>=20
+> However commit 85c8f176a611 ("ext4: preload block group descriptors")
+> broke this by introducing pre-reading of the ext4 superblock.
+> The problem is that __breadahead() is using __getblk() underneath,
+> which allocates buffer heads out of movable memory.
+>=20
+> It resulted in page migration failures I've seen on a machine
+> with an ext4 partition and a preallocated cma area.
+>=20
+> Fix this by introducing sb_breadahead_unmovable() and
+> __breadahead_gfp() helpers which use non-movable memory for buffer
+> head allocations and use them for the ext4 superblock readahead.
+>=20
+> Fixes: 85c8f176a611 ("ext4: preload block group descriptors")
+> Signed-off-by: Roman Gushchin <guro@fb.com>
 
-I think I know how to code this up in a way that would be fully
-transparent to the existing syscalls.
+Makes sense.
 
-James
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
+> Cc: Andrew Perepechko <andrew.perepechko@seagate.com>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: Gioh Kim <gioh.kim@lge.com>
+> Cc: Jan Kara <jack@suse.cz>
+> ---
+> fs/buffer.c                 | 11 +++++++++++
+> fs/ext4/super.c             |  2 +-
+> include/linux/buffer_head.h |  8 ++++++++
+> 3 files changed, 20 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 4299e100a05b..25462edd920e 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -1414,6 +1414,17 @@ void __breadahead(struct block_device *bdev, =
+sector_t block, unsigned size)
+> }
+> EXPORT_SYMBOL(__breadahead);
+>=20
+> +void __breadahead_gfp(struct block_device *bdev, sector_t block, =
+unsigned size,
+> +		      gfp_t gfp)
+> +{
+> +	struct buffer_head *bh =3D __getblk_gfp(bdev, block, size, gfp);
+> +	if (likely(bh)) {
+> +		ll_rw_block(REQ_OP_READ, REQ_RAHEAD, 1, &bh);
+> +		brelse(bh);
+> +	}
+> +}
+> +EXPORT_SYMBOL(__breadahead_gfp);
+> +
+> /**
+>  *  __bread_gfp() - reads a specified block and returns the bh
+>  *  @bdev: the block_device to read from
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 3a401f930bca..6a10f7d44719 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4321,7 +4321,7 @@ static int ext4_fill_super(struct super_block =
+*sb, void *data, int silent)
+> 	/* Pre-read the descriptors into the buffer cache */
+> 	for (i =3D 0; i < db_count; i++) {
+> 		block =3D descriptor_loc(sb, logical_sb_block, i);
+> -		sb_breadahead(sb, block);
+> +		sb_breadahead_unmovable(sb, block);
+> 	}
+>=20
+> 	for (i =3D 0; i < db_count; i++) {
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 7b73ef7f902d..b56cc825f64d 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -189,6 +189,8 @@ struct buffer_head *__getblk_gfp(struct =
+block_device *bdev, sector_t block,
+> void __brelse(struct buffer_head *);
+> void __bforget(struct buffer_head *);
+> void __breadahead(struct block_device *, sector_t block, unsigned int =
+size);
+> +void __breadahead_gfp(struct block_device *, sector_t block, unsigned =
+int size,
+> +		  gfp_t gfp);
+> struct buffer_head *__bread_gfp(struct block_device *,
+> 				sector_t block, unsigned size, gfp_t =
+gfp);
+> void invalidate_bh_lrus(void);
+> @@ -319,6 +321,12 @@ sb_breadahead(struct super_block *sb, sector_t =
+block)
+> 	__breadahead(sb->s_bdev, block, sb->s_blocksize);
+> }
+>=20
+> +static inline void
+> +sb_breadahead_unmovable(struct super_block *sb, sector_t block)
+> +{
+> +	__breadahead_gfp(sb->s_bdev, block, sb->s_blocksize, 0);
+> +}
+> +
+> static inline struct buffer_head *
+> sb_getblk(struct super_block *sb, sector_t block)
+> {
+> --
+> 2.24.1
+>=20
+
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl5QQDYACgkQcqXauRfM
+H+BBjxAAlmV92opkdGquanhWcY0p1p8AapfFz1mlRtN3l7J7yyvJ+03hbx5bLKQx
+WbU0QvZQwseMJJAzjJgOeKyTrxUiqimNGsKlqlkXBvEabOtAd9PkkrTV/w8/sdPi
+vAG4KfRm/JypzEnpetYT0YJFNW1OkoCAF2hEmZy7vPBTugPWTQT79VCwKrC8+0VY
+rNkOqCYKs86Z3Mm1ocQboxEq0cNFHWNcFrElU8G5KemhdVACXs4BckEZ/iXFeiQd
+Hx/HWW0Yj0304jvGyDlkh1K9zkZNxj7rV7kPVgEr69N8FWcgQCBft+zljpTTJY/6
+E3ASvp+dd/2OMO+xQrihZbv02EO5TW30K1f4X1NTsG97CRPpiwa3JiFUUGjP9I2s
+/REuj3FhC54qpD487HhK3WN4ji+gaAmYsjghAV/P68Hevd/EWU/k8Fhsq7SXbr2B
+LnkBS9BloRC3Ca14QqG6hJL5KOnUXEcmIHu8eXzb3Yyg3EQhGZ8c/xFqBISNrL58
+JxT2cVaTFXDuhpYWEusXTGsSQke1X/duXJuEMm+VDXGY0DQQlGN2J6jSb7TXvr9r
++iZuTapW+0Pq1OqSRS/eTKcbH02vSnwoTKMe4Zh/xc+mwDJT6hH8GTikZl3kxaBb
+xi1f+LPwr8/w0BBZfbvJLVUpdufUao+7VFbI3kZVoyjlurXBNu8=
+=nxwv
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_5BABCC3E-C177-4038-AA9E-86DEAA743FD2--
