@@ -2,273 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 731F7166C34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 02:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF922166C40
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 02:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbgBUBQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Feb 2020 20:16:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:32972 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729476AbgBUBQJ (ORCPT
+        id S1729525AbgBUBWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Feb 2020 20:22:07 -0500
+Received: from mout-p-202.mailbox.org ([80.241.56.172]:22976 "EHLO
+        mout-p-202.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729476AbgBUBWG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Feb 2020 20:16:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u6so178689wrt.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Feb 2020 17:16:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=o+pp6WjkijFi/cFymD5udOX8QbE4tnzlUQVoizd2/v8=;
-        b=JCdw/jYCzwsajXk+2CRmpVEuCLHdL5I2WS7TTRwQgDkpfHH2vClT/cONJ+PaB6MenR
-         +EOi/x2mr7KGl30PbOwwgQ6BfQoVCbFG4FVzXEbqGOFKRqQ65kjbM2+WnDz1OL3nN8G5
-         uMwCnkiVZ89PeOTZOyg1EPOp6/t84WvjVZlnw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=o+pp6WjkijFi/cFymD5udOX8QbE4tnzlUQVoizd2/v8=;
-        b=J+7yAnEvBS7nefwsMD9mSq103TQi+Rma1r5+iUYPN4Zjvh+qtFypqHRMORBjxVWnqd
-         Ij3eQB6zvGiBYJQd6py3osGRvz44VXefwO8rYBrlKUuDCp7Vk5Xn87n74g44vWetC4nv
-         YoDNerNUBPoOTUtJIDjvIPsS3f5K6AwYPpJMtXIPU9lestLcfS/CDvszeUmjlJnLzmgK
-         BJG6y8v3ewq2Rh2W11HRTjFVuYAhhfcjDWaLXsC9209wM/iK0TsvdvEcHhkctYkedyTS
-         dfjeNyto3psacawsOC92KT8Pw+AUvblqhJFrNbDxWYOfWV4MJ/T6qQLNyMcbwbn2PfvM
-         +EFw==
-X-Gm-Message-State: APjAAAW1jOMEsP6+CjouaYi8SDzuULsCqHP28zZB/3kMHUcFKY0GZyW9
-        I6m8lWpHBbmK/lLznhAEXLy1lQ==
-X-Google-Smtp-Source: APXvYqxxcQJGSUxxc/xkaF1XgEwdO9U0vVvBJoSNVQvkEfShM9JCtvPvpgn1NaRGE7wFd3Ii4IpK9w==
-X-Received: by 2002:adf:df03:: with SMTP id y3mr45314758wrl.260.1582247765872;
-        Thu, 20 Feb 2020 17:16:05 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id h205sm1517742wmf.25.2020.02.20.17.16.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2020 17:16:04 -0800 (PST)
-Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
+        Thu, 20 Feb 2020 20:22:06 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 48NtwW3WsKzQlCK;
+        Fri, 21 Feb 2020 02:22:03 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id gB_F9IHMADEC; Fri, 21 Feb 2020 02:21:59 +0100 (CET)
+Date:   Fri, 21 Feb 2020 12:21:42 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ross Zwisler <zwisler@google.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Raul Rangel <rrangel@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mattias Nissler <mnissler@chromium.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-6-scott.branden@broadcom.com>
- <20200220075045.GB3261162@kroah.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
-Date:   Thu, 20 Feb 2020 17:15:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Benjamin Gordon <bmgordon@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v5] Add a "nosymfollow" mount option.
+Message-ID: <20200221012142.4onrcfjtyghg237d@yavin.dot.cyphar.com>
+References: <20200204215014.257377-1-zwisler@google.com>
+ <CAHQZ30BgsCodGofui2kLwtpgzmpqcDnaWpS4hYf7Z+mGgwxWQw@mail.gmail.com>
+ <CAGRrVHwQimihNNVs434jNGF3BL5_Qov+1eYqBYKPCecQ0yjxpw@mail.gmail.com>
+ <CAGRrVHyzX4zOpO2nniv42BHOCbyCdPV9U7GE3FVhjzeFonb0bQ@mail.gmail.com>
+ <20200205032110.GR8731@bombadil.infradead.org>
+ <20200205034500.x3omkziqwu3g5gpx@yavin>
+ <CAGRrVHxRdLMx5axcB1Fyea8RZhfd-EO3TTpQtOvpOP0yxnAsbQ@mail.gmail.com>
+ <20200213154642.GA38197@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200220075045.GB3261162@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xsczwp6mfjixgoyo"
+Content-Disposition: inline
+In-Reply-To: <20200213154642.GA38197@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Greg,
 
-Thanks for the review.  Comments inline.
+--xsczwp6mfjixgoyo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2020-02-19 11:50 p.m., Greg Kroah-Hartman wrote:
-> On Wed, Feb 19, 2020 at 04:48:23PM -0800, Scott Branden wrote:
->> Add user space api for bcm-vk driver.
->>
->> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->> ---
->>   include/uapi/linux/misc/bcm_vk.h | 117 +++++++++++++++++++++++++++++++
->>   1 file changed, 117 insertions(+)
->>   create mode 100644 include/uapi/linux/misc/bcm_vk.h
->>
->> diff --git a/include/uapi/linux/misc/bcm_vk.h b/include/uapi/linux/misc/bcm_vk.h
->> new file mode 100644
->> index 000000000000..56a2178e06f5
->> --- /dev/null
->> +++ b/include/uapi/linux/misc/bcm_vk.h
->> @@ -0,0 +1,117 @@
->> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
->> +/*
->> + * Copyright 2018-2020 Broadcom.
->> + */
->> +
->> +#ifndef __UAPI_LINUX_MISC_BCM_VK_H
->> +#define __UAPI_LINUX_MISC_BCM_VK_H
->> +
->> +#include <linux/ioctl.h>
->> +#include <linux/types.h>
->> +
->> +struct vk_image {
->> +	__u32 type;     /* Type of image */
->> +#define VK_IMAGE_TYPE_BOOT1 1 /* 1st stage (load to SRAM) */
->> +#define VK_IMAGE_TYPE_BOOT2 2 /* 2nd stage (load to DDR) */
->> +	char filename[64]; /* Filename of image */
-> __u8?
-I don't understand why char is not appropriate for a filename.
-Would like to understand why __u8 is correct to use here vs. char.
->
->> +};
->> +
->> +/* default firmware images names */
->> +#define VK_BOOT1_DEF_VALKYRIE_FILENAME	"vk-boot1.bin"
->> +#define VK_BOOT2_DEF_VALKYRIE_FILENAME	"vk-boot2.bin"
->> +
->> +#define VK_BOOT1_DEF_VIPER_FILENAME	"vp-boot1.bin"
->> +#define VK_BOOT2_DEF_VIPER_FILENAME	"vp-boot2.bin"
-> Why do these need to be in a uapi .h file?  Shouldn't they just be part
-> of the normal MODULE_FIRMWARE() macro in the driver itself?
-ioctl VK_IOCTL_LOAD_IMAGE passes in type of image to load and filename.
-These are the default names used if the images are autoloaded by the driver.
-But if userspace app wishes to load (or reload) the default images then 
-it needs to know the name of the file to pass in ioctl.
-I guess I could change the API at this point to lookup the default 
-filename if NULL filename passed into ioctl.
->> +struct vk_access {
->> +	__u8 barno;     /* BAR number to use */
->> +	__u8 type;      /* Type of access */
->> +#define VK_ACCESS_READ 0
->> +#define VK_ACCESS_WRITE 1
->> +	__u32 len;      /* length of data */
-> Horrible padding issues, are you sure this all works properly?
-Haven't had any issues.
->
->> +	__u64 offset;   /* offset in BAR */
->> +	__u32 *data;    /* where to read/write data to */
-> Are you _SURE_ you want a pointer here?  How do you handle the compat
-> issues with 32/64 user/kernel space?
-Don't care about 32-bit user space for this driver.
-I don't think there isn't even enough memory in such systems for the 
-number of streams of video buffers needed for transcoding.
-This driver is only used in high end 64-bit x86 servers.
-But, VK_IOCTL_ACCESS_BAR can go away entirely if standard user space 
-approach already exists as you imply.
->> +};
-> And isn't this just a normal PCI write thing?  Can't you do it from
-> userspace using the existing userspace PCI accesses?  Why do you need a
-> special ioctl for it?
-This follows how pci_endpoint_test reads and writes BARS via ioctl.
-It also abstracts the accesses all into the device node being opened.
+On 2020-02-13, Ross Zwisler <zwisler@google.com> wrote:
+> On Thu, Feb 06, 2020 at 12:10:45PM -0700, Ross Zwisler wrote:
+> > On Tue, Feb 4, 2020 at 8:45 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > > On 2020-02-04, Matthew Wilcox <willy@infradead.org> wrote:
+> > > > On Tue, Feb 04, 2020 at 04:49:48PM -0700, Ross Zwisler wrote:
+> > > > > On Tue, Feb 4, 2020 at 3:11 PM Ross Zwisler <zwisler@chromium.org=
+> wrote:
+> > > > > > On Tue, Feb 4, 2020 at 2:53 PM Raul Rangel <rrangel@google.com>=
+ wrote:
+> > > > > > > > --- a/include/uapi/linux/mount.h
+> > > > > > > > +++ b/include/uapi/linux/mount.h
+> > > > > > > > @@ -34,6 +34,7 @@
+> > > > > > > >  #define MS_I_VERSION   (1<<23) /* Update inode I_version f=
+ield */
+> > > > > > > >  #define MS_STRICTATIME (1<<24) /* Always perform atime upd=
+ates */
+> > > > > > > >  #define MS_LAZYTIME    (1<<25) /* Update the on-disk [acm]=
+times lazily */
+> > > > > > > > +#define MS_NOSYMFOLLOW (1<<26) /* Do not follow symlinks */
+> > > > > > > Doesn't this conflict with MS_SUBMOUNT below?
+> > > > > > > >
+> > > > > > > >  /* These sb flags are internal to the kernel */
+> > > > > > > >  #define MS_SUBMOUNT     (1<<26)
+> > > > > >
+> > > > > > Yep.  Thanks for the catch, v6 on it's way.
+> > > > >
+> > > > > It actually looks like most of the flags which are internal to the
+> > > > > kernel are actually unused (MS_SUBMOUNT, MS_NOREMOTELOCK, MS_NOSE=
+C,
+> > > > > MS_BORN and MS_ACTIVE).  Several are unused completely, and the r=
+est
+> > > > > are just part of the AA_MS_IGNORE_MASK which masks them off in the
+> > > > > apparmor LSM, but I'm pretty sure they couldn't have been set any=
+way.
+> > > > >
+> > > > > I'll just take over (1<<26) for MS_NOSYMFOLLOW, and remove the re=
+st in
+> > > > > a second patch.
+> > > > >
+> > > > > If someone thinks these flags are actually used by something and =
+I'm
+> > > > > just missing it, please let me know.
+> > > >
+> > > > Afraid you did miss it ...
+> > > >
+> > > > /*
+> > > >  * sb->s_flags.  Note that these mirror the equivalent MS_* flags w=
+here
+> > > >  * represented in both.
+> > > >  */
+> > > > ...
+> > > > #define SB_SUBMOUNT     (1<<26)
+> > > >
+> > > > It's not entirely clear to me why they need to be the same, but I h=
+aven't
+> > > > been paying close attention to the separation of superblock and mou=
+nt
+> > > > flags, so someone else can probably explain the why of it.
+> > >
+> > > I could be wrong, but I believe this is historic and originates from =
+the
+> > > kernel setting certain flags internally (similar to the whole O_* fla=
+g,
+> > > "internal" O_* flag, and FMODE_NOTIFY mixup).
+> > >
+> > > Also, one of the arguments for the new mount API was that we'd run out
+> > > MS_* bits so it's possible that you have to enable this new mount opt=
+ion
+> > > in the new mount API only. (Though Howells is the right person to talk
+> > > to on this point.)
+> >=20
+> > As far as I can tell, SB_SUBMOUNT doesn't actually have any dependence =
+on
+> > MS_SUBMOUNT. Nothing ever sets or checks MS_SUBMOUNT from within the ke=
+rnel,
+> > and whether or not it's set from userspace has no bearing on how SB_SUB=
+MOUNT
+> > is used.  SB_SUBMOUNT is set independently inside of the kernel in
+> > vfs_submount().
+> >=20
+> > I agree that their association seems to be historical, introduced in th=
+is
+> > commit from David Howells:
+> >=20
+> > e462ec50cb5fa VFS: Differentiate mount flags (MS_*) from internal super=
+block flags
+> >=20
+> > In that commit message David notes:
+> >=20
+> >      (1) Some MS_* flags get translated to MNT_* flags (such as MS_NODE=
+V ->
+> >          MNT_NODEV) without passing this on to the filesystem, but some
+> >          filesystems set such flags anyway.
+> >=20
+> > I think this is sort of what we are trying to do with MS_NOSYMFOLLOW: h=
+ave a
+> > userspace flag that translates to MNT_NOSYMFOLLOW, but which doesn't ne=
+ed an
+> > associated SB_* flag.  Is it okay to reclaim the bit currently owned by
+> > MS_SUBMOUNT and use it for MS_NOSYMFOLLOW.
+> >=20
+> > A second option would be to choose one of the unused MS_* values from t=
+he
+> > middle of the range, such as 256 or 512.  Looking back as far as git wi=
+ll let
+> > me, I don't think that these flags have been used for MS_* values at le=
+ast
+> > since v2.6.12:
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/include/linux/fs.h?id=3D1da177e4c3f41524e886b7f1b8a0c1fc7321cac2
+> >=20
+> > I think maybe these used to be S_WRITE and S_APPEND, which weren't file=
+system
+> > mount flags?
+> >=20
+> > https://sites.uclouvain.be/SystInfo/usr/include/sys/mount.h.html
+> >=20
+> > A third option would be to create this flag using the new mount system:
+> >=20
+> > https://lwn.net/Articles/753473/
+> > https://lwn.net/Articles/759499/
+> >=20
+> > My main concern with this option is that for Chrome OS we'd like to be =
+able to
+> > backport whatever solution we come up with to a variety of older kernel=
+s, and
+> > if we go with the new mount system this would require us to backport the
+> > entire new mount system to those kernels, which I think is infeasible. =
+=20
+> >=20
+> > David, what are your thoughts on this?  Of these three options for supp=
+orting
+> > a new MS_NOSYMFOLLOW flag:
+> >=20
+> > 1) reclaim the bit currently used by MS_SUBMOUNT
+> > 2) use a smaller unused value for the flag, 256 or 512
+> > 3) implement the new flag only in the new mount system
+> >=20
+> > do you think either #1 or #2 are workable?  If so, which would you pref=
+er?
+>=20
+> Gentle ping on this - do either of the options using the existing mount A=
+PI
+> seem possible?  Would it be useful for me to send out example patches in =
+one
+> of those directions?  Or is it out of the question, and I should spend my=
+ time
+> on making patches using the new mount system?  Thanks!
 
-I am not familiar with userspace PCI accesses.  Would this be through 
-some sys entries?
->
->> +
->> +struct vk_reset {
->> +	__u32 arg1;
->> +	__u32 arg2;
->> +};
->> +
->> +#define VK_MAGIC              0x5E
->> +
->> +/* Load image to Valkyrie */
->> +#define VK_IOCTL_LOAD_IMAGE   _IOW(VK_MAGIC, 0x2, struct vk_image)
->> +
->> +/* Read data from Valkyrie */
->> +#define VK_IOCTL_ACCESS_BAR   _IOWR(VK_MAGIC, 0x3, struct vk_access)
->> +
->> +/* Send Reset to Valkyrie */
->> +#define VK_IOCTL_RESET        _IOW(VK_MAGIC, 0x4, struct vk_reset)
->> +
->> +/*
->> + * message block - basic unit in the message where a message's size is always
->> + *		   N x sizeof(basic_block)
->> + */
->> +struct vk_msg_blk {
->> +	__u8 function_id;
->> +#define VK_FID_TRANS_BUF 5
->> +#define VK_FID_SHUTDOWN  8
->> +	__u8 size;
->> +	__u16 queue_id:4;
->> +	__u16 msg_id:12;
-> Do not use bitfields in ioctls, they will not work properly on all
-> systems.  Use masks and shifts instead.
-I don't like the bitfields either - structure inherited from firmware code.
-Will work on getting these removed.
->
->> +	__u32 context_id;
->> +	__u32 args[2];
->> +#define VK_CMD_PLANES_MASK 0x000F /* number of planes to up/download */
->> +#define VK_CMD_UPLOAD      0x0400 /* memory transfer to vk */
->> +#define VK_CMD_DOWNLOAD    0x0500 /* memory transfer from vk */
->> +#define VK_CMD_MASK        0x0F00 /* command mask */
->> +};
->> +
->> +#define VK_BAR_FWSTS			0x41C
->> +/* VK_FWSTS definitions */
->> +#define VK_FWSTS_RELOCATION_ENTRY	BIT(0)
->> +#define VK_FWSTS_RELOCATION_EXIT	BIT(1)
->> +#define VK_FWSTS_INIT_START		BIT(2)
->> +#define VK_FWSTS_ARCH_INIT_DONE		BIT(3)
->> +#define VK_FWSTS_PRE_KNL1_INIT_DONE	BIT(4)
->> +#define VK_FWSTS_PRE_KNL2_INIT_DONE	BIT(5)
->> +#define VK_FWSTS_POST_KNL_INIT_DONE	BIT(6)
->> +#define VK_FWSTS_INIT_DONE		BIT(7)
->> +#define VK_FWSTS_APP_INIT_START		BIT(8)
->> +#define VK_FWSTS_APP_INIT_DONE		BIT(9)
-> I do not think that BIT() is exported to userspace properly, is it
-> really ok here?
-Works fine.  Also in uapi/linux/rtc.h.
->
->> +#define VK_FWSTS_MASK			0xFFFFFFFF
->> +#define VK_FWSTS_READY			(VK_FWSTS_INIT_START | \
->> +					 VK_FWSTS_ARCH_INIT_DONE | \
->> +					 VK_FWSTS_PRE_KNL1_INIT_DONE | \
->> +					 VK_FWSTS_PRE_KNL2_INIT_DONE | \
->> +					 VK_FWSTS_POST_KNL_INIT_DONE | \
->> +					 VK_FWSTS_INIT_DONE | \
->> +					 VK_FWSTS_APP_INIT_START | \
->> +					 VK_FWSTS_APP_INIT_DONE)
->> +/* Deinit */
->> +#define VK_FWSTS_APP_DEINIT_START	BIT(23)
->> +#define VK_FWSTS_APP_DEINIT_DONE	BIT(24)
->> +#define VK_FWSTS_DRV_DEINIT_START	BIT(25)
->> +#define VK_FWSTS_DRV_DEINIT_DONE	BIT(26)
->> +#define VK_FWSTS_RESET_DONE		BIT(27)
->> +#define VK_FWSTS_DEINIT_TRIGGERED	(VK_FWSTS_APP_DEINIT_START | \
->> +					 VK_FWSTS_APP_DEINIT_DONE  | \
->> +					 VK_FWSTS_DRV_DEINIT_START | \
->> +					 VK_FWSTS_DRV_DEINIT_DONE)
->> +/* Last nibble for reboot reason */
->> +#define VK_FWSTS_RESET_REASON_SHIFT	28
->> +#define VK_FWSTS_RESET_REASON_MASK	(0xF << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_SYS_PWRUP	(0x0 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_MBOX_DB		(0x1 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_M7_WDOG		(0x2 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_TEMP		(0x3 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_PCI_FLR		(0x4 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_PCI_HOT		(0x5 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_PCI_WARM		(0x6 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_PCI_COLD		(0x7 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_L1		(0x8 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_L0		(0x9 << VK_FWSTS_RESET_REASON_SHIFT)
->> +#define VK_FWSTS_RESET_UNKNOWN		(0xF << VK_FWSTS_RESET_REASON_SHIFT)
-> What are all of these #defines doing in an uapi file?  How is userspace
-> going to use them?
-There are actually 2 linux user spaces that use this header.
-One is the x86 host with the bcm-vk PCI driver.
-The x86 host user space could use them to check the firmware status and 
-find out what state VK is in.
+I think (1) or (2) sound reasonable, but I'm not really the right person
+to ask.
 
-The other user space is a coprocessor inside the VK SOC.
-The app running in user space needs to know the state of the FWSTS in 
-order to proceed.
-It includes this header in its user space app (even though it doesn't 
-user the linux driver, it needs access to the same FWSTS register 
-directly).
-> thanks,
->
-> greg k-h
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
+--xsczwp6mfjixgoyo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXk8wowAKCRCdlLljIbnQ
+Es1iAQDuT/a47/nE7aKahxtlanEMrLCGeMRrWIZPfm9nP6QvIAEAzmfRulzyRUaO
+aJqg3PlVJUtu7shA39yqgFXB6iB3tQM=
+=TQ4/
+-----END PGP SIGNATURE-----
+
+--xsczwp6mfjixgoyo--
