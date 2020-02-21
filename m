@@ -2,99 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0244167DA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 13:42:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30AFC167DB7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 13:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgBUMmO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 07:42:14 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40878 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbgBUMmO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 07:42:14 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c23so1385089lfi.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 04:42:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BjoBKXIcxCqkMcDtocPoDMNTlqqBgsrHw4ar9iaPBm8=;
-        b=ImxHL/wm/0DS01CiAm6IEyWwr1YLg4Y3BMgGb3qHBzpXs/WO6b5aGLiMLpDzAoh9Tg
-         MJJUjIIODYjwEhY8Iy+ppZfH3ZtHB+J9OXVBESkHQ0QoFjAQI7F/ylY3IiqDeNW1f/FG
-         /iDbwrOK0MFXFLxT0aRtLkbodQsAn34GEkeKad5RP4G1ajX7uEFgyKVrglDwdbkW1ZSE
-         OzU0NvLF0whVrsNO507XNiZkfQ6wCsuB2gM8lTiu0gYap7T/G2rgum0ZXp/fOGY0Ftyq
-         08vypgcFeiDD7zXPofpZXUzuRdyRMOmnR0wKF8F70sFde2cGAEoLtBdJcnLS17waDJXM
-         euCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BjoBKXIcxCqkMcDtocPoDMNTlqqBgsrHw4ar9iaPBm8=;
-        b=bpBy4r+JtP5pqbh0vLlMsrbYhvinfkYVGsQxywLYTsglvxc7vEBcH8/yqXbzFVQKuP
-         1CHG7NJ9NOFvV0yqHzhvco9MUlbDtp9UF8xCGWxYn6IZ1OXyzb41dIc/CxdB/Yi4wftL
-         KTHTWdSrlkTQQU4lw5tDidI/jLXuFRnIQnR76YzTxr+WtpbjhJYCiB38xi5mSHtbpV5c
-         Jr6grs/BwIQVGsU6n0dwBAI698LwCydZXp093IxIUI/SdDOEjYXhgcQ0LD5whLdeRqOE
-         ko07uz6g3qlSlbgDvN0aPp2wAmupV7SXjbsvN/WJZ+yhSmyJyIzUmuTtTL5lRXCGMBuk
-         bxjA==
-X-Gm-Message-State: APjAAAWBFAeaXSFiZ4UtrFj1v3XZwLVjcbXojF0nLfBqmbGIkzhyN0zM
-        mRM5nd2mdF04y/HozER7Gxo9iA==
-X-Google-Smtp-Source: APXvYqwDJ3VvW3VVUq4oyV9v/CU0PsmTsHm77UKYLtap8C0MsC9PnyOumhZw7OnquLEBmI8nLdUKWA==
-X-Received: by 2002:ac2:4477:: with SMTP id y23mr5248642lfl.135.1582288931518;
-        Fri, 21 Feb 2020 04:42:11 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id r21sm1577795ljn.64.2020.02.21.04.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2020 04:42:10 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id AF956100FC3; Fri, 21 Feb 2020 15:42:40 +0300 (+03)
-Date:   Fri, 21 Feb 2020 15:42:40 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/25] fs: Add zero_user_large
-Message-ID: <20200221124240.tk4p2cx2p53emx5a@box>
-References: <20200212041845.25879-1-willy@infradead.org>
- <20200212041845.25879-14-willy@infradead.org>
- <20200214135248.zqcqx3erb4pnlvmu@box>
- <20200214160342.GA7778@bombadil.infradead.org>
- <20200218141634.zhhjgtv44ux23l3l@box>
- <20200218161349.GS7778@bombadil.infradead.org>
- <20200218171052.lwd56nr332qjgs5j@box>
- <20200218180705.GA24185@bombadil.infradead.org>
+        id S1728264AbgBUMsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 07:48:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60998 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727137AbgBUMsi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 07:48:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 67900AC6E;
+        Fri, 21 Feb 2020 12:48:36 +0000 (UTC)
+Date:   Fri, 21 Feb 2020 06:48:33 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, darrick.wong@oracle.com
+Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200221124833.xfwz7gskkcfdkxol@fiona>
+References: <20200220152355.5ticlkptc7kwrifz@fiona>
+ <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218180705.GA24185@bombadil.infradead.org>
+In-Reply-To: <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 10:07:05AM -0800, Matthew Wilcox wrote:
-> On Tue, Feb 18, 2020 at 08:10:52PM +0300, Kirill A. Shutemov wrote:
-> > Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+On 10:21 21/02, Ritesh Harjani wrote:
 > 
-> Thanks
 > 
-> > > +#if defined(CONFIG_HIGHMEM) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> > > +void zero_user_segments(struct page *page, unsigned start1, unsigned end1,
-> > > +               unsigned start2, unsigned end2);
-> > > +#else /* !HIGHMEM || !TRANSPARENT_HUGEPAGE */
+> On 2/20/20 8:53 PM, Goldwyn Rodrigues wrote:
+> > In case of a block device error, written parameter in iomap_end()
+> > is zero as opposed to the amount of submitted I/O.
+> > Filesystems such as btrfs need to account for the I/O in ordered
+> > extents, even if it resulted in an error. Having (incomplete)
+> > submitted bytes in written gives the filesystem the amount of data
+> > which has been submitted before the error occurred, and the
+> > filesystem code can choose how to use it.
 > > 
-> > This is a neat trick. I like it.
+> > The final returned error for iomap_dio_rw() is set by
+> > iomap_dio_complete().
 > > 
-> > Although, it means non-inlined version will never get tested :/
+> > Partial writes in direct I/O are considered an error. So,
+> > ->iomap_end() using written == 0 as error must be changed
+> > to written < length. In this case, ext4 is the only user.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> >   fs/ext4/inode.c      | 2 +-
+> >   fs/iomap/direct-io.c | 2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > index e60aca791d3f..e50e7414351a 100644
+> > --- a/fs/ext4/inode.c
+> > +++ b/fs/ext4/inode.c
+> > @@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
+> >   	 * the I/O. Any blocks that may have been allocated in preparation for
+> >   	 * the direct I/O will be reused during buffered I/O.
+> >   	 */
+> > -	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
+> > +	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
+> >   		return -ENOTBLK;
+> >   	return 0;
+> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > index 41c1e7c20a1f..01865db1bd09 100644
+> > --- a/fs/iomap/direct-io.c
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+> >   		size_t n;
+> >   		if (dio->error) {
+> >   			iov_iter_revert(dio->submit.iter, copied);
+> > -			copied = ret = 0;
+> > +			ret = 0;
+> >   			goto out;
+> >   		}
 > 
-> I worry about that too, but I don't really want to incur the overhead on
-> platforms people actually use.
+> But if I am seeing this correctly, even after there was a dio->error
+> if you return copied > 0, then the loop in iomap_dio_rw will continue
+> for next iteration as well. Until the second time it won't copy
+> anything since dio->error is set and from there I guess it may return
+> 0 which will break the loop.
+> 
+> Is this the correct flow? Shouldn't the while loop doing
+> iomap_apply in iomap_dio_rw should also break in case of
+> dio->error? Or did I miss anything?
+> 
 
-I'm also worried about latency: kmap_atomic() disables preemption even if
-system has no highmem. Some archs have way too large THP to clear them
-with preemption disabled.
-
-I *think* there's no real need in preemption disabling in this situation
-and we can wrap kmap_atomic()/kunmap_atomic() into CONFIG_HIGHMEM.
+Yes, We can save an extra iteration by checking for dio->error in the
+while loop of iomap_dio_rw(). 
 
 -- 
- Kirill A. Shutemov
+Goldwyn
