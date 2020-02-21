@@ -2,133 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A36F9168A60
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 00:27:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64443168A76
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 00:38:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbgBUX1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 18:27:06 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39729 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgBUX05 (ORCPT
+        id S1729487AbgBUXhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 18:37:53 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38988 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbgBUXhx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 18:26:57 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 18so353622oij.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 15:26:57 -0800 (PST)
+        Fri, 21 Feb 2020 18:37:53 -0500
+Received: by mail-pg1-f193.google.com with SMTP id j15so1776057pgm.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Feb 2020 15:37:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Qjb28JuFNd9gOL/WSqmB2kriWyv5u53CrYdkf6Wy1Y=;
-        b=TbwlC6/OrsWHxLiHo7OXqsvf/ROPkSFjJO1MBYg1yRPYgiKYPSofcItFNCaMiRPqUg
-         ekVKNLY9y1PeCxEUWaSDpZ27kasvrGCcmLmTlo26XYh0b/2TauVoNpEh5kth8ND8N5Ha
-         WooPz1Nm1JTzfThjUvTHDj61iIKbc2/48vx9sJnbA3uOgV0hFKgJ1Nh32QSV9HnXuzR9
-         bp5UUR33XZYEueszk5XSdy5dxhzlDPlnoyesaSyx7IXU5Iopv4iymYu2RXAjDyvIqgPT
-         LJF3lNwhgVAvbffRoFHg+eiJEAG6brTEsvGZFVYpbMG15bUtHaA1J0W4U/s+7/aq3YiG
-         GuBA==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=U8GTXDQYqxVMWeiE3CeM22iOXjrDkwUgtcNqh51keqY=;
+        b=BTbJ9DV5UnhS6c59epTpH7XTEnU2oooXg+g6bAhjUyVbujp1zj/9TaRU8cj0TPZwd3
+         CG8U0vdI5gFnoJTHTJLwe669yrJzuJv13qa3AVL8dmiMh5v19I5goaubVFzUpLjj3wTs
+         7lQz+6WG62x4T5Z+CFsJPY2Ds6kbuZLZW2JXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Qjb28JuFNd9gOL/WSqmB2kriWyv5u53CrYdkf6Wy1Y=;
-        b=ExoR8LI+PAiM1C6MlLCR4d6amY8uGcDG3gcaz0rqNajbPwN1eyzu/oiBnRvlnQ4PN0
-         nDK4Y0XCInGhjic3Dbh53R+k9x55+uMrOfcpieY7WnFeTD5zqKvHFKK8wiQsn9BcZseo
-         eqYIyl9YjkHHCTv6kBF8vqPEpsvnTW/nMXOqKmQt8OHwsf6zIoNIE3D9aD4BWTCEzB45
-         v+jsSEdtxLZ09egnKUHUuB5RMDDD9tAJRV8d7IPXLESMDSzKAWbP84eDHcO4R9yEf1nH
-         ZR21FvQu+bWw8tTGq/3rOY/3gd/BHgsnRdImjtBzJTJECeTTAuE1Nk4AhUUFXhqBAAcc
-         edHw==
-X-Gm-Message-State: APjAAAX//qxqBXadfITxRKB1HTI1nkXxkebYLyAG3D2bxaW2c1MeCp+6
-        N8JSEyu7NMC3CbYGVCmJGEnldMZCL8e83lx8TDC4xw==
-X-Google-Smtp-Source: APXvYqy2rdUEqZ3R4aMaqDNTBL6bwDfhIb/6cZCDZKDfBRXKgwgp6CIVU2tXnuzooMcwkImhJrj6TbiItSwmVWFD3ug=
-X-Received: by 2002:a05:6808:a83:: with SMTP id q3mr4285182oij.0.1582327616863;
- Fri, 21 Feb 2020 15:26:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20200221004134.30599-1-ira.weiny@intel.com> <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de> <20200221224419.GW10776@dread.disaster.area>
-In-Reply-To: <20200221224419.GW10776@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 21 Feb 2020 15:26:45 -0800
-Message-ID: <CAPcyv4gueN4BsE94CGeO_rDad+MBs==5a+m7SKymJ_RywNCW3w@mail.gmail.com>
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>, "Weiny, Ira" <ira.weiny@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=U8GTXDQYqxVMWeiE3CeM22iOXjrDkwUgtcNqh51keqY=;
+        b=LD/vhunnraxDyp9D4donZXrt+MJ+mYaaZGmwRP6jfAAz8oWRpK3gVGtuqEtznTnv+c
+         yz/JomYy2627UYNuU6jmiYv/2WhP5Xe2uUO/ShGw4pggXaRo6xMyrWdSo8CpnlC4MjWa
+         Cbi+4K1CGs1UNeZ1Iw3oAJj+dJN586z3QPifx0p42qGIkj0kIK6pmTuSZEXYJiu2SOo0
+         q+yLynf0b3J/aXzihcAWIMoC33hmz5MU/X8+LTWgJvN+7MwkLV1avk4jh3ZKTGYHa9dM
+         /S3I41KOkGBPdIJWJJcNhQMSD76bXaDEHjGm4NaATETbBgxLKWr0SKdQCgjku0tv1SB4
+         V4Qg==
+X-Gm-Message-State: APjAAAU4idBuykK3wJLa3y8g6dvyE9TeZHrYjgnNQyoOTZP7NG/lfTcf
+        fVmX/3n98GO10MCD6J1Zpzu5mg==
+X-Google-Smtp-Source: APXvYqzSKwENjp8Zc5/+UeGf1chfHFs+nHCsMZqHL9BYW/wJmsDWoBM6WNV9QMdjdezOfrljgme5xQ==
+X-Received: by 2002:a63:3c08:: with SMTP id j8mr40832260pga.223.1582328272147;
+        Fri, 21 Feb 2020 15:37:52 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id u23sm3891110pfm.29.2020.02.21.15.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2020 15:37:51 -0800 (PST)
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com>
+ <s5hef1crybq.wl-tiwai@suse.de>
+ <10461fcf-9eca-32b6-0f9d-23c63b3f3442@broadcom.com>
+ <s5hr258j6ln.wl-tiwai@suse.de>
+ <93b8285a-e5eb-d4a4-545d-426bbbeb8008@broadcom.com>
+ <s5ho90byhnv.wl-tiwai@suse.de>
+ <b440f372-45be-c06c-94a1-44ae6b1e7eb8@broadcom.com>
+ <s5hwoeyj3i5.wl-tiwai@suse.de> <20191011133120.GP16384@42.do-not-panic.com>
+ <e65a3ba1-d064-96fe-077e-59bf8ffff377@broadcom.com>
+ <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <3731a882-8784-b957-7628-49edfa9683e7@broadcom.com>
+Date:   Fri, 21 Feb 2020 15:37:47 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a2NJurg_hxVbWYZwJVhYM5-xjWt12Kh0DdyfTGqQPrPAQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 2:44 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Fri, Feb 21, 2020 at 06:44:49PM +0100, Christoph Hellwig wrote:
-> > On Thu, Feb 20, 2020 at 04:41:28PM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > >
-> > > DAX requires special address space operations (aops).  Changing DAX
-> > > state therefore requires changing those aops.
-> > >
-> > > However, many functions require aops to remain consistent through a deep
-> > > call stack.
-> > >
-> > > Define a vfs level inode rwsem to protect aops throughout call stacks
-> > > which require them.
-> > >
-> > > Finally, define calls to be used in subsequent patches when aops usage
-> > > needs to be quiesced by the file system.
-> >
-> > I am very much against this.  There is a reason why we don't support
-> > changes of ops vectors at runtime anywhere else, because it is
-> > horribly complicated and impossible to get right.  IFF we ever want
-> > to change the DAX vs non-DAX mode (which I'm still not sold on) the
-> > right way is to just add a few simple conditionals and merge the
-> > aops, which is much easier to reason about, and less costly in overall
-> > overhead.
->
-> *cough*
->
-> That's exactly what the original code did. And it was broken
-> because page faults call multiple aops that are dependent on the
-> result of the previous aop calls setting up the state correctly for
-> the latter calls. And when S_DAX changes between those calls, shit
-> breaks.
->
-> It's exactly the same problem as switching aops between two
-> dependent aops method calls - we don't solve anything by merging
-> aops and checking IS_DAX in each method because the race condition
-> is still there.
->
-> /me throws his hands in the air and walks away
+Hi Arnd,
 
-Please come back, because I think it's also clear that the "we don't
-support changes of ops vectors at runtime" assertion is already being
-violated by ext4 [1]. So that leaves "IFF we ever want to change the
-dax vs non-dax mode" which I thought was already consensus given the
-lingering hopes about having some future where the kernel is able to
-dynamically optimize for dax vs non-dax based on memory media
-performance characteristics. I thought the only thing missing from the
-conclusion of the last conversation [2] was the "physical" vs
-"effective" split that we identified at LSF'19 [3]. Christoph, that
-split allows for for your concern about application intent to be
-considered / overridden by kernel policy, and it allows for
-communication of the effective state which applications need for
-resource planning [4] independent of MAP_SYNC and other dax semantics.
+On 2020-02-21 12:44 a.m., Arnd Bergmann wrote:
+> On Fri, Feb 21, 2020 at 1:11 AM Scott Branden
+> <scott.branden@broadcom.com> wrote:
+>> On 2019-10-11 6:31 a.m., Luis Chamberlain wrote:
+>>> On Tue, Aug 27, 2019 at 12:40:02PM +0200, Takashi Iwai wrote:
+>>>> On Mon, 26 Aug 2019 19:24:22 +0200,
+>>>> Scott Branden wrote:
+>>>>> I will admit I am not familiar with every subtlety of PCI
+>>>>> accesses. Any comments to the Valkyrie driver in this patch series are
+>>>>> appreciated.
+>>>>> But not all drivers need to work on all architectures. I can add a
+>>>>> depends on x86 64bit architectures to the driver to limit it to such.
+>>>> But it's an individual board on PCIe, and should work no matter which
+>>>> architecture is?  Or is this really exclusive to x86?
+>>> Poke Scott.
+>> Yes, this is exclusive to x86.
+>> In particular, 64-bit x86 server class machines with PCIe gen3 support.
+>> There is no reason for these PCIe boards to run in other lower end
+>> machines or architectures.
+> It doesn't really matter that much what you expect your customers to
+> do with your product, or what works a particular machine today, drivers
+> should generally be written in a portable manner anyway and use
+> the documented APIs. memcpy() into an __iomem pointer is not
+> portable and while it probably works on any x86 machine today, please
+> just don't do it. If you use 'sparse' to check your code, that would normally
+> result in an address space warning, unless you add __force and a
+> long comment explaining why you cannot just use memcpy_to_io()
+> instead. At that point, you are already better off usingn memcpy_to_io() ;-)
+>
+>          Arnd
+I am a not performing a memcpy at all right now.
+I am calling a request_firmware_into_buf call and do not need to make a 
+copy.
+This function eventually calls kernel_read_file, which then makes at 
+indirect call in __vfs_read to perform the read to memory.
+ From there I am lost as to what operation happens to achieve this.
+The read function would need to detect the buf is in io space and 
+perform the necessary operation.
+Anyone with any knowledge on how to make this read to io space would be 
+appreciated?
 
-The status quo of globally enabling dax for all files is empirically
-the wrong choice for page-cache friendly workloads running on
-slower-than-DRAM pmem media.
+ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
+            loff_t *pos)
+{
+     if (file->f_op->read)
+         return file->f_op->read(file, buf, count, pos);
+     else if (file->f_op->read_iter)
+         return new_sync_read(file, buf, count, pos);
+     else
+         return -EINVAL;
+}
 
-I am struggling to see how we address the above items without first
-having a dynamic / less than global-filesystem scope facility to
-control dax.
+ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+{
+     mm_segment_t old_fs;
+     ssize_t result;
 
-[1]: https://lore.kernel.org/linux-fsdevel/20191108131238.GK20863@quack2.suse.cz
-[2]: https://lore.kernel.org/linux-fsdevel/20170927064001.GA27601@infradead.org
-[3]: https://lwn.net/Articles/787973/
-[4]: https://lwn.net/Articles/787233/
+     old_fs = get_fs();
+     set_fs(KERNEL_DS);
+     /* The cast to a user pointer is valid due to the set_fs() */
+     result = vfs_read(file, (void __user *)buf, count, pos);
+     set_fs(old_fs);
+     return result;
+}
+
