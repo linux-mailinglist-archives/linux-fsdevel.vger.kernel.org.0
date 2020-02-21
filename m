@@ -2,101 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ADA5166EF7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 06:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B37167678
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 09:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbgBUFV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 00:21:56 -0500
-Received: from mout-p-103.mailbox.org ([80.241.56.161]:63698 "EHLO
-        mout-p-103.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbgBUFV4 (ORCPT
+        id S1732114AbgBUIfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 03:35:14 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:57359 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbgBUIfN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 00:21:56 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 48P0FG2FpqzKmgH;
-        Fri, 21 Feb 2020 06:21:54 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id wq9pO3caYdHI; Fri, 21 Feb 2020 06:21:50 +0100 (CET)
-Date:   Fri, 21 Feb 2020 16:21:42 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Florian Weimer <fw@deneb.enyo.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs@vger.kernel.org, libc-alpha@sourceware.org,
-        linux-fsdevel@vger.kernel.org, Rich Felker <dalias@libc.org>
-Subject: Re: XFS reports lchmod failure, but changes file system contents
-Message-ID: <20200221052142.qfvpuga7r6u6p474@yavin.dot.cyphar.com>
-References: <874kvwowke.fsf@mid.deneb.enyo.de>
- <20200212161604.GP6870@magnolia>
- <20200212181128.GA31394@infradead.org>
- <20200212183718.GQ6870@magnolia>
- <87d0ajmxc3.fsf@mid.deneb.enyo.de>
- <20200212195118.GN23230@ZenIV.linux.org.uk>
- <87wo8rlgml.fsf@mid.deneb.enyo.de>
- <20200221040919.zmsayko3fnbdbmib@yavin.dot.cyphar.com>
- <20200221050205.GW23230@ZenIV.linux.org.uk>
+        Fri, 21 Feb 2020 03:35:13 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mbzdn-1ja00W1B5r-00dSWR; Fri, 21 Feb 2020 09:35:11 +0100
+Received: by mail-qt1-f174.google.com with SMTP id d9so707892qte.12;
+        Fri, 21 Feb 2020 00:35:10 -0800 (PST)
+X-Gm-Message-State: APjAAAXTd9Yo3qP11M/nKjS1oclRFXGQK78xdiuVvehz0Bo4Sf1yDBRR
+        kmGtcWFBJ46Pu/ZGhnxTz+ATQpXD3hLnj1bABS4=
+X-Google-Smtp-Source: APXvYqzMtKpji2kHcAwVfJDYkwxyhgoIO+eLhAK993sRWmxCI9kRi7QXQGVX8kksKrQac1lTZAK5TBBxLKggVruJ36Y=
+X-Received: by 2002:ac8:1977:: with SMTP id g52mr29831842qtk.18.1582274109872;
+ Fri, 21 Feb 2020 00:35:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="brep73g5urggblmz"
-Content-Disposition: inline
-In-Reply-To: <20200221050205.GW23230@ZenIV.linux.org.uk>
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-6-scott.branden@broadcom.com> <20200220075045.GB3261162@kroah.com>
+ <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+In-Reply-To: <030219dc-539a-a2db-5ab2-1de7336a811c@broadcom.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Feb 2020 09:34:53 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
+Message-ID: <CAK8P3a1v7S4Ma67vRyfSY=v9z9bt9ZrftOYhgYvsECWXykGTJg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] bcm-vk: add bcm_vk UAPI
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:uKsCb7o+WwoRn2H66DIerL3UeOyZ5PMu17VhbxdEL4me0biPjB6
+ o7WZmnQ0rrYrtZccp+dGHRstPYT/AL1SEm/3IYCsEAqVHCgMbQ4ksER5Jxxky8Jnoh51X2G
+ /JnrA6gQfGsmJj8e1K4e9enaF7zgs4g/BCYaMmvJ3m+rCoMGhz2lndHIOExjZ86K2oepGhd
+ JtCJNVmjLyn1iCoVpAc5w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Vx6+2EQVCCk=:3nyhniYPMKUTdjUW1WlS1X
+ dizBB8ISTpfxLCiIjgNUDM13W0KZ67gyO2bh1Md9wdY/kVxGvwYn5gX55onS553yW1D/SV+Ic
+ chWqDqJSktTofpps+FghQQa1v46eU7cKssNfN8Yc5x0PxCWaq+Dn/qfZO9DsbuQ8gyxIGaYZX
+ vGVVHjT0SaIwbZR8VtUba1pNnpuJshQeY6oNsIEsbUL2lRa2xJZnzvD88GlgA5zM5Om437HEy
+ gOaK0KA9PdAzgJOOWU90JqA1J6yt4lf74KKOKl1vCuAK94O3hnFO4F3R5G4SACx4G7udFL8ex
+ GA7RPATiwpR4N1jVm2OiTuYBtfHBhc5GTADdJ5FvuoPhcku9U/0rb7kUh22ttL6NtwCWXZuAk
+ tXw1kO4kCzWlqYg+iiTw8R4YCq46iHwDp/DUZk5OALtRfeEhaLhzi3F/xL8N1/gxCXoWTKA6g
+ 6PpoBgcNI7fvKOcpty/X070DM/shiGQidrOO7rshPTPihkdG3cZS0zqwqq8mR96G2CYmYGPw6
+ i9vo7npjwiZczbygEsU+NPQc5JqzPcfnJ6Eagw8FfOhKBlLUUIof6oR45sX8I6NHqevSwKJCd
+ 4zcIVZ72l9Rq3yCMGY2sF0QJ/od3s04YZePgn/NksbpSbt1QLDCMweHqD6LI1q543KzCsvfp9
+ bOpMBR7BXHdKcJ2lgZYXS5IiWXGGv6LiBx0GbTliLojyx0it0vRXHgAagHJx/HKaHdXGB/XJS
+ NCA/yU0Pz+mb4mur480nqWi9BBWKph6RjCG4AG3QPdqHVluVN0h5FBMeycbQlbjO2/APQUko5
+ 6umjBaVTqYwERcD6UZfHWF1CEOUkqNWlmw+YmOH0ZTKghgBdMU=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Feb 21, 2020 at 2:16 AM Scott Branden
+<scott.branden@broadcom.com> wrote:
 
---brep73g5urggblmz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2020-02-21, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Feb 21, 2020 at 03:09:19PM +1100, Aleksa Sarai wrote:
-> >  * open(/proc/self/fd/$n) failing with ELOOP might actually be a bug
-> >    (the error is coming from may_open as though the lookup was done with
-> >    O_NOFOLLOW) -- the nd_jump_link() jump takes the namei lookup to a
-> >    the symlink but it looks like the normal link_path_walk et al
-> >    handling doesn't actually try to continue resolving it. I'll look
-> >    into this a bit more.
->=20
-> Not a bug.  Neither mount nor symlink traversal applies to destinations
-> of pure jumps (be it a symlink to "/" or a procfs symlink).  Both are
-> deliberate and both for very good reasons.  We'd discussed that last
-> year (and I'm going to cover that on LSF); basically, there's no
-> good semantics for symlink traversal in such situation.
+> >> +struct vk_access {
+> >> +    __u8 barno;     /* BAR number to use */
+> >> +    __u8 type;      /* Type of access */
+> >> +#define VK_ACCESS_READ 0
+> >> +#define VK_ACCESS_WRITE 1
+> >> +    __u32 len;      /* length of data */
+> > Horrible padding issues, are you sure this all works properly?
+> Haven't had any issues.
+> >
+> >> +    __u64 offset;   /* offset in BAR */
+> >> +    __u32 *data;    /* where to read/write data to */
+> > Are you _SURE_ you want a pointer here?  How do you handle the compat
+> > issues with 32/64 user/kernel space?
+> Don't care about 32-bit user space for this driver.
+> I don't think there isn't even enough memory in such systems for the
+> number of streams of video buffers needed for transcoding.
+> This driver is only used in high end 64-bit x86 servers.
 
-Fair enough, I figured there might be a deeper reason I was missing. ;)
+Please see Documentation/core-api/ioctl.rst
 
-> Again, this is absolutely deliberate.  And for sanity sake, don't bother
-> with link_path_walk() et.al. state in mainline - see #work.namei or
-> #work.do_last in vfs.git; I'm going to repost that series tonight or
-> tomorrow.  The logics is easier to follow there.
+All ioctl interfaces should be written in a portable way that works with
+compat user space and avoids all padding in order to not leak kernel
+data into user space.
 
-Yeah, will do. I took a quick look when you posted it originally and I
-agree it does seem more reasonable, I'll read through it in more depth
-once you resend it.
+If the driver is passing video buffers for transcoding, shouldn't the driver
+use the existing drivers/media interfaces for that? If it needs features
+that are not present there, they can probably be added.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---brep73g5urggblmz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXk9o4wAKCRCdlLljIbnQ
-EhVyAP46Uj2/Gda5JhVHHNKLauRVh0q6o31E8V2mCyh7M2jCswEA5H1yEUozSqf9
-K+WtiDNdZCuunuoGTlvK0RJFv7qFNAU=
-=JCj1
------END PGP SIGNATURE-----
-
---brep73g5urggblmz--
+        Arnd
