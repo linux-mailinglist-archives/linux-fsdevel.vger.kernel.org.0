@@ -2,174 +2,221 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC521680B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDEA1680C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 15:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbgBUOtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 09:49:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55363 "EHLO
+        id S1728712AbgBUOvW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 09:51:22 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55426 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbgBUOtD (ORCPT
+        with ESMTP id S1727096AbgBUOvW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:49:03 -0500
+        Fri, 21 Feb 2020 09:51:22 -0500
 Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j59br-0006f5-C5; Fri, 21 Feb 2020 14:48:55 +0000
-Date:   Fri, 21 Feb 2020 15:48:54 +0100
+        id 1j59e6-0006ov-S2; Fri, 21 Feb 2020 14:51:14 +0000
+Date:   Fri, 21 Feb 2020 15:51:14 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     David Howells <dhowells@redhat.com>
 Cc:     viro@zeniv.linux.org.uk, raven@themaw.net, mszeredi@redhat.com,
         christian@brauner.io, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/19] vfs: Add mount change counter [ver #16]
-Message-ID: <20200221144854.cdneyjekgljmoevz@wittgenstein>
+Subject: Re: [PATCH 02/19] fsinfo: Add syscalls to other arches [ver #16]
+Message-ID: <20200221145114.satmwy7u6mqfluzs@wittgenstein>
 References: <158204549488.3299825.3783690177353088425.stgit@warthog.procyon.org.uk>
- <158204552812.3299825.2343288163181726758.stgit@warthog.procyon.org.uk>
+ <158204551308.3299825.11782813238111590104.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <158204552812.3299825.2343288163181726758.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158204551308.3299825.11782813238111590104.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:05:28PM +0000, David Howells wrote:
-> Add a change counter on each mount object so that the user can easily check
-> to see if a mount has changed its attributes or its children.
-> 
-> Future patches will:
-> 
->  (1) Provide this value through fsinfo() attributes.
-> 
->  (2) Implement a watch_mount() system call to provide a notification
->      interface for userspace monitoring.
+On Tue, Feb 18, 2020 at 05:05:13PM +0000, David Howells wrote:
+> Add the fsinfo syscall to the other arches.
+
+Over the last couple of kernel releases we have established the
+convention that we wire-up a syscall for all arches at the same time and
+not e.g. x86 and then the other separately.
+
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  fs/mount.h     |   22 ++++++++++++++++++++++
->  fs/namespace.c |   11 +++++++++++
->  2 files changed, 33 insertions(+)
+>  arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
+>  arch/arm/tools/syscall.tbl                  |    1 +
+>  arch/arm64/include/asm/unistd.h             |    2 +-
+>  arch/arm64/include/asm/unistd32.h           |    2 +-
+>  arch/ia64/kernel/syscalls/syscall.tbl       |    1 +
+>  arch/m68k/kernel/syscalls/syscall.tbl       |    2 ++
+>  arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
+>  arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
+>  arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
+>  arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
+>  arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
+>  arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
+>  arch/s390/kernel/syscalls/syscall.tbl       |    1 +
+>  arch/sh/kernel/syscalls/syscall.tbl         |    1 +
+>  arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
+>  arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
+>  16 files changed, 17 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 711a4093e475..a1625924fe81 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -72,6 +72,7 @@ struct mount {
->  	int mnt_expiry_mark;		/* true if marked for expiry */
->  	struct hlist_head mnt_pins;
->  	struct hlist_head mnt_stuck_children;
-> +	atomic_t mnt_change_counter;	/* Number of changed applied */
-
-Nit: "Number of changes applied"?
-
->  } __randomize_layout;
+> diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+> index 36d42da7466a..961750417ef2 100644
+> --- a/arch/alpha/kernel/syscalls/syscall.tbl
+> +++ b/arch/alpha/kernel/syscalls/syscall.tbl
+> @@ -477,3 +477,4 @@
+>  # 545 reserved for clone3
+>  547	common	openat2				sys_openat2
+>  548	common	pidfd_getfd			sys_pidfd_getfd
+> +549	common	fsinfo				sys_fsinfo
+> diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+> index 4d1cf74a2caa..e6b9dfe01471 100644
+> --- a/arch/arm/tools/syscall.tbl
+> +++ b/arch/arm/tools/syscall.tbl
+> @@ -451,3 +451,4 @@
+>  435	common	clone3				sys_clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+> index 1dd22da1c3a9..75f04a1023be 100644
+> --- a/arch/arm64/include/asm/unistd.h
+> +++ b/arch/arm64/include/asm/unistd.h
+> @@ -38,7 +38,7 @@
+>  #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+>  #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
 >  
->  #define MNT_NS_INTERNAL ERR_PTR(-EINVAL) /* distinct from any mnt_namespace */
-> @@ -153,3 +154,24 @@ static inline bool is_anon_ns(struct mnt_namespace *ns)
->  {
->  	return ns->seq == 0;
->  }
-> +
-> +/*
-> + * Type of mount topology change notification.
-> + */
-> +enum mount_notification_subtype {
-> +	NOTIFY_MOUNT_NEW_MOUNT	= 0, /* New mount added */
-> +	NOTIFY_MOUNT_UNMOUNT	= 1, /* Mount removed manually */
-> +	NOTIFY_MOUNT_EXPIRY	= 2, /* Automount expired */
-> +	NOTIFY_MOUNT_READONLY	= 3, /* Mount R/O state changed */
-> +	NOTIFY_MOUNT_SETATTR	= 4, /* Mount attributes changed */
-> +	NOTIFY_MOUNT_MOVE_FROM	= 5, /* Mount moved from here */
-> +	NOTIFY_MOUNT_MOVE_TO	= 6, /* Mount moved to here (compare op_id) */
-> +};
-> +
-> +static inline void notify_mount(struct mount *changed,
-> +				struct mount *aux,
-> +				enum mount_notification_subtype subtype,
-> +				u32 info_flags)
-> +{
-> +	atomic_inc(&changed->mnt_change_counter);
-> +}
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 85b5f7bea82e..5c84aadb6aa1 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -498,6 +498,8 @@ static int mnt_make_readonly(struct mount *mnt)
->  	smp_wmb();
->  	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
->  	unlock_mount_hash();
-> +	if (ret == 0)
-> +		notify_mount(mnt, NULL, NOTIFY_MOUNT_READONLY, 0x10000);
-
-Why is 0x10000 hard-coded here?
-Hm, maybe for future patches where this will be replaced with a #define
-but not sure...
-
->  	return ret;
->  }
+> -#define __NR_compat_syscalls		439
+> +#define __NR_compat_syscalls		440
+>  #endif
 >  
-> @@ -506,6 +508,7 @@ static int __mnt_unmake_readonly(struct mount *mnt)
->  	lock_mount_hash();
->  	mnt->mnt.mnt_flags &= ~MNT_READONLY;
->  	unlock_mount_hash();
-> +	notify_mount(mnt, NULL, NOTIFY_MOUNT_READONLY, 0);
->  	return 0;
->  }
->  
-> @@ -819,6 +822,7 @@ static struct mountpoint *unhash_mnt(struct mount *mnt)
->   */
->  static void umount_mnt(struct mount *mnt)
->  {
-> +	notify_mount(mnt->mnt_parent, mnt, NOTIFY_MOUNT_UNMOUNT, 0);
->  	put_mountpoint(unhash_mnt(mnt));
->  }
->  
-> @@ -1453,6 +1457,7 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
->  		p = list_first_entry(&tmp_list, struct mount, mnt_list);
->  		list_del_init(&p->mnt_expire);
->  		list_del_init(&p->mnt_list);
-> +
->  		ns = p->mnt_ns;
->  		if (ns) {
->  			ns->mounts--;
-> @@ -2078,7 +2083,10 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  		lock_mount_hash();
->  	}
->  	if (moving) {
-> +		notify_mount(source_mnt->mnt_parent, source_mnt,
-> +			     NOTIFY_MOUNT_MOVE_FROM, 0);
->  		unhash_mnt(source_mnt);
-> +		notify_mount(dest_mnt, source_mnt, NOTIFY_MOUNT_MOVE_TO, 0);
->  		attach_mnt(source_mnt, dest_mnt, dest_mp);
->  		touch_mnt_namespace(source_mnt->mnt_ns);
->  	} else {
-> @@ -2087,6 +2095,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->  			list_del_init(&source_mnt->mnt_ns->list);
->  		}
->  		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
-> +		notify_mount(dest_mnt, source_mnt, NOTIFY_MOUNT_NEW_MOUNT, 0);
->  		commit_tree(source_mnt);
->  	}
->  
-> @@ -2464,6 +2473,7 @@ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
->  	mnt->mnt.mnt_flags = mnt_flags;
->  	touch_mnt_namespace(mnt->mnt_ns);
->  	unlock_mount_hash();
-> +	notify_mount(mnt, NULL, NOTIFY_MOUNT_SETATTR, 0);
->  }
->  
->  static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *mnt)
-> @@ -2898,6 +2908,7 @@ void mark_mounts_for_expiry(struct list_head *mounts)
->  		if (!xchg(&mnt->mnt_expiry_mark, 1) ||
->  			propagate_mount_busy(mnt, 1))
->  			continue;
-> +		notify_mount(mnt, NULL, NOTIFY_MOUNT_EXPIRY, 0);
->  		list_move(&mnt->mnt_expire, &graveyard);
->  	}
->  	while (!list_empty(&graveyard)) {
+>  #define __ARCH_WANT_SYS_CLONE
+> diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+> index c1c61635f89c..7d1225de47e6 100644
+> --- a/arch/arm64/include/asm/unistd32.h
+> +++ b/arch/arm64/include/asm/unistd32.h
+> @@ -873,7 +873,7 @@ __SYSCALL(__NR_fsopen, sys_fsopen)
+>  __SYSCALL(__NR_fsconfig, sys_fsconfig)
+>  #define __NR_fsmount 432
+>  __SYSCALL(__NR_fsmount, sys_fsmount)
+> -#define __NR_fspick 433
+> +#define __NR_fspick 434
+>  __SYSCALL(__NR_fspick, sys_fspick)
+>  #define __NR_pidfd_open 434
+>  __SYSCALL(__NR_pidfd_open, sys_pidfd_open)
+> diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+> index 042911e670b8..9018a3a6b067 100644
+> --- a/arch/ia64/kernel/syscalls/syscall.tbl
+> +++ b/arch/ia64/kernel/syscalls/syscall.tbl
+> @@ -358,3 +358,4 @@
+>  # 435 reserved for clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+> index f4f49fcb76d0..10172bb6ba1f 100644
+> --- a/arch/m68k/kernel/syscalls/syscall.tbl
+> +++ b/arch/m68k/kernel/syscalls/syscall.tbl
+> @@ -437,3 +437,5 @@
+>  435	common	clone3				__sys_clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +# 435 reserved for clone3
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+> index 4c67b11f9c9e..58665073c1f0 100644
+> --- a/arch/microblaze/kernel/syscalls/syscall.tbl
+> +++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+> @@ -443,3 +443,4 @@
+>  435	common	clone3				sys_clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+> index 1f9e8ad636cc..1f07a89473c3 100644
+> --- a/arch/mips/kernel/syscalls/syscall_n32.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+> @@ -376,3 +376,4 @@
+>  435	n32	clone3				__sys_clone3
+>  437	n32	openat2				sys_openat2
+>  438	n32	pidfd_getfd			sys_pidfd_getfd
+> +439	n32	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+> index c0b9d802dbf6..3c853ca54901 100644
+> --- a/arch/mips/kernel/syscalls/syscall_n64.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+> @@ -352,3 +352,4 @@
+>  435	n64	clone3				__sys_clone3
+>  437	n64	openat2				sys_openat2
+>  438	n64	pidfd_getfd			sys_pidfd_getfd
+> +439	n64	fsinfo				sys_fsinfo
+> diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+> index ac586774c980..727f54542bf4 100644
+> --- a/arch/mips/kernel/syscalls/syscall_o32.tbl
+> +++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+> @@ -425,3 +425,4 @@
+>  435	o32	clone3				__sys_clone3
+>  437	o32	openat2				sys_openat2
+>  438	o32	pidfd_getfd			sys_pidfd_getfd
+> +439	o32	fsinfo				sys_fsinfo
+> diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+> index 52a15f5cd130..2e9576638d80 100644
+> --- a/arch/parisc/kernel/syscalls/syscall.tbl
+> +++ b/arch/parisc/kernel/syscalls/syscall.tbl
+> @@ -435,3 +435,4 @@
+>  435	common	clone3				sys_clone3_wrapper
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+> index 35b61bfc1b1a..397190734ca7 100644
+> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
+> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+> @@ -519,3 +519,4 @@
+>  435	nospu	clone3				ppc_clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+> index bd7bd3581a0f..e9340d712dcd 100644
+> --- a/arch/s390/kernel/syscalls/syscall.tbl
+> +++ b/arch/s390/kernel/syscalls/syscall.tbl
+> @@ -440,3 +440,4 @@
+>  435  common	clone3			sys_clone3			sys_clone3
+>  437  common	openat2			sys_openat2			sys_openat2
+>  438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+> +439  common	fsinfo			sys_fsinfo			sys_fsinfo
+> diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+> index c7a30fcd135f..7bb5ec284fbb 100644
+> --- a/arch/sh/kernel/syscalls/syscall.tbl
+> +++ b/arch/sh/kernel/syscalls/syscall.tbl
+> @@ -440,3 +440,4 @@
+>  # 435 reserved for clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+> index f13615ecdecc..a902b757ace2 100644
+> --- a/arch/sparc/kernel/syscalls/syscall.tbl
+> +++ b/arch/sparc/kernel/syscalls/syscall.tbl
+> @@ -483,3 +483,4 @@
+>  # 435 reserved for clone3
+>  437	common	openat2			sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
+> diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+> index 85a9ab1bc04d..f82702a7ab38 100644
+> --- a/arch/xtensa/kernel/syscalls/syscall.tbl
+> +++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+> @@ -408,3 +408,4 @@
+>  435	common	clone3				sys_clone3
+>  437	common	openat2				sys_openat2
+>  438	common	pidfd_getfd			sys_pidfd_getfd
+> +439	common	fsinfo				sys_fsinfo
 > 
 > 
