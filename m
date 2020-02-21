@@ -2,173 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2719116841A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 17:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4792F16845B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Feb 2020 18:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgBUQvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 11:51:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36344 "EHLO
+        id S1728086AbgBUREf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 12:04:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41486 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbgBUQvN (ORCPT
+        with ESMTP id S1728028AbgBUREf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 11:51:13 -0500
+        Fri, 21 Feb 2020 12:04:35 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=ljeDBtIhvMl7XkvIGfVYLN9gAQL27p/c67Gbwn9I/5c=; b=dfTjZxKR1/3QPd5yLOq9tyh5dh
-        WW35vcZB2LeZ6eSWMMJtyu+t6W9N1vf8XbRYXZTXLXsG0zAsq3E6Fp0njWa2+7VoAFOZqiHvIX95D
-        DrhMl8XWSo2HkJYCAjwc6doBR6qqvejseLhDyrvtjCf3SDd7UwRHJMOT1BWA7aH2k4uSyUW51Fno8
-        FUXtu+b4pQd5eJD1uokxaAHJ3XodWUhVHLeXqngqeJbPmdXASEZtE8X9lTE4wctYk1/OjAcVt6cbg
-        ASE1G6bB2VNJod5BBqDf6cpqLPT9NZRNoymmtrQuDlHLBLbANFzhRfdcnRfC11Ib1PDkxXJG7KRTg
-        DkdEiXbQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5BWA-0008Cb-DS; Fri, 21 Feb 2020 16:51:10 +0000
-Subject: Re: [PATCH v7 3/9] block: blk-crypto-fallback for Inline Encryption
-To:     Satya Tangirala <satyat@google.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Cc:     Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=r3W9uQBOJlV/Av1C4P5QJ8rWtko3f0+LGkNeNqVgIXE=; b=AV6Cw8ovuehrTohFGMfQ7n0kse
+        bjrdnD9nESXI0I3PhTjjlM1TLq5ja8b35TsbwUSuOz6O3K1S8kAcssyZP1MCGHcG4kw/lfza5fkeb
+        QOnZfCeaRELcgK09zo2800vd04X5tYSYTSi6pR24Pv7o7U2qmROm4epqCjmdubnrlnmVFNqKTUfNu
+        87qqVl3NeMxxEMlK1BEUhoafXDd8nMTCXTvOtVD3ptQxLN36wRRJoYUQ/FDv2hQsUqZ5LFEcVCpUg
+        Nt8pMcATyiWCCDn6xIrWVuAgQbk1q7RAv8dNR7WD1b0IYd/UQOWjvoWynx1dI6wC7JPPah9Nr35ng
+        KSATh/Qw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5Bj8-0004qU-9u; Fri, 21 Feb 2020 17:04:34 +0000
+Date:   Fri, 21 Feb 2020 09:04:34 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
         Kuohong Wang <kuohong.wang@mediatek.com>,
         Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v7 1/9] block: Keyslot Manager for Inline Encryption
+Message-ID: <20200221170434.GA438@infradead.org>
 References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-4-satyat@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9c81a71f-9322-7f89-fa3d-4511f162d085@infradead.org>
-Date:   Fri, 21 Feb 2020 08:51:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+ <20200221115050.238976-2-satyat@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200221115050.238976-4-satyat@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200221115050.238976-2-satyat@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/21/20 3:50 AM, Satya Tangirala wrote:
-> Blk-crypto delegates crypto operations to inline encryption hardware when
-> available. The separately configurable blk-crypto-fallback contains a
-> software fallback to the kernel crypto API - when enabled, blk-crypto
-> will use this fallback for en/decryption when inline encryption hardware is
-> not available. This lets upper layers not have to worry about whether or
-> not the underlying device has support for inline encryption before
-> deciding to specify an encryption context for a bio, and also allows for
-> testing without actual inline encryption hardware. For more details, refer
-> to Documentation/block/inline-encryption.rst.
-> 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> ---
->  Documentation/block/index.rst             |   1 +
->  Documentation/block/inline-encryption.rst | 162 ++++++
->  block/Kconfig                             |  10 +
->  block/Makefile                            |   1 +
->  block/bio-integrity.c                     |   2 +-
->  block/blk-crypto-fallback.c               | 673 ++++++++++++++++++++++
->  block/blk-crypto-internal.h               |  32 +
->  block/blk-crypto.c                        |  43 +-
->  include/linux/blk-crypto.h                |  17 +-
->  include/linux/blk_types.h                 |   6 +
->  10 files changed, 938 insertions(+), 9 deletions(-)
->  create mode 100644 Documentation/block/inline-encryption.rst
->  create mode 100644 block/blk-crypto-fallback.c
+> +#ifdef CONFIG_PM
+> +static inline void blk_ksm_set_dev(struct keyslot_manager *ksm,
+> +				   struct device *dev)
+> +{
+> +	ksm->dev = dev;
+> +}
+> +
+> +/* If there's an underlying device and it's suspended, resume it. */
+> +static inline void blk_ksm_pm_get(struct keyslot_manager *ksm)
+> +{
+> +	if (ksm->dev)
+> +		pm_runtime_get_sync(ksm->dev);
+> +}
+> +
+> +static inline void blk_ksm_pm_put(struct keyslot_manager *ksm)
+> +{
+> +	if (ksm->dev)
+> +		pm_runtime_put_sync(ksm->dev);
+> +}
+> +#else /* CONFIG_PM */
+> +static inline void blk_ksm_set_dev(struct keyslot_manager *ksm,
+> +				   struct device *dev)
+> +{
+> +}
+> +
+> +static inline void blk_ksm_pm_get(struct keyslot_manager *ksm)
+> +{
+> +}
+> +
+> +static inline void blk_ksm_pm_put(struct keyslot_manager *ksm)
+> +{
+> +}
+> +#endif /* !CONFIG_PM */
 
+I think no one is hurt by an unused dev field for the non-pm case.
+I'd suggest to define the field unconditionally, and replace all
+the above with direct calls below.
 
-> diff --git a/Documentation/block/inline-encryption.rst b/Documentation/block/inline-encryption.rst
-> new file mode 100644
-> index 000000000000..02abea993975
-> --- /dev/null
-> +++ b/Documentation/block/inline-encryption.rst
-> @@ -0,0 +1,162 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=================
-> +Inline Encryption
-> +=================
-> +
-> +Background
-> +==========
-> +
-> +Inline encryption hardware sit logically between memory and the disk, and can
+> +/**
+> + * blk_ksm_get_slot() - Increment the refcount on the specified slot.
+> + * @ksm: The keyslot manager that we want to modify.
+> + * @slot: The slot to increment the refcount of.
+> + *
+> + * This function assumes that there is already an active reference to that slot
+> + * and simply increments the refcount. This is useful when cloning a bio that
+> + * already has a reference to a keyslot, and we want the cloned bio to also have
+> + * its own reference.
+> + *
+> + * Context: Any context.
+> + */
+> +void blk_ksm_get_slot(struct keyslot_manager *ksm, unsigned int slot)
 
-                              sits
+This function doesn't appear to be used at all in the whole series.
 
-> +en/decrypt data as it goes in/out of the disk. Inline encryption hardware have a
+> +/**
+> + * blk_ksm_put_slot() - Release a reference to a slot
+> + * @ksm: The keyslot manager to release the reference from.
+> + * @slot: The slot to release the reference from.
+> + *
+> + * Context: Any context.
+> + */
+> +void blk_ksm_put_slot(struct keyslot_manager *ksm, unsigned int slot)
+> +{
+> +	unsigned long flags;
+> +
+> +	if (WARN_ON(slot >= ksm->num_slots))
+> +		return;
+> +
+> +	if (atomic_dec_and_lock_irqsave(&ksm->slots[slot].slot_refs,
+> +					&ksm->idle_slots_lock, flags)) {
+> +		list_add_tail(&ksm->slots[slot].idle_slot_node,
+> +			      &ksm->idle_slots);
+> +		spin_unlock_irqrestore(&ksm->idle_slots_lock, flags);
+> +		wake_up(&ksm->idle_slots_wait_queue);
+> +	}
 
-                                                                             has
+Given that blk_ksm_get_slot_for_key returns a signed keyslot that
+can return errors, and the only callers stores it in a signed variable
+I think this function should take a signed slot as well, and the check
+for a non-negative slot should be moved here from the only caller.
 
-> +fixed number of "keyslots" - slots into which encryption contexts (i.e. the
-> +encryption key, encryption algorithm, data unit size) can be programmed by the
-> +kernel at any time. Each request sent to the disk can be tagged with the index
-> +of a keyslot (and also a data unit number to act as an encryption tweak), and
-> +the inline encryption hardware will en/decrypt the data in the request with the
-> +encryption context programmed into that keyslot. This is very different from
-> +full disk encryption solutions like self encrypting drives/TCG OPAL/ATA
-> +Security standards, since with inline encryption, any block on disk could be
-> +encrypted with any encryption context the kernel chooses.
-> +
-> +
-> +Objective
-> +=========
-> +
-...
-> +
-> +
-> +Constraints and notes
-> +=====================
-> +
-> +- IE hardware have a limited number of "keyslots" that can be programmed
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 853d92ceee64..b2103e207ed5 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -8,6 +8,7 @@
+>  #include <linux/highmem.h>
+>  #include <linux/mempool.h>
+>  #include <linux/ioprio.h>
+> +#include <linux/blk-crypto.h>
+>  
+>  #ifdef CONFIG_BLOCK
+>  /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
 
-                 has
-
-> +  with an encryption context (key, algorithm, data unit size, etc.) at any time.
-> +  One can specify a keyslot in a data request made to the device, and the
-> +  device will en/decrypt the data using the encryption context programmed into
-> +  that specified keyslot. When possible, we want to make multiple requests with
-> +  the same encryption context share the same keyslot.
-> +
-...
-> +
-> +
-> +Design
-> +======
-> +
-> +We add a :c:type:`struct bio_crypt_ctx` to :c:type:`struct bio` that can
-> +represent an encryption context, because we need to be able to pass this
-> +encryption context from the FS layer to the device driver to act upon.
-> +
-> +While IE hardware works on the notion of keyslots, the FS layer has no
-> +knowledge of keyslots - it simply wants to specify an encryption context to
-> +use while en/decrypting a bio.
-> +
-> +We introduce a keyslot manager (KSM) that handles the translation from
-> +encryption contexts specified by the FS to keyslots on the IE hardware.
-> +This KSM also serves as the way IE hardware can expose their capabilities to
-
-                                                          its
-
-> +upper layers. The generic mode of operation is: each device driver that wants
-> +to support IE will construct a KSM and set it up in its struct request_queue.
-> +Upper layers that want to use IE on this device can then use this KSM in
-> +the device's struct request_queue to translate an encryption context into
-> +a keyslot. The presence of the KSM in the request queue shall be used to mean
-> +that the device supports IE.
-> +
-...
-
-Hi Satya,
-ISTM that we disagree on whether "hardware" is singular or plural.  ;)
-
-My interface search foo (FWIW) says that "hardware" has no plural version.
-Anyway, my best evidence is in your intro/commit message, where it says:
-"when inline encryption hardware is not available",
-so it must be singular.  :)
-
-cheers.
--- 
-~Randy
-
+This doesn't belong here, but into the patch that actually requires
+crypto definitions in bio.h.
