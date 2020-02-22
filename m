@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F35169072
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 17:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D625416906E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 17:45:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgBVQpV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 11:45:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:47003 "EHLO mga07.intel.com"
+        id S1726855AbgBVQpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 11:45:23 -0500
+Received: from mga18.intel.com ([134.134.136.126]:5654 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbgBVQpU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 11:45:20 -0500
+        id S1725976AbgBVQpX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 22 Feb 2020 11:45:23 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2020 08:45:19 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Feb 2020 08:45:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,472,1574150400"; 
-   d="scan'208";a="349603727"
+   d="scan'208";a="283989618"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Feb 2020 08:45:14 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Feb 2020 08:45:17 -0800
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1j5Xtx-0001CW-Nc; Sun, 23 Feb 2020 00:45:13 +0800
-Date:   Sun, 23 Feb 2020 00:44:49 +0800
+        id 1j5Xu0-0001QN-DO; Sun, 23 Feb 2020 00:45:16 +0800
+Date:   Sun, 23 Feb 2020 00:44:50 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Scott Branden <scott.branden@broadcom.com>
 Cc:     kbuild-all@lists.01.org, Luis Chamberlain <mcgrof@kernel.org>,
@@ -49,86 +49,62 @@ Cc:     kbuild-all@lists.01.org, Luis Chamberlain <mcgrof@kernel.org>,
         Desmond Yan <desmond.yan@broadcom.com>,
         James Hu <james.hu@broadcom.com>,
         Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-Message-ID: <202002230019.zc13SqPI%lkp@intel.com>
+Subject: [RFC PATCH] misc: bcm-vk: image_tab[] can be static
+Message-ID: <20200222164450.GA660@e50d7db646c3>
 References: <20200220004825.23372-7-scott.branden@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200220004825.23372-7-scott.branden@broadcom.com>
+X-Patchwork-Hint: ignore
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Scott,
 
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on char-misc/char-misc-testing]
-[also build test WARNING on kselftest/next linus/master v5.6-rc2]
-[cannot apply to driver-core/driver-core-testing next-20200221]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Scott-Branden/firmware-add-partial-read-support-in-request_firmware_into_buf/20200222-032851
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git 06e33595e96f212811066df192ae8bf802174296
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-173-ge0787745-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> drivers/misc/bcm-vk/bcm_vk_dev.c:34:29: sparse: sparse: symbol 'image_tab' was not declared. Should it be static?
->> drivers/misc/bcm-vk/bcm_vk_dev.c:185:15: sparse: sparse: incorrect type in assignment (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:185:15: sparse:    expected struct bcm_vk_peer_log *p_ctl
->> drivers/misc/bcm-vk/bcm_vk_dev.c:185:15: sparse:    got void [noderef] <asn:2> *
-   drivers/misc/bcm-vk/bcm_vk_dev.c:415:22: sparse: sparse: incorrect type in assignment (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:415:22: sparse:    expected void *bufp
-   drivers/misc/bcm-vk/bcm_vk_dev.c:415:22: sparse:    got void [noderef] <asn:2> *
->> drivers/misc/bcm-vk/bcm_vk_dev.c:654:36: sparse: sparse: incorrect type in argument 2 (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:654:36: sparse:    expected void const [noderef] <asn:1> *from
->> drivers/misc/bcm-vk/bcm_vk_dev.c:654:36: sparse:    got struct vk_image *arg
-   drivers/misc/bcm-vk/bcm_vk_dev.c:694:37: sparse: sparse: incorrect type in argument 2 (different address spaces)
-   drivers/misc/bcm-vk/bcm_vk_dev.c:694:37: sparse:    expected void const [noderef] <asn:1> *from
->> drivers/misc/bcm-vk/bcm_vk_dev.c:694:37: sparse:    got struct vk_access *arg
-   drivers/misc/bcm-vk/bcm_vk_dev.c:717:31: sparse: sparse: incorrect type in argument 1 (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:717:31: sparse:    expected void const volatile [noderef] <asn:1> *
->> drivers/misc/bcm-vk/bcm_vk_dev.c:717:31: sparse:    got unsigned int [usertype] *
-   drivers/misc/bcm-vk/bcm_vk_dev.c:728:31: sparse: sparse: incorrect type in argument 1 (different address spaces)
-   drivers/misc/bcm-vk/bcm_vk_dev.c:728:31: sparse:    expected void const volatile [noderef] <asn:1> *
-   drivers/misc/bcm-vk/bcm_vk_dev.c:728:31: sparse:    got unsigned int [usertype] *
-   drivers/misc/bcm-vk/bcm_vk_dev.c:793:36: sparse: sparse: incorrect type in argument 2 (different address spaces)
-   drivers/misc/bcm-vk/bcm_vk_dev.c:793:36: sparse:    expected void const [noderef] <asn:1> *from
->> drivers/misc/bcm-vk/bcm_vk_dev.c:793:36: sparse:    got struct vk_reset *arg
-   drivers/misc/bcm-vk/bcm_vk_dev.c:873:45: sparse: sparse: incorrect type in argument 2 (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:873:45: sparse:    expected struct vk_image *arg
->> drivers/misc/bcm-vk/bcm_vk_dev.c:873:45: sparse:    got void [noderef] <asn:1> *argp
-   drivers/misc/bcm-vk/bcm_vk_dev.c:877:45: sparse: sparse: incorrect type in argument 2 (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:877:45: sparse:    expected struct vk_access *arg
-   drivers/misc/bcm-vk/bcm_vk_dev.c:877:45: sparse:    got void [noderef] <asn:1> *argp
-   drivers/misc/bcm-vk/bcm_vk_dev.c:881:40: sparse: sparse: incorrect type in argument 2 (different address spaces)
->> drivers/misc/bcm-vk/bcm_vk_dev.c:881:40: sparse:    expected struct vk_reset *arg
-   drivers/misc/bcm-vk/bcm_vk_dev.c:881:40: sparse:    got void [noderef] <asn:1> *argp
---
->> drivers/misc/bcm-vk/bcm_vk_msg.c:102:6: sparse: sparse: symbol 'bcm_vk_update_qstats' was not declared. Should it be static?
->> drivers/misc/bcm-vk/bcm_vk_msg.c:455:17: sparse: sparse: cast removes address space '<asn:2>' of expression
-   drivers/misc/bcm-vk/bcm_vk_msg.c:656:15: sparse: sparse: cast removes address space '<asn:2>' of expression
-   drivers/misc/bcm-vk/bcm_vk_msg.c:664:23: sparse: sparse: cast removes address space '<asn:2>' of expression
->> drivers/misc/bcm-vk/bcm_vk_msg.c:734:5: sparse: sparse: symbol 'bcm_vk_handle_last_sess' was not declared. Should it be static?
-   drivers/misc/bcm-vk/bcm_vk_msg.c:823:31: sparse: sparse: cast removes address space '<asn:2>' of expression
-   drivers/misc/bcm-vk/bcm_vk_msg.c:851:47: sparse: sparse: cast removes address space '<asn:2>' of expression
-
-Please review and possibly fold the followup patch.
-
+Fixes: b6354450d21b ("misc: bcm-vk: add Broadcom VK driver")
+Signed-off-by: kbuild test robot <lkp@intel.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ bcm_vk_dev.c |    2 +-
+ bcm_vk_msg.c |    6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/misc/bcm-vk/bcm_vk_dev.c b/drivers/misc/bcm-vk/bcm_vk_dev.c
+index d8f59e898ca8a..24cdab04c8703 100644
+--- a/drivers/misc/bcm-vk/bcm_vk_dev.c
++++ b/drivers/misc/bcm-vk/bcm_vk_dev.c
+@@ -31,7 +31,7 @@ enum soc_idx {
+ };
+ 
+ #define NUM_BOOT_STAGES 2
+-const struct load_image_tab image_tab[][NUM_BOOT_STAGES] = {
++static const struct load_image_tab image_tab[][NUM_BOOT_STAGES] = {
+ 	[VALKYRIE] = {
+ 		{VK_IMAGE_TYPE_BOOT1, VK_BOOT1_DEF_VALKYRIE_FILENAME},
+ 		{VK_IMAGE_TYPE_BOOT2, VK_BOOT2_DEF_VALKYRIE_FILENAME}
+diff --git a/drivers/misc/bcm-vk/bcm_vk_msg.c b/drivers/misc/bcm-vk/bcm_vk_msg.c
+index 651fba2149e28..9247d4bc50288 100644
+--- a/drivers/misc/bcm-vk/bcm_vk_msg.c
++++ b/drivers/misc/bcm-vk/bcm_vk_msg.c
+@@ -99,8 +99,8 @@ static void bcm_vk_h2vk_verify_blk
+ #define BCM_VK_QSTATS_ACC_CNT 20000
+ #endif
+ 
+-void bcm_vk_update_qstats(struct bcm_vk *vk, const char *tag,
+-			  struct bcm_vk_qstats *qstats, uint32_t occupancy)
++static void bcm_vk_update_qstats(struct bcm_vk *vk, const char *tag,
++				 struct bcm_vk_qstats *qstats, uint32_t occupancy)
+ {
+ 	struct bcm_vk_qs_cnts *qcnts = &qstats->qcnts;
+ 
+@@ -731,7 +731,7 @@ int bcm_vk_send_shutdown_msg(struct bcm_vk *vk, uint32_t shut_type,
+ 	return rc;
+ }
+ 
+-int bcm_vk_handle_last_sess(struct bcm_vk *vk, struct task_struct *ppid)
++static int bcm_vk_handle_last_sess(struct bcm_vk *vk, struct task_struct *ppid)
+ {
+ 	int rc = 0;
+ 	pid_t pid = task_pid_nr(ppid);
