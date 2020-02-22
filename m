@@ -2,91 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97322168C80
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 06:21:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6C30168CBE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 06:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgBVFVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 00:21:33 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22986 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726892AbgBVFVd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 00:21:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582348892;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2LypZWR3wo1C+DQ15GIrtwcRbipyTjTpddzxoXyYlwg=;
-        b=XfUheYHbBlqM8xR7X5B9ofPmsIua9/RQE7QxoMi5BWcyyQJEQHzmWiGgvbuUj/qJVISBDb
-        R5gvfl1LXS1qXuajyubQAJ90lK2BBv6czryJOEipPg2Qu1z8nDj3qnsHJibu/nbHYmz/Pp
-        iLI5DyVTx4GfsofNtxA/fG+jTY2RH/U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-199-NwztNkubMvmgWrolAX3oGQ-1; Sat, 22 Feb 2020 00:21:29 -0500
-X-MC-Unique: NwztNkubMvmgWrolAX3oGQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726688AbgBVFjI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 00:39:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbgBVFjH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 22 Feb 2020 00:39:07 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CC8BD100550E;
-        Sat, 22 Feb 2020 05:21:27 +0000 (UTC)
-Received: from localhost (dhcp-12-102.nay.redhat.com [10.66.12.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 40DFB5D9CD;
-        Sat, 22 Feb 2020 05:21:26 +0000 (UTC)
-Date:   Sat, 22 Feb 2020 13:31:53 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH V2 3/3] xfs/300: modify test to work on any fs block size
-Message-ID: <20200222053152.GM14282@dhcp-12-102.nay.redhat.com>
-Mail-Followup-To: Jeff Moyer <jmoyer@redhat.com>, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20200220200632.14075-1-jmoyer@redhat.com>
- <20200220200632.14075-4-jmoyer@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F502208C3;
+        Sat, 22 Feb 2020 05:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582349946;
+        bh=tstnNHhaIvRVX4ExQFdDOhN9ZstDOzAqulx7HPJbK8Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nQfM6CCgx+pVqyEwP92qBWdLJjAuuh7iZeR3ncbtvvgsiun0gVfKr9vYHUxYAxjFP
+         abj9rUQsDl68oqGY5yOTPK4sCVbNj+yNYvjFQxlcOdCuS2hCQWRqLguVjvPBGtdKF8
+         jOKekVc3QEjPSLZ+EsQDPvTSXf7tADwaIwl6OAh4=
+Date:   Fri, 21 Feb 2020 21:39:05 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v7 7/9] fscrypt: add inline encryption support
+Message-ID: <20200222053905.GC848@sol.localdomain>
+References: <20200221115050.238976-1-satyat@google.com>
+ <20200221115050.238976-8-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200220200632.14075-4-jmoyer@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200221115050.238976-8-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 03:06:32PM -0500, Jeff Moyer wrote:
-> The test currently assumes a file system block size of 4k.  It will
-> work just fine on any user-specified block size, though.
-> 
-> Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
-> ---
->  tests/xfs/300 | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tests/xfs/300 b/tests/xfs/300
-> index 28608b81..4f1c927a 100755
-> --- a/tests/xfs/300
-> +++ b/tests/xfs/300
-> @@ -50,8 +50,9 @@ $XFS_IO_PROG -f -c "pwrite -S 0x63 0 4096" $SCRATCH_MNT/attrvals >> $seqres.full
->  cat $SCRATCH_MNT/attrvals | attr -s name $SCRATCH_MNT/$seq.test >> $seqres.full 2>&1
->  
->  # Fragment the file by writing backwards
-> +bs=$(_get_file_block_size $SCRATCH_MNT)
->  for I in `seq 6 -1 0`; do
-> -	dd if=/dev/zero of=$SCRATCH_MNT/$seq.test seek=$I bs=4k \
-> +	dd if=/dev/zero of=$SCRATCH_MNT/$seq.test seek=$I bs=${bs} \
+On Fri, Feb 21, 2020 at 03:50:48AM -0800, Satya Tangirala wrote:
+> diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+> index 65cb09fa6ead..7c157130c16a 100644
+> --- a/fs/crypto/keysetup.c
+> +++ b/fs/crypto/keysetup.c
+> @@ -19,6 +19,8 @@ struct fscrypt_mode fscrypt_modes[] = {
+>  		.cipher_str = "xts(aes)",
+>  		.keysize = 64,
+>  		.ivsize = 16,
+> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_AES_256_XTS,
+> +		.blk_crypto_dun_bytes_required = 8,
+>  	},
+>  	[FSCRYPT_MODE_AES_256_CTS] = {
+>  		.friendly_name = "AES-256-CTS-CBC",
+> @@ -31,6 +33,8 @@ struct fscrypt_mode fscrypt_modes[] = {
+>  		.cipher_str = "essiv(cbc(aes),sha256)",
+>  		.keysize = 16,
+>  		.ivsize = 16,
+> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_AES_128_CBC_ESSIV,
+> +		.blk_crypto_dun_bytes_required = 8,
+>  	},
+>  	[FSCRYPT_MODE_AES_128_CTS] = {
+>  		.friendly_name = "AES-128-CTS-CBC",
+> @@ -43,6 +47,8 @@ struct fscrypt_mode fscrypt_modes[] = {
+>  		.cipher_str = "adiantum(xchacha12,aes)",
+>  		.keysize = 32,
+>  		.ivsize = 32,
+> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_ADIANTUM,
+> +		.blk_crypto_dun_bytes_required = 24,
+>  	},
+>  };
 
-Although the original case won't fail on 64k test. But this change makes
-more sense.
+The DUN bytes required is actually determined by the IV generation method too.
+Currently fscrypt has the following combinations:
 
-Thanks,
-Zorro
+	AES-256-XTS: 8 bytes
+	AES-128-CBC-ESSIV: 8 bytes
+	Adiantum without DIRECT_KEY: 8 bytes
+	Adiantum with DIRECT_KEY: 24 bytes
 
->  	   oflag=direct count=1 conv=notrunc >> $seqres.full 2>&1
->  done
->  
-> -- 
-> 2.19.1
-> 
+I.e., DIRECT_KEY is only allowed with Adiantum, but not required for it.
 
+So it's technically incorrect to always pass dun_bytes_required=24 for Adiantum.
+
+And it's conceivable that in the future we could add an fscrypt setting that
+uses AES-256-XTS with 16 IV bytes.  Such a setting wouldn't be usable with UFS
+inline encryption, yet the existing AES-256-XTS settings still would.
+
+So, how about instead of putting .blk_crypto_dun_bytes_required in the
+crypto_mode table, using logic like:
+
+	dun_bytes_required = 8;
+	if (flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY)
+		dun_bytes_required += 16;
+
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3cd4fe6b845e..2331ff0464b2 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1370,6 +1370,7 @@ extern int send_sigurg(struct fown_struct *fown);
+>  #define SB_NODIRATIME	2048	/* Do not update directory access times */
+>  #define SB_SILENT	32768
+>  #define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
+> +#define SB_INLINE_CRYPT	(1<<17)	/* inodes in SB use blk-crypto */
+>  #define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
+>  #define SB_I_VERSION	(1<<23) /* Update inode I_version field */
+>  #define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
+
+This flag probably should be called "SB_INLINECRYPT" to match the mount option,
+which is "inlinecrypt" not "inline_crypt".
+
+Also, the addition of this flag, along with the update to show_sb_opts() in
+fs/proc_namespace.c which I think is needed, maybe should go in a separate patch
+whose subject is prefixed with "fs: " to make it clearer to reviewers that this
+part is a VFS-level change.
+
+- Eric
