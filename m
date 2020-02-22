@@ -2,123 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6C30168CBE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 06:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A097168D6F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 09:03:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbgBVFjI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 00:39:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbgBVFjH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 00:39:07 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F502208C3;
-        Sat, 22 Feb 2020 05:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582349946;
-        bh=tstnNHhaIvRVX4ExQFdDOhN9ZstDOzAqulx7HPJbK8Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nQfM6CCgx+pVqyEwP92qBWdLJjAuuh7iZeR3ncbtvvgsiun0gVfKr9vYHUxYAxjFP
-         abj9rUQsDl68oqGY5yOTPK4sCVbNj+yNYvjFQxlcOdCuS2hCQWRqLguVjvPBGtdKF8
-         jOKekVc3QEjPSLZ+EsQDPvTSXf7tADwaIwl6OAh4=
-Date:   Fri, 21 Feb 2020 21:39:05 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v7 7/9] fscrypt: add inline encryption support
-Message-ID: <20200222053905.GC848@sol.localdomain>
-References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-8-satyat@google.com>
+        id S1727310AbgBVIDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 03:03:04 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:55497 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbgBVIDD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 22 Feb 2020 03:03:03 -0500
+Received: from mail-lj1-f170.google.com ([209.85.208.170]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MGQ85-1jDNxT0E8L-00Gmo9; Sat, 22 Feb 2020 09:03:02 +0100
+Received: by mail-lj1-f170.google.com with SMTP id w1so4663095ljh.5;
+        Sat, 22 Feb 2020 00:03:01 -0800 (PST)
+X-Gm-Message-State: APjAAAXzm3mazZhpifv6NLwNUOZwOlo1AXN5boy8wUSX/H3CDKpMt+O5
+        rZW0g871fIpzP2DTUA4cwHcEtUsYDjUs/bnkz+M=
+X-Google-Smtp-Source: APXvYqy8pqZnXs4eA0pVTt5xMk383YhNUC6JgnQCwACtDyc9LnpCj6Rs0ZSynacog0ZUWSe9rR6qD5KRQrqsZqng2m8=
+X-Received: by 2002:a2e:8e70:: with SMTP id t16mr24610761ljk.73.1582358581384;
+ Sat, 22 Feb 2020 00:03:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221115050.238976-8-satyat@google.com>
+References: <20200220004825.23372-1-scott.branden@broadcom.com>
+ <20200220004825.23372-7-scott.branden@broadcom.com> <20200220074711.GA3261162@kroah.com>
+ <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
+In-Reply-To: <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 22 Feb 2020 09:02:44 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0y8RfjEng4AsMr4MAPGMTXduiFOyfUzazgw9c+KVWmYA@mail.gmail.com>
+Message-ID: <CAK8P3a0y8RfjEng4AsMr4MAPGMTXduiFOyfUzazgw9c+KVWmYA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+        Desmond Yan <desmond.yan@broadcom.com>,
+        James Hu <james.hu@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:XZlkbUR4fxvy+eE3fvD5js5E7JSWv9M4hJtyepE/iQGN5bhv2kl
+ LCRDkcdhGgVq9hhYgkCZgDR+VchB2qOw2MftAiiGtTFUU2tweq60mZQa635lfEwtVeEKbWs
+ MnJ61uB+Wp7wWZPjOAtlkBmAImwxQO7Ykpn56BlDB0JVbz66Aa27T17gmP7vhlQd6/sfeSy
+ QsAJR7A4fAvOlUoULX7cg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vCKx0DV6jsY=:ZsJCmUIHVEjxqelF+v30ky
+ lC0Y/TQGa+3Rw3L57lffpcaWs4ZYYhg5vv9wGqlr5jlabbaOpg8V67KH3ZE8IA2X/mtc9J+zm
+ +EboEKThaasEeUHgCpyTARgb+oHTQ56g3rp/+CsQjvWyy/zTQQCBVgU6n8JjWHRX3V92XBGEH
+ RQ/NcjEF4Xpxec+a++cxJFDCxYMiooJceIVUQK0ypZH9Tjge/LCnt+soje2RgAvYyPbQbI2ZB
+ s/hJH7tSKNQd3OHAgjGQszvL9rhTIVK3KHDrBJ5RTR7jXSm3QJjvnCUu4bIh+beLlODSh5Hpj
+ 3DwCH1bmvrAC19pFXm7+GeKaerf5aOVGe1dWZgBIcpiies54HKXei/5dQ+qwJ4Rghe6+z86PM
+ LOTRPDeMSSIau5D0FPh+/g3FRWjz9rkDaI2cccpJZ7dePCAlgkm+HoQasDKk4caYqTbvbW7bk
+ md5LyLt70Gj1Iqdd/5KpIKLP9hYOH1yTpoYk08qsKv7XjBsChcJDivxd95HrpuuL4KyrmIzhg
+ Cd0DrT7KyLpDyA8K9dkDwPMgRNa+hu86CAkGa7gy/3lCJ8C6ZtllEDFI611rgZW6stxPrfr2F
+ lZ3GXKge51OQZ69LqB16KRYr3kyj0YHkPoQbmyRiI/tRT2N2VWYa2HGrmCgwIwqmVgsECMGap
+ RtZ14uQm+RrA4IzULJoPDdmF3NU6c7EvQCMpRV79y1zUFq9T6HLkt7BsPViE+FtoR5pGtSiTC
+ w8l6oJop0NZNhSkYHu0sKe1Vj+nrZNI7bLi9oFSaMtX9gJRXB9x1XOBrRSLEecrfDX3CMIYp/
+ iWjjodC82c9+3yzaXUbBiwhSHDAYsYqdIQLoIak8F6KxcPWWTk=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:50:48AM -0800, Satya Tangirala wrote:
-> diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-> index 65cb09fa6ead..7c157130c16a 100644
-> --- a/fs/crypto/keysetup.c
-> +++ b/fs/crypto/keysetup.c
-> @@ -19,6 +19,8 @@ struct fscrypt_mode fscrypt_modes[] = {
->  		.cipher_str = "xts(aes)",
->  		.keysize = 64,
->  		.ivsize = 16,
-> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_AES_256_XTS,
-> +		.blk_crypto_dun_bytes_required = 8,
->  	},
->  	[FSCRYPT_MODE_AES_256_CTS] = {
->  		.friendly_name = "AES-256-CTS-CBC",
-> @@ -31,6 +33,8 @@ struct fscrypt_mode fscrypt_modes[] = {
->  		.cipher_str = "essiv(cbc(aes),sha256)",
->  		.keysize = 16,
->  		.ivsize = 16,
-> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_AES_128_CBC_ESSIV,
-> +		.blk_crypto_dun_bytes_required = 8,
->  	},
->  	[FSCRYPT_MODE_AES_128_CTS] = {
->  		.friendly_name = "AES-128-CTS-CBC",
-> @@ -43,6 +47,8 @@ struct fscrypt_mode fscrypt_modes[] = {
->  		.cipher_str = "adiantum(xchacha12,aes)",
->  		.keysize = 32,
->  		.ivsize = 32,
-> +		.blk_crypto_mode = BLK_ENCRYPTION_MODE_ADIANTUM,
-> +		.blk_crypto_dun_bytes_required = 24,
->  	},
->  };
+On Fri, Feb 21, 2020 at 7:19 PM Scott Branden
+<scott.branden@broadcom.com> wrote:
+> On 2020-02-19 11:47 p.m., Greg Kroah-Hartman wrote:
 
-The DUN bytes required is actually determined by the IV generation method too.
-Currently fscrypt has the following combinations:
+> > Have you worked with the V4L developers to tie this into the proper
+> > in-kernel apis for this type of functionality?
+> We looked at the V4L model doesn't have any support for anything we are
+> doing in this driver.
+> We also want a driver that doesn't care about video.  It could be
+> offloading crypto or other operations.
+> We talked with Olof about all of this previously and he said leave it as
+> a misc driver for now.
+> He was going to discuss at linux plumbers conference that we need some
+> sort of offload engine model that such devices could fit into.
 
-	AES-256-XTS: 8 bytes
-	AES-128-CBC-ESSIV: 8 bytes
-	Adiantum without DIRECT_KEY: 8 bytes
-	Adiantum with DIRECT_KEY: 24 bytes
+I see. Have you looked at the "uacce" driver submission? It seems
+theirs is similar enough that there might be some way to share interfaces.
 
-I.e., DIRECT_KEY is only allowed with Adiantum, but not required for it.
+> > Using a tty driver seems like the totally incorrect way to do this, what
+> > am I missing?
+> tty driver is used to provide console access to the processors running
+> on vk.
+> Data is sent using the bcm_vk_msg interface by read/write operations
+> from user space.
+> VK then gets the messages and DMA's the data to/from host memory when
+> needed to process.
 
-So it's technically incorrect to always pass dun_bytes_required=24 for Adiantum.
+In turn here, it sounds like you'd want to look at what drivers/misc/mic/
+and the mellanox bluefield drivers are doing. As I understand, they have the
+same requirements for console, but have a nicer approach of providing
+abstract 'virtio' channels between the PCIe endpoint and the host, and
+then run regular virtio based drivers (console, tty, block, filesystem,
+network, ...) along with application specific ones to provide the custom
+high-level protocols. This is also similar to what the drivers/pci/endpoint
+(from the other end) as the drivers/ntb (pci host on both ends) frameworks
+and of course the rpmsg/remoteproc framework do.
 
-And it's conceivable that in the future we could add an fscrypt setting that
-uses AES-256-XTS with 16 IV bytes.  Such a setting wouldn't be usable with UFS
-inline encryption, yet the existing AES-256-XTS settings still would.
+In the long run, I would want much more consolidation between the
+low-level parts of all these frameworks, but moving your high-level
+protocols to the same virtio method would sound like a step in the
+direction towards a generialized framework and easier sharing of
+the abstractions.
 
-So, how about instead of putting .blk_crypto_dun_bytes_required in the
-crypto_mode table, using logic like:
-
-	dun_bytes_required = 8;
-	if (flags & FSCRYPT_POLICY_FLAG_DIRECT_KEY)
-		dun_bytes_required += 16;
-
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3cd4fe6b845e..2331ff0464b2 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1370,6 +1370,7 @@ extern int send_sigurg(struct fown_struct *fown);
->  #define SB_NODIRATIME	2048	/* Do not update directory access times */
->  #define SB_SILENT	32768
->  #define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
-> +#define SB_INLINE_CRYPT	(1<<17)	/* inodes in SB use blk-crypto */
->  #define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
->  #define SB_I_VERSION	(1<<23) /* Update inode I_version field */
->  #define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
-
-This flag probably should be called "SB_INLINECRYPT" to match the mount option,
-which is "inlinecrypt" not "inline_crypt".
-
-Also, the addition of this flag, along with the update to show_sb_opts() in
-fs/proc_namespace.c which I think is needed, maybe should go in a separate patch
-whose subject is prefixed with "fs: " to make it clearer to reviewers that this
-part is a VFS-level change.
-
-- Eric
+       Arnd
