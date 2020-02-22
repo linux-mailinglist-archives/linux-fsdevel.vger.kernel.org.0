@@ -2,90 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98CA9168C37
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 04:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1C2168C49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Feb 2020 05:18:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbgBVDmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Feb 2020 22:42:42 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7190 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbgBVDmm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Feb 2020 22:42:42 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e50a30f0000>; Fri, 21 Feb 2020 19:42:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Feb 2020 19:42:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Feb 2020 19:42:41 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 22 Feb
- 2020 03:42:41 +0000
-From:   John Hubbard <jhubbard@nvidia.com>
-Subject: [LSF/MM/BPF ATTEND]: gup+dma, struct-less page support for devices,
- THP migration, memory hinting
-X-Nvconfidentiality: public
-To:     <lsf-pc@lists.linuxfoundation.org>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Message-ID: <9fe958f2-5a96-9f0c-7eeb-76123d1bfca0@nvidia.com>
-Date:   Fri, 21 Feb 2020 19:42:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582342927; bh=TbXBPrLq5M8QW+k0aPKocsr/O7hXql8xggisjzzib1E=;
-        h=X-PGP-Universal:From:Subject:X-Nvconfidentiality:To:Message-ID:
-         Date:User-Agent:MIME-Version:X-Originating-IP:X-ClientProxiedBy:
-         Content-Type:Content-Language:Content-Transfer-Encoding;
-        b=L7r/a3iL03hB1G+3mPIDsbLeN5tuhkX9kXcnZwVisTq6CQ5IJf5PkKyCRk/splsEy
-         VRNw4260DTAzVXC4b5IdFtXNgp8bueXwlWlFcr/XTUWlji3VQhy/c8/3P+IewAaakH
-         FrKyPQrWU6aSFLgSa8+LyBc7JNmqhFGUBVI3BIVSWMBvwAtuWxXGedWU3oCC8I1RYw
-         P3Pzb+bkO575ITDyDMZYjzaRkgu4iy7o7NVRMehy54g8ANh23i3MolHOXvdrEPd9v5
-         5OP7TwiDnGcUtSmKDu1pbcNksA2QphPlZGdPC51za9GgPupwbBHoesjHm9PbGH67dI
-         wUN7oQ2dahvGg==
+        id S1727515AbgBVESk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Feb 2020 23:18:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726472AbgBVESk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Feb 2020 23:18:40 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 049CC208C3;
+        Sat, 22 Feb 2020 04:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582345119;
+        bh=K2HDrAKj7hj+2CKvJF8xxV8d26LJI0EnDte3e8IkOao=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LRiRzVbcteB3Volmi03sResRMRYDN3BmjYwifXRV+ywPsz2VCrpiWQYzhrC0TxyJE
+         HWwyt8ag1ZbHA1snRpeiV2DSGzb7cyPoUDyMLBFAOWqa3n487khYqgleadwySGSWCf
+         5LTvKRf9sy8RH0X0nc/BWvG4Hs4RNC89AwvKePmU=
+Date:   Sat, 22 Feb 2020 13:18:33 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Bird <Tim.Bird@sony.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for
+ extended boot config
+Message-Id: <20200222131833.56a5be2d36033dc5a77a9f0b@kernel.org>
+In-Reply-To: <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
+References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
+        <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
+        <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
+        <20200221191637.e9eed4268ff607a98200628c@kernel.org>
+        <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, 21 Feb 2020 17:43:32 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-I'm interested in several areas: 
+> >> Is there a need to separate the number from the following unit?
+> >
+> > Sorry, I couldn't understand what you pointed here.
+> 
+> Can the specification “… size is 32 KiB …”be more appropriate
+> (besides a small wording adjustment)?
 
-* Next steps for the gup/dma work: pin_user_pages*() and related APIs. I'm pretty 
-  sure Jan Kara is going to propose that as a TOPIC, but if not, it's fine for 
-  the hallway and after hours discussion track.
+OK, I'll update as so :)
 
-* GPU-centric memory management interests:
+> > Like "descriptions of ..." ?
+> 
+> I got another idea also for the provided documentation format.
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/admin-guide/bootconfig.rst?id=bee46b309a13ca158c99c325d0408fb2f0db207f#n18
+> 
+> * Will a file format description become helpful in the way of
+>   an extended Backus–Naur form?
 
-  * The topic areas that Jerome brought up are really important to me: Generic
-    page protection, especially. Without those (or some other clever solution
-    that maybe someone will dream up) there is no way to support atomic
-    operations on memory that the CPU and GPU might both have mapped.
+Good suggestion! Let me try to write an EBNF section.
+I think EBNF can logically explain the format, but not intuitive
+- we need some examples.
 
-  * Peer-to-peer RDMA/migration
+> * How will data processing evolve around the added structures?
 
-  * Representing device memory. (Maybe this means without struct pages.)
+OK, I'll add some more API (and usage) differences from the legacy
+command line.
 
-  * THP: modern GPUs love-love-love huge pages, and THP seems like The Way. So
-    all things that make THP work better, especially THP migration, are of
-    interest here.
+Thank you,
 
-  * Memory hinting and other ways of solving the problem of what to do upon
-    a page fault (CPU or GPU page fault, actually): migrate? migrate peer to
-    peer? What should map to where? Slightly richer information would help.
-    This can easily be answered with device drivers and custom allocators,
-    but for NUMA memory (malloc/mmap) it's still not all there.
-
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Masami Hiramatsu <mhiramat@kernel.org>
