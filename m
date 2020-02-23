@@ -2,154 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBF51692D6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 02:26:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4281916930D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:08:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbgBWB0S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 20:26:18 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50304 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgBWB0S (ORCPT
+        id S1727159AbgBWCIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 21:08:02 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33764 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgBWCH7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 20:26:18 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5g1v-00HDqV-Vc; Sun, 23 Feb 2020 01:26:05 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v2 34/34] split the lookup-related parts of do_last() into a separate helper
-Date:   Sun, 23 Feb 2020 01:16:26 +0000
-Message-Id: <20200223011626.4103706-34-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+        Sat, 22 Feb 2020 21:07:59 -0500
+Received: by mail-lf1-f67.google.com with SMTP id n25so4318279lfl.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:07:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J4EpyKP0B16qUqyv0D0u0i1KANfiNDemnRfXEOMQZ8w=;
+        b=D59j+IUyZoIzeC5uolMmJmJpCNfBDS5i850QEQva1gY5p/iyqk4L8l/OnaOXmzo8MV
+         drvUkV5r7JXptxn8mU7gALV8/72ndjyNibKEkb702NJ78lZz9nygv9ROLBKItoBoM9+h
+         BPt8ag3da2zcoarpcsJrURNdbl7jazzqgrIaY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J4EpyKP0B16qUqyv0D0u0i1KANfiNDemnRfXEOMQZ8w=;
+        b=aV9sgGV27XfoWd9Cf1PZch2I/oB6GaqPBZ3hrH2z6YlbZrNuCbOZCDLernOsL/oi6r
+         C7szOEoTfGGRZNz5MMtCW8/a7CiJTARxQGvi1z2F+iKcXDx6elkeTU4NTFaQ1OyxYEce
+         L3eXRPLXptxFN6+GdOKqVUdekH9ZZnLRhLgcRh3Bf9cBeP6Pz6RKK0KtVHHy1EvGptri
+         8o1EPMMJP0iy4gQ/JLhqNJONlnp4sMB75SnO/FDaqrPQ+Uji+x3hGbUU+yK1e0bx3bgS
+         5v5xfImnr+R26cV3/sSkzC0MCH3mD9CYQQ/qN0Ijrt+qazL289L3nAuD60lZKqXGaXyN
+         Ozqg==
+X-Gm-Message-State: APjAAAWiYyjFX5RU1nSM/AL2Foe5mqc7eWSSMFhC+cAs6i9Rr8NRn3jJ
+        Z+Keu4vPriKqVoKIwZ+METZnoqvdbHw=
+X-Google-Smtp-Source: APXvYqx9sc5yiwi6aP/LCMlSH4RfiDTLOMAJvmlA1IqzqpFIn3etNfwRLg6xu+qxC0lpaa6BMu9WEQ==
+X-Received: by 2002:a19:4013:: with SMTP id n19mr12547044lfa.2.1582423677331;
+        Sat, 22 Feb 2020 18:07:57 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id v16sm3749141lfp.92.2020.02.22.18.07.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2020 18:07:56 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id a13so6189224ljm.10
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:07:55 -0800 (PST)
+X-Received: by 2002:a2e:909a:: with SMTP id l26mr25338680ljg.209.1582423675207;
+ Sat, 22 Feb 2020 18:07:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-2-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200223011626.4103706-2-viro@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 22 Feb 2020 18:07:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
+Message-ID: <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 02/34] fix automount/automount race properly
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Sat, Feb 22, 2020 at 5:16 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> +
+> +discard2:
+> +       namespace_unlock();
+> +discard1:
+> +       inode_unlock(dentry->d_inode);
+> +discard:
+>         /* remove m from any expiration list it may be on */
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 51 +++++++++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 22 deletions(-)
+Would you mind re-naming those labels?
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 37cbe7806677..96182a947ca1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3121,19 +3121,12 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	return ERR_PTR(error);
- }
- 
--/*
-- * Handle the last step of open()
-- */
--static const char *do_last(struct nameidata *nd,
-+static const char *open_last_lookups(struct nameidata *nd,
- 		   struct file *file, const struct open_flags *op)
- {
- 	struct dentry *dir = nd->path.dentry;
--	kuid_t dir_uid = nd->inode->i_uid;
--	umode_t dir_mode = nd->inode->i_mode;
- 	int open_flag = op->open_flag;
--	bool do_truncate;
- 	bool got_write = false;
--	int acc_mode;
- 	unsigned seq;
- 	struct inode *inode;
- 	struct dentry *dentry;
-@@ -3145,9 +3138,9 @@ static const char *do_last(struct nameidata *nd,
- 
- 	if (nd->last_type != LAST_NORM) {
- 		error = handle_dots(nd, nd->last_type);
--		if (unlikely(error))
--			return ERR_PTR(error);
--		goto finish_open;
-+		if (likely(!error))
-+			error = complete_walk(nd);
-+		return ERR_PTR(error);
- 	}
- 
- 	if (!(open_flag & O_CREAT)) {
-@@ -3160,7 +3153,6 @@ static const char *do_last(struct nameidata *nd,
- 		if (likely(dentry))
- 			goto finish_lookup;
- 
--		BUG_ON(nd->inode != dir->d_inode);
- 		BUG_ON(nd->flags & LOOKUP_RCU);
- 	} else {
- 		/* create side of things */
-@@ -3170,7 +3162,7 @@ static const char *do_last(struct nameidata *nd,
- 		 * about to look up
- 		 */
- 		error = complete_walk(nd);
--		if (error)
-+		if (unlikely(error))
- 			return ERR_PTR(error);
- 
- 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
-@@ -3199,10 +3191,8 @@ static const char *do_last(struct nameidata *nd,
- 	else
- 		inode_unlock_shared(dir->d_inode);
- 
--	if (got_write) {
-+	if (got_write)
- 		mnt_drop_write(nd->path.mnt);
--		got_write = false;
--	}
- 
- 	if (IS_ERR(dentry))
- 		return ERR_CAST(dentry);
-@@ -3210,7 +3200,7 @@ static const char *do_last(struct nameidata *nd,
- 	if (file->f_mode & (FMODE_OPENED | FMODE_CREATED)) {
- 		dput(nd->path.dentry);
- 		nd->path.dentry = dentry;
--		goto finish_open_created;
-+		return NULL;
- 	}
- 
- finish_lookup:
-@@ -3226,12 +3216,29 @@ static const char *do_last(struct nameidata *nd,
- 		audit_inode(nd->name, nd->path.dentry, 0);
- 		return ERR_PTR(-EEXIST);
- 	}
--finish_open:
-+
- 	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
--	error = complete_walk(nd);
--	if (error)
--		return ERR_PTR(error);
--finish_open_created:
-+	return ERR_PTR(complete_walk(nd));
-+}
-+
-+/*
-+ * Handle the last step of open()
-+ */
-+static const char *do_last(struct nameidata *nd,
-+		   struct file *file, const struct open_flags *op)
-+{
-+	kuid_t dir_uid = nd->inode->i_uid;
-+	umode_t dir_mode = nd->inode->i_mode;
-+	int open_flag = op->open_flag;
-+	bool do_truncate;
-+	int acc_mode;
-+	const char *link;
-+	int error;
-+
-+	link = open_last_lookups(nd, file, op);
-+	if (unlikely(link))
-+		return link;
-+
- 	if (!(file->f_mode & FMODE_CREATED))
- 		audit_inode(nd->name, nd->path.dentry, 0);
- 	if (open_flag & O_CREAT) {
--- 
-2.11.0
+I realize that the numbering may help show that the error handling is
+done in the reverse order, but I bet that a nice name could so that
+too.
 
+              Linus
