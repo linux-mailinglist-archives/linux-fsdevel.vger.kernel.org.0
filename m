@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569661692B3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 02:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2A751692B5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 02:21:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgBWBVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 20:21:19 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50178 "EHLO
+        id S1727239AbgBWBVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 20:21:36 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50184 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgBWBVT (ORCPT
+        with ESMTP id S1727181AbgBWBVg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 20:21:19 -0500
+        Sat, 22 Feb 2020 20:21:36 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5fx5-00HDgt-9k; Sun, 23 Feb 2020 01:21:04 +0000
+        id 1j5fxN-00HDhB-US; Sun, 23 Feb 2020 01:21:24 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v2 18/34] merging pick_link() with get_link(), part 1
-Date:   Sun, 23 Feb 2020 01:16:10 +0000
-Message-Id: <20200223011626.4103706-18-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 19/34] merging pick_link() with get_link(), part 2
+Date:   Sun, 23 Feb 2020 01:16:11 +0000
+Message-Id: <20200223011626.4103706-19-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
 References: <20200223011154.GY23230@ZenIV.linux.org.uk>
@@ -34,56 +34,187 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Move restoring LOOKUP_PARENT and zeroing nd->stack.name[0] past
-the call of get_link() (nothing _currently_ uses them in there).
-That allows to moved the call of may_follow_link() into get_link()
-as well, since now the presence of LOOKUP_PARENT distinguishes
-the callers from each other (link_path_walk() has it, trailing_symlink()
-doesn't).
+Fold trailing_symlink() into lookup_last() and do_last(), change
+the calling conventions of those two.  Rules change:
+	success, we are done => NULL instead of 0
+	error	=> ERR_PTR(-E...) instead of -E...
+	got a symlink to follow => return the path to be followed instead of 1
 
-Preparations for folding trailing_symlink() into callers (lookup_last()
-and do_last()) and changing the calling conventions of those.  Next
-stage after that will have get_link() call migrate into walk_component(),
-then - into step_into().  It's tricky enough to warrant doing that
-in stages, unfortunately...
+The loops calling those (in path_lookupat() and path_openat()) adjusted.
+
+A subtle change of control flow here: originally a pure-jump trailing
+symlink ("/" or procfs one) would've passed through the upper level
+loop once more, with "" for path to traverse.  That would've brought
+us back to the lookup_last/do_last entry and we would've hit LAST_BIND
+case (LAST_BIND left from get_link() called by trailing_symlink())
+and pretty much skip to the point right after where we'd left the
+sucker back when we picked that trailing symlink.
+
+Now we don't bother with that extra pass through the upper level
+loop - if get_link() says "I've just done a pure jump, nothing
+else to do", we just treat that as non-symlink case.
+
+Boilerplate added on that step will go away shortly - it'll migrate
+into walk_component() and then to step_into(), collapsing into the
+change of calling conventions for those.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/namei.c | 68 ++++++++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 40 insertions(+), 28 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 3eed5784942a..3594f6a4998b 100644
+index 3594f6a4998b..888b1e5b994e 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1115,6 +1115,12 @@ const char *get_link(struct nameidata *nd)
- 	int error;
- 	const char *res;
- 
-+	if (!(nd->flags & LOOKUP_PARENT)) {
-+		error = may_follow_link(nd);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
-+	}
-+
- 	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
- 		return ERR_PTR(-ELOOP);
- 
-@@ -2329,13 +2335,9 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 
- static const char *trailing_symlink(struct nameidata *nd)
- {
--	const char *s;
--	int error = may_follow_link(nd);
--	if (unlikely(error))
--		return ERR_PTR(error);
-+	const char *s = get_link(nd);
- 	nd->flags |= LOOKUP_PARENT;
- 	nd->stack[0].name = NULL;
--	s = get_link(nd);
- 	return s ? s : "";
+@@ -2333,21 +2333,26 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	return s;
  }
  
+-static const char *trailing_symlink(struct nameidata *nd)
+-{
+-	const char *s = get_link(nd);
+-	nd->flags |= LOOKUP_PARENT;
+-	nd->stack[0].name = NULL;
+-	return s ? s : "";
+-}
+-
+-static inline int lookup_last(struct nameidata *nd)
++static inline const char *lookup_last(struct nameidata *nd)
+ {
++	int err;
+ 	if (nd->last_type == LAST_NORM && nd->last.name[nd->last.len])
+ 		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+ 
+ 	nd->flags &= ~LOOKUP_PARENT;
+-	return walk_component(nd, 0);
++	err = walk_component(nd, 0);
++	if (unlikely(err)) {
++		const char *s;
++		if (err < 0)
++			return PTR_ERR(err);
++		s = get_link(nd);
++		if (s) {
++			nd->flags |= LOOKUP_PARENT;
++			nd->stack[0].name = NULL;
++			return s;
++		}
++	}
++	return NULL;
+ }
+ 
+ static int handle_lookup_down(struct nameidata *nd)
+@@ -2370,10 +2375,9 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
+ 			s = ERR_PTR(err);
+ 	}
+ 
+-	while (!(err = link_path_walk(s, nd))
+-		&& ((err = lookup_last(nd)) > 0)) {
+-		s = trailing_symlink(nd);
+-	}
++	while (!(err = link_path_walk(s, nd)) &&
++	       (s = lookup_last(nd)) != NULL)
++		;
+ 	if (!err)
+ 		err = complete_walk(nd);
+ 
+@@ -3185,7 +3189,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ /*
+  * Handle the last step of open()
+  */
+-static int do_last(struct nameidata *nd,
++static const char *do_last(struct nameidata *nd,
+ 		   struct file *file, const struct open_flags *op)
+ {
+ 	struct dentry *dir = nd->path.dentry;
+@@ -3206,7 +3210,7 @@ static int do_last(struct nameidata *nd,
+ 	if (nd->last_type != LAST_NORM) {
+ 		error = handle_dots(nd, nd->last_type);
+ 		if (unlikely(error))
+-			return error;
++			return ERR_PTR(error);
+ 		goto finish_open;
+ 	}
+ 
+@@ -3216,7 +3220,7 @@ static int do_last(struct nameidata *nd,
+ 		/* we _can_ be in RCU mode here */
+ 		dentry = lookup_fast(nd, &inode, &seq);
+ 		if (IS_ERR(dentry))
+-			return PTR_ERR(dentry);
++			return ERR_CAST(dentry);
+ 		if (likely(dentry))
+ 			goto finish_lookup;
+ 
+@@ -3231,12 +3235,12 @@ static int do_last(struct nameidata *nd,
+ 		 */
+ 		error = complete_walk(nd);
+ 		if (error)
+-			return error;
++			return ERR_PTR(error);
+ 
+ 		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+ 		/* trailing slashes? */
+ 		if (unlikely(nd->last.name[nd->last.len]))
+-			return -EISDIR;
++			return ERR_PTR(-EISDIR);
+ 	}
+ 
+ 	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+@@ -3296,18 +3300,28 @@ static int do_last(struct nameidata *nd,
+ 
+ finish_lookup:
+ 	error = step_into(nd, 0, dentry, inode, seq);
+-	if (unlikely(error))
+-		return error;
++	if (unlikely(error)) {
++		const char *s;
++		if (error < 0)
++			return ERR_PTR(error);
++		s = get_link(nd);
++		if (s) {
++			nd->flags |= LOOKUP_PARENT;
++			nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
++			nd->stack[0].name = NULL;
++			return s;
++		}
++	}
+ 
+ 	if (unlikely((open_flag & (O_EXCL | O_CREAT)) == (O_EXCL | O_CREAT))) {
+ 		audit_inode(nd->name, nd->path.dentry, 0);
+-		return -EEXIST;
++		return ERR_PTR(-EEXIST);
+ 	}
+ finish_open:
+ 	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
+ 	error = complete_walk(nd);
+ 	if (error)
+-		return error;
++		return ERR_PTR(error);
+ 	audit_inode(nd->name, nd->path.dentry, 0);
+ 	if (open_flag & O_CREAT) {
+ 		error = -EISDIR;
+@@ -3349,7 +3363,7 @@ static int do_last(struct nameidata *nd,
+ 	}
+ 	if (got_write)
+ 		mnt_drop_write(nd->path.mnt);
+-	return error;
++	return ERR_PTR(error);
+ }
+ 
+ struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
+@@ -3452,10 +3466,8 @@ static struct file *path_openat(struct nameidata *nd,
+ 	} else {
+ 		const char *s = path_init(nd, flags);
+ 		while (!(error = link_path_walk(s, nd)) &&
+-			(error = do_last(nd, file, op)) > 0) {
+-			nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
+-			s = trailing_symlink(nd);
+-		}
++		       (s = do_last(nd, file, op)) != NULL)
++			;
+ 		terminate_walk(nd);
+ 	}
+ 	if (likely(!error)) {
 -- 
 2.11.0
 
