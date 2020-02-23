@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4281916930D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA074169310
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:15:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbgBWCIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 21:08:02 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33764 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726884AbgBWCH7 (ORCPT
+        id S1727074AbgBWCPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 21:15:04 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42792 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726965AbgBWCPE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:07:59 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n25so4318279lfl.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:07:58 -0800 (PST)
+        Sat, 22 Feb 2020 21:15:04 -0500
+Received: by mail-lj1-f196.google.com with SMTP id d10so6203320ljl.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:15:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=J4EpyKP0B16qUqyv0D0u0i1KANfiNDemnRfXEOMQZ8w=;
-        b=D59j+IUyZoIzeC5uolMmJmJpCNfBDS5i850QEQva1gY5p/iyqk4L8l/OnaOXmzo8MV
-         drvUkV5r7JXptxn8mU7gALV8/72ndjyNibKEkb702NJ78lZz9nygv9ROLBKItoBoM9+h
-         BPt8ag3da2zcoarpcsJrURNdbl7jazzqgrIaY=
+        bh=usCPDZzqoEQffaBHKz63gbophNqdIvzMOB5/yaDj3Ek=;
+        b=Ft335B/q4kOGEdbWJ0HffT8n8Ks0hvRKKjTvQ3F6wbdJ99TgY+eIt6+6Fy0GK774yr
+         tYPrBAkT6L2g0sIK/wKLCIs8tAZgXl0SjKxSY3CbR9SbAlgPerdD0j+hCaheptaAknOt
+         +y1EqTRtlN7zsr7V1qD6Wtb4ddO2Rwm46DDMc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J4EpyKP0B16qUqyv0D0u0i1KANfiNDemnRfXEOMQZ8w=;
-        b=aV9sgGV27XfoWd9Cf1PZch2I/oB6GaqPBZ3hrH2z6YlbZrNuCbOZCDLernOsL/oi6r
-         C7szOEoTfGGRZNz5MMtCW8/a7CiJTARxQGvi1z2F+iKcXDx6elkeTU4NTFaQ1OyxYEce
-         L3eXRPLXptxFN6+GdOKqVUdekH9ZZnLRhLgcRh3Bf9cBeP6Pz6RKK0KtVHHy1EvGptri
-         8o1EPMMJP0iy4gQ/JLhqNJONlnp4sMB75SnO/FDaqrPQ+Uji+x3hGbUU+yK1e0bx3bgS
-         5v5xfImnr+R26cV3/sSkzC0MCH3mD9CYQQ/qN0Ijrt+qazL289L3nAuD60lZKqXGaXyN
-         Ozqg==
-X-Gm-Message-State: APjAAAWiYyjFX5RU1nSM/AL2Foe5mqc7eWSSMFhC+cAs6i9Rr8NRn3jJ
-        Z+Keu4vPriKqVoKIwZ+METZnoqvdbHw=
-X-Google-Smtp-Source: APXvYqx9sc5yiwi6aP/LCMlSH4RfiDTLOMAJvmlA1IqzqpFIn3etNfwRLg6xu+qxC0lpaa6BMu9WEQ==
-X-Received: by 2002:a19:4013:: with SMTP id n19mr12547044lfa.2.1582423677331;
-        Sat, 22 Feb 2020 18:07:57 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id v16sm3749141lfp.92.2020.02.22.18.07.55
+        bh=usCPDZzqoEQffaBHKz63gbophNqdIvzMOB5/yaDj3Ek=;
+        b=eF5nOLZ5GUtj83hQz6NAuVMILLdz0XLY6y7hc7qaaDgfS/1cOM2SxvC/wwbDILoeYX
+         Yh1dnvmxF218Y5hLQo1uPQdvTL0QcoC6ajAf/vdV0zjG3MpQguT6a0RbBx7mno5xvbEy
+         YacpAIYeyJe3xT6x3msjOmsnD4Za/TnUwUCj12qjUdaIK9cmASbUViIh9RFDd73s5qdi
+         n4H1X4GubFtvOAMa6VCJU/0ihf4PhzdTJ4rK7RwKwvUU2onIQy2zTpmXJ7wAafMk9wkF
+         nTHuPgime7niguCBf3ncH3ClTfO1x9b+HGdBCpZ6wRzlbDSNAFWJUUbuynhpulJPzXae
+         IH1g==
+X-Gm-Message-State: APjAAAWF/dHDDgeUgE38F4UJtJOkEuPRAafQLa4iSYUTXn9oBkxzDKFU
+        EGkpW2WaaYSITsTN50DrFJOeexdmoF4=
+X-Google-Smtp-Source: APXvYqxIFJiLI/X+c0JFR8IWkPdbxf8jhbn7jA2LlYvAwnKblat556ssh3WiMOJRJhRvQ9Kjk5lBBA==
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr27333401ljc.158.1582424102136;
+        Sat, 22 Feb 2020 18:15:02 -0800 (PST)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id i1sm3937201lji.71.2020.02.22.18.15.01
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2020 18:07:56 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id a13so6189224ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:07:55 -0800 (PST)
-X-Received: by 2002:a2e:909a:: with SMTP id l26mr25338680ljg.209.1582423675207;
- Sat, 22 Feb 2020 18:07:55 -0800 (PST)
+        Sat, 22 Feb 2020 18:15:01 -0800 (PST)
+Received: by mail-lj1-f171.google.com with SMTP id a13so6196961ljm.10
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:15:01 -0800 (PST)
+X-Received: by 2002:a2e:88c5:: with SMTP id a5mr26872226ljk.201.1582424100766;
+ Sat, 22 Feb 2020 18:15:00 -0800 (PST)
 MIME-Version: 1.0
 References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
- <20200223011626.4103706-2-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20200223011626.4103706-2-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 22 Feb 2020 18:07:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
-Message-ID: <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 02/34] fix automount/automount race properly
+Date:   Sat, 22 Feb 2020 18:14:45 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
+Message-ID: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 14/34] new step_into() flag: WALK_NOFOLLOW
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -65,20 +65,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 5:16 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Sat, Feb 22, 2020 at 5:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> +
-> +discard2:
-> +       namespace_unlock();
-> +discard1:
-> +       inode_unlock(dentry->d_inode);
-> +discard:
->         /* remove m from any expiration list it may be on */
+>         if (likely(!d_is_symlink(path->dentry)) ||
+> -          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW)) {
+> +          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
+> +          flags & WALK_NOFOLLOW) {
 
-Would you mind re-naming those labels?
+Humor me, and don't mix bitwise ops with logical boolean ops without
+parentheses, ok?
 
-I realize that the numbering may help show that the error handling is
-done in the reverse order, but I bet that a nice name could so that
-too.
+And yes, the old code did it too, so it's not a new thing.
 
-              Linus
+But as it gets even more complex, let's just generally strive for doing
+
+   (a & b) || (c & d)
+
+instead of
+
+   a & b || c & d
+
+to make it easier to mentally see the grouping.
+
+               Linus
