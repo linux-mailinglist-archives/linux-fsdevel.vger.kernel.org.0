@@ -2,84 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85C721694E3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFED1694C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:34:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbgBWCd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 21:33:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbgBWCWo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:22:44 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA64824650;
-        Sun, 23 Feb 2020 02:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582424563;
-        bh=7/tLskozrg4ixBT/OquLc2xq33BKnTZdZEOZh32dCUw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LYr5eSv9r2+mnJv2Hq4D/A3DY1OkTgd84SK5c9eowoAvQNM5ivlkC4CkdXlziJz0d
-         6zacJcnYhc+j7gU7rQtxLEjPdCt1a1USeEKBS++pSMFgEmD/3CmzJn2nC9hxhizqhN
-         CPYDqTHOwpRM3gGsu0QLFCBLjxHfWjleUoA5hxCA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Subject: [PATCH AUTOSEL 5.4 06/50] dax: pass NOWAIT flag to iomap_apply
-Date:   Sat, 22 Feb 2020 21:21:51 -0500
-Message-Id: <20200223022235.1404-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200223022235.1404-1-sashal@kernel.org>
-References: <20200223022235.1404-1-sashal@kernel.org>
+        id S1728584AbgBWCcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 21:32:53 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44884 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbgBWCXC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 22 Feb 2020 21:23:02 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 7so4291673lfz.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:23:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nRiUMLVal6a47Pn0KiyPnBHZC0rhgcARtYIItZoVMts=;
+        b=cONgu9fG5pE/tWCiXtgOF5ceYHdHZxNumSvYoyFsvLp9PS5M3fb0VPF5CuTOccSzER
+         r2NpU2iSrvNXG0WR0NFnOm0HM9MXa0tN+yL++q7ziS1cy/uG5oeUPcx10pfWU/Hr0Ynu
+         w3/+07uf8cXa3uKMy2VDDKuUVcP4LO3LE57ko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nRiUMLVal6a47Pn0KiyPnBHZC0rhgcARtYIItZoVMts=;
+        b=GvdrbF+S9G1miGKbhyShoY5UITMQe9MNKwPf2sXzKfSPy9BrpbZeZgeCZKZRdajtDk
+         yv6ZQQSY+4g+QGViDtMcEu9jyi5FmJ3e1Zk4FzPqf915CygeYGk+ZzlRb7gkvygbRifP
+         rAiYXjmZrQfwItTivQGV0mqpaBuiw044AQ0C69FUx9/wlX+cTd46Lnx13l4ko0IRN7uU
+         G9mG9MA7NCeu215p9uApUEMHFJRZSLteUXhXL7fMFugOjSRfrXl1yXE8IJS/CMYLVZxO
+         1eidofEIzsNN0d2c4r/5lDhbl/t7uLypNanf9KEwTDp8IPh+tro203tbj7czhwPgDR8L
+         AG2A==
+X-Gm-Message-State: APjAAAX6bdHGlcB50NuX4WhW8QhQv4J9RrzoHIBzmU2HRxf624T/T0Es
+        MkLq2ceyoP/JaIHQ+f0KkEctCufFhfI=
+X-Google-Smtp-Source: APXvYqzG/xJPlI70GR1xJZTIlLaPmB8CHE/AEJhvmVXbaMFZ5j7Deqqp/f9pggHGziBo9TzyH/BUkQ==
+X-Received: by 2002:a19:6b0e:: with SMTP id d14mr4612887lfa.46.1582424580058;
+        Sat, 22 Feb 2020 18:23:00 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id c19sm3858850lfb.41.2020.02.22.18.22.59
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Feb 2020 18:22:59 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id c23so4305388lfi.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:22:59 -0800 (PST)
+X-Received: by 2002:a19:f514:: with SMTP id j20mr23906945lfb.31.1582424578811;
+ Sat, 22 Feb 2020 18:22:58 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-22-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200223011626.4103706-22-viro@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 22 Feb 2020 18:22:43 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiQaqgkZiNX6+zG5kqOPWSiGKh6iis_n+Z0dfTBJeQLCg@mail.gmail.com>
+Message-ID: <CAHk-=wiQaqgkZiNX6+zG5kqOPWSiGKh6iis_n+Z0dfTBJeQLCg@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 22/34] merging pick_link() with get_link(), part 5
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Moyer <jmoyer@redhat.com>
+Ok, one step back:
 
-[ Upstream commit 96222d53842dfe54869ec4e1b9d4856daf9105a2 ]
+On Sat, Feb 22, 2020 at 5:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> +       if (err > 0)
+> +               return get_link(nd);
+> +       else
+> +               return ERR_PTR(err);
+>  }
 
-fstests generic/471 reports a failure when run with MOUNT_OPTIONS="-o
-dax".  The reason is that the initial pwrite to an empty file with the
-RWF_NOWAIT flag set does not return -EAGAIN.  It turns out that
-dax_iomap_rw doesn't pass that flag through to iomap_apply.
+.. and two steps forward, as you then entirely remove the code I just
+complained about.
 
-With this patch applied, generic/471 passes for me.
+> -       err = step_into(nd, flags, dentry, inode, seq);
+> -       if (!err)
+> -               return NULL;
+> -       else if (err > 0)
+> -               return get_link(nd);
+> -       else
+> -               return ERR_PTR(err);
+> +       return step_into(nd, flags, dentry, inode, seq);
 
-Signed-off-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/x49r1z86e1d.fsf@segfault.boston.devel.redhat.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/dax.c | 3 +++
- 1 file changed, 3 insertions(+)
+I'm waiting with bated breath if the next patch will then remove the
+new odd if-return-else thing. But I'm not going to peek, it's going to
+be a surprise.
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 2cc43cd914eb8..cc56313c6b3b9 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1207,6 +1207,9 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		lockdep_assert_held(&inode->i_rwsem);
- 	}
- 
-+	if (iocb->ki_flags & IOCB_NOWAIT)
-+		flags |= IOMAP_NOWAIT;
-+
- 	while (iov_iter_count(iter)) {
- 		ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
- 				iter, dax_iomap_actor);
--- 
-2.20.1
-
+              Linus
