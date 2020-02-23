@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82C91692BF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 02:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A2E1692C1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 02:23:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbgBWBXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 20:23:16 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50218 "EHLO
+        id S1727193AbgBWBXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 20:23:41 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50224 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbgBWBXQ (ORCPT
+        with ESMTP id S1726934AbgBWBXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 20:23:16 -0500
+        Sat, 22 Feb 2020 20:23:41 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j5fz2-00HDjd-3U; Sun, 23 Feb 2020 01:23:06 +0000
+        id 1j5fzG-00HDk2-NQ; Sun, 23 Feb 2020 01:23:23 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v2 24/34] finally fold get_link() into pick_link()
-Date:   Sun, 23 Feb 2020 01:16:16 +0000
-Message-Id: <20200223011626.4103706-24-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v2 25/34] massage __follow_mount_rcu() a bit
+Date:   Sun, 23 Feb 2020 01:16:17 +0000
+Message-Id: <20200223011626.4103706-25-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
 References: <20200223011154.GY23230@ZenIV.linux.org.uk>
@@ -34,197 +34,110 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-kill nd->link_inode, while we are at it
+make the loop more similar to that in follow_managed(), with
+explicit tracking of flags, etc.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 135 ++++++++++++++++++++++++++++---------------------------------
- 1 file changed, 61 insertions(+), 74 deletions(-)
+ fs/namei.c | 70 +++++++++++++++++++++++++++++++-------------------------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index fef2c447219d..9b6c3e3edd75 100644
+index 9b6c3e3edd75..e83071d25fae 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -503,7 +503,6 @@ struct nameidata {
- 	} *stack, internal[EMBEDDED_LEVELS];
- 	struct filename	*name;
- 	struct nameidata *saved;
--	struct inode	*link_inode;
- 	unsigned	root_seq;
- 	int		dfd;
- } __randomize_layout;
-@@ -962,9 +961,8 @@ int sysctl_protected_regular __read_mostly;
-  *
-  * Returns 0 if following the symlink is allowed, -ve on error.
-  */
--static inline int may_follow_link(struct nameidata *nd)
-+static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
- {
--	const struct inode *inode;
- 	const struct inode *parent;
- 	kuid_t puid;
- 
-@@ -972,7 +970,6 @@ static inline int may_follow_link(struct nameidata *nd)
- 		return 0;
- 
- 	/* Allowed if owner and follower match. */
--	inode = nd->link_inode;
- 	if (uid_eq(current_cred()->fsuid, inode->i_uid))
- 		return 0;
- 
-@@ -1106,73 +1103,6 @@ static int may_create_in_sticky(umode_t dir_mode, kuid_t dir_uid,
- 	return 0;
+@@ -1269,12 +1269,6 @@ int follow_down_one(struct path *path)
  }
+ EXPORT_SYMBOL(follow_down_one);
  
--static __always_inline
--const char *get_link(struct nameidata *nd)
+-static inline int managed_dentry_rcu(const struct path *path)
 -{
--	struct saved *last = nd->stack + nd->depth - 1;
--	struct dentry *dentry = last->link.dentry;
--	struct inode *inode = nd->link_inode;
--	int error;
--	const char *res;
--
--	if (!(nd->flags & LOOKUP_PARENT)) {
--		error = may_follow_link(nd);
--		if (unlikely(error))
--			return ERR_PTR(error);
--	}
--
--	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
--		return ERR_PTR(-ELOOP);
--
--	if (!(nd->flags & LOOKUP_RCU)) {
--		touch_atime(&last->link);
--		cond_resched();
--	} else if (atime_needs_update(&last->link, inode)) {
--		if (unlikely(unlazy_walk(nd)))
--			return ERR_PTR(-ECHILD);
--		touch_atime(&last->link);
--	}
--
--	error = security_inode_follow_link(dentry, inode,
--					   nd->flags & LOOKUP_RCU);
--	if (unlikely(error))
--		return ERR_PTR(error);
--
--	nd->last_type = LAST_BIND;
--	res = READ_ONCE(inode->i_link);
--	if (!res) {
--		const char * (*get)(struct dentry *, struct inode *,
--				struct delayed_call *);
--		get = inode->i_op->get_link;
--		if (nd->flags & LOOKUP_RCU) {
--			res = get(NULL, inode, &last->done);
--			if (res == ERR_PTR(-ECHILD)) {
--				if (unlikely(unlazy_walk(nd)))
--					return ERR_PTR(-ECHILD);
--				res = get(dentry, inode, &last->done);
--			}
--		} else {
--			res = get(dentry, inode, &last->done);
--		}
--		if (!res)
--			goto all_done;
--		if (IS_ERR(res))
--			return res;
--	}
--	if (*res == '/') {
--		error = nd_jump_root(nd);
--		if (unlikely(error))
--			return ERR_PTR(error);
--		while (unlikely(*++res == '/'))
--			;
--	}
--	if (*res)
--		return res;
--all_done: // pure jump
--	put_link(nd);
--	return NULL;
+-	return (path->dentry->d_flags & DCACHE_MANAGE_TRANSIT) ?
+-		path->dentry->d_op->d_manage(path, true) : 0;
 -}
 -
  /*
-  * follow_up - Find the mountpoint of path's vfsmount
-  *
-@@ -1796,8 +1726,10 @@ static inline int handle_dots(struct nameidata *nd, int type)
- static const char *pick_link(struct nameidata *nd, struct path *link,
- 		     struct inode *inode, unsigned seq)
+  * Try to skip to top of mountpoint pile in rcuwalk mode.  Fail if
+  * we meet a managed dentry that would need blocking.
+@@ -1282,43 +1276,49 @@ static inline int managed_dentry_rcu(const struct path *path)
+ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
+ 			       struct inode **inode, unsigned *seqp)
  {
--	int error;
- 	struct saved *last;
-+	const char *res;
-+	int error;
++	struct dentry *dentry = path->dentry;
++	unsigned int flags = dentry->d_flags;
 +
- 	if (unlikely(nd->total_link_count++ >= MAXSYMLINKS)) {
- 		path_to_nameidata(link, nd);
- 		return ERR_PTR(-ELOOP);
-@@ -1828,9 +1760,64 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 	last = nd->stack + nd->depth++;
- 	last->link = *link;
- 	clear_delayed_call(&last->done);
--	nd->link_inode = inode;
- 	last->seq = seq;
--	return get_link(nd);
++	if (likely(!(flags & DCACHE_MANAGED_DENTRY)))
++		return true;
 +
-+	if (!(nd->flags & LOOKUP_PARENT)) {
-+		error = may_follow_link(nd, inode);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
-+	}
++	if (unlikely(nd->flags & LOOKUP_NO_XDEV))
++		return false;
 +
-+	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
-+		return ERR_PTR(-ELOOP);
-+
-+	if (!(nd->flags & LOOKUP_RCU)) {
-+		touch_atime(&last->link);
-+		cond_resched();
-+	} else if (atime_needs_update(&last->link, inode)) {
-+		if (unlikely(unlazy_walk(nd)))
-+			return ERR_PTR(-ECHILD);
-+		touch_atime(&last->link);
-+	}
-+
-+	error = security_inode_follow_link(link->dentry, inode,
-+					   nd->flags & LOOKUP_RCU);
-+	if (unlikely(error))
-+		return ERR_PTR(error);
-+
-+	nd->last_type = LAST_BIND;
-+	res = READ_ONCE(inode->i_link);
-+	if (!res) {
-+		const char * (*get)(struct dentry *, struct inode *,
-+				struct delayed_call *);
-+		get = inode->i_op->get_link;
-+		if (nd->flags & LOOKUP_RCU) {
-+			res = get(NULL, inode, &last->done);
-+			if (res == ERR_PTR(-ECHILD)) {
-+				if (unlikely(unlazy_walk(nd)))
-+					return ERR_PTR(-ECHILD);
-+				res = get(link->dentry, inode, &last->done);
+ 	for (;;) {
+-		struct mount *mounted;
+ 		/*
+ 		 * Don't forget we might have a non-mountpoint managed dentry
+ 		 * that wants to block transit.
+ 		 */
+-		switch (managed_dentry_rcu(path)) {
+-		case -ECHILD:
+-		default:
+-			return false;
+-		case -EISDIR:
+-			return true;
+-		case 0:
+-			break;
++		if (unlikely(flags & DCACHE_MANAGE_TRANSIT)) {
++			int res = dentry->d_op->d_manage(path, true);
++			if (res)
++				return res == -EISDIR;
++			flags = dentry->d_flags;
+ 		}
+ 
+-		if (!d_mountpoint(path->dentry))
+-			return !(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
+-
+-		mounted = __lookup_mnt(path->mnt, path->dentry);
+-		if (!mounted)
+-			break;
+-		if (unlikely(nd->flags & LOOKUP_NO_XDEV))
+-			return false;
+-		path->mnt = &mounted->mnt;
+-		path->dentry = mounted->mnt.mnt_root;
+-		nd->flags |= LOOKUP_JUMPED;
+-		*seqp = read_seqcount_begin(&path->dentry->d_seq);
+-		/*
+-		 * Update the inode too. We don't need to re-check the
+-		 * dentry sequence number here after this d_inode read,
+-		 * because a mount-point is always pinned.
+-		 */
+-		*inode = path->dentry->d_inode;
++		if (flags & DCACHE_MOUNTED) {
++			struct mount *mounted = __lookup_mnt(path->mnt, dentry);
++			if (mounted) {
++				path->mnt = &mounted->mnt;
++				dentry = path->dentry = mounted->mnt.mnt_root;
++				nd->flags |= LOOKUP_JUMPED;
++				*seqp = read_seqcount_begin(&dentry->d_seq);
++				*inode = dentry->d_inode;
++				/*
++				 * We don't need to re-check ->d_seq after this
++				 * ->d_inode read - there will be an RCU delay
++				 * between mount hash removal and ->mnt_root
++				 * becoming unpinned.
++				 */
++				flags = dentry->d_flags;
++				continue;
 +			}
-+		} else {
-+			res = get(link->dentry, inode, &last->done);
++			if (read_seqretry(&mount_lock, nd->m_seq))
++				return false;
 +		}
-+		if (!res)
-+			goto all_done;
-+		if (IS_ERR(res))
-+			return res;
-+	}
-+	if (*res == '/') {
-+		error = nd_jump_root(nd);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
-+		while (unlikely(*++res == '/'))
-+			;
-+	}
-+	if (*res)
-+		return res;
-+all_done: // pure jump
-+	put_link(nd);
-+	return NULL;
++		return !(flags & DCACHE_NEED_AUTOMOUNT);
+ 	}
+-	return !read_seqretry(&mount_lock, nd->m_seq) &&
+-		!(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
  }
  
- enum {WALK_FOLLOW = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
+ static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
 -- 
 2.11.0
 
