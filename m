@@ -2,117 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BB641697F2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 14:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A700169824
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 15:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBWNrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 08:47:52 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:26358 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726208AbgBWNrv (ORCPT
+        id S1726678AbgBWOqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 09:46:30 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40238 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbgBWOq3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 08:47:51 -0500
-X-UUID: 83b3ac7c022647e98daa2ff3fabae555-20200223
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=xzX/UQmBaKzzXeW3wSmoU95INRraG2xqKdLhcRv0zw0=;
-        b=cC8U13tnRxQzVl2x9qp4ks0D6qUzZqJU0gCf60mIaIrwGbkhE4J1IohyRR7jGBfGws6Jyw8Anbu2asvCqM8yomejgHOU6zwf1gnaSZPj8PA7gSK7tmBytKH3H1qWkyqIg6BWiyhyLuS+5gTBywl6XtWAVbhtMeXY9ePvg/A3G1A=;
-X-UUID: 83b3ac7c022647e98daa2ff3fabae555-20200223
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1594138836; Sun, 23 Feb 2020 21:47:44 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 23 Feb 2020 21:45:04 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 23 Feb 2020 21:47:56 +0800
-Message-ID: <1582465656.26304.69.camel@mtksdccf07>
-Subject: Re: [PATCH v7 6/9] scsi: ufs: Add inline encryption support to UFS
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        Satya Tangirala <satyat@google.com>,
-        <linux-block@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-ext4@vger.kernel.org>,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        "Kim Boojin" <boojin.kim@samsung.com>,
-        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
-        Parshuram Raju Thombare <pthombar@cadence.com>
-Date:   Sun, 23 Feb 2020 21:47:36 +0800
-In-Reply-To: <20200221181109.GB925@sol.localdomain>
-References: <20200221115050.238976-1-satyat@google.com>
-         <20200221115050.238976-7-satyat@google.com>
-         <20200221172244.GC438@infradead.org> <20200221181109.GB925@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Sun, 23 Feb 2020 09:46:29 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b185so3909692pfb.7;
+        Sun, 23 Feb 2020 06:46:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BFmvR6FXjIiaKj0uGYjYuAkA3IYTXfDuXDN6BEVXAi8=;
+        b=d1PGMP0q2gyHWtYiojcyQFQQZ6zFdugDBtV9XTiC7PeXcYa3lpugKc2EWuGcrbBdMj
+         FRVMxBa3UI/Yg7ujTT2A2B6cpp+UWAC79CRHZCzI3m1EAlRvO3eXY+1uV/rOkZBOIfau
+         rO1iyYqUeOIw+zOFQ410oXXIAWcuT1hyShMB7T2LSE6OcoUF7NjQb8q+Eg8CildoDeNC
+         AbH1t/8RvOvGlZQpxHYDQ75hT43vOjaBpJ/1OWhUsY3afHC6g1wEyyGkN3sPdoGPKJMv
+         cThKTufNVhqPUI+rJWBBYaGRRSw7JYDilTLt8ufEw++RIH7xhLTnMkTmI/WqYXCYuOZ/
+         ri4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BFmvR6FXjIiaKj0uGYjYuAkA3IYTXfDuXDN6BEVXAi8=;
+        b=GjKRuAYXWuzJ/wLjE2hSv1XjQ+hYFwXpbSmVRd8MU9lAlBZLZ177Ubs5tqSDVS6kbR
+         gqrUGGUajepYhQrsQWHCzJAiqVDsPUoG0ZH51N3+mvqUhMGFZbWZ+kzQMffr9vIFUWf8
+         eaDCBUwPKeuPOUt41fvMcOvo1zCrOdkvx9mQKonE9nV/sOgmo9InXWQTsp915kElanlc
+         vBTrbvutqUSAmLFb6+xhGtERbO9WJxhLp4u+oNYmbHqMXlvMBfKh5wVjUXn5Djv9WeAw
+         +Ujk7u9CSZjyKdUfFyvSY5UymlC2RT1l1PVGPf/TKGMfM/S6c+6eFgtevTDbMwGMPQxD
+         ZJyw==
+X-Gm-Message-State: APjAAAX+0ggQoukFSxHTRgDPhjRu0veR9LsslauUwNbRHmRQq+Tq4uNn
+        6H7G/VDn0b0S7Lig3zOyyNnWXbaD+04=
+X-Google-Smtp-Source: APXvYqzYO/p7EgGYRqDVODSuOoJ9hxTp7laqD+BWxt1FdHzRKGazplZoI0v9QZ4jXlwsgiyDiHo5Gg==
+X-Received: by 2002:a63:515d:: with SMTP id r29mr47131410pgl.265.1582469188855;
+        Sun, 23 Feb 2020 06:46:28 -0800 (PST)
+Received: from localhost ([178.128.102.47])
+        by smtp.gmail.com with ESMTPSA id 144sm9738371pfc.45.2020.02.23.06.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2020 06:46:27 -0800 (PST)
+Date:   Sun, 23 Feb 2020 22:46:17 +0800
+From:   Eryu Guan <guaneryu@gmail.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        kernel-team@fb.com, linux-api@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Xi Wang <xi@cs.washington.edu>, fstests@vger.kernel.org
+Subject: Re: [RFC PATCH xfstests] generic: add smoke test for AT_LINK_REPLACE
+Message-ID: <20200223144345.GE3840@desktop>
+References: <cover.1580251857.git.osandov@fb.com>
+ <f23621bea2e8d5f919389131b84fa0226b90f502.1580253372.git.osandov@fb.com>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 994E6A33E05B8928D3F2EC1C5ED8840CD9FEC231CBD3D196C64A17554069603C2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f23621bea2e8d5f919389131b84fa0226b90f502.1580253372.git.osandov@fb.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGksIA0KDQpPbiBGcmksIDIwMjAtMDItMjEgYXQgMTA6MTEgLTA4MDAsIEVyaWMgQmlnZ2VycyB3
-cm90ZToNCj4gT24gRnJpLCBGZWIgMjEsIDIwMjAgYXQgMDk6MjI6NDRBTSAtMDgwMCwgQ2hyaXN0
-b3BoIEhlbGx3aWcgd3JvdGU6DQo+ID4gT24gRnJpLCBGZWIgMjEsIDIwMjAgYXQgMDM6NTA6NDdB
-TSAtMDgwMCwgU2F0eWEgVGFuZ2lyYWxhIHdyb3RlOg0KPiA+ID4gV2lyZSB1cCB1ZnNoY2QuYyB3
-aXRoIHRoZSBVRlMgQ3J5cHRvIEFQSSwgdGhlIGJsb2NrIGxheWVyIGlubGluZQ0KPiA+ID4gZW5j
-cnlwdGlvbiBhZGRpdGlvbnMgYW5kIHRoZSBrZXlzbG90IG1hbmFnZXIuDQo+ID4gPiANCj4gPiA+
-IEFsc28sIGludHJvZHVjZSBVRlNIQ0RfUVVJUktfQlJPS0VOX0NSWVBUTyB0aGF0IGNlcnRhaW4g
-VUZTIGRyaXZlcnMNCj4gPiA+IHRoYXQgZG9uJ3QgeWV0IHN1cHBvcnQgaW5saW5lIGVuY3J5cHRp
-b24gbmVlZCB0byB1c2UgLSB0YWtlbiBmcm9tDQo+ID4gPiBwYXRjaGVzIGJ5IEpvaG4gU3R1bHR6
-IDxqb2huLnN0dWx0ekBsaW5hcm8ub3JnPg0KPiA+ID4gKGh0dHBzOi8vYW5kcm9pZC1yZXZpZXcu
-Z29vZ2xlc291cmNlLmNvbS9jL2tlcm5lbC9jb21tb24vKy8xMTYyMjI0LzUpDQo+ID4gPiAoaHR0
-cHM6Ly9hbmRyb2lkLXJldmlldy5nb29nbGVzb3VyY2UuY29tL2Mva2VybmVsL2NvbW1vbi8rLzEx
-NjIyMjUvNSkNCj4gPiA+IChodHRwczovL2FuZHJvaWQtcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20v
-Yy9rZXJuZWwvY29tbW9uLysvMTE2NDUwNi8xKQ0KPiA+IA0KPiA+IEJldHdlZW4gYWxsIHRoZXNl
-IHF1aXJrcywgd2l0aCB3aGF0IHVwc3RyZWFtIFNPQyBkb2VzIHRoaXMgZmVhdHVyZQ0KPiA+IGFj
-dHVhbGx5IHdvcms/DQo+IA0KPiBJdCB3aWxsIHdvcmsgb24gRHJhZ29uQm9hcmQgODQ1YywgaS5l
-LiBRdWFsY29tbSdzIFNuYXBkcmFnb24gODQ1IFNvQywgaWYgd2UNCj4gYXBwbHkgbXkgcGF0Y2hz
-ZXQNCj4gaHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvbGludXgtYmxvY2svMjAyMDAxMTAwNjE2MzQu
-NDY3NDItMS1lYmlnZ2Vyc0BrZXJuZWwub3JnLy4NCj4gSXQncyBjdXJyZW50bHkgYmFzZWQgb24g
-U2F0eWEncyB2NiBwYXRjaHNldCwgYnV0IEknbGwgYmUgcmViYXNpbmcgaXQgb250byB2NyBhbmQN
-Cj4gcmVzZW5kaW5nLiAgSXQgdXNlcyBhbGwgdGhlIFVGUyBzdGFuZGFyZCBjcnlwdG8gY29kZSB0
-aGF0IFNhdHlhIGlzIGFkZGluZyBleGNlcHQNCj4gZm9yIHVmc2hjZF9wcm9ncmFtX2tleSgpLCB3
-aGljaCBoYXMgdG8gYmUgcmVwbGFjZWQgd2l0aCBhIHZlbmRvci1zcGVjaWZpYw0KPiBvcGVyYXRp
-b24uICBJdCBkb2VzIGFsc28gYWRkIHZlbmRvci1zcGVjaWZpYyBjb2RlIHRvIHVmcy1xY29tIHRv
-IGluaXRpYWxpemUgdGhlDQo+IGNyeXB0byBoYXJkd2FyZSwgYnV0IHRoYXQncyBpbiBhZGRpdGlv
-biB0byB0aGUgc3RhbmRhcmQgY29kZSwgbm90IHJlcGxhY2luZyBpdC4NCj4gDQo+IERyYWdvbkJv
-YXJkIDg0NWMgaXMgYSBjb21tZXJjaWFsbHkgYXZhaWxhYmxlIGRldmVsb3BtZW50IGJvYXJkIHRo
-YXQgYm9vdHMgdGhlDQo+IG1haW5saW5lIGtlcm5lbCAobW9kdWxvIHR3byBhcm0tc21tdSBJT01N
-VSBwYXRjaGVzIHRoYXQgTGluYXJvIGlzIHdvcmtpbmcgb24pLA0KPiBzbyBJIHRoaW5rIGl0IGNv
-dW50cyBhcyBhbiAidXBzdHJlYW0gU29DIi4NCj4gDQo+IFRoYXQncyBhbGwgdGhhdCB3ZSBjdXJy
-ZW50bHkgaGF2ZSB0aGUgaGFyZHdhcmUgdG8gdmVyaWZ5IG91cnNlbHZlcywgdGhvdWdoDQo+IE1l
-ZGlhdGVrIHNheXMgdGhhdCBTYXR5YSdzIHBhdGNoZXMgYXJlIHdvcmtpbmcgb24gdGhlaXIgaGFy
-ZHdhcmUgdG9vLiAgQW5kIHRoZQ0KPiBVRlMgY29udHJvbGxlciBvbiBNZWRpYXRlayBTb0NzIGlz
-IHN1cHBvcnRlZCBieSB0aGUgdXBzdHJlYW0ga2VybmVsIHZpYQ0KPiB1ZnMtbWVkaWF0ZWsuICBC
-dXQgSSBkb24ndCBrbm93IHdoZXRoZXIgaXQganVzdCB3b3JrcyBleGFjdGx5IGFzLWlzIG9yIHdo
-ZXRoZXINCj4gdGhleSBuZWVkZWQgdG8gcGF0Y2ggdWZzLW1lZGlhdGVrIHRvby4gIFN0YW5sZXkg
-b3IgS3VvaG9uZywgY2FuIHlvdSBjb25maXJtPw0KDQpZZXMsIE1lZGlhVGVrIGlzIGtlZXBpbmcg
-d29yayBjbG9zZWx5IHdpdGggaW5saW5lIGVuY3J5cHRpb24gcGF0Y2ggc2V0cy4NCkN1cnJlbnRs
-eSB0aGUgdjYgdmVyc2lvbiBjYW4gd29yayB3ZWxsICh3aXRob3V0DQpVRlNIQ0RfUVVJUktfQlJP
-S0VOX0NSWVBUTyBxdWlyaykgYXQgbGVhc3QgaW4gb3VyIE1UNjc3OSBTb0MgcGxhdGZvcm0NCndo
-aWNoIGJhc2ljIFNvQyBzdXBwb3J0IGFuZCBzb21lIG90aGVyIHBlcmlwaGVyYWwgZHJpdmVycyBh
-cmUgdW5kZXINCnVwc3RyZWFtaW5nIGFzIGJlbG93IGxpbmssDQoNCmh0dHBzOi8vcGF0Y2h3b3Jr
-Lmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC1tZWRpYXRlay9saXN0Lz9zdGF0ZT0lDQoyQSZxPTY3
-Nzkmc2VyaWVzPSZzdWJtaXR0ZXI9JmRlbGVnYXRlPSZhcmNoaXZlPWJvdGgNCg0KVGhlIGludGVn
-cmF0aW9uIHdpdGggaW5saW5lIGVuY3J5cHRpb24gcGF0Y2ggc2V0IG5lZWRzIHRvIHBhdGNoDQp1
-ZnMtbWVkaWF0ZWsgYW5kIHBhdGNoZXMgYXJlIHJlYWR5IGluIGRvd25zdHJlYW0uIFdlIHBsYW4g
-dG8gdXBzdHJlYW0NCnRoZW0gc29vbiBhZnRlciBpbmxpbmUgZW5jcnlwdGlvbiBwYXRjaCBzZXRz
-IGdldCBtZXJnZWQuDQoNCj4gDQo+IFdlJ3JlIGFsc28gaG9waW5nIHRoYXQgdGhlIHBhdGNoZXMg
-YXJlIHVzYWJsZSB3aXRoIHRoZSBVRlMgY29udHJvbGxlcnMgZnJvbQ0KPiBDYWRlbmNlIERlc2ln
-biBTeXN0ZW1zIGFuZCBTeW5vcHN5cywgd2hpY2ggaGF2ZSB1cHN0cmVhbSBrZXJuZWwgc3VwcG9y
-dCBpbg0KPiBkcml2ZXJzL3Njc2kvdWZzL2NkbnMtcGx0ZnJtLmMgYW5kIGRyaXZlcnMvc2NzaS91
-ZnMvdWZzaGNkLWR3Yy5jLiAgQnV0IHdlIGRvbid0DQo+IGN1cnJlbnRseSBoYXZlIGEgd2F5IHRv
-IHZlcmlmeSB0aGlzLiAgQnV0IGluIDIwMTgsIGJvdGggY29tcGFuaWVzIGhhZCB0cmllZCB0bw0K
-PiBnZXQgdGhlIFVGUyB2Mi4xIHN0YW5kYXJkIGNyeXB0byBzdXBwb3J0IHVwc3RyZWFtLCBzbyBw
-cmVzdW1hYmx5IHRoZXkgbXVzdCBoYXZlDQo+IGltcGxlbWVudGVkIGl0IGluIHRoZWlyIGhhcmR3
-YXJlLiAgK0NjIHRoZSBwZW9wbGUgd2hvIHdlcmUgd29ya2luZyBvbiB0aGF0Lg0KPiANCj4gLSBF
-cmljDQoNClRoYW5rcywNClN0YW5sZXkgQ2h1DQo=
+On Wed, Jan 29, 2020 at 12:58:27AM -0800, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
+> 
+> Cc: fstests@vger.kernel.org
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
 
+Looks fine overall, would you please provide more info about this
+AT_LINK_REPLACE flag? e.g. what's the expected behavior, what's current
+status (merged in kernel or still pending?), reference the related
+commits if already merged.
+
+> ---
+>  common/rc             |  2 +-
+>  tests/generic/593     | 97 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/593.out |  6 +++
+>  tests/generic/group   |  1 +
+>  4 files changed, 105 insertions(+), 1 deletion(-)
+>  create mode 100755 tests/generic/593
+>  create mode 100644 tests/generic/593.out
+> 
+> diff --git a/common/rc b/common/rc
+> index eeac1355..257f65a1 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -2172,7 +2172,7 @@ _require_xfs_io_command()
+>  		;;
+>  	"flink")
+>  		local testlink=$TEST_DIR/$$.link.xfs_io
+> -		testio=`$XFS_IO_PROG -F -f -c "flink $testlink" $testfile 2>&1`
+> +		testio=`$XFS_IO_PROG -F -f -c "flink $param $testlink" $testfile 2>&1`
+>  		rm -f $testlink > /dev/null 2>&1
+>  		;;
+>  	"-T")
+> diff --git a/tests/generic/593 b/tests/generic/593
+> new file mode 100755
+> index 00000000..8a9fee02
+> --- /dev/null
+> +++ b/tests/generic/593
+> @@ -0,0 +1,97 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2020 Facebook.  All Rights Reserved.
+> +#
+> +# FS QA Test 593
+> +#
+> +# Smoke test linkat() with AT_LINK_REPLACE.
+> +#
+> +seq=`basename $0`
+> +seqres=$RESULT_DIR/$seq
+> +echo "QA output created by $seq"
+> +
+> +here=`pwd`
+> +tmp=/tmp/$$
+> +status=1	# failure is the default!
+> +trap "_cleanup; exit \$status" 0 1 2 3 15
+> +
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +}
+> +
+> +# get standard environment, filters and checks
+> +. ./common/rc
+> +. ./common/filter
+> +
+> +# remove previous $seqres.full before test
+> +rm -f $seqres.full
+> +
+> +_supported_fs generic
+> +_supported_os Linux
+> +_require_test
+> +_require_xfs_io_command "-T"
+> +_require_xfs_io_command "flink" "-f"
+> +
+> +same_file() {
+> +	[[ "$(stat -c '%d %i' "$1")" = "$(stat -c '%d %i' "$2")" ]]
+> +}
+> +
+> +touch "$TEST_DIR/$seq.src"
+> +touch "$TEST_DIR/$seq.tgt"
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" "$TEST_DIR/$seq.src"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" ||
+> +	echo "Target was not replaced"
+> +
+> +# Linking to the same file should be a noop.
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.src" "$TEST_DIR/$seq.src"
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" "$TEST_DIR/$seq.src"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" || echo "Target changed?"
+> +
+> +# Should work with O_TMPFILE.
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt" -T "$TEST_DIR"
+> +stat -c '%h' "$TEST_DIR/$seq.tgt"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt" &&
+> +	echo "Target was not replaced"
+> +
+> +# It's okay if the target doesn't exist.
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.tgt2" "$TEST_DIR/$seq.src"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.tgt2" ||
+> +	echo "Target was not created"
+> +
+> +# Can't replace directories.
+> +mkdir "$TEST_DIR/$seq.dir"
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.dir" "$TEST_DIR/$seq.src"
+> +cd "$TEST_DIR/$seq.dir"
+> +$XFS_IO_PROG -c "flink -f ." "$TEST_DIR/$seq.src"
+> +$XFS_IO_PROG -c "flink -f .." "$TEST_DIR/$seq.src"
+> +cd - &> /dev/null
+> +
+> +# Can't replace local mount points.
+> +touch "$TEST_DIR/$seq.mnt"
+> +$MOUNT_PROG --bind "$TEST_DIR/$seq.mnt" "$TEST_DIR/$seq.mnt"
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.mnt" "$TEST_DIR/$seq.src"
+> +
+> +# Can replace mount points in other namespaces, though.
+> +unshare -m \
+
+Better to define an UNSHARE_PROG in common/config and require it in this
+test, then use $UNSHARE_PROG here.
+
+Thanks,
+Eryu
+
+> +	bash -c "$UMOUNT_PROG $TEST_DIR/$seq.mnt; $XFS_IO_PROG -c \"flink -f $TEST_DIR/$seq.mnt\" $TEST_DIR/$seq.src"
+> +if $UMOUNT_PROG "$TEST_DIR/$seq.mnt" &> /dev/null; then
+> +	echo "Mount point was not detached"
+> +fi
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.mnt" ||
+> +	echo "Mount point was not replaced"
+> +
+> +# Should replace symlinks, not follow them.
+> +touch "$TEST_DIR/$seq.symtgt"
+> +ln -s "$TEST_DIR/$seq.symtgt" "$TEST_DIR/$seq.sym"
+> +$XFS_IO_PROG -c "flink -f $TEST_DIR/$seq.sym" "$TEST_DIR/$seq.src"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.sym" ||
+> +	echo "Symlink was not replaced"
+> +same_file "$TEST_DIR/$seq.src" "$TEST_DIR/$seq.symtgt" &&
+> +	echo "Symlink target was replaced"
+> +
+> +rm -rf "$TEST_DIR/$seq."*
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/593.out b/tests/generic/593.out
+> new file mode 100644
+> index 00000000..834c34bf
+> --- /dev/null
+> +++ b/tests/generic/593.out
+> @@ -0,0 +1,6 @@
+> +QA output created by 593
+> +1
+> +flink: Is a directory
+> +flink: Is a directory
+> +flink: Is a directory
+> +flink: Device or resource busy
+> diff --git a/tests/generic/group b/tests/generic/group
+> index 6fe62505..0a87efca 100644
+> --- a/tests/generic/group
+> +++ b/tests/generic/group
+> @@ -595,3 +595,4 @@
+>  590 auto prealloc preallocrw
+>  591 auto quick rw pipe splice
+>  592 auto quick encrypt
+> +593 auto quick hardlink
+> -- 
+> 2.25.0
+> 
