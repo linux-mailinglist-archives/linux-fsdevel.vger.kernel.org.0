@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA074169310
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:15:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A09169319
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 03:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbgBWCPE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Feb 2020 21:15:04 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42792 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbgBWCPE (ORCPT
+        id S1727150AbgBWCUP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Feb 2020 21:20:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36856 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgBWCUO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Feb 2020 21:15:04 -0500
-Received: by mail-lj1-f196.google.com with SMTP id d10so6203320ljl.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:15:03 -0800 (PST)
+        Sat, 22 Feb 2020 21:20:14 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so6230880ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:20:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=usCPDZzqoEQffaBHKz63gbophNqdIvzMOB5/yaDj3Ek=;
-        b=Ft335B/q4kOGEdbWJ0HffT8n8Ks0hvRKKjTvQ3F6wbdJ99TgY+eIt6+6Fy0GK774yr
-         tYPrBAkT6L2g0sIK/wKLCIs8tAZgXl0SjKxSY3CbR9SbAlgPerdD0j+hCaheptaAknOt
-         +y1EqTRtlN7zsr7V1qD6Wtb4ddO2Rwm46DDMc=
+        bh=DlzDCWKnpP64oLtQaBAbzFOIcuprG8j5G+iWBrmKVrg=;
+        b=J87BUl1GAtEGuqJhlVY2/k9SfnX3/EJ26CnJ5zhPvKO27Ck4gIMAaEcEp6RkXK1CoH
+         cYeUu7QkJG+o7g82QaU04EprymxperNTYgWURB5uT+eAQBNQAFtc9siHaFRsGCPU/lfu
+         6B0xzEvBpPVHL7GX3USuIS4PmGhz5I5USMHYg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=usCPDZzqoEQffaBHKz63gbophNqdIvzMOB5/yaDj3Ek=;
-        b=eF5nOLZ5GUtj83hQz6NAuVMILLdz0XLY6y7hc7qaaDgfS/1cOM2SxvC/wwbDILoeYX
-         Yh1dnvmxF218Y5hLQo1uPQdvTL0QcoC6ajAf/vdV0zjG3MpQguT6a0RbBx7mno5xvbEy
-         YacpAIYeyJe3xT6x3msjOmsnD4Za/TnUwUCj12qjUdaIK9cmASbUViIh9RFDd73s5qdi
-         n4H1X4GubFtvOAMa6VCJU/0ihf4PhzdTJ4rK7RwKwvUU2onIQy2zTpmXJ7wAafMk9wkF
-         nTHuPgime7niguCBf3ncH3ClTfO1x9b+HGdBCpZ6wRzlbDSNAFWJUUbuynhpulJPzXae
-         IH1g==
-X-Gm-Message-State: APjAAAWF/dHDDgeUgE38F4UJtJOkEuPRAafQLa4iSYUTXn9oBkxzDKFU
-        EGkpW2WaaYSITsTN50DrFJOeexdmoF4=
-X-Google-Smtp-Source: APXvYqxIFJiLI/X+c0JFR8IWkPdbxf8jhbn7jA2LlYvAwnKblat556ssh3WiMOJRJhRvQ9Kjk5lBBA==
-X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr27333401ljc.158.1582424102136;
-        Sat, 22 Feb 2020 18:15:02 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id i1sm3937201lji.71.2020.02.22.18.15.01
+        bh=DlzDCWKnpP64oLtQaBAbzFOIcuprG8j5G+iWBrmKVrg=;
+        b=sZNtu9GqRmenxYKNJVkWFtFtgttbObjoYqe1dbieupTtJIus98mEqpfLF2Is72SDnj
+         ZEg5yAmvwY8VTyOfpBG5Ux/75xWxlHmXZ5fLZpykqzlYcM3yX/UQUcWEPfZZSOg/BEWr
+         y2xtI1e+2R8rWJrULjlCN2A6517noRErAAkg3xS9Hq4cCrZs8hjqm6Md6rq9MO9FhwU6
+         4l0N20Crtf9W5I+gsysB9bVWDCaBVINha7q+tbePo18TtLAj4OAhLf2ZZtYtHUA6MjuW
+         VvINXjqBZT6GojXyjKdgRYwYd9JUkU0iwb9+UCRCP7vM71fYdC0R+1CaGKP1IKD41Flv
+         n+Vw==
+X-Gm-Message-State: APjAAAXG+v9v85hoCQlQ1ntczs/6TVTnvDoGn+bzs/Xr/XSeLJbuwaiR
+        qldXcz94yI5LL32/7rod38Aosi0mqjE=
+X-Google-Smtp-Source: APXvYqzEhLKKbZm3TrwDFFtabG550Rivn1eAEY7aivAx6wXaKGw0XjjXO3xhYX/Byxx0XLsp0tXyZg==
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr25024250ljm.218.1582424412224;
+        Sat, 22 Feb 2020 18:20:12 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id a22sm3892495ljp.96.2020.02.22.18.20.11
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2020 18:15:01 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id a13so6196961ljm.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:15:01 -0800 (PST)
-X-Received: by 2002:a2e:88c5:: with SMTP id a5mr26872226ljk.201.1582424100766;
- Sat, 22 Feb 2020 18:15:00 -0800 (PST)
+        Sat, 22 Feb 2020 18:20:11 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id r19so6230847ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Feb 2020 18:20:11 -0800 (PST)
+X-Received: by 2002:a2e:97cc:: with SMTP id m12mr26028515ljj.241.1582424410837;
+ Sat, 22 Feb 2020 18:20:10 -0800 (PST)
 MIME-Version: 1.0
 References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
- <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-21-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200223011626.4103706-21-viro@ZenIV.linux.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 22 Feb 2020 18:14:45 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
-Message-ID: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 14/34] new step_into() flag: WALK_NOFOLLOW
+Date:   Sat, 22 Feb 2020 18:19:55 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wikzXu_Veyj-H90HmLRof5vyMVZCWp03J_pC8fjb1_N8g@mail.gmail.com>
+Message-ID: <CAHk-=wikzXu_Veyj-H90HmLRof5vyMVZCWp03J_pC8fjb1_N8g@mail.gmail.com>
+Subject: Re: [RFC][PATCH v2 21/34] merging pick_link() with get_link(), part 4
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -65,26 +65,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 5:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+Ok, so far I haven't seen anything bad. But I keep noticing these odd
+stylistic things...
+
+On Sat, Feb 22, 2020 at 5:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
->         if (likely(!d_is_symlink(path->dentry)) ||
-> -          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW)) {
-> +          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
-> +          flags & WALK_NOFOLLOW) {
+> -       return step_into(nd, flags, dentry, inode, seq);
+> +       err = step_into(nd, flags, dentry, inode, seq);
+> +       if (!err)
+> +               return NULL;
+> +       else if (err > 0)
+> +               return get_link(nd);
+> +       else
+> +               return ERR_PTR(err);
+>  }
 
-Humor me, and don't mix bitwise ops with logical boolean ops without
-parentheses, ok?
+What?
 
-And yes, the old code did it too, so it's not a new thing.
+Those "else" statements make no sense.
 
-But as it gets even more complex, let's just generally strive for doing
+Each if-statement has a "return" in it. It's done. The else part is
+not adding anything but confusion.
 
-   (a & b) || (c & d)
+IOW, this should be
 
-instead of
+        if (!err)
+                return NULL;
+        if (err > 0)
+                return get_link(nd);
+        return ERR_PTR(err);
 
-   a & b || c & d
+with not an 'else' in sight.
 
-to make it easier to mentally see the grouping.
-
-               Linus
+              Linus
