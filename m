@@ -2,139 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773C016975A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 12:30:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA87169775
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 13:08:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgBWLaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 06:30:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50227 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbgBWLaa (ORCPT
+        id S1725980AbgBWMI1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 07:08:27 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:46296 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbgBWMI1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 06:30:30 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a5so6210879wmb.0;
-        Sun, 23 Feb 2020 03:30:28 -0800 (PST)
+        Sun, 23 Feb 2020 07:08:27 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p14so8386177edy.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2020 04:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6bqMQ6Q8pNpUWevMe3I2fQaUxze6ip4xI8Zg0jCRVFY=;
-        b=PzabzD3RJRGWE71FAdfmLXTa3MR80htynajipe846I5/QEDB5Vb9X54dACcFhkLHQt
-         NlcBF1lLBm+JSKY+BboOue0ZTC2I7hQiTUORe++WizJBR0qyv+8CsonjVR2VuFiWRpPL
-         DX/dMl+d64PCZQUQtw9Qnryo13K70HSRqxDmaKbxQJOgm17jDERQSy9qxFdhhfqjOXZ2
-         3Rz9LRVouecAYSjbe4CF8hMDBtzz8EUmGilINrTWW9qN3f4M2JjBZkx4PcvzD0TcV2/g
-         R5lDfm0R/F+r9yqDxeGUM359a8wpruJ5tLT16gXMbm/DU8150QZ5QdWOSPWBrr7l6AqY
-         6PNg==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+3bMOmlbRvA7zJn3vOuEZuAwgejpM69Egt00+fb0xdY=;
+        b=T3WFs3xjFny16290cyxTqgKXSvQHbyNny7C93fqZTGkJV8r9xn+3gn9X+ShN8Mk0WM
+         dO0l0LX9EOCikb28IY0VakansjrkDIATf093GmwLD2K0sZ6+9P42gmWllYYzTLFdUz/n
+         66IsUkOKkACqO/c2vI1XM9kgtJO9yB1uvVtGzF+m33sJ86nWvS4jN6kzUeBQWjM+i9un
+         X9r6zms2nXiyWypxNyjOWJkkynQXOMpYW0OIGduqUoMm2tX5dS+/2kQHKMddBuzoBuAm
+         yXltxT8j4g2hIbHmDrlZobCI42zciSKk7RekRZ58PWk1EMYh12RnI3kMC2wdgYb/lrBR
+         hK8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6bqMQ6Q8pNpUWevMe3I2fQaUxze6ip4xI8Zg0jCRVFY=;
-        b=c/cUwXI8xjrKAbQFQJO3yXl9c/dIDoLl/qrOfJpPwerk3yG+0TLqKWwL9RnuqndR+W
-         DiNJqUE0+26/Z/N9X+vCOIBWsb7uyZkcWTOAABEmUjZiQgFW2LRNYir8Ff8ukVVZzBBF
-         vLTyRNCdcRtC0KEF8ifTzE7OVIuxqYuZfwpcVKR8W0aXM9KEQn81BgJm2Cbb7vWicV2Z
-         T3eZBmihjJ/QMtHpZHXfPWuNMM9w6SDQvQfVS1VH1ZpiwIQjPeWo9Gy1MT8Hk32xlTMd
-         0hFbVoVcNstMNb+4QNoKv1Ayw6vkgu3l0KgSUzRjYNlRYkdFUgII0yPB2NWtN9FDSY9q
-         43fw==
-X-Gm-Message-State: APjAAAXp3TvpvSNOjeXrqmTUzMQtEse7v3FbVbAXz3iMxGgX81oo8KEZ
-        6+bgL28XA/G0d+MvssBtYqNijNs=
-X-Google-Smtp-Source: APXvYqxPw0VaSj2Lpsbn4NCOSK4+2vn65MuaG5UcoPoQq4zKGHbihaXwiRo4CEQhaKWgr1UdzAIahw==
-X-Received: by 2002:a1c:2786:: with SMTP id n128mr15528583wmn.47.1582457427827;
-        Sun, 23 Feb 2020 03:30:27 -0800 (PST)
-Received: from avx2 ([46.53.251.128])
-        by smtp.gmail.com with ESMTPSA id i2sm12656810wmb.28.2020.02.23.03.30.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2020 03:30:26 -0800 (PST)
-Date:   Sun, 23 Feb 2020 14:30:24 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+3bMOmlbRvA7zJn3vOuEZuAwgejpM69Egt00+fb0xdY=;
+        b=cR9xT8cSz/fG2RZZPKRLKsga53Rb0t3VANy6JB9pYsdM94yDxUxOv1xQ1gMQy4Qx0i
+         VZjzjb4fSnL2fVVW9w/cLnVfvHUFte8dltLTeLWPbWZ9UcyS3QQ2ju1s2EcgetDntW1T
+         WVMLTjsUh9YYMUgE7yGb5a4uPkj1JSaQ89q+WVYtLCTNVI8pO4P00uVI6FLCVXwIR1sF
+         SLI731zGfrh5lYvcDiQxCefQMhhMTPaNoMNeGMVY5hNLnS3OCyZkDFr/wM3WOwUiBGa4
+         uQ/NmL/DAZaltRsTLPOD7j/CjdO6QiIHA4YpE8U6vsJnIvBR16hoetF8VCAGpXS0OqkZ
+         hn8g==
+X-Gm-Message-State: APjAAAUpWtImyE9V9Qwlj6K+6t8IPWV/ZhIrtVCWipuI/Y1k3/kXMlvv
+        lOJ8HQTNCRiS1K5fokVNIH9ByA==
+X-Google-Smtp-Source: APXvYqwujUALm/F4AQXpMk5SgonEseoix+lVm+NIaBFLz/7op3ah/12Xz9FIQF4VlGK8UsYQdVv84Q==
+X-Received: by 2002:a17:906:1956:: with SMTP id b22mr42774186eje.276.1582459705235;
+        Sun, 23 Feb 2020 04:08:25 -0800 (PST)
+Received: from ?IPv6:2a02:8084:e84:2480:228:f8ff:fe6f:83a8? ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id d13sm778142edk.0.2020.02.23.04.08.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Feb 2020 04:08:24 -0800 (PST)
+Subject: Re: [PATCHv2-next 1/3] sysctl/sysrq: Remove __sysrq_enabled copy
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
-Message-ID: <20200223113024.GA4941@avx2>
-References: <20200222201539.GA22576@avx2>
- <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
+References: <20200114171912.261787-1-dima@arista.com>
+ <20200114171912.261787-2-dima@arista.com>
+ <20200115123601.GA3461986@kroah.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <eef8e82a-c254-9391-506b-c9de8e52ee0f@arista.com>
+Date:   Sun, 23 Feb 2020 12:08:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
+In-Reply-To: <20200115123601.GA3461986@kroah.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
-> On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
-> > Now that "struct proc_ops" exist we can start putting there stuff which
-> > could not fly with VFS "struct file_operations"...
-> > 
-> > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
-> > in the event of disappearing /proc entries which usually happens if module is
-> > getting removed. Files like /proc/cpuinfo which never disappear simply do not
-> > need such protection.
-> > 
-> > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
-> > "permanent" files.
-> > 
-> > Enable "permanent" flag for
-> > 
-> > 	/proc/cpuinfo
-> > 	/proc/kmsg
-> > 	/proc/modules
-> > 	/proc/slabinfo
-> > 	/proc/stat
-> > 	/proc/sysvipc/*
-> > 	/proc/swaps
-> > 
-> > More will come once I figure out foolproof way to prevent out module
-> > authors from marking their stuff "permanent" for performance reasons
-> > when it is not.
-> > 
-> > This should help with scalability: benchmark is "read /proc/cpuinfo R times
-> > by N threads scattered over the system".
+
+On 1/15/20 12:36 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jan 14, 2020 at 05:19:10PM +0000, Dmitry Safonov wrote:
+[..]
+>> +int sysrq_get_mask(void)
+>> +{
+>> +	if (sysrq_always_enabled)
+>> +		return 1;
+>> +	return sysrq_enabled;
+>> +}
 > 
-> Is this an actual expected use-case?
+> Naming is hard.  And this name is really hard to understand.
 
-Yes.
+Agree.
 
-> Is there some additional unnecessary memory consumption
-> in the unscaled systems?
 
-No, it's the opposite. Less memory usage for everyone and noticeable
-performance improvement for contented case.
+> Traditionally get/put are used for incrementing reference counts.  You
+> don't have a sysrq_put_mask() call, right?  :)
 
-> >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> >  {
-> >  	struct proc_dir_entry *pde = PDE(file_inode(file));
-> >  	ssize_t rv = -EIO;
-> > -	if (use_pde(pde)) {
-> > -		typeof_member(struct proc_ops, proc_read) read;
-> >  
-> > -		read = pde->proc_ops->proc_read;
-> > -		if (read)
-> > -			rv = read(file, buf, count, ppos);
-> > +	if (pde_is_permanent(pde)) {
-> > +		return pde_read(pde, file, buf, count, ppos);
-> > +	} else if (use_pde(pde)) {
-> > +		rv = pde_read(pde, file, buf, count, ppos);
-> >  		unuse_pde(pde);
+Yes, fair point
+
+
+> I think what you want this function to do is, "is sysrq enabled right
+> now" (hint, it's a global function, add kernel-doc to it so we know what
+> it does...).  If so, it should maybe be something like:
 > 
-> Perhaps all the function call duplication could be minimized
-> by using code without direct returns like:
+> 	bool sysrq_is_enabled(void);
 > 
-> 	rv = pde_read(pde, file, buf, count, pos);
-> 	if (!pde_is_permanent(pde))
-> 		unuse_pde(pde);
-> 
-> 	return rv;
+> which to me makes more sense.
 
-Function call non-duplication is false goal.
-Surprisingly it makes code bigger:
+Err, not exactly: there is a function for that which is sysrq_on().
+But for sysctl the value of the mask (or 1 for always_enabled) is
+actually needed to show a proper value back to the userspace reader.
 
-	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
-	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
-	Function                                     old     new   delta
-	proc_reg_read                                108     118     +10
-
-and worse too: "rv" is carried on stack through "unuse_pde" call.
+Thanks,
+          Dmitry
