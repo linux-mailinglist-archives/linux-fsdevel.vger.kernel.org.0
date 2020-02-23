@@ -2,110 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C21169999
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 20:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 540EF169A64
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 23:07:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbgBWTX4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 14:23:56 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38669 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbgBWTXz (ORCPT
+        id S1727099AbgBWWHt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 17:07:49 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:34946 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbgBWWHs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 14:23:55 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x185so4169418pfc.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2020 11:23:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=es-iitr-ac-in.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=p/oWPc6dicg9Lm6g0PcQb0lWtpA8WNgqP72+bZZmonY=;
-        b=VKzw8uUlmATaByLcG+SITEL5VM6hw6I/svwNEwCUy4G4KX5oOTqcsYrpP1nnbi/RKH
-         kHhs+2sYN+A1KSVBIIpA8kLQHBlE1eaRb9zpcrAdCHAmS0ad26ca6mMxI/TVn7uP2sik
-         7O1kAJA79hJUQETsCBUZ4KjwKBb0K+GzyDDues4afVo2wu3E75It1rDX5IaxbH1ECORd
-         ifk5NRz5tbx2u6w9LTE/sphogeKnOEse+M9lKvffmar3aZiAffxGz30Qm3PUHXJCKMlQ
-         aVK7tm7dSyS6Gev4pKRK32Y0tpZprTsLDPKfdlhRw+xSWZvvrGqGxkBm7X/53YGPJU86
-         0c5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=p/oWPc6dicg9Lm6g0PcQb0lWtpA8WNgqP72+bZZmonY=;
-        b=Rq2YGdZgul6CVDM23JnguAy74a/7yg+jma2SCYSw1lMA4x2tp7BTx+NdkuPg9qzuUT
-         9ll94J9qzK7PX22hCRPA4Ig2T9OtbKzh5Ct7Qj/63S78zb5A3Fp3ryRB6T7ZVT96TYVU
-         UUUm8CtoWJYT854scMf3qh6u6Cazo/vocDB8Nu16fepbYMXUC8VZ85k5OXtdBjDlX8/9
-         Qm4ZOvbzCP0aA122SlcbE0DsSKTUwSzYrGX69jixi3guW2dJd0p1NVKPvWzRUHtlxOm1
-         WvuvyTQ6ZgJVSDyxkQSzWS1kQrFbSoU46ROEyV/ke0Sm/b0XNx+u/I3RCYIyad1xqfTs
-         pVgQ==
-X-Gm-Message-State: APjAAAV3/63do3aVhuro1DOphZJ0Xc8yX1ZMQc4SEMXs+iNhCrlmZAeU
-        B3wYxXB0qgKnCdPl9MV5BjOaig==
-X-Google-Smtp-Source: APXvYqzxuAgacRkNNWJYsDpRQyDXBIH0scB/6/cfNf3UgciFb96UiJWOm0qx1Wgod3g/nR3VG8hc6A==
-X-Received: by 2002:a63:291:: with SMTP id 139mr42809093pgc.342.1582485835006;
-        Sun, 23 Feb 2020 11:23:55 -0800 (PST)
-Received: from kaaira-HP-Pavilion-Notebook ([103.37.201.174])
-        by smtp.gmail.com with ESMTPSA id f43sm9614614pje.23.2020.02.23.11.23.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 23 Feb 2020 11:23:54 -0800 (PST)
-Date:   Mon, 24 Feb 2020 00:53:47 +0530
-From:   Kaaira Gupta <kgupta@es.iitr.ac.in>
-To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: exfat: remove sync_alloc_bitmap()
-Message-ID: <20200223192347.GA20286@kaaira-HP-Pavilion-Notebook>
+        Sun, 23 Feb 2020 17:07:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j5zPf-0003GM-9F; Sun, 23 Feb 2020 22:07:47 +0000
+Date:   Sun, 23 Feb 2020 22:07:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH v2 14/34] new step_into() flag: WALK_NOFOLLOW
+Message-ID: <20200223220747.GZ23230@ZenIV.linux.org.uk>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+ <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
+ <20200223011626.4103706-14-viro@ZenIV.linux.org.uk>
+ <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHk-=whzmY4RdkqtitWVB=OJvHG-8_VLZrU1oXBX8b+5qJKBag@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-sync_alloc_bitmap() is not called anywhere, hence remove it from
-exfat_core.c and exfat.h
+On Sat, Feb 22, 2020 at 06:14:45PM -0800, Linus Torvalds wrote:
+> On Sat, Feb 22, 2020 at 5:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> >         if (likely(!d_is_symlink(path->dentry)) ||
+> > -          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW)) {
+> > +          !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
+> > +          flags & WALK_NOFOLLOW) {
+> 
+> Humor me, and don't mix bitwise ops with logical boolean ops without
+> parentheses, ok?
+> 
+> And yes, the old code did it too, so it's not a new thing.
+> 
+> But as it gets even more complex, let's just generally strive for doing
+> 
+>    (a & b) || (c & d)
+> 
+> instead of
+> 
+>    a & b || c & d
+> 
+> to make it easier to mentally see the grouping.
 
-Signed-off-by: Kaaira Gupta <kgupta@es.iitr.ac.in>
----
- drivers/staging/exfat/exfat.h      |  1 -
- drivers/staging/exfat/exfat_core.c | 12 ------------
- 2 files changed, 13 deletions(-)
+Can do...  FWIW, the only case where the normal "'and' is multiplication,
+'or' is addition" doesn't give the right result is
+	x | y && z
+written instead of
+	x | (y && z)
+where you would be better off rewriting the expression anyway.
 
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 1867d47d2394..4a0a481fe010 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -665,7 +665,6 @@ void exfat_chain_cont_cluster(struct super_block *sb, u32 chain, s32 len);
- /* allocation bitmap management functions */
- s32 load_alloc_bitmap(struct super_block *sb);
- void free_alloc_bitmap(struct super_block *sb);
--void sync_alloc_bitmap(struct super_block *sb);
- 
- /* upcase table management functions */
- s32 load_upcase_table(struct super_block *sb);
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index 7308e50c0aaf..d30dc050411e 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -561,18 +561,6 @@ void free_alloc_bitmap(struct super_block *sb)
- 	p_fs->vol_amap = NULL;
+FWIW, one of the things in the local pile is this:
+
+commit cc1b6724b32de1be108cf6a5f28dbb5aa424b42f
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Jan 19 12:44:18 2020 -0500
+
+    namei: invert the meaning of WALK_FOLLOW
+    
+    old flags & WALK_FOLLOW <=> new !(flags & WALK_TRAILING)
+    That's what that flag had really been used for.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 6eb708014d4b..7d938241157f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1786,7 +1786,7 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+ 	return NULL;
  }
  
--void sync_alloc_bitmap(struct super_block *sb)
--{
--	int i;
--	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
--
--	if (!p_fs->vol_amap)
--		return;
--
--	for (i = 0; i < p_fs->map_sectors; i++)
--		sync_dirty_buffer(p_fs->vol_amap[i]);
--}
--
+-enum {WALK_FOLLOW = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
++enum {WALK_TRAILING = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
+ 
  /*
-  *  Upcase table Management Functions
-  */
--- 
-2.17.1
+  * Do we need to follow links? We _really_ want to be able
+@@ -1805,7 +1805,7 @@ static const char *step_into(struct nameidata *nd, int flags,
+ 	if (!(flags & WALK_MORE) && nd->depth)
+ 		put_link(nd);
+ 	if (likely(!d_is_symlink(path.dentry)) ||
+-	   !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW) ||
++	   (flags & WALK_TRAILING && !(nd->flags & LOOKUP_FOLLOW)) ||
+ 	   flags & WALK_NOFOLLOW) {
+ 		/* not a symlink or should not follow */
+ 		path_to_nameidata(&path, nd);
+@@ -2157,10 +2157,10 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 			if (!name)
+ 				return 0;
+ 			/* last component of nested symlink */
+-			link = walk_component(nd, WALK_FOLLOW);
++			link = walk_component(nd, 0);
+ 		} else {
+ 			/* not the last component */
+-			link = walk_component(nd, WALK_FOLLOW | WALK_MORE);
++			link = walk_component(nd, WALK_MORE);
+ 		}
+ 		if (unlikely(link)) {
+ 			if (IS_ERR(link))
+@@ -2288,7 +2288,7 @@ static inline const char *lookup_last(struct nameidata *nd)
+ 		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+ 
+ 	nd->flags &= ~LOOKUP_PARENT;
+-	link = walk_component(nd, 0);
++	link = walk_component(nd, WALK_TRAILING);
+ 	if (link) {
+ 		nd->flags |= LOOKUP_PARENT;
+ 		nd->stack[0].name = NULL;
+@@ -3241,7 +3241,7 @@ static const char *do_last(struct nameidata *nd,
+ 	}
+ 
+ finish_lookup:
+-	link = step_into(nd, 0, dentry, inode, seq);
++	link = step_into(nd, WALK_TRAILING, dentry, inode, seq);
+ 	if (unlikely(link)) {
+ 		nd->flags |= LOOKUP_PARENT;
+ 		nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
 
+
+and I can simply fold adding extra parens into it.  Or I can fold that into
+the patch you'd been replying to  - I'm still uncertain about the series
+containing WALK_TRAILING...
