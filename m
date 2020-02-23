@@ -2,115 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D91E116971D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 11:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 773C016975A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Feb 2020 12:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgBWKA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 05:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbgBWKA0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 05:00:26 -0500
-Received: from localhost (95-141-97-180.as16211.net [95.141.97.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CC16206ED;
-        Sun, 23 Feb 2020 10:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582452025;
-        bh=xwKm9mG+11CRzycDripWRYB5FalIoOmjBWJgOiYvD5k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NwryWQ5Goji2SiP6xJzMmh7wCi300mTSXPWWqyPuSGdZGL3+TXg/MKgteSFqqoFLa
-         vqqDacaNByLoHmQQIHWfBnP8xK+rBbROt7YWk6Tf2cCbWOEgm+iLjcG0PSEFnradCr
-         p1xCdrnh264QsepdCKdaenBu4e5yDT334vyn1CD0=
-Date:   Sun, 23 Feb 2020 11:00:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Andy Gross <agross@kernel.org>,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-Subject: Re: [PATCH v2 6/7] misc: bcm-vk: add Broadcom VK driver
-Message-ID: <20200223100022.GB120495@kroah.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-7-scott.branden@broadcom.com>
- <20200220074711.GA3261162@kroah.com>
- <ee53fe6f-53de-87c0-db16-989cc15abbce@broadcom.com>
- <CAK8P3a0y8RfjEng4AsMr4MAPGMTXduiFOyfUzazgw9c+KVWmYA@mail.gmail.com>
+        id S1727104AbgBWLaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 06:30:30 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50227 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbgBWLaa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 23 Feb 2020 06:30:30 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so6210879wmb.0;
+        Sun, 23 Feb 2020 03:30:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6bqMQ6Q8pNpUWevMe3I2fQaUxze6ip4xI8Zg0jCRVFY=;
+        b=PzabzD3RJRGWE71FAdfmLXTa3MR80htynajipe846I5/QEDB5Vb9X54dACcFhkLHQt
+         NlcBF1lLBm+JSKY+BboOue0ZTC2I7hQiTUORe++WizJBR0qyv+8CsonjVR2VuFiWRpPL
+         DX/dMl+d64PCZQUQtw9Qnryo13K70HSRqxDmaKbxQJOgm17jDERQSy9qxFdhhfqjOXZ2
+         3Rz9LRVouecAYSjbe4CF8hMDBtzz8EUmGilINrTWW9qN3f4M2JjBZkx4PcvzD0TcV2/g
+         R5lDfm0R/F+r9yqDxeGUM359a8wpruJ5tLT16gXMbm/DU8150QZ5QdWOSPWBrr7l6AqY
+         6PNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6bqMQ6Q8pNpUWevMe3I2fQaUxze6ip4xI8Zg0jCRVFY=;
+        b=c/cUwXI8xjrKAbQFQJO3yXl9c/dIDoLl/qrOfJpPwerk3yG+0TLqKWwL9RnuqndR+W
+         DiNJqUE0+26/Z/N9X+vCOIBWsb7uyZkcWTOAABEmUjZiQgFW2LRNYir8Ff8ukVVZzBBF
+         vLTyRNCdcRtC0KEF8ifTzE7OVIuxqYuZfwpcVKR8W0aXM9KEQn81BgJm2Cbb7vWicV2Z
+         T3eZBmihjJ/QMtHpZHXfPWuNMM9w6SDQvQfVS1VH1ZpiwIQjPeWo9Gy1MT8Hk32xlTMd
+         0hFbVoVcNstMNb+4QNoKv1Ayw6vkgu3l0KgSUzRjYNlRYkdFUgII0yPB2NWtN9FDSY9q
+         43fw==
+X-Gm-Message-State: APjAAAXp3TvpvSNOjeXrqmTUzMQtEse7v3FbVbAXz3iMxGgX81oo8KEZ
+        6+bgL28XA/G0d+MvssBtYqNijNs=
+X-Google-Smtp-Source: APXvYqxPw0VaSj2Lpsbn4NCOSK4+2vn65MuaG5UcoPoQq4zKGHbihaXwiRo4CEQhaKWgr1UdzAIahw==
+X-Received: by 2002:a1c:2786:: with SMTP id n128mr15528583wmn.47.1582457427827;
+        Sun, 23 Feb 2020 03:30:27 -0800 (PST)
+Received: from avx2 ([46.53.251.128])
+        by smtp.gmail.com with ESMTPSA id i2sm12656810wmb.28.2020.02.23.03.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2020 03:30:26 -0800 (PST)
+Date:   Sun, 23 Feb 2020 14:30:24 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
+Message-ID: <20200223113024.GA4941@avx2>
+References: <20200222201539.GA22576@avx2>
+ <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0y8RfjEng4AsMr4MAPGMTXduiFOyfUzazgw9c+KVWmYA@mail.gmail.com>
+In-Reply-To: <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 09:02:44AM +0100, Arnd Bergmann wrote:
-> On Fri, Feb 21, 2020 at 7:19 PM Scott Branden
-> <scott.branden@broadcom.com> wrote:
-> > On 2020-02-19 11:47 p.m., Greg Kroah-Hartman wrote:
+On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
+> On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
+> > Now that "struct proc_ops" exist we can start putting there stuff which
+> > could not fly with VFS "struct file_operations"...
+> > 
+> > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
+> > in the event of disappearing /proc entries which usually happens if module is
+> > getting removed. Files like /proc/cpuinfo which never disappear simply do not
+> > need such protection.
+> > 
+> > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
+> > "permanent" files.
+> > 
+> > Enable "permanent" flag for
+> > 
+> > 	/proc/cpuinfo
+> > 	/proc/kmsg
+> > 	/proc/modules
+> > 	/proc/slabinfo
+> > 	/proc/stat
+> > 	/proc/sysvipc/*
+> > 	/proc/swaps
+> > 
+> > More will come once I figure out foolproof way to prevent out module
+> > authors from marking their stuff "permanent" for performance reasons
+> > when it is not.
+> > 
+> > This should help with scalability: benchmark is "read /proc/cpuinfo R times
+> > by N threads scattered over the system".
 > 
-> > > Have you worked with the V4L developers to tie this into the proper
-> > > in-kernel apis for this type of functionality?
-> > We looked at the V4L model doesn't have any support for anything we are
-> > doing in this driver.
-> > We also want a driver that doesn't care about video.  It could be
-> > offloading crypto or other operations.
-> > We talked with Olof about all of this previously and he said leave it as
-> > a misc driver for now.
-> > He was going to discuss at linux plumbers conference that we need some
-> > sort of offload engine model that such devices could fit into.
-> 
-> I see. Have you looked at the "uacce" driver submission? It seems
-> theirs is similar enough that there might be some way to share interfaces.
-> 
-> > > Using a tty driver seems like the totally incorrect way to do this, what
-> > > am I missing?
-> > tty driver is used to provide console access to the processors running
-> > on vk.
-> > Data is sent using the bcm_vk_msg interface by read/write operations
-> > from user space.
-> > VK then gets the messages and DMA's the data to/from host memory when
-> > needed to process.
-> 
-> In turn here, it sounds like you'd want to look at what drivers/misc/mic/
-> and the mellanox bluefield drivers are doing. As I understand, they have the
-> same requirements for console, but have a nicer approach of providing
-> abstract 'virtio' channels between the PCIe endpoint and the host, and
-> then run regular virtio based drivers (console, tty, block, filesystem,
-> network, ...) along with application specific ones to provide the custom
-> high-level protocols. This is also similar to what the drivers/pci/endpoint
-> (from the other end) as the drivers/ntb (pci host on both ends) frameworks
-> and of course the rpmsg/remoteproc framework do.
-> 
-> In the long run, I would want much more consolidation between the
-> low-level parts of all these frameworks, but moving your high-level
-> protocols to the same virtio method would sound like a step in the
-> direction towards a generialized framework and easier sharing of
-> the abstractions.
+> Is this an actual expected use-case?
 
-I agree, please do not override the generic tty api with something so
-hardware-specific like this as it really is not a serial device here.
+Yes.
 
-thanks,
+> Is there some additional unnecessary memory consumption
+> in the unscaled systems?
 
-greg k-h
+No, it's the opposite. Less memory usage for everyone and noticeable
+performance improvement for contented case.
+
+> >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> >  {
+> >  	struct proc_dir_entry *pde = PDE(file_inode(file));
+> >  	ssize_t rv = -EIO;
+> > -	if (use_pde(pde)) {
+> > -		typeof_member(struct proc_ops, proc_read) read;
+> >  
+> > -		read = pde->proc_ops->proc_read;
+> > -		if (read)
+> > -			rv = read(file, buf, count, ppos);
+> > +	if (pde_is_permanent(pde)) {
+> > +		return pde_read(pde, file, buf, count, ppos);
+> > +	} else if (use_pde(pde)) {
+> > +		rv = pde_read(pde, file, buf, count, ppos);
+> >  		unuse_pde(pde);
+> 
+> Perhaps all the function call duplication could be minimized
+> by using code without direct returns like:
+> 
+> 	rv = pde_read(pde, file, buf, count, pos);
+> 	if (!pde_is_permanent(pde))
+> 		unuse_pde(pde);
+> 
+> 	return rv;
+
+Function call non-duplication is false goal.
+Surprisingly it makes code bigger:
+
+	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
+	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
+	Function                                     old     new   delta
+	proc_reg_read                                108     118     +10
+
+and worse too: "rv" is carried on stack through "unuse_pde" call.
