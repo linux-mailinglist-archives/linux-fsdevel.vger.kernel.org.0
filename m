@@ -2,190 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8F7169B40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 01:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 506B6169C60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 03:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgBXAkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 19:40:53 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42428 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbgBXAkx (ORCPT
+        id S1727186AbgBXCp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 21:45:56 -0500
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:34177 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727168AbgBXCp4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 19:40:53 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j132so7406253oih.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2020 16:40:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/fWYYQZ1tUAo30vrwKRme2xC0z7VIUZp9g41h1//e/o=;
-        b=WLRjQ0eyFKzsOa97x37vwYC4JCVblsUAEaOFOHkNbJ7sXhCoTayazSDFNNH+Wn5CSc
-         jlSwUn8u1cCowXWer4TGls3dNbkd8Wl0yFBkpnLKDD3Uvj5nzZ65Ca26aGAwbcSEiLEY
-         a+u/a7VbNJIK3yrdhHx4m5YET/DFdOSIKIuTuMZr7Db2WSfQgNzEEpfjOBR6IW+bKWH8
-         uQwvTyouue5J+jZz2/lZwW/PgG74G8U1klJM3ccqtm/NesLGWX5gHbet38H35FQtai/P
-         f9fAvBa9Zgzqn2K7pYPLGVpHqZ2wpCqn4OvgZdUIOUP38zTtT5tIyFOiaPtKMwlJ+Bmq
-         D8PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/fWYYQZ1tUAo30vrwKRme2xC0z7VIUZp9g41h1//e/o=;
-        b=mqttmr5gKvmJrxtLEmFeZtwjTASPbIs1RUWQitSoMrK41EKS7lguBWNawIfJ/tcgpl
-         J6mNU16vMZa2lkP+6EU74Tve97xjc+InUariIs1nJ8jLvJ0LfpI5dc3bTCXp5sMpmA5W
-         MpQXbPRdufOjUBlf+Z5cS7znPg0EL0xPh7e0MY08oJ2+2mytJ+AdQxs+8O7T7UfzEX07
-         w+Y6PyPrqRXjmOHzlZfnUjg4j5DqFkaoB0snLfrnFdk3ingMlwrQPRby5xPyUcqxf0Vz
-         kxMnaCa83KgrUt9IVIU76bZCZgNJB9L7Y1+0arn3ji6LIAdYHvhzASR48tlCiBBeptQy
-         rY4A==
-X-Gm-Message-State: APjAAAXFCWoLXljk0wgdsl5YqgjEF4hJji/fryFrPrJc0VJxczuTe5oo
-        yDFRGzSUa6IrQ5jS+0IUTlptLUOQKIQHf22w5OUR7Q==
-X-Google-Smtp-Source: APXvYqwrH1BeHXIjpPFXOS9J7oM8tzow/HkEMYsIW3IDVepJp41zLBuZXXglRgycv6nOwaG/2wuAr/itaObiTZGZwRY=
-X-Received: by 2002:aca:3f54:: with SMTP id m81mr10454580oia.73.1582504851476;
- Sun, 23 Feb 2020 16:40:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20200218214841.10076-1-vgoyal@redhat.com> <20200218214841.10076-3-vgoyal@redhat.com>
- <x49lfoxj622.fsf@segfault.boston.devel.redhat.com> <20200220215707.GC10816@redhat.com>
- <x498skv3i5r.fsf@segfault.boston.devel.redhat.com> <20200221201759.GF25974@redhat.com>
- <20200223230330.GE10737@dread.disaster.area>
-In-Reply-To: <20200223230330.GE10737@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sun, 23 Feb 2020 16:40:40 -0800
-Message-ID: <CAPcyv4ghusuMsAq8gSLJKh1fiKjwa8R_-ojVgjsttoPRqBd_Sg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
- arbitrary offset and len
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>
+        Sun, 23 Feb 2020 21:45:56 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 15C784B8;
+        Sun, 23 Feb 2020 21:45:55 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Sun, 23 Feb 2020 21:45:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        s5Zfoadpx+pNCBSJRW69C71D/q3G2eT1Z4AraQAtWIw=; b=FNwTAdHtEQf4lV6n
+        fxF98PL7t1lBbbDmSXSIATpo+aC1Tj/H4W8JKmhNpwAJtYdrt9JvaDLaZA96Ghmt
+        52HHMC4DTGl0FjI6zpEvbNSKd1mlpVOqNUvjkOl7i/yD1G5mnRdI7fN2lVBN0nzt
+        IN5/HHJH/Ktx6xvGI+cJ3M1IFVTOMQMxK5jTfxu8LHQPg4CTgpp9K/RVAvhWrMjV
+        7EbZaBYzSUDSIfzKUR/dwEz4loj7i5Zjfx0U0u6B2HpJPktgcxooZF7olQQneZgl
+        JXMraNRDFCncurqMaPn58o9Wrr61udHd+Eq5yzAwWF+c5JLAiT7K+Fn8Ff8GJVgB
+        c9rpfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=s5Zfoadpx+pNCBSJRW69C71D/q3G2eT1Z4AraQAtW
+        Iw=; b=MTEQ0/siZ9FKsjN5bauguWL3cmn+fICsfaL7V4Kairj4IMLvMkJQmJ6Wt
+        oIGPgAsXMjmlIpEsJ7lBYmcd97WciBAqFfD1KkQClbAOWyGf9GlVYuLa0uudnUte
+        upkgX9/2l6q6sxMvDcoGAouyhcV8ilXu3Vi0VugcOGgU/9AfwkhEh+Gtyur6/QWa
+        nQOK/ZHNtaEVtZiW78J8VG4Qvo7VQGChLYqvS+2dm/4asuOEAmoPAC+BxnSmQPSh
+        FgghBbPrYCcK1EE3A/P0kbJmupbrV/Bi97Z8foJGkQzwoYnKZmbNpBux6ET0s9KN
+        1/n4Io1xbvmMk39LbDMhxYRqoi5bg==
+X-ME-Sender: <xms:4ThTXs9vzzta2WJFV_QhQatatbrv6-lPMBHTxhazrDZivsBL17YTpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeelgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehkvghrnh
+    gvlhdrohhrghenucfkphepuddukedrvddtledrudektddrvddvleenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfi
+    drnhgvth
+X-ME-Proxy: <xmx:4ThTXo-Kvws7hJYhR04bViPCu-zS-2st7Ql0Q970kpmEKiupwOWuiQ>
+    <xmx:4ThTXtBliZa2C7jGSIJ8DT_Jqsi6zi9TV9KzlxGu-RzPK_FPjdusjQ>
+    <xmx:4ThTXgxDuNQSU6SNa-BMYFmG75bPNIFF_pWDAQckYny1Eqbbwblu6w>
+    <xmx:4jhTXosSnl9yH1EJszSlI5AUQrvzVxtqQ6EQhQuxndK8Jzj8zqsqTg>
+Received: from mickey.themaw.net (unknown [118.209.180.229])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 52B0C3060BD1;
+        Sun, 23 Feb 2020 21:45:51 -0500 (EST)
+Message-ID: <0f24065ec6aaf654602f03e241747efa4fbe73fd.camel@themaw.net>
+Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
+From:   Ian Kent <raven@themaw.net>
+To:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 24 Feb 2020 10:45:47 +0800
+In-Reply-To: <20191029170137.GA21633@mail.hallyn.com>
+References: <20191025112917.22518-1-mszeredi@redhat.com>
+         <CAJfpegv1SA7b45_2g-GFYrc7ZsOmcQ2qv602n=85L4RknkOvKQ@mail.gmail.com>
+         <20191029170137.GA21633@mail.hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 3:03 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Fri, Feb 21, 2020 at 03:17:59PM -0500, Vivek Goyal wrote:
-> > On Fri, Feb 21, 2020 at 01:32:48PM -0500, Jeff Moyer wrote:
-> > > Vivek Goyal <vgoyal@redhat.com> writes:
-> > >
-> > > > On Thu, Feb 20, 2020 at 04:35:17PM -0500, Jeff Moyer wrote:
-> > > >> Vivek Goyal <vgoyal@redhat.com> writes:
-> > > >>
-> > > >> > Currently pmem_clear_poison() expects offset and len to be sector aligned.
-> > > >> > Atleast that seems to be the assumption with which code has been written.
-> > > >> > It is called only from pmem_do_bvec() which is called only from pmem_rw_page()
-> > > >> > and pmem_make_request() which will only passe sector aligned offset and len.
-> > > >> >
-> > > >> > Soon we want use this function from dax_zero_page_range() code path which
-> > > >> > can try to zero arbitrary range of memory with-in a page. So update this
-> > > >> > function to assume that offset and length can be arbitrary and do the
-> > > >> > necessary alignments as needed.
-> > > >>
-> > > >> What caller will try to zero a range that is smaller than a sector?
-> > > >
-> > > > Hi Jeff,
-> > > >
-> > > > New dax zeroing interface (dax_zero_page_range()) can technically pass
-> > > > a range which is less than a sector. Or which is bigger than a sector
-> > > > but start and end are not aligned on sector boundaries.
-> > >
-> > > Sure, but who will call it with misaligned ranges?
-> >
-> > create a file foo.txt of size 4K and then truncate it.
-> >
-> > "truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
-> > 4095.
->
-> This should fail with EIO. Only full page writes should clear the
-> bad page state, and partial writes should therefore fail because
-> they do not guarantee the data in the filesystem block is all good.
->
-> If this zeroing was a buffered write to an address with a bad
-> sector, then the writeback will fail and the user will (eventually)
-> get an EIO on the file.
->
-> DAX should do the same thing, except because the zeroing is
-> synchronous (i.e. done directly by the truncate syscall) we can -
-> and should - return EIO immediately.
->
-> Indeed, with your code, if we then extend the file by truncating up
-> back to 4k, then the range between 23 and 512 is still bad, even
-> though we've successfully zeroed it and the user knows it. An
-> attempt to read anywhere in this range (e.g. 10 bytes at offset 100)
-> will fail with EIO, but reading 10 bytes at offset 2000 will
-> succeed.
->
-> That's *awful* behaviour to expose to userspace, especially when
-> they look at the fs config and see that it's using both 4kB block
-> and sector sizes...
->
-> The only thing that makes sense from a filesystem perspective is
-> clearing bad page state when entire filesystem blocks are
-> overwritten. The data in a filesystem block is either good or bad,
-> and it doesn't matter how many internal (kernel or device) sectors
-> it has.
->
-> > > And what happens to the rest?  The caller is left to trip over the
-> > > errors?  That sounds pretty terrible.  I really think there needs to be
-> > > an explicit contract here.
-> >
-> > Ok, I think is is the contentious bit. Current interface
-> > (__dax_zero_page_range()) either clears the poison (if I/O is aligned to
-> > sector) or expects page to be free of poison.
-> >
-> > So in above example, of "truncate -s 23 foo.txt", currently I get an error
-> > because range being zeroed is not sector aligned. So
-> > __dax_zero_page_range() falls back to calling direct_access(). Which
-> > fails because there are poisoned sectors in the page.
-> >
-> > With my patches, dax_zero_page_range(), clears the poison from sector 1 to
-> > 7 but leaves sector 0 untouched and just writes zeroes from byte 0 to 511
-> > and returns success.
->
-> Ok, kernel sectors are not the unit of granularity bad page state
-> should be managed at. They don't match page state granularity, and
-> they don't match filesystem block granularity, and the whacky
-> "partial writes silently succeed, reads fail unpredictably"
-> assymetry it leads to will just cause problems for users.
->
-> > So question is, is this better behavior or worse behavior. If sector 0
-> > was poisoned, it will continue to remain poisoned and caller will come
-> > to know about it on next read and then it should try to truncate file
-> > to length 0 or unlink file or restore that file to get rid of poison.
->
-> Worse, because the filesystem can't track what sub-parts of the
-> block are bad and that leads to inconsistent data integrity status
-> being exposed to userspace.
+On Tue, 2019-10-29 at 12:01 -0500, Serge E. Hallyn wrote:
+> On Fri, Oct 25, 2019 at 01:35:20PM +0200, Miklos Szeredi wrote:
+> > On Fri, Oct 25, 2019 at 1:30 PM Miklos Szeredi <mszeredi@redhat.com
+> > > wrote:
+> > > Hi Eric,
+> > > 
+> > > Can you please have a look at this patchset?
+> > > 
+> > > The most interesting one is the last oneliner adding
+> > > FS_USERNS_MOUNT;
+> > > whether I'm correct in stating that this isn't going to introduce
+> > > any
+> > > holes, or not...
+> > 
+> > Forgot the git tree:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#ovl-
+> > unpriv
+> > 
+> > Thanks,
+> > Miklos
+> 
+> I've looked through it, seemed sensible to me.
 
-The driver can't track it either. Latent poison isn't know until it is
-consumed, and writes to latent poison are not guaranteed to clear it.
+Seems sensible to me too but I'm not sure what I'm looking for.
 
->
->
-> > IOW, if a partial block is being zeroed and if it is poisoned, caller
-> > will not be return an error and poison will not be cleared and memory
-> > will be zeroed. What do we expect in such cases.
-> >
-> > Do we expect an interface where if there are any bad blocks in the range
-> > being zeroed, then they all should be cleared (and hence all I/O should
-> > be aligned) otherwise error is returned. If yes, I could make that
-> > change.
-> >
-> > Downside of current interface is that it will clear as many blocks as
-> > possible in the given range and leave starting and end blocks poisoned
-> > (if it is unaligned) and not return error. That means a reader will
-> > get error on these blocks again and they will have to try to clear it
-> > again.
->
-> Which is solved by having partial page writes always EIO on poisoned
-> memory.
+Perhaps a bit more on how this is secure to give an idea what's been
+checked and where to focus so the the survey can be broadened from
+there... I'm not sure.
 
-The problem with the above is that partial page writes can not be
-guaranteed to return EIO. Poison is only detected on consumed reads,
-or a periodic scrub, not writes. IFF poison detection was always
-synchronous with poison creation then the above makes sense. However,
-with asynchronous signaling, it's fundamentally a false security
-blanket to assume even full block writes will clear poison unless a
-callback to firmware is made for every block.
+For example, from my simple minded view I wonder about the posix acl
+code.
+
+In ovl_posix_acl_xattr_set() there is a call to posix_acl_from_xattr()
+that uses init_user_ns. I wonder if that should be the current user ns
+in this case but I'm not sure?
+
+Ian
+
