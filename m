@@ -2,82 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A28616AA3C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 16:36:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC26116AA4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 16:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbgBXPgH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 10:36:07 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44238 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727730AbgBXPgG (ORCPT
+        id S1727734AbgBXPiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 10:38:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:50990 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727719AbgBXPiv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 10:36:06 -0500
-Received: by mail-io1-f66.google.com with SMTP id z16so10646367iod.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2020 07:36:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=zddawmptTj8O/iOFAeDEIVRJudMFVZUKfFGPqjx1LMk=;
-        b=NLvGifZF6nw+IxiFIhrBLRrajvZsnwn1tkIxXaXebNAqQHMSuIBDN2uVpU6oYpef8H
-         YcAsxc1k6I4XLVgnP/rr3t6/nGF8DUpFgf0RBC3eDBl1skBwR2b+XcQNzsmb9DkMPk/h
-         kTQZaRz76MdM/7+E9AgkSMHFh1DMeJCljGydy2AB6sd75EozDgzhpGd4fszRSu6MkPoH
-         d3qbbRezx8I+B8ILIZtOYrllU3XNFtpUiBsIMaZckU4xZ1qaE0AW6VKNpzPzKEyWnE9c
-         O9s3ovM1lZjclsudzHwkv1PmmFUUwFjX24yERfq0Bn0s9xZhQkYW4EVxMMsan6OxCF3y
-         tHgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zddawmptTj8O/iOFAeDEIVRJudMFVZUKfFGPqjx1LMk=;
-        b=CYxqqy5GNk7r9XzmNouo3CB3Hf73uSSfdT/QMOT7e4cEtlewv4wkso+jeyrpwI3f2k
-         ls2/mtVrEJw+9GnNcHeCGjIlenyh0eLbh97Tuadt3wOXUprDXkl56owUURm1KbiFhNQ3
-         Grrq1HUN7ix6epB5aMrGp9e0KzqJep6PGWYNq11yRdRnNlIYymdi3m3181T0/mP2SBVq
-         7GkpZs2CdQTc9q3/IxonSsQt6TwFbo0dNWct0BS8X3OMNCPg/tEvV7FdbICAOvU4JLr8
-         h9foOo2lHoDeYsrJIJYhaYFHpp7OXlD7X4gtXL9If3VmRB9q8AmPBRgmmqoV3QjH8q2T
-         5qsw==
-X-Gm-Message-State: APjAAAV7khEXpELp8W9Cspec4IyAfzP8oFZZ/HoKPH/Iq2Bwb2Qgx22T
-        ipdpZuS/vyOfa8QUiUb2fdsTMQ==
-X-Google-Smtp-Source: APXvYqxJLYN7KxGZRPJQFZnCFWyWjTrI95KeI9Mk/yjMubZC8gJzK/dCmDDDpmGRE3GeVaB1yZIXeA==
-X-Received: by 2002:a6b:6604:: with SMTP id a4mr54584788ioc.300.1582558554596;
-        Mon, 24 Feb 2020 07:35:54 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id v5sm4426550ilg.73.2020.02.24.07.35.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2020 07:35:53 -0800 (PST)
-Subject: Re: [PATCH v4 0/3] io_uring: add splice(2) support
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1582530525.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <923cc84a-e11f-2a16-2f12-ca3ba2f3ade4@kernel.dk>
-Date:   Mon, 24 Feb 2020 08:35:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Mon, 24 Feb 2020 10:38:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582558730;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fLyonSIDC83RBTPHCM8f4o4yMY3G8tzoWeqc8LOk64E=;
+        b=Zi/9lztac8zbbWNBUy+zTj1ELt6uK1iXOkRX2yw/znUkW36BxCe0xMuSCYRXqG/9GTX4b5
+        7oMfU72Bh+OoxBwh14fxmwiFd2953hiKU6SpjzSDsejwmmW1dlrTposzjp6V7ATHlvvFiG
+        Vr2S6CMXEMQS4cbfZnRRpgLjVfNDXuQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-202--esf3cAoOSmm3_PTQ-NYEw-1; Mon, 24 Feb 2020 10:38:48 -0500
+X-MC-Unique: -esf3cAoOSmm3_PTQ-NYEw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6EFB1800D5E;
+        Mon, 24 Feb 2020 15:38:47 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B6F125C1D6;
+        Mon, 24 Feb 2020 15:38:44 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 571B3220A24; Mon, 24 Feb 2020 10:38:44 -0500 (EST)
+Date:   Mon, 24 Feb 2020 10:38:44 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, hch@infradead.org,
+        dan.j.williams@intel.com, dm-devel@redhat.com
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
+ arbitrary offset and len
+Message-ID: <20200224153844.GB14651@redhat.com>
+References: <20200218214841.10076-1-vgoyal@redhat.com>
+ <20200218214841.10076-3-vgoyal@redhat.com>
+ <x49lfoxj622.fsf@segfault.boston.devel.redhat.com>
+ <20200220215707.GC10816@redhat.com>
+ <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
+ <20200221201759.GF25974@redhat.com>
+ <20200223230330.GE10737@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <cover.1582530525.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200223230330.GE10737@dread.disaster.area>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/24/20 1:32 AM, Pavel Begunkov wrote:
-> *on top of for-5.6 + async patches*
-> 
-> Not the fastets implementation, but I'd need to stir up/duplicate
-> splice.c bits to do it more efficiently.
-> 
-> note: rebase on top of the recent inflight patchset.
+On Mon, Feb 24, 2020 at 10:03:30AM +1100, Dave Chinner wrote:
 
-Let's get this queued up, looks good to go to me. Do you have a few
-liburing test cases we can add for this?
+[..]
+> > > > Hi Jeff,
+> > > >
+> > > > New dax zeroing interface (dax_zero_page_range()) can technically pass
+> > > > a range which is less than a sector. Or which is bigger than a sector
+> > > > but start and end are not aligned on sector boundaries.
+> > > 
+> > > Sure, but who will call it with misaligned ranges?
+> > 
+> > create a file foo.txt of size 4K and then truncate it.
+> > 
+> > "truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
+> > 4095.
+> 
+> This should fail with EIO. Only full page writes should clear the
+> bad page state, and partial writes should therefore fail because
+> they do not guarantee the data in the filesystem block is all good.
+> 
+> If this zeroing was a buffered write to an address with a bad
+> sector, then the writeback will fail and the user will (eventually)
+> get an EIO on the file.
+> 
+> DAX should do the same thing, except because the zeroing is
+> synchronous (i.e. done directly by the truncate syscall) we can -
+> and should - return EIO immediately.
+> 
+> Indeed, with your code, if we then extend the file by truncating up
+> back to 4k, then the range between 23 and 512 is still bad, even
+> though we've successfully zeroed it and the user knows it. An
+> attempt to read anywhere in this range (e.g. 10 bytes at offset 100)
+> will fail with EIO, but reading 10 bytes at offset 2000 will
+> succeed.
 
--- 
-Jens Axboe
+Hi Dave,
+
+What is expected if I do "truncate -s 512 foo.txt". Say first sector (0 to
+511) is poisoned and rest don't have poison. Should this fail with -EIO.
+
+In current implementation it does not. Because all sector aligned I/O
+we redirect through blkdev_issue_zeroout() and that will happly zero
+out sector 2-8 without worrying about the state of sector 1. Hence user
+which tries to read 10 bytes at offset 100, will still fail. This probably
+should be fixed if we want to retain existing behavior.
+
+Anyway, partial page truncate can't ensure that data in rest of the page can
+be read back successfully. Memory can get poison after the write and
+hence read after truncate will still fail.
+
+Hence, all we are trying to ensure is that if a poison is known at the
+time of writing partial page, then we should return error to user space.
+
+Thanks
+Vivek
 
