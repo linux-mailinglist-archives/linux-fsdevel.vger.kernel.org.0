@@ -2,127 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFE12169B3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 01:35:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8F7169B40
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 01:40:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbgBXAfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 19:35:03 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:43679 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727151AbgBXAfD (ORCPT
+        id S1727158AbgBXAkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 19:40:53 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42428 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbgBXAkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 19:35:03 -0500
-Received: from dread.disaster.area (pa49-195-185-106.pa.nsw.optusnet.com.au [49.195.185.106])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id B52CD3A211E;
-        Mon, 24 Feb 2020 11:34:57 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j61i4-0004s8-0Y; Mon, 24 Feb 2020 11:34:56 +1100
-Date:   Mon, 24 Feb 2020 11:34:55 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
-Message-ID: <20200224003455.GY10776@dread.disaster.area>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-10-ira.weiny@intel.com>
+        Sun, 23 Feb 2020 19:40:53 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j132so7406253oih.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Feb 2020 16:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/fWYYQZ1tUAo30vrwKRme2xC0z7VIUZp9g41h1//e/o=;
+        b=WLRjQ0eyFKzsOa97x37vwYC4JCVblsUAEaOFOHkNbJ7sXhCoTayazSDFNNH+Wn5CSc
+         jlSwUn8u1cCowXWer4TGls3dNbkd8Wl0yFBkpnLKDD3Uvj5nzZ65Ca26aGAwbcSEiLEY
+         a+u/a7VbNJIK3yrdhHx4m5YET/DFdOSIKIuTuMZr7Db2WSfQgNzEEpfjOBR6IW+bKWH8
+         uQwvTyouue5J+jZz2/lZwW/PgG74G8U1klJM3ccqtm/NesLGWX5gHbet38H35FQtai/P
+         f9fAvBa9Zgzqn2K7pYPLGVpHqZ2wpCqn4OvgZdUIOUP38zTtT5tIyFOiaPtKMwlJ+Bmq
+         D8PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/fWYYQZ1tUAo30vrwKRme2xC0z7VIUZp9g41h1//e/o=;
+        b=mqttmr5gKvmJrxtLEmFeZtwjTASPbIs1RUWQitSoMrK41EKS7lguBWNawIfJ/tcgpl
+         J6mNU16vMZa2lkP+6EU74Tve97xjc+InUariIs1nJ8jLvJ0LfpI5dc3bTCXp5sMpmA5W
+         MpQXbPRdufOjUBlf+Z5cS7znPg0EL0xPh7e0MY08oJ2+2mytJ+AdQxs+8O7T7UfzEX07
+         w+Y6PyPrqRXjmOHzlZfnUjg4j5DqFkaoB0snLfrnFdk3ingMlwrQPRby5xPyUcqxf0Vz
+         kxMnaCa83KgrUt9IVIU76bZCZgNJB9L7Y1+0arn3ji6LIAdYHvhzASR48tlCiBBeptQy
+         rY4A==
+X-Gm-Message-State: APjAAAXFCWoLXljk0wgdsl5YqgjEF4hJji/fryFrPrJc0VJxczuTe5oo
+        yDFRGzSUa6IrQ5jS+0IUTlptLUOQKIQHf22w5OUR7Q==
+X-Google-Smtp-Source: APXvYqwrH1BeHXIjpPFXOS9J7oM8tzow/HkEMYsIW3IDVepJp41zLBuZXXglRgycv6nOwaG/2wuAr/itaObiTZGZwRY=
+X-Received: by 2002:aca:3f54:: with SMTP id m81mr10454580oia.73.1582504851476;
+ Sun, 23 Feb 2020 16:40:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221004134.30599-10-ira.weiny@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=bkRQb8bsQZKWSSj4M57YXw==:117 a=bkRQb8bsQZKWSSj4M57YXw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=jzfXMxHasCwLGlr9pT0A:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200218214841.10076-1-vgoyal@redhat.com> <20200218214841.10076-3-vgoyal@redhat.com>
+ <x49lfoxj622.fsf@segfault.boston.devel.redhat.com> <20200220215707.GC10816@redhat.com>
+ <x498skv3i5r.fsf@segfault.boston.devel.redhat.com> <20200221201759.GF25974@redhat.com>
+ <20200223230330.GE10737@dread.disaster.area>
+In-Reply-To: <20200223230330.GE10737@dread.disaster.area>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 23 Feb 2020 16:40:40 -0800
+Message-ID: <CAPcyv4ghusuMsAq8gSLJKh1fiKjwa8R_-ojVgjsttoPRqBd_Sg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
+ arbitrary offset and len
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> XFS requires the use of the aops of an inode to quiesced prior to
-> changing it to/from the DAX aops vector.
-> 
-> Take the aops write lock while changing DAX state.
-> 
-> We define a new XFS_DAX_EXCL lock type to carry the lock through to
-> transaction completion.
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
-> ---
-> Changes from v3:
-> 	Change locking function names to reflect changes in previous
-> 	patches.
-> 
-> Changes from V2:
-> 	Change name of patch (WAS: fs/xfs: Add lock/unlock state to xfs)
-> 	Remove the xfs specific lock and move to the vfs layer.
-> 		We still use XFS_LOCK_DAX_EXCL to be able to pass this
-> 		flag through to the transaction code.  But we no longer
-> 		have a lock specific to xfs.  This removes a lot of code
-> 		from the XFS layer, preps us for using this in ext4, and
-> 		is actually more straight forward now that all the
-> 		locking requirements are better known.
-> 
-> 	Fix locking order comment
-> 	Rework for new 'state' names
-> 	(Other comments on the previous patch are not applicable with
-> 	new patch as much of the code was removed in favor of the vfs
-> 	level lock)
-> ---
->  fs/xfs/xfs_inode.c | 22 ++++++++++++++++++++--
->  fs/xfs/xfs_inode.h |  7 +++++--
->  2 files changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index 35df324875db..5b014c428f0f 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
->   *
->   * Basic locking order:
->   *
-> - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
->   *
->   * mmap_sem locking order:
->   *
->   * i_rwsem -> page lock -> mmap_sem
-> - * mmap_sem -> i_mmap_lock -> page_lock
-> + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
->   *
->   * The difference in mmap_sem locking order mean that we cannot hold the
->   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> @@ -182,6 +182,9 @@ xfs_ilock(
->  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
->  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
->  
-> +	if (lock_flags & XFS_DAX_EXCL)
-> +		inode_aops_down_write(VFS_I(ip));
+On Sun, Feb 23, 2020 at 3:03 PM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Fri, Feb 21, 2020 at 03:17:59PM -0500, Vivek Goyal wrote:
+> > On Fri, Feb 21, 2020 at 01:32:48PM -0500, Jeff Moyer wrote:
+> > > Vivek Goyal <vgoyal@redhat.com> writes:
+> > >
+> > > > On Thu, Feb 20, 2020 at 04:35:17PM -0500, Jeff Moyer wrote:
+> > > >> Vivek Goyal <vgoyal@redhat.com> writes:
+> > > >>
+> > > >> > Currently pmem_clear_poison() expects offset and len to be sector aligned.
+> > > >> > Atleast that seems to be the assumption with which code has been written.
+> > > >> > It is called only from pmem_do_bvec() which is called only from pmem_rw_page()
+> > > >> > and pmem_make_request() which will only passe sector aligned offset and len.
+> > > >> >
+> > > >> > Soon we want use this function from dax_zero_page_range() code path which
+> > > >> > can try to zero arbitrary range of memory with-in a page. So update this
+> > > >> > function to assume that offset and length can be arbitrary and do the
+> > > >> > necessary alignments as needed.
+> > > >>
+> > > >> What caller will try to zero a range that is smaller than a sector?
+> > > >
+> > > > Hi Jeff,
+> > > >
+> > > > New dax zeroing interface (dax_zero_page_range()) can technically pass
+> > > > a range which is less than a sector. Or which is bigger than a sector
+> > > > but start and end are not aligned on sector boundaries.
+> > >
+> > > Sure, but who will call it with misaligned ranges?
+> >
+> > create a file foo.txt of size 4K and then truncate it.
+> >
+> > "truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
+> > 4095.
+>
+> This should fail with EIO. Only full page writes should clear the
+> bad page state, and partial writes should therefore fail because
+> they do not guarantee the data in the filesystem block is all good.
+>
+> If this zeroing was a buffered write to an address with a bad
+> sector, then the writeback will fail and the user will (eventually)
+> get an EIO on the file.
+>
+> DAX should do the same thing, except because the zeroing is
+> synchronous (i.e. done directly by the truncate syscall) we can -
+> and should - return EIO immediately.
+>
+> Indeed, with your code, if we then extend the file by truncating up
+> back to 4k, then the range between 23 and 512 is still bad, even
+> though we've successfully zeroed it and the user knows it. An
+> attempt to read anywhere in this range (e.g. 10 bytes at offset 100)
+> will fail with EIO, but reading 10 bytes at offset 2000 will
+> succeed.
+>
+> That's *awful* behaviour to expose to userspace, especially when
+> they look at the fs config and see that it's using both 4kB block
+> and sector sizes...
+>
+> The only thing that makes sense from a filesystem perspective is
+> clearing bad page state when entire filesystem blocks are
+> overwritten. The data in a filesystem block is either good or bad,
+> and it doesn't matter how many internal (kernel or device) sectors
+> it has.
+>
+> > > And what happens to the rest?  The caller is left to trip over the
+> > > errors?  That sounds pretty terrible.  I really think there needs to be
+> > > an explicit contract here.
+> >
+> > Ok, I think is is the contentious bit. Current interface
+> > (__dax_zero_page_range()) either clears the poison (if I/O is aligned to
+> > sector) or expects page to be free of poison.
+> >
+> > So in above example, of "truncate -s 23 foo.txt", currently I get an error
+> > because range being zeroed is not sector aligned. So
+> > __dax_zero_page_range() falls back to calling direct_access(). Which
+> > fails because there are poisoned sectors in the page.
+> >
+> > With my patches, dax_zero_page_range(), clears the poison from sector 1 to
+> > 7 but leaves sector 0 untouched and just writes zeroes from byte 0 to 511
+> > and returns success.
+>
+> Ok, kernel sectors are not the unit of granularity bad page state
+> should be managed at. They don't match page state granularity, and
+> they don't match filesystem block granularity, and the whacky
+> "partial writes silently succeed, reads fail unpredictably"
+> assymetry it leads to will just cause problems for users.
+>
+> > So question is, is this better behavior or worse behavior. If sector 0
+> > was poisoned, it will continue to remain poisoned and caller will come
+> > to know about it on next read and then it should try to truncate file
+> > to length 0 or unlink file or restore that file to get rid of poison.
+>
+> Worse, because the filesystem can't track what sub-parts of the
+> block are bad and that leads to inconsistent data integrity status
+> being exposed to userspace.
 
-I largely don't see the point of adding this to xfs_ilock/iunlock.
+The driver can't track it either. Latent poison isn't know until it is
+consumed, and writes to latent poison are not guaranteed to clear it.
 
-It's only got one caller, so I don't see much point in adding it to
-an interface that has over a hundred other call sites that don't
-need or use this lock. just open code it where it is needed in the
-ioctl code.
+>
+>
+> > IOW, if a partial block is being zeroed and if it is poisoned, caller
+> > will not be return an error and poison will not be cleared and memory
+> > will be zeroed. What do we expect in such cases.
+> >
+> > Do we expect an interface where if there are any bad blocks in the range
+> > being zeroed, then they all should be cleared (and hence all I/O should
+> > be aligned) otherwise error is returned. If yes, I could make that
+> > change.
+> >
+> > Downside of current interface is that it will clear as many blocks as
+> > possible in the given range and leave starting and end blocks poisoned
+> > (if it is unaligned) and not return error. That means a reader will
+> > get error on these blocks again and they will have to try to clear it
+> > again.
+>
+> Which is solved by having partial page writes always EIO on poisoned
+> memory.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+The problem with the above is that partial page writes can not be
+guaranteed to return EIO. Poison is only detected on consumed reads,
+or a periodic scrub, not writes. IFF poison detection was always
+synchronous with poison creation then the above makes sense. However,
+with asynchronous signaling, it's fundamentally a false security
+blanket to assume even full block writes will clear poison unless a
+callback to firmware is made for every block.
