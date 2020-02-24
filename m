@@ -2,94 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93B4169C89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 04:13:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC60A169C8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 04:14:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbgBXDNK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 22:13:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbgBXDNK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 22:13:10 -0500
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E06B220675;
-        Mon, 24 Feb 2020 03:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582513989;
-        bh=59NNPTLjABW0a7GgDsLekm7FZuCIANRbnVKzUyAHJeA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DveasmG/vht0a4p5AHAEODbQpn47aZOj4WqEHF9QAo9078YF1ESg2sT/BSYFXJ8iV
-         02o/wXisJ/b4eGgsFXfZhJ9F7HFGDDUOCdK2XnnJT9yeXZu7OyZjZQPqmvSWEc7blM
-         ttuDrb+4YXHxTKWM0Wucq4NTvG+CEaNDntGd3p6w=
-Date:   Mon, 24 Feb 2020 12:13:02 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+        id S1727218AbgBXDN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 22:13:58 -0500
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:51963 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727156AbgBXDN6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 23 Feb 2020 22:13:58 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0TqhetfV_1582514031;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TqhetfV_1582514031)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 24 Feb 2020 11:13:53 +0800
+Subject: Re: [PATCH RESEND v8 1/2] sched/numa: introduce per-cgroup NUMA
+ locality info
+To:     Peter Zijlstra <peterz@infradead.org>, Mel Gorman <mgorman@suse.de>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Michal Koutn? <mkoutny@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Bird <Tim.Bird@sony.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [for-next][12/26] Documentation: bootconfig: Add a doc for
- extended boot config
-Message-Id: <20200224121302.5b730b519d550eb34da720a5@kernel.org>
-In-Reply-To: <8cc7e621-c5e3-28fa-c789-0bb7c55d77d6@web.de>
-References: <23e371ca-5df8-3ae3-c685-b01c07b55540@web.de>
-        <20200220221340.2b66fd2051a5da74775c474b@kernel.org>
-        <5ed96b7b-7485-1ea0-16e2-d39c14ae266d@web.de>
-        <20200221191637.e9eed4268ff607a98200628c@kernel.org>
-        <5ade73b0-a3e8-e71a-3685-6485f37ac8b7@web.de>
-        <20200222131833.56a5be2d36033dc5a77a9f0b@kernel.org>
-        <370e675a-598e-71db-8213-f5494b852a71@web.de>
-        <20200223005615.79f308e2ca0717132bb2887b@kernel.org>
-        <8cc7e621-c5e3-28fa-c789-0bb7c55d77d6@web.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Jonathan Corbet <corbet@lwn.net>
+References: <fe56d99d-82e0-498c-ae44-f7cde83b5206@linux.alibaba.com>
+ <cde13472-46c0-7e17-175f-4b2ba4d8148a@linux.alibaba.com>
+ <20200214151048.GL14914@hirez.programming.kicks-ass.net>
+ <20200217115810.GA3420@suse.de>
+ <881deb50-163e-442a-41ec-b375cc445e4d@linux.alibaba.com>
+ <20200217141616.GB3420@suse.de>
+ <114519ab-4e9e-996a-67b8-4f5fcecba72a@linux.alibaba.com>
+ <20200221142010.GT3420@suse.de>
+ <20200221154706.GI18400@hirez.programming.kicks-ass.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <9b3fc96e-d705-1b30-da3d-e85ad5549da3@linux.alibaba.com>
+Date:   Mon, 24 Feb 2020 11:13:51 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:68.0)
+ Gecko/20100101 Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200221154706.GI18400@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Markus,
 
-On Sat, 22 Feb 2020 17:15:57 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
 
-> >> Is there a need to provide two format descriptions as separate files
-> >> (so that they can help more for different software users)?
-> >>
-> >> * RST
-> >> * EBNF
-> >
-> > Hmm, since RST is enough flexible, we can write it as a section.
+On 2020/2/21 下午11:47, Peter Zijlstra wrote:
+> On Fri, Feb 21, 2020 at 02:20:10PM +0000, Mel Gorman wrote:
+>> I fully acknowledge that this may have value for sysadmins and may be a
+>> good enough reason to merge it for environments that typically build and
+>> configure their own kernels. I doubt that general distributions would
+>> enable it but that's a guess.
 > 
-> I guess that there are further design options to consider.
+> OTOH, many sysadmins seem to 'rely' on BPF scripts and other such fancy
+> things these days.
 > 
+>  ( of course, we have the open question on what happens when we break
+>    one of those BPF 'important' scripts ... )
 > 
-> > Then user can copy & paste if they need it.
+> My main reservation with this patch is that it exposes, to userspace, an
+> ABI that is very hard to interpret and subject to implementation
+> details.
 > 
-> I imagine that it can be more convenient to refer to an EBNF file directly
-> if an other software developer would like to generate customised parsers
-> based on available information.
+> So while it can be disabled; people who have it enabled might suddenly
+> complain when we change the meaning/interpretation/whatever of these
+> magic numbers.
+> 
+> Michael; you seem to have ignored the tracepoint / BPF angle earlier in
+> this discussion; that is not something that could/would work for you?
 
-OK, I'll try to make a split EBNF file and include it.
+At very beginning I think these fancy stuff may consume too much resources
+them selves, so just as you said, ignored the possibility :-P
 
-Thank you,
+But now I understand there is a big gap here, which require a much more general
+way to evaluate the NUMA platform, I'll try to follow this way see if there
+are any practical approach instead~
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Michael Wang
+
+> 
