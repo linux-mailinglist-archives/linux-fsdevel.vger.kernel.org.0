@@ -2,108 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26531169CFE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 05:34:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9169C169D50
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 06:03:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbgBXEd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 23:33:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56642 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbgBXEd4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 23:33:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oZOe8S6XU8WPAzzWKK+7v8HQwuSfqOL+eNbf+Acq4Wc=; b=ALNrh1EBEZbPI0eohwoy43k7IJ
-        XJ2e9816/Cs/vRrqDf3S6gKYY5tNTkWN4kjJFPML+eVKwmz8Ej5/NJIR097xCbOVGT4n/3FVCtY3O
-        gn/yNbyTTS/qLVvgD8a/9uv4J4ws/6B3fng445cylTypcWambS3YaUfmoMD+/TOtojzWbjZpE6/zo
-        ghV8g3yRtNrjP80Aoo51Pd9fIJz1CgBzZuRDbL9STCkWsJuA7Fz9M8l7mClCERunvUnwRHI/iy7J0
-        DR9XgSFpwQPqfjwVfkmT0/g0k3jsyI3Efuhg2HSWlBcxnyFp7l7jjt1QI9lutMTR51+hhwlnhGP9z
-        +ZZz/7SQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j65RL-0000Cd-GT; Mon, 24 Feb 2020 04:33:55 +0000
-Date:   Sun, 23 Feb 2020 20:33:55 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 22/24] iomap: Convert from readpages to readahead
-Message-ID: <20200224043355.GL24185@bombadil.infradead.org>
-References: <20200219210103.32400-1-willy@infradead.org>
- <20200219210103.32400-23-willy@infradead.org>
- <20200220154912.GC19577@infradead.org>
- <20200220165734.GZ24185@bombadil.infradead.org>
- <20200222010013.GH9506@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200222010013.GH9506@magnolia>
+        id S1726810AbgBXFDh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 00:03:37 -0500
+Received: from foss.arm.com ([217.140.110.172]:57634 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgBXFDh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Feb 2020 00:03:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66CBD1FB;
+        Sun, 23 Feb 2020 21:03:36 -0800 (PST)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.16.95])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6C51A3F534;
+        Sun, 23 Feb 2020 21:03:33 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: [PATCH V2 0/4] mm/vma: Use all available wrappers when possible
+Date:   Mon, 24 Feb 2020 10:33:09 +0530
+Message-Id: <1582520593-30704-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 05:00:13PM -0800, Darrick J. Wong wrote:
-> On Thu, Feb 20, 2020 at 08:57:34AM -0800, Matthew Wilcox wrote:
-> > On Thu, Feb 20, 2020 at 07:49:12AM -0800, Christoph Hellwig wrote:
-> > +/**
-> > + * iomap_readahead - Attempt to read pages from a file.
-> > + * @rac: Describes the pages to be read.
-> > + * @ops: The operations vector for the filesystem.
-> > + *
-> > + * This function is for filesystems to call to implement their readahead
-> > + * address_space operation.
-> > + *
-> > + * Context: The file is pinned by the caller, and the pages to be read are
-> > + * all locked and have an elevated refcount.  This function will unlock
-> > + * the pages (once I/O has completed on them, or I/O has been determined to
-> > + * not be necessary).  It will also decrease the refcount once the pages
-> > + * have been submitted for I/O.  After this point, the page may be removed
-> > + * from the page cache, and should not be referenced.
-> > + */
-> > 
-> > > Isn't the context documentation something that belongs into the aop
-> > > documentation?  I've never really seen the value of duplicating this
-> > > information in method instances, as it is just bound to be out of date
-> > > rather sooner than later.
-> > 
-> > I'm in two minds about it as well.  There's definitely no value in
-> > providing kernel-doc for implementations of a common interface ... so
-> > rather than fixing the nilfs2 kernel-doc, I just deleted it.  But this
-> > isn't just the implementation, like nilfs2_readahead() is, it's a library
-> > function for filesystems to call, so it deserves documentation.  On the
-> > other hand, there's no real thought to this on the part of the filesystem;
-> > the implementation just calls this with the appropriate ops pointer.
-> > 
-> > Then again, I kind of feel like we need more documentation of iomap to
-> > help filesystems convert to using it.  But maybe kernel-doc isn't the
-> > mechanism to provide that.
-> 
-> I think we need more documentation of the parts of iomap where it can
-> call back into the filesystem (looking at you, iomap_dio_ops).
-> 
-> I'm not opposed to letting this comment stay, though I don't see it as
-> all that necessary since iomap_readahead implements a callout that's
-> documented in vfs.rst and is thus subject to all the constraints listed
-> in the (*readahead) documentation.
+Apart from adding a VMA flag readable name for trace purpose, this series
+does some open encoding replacements with availabe VMA specific wrappers.
+This skips VM_HUGETLB check in vma_migratable() as its already being done
+with another patch (https://patchwork.kernel.org/patch/11347831/) which
+is yet to be merged.
 
-Right.  And that's not currently in kernel-doc format, but should be.
-Something for a different patchset, IMO.
+This series applies on 5.6-rc3. This has been build tested on multiple
+platforms, though boot and runtime testing was limited to arm64 and x86.
 
-What we need documenting _here_ is the conditions under which the
-iomap_ops are called so the filesystem author doesn't need to piece them
-together from three different places.  Here's what I currently have:
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mips@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-sh@vger.kernel.org
+Cc: kvm-ppc@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-mm@kvack.org
 
- * Context: The @ops callbacks may submit I/O (eg to read the addresses of
- * blocks from disc), and may wait for it.  The caller may be trying to
- * access a different page, and so sleeping excessively should be avoided.
- * It may allocate memory, but should avoid large allocations.  This
- * function is called with memalloc_nofs set, so allocations will not cause
- * the filesystem to be reentered.
+Changes in V2:
+
+- Dropped patch [PATCH 4/5] mm/vma: Replace....vma_set_anonymous() per Kirril
+- Dropped braces around is_vm_hugetlb_page() in kvmppc_e500_shadow_map()
+- Replaced two open encodings in mm/mmap.c with vma_is_accessible()
+- Added hugetlb headers to prevent build failures wrt is_vm_hugetlb_page()
+
+Changes in V1: (https://patchwork.kernel.org/cover/11385219/)
+
+Anshuman Khandual (4):
+  mm/vma: Add missing VMA flag readable name for VM_SYNC
+  mm/vma: Make vma_is_accessible() available for general use
+  mm/vma: Replace all remaining open encodings with is_vm_hugetlb_page()
+  mm/vma: Replace all remaining open encodings with vma_is_anonymous()
+
+ arch/csky/mm/fault.c             | 2 +-
+ arch/m68k/mm/fault.c             | 2 +-
+ arch/mips/mm/fault.c             | 2 +-
+ arch/powerpc/kvm/e500_mmu_host.c | 2 +-
+ arch/powerpc/mm/fault.c          | 2 +-
+ arch/sh/mm/fault.c               | 2 +-
+ arch/x86/mm/fault.c              | 2 +-
+ fs/binfmt_elf.c                  | 3 ++-
+ include/asm-generic/tlb.h        | 3 ++-
+ include/linux/mm.h               | 5 +++++
+ include/trace/events/mmflags.h   | 1 +
+ kernel/events/core.c             | 3 ++-
+ kernel/sched/fair.c              | 2 +-
+ mm/gup.c                         | 5 +++--
+ mm/memory.c                      | 5 -----
+ mm/mempolicy.c                   | 3 +--
+ mm/mmap.c                        | 5 ++---
+ 17 files changed, 26 insertions(+), 23 deletions(-)
+
+-- 
+2.20.1
 
