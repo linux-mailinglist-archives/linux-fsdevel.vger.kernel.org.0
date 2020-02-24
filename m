@@ -2,101 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 588E616A370
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 11:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BC0C16A3D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 11:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgBXKCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 05:02:20 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:33914 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbgBXKCU (ORCPT
+        id S1726778AbgBXKZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 05:25:07 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42800 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726509AbgBXKZH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 05:02:20 -0500
-Received: by mail-pj1-f68.google.com with SMTP id f2so3900353pjq.1;
-        Mon, 24 Feb 2020 02:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:in-reply-to:references:mime-version:content-id
-         :content-transfer-encoding:date:message-id;
-        bh=rB3C6Ui3C2PRhHGdFypVZb4/ATr5XISx7YPQFUhCEqY=;
-        b=BuxvF0zexi6lbxhqAVXH0BAnoUGmboKabKjIvKHuvc7pIA3dX8KyIXI5YJO1i/Kpfi
-         +HCx5Wyyn+fDaxPoonCPTE8ieRvJeiXsB+e/dsRKnJPaWPJdzeoq4TREyUh2GgBS8W0F
-         zx+MysUYWiYdeU6htrT9cRs3u69HRrdo3kjwWj0wakl7htXKqC/XgE54j7EjUVZEPHR3
-         L4rZtXUa1NZI3D7PAzpVJxf0GhyW3gjwSjtNawT7/RS7gl2VOhBczHZtSUgm0TXKG6R+
-         XU6ylgYkyHaqNFk7HSaAsXn6mVlh01cIplzY2Ql2MPU6mPpMsvBcm3dgLJ/oWEDXibaK
-         hGKg==
+        Mon, 24 Feb 2020 05:25:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582539905;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gy+vhmoT6JM3Yv4RVEvhda7Thq8Oh3Z0jshMS0ARWMg=;
+        b=Z3WB2W3buQrh528MIAYislH4RE/kofCs1hllZJDEzKazP9jCvC3oYXTYeWfsHqup0egjOP
+        Swam3ZftxYF+yH0rOq6z6Z05DJoBM7ZH3Fsz3qtK25RN2srvgNf+nlu6kHxWivsr3nQSxy
+        P/MzSHxEQ0Vt24XvJd7Q+GDglDaC0kQ=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-2-NCnYek5DOSaJ6cUbfywN8g-1; Mon, 24 Feb 2020 05:25:03 -0500
+X-MC-Unique: NCnYek5DOSaJ6cUbfywN8g-1
+Received: by mail-qt1-f200.google.com with SMTP id x8so10155714qtq.14
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2020 02:25:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:in-reply-to:references
-         :mime-version:content-id:content-transfer-encoding:date:message-id;
-        bh=rB3C6Ui3C2PRhHGdFypVZb4/ATr5XISx7YPQFUhCEqY=;
-        b=jpbwLYnVQ8uONlCkwuV+CG87LPcdmbd8ZXIq3oMIfljXizXyRc8hjUSBiJ0Zf/ltPj
-         5d18LpDXkCZ53cbtgAk+wXuQi4DVA8wvW+0hHGv/m2ztYlSlNkf45Kd56qy7TXXCV8JE
-         lO7eYaYvJv8O/kpUiEBcSL1mlPwXJdSBJZ6HzfS3Gm3fF9ne/IL1tcrujutGSHHHz0Ie
-         nO09V9LeMU/N+BK6OWhxtC8f2EBG6+DEEgP/JAlPQbiUtt3AXpCrK0XRSNFmuOiyIfNx
-         FnOst1DOmhLkxprxC71zrEUkFi88r4Iu6+fuTTqMQxPPYAMIktvotgfWdSjqSWcJPDoy
-         jxNA==
-X-Gm-Message-State: APjAAAV3kwswsADHNZnNqS41sqttYDJHax1TTAbyzka2FooMKAqXxLl8
-        GEelk9NYksr+73856wIwaXQ=
-X-Google-Smtp-Source: APXvYqzIhuzkSb+8cDBwrTf045i3OCE5ny+FFAShKLaH5fh/PZdiYkTJW5JQcIY00I10hY0FYuZYFg==
-X-Received: by 2002:a17:90a:8545:: with SMTP id a5mr19158028pjw.43.1582538539089;
-        Mon, 24 Feb 2020 02:02:19 -0800 (PST)
-Received: from jromail.nowhere (h219-110-108-104.catv02.itscom.jp. [219.110.108.104])
-        by smtp.gmail.com with ESMTPSA id e6sm12081336pfh.32.2020.02.24.02.02.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 02:02:18 -0800 (PST)
-Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1j6AZ7-0006QE-Aw ; Mon, 24 Feb 2020 19:02:17 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: ext2, possible circular locking dependency detected
-To:     Jan Kara <jack@suse.cz>
-Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-In-Reply-To: <20200224090846.GB27857@quack2.suse.cz>
-References: <4946.1582339996@jrobl> <20200224090846.GB27857@quack2.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gy+vhmoT6JM3Yv4RVEvhda7Thq8Oh3Z0jshMS0ARWMg=;
+        b=Veb88QFFad0y2wK6r06+uOJgrwDr5w1r9MhmopsTRfAHFs6Wf77NM611Q9puaKCgFz
+         RY8b8QmsNN9kzOa48cLTqURbDYpohaXtTsyEp0KDWoo3mDtvjxIS0OfvfW+tRcg7qgsF
+         8oBHAu5a2octG+CWVlmWo5/NR851XD86Og1OnW98vLKkbTfRI3aPKckM6BiAQ++iZDc6
+         UKXAGBLvZ/X66olOG6PIoclxHNTmEBXAVBfje5vGVwD2vLwd4KSCZouTUwI7B/S3p09d
+         xiwfzF1VGasVxpujJ8UqRL+7ifmJ/lOKX+aLSklYayEymOog/of7lCkjZKIqIMaap6yZ
+         k6NQ==
+X-Gm-Message-State: APjAAAX0ugRM5uoT6fXQPmABRWFtDnrXTPO2IJ+SKcuzlTYLz8oE3tI4
+        kN28BjSj6WzY/ryvsqc7XMP7Gz7k1iCfx6fXydMwP+rx+jztCQnRuo7jooEred7Wx0N6g80K5GT
+        SqOBNKpzP8kr+ZNM5tLMoO4XrTCaN3Y8f9k8Lw9HKGA==
+X-Received: by 2002:a37:a881:: with SMTP id r123mr14184718qke.199.1582539902870;
+        Mon, 24 Feb 2020 02:25:02 -0800 (PST)
+X-Google-Smtp-Source: APXvYqztFT5Zfqx4XMsPU01nDc9vsIiEe1j5CK26LdX74+ps7d85rr9U4y9yqiVVjcliDp+alv+x51zsiwVwJlJsaVY=
+X-Received: by 2002:a37:a881:: with SMTP id r123mr14184671qke.199.1582539902450;
+ Mon, 24 Feb 2020 02:25:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24688.1582538536.1@jrobl>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 24 Feb 2020 19:02:16 +0900
-Message-ID: <24689.1582538536@jrobl>
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com>
+In-Reply-To: <1582316494.3376.45.camel@HansenPartnership.com>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Mon, 24 Feb 2020 11:24:51 +0100
+Message-ID: <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        christian@brauner.io, Jann Horn <jannh@google.com>,
+        darrick.wong@oracle.com, Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara:
-> This is not the right way how memalloc_nofs_save() should be used (you
-> could just use GFP_NOFS instead of GFP_KERNEL instead of wrapping the
-> allocation inside memalloc_nofs_save/restore()). The
-> memalloc_nofs_save/restore() API is created so that you can change the
-> allocation context at the place which mandates the new context - i.e., i=
-n
-> this case when acquiring / dropping xattr_sem. That way you don't have t=
-o
-> propagate the context information down to function calls and the code is
-> also future-proof - if you add new allocation, they will use correct
-> allocation context.
+On Fri, Feb 21, 2020 at 9:21 PM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Fri, 2020-02-21 at 18:01 +0000, David Howells wrote:
+> [...]
+> > ============================
+> > FILESYSTEM INFORMATION QUERY
+> > ============================
+> >
+> > The fsinfo() system call allows information about the filesystem at a
+> > particular path point to be queried as a set of attributes, some of
+> > which may have more than one value.
+> >
+> > Attribute values are of four basic types:
+> >
+> >  (1) Version dependent-length structure (size defined by type).
+> >
+> >  (2) Variable-length string (up to 4096, including NUL).
+> >
+> >  (3) List of structures (up to INT_MAX size).
+> >
+> >  (4) Opaque blob (up to INT_MAX size).
+> >
+> > Attributes can have multiple values either as a sequence of values or
+> > a sequence-of-sequences of values and all the values of a particular
+> > attribute must be of the same type.
+> >
+> > Note that the values of an attribute *are* allowed to vary between
+> > dentries within a single superblock, depending on the specific dentry
+> > that you're looking at, but all the values of an attribute have to be
+> > of the same type.
+> >
+> > I've tried to make the interface as light as possible, so
+> > integer/enum attribute selector rather than string and the core does
+> > all the allocation and extensibility support work rather than leaving
+> > that to the filesystems. That means that for the first two attribute
+> > types, the filesystem will always see a sufficiently-sized buffer
+> > allocated.  Further, this removes the possibility of the filesystem
+> > gaining access to the userspace buffer.
+> >
+> >
+> > fsinfo() allows a variety of information to be retrieved about a
+> > filesystem and the mount topology:
+> >
+> >  (1) General superblock attributes:
+> >
+> >      - Filesystem identifiers (UUID, volume label, device numbers,
+> > ...)
+> >      - The limits on a filesystem's capabilities
+> >      - Information on supported statx fields and attributes and IOC
+> > flags.
+> >      - A variety single-bit flags indicating supported capabilities.
+> >      - Timestamp resolution and range.
+> >      - The amount of space/free space in a filesystem (as statfs()).
+> >      - Superblock notification counter.
+> >
+> >  (2) Filesystem-specific superblock attributes:
+> >
+> >      - Superblock-level timestamps.
+> >      - Cell name.
+> >      - Server names and addresses.
+> >      - Filesystem-specific information.
+> >
+> >  (3) VFS information:
+> >
+> >      - Mount topology information.
+> >      - Mount attributes.
+> >      - Mount notification counter.
+> >
+> >  (4) Information about what the fsinfo() syscall itself supports,
+> > including
+> >      the type and struct/element size of attributes.
+> >
+> > The system is extensible:
+> >
+> >  (1) New attributes can be added.  There is no requirement that a
+> >      filesystem implement every attribute.  Note that the core VFS
+> > keeps a
+> >      table of types and sizes so it can handle future extensibility
+> > rather
+> >      than delegating this to the filesystems.
+> >
+> >  (2) Version length-dependent structure attributes can be made larger
+> > and
+> >      have additional information tacked on the end, provided it keeps
+> > the
+> >      layout of the existing fields.  If an older process asks for a
+> > shorter
+> >      structure, it will only be given the bits it asks for.  If a
+> > newer
+> >      process asks for a longer structure on an older kernel, the
+> > extra
+> >      space will be set to 0.  In all cases, the size of the data
+> > actually
+> >      available is returned.
+> >
+> >      In essence, the size of a structure is that structure's version:
+> > a
+> >      smaller size is an earlier version and a later version includes
+> >      everything that the earlier version did.
+> >
+> >  (3) New single-bit capability flags can be added.  This is a
+> > structure-typed
+> >      attribute and, as such, (2) applies.  Any bits you wanted but
+> > the kernel
+> >      doesn't support are automatically set to 0.
+> >
+> > fsinfo() may be called like the following, for example:
+> >
+> >       struct fsinfo_params params = {
+> >               .at_flags       = AT_SYMLINK_NOFOLLOW,
+> >               .flags          = FSINFO_FLAGS_QUERY_PATH,
+> >               .request        = FSINFO_ATTR_AFS_SERVER_ADDRESSES,
+> >               .Nth            = 2,
+> >       };
+> >       struct fsinfo_server_address address;
+> >       len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> >                    &address, sizeof(address));
+> >
+> > The above example would query an AFS filesystem to retrieve the
+> > address
+> > list for the 3rd server, and:
+> >
+> >       struct fsinfo_params params = {
+> >               .at_flags       = AT_SYMLINK_NOFOLLOW,
+> >               .flags          = FSINFO_FLAGS_QUERY_PATH,
+> >               .request        = FSINFO_ATTR_AFS_CELL_NAME;
+> >       };
+> >       char cell_name[256];
+> >       len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+> >                    &cell_name, sizeof(cell_name));
+> >
+> > would retrieve the name of an AFS cell as a string.
+> >
+> > In future, I want to make fsinfo() capable of querying a context
+> > created by
+> > fsopen() or fspick(), e.g.:
+> >
+> >       fd = fsopen("ext4", 0);
+> >       struct fsinfo_params params = {
+> >               .flags          = FSINFO_FLAGS_QUERY_FSCONTEXT,
+> >               .request        = FSINFO_ATTR_PARAMETERS;
+> >       };
+> >       char buffer[65536];
+> >       fsinfo(fd, NULL, &params, &buffer, sizeof(buffer));
+> >
+> > even if that context doesn't currently have a superblock attached.  I
+> > would prefer this to contain length-prefixed strings so that there's
+> > no need to insert escaping, especially as any character, including
+> > '\', can be used as the separator in cifs and so that binary
+> > parameters can be returned (though that is a lesser issue).
+>
+> Could I make a suggestion about how this should be done in a way that
+> doesn't actually require the fsinfo syscall at all: it could just be
+> done with fsconfig.  The idea is based on something I've wanted to do
+> for configfd but couldn't because otherwise it wouldn't substitute for
+> fsconfig, but Christian made me think it was actually essential to the
+> ability of the seccomp and other verifier tools in the critique of
+> configfd and I belive the same critique applies here.
+>
+> Instead of making fsconfig functionally configure ... as in you pass
+> the attribute name, type and parameters down into the fs specific
+> handler and the handler does a string match and then verifies the
+> parameters and then acts on them, make it table configured, so what
+> each fstype does is register a table of attributes which can be got and
+> optionally set (with each attribute having a get and optional set
+> function).  We'd have multiple tables per fstype, so the generic VFS
+> can register a table of attributes it understands for every fstype
+> (things like name, uuid and the like) and then each fs type would
+> register a table of fs specific attributes following the same pattern.
+> The system would examine the fs specific table before the generic one,
+> allowing overrides.  fsconfig would have the ability to both get and
+> set attributes, permitting retrieval as well as setting (which is how I
+> get rid of the fsinfo syscall), we'd have a global parameter, which
+> would retrieve the entire table by name and type so the whole thing is
+> introspectable because the upper layer knows a-priori all the
+> attributes which can be set for a given fs type and what type they are
+> (so we can make more of the parsing generic).  Any attribute which
+> doesn't have a set routine would be read only and all attributes would
+> have to have a get routine meaning everything is queryable.
 
-Thanks for the lecture about memalloc_nofs_save/restore().
-Honestly speaking, I didn't know these APIs and I always use GFP_NOFS
-flag. Investigating this lockdep warning, I read the comments in gfp.h.
+And that makes me wonder: would a
+"/sys/class/fs/$ST_DEV/options/$OPTION" type interface be feasible for
+this?
 
- * %GFP_NOFS will use direct reclaim but will not use any filesystem inter=
-faces.
- * Please try to avoid using this flag directly and instead use
- * memalloc_nofs_{save,restore} to mark the whole scope which cannot/shoul=
-dn't
- * recurse into the FS layer with a short explanation why. All allocation
- * requests will inherit GFP_NOFS implicitly.
+Thanks,
+Miklos
 
-Actually grep-ping the whole kernel source tree told me there are
-several "one-liners" like ...nofs_save(); kmalloc(); ...nofs_restore
-sequence.  But re-reading the comments and your mail, I understand these
-APIs are for much wider region than such one-liner.
-
-I don't think it a good idea that I send you another patch replaced by
-GFP_NOFS.  You can fix it simply and you know much more than me about
-this matter, and I will be satisfied when this problem is fixed by you.
-
-
-J. R. Okajima
