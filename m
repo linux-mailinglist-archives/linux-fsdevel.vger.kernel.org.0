@@ -2,120 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11AC916B415
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 23:33:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE0416B41E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 23:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgBXWc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 17:32:58 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:60435 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727459AbgBXWc5 (ORCPT
+        id S1728171AbgBXWei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 17:34:38 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39789 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727825AbgBXWef (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 17:32:57 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C34DF7E9764;
-        Tue, 25 Feb 2020 09:32:47 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j6MHN-0004Ek-4z; Tue, 25 Feb 2020 09:32:45 +1100
-Date:   Tue, 25 Feb 2020 09:32:45 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
+        Mon, 24 Feb 2020 17:34:35 -0500
+Received: by mail-io1-f65.google.com with SMTP id c16so12006663ioh.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2020 14:34:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=LcEDW2DJjfwsN2jHoNapXxaO0EbP3e6SpLIeDbSLDHo=;
+        b=j1rlVEQ53oIIDmRKRyf+Ub8PZorvJ3Jvn72rJSDxjgIO81vPRNoI59soGQPuKNZJp2
+         i/5WLDmIgf0v/yr1ZYQU4AwcC9S7zFI3pB09ahCFOj1Et38mME2/1bwjNNNudOfslkER
+         Y7pj9ORfxZLBq5mobTaCO8WL7x6iOviyDcSWOrE8v0t55bA45x6KIX2Sdt6o5dj3ObsQ
+         qemAolW2soW4xHKVidIZqz+sPE1dmWwmn4tUmuy6RzDzKwMWmrd0/vu8GXjcjf2u2QUV
+         Ibo9VXcvhctVApMiEBM678gnsV7kLb1BpI9t4zqq9vgcemKDvrJXsrG3IQ2v/uu8saMy
+         MTfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LcEDW2DJjfwsN2jHoNapXxaO0EbP3e6SpLIeDbSLDHo=;
+        b=pV4UqpZvXIk+F8TWwlaalE5HoiCxEyU0GlodAhWACvJ4moUh3+/xc1jdZvWh+7+hPJ
+         rTh7vjA3beV6EzM1FBmIdLkfELZnOh5PjvW14Jke+Hr0BX02GZKEFSIepp9VZSeVzSVJ
+         y50ctmlUsJtkFeSq+CyEO7iM0rQB/unab7SNaHQO5s958K3hv43KoBcoRRZgR2pAQsTD
+         8e9Q1C+vs9QWHIXZesgOfBeHOxkWgoT5jL1GBL4BqiEvVPXYqDp6foznyYgMQTBBhlCg
+         LqxjvDs8jNplKjcfmrnBEfMgK47GWpCze9hKuTvQMuMW+n22pkxEKe93JDEvJbbsA4Tn
+         OPDg==
+X-Gm-Message-State: APjAAAVzku20bFCOr67sCV7/Od8KDyo2Lc7Kx2ZrEPAq0I+6Sc3gosAr
+        wDchzimUo+gO/rkzrmkg6B0ZD6sSYdQ=
+X-Google-Smtp-Source: APXvYqwruaA7++v/6de+pBK64t/i++bMn+3fXg2Pg3U7puKprnod7XwhrZ5mlI7mLXHnnWdFC3VRgQ==
+X-Received: by 2002:a02:390a:: with SMTP id l10mr53494289jaa.42.1582583674519;
+        Mon, 24 Feb 2020 14:34:34 -0800 (PST)
+Received: from [192.168.1.147] (174-23-131-244.slkc.qwest.net. [174.23.131.244])
+        by smtp.gmail.com with ESMTPSA id 69sm4745386ilc.80.2020.02.24.14.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2020 14:34:34 -0800 (PST)
+Subject: Re: [PATCH v4 0/3] io_uring: add splice(2) support
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
-Message-ID: <20200224223245.GZ10776@dread.disaster.area>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-10-ira.weiny@intel.com>
- <20200224003455.GY10776@dread.disaster.area>
- <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
+        Stefan Metzmacher <metze@samba.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1582530525.git.asml.silence@gmail.com>
+ <923cc84a-e11f-2a16-2f12-ca3ba2f3ade4@kernel.dk>
+Message-ID: <596e6b61-e9de-7498-05c4-571613673c15@kernel.dk>
+Date:   Mon, 24 Feb 2020 15:34:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=gnghuLLEDpD_sVzI300A:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <923cc84a-e11f-2a16-2f12-ca3ba2f3ade4@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 11:57:36AM -0800, Ira Weiny wrote:
-> On Mon, Feb 24, 2020 at 11:34:55AM +1100, Dave Chinner wrote:
-> > On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > > 
+On 2/24/20 8:35 AM, Jens Axboe wrote:
+> On 2/24/20 1:32 AM, Pavel Begunkov wrote:
+>> *on top of for-5.6 + async patches*
+>>
+>> Not the fastets implementation, but I'd need to stir up/duplicate
+>> splice.c bits to do it more efficiently.
+>>
+>> note: rebase on top of the recent inflight patchset.
 > 
-> [snip]
-> 
-> > > 
-> > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > index 35df324875db..5b014c428f0f 100644
-> > > --- a/fs/xfs/xfs_inode.c
-> > > +++ b/fs/xfs/xfs_inode.c
-> > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-> > >   *
-> > >   * Basic locking order:
-> > >   *
-> > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > >   *
-> > >   * mmap_sem locking order:
-> > >   *
-> > >   * i_rwsem -> page lock -> mmap_sem
-> > > - * mmap_sem -> i_mmap_lock -> page_lock
-> > > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
-> > >   *
-> > >   * The difference in mmap_sem locking order mean that we cannot hold the
-> > >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> > > @@ -182,6 +182,9 @@ xfs_ilock(
-> > >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
-> > >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
-> > >  
-> > > +	if (lock_flags & XFS_DAX_EXCL)
-> > > +		inode_aops_down_write(VFS_I(ip));
-> > 
-> > I largely don't see the point of adding this to xfs_ilock/iunlock.
-> > 
-> > It's only got one caller, so I don't see much point in adding it to
-> > an interface that has over a hundred other call sites that don't
-> > need or use this lock. just open code it where it is needed in the
-> > ioctl code.
-> 
-> I know it seems overkill but if we don't do this we need to code a flag to be
-> returned from xfs_ioctl_setattr_dax_invalidate().  This flag is then used in
-> xfs_ioctl_setattr_get_trans() to create the transaction log item which can then
-> be properly used to unlock the lock in xfs_inode_item_release()
-> 
-> I don't know of a cleaner way to communicate to xfs_inode_item_release() to
-> unlock i_aops_sem after the transaction is complete.
+> Let's get this queued up, looks good to go to me. Do you have a few
+> liburing test cases we can add for this?
 
-We manually unlock inodes after transactions in many cases -
-anywhere we do a rolling transaction, the inode locks do not get
-released by the transaction. Hence for a one-off case like this it
-doesn't really make sense to push all this infrastructure into the
-transaction subsystem. Especially as we can manually lock before and
-unlock after the transaction context without any real complexity.
+Seems to me like we have an address space issue for the off_in and
+off_out parameters. Why aren't we passing in pointers to these
+and making them work like regular splice?
 
-This also means that we can, if necessary, do aops manipulation work
-/after/ the transaction that changes on-disk state completes and we
-still hold the aops reference exclusively. While we don't do that
-now, I think it is worthwhile keeping our options open here....
 
-Cheers,
-
-Dave.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 792ef01a521c..b0cfd68be8c9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -448,8 +448,8 @@ struct io_epoll {
+ struct io_splice {
+ 	struct file			*file_out;
+ 	struct file			*file_in;
+-	loff_t				off_out;
+-	loff_t				off_in;
++	loff_t __user			*off_out;
++	loff_t __user			*off_in;
+ 	u64				len;
+ 	unsigned int			flags;
+ };
+@@ -2578,8 +2578,8 @@ static int io_splice_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 		return 0;
+ 
+ 	sp->file_in = NULL;
+-	sp->off_in = READ_ONCE(sqe->splice_off_in);
+-	sp->off_out = READ_ONCE(sqe->off);
++	sp->off_in = u64_to_user_ptr(READ_ONCE(sqe->splice_off_in));
++	sp->off_out = u64_to_user_ptr(READ_ONCE(sqe->off));
+ 	sp->len = READ_ONCE(sqe->len);
+ 	sp->flags = READ_ONCE(sqe->splice_flags);
+ 
+@@ -2614,7 +2614,6 @@ static int io_splice(struct io_kiocb *req, struct io_kiocb **nxt,
+ 	struct file *in = sp->file_in;
+ 	struct file *out = sp->file_out;
+ 	unsigned int flags = sp->flags & ~SPLICE_F_FD_IN_FIXED;
+-	loff_t *poff_in, *poff_out;
+ 	long ret;
+ 
+ 	if (force_nonblock) {
+@@ -2623,9 +2622,7 @@ static int io_splice(struct io_kiocb *req, struct io_kiocb **nxt,
+ 		flags |= SPLICE_F_NONBLOCK;
+ 	}
+ 
+-	poff_in = (sp->off_in == -1) ? NULL : &sp->off_in;
+-	poff_out = (sp->off_out == -1) ? NULL : &sp->off_out;
+-	ret = do_splice(in, poff_in, out, poff_out, sp->len, flags);
++	ret = do_splice(in, sp->off_in, out, sp->off_out, sp->len, flags);
+ 	if (force_nonblock && ret == -EAGAIN)
+ 		return -EAGAIN;
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
