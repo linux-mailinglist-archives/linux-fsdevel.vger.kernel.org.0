@@ -2,170 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BFA816AE2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 18:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1655516AE33
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 18:56:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbgBXRz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 12:55:26 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51320 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbgBXRzZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:55:25 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t23so237310wmi.1;
-        Mon, 24 Feb 2020 09:55:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
-        b=Vwkro33JPZEjGumCkuOvUlXTzL/fDauJkqYW8YDyhgcyZDvc9+xMMcMOp48V0SqDew
-         NtZUkEKblDHV8EvfvK5BMWroYkI+HmgUETvMBfgEvKXitmgQ7Q17y7t3jbtzZVMUfsVV
-         2q+nx/5gFgfqeKXnYe26ES5rnCgKJ0zRS9NoP/lHphqkoWgjMOMf8N8/5ou/BHKyduSO
-         EXsoKJqN/LfLHO2l/qdzEDlohe3shxKYZ6B+aPP0xIOdEclw/+Y1DRRXEi7oX0dgIBAH
-         zB3Xaxk8XQnRDP6nozRFtcBs+u9kZ/tEPdwEyTkYXbNnNHclyKJVgsX5VOyr8TkORgHs
-         RPlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
-        b=Y5IiOE4LLchXd85N0or0eR7qizY9Ym6foC5grB+tFOQ5WppPvQgXc1yNtbflfsRadZ
-         8NXGvPkvqy4eMit0maJ6+lgWZZSiXVQd9T+mf19h5Y2SumtPsohInEhGlQgPLmCGcO5a
-         jw6P5DAjekgxppebKpG+TlKQ5FFWELq+9M88Ce0T51n2oBVLwrE8WbxEoCPThOEI9tnF
-         JN7MGb3BZVUr/a8CJqChDVxkiL3guoroTusAkOcDKFGPQLMUTxNpDQhRRlDzs2rznX3Z
-         8lN1g+hjO3Urj7LxPc3MYAWBo2qDgciFQLTMly5wIZXSXWxIOd4saZXApX1bfjmuTC1H
-         C1sQ==
-X-Gm-Message-State: APjAAAXac9hzKJnSdhvaMShT4w2xern07MGB6Ziru916d8jiDEHV6Dy+
-        LtPlDOb7oLDN1PsSeIZpea6amc8=
-X-Google-Smtp-Source: APXvYqxm0NJVyiy1qW3kAmbakTqJFJUOQ0dfkTq8hktodIEO2WpsI8z91rO0JnAJZ5HXpylenvl3GA==
-X-Received: by 2002:a1c:990b:: with SMTP id b11mr211208wme.15.1582566923445;
-        Mon, 24 Feb 2020 09:55:23 -0800 (PST)
-Received: from avx2 ([46.53.250.94])
-        by smtp.gmail.com with ESMTPSA id s8sm20772193wrt.57.2020.02.24.09.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2020 09:55:22 -0800 (PST)
-Date:   Mon, 24 Feb 2020 20:55:20 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        id S1727775AbgBXR4G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 12:56:06 -0500
+Received: from verein.lst.de ([213.95.11.211]:39459 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727438AbgBXR4G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:56:06 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id BF32268B20; Mon, 24 Feb 2020 18:56:03 +0100 (CET)
+Date:   Mon, 24 Feb 2020 18:56:03 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>, ira.weiny@intel.com,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
-Message-ID: <20200224175520.GA3401@avx2>
-References: <20200222201539.GA22576@avx2>
- <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
- <20200223113024.GA4941@avx2>
- <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200224175603.GE7771@lst.de>
+References: <20200221004134.30599-1-ira.weiny@intel.com> <20200221004134.30599-8-ira.weiny@intel.com> <20200221174449.GB11378@lst.de> <20200221224419.GW10776@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200221224419.GW10776@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 06:48:38PM -0800, Joe Perches wrote:
-> On Sun, 2020-02-23 at 14:30 +0300, Alexey Dobriyan wrote:
-> > On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
-> > > On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
-> > > > Now that "struct proc_ops" exist we can start putting there stuff which
-> > > > could not fly with VFS "struct file_operations"...
-> > > > 
-> > > > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
-> > > > in the event of disappearing /proc entries which usually happens if module is
-> > > > getting removed. Files like /proc/cpuinfo which never disappear simply do not
-> > > > need such protection.
-> > > > 
-> > > > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
-> > > > "permanent" files.
-> > > > 
-> > > > Enable "permanent" flag for
-> > > > 
-> > > > 	/proc/cpuinfo
-> > > > 	/proc/kmsg
-> > > > 	/proc/modules
-> > > > 	/proc/slabinfo
-> > > > 	/proc/stat
-> > > > 	/proc/sysvipc/*
-> > > > 	/proc/swaps
-> > > > 
-> > > > More will come once I figure out foolproof way to prevent out module
-> > > > authors from marking their stuff "permanent" for performance reasons
-> > > > when it is not.
-> > > > 
-> > > > This should help with scalability: benchmark is "read /proc/cpuinfo R times
-> > > > by N threads scattered over the system".
-> > > 
-> > > Is this an actual expected use-case?
-> > 
-> > Yes.
-> > 
-> > > Is there some additional unnecessary memory consumption
-> > > in the unscaled systems?
-> > 
-> > No, it's the opposite. Less memory usage for everyone and noticeable
-> > performance improvement for contented case.
-> > 
-> > > >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> > > >  {
-> > > >  	struct proc_dir_entry *pde = PDE(file_inode(file));
-> > > >  	ssize_t rv = -EIO;
-> > > > -	if (use_pde(pde)) {
-> > > > -		typeof_member(struct proc_ops, proc_read) read;
-> > > >  
-> > > > -		read = pde->proc_ops->proc_read;
-> > > > -		if (read)
-> > > > -			rv = read(file, buf, count, ppos);
-> > > > +	if (pde_is_permanent(pde)) {
-> > > > +		return pde_read(pde, file, buf, count, ppos);
-> > > > +	} else if (use_pde(pde)) {
-> > > > +		rv = pde_read(pde, file, buf, count, ppos);
-> > > >  		unuse_pde(pde);
-> > > 
-> > > Perhaps all the function call duplication could be minimized
-> > > by using code without direct returns like:
-> > > 
-> > > 	rv = pde_read(pde, file, buf, count, pos);
-> > > 	if (!pde_is_permanent(pde))
-> > > 		unuse_pde(pde);
-> > > 
-> > > 	return rv;
-> > 
-> > Function call non-duplication is false goal.
+On Sat, Feb 22, 2020 at 09:44:19AM +1100, Dave Chinner wrote:
+> > I am very much against this.  There is a reason why we don't support
+> > changes of ops vectors at runtime anywhere else, because it is
+> > horribly complicated and impossible to get right.  IFF we ever want
+> > to change the DAX vs non-DAX mode (which I'm still not sold on) the
+> > right way is to just add a few simple conditionals and merge the
+> > aops, which is much easier to reason about, and less costly in overall
+> > overhead.
 > 
-> Depends, copy/paste errors are common and object code
-> size generally increases.
+> *cough*
 > 
-> > Surprisingly it makes code bigger:
-> 
-> Not so far as I can tell.  Are you sure?
-> 
-> > 	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
-> > 	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
-> > 	Function                                     old     new   delta
-> > 	proc_reg_read                                108     118     +10
-> > 
-> > and worse too: "rv" is carried on stack through "unuse_pde" call.
-> 
-> With gcc 9.2.1 x86-64 defconfig:
-> 
-> Changing just proc_reg_read to:
-> 
-> static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
-> {
-> 	struct proc_dir_entry *pde = PDE(file_inode(file));
-> 	ssize_t rv;
-> 
-> 	rv = pde_read(pde, file, buf, count, ppos);
-> 	if (use_pde(pde))
-> 		unuse_pde(pde);
+> That's exactly what the original code did. And it was broken
+> because page faults call multiple aops that are dependent on the
+> result of the previous aop calls setting up the state correctly for
+> the latter calls. And when S_DAX changes between those calls, shit
+> breaks.
 
-What?
+No, the original code was broken because it didn't serialize between
+DAX and buffer access.
 
-Please make non-racy patch before doing anything.
+Take a step back and look where the problems are, and they are not
+mostly with the aops.  In fact the only aop useful for DAX is
+is ->writepages, and how it uses ->writepages is actually a bit of
+an abuse of that interface.
 
-> 
-> 	return rv;
-> }
+So what we really need it just a way to prevent switching the flag
+when a file is mapped, and in the normal read/write path ensure the
+flag can't be switch while I/O is going on, which could either be
+done by ensuring it is only switched under i_rwsem or equivalent
+protection, or by setting the DAX flag once in the iocb similar to
+IOCB_DIRECT.
+
+And they easiest way to get all this done is as a first step to
+just allowing switching the flag when no blocks are allocated at
+all, similar to how the rt flag works.  Once that works properly
+and use cases show up we can relax the requirements, and we need
+to do that in a way without bloating the inode and various VFS
+code paths, as DAX is a complete fringe feature, and ѕwitching
+the flag and runtime is the fringe of a fringe.  It just isn't worth
+bloating the inode and wasting tons of developer time on it.
