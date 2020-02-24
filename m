@@ -2,73 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 506B6169C60
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 03:46:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6E06169C64
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 03:50:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbgBXCp4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Feb 2020 21:45:56 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:34177 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727168AbgBXCp4 (ORCPT
+        id S1727168AbgBXCuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Feb 2020 21:50:09 -0500
+Received: from smtprelay0043.hostedemail.com ([216.40.44.43]:39519 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727156AbgBXCuJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Feb 2020 21:45:56 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 15C784B8;
-        Sun, 23 Feb 2020 21:45:55 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Sun, 23 Feb 2020 21:45:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        s5Zfoadpx+pNCBSJRW69C71D/q3G2eT1Z4AraQAtWIw=; b=FNwTAdHtEQf4lV6n
-        fxF98PL7t1lBbbDmSXSIATpo+aC1Tj/H4W8JKmhNpwAJtYdrt9JvaDLaZA96Ghmt
-        52HHMC4DTGl0FjI6zpEvbNSKd1mlpVOqNUvjkOl7i/yD1G5mnRdI7fN2lVBN0nzt
-        IN5/HHJH/Ktx6xvGI+cJ3M1IFVTOMQMxK5jTfxu8LHQPg4CTgpp9K/RVAvhWrMjV
-        7EbZaBYzSUDSIfzKUR/dwEz4loj7i5Zjfx0U0u6B2HpJPktgcxooZF7olQQneZgl
-        JXMraNRDFCncurqMaPn58o9Wrr61udHd+Eq5yzAwWF+c5JLAiT7K+Fn8Ff8GJVgB
-        c9rpfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=s5Zfoadpx+pNCBSJRW69C71D/q3G2eT1Z4AraQAtW
-        Iw=; b=MTEQ0/siZ9FKsjN5bauguWL3cmn+fICsfaL7V4Kairj4IMLvMkJQmJ6Wt
-        oIGPgAsXMjmlIpEsJ7lBYmcd97WciBAqFfD1KkQClbAOWyGf9GlVYuLa0uudnUte
-        upkgX9/2l6q6sxMvDcoGAouyhcV8ilXu3Vi0VugcOGgU/9AfwkhEh+Gtyur6/QWa
-        nQOK/ZHNtaEVtZiW78J8VG4Qvo7VQGChLYqvS+2dm/4asuOEAmoPAC+BxnSmQPSh
-        FgghBbPrYCcK1EE3A/P0kbJmupbrV/Bi97Z8foJGkQzwoYnKZmbNpBux6ET0s9KN
-        1/n4Io1xbvmMk39LbDMhxYRqoi5bg==
-X-ME-Sender: <xms:4ThTXs9vzzta2WJFV_QhQatatbrv6-lPMBHTxhazrDZivsBL17YTpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeelgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuffhomhgrihhnpehkvghrnh
-    gvlhdrohhrghenucfkphepuddukedrvddtledrudektddrvddvleenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfi
-    drnhgvth
-X-ME-Proxy: <xmx:4ThTXo-Kvws7hJYhR04bViPCu-zS-2st7Ql0Q970kpmEKiupwOWuiQ>
-    <xmx:4ThTXtBliZa2C7jGSIJ8DT_Jqsi6zi9TV9KzlxGu-RzPK_FPjdusjQ>
-    <xmx:4ThTXgxDuNQSU6SNa-BMYFmG75bPNIFF_pWDAQckYny1Eqbbwblu6w>
-    <xmx:4jhTXosSnl9yH1EJszSlI5AUQrvzVxtqQ6EQhQuxndK8Jzj8zqsqTg>
-Received: from mickey.themaw.net (unknown [118.209.180.229])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 52B0C3060BD1;
-        Sun, 23 Feb 2020 21:45:51 -0500 (EST)
-Message-ID: <0f24065ec6aaf654602f03e241747efa4fbe73fd.camel@themaw.net>
-Subject: Re: [RFC PATCH 0/5] allow unprivileged overlay mounts
-From:   Ian Kent <raven@themaw.net>
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 24 Feb 2020 10:45:47 +0800
-In-Reply-To: <20191029170137.GA21633@mail.hallyn.com>
-References: <20191025112917.22518-1-mszeredi@redhat.com>
-         <CAJfpegv1SA7b45_2g-GFYrc7ZsOmcQ2qv602n=85L4RknkOvKQ@mail.gmail.com>
-         <20191029170137.GA21633@mail.hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        Sun, 23 Feb 2020 21:50:09 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2D36A1802926E;
+        Mon, 24 Feb 2020 02:50:07 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:2:41:355:379:599:960:966:968:973:981:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1593:1594:1605:1730:1747:1777:1792:1801:2196:2197:2199:2200:2393:2553:2559:2562:2693:2828:2897:3138:3139:3140:3141:3142:3622:3653:3865:3866:3867:3868:3870:3871:3872:3873:3874:4049:4118:4321:4385:4605:5007:6117:6119:7903:7904:8603:8660:9121:10004:10848:11026:11232:11233:11657:11658:11914:12297:12555:12740:12760:12895:12986:13148:13230:13439:14096:14097:14659:21067:21080:21221:21433:21451:21611:21627:21939:21972:21990:30012:30051:30054:30079:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: rest88_5836b87657e27
+X-Filterd-Recvd-Size: 7800
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 24 Feb 2020 02:50:06 +0000 (UTC)
+Message-ID: <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
+Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
+From:   Joe Perches <joe@perches.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Sun, 23 Feb 2020 18:48:38 -0800
+In-Reply-To: <20200223113024.GA4941@avx2>
+References: <20200222201539.GA22576@avx2>
+         <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
+         <20200223113024.GA4941@avx2>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -76,42 +43,181 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2019-10-29 at 12:01 -0500, Serge E. Hallyn wrote:
-> On Fri, Oct 25, 2019 at 01:35:20PM +0200, Miklos Szeredi wrote:
-> > On Fri, Oct 25, 2019 at 1:30 PM Miklos Szeredi <mszeredi@redhat.com
-> > > wrote:
-> > > Hi Eric,
+On Sun, 2020-02-23 at 14:30 +0300, Alexey Dobriyan wrote:
+> On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
+> > On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
+> > > Now that "struct proc_ops" exist we can start putting there stuff which
+> > > could not fly with VFS "struct file_operations"...
 > > > 
-> > > Can you please have a look at this patchset?
+> > > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
+> > > in the event of disappearing /proc entries which usually happens if module is
+> > > getting removed. Files like /proc/cpuinfo which never disappear simply do not
+> > > need such protection.
 > > > 
-> > > The most interesting one is the last oneliner adding
-> > > FS_USERNS_MOUNT;
-> > > whether I'm correct in stating that this isn't going to introduce
-> > > any
-> > > holes, or not...
+> > > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
+> > > "permanent" files.
+> > > 
+> > > Enable "permanent" flag for
+> > > 
+> > > 	/proc/cpuinfo
+> > > 	/proc/kmsg
+> > > 	/proc/modules
+> > > 	/proc/slabinfo
+> > > 	/proc/stat
+> > > 	/proc/sysvipc/*
+> > > 	/proc/swaps
+> > > 
+> > > More will come once I figure out foolproof way to prevent out module
+> > > authors from marking their stuff "permanent" for performance reasons
+> > > when it is not.
+> > > 
+> > > This should help with scalability: benchmark is "read /proc/cpuinfo R times
+> > > by N threads scattered over the system".
 > > 
-> > Forgot the git tree:
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git#ovl-
-> > unpriv
-> > 
-> > Thanks,
-> > Miklos
+> > Is this an actual expected use-case?
 > 
-> I've looked through it, seemed sensible to me.
+> Yes.
+> 
+> > Is there some additional unnecessary memory consumption
+> > in the unscaled systems?
+> 
+> No, it's the opposite. Less memory usage for everyone and noticeable
+> performance improvement for contented case.
+> 
+> > >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> > >  {
+> > >  	struct proc_dir_entry *pde = PDE(file_inode(file));
+> > >  	ssize_t rv = -EIO;
+> > > -	if (use_pde(pde)) {
+> > > -		typeof_member(struct proc_ops, proc_read) read;
+> > >  
+> > > -		read = pde->proc_ops->proc_read;
+> > > -		if (read)
+> > > -			rv = read(file, buf, count, ppos);
+> > > +	if (pde_is_permanent(pde)) {
+> > > +		return pde_read(pde, file, buf, count, ppos);
+> > > +	} else if (use_pde(pde)) {
+> > > +		rv = pde_read(pde, file, buf, count, ppos);
+> > >  		unuse_pde(pde);
+> > 
+> > Perhaps all the function call duplication could be minimized
+> > by using code without direct returns like:
+> > 
+> > 	rv = pde_read(pde, file, buf, count, pos);
+> > 	if (!pde_is_permanent(pde))
+> > 		unuse_pde(pde);
+> > 
+> > 	return rv;
+> 
+> Function call non-duplication is false goal.
 
-Seems sensible to me too but I'm not sure what I'm looking for.
+Depends, copy/paste errors are common and object code
+size generally increases.
 
-Perhaps a bit more on how this is secure to give an idea what's been
-checked and where to focus so the the survey can be broadened from
-there... I'm not sure.
+> Surprisingly it makes code bigger:
 
-For example, from my simple minded view I wonder about the posix acl
-code.
+Not so far as I can tell.  Are you sure?
 
-In ovl_posix_acl_xattr_set() there is a call to posix_acl_from_xattr()
-that uses init_user_ns. I wonder if that should be the current user ns
-in this case but I'm not sure?
+> 	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
+> 	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
+> 	Function                                     old     new   delta
+> 	proc_reg_read                                108     118     +10
+> 
+> and worse too: "rv" is carried on stack through "unuse_pde" call.
 
-Ian
+With gcc 9.2.1 x86-64 defconfig:
+
+Changing just proc_reg_read to:
+
+static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+{
+	struct proc_dir_entry *pde = PDE(file_inode(file));
+	ssize_t rv;
+
+	rv = pde_read(pde, file, buf, count, ppos);
+	if (use_pde(pde))
+		unuse_pde(pde);
+
+	return rv;
+}
+
+gives:
+
+$ size fs/proc/inode.o*
+   text	   data	    bss	    dec	    hex	filename
+   5448	     28	      0	   5476	   1564	fs/proc/inode.o.suggested
+   5526	     28	      0	   5554	   15b2	fs/proc/inode.o.alexey
+
+$ objdump -d fs/proc/inode.o.suggested (grep for proc_reg_read)
+0000000000000410 <proc_reg_read>:
+ 410:	41 54                	push   %r12
+ 412:	55                   	push   %rbp
+ 413:	48 8b 47 20          	mov    0x20(%rdi),%rax
+ 417:	48 8b 68 d0          	mov    -0x30(%rax),%rbp
+ 41b:	48 8b 45 30          	mov    0x30(%rbp),%rax
+ 41f:	48 8b 40 10          	mov    0x10(%rax),%rax
+ 423:	48 85 c0             	test   %rax,%rax
+ 426:	74 28                	je     450 <proc_reg_read+0x40>
+ 428:	e8 00 00 00 00       	callq  42d <proc_reg_read+0x1d>
+ 42d:	49 89 c4             	mov    %rax,%r12
+ 430:	8b 45 00             	mov    0x0(%rbp),%eax
+ 433:	85 c0                	test   %eax,%eax
+ 435:	78 12                	js     449 <proc_reg_read+0x39>
+ 437:	8d 50 01             	lea    0x1(%rax),%edx
+ 43a:	f0 0f b1 55 00       	lock cmpxchg %edx,0x0(%rbp)
+ 43f:	75 f2                	jne    433 <proc_reg_read+0x23>
+ 441:	48 89 ef             	mov    %rbp,%rdi
+ 444:	e8 e7 fc ff ff       	callq  130 <unuse_pde>
+ 449:	4c 89 e0             	mov    %r12,%rax
+ 44c:	5d                   	pop    %rbp
+ 44d:	41 5c                	pop    %r12
+ 44f:	c3                   	retq   
+ 450:	49 c7 c4 fb ff ff ff 	mov    $0xfffffffffffffffb,%r12
+ 457:	eb d7                	jmp    430 <proc_reg_read+0x20>
+ 459:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+vs
+ 
+$ objdump -d fs/proc/inode.o.alexey (grep for proc_reg_read)
+
+00000000000006e0 <proc_reg_read>:
+ 6e0:	41 54                	push   %r12
+ 6e2:	55                   	push   %rbp
+ 6e3:	48 8b 47 20          	mov    0x20(%rdi),%rax
+ 6e7:	48 8b 68 d0          	mov    -0x30(%rax),%rbp
+ 6eb:	f6 85 aa 00 00 00 01 	testb  $0x1,0xaa(%rbp)
+ 6f2:	74 15                	je     709 <proc_reg_read+0x29>
+ 6f4:	48 8b 45 30          	mov    0x30(%rbp),%rax
+ 6f8:	48 8b 40 10          	mov    0x10(%rax),%rax
+ 6fc:	48 85 c0             	test   %rax,%rax
+ 6ff:	74 3f                	je     740 <proc_reg_read+0x60>
+ 701:	5d                   	pop    %rbp
+ 702:	41 5c                	pop    %r12
+ 704:	e9 00 00 00 00       	jmpq   709 <proc_reg_read+0x29>
+ 709:	8b 45 00             	mov    0x0(%rbp),%eax
+ 70c:	85 c0                	test   %eax,%eax
+ 70e:	78 30                	js     740 <proc_reg_read+0x60>
+ 710:	44 8d 40 01          	lea    0x1(%rax),%r8d
+ 714:	f0 44 0f b1 45 00    	lock cmpxchg %r8d,0x0(%rbp)
+ 71a:	75 f0                	jne    70c <proc_reg_read+0x2c>
+ 71c:	48 8b 45 30          	mov    0x30(%rbp),%rax
+ 720:	48 8b 40 10          	mov    0x10(%rax),%rax
+ 724:	48 85 c0             	test   %rax,%rax
+ 727:	74 20                	je     749 <proc_reg_read+0x69>
+ 729:	e8 00 00 00 00       	callq  72e <proc_reg_read+0x4e>
+ 72e:	49 89 c4             	mov    %rax,%r12
+ 731:	48 89 ef             	mov    %rbp,%rdi
+ 734:	e8 f7 f9 ff ff       	callq  130 <unuse_pde>
+ 739:	4c 89 e0             	mov    %r12,%rax
+ 73c:	5d                   	pop    %rbp
+ 73d:	41 5c                	pop    %r12
+ 73f:	c3                   	retq   
+ 740:	49 c7 c4 fb ff ff ff 	mov    $0xfffffffffffffffb,%r12
+ 747:	eb f0                	jmp    739 <proc_reg_read+0x59>
+ 749:	49 c7 c4 fb ff ff ff 	mov    $0xfffffffffffffffb,%r12
+ 750:	eb df                	jmp    731 <proc_reg_read+0x51>
+ 752:	66 66 2e 0f 1f 84 00 	data16 nopw %cs:0x0(%rax,%rax,1)
+ 759:	00 00 00 00 
+ 75d:	0f 1f 00             	nopl   (%rax)
+
 
