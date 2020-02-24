@@ -2,99 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7737616AD82
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 18:32:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFA816AE2D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Feb 2020 18:55:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbgBXRca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 12:32:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52680 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbgBXRca (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 12:32:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 96B5FAC84;
-        Mon, 24 Feb 2020 17:32:28 +0000 (UTC)
-Subject: Re: [PATCH] vfs: Rename __is_local_mountpoint to is_local_mountpoint
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-References: <20200224170142.5604-1-nborisov@suse.com>
- <20200224171839.GB23230@ZenIV.linux.org.uk>
-From:   Nikolay Borisov <nborisov@suse.com>
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <892bab0d-8801-33cf-40bb-4de0613dab66@suse.com>
-Date:   Mon, 24 Feb 2020 19:32:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727479AbgBXRz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 12:55:26 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51320 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbgBXRzZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Feb 2020 12:55:25 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t23so237310wmi.1;
+        Mon, 24 Feb 2020 09:55:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
+        b=Vwkro33JPZEjGumCkuOvUlXTzL/fDauJkqYW8YDyhgcyZDvc9+xMMcMOp48V0SqDew
+         NtZUkEKblDHV8EvfvK5BMWroYkI+HmgUETvMBfgEvKXitmgQ7Q17y7t3jbtzZVMUfsVV
+         2q+nx/5gFgfqeKXnYe26ES5rnCgKJ0zRS9NoP/lHphqkoWgjMOMf8N8/5ou/BHKyduSO
+         EXsoKJqN/LfLHO2l/qdzEDlohe3shxKYZ6B+aPP0xIOdEclw/+Y1DRRXEi7oX0dgIBAH
+         zB3Xaxk8XQnRDP6nozRFtcBs+u9kZ/tEPdwEyTkYXbNnNHclyKJVgsX5VOyr8TkORgHs
+         RPlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=98hkSdEFZYYm7ue/qKLU11DJOrIsjwH9kzLWsOMOGoQ=;
+        b=Y5IiOE4LLchXd85N0or0eR7qizY9Ym6foC5grB+tFOQ5WppPvQgXc1yNtbflfsRadZ
+         8NXGvPkvqy4eMit0maJ6+lgWZZSiXVQd9T+mf19h5Y2SumtPsohInEhGlQgPLmCGcO5a
+         jw6P5DAjekgxppebKpG+TlKQ5FFWELq+9M88Ce0T51n2oBVLwrE8WbxEoCPThOEI9tnF
+         JN7MGb3BZVUr/a8CJqChDVxkiL3guoroTusAkOcDKFGPQLMUTxNpDQhRRlDzs2rznX3Z
+         8lN1g+hjO3Urj7LxPc3MYAWBo2qDgciFQLTMly5wIZXSXWxIOd4saZXApX1bfjmuTC1H
+         C1sQ==
+X-Gm-Message-State: APjAAAXac9hzKJnSdhvaMShT4w2xern07MGB6Ziru916d8jiDEHV6Dy+
+        LtPlDOb7oLDN1PsSeIZpea6amc8=
+X-Google-Smtp-Source: APXvYqxm0NJVyiy1qW3kAmbakTqJFJUOQ0dfkTq8hktodIEO2WpsI8z91rO0JnAJZ5HXpylenvl3GA==
+X-Received: by 2002:a1c:990b:: with SMTP id b11mr211208wme.15.1582566923445;
+        Mon, 24 Feb 2020 09:55:23 -0800 (PST)
+Received: from avx2 ([46.53.250.94])
+        by smtp.gmail.com with ESMTPSA id s8sm20772193wrt.57.2020.02.24.09.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2020 09:55:22 -0800 (PST)
+Date:   Mon, 24 Feb 2020 20:55:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] proc: faster open/read/close with "permanent" files
+Message-ID: <20200224175520.GA3401@avx2>
+References: <20200222201539.GA22576@avx2>
+ <7c30fd26941948fa1aedd1e73bdc2ebb8efec477.camel@perches.com>
+ <20200223113024.GA4941@avx2>
+ <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20200224171839.GB23230@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <dc93d5299169a33e00fc35a4c5f29ea72764bce0.camel@perches.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 24.02.20 г. 19:18 ч., Al Viro wrote:
-> On Mon, Feb 24, 2020 at 07:01:42PM +0200, Nikolay Borisov wrote:
->> Current is_local_mountpoint is a simple wrapper with added d_mountpoint
->> check. However, the same check is the first thing which
->> __is_local_mountpoint performs. So remove the wrapper and promote the
->> private helper to is_local_mountpoint. No semantics changes.
+On Sun, Feb 23, 2020 at 06:48:38PM -0800, Joe Perches wrote:
+> On Sun, 2020-02-23 at 14:30 +0300, Alexey Dobriyan wrote:
+> > On Sat, Feb 22, 2020 at 12:39:39PM -0800, Joe Perches wrote:
+> > > On Sat, 2020-02-22 at 23:15 +0300, Alexey Dobriyan wrote:
+> > > > Now that "struct proc_ops" exist we can start putting there stuff which
+> > > > could not fly with VFS "struct file_operations"...
+> > > > 
+> > > > Most of fs/proc/inode.c file is dedicated to make open/read/.../close reliable
+> > > > in the event of disappearing /proc entries which usually happens if module is
+> > > > getting removed. Files like /proc/cpuinfo which never disappear simply do not
+> > > > need such protection.
+> > > > 
+> > > > Save 2 atomic ops, 1 allocation, 1 free per open/read/close sequence for such
+> > > > "permanent" files.
+> > > > 
+> > > > Enable "permanent" flag for
+> > > > 
+> > > > 	/proc/cpuinfo
+> > > > 	/proc/kmsg
+> > > > 	/proc/modules
+> > > > 	/proc/slabinfo
+> > > > 	/proc/stat
+> > > > 	/proc/sysvipc/*
+> > > > 	/proc/swaps
+> > > > 
+> > > > More will come once I figure out foolproof way to prevent out module
+> > > > authors from marking their stuff "permanent" for performance reasons
+> > > > when it is not.
+> > > > 
+> > > > This should help with scalability: benchmark is "read /proc/cpuinfo R times
+> > > > by N threads scattered over the system".
+> > > 
+> > > Is this an actual expected use-case?
+> > 
+> > Yes.
+> > 
+> > > Is there some additional unnecessary memory consumption
+> > > in the unscaled systems?
+> > 
+> > No, it's the opposite. Less memory usage for everyone and noticeable
+> > performance improvement for contented case.
+> > 
+> > > >  static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> > > >  {
+> > > >  	struct proc_dir_entry *pde = PDE(file_inode(file));
+> > > >  	ssize_t rv = -EIO;
+> > > > -	if (use_pde(pde)) {
+> > > > -		typeof_member(struct proc_ops, proc_read) read;
+> > > >  
+> > > > -		read = pde->proc_ops->proc_read;
+> > > > -		if (read)
+> > > > -			rv = read(file, buf, count, ppos);
+> > > > +	if (pde_is_permanent(pde)) {
+> > > > +		return pde_read(pde, file, buf, count, ppos);
+> > > > +	} else if (use_pde(pde)) {
+> > > > +		rv = pde_read(pde, file, buf, count, ppos);
+> > > >  		unuse_pde(pde);
+> > > 
+> > > Perhaps all the function call duplication could be minimized
+> > > by using code without direct returns like:
+> > > 
+> > > 	rv = pde_read(pde, file, buf, count, pos);
+> > > 	if (!pde_is_permanent(pde))
+> > > 		unuse_pde(pde);
+> > > 
+> > > 	return rv;
+> > 
+> > Function call non-duplication is false goal.
 > 
-> NAK.  "No semantics changes" does not cut it - inline helper that checks
-> some unlikely condition and calls an out-of-line version is a fairly
-> common pattern, with legitimate uses.  It *may* be unwarranted here,
-> but you need more serious analysis than that.  I'm not saying that
-> the patch is wrong, but you'll also need to explain why removing the
-> check from __is_local_mountpoint() (and marking the condition unlikely
-> in the wrapper) would be worse than what you propose.
+> Depends, copy/paste errors are common and object code
+> size generally increases.
 > 
+> > Surprisingly it makes code bigger:
+> 
+> Not so far as I can tell.  Are you sure?
+> 
+> > 	$ ./scripts/bloat-o-meter ../vmlinux-000 ../obj/vmlinux
+> > 	add/remove: 0/0 grow/shrink: 1/0 up/down: 10/0 (10)
+> > 	Function                                     old     new   delta
+> > 	proc_reg_read                                108     118     +10
+> > 
+> > and worse too: "rv" is carried on stack through "unuse_pde" call.
+> 
+> With gcc 9.2.1 x86-64 defconfig:
+> 
+> Changing just proc_reg_read to:
+> 
+> static ssize_t proc_reg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> {
+> 	struct proc_dir_entry *pde = PDE(file_inode(file));
+> 	ssize_t rv;
+> 
+> 	rv = pde_read(pde, file, buf, count, ppos);
+> 	if (use_pde(pde))
+> 		unuse_pde(pde);
 
-My main motivation was to collapse the number of functions so it's
-easier to see what's going on and removing duplicate check. If you are
-going to accept the alternative version you proposed I'm fine sending it.
+What?
+
+Please make non-racy patch before doing anything.
+
+> 
+> 	return rv;
+> }
