@@ -2,142 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E16B716F0D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 22:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4CAF16F0EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 22:12:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbgBYVDI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 16:03:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:16033 "EHLO mga14.intel.com"
+        id S1727048AbgBYVMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 16:12:31 -0500
+Received: from mga11.intel.com ([192.55.52.93]:11503 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728618AbgBYVDI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 16:03:08 -0500
+        id S1726130AbgBYVMb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Feb 2020 16:12:31 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 13:03:07 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Feb 2020 13:12:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,485,1574150400"; 
-   d="scan'208";a="436393557"
+   d="scan'208";a="410370648"
 Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Feb 2020 13:03:06 -0800
-Date:   Tue, 25 Feb 2020 13:03:06 -0800
+  by orsmga005.jf.intel.com with ESMTP; 25 Feb 2020 13:12:29 -0800
+Date:   Tue, 25 Feb 2020 13:12:28 -0800
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
         "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200225210306.GA15810@iweiny-DESK2.sc.intel.com>
+Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
+Message-ID: <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
 References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de>
- <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de>
- <20200225000937.GA10776@dread.disaster.area>
- <20200225173633.GA30843@lst.de>
+ <20200221004134.30599-10-ira.weiny@intel.com>
+ <20200224003455.GY10776@dread.disaster.area>
+ <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
+ <20200224223245.GZ10776@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200225173633.GA30843@lst.de>
+In-Reply-To: <20200224223245.GZ10776@dread.disaster.area>
 User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 06:36:33PM +0100, Christoph Hellwig wrote:
-> On Tue, Feb 25, 2020 at 11:09:37AM +1100, Dave Chinner wrote:
-> > > No, the original code was broken because it didn't serialize between
-> > > DAX and buffer access.
+On Tue, Feb 25, 2020 at 09:32:45AM +1100, Dave Chinner wrote:
+> On Mon, Feb 24, 2020 at 11:57:36AM -0800, Ira Weiny wrote:
+> > On Mon, Feb 24, 2020 at 11:34:55AM +1100, Dave Chinner wrote:
+> > > On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
+> > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > 
+> > 
+> > [snip]
+> > 
+> > > > 
+> > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > index 35df324875db..5b014c428f0f 100644
+> > > > --- a/fs/xfs/xfs_inode.c
+> > > > +++ b/fs/xfs/xfs_inode.c
+> > > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+> > > >   *
+> > > >   * Basic locking order:
+> > > >   *
+> > > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > >   *
+> > > >   * mmap_sem locking order:
+> > > >   *
+> > > >   * i_rwsem -> page lock -> mmap_sem
+> > > > - * mmap_sem -> i_mmap_lock -> page_lock
+> > > > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
+> > > >   *
+> > > >   * The difference in mmap_sem locking order mean that we cannot hold the
+> > > >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
+> > > > @@ -182,6 +182,9 @@ xfs_ilock(
+> > > >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+> > > >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
+> > > >  
+> > > > +	if (lock_flags & XFS_DAX_EXCL)
+> > > > +		inode_aops_down_write(VFS_I(ip));
 > > > 
-> > > Take a step back and look where the problems are, and they are not
-> > > mostly with the aops.  In fact the only aop useful for DAX is
-> > > is ->writepages, and how it uses ->writepages is actually a bit of
-> > > an abuse of that interface.
+> > > I largely don't see the point of adding this to xfs_ilock/iunlock.
+> > > 
+> > > It's only got one caller, so I don't see much point in adding it to
+> > > an interface that has over a hundred other call sites that don't
+> > > need or use this lock. just open code it where it is needed in the
+> > > ioctl code.
 > > 
-> > The races are all through the fops, too, which is one of the reasons
-> > Darrick mentioned we should probably move this up to file ops
-> > level...
-> 
-> But the file ops are very simple to use.  Pass the flag in the iocb,
-> and make sure the flag can only changed with i_rwsem held.  That part
-> is pretty trivial, the interesting case is mmap because it is so
-> spread out.
-> 
-> > > So what we really need it just a way to prevent switching the flag
-> > > when a file is mapped,
+> > I know it seems overkill but if we don't do this we need to code a flag to be
+> > returned from xfs_ioctl_setattr_dax_invalidate().  This flag is then used in
+> > xfs_ioctl_setattr_get_trans() to create the transaction log item which can then
+> > be properly used to unlock the lock in xfs_inode_item_release()
 > > 
-> > That's not sufficient.
-> > 
-> > We also have to prevent the file from being mapped *while we are
-> > switching*. Nothing in the mmap() path actually serialises against
-> > filesystem operations, and the initial behavioural checks in the
-> > page fault path are similarly unserialised against changing the
-> > S_DAX flag.
+> > I don't know of a cleaner way to communicate to xfs_inode_item_release() to
+> > unlock i_aops_sem after the transaction is complete.
 > 
-> And the important part here is ->mmap.  If ->mmap doesn't get through
-> we are not going to see page faults.
+> We manually unlock inodes after transactions in many cases -
+> anywhere we do a rolling transaction, the inode locks do not get
+> released by the transaction. Hence for a one-off case like this it
+> doesn't really make sense to push all this infrastructure into the
+> transaction subsystem. Especially as we can manually lock before and
+> unlock after the transaction context without any real complexity.
 
-The series already blocks mmap'ed files from a switch.  That was not crazy
-hard.  I don't see a use case to support changing the mode while the file is
-mapped.
+So does xfs_trans_commit() operate synchronously?
 
-> 
-> > > and in the normal read/write path ensure the
-> > > flag can't be switch while I/O is going on, which could either be
-> > > done by ensuring it is only switched under i_rwsem or equivalent
-> > > protection, or by setting the DAX flag once in the iocb similar to
-> > > IOCB_DIRECT.
-> > 
-> > The iocb path is not the problem - that's entirely serialised
-> > against S_DAX changes by the i_rwsem. The problem is that we have no
-> > equivalent filesystem level serialisation for the entire mmap/page
-> > fault path, and it checks S_DAX all over the place.
-> 
-> Not right now.  We have various IS_DAX checks outside it.  But it is
-> easily fixable indeed.
-> 
-> > /me wonders if the best thing to do is to add a ->fault callout to
-> > tell the filesystem to lock/unlock the inode right up at the top of
-> > the page fault path, outside even the mmap_sem.  That means all the
-> > methods that the page fault calls are protected against S_DAX
-> > changes, and it gives us a low cost method of serialising page
-> > faults against DIO (e.g. via inode_dio_wait())....
-> 
-> Maybe.  Especially if it solves real problems and isn't just new
-> overhead to add an esoteric feature.
+I want to understand this better because I have fought with a lot of ABBA
+issues with these locks.  So...  can I hold the lock until after
+xfs_trans_commit() and safely unlock it there... because the XFS_MMAPLOCK_EXCL,
+XFS_IOLOCK_EXCL, and XFS_ILOCK_EXCL will be released at that point?  Thus
+preserving the following lock order.
 
-I thought about doing something like this but it seemed easier to block the
-change while the file was mapped.
+...
+ * Basic locking order:
+ *
+ * i_aops_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+ *
+...
 
-> 
-> > 
-> > > And they easiest way to get all this done is as a first step to
-> > > just allowing switching the flag when no blocks are allocated at
-> > > all, similar to how the rt flag works.
-> > 
-> > False equivalence - it is not similar because the RT flag changes
-> > and their associated state checks are *already fully serialised* by
-> > the XFS_ILOCK_EXCL. S_DAX accesses have no such serialisation, and
-> > that's the problem we need to solve...
-> 
-> And my point is that if we ensure S_DAX can only be checked if there
-> are no blocks on the file, is is fairly easy to provide the same
-> guarantee.  And I've not heard any argument that we really need more
-> flexibility than that.  In fact I think just being able to change it
-> on the parent directory and inheriting the flag might be more than
-> plenty, which would lead to a very simple implementation without any
-> of the crazy overhead in this series.
-
-Inherit on file creation or also if a file was moved under the directory?
-
-Do we need to consider hard or soft links?
-
+Thanks for the review!
 Ira
 
+> 
+> This also means that we can, if necessary, do aops manipulation work
+> /after/ the transaction that changes on-disk state completes and we
+> still hold the aops reference exclusively. While we don't do that
+> now, I think it is worthwhile keeping our options open here....
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
