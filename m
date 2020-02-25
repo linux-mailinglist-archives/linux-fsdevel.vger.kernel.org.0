@@ -2,86 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB65916B729
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 02:25:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FAD516B75F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 02:49:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbgBYBZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 20:25:00 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54390 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbgBYBY7 (ORCPT
+        id S1728738AbgBYBtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 20:49:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57754 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbgBYBtu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 20:24:59 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6Oy1-000c1D-U6; Tue, 25 Feb 2020 01:24:58 +0000
-Date:   Tue, 25 Feb 2020 01:24:57 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v2)
-Message-ID: <20200225012457.GA138294@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+        Mon, 24 Feb 2020 20:49:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yPstBDWt6d6bgib6lzSxq/HWT4OJnZOw1KjPemQQZhk=; b=nq6XE/tSepneJylkylrJT/pjX0
+        Spd9n665DMmObVCAJQLiBcVE27W55R0GvvnwfhobI0nmTEDz86mNpQ7jYVEvZB4cBHnXuxzpqbtB2
+        dztcP9+wnlj1Npzqvcvw4SBbhcPINCOrW5w/GB5Voz46hys+/yy1cVSQJnvnClSLqQV0BlbT/xSnd
+        Nll+nW4Z23UwGg0w+NmFJ+j5Vj9uN8TwBH0aWud5eMbaqI91DlTxC7X8GQe99Ryifnf+8ekuv6cG5
+        v3Zi+BLESY98iLiL33OQI7hDesuLmsELZwns1M2tRR8quGkyU/jgISoLGdMjNj/zL8NWKAboOxtDf
+        qQluRdMA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6PM5-0005vC-A1; Tue, 25 Feb 2020 01:49:49 +0000
+Date:   Mon, 24 Feb 2020 17:49:49 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 21/24] iomap: Restructure iomap_readpages_actor
+Message-ID: <20200225014949.GS24185@bombadil.infradead.org>
+References: <20200219210103.32400-1-willy@infradead.org>
+ <20200219210103.32400-22-willy@infradead.org>
+ <20200220154741.GB19577@infradead.org>
+ <20200220162404.GY24185@bombadil.infradead.org>
+ <20200224221749.GA22231@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200223011154.GY23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200224221749.GA22231@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 23, 2020 at 01:12:21AM +0000, Al Viro wrote:
-> 	This is a slightly extended repost of the patchset posted on
-> Jan 19.  Current branch is in vfs.git#work.do_last, the main
-> difference from the last time around being a bit of do_last()
-> untangling added in the end of series.  #work.openat2 is already
-> in mainline, which simplifies the series - now it's a straight
-> branch with no merges.
+On Mon, Feb 24, 2020 at 02:17:49PM -0800, Christoph Hellwig wrote:
+> On Thu, Feb 20, 2020 at 08:24:04AM -0800, Matthew Wilcox wrote:
+> > On Thu, Feb 20, 2020 at 07:47:41AM -0800, Christoph Hellwig wrote:
+> > > On Wed, Feb 19, 2020 at 01:01:00PM -0800, Matthew Wilcox wrote:
+> > > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > > > 
+> > > > By putting the 'have we reached the end of the page' condition at the end
+> > > > of the loop instead of the beginning, we can remove the 'submit the last
+> > > > page' code from iomap_readpages().  Also check that iomap_readpage_actor()
+> > > > didn't return 0, which would lead to an endless loop.
+> > > 
+> > > I'm obviously biassed a I wrote the original code, but I find the new
+> > > very much harder to understand (not that the previous one was easy, this
+> > > is tricky code..).
+> > 
+> > Agreed, I found the original code hard to understand.  I think this is
+> > easier because now cur_page doesn't leak outside this loop, so it has
+> > an obvious lifecycle.
+> 
+> I really don't like this patch, and would prefer if the series goes
+> ahead without it, as the current sctructure works just fine even
+> with the readahead changes.
 
-Whee...  While trying to massage ".." handling towards the use of
-regular mount crossing semantics, I've found something interesting.
-Namely, if you start in a directory with overmounted parent,
-LOOKUP_NO_XDEV resolution of ../something will bloody well cross
-into the overmount.
-
-Reason: follow_dotdot() (and its RCU counterpart) check for LOOKUP_NO_XDEV
-when crossing into underlying fs, but not when crossing into overmount
-of the parent.
-
-Interpretation of .. is basically
-
-loop:	if we are in root					// uncommon
-		next = current position
-	else if we are in root of a mounted filesystem		// more rare
-		move to underlying mountpoint
-		goto loop
-	else
-		next = parent directory of current position	// most common
-
-	while next is overmounted				// _VERY_ uncommon
-		next = whatever's mounted on next
-
-	move to next
-
-The second loop should've been sharing code with the normal mountpoint
-crossing.  It doesn't, which has already lead to interesting inconsistencies
-(e.g. autofs generally expects ->d_manage() to be called before crossing
-into it; here it's not done).  LOOKUP_NO_XDEV has just added one more...
-
-Incidentally, another inconsistency is LOOKUP_BENEATH treatment in case
-when we have walked out of the subtree by way of e.g. procfs symlink and
-then ran into .. in the absolute root (that's
-                if (!follow_up(&nd->path))
-                        break;
-in follow_dotdot()).  Shouldn't that give the same reaction as ..
-in root (EXDEV on LOOKUP_BENEATH, that is)?  It doesn't...
-
-Another one is about LOOKUP_NO_XDEV again: suppose you have process'
-root directly overmounted and cwd in the root of whatever's overmounting
-it.  Resolution of .. will stay in cwd - we have no parent within the
-chroot jail we are in, so we move to whatever's overmounting that root.
-Which is the original location.  Should we fail on LOOKUP_NO_XDEV here?
-Plain .. in the root of chroot jail (not overmounted by anything) does
-*not*...
+Dave Chinner specifically asked me to do it this way, so please fight
+amongst yourselves.
