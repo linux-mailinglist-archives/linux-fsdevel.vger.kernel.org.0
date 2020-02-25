@@ -2,240 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6041D16F2B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 23:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C729C16F2D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 23:59:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbgBYWtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 17:49:43 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:32989 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728806AbgBYWtn (ORCPT
+        id S1729271AbgBYW7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 17:59:48 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45885 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728806AbgBYW7r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:49:43 -0500
-Received: by mail-oi1-f194.google.com with SMTP id q81so1070413oig.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 14:49:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wj5T1UtJ1FhajyQP2DE5DlzXgLbIbN8zZKz81bFb3dc=;
-        b=Lfl8aQwG7T5yRx7bX7opscefnao9sE0xgLdVx2fmSNx7FV/bJD8jUAh3sSF32CPXhn
-         nRbaLkWaDYP+wkYiU40WHRS5jiwFPt8PfqckcoQ1GRtAUJ+5RzVjg78jv9QRNa3Jq9oy
-         UtuFpMQ1zCDE3OKMYYCdOnPGbGUrKFq/HkwED+8CUnXdqaNnbi4adJOzfqjMjMxz09Pj
-         Sf5K3S8+HvwlkdsykgCqgjVEJFzO/HMbB+UE4oDVrcMiEdSWICaGTGQyVo2i8EB1CdnE
-         cROHXpa6jUqeIYW3Sa/FBcb3PWGYVQvULNEGrFTv3fY/udyAw9+jj2+63sAbzg/qR7MB
-         Oxpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wj5T1UtJ1FhajyQP2DE5DlzXgLbIbN8zZKz81bFb3dc=;
-        b=kpHEXHsPwjtPfuyvkICbso/Qp3w2Im+DAXObcrjvIqznIsNBEzL8Q4L5PzkFvBinW1
-         WbtqXVoA496gMbraTqA8p6UESXlpVF0/pWFZ2+dzEp+Fsk19vTrmYCu/Iz+1WbXPc0rB
-         b1h1DHML6c4MNoeQW3wKrnNzZ7Uzp4N1EI5SgZ6bgEsfMKytf3a1aM0TVF6hgKbsw6nP
-         EFD41yIKUbD6NvCbev1sNCSfwKM5Oh1goFb7EGPHGZywhmwvJKP2dvjqJK0KKWrjJSeq
-         4FnEOxNN/Dw4Q9x7brypUB+ys64Jcoh3KW/i0M0KlP3qv1/URydRyVIy7rlQcA2ArXOj
-         BjaA==
-X-Gm-Message-State: APjAAAWMBq+2U3WgYUfwL5G3nsnAdX9f9NkbUeXX0/00TlaRa2xZu95g
-        3I5x5RbbpW0kc94udPo3DRswPggEprrE6NHKlbtb0Q==
-X-Google-Smtp-Source: APXvYqzSI0mKTSVTY2eTavO43X86cRUSGftoZ9+jxIZhPGdiDKxGoShk7Z7SDfrrWFaqA62qLsTd6iLzhdaZO9QSqdM=
-X-Received: by 2002:a05:6808:a83:: with SMTP id q3mr1010050oij.0.1582670982001;
- Tue, 25 Feb 2020 14:49:42 -0800 (PST)
+        Tue, 25 Feb 2020 17:59:47 -0500
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A7E1D3A2C51;
+        Wed, 26 Feb 2020 09:59:42 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j6jAz-0004a5-3t; Wed, 26 Feb 2020 09:59:41 +1100
+Date:   Wed, 26 Feb 2020 09:59:41 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
+Message-ID: <20200225225941.GO10776@dread.disaster.area>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-10-ira.weiny@intel.com>
+ <20200224003455.GY10776@dread.disaster.area>
+ <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
+ <20200224223245.GZ10776@dread.disaster.area>
+ <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20200220215707.GC10816@redhat.com> <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
- <20200221201759.GF25974@redhat.com> <20200223230330.GE10737@dread.disaster.area>
- <20200224201346.GC14651@redhat.com> <CAPcyv4gGrimesjZ=OKRaYTDd5dUVz+U9aPeBMh_H3_YCz4FOEQ@mail.gmail.com>
- <20200224211553.GD14651@redhat.com> <CAPcyv4gX8p0YuMg3=r9DtPAO3Lz-96nuNyXbK1X5-cyVzNrDTA@mail.gmail.com>
- <20200225133653.GA7488@redhat.com> <CAPcyv4h2fdo=-jqLPTqnuxYVMbBgODWPqafH35yBMBaPa5Rxcw@mail.gmail.com>
- <20200225200824.GB7488@redhat.com>
-In-Reply-To: <20200225200824.GB7488@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 25 Feb 2020 14:49:30 -0800
-Message-ID: <CAPcyv4jN7ntOO2hK4ByDcX4-Kob=aJNOr3fGR_k_8rxZ=3Sz7w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
- arbitrary offset and len
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dave Chinner <david@fromorbit.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=WlU5GPDpDACU7zcM-uYA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 12:08 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Tue, Feb 25, 2020 at 08:25:27AM -0800, Dan Williams wrote:
-> > On Tue, Feb 25, 2020 at 5:37 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Mon, Feb 24, 2020 at 01:32:58PM -0800, Dan Williams wrote:
-> > >
-> > > [..]
-> > > > > > > Ok, how about if I add one more patch to the series which will check
-> > > > > > > if unwritten portion of the page has known poison. If it has, then
-> > > > > > > -EIO is returned.
-> > > > > > >
-> > > > > > >
-> > > > > > > Subject: pmem: zero page range return error if poisoned memory in unwritten area
-> > > > > > >
-> > > > > > > Filesystems call into pmem_dax_zero_page_range() to zero partial page upon
-> > > > > > > truncate. If partial page is being zeroed, then at the end of operation
-> > > > > > > file systems expect that there is no poison in the whole page (atleast
-> > > > > > > known poison).
-> > > > > > >
-> > > > > > > So make sure part of the partial page which is not being written, does not
-> > > > > > > have poison. If it does, return error. If there is poison in area of page
-> > > > > > > being written, it will be cleared.
-> > > > > >
-> > > > > > No, I don't like that the zero operation is special cased compared to
-> > > > > > the write case. I'd say let's make them identical for now. I.e. fail
-> > > > > > the I/O at dax_direct_access() time.
-> > > > >
-> > > > > So basically __dax_zero_page_range() will only write zeros (and not
-> > > > > try to clear any poison). Right?
-> > > >
-> > > > Yes, the zero operation would have already failed at the
-> > > > dax_direct_access() step if there was present poison.
-> > > >
-> > > > > > I think the error clearing
-> > > > > > interface should be an explicit / separate op rather than a
-> > > > > > side-effect. What about an explicit interface for initializing newly
-> > > > > > allocated blocks, and the only reliable way to destroy poison through
-> > > > > > the filesystem is to free the block?
-> > > > >
-> > > > > Effectively pmem_make_request() is already that interface filesystems
-> > > > > use to initialize blocks and clear poison. So we don't really have to
-> > > > > introduce a new interface?
-> > > >
-> > > > pmem_make_request() is shared with the I/O path and is too low in the
-> > > > stack to understand intent. DAX intercepts the I/O path closer to the
-> > > > filesystem and can understand zeroing vs writing today. I'm proposing
-> > > > we go a step further and make DAX understand free-to-allocated-block
-> > > > initialization instead of just zeroing. Inject the error clearing into
-> > > > that initialization interface.
-> > > >
-> > > > > Or you are suggesting separate dax_zero_page_range() interface which will
-> > > > > always call into firmware to clear poison. And that will make sure latent
-> > > > > poison is cleared as well and filesystem should use that for block
-> > > > > initialization instead?
-> > > >
-> > > > Yes, except latent poison would not be cleared until the zeroing is
-> > > > implemented with movdir64b instead of callouts to firmware. It's
-> > > > otherwise too slow to call out to firmware unconditionally.
-> > > >
-> > > > > I do like the idea of not having to differentiate
-> > > > > between known poison and latent poison. Once a block has been initialized
-> > > > > all poison should be cleared (known/latent). I am worried though that
-> > > > > on large devices this might slowdown filesystem initialization a lot
-> > > > > if they are zeroing large range of blocks.
-> > > > >
-> > > > > If yes, this sounds like two different patch series. First patch series
-> > > > > takes care of removing blkdev_issue_zeroout() from
-> > > > > __dax_zero_page_range() and couple of iomap related cleans christoph
-> > > > > wanted.
-> > > > >
-> > > > > And second patch series for adding new dax operation to zero a range
-> > > > > and always call info firmware to clear poison and modify filesystems
-> > > > > accordingly.
-> > > >
-> > > > Yes, but they may need to be merged together. I don't want to regress
-> > > > the ability of a block-aligned hole-punch to clear errors.
-> > >
-> > > Hi Dan,
-> > >
-> > > IIUC, block aligned hole punch don't go through __dax_zero_page_range()
-> > > path. Instead they call blkdev_issue_zeroout() at later point of time.
-> > >
-> > > Only partial block zeroing path is taking __dax_zero_page_range(). So
-> > > even if we remove poison clearing code from __dax_zero_page_range(),
-> > > there should not be a regression w.r.t full block zeroing. Only possible
-> > > regression will be if somebody was doing partial block zeroing on sector
-> > > boundary, then poison will not be cleared.
-> > >
-> > > We now seem to be discussing too many issues w.r.t poison clearing
-> > > and dax. Atleast 3 issues are mentioned in this thread.
-> > >
-> > > A. Get rid of dependency on block device in dax zeroing path.
-> > >    (__dax_zero_page_range)
-> > >
-> > > B. Provide a way to clear latent poison. And possibly use movdir64b to
-> > >    do that and make filesystems use that interface for initialization
-> > >    of blocks.
-> > >
-> > > C. Dax zero operation is clearing known poison while copy_from_iter() is
-> > >    not. I guess this ship has already sailed. If we change it now,
-> > >    somebody will complain of some regression.
-> > >
-> > > For issue A, there are two possible ways to deal with it.
-> > >
-> > > 1. Implement a dax method to zero page. And this method will also clear
-> > >    known poison. This is what my patch series is doing.
-> > >
-> > > 2. Just get rid of blkdev_issue_zeroout() from __dax_zero_page_range()
-> > >    so that no poison will be cleared in __dax_zero_page_range() path. This
-> > >    path is currently used in partial page zeroing path and full filesystem
-> > >    block zeroing happens with blkdev_issue_zeroout(). There is a small
-> > >    chance of regression here in case of sector aligned partial block
-> > >    zeroing.
-> > >
-> > > My patch series takes care of issue A without any regressions. In fact it
-> > > improves current interface. For example, currently "truncate -s 512
-> > > foo.txt" will succeed even if first sector in the block is poisoned. My
-> > > patch series fixes it. Current implementation will return error on if any
-> > > non sector aligned truncate is done and any of the sector is poisoned. My
-> > > implementation will not return error if poisoned can be cleared as part
-> > > of zeroing. It will return only if poison is present in non-zeoring part.
-> >
-> > That asymmetry makes the implementation too much of a special case. If
-> > the dax mapping path forces error boundaries on PAGE_SIZE blocks then
-> > so should zeroing.
-> >
-> > >
-> > > Why don't we solve one issue A now and deal with issue B and C later in
-> > > a sepaprate patch series. This patch series gets rid of dependency on
-> > > block device in dax path and also makes current zeroing interface better.
-> >
-> > I'm ok with replacing blkdev_issue_zeroout() with a dax operation
-> > callback that deals with page aligned entries. That change at least
-> > makes the error boundary symmetric across copy_from_iter() and the
-> > zeroing path.
->
-> IIUC, you are suggesting that modify dax_zero_page_range() to take page
-> aligned start and size and call this interface from
-> __dax_zero_page_range() and get rid of blkdev_issue_zeroout() in that
-> path?
->
-> Something like.
->
-> __dax_zero_page_range() {
->   if(page_aligned_io)
->         call_dax_page_zero_range()
->   else
->         use_direct_access_and_memcpy;
-> }
->
-> And other callers of blkdev_issue_zeroout() in filesystems can migrate
-> to calling dax_zero_page_range() instead.
->
-> If yes, I am not seeing what advantage do we get by this change.
->
-> - __dax_zero_page_range() seems to be called by only partial block
->   zeroing code. So dax_zero_page_range() call will remain unused.
->
->
-> - dax_zero_page_range() will be exact replacement of
->   blkdev_issue_zeroout() so filesystems will not gain anything. Just that
->   it will create a dax specific hook.
->
-> In that case it might be simpler to just get rid of blkdev_issue_zeroout()
-> call from __dax_zero_page_range() and make sure there are no callers of
-> full block zeroing from this path.
+On Tue, Feb 25, 2020 at 01:12:28PM -0800, Ira Weiny wrote:
+> On Tue, Feb 25, 2020 at 09:32:45AM +1100, Dave Chinner wrote:
+> > On Mon, Feb 24, 2020 at 11:57:36AM -0800, Ira Weiny wrote:
+> > > On Mon, Feb 24, 2020 at 11:34:55AM +1100, Dave Chinner wrote:
+> > > > On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
+> > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > 
+> > > 
+> > > [snip]
+> > > 
+> > > > > 
+> > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > > index 35df324875db..5b014c428f0f 100644
+> > > > > --- a/fs/xfs/xfs_inode.c
+> > > > > +++ b/fs/xfs/xfs_inode.c
+> > > > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+> > > > >   *
+> > > > >   * Basic locking order:
+> > > > >   *
+> > > > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > > > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > > >   *
+> > > > >   * mmap_sem locking order:
+> > > > >   *
+> > > > >   * i_rwsem -> page lock -> mmap_sem
+> > > > > - * mmap_sem -> i_mmap_lock -> page_lock
+> > > > > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
+> > > > >   *
+> > > > >   * The difference in mmap_sem locking order mean that we cannot hold the
+> > > > >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
+> > > > > @@ -182,6 +182,9 @@ xfs_ilock(
+> > > > >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+> > > > >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
+> > > > >  
+> > > > > +	if (lock_flags & XFS_DAX_EXCL)
+> > > > > +		inode_aops_down_write(VFS_I(ip));
+> > > > 
+> > > > I largely don't see the point of adding this to xfs_ilock/iunlock.
+> > > > 
+> > > > It's only got one caller, so I don't see much point in adding it to
+> > > > an interface that has over a hundred other call sites that don't
+> > > > need or use this lock. just open code it where it is needed in the
+> > > > ioctl code.
+> > > 
+> > > I know it seems overkill but if we don't do this we need to code a flag to be
+> > > returned from xfs_ioctl_setattr_dax_invalidate().  This flag is then used in
+> > > xfs_ioctl_setattr_get_trans() to create the transaction log item which can then
+> > > be properly used to unlock the lock in xfs_inode_item_release()
+> > > 
+> > > I don't know of a cleaner way to communicate to xfs_inode_item_release() to
+> > > unlock i_aops_sem after the transaction is complete.
+> > 
+> > We manually unlock inodes after transactions in many cases -
+> > anywhere we do a rolling transaction, the inode locks do not get
+> > released by the transaction. Hence for a one-off case like this it
+> > doesn't really make sense to push all this infrastructure into the
+> > transaction subsystem. Especially as we can manually lock before and
+> > unlock after the transaction context without any real complexity.
+> 
+> So does xfs_trans_commit() operate synchronously?
 
-I think you're right. The path I'm concerned about not regressing is
-the error clearing on new block allocation and we get that already via
-xfs_zero_extent() and sb_issue_zeroout(). For your fs we'll want a
-dax-device equivalent  for that path, but that does mean that
-__dax_zero_page_range() stays out of the error clearing game.
+What do you mean by "synchronously", and what are you expecting to
+occur (a)synchronously with respect to filesystem objects and/or
+on-disk state?
+
+Keep in mid that the xfs transaction subsystem is a complex
+asynchronous IO engine full of feedback loops and resource
+management, so asking if something is "synchronous" without any
+other context is a difficult question to answer :)
+
+> I want to understand this better because I have fought with a lot of ABBA
+> issues with these locks.  So...  can I hold the lock until after
+> xfs_trans_commit() and safely unlock it there... because the XFS_MMAPLOCK_EXCL,
+> XFS_IOLOCK_EXCL, and XFS_ILOCK_EXCL will be released at that point?  Thus
+> preserving the following lock order.
+
+See how operations like xfs_create, xfs_unlink, etc work. The don't
+specify flags to xfs_ijoin(), and so the transaction commits don't
+automatically unlock the inode. This is necessary so that rolling
+transactions are executed atomically w.r.t. inode access - no-one
+can lock and access the inode while a multi-commit rolling
+transaction on the inode is on-going.
+
+In this case it's just a single commit and we don't need to keep
+it locked after the change is made, so we can unlock the inode
+on commit. So for the XFS internal locks the code is fine and
+doesn't need to change. We just need to wrap the VFS aops lock (if
+we keep it) around the outside of all the XFS locking until the
+transaction commits and unlocks the XFS locks...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
