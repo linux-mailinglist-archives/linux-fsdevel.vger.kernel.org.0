@@ -2,96 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE4616EED5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 20:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D14716EF24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 20:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbgBYTQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 14:16:17 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40894 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730995AbgBYTQQ (ORCPT
+        id S1730671AbgBYTh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 14:37:27 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:45138 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728555AbgBYThW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:16:16 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so185312plp.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 11:16:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=b99EgRmcp6u1zsZNpUbvhzpwtqn608FaTwMrFvX1wow=;
-        b=L9WLI+4G74iViWuakHZtFcVF28mi9T91ZIzz6uQPWJh0QOMf/QV5QztwhxNuO8j7L5
-         9Qi2BOkxxZQOGBDbtc5+e6wmFhLIR4r3LA0NT2PoVyEPhJyLl0SEyt09g9oEFaJQGJuy
-         WoTXiGT8QYDglCNKAU5Chk7k0p/0Ci/AlVXO4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b99EgRmcp6u1zsZNpUbvhzpwtqn608FaTwMrFvX1wow=;
-        b=tubY0L6WANbbZ2wub2/LMeUYfvtlu1wxZOtjWA6Z5FNcdB9eWqUNkxnyX1m+imqMKc
-         VYo6uMyKBpRsudyFFQQPtQP2WfBPctTfvKgAbWV2hRb3V3bOgaigDkBW3hSYE/8k58u0
-         cAGKayzMovJ7yRB+5hyLlyrOmJ+IYN//eMRA8EWHikaHAfEHekQplyWGWgChA3rZhKdn
-         ydf0HLPb1pWyTv4WWTCrqmr/RrMcvGnJvhBDjY2JMyL65L002Q5WpAwlZcVKb90teAkB
-         H27udK2cvN3YZ4qZV9PmBs2bxEYG5DeYzT1+DmAEKSwJ5zAUgRBQ9mX7f5q6bizSYN4m
-         NxSw==
-X-Gm-Message-State: APjAAAU/aVd1elfBw+mX2e4qvyejYoNRaz7mFZ0ZKrbwrkNetqiG4daT
-        6xIUw+W9oaQnp1gAoU2Zg04nyA==
-X-Google-Smtp-Source: APXvYqzQlLhPIFPq3uvh5CL4wIxLVhcX97mccMpaVx6FggtRnvJcPxL13cj25t0wmPJlTqiWsgadYw==
-X-Received: by 2002:a17:902:8a81:: with SMTP id p1mr23977plo.284.1582658176242;
-        Tue, 25 Feb 2020 11:16:16 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z4sm17295948pfn.42.2020.02.25.11.16.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 11:16:15 -0800 (PST)
-Date:   Tue, 25 Feb 2020 11:16:14 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     qiwuchen55@gmail.com
-Cc:     anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        linux-fsdevel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
-Subject: Re: [PATCH 2/2] pstore/ram: remove unnecessary
- ramoops_unregister_dummy()
-Message-ID: <202002251116.EA2C8C561@keescook>
-References: <1581068800-13817-1-git-send-email-qiwuchen55@gmail.com>
- <1581068800-13817-2-git-send-email-qiwuchen55@gmail.com>
+        Tue, 25 Feb 2020 14:37:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582659441;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3454YjUXRoDS+24Lzxnu4Pv0NqG7YV73o/VGu7/5u2E=;
+        b=MmFIV2bCFfKsScL4zbRKXb9IbJaKNNlhasHYPnSW6EodaAzOvlGhIFBPFqnHN2hU2xfdmc
+        6IZuIE8eXvoviUr+/7eQLNDd9ekMwTwuGpgD/oH4iQg2jCOn2fAejJX50YRRR0sEn1RQZh
+        WXBCorgyRMvo86IbzlBo0yzLQoCcLLI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-367-9ulGlCEBOoewJwoiFtQzDg-1; Tue, 25 Feb 2020 14:37:17 -0500
+X-MC-Unique: 9ulGlCEBOoewJwoiFtQzDg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2852C8017CC;
+        Tue, 25 Feb 2020 19:37:15 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0FC65C296;
+        Tue, 25 Feb 2020 19:37:13 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, jhallida@redhat.com
+Cc:     Dave Chinner <david@fromorbit.com>, ira.weiny@intel.com,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space operations state
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+        <20200221004134.30599-8-ira.weiny@intel.com>
+        <20200221174449.GB11378@lst.de>
+        <20200221224419.GW10776@dread.disaster.area>
+        <20200224175603.GE7771@lst.de>
+        <20200225000937.GA10776@dread.disaster.area>
+        <20200225173633.GA30843@lst.de>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Tue, 25 Feb 2020 14:37:12 -0500
+In-Reply-To: <20200225173633.GA30843@lst.de> (Christoph Hellwig's message of
+        "Tue, 25 Feb 2020 18:36:33 +0100")
+Message-ID: <x49fteyh313.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581068800-13817-2-git-send-email-qiwuchen55@gmail.com>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 07, 2020 at 05:46:40PM +0800, qiwuchen55@gmail.com wrote:
-> From: chenqiwu <chenqiwu@xiaomi.com>
-> 
-> Remove unnecessary ramoops_unregister_dummy() if ramoops
-> platform device register failed.
-> 
-> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
+Christoph Hellwig <hch@lst.de> writes:
 
-Thanks! Applied to for-next/pstore.
+> And my point is that if we ensure S_DAX can only be checked if there
+> are no blocks on the file, is is fairly easy to provide the same
+> guarantee.  And I've not heard any argument that we really need more
+> flexibility than that.  In fact I think just being able to change it
+> on the parent directory and inheriting the flag might be more than
+> plenty, which would lead to a very simple implementation without any
+> of the crazy overhead in this series.
 
--Kees
+I know of one user who had at least mentioned it to me, so I cc'd him.
+Jonathan, can you describe your use case for being able to change a
+file between dax and non-dax modes?  Or, if I'm misremembering, just
+correct me?
 
-> ---
->  fs/pstore/ram.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 013486b..7956221 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -963,7 +963,6 @@ static void __init ramoops_register_dummy(void)
->  		pr_info("could not create platform device: %ld\n",
->  			PTR_ERR(dummy));
->  		dummy = NULL;
-> -		ramoops_unregister_dummy();
->  	}
->  }
->  
-> -- 
-> 1.9.1
-> 
+Thanks!
+Jeff
 
--- 
-Kees Cook
