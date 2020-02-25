@@ -2,102 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 500A316EEB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 20:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3142716EECC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 20:13:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731318AbgBYTLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 14:11:18 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38501 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729489AbgBYTLS (ORCPT
+        id S1729180AbgBYTN4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 14:13:56 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40753 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728443AbgBYTN4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 14:11:18 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d6so13154pgn.5;
-        Tue, 25 Feb 2020 11:11:16 -0800 (PST)
+        Tue, 25 Feb 2020 14:13:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so182457plp.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 11:13:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ME7tWI2LujE/1u8Qe8IEwBIu2j1OAynNsNQIKSwMuLw=;
+        b=eWXt/u8b8fCzzSFzEkjV2jR+M+0OEtsb4UmEFYJawmxPzlvXE+9kfRckuHqTOxDvK5
+         6Qtx1/95jBXrXTDplrgHdAGbi100OCxBHblIjpFp2ZIpBI1S3VDJs7PjP+C0QgLz9/3y
+         aLTc6udDiKEAfHcyIPLdpcBy/nuYzEmWHVVDU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6fj2i98wrBqHNFBClWRPI0aXIGQwNsnnkHZjmeFx4vo=;
-        b=lEmnenjDQ2KVRDWbKgSezI5Y9S8HulB2boliEz/CIatSs7pal+yLKXus2dAQKcc8LX
-         TnTu6evVNMB5AFZAiBL5L/0Y+tEsExAwiZbkh8KkBVmyXV37DRwgjo4kIGhTYMRzN640
-         9kwkEwnsRs/C/nzTUBppNb8rsAJm+9ICP7ygdS10CVfnHO4yQ1U3waNFCPpRLBV7B2s9
-         L4XjYATIPTELXyBUKL5DkT9D9HAuZsh8KRUU1oGNJIgF9yzCaPJ+wkOZMyG/q3lnMDh/
-         eqDoCIOFAZHgIETVWFbOK7UCY6/h+W+Q6EQDdD2++5clWLHdGKXE0lB/IE6thDr5VGcV
-         QgUw==
-X-Gm-Message-State: APjAAAXj2550UR9JP2QfjExfG0C3JND9uApKkZ/I/u1DfSuf7dJdRWmD
-        uyhV7VyyYhG/d71rFCGiXHQ=
-X-Google-Smtp-Source: APXvYqwPLMBR9bomYY3aI/v3GcwJxrQRcety3+JoHAeMIv2R3wYeF8p6mSSAyFUeGQtBIirNlQUkag==
-X-Received: by 2002:a63:48f:: with SMTP id 137mr2886pge.245.1582657875635;
-        Tue, 25 Feb 2020 11:11:15 -0800 (PST)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id s125sm17944724pgc.53.2020.02.25.11.11.12
+         :mime-version:content-disposition:in-reply-to;
+        bh=ME7tWI2LujE/1u8Qe8IEwBIu2j1OAynNsNQIKSwMuLw=;
+        b=MmsOvMTgqoFm7PwP5gRt1LGvMSFpbcrzy1FIrHk0nhbTfl1jX/NgKnEhtOm8Y1CeHG
+         l1fyd1qemiT/w70SVqJtW5EeZBo6OuP017ARHzdJVtbuDjUH56wArYzj6CR/7p/Kn1iv
+         R+ngzQDOyH1iXKOW9r2tBzQ/Laotwy6412jLOVSgTtu1minfSfXuDGubRspcf6N4P8tF
+         Z03OBdmvhz615rGN2VGs02uSQAg0tkRrFUKhIO2hoGe0nmpUN2ACfysG2Jz8SE2ZI6l7
+         2SbzzSEwTnDi49Ok9/Ho6Y4q51c1n/rIQxhMr7WHaIYVM4eUxZqsZH5me+5Vcuy4F9ke
+         cHYw==
+X-Gm-Message-State: APjAAAXIaCWhuc7+lV8oIy+wo2qr1RHsiVkVoe08Mpat5Ds13lGYyZI0
+        Ug/CrudmLHDyPHnpQxjSHdd6sg==
+X-Google-Smtp-Source: APXvYqyL3bI9ySms9CphLhoNldtzN+RYD//HIyuoeOVLv5UO2o6xAGdKHFtS1o0HJaPOFDTFHn43wQ==
+X-Received: by 2002:a17:902:c693:: with SMTP id r19mr3175plx.25.1582658035520;
+        Tue, 25 Feb 2020 11:13:55 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s206sm18888208pfs.100.2020.02.25.11.13.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 11:11:13 -0800 (PST)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 59BFA40297; Tue, 25 Feb 2020 19:11:12 +0000 (UTC)
-Date:   Tue, 25 Feb 2020 19:11:12 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v2 3/7] test_firmware: add partial read support for
- request_firmware_into_buf
-Message-ID: <20200225191112.GX11244@42.do-not-panic.com>
-References: <20200220004825.23372-1-scott.branden@broadcom.com>
- <20200220004825.23372-4-scott.branden@broadcom.com>
- <20200220084255.GW7838@kadam>
- <9afab7f8-1b5f-a7bb-6b76-f7b19efb2979@broadcom.com>
- <4a666590-461d-17f9-5580-31a41869383f@broadcom.com>
+        Tue, 25 Feb 2020 11:13:54 -0800 (PST)
+Date:   Tue, 25 Feb 2020 11:13:53 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     qiwuchen55@gmail.com
+Cc:     anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        linux-fsdevel@vger.kernel.org, chenqiwu <chenqiwu@xiaomi.com>
+Subject: Re: [PATCH 1/2] pstore/platform: fix potential mem leak if
+ pstore_init_fs failed
+Message-ID: <202002251113.BF80CEAEB@keescook>
+References: <1581068800-13817-1-git-send-email-qiwuchen55@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4a666590-461d-17f9-5580-31a41869383f@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1581068800-13817-1-git-send-email-qiwuchen55@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 05:13:08PM -0800, Scott Branden wrote:
-> > > > +static ssize_t test_dev_config_show_size_t(char *buf, int cfg)
-> > > > +{
-> > > > +    size_t val;
-> > > > +
-> > > > +    mutex_lock(&test_fw_mutex);
-> > > > +    val = cfg;
-> > > > +    mutex_unlock(&test_fw_mutex);
-> > > Both val and cfg are stack variables so there is no need for locking.
-> > > Probably you meant to pass a pointer to cfg?
-> I am following the existing code as was done for
-> test_dev_config_show_bool(),
-> test_dev_config_show_int(),
-> test_dev_config_show_u8()
+On Fri, Feb 07, 2020 at 05:46:39PM +0800, qiwuchen55@gmail.com wrote:
+> From: chenqiwu <chenqiwu@xiaomi.com>
 > 
-> Mutex probably not needed but I don't think I need to deviate from the rest
-> of the test code.
+> There is a potential mem leak when pstore_init_fs failed,
+> since the pstore compression maybe unlikey to initialized
+> successfully. We must clean up the allocation once this
+> unlikey issue happens.
 > 
-> Luis, could you please explain what the rest of your code is doing?
+> Signed-off-by: chenqiwu <chenqiwu@xiaomi.com>
 
-The lock is indeed not needed in the functions you mentioned, so you can
-also remove the other locks as a precursor patch. It would be a seperate
-patch.
+Thanks! Applied to for-next/pstore.
 
-  Luis
+-Kees
+
+> ---
+>  fs/pstore/platform.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+> index d896457..114dbdf15 100644
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -822,10 +822,10 @@ static int __init pstore_init(void)
+>  	allocate_buf_for_compression();
+>  
+>  	ret = pstore_init_fs();
+> -	if (ret)
+> -		return ret;
+> +	if (ret < 0)
+> +		free_buf_for_compression();
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  late_initcall(pstore_init);
+>  
+> -- 
+> 1.9.1
+> 
+
+-- 
+Kees Cook
