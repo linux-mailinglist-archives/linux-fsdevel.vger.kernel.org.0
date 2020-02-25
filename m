@@ -2,150 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C729C16F2D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 23:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F83016F313
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 00:14:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbgBYW7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 17:59:48 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45885 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728806AbgBYW7r (ORCPT
+        id S1729078AbgBYXO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 18:14:29 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43820 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728865AbgBYXO3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:59:47 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A7E1D3A2C51;
-        Wed, 26 Feb 2020 09:59:42 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j6jAz-0004a5-3t; Wed, 26 Feb 2020 09:59:41 +1100
-Date:   Wed, 26 Feb 2020 09:59:41 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
-Message-ID: <20200225225941.GO10776@dread.disaster.area>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-10-ira.weiny@intel.com>
- <20200224003455.GY10776@dread.disaster.area>
- <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
- <20200224223245.GZ10776@dread.disaster.area>
- <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
+        Tue, 25 Feb 2020 18:14:29 -0500
+Received: by mail-pf1-f194.google.com with SMTP id s1so372488pfh.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 15:14:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ik1zuiqE8i76YJubrnNTmer8KABpIWbp2agVMhEd0M4=;
+        b=mGnOqthEowg2FBXNkXluMN/hRl1lQRj0tN9t5NB1i2gWmfosFiPkJONAvhfT1xHrpU
+         oFKHf+ib2VqZgZN1/abWJvJ5NkBYY9WoXLPdrL45U4fjYYOF390hDPCIo0cwMj9846xy
+         qb1tnlwKk8nzmFrJmtCs1aI5w/oJWQOhdTJb4L0Sv/zqZNUccZUWdoAFMVc61Xtizm0H
+         THNvtbfv35/H2buOTn1Rtq1VkI/BbGTr6Jo15myWk9gRq4BEhEjRnEytFdJ6mue3jSfz
+         L50sbyM4EuxkZKY0mm9oU8CcZyDzDRL8IvLxS+ejiqSOVUAOA+f1/c74w7XTKaooSDh1
+         VAog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ik1zuiqE8i76YJubrnNTmer8KABpIWbp2agVMhEd0M4=;
+        b=jwql/FOUaTQATgkXcatDWC0cJXXw2VmEOa1RnXCfAMYKzl5ceGrAMJnKHk9MGF7Jkk
+         gfwfgQKn2xns3OStgyJWTST3ZMsmpgjcNLM3N+D/6BJ1jBUeRcwO8nhvfitmu719FRoo
+         5MjkIpKn5ehjxmr1s69l/HRO4bdHPuJtH6ELA8euJHDSQh8n0J442ng4vo6VeaOGl5Jp
+         v3DDF1+GEnZQvGIWVT/c1q1ODoiWGEq0DVSjpKt/AyoGFyIV1+xTlWqpHYLPMbTeGxN7
+         rMue9oK/TGX+oJ7txfjHCayLoLaUhXF4mDeU9jdIOS1WGhsQxm70dOcWt5xr+/yVYAPF
+         n5eA==
+X-Gm-Message-State: APjAAAXhN1pVi4bg0IZcEj8G2ntJg0ptBuabGmTMtqlIXiTIM2eCQiVB
+        hP2j78ABs+D/GnEI5Re8ZYMwjg==
+X-Google-Smtp-Source: APXvYqwDkSgemuveBIsYIy/dIT5xtOS3wUx5uGf0cTYtvCxSEWAdnhLqNQZgETOPI9K2NzHT19/+Ug==
+X-Received: by 2002:a62:3892:: with SMTP id f140mr1097196pfa.190.1582672467127;
+        Tue, 25 Feb 2020 15:14:27 -0800 (PST)
+Received: from [100.112.92.218] ([104.133.9.106])
+        by smtp.gmail.com with ESMTPSA id w8sm134400pfn.186.2020.02.25.15.14.25
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 25 Feb 2020 15:14:26 -0800 (PST)
+Date:   Tue, 25 Feb 2020 15:14:05 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Chris Down <chris@chrisdown.name>
+cc:     Hugh Dickins <hughd@google.com>,
+        Dave Chinner <david@fromorbit.com>, Chris Mason <clm@fb.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Mikael Magnusson <mikachu@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v5 2/2] tmpfs: Support 64-bit inums per-sb
+In-Reply-To: <20200120151117.GA81113@chrisdown.name>
+Message-ID: <alpine.LSU.2.11.2002251422370.8029@eggly.anvils>
+References: <20200107001643.GA485121@chrisdown.name> <20200107003944.GN23195@dread.disaster.area> <CAOQ4uxjvH=UagqjHP_71_p9_dW9wKqiaWujzY1xKe7yZVFPoTA@mail.gmail.com> <alpine.LSU.2.11.2001070002040.1496@eggly.anvils> <CAOQ4uxiMQ3Oz4M0wKo5FA_uamkMpM1zg7ydD8FXv+sR9AH_eFA@mail.gmail.com>
+ <20200107210715.GQ23195@dread.disaster.area> <4E9DF932-C46C-4331-B88D-6928D63B8267@fb.com> <alpine.LSU.2.11.2001080259350.1884@eggly.anvils> <20200110164503.GA1697@chrisdown.name> <alpine.LSU.2.11.2001122259120.3471@eggly.anvils>
+ <20200120151117.GA81113@chrisdown.name>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=WlU5GPDpDACU7zcM-uYA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 01:12:28PM -0800, Ira Weiny wrote:
-> On Tue, Feb 25, 2020 at 09:32:45AM +1100, Dave Chinner wrote:
-> > On Mon, Feb 24, 2020 at 11:57:36AM -0800, Ira Weiny wrote:
-> > > On Mon, Feb 24, 2020 at 11:34:55AM +1100, Dave Chinner wrote:
-> > > > On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
-> > > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > > 
-> > > 
-> > > [snip]
-> > > 
-> > > > > 
-> > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> > > > > index 35df324875db..5b014c428f0f 100644
-> > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
-> > > > >   *
-> > > > >   * Basic locking order:
-> > > > >   *
-> > > > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > > > > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
-> > > > >   *
-> > > > >   * mmap_sem locking order:
-> > > > >   *
-> > > > >   * i_rwsem -> page lock -> mmap_sem
-> > > > > - * mmap_sem -> i_mmap_lock -> page_lock
-> > > > > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
-> > > > >   *
-> > > > >   * The difference in mmap_sem locking order mean that we cannot hold the
-> > > > >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
-> > > > > @@ -182,6 +182,9 @@ xfs_ilock(
-> > > > >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
-> > > > >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
-> > > > >  
-> > > > > +	if (lock_flags & XFS_DAX_EXCL)
-> > > > > +		inode_aops_down_write(VFS_I(ip));
-> > > > 
-> > > > I largely don't see the point of adding this to xfs_ilock/iunlock.
-> > > > 
-> > > > It's only got one caller, so I don't see much point in adding it to
-> > > > an interface that has over a hundred other call sites that don't
-> > > > need or use this lock. just open code it where it is needed in the
-> > > > ioctl code.
-> > > 
-> > > I know it seems overkill but if we don't do this we need to code a flag to be
-> > > returned from xfs_ioctl_setattr_dax_invalidate().  This flag is then used in
-> > > xfs_ioctl_setattr_get_trans() to create the transaction log item which can then
-> > > be properly used to unlock the lock in xfs_inode_item_release()
-> > > 
-> > > I don't know of a cleaner way to communicate to xfs_inode_item_release() to
-> > > unlock i_aops_sem after the transaction is complete.
-> > 
-> > We manually unlock inodes after transactions in many cases -
-> > anywhere we do a rolling transaction, the inode locks do not get
-> > released by the transaction. Hence for a one-off case like this it
-> > doesn't really make sense to push all this infrastructure into the
-> > transaction subsystem. Especially as we can manually lock before and
-> > unlock after the transaction context without any real complexity.
+On Mon, 20 Jan 2020, Chris Down wrote:
+> Hi Hugh,
 > 
-> So does xfs_trans_commit() operate synchronously?
+> Sorry this response took so long, I had some non-work issues that took a lot
+> of time last week.
 
-What do you mean by "synchronously", and what are you expecting to
-occur (a)synchronously with respect to filesystem objects and/or
-on-disk state?
+No, clearly it's I who must apologize to you for very slow response.
 
-Keep in mid that the xfs transaction subsystem is a complex
-asynchronous IO engine full of feedback loops and resource
-management, so asking if something is "synchronous" without any
-other context is a difficult question to answer :)
+> 
+> Hugh Dickins writes:
+> > 
+> > So the "inode64" option will be accepted but redundant on mounting,
+> > but exists for use as a remount option after mounting or remounting
+> > with "inode32": allowing the admin to switch temporarily to mask off
+> > the high ino bits with "inode32" when needing to run a limited binary.
+> > 
+> > Documentation and commit message to alert Andrew and Linus and distros
+> > that we are risking some breakage with this, but supplying the antidote
+> > (not breakage of any distros themselves, no doubt they're all good;
+> > but breakage of what some users might run on them).
+> 
+> Sounds good.
+> 
+> > > 
+> > > Other than that, the first patch could be similar to how it is now,
+> > > incorporating Hugh's improvements to the first patch to put everything
+> > > under
+> > > the same stat_lock in shmem_reserve_inode.
+> > 
+> > So, I persuaded Amir to the other aspects my version, but did not
+> > persuade you?  Well, I can live with that (or if not, can send mods
+> > on top of yours): but please read again why I was uncomfortable with
+> > yours, to check that you still prefer it (I agree that your patch is
+> > simpler, and none of my discomfort decisive).
+> 
+> Hmm, which bit were you thinking of? The lack of batching, shmem_encode_fh(),
+> or the fact that nr_inodes can now be 0 on non-internal mounts?
 
-> I want to understand this better because I have fought with a lot of ABBA
-> issues with these locks.  So...  can I hold the lock until after
-> xfs_trans_commit() and safely unlock it there... because the XFS_MMAPLOCK_EXCL,
-> XFS_IOLOCK_EXCL, and XFS_ILOCK_EXCL will be released at that point?  Thus
-> preserving the following lock order.
+I was uncomfortable with tmpfs depleting get_next_ino()'s pool in some
+configurations, and wanted the (get_next_ino-like) per-cpu but per-sb
+batching for nr_inodes=0, to minimize its stat_lock contention.
 
-See how operations like xfs_create, xfs_unlink, etc work. The don't
-specify flags to xfs_ijoin(), and so the transaction commits don't
-automatically unlock the inode. This is necessary so that rolling
-transactions are executed atomically w.r.t. inode access - no-one
-can lock and access the inode while a multi-commit rolling
-transaction on the inode is on-going.
+I did not have a patch to shmem_encode_fh(), had gone through thinking
+that 64-bit inos made an additional fix there necessary; but Amir then
+educated us that it is safe as is, though could be cleaned up later.
 
-In this case it's just a single commit and we don't need to keep
-it locked after the change is made, so we can unlock the inode
-on commit. So for the XFS internal locks the code is fine and
-doesn't need to change. We just need to wrap the VFS aops lock (if
-we keep it) around the outside of all the XFS locking until the
-transaction commits and unlocks the XFS locks...
+nr_inodes can be 0 on non-internal mounts, for many years.
 
-Cheers,
+> 
+> For batching, I'm neutral. I'm happy to use the approach from your patch and
+> integrate it (and credit you, of course).
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Credit not important, but you may well want to blame me for that
+complication :)
+
+> 
+> For shmem_encode_fh, I'm not totally sure I understand the concern, if that's
+> what you mean.
+
+My concern had been that shmem_encode_fh() builds up an fh from i_ino
+and more, looks well prepared for a 64-bit ino, but appeared to be
+announcing a 32-bit ino in its return value: Amir reassures us that
+that return value does not matter.
+
+> 
+> For nr_inodes, I agree that intentional or unintentional, we should at least
+> handle this case for now and can adjust later if the behaviour changes.
+
+nr_inodes=0 is an intentional configuration (but 0 denoting infinity:
+not very clean, and I've sometimes regretted that choice).
+
+If there's any behavior change, that's a separate matter from these
+64-bit ino patches; maybe I mentioned it in passing and confused us -
+that we seem to have recently allowed a remounting limited<->unlimited
+that was not permitted before, and might or might not need a fix patch.
+
+Sorry again for delaying you, Chris: not at all what I'd wanted to do.
+Hugh
