@@ -2,112 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 072DC16C394
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 15:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E32BB16C3D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 15:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbgBYONo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 09:13:44 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45526 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730478AbgBYONo (ORCPT
+        id S1730725AbgBYO1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 09:27:14 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32783 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730600AbgBYO1O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:13:44 -0500
-Received: by mail-wr1-f66.google.com with SMTP id g3so14864417wrs.12;
-        Tue, 25 Feb 2020 06:13:41 -0800 (PST)
+        Tue, 25 Feb 2020 09:27:14 -0500
+Received: by mail-io1-f65.google.com with SMTP id z8so2454279ioh.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 06:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qKtolOITCKPMbVBYgv9Bpor58H2AqX1gAl4HSp9rYe4=;
+        b=FwgDvSxUWSxf5sF2ksDzBQV8BLXzTn+RFx4575raHtCLqe8V2eMHhdlfRbhuDREmNm
+         EB2nWAg2ClXI//A8XFe/707tzpcV/cLXXjEO5/8N5W/H972N2ndeRDVOP5ryk4a/bXYd
+         ypxJWNNlSDc9CPWAhH6k1HrUB0323L2Ghvs/64enO+GchBrFlyg0c25gyHADrENkrNz6
+         wQxpkBsLR4OTp4+h5ggwNbmqHfQDJLFVx1mUfJmLuwldv2MnEY5TSRce6J4JFmiNWQ1m
+         Jr4PLxkFlL/GYgUN/D7MzyIZcVIdFrCLo4IsBbh1XVE8+Npv48VhIm1EYu3TbeRUy8NS
+         p6iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jxubRze50o1F8gM76cssrAcVTC+kj7bPygK0ClbrEFQ=;
-        b=BZ8YTJ5QErOJ/y+jWt4D7dZix2s5LSqv9Mv10h+54eL+2avNFQYA9zenWsdvxayHa6
-         sarBknWHzQvqcd6+4SeczyEULQlA1O4RzUBjBLkYUWyh95J7OWazHQZ05C9VJ2yHqDVb
-         qD2CvNn3ZDw5DLOfptoMQpYGDnuffoWAm0HsCRF8sPW+swsoUcMe3gEJalR/zlxuEmLo
-         NMJVO/PfQ8jOtJcKz3k/DWxpISbsPFPGf2Lw0/ojhLq8JAPelyx8y0LVvztttpYcaZw9
-         FpbUnlhWfF8ckKm3k3hE8L8lr5PJ0+SavrA6eneKZ+et/YUbbNy/ovZghuqyA4n8CRwN
-         t5gg==
-X-Gm-Message-State: APjAAAU+FQgAnm9qoaXRRKben0d/48wW808hTqdHfWQDEPXIyjL5dfz/
-        dxKJGpUk2FqSaCUzbF/0/hs=
-X-Google-Smtp-Source: APXvYqzZDJ3iAatx+c1W9QUy0WfZcIu4vrV7Thvn1lJDb6r3o5K5088UhtDeqAbWOuXq8UUYWOou1g==
-X-Received: by 2002:a5d:55c1:: with SMTP id i1mr79044434wrw.347.1582640020664;
-        Tue, 25 Feb 2020 06:13:40 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id b10sm4161691wmj.48.2020.02.25.06.13.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 06:13:40 -0800 (PST)
-Date:   Tue, 25 Feb 2020 15:13:39 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v4 11/13] mm/vmscan: Move count_vm_event(DROP_SLAB)
- into drop_slab()
-Message-ID: <20200225141339.GV22443@dhcp22.suse.cz>
-References: <20191212171137.13872-1-david@redhat.com>
- <20191212171137.13872-12-david@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qKtolOITCKPMbVBYgv9Bpor58H2AqX1gAl4HSp9rYe4=;
+        b=PJJENktaJt3uXAuDP1WXvybH/j0UO9UI0yVDsJU0W3MsB3ugRIuSBbpVKcoBBGrXZS
+         dVfsHzDi75INXXLidv5Pso7AtgMAKOh4Ir9gjOhkLlcvVurqSOn5v7MMGG5XffiRTcuJ
+         AJuKuEZcQv9DnwbQRgyGz/MWlv4QtPLvaCkIF9jnJQ7HY1S1DO3OhbpGTY5DiSnOua94
+         kmuqorNYymb+bP5neqCtqM2Rye4U8DwZIbyHK5I9/6iQBw8G+tV+7nj/Zdrxo0YJ17sW
+         /SczigJ7DB7+fZBCxAJjq/rx3Ps8uAoMFeHuKuafmskPWKBTQ8+osTBN4FBM1e747fuP
+         5vSQ==
+X-Gm-Message-State: APjAAAWMYaYcCGNcwDUCJIjuMCwnzzGc4d1eIbudjFK2NcmswklEqYSR
+        TYyxPZgkySLg3MeSVjRbZIQcZOGipbYreI6lXh4j26Tm
+X-Google-Smtp-Source: APXvYqzDxtW13rPI5UE8PUpcGk9NNc7fh4me2yJ8o7ydDazoBt3CaUYHfazJh3E2m4me/ICFAFE/O8QJn2YbRIDjrIQ=
+X-Received: by 2002:a02:8817:: with SMTP id r23mr58655944jai.120.1582640834095;
+ Tue, 25 Feb 2020 06:27:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212171137.13872-12-david@redhat.com>
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-3-amir73il@gmail.com>
+ <20200225134612.GA10728@quack2.suse.cz>
+In-Reply-To: <20200225134612.GA10728@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 25 Feb 2020 16:27:02 +0200
+Message-ID: <CAOQ4uxjRaidKvh=7UBNHZTwfqLne+JXeOkWb0BVsvJep26kFyw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/16] fsnotify: factor helpers fsnotify_dentry() and fsnotify_file()
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 12-12-19 18:11:35, David Hildenbrand wrote:
-> Let's count within the function itself, so every invocation (of future
-> users) will be counted.
-> 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On Tue, Feb 25, 2020 at 3:46 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 17-02-20 15:14:41, Amir Goldstein wrote:
+> > Most of the code in fsnotify hooks is boiler plate of one or the other.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  include/linux/fsnotify.h | 96 +++++++++++++++-------------------------
+> >  1 file changed, 36 insertions(+), 60 deletions(-)
+>
+> Nice cleanup. Just two comments below.
+>
+> > @@ -58,8 +78,6 @@ static inline int fsnotify_path(struct inode *inode, const struct path *path,
+> >  static inline int fsnotify_perm(struct file *file, int mask)
+> >  {
+> >       int ret;
+> > -     const struct path *path = &file->f_path;
+> > -     struct inode *inode = file_inode(file);
+> >       __u32 fsnotify_mask = 0;
+> >
+> >       if (file->f_mode & FMODE_NONOTIFY)
+>
+> I guess you can drop the NONOTIFY check from here. You've moved it to
+> fsnotify_file() and there's not much done in this function to be worth
+> skipping...
 
-Slight inconsistency with the page cache droppint but nothing earth
-shattering.
+True.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+>
+> > @@ -70,7 +88,7 @@ static inline int fsnotify_perm(struct file *file, int mask)
+> >               fsnotify_mask = FS_OPEN_PERM;
+> >
+> >               if (file->f_flags & __FMODE_EXEC) {
+> > -                     ret = fsnotify_path(inode, path, FS_OPEN_EXEC_PERM);
+> > +                     ret = fsnotify_file(file, FS_OPEN_EXEC_PERM);
+> >
+> >                       if (ret)
+> >                               return ret;
+>
+> Hum, I think we could simplify fsnotify_perm() even further by having:
+>
+>         if (mask & MAY_OPEN) {
+>                 if (file->f_flags & __FMODE_EXEC)
+>                         fsnotify_mask = FS_OPEN_EXEC_PERM;
+>                 else
+>                         fsnotify_mask = FS_OPEN_PERM;
+>         } ...
+>
 
-> ---
->  fs/drop_caches.c | 4 +---
->  mm/vmscan.c      | 1 +
->  2 files changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d31b6c72b476..a042da782fcd 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -61,10 +61,8 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
->  			iterate_supers(drop_pagecache_sb, NULL);
->  			count_vm_event(DROP_PAGECACHE);
->  		}
-> -		if (sysctl_drop_caches & 2) {
-> +		if (sysctl_drop_caches & 2)
->  			drop_slab();
-> -			count_vm_event(DROP_SLAB);
-> -		}
->  		if (!stfu) {
->  			pr_info("%s (%d): drop_caches: %d\n",
->  				current->comm, task_pid_nr(current),
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 5a6445e86328..c3e53502a84a 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -726,6 +726,7 @@ void drop_slab(void)
->  
->  	for_each_online_node(nid)
->  		drop_slab_node(nid);
-> +	count_vm_event(DROP_SLAB);
->  }
->  
->  static inline int is_page_cache_freeable(struct page *page)
-> -- 
-> 2.23.0
+But the current code sends both FS_OPEN_EXEC_PERM and FS_OPEN_PERM
+on an open for exec. I believe that is what was discussed when Matthew wrote
+the OPEN_EXEC patches, so existing receivers of OPEN_PERM event on exec
+will not regress..
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Amir.
