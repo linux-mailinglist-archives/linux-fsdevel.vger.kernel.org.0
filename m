@@ -2,108 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49DD016EC7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 18:27:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5481616EC98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 18:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbgBYR10 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 12:27:26 -0500
-Received: from foss.arm.com ([217.140.110.172]:53552 "EHLO foss.arm.com"
+        id S1729616AbgBYRgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 12:36:37 -0500
+Received: from verein.lst.de ([213.95.11.211]:44528 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728200AbgBYR1Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:27:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21F221FB;
-        Tue, 25 Feb 2020 09:27:25 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A6403F6CF;
-        Tue, 25 Feb 2020 09:27:24 -0800 (PST)
-Date:   Tue, 25 Feb 2020 17:27:23 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Amit Kachhap <amit.kachhap@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        id S1728051AbgBYRgh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Feb 2020 12:36:37 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6F2B368BE1; Tue, 25 Feb 2020 18:36:33 +0100 (CET)
+Date:   Tue, 25 Feb 2020 18:36:33 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>, ira.weiny@intel.com,
+        linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v6 05/11] arm64: elf: Enable BTI at exec based on ELF
- program properties
-Message-ID: <20200225172723.GG4633@sirena.org.uk>
-References: <20200212192906.53366-1-broonie@kernel.org>
- <20200212192906.53366-6-broonie@kernel.org>
- <275b9cdb-7835-0dfe-9bea-acb0d8301e36@arm.com>
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200225173633.GA30843@lst.de>
+References: <20200221004134.30599-1-ira.weiny@intel.com> <20200221004134.30599-8-ira.weiny@intel.com> <20200221174449.GB11378@lst.de> <20200221224419.GW10776@dread.disaster.area> <20200224175603.GE7771@lst.de> <20200225000937.GA10776@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TmwHKJoIRFM7Mu/A"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <275b9cdb-7835-0dfe-9bea-acb0d8301e36@arm.com>
-X-Cookie: Booths for two or more.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200225000937.GA10776@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Feb 25, 2020 at 11:09:37AM +1100, Dave Chinner wrote:
+> > No, the original code was broken because it didn't serialize between
+> > DAX and buffer access.
+> > 
+> > Take a step back and look where the problems are, and they are not
+> > mostly with the aops.  In fact the only aop useful for DAX is
+> > is ->writepages, and how it uses ->writepages is actually a bit of
+> > an abuse of that interface.
+> 
+> The races are all through the fops, too, which is one of the reasons
+> Darrick mentioned we should probably move this up to file ops
+> level...
 
---TmwHKJoIRFM7Mu/A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+But the file ops are very simple to use.  Pass the flag in the iocb,
+and make sure the flag can only changed with i_rwsem held.  That part
+is pretty trivial, the interesting case is mmap because it is so
+spread out.
 
-On Tue, Feb 25, 2020 at 06:58:50PM +0530, Amit Kachhap wrote:
-> On 2/13/20 12:59 AM, Mark Brown wrote:
+> > So what we really need it just a way to prevent switching the flag
+> > when a file is mapped,
+> 
+> That's not sufficient.
+> 
+> We also have to prevent the file from being mapped *while we are
+> switching*. Nothing in the mmap() path actually serialises against
+> filesystem operations, and the initial behavioural checks in the
+> page fault path are similarly unserialised against changing the
+> S_DAX flag.
 
-> > +static inline int arch_parse_elf_property(u32 type, const void *data,
-> > +					  size_t datasz, bool compat,
-> > +					  struct arch_elf_state *arch)
-> > +{
+And the important part here is ->mmap.  If ->mmap doesn't get through
+we are not going to see page faults.
 
-> Does this check here make sense to skip running extra code?
->     if (!system_supports_bti())
->              return 0;
+> > and in the normal read/write path ensure the
+> > flag can't be switch while I/O is going on, which could either be
+> > done by ensuring it is only switched under i_rwsem or equivalent
+> > protection, or by setting the DAX flag once in the iocb similar to
+> > IOCB_DIRECT.
+> 
+> The iocb path is not the problem - that's entirely serialised
+> against S_DAX changes by the i_rwsem. The problem is that we have no
+> equivalent filesystem level serialisation for the entire mmap/page
+> fault path, and it checks S_DAX all over the place.
 
-This specifically is the wrong place for such a test since we didn't
-even figure out if we're looking at the BTI property yet so it'd need to
-be moved if any further properties are added.
+Not right now.  We have various IS_DAX checks outside it.  But it is
+easily fixable indeed.
 
-> Although this check is there in arch_validate_prot.
+> /me wonders if the best thing to do is to add a ->fault callout to
+> tell the filesystem to lock/unlock the inode right up at the top of
+> the page fault path, outside even the mmap_sem.  That means all the
+> methods that the page fault calls are protected against S_DAX
+> changes, and it gives us a low cost method of serialising page
+> faults against DIO (e.g. via inode_dio_wait())....
 
-And more importantly in arch_calc_vm_prot_bits() so we never actually
-create guarded pages on a system that doesn't support BTI.  That said I
-do agree that it seems reasonable to add an explicit check in the
-parsing of the actual BTI property for robustness and clarity, I'll do a
-patch for that and roll it into any future versions or send it
-incrementally if this one is applied but it doesn't seem sensible to
-spin the whole series with the very broad CC list it has.
+Maybe.  Especially if it solves real problems and isn't just new
+overhead to add an esoteric feature.
 
---TmwHKJoIRFM7Mu/A
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> > And they easiest way to get all this done is as a first step to
+> > just allowing switching the flag when no blocks are allocated at
+> > all, similar to how the rt flag works.
+> 
+> False equivalence - it is not similar because the RT flag changes
+> and their associated state checks are *already fully serialised* by
+> the XFS_ILOCK_EXCL. S_DAX accesses have no such serialisation, and
+> that's the problem we need to solve...
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5VWPoACgkQJNaLcl1U
-h9Bq6Af/XISIHfTbIdVWLIy9cav1xBGoNheQB8U8jrd370PqkAtHsvZwnq9aDdt3
-IxSWEuRVgj4bCprzm7gRSiLT5DSxNEqraVfT9GtbAy2Yi/ErLTSHRTCafCelguRv
-guxddwpmSo/yyNcyW0xen19YAhFjJ+VAKjlPdO0ApbplIBWPzwX7cvO7db6qnH9m
-k0GBhysZIXjhJW9KtjmFjdeiJxWGkjTXMDiC5O+Lq0/PL5MIWzrALmT45mFq4Ojf
-1rHAkV6H/8HqU7hSGxnKegK5uwx/gPT2JjhKVYoXXnTIogDeFmnBuz4ZlWMaVD0P
-3T4W1JDe639jb8v2EqZNxjdsU2XPFA==
-=os2p
------END PGP SIGNATURE-----
-
---TmwHKJoIRFM7Mu/A--
+And my point is that if we ensure S_DAX can only be checked if there
+are no blocks on the file, is is fairly easy to provide the same
+guarantee.  And I've not heard any argument that we really need more
+flexibility than that.  In fact I think just being able to change it
+on the parent directory and inheriting the flag might be more than
+plenty, which would lead to a very simple implementation without any
+of the crazy overhead in this series.
