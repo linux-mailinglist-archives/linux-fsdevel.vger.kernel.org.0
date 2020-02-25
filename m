@@ -2,112 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5481616EC98
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 18:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 927C116EE5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 19:50:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbgBYRgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Feb 2020 12:36:37 -0500
-Received: from verein.lst.de ([213.95.11.211]:44528 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728051AbgBYRgh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Feb 2020 12:36:37 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 6F2B368BE1; Tue, 25 Feb 2020 18:36:33 +0100 (CET)
-Date:   Tue, 25 Feb 2020 18:36:33 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>, ira.weiny@intel.com,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200225173633.GA30843@lst.de>
-References: <20200221004134.30599-1-ira.weiny@intel.com> <20200221004134.30599-8-ira.weiny@intel.com> <20200221174449.GB11378@lst.de> <20200221224419.GW10776@dread.disaster.area> <20200224175603.GE7771@lst.de> <20200225000937.GA10776@dread.disaster.area>
+        id S1731628AbgBYSt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Feb 2020 13:49:58 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44042 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730634AbgBYSt5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 25 Feb 2020 13:49:57 -0500
+Received: by mail-pl1-f194.google.com with SMTP id d9so144735plo.11;
+        Tue, 25 Feb 2020 10:49:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=nvwGkkcwwig4eCR4m0+EXyPalZCNu0nCU8n4Iqik970=;
+        b=G7bWyZbHZX8L5mx1qmuUrJ6R/u1VcW6191mW+YfJDBC8HLgDFKfKHWQEOoEJoVhkXn
+         W/y6CCVqFL92NYn57nNRjyHA6lwYbRoweC1yYGHTkJzL53mymmUpJksjTWZ7ySbaPrRB
+         n0dyGnxfMmOFoTSoRJbqDT3MGEuqUxVvZXV12P4m3+0oJWHi3DH5TMF+x/W1qg0hNMxA
+         CLweY4F1EeybVJFQ04jKbevHMx8Vcg43jgMKOzPQ4W+7RIFDB5lRmOdZqHKK6pq4BKkF
+         NJ9ve8xEqDSWGj1UXvCZkB5iZd0pmON/92SSjvdIELk2bdaMvOd6OKLXHoTzYJLCvTa+
+         zcpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=nvwGkkcwwig4eCR4m0+EXyPalZCNu0nCU8n4Iqik970=;
+        b=uHHAIJZKoQDrf7xJVbKS38TFWc1YeoYHpYTP4TKy221TnVQXTOu7e4hwSHjBuSi6r8
+         8fb64eNsBkAbxjN3ZyIvJ+7gkM7ioTMt0wntDZTnzO20DcispTXjQGxblKDNlaRgpLyL
+         wiMANgQ9n6DUCunoH3ulmZoQd4/k0ecflh9IlGCXApc25/eeQ8VAiWMlwZQlhsVskjqB
+         I4xaJEzm9XBSK1s9bDSjNb4HurgOimoQ5rZjEyjLF/Vf0lmOSkW5CeckHBlcFs1jrqeC
+         zlj4VlG13XprAXC853D/uRRl1s0jJiBGhjgt0rAhjTdyWYtayNhJVMSZMwlU2tpVuLQ3
+         3LzQ==
+X-Gm-Message-State: APjAAAXs+N4FNq/SkE71+8CPflZ4wpbrbCFNvOR+Wxad/dEXqxDn/rhI
+        yLmVSTicxG3nv8ivKCnfuOA=
+X-Google-Smtp-Source: APXvYqwqCzAhzlldh7y2QteC8HJxHmiV+T+MgbEcZee4Qfdqy017TQ2Ol+QM4KbM9t0bb8tGyUsHwA==
+X-Received: by 2002:a17:902:bc45:: with SMTP id t5mr56453991plz.239.1582656596777;
+        Tue, 25 Feb 2020 10:49:56 -0800 (PST)
+Received: from JF-EN-C02V905BHTDF.tld ([12.111.169.54])
+        by smtp.gmail.com with ESMTPSA id q9sm14936484pgs.89.2020.02.25.10.49.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2020 10:49:56 -0800 (PST)
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200224160215.4136-1-mic@digikod.net>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <6df3e6b1-ffd1-dacf-2f2d-7df8e5aca668@gmail.com>
+Date:   Tue, 25 Feb 2020 10:49:52 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225000937.GA10776@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200224160215.4136-1-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 11:09:37AM +1100, Dave Chinner wrote:
-> > No, the original code was broken because it didn't serialize between
-> > DAX and buffer access.
-> > 
-> > Take a step back and look where the problems are, and they are not
-> > mostly with the aops.  In fact the only aop useful for DAX is
-> > is ->writepages, and how it uses ->writepages is actually a bit of
-> > an abuse of that interface.
-> 
-> The races are all through the fops, too, which is one of the reasons
-> Darrick mentioned we should probably move this up to file ops
-> level...
 
-But the file ops are very simple to use.  Pass the flag in the iocb,
-and make sure the flag can only changed with i_rwsem held.  That part
-is pretty trivial, the interesting case is mmap because it is so
-spread out.
 
-> > So what we really need it just a way to prevent switching the flag
-> > when a file is mapped,
-> 
-> That's not sufficient.
-> 
-> We also have to prevent the file from being mapped *while we are
-> switching*. Nothing in the mmap() path actually serialises against
-> filesystem operations, and the initial behavioural checks in the
-> page fault path are similarly unserialised against changing the
-> S_DAX flag.
+On 2/24/20 8:02 AM, Mickaël Salaün wrote:
 
-And the important part here is ->mmap.  If ->mmap doesn't get through
-we are not going to see page faults.
+> ## Syscall
+>
+> Because it is only tested on x86_64, the syscall is only wired up for
+> this architecture.  The whole x86 family (and probably all the others)
+> will be supported in the next patch series.
+General question for u.  What is it meant "whole x86 family will be 
+supported".  32-bit x86 will be supported?
 
-> > and in the normal read/write path ensure the
-> > flag can't be switch while I/O is going on, which could either be
-> > done by ensuring it is only switched under i_rwsem or equivalent
-> > protection, or by setting the DAX flag once in the iocb similar to
-> > IOCB_DIRECT.
-> 
-> The iocb path is not the problem - that's entirely serialised
-> against S_DAX changes by the i_rwsem. The problem is that we have no
-> equivalent filesystem level serialisation for the entire mmap/page
-> fault path, and it checks S_DAX all over the place.
+Thanks,
+Jay
 
-Not right now.  We have various IS_DAX checks outside it.  But it is
-easily fixable indeed.
-
-> /me wonders if the best thing to do is to add a ->fault callout to
-> tell the filesystem to lock/unlock the inode right up at the top of
-> the page fault path, outside even the mmap_sem.  That means all the
-> methods that the page fault calls are protected against S_DAX
-> changes, and it gives us a low cost method of serialising page
-> faults against DIO (e.g. via inode_dio_wait())....
-
-Maybe.  Especially if it solves real problems and isn't just new
-overhead to add an esoteric feature.
-
-> 
-> > And they easiest way to get all this done is as a first step to
-> > just allowing switching the flag when no blocks are allocated at
-> > all, similar to how the rt flag works.
-> 
-> False equivalence - it is not similar because the RT flag changes
-> and their associated state checks are *already fully serialised* by
-> the XFS_ILOCK_EXCL. S_DAX accesses have no such serialisation, and
-> that's the problem we need to solve...
-
-And my point is that if we ensure S_DAX can only be checked if there
-are no blocks on the file, is is fairly easy to provide the same
-guarantee.  And I've not heard any argument that we really need more
-flexibility than that.  In fact I think just being able to change it
-on the parent directory and inheriting the flag might be more than
-plenty, which would lead to a very simple implementation without any
-of the crazy overhead in this series.
