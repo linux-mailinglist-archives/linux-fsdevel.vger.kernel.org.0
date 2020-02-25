@@ -2,107 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E3D716B77F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 03:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C3716B831
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Feb 2020 04:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbgBYCDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Feb 2020 21:03:09 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:54840 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbgBYCDJ (ORCPT
+        id S1728779AbgBYDsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Feb 2020 22:48:33 -0500
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:40410 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbgBYDsd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Feb 2020 21:03:09 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6PYx-000diw-1R; Tue, 25 Feb 2020 02:03:07 +0000
-Date:   Tue, 25 Feb 2020 02:03:07 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v2)
-Message-ID: <20200225020307.GC23230@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200225012457.GA138294@ZenIV.linux.org.uk>
+        Mon, 24 Feb 2020 22:48:33 -0500
+Received: by mail-lj1-f178.google.com with SMTP id n18so12440589ljo.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Feb 2020 19:48:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mirlab-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=BdE6ucHq4pRy9/T8CzfnvtYmK0etY8BaSPf9biBg8Ko=;
+        b=DCPbtLtJtfLVi/+T0mzMI8BQnSP9j3AkryEn1yvN0POpjmTm9JmXXaQUmLl6mAu93Z
+         mmV02eYcffrWQeUQK9Yq6bKBOCh3xR+0Mq+tKiScinbwtpZw/OXkYTF2ljWN3axeljX0
+         GptL0nSOjy8qudoo4rPUzsuECPTim73l6/QDlaKlmsBGS9iZI11ieYOc/fPRarfodAiz
+         7gBiOlmXbIWe1JgMk7HfevSpsdzKm+RjBAyEiuCiyCLQMGDR02YymFs2JEXOKoU1Kapw
+         9R0cUd6nf49Nk1R3F4/zCnZkT6UIvQGmwXisSDE3vmeSc9WJTUlwEKL6r4WH6DTxF8Wl
+         wUiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=BdE6ucHq4pRy9/T8CzfnvtYmK0etY8BaSPf9biBg8Ko=;
+        b=t1ooR11q1V1iAQQugqymMiW8xHDfqIIEkjV7IUh+wysRXcvHifc1b7EZNqikIC2zXP
+         jCV7dMoi6zwPGjCzui2ff6ZhwpLCovV2PWBbgR7vwm+OX3dqaerlWOrx1pj3gaDMNj40
+         FRLDkVbCfa1yVASTqI70Dgw8LkHnktoPFaOzbv1sk+yt1wpEudaIvZ1Rpfb1PgZYBYHb
+         ntUFdDEbiZ2O9bmBGWpVhmDMFoHrYEklbLCA6hPbZBCPWi3ywEqO6IxDJX29/yL+4hqH
+         4eLgfcdj3rfW41nGpxeP4fzfNHR9YAY0cQAYkBols3CNkoxTKrlykfydr4QtZqGh61qn
+         M/Sw==
+X-Gm-Message-State: APjAAAWrguN5fH2OUUPezfcEQ2PcI0h5dJ0VXU8KQP6GJ9u3SRc5NB2R
+        mmuYFVVv/KmdzuqkvRSVel+IH4LLWVSDyjafiud5JC58
+X-Google-Smtp-Source: APXvYqxa8700gntEBx60CFo7PdapW8cgV9yEjkjjFCsuvBh67qASHhiJ78+udsMA9cbatD+T3GNzPXpr7Y4m/yHGH1o=
+X-Received: by 2002:a2e:9e43:: with SMTP id g3mr32880316ljk.37.1582602510972;
+ Mon, 24 Feb 2020 19:48:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200225012457.GA138294@ZenIV.linux.org.uk>
+From:   lampahome <pahome.chen@mirlab.org>
+Date:   Tue, 25 Feb 2020 11:48:18 +0800
+Message-ID: <CAB3eZfsT6qBmqPmBxb=uMgh=7SV2LiKi-8OJTj08AfAPsGGw_g@mail.gmail.com>
+Subject: How to flip +F to inode attribute in ext4?
+To:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 01:24:57AM +0000, Al Viro wrote:
+I change to kernel5.4 and wants to setup folder to be case-insensitive.
 
-> Incidentally, another inconsistency is LOOKUP_BENEATH treatment in case
-> when we have walked out of the subtree by way of e.g. procfs symlink and
-> then ran into .. in the absolute root (that's
->                 if (!follow_up(&nd->path))
->                         break;
-> in follow_dotdot()).  Shouldn't that give the same reaction as ..
-> in root (EXDEV on LOOKUP_BENEATH, that is)?  It doesn't...
-> 
-> Another one is about LOOKUP_NO_XDEV again: suppose you have process'
-> root directly overmounted and cwd in the root of whatever's overmounting
-> it.  Resolution of .. will stay in cwd - we have no parent within the
-> chroot jail we are in, so we move to whatever's overmounting that root.
-> Which is the original location.  Should we fail on LOOKUP_NO_XDEV here?
-> Plain .. in the root of chroot jail (not overmounted by anything) does
-> *not*...
+I saw this line in doc:
+"enabled by flipping +F to inode attribute"
 
-FWIW, my preference would be the following (for non-RCU case; RCU
-one is similar)
+Should I use somewhat command to modify attribute? or mount with
+additional options?
 
-get_parent(nd)
-{
-	if (path_equal(&nd->path, &nd->root))
-		return NULL;
-	if (nd->path.dentry != nd->path.mnt->mnt_root)
-		return dget_parent(nd->path.dentry);
-	m = real_mount(nd->path.mnt);
-        read_seqlock_excl(&mount_lock);
-	while (mnt_has_parent(m)) {
-		d = m->mnt_mountpoint;
-		m = m->mnt_parent;
-		if (&m->mnt == nd->root.mnt && d == nd->root.path) // root
-			break;
-		if (m->mnt_root != d) {
-			if (unlikely(nd->flags & LOOKUP_NO_XDEV)) {
-				read_sequnlock_excl(&mount_lock);
-				return ERR_PTR(-EXDEV);
-			}
-			mntget(&m->mnt);
-			dget(d);
-			read_sequnlock_excl(&mount_lock);
-			path_put(&nd->path);
-			nd->path.mnt = &m->mnt;
-			nd->path.dentry = d;
-			nd->inode = d->d_inode;
-			return dget_parent(d);
-		}
-	}
-	read_sequnlock_excl(&mount_lock);
-	return NULL;
-}
-
-with follow_dotdot() doing
-	parent = get_parent(nd);
-	if (unlikely(IS_ERR(parent)))
-		return PTR_ERR(parent);
-	if (unlikely(!parent)) {	.. in root is a rare case
-		bugger off if LOOKUP_BENEATH
-		parent = dget(nd->path.dentry);
-	} else if (unlikely(!path_connected(nd->path.mnt, parent))) {
-		dput(parent);
-		return -ENOENT;
-	}
-	dput(nd->path.dentry);
-	nd->path.dentry = parent;
-	follow_mount(&nd->path);
-
-... with the last part replaced with
-	step_into(nd, WALK_NOFOLLOW, dentry, NULL, 0);
-later in this series, with similar in RCU case (only there we would want
-inode and seq supplied, as usual, so it would be get_parent_rcu(nd, &inode,
-&seq)).
+thx
