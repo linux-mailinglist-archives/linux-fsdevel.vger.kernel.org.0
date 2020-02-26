@@ -2,141 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772F31706B7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 18:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90DC71706E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 19:02:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgBZRy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 12:54:26 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34607 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726917AbgBZRyY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:54:24 -0500
-Received: by mail-oi1-f195.google.com with SMTP id l136so416652oig.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 09:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=19soKHU3UI5r5wvmfAJVl4z0JskbjWMjhN/nbHz3sBk=;
-        b=ayzTVtVbCk7aoeymtSP3HR7X6PRnOqPojYSBqwLAfxVUuLITtIzhlDJlWMEm6A1+8T
-         C8YIeBWHOV3NPwqg64wQHrWhfj9kivCWkysAH1BSAOYvLFOOAi4+yH9QJP57/+5shlfD
-         s5cjVcyQxyo0HaM1s6nfsR8FwpF+8S3J2DvT6kSkUlGvXSM7QY5vN+6Qbv7oRV9HPJKs
-         igu6VIUXlgXR/XdKg9vl42HW0GEeFBI2npotOal7aLWB+rxrop4KsYtmfyNVvePc3Nfv
-         qVucCvVKwh0rb8yG4kZZuGcG6D+WRKCBt1Mq7RD7NLEqaY3HW1GRhBWlkhjBAbXqHMmj
-         YIAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=19soKHU3UI5r5wvmfAJVl4z0JskbjWMjhN/nbHz3sBk=;
-        b=ARClb8atJrsaFZwfMMY0On2baI6mW5gNhNnQWJ/Vp17kBP3UIXa3RIqYjZJOS9/v7N
-         YVtPSSZL3cvyuT+D0CV39uw5LTchmGERyXzocqIXrGvsNtOWICFvf4ixKRIXuJh6TRnZ
-         3YFSk2soA6OUUPyB9Tfvogtof0fVrmPLo03LsfozzfRUuA9jThngDiS5RGsXmNceUwxE
-         jIyiNkS0XhCSw/P2zjnBS5k/Cn9n37qD89dXuh7n3MWTFSIA+ACejauqR8GEhPcWnKpi
-         FlRJvT+j5SL4facEES6k9vEBsqhSwf7LG1vaXDHrQXrfwnw13DdYSIaCFEaQ+MqI1seG
-         Q2Qw==
-X-Gm-Message-State: APjAAAUxnCTTLtjBFLL6Fcss3YqFmMDSRrIyWBO8H7Jje35jU/4HrAZ/
-        ctOEmckEWovjwyoKId3WPz0jIk9Z/+1uJX20bC38u2kQ
-X-Google-Smtp-Source: APXvYqy7wODpn4AfWhCX4NUeUzjCaKNftkw39AJC80F5CWULEFUJ5R2cUw55wi6jfqJVFzI36d6GqvgWUwEbM45lTyM=
-X-Received: by 2002:aca:4c9:: with SMTP id 192mr123494oie.105.1582739662914;
- Wed, 26 Feb 2020 09:54:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20200221004134.30599-1-ira.weiny@intel.com> <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de> <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de> <20200225000937.GA10776@dread.disaster.area>
- <20200225173633.GA30843@lst.de> <x49fteyh313.fsf@segfault.boston.devel.redhat.com>
- <a126276c-d252-6050-b6ee-4d6448d45fac@redhat.com> <CAPcyv4iuWpHi-0SK_HS0zmfH87=G64U47VhthhpTjDCw_BMG8A@mail.gmail.com>
- <20200226172034.GV10728@quack2.suse.cz>
-In-Reply-To: <20200226172034.GV10728@quack2.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 26 Feb 2020 09:54:12 -0800
-Message-ID: <CAPcyv4hi08KCQHFV0aorVmZZ0YXo=wGzsXbrnTSAySXirNjzrA@mail.gmail.com>
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jonathan Halliday <jonathan.halliday@redhat.com>,
-        Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <david@fromorbit.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1726995AbgBZSCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 13:02:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:38096 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726787AbgBZSCx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 13:02:53 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 10:02:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,489,1574150400"; 
+   d="scan'208";a="256409560"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 26 Feb 2020 10:02:51 -0800
+Date:   Wed, 26 Feb 2020 10:02:51 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 09/13] fs/xfs: Add write aops lock to xfs layer
+Message-ID: <20200226180250.GC22036@iweiny-DESK2.sc.intel.com>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-10-ira.weiny@intel.com>
+ <20200224003455.GY10776@dread.disaster.area>
+ <20200224195735.GA11565@iweiny-DESK2.sc.intel.com>
+ <20200224223245.GZ10776@dread.disaster.area>
+ <20200225211228.GB15810@iweiny-DESK2.sc.intel.com>
+ <20200225225941.GO10776@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225225941.GO10776@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 9:20 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 26-02-20 08:46:42, Dan Williams wrote:
-> > On Wed, Feb 26, 2020 at 1:29 AM Jonathan Halliday
-> > <jonathan.halliday@redhat.com> wrote:
-> > >
-> > >
-> > > Hi All
-> > >
-> > > I'm a middleware developer, focused on how Java (JVM) workloads can
-> > > benefit from app-direct mode pmem. Initially the target is apps that
-> > > need a fast binary log for fault tolerance: the classic database WAL use
-> > > case; transaction coordination systems; enterprise message bus
-> > > persistence and suchlike. Critically, there are cases where we use log
-> > > based storage, i.e. it's not the strict 'read rarely, only on recovery'
-> > > model that a classic db may have, but more of a 'append only, read many
-> > > times' event stream model.
-> > >
-> > > Think of the log oriented data storage as having logical segments (let's
-> > > implement them as files), of which the most recent is being appended to
-> > > (read_write) and the remaining N-1 older segments are full and sealed,
-> > > so effectively immutable (read_only) until discarded. The tail segment
-> > > needs to be in DAX mode for optimal write performance, as the size of
-> > > the append may be sub-block and we don't want the overhead of the kernel
-> > > call anyhow. So that's clearly a good fit for putting on a DAX fs mount
-> > > and using mmap with MAP_SYNC.
-> > >
-> > > However, we want fast read access into the segments, to retrieve stored
-> > > records. The small access index can be built in volatile RAM (assuming
-> > > we're willing to take the startup overhead of a full file scan at
-> > > recovery time) but the data itself is big and we don't want to move it
-> > > all off pmem. Which means the requirements are now different: we want
-> > > the O/S cache to pull hot data into fast volatile RAM for us, which DAX
-> > > explicitly won't do. Effectively a poor man's 'memory mode' pmem, rather
-> > > than app-direct mode, except here we're using the O/S rather than the
-> > > hardware memory controller to do the cache management for us.
-> > >
-> > > Currently this requires closing the full (read_write) file, then copying
-> > > it to a non-DAX device and reopening it (read_only) there. Clearly
-> > > that's expensive and rather tedious. Instead, I'd like to close the
-> > > MAP_SYNC mmap, then, leaving the file where it is, reopen it in a mode
-> > > that will instead go via the O/S cache in the traditional manner. Bonus
-> > > points if I can do it over non-overlapping ranges in a file without
-> > > closing the DAX mode mmap, since then the segments are entirely logical
-> > > instead of needing separate physical files.
-> >
-> > Hi John,
-> >
-> > IIRC we chatted about this at PIRL, right?
-> >
-> > At the time it sounded more like mixed mode dax, i.e. dax writes, but
-> > cached reads. To me that's an optimization to optionally use dax for
-> > direct-I/O writes, with its existing set of page-cache coherence
-> > warts, and not a capability to dynamically switch the dax-mode.
-> > mmap+MAP_SYNC seems the wrong interface for this. This writeup
-> > mentions bypassing kernel call overhead, but I don't see how a
-> > dax-write syscall is cheaper than an mmap syscall plus fault. If
-> > direct-I/O to a dax capable file bypasses the block layer, isn't that
-> > about the maximum of kernel overhead that can be cut out of this use
-> > case? Otherwise MAP_SYNC is a facility to achieve efficient sub-block
-> > update-in-place writes not append writes.
->
-> Well, even for appends you'll pay the cost only once per page (or maybe even
-> once per huge page) when using MAP_SYNC. With a syscall you'll pay once per
-> write. So although it would be good to check real numbers, the design isn't
-> non-sensical to me.
+On Wed, Feb 26, 2020 at 09:59:41AM +1100, Dave Chinner wrote:
+> On Tue, Feb 25, 2020 at 01:12:28PM -0800, Ira Weiny wrote:
+> > On Tue, Feb 25, 2020 at 09:32:45AM +1100, Dave Chinner wrote:
+> > > On Mon, Feb 24, 2020 at 11:57:36AM -0800, Ira Weiny wrote:
+> > > > On Mon, Feb 24, 2020 at 11:34:55AM +1100, Dave Chinner wrote:
+> > > > > On Thu, Feb 20, 2020 at 04:41:30PM -0800, ira.weiny@intel.com wrote:
+> > > > > > From: Ira Weiny <ira.weiny@intel.com>
+> > > > > > 
+> > > > 
+> > > > [snip]
+> > > > 
+> > > > > > 
+> > > > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > > > index 35df324875db..5b014c428f0f 100644
+> > > > > > --- a/fs/xfs/xfs_inode.c
+> > > > > > +++ b/fs/xfs/xfs_inode.c
+> > > > > > @@ -142,12 +142,12 @@ xfs_ilock_attr_map_shared(
+> > > > > >   *
+> > > > > >   * Basic locking order:
+> > > > > >   *
+> > > > > > - * i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > > > > + * s_dax_sem -> i_rwsem -> i_mmap_lock -> page_lock -> i_ilock
+> > > > > >   *
+> > > > > >   * mmap_sem locking order:
+> > > > > >   *
+> > > > > >   * i_rwsem -> page lock -> mmap_sem
+> > > > > > - * mmap_sem -> i_mmap_lock -> page_lock
+> > > > > > + * s_dax_sem -> mmap_sem -> i_mmap_lock -> page_lock
+> > > > > >   *
+> > > > > >   * The difference in mmap_sem locking order mean that we cannot hold the
+> > > > > >   * i_mmap_lock over syscall based read(2)/write(2) based IO. These IO paths can
+> > > > > > @@ -182,6 +182,9 @@ xfs_ilock(
+> > > > > >  	       (XFS_ILOCK_SHARED | XFS_ILOCK_EXCL));
+> > > > > >  	ASSERT((lock_flags & ~(XFS_LOCK_MASK | XFS_LOCK_SUBCLASS_MASK)) == 0);
+> > > > > >  
+> > > > > > +	if (lock_flags & XFS_DAX_EXCL)
+> > > > > > +		inode_aops_down_write(VFS_I(ip));
+> > > > > 
+> > > > > I largely don't see the point of adding this to xfs_ilock/iunlock.
+> > > > > 
+> > > > > It's only got one caller, so I don't see much point in adding it to
+> > > > > an interface that has over a hundred other call sites that don't
+> > > > > need or use this lock. just open code it where it is needed in the
+> > > > > ioctl code.
+> > > > 
+> > > > I know it seems overkill but if we don't do this we need to code a flag to be
+> > > > returned from xfs_ioctl_setattr_dax_invalidate().  This flag is then used in
+> > > > xfs_ioctl_setattr_get_trans() to create the transaction log item which can then
+> > > > be properly used to unlock the lock in xfs_inode_item_release()
+> > > > 
+> > > > I don't know of a cleaner way to communicate to xfs_inode_item_release() to
+> > > > unlock i_aops_sem after the transaction is complete.
+> > > 
+> > > We manually unlock inodes after transactions in many cases -
+> > > anywhere we do a rolling transaction, the inode locks do not get
+> > > released by the transaction. Hence for a one-off case like this it
+> > > doesn't really make sense to push all this infrastructure into the
+> > > transaction subsystem. Especially as we can manually lock before and
+> > > unlock after the transaction context without any real complexity.
+> > 
+> > So does xfs_trans_commit() operate synchronously?
+> 
+> What do you mean by "synchronously", and what are you expecting to
+> occur (a)synchronously with respect to filesystem objects and/or
+> on-disk state?
+> 
+> Keep in mid that the xfs transaction subsystem is a complex
+> asynchronous IO engine full of feedback loops and resource
+> management,
 
-True, Jonathan, how many writes per page are we talking about in this case?
+This is precisely why I added the lock to the transaction state.  So that I
+could guarantee that the lock will be released in the proper order when the
+complicated transaction subsystem was done with it.  I did not see any reason
+to allow operations to proceed before that time.  And so this seemed safe...
+
+> so asking if something is "synchronous" without any
+> other context is a difficult question to answer :)
+
+Or apparently it is difficult to even ask...  ;-)  (...not trying to be
+sarcastic.)  Seriously, I'm not an expert in this area so I did what I thought
+was most safe.  Which for me was the number 1 goal.
+
+> 
+> > I want to understand this better because I have fought with a lot of ABBA
+> > issues with these locks.  So...  can I hold the lock until after
+> > xfs_trans_commit() and safely unlock it there... because the XFS_MMAPLOCK_EXCL,
+> > XFS_IOLOCK_EXCL, and XFS_ILOCK_EXCL will be released at that point?  Thus
+> > preserving the following lock order.
+> 
+> See how operations like xfs_create, xfs_unlink, etc work. The don't
+> specify flags to xfs_ijoin(), and so the transaction commits don't
+> automatically unlock the inode.
+
+xfs_ijoin()?  Do you mean xfs_trans_ijoin()?
+
+> This is necessary so that rolling
+> transactions are executed atomically w.r.t. inode access - no-one
+> can lock and access the inode while a multi-commit rolling
+> transaction on the inode is on-going.
+> 
+> In this case it's just a single commit and we don't need to keep
+> it locked after the change is made, so we can unlock the inode
+> on commit. So for the XFS internal locks the code is fine and
+> doesn't need to change. We just need to wrap the VFS aops lock (if
+> we keep it) around the outside of all the XFS locking until the
+> transaction commits and unlocks the XFS locks...
+
+Ok, I went ahead and coded it up and it is testing now.  Everything looks good.
+I have to say that at this point I have to agree that I can't see how a
+deadlock could occur so...
+
+Thanks for the review,
+Ira
+
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
