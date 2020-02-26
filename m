@@ -2,298 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62A01170045
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 14:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A4C17006F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 14:52:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbgBZNlY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 08:41:24 -0500
-Received: from relay.sw.ru ([185.231.240.75]:44744 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbgBZNlX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 08:41:23 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1j6ww8-0006rf-CG; Wed, 26 Feb 2020 16:41:16 +0300
-Subject: [PATCH RFC 5/5] ext4: Add fallocate2() support
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     tytso@mit.edu, viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
-        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
-        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
-        ktkhai@virtuozzo.com, dmonakhov@gmail.com,
-        mbobrowski@mbobrowski.org, enwlinux@gmail.com, sblbir@amazon.com,
-        khazhy@google.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Wed, 26 Feb 2020 16:41:16 +0300
-Message-ID: <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
-In-Reply-To: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
-References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
-User-Agent: StGit/0.19
+        id S1726988AbgBZNwB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 08:52:01 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:49414 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726388AbgBZNwB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 08:52:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582725118;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qS+zeTxWycgVFIYDEZjy4nCOnkZdH/4Sp0bqijNqhww=;
+        b=aWjv3JaSKmgzRud0qQ97OFqa5dZT4jlmtwEWLTG+Ey/Y8MOy5VH9MbZFM6utdkIhJJ1VIB
+        QIh059Ymwf2l52lzWH7LPDMZRAVJIKCjH6Eqpd9NBIC6u/ZsrjIUJT4ctdr5PxVu8HtvvL
+        ZcjItT4QRzB6Doo0chrgbagvX3bb3sM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-68-cJauPauOMlK1pAIo-9Oeew-1; Wed, 26 Feb 2020 08:51:54 -0500
+X-MC-Unique: cJauPauOMlK1pAIo-9Oeew-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70A4B13E2;
+        Wed, 26 Feb 2020 13:51:53 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7E6560BE1;
+        Wed, 26 Feb 2020 13:51:50 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 58E0E2257D2; Wed, 26 Feb 2020 08:51:50 -0500 (EST)
+Date:   Wed, 26 Feb 2020 08:51:50 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
+ arbitrary offset and len
+Message-ID: <20200226135150.GA30329@redhat.com>
+References: <20200221201759.GF25974@redhat.com>
+ <20200223230330.GE10737@dread.disaster.area>
+ <20200224201346.GC14651@redhat.com>
+ <CAPcyv4gGrimesjZ=OKRaYTDd5dUVz+U9aPeBMh_H3_YCz4FOEQ@mail.gmail.com>
+ <20200224211553.GD14651@redhat.com>
+ <CAPcyv4gX8p0YuMg3=r9DtPAO3Lz-96nuNyXbK1X5-cyVzNrDTA@mail.gmail.com>
+ <20200225133653.GA7488@redhat.com>
+ <CAPcyv4h2fdo=-jqLPTqnuxYVMbBgODWPqafH35yBMBaPa5Rxcw@mail.gmail.com>
+ <20200225200824.GB7488@redhat.com>
+ <CAPcyv4jN7ntOO2hK4ByDcX4-Kob=aJNOr3fGR_k_8rxZ=3Sz7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jN7ntOO2hK4ByDcX4-Kob=aJNOr3fGR_k_8rxZ=3Sz7w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a support of physical hint for fallocate2() syscall.
-In case of @physical argument is set for ext4_fallocate(),
-we try to allocate blocks only from [@phisical, @physical + len]
-range, while other blocks are not used.
+On Tue, Feb 25, 2020 at 02:49:30PM -0800, Dan Williams wrote:
+[..]
+> > > > Hi Dan,
+> > > >
+> > > > IIUC, block aligned hole punch don't go through __dax_zero_page_range()
+> > > > path. Instead they call blkdev_issue_zeroout() at later point of time.
+> > > >
+> > > > Only partial block zeroing path is taking __dax_zero_page_range(). So
+> > > > even if we remove poison clearing code from __dax_zero_page_range(),
+> > > > there should not be a regression w.r.t full block zeroing. Only possible
+> > > > regression will be if somebody was doing partial block zeroing on sector
+> > > > boundary, then poison will not be cleared.
+> > > >
+> > > > We now seem to be discussing too many issues w.r.t poison clearing
+> > > > and dax. Atleast 3 issues are mentioned in this thread.
+> > > >
+> > > > A. Get rid of dependency on block device in dax zeroing path.
+> > > >    (__dax_zero_page_range)
+> > > >
+> > > > B. Provide a way to clear latent poison. And possibly use movdir64b to
+> > > >    do that and make filesystems use that interface for initialization
+> > > >    of blocks.
+> > > >
+> > > > C. Dax zero operation is clearing known poison while copy_from_iter() is
+> > > >    not. I guess this ship has already sailed. If we change it now,
+> > > >    somebody will complain of some regression.
+> > > >
+> > > > For issue A, there are two possible ways to deal with it.
+> > > >
+> > > > 1. Implement a dax method to zero page. And this method will also clear
+> > > >    known poison. This is what my patch series is doing.
+> > > >
+> > > > 2. Just get rid of blkdev_issue_zeroout() from __dax_zero_page_range()
+> > > >    so that no poison will be cleared in __dax_zero_page_range() path. This
+> > > >    path is currently used in partial page zeroing path and full filesystem
+> > > >    block zeroing happens with blkdev_issue_zeroout(). There is a small
+> > > >    chance of regression here in case of sector aligned partial block
+> > > >    zeroing.
+> > > >
+> > > > My patch series takes care of issue A without any regressions. In fact it
+> > > > improves current interface. For example, currently "truncate -s 512
+> > > > foo.txt" will succeed even if first sector in the block is poisoned. My
+> > > > patch series fixes it. Current implementation will return error on if any
+> > > > non sector aligned truncate is done and any of the sector is poisoned. My
+> > > > implementation will not return error if poisoned can be cleared as part
+> > > > of zeroing. It will return only if poison is present in non-zeoring part.
+> > >
+> > > That asymmetry makes the implementation too much of a special case. If
+> > > the dax mapping path forces error boundaries on PAGE_SIZE blocks then
+> > > so should zeroing.
+> > >
+> > > >
+> > > > Why don't we solve one issue A now and deal with issue B and C later in
+> > > > a sepaprate patch series. This patch series gets rid of dependency on
+> > > > block device in dax path and also makes current zeroing interface better.
+> > >
+> > > I'm ok with replacing blkdev_issue_zeroout() with a dax operation
+> > > callback that deals with page aligned entries. That change at least
+> > > makes the error boundary symmetric across copy_from_iter() and the
+> > > zeroing path.
+> >
+> > IIUC, you are suggesting that modify dax_zero_page_range() to take page
+> > aligned start and size and call this interface from
+> > __dax_zero_page_range() and get rid of blkdev_issue_zeroout() in that
+> > path?
+> >
+> > Something like.
+> >
+> > __dax_zero_page_range() {
+> >   if(page_aligned_io)
+> >         call_dax_page_zero_range()
+> >   else
+> >         use_direct_access_and_memcpy;
+> > }
+> >
+> > And other callers of blkdev_issue_zeroout() in filesystems can migrate
+> > to calling dax_zero_page_range() instead.
+> >
+> > If yes, I am not seeing what advantage do we get by this change.
+> >
+> > - __dax_zero_page_range() seems to be called by only partial block
+> >   zeroing code. So dax_zero_page_range() call will remain unused.
+> >
+> >
+> > - dax_zero_page_range() will be exact replacement of
+> >   blkdev_issue_zeroout() so filesystems will not gain anything. Just that
+> >   it will create a dax specific hook.
+> >
+> > In that case it might be simpler to just get rid of blkdev_issue_zeroout()
+> > call from __dax_zero_page_range() and make sure there are no callers of
+> > full block zeroing from this path.
+> 
+> I think you're right. The path I'm concerned about not regressing is
+> the error clearing on new block allocation and we get that already via
+> xfs_zero_extent() and sb_issue_zeroout(). For your fs we'll want a
+> dax-device equivalent  for that path, but that does mean that
+> __dax_zero_page_range() stays out of the error clearing game.
 
-ext4_fallocate(struct file *file, int mode,
-                    loff_t offset, loff_t len, u64 physical)
+In virtiofs we do not manage our own blocks. We let host filesystem
+do that and we are just passthrough filesystem passing fuse messages
+around. So I have not seen need of block zeroing interface yet.
 
-In case of some of blocks from the range are occupied, the syscall
-returns with error. This is the only difference from fallocate().
-The same as fallocate(), less then @len blocks may be allocated
-with error as a return value.
+I just happened to carry a patch in my patch series in this area because
+we wanted to get rid of this assumption that dax always has a block
+device associated. Apart from that, I don't need __dax_zero_page_range()
+for virtiofs. 
 
-We try to find hint blocks both in preallocated and ordinary blocks.
-Note, that ext4_mb_use_preallocated() looks for the hint only in
-inode's preallocations. In case of there are no desired block,
-further ext4_mb_discard_preallocations() tries to release group
-preallocations.
+I am doing this cleanup so that we dont even try to use block device
+in this dax zeroing path.
 
-Note, that this patch makes EXT4_MB_HINT_GOAL_ONLY flag be used,
-it used to be unused before for years.
-New EXT4_GET_BLOCKS_FROM_GOAL flag of ext4_map_blocks() is added.
-It indicates, that struct ext4_map_blocks::m_goal_pblk is valid.
+Anyway, I will cleanup this patch series and get rid of
+blkdev_issue_zeroout() call from __dax_zero_page_range() and post again
+for review and where does it go from there.
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- fs/ext4/ext4.h    |    3 +++
- fs/ext4/extents.c |   31 ++++++++++++++++++++++++-------
- fs/ext4/inode.c   |   14 ++++++++++++++
- fs/ext4/mballoc.c |   17 ++++++++++++++---
- 4 files changed, 55 insertions(+), 10 deletions(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 5a98081c5369..299fbb8350ac 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -181,6 +181,7 @@ struct ext4_allocation_request {
- struct ext4_map_blocks {
- 	ext4_fsblk_t m_pblk;
- 	ext4_lblk_t m_lblk;
-+	ext4_fsblk_t m_goal_pblk;
- 	unsigned int m_len;
- 	unsigned int m_flags;
- };
-@@ -621,6 +622,8 @@ enum {
- 	/* Caller will submit data before dropping transaction handle. This
- 	 * allows jbd2 to avoid submitting data before commit. */
- #define EXT4_GET_BLOCKS_IO_SUBMIT		0x0400
-+	/* Caller wants blocks from provided physical offset */
-+#define EXT4_GET_BLOCKS_FROM_GOAL		0x0800
- 
- /*
-  * The bit position of these flags must not overlap with any of the
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index 10d0188a712d..5f2790c1c4fb 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -4412,7 +4412,6 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 
- 	/* allocate new block */
- 	ar.inode = inode;
--	ar.goal = ext4_ext_find_goal(inode, path, map->m_lblk);
- 	ar.logical = map->m_lblk;
- 	/*
- 	 * We calculate the offset from the beginning of the cluster
-@@ -4437,6 +4436,13 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 		ar.flags |= EXT4_MB_DELALLOC_RESERVED;
- 	if (flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
- 		ar.flags |= EXT4_MB_USE_RESERVED;
-+	if (flags & EXT4_GET_BLOCKS_FROM_GOAL) {
-+		ar.flags |= EXT4_MB_HINT_TRY_GOAL|EXT4_MB_HINT_GOAL_ONLY;
-+		ar.goal = map->m_goal_pblk;
-+	} else {
-+		ar.goal = ext4_ext_find_goal(inode, path, map->m_lblk);
-+	}
-+
- 	newblock = ext4_mb_new_blocks(handle, &ar, &err);
- 	if (!newblock)
- 		goto out2;
-@@ -4580,8 +4586,8 @@ int ext4_ext_truncate(handle_t *handle, struct inode *inode)
- }
- 
- static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
--				  ext4_lblk_t len, loff_t new_size,
--				  int flags)
-+				  ext4_lblk_t len, ext4_fsblk_t goal_pblk,
-+				  loff_t new_size, int flags)
- {
- 	struct inode *inode = file_inode(file);
- 	handle_t *handle;
-@@ -4603,6 +4609,10 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 	 */
- 	if (len <= EXT_UNWRITTEN_MAX_LEN)
- 		flags |= EXT4_GET_BLOCKS_NO_NORMALIZE;
-+	if (goal_pblk != (ext4_fsblk_t)-1) {
-+		map.m_goal_pblk = goal_pblk;
-+		flags |= EXT4_GET_BLOCKS_FROM_GOAL;
-+	}
- 
- 	/*
- 	 * credits to insert 1 extent into extent tree
-@@ -4637,6 +4647,7 @@ static int ext4_alloc_file_blocks(struct file *file, ext4_lblk_t offset,
- 			break;
- 		}
- 		map.m_lblk += ret;
-+		map.m_goal_pblk += ret;
- 		map.m_len = len = len - ret;
- 		epos = (loff_t)map.m_lblk << inode->i_blkbits;
- 		inode->i_ctime = current_time(inode);
-@@ -4746,6 +4757,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 				round_down(offset, 1 << blkbits) >> blkbits,
- 				(round_up((offset + len), 1 << blkbits) -
- 				 round_down(offset, 1 << blkbits)) >> blkbits,
-+				(ext4_fsblk_t)-1,
- 				new_size, flags);
- 		if (ret)
- 			goto out_mutex;
-@@ -4778,8 +4790,8 @@ static long ext4_zero_range(struct file *file, loff_t offset,
- 		truncate_pagecache_range(inode, start, end - 1);
- 		inode->i_mtime = inode->i_ctime = current_time(inode);
- 
--		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
--					     flags);
-+		ret = ext4_alloc_file_blocks(file, lblk, max_blocks,
-+					     (ext4_fsblk_t)-1, new_size, flags);
- 		up_write(&EXT4_I(inode)->i_mmap_sem);
- 		if (ret)
- 			goto out_mutex;
-@@ -4839,10 +4851,12 @@ long ext4_fallocate(struct file *file, int mode,
- 		    loff_t offset, loff_t len, u64 physical)
- {
- 	struct inode *inode = file_inode(file);
-+	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
- 	loff_t new_size = 0;
- 	unsigned int max_blocks;
- 	int ret = 0;
- 	int flags;
-+	ext4_fsblk_t pblk;
- 	ext4_lblk_t lblk;
- 	unsigned int blkbits = inode->i_blkbits;
- 
-@@ -4862,7 +4876,8 @@ long ext4_fallocate(struct file *file, int mode,
- 		     FALLOC_FL_INSERT_RANGE))
- 		return -EOPNOTSUPP;
- 
--	if (physical != (u64)-1)
-+	if (((mode & ~FALLOC_FL_KEEP_SIZE) || sbi->s_cluster_ratio > 1) &&
-+	    physical != (u64)-1)
- 		return -EOPNOTSUPP;
- 
- 	if (mode & FALLOC_FL_PUNCH_HOLE)
-@@ -4883,6 +4898,7 @@ long ext4_fallocate(struct file *file, int mode,
- 
- 	trace_ext4_fallocate_enter(inode, offset, len, mode);
- 	lblk = offset >> blkbits;
-+	pblk = physical == (u64)-1 ? (ext4_fsblk_t)-1 : physical >> blkbits;
- 
- 	max_blocks = EXT4_MAX_BLOCKS(len, offset, blkbits);
- 	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
-@@ -4911,7 +4927,8 @@ long ext4_fallocate(struct file *file, int mode,
- 	/* Wait all existing dio workers, newcomers will block on i_mutex */
- 	inode_dio_wait(inode);
- 
--	ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size, flags);
-+	ret = ext4_alloc_file_blocks(file, lblk, max_blocks, pblk,
-+				     new_size, flags);
- 	if (ret)
- 		goto out;
- 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fa0ff78dc033..1054ba65cc1b 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -580,6 +580,10 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 			return ret;
- 	}
- 
-+	if (retval > 0 && flags & EXT4_GET_BLOCKS_FROM_GOAL &&
-+	    map->m_pblk != map->m_goal_pblk)
-+		return -EEXIST;
-+
- 	/* If it is only a block(s) look up */
- 	if ((flags & EXT4_GET_BLOCKS_CREATE) == 0)
- 		return retval;
-@@ -672,6 +676,16 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
- 			}
- 		}
- 
-+		/*
-+		 * Concurrent thread could allocate extent with other m_pblk,
-+		 * and we got it during second call of ext4_ext_map_blocks().
-+		 */
-+		if (retval > 0 && flags & EXT4_GET_BLOCKS_FROM_GOAL &&
-+		    map->m_pblk != map->m_goal_pblk) {
-+			retval = -EEXIST;
-+			goto out_sem;
-+		}
-+
- 		/*
- 		 * If the extent has been zeroed out, we don't need to update
- 		 * extent status tree.
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index b1b3c5526d1a..ed25f47748a0 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -3426,6 +3426,8 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 	struct ext4_prealloc_space *pa, *cpa = NULL;
- 	ext4_fsblk_t goal_block;
- 
-+	goal_block = ext4_grp_offs_to_block(ac->ac_sb, &ac->ac_g_ex);
-+
- 	/* only data can be preallocated */
- 	if (!(ac->ac_flags & EXT4_MB_HINT_DATA))
- 		return 0;
-@@ -3436,7 +3438,11 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 
- 		/* all fields in this condition don't change,
- 		 * so we can skip locking for them */
--		if (ac->ac_o_ex.fe_logical < pa->pa_lstart ||
-+		if (unlikely(ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY) &&
-+		    (goal_block < pa->pa_pstart ||
-+		     goal_block >= pa->pa_pstart + pa->pa_len))
-+			continue;
-+		else if (ac->ac_o_ex.fe_logical < pa->pa_lstart ||
- 		    ac->ac_o_ex.fe_logical >= (pa->pa_lstart +
- 					       EXT4_C2B(sbi, pa->pa_len)))
- 			continue;
-@@ -3465,6 +3471,9 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 	if (!(ac->ac_flags & EXT4_MB_HINT_GROUP_ALLOC))
- 		return 0;
- 
-+	if (unlikely(ac->ac_flags & EXT4_MB_HINT_GOAL_ONLY))
-+		return 0;
-+
- 	/* inode may have no locality group for some reason */
- 	lg = ac->ac_lg;
- 	if (lg == NULL)
-@@ -3474,7 +3483,6 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
- 		/* The max size of hash table is PREALLOC_TB_SIZE */
- 		order = PREALLOC_TB_SIZE - 1;
- 
--	goal_block = ext4_grp_offs_to_block(ac->ac_sb, &ac->ac_g_ex);
- 	/*
- 	 * search for the prealloc space that is having
- 	 * minimal distance from the goal block.
-@@ -4261,8 +4269,11 @@ ext4_mb_initialize_context(struct ext4_allocation_context *ac,
- 	/* start searching from the goal */
- 	goal = ar->goal;
- 	if (goal < le32_to_cpu(es->s_first_data_block) ||
--			goal >= ext4_blocks_count(es))
-+			goal >= ext4_blocks_count(es)) {
-+		if (ar->flags & EXT4_MB_HINT_GOAL_ONLY)
-+			return -EINVAL;
- 		goal = le32_to_cpu(es->s_first_data_block);
-+	}
- 	ext4_get_group_no_and_offset(sb, goal, &group, &block);
- 
- 	/* set up allocation goals */
-
+Thanks
+Vivek
 
