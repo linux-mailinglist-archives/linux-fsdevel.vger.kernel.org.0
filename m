@@ -2,73 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 138541702A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 16:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16851170345
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 16:55:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbgBZPfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 10:35:44 -0500
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:40631 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbgBZPfn (ORCPT
+        id S1728585AbgBZPzr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 10:55:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51956 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbgBZPzq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:35:43 -0500
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-        by smtp-sh2.infomaniak.ch (8.14.4/8.14.4/Debian-8+deb8u2) with ESMTP id 01QFZ3Zc056663
-        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 26 Feb 2020 16:35:03 +0100
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48SKcN1RPGzlhMhj;
-        Wed, 26 Feb 2020 16:35:00 +0100 (CET)
-Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
-To:     J Freyensee <why2jjj.linux@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-References: <20200224160215.4136-1-mic@digikod.net>
- <6df3e6b1-ffd1-dacf-2f2d-7df8e5aca668@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <5ec24e38-1a6f-590a-3b30-50caae177e9b@digikod.net>
-Date:   Wed, 26 Feb 2020 16:34:59 +0100
-User-Agent: 
+        Wed, 26 Feb 2020 10:55:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Fzv0zma6qNHzEymKrEWyqTitusIASlSI8vJyXmG2rJc=; b=D7H2FzbBGfi2n+JNeba/gdYqyy
+        bIjC1RC6wR8orJYPP9f8xd8bov3RjjVYOnJzPe4diHk1oURUDw4BV87duYPM2LJJrWdTBqmzpMF6r
+        9X2a5sGhpu0+buC9IRIR1bBaMIOAXeLtrATuvG+kr0DrATZKcq4PSvGuIAwRUaiK5inwJmAqaoAOM
+        YINQWRRM41eE9hnRno5tCSxgMLPD2IOINRAp6v/scLRjaH5rOK4h3Hb/xRyMOMzVvARLqj0KljAoZ
+        7ICJnrM6/FvMGFtaePismAf6+PJGACByG2yuJ9/sf046zxiIcfgjPWk5Feob+HTJIp05kw9i6hMj5
+        Z3yvlKsA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6z1t-0007rU-Kj; Wed, 26 Feb 2020 15:55:21 +0000
+Date:   Wed, 26 Feb 2020 07:55:21 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     tytso@mit.edu, viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
+        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
+        dmonakhov@gmail.com, mbobrowski@mbobrowski.org, enwlinux@gmail.com,
+        sblbir@amazon.com, khazhy@google.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
+Message-ID: <20200226155521.GA24724@infradead.org>
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <6df3e6b1-ffd1-dacf-2f2d-7df8e5aca668@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Feb 26, 2020 at 04:41:16PM +0300, Kirill Tkhai wrote:
+> This adds a support of physical hint for fallocate2() syscall.
+> In case of @physical argument is set for ext4_fallocate(),
+> we try to allocate blocks only from [@phisical, @physical + len]
+> range, while other blocks are not used.
 
-On 25/02/2020 19:49, J Freyensee wrote:
-> 
-> 
-> On 2/24/20 8:02 AM, Mickaël Salaün wrote:
-> 
->> ## Syscall
->>
->> Because it is only tested on x86_64, the syscall is only wired up for
->> this architecture.  The whole x86 family (and probably all the others)
->> will be supported in the next patch series.
-> General question for u.  What is it meant "whole x86 family will be
-> supported".  32-bit x86 will be supported?
-
-Yes, I was referring to x86_32, x86_64 and x32, but all architectures
-should be supported.
+Sorry, but this is a complete bullshit interface.  Userspace has
+absolutely no business even thinking of physical placement.  If you
+want to align allocations to physical block granularity boundaries
+that is the file systems job, not the applications job.
