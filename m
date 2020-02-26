@@ -2,80 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7153517060C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 18:26:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13908170652
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 18:40:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbgBZR04 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 12:26:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47206 "EHLO mx2.suse.de"
+        id S1726872AbgBZRkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 12:40:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55426 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726687AbgBZR04 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 12:26:56 -0500
+        id S1726579AbgBZRkp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 12:40:45 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A247EABE9;
-        Wed, 26 Feb 2020 17:26:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7295E1E0EA2; Wed, 26 Feb 2020 18:26:53 +0100 (CET)
-Date:   Wed, 26 Feb 2020 18:26:53 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>, jack@suse.cz,
-        tytso@mit.edu, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, cmaiolino@redhat.com
-Subject: Re: [PATCHv3 6/6] Documentation: Correct the description of
- FIEMAP_EXTENT_LAST
-Message-ID: <20200226172653.GW10728@quack2.suse.cz>
-References: <cover.1582702693.git.riteshh@linux.ibm.com>
- <279638c6939b1f6ef3ab32912cb51da1a967cf8e.1582702694.git.riteshh@linux.ibm.com>
- <20200226130503.GY24185@bombadil.infradead.org>
- <20200226161742.GB8036@magnolia>
+        by mx2.suse.de (Postfix) with ESMTP id 75EEDAE85;
+        Wed, 26 Feb 2020 17:40:42 +0000 (UTC)
+Subject: Re: [PATCH V2 3/4] mm/vma: Replace all remaining open encodings with
+ is_vm_hugetlb_page()
+To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <1582520593-30704-1-git-send-email-anshuman.khandual@arm.com>
+ <1582520593-30704-4-git-send-email-anshuman.khandual@arm.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <79d454cb-9b7e-4fc2-6381-3da93f17ddc1@suse.cz>
+Date:   Wed, 26 Feb 2020 18:40:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226161742.GB8036@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1582520593-30704-4-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 26-02-20 08:17:42, Darrick J. Wong wrote:
-> On Wed, Feb 26, 2020 at 05:05:03AM -0800, Matthew Wilcox wrote:
-> > On Wed, Feb 26, 2020 at 03:27:08PM +0530, Ritesh Harjani wrote:
-> > > Currently FIEMAP_EXTENT_LAST is not working consistently across
-> > > different filesystem's fiemap implementations and thus this feature
-> > > may be broken. So fix the documentation about this flag to meet the
-> > > right expectations.
-> > 
-> > Are you saying filesystems have both false positives and false negatives?
-> > I can understand how a filesystem might fail to set FIEMAP_EXTENT_LAST,
-> > but not how a filesystem might set it when there's actually another
-> > extent beyond this one.
-> > 
-> > >  * FIEMAP_EXTENT_LAST
-> > > -This is the last extent in the file. A mapping attempt past this
-> > > -extent will return nothing.
-> > > +This is generally the last extent in the file. A mapping attempt past this
-> > > +extent may return nothing. But the user must still confirm by trying to map
-> > > +past this extent, since different filesystems implement this differently.
+On 2/24/20 6:03 AM, Anshuman Khandual wrote:
+> This replaces all remaining open encodings with is_vm_hugetlb_page().
 > 
-> "This flag means nothing and can be set arbitrarily by the fs for the lulz."
-> 
-> Yuck.  I was really hoping for "This is set on the last extent record in
-> the dataset generated by the query parameters", particularly becaue
-> that's how e2fsprogs utilties interpret that flag.
+> Cc: Paul Mackerras <paulus@ozlabs.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Nick Piggin <npiggin@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: kvm-ppc@vger.kernel.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-The problem is that in some cases, we cannot determine whether the flag
-should be set without doing work equivalent to another fiemap call. And it
-just seems pointless to try to provide the flag in those cases.
+Meh, why is there _page in the function's name... but too many users to bother
+changing it now, I guess.
 
-But I agree with Matthew that seeing the flag without the extent really
-being the last one shouldn't happen (unless someone is changing the file).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Acked-by: Vlastimil Babka <vbabka@suse.cz
