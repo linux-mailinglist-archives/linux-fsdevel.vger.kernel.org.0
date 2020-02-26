@@ -2,126 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F011703BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AA41703D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbgBZQFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 11:05:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:44148 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbgBZQFD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:05:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFxPmQ164659;
-        Wed, 26 Feb 2020 16:04:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=/op6eB0GJIWmE5awTMCc59CC2KBIYmyjFl9AwZ4pu7w=;
- b=naP77yd3khxdk8GZLMAnBM9+66OE1nM0HX9YOPaVPvTUQo9FTpSZjsgCb1sZtAzHHi6x
- +kDw7rKpPQIdmkLUvH6IU0z6hIYhhULzizHu+ucWvFb3oZvOrrm0V8/kbD1Hf0T3FfLN
- VcL6ltG/47H6Sx5U0QYXGacqht02A9lPE/L2W4DlWAIrqpfXQRdB+deYNxf5NYOrieem
- NiyovZXLaLu9BnshaWlzd117Ba2M+ruKZsbZdcOrnENLFuhG5wVUvQw8+PU23pJlXxK9
- Uk9A/kkBqQKclzVZ4dh5Fn2C3CFkBgaFFmIDg0doMj9Cl4j7XgHHsYENi565rXlHGkF4 zQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2ydcsncmny-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:04:59 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFwHOr052230;
-        Wed, 26 Feb 2020 16:04:59 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2ydcs5c4ry-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:04:58 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QG4vYs020904;
-        Wed, 26 Feb 2020 16:04:57 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:04:57 -0800
-Date:   Wed, 26 Feb 2020 08:04:56 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Bob Liu <bob.liu@oracle.com>
-Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
-        martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH 3/4] block_dev: support protect information passthrough
-Message-ID: <20200226160456.GC8044@magnolia>
-References: <20200226083719.4389-1-bob.liu@oracle.com>
- <20200226083719.4389-4-bob.liu@oracle.com>
+        id S1727180AbgBZQKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 11:10:05 -0500
+Received: from mga01.intel.com ([192.55.52.88]:25114 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726614AbgBZQKF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 11:10:05 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 08:10:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
+   d="scan'208";a="350419564"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Feb 2020 08:10:04 -0800
+Date:   Wed, 26 Feb 2020 08:10:04 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jonathan Halliday <jonathan.halliday@redhat.com>
+Cc:     Jeff Moyer <jmoyer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200226161004.GB22036@iweiny-DESK2.sc.intel.com>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-8-ira.weiny@intel.com>
+ <20200221174449.GB11378@lst.de>
+ <20200221224419.GW10776@dread.disaster.area>
+ <20200224175603.GE7771@lst.de>
+ <20200225000937.GA10776@dread.disaster.area>
+ <20200225173633.GA30843@lst.de>
+ <x49fteyh313.fsf@segfault.boston.devel.redhat.com>
+ <a126276c-d252-6050-b6ee-4d6448d45fac@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226083719.4389-4-bob.liu@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 spamscore=0 adultscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
+In-Reply-To: <a126276c-d252-6050-b6ee-4d6448d45fac@redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 04:37:18PM +0800, Bob Liu wrote:
-> Support protect information passed from use sapce, on direct io
-> is considered now.
+On Wed, Feb 26, 2020 at 09:28:57AM +0000, Jonathan Halliday wrote:
 > 
-> Signed-off-by: Bob Liu <bob.liu@oracle.com>
-> ---
->  fs/block_dev.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
+> Hi All
 > 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index 69bf2fb..10e3299 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -348,6 +348,13 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->  	loff_t pos = iocb->ki_pos;
->  	blk_qc_t qc = BLK_QC_T_NONE;
->  	int ret = 0;
-> +	struct iovec *pi_iov;
-> +
-> +	if (iocb->ki_flags & IOCB_USE_PI) {
-> +		ret = iter_slice_protect_info(iter, nr_pages, &pi_iov);
-> +		if (ret)
-> +			return -EINVAL;
-> +	}
->  
->  	if ((pos | iov_iter_alignment(iter)) &
->  	    (bdev_logical_block_size(bdev) - 1))
-> @@ -411,6 +418,16 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->  				polled = true;
->  			}
->  
-> +			/* Add protection information to bio */
-> +			if (iocb->ki_flags & IOCB_USE_PI) {
-> +				ret = bio_integrity_prep_from_iovec(bio, pi_iov);
-> +				if (ret) {
-> +					bio->bi_status = BLK_STS_IOERR;
-> +					bio_endio(bio);
+> I'm a middleware developer, focused on how Java (JVM) workloads can benefit
+> from app-direct mode pmem. Initially the target is apps that need a fast
+> binary log for fault tolerance: the classic database WAL use case;
+> transaction coordination systems; enterprise message bus persistence and
+> suchlike. Critically, there are cases where we use log based storage, i.e.
+> it's not the strict 'read rarely, only on recovery' model that a classic db
+> may have, but more of a 'append only, read many times' event stream model.
+> 
+> Think of the log oriented data storage as having logical segments (let's
+> implement them as files), of which the most recent is being appended to
+> (read_write) and the remaining N-1 older segments are full and sealed, so
+> effectively immutable (read_only) until discarded. The tail segment needs to
+> be in DAX mode for optimal write performance, as the size of the append may
+> be sub-block and we don't want the overhead of the kernel call anyhow. So
+> that's clearly a good fit for putting on a DAX fs mount and using mmap with
+> MAP_SYNC.
+> 
+> However, we want fast read access into the segments, to retrieve stored
+> records. The small access index can be built in volatile RAM (assuming we're
+> willing to take the startup overhead of a full file scan at recovery time)
+> but the data itself is big and we don't want to move it all off pmem. Which
+> means the requirements are now different: we want the O/S cache to pull hot
+> data into fast volatile RAM for us, which DAX explicitly won't do.
+> Effectively a poor man's 'memory mode' pmem, rather than app-direct mode,
+> except here we're using the O/S rather than the hardware memory controller
+> to do the cache management for us.
+> 
+> Currently this requires closing the full (read_write) file, then copying it
+> to a non-DAX device and reopening it (read_only) there. Clearly that's
+> expensive and rather tedious. Instead, I'd like to close the MAP_SYNC mmap,
+> then, leaving the file where it is, reopen it in a mode that will instead go
+> via the O/S cache in the traditional manner.
 
-If you're just going to mash all the error codes into IOERR, then this
-could very well become bio_io_error() ?
+This patch set implements this capability.
 
---D
+> Bonus points if I can do it
+> over non-overlapping ranges in a file without closing the DAX mode mmap,
+> since then the segments are entirely logical instead of needing separate
+> physical files.
 
-> +					break;
-> +				}
-> +			}
-> +
->  			qc = submit_bio(bio);
->  
->  			if (polled)
+But it is too hard to do so while an mmap is in place so it can't do this.  So
+no bonus points...
+
+> 
+> I note a comment below regarding a per-directly setting, but don't have the
+> background to fully understand what's being suggested. However, I'll note
+> here that I can live with a per-directory granularity, as relinking a file
+> into a new dir is a constant time operation, whilst the move described above
+> isn't. So if a per-directory granularity is easier than a per-file one
+> that's fine, though as a person with only passing knowledge of filesystem
+> design I don't see how having multiple links to a file can work cleanly in
+> that case.
+
+The more I think about it the more I'm not comfortable with a directory option.
+soft links and hard links complicate that IMO.  The current inheritance model
+is at file creation time and the file sticks with that state (mode).  That is
+easy enough and carry's with the file without having the complexity of possibly
+looking at the wrong parent directory.
+
+Ira
+
+
+> 
+> Hope that helps.
+> 
+> Jonathan
+> 
+> P.S. I'll cheekily take the opportunity of having your attention to tack on
+> one minor gripe about the current system: The only way to know if a mmap
+> with MAP_SYNC will work is to try it and catch the error. Which would be
+> reasonable if it were free of side effects.  However, the process requires
+> first expanding the file to at least the size of the desired map, which is
+> done non-atomically i.e. is user visible. There are thus nasty race
+> conditions in the cleanup, where after a failed mmap attempt (e.g the device
+> doesn't support DAX), we try to shrink the file back to its original size,
+> but something else has already opened it at its new, larger size. This is
+> not theoretical: I got caught by it whilst adapting some of our middleware
+> to use pmem.  Therefore, some way to probe the file path for its capability
+> would be nice, much the same as I can e.g. inspect file permissions to (more
+> or less) evaluate if I can write it without actually mutating it.  Thanks!
+> 
+> 
+> 
+> On 25/02/2020 19:37, Jeff Moyer wrote:
+> > Christoph Hellwig <hch@lst.de> writes:
+> > 
+> > > And my point is that if we ensure S_DAX can only be checked if there
+> > > are no blocks on the file, is is fairly easy to provide the same
+> > > guarantee.  And I've not heard any argument that we really need more
+> > > flexibility than that.  In fact I think just being able to change it
+> > > on the parent directory and inheriting the flag might be more than
+> > > plenty, which would lead to a very simple implementation without any
+> > > of the crazy overhead in this series.
+> > 
+> > I know of one user who had at least mentioned it to me, so I cc'd him.
+> > Jonathan, can you describe your use case for being able to change a
+> > file between dax and non-dax modes?  Or, if I'm misremembering, just
+> > correct me?
+> > 
+> > Thanks!
+> > Jeff
+> > 
+> 
 > -- 
-> 2.9.5
+> Registered in England and Wales under Company Registration No. 03798903
+> Directors: Michael Cunningham, Michael ("Mike") O'Neill, Eric Shander
 > 
