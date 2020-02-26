@@ -2,94 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17F8D170375
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 16:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 511D2170358
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 16:57:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbgBZP5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 10:57:32 -0500
-Received: from mga12.intel.com ([192.55.52.136]:20933 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728590AbgBZP53 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1728555AbgBZP53 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 26 Feb 2020 10:57:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 07:57:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
-   d="scan'208";a="231443910"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga008.jf.intel.com with ESMTP; 26 Feb 2020 07:57:28 -0800
+Received: from bombadil.infradead.org ([198.137.202.133]:53260 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbgBZP53 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 10:57:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=q6+/Qd2Y2JYGSuVZkpzMJBymUWB4oioDyaoc9EA54Mk=; b=LXgY2HyV62m0jZoriJzn9lW1Vo
+        1rcWuVS6DQyaDEyT8m1/KLrbKN+DKjK6bih5KPHbY+pNX3P1JcdIk4UcTZkyZmHVyWUuLbZzGvJkw
+        EmGuKm0Ss0qYMWC8JrCq8ttlOMOgmg80NINVJNFRzkotRIvbQ9Ejby2QJN1aO2aWGleI6pnBHVoxn
+        kdNVPOhsUpmkoTyzhKEVYzWscEIxwqWbThBQwtgQHrTbxlcm17f/TLO+tZaLPA/fQxBf5CF9DnTBy
+        nFySCmtHbzeRTJcRe/SOiQM7g0vULK3XTyVDzhGtDDSTkPAojrMopVqqRCLezZ27CY/s3yUWrQKSS
+        3Urlv3IQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6z3w-00007H-7d; Wed, 26 Feb 2020 15:57:28 +0000
 Date:   Wed, 26 Feb 2020 07:57:28 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
- operations state
-Message-ID: <20200226155727.GA22036@iweiny-DESK2.sc.intel.com>
-References: <20200221004134.30599-1-ira.weiny@intel.com>
- <20200221004134.30599-8-ira.weiny@intel.com>
- <20200221174449.GB11378@lst.de>
- <20200221224419.GW10776@dread.disaster.area>
- <20200224175603.GE7771@lst.de>
- <20200225000937.GA10776@dread.disaster.area>
- <20200226111740.GF10728@quack2.suse.cz>
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Bob Liu <bob.liu@oracle.com>, linux-block@vger.kernel.org,
+        martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, io-uring@vger.kernel.org
+Subject: Re: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
+Message-ID: <20200226155728.GA32543@infradead.org>
+References: <20200226083719.4389-1-bob.liu@oracle.com>
+ <20200226083719.4389-2-bob.liu@oracle.com>
+ <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226111740.GF10728@quack2.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 12:17:40PM +0100, Jan Kara wrote:
-> On Tue 25-02-20 11:09:37, Dave Chinner wrote:
-> > /me wonders if the best thing to do is to add a ->fault callout to
-> > tell the filesystem to lock/unlock the inode right up at the top of
-> > the page fault path, outside even the mmap_sem.  That means all the
-> > methods that the page fault calls are protected against S_DAX
-> > changes, and it gives us a low cost method of serialising page
-> > faults against DIO (e.g. via inode_dio_wait())....
+On Wed, Feb 26, 2020 at 07:24:06AM -0700, Jens Axboe wrote:
+> On 2/26/20 1:37 AM, Bob Liu wrote:
+> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> > index a3300e1..98fa3f1 100644
+> > --- a/include/uapi/linux/io_uring.h
+> > +++ b/include/uapi/linux/io_uring.h
+> > @@ -62,6 +62,8 @@ enum {
+> >  	IORING_OP_NOP,
+> >  	IORING_OP_READV,
+> >  	IORING_OP_WRITEV,
+> > +	IORING_OP_READV_PI,
+> > +	IORING_OP_WRITEV_PI,
+> >  	IORING_OP_FSYNC,
+> >  	IORING_OP_READ_FIXED,
+> >  	IORING_OP_WRITE_FIXED,
 > 
-> Well, that's going to be pretty hard. The main problem is: you cannot
-> lookup VMA until you hold mmap_sem and the inode is inside the VMA. And
-> this is a fundamental problem because until you hold mmap_sem, the address
-> space can change and thus the virtual address you are faulting can be
-> changing inode it is mapped to. So you would have to do some dance like:
+> So this one renumbers everything past IORING_OP_WRITEV, breaking the
+> ABI in a very bad way. I'm guessing that was entirely unintentional?
+> Any new command must go at the end of the list.
 > 
-> lock mmap_sem
-> lookup vma
-> get inode reference
-> drop mmap_sem
-> tell fs about page fault
-> lock mmap_sem
-> is the vma still the same?
-> 
-> And I'm pretty confident the overhead will be visible in page fault
-> intensive workloads...
+> You're also not updating io_op_defs[] with the two new commands,
+> which means it won't compile at all. I'm guessing you tested this on
+> an older version of the kernel which didn't have io_op_defs[]?
 
-I did not get to this level of detail...  Rather I looked at it from a high
-level perspective and thought "does the mode need to change while someone has
-the mmap?"  My thought is, that it does not make a lot of sense.  Generally the
-user has mmaped with some use case in mind (either DAX or non-DAX) and it seems
-reasonable to keep that mode consistent while the map is in place.
-
-So I punted and restricted the change.
-
-Ira
-
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+And the real question is why we need ops insted of just a flag and
+using previously reserved fields for the PI pointer.
