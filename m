@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D012170A95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 22:39:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3689E170A9B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 22:40:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbgBZVi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 16:38:58 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:50314 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbgBZVi5 (ORCPT
+        id S1727733AbgBZVjy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 16:39:54 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37585 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbgBZVjw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 16:38:57 -0500
-Received: by mail-pj1-f68.google.com with SMTP id r67so206135pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 13:38:55 -0800 (PST)
+        Wed, 26 Feb 2020 16:39:52 -0500
+Received: by mail-pf1-f193.google.com with SMTP id p14so446295pfn.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 13:39:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ICcEQ4gQdYyuJJyaNP/FXqF/GhkUX9RbcqCJbqfCFhk=;
-        b=JK7mgAJhIECWhL4BqCySSQ6RLJa9mVCEkRWbEgclZW6QParWyKb3pKOOzK7P7B2Fds
-         QcJF8TMbhEkv9fkT27o5U2RrqdXSuHQHl3gd7Qlg7QioSGNbW/enlgGOtVHMRwsG9u/z
-         ud39wkvioudcK1LY9iGaZX2XQoE68rMHqRca8=
+        bh=SuRPBFQdcJTBQXLfW7zhTZM3AVXzTzaLq0hZO+OJ8t8=;
+        b=McMrWJB/rzDG1kYNRHCmu6YGhWogESTULXa4e+VE70LyFgccjXgbd+15VJ3LqXUUU8
+         jJaLOjX8fotobjx6twtTRj4EZmpxPNIw/R2SlyBMIKuyHb/AIRdVMvgSR5jzwqx1whrJ
+         Fa20+GL6IL88TZFTbMeFNrQ8Xj9oz3fbcCWZ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ICcEQ4gQdYyuJJyaNP/FXqF/GhkUX9RbcqCJbqfCFhk=;
-        b=hBb69JsNy5DviIby/Cy6yrepHaIO2Nct3lrUoNzZGHR9ml67v4M2dVURmhtlWRhftB
-         K4hdhyw5Vki2QNiUAlUlALqbiaHWoi5LXlc1K4uz1tOoFTMfGCQTpFplesXFVIcl7cPd
-         6jZvr6NxBULRmY0dPmyZxnoLGDXohzBqyTLMp4aeyj2y7BUpUqHLfK7DFOPPRGt94YtZ
-         wWm8pcuGIeWOxH7fvLZfcAa2VY2fVwyYiINEtSYq0pQS8XFFVDL8Cv4w29LkZZ7zRzMf
-         xOGefJl2WrPVwKeh0WNaYmkRfng7Mxxj/6XZPbPaliYSh12H5jcg+dVQ4F0KaEwDFHfs
-         JNYg==
-X-Gm-Message-State: APjAAAX0DnM7a0fTlGa1peyX+UtVxs9tU/zyeKTe2RPT6s2Km4vN+Wgt
-        CwbI0HZMwe8Q5XHL9vZ0o180MQ==
-X-Google-Smtp-Source: APXvYqy0FqzsDX/eNvJJ9FIhOvUOIrN2vJCL0P6ncKlZEe17n/wI063mdTJEXhlTrLSMfxHAV6Ojog==
-X-Received: by 2002:a17:902:6ac3:: with SMTP id i3mr1273585plt.111.1582753134753;
-        Wed, 26 Feb 2020 13:38:54 -0800 (PST)
+        bh=SuRPBFQdcJTBQXLfW7zhTZM3AVXzTzaLq0hZO+OJ8t8=;
+        b=mnckgDeBWW43EcHSX9Hwax2Gz/Fbucwb6BiYsSGm3lCa4O8UY4CCSnmQ7CIbz+je1c
+         0lP8AtSh4D43dfyLhquA6ABASM1L8z0RLVHZGUrMOxxnZwys5yN7A0UNEuSoctHa7P6g
+         xVpWtZODEFNo6eafAI80tMLgLKDcxQtnlU3S/VewBOEmIx5lkSrt0rZjmGLdTBLpHgtq
+         qvXhrdE5j0NFKgFwe44ex3f2UkMJAqv8leTCcCkPyQfcPCjlaO3iULXtueMbbbXgEPed
+         9RovjcJeHS6wZv6GULy6txUOsW9xbsAne2ZRLXwGF0dj6hkNxr2Obcu1syFZeFvHom4N
+         aZdA==
+X-Gm-Message-State: APjAAAW1fgdR/GZlejNpW/1BzfOdcfeTDCs6C2leLPfKaY0F6K9GLrr9
+        MjkOtT9tuimbbPHU03+x1MuWnw==
+X-Google-Smtp-Source: APXvYqywytR40Z7EOffZT448kxzYwWrN/27FUekevyfwSHqRVpegVaIO/Shffbk5jeh0USf/WAeU7Q==
+X-Received: by 2002:a63:1a5b:: with SMTP id a27mr769948pgm.249.1582753191171;
+        Wed, 26 Feb 2020 13:39:51 -0800 (PST)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x197sm188503pfc.47.2020.02.26.13.38.53
+        by smtp.gmail.com with ESMTPSA id i2sm3730242pjs.21.2020.02.26.13.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 13:38:53 -0800 (PST)
-Date:   Wed, 26 Feb 2020 13:38:53 -0800
+        Wed, 26 Feb 2020 13:39:50 -0800 (PST)
+Date:   Wed, 26 Feb 2020 13:39:49 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Catalin Marinas <catalin.marinas@arm.com>,
@@ -65,52 +65,176 @@ Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Florian Weimer <fweimer@redhat.com>,
         Sudakshina Das <sudi.das@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 11/11] arm64: mm: Display guarded pages in ptdump
-Message-ID: <202002261338.9890367C@keescook>
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v7 08/11] arm64: traps: Shuffle code to eliminate forward
+ declarations
+Message-ID: <202002261339.53539BA19@keescook>
 References: <20200226155714.43937-1-broonie@kernel.org>
- <20200226155714.43937-12-broonie@kernel.org>
+ <20200226155714.43937-9-broonie@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226155714.43937-12-broonie@kernel.org>
+In-Reply-To: <20200226155714.43937-9-broonie@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 03:57:14PM +0000, Mark Brown wrote:
-> v8.5-BTI introduces the GP field in stage 1 translation tables which
-> indicates that blocks and pages with it set are guarded pages for which
-> branch target identification checks should be performed. Decode this
-> when dumping the page tables to aid debugging.
+On Wed, Feb 26, 2020 at 03:57:11PM +0000, Mark Brown wrote:
+> From: Dave Martin <Dave.Martin@arm.com>
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Hoist the IT state handling code earlier in traps.c, to avoid
+> accumulating forward declarations.
+> 
+> No functional change.
+> 
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -Kees
 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
->  arch/arm64/mm/dump.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  arch/arm64/kernel/traps.c | 103 ++++++++++++++++++--------------------
+>  1 file changed, 50 insertions(+), 53 deletions(-)
 > 
-> diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-> index 860c00ec8bd3..78163b7a7dde 100644
-> --- a/arch/arm64/mm/dump.c
-> +++ b/arch/arm64/mm/dump.c
-> @@ -145,6 +145,11 @@ static const struct prot_bits pte_bits[] = {
->  		.val	= PTE_UXN,
->  		.set	= "UXN",
->  		.clear	= "   ",
-> +	}, {
-> +		.mask	= PTE_GP,
-> +		.val	= PTE_GP,
-> +		.set	= "GP",
-> +		.clear	= "  ",
->  	}, {
->  		.mask	= PTE_ATTRINDX_MASK,
->  		.val	= PTE_ATTRINDX(MT_DEVICE_nGnRnE),
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index bc9f4292bfc3..3c07a7074145 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -272,7 +272,55 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
+>  	}
+>  }
+>  
+> -static void advance_itstate(struct pt_regs *regs);
+> +#ifdef CONFIG_COMPAT
+> +#define PSTATE_IT_1_0_SHIFT	25
+> +#define PSTATE_IT_1_0_MASK	(0x3 << PSTATE_IT_1_0_SHIFT)
+> +#define PSTATE_IT_7_2_SHIFT	10
+> +#define PSTATE_IT_7_2_MASK	(0x3f << PSTATE_IT_7_2_SHIFT)
+> +
+> +static u32 compat_get_it_state(struct pt_regs *regs)
+> +{
+> +	u32 it, pstate = regs->pstate;
+> +
+> +	it  = (pstate & PSTATE_IT_1_0_MASK) >> PSTATE_IT_1_0_SHIFT;
+> +	it |= ((pstate & PSTATE_IT_7_2_MASK) >> PSTATE_IT_7_2_SHIFT) << 2;
+> +
+> +	return it;
+> +}
+> +
+> +static void compat_set_it_state(struct pt_regs *regs, u32 it)
+> +{
+> +	u32 pstate_it;
+> +
+> +	pstate_it  = (it << PSTATE_IT_1_0_SHIFT) & PSTATE_IT_1_0_MASK;
+> +	pstate_it |= ((it >> 2) << PSTATE_IT_7_2_SHIFT) & PSTATE_IT_7_2_MASK;
+> +
+> +	regs->pstate &= ~PSR_AA32_IT_MASK;
+> +	regs->pstate |= pstate_it;
+> +}
+> +
+> +static void advance_itstate(struct pt_regs *regs)
+> +{
+> +	u32 it;
+> +
+> +	/* ARM mode */
+> +	if (!(regs->pstate & PSR_AA32_T_BIT) ||
+> +	    !(regs->pstate & PSR_AA32_IT_MASK))
+> +		return;
+> +
+> +	it  = compat_get_it_state(regs);
+> +
+> +	/*
+> +	 * If this is the last instruction of the block, wipe the IT
+> +	 * state. Otherwise advance it.
+> +	 */
+> +	if (!(it & 7))
+> +		it = 0;
+> +	else
+> +		it = (it & 0xe0) | ((it << 1) & 0x1f);
+> +
+> +	compat_set_it_state(regs, it);
+> +}
+>  
+>  void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
+>  {
+> @@ -285,7 +333,7 @@ void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
+>  	if (user_mode(regs))
+>  		user_fastforward_single_step(current);
+>  
+> -	if (regs->pstate & PSR_MODE32_BIT)
+> +	if (compat_user_mode(regs))
+>  		advance_itstate(regs);
+>  }
+>  
+> @@ -578,34 +626,6 @@ static const struct sys64_hook sys64_hooks[] = {
+>  	{},
+>  };
+>  
+> -
+> -#ifdef CONFIG_COMPAT
+> -#define PSTATE_IT_1_0_SHIFT	25
+> -#define PSTATE_IT_1_0_MASK	(0x3 << PSTATE_IT_1_0_SHIFT)
+> -#define PSTATE_IT_7_2_SHIFT	10
+> -#define PSTATE_IT_7_2_MASK	(0x3f << PSTATE_IT_7_2_SHIFT)
+> -
+> -static u32 compat_get_it_state(struct pt_regs *regs)
+> -{
+> -	u32 it, pstate = regs->pstate;
+> -
+> -	it  = (pstate & PSTATE_IT_1_0_MASK) >> PSTATE_IT_1_0_SHIFT;
+> -	it |= ((pstate & PSTATE_IT_7_2_MASK) >> PSTATE_IT_7_2_SHIFT) << 2;
+> -
+> -	return it;
+> -}
+> -
+> -static void compat_set_it_state(struct pt_regs *regs, u32 it)
+> -{
+> -	u32 pstate_it;
+> -
+> -	pstate_it  = (it << PSTATE_IT_1_0_SHIFT) & PSTATE_IT_1_0_MASK;
+> -	pstate_it |= ((it >> 2) << PSTATE_IT_7_2_SHIFT) & PSTATE_IT_7_2_MASK;
+> -
+> -	regs->pstate &= ~PSR_AA32_IT_MASK;
+> -	regs->pstate |= pstate_it;
+> -}
+> -
+>  static bool cp15_cond_valid(unsigned int esr, struct pt_regs *regs)
+>  {
+>  	int cond;
+> @@ -626,29 +646,6 @@ static bool cp15_cond_valid(unsigned int esr, struct pt_regs *regs)
+>  	return aarch32_opcode_cond_checks[cond](regs->pstate);
+>  }
+>  
+> -static void advance_itstate(struct pt_regs *regs)
+> -{
+> -	u32 it;
+> -
+> -	/* ARM mode */
+> -	if (!(regs->pstate & PSR_AA32_T_BIT) ||
+> -	    !(regs->pstate & PSR_AA32_IT_MASK))
+> -		return;
+> -
+> -	it  = compat_get_it_state(regs);
+> -
+> -	/*
+> -	 * If this is the last instruction of the block, wipe the IT
+> -	 * state. Otherwise advance it.
+> -	 */
+> -	if (!(it & 7))
+> -		it = 0;
+> -	else
+> -		it = (it & 0xe0) | ((it << 1) & 0x1f);
+> -
+> -	compat_set_it_state(regs, it);
+> -}
+> -
+>  static void compat_cntfrq_read_handler(unsigned int esr, struct pt_regs *regs)
+>  {
+>  	int reg = (esr & ESR_ELx_CP15_32_ISS_RT_MASK) >> ESR_ELx_CP15_32_ISS_RT_SHIFT;
 > -- 
 > 2.20.1
 > 
