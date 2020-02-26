@@ -2,118 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC72816F97E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 09:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CDD516F9A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 09:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbgBZIVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 03:21:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57058 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727311AbgBZIVA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 03:21:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EC3A0B1AB;
-        Wed, 26 Feb 2020 08:20:58 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9C73D1E0EA2; Wed, 26 Feb 2020 09:20:58 +0100 (CET)
-Date:   Wed, 26 Feb 2020 09:20:58 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 07/16] fsnotify: replace inode pointer with tag
-Message-ID: <20200226082058.GB10728@quack2.suse.cz>
-References: <20200217131455.31107-1-amir73il@gmail.com>
- <20200217131455.31107-8-amir73il@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217131455.31107-8-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727311AbgBZIis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 03:38:48 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57220 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbgBZIis (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:38:48 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8ci7S159127;
+        Wed, 26 Feb 2020 08:38:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2020-01-29;
+ bh=QPaeCoKjz0Hj1DSh69y7fdDukch0dAgnsq4X9qRIdnk=;
+ b=k1gJKmYZfkL8zdhTMAd3ZlyQPX33X2vUUCTVeS2anrA+vibpba4e2to7JXK0vgrNELs3
+ sa279arv+/E+rUXvro8f/zTCyP3ptwaBykfyyhda2XdMfFhVcZzPlNmvc/jFKodMoe4G
+ 1s9N+5JGIJRxbZOBqJd5eqpIuOtKUD0ZSGwkm31WxBq2QX968TmaHJGRBc9g89n/Jv/p
+ uYl2M4NrbhwA0KtUUmnyCFT89p0SpMMR/4nLf5Hvn4sT/RqpZCGqbEA3Tqf2qXONc7cQ
+ ZhBmiFf7Yz2tW0GGAMrBNf7NWHK6QHXI18o+ajUPZBSQq1tSUYGw7nBAlk2+FHumD3Gq mA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2ydct31ws9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 08:38:44 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01Q8cEiP091708;
+        Wed, 26 Feb 2020 08:38:44 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2ydcs1hs08-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 08:38:44 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01Q8cfVl028122;
+        Wed, 26 Feb 2020 08:38:41 GMT
+Received: from localhost.localdomain (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Feb 2020 00:38:40 -0800
+From:   Bob Liu <bob.liu@oracle.com>
+To:     linux-block@vger.kernel.org
+Cc:     axboe@kernel.dk, martin.petersen@oracle.com,
+        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        io-uring@vger.kernel.org, Bob Liu <bob.liu@oracle.com>
+Subject: [RFC PATCH 0/4] userspace PI passthrough via io_uring
+Date:   Wed, 26 Feb 2020 16:37:15 +0800
+Message-Id: <20200226083719.4389-1-bob.liu@oracle.com>
+X-Mailer: git-send-email 2.9.5
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=550 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260065
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9542 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=620 mlxscore=0 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260065
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 17-02-20 15:14:46, Amir Goldstein wrote:
-> The event inode field is used only for comparison in queue merges and
-> cannot be dereferenced after handle_event(), because it does not hold a
-> refcount on the inode.
-> 
-> Replace it with an abstract tag do to the same thing. We are going to
-> set this tag for values other than inode pointer in fanotify.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+This RFC provides a rough implementation of a mechanism to allow
+userspace to attach protection information (e.g. T10 DIF) data to a
+disk write and to receive the information alongside a disk read.
+The interface is an extension to the io_uring interface:
+two new commands (IORING_OP_READV{WRITEV}_PI) are provided.
+The last struct iovec in the arg list is interpreted to point to a buffer
+containing the the PI data.
 
-I like this but can we call it say 'objectid' or something like that? 'tag'
-seems too generic to me and it isn't clear why we should merge or not merge
-events with different tags...
+Patch #1 add two new commands to io_uring.
+Patch #2 introduces two helper funcs in bio-integrity.
+Patch #3 implement the PI passthrough in direct-io of block-dev.
+(Similar extensions may add to fs/direct-io.c and fs/maps/directio.c)
+Patch #4 add io_uring use space test case to liburing.
 
-								Honza
+Welcome any feedbacks.
+Thanks!
 
-> ---
->  fs/notify/fanotify/fanotify.c        | 2 +-
->  fs/notify/inotify/inotify_fsnotify.c | 2 +-
->  include/linux/fsnotify_backend.h     | 8 +++-----
->  3 files changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 19ec7a4f4d50..98c3cbf29003 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -26,7 +26,7 @@ static bool should_merge(struct fsnotify_event *old_fsn,
->  	old = FANOTIFY_E(old_fsn);
->  	new = FANOTIFY_E(new_fsn);
->  
-> -	if (old_fsn->inode != new_fsn->inode || old->pid != new->pid ||
-> +	if (old_fsn->tag != new_fsn->tag || old->pid != new->pid ||
->  	    old->fh_type != new->fh_type || old->fh_len != new->fh_len)
->  		return false;
->  
-> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-> index 6bb98522bbfd..4f42ea7b7fdd 100644
-> --- a/fs/notify/inotify/inotify_fsnotify.c
-> +++ b/fs/notify/inotify/inotify_fsnotify.c
-> @@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
->  	if (old->mask & FS_IN_IGNORED)
->  		return false;
->  	if ((old->mask == new->mask) &&
-> -	    (old_fsn->inode == new_fsn->inode) &&
-> +	    (old_fsn->tag == new_fsn->tag) &&
->  	    (old->name_len == new->name_len) &&
->  	    (!old->name_len || !strcmp(old->name, new->name)))
->  		return true;
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index bd3f6114a7a9..cd106b5c87a4 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -132,8 +132,7 @@ struct fsnotify_ops {
->   */
->  struct fsnotify_event {
->  	struct list_head list;
-> -	/* inode may ONLY be dereferenced during handle_event(). */
-> -	struct inode *inode;	/* either the inode the event happened to or its parent */
-> +	unsigned long tag;	/* identifier for queue merges */
->  };
->  
->  /*
-> @@ -542,11 +541,10 @@ extern void fsnotify_put_mark(struct fsnotify_mark *mark);
->  extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
->  extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
->  
-> -static inline void fsnotify_init_event(struct fsnotify_event *event,
-> -				       struct inode *inode)
-> +static inline void fsnotify_init_event(struct fsnotify_event *event, void *tag)
->  {
->  	INIT_LIST_HEAD(&event->list);
-> -	event->inode = inode;
-> +	event->tag = (unsigned long)tag;
->  }
->  
->  #else
-> -- 
-> 2.17.1
-> 
+There was attempt before[1], but was based on AIO at that time.
+[1] https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg27537.html
+
+Bob Liu (3):
+  io_uring: add IORING_OP_READ{WRITE}V_PI cmd
+  bio-integrity: introduce two funcs handle protect information
+  block_dev: support protect information passthrough
+
+ block/bio-integrity.c         | 77 +++++++++++++++++++++++++++++++++++++++++++
+ fs/block_dev.c                | 17 ++++++++++
+ fs/io_uring.c                 | 12 +++++++
+ include/linux/bio.h           | 14 ++++++++
+ include/linux/fs.h            |  1 +
+ include/uapi/linux/io_uring.h |  2 ++
+ 6 files changed, 123 insertions(+)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.9.5
+
