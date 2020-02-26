@@ -2,164 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A3F16F817
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 07:38:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6785A16F821
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 07:43:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbgBZGhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 01:37:51 -0500
-Received: from mx04.melco.co.jp ([192.218.140.144]:56364 "EHLO
-        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgBZGhv (ORCPT
+        id S1727105AbgBZGnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 01:43:20 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6047 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726112AbgBZGnU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 01:37:51 -0500
-Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
-        by mx04.melco.co.jp (Postfix) with ESMTP id 4DA743A419B;
-        Wed, 26 Feb 2020 15:37:49 +0900 (JST)
-Received: from mr04.melco.co.jp (unknown [127.0.0.1])
-        by mr04.imss (Postfix) with ESMTP id 48S5hY139lzRkGJ;
-        Wed, 26 Feb 2020 15:37:49 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr04.melco.co.jp (Postfix) with ESMTP id 48S5hY0kljzRk96;
-        Wed, 26 Feb 2020 15:37:49 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 48S5hY0hqBzRkC0;
-        Wed, 26 Feb 2020 15:37:49 +0900 (JST)
-Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 48S5hY07KZzRk7V;
-        Wed, 26 Feb 2020 15:37:49 +0900 (JST)
-Received:  from tux532.tad.melco.co.jp
-        by tux532.tad.melco.co.jp (unknown) with ESMTP id 01Q6bmYY020894;
-        Wed, 26 Feb 2020 15:37:48 +0900
-Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
-        by postfix.imss70 (Postfix) with ESMTP id A1CB817E075;
-        Wed, 26 Feb 2020 15:37:48 +0900 (JST)
-Received: from tux554.tad.melco.co.jp (mailgw1.tad.melco.co.jp [10.168.7.223])
-        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 8905917E073;
-        Wed, 26 Feb 2020 15:37:48 +0900 (JST)
-Received: from tux554.tad.melco.co.jp
-        by tux554.tad.melco.co.jp (unknown) with ESMTP id 01Q6bmFI029214;
-        Wed, 26 Feb 2020 15:37:48 +0900
-From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: exfat: remove symlink feature : Additional patch
-Date:   Wed, 26 Feb 2020 15:37:46 +0900
-Message-Id: <20200226063746.3128-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-X-Mailer: git-send-email 2.25.1
+        Wed, 26 Feb 2020 01:43:20 -0500
+X-UUID: 66ab466f211b4c578793ed09b5fa2993-20200226
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=apvx+VLcaGZjP80PbFYAB+4q9C0nw1KkpiRc7G/OTT0=;
+        b=LQPK7eVtpWBPw8xiPHS9jB8i5vXbWpu1Tc+wAzon0iiqZYlkRoxGvNRk5L9f8fEIPVDuPfebLxbLMQ/hXl++0DzkdCCeKRpCARCKaWXWljYLlekfmNiRaFM7gwqHhecoxY5/6rmXURdQ9QAlqtXooKHkDYmChmpNE8D59xI6Z38=;
+X-UUID: 66ab466f211b4c578793ed09b5fa2993-20200226
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <stanley.chu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 675364193; Wed, 26 Feb 2020 14:43:16 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 26 Feb 2020 14:41:21 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 26 Feb 2020 14:43:23 +0800
+Message-ID: <1582699394.26304.96.camel@mtksdccf07>
+Subject: Re: [PATCH v7 6/9] scsi: ufs: Add inline encryption support to UFS
+From:   Stanley Chu <stanley.chu@mediatek.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Satya Tangirala <satyat@google.com>,
+        <linux-block@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-ext4@vger.kernel.org>,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        "Kim Boojin" <boojin.kim@samsung.com>,
+        Ladvine D Almeida <Ladvine.DAlmeida@synopsys.com>,
+        Parshuram Raju Thombare <pthombar@cadence.com>
+Date:   Wed, 26 Feb 2020 14:43:14 +0800
+In-Reply-To: <20200226011206.GD114977@gmail.com>
+References: <20200221115050.238976-1-satyat@google.com>
+         <20200221115050.238976-7-satyat@google.com>
+         <20200221172244.GC438@infradead.org> <20200221181109.GB925@sol.localdomain>
+         <1582465656.26304.69.camel@mtksdccf07>
+         <20200224233759.GC30288@infradead.org>
+         <1582615285.26304.93.camel@mtksdccf07> <20200226011206.GD114977@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Completely remove symlink codes and definitions.
-In the previous patch, it was not completely removed.
-
-Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
----
- drivers/staging/exfat/exfat.h       |  3 ---
- drivers/staging/exfat/exfat_core.c  |  3 ---
- drivers/staging/exfat/exfat_super.c | 27 ---------------------------
- 3 files changed, 33 deletions(-)
-
-diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-index 4a0a481fe010..cd3479fc78ba 100644
---- a/drivers/staging/exfat/exfat.h
-+++ b/drivers/staging/exfat/exfat.h
-@@ -63,7 +63,6 @@
- #define TYPE_VOLUME		0x0103
- #define TYPE_DIR		0x0104
- #define TYPE_FILE		0x011F
--#define TYPE_SYMLINK		0x015F
- #define TYPE_CRITICAL_SEC	0x0200
- #define TYPE_STREAM		0x0201
- #define TYPE_EXTEND		0x0202
-@@ -198,13 +197,11 @@ static inline u16 get_row_index(u16 i)
- #define ATTR_VOLUME		0x0008
- #define ATTR_SUBDIR		0x0010
- #define ATTR_ARCHIVE		0x0020
--#define ATTR_SYMLINK		0x0040
- #define ATTR_EXTEND		0x000F
- #define ATTR_RWMASK		0x007E
- 
- /* file creation modes */
- #define FM_REGULAR              0x00
--#define FM_SYMLINK              0x40
- 
- #define NUM_UPCASE              2918
- 
-diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
-index d30dc050411e..941094b08dd9 100644
---- a/drivers/staging/exfat/exfat_core.c
-+++ b/drivers/staging/exfat/exfat_core.c
-@@ -844,9 +844,6 @@ static void exfat_set_entry_type(struct dentry_t *p_entry, u32 type)
- 	} else if (type == TYPE_FILE) {
- 		ep->type = 0x85;
- 		SET16_A(ep->attr, ATTR_ARCHIVE);
--	} else if (type == TYPE_SYMLINK) {
--		ep->type = 0x85;
--		SET16_A(ep->attr, ATTR_ARCHIVE | ATTR_SYMLINK);
- 	}
- }
- 
-diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
-index c7bc07e91c45..6f3b72eb999d 100644
---- a/drivers/staging/exfat/exfat_super.c
-+++ b/drivers/staging/exfat/exfat_super.c
-@@ -320,8 +320,6 @@ static inline mode_t exfat_make_mode(struct exfat_sb_info *sbi, u32 attr,
- 
- 	if (attr & ATTR_SUBDIR)
- 		return (mode & ~sbi->options.fs_dmask) | S_IFDIR;
--	else if (attr & ATTR_SYMLINK)
--		return (mode & ~sbi->options.fs_dmask) | S_IFLNK;
- 	else
- 		return (mode & ~sbi->options.fs_fmask) | S_IFREG;
- }
-@@ -2399,24 +2397,6 @@ static const struct inode_operations exfat_dir_inode_operations = {
- /*======================================================================*/
- /*  File Operations                                                     */
- /*======================================================================*/
--static const char *exfat_get_link(struct dentry *dentry, struct inode *inode,
--				  struct delayed_call *done)
--{
--	struct exfat_inode_info *ei = EXFAT_I(inode);
--
--	if (ei->target) {
--		char *cookie = ei->target;
--
--		if (cookie)
--			return (char *)(ei->target);
--	}
--	return NULL;
--}
--
--static const struct inode_operations exfat_symlink_inode_operations = {
--		.get_link = exfat_get_link,
--};
--
- static int exfat_file_release(struct inode *inode, struct file *filp)
- {
- 	struct super_block *sb = inode->i_sb;
-@@ -2688,13 +2668,6 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
- 		i_size_write(inode, info.Size);
- 		EXFAT_I(inode)->mmu_private = i_size_read(inode);
- 		set_nlink(inode, info.num_subdirs);
--	} else if (info.attr & ATTR_SYMLINK) { /* symbolic link */
--		inode->i_generation |= 1;
--		inode->i_mode = exfat_make_mode(sbi, info.attr, 0777);
--		inode->i_op = &exfat_symlink_inode_operations;
--
--		i_size_write(inode, info.Size);
--		EXFAT_I(inode)->mmu_private = i_size_read(inode);
- 	} else { /* regular file */
- 		inode->i_generation |= 1;
- 		inode->i_mode = exfat_make_mode(sbi, info.attr, 0777);
--- 
-2.25.1
+SGkgRXJpYywNCg0KT24gVHVlLCAyMDIwLTAyLTI1IGF0IDE3OjEyIC0wODAwLCBFcmljIEJpZ2dl
+cnMgd3JvdGU6DQo+IE9uIFR1ZSwgRmViIDI1LCAyMDIwIGF0IDAzOjIxOjI1UE0gKzA4MDAsIFN0
+YW5sZXkgQ2h1IHdyb3RlOg0KPiA+IEhpIENocmlzdG9waCwNCj4gPiANCj4gPiBPbiBNb24sIDIw
+MjAtMDItMjQgYXQgMTU6MzcgLTA4MDAsIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiA+ID4g
+T24gU3VuLCBGZWIgMjMsIDIwMjAgYXQgMDk6NDc6MzZQTSArMDgwMCwgU3RhbmxleSBDaHUgd3Jv
+dGU6DQo+ID4gPiA+IFllcywgTWVkaWFUZWsgaXMga2VlcGluZyB3b3JrIGNsb3NlbHkgd2l0aCBp
+bmxpbmUgZW5jcnlwdGlvbiBwYXRjaCBzZXRzLg0KPiA+ID4gPiBDdXJyZW50bHkgdGhlIHY2IHZl
+cnNpb24gY2FuIHdvcmsgd2VsbCAod2l0aG91dA0KPiA+ID4gPiBVRlNIQ0RfUVVJUktfQlJPS0VO
+X0NSWVBUTyBxdWlyaykgYXQgbGVhc3QgaW4gb3VyIE1UNjc3OSBTb0MgcGxhdGZvcm0NCj4gPiA+
+ID4gd2hpY2ggYmFzaWMgU29DIHN1cHBvcnQgYW5kIHNvbWUgb3RoZXIgcGVyaXBoZXJhbCBkcml2
+ZXJzIGFyZSB1bmRlcg0KPiA+ID4gPiB1cHN0cmVhbWluZyBhcyBiZWxvdyBsaW5rLA0KPiA+ID4g
+PiANCj4gPiA+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wcm9qZWN0L2xpbnV4LW1l
+ZGlhdGVrL2xpc3QvP3N0YXRlPSUNCj4gPiA+ID4gMkEmcT02Nzc5JnNlcmllcz0mc3VibWl0dGVy
+PSZkZWxlZ2F0ZT0mYXJjaGl2ZT1ib3RoDQo+ID4gPiA+IA0KPiA+ID4gPiBUaGUgaW50ZWdyYXRp
+b24gd2l0aCBpbmxpbmUgZW5jcnlwdGlvbiBwYXRjaCBzZXQgbmVlZHMgdG8gcGF0Y2gNCj4gPiA+
+ID4gdWZzLW1lZGlhdGVrIGFuZCBwYXRjaGVzIGFyZSByZWFkeSBpbiBkb3duc3RyZWFtLiBXZSBw
+bGFuIHRvIHVwc3RyZWFtDQo+ID4gPiA+IHRoZW0gc29vbiBhZnRlciBpbmxpbmUgZW5jcnlwdGlv
+biBwYXRjaCBzZXRzIGdldCBtZXJnZWQuDQo+ID4gPiANCj4gPiA+IFdoYXQgYW1vdW50IG9mIHN1
+cHBvcnQgZG8geW91IG5lZWQgaW4gdWZzLW1lZGlhdGVrPyAgSXQgc2VlbXMgbGlrZQ0KPiA+ID4g
+cHJldHR5IG11Y2ggZXZlcnkgdWZzIGxvdy1sZXZlbCBkcml2ZXIgbmVlZHMgc29tZSBraW5kIG9m
+IHNwZWNpZmljDQo+ID4gPiBzdXBwb3J0IG5vdywgcmlnaHQ/ICBJIHdvbmRlciBpZiB3ZSBzaG91
+bGQgaW5zdGVhZCBvcHQgaW50byB0aGUgc3VwcG9ydA0KPiA+ID4gaW5zdGVhZCBvZiBhbGwgdGhl
+IHF1aXJraW5nIGhlcmUuDQo+ID4gDQo+ID4gVGhlIHBhdGNoIGluIHVmcy1tZWRpYXRlayBpcyBh
+aW1lZCB0byBpc3N1ZSB2ZW5kb3Itc3BlY2lmaWMgU01DIGNhbGxzDQo+ID4gZm9yIGhvc3QgaW5p
+dGlhbGl6YXRpb24gYW5kIGNvbmZpZ3VyYXRpb24uIFRoaXMgaXMgYmVjYXVzZSBNZWRpYVRlayBV
+RlMNCj4gPiBob3N0IGhhcyBzb21lICJzZWN1cmUtcHJvdGVjdGVkIiByZWdpc3RlcnMvZmVhdHVy
+ZXMgd2hpY2ggbmVlZCB0byBiZQ0KPiA+IGFjY2Vzc2VkL3N3aXRjaGVkIGluIHNlY3VyZSB3b3Js
+ZC4gDQo+ID4gDQo+ID4gU3VjaCBwcm90ZWN0aW9uIGlzIG5vdCBtZW50aW9uZWQgYnkgVUZTSENJ
+IHNwZWNpZmljYXRpb25zIHRodXMgaW5saW5lDQo+ID4gZW5jcnlwdGlvbiBwYXRjaCBzZXQgYXNz
+dW1lcyB0aGF0IGV2ZXJ5IHJlZ2lzdGVycyBpbiBVRlNIQ0kgY2FuIGJlDQo+ID4gYWNjZXNzZWQg
+bm9ybWFsbHkgaW4ga2VybmVsLiBUaGlzIG1ha2VzIHNlbnNlIGFuZCBzdXJlbHkgdGhlIHBhdGNo
+c2V0DQo+ID4gY2FuIHdvcmsgZmluZSBpbiBhbnkgInN0YW5kYXJkIiBVRlMgaG9zdC4gSG93ZXZl
+ciBpZiBob3N0IGhhcyBzcGVjaWFsDQo+ID4gZGVzaWduIHRoZW4gaXQgY2FuIHdvcmsgbm9ybWFs
+bHkgb25seSBpZiBzb21lIHZlbmRvci1zcGVjaWZpYyB0cmVhdG1lbnQNCj4gPiBpcyBhcHBsaWVk
+Lg0KPiA+IA0KPiA+IEkgdGhpbmsgb25lIG9mIHRoZSByZWFzb24gdG8gYXBwbHkgVUZTSENEX1FV
+SVJLX0JST0tFTl9DUllQVE8gcXVpcmsgaW4NCj4gPiB1ZnMtcWNvbSBob3N0IGlzIHNpbWlsYXIg
+dG8gYWJvdmUgY2FzZS4NCj4gDQo+IFNvLCBJIGhhZCBvcmlnaW5hbGx5IGFzc3VtZWQgdGhhdCBt
+b3N0IGtlcm5lbCBkZXZlbG9wZXJzIHdvdWxkIHByZWZlciB0byBtYWtlDQo+IHRoZSBVRlMgY3J5
+cHRvIHN1cHBvcnQgb3B0LW91dCByYXRoZXIgdGhhbiBvcHQtaW4sIHNpbmNlIHRoYXQgbWF0Y2hl
+cyB0aGUgbm9ybWFsDQo+IExpbnV4IHdheSBvZiBkb2luZyB0aGluZ3MuICBJLmUuIG5vcm1hbGx5
+IHRoZSBrZXJuZWwncyBkZWZhdWx0IGFzc3VtcHRpb24gaXMNCj4gdGhhdCBkZXZpY2VzIGltcGxl
+bWVudCB0aGUgcmVsZXZhbnQgc3RhbmRhcmQsIGFuZCBvbmx5IHdoZW4gYSBkZXZpY2UgaXMga25v
+d24gdG8NCj4gZGV2aWF0ZSBmcm9tIHRoZSBzdGFuZGFyZCBkb2VzIHRoZSBkcml2ZXIgYXBwbHkg
+cXVpcmtzLg0KPiANCj4gQnV0IGluZGVlZCwgYXMgd2UndmUgaW52ZXN0aWdhdGVkIG1vcmUgdmVu
+ZG9ycycgVUZTIGhhcmR3YXJlLCBpdCBzZWVtcyB0aGF0DQo+IGV2ZXJ5b25lIGhhcyBzb21lIHF1
+aXJrIHRoYXQgbmVlZHMgdG8gYmUgaGFuZGxlZCBpbiB0aGUgcGxhdGZvcm0gZHJpdmVyOg0KPiAN
+Cj4gICAtIHVmcy1xY29tICh0ZXN0ZWQgb24gRHJhZ29uQm9hcmQgODQ1YyB3aXRoIHVwc3RyZWFt
+IGtlcm5lbCkgbmVlZHMNCj4gICAgIHZlbmRvci1zcGVjaWZpYyBjcnlwdG8gaW5pdGlhbGl6YXRp
+b24gbG9naWMgYW5kIFNNQyBjYWxscyB0byBzZXQga2V5cw0KPiANCj4gICAtIHVmcy1tZWRpYXRl
+ayBuZWVkcyB0aGUgcXVpcmtzIHRoYXQgU3RhbmxleSBtZW50aW9uZWQgYWJvdmUNCj4gDQo+ICAg
+LSB1ZnMtaGlzaSAodGVzdGVkIG9uIEhpa2V5OTYwIHdpdGggdXBzdHJlYW0ga2VybmVsKSBuZWVk
+cyB0byB3cml0ZSBhDQo+ICAgICB2ZW5kb3Itc3BlY2lmaWMgcmVnaXN0ZXIgdG8gdXNlIGhpZ2gg
+a2V5c2xvdHMsIGJ1dCBldmVuIHRoZW4gSSBzdGlsbA0KPiAgICAgY291bGRuJ3QgZ2V0IHRoZSBj
+cnlwdG8gc3VwcG9ydCB3b3JraW5nIGNvcnJlY3RseS4NCj4gDQo+IEknbSBub3Qgc3VyZSBhYm91
+dCB0aGUgVUZTIGNvbnRyb2xsZXJzIGZyb20gU3lub3BzeXMsIENhZGVuY2UsIG9yIFNhbXN1bmcs
+IGFsbA0KPiBvZiB3aGljaCBhcHBhcmVudGx5IGhhdmUgaW1wbGVtZW50ZWQgc29tZSBmb3JtIG9m
+IHRoZSBjcnlwdG8gc3VwcG9ydCB0b28uICBCdXQgSQ0KPiB3b3VsZG4ndCBnZXQgbXkgaG9wZXMg
+dXAgdGhhdCBldmVyeW9uZSBmb2xsb3dlZCB0aGUgVUZTIHN0YW5kYXJkIHByZWNpc2VseS4NCj4g
+DQo+IFNvIGlmIHRoZXJlIGFyZSBubyBvYmplY3Rpb25zLCBJTU8gd2Ugc2hvdWxkIG1ha2UgdGhl
+IGNyeXB0byBzdXBwb3J0IG9wdC1pbi4NCj4gDQo+IFRoYXQgbWFrZXMgaXQgZXZlbiBtb3JlIGlt
+cG9ydGFudCB0byB1cHN0cmVhbSB0aGUgY3J5cHRvIHN1cHBvcnQgZm9yIHNwZWNpZmljDQo+IGhh
+cmR3YXJlIGxpa2UgdWZzLXFjb20gYW5kIHVmcy1tZWRpYXRlaywgc2luY2Ugb3RoZXJ3aXNlIHRo
+ZSB1ZnNoY2QtY3J5cHRvIGNvZGUNCj4gd291bGQgYmUgdW51c2FibGUgZXZlbiB0aGVvcmV0aWNh
+bGx5LiAgSSdtIHZvbHVudGVlcmluZyB0byBoYW5kbGUgdWZzLXFjb20gd2l0aA0KPiBodHRwczov
+L2xrbWwua2VybmVsLm9yZy9saW51eC1ibG9jay8yMDIwMDExMDA2MTYzNC40Njc0Mi0xLWViaWdn
+ZXJzQGtlcm5lbC5vcmcvLg0KPiBTdGFubGV5LCBjb3VsZCB5b3Ugc2VuZCBvdXQgdWZzLW1lZGlh
+dGVrIHN1cHBvcnQgYXMgYW4gUkZDIHNvIHBlb3BsZSBjYW4gc2VlDQo+IGJldHRlciB3aGF0IGl0
+IGludm9sdmVzPw0KDQpTdXJlLCBJIHdpbGwgc2VuZCBvdXQgb3VyIFJGQyBwYXRjaGVzLiBQbGVh
+c2UgYWxsb3cgbWUgc29tZSB0aW1lIGZvcg0Kc3VibWlzc2lvbi4NCg0KVGhhbmtzLA0KU3Rhbmxl
+eSBDaHUNCj4gLSBFcmljDQoNCg==
 
