@@ -2,138 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8CE170415
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:16:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ACD817041D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:18:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbgBZQQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 11:16:03 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:39281 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728734AbgBZQP6 (ORCPT
+        id S1726971AbgBZQR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 11:17:58 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:42252 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQR6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:15:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582733756;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=ywx1qIVqpeFVyk5FdbSzu1McnsKdZIvwvf+WZMVi7Zs=;
-        b=BuqaloSov3HuKrUUTLwuz5jdJwGMVxZTCOSee7MjY6m7196phtfa7WO4SNVb7ijQv6S5IY
-        yQuC0uR1ug8O36LGeIoTWaezF1V9eFkWjWxlI4TpJmijNkVp1TTMnE5gdD29dYYWXnXSa0
-        UJjDG2uiDa4JksP+Aloux0+OCdEbgfQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-K7C2TJKJPyaLBrctJLBKxQ-1; Wed, 26 Feb 2020 11:15:53 -0500
-X-MC-Unique: K7C2TJKJPyaLBrctJLBKxQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3873F800D6C;
-        Wed, 26 Feb 2020 16:15:51 +0000 (UTC)
-Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CFD6F60BE1;
-        Wed, 26 Feb 2020 16:15:47 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH 11/11] fs/dcache: Track # of negative dentries reclaimed & killed
-Date:   Wed, 26 Feb 2020 11:14:04 -0500
-Message-Id: <20200226161404.14136-12-longman@redhat.com>
-In-Reply-To: <20200226161404.14136-1-longman@redhat.com>
-References: <20200226161404.14136-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+        Wed, 26 Feb 2020 11:17:58 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFvf0S033348;
+        Wed, 26 Feb 2020 16:17:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=WKDZDiIYwkHJ2rTuDV4wlnpR6BBfh5Fu3+ipePDTfXQ=;
+ b=zCYArvRaXJmqXBidy/Q5qenDhKRVmcVzrktrvGTdPBebl7sI5xagcFXYUgC2ZTho07tX
+ 8THf6oPBRBGDEimP3iO3azzyM8eFBSqhsmbQck3Xo9cvFeTLs8rxZH5Gs7qCs2bqBwep
+ kDW0tlB18T7ZAWetfkGwd8DjYJE/ODI8GfgyauamE+0ynyOly7JgozmFqhfZYTLu8Voi
+ ZhCEe385XKiZTK+ckxaYG3+QLbPUNsejpIf5y/VwD+yqAsgQdcIAiygRRlOkipSVLX47
+ d+GvnJFJeLM5RBiaNxuCxHgL2QL6lTNHVcaDMdu8B9C8eH8Gfs9Irt/KJGDjeL68Z09I Pg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2ydcsrmqqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 16:17:46 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGELGG110521;
+        Wed, 26 Feb 2020 16:17:45 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2ydcs2fs6w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 26 Feb 2020 16:17:45 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGHiaR030245;
+        Wed, 26 Feb 2020 16:17:44 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 26 Feb 2020 08:17:43 -0800
+Date:   Wed, 26 Feb 2020 08:17:42 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, jack@suse.cz,
+        tytso@mit.edu, linux-ext4@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, cmaiolino@redhat.com
+Subject: Re: [PATCHv3 6/6] Documentation: Correct the description of
+ FIEMAP_EXTENT_LAST
+Message-ID: <20200226161742.GB8036@magnolia>
+References: <cover.1582702693.git.riteshh@linux.ibm.com>
+ <279638c6939b1f6ef3ab32912cb51da1a967cf8e.1582702694.git.riteshh@linux.ibm.com>
+ <20200226130503.GY24185@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226130503.GY24185@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002260111
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The negative dentry reclaim process gave no visible indication that
-it was being activated. In order to allow system administrator to
-see if it is being activated as expected, two new debugfs variables
-"negative_dentry_reclaimed" and "negative_dentry_killed" are now added
-to report the total number of negative dentries that have been reclaimed
-and killed. These debugfs variables are only added after the negative
-dentry reclaim mechanism is activated for the first time.
+On Wed, Feb 26, 2020 at 05:05:03AM -0800, Matthew Wilcox wrote:
+> On Wed, Feb 26, 2020 at 03:27:08PM +0530, Ritesh Harjani wrote:
+> > Currently FIEMAP_EXTENT_LAST is not working consistently across
+> > different filesystem's fiemap implementations and thus this feature
+> > may be broken. So fix the documentation about this flag to meet the
+> > right expectations.
+> 
+> Are you saying filesystems have both false positives and false negatives?
+> I can understand how a filesystem might fail to set FIEMAP_EXTENT_LAST,
+> but not how a filesystem might set it when there's actually another
+> extent beyond this one.
+> 
+> >  * FIEMAP_EXTENT_LAST
+> > -This is the last extent in the file. A mapping attempt past this
+> > -extent will return nothing.
+> > +This is generally the last extent in the file. A mapping attempt past this
+> > +extent may return nothing. But the user must still confirm by trying to map
+> > +past this extent, since different filesystems implement this differently.
 
-In reality, the actual number may be slightly less than the reported
-number as not all the negative dentries passed to shrink_dentry_list()
-and __dentry_kill() can be successfully reclaimed.
+"This flag means nothing and can be set arbitrarily by the fs for the lulz."
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- fs/dcache.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Yuck.  I was really hoping for "This is set on the last extent record in
+the dataset generated by the query parameters", particularly becaue
+that's how e2fsprogs utilties interpret that flag.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index fe48e00349c9..471b51316506 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -33,6 +33,7 @@
- #include <linux/rculist_bl.h>
- #include <linux/list_lru.h>
- #include <linux/jump_label.h>
-+#include <linux/debugfs.h>
- #include "internal.h"
- #include "mount.h"
- 
-@@ -136,6 +137,8 @@ static DEFINE_PER_CPU(long, nr_dentry_negative);
- int dcache_dentry_dir_max_sysctl;
- EXPORT_SYMBOL_GPL(dcache_dentry_dir_max_sysctl);
- static int negative_dentry_dir_max __read_mostly;
-+static unsigned long negative_dentry_reclaim_count;
-+static atomic_t negative_dentry_kill_count;
- #define	DENTRY_DIR_MAX_MIN	0x100
- 
- static LLIST_HEAD(negative_reclaim_list);
-@@ -204,6 +207,7 @@ int proc_dcache_dentry_dir_max(struct ctl_table *ctl, int write,
- {
- 	int old = dcache_dentry_dir_max_sysctl;
- 	int ret;
-+	static bool debugfs_file_created;
- 
- 	ret = proc_dointvec_minmax(ctl, write, buffer, lenp, ppos);
- 
-@@ -219,6 +223,14 @@ int proc_dcache_dentry_dir_max(struct ctl_table *ctl, int write,
- 		return -EINVAL;
- 	}
- 
-+	if (!debugfs_file_created) {
-+		debugfs_create_ulong("negative_dentry_reclaimed", 0400, NULL,
-+				     &negative_dentry_reclaim_count);
-+		debugfs_create_u32("negative_dentry_killed", 0400, NULL,
-+				   (u32 *)&negative_dentry_kill_count.counter);
-+		debugfs_file_created = true;
-+	}
-+
- 	negative_dentry_dir_max = dcache_dentry_dir_max_sysctl;
- 	if (!old && dcache_dentry_dir_max_sysctl)
- 		static_branch_enable(&negative_reclaim_enable);
-@@ -1542,6 +1554,8 @@ static void negative_reclaim_workfn(struct work_struct *work)
- 		kfree(dentry_node);
- 		cond_resched();
- 	}
-+	if (quota < MAX_DENTRY_RECLAIM)
-+		negative_dentry_reclaim_count += MAX_DENTRY_RECLAIM - quota;
- }
- 
- /*
-@@ -1609,6 +1623,7 @@ static void negative_reclaim_check(struct dentry *parent, struct dentry *child)
- 			rcu_read_unlock();
- 			__dentry_kill(child);
- 			dput(parent);
-+			atomic_inc(&negative_dentry_kill_count);
- 			return;
- 		}
- 		spin_unlock(&child->d_lock);
--- 
-2.18.1
-
+--D
