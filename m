@@ -2,142 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A117E170A3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 22:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC8F2170A6E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 22:29:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbgBZVMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 16:12:09 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:57626 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727446AbgBZVMJ (ORCPT
+        id S1727554AbgBZV2v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 16:28:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbgBZV2v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 16:12:09 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QL3gpZ060586;
-        Wed, 26 Feb 2020 21:11:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=rxC5xpipAUhGNNMWHp6ES0pv2giMw3uyxi5WN3U/eTE=;
- b=W7u96SLqMZPUajqgxXsXKp5SlvSJRsCU4lFUHtcOIw50LnQnh55yHShfxPyHpGLFaJdI
- tfBsRhcVYyzzFyN75ReZK/W0i5edQT7/SFvD8fXEzEQ8Ei8jp7msJxUwzVrEqSgYRMC5
- jw8Q1sRzyh0tBImIBkBmvMCo3h/Tb39bdBhONkV75KkY+lbRFs7PqEH+x/SKk+TkRZqv
- BiO0PCwBHnID2v48kVEG4whZpW1KZhZ+rA9dtJFjp3+LKVYo9WdESqm428pohaduMUm4
- VliqkcSLA2Uvb2Mp7DK+4UgUarSnF6luFEII41+19BTJihGDKlqcmX6mpAfVAyXR/8et yg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2ydybcgatf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 21:11:33 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QL2GQQ072854;
-        Wed, 26 Feb 2020 21:11:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2ydcs6965f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 21:11:32 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01QLBRJX014010;
-        Wed, 26 Feb 2020 21:11:27 GMT
-Received: from [10.209.227.41] (/10.209.227.41)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 13:11:27 -0800
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-To:     Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>, kernel-team@fb.com,
+        Wed, 26 Feb 2020 16:28:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=22L8bPAzmVdqd1/KzktzA8ztx8DTFzR2iF/v1VHlqz0=; b=u6Qf/0KanA1Wckx/r3ajANog91
+        t5mZB2hlR9hC2xHkmV++USC/1wp3rDkQYzFUFm2S3AS2EJX6dfnlOZUsfIw+1oRq3cNPIjuPXOLux
+        7b2bZbJzarW5uB37Hi4mqqbHwyFYRsVKnRX18yd3J0/NHuQyy+n4qkS4r4QsC5oxLy0hdqqq+12Yy
+        ZJdtVw9lBdWCJYgZzef+VkdDaLswl7mFZvX0aI/+lS85GS6VUgpfUwkaRxSWn1BvJaCYxywjlCCaJ
+        NAn1li//Sw89TsCek1PIeAymwqppl7jRajU8kgUZ5AIDFFrrtZdnh6ZEQ2Jm42vgULqfCUXzUob6Z
+        6if60eOg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j74EW-0006tG-S4; Wed, 26 Feb 2020 21:28:44 +0000
+Date:   Wed, 26 Feb 2020 13:28:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
         Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-References: <20200211175507.178100-1-hannes@cmpxchg.org>
- <29b6e848ff4ad69b55201751c9880921266ec7f4.camel@surriel.com>
- <20200211193101.GA178975@cmpxchg.org>
- <20200211154438.14ef129db412574c5576facf@linux-foundation.org>
- <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
- <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk>
- <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
-From:   santosh.shilimkar@oracle.com
-Organization: Oracle Corporation
-Message-ID: <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
-Date:   Wed, 26 Feb 2020 13:11:26 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.2
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Message-ID: <20200226212844.GD24185@bombadil.infradead.org>
+References: <20200226161404.14136-1-longman@redhat.com>
+ <20200226162954.GC24185@bombadil.infradead.org>
+ <12e8d951-fc35-bce0-e96d-f93bccf2bd3a@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260125
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 adultscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 spamscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002260125
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12e8d951-fc35-bce0-e96d-f93bccf2bd3a@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+Nishant, Tero
+On Wed, Feb 26, 2020 at 02:19:59PM -0500, Waiman Long wrote:
+> On 2/26/20 11:29 AM, Matthew Wilcox wrote:
+> > On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
+> >> A new sysctl parameter "dentry-dir-max" is introduced which accepts a
+> >> value of 0 (default) for no limit or a positive integer 256 and up. Small
+> >> dentry-dir-max numbers are forbidden to avoid excessive dentry count
+> >> checking which can impact system performance.
+> > This is always the wrong approach.  A sysctl is just a way of blaming
+> > the sysadmin for us not being very good at programming.
+> >
+> > I agree that we need a way to limit the number of negative dentries.
+> > But that limit needs to be dynamic and depend on how the system is being
+> > used, not on how some overworked sysadmin has configured it.
+> >
+> > So we need an initial estimate for the number of negative dentries that
+> > we need for good performance.  Maybe it's 1000.  It doesn't really matter;
+> > it's going to change dynamically.
+> >
+> > Then we need a metric to let us know whether it needs to be increased.
+> > Perhaps that's "number of new negative dentries created in the last
+> > second".  And we need to decide how much to increase it; maybe it's by
+> > 50% or maybe by 10%.  Perhaps somewhere between 10-100% depending on
+> > how high the recent rate of negative dentry creation has been.
+> >
+> > We also need a metric to let us know whether it needs to be decreased.
+> > I'm reluctant to say that memory pressure should be that metric because
+> > very large systems can let the number of dentries grow in an unbounded
+> > way.  Perhaps that metric is "number of hits in the negative dentry
+> > cache in the last ten seconds".  Again, we'll need to decide how much
+> > to shrink the target number by.
+> >
+> > If the number of negative dentries is at or above the target, then
+> > creating a new negative dentry means evicting an existing negative dentry.
+> > If the number of negative dentries is lower than the target, then we
+> > can just create a new one.
+> >
+> > Of course, memory pressure (and shrinking the target number) should
+> > cause negative dentries to be evicted from the old end of the LRU list.
+> > But memory pressure shouldn't cause us to change the target number;
+> > the target number is what we think we need to keep the system running
+> > smoothly.
+> >
+> Thanks for the quick response.
+> 
+> I agree that auto-tuning so that the system administrator don't have to
+> worry about it will be the best approach if it is implemented in the
+> right way. However, it is hard to do it right.
+> 
+> How about letting users specify a cap on the amount of total system
+> memory allowed for negative dentries like one of my previous patchs.
+> Internally, there is a predefined minimum and maximum for
+> dentry-dir-max. We sample the total negative dentry counts periodically
+> and adjust the dentry-dir-max accordingly.
+> 
+> Specifying a percentage of total system memory is more intuitive than
+> just specifying a hard number for dentry-dir-max. Still some user input
+> is required.
 
-On 2/26/20 1:01 PM, Arnd Bergmann wrote:
-> On Wed, Feb 26, 2020 at 7:04 PM <santosh.shilimkar@oracle.com> wrote:
->>
->> On 2/13/20 8:52 AM, Arnd Bergmann wrote:
->>> On Wed, Feb 12, 2020 at 9:50 AM Russell King - ARM Linux admin
->>> <linux@armlinux.org.uk> wrote:
->>
->> The Keystone generations of SOCs have been used in different areas and
->> they will be used for long unless says otherwise.
->>
->> Apart from just split of lowmem and highmem, one of the peculiar thing
->> with Keystome family of SOCs is the DDR is addressable from two
->> addressing ranges. The lowmem address range is actually non-cached
->> range and the higher range is the cacheable.
-> 
-> I'm aware of Keystone's special physical memory layout, but for the
-> discussion here, this is actually irrelevant for the discussion about
-> highmem here, which is only about the way we map all or part of the
-> available physical memory into the 4GB of virtual address space.
-> 
-> The far more important question is how much memory any users
-> (in particular the subset that are going to update their kernels
-> several years from now) actually have installed. Keystone-II is
-> one of the rare 32-bit chips with fairly wide memory interfaces,
-> having two 72-bit (with ECC) channels rather than the usual one
->   or two channels of 32-bit DDR3. This means a relatively cheap
-> 4GB configuration using eight 256Mx16 chips is possible, or
-> even a 8GB using sixteen or eighteen 512Mx8.
-> 
-> Do you have an estimate on how common these 4GB and 8GB
-> configurations are in practice outside of the TI evaluation
-> board?
-> 
- From my TI memories, many K2 customers were going to install
-more than 2G memory. Don't remember 8G, but 4G was the dominant
-one afair. Will let Nishant/Tero elaborate latest on this.
+If you want to base the whole thing on a per-directory target number,
+or a percentage of the system memory target (rather than my suggestion
+of a total # of negative dentries), that seems reasonable.  What's not
+reasonable is expecting the sysadmin to be able to either predict the
+workload, or react to a changing workload in sufficient time.  The system
+has to be self-tuning.
 
-regards,
-Santosh
+Just look how long stale information stays around about how to tune your
+Linux system.  Here's an article from 2018 suggesting using the 'intr'
+option for NFS mounts:
+https://kb.netapp.com/app/answers/answer_view/a_id/1004893/~/hard-mount-vs-soft-mount-
+I made that a no-op in 2007.  Any tunable you add to Linux immediately
+becomes a cargo-cult solution to any problem people are having.
