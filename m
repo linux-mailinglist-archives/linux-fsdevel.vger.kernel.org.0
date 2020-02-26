@@ -2,102 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ACD817041D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7D217045D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:30:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgBZQR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 11:17:58 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:42252 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgBZQR6 (ORCPT
+        id S1727503AbgBZQ36 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 11:29:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59040 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQ36 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:17:58 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFvf0S033348;
-        Wed, 26 Feb 2020 16:17:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=WKDZDiIYwkHJ2rTuDV4wlnpR6BBfh5Fu3+ipePDTfXQ=;
- b=zCYArvRaXJmqXBidy/Q5qenDhKRVmcVzrktrvGTdPBebl7sI5xagcFXYUgC2ZTho07tX
- 8THf6oPBRBGDEimP3iO3azzyM8eFBSqhsmbQck3Xo9cvFeTLs8rxZH5Gs7qCs2bqBwep
- kDW0tlB18T7ZAWetfkGwd8DjYJE/ODI8GfgyauamE+0ynyOly7JgozmFqhfZYTLu8Voi
- ZhCEe385XKiZTK+ckxaYG3+QLbPUNsejpIf5y/VwD+yqAsgQdcIAiygRRlOkipSVLX47
- d+GvnJFJeLM5RBiaNxuCxHgL2QL6lTNHVcaDMdu8B9C8eH8Gfs9Irt/KJGDjeL68Z09I Pg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2ydcsrmqqg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:17:46 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QGELGG110521;
-        Wed, 26 Feb 2020 16:17:45 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2ydcs2fs6w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:17:45 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGHiaR030245;
-        Wed, 26 Feb 2020 16:17:44 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:17:43 -0800
-Date:   Wed, 26 Feb 2020 08:17:42 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, jack@suse.cz,
-        tytso@mit.edu, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, cmaiolino@redhat.com
-Subject: Re: [PATCHv3 6/6] Documentation: Correct the description of
- FIEMAP_EXTENT_LAST
-Message-ID: <20200226161742.GB8036@magnolia>
-References: <cover.1582702693.git.riteshh@linux.ibm.com>
- <279638c6939b1f6ef3ab32912cb51da1a967cf8e.1582702694.git.riteshh@linux.ibm.com>
- <20200226130503.GY24185@bombadil.infradead.org>
+        Wed, 26 Feb 2020 11:29:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=f1bv7k+aR95JLaRnibgjh33tWs/5T1jZciQ/wlmBMxs=; b=drlUX7Cthr4H9sggJz4h6/3Y5G
+        mo/5uBnR1hfM10WWin7v8ZrcDr7KIs1mpcF6JYjbDP8axE8K12+2yE1dRgEoe0JkNdBVR6konO36L
+        v3FvtY2daDQI3Gxc6w0U1zAJaYE5qtmKV9inPLcETf2TyHgRdeS9kfssNNk9mpuPmtIEmOX0yrQIQ
+        yG1PVIGbktpGvcMbun68CEcwUVIut75rKPT3wx1/X5WQiCz0SF/+G0iN43AS5VQqvGKzrN33qoWRY
+        uCiTaJkuWH3Ve0ffsRDJDWjzD68U4huwGUTkXyUiK713MvpoLADsSp5G/y3jyvL0y2l36IORoC94R
+        FUg4DiEA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6zZK-0008I8-Rs; Wed, 26 Feb 2020 16:29:54 +0000
+Date:   Wed, 26 Feb 2020 08:29:54 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Message-ID: <20200226162954.GC24185@bombadil.infradead.org>
+References: <20200226161404.14136-1-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200226130503.GY24185@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
+In-Reply-To: <20200226161404.14136-1-longman@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 05:05:03AM -0800, Matthew Wilcox wrote:
-> On Wed, Feb 26, 2020 at 03:27:08PM +0530, Ritesh Harjani wrote:
-> > Currently FIEMAP_EXTENT_LAST is not working consistently across
-> > different filesystem's fiemap implementations and thus this feature
-> > may be broken. So fix the documentation about this flag to meet the
-> > right expectations.
-> 
-> Are you saying filesystems have both false positives and false negatives?
-> I can understand how a filesystem might fail to set FIEMAP_EXTENT_LAST,
-> but not how a filesystem might set it when there's actually another
-> extent beyond this one.
-> 
-> >  * FIEMAP_EXTENT_LAST
-> > -This is the last extent in the file. A mapping attempt past this
-> > -extent will return nothing.
-> > +This is generally the last extent in the file. A mapping attempt past this
-> > +extent may return nothing. But the user must still confirm by trying to map
-> > +past this extent, since different filesystems implement this differently.
+On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
+> A new sysctl parameter "dentry-dir-max" is introduced which accepts a
+> value of 0 (default) for no limit or a positive integer 256 and up. Small
+> dentry-dir-max numbers are forbidden to avoid excessive dentry count
+> checking which can impact system performance.
 
-"This flag means nothing and can be set arbitrarily by the fs for the lulz."
+This is always the wrong approach.  A sysctl is just a way of blaming
+the sysadmin for us not being very good at programming.
 
-Yuck.  I was really hoping for "This is set on the last extent record in
-the dataset generated by the query parameters", particularly becaue
-that's how e2fsprogs utilties interpret that flag.
+I agree that we need a way to limit the number of negative dentries.
+But that limit needs to be dynamic and depend on how the system is being
+used, not on how some overworked sysadmin has configured it.
 
---D
+So we need an initial estimate for the number of negative dentries that
+we need for good performance.  Maybe it's 1000.  It doesn't really matter;
+it's going to change dynamically.
+
+Then we need a metric to let us know whether it needs to be increased.
+Perhaps that's "number of new negative dentries created in the last
+second".  And we need to decide how much to increase it; maybe it's by
+50% or maybe by 10%.  Perhaps somewhere between 10-100% depending on
+how high the recent rate of negative dentry creation has been.
+
+We also need a metric to let us know whether it needs to be decreased.
+I'm reluctant to say that memory pressure should be that metric because
+very large systems can let the number of dentries grow in an unbounded
+way.  Perhaps that metric is "number of hits in the negative dentry
+cache in the last ten seconds".  Again, we'll need to decide how much
+to shrink the target number by.
+
+If the number of negative dentries is at or above the target, then
+creating a new negative dentry means evicting an existing negative dentry.
+If the number of negative dentries is lower than the target, then we
+can just create a new one.
+
+Of course, memory pressure (and shrinking the target number) should
+cause negative dentries to be evicted from the old end of the LRU list.
+But memory pressure shouldn't cause us to change the target number;
+the target number is what we think we need to keep the system running
+smoothly.
