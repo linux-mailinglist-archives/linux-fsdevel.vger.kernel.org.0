@@ -2,100 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3A8E16FA4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 10:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C3716FA78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 10:18:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbgBZJLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 04:11:17 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:22774 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726936AbgBZJLR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:11:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582708275;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oEqkrC4VLq8DaEUXXUlw4qM+t78tq2tEXmDFeRSdK/U=;
-        b=LYX8khLquEaMYAmpi8dZX3a+4Tcgs9mZJYjMH41sxOF7boBZdvJzapJhBKV1BVnE/L8F8/
-        ZS7/GiU4Ss5VGv1pjHMadZKd2jnrK+Fq1Qchy0tT/2t0s5RfI3MFC8/J3fBwDJT1feTUyj
-        ZrDunVqgNfN4YYsXgwirggJqlOGEjGQ=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-173-fn3YZllmPuGcj2XnNEK4nQ-1; Wed, 26 Feb 2020 04:11:13 -0500
-X-MC-Unique: fn3YZllmPuGcj2XnNEK4nQ-1
-Received: by mail-qt1-f197.google.com with SMTP id l25so3626337qtu.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 01:11:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oEqkrC4VLq8DaEUXXUlw4qM+t78tq2tEXmDFeRSdK/U=;
-        b=ObkHge6P7luct7yZlfi7hiFvIJaV/DRN6KqBM2L6/fWFFv66lwNUVVXdZFUn6Xhi4D
-         5gMKpL76FFenxiNesS+cVRFL4frKfBd8l75TguqlDMTsO+jcOEeY4mQUXTTaKg5yYzCo
-         sV5GaKBbIkgZ2NmayaFFK5mL1Sm9j0pRBDQ2+tmNr3pZenjQFZPWqPLLB3gdAgrbP68o
-         x7WxCIR62IqxwuqLZVPoD4sDDPrm8lAfwBvMomSwNywM+uPdLDxMFQkRIS10Fmjjs3Hs
-         TMywN7EhEkTKsFG7Pc013XsfiSUeJTqp1vjXsZTMHndBma5lUVPzLkTTfb/cr3odmFYR
-         00Nw==
-X-Gm-Message-State: APjAAAVAvm8hW7b+hEwrihT3jmptYAgQdcbYWX51hT0auaGx+rM+STW2
-        wOo3mZFuOM82BKoSMAKjdSHkCaSnGtu6q3h41VCLT/fL7epYe4aUiOSMrj68sgt6xSCjH7uiCu5
-        Ghk6OHaihQJSO9fORumeN14Uv3aIMAWMA638j44o32w==
-X-Received: by 2002:a37:40d2:: with SMTP id n201mr4423905qka.211.1582708273448;
-        Wed, 26 Feb 2020 01:11:13 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxXjPA2Pp28AoAuqRyzeCA+TX5xe5BSYiQaT9UAKY0Cw8GAaR+YwHF7q/xXePrlEyxxI8KoSd+4S3BP8Ddn7Zw=
-X-Received: by 2002:a37:40d2:: with SMTP id n201mr4423885qka.211.1582708273224;
- Wed, 26 Feb 2020 01:11:13 -0800 (PST)
+        id S1726936AbgBZJSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 04:18:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54676 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbgBZJSG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 04:18:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 3C389AAFD;
+        Wed, 26 Feb 2020 09:18:05 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E12F61E0EA2; Wed, 26 Feb 2020 10:18:04 +0100 (CET)
+Date:   Wed, 26 Feb 2020 10:18:04 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 08/16] fanotify: merge duplicate events on parent and
+ child
+Message-ID: <20200226091804.GD10728@quack2.suse.cz>
+References: <20200217131455.31107-1-amir73il@gmail.com>
+ <20200217131455.31107-9-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
-In-Reply-To: <1582644535.3361.8.camel@HansenPartnership.com>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Wed, 26 Feb 2020 10:11:02 +0100
-Message-ID: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217131455.31107-9-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 4:29 PM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Mon 17-02-20 15:14:47, Amir Goldstein wrote:
+> With inotify, when a watch is set on a directory and on its child, an
+> event on the child is reported twice, once with wd of the parent watch
+> and once with wd of the child watch without the filename.
+> 
+> With fanotify, when a watch is set on a directory and on its child, an
+> event on the child is reported twice, but it has the exact same
+> information - either an open file descriptor of the child or an encoded
+> fid of the child.
+> 
+> The reason that the two identical events are not merged is because the
+> tag used for merging events in the queue is the child inode in one event
+> and parent inode in the other.
+> 
+> For events with path or dentry data, use the dentry instead of inode as
+> the tag for event merging, so that the event reported on parent will be
+> merged with the event reported on the child.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-> The other thing a file descriptor does that sysfs doesn't is that it
-> solves the information leak: if I'm in a mount namespace that has no
-> access to certain mounts, I can't fspick them and thus I can't see the
-> information.  By default, with sysfs I can.
+I agree that reporting identical event twice seems wasteful but ...
 
-That's true, but procfs/sysfs has to deal with various namespacing
-issues anyway.  If this is just about hiding a number of entries, then
-I don't think that's going to be a big deal.
+> @@ -312,7 +313,12 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+>  	if (!event)
+>  		goto out;
+>  init: __maybe_unused
+> -	fsnotify_init_event(&event->fse, inode);
+> +	/*
+> +	 * Use the dentry instead of inode as tag for event queue, so event
+> +	 * reported on parent is merged with event reported on child when both
+> +	 * directory and child watches exist.
+> +	 */
+> +	fsnotify_init_event(&event->fse, (void *)dentry ?: inode);
 
-The syscall API is efficient: single syscall per query instead of
-several, no parsing necessary.
+... this seems quite ugly and also previously we could merge 'inode' events
+with others and now we cannot because some will carry "dentry where event
+happened" and other ones "inode with watch" as object identifier. So if you
+want to do this, I'd use "inode where event happened" as object identifier
+for fanotify.
 
-However, it is difficult to extend, because the ABI must be updated,
-possibly libc and util-linux also, so that scripts can also consume
-the new parameter.  With the sysfs approach only the kernel needs to
-be updated, and possibly only the filesystem code, not even the VFS.
+Hum, now thinking about this, maybe we could clean this up even a bit more.
+event->inode is currently used only by inotify and fanotify for merging
+purposes. Now inotify could use its 'wd' instead of inode with exactly the
+same results, fanotify path or fid check is at least as strong as the inode
+check. So only for the case of pure "inode" events, we need to store inode
+identifier in struct fanotify_event - and we can do that in the union with
+struct path and completely remove the 'inode' member from fsnotify_event.
+Am I missing something?
 
-So I think the question comes down to:  do we need a highly efficient
-way to query the superblock parameters all at once, or not?
-
-Thanks,
-Miklos
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
