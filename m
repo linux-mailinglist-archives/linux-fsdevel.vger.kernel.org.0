@@ -2,17 +2,17 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE7316FD01
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 12:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 243EA16FD04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 12:11:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgBZLLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 06:11:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38292 "EHLO huawei.com"
+        id S1728073AbgBZLLv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 06:11:51 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38420 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727891AbgBZLLs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:11:48 -0500
+        id S1728000AbgBZLLu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 06:11:50 -0500
 Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6FC2E719D1F313B2E02F;
+        by Forcepoint Email with ESMTP id 81F038A282C020EE2566;
         Wed, 26 Feb 2020 19:11:45 +0800 (CST)
 Received: from huawei.com (10.90.53.225) by DGGEMS402-HUB.china.huawei.com
  (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 26 Feb 2020
@@ -22,9 +22,9 @@ To:     <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <tj@kernel.org>, <jack@suse.cz>, <bvanassche@acm.org>,
         <tytso@mit.edu>
-Subject: [PATCH v2 4/7] bdi: create a new function bdi_get_dev_name()
-Date:   Wed, 26 Feb 2020 19:18:48 +0800
-Message-ID: <20200226111851.55348-5-yuyufen@huawei.com>
+Subject: [PATCH v2 5/7] bfq: fix potential kernel crash when print dev err info
+Date:   Wed, 26 Feb 2020 19:18:49 +0800
+Message-ID: <20200226111851.55348-6-yuyufen@huawei.com>
 X-Mailer: git-send-email 2.16.2.dirty
 In-Reply-To: <20200226111851.55348-1-yuyufen@huawei.com>
 References: <20200226111851.55348-1-yuyufen@huawei.com>
@@ -37,49 +37,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We prepare a new function bdi_get_dev_name() to copy device
-kobj->name into buffer passed by caller. The function is covered
-by RCU. Thus, caller can access ->dev and copy integral device name.
+We use bdi_get_dev_name() to get device name, avoiding
+use-after-free or NULL pointer reference for ->dev.
 
 Signed-off-by: Yufen Yu <yuyufen@huawei.com>
 ---
- include/linux/backing-dev.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ block/bfq-iosched.c         | 7 +++++--
+ include/linux/backing-dev.h | 2 ++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 00904611b8e4..8d41783d8e77 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -123,6 +123,7 @@
+ #include <linux/ioprio.h>
+ #include <linux/sbitmap.h>
+ #include <linux/delay.h>
++#include <linux/backing-dev.h>
+ 
+ #include "blk.h"
+ #include "blk-mq.h"
+@@ -4971,6 +4972,7 @@ bfq_set_next_ioprio_data(struct bfq_queue *bfqq, struct bfq_io_cq *bic)
+ 	struct task_struct *tsk = current;
+ 	int ioprio_class;
+ 	struct bfq_data *bfqd = bfqq->bfqd;
++	char dname[BDI_DEV_NAME_LEN];
+ 
+ 	if (!bfqd)
+ 		return;
+@@ -4978,8 +4980,9 @@ bfq_set_next_ioprio_data(struct bfq_queue *bfqq, struct bfq_io_cq *bic)
+ 	ioprio_class = IOPRIO_PRIO_CLASS(bic->ioprio);
+ 	switch (ioprio_class) {
+ 	default:
+-		dev_err(&bfqq->bfqd->queue->backing_dev_info->rcu_dev->dev,
+-			"bfq: bad prio class %d\n", ioprio_class);
++		bdi_get_dev_name(bfqq->bfqd->queue->backing_dev_info,
++				dname, BDI_DEV_NAME_LEN);
++		pr_err("bdi %s: bfq: bad prio class %d\n", dname, ioprio_class);
+ 		/* fall through */
+ 	case IOPRIO_CLASS_NONE:
+ 		/*
 diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 67e429b203a1..89d1cb7923f5 100644
+index 89d1cb7923f5..291db069f7da 100644
 --- a/include/linux/backing-dev.h
 +++ b/include/linux/backing-dev.h
-@@ -514,4 +514,29 @@ static inline const char *bdi_dev_name(struct backing_dev_info *bdi)
- 	return dev_name(&bdi->rcu_dev->dev);
- }
+@@ -19,6 +19,8 @@
+ #include <linux/backing-dev-defs.h>
+ #include <linux/slab.h>
  
-+/**
-+ * bdi_get_dev_name - copy bdi device name into buffer
-+ * @bdi: target bdi
-+ * @dname: Where to copy the device name to
-+ * @len: size of destination buffer
-+ */
-+static inline void bdi_get_dev_name(struct backing_dev_info *bdi,
-+			char *dname, int len)
-+{
-+	struct bdi_rcu_device *rcu_dev;
++#define BDI_DEV_NAME_LEN       32
 +
-+	if (!bdi) {
-+		strlcpy(dname, bdi_unknown_name, len);
-+		return;
-+	}
-+
-+	rcu_read_lock();
-+
-+	rcu_dev = rcu_dereference(bdi->rcu_dev);
-+	strlcpy(dname, rcu_dev ? dev_name(&rcu_dev->dev) :
-+			bdi_unknown_name, len);
-+
-+	rcu_read_unlock();
-+}
-+
- #endif	/* _LINUX_BACKING_DEV_H */
+ static inline struct backing_dev_info *bdi_get(struct backing_dev_info *bdi)
+ {
+ 	kref_get(&bdi->refcnt);
 -- 
 2.16.2.dirty
 
