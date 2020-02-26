@@ -2,111 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB9E16FC80
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 11:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 226AC16FD4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 12:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgBZKvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 05:51:12 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58115 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726679AbgBZKvL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 05:51:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582714270;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DIx6zuwqR++Y3FFjikNlSkaH8sZ2FNTsX9QKVbo0PI8=;
-        b=hXCOIj/3J3F5VJaUeheaOEUZOQzmPKruWZNTKEyS30DEzPu+tWr9LkjYK+LKEbTl0Qe7E4
-        98B8rRQoS0nCxAePM5jY1y6l4tNfOR69cupMbmI9+PQlRNMKy7j21JUuPdjpaiyG+l1l8E
-        JItw7DGwNB0X+x/RA3aZxtsxAfpCIbI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-340-uxeWjtzYOB67Z4LxYrMwyg-1; Wed, 26 Feb 2020 05:51:08 -0500
-X-MC-Unique: uxeWjtzYOB67Z4LxYrMwyg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 31F3318B642C;
-        Wed, 26 Feb 2020 10:51:06 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 900595DA2C;
-        Wed, 26 Feb 2020 10:51:02 +0000 (UTC)
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-To:     Miklos Szeredi <mszeredi@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
+        id S1728147AbgBZLRn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 06:17:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58540 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726555AbgBZLRn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 06:17:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4917FACCE;
+        Wed, 26 Feb 2020 11:17:41 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9D3F61E0EA2; Wed, 26 Feb 2020 12:17:40 +0100 (CET)
+Date:   Wed, 26 Feb 2020 12:17:40 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>, ira.weiny@intel.com,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com>
- <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com>
- <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
- <1582644535.3361.8.camel@HansenPartnership.com>
- <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <39284de5-8eb8-ba1d-7ea6-be9b9b5df42c@redhat.com>
-Date:   Wed, 26 Feb 2020 10:51:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Dan Williams <dan.j.williams@intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH V4 07/13] fs: Add locking for a dynamic address space
+ operations state
+Message-ID: <20200226111740.GF10728@quack2.suse.cz>
+References: <20200221004134.30599-1-ira.weiny@intel.com>
+ <20200221004134.30599-8-ira.weiny@intel.com>
+ <20200221174449.GB11378@lst.de>
+ <20200221224419.GW10776@dread.disaster.area>
+ <20200224175603.GE7771@lst.de>
+ <20200225000937.GA10776@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200225000937.GA10776@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue 25-02-20 11:09:37, Dave Chinner wrote:
+> /me wonders if the best thing to do is to add a ->fault callout to
+> tell the filesystem to lock/unlock the inode right up at the top of
+> the page fault path, outside even the mmap_sem.  That means all the
+> methods that the page fault calls are protected against S_DAX
+> changes, and it gives us a low cost method of serialising page
+> faults against DIO (e.g. via inode_dio_wait())....
 
-On 26/02/2020 09:11, Miklos Szeredi wrote:
-> On Tue, Feb 25, 2020 at 4:29 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
->
->> The other thing a file descriptor does that sysfs doesn't is that it
->> solves the information leak: if I'm in a mount namespace that has no
->> access to certain mounts, I can't fspick them and thus I can't see the
->> information.  By default, with sysfs I can.
-> That's true, but procfs/sysfs has to deal with various namespacing
-> issues anyway.  If this is just about hiding a number of entries, then
-> I don't think that's going to be a big deal.
->
-> The syscall API is efficient: single syscall per query instead of
-> several, no parsing necessary.
->
-> However, it is difficult to extend, because the ABI must be updated,
-> possibly libc and util-linux also, so that scripts can also consume
-> the new parameter.  With the sysfs approach only the kernel needs to
-> be updated, and possibly only the filesystem code, not even the VFS.
->
-> So I think the question comes down to:  do we need a highly efficient
-> way to query the superblock parameters all at once, or not?
->
-> Thanks,
-> Miklos
->
+Well, that's going to be pretty hard. The main problem is: you cannot
+lookup VMA until you hold mmap_sem and the inode is inside the VMA. And
+this is a fundamental problem because until you hold mmap_sem, the address
+space can change and thus the virtual address you are faulting can be
+changing inode it is mapped to. So you would have to do some dance like:
 
-That is Ian's use case for autofs I think, and it will also be what is 
-needed at start up of most applications using the fs notifications, as 
-well as at resync time if there has been an overrun leading to lost fs 
-notification messages. We do need a solution that can scale to large 
-numbers of mounts efficiently. Being able to extend it is also an 
-important consideration too, so hopefully David has a solution to that,
+lock mmap_sem
+lookup vma
+get inode reference
+drop mmap_sem
+tell fs about page fault
+lock mmap_sem
+is the vma still the same?
 
-Steve.
+And I'm pretty confident the overhead will be visible in page fault
+intensive workloads...
 
+								Honza
 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
