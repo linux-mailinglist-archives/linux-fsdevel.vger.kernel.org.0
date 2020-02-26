@@ -2,117 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A2116F87F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 08:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC72816F97E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 09:21:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbgBZH0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 02:26:36 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:34240 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727105AbgBZH0d (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 02:26:33 -0500
-Received: from mr1.cc.vt.edu (mr1.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:31:1732:8aa4])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 01Q7QWdH014981
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 02:26:32 -0500
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        by mr1.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 01Q7QRDb008674
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 02:26:32 -0500
-Received: by mail-qt1-f198.google.com with SMTP id c8so3180488qte.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 23:26:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=/RrYGkGua2Nxdn/5XcsUsmert5oNHB1woL1bedy/GmI=;
-        b=ZMoANnFsBNr2psLqvrrIkMY62pB0xETj8RaVFTxMkzSfOChd/OctNFixjny27/lok3
-         OfPsnBoCP+qUdavCYyEEoOzeAPeayOcHs0CkheoBZNJzABoz2uABn01W+Z2cR9jpsRlY
-         CJjDGxW7imuIDr6sKpA17QyS1P09XKpnMkfJGEIiP8SKZUBFSphmaTXz38r6W4ytE82S
-         R/Jc2bAZc7i/1yshIMwrwLpR1JlacuYleddgGSp8wjN5gS7toYZC6MSdoRpJXdmPzbQ2
-         +6TsenlCOKwQtZeUwP4DbjlC8mo4GxMbHJNKCQYOiTNf2qmEnfr4PVib9VhBkjsepyOi
-         mFzA==
-X-Gm-Message-State: APjAAAVEKXY+ot58KFH8XcrCK/1PRJqFDVcs6MPi6CIeM30u5AyEcBTz
-        CcYJz2vnNaBSb3DopfwtmcsWiM70qPVpqNe85jNSt3dF3Z1/N6iBPYEk7q5quidb8ZHUE9II/es
-        ypKeYXQ2N0vEa4KwqRYU4QhMZzRvr48DIFx74
-X-Received: by 2002:a05:620a:818:: with SMTP id s24mr3993094qks.369.1582701986638;
-        Tue, 25 Feb 2020 23:26:26 -0800 (PST)
-X-Google-Smtp-Source: APXvYqy9jp1KDxLFeQLv7QeR2TtKnSWWQ2++QWZI9Gbb8l6PC8kX3KCPOu2JNC/AcAu35IfNkSy/tg==
-X-Received: by 2002:a05:620a:818:: with SMTP id s24mr3993072qks.369.1582701986335;
-        Tue, 25 Feb 2020 23:26:26 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id x131sm689963qka.1.2020.02.25.23.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 23:26:24 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: exfat: remove symlink feature : Additional patch
-In-Reply-To: <20200226063746.3128-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-References: <20200226063746.3128-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1582701983_403032P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 26 Feb 2020 02:26:23 -0500
-Message-ID: <503049.1582701983@turing-police>
+        id S1727335AbgBZIVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 03:21:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57058 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727311AbgBZIVA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 03:21:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id EC3A0B1AB;
+        Wed, 26 Feb 2020 08:20:58 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9C73D1E0EA2; Wed, 26 Feb 2020 09:20:58 +0100 (CET)
+Date:   Wed, 26 Feb 2020 09:20:58 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 07/16] fsnotify: replace inode pointer with tag
+Message-ID: <20200226082058.GB10728@quack2.suse.cz>
+References: <20200217131455.31107-1-amir73il@gmail.com>
+ <20200217131455.31107-8-amir73il@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200217131455.31107-8-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1582701983_403032P
-Content-Type: text/plain; charset=us-ascii
+On Mon 17-02-20 15:14:46, Amir Goldstein wrote:
+> The event inode field is used only for comparison in queue merges and
+> cannot be dereferenced after handle_event(), because it does not hold a
+> refcount on the inode.
+> 
+> Replace it with an abstract tag do to the same thing. We are going to
+> set this tag for values other than inode pointer in fanotify.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-On Wed, 26 Feb 2020 15:37:46 +0900, Tetsuhiro Kohada said:
-> Completely remove symlink codes and definitions.
+I like this but can we call it say 'objectid' or something like that? 'tag'
+seems too generic to me and it isn't clear why we should merge or not merge
+events with different tags...
 
-> In the previous patch, it was not completely removed.
+								Honza
 
-Then this should have been [PATCH v2], and the fixed version [PATCH v3]
-
-> Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
->
 > ---
-And right in here there should be something like this:
-
-v3: fixed subject line
-v2: previous patch didn't completely remove it
-
->  drivers/staging/exfat/exfat.h       |  3 ---
->  drivers/staging/exfat/exfat_core.c  |  3 ---
->  drivers/staging/exfat/exfat_super.c | 27 ---------------------------
->  3 files changed, 33 deletions(-)
->
-> diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
-> index 4a0a481fe010..cd3479fc78ba 100644
-
-
-
---==_Exmh_1582701983_403032P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXlYdnwdmEQWDXROgAQJaqQ/+LFm+5gnoObjHByvFiSe/WLwyDsLR5ck8
-NxQVtg5wFV9uNxsVdsTCyiwaPril0sXlQfIvt3+di7OqzwfwSmsmLkDNHnrxPoCi
-n874KFMcJ7QpBXNP+FwWKd6tFB6ORf0A4EAQG+oS1afzVvFXKN9Vc+FYiT3GfPlj
-KlUgi8WJpQriRYz2HQ6RcYZj7PrrCSr3AOHTzVpvCwJXSKJlKi62LxRw6yIq5rRZ
-18Sqe8t6v4eX5CNOPvlZPBLYnbyW9AxUslhF/qWTzRIy7Vd/urwRY68tbKsnvMvT
-7dmjmPPOxurq2kirYBGBYdATN6LhIN22OVctFghT10c2ddrwyhnxHtwJbQLGNXcO
-QrHzgkFyabWQlVkQOuG25CBE/d0M7+gtPJmIx+zun63GTvd8m53GZoKkGc8dIDqe
-pLug/kVCbkxtffVovWXSgriu6KQnGa6jTo95l85trYbXbGW9+DAGdmSR5N6HgLb6
-mBi3stwpDgOFq86r+paMyDhZVwfNLh6z0zLf+obEP1W9j3aL8KNx4txUzR7RoKFk
-PizGKPz9E2iQWc/VBsnKa65Of1EwylK0hefiYjM+jTt8zFthT8RG1JXX5CxjeVYF
-UJUUbH9tF+76AsSx4w06kRaiG1kS6bZ9aFhspyZcXYUTBbb2ua19gPsSdg5JAZ8K
-AZraphreKpc=
-=69Q7
------END PGP SIGNATURE-----
-
---==_Exmh_1582701983_403032P--
+>  fs/notify/fanotify/fanotify.c        | 2 +-
+>  fs/notify/inotify/inotify_fsnotify.c | 2 +-
+>  include/linux/fsnotify_backend.h     | 8 +++-----
+>  3 files changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 19ec7a4f4d50..98c3cbf29003 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -26,7 +26,7 @@ static bool should_merge(struct fsnotify_event *old_fsn,
+>  	old = FANOTIFY_E(old_fsn);
+>  	new = FANOTIFY_E(new_fsn);
+>  
+> -	if (old_fsn->inode != new_fsn->inode || old->pid != new->pid ||
+> +	if (old_fsn->tag != new_fsn->tag || old->pid != new->pid ||
+>  	    old->fh_type != new->fh_type || old->fh_len != new->fh_len)
+>  		return false;
+>  
+> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+> index 6bb98522bbfd..4f42ea7b7fdd 100644
+> --- a/fs/notify/inotify/inotify_fsnotify.c
+> +++ b/fs/notify/inotify/inotify_fsnotify.c
+> @@ -39,7 +39,7 @@ static bool event_compare(struct fsnotify_event *old_fsn,
+>  	if (old->mask & FS_IN_IGNORED)
+>  		return false;
+>  	if ((old->mask == new->mask) &&
+> -	    (old_fsn->inode == new_fsn->inode) &&
+> +	    (old_fsn->tag == new_fsn->tag) &&
+>  	    (old->name_len == new->name_len) &&
+>  	    (!old->name_len || !strcmp(old->name, new->name)))
+>  		return true;
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index bd3f6114a7a9..cd106b5c87a4 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -132,8 +132,7 @@ struct fsnotify_ops {
+>   */
+>  struct fsnotify_event {
+>  	struct list_head list;
+> -	/* inode may ONLY be dereferenced during handle_event(). */
+> -	struct inode *inode;	/* either the inode the event happened to or its parent */
+> +	unsigned long tag;	/* identifier for queue merges */
+>  };
+>  
+>  /*
+> @@ -542,11 +541,10 @@ extern void fsnotify_put_mark(struct fsnotify_mark *mark);
+>  extern void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info);
+>  extern bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info);
+>  
+> -static inline void fsnotify_init_event(struct fsnotify_event *event,
+> -				       struct inode *inode)
+> +static inline void fsnotify_init_event(struct fsnotify_event *event, void *tag)
+>  {
+>  	INIT_LIST_HEAD(&event->list);
+> -	event->inode = inode;
+> +	event->tag = (unsigned long)tag;
+>  }
+>  
+>  #else
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
