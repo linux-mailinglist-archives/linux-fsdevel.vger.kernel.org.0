@@ -2,98 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C73416F79E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 06:49:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C4716F807
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 07:36:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgBZFti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 00:49:38 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43389 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgBZFti (ORCPT
+        id S1726988AbgBZGgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 01:36:04 -0500
+Received: from mail-io1-f46.google.com ([209.85.166.46]:36777 "EHLO
+        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbgBZGgE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 00:49:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p11so828361plq.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Feb 2020 21:49:38 -0800 (PST)
+        Wed, 26 Feb 2020 01:36:04 -0500
+Received: by mail-io1-f46.google.com with SMTP id d15so2144878iog.3;
+        Tue, 25 Feb 2020 22:36:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+o0Cxx8HmQdXWrejhdC3RH6moiQGlThNZB33TEB2/R0=;
-        b=QVngWJphiEqTsggSbaGZG6KKVe/5xdUUs9fF1c8wpFIBC85uu6w0X4OjARiK7hiHsy
-         YirmKlA8+5ufTIQVNnhu+cRiDjjkVNg+kDVeOmLSZcaJcnc/+CklCyb23K9XK4TexOyP
-         w+JOHDZPBRFCgI7qgLAo6vpCvdZb8ga/AW3GI=
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=eFo/amBiw4ra9qJF2sHSoCjzhIEMIa3Edz34Kt0xAwI=;
+        b=dhEjyFqSp7aLk7RcKJXSEmWOU7r54o17dGXzyFHN8nQmy7U4LSAteSM9R6BMen+myC
+         p0g18JZldQiTYVqNeQV6YphadUZyuQtae0ieyNcTIBsEbYis1+gJUWsbpDQEvqw5jOSq
+         NcUO1qT4ZKkREme2LLJgVvHwZCK3a4TR1vnjfq8DnX8Ll4z5eO5MCtHbuzrVaIaD1KZp
+         zViAo1aP4ibxvCnHKkBje0CNaPZN2DU9ltuFEm/0hLPcY2ScTs3C2QQxNC0o6hqVW8WW
+         /Tb3PZgcXpcSaxOmud+91auzF6stQDtvMGZNIa6lesmFshl+iER96CluI/z0IY5yZucy
+         BrVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+o0Cxx8HmQdXWrejhdC3RH6moiQGlThNZB33TEB2/R0=;
-        b=JGKGCEBojq5ocuL05o5jAxAjgUhpDPsnHqzh2FPZ5LZTuT1AXqBCnQi2TvqrxA3STz
-         of5YyrPBH6Q6A+FB8kdhl8se2iUwa3fbUPpYHIPNAGvXyN5/36VbF0fMILnySWc7hZfB
-         h7b2tG5qGj/8ZskDdp4q3SLJ7sqqrNJQpwoOBZTPlHqL9bG/PngW9cRcZEZQrBtIMzSx
-         cN/DHOYBj8qLDsSxOoGoaltBQn+E3+ZzELD9ba5JyluiDsXCtYrqEhzEuAcT/aVZd8/Z
-         ihE7OZWc2MYx1JGaLcQMI3Z0/v2a9n8L1GNRqq3klnQ2pg//yxHGXZDcMrJYariIxu9W
-         xOtg==
-X-Gm-Message-State: APjAAAXghyGS38PSDiuzu56a1+RiMJheFs4d3Cx1Nl1jZeLYJWznK1y4
-        CzYEHUI9sFAwAVzRWBZW5zpDUg==
-X-Google-Smtp-Source: APXvYqx8Hr/Cj5VybYqFNkztZ4OEH69rhUqXd7K5EOJh00EissLfKhJ2zFA3IUzdAa6QW4zPXy4nZg==
-X-Received: by 2002:a17:902:6ac7:: with SMTP id i7mr2245702plt.314.1582696177733;
-        Tue, 25 Feb 2020 21:49:37 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q6sm1057628pfh.127.2020.02.25.21.49.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 21:49:36 -0800 (PST)
-Date:   Tue, 25 Feb 2020 21:49:35 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v6 01/11] ELF: UAPI and Kconfig additions for ELF program
- properties
-Message-ID: <202002252147.7BFF9EE@keescook>
-References: <20200212192906.53366-1-broonie@kernel.org>
- <20200212192906.53366-2-broonie@kernel.org>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=eFo/amBiw4ra9qJF2sHSoCjzhIEMIa3Edz34Kt0xAwI=;
+        b=ugLBAhl+LFYom2qAB4LCfV09snSYzXD20iL6IT/UooELQO5kPBlYoSh1M4nWVpMIdf
+         IS//xgsRJEBy1oo8A23hwPK60KZTJM2SiaGDi8+NJO90CqYsRfUFM68I4c4j6R5NakVA
+         9dgzOaxtNZ91TzO2r5PGE1uT+UrUBBIJ8je5jm7KjmtE/LWHh0bpG+rJDt+UwU8ql2TQ
+         i6tX99DJ36KOMW0djO/uSgGhjPHPr2JLWrg2zzZwaq+hKRoWTeFP7ceefHFnaLrnFuNk
+         l2FLMQYbJDGkiDNKuGtH+GtZfcbmvt4PsoWu7Vm74JRkC7yQV8KZ677R6Bwg5vOZnHfB
+         94RQ==
+X-Gm-Message-State: APjAAAWuIiLGPG/q1xNj5mO+L5WNw5sQIMJ5WEsSKChcheM6dpTn8beZ
+        q0g57SogR3uAs5Jbt25wN3YK2MuY2Osh7d9GtoUX1g==
+X-Google-Smtp-Source: APXvYqwX8A3Hd2lbBCep5kIfXNaBAi1xmcK8jdjkUNhedPox5PQphF/+56QeowLlHLT0ZLEsa7wPK8bYwAPdQPAXIbA=
+X-Received: by 2002:a05:6638:149:: with SMTP id y9mr2359365jao.132.1582698963130;
+ Tue, 25 Feb 2020 22:36:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200212192906.53366-2-broonie@kernel.org>
+From:   Steve French <smfrench@gmail.com>
+Date:   Wed, 26 Feb 2020 00:35:51 -0600
+Message-ID: <CAH2r5mt0=WRC2SgG6UZmZ32PbjZrcK4N_sZ9=WcSEar1utTmCw@mail.gmail.com>
+Subject: [PATCH][CIFS] Use FS_RENAME_DOES_D_MOVE to minimize races in rename
+To:     CIFS <linux-cifs@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000007c35c8059f74d1c0"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 07:28:56PM +0000, Mark Brown wrote:
-> From: Dave Martin <Dave.Martin@arm.com>
-> 
-> Pull the basic ELF definitions relating to the
-> NT_GNU_PROPERTY_TYPE_0 note from Yu-Cheng Yu's earlier x86 shstk
-> series.
+--0000000000007c35c8059f74d1c0
+Content-Type: text/plain; charset="UTF-8"
 
-Both BTI and SHSTK depend on this. If BTI doesn't land soon, can this
-and patch 2 land separately? I don't like seeing the older version in
-the SHSTK series -- I worry there will be confusion and the BTI version
-(which is more up to date) will get missed.
+Should be safer to do the dentry move immediately after the rename
+rather than later.
 
-What's left to land BTI support?
+
+
+
 
 -- 
-Kees Cook
+Thanks,
+
+Steve
+
+--0000000000007c35c8059f74d1c0
+Content-Type: text/x-patch; charset="US-ASCII"; name="0001-cifs-do-d_move-in-rename.patch"
+Content-Disposition: attachment; 
+	filename="0001-cifs-do-d_move-in-rename.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k72y39610>
+X-Attachment-Id: f_k72y39610
+
+RnJvbSBjMWJjNzUxNzg3ODA2NjU3MTZhZDE0YjhjNDBhOGQ4ZTU4ZDBmM2UzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
+CkRhdGU6IFR1ZSwgMjUgRmViIDIwMjAgMTg6MDg6NTQgLTA2MDAKU3ViamVjdDogW1BBVENIXSBj
+aWZzOiBkbyBkX21vdmUgaW4gcmVuYW1lCgpJdCBpcyBzYWZlciB0byBkbyB0aGUgZF9tb3ZlIGNs
+b3NlciB0byB0aGUgcmVuYW1lIHRvCmF2b2lkIHJhY2VzLgoKU2lnbmVkLW9mZi1ieTogU3RldmUg
+RnJlbmNoIDxzdGZyZW5jaEBtaWNyb3NvZnQuY29tPgotLS0KIGZzL2NpZnMvY2lmc2ZzLmMgfCA0
+ICsrLS0KIGZzL2NpZnMvaW5vZGUuYyAgfCAyICsrCiAyIGZpbGVzIGNoYW5nZWQsIDQgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy9jaWZzL2NpZnNmcy5jIGIv
+ZnMvY2lmcy9jaWZzZnMuYwppbmRleCBmYTc3ZmU1MjU4YjAuLjk0ZTNlZDQ4NTBiNSAxMDA2NDQK
+LS0tIGEvZnMvY2lmcy9jaWZzZnMuYworKysgYi9mcy9jaWZzL2NpZnNmcy5jCkBAIC0xMDE4LDcg
+KzEwMTgsNyBAQCBzdHJ1Y3QgZmlsZV9zeXN0ZW1fdHlwZSBjaWZzX2ZzX3R5cGUgPSB7CiAJLm5h
+bWUgPSAiY2lmcyIsCiAJLm1vdW50ID0gY2lmc19kb19tb3VudCwKIAkua2lsbF9zYiA9IGNpZnNf
+a2lsbF9zYiwKLQkvKiAgLmZzX2ZsYWdzICovCisJLmZzX2ZsYWdzID0gRlNfUkVOQU1FX0RPRVNf
+RF9NT1ZFLAogfTsKIE1PRFVMRV9BTElBU19GUygiY2lmcyIpOwogCkBAIC0xMDI3LDcgKzEwMjcs
+NyBAQCBzdGF0aWMgc3RydWN0IGZpbGVfc3lzdGVtX3R5cGUgc21iM19mc190eXBlID0gewogCS5u
+YW1lID0gInNtYjMiLAogCS5tb3VudCA9IHNtYjNfZG9fbW91bnQsCiAJLmtpbGxfc2IgPSBjaWZz
+X2tpbGxfc2IsCi0JLyogIC5mc19mbGFncyAqLworCS5mc19mbGFncyA9IEZTX1JFTkFNRV9ET0VT
+X0RfTU9WRSwKIH07CiBNT0RVTEVfQUxJQVNfRlMoInNtYjMiKTsKIE1PRFVMRV9BTElBUygic21i
+MyIpOwpkaWZmIC0tZ2l0IGEvZnMvY2lmcy9pbm9kZS5jIGIvZnMvY2lmcy9pbm9kZS5jCmluZGV4
+IDY1NDM0NjU1OTVmNi4uN2JiN2ZmMTEwZGM2IDEwMDY0NAotLS0gYS9mcy9jaWZzL2lub2RlLmMK
+KysrIGIvZnMvY2lmcy9pbm9kZS5jCkBAIC0xODM1LDYgKzE4MzUsOCBAQCBjaWZzX2RvX3JlbmFt
+ZShjb25zdCB1bnNpZ25lZCBpbnQgeGlkLCBzdHJ1Y3QgZGVudHJ5ICpmcm9tX2RlbnRyeSwKIAkJ
+Q0lGU1NNQkNsb3NlKHhpZCwgdGNvbiwgZmlkLm5ldGZpZCk7CiAJfQogZG9fcmVuYW1lX2V4aXQ6
+CisJaWYgKHJjID09IDApCisJCWRfbW92ZShmcm9tX2RlbnRyeSwgdG9fZGVudHJ5KTsKIAljaWZz
+X3B1dF90bGluayh0bGluayk7CiAJcmV0dXJuIHJjOwogfQotLSAKMi4yMC4xCgo=
+--0000000000007c35c8059f74d1c0--
