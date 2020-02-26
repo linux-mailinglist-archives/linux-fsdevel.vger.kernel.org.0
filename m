@@ -2,90 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19C3716FA78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 10:18:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE78616FAA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 10:22:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgBZJSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 04:18:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54676 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbgBZJSG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 04:18:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3C389AAFD;
-        Wed, 26 Feb 2020 09:18:05 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E12F61E0EA2; Wed, 26 Feb 2020 10:18:04 +0100 (CET)
-Date:   Wed, 26 Feb 2020 10:18:04 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 08/16] fanotify: merge duplicate events on parent and
- child
-Message-ID: <20200226091804.GD10728@quack2.suse.cz>
-References: <20200217131455.31107-1-amir73il@gmail.com>
- <20200217131455.31107-9-amir73il@gmail.com>
+        id S1727862AbgBZJWi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 04:22:38 -0500
+Received: from mail-io1-f48.google.com ([209.85.166.48]:40518 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbgBZJWi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 04:22:38 -0500
+Received: by mail-io1-f48.google.com with SMTP id x1so2553720iop.7;
+        Wed, 26 Feb 2020 01:22:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EV7FGZpFqM3MXMRpDIfQuZeYXOQ0Cm1sB7r0IOS6lMw=;
+        b=ICPhGHr7tJmDzDBkCqyFZ5ucRR+vGT8BRVZ+bPsX2Fnd4trg/jrsJ/9iRN6BHvgE9F
+         VaIB9RZTo0yZf95ykQ+Eyk8//usLHs4Lwagd7GFHXW+9TM46lmVoMdAXVpST4Nzn34GX
+         ykO8dwGAj/62eS77sZaK4Srdorlzg+yCQjE9Zrg2HsnkGnULOAFCSS2NwGd/9dfANpu9
+         24EjtOzkX9lNGe8cBFum3AJ0dWXgZAYfTYXYyhb3EDaLZkZHamaXTDGfIJHL3nF6E/4S
+         2ePKrfEZRvZZLqA/l3ZmCH29TJDmV2aofXuhhTot/s4oJvV2TOeqFqx/VZ9yGmrCrPb5
+         KTgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EV7FGZpFqM3MXMRpDIfQuZeYXOQ0Cm1sB7r0IOS6lMw=;
+        b=TG1AoIFmyPdwDi8Wsh69YxgtwxAS5um2EpfX5gDo968IiuoGKRhy+QsHgijYFARZrt
+         VsOh1MHM9ShyNYTFwBhlgeV8n2LG/XsPu+WrsULB9t1p9s3kYTkR4J4B9JH6OJFog4lW
+         GiKUx9xLyy1rGemdXeMZXNRz5VHjNn8buDuVmQrOyF7OCL1jTiCyvBz/W5456QBz8olK
+         T8U66PoT7CVuYMmWK6s+gJizxOHnzD4F2chY9H2Mn+LjGjCP2PcAh45D9pTJ2fNc6Zdb
+         yqKmZVANWoiDegdASwCEiZPlIQ4ANWtZw4xHJnBZJcsLiJBEyNDzU92H6izcrdPt3l90
+         J+WQ==
+X-Gm-Message-State: APjAAAXKfKnnZUAMoPH5NAuGoxp063gdfxZJLtibAREK8KupV0yfWbl+
+        wrN50ma56q9n31RHQ5LjlcD3wBDDMreLPOki2eM2/lV2
+X-Google-Smtp-Source: APXvYqw0sD4ErZ4gv5YKtxhRLMl66m8Y/T3l3446JfpEtvmwI6jm6LXWXnEG8XHui07nTxCndkxDZUEQU7H5+6BOPXM=
+X-Received: by 2002:a5d:9c88:: with SMTP id p8mr3424343iop.9.1582708957178;
+ Wed, 26 Feb 2020 01:22:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200217131455.31107-9-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAH2r5mt0=WRC2SgG6UZmZ32PbjZrcK4N_sZ9=WcSEar1utTmCw@mail.gmail.com>
+In-Reply-To: <CAH2r5mt0=WRC2SgG6UZmZ32PbjZrcK4N_sZ9=WcSEar1utTmCw@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 26 Feb 2020 11:22:26 +0200
+Message-ID: <CAOQ4uxgUuR__Epnt4tfDuZ4-qiRQxt9mVY5ukBCC2z59YNdDHw@mail.gmail.com>
+Subject: Re: [PATCH][CIFS] Use FS_RENAME_DOES_D_MOVE to minimize races in rename
+To:     Steve French <smfrench@gmail.com>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 17-02-20 15:14:47, Amir Goldstein wrote:
-> With inotify, when a watch is set on a directory and on its child, an
-> event on the child is reported twice, once with wd of the parent watch
-> and once with wd of the child watch without the filename.
-> 
-> With fanotify, when a watch is set on a directory and on its child, an
-> event on the child is reported twice, but it has the exact same
-> information - either an open file descriptor of the child or an encoded
-> fid of the child.
-> 
-> The reason that the two identical events are not merged is because the
-> tag used for merging events in the queue is the child inode in one event
-> and parent inode in the other.
-> 
-> For events with path or dentry data, use the dentry instead of inode as
-> the tag for event merging, so that the event reported on parent will be
-> merged with the event reported on the child.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On Wed, Feb 26, 2020 at 8:37 AM Steve French <smfrench@gmail.com> wrote:
+>
 
-I agree that reporting identical event twice seems wasteful but ...
+What sort of rename races? Is that a real/reproducible problem?
 
-> @@ -312,7 +313,12 @@ struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  	if (!event)
->  		goto out;
->  init: __maybe_unused
-> -	fsnotify_init_event(&event->fse, inode);
-> +	/*
-> +	 * Use the dentry instead of inode as tag for event queue, so event
-> +	 * reported on parent is merged with event reported on child when both
-> +	 * directory and child watches exist.
-> +	 */
-> +	fsnotify_init_event(&event->fse, (void *)dentry ?: inode);
+> Should be safer to do the dentry move immediately after the rename
+> rather than later.
+>
 
-... this seems quite ugly and also previously we could merge 'inode' events
-with others and now we cannot because some will carry "dentry where event
-happened" and other ones "inode with watch" as object identifier. So if you
-want to do this, I'd use "inode where event happened" as object identifier
-for fanotify.
+Looking at what "later" means, you moved d_move() before
+cifs_put_tlink(tlink);
+and
+shrink_dcache_parent(new_dentry);
+detach_mounts(new_dentry);
 
-Hum, now thinking about this, maybe we could clean this up even a bit more.
-event->inode is currently used only by inotify and fanotify for merging
-purposes. Now inotify could use its 'wd' instead of inode with exactly the
-same results, fanotify path or fid check is at least as strong as the inode
-check. So only for the case of pure "inode" events, we need to store inode
-identifier in struct fanotify_event - and we can do that in the union with
-struct path and completely remove the 'inode' member from fsnotify_event.
-Am I missing something?
+I suppose cifs_put_tlink() is not the issue.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+It makes me wonder about shrink_dcache_parent()/detach_mounts() -
+they happen for some fs before d_move() and for some fs after d_move()
+
+I think it kind of makes sense to have them moved after dentry is
+unhashed anyway? (that is after d_move()).
+
+Thanks,
+Amir.
