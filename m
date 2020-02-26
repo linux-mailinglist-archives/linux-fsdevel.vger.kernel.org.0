@@ -2,129 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2054C1708D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 20:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B593170932
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 21:06:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbgBZTUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 14:20:10 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35458 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727134AbgBZTUJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:20:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582744808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JC/2w/EASsF47NJsQnG/EnRFDXzT40bcN876RMkvyQU=;
-        b=VIonsxn5ETTCv/jF+U/9Eul8RWdx/wrzovKfOZtDFgszowTjqQp3vQpHu/JVsFvEKI8P8s
-        4HKN33RlcLPReAFD2//hPW76bcl7vVhKYgm8vVpVeovq3b2bAfTDO7mkWxLo1iVy53LPo9
-        BcZjifnPJLsyFCZsSEanL8gq7mLr648=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-274-NTKz4_vuPum3utiIDaAQtg-1; Wed, 26 Feb 2020 14:20:06 -0500
-X-MC-Unique: NTKz4_vuPum3utiIDaAQtg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 106481005512;
-        Wed, 26 Feb 2020 19:20:04 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E53890CD1;
-        Wed, 26 Feb 2020 19:19:59 +0000 (UTC)
-Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>
-References: <20200226161404.14136-1-longman@redhat.com>
- <20200226162954.GC24185@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <12e8d951-fc35-bce0-e96d-f93bccf2bd3a@redhat.com>
-Date:   Wed, 26 Feb 2020 14:19:59 -0500
+        id S1727306AbgBZUGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 15:06:35 -0500
+Received: from mail-eopbgr60099.outbound.protection.outlook.com ([40.107.6.99]:18990
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727296AbgBZUGf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 15:06:35 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Z0a3a7EEWusmBwwt0AoM3Cjj2vNP8Ilta76tESxWjR7LWWgnpcpU8sTeCSiz2S/aA9qdoUZnByN6iAfbq/vXfVF0SEkm5tXriHkXxyC+stNAFIVm3Xpb3G3GA3brZ1x3uaw2RCke0aSekilKuGUpU3VY4N3C9ERO+bnQ5P/fB8ZTQZUaZqR2U8P95QncSrwOsFgNcDpUnVz6ij4YTnNxxmnFwxbdTv/sFNvZecQ9EUXgaDbfU6EESz0EafQWDuEwWGbAsioHLfWwyEIrAKT/TGLXze2csaSF7cNhv5Vy5kcPLbOg9WlWgjR6p7gFsvM5ZG2H2mzfq7P2+uuVs/Aydw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/w1lFPsPIsG/y3jktuT5z7lsNA/KXEsIr2gY8V8GqKE=;
+ b=RORp7eZ4nRs781B/29kbdrpwRtRARfrOcQUmcgf9ZpAOPlrpz7rm554WwvLkEu2CUHKoYima9AJ+3bqE3KL6+qZpfcxm4xTDNL+DuEjrwbiFMw4KHrxHJKtG0KK95FGeI1kdppNn0SkHVQwfuAzyX0gH/qS6AVbp7yR7A+iHpycNW07x63YUaIrjeb5C3Cs798A5bceoNw6pOvUiKQO7zBAoaLv2qOgkBfKTyj82C2zJx7UVyZ8R0FaHI7mh9oNmnk5QT+5WJkYKuVOOSo81/umvU8ZFSBvBkVLBHrhLYPML9apr9Hb0jQFx8DZ7l0wje2k0W5s1k3tmZ3Poc1v96g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/w1lFPsPIsG/y3jktuT5z7lsNA/KXEsIr2gY8V8GqKE=;
+ b=WPciydVqEKnwX36Fs3aOuu0134Sr8jLCO77bWmEU/FlScUucJH0GjMISxyQYAvhXmpphq2XERealfOFBcKApeTnzg2fW811ooCQqmnyuxDKoHvVKISkSyTWpiqB1unnDIV9YK7dF++FJr2HVZlLdoJgJrXlB3/L204vMGBoyomo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com (52.135.128.26) by
+ DB7PR08MB3755.eurprd08.prod.outlook.com (20.178.45.224) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.14; Wed, 26 Feb 2020 20:06:32 +0000
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::5cbb:db23:aa64:5a91]) by DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::5cbb:db23:aa64:5a91%3]) with mapi id 15.20.2772.012; Wed, 26 Feb 2020
+ 20:06:32 +0000
+Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     tytso@mit.edu, viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
+        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
+        dmonakhov@gmail.com, mbobrowski@mbobrowski.org, enwlinux@gmail.com,
+        sblbir@amazon.com, khazhy@google.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
+ <20200226155521.GA24724@infradead.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
+Date:   Wed, 26 Feb 2020 23:05:23 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20200226162954.GC24185@bombadil.infradead.org>
+ Thunderbird/60.9.0
+In-Reply-To: <20200226155521.GA24724@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: HE1PR05CA0311.eurprd05.prod.outlook.com
+ (2603:10a6:7:93::42) To DB7PR08MB3276.eurprd08.prod.outlook.com
+ (2603:10a6:5:21::26)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (176.14.212.145) by HE1PR05CA0311.eurprd05.prod.outlook.com (2603:10a6:7:93::42) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Wed, 26 Feb 2020 20:06:29 +0000
+X-Originating-IP: [176.14.212.145]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e4c21341-7c48-40d6-2da0-08d7baf75fb1
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3755:
+X-Microsoft-Antispam-PRVS: <DB7PR08MB37556988B2DA3700820E8D2ECDEA0@DB7PR08MB3755.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0325F6C77B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(346002)(136003)(39850400004)(189003)(199004)(31696002)(6916009)(186003)(16526019)(478600001)(31686004)(52116002)(86362001)(956004)(8936002)(2616005)(316002)(6506007)(8676002)(6666004)(966005)(53546011)(26005)(2906002)(6512007)(6486002)(36756003)(7416002)(4326008)(81166006)(81156014)(5660300002)(66946007)(66476007)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3755;H:DB7PR08MB3276.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JAykNBWn75+desrTbAeXW9Y39yxMYgOjG55kKi81rsKCk72uC+zi+22VSDmxuPg4mly2I+j8airmSbyk/MZsOBNFsxA8yr6jfvxsyET9c0Dcmn4oQM7v7mCK3rnvbS4ypsF6SMQoazbtHJZwvFu4vSvoySaDo24i6VNFaTRXVAG+sj/x5UfuvE7tCBEUE8DhW14h6wF7UB49HPiw3apJPq/EJvb6gBCG/h/Aw12simL6hlv+WOslBuh/PPEt/x7TqVWtz5IOd4pIKSO6zKZokw2r+zJmIeZCaGgOJt0hGuqG78+BNltytufdYRYWRPQ2O3gUIHksTOPVNiMGgb+xoJNp5XSsAM8BTEcai0E72pUPu3NUVhEs8f99N2to9k0BmbZalfGdfDAClhDCzDtOPUrcULWDXTN8k3jbv4MXjH+MY17dezPP6jMl1F4M7tcndpjj6bBzni/jF8joAEDhGSjM6lxEbIfSBJDEnCoAs7fjOn8qcMpEOZzrhJ+628IGIeEnNFNEx/nyH3NHFoFlhA==
+X-MS-Exchange-AntiSpam-MessageData: 9cbZNs1BC3IdiPAKVP4Tj0sqD3XUZ7KDtYnpDlK0ftMP0YgfwUgfFhy05r9WqmfmCIjrJc5MrGllDBt9QRUK03rTFKTkr8Y0DZBTJiAVGb8kx8BoycvLNms0ked51Lcn5nDdhIJrO2t/cyoR8+5Daw==
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4c21341-7c48-40d6-2da0-08d7baf75fb1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2020 20:06:32.3798
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tWAQ6M+iUd9QPdo9ufUq44iI4PPXxPWCXQgNzWdJesTHpRRH3Yn9XxjJWTgOGVlLq1KLiQwR7ViOuALYAp64Pw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3755
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/26/20 11:29 AM, Matthew Wilcox wrote:
-> On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
->> A new sysctl parameter "dentry-dir-max" is introduced which accepts a
->> value of 0 (default) for no limit or a positive integer 256 and up. Small
->> dentry-dir-max numbers are forbidden to avoid excessive dentry count
->> checking which can impact system performance.
-> This is always the wrong approach.  A sysctl is just a way of blaming
-> the sysadmin for us not being very good at programming.
->
-> I agree that we need a way to limit the number of negative dentries.
-> But that limit needs to be dynamic and depend on how the system is being
-> used, not on how some overworked sysadmin has configured it.
->
-> So we need an initial estimate for the number of negative dentries that
-> we need for good performance.  Maybe it's 1000.  It doesn't really matter;
-> it's going to change dynamically.
->
-> Then we need a metric to let us know whether it needs to be increased.
-> Perhaps that's "number of new negative dentries created in the last
-> second".  And we need to decide how much to increase it; maybe it's by
-> 50% or maybe by 10%.  Perhaps somewhere between 10-100% depending on
-> how high the recent rate of negative dentry creation has been.
->
-> We also need a metric to let us know whether it needs to be decreased.
-> I'm reluctant to say that memory pressure should be that metric because
-> very large systems can let the number of dentries grow in an unbounded
-> way.  Perhaps that metric is "number of hits in the negative dentry
-> cache in the last ten seconds".  Again, we'll need to decide how much
-> to shrink the target number by.
->
-> If the number of negative dentries is at or above the target, then
-> creating a new negative dentry means evicting an existing negative dentry.
-> If the number of negative dentries is lower than the target, then we
-> can just create a new one.
->
-> Of course, memory pressure (and shrinking the target number) should
-> cause negative dentries to be evicted from the old end of the LRU list.
-> But memory pressure shouldn't cause us to change the target number;
-> the target number is what we think we need to keep the system running
-> smoothly.
->
-Thanks for the quick response.
+On 26.02.2020 18:55, Christoph Hellwig wrote:
+> On Wed, Feb 26, 2020 at 04:41:16PM +0300, Kirill Tkhai wrote:
+>> This adds a support of physical hint for fallocate2() syscall.
+>> In case of @physical argument is set for ext4_fallocate(),
+>> we try to allocate blocks only from [@phisical, @physical + len]
+>> range, while other blocks are not used.
+> 
+> Sorry, but this is a complete bullshit interface.  Userspace has
+> absolutely no business even thinking of physical placement.  If you
+> want to align allocations to physical block granularity boundaries
+> that is the file systems job, not the applications job.
 
-I agree that auto-tuning so that the system administrator don't have to
-worry about it will be the best approach if it is implemented in the
-right way. However, it is hard to do it right.
+Why? There are two contradictory actions that filesystem can't do at the same time:
 
-How about letting users specify a cap on the amount of total system
-memory allowed for negative dentries like one of my previous patchs.
-Internally, there is a predefined minimum and maximum for
-dentry-dir-max. We sample the total negative dentry counts periodically
-and adjust the dentry-dir-max accordingly.
+1)place files on a distance from each other to minimize number of extents
+  on possible future growth;
+2)place small files in the same big block of block device.
 
-Specifying a percentage of total system memory is more intuitive than
-just specifying a hard number for dentry-dir-max. Still some user input
-is required.
+At initial allocation time you never know, which file will stop grow in some future,
+i.e. which file is suitable for compaction. This knowledge becomes available some time later.
+Say, if a file has not been changed for a month, it is suitable for compaction with
+another files like it.
 
-What do you think?
+If at allocation time you can determine a file, which won't grow in the future, don't be afraid,
+and just share your algorithm here.
 
-Cheers,
-Longman
+In Virtuozzo we tried to compact ext4 with existing kernel interface:
 
+https://github.com/dmonakhov/e2fsprogs/blob/e4defrag2/misc/e4defrag2.c
+
+But it does not work well in many situations, and the main problem is blocks allocation
+in desired place is not possible. Block allocator can't behave excellent for everything.
+
+If this interface bad, can you suggest another interface to make block allocator to know
+the behavior expected from him in this specific case?
+
+Kirill
