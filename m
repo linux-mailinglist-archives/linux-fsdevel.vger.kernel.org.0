@@ -2,62 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DC916FF9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 14:05:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8724116FFA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 14:08:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbgBZNFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 08:05:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44092 "EHLO
+        id S1726918AbgBZNIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 08:08:23 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44134 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbgBZNFF (ORCPT
+        with ESMTP id S1726592AbgBZNIX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 08:05:05 -0500
+        Wed, 26 Feb 2020 08:08:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YWIvxqR0O64iCW+32RSdIg/0pnbQba367tq67f6Dqzw=; b=Mpa4FPkNfAILKJDnTcy/rhSkdm
-        cFSHlvDUtzPkU0Rlb+MOZNtS1ck1IKFYswb00odKVY/8FGc+d4/1zmp20ideLYyEoGEm+f/R1yoTK
-        IxSYDKG+Ti+QUv7+8BzoB1nsOcrkOG1TtO4yfOxqBYwohCirhUQP8QFpOfJxJw5wfX84tacjfak1+
-        kU7YMXMQQUMGeYV7N6JFbkTpitay+gzPXVUvZwHwytX4uMTk0HzAPHeSbyI5wM3sxn09pMzLfaDfH
-        zKxBXghYvS2pPJJXGKeJp0+VQaIBCMIWRzl1PNxMMdr0t02ctFarpk1yfuqMkf/vOzt400DqE70bw
-        ir+zQPRw==;
+        bh=2IY2GB7i/mwF4XIOgJDt/lQwAFNzsE0mMABE5WbvmUo=; b=AIUiGp2xB8oDNwPH9CLnnSK+Mt
+        Ij91K8QhHlgdauRQyycZeFF2KqhqoBDiMYqAci0/1uKmmkEqP9K1pFGOX2vEoY08DO5lbyEwl/Kj3
+        0y8cCYNhIRvy/5RPdZhSlsTL/LfT1/7yNhD9L7idGxioeuC9IRPcBYObfxvO/Ocs8n3YoHeREVBQw
+        vberjXfNkORkCH2EthTZwsMYwXGnt+VfiIfGV/BAy6wTvOVlAmGnlD2Amm9XOMKy62h+5Zh03arhW
+        sMHo/IfgGbstv+JyOcmwYicq2+wQ7gtlymVgVZEmS0WpGxHwuchsm02qtcogs0L440ronFnxDqUR3
+        N/YN274g==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j6wN5-0002AC-8T; Wed, 26 Feb 2020 13:05:03 +0000
-Date:   Wed, 26 Feb 2020 05:05:03 -0800
+        id 1j6wQG-0003fw-W1; Wed, 26 Feb 2020 13:08:20 +0000
+Date:   Wed, 26 Feb 2020 05:08:20 -0800
 From:   Matthew Wilcox <willy@infradead.org>
 To:     Ritesh Harjani <riteshh@linux.ibm.com>
 Cc:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
         adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
         darrick.wong@oracle.com, hch@infradead.org, cmaiolino@redhat.com
-Subject: Re: [PATCHv3 6/6] Documentation: Correct the description of
- FIEMAP_EXTENT_LAST
-Message-ID: <20200226130503.GY24185@bombadil.infradead.org>
-References: <cover.1582702693.git.riteshh@linux.ibm.com>
- <279638c6939b1f6ef3ab32912cb51da1a967cf8e.1582702694.git.riteshh@linux.ibm.com>
+Subject: Re: [PATCHv3 0/6] ext4: bmap & fiemap conversion to use iomap
+Message-ID: <20200226130820.GZ24185@bombadil.infradead.org>
+References: <cover.1582702366.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <279638c6939b1f6ef3ab32912cb51da1a967cf8e.1582702694.git.riteshh@linux.ibm.com>
+In-Reply-To: <cover.1582702366.git.riteshh@linux.ibm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 03:27:08PM +0530, Ritesh Harjani wrote:
-> Currently FIEMAP_EXTENT_LAST is not working consistently across
-> different filesystem's fiemap implementations and thus this feature
-> may be broken. So fix the documentation about this flag to meet the
-> right expectations.
+On Wed, Feb 26, 2020 at 03:27:02PM +0530, Ritesh Harjani wrote:
+> Background
+> ==========
+> These are v3 patches to move ext4 bmap & fiemap calls to use iomap APIs.
 
-Are you saying filesystems have both false positives and false negatives?
-I can understand how a filesystem might fail to set FIEMAP_EXTENT_LAST,
-but not how a filesystem might set it when there's actually another
-extent beyond this one.
+Are you also planning to switch readpages over in the future?  If so,
+I think you'll want this patch:
 
->  * FIEMAP_EXTENT_LAST
-> -This is the last extent in the file. A mapping attempt past this
-> -extent will return nothing.
-> +This is generally the last extent in the file. A mapping attempt past this
-> +extent may return nothing. But the user must still confirm by trying to map
-> +past this extent, since different filesystems implement this differently.
+http://git.infradead.org/users/willy/linux-dax.git/commitdiff/2ef99d3d1dd1941cbf9214f2a49b50f8c9e6f021
+
+I haven't done any performance evaluation here; just reading the code.
