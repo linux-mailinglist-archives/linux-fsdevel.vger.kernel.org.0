@@ -2,124 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4691703DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:12:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEB41703F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbgBZQMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 11:12:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33744 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgBZQMP (ORCPT
+        id S1727820AbgBZQPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 11:15:09 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:36977 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727274AbgBZQPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:12:15 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFvgLT033929;
-        Wed, 26 Feb 2020 16:11:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=YbNJsmUfsUEFD7d1eHTqn0q9n5eOHlz7ui0y6YtuBSw=;
- b=yhoB3k401XDyuuzpsmgcCT/31wyF+4Ft6MtDXBtAU17nlN6GpLFpJQKJeYLqWAoy1kv3
- cNX8p4C3jMsyA+MqzRoMx7ViG6rhPUKFm3MrJLRT8NOzqhaLa9rYLDNn20jkXLjBPVAS
- W/un4eIkSJ30lsBgcFPhi3l/mR3Im05HdRjSPdHdRrxKwFFvYoaVAwsKr+tKlW/kVnFc
- sUv+MV/pbJpG36JmouaeSuJWmhCsxRj6ikP4O0uHqJgh8/tUeEwzTHWn2fI5LAsRA/iC
- GLvEIpWp1WgZ0o9KbDy9DFMIO3FRXw6HSXfn8dNeaPHgmePR17/PNeTkM+O464iJESoc Hg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2ydcsrmpge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:11:59 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01QFuiV7098734;
-        Wed, 26 Feb 2020 16:11:59 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2ydcsa4xkk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 16:11:58 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01QGBqmK026431;
-        Wed, 26 Feb 2020 16:11:52 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 26 Feb 2020 08:11:52 -0800
-Date:   Wed, 26 Feb 2020 08:11:50 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, cmaiolino@redhat.com
-Subject: Re: [PATCHv3 4/6] ext4: Make ext4_ind_map_blocks work with fiemap
-Message-ID: <20200226161150.GA8036@magnolia>
-References: <cover.1582702693.git.riteshh@linux.ibm.com>
- <56fc8d3802c578d27d49270600946a0737cef119.1582702694.git.riteshh@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56fc8d3802c578d27d49270600946a0737cef119.1582702694.git.riteshh@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002260111
+        Wed, 26 Feb 2020 11:15:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1582733707;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=GFnA8Sa/wZo/6noDEkcT6+Ar1rUimsYkRyF79+pzSnM=;
+        b=dpqXO9iZitwrnpUH1Flv5IE4VIKDYag1ap+pDcxGwQvu6jRVyJqRQDMefdMNJMHepCKe3D
+        jReOUjdvvzPPF+wpXsROzAWDRDuNppEKhEJM/6NaO2Z2I96PaoacNe8nIXH34BlmHyT4ap
+        JKO153K8n5YSUkSXiS+KzpNqpy5EQN0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-411-6kLbTQcGNnSdZWckjUi0gA-1; Wed, 26 Feb 2020 11:15:04 -0500
+X-MC-Unique: 6kLbTQcGNnSdZWckjUi0gA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5C251005512;
+        Wed, 26 Feb 2020 16:15:02 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DC22160BE1;
+        Wed, 26 Feb 2020 16:14:55 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+Date:   Wed, 26 Feb 2020 11:13:53 -0500
+Message-Id: <20200226161404.14136-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 03:27:06PM +0530, Ritesh Harjani wrote:
-> For indirect block mapping if the i_block > max supported block in inode
-> then ext4_ind_map_blocks may return a -EIO error. But in case of fiemap
-> this could be a valid query to ext4_map_blocks.
-> So in case if !create then return 0. This also makes ext4_warning to
-> ext4_debug in ext4_block_to_path() for the same reason.
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/ext4/indirect.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
-> index 3a4ab70fe9e0..e1ab495dd900 100644
-> --- a/fs/ext4/indirect.c
-> +++ b/fs/ext4/indirect.c
-> @@ -102,7 +102,11 @@ static int ext4_block_to_path(struct inode *inode,
->  		offsets[n++] = i_block & (ptrs - 1);
->  		final = ptrs;
->  	} else {
-> -		ext4_warning(inode->i_sb, "block %lu > max in inode %lu",
-> +		/*
-> +		 * It's not yet an error to just query beyond max
-> +		 * block in inode. Fiemap callers may do so.
-> +		 */
-> +		ext4_debug("block %lu > max in inode %lu",
->  			     i_block + direct_blocks +
->  			     indirect_blocks + double_blocks, inode->i_ino);
+As there is no limit for negative dentries, it is possible that a sizeable
+portion of system memory can be tied up in dentry cache slabs. Dentry slabs
+are generally recalimable if the dentries are in the LRUs. Still having
+too much memory used up by dentries can be problematic:
 
-Does that mean fiemap callers can spamflood dmesg with this message just
-by setting the query start range to a huge value?
+ 1) When a filesystem with too many negative dentries is being unmounted,
+    the process of draining the dentries associated with the filesystem
+    can take some time. To users, the system may seem to hang for
+    a while.  The long wait may also cause unexpected timeout error or
+    other warnings.  This can happen when a long running container with
+    many negative dentries is being destroyed, for instance.
 
---D
+ 2) Tying up too much memory in unused negative dentries means there
+    are less memory available for other use. Even though the kernel is
+    able to reclaim unused dentries when running out of free memory,
+    it will still introduce additional latency to the application
+    reducing its performance.
 
->  	}
-> @@ -537,8 +541,11 @@ int ext4_ind_map_blocks(handle_t *handle, struct inode *inode,
->  	depth = ext4_block_to_path(inode, map->m_lblk, offsets,
->  				   &blocks_to_boundary);
->  
-> -	if (depth == 0)
-> +	if (depth == 0) {
-> +		if (!(flags & EXT4_GET_BLOCKS_CREATE))
-> +			err = 0;
->  		goto out;
-> +	}
->  
->  	partial = ext4_get_branch(inode, depth, offsets, chain, &err);
->  
-> -- 
-> 2.21.0
-> 
+There are two different approaches to limit negative dentries.
+
+  1) Global reclaim
+     Based on the total number of negative dentries as tracked by the
+     nr_dentry_negative percpu count, a function can be activated to
+     scan the various LRU lists to trim out excess negative dentries.
+
+  2) Local reclaim
+     By tracking the number of negative dentries under each directory,
+     we can start the reclaim process if the number exceeds a certain
+     limit.
+
+The problem with global reclaim is that there are just too many LRU lists
+present that may need to be scanned for each filesystem. Especially
+problematic is the fact that each memory cgroup can have its own LRU
+lists. As memory cgroup can come and go at any time, scanning its LRUs
+can be tricky.
+
+Local reclaim does not have this problem. So it is used as the basis
+for negative dentry reclaim for this patchset. Accurately tracking the
+number of negative dentries in each directory can be costly in term of
+performance hit. As a result, this patchset estimates the number of
+negative dentries present in a directory by looking at a newly added
+children count and an opportunistically stored positive dentry count.
+
+A new sysctl parameter "dentry-dir-max" is introduced which accepts a
+value of 0 (default) for no limit or a positive integer 256 and up. Small
+dentry-dir-max numbers are forbidden to avoid excessive dentry count
+checking which can impact system performance.
+
+The actual negative dentry reclaim is delegated to the system workqueue
+to avoid adding excessive latency to normal filesystem operation.
+
+Waiman Long (11):
+  fs/dcache: Fix incorrect accounting of negative dentries
+  fs/dcache: Simplify __dentry_kill()
+  fs/dcache: Add a counter to track number of children
+  fs/dcache: Add sysctl parameter dentry-dir-max
+  fs/dcache: Reclaim excessive negative dentries in directories
+  fs/dcache: directory opportunistically stores # of positive dentries
+  fs/dcache: Add static key negative_reclaim_enable
+  fs/dcache: Limit dentry reclaim count in negative_reclaim_workfn()
+  fs/dcache: Don't allow small values for dentry-dir-max
+  fs/dcache: Kill off dentry as last resort
+  fs/dcache: Track # of negative dentries reclaimed & killed
+
+ Documentation/admin-guide/sysctl/fs.rst |  18 +
+ fs/dcache.c                             | 428 +++++++++++++++++++++++-
+ include/linux/dcache.h                  |  18 +-
+ kernel/sysctl.c                         |  11 +
+ 4 files changed, 457 insertions(+), 18 deletions(-)
+
+-- 
+2.18.1
+
