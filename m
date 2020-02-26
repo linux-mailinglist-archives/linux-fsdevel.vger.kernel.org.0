@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70CDB170405
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D435170407
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Feb 2020 17:15:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbgBZQPi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 11:15:38 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:51956 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728373AbgBZQPh (ORCPT
+        id S1728656AbgBZQPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 11:15:40 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:49066 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727916AbgBZQPj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 11:15:37 -0500
+        Wed, 26 Feb 2020 11:15:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582733737;
+        s=mimecast20190719; t=1582733738;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=plSY3/ieBBIb+uqAgd5rkUQMsog86fQPx4J35UFU/bc=;
-        b=E5B24mbs4NAB4uNAp+xMnYWDt2c/RQyY3O1OtCOwDUvym0yILB+SVahps7umRKAptHFGTE
-        M95aDP1cMFMdn4yLqeIZ/OQrctHVDCcqnthYJjolz9+egTWDUlQKuZvF2Db91jQKOIPY4H
-        Gu/BfcLmqQrSUYDVA6JLIm1vzsk/5Po=
+        bh=jFlp1Ai79InLDRWAlyPIGd+U3BTEfGYkEUUnbfg479Y=;
+        b=A8XQj9g20ne5V0KqXfhAklyUdKJU46KKyWh6vCSUNzqN+TlT9tlZHM4/+h3mM+lLKA6LqQ
+        jCo7s8VdH8kjBPySY5xLa7x+goHX4sOe8++18Oje8dKq2wrCKQGf6br2IaVQMeX/y492/O
+        qv9ecEhv439jo8r6XTEW2w1ij80ts4w=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-182-Hj-vPNxaMieEVX_Boex0rg-1; Wed, 26 Feb 2020 11:15:33 -0500
-X-MC-Unique: Hj-vPNxaMieEVX_Boex0rg-1
+ us-mta-161-CpvYF8T_O5Go3acqcBCJNA-1; Wed, 26 Feb 2020 11:15:36 -0500
+X-MC-Unique: CpvYF8T_O5Go3acqcBCJNA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 289DADBF2;
-        Wed, 26 Feb 2020 16:15:31 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08A6510883B9;
+        Wed, 26 Feb 2020 16:15:34 +0000 (UTC)
 Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 536B860BE1;
-        Wed, 26 Feb 2020 16:15:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 55CEE60BE1;
+        Wed, 26 Feb 2020 16:15:31 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Dave Chinner <david@fromorbit.com>,
         Eric Sandeen <sandeen@redhat.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH 07/11] fs/dcache: Add static key negative_reclaim_enable
-Date:   Wed, 26 Feb 2020 11:14:00 -0500
-Message-Id: <20200226161404.14136-8-longman@redhat.com>
+Subject: [PATCH 08/11] fs/dcache: Limit dentry reclaim count in negative_reclaim_workfn()
+Date:   Wed, 26 Feb 2020 11:14:01 -0500
+Message-Id: <20200226161404.14136-9-longman@redhat.com>
 In-Reply-To: <20200226161404.14136-1-longman@redhat.com>
 References: <20200226161404.14136-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
@@ -56,110 +56,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a static_key negative_reclaim_enable to optimize the default case
-where negative dentry directory limit "dentry-dir-max" is not set.
+To limit the d_lock hold time of directory dentry in the negative dentry
+reclaim process, a quota (currently 64k) is added to limit the amount of
+work that the work function can do and hence its execution time. This is
+done to minimize impact on other processes that depend on that d_lock or
+other work functions in the same work queue from excessive delay.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- fs/dcache.c     | 30 ++++++++++++++++++++++++++++--
- kernel/sysctl.c |  3 ++-
- 2 files changed, 30 insertions(+), 3 deletions(-)
+ fs/dcache.c | 33 +++++++++++++++++++++++++++++----
+ 1 file changed, 29 insertions(+), 4 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index c5364c2ed5d8..149c0a6c1a6e 100644
+index 149c0a6c1a6e..0bd5d6974f75 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -32,6 +32,7 @@
- #include <linux/bit_spinlock.h>
- #include <linux/rculist_bl.h>
- #include <linux/list_lru.h>
-+#include <linux/jump_label.h>
- #include "internal.h"
- #include "mount.h"
- 
-@@ -134,11 +135,13 @@ int dcache_dentry_dir_max_sysctl __read_mostly;
- EXPORT_SYMBOL_GPL(dcache_dentry_dir_max_sysctl);
- 
- static LLIST_HEAD(negative_reclaim_list);
-+static DEFINE_STATIC_KEY_FALSE(negative_reclaim_enable);
- static void negative_reclaim_check(struct dentry *parent);
- static void negative_reclaim_workfn(struct work_struct *work);
- static DECLARE_WORK(negative_reclaim_work, negative_reclaim_workfn);
- 
- #if defined(CONFIG_SYSCTL) && defined(CONFIG_PROC_FS)
-+proc_handler proc_dcache_dentry_dir_max;
- 
- /*
-  * Here we resort to our own counters instead of using generic per-cpu counters
-@@ -188,6 +191,27 @@ int proc_nr_dentry(struct ctl_table *table, int write, void __user *buffer,
- 	dentry_stat.nr_negative = get_nr_dentry_negative();
- 	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+@@ -1374,10 +1374,25 @@ static inline void init_dentry_iname(struct dentry *dentry)
+ 	set_dentry_npositive(dentry, 0);
  }
-+
+ 
 +/*
-+ * Sysctl proc handler for dcache_dentry_dir_max_sysctl
++ * In the pathological case where a large number of negative dentries are
++ * generated in a short time in a given directory, there is a possibility
++ * that negative dentries reclaiming process will have many dentries to
++ * be dispose of. Thus the d_lock lock can be hold for too long impacting
++ * other running processes that need it.
++ *
++ * There is also the consideration that a long runtime will impact other
++ * work functions that need to be run in the same work queue. As a result,
++ * we have to limit the number of dentries that can be reclaimed in each
++ * invocation of the work function.
 + */
-+int proc_dcache_dentry_dir_max(struct ctl_table *ctl, int write,
-+			       void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int old = dcache_dentry_dir_max_sysctl;
-+	int ret;
++#define MAX_DENTRY_RECLAIM	(1 << 16)
 +
-+	ret = proc_dointvec_minmax(ctl, write, buffer, lenp, ppos);
+ /*
+  * Reclaim excess negative dentries in a directory
++ * Return: true if the work function needs to be rescheduled, false otherwise
+  */
+-static void reclaim_negative_dentry(struct dentry *parent,
++static void reclaim_negative_dentry(struct dentry *parent, int *quota,
+ 				    struct list_head *dispose)
+ {
+ 	struct dentry *child;
+@@ -1394,9 +1409,16 @@ static void reclaim_negative_dentry(struct dentry *parent,
+ 	 */
+ 	if (cnt <= limit)
+ 		return;
 +
-+	if (!write || ret || (dcache_dentry_dir_max_sysctl == old))
-+		return ret;
++	npositive = 0;
+ 	cnt -= limit;
+ 	cnt += (limit >> 3);
+-	npositive = 0;
++	if (cnt >= *quota) {
++		cnt = *quota;
++		*quota = 0;
++	} else {
++		*quota -= cnt;
++	}
+ 
+ 	/*
+ 	 * The d_subdirs is treated like a kind of LRU where
+@@ -1462,6 +1484,8 @@ static void reclaim_negative_dentry(struct dentry *parent,
+ 	}
+ 	if (dentry_has_npositive(parent))
+ 		set_dentry_npositive(parent, npositive);
 +
-+	if (!old && dcache_dentry_dir_max_sysctl)
-+		static_branch_enable(&negative_reclaim_enable);
-+	else if (old && !dcache_dentry_dir_max_sysctl)
-+		static_branch_disable(&negative_reclaim_enable);
-+	return 0;
-+}
- #endif
++	*quota += cnt;
+ }
  
  /*
-@@ -876,7 +900,8 @@ void dput(struct dentry *dentry)
- 		if (likely(retain_dentry(dentry))) {
- 			struct dentry *neg_parent = NULL;
+@@ -1472,6 +1496,7 @@ static void negative_reclaim_workfn(struct work_struct *work)
+ 	struct llist_node *nodes, *next;
+ 	struct dentry *parent;
+ 	struct reclaim_dentry *dentry_node;
++	int quota = MAX_DENTRY_RECLAIM;
  
--			if (d_is_negative(dentry)) {
-+			if (static_branch_unlikely(&negative_reclaim_enable) &&
-+			    d_is_negative(dentry)) {
- 				neg_parent = dentry->d_parent;
- 				rcu_read_lock();
- 			}
-@@ -886,7 +911,8 @@ void dput(struct dentry *dentry)
- 			 * Negative dentry reclaim check is only done when
- 			 * a negative dentry is being put into a LRU list.
- 			 */
--			if (neg_parent)
-+			if (static_branch_unlikely(&negative_reclaim_enable) &&
-+			    neg_parent)
- 				negative_reclaim_check(neg_parent);
- 			return;
- 		}
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cd0a83ff1029..9a4b0a1376e8 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -119,6 +119,7 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- extern int sysctl_nr_trim_pages;
- #endif
- extern int dcache_dentry_dir_max_sysctl;
-+extern proc_handler proc_dcache_dentry_dir_max;
+ 	/*
+ 	 * Collect excess negative dentries in dispose list & shrink them.
+@@ -1486,10 +1511,10 @@ static void negative_reclaim_workfn(struct work_struct *work)
+ 		parent = dentry_node->parent_dir;
+ 		spin_lock(&parent->d_lock);
  
- /* Constants used for minimum and  maximum */
- #ifdef CONFIG_LOCKUP_DETECTOR
-@@ -1956,7 +1957,7 @@ static struct ctl_table fs_table[] = {
- 		.data		= &dcache_dentry_dir_max_sysctl,
- 		.maxlen		= sizeof(dcache_dentry_dir_max_sysctl),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dcache_dentry_dir_max,
- 		.extra1		= &zero,
- 	},
- 	{ }
+-		if (d_is_dir(parent) &&
++		if (d_is_dir(parent) && quota &&
+ 		    can_reclaim_dentry(parent->d_flags) &&
+ 		    (parent->d_flags & DCACHE_RECLAIMING))
+-			reclaim_negative_dentry(parent, &dispose);
++			reclaim_negative_dentry(parent, &quota, &dispose);
+ 
+ 		if (!list_empty(&dispose)) {
+ 			spin_unlock(&parent->d_lock);
 -- 
 2.18.1
 
