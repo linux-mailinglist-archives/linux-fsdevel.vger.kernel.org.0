@@ -2,115 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793631713AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:06:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D15CA1713F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgB0JGa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 04:06:30 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40103 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbgB0JGa (ORCPT
+        id S1728655AbgB0JTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 04:19:38 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:38092 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbgB0JTh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:06:30 -0500
-Received: by mail-il1-f194.google.com with SMTP id i7so1746866ilr.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 01:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=syflZTas6oidq14f0UxYrYu5gyw30ZJIZYZtJBdX1EQ=;
-        b=uVvtqnYSB2+1XtA0B60aMQRLYswPzDLcvWft9hp6Gzukh5caGIAR9AsVPgxEtRCfw6
-         8slv9hAADEmxfrw+CndeRW2hCJrx5c39FVnwInaB+F11pJetFgaBBoZO+RrPnq6vgHtq
-         FUoo935KcVG1PyLpVc4OSCA1DOwPPB+w9EEcKmBgMZLTQVDjq2s5O0u4uZNE463j1Yas
-         7snOoiAX08WFKIycEvzJAh27tVH3TCdI0XaTXv5ZuqKL8lolwk8B04AVdO3n1y1mdIqK
-         rjACfNq4HbheXAP9Cu2GS6MC6BS0idjBYUvwAQUgkkZ2YkkBzwkxqfssl7IUPoH+bEHE
-         cOlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=syflZTas6oidq14f0UxYrYu5gyw30ZJIZYZtJBdX1EQ=;
-        b=j/ul2Sd+RK1ykeRXXxbthh4TkOANv8KTikzymUdpUJGbAR+um/ST9hENB40FeeTW3L
-         i6C/oAEQKn7aAx4hnBRWpdW90FBkosQ1CTa0mKO9lCbbXuTTvTzUvQ+I3V719l+5CAxX
-         KPz8jxCqxkeoXM/wVZi/kyfK1afdFBzazG5MA8pBTOoj02c74F4AJ8oCf6mRQrooOeHQ
-         5aoS+qmN/zp/SYregS3NJ1Qp9DH/OmupO7MC88n5Qx3ZdHmzKJ2Plt5B0L6D8ElIG08b
-         fFl6nXyDEvWS1bI3w0XNLW9Y28T2Cezw2+7I41WXUzFkbjMWE0pC+aOd45fGJl7KVRZH
-         8v6Q==
-X-Gm-Message-State: APjAAAVGCSvAgdjgVJ8iEXZ5QTerGT1l+BOAZx6ZHFkabc/7zwb61GOc
-        bLwkCiosFhCi5XOxPOuDjzTGE652kO/P/50Gya2srA==
-X-Google-Smtp-Source: APXvYqysp/V+VucOPKFZSY17Lo5UypySvl7Dpp1ewuRDy7r38kaGBOXejTza6qB6VoeW/wXihtItyuSXQEjVkg7DKXE=
-X-Received: by 2002:a92:d5c3:: with SMTP id d3mr4176605ilq.250.1582794389987;
- Thu, 27 Feb 2020 01:06:29 -0800 (PST)
+        Thu, 27 Feb 2020 04:19:37 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R9F6Hl091510;
+        Thu, 27 Feb 2020 09:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=d4b3D5DmveOIQH3fWRGTZrbAVm/isi1FEEnnWao0g3Q=;
+ b=Mzto7rMY0tpW51J82egbXBwUzv80GMbUmMq+I+MPuPuT06flkQU7cEnFXvakSmEOPQUl
+ 2FE94qyM26vHcglBUprf18NvBk/Yqtc+jBEYR6Rd7ia1J51MSHY/Sislq0/PGJo3lx4u
+ UqwHhW83khyME/iq3oWXHJG8Sezjlp511+qV5P3816W8+mLB4QcjTt/Dnju2yMBRbt7B
+ jglV0+YI5znbvlkZCNqgYphv+lTKb2ngvIAlJCyC4B9AS5daMsyRtEIaPSdyHdb2OAvo
+ ImVUxGwzN9RyYtObMVp8Tb/df+wI5FJdsIFDOUan4sMjejc/lW+H3MWhMG+q2HPvf/Nj Mw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2ydct39hds-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 09:19:28 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R9EJiw172581;
+        Thu, 27 Feb 2020 09:19:28 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2ydcs4mxj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 09:19:28 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01R9JRun026400;
+        Thu, 27 Feb 2020 09:19:27 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Feb 2020 01:19:27 -0800
+Subject: Re: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
+To:     Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, martin.petersen@oracle.com,
+        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
+        io-uring@vger.kernel.org
+References: <20200226083719.4389-1-bob.liu@oracle.com>
+ <20200226083719.4389-2-bob.liu@oracle.com>
+ <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
+ <20200226155728.GA32543@infradead.org>
+ <af282e53-7dff-2df3-0d03-62e1bcdb0005@kernel.dk>
+ <20200226165309.GA3995@infradead.org>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <c3a98504-947b-1235-c9d6-c9f1ccbaba6f@oracle.com>
+Date:   Thu, 27 Feb 2020 17:19:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-12-amir73il@gmail.com>
- <20200226102354.GE10728@quack2.suse.cz> <CAOQ4uxivfnmvXag8+f5wJujqRgp9FW+2_CVD6MSgB40_yb+sHw@mail.gmail.com>
- <20200226170705.GU10728@quack2.suse.cz> <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 27 Feb 2020 11:06:18 +0200
-Message-ID: <CAOQ4uxih7zhAj6qUp39B_a_On5gv80SKm-VsC4D8ayCrC6oSRw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
- child fid's
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200226165309.GA3995@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=923 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270075
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=963 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270075
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > So overall I think this would be better. The question is whether the
-> > resulting code will really be more readable. I hope so because the
-> > structures are definitely nicer this way and things belonging logically
-> > together are now together. But you never know until you convert the code...
-> > Would you be willing to try this refactoring?
->
-> Yes, but I would like to know what you think about the two 6 byte holes
-> Just let that space be wasted for the sake of nicer abstraction?
-> It seems like too much to me.
->
+On 2/27/20 12:53 AM, Christoph Hellwig wrote:
+> On Wed, Feb 26, 2020 at 08:58:46AM -0700, Jens Axboe wrote:
+>> Yeah, should probably be a RWF_ flag instead, and a 64-bit SQE field
+>> for the PI data. The 'last iovec is PI' is kind of icky.
+> 
+> Abusing an iovec (although I though of the first once when looking
+> into it) looks really horrible, but has two huge advantages:
+> 
+>  - it doesn't require passing another argument all the way down
+>    the I/O stack
+>  - it works with all the vectored interfaces that take a flag
+>    argument, so not just io_uring, but also preadv2/pwritev2 and aio.
+>    And while I don't care too much about the last I think preadv2
+>    and pwritev2 are valuable to support.
+> 
 
-What if we unite the fh and name into one struct and keep a 32bit hash of
-fh+name inside?
+Indeed, actually the 'last iovec is PI' idea was learned from Darrick's original
+patch which support PI passthrough via aio.
+https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg27537.html
 
-This will allow us to mitigate the cost of memcmp of fh+name in merge
-and get rid of objectid in fsnotify_event as you suggested.
-
-struct fanotify_fh_name {
-         union {
-                struct {
-                       u8 fh_type;
-                       u8 fh_len;
-                       u8 name_len;
-                       u32 hash;
-                };
-                u64 hash_len;
-        };
-        union {
-                unsigned char fh[FANOTIFY_INLINE_FH_LEN];
-                unsigned char *ext_fh;
-        };
-        char name[0];
-};
-
-struct fanotify_fid_event {
-        struct fanotify_event fae;
-        __kernel_fsid_t fsid;
-        struct fanotify_fh_name object_fh; /* name is empty */
-};
-
-struct fanofify_name_event {
-        struct fanotify_fid_event ffe;
-        struct fanotify_fh_name dirent;
-};
-
-So the only anomaly is that we use struct fanotify_fh_name
-to describe object_fh which never has a name.
-
-I think we can live with that and trying to beat that would be
-over abstraction.
-
-Thoughts?
-
-Thanks,
-Amir.
