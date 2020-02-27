@@ -2,80 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7350171293
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 09:30:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7711713A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:05:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbgB0Iae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 03:30:34 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:54604 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728454AbgB0Iae (ORCPT
+        id S1728668AbgB0JFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 04:05:22 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44648 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728627AbgB0JFW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 03:30:34 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id BF54D7E83E9;
-        Thu, 27 Feb 2020 19:30:30 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j7EYv-000849-AF; Thu, 27 Feb 2020 19:30:29 +1100
-Date:   Thu, 27 Feb 2020 19:30:29 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
-Message-ID: <20200227083029.GL10737@dread.disaster.area>
-References: <20200226161404.14136-1-longman@redhat.com>
+        Thu, 27 Feb 2020 04:05:22 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R92mrI100909;
+        Thu, 27 Feb 2020 09:05:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=T8tGCCI7g34NHBNqX3ptq95FJYXCBtLf/FnjowZ3Q9Q=;
+ b=QXPNVaWrEnZISnv11ePayKkyMoLgh5et46+pvSuLCJ5HEKvSiLR9M5ev+GB4Kx/6qGD3
+ imJiOAfCJOO2LjejTpuWo9Yq8q2wxCfeBRBReTTxECiWCX4CABcWtmNoUWTqjYid+5q+
+ 8kTfSPWR1KghuSyYef8pw5146xCMWEjTe8YLth/SUwfzJCe3Ff9HxuDuF391MHJw9fin
+ gciin6+83TM0xgHBFmAth8LdWQxm0/7WHJ8/ugOEZpquZSmULv7oRiUx0XGam61e/oU6
+ ++UpEn68j/n5HRU5+rGbr3q9jDFu/tPZvzgPivzfWULKNB+ci4z3dsRj15AE3K77YzOv Cw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2ydct39e92-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 09:05:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R8ug97006754;
+        Thu, 27 Feb 2020 09:05:18 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2ydcsbvb44-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 09:05:18 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01R95HqF025334;
+        Thu, 27 Feb 2020 09:05:17 GMT
+Received: from [192.168.1.14] (/114.88.246.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 27 Feb 2020 01:05:17 -0800
+Subject: Re: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, io-uring@vger.kernel.org
+References: <20200226083719.4389-1-bob.liu@oracle.com>
+ <20200226083719.4389-2-bob.liu@oracle.com>
+ <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <8386e54e-723a-93e3-776c-b2138d077c77@oracle.com>
+Date:   Thu, 27 Feb 2020 17:05:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226161404.14136-1-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=vcMIKiOjALrSOcI2QM0A:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270073
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002270073
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
-> As there is no limit for negative dentries, it is possible that a sizeable
-> portion of system memory can be tied up in dentry cache slabs. Dentry slabs
-> are generally recalimable if the dentries are in the LRUs. Still having
-> too much memory used up by dentries can be problematic:
+On 2/26/20 10:24 PM, Jens Axboe wrote:
+> On 2/26/20 1:37 AM, Bob Liu wrote:
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index a3300e1..98fa3f1 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -62,6 +62,8 @@ enum {
+>>  	IORING_OP_NOP,
+>>  	IORING_OP_READV,
+>>  	IORING_OP_WRITEV,
+>> +	IORING_OP_READV_PI,
+>> +	IORING_OP_WRITEV_PI,
+>>  	IORING_OP_FSYNC,
+>>  	IORING_OP_READ_FIXED,
+>>  	IORING_OP_WRITE_FIXED,
+> 
+> So this one renumbers everything past IORING_OP_WRITEV, breaking the
+> ABI in a very bad way. I'm guessing that was entirely unintentional?
+> Any new command must go at the end of the list.
+> 
+> You're also not updating io_op_defs[] with the two new commands,
+> which means it won't compile at all. I'm guessing you tested this on
+> an older version of the kernel which didn't have io_op_defs[]?
+> 
 
-I don't get it.
+Yep, will rebase to the latest version next time.
 
-Why isn't the solution simply "constrain the application generating
-unbound numbers of dentries to a memcg"?
-
-Then when the memcg runs out of memory, it will start reclaiming the
-dentries that were allocated inside the memcg that are using all
-it's resources, thereby preventing unbound growth of the dentry
-cache.
-
-I mean, this sort of resource control is exactly what memcgs are
-supposed to be used for and are already used for. I don't see why we
-need all this complexity for global dentry resource management when
-memcgs should already provide an effective means of managing and
-placing bounds on the amount of memory any specific application can
-use...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
