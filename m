@@ -2,259 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BBBD171176
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 08:28:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EC2171188
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 08:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbgB0H2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 02:28:02 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46125 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbgB0H2B (ORCPT
+        id S1728449AbgB0Hdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 02:33:45 -0500
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:58589 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726999AbgB0Hdp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 02:28:01 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y8so763178pll.13;
-        Wed, 26 Feb 2020 23:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=+zGRKeshGQVlukDljqkxIhhlnNK1OHi6NOTC6bZRBxo=;
-        b=JP8igOlvXFF2xXwFwX+mRVJiEE0HmlLHlKW8JEb9cytUu7VTngW2naempp5+JdSg0/
-         NjVVpHCqKlKD9XRnPH04dKw7Rzx8T10ltZuOwIQU4cMSrpt56cFsG4nut+YmSFjqRzuj
-         to0SWE+umdk+sKkiz8UdoaoAHTN3UtOxJ3pA/jfs7cYCmGvHWVaVlJ+BEsGiQGiZjTPw
-         ITQ7CnoyhlplFgcqebyXAA4r8invMgaA1YyfHxTWQPiXw9J9k9DRiAl5jWUX/NQUqIwO
-         WLk+hW0TNe9r8d3Lg3lPn5G/jJd+U1REbyNLmps1sX6+jn6qrt6Zd9pKt5p8UrLi7eMN
-         4ceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:message-id:subject:from:to:cc:date
-         :in-reply-to:references:user-agent:mime-version;
-        bh=+zGRKeshGQVlukDljqkxIhhlnNK1OHi6NOTC6bZRBxo=;
-        b=JxalxasN6xAJ0YXpl9/PxUDmQPMnDuoFP4IFzVeSwfaRI2YKwK1JznSoXtZJz+283u
-         wOKKRE3k5MtV5nB5DuwNuTSLFpdzjt2KPYTMBOEfUDVQV7UfpBSz02h/G+UiFGdeRy+1
-         WoHWb2JPupOwKLCP6bTt5+Da1HLRhpL89hKxW56RAb4/hjgCa5zUwB3LHBqXOBqmt9cq
-         YJ+Co0Qkx3qdC+foxOuE847P79YdBiykzkyliTvhxFG4ffm7aqivQIdM+QLrk1hHq1lv
-         VGA4reIO6z8EN92LysjUVJ7Plt3RJIZS7rkB0Z0iwSu8HbSu4qEtioo/BhutiI6FOpTL
-         1pLQ==
-X-Gm-Message-State: APjAAAU13nZZujZ0VGSKfUh/XiNBT3t1/uQTI6iTSNr8I2EFJcqH44AD
-        xX4uLfGBwSo8t0kDNCVhhOUSplYGHKA=
-X-Google-Smtp-Source: APXvYqy8C3dfbOK2+toq1qT1z8gRW1E2cC05j1CEnvqbG5oF1+ox2Uh17JXJtOjvITXurKlGPn5r7w==
-X-Received: by 2002:a17:902:8204:: with SMTP id x4mr3147029pln.225.1582788479986;
-        Wed, 26 Feb 2020 23:27:59 -0800 (PST)
-Received: from xps ([103.125.232.133])
-        by smtp.gmail.com with ESMTPSA id r66sm6061240pfc.74.2020.02.26.23.27.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 23:27:59 -0800 (PST)
-Message-ID: <cf946303ac8e2e79ea560ae6d2edeec7e4622946.camel@debian.org>
-Subject: Re: [PATCH v3] binfmt_misc: pass binfmt_misc flags to the
- interpreter
-From:   YunQiang Su <syq@debian.org>
-To:     Laurent Vivier <laurent@vivier.eu>, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        libc-alpha@sourceware.org
-Date:   Thu, 27 Feb 2020 15:27:43 +0800
-In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
-References: <20200128132539.782286-1-laurent@vivier.eu>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-zE24wshRpe0xR3T9LNGS"
-User-Agent: Evolution 3.34.1-4 
+        Thu, 27 Feb 2020 02:33:45 -0500
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0A6A93A30FA;
+        Thu, 27 Feb 2020 18:33:37 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j7Dfs-0007i4-5j; Thu, 27 Feb 2020 18:33:36 +1100
+Date:   Thu, 27 Feb 2020 18:33:36 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, tytso@mit.edu,
+        viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
+        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
+        dmonakhov@gmail.com, mbobrowski@mbobrowski.org, enwlinux@gmail.com,
+        sblbir@amazon.com, khazhy@google.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
+Message-ID: <20200227073336.GJ10737@dread.disaster.area>
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
+ <20200226155521.GA24724@infradead.org>
+ <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=SSkiD6HNAAAA:20 a=7-415B0cAAAA:8 a=Rrx9BAELJYaVBBxEqmIA:9
+        a=dm0UahiCclTZQYsM:21 a=WexPZ7QWWnMIFWoD:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Feb 26, 2020 at 11:05:23PM +0300, Kirill Tkhai wrote:
+> On 26.02.2020 18:55, Christoph Hellwig wrote:
+> > On Wed, Feb 26, 2020 at 04:41:16PM +0300, Kirill Tkhai wrote:
+> >> This adds a support of physical hint for fallocate2() syscall.
+> >> In case of @physical argument is set for ext4_fallocate(),
+> >> we try to allocate blocks only from [@phisical, @physical + len]
+> >> range, while other blocks are not used.
+> > 
+> > Sorry, but this is a complete bullshit interface.  Userspace has
+> > absolutely no business even thinking of physical placement.  If you
+> > want to align allocations to physical block granularity boundaries
+> > that is the file systems job, not the applications job.
+> 
+> Why? There are two contradictory actions that filesystem can't do at the same time:
+> 
+> 1)place files on a distance from each other to minimize number of extents
+>   on possible future growth;
 
---=-zE24wshRpe0xR3T9LNGS
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Speculative EOF preallocation at delayed allocation reservation time
+provides this.
 
-=E5=9C=A8 2020-01-28=E4=BA=8C=E7=9A=84 14:25 +0100=EF=BC=8CLaurent Vivier=
-=E5=86=99=E9=81=93=EF=BC=9A
-> It can be useful to the interpreter to know which flags are in use.
->=20
-> For instance, knowing if the preserve-argv[0] is in use would
-> allow to skip the pathname argument.
->=20
-> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
-> flag to inform interpreter if the preserve-argv[0] is enabled.
+> 2)place small files in the same big block of block device.
 
-CC: libc-alpha.
-I guess we need some review from libc people.
+Delayed allocation during writeback packs files smaller than the
+stripe unit of the filesystem tightly.
 
->=20
-> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
-> ---
->=20
-> Notes:
->     This can be tested with QEMU from my branch:
->    =20
->       https://github.com/vivier/qemu/commits/binfmt-argv0
->    =20
->     With something like:
->    =20
->       # cp ..../qemu-ppc /chroot/powerpc/jessie
->    =20
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
-> yes \
->                             --persistent no --preserve-argv0 yes
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: POC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       sh
->    =20
->       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential
-> yes \
->                             --persistent no --preserve-argv0 no
->       # systemctl restart systemd-binfmt.service
->       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
->       enabled
->       interpreter //qemu-ppc
->       flags: OC
->       offset 0
->       magic 7f454c4601020100000000000000000000020014
->       mask ffffffffffffff00fffffffffffffffffffeffff
->       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
->       /bin/sh
->    =20
->     v3: mix my patch with one from YunQiang Su and my comments on it
->         introduce a new flag in the uabi for the AT_FLAGS
->     v2: only pass special flags (remove Magic and Enabled flags)
->=20
->  fs/binfmt_elf.c              | 5 ++++-
->  fs/binfmt_elf_fdpic.c        | 5 ++++-
->  fs/binfmt_misc.c             | 4 +++-
->  include/linux/binfmts.h      | 4 ++++
->  include/uapi/linux/binfmts.h | 4 ++++
->  5 files changed, 19 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index ecd8d2698515..ff918042ceed 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm,
-> struct elfhdr *exec,
->  	unsigned char k_rand_bytes[16];
->  	int items;
->  	elf_addr_t *elf_info;
-> +	elf_addr_t flags =3D 0;
->  	int ei_index =3D 0;
->  	const struct cred *cred =3D current_cred();
->  	struct vm_area_struct *vma;
-> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm,
-> struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
->  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-> -	NEW_AUX_ENT(AT_FLAGS, 0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |=3D AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS, flags);
->  	NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
->  	NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred-
-> >uid));
->  	NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred-
-> >euid));
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index 240f66663543..abb90d82aa58 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct
-> linux_binprm *bprm,
->  	char __user *u_platform, *u_base_platform, *p;
->  	int loop;
->  	int nr;	/* reset for each csp adjustment */
-> +	unsigned long flags =3D 0;
-> =20
->  #ifdef CONFIG_MMU
->  	/* In some cases (e.g. Hyper-Threading), we want to avoid L1
-> evictions
-> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct
-> linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_PHENT,	sizeof(struct elf_phdr));
->  	NEW_AUX_ENT(AT_PHNUM,	exec_params->hdr.e_phnum);
->  	NEW_AUX_ENT(AT_BASE,	interp_params->elfhdr_addr);
-> -	NEW_AUX_ENT(AT_FLAGS,	0);
-> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> +		flags |=3D AT_FLAGS_PRESERVE_ARGV0;
-> +	NEW_AUX_ENT(AT_FLAGS,	flags);
->  	NEW_AUX_ENT(AT_ENTRY,	exec_params->entry_addr);
->  	NEW_AUX_ENT(AT_UID,	(elf_addr_t) from_kuid_munged(cred-
-> >user_ns, cred->uid));
->  	NEW_AUX_ENT(AT_EUID,	(elf_addr_t) from_kuid_munged(cred-
-> >user_ns, cred->euid));
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index cdb45829354d..b9acdd26a654 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm
-> *bprm)
->  	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
->  		goto ret;
-> =20
-> -	if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
-> +	if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
-> +		bprm->interp_flags |=3D BINPRM_FLAGS_PRESERVE_ARGV0;
-> +	} else {
->  		retval =3D remove_arg_zero(bprm);
->  		if (retval)
->  			goto ret;
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index b40fc633f3be..265b80d5fd6f 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -78,6 +78,10 @@ struct linux_binprm {
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
->  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 <<
-> BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
-> =20
-> +/* if preserve the argv0 for the interpreter  */
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
-> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 <<
-> BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  /* Function parameter for binfmt->coredump */
->  struct coredump_params {
->  	const kernel_siginfo_t *siginfo;
-> diff --git a/include/uapi/linux/binfmts.h
-> b/include/uapi/linux/binfmts.h
-> index 689025d9c185..a70747416130 100644
-> --- a/include/uapi/linux/binfmts.h
-> +++ b/include/uapi/linux/binfmts.h
-> @@ -18,4 +18,8 @@ struct pt_regs;
->  /* sizeof(linux_binprm->buf) */
->  #define BINPRM_BUF_SIZE 256
-> =20
-> +/* if preserve the argv0 for the interpreter  */
-> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
-> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
-> +
->  #endif /* _UAPI_LINUX_BINFMTS_H */
+So, yes, we do both of these things at the same time in XFS, and
+have for the past 10 years.
 
---=-zE24wshRpe0xR3T9LNGS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> At initial allocation time you never know, which file will stop grow in some future,
+> i.e. which file is suitable for compaction. This knowledge becomes available some time later.
+> Say, if a file has not been changed for a month, it is suitable for compaction with
+> another files like it.
+> 
+> If at allocation time you can determine a file, which won't grow in the future, don't be afraid,
+> and just share your algorithm here.
+> 
+> In Virtuozzo we tried to compact ext4 with existing kernel interface:
+> 
+> https://github.com/dmonakhov/e2fsprogs/blob/e4defrag2/misc/e4defrag2.c
+> 
+> But it does not work well in many situations, and the main problem is blocks allocation
+> in desired place is not possible. Block allocator can't behave excellent for everything.
+> 
+> If this interface bad, can you suggest another interface to make block allocator to know
+> the behavior expected from him in this specific case?
 
------BEGIN PGP SIGNATURE-----
+Write once, long term data:
 
-iQEzBAABCgAdFiEET3MbhxKET+7/a6zdW0gHVdEZ6o4FAl5Xb28ACgkQW0gHVdEZ
-6o5PCgf+IhNRA4aou8ifw13gYlx/VqRW+7x1bIxFdRzNhhpSKkCGMvzKrZdq5rUA
-S+9PUa+MHBGrMwO8n+izBDF9Sj9G1p/9rJp7MoYbBHceZxeXWdFrDNMQ+dXIWiJQ
-IN8EGIOhRco+Gzf59zZZhB9WjHRBK7R23sk9h57esS6+KQiomREc3UoeioXSmYoZ
-sYDt+ooTDFl2QlmJC7CKzXNk7EPIQYnzGrO1DpN1icCcSSvMNYzCfG2+AIfmyJOc
-Lz+GVXAWne/T6yJKFa3wzsqwkkJ0qg6792vLP9ieMkbQMjD/T/eTGPfhFHqIbQUA
-uQhaIxAErGmi2/1KFAVTYiEerUG9Sw==
-=qjWv
------END PGP SIGNATURE-----
+	fcntl(fd, F_SET_RW_HINT, RWH_WRITE_LIFE_EXTREME);
 
---=-zE24wshRpe0xR3T9LNGS--
+That will allow the the storage stack to group all data with the
+same hint together, both in software and in hardware.
 
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
