@@ -2,202 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C659F171595
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 12:01:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D48A1715BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 12:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbgB0LBP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 06:01:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50282 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728744AbgB0LBO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 06:01:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 586DBAB3D;
-        Thu, 27 Feb 2020 11:01:12 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 681191E0F04; Thu, 27 Feb 2020 12:01:05 +0100 (CET)
-Date:   Thu, 27 Feb 2020 12:01:05 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
- child fid's
-Message-ID: <20200227110105.GY10728@quack2.suse.cz>
-References: <20200217131455.31107-1-amir73il@gmail.com>
- <20200217131455.31107-12-amir73il@gmail.com>
- <20200226102354.GE10728@quack2.suse.cz>
- <CAOQ4uxivfnmvXag8+f5wJujqRgp9FW+2_CVD6MSgB40_yb+sHw@mail.gmail.com>
- <20200226170705.GU10728@quack2.suse.cz>
- <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
+        id S1728872AbgB0LKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 06:10:41 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728860AbgB0LKl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Feb 2020 06:10:41 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01RB93pb047360
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 06:10:40 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ydq6j36vh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 06:10:40 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
+        Thu, 27 Feb 2020 11:10:37 -0000
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 27 Feb 2020 11:10:33 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01RB9Zcj38666730
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 11:09:35 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 210DC4204B;
+        Thu, 27 Feb 2020 11:10:32 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A20CD42042;
+        Thu, 27 Feb 2020 11:10:29 +0000 (GMT)
+Received: from dhcp-9-199-158-169.in.ibm.com (unknown [9.199.158.169])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Feb 2020 11:10:29 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     jack@suse.cz, tytso@mit.edu, linux-ext4@vger.kernel.org
+Cc:     adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, hch@infradead.org, cmaiolino@redhat.com,
+        david@fromorbit.com, Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCHv4 0/6] ext4: bmap & fiemap conversion to use iomap
+Date:   Thu, 27 Feb 2020 16:40:21 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20022711-0028-0000-0000-000003DE79B6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20022711-0029-0000-0000-000024A398A7
+Message-Id: <cover.1582800839.git.riteshh@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-27_03:2020-02-26,2020-02-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ spamscore=0 impostorscore=0 suspectscore=1 bulkscore=0 mlxlogscore=999
+ clxscore=1015 priorityscore=1501 malwarescore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270090
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 26-02-20 19:50:30, Amir Goldstein wrote:
-> On Wed, Feb 26, 2020 at 7:07 PM Jan Kara <jack@suse.cz> wrote:
-> > Looking at this I'm not quite happy either :-| E.g. 'dfh' contents here
-> > somewhat magically tells that this is not fanotify_event but
-> > fanotify_name_event. Also I agree that fsid hidden in 'object' is not ideal
-> > although I still dislike having it directly in fanotify_event as for path
-> > events it will not be filled and that can lead to confusion.
-> >
-> > I understand this is so convoluted because there are several constraints:
-> > 1) We don't want to grow event size unnecessarily.
-> > 2) We prefer allocating from dedicated slab cache
-> > 3) We have events of several types needing to store different kind of
-> > information.
-> >
-> > But seeing how things evolve I think we should consider relaxing some of
-> > the constraints to make the code easier to follow. How about having
-> > something like:
-> >
-> > struct fanotify_event {
-> >         struct fsnotify_event fse;
-> >         u32 mask;
-> >         enum fanotify_event_type type;
-> >         struct pid *pid;
-> > };
-> >
-> > where type would identify what kind of event we have. Then we would have
-> >
-> > struct fanotify_path_event {
-> >         struct fanotify_event fae;
-> >         struct path path;
-> > };
-> >
-> > struct fanotify_perm_path_event {
-> >         struct fanotify_event fae;
-> >         struct path path;
-> 
-> Any reason not to "inherit" from fanotify_path_event?
-> There is code that is generic to permission and non-permission path
-> events that accesses event->path and I wouldn't
-> want to make that code two cases instead of just one.
+Hello All, 
 
-I'm OK with that if it works better for you. I was just thinking that we'll
-have a helper like:
+Background
+==========
+These are v4 patches to move ext4 bmap & fiemap calls to use iomap APIs.
+Previous version can be found in links mentioned below.
+After some discussions with the community in [RFCv2] all of the below
+observational differences between the old and the new (iomap based
+implementation) has been agreed upon. It looks like we should be good to move
+ext4_fiemap & ext4_bmap too to iomap interface.
 
-struct path *fanotify_event_path(struct fanotify_event *event)
-{
-	if (event->type == FA_PATH_EVENT)
-		return ((struct fanotify_path_event *)event)->path;
-	else if (event->type == FA_PERM_PATH_EVENT)
-		return ((struct fanotify_perm_path_event *)event)->path;
-	else
-		return NULL;
-}
+FYI - this patch reduces the users of ext4_get_block API and thus a step
+towards getting rid of buffer_heads from ext4.
+Also reduces a lot of code by making use of existing iomap_ops.
 
-and thus in most of code all the type details could be abstracted by this
-helper and so there won't be reason for "intermediate" types. But as I
-wrote above if you find good use for them, I'm OK with that.
+PATCHv3 -> PATCHv4
+==================
+1. Patch-1: Fixed indentation and checking of flags EXT4_MAP_UNWRITTEN.
+2. Patch-4: Moved the checking of offset beyond what indirect mapped file inode
+   can support, to early in ext4_iomap_begin_report().
+3. Patch-5: Fixed no in-inode & no external block case in case of xattr.
+   Returning -ENOENT in that case.
+4. Patch-6: Added more info in documentation about when FIEMAP_EXTENT_LAST could
+   be set.
 
-> >         unsigned short response;
-> >         unsigned short state;
-> >         int fd;
-> > };
-> >
-> > struct fanotify_fh {
-> >         u8 type;
-> >         u8 len;
-> 
-> That's a 6 bytes hole! and then there are two of those
-> in object_fh and dir_fh.
-> That is why I stored the header in separate from the fh itself
-> so that two headers could pack up nicely and yes,
-> I also used the headers as an event type indication.
 
-Yes, I know but this packing of loosely related things is exactly what makes
-the code difficult to follow... 
+RFCv2 -> PATCHv3
+================
+1. Fixed IOMAP_INLINE & IOMAP_MAPPED flag setting in *xattr_fiemap() based
+   on, whether it is inline v/s external block.
+2. Fixed fiemap for non-extent based mapping. [PATCHv3 4/6] fixes it.
+3. Updated the documentation for description about FIEMAP_EXTENT_LAST flag.
+   [PATCHv3 6/6].
 
-> >         union {
-> >                 unsigned char fh[FANOTIFY_INLINE_FH_LEN];
-> >                 unsigned char *ext_fh;
-> >         };
-> > };
-> >
-> > struct fanotify_fid_event {
-> >         struct fanotify_event fae;
-> >         __kernel_fsid_t fsid;
-> >         struct fanotify_fh object_fh;
-> > };
-> >
-> > struct fanofify_name_event {
-> >         struct fanotify_event fae;
-> >         __kernel_fsid_t fsid;
-> >         struct fanotify_fh object_fh;
-> 
-> Again, any reason not to "inherit" from fanotify_fid_event?
-> There is plenty of code that is common to fid and name events
-> because name events are also fid events.
 
-We could if the helper functions do not abstract the difference enough...
+Testing (done on ext4 master branch)
+========
+'xfstests -g quick' passes with default mkfs/mount configuration
+(v/s which also pass with vanilla kernel without this patch). Except
+generic/473 which also failes on XFS. This seems to be the test case issue
+since it expects the data in slightly different way as compared to what iomap
+returns.
+Point 2.a below describes more about this.
 
-> >         struct fanotify_fh dir_fh;
-> >         u8 name_len;
-> >         char name[0];
-> > };
-> >
-> > WRT size, this would grow fanotify_fid_event by 1 long on 64-bits,
-> > fanotify_path_event would be actually smaller by 1 long, fanofify_name_event
-> > would be smaller but that's not really comparable because you chose a
-> > solution with fixed-inline length while I'd just go with allocating from
-> > kmalloc when we have to store the name.
-> 
-> OK. Same an inotify.
-> I guess I started with the name_snapshot thing that was really fixed-size
-> event and then reused the same construct without the snapshot, but I
-> guess we can do away with the inline name.
-> 
-> > In terms of kmalloc caches, we would need three: for path, perm_path, fid
-> > events, I'd allocate name events from generic kmalloc caches.
-> >
-> > So overall I think this would be better. The question is whether the
-> > resulting code will really be more readable. I hope so because the
-> > structures are definitely nicer this way and things belonging logically
-> > together are now together. But you never know until you convert the code...
-> > Would you be willing to try this refactoring?
-> 
-> Yes, but I would like to know what you think about the two 6 byte holes
-> Just let that space be wasted for the sake of nicer abstraction?
-> It seems like too much to me.
+Observations/Review required
+============================
+1. bmap related old v/s new method differences:-
+	a. In case if addr > INT_MAX, it issues a warning and
+	   returns 0 as the block no. While earlier it used to return the
+	   truncated value with no warning.
+	[Again this should be fine, it was just an observation worth mentioning]
 
-Well, it's wasting 1 long per FID event (i.e., 72 vs 64 bytes on 64-bits if
-I'm counting right) compared to the tight packing we had previously. I'd
-say that's bearable.
+	b. block no. is only returned in case of iomap->type is IOMAP_MAPPED,
+	   but not when iomap->type is IOMAP_UNWRITTEN. While with previously
+	   we used to get block no. for both of above cases.
+	[Darrick:- not much reason to map unwritten blocks. So this may not
+	 be relevant here [5]]
 
-For name events we are wasting two longs per event compared to the tightest
-packing I can imagine (i.e., 97+name vs 81+name). That's bad enough but I
-can live with that for now...
+2. Fiemap related old v/s new method differences:-
+	a. iomap_fiemap returns the disk extent information in exact
+	   correspondence with start of user requested logical offset till the
+	   length requested by user. While in previous implementation the
+	   returned information used to give the complete extent information if
+	   the range requested by user lies in between the extent mapping.
+	[Both behaviors should be fine here as per documentation - [5]]
 
-We could actually improve packing of name events by declaring handle as:
+	b. iomap_fiemap adds the FIEMAP_EXTENT_LAST flag also at the last
+	   fiemap_extent mapping range requested by the user via fm_length (
+	   if that has a valid mapped extent on the disk). But if the user
+	   requested for more fm_length which could not be mapped in the last
+	   fiemap_extent, then the flag is not set.
+	[This does not seems to be an issue after some community discussion.
+	Since this flag is not consistent across different filesystems.
+	In ext4 itself for extent v/s non-extent based mapping, this flag is
+	set differently. So we rather decided to update the documentation rather
+	than complicating it more, which anyway no one seems to cares about -
+	[6,7]]
+	   
 
-struct fanotify_fh {
-	u8 type;
-	u8 len;
-	u8 fh[FANOTIFY_INLINE_FH_LEN];
-};
+Below is CTRL-C -> CTRL-V from from previous versions
+=====================================================
 
-This is a structure that has no padding requirements and so if we place two
-next to each other they will use just 36 bytes instead of 48. But then we
-have to play games with hiding pointer inside 'fh' like:
+e.g. output for above differences 2.a & 2.b
+===========================================
+create a file with below cmds. 
+1. fallocate -o 0 -l 8K testfile.txt
+2. xfs_io -c "pwrite 8K 8K" testfile.txt
+3. check extent mapping:- xfs_io -c "fiemap -v" testfile.txt
+4. run this binary on with and without these patches:- ./a.out (test_fiemap_diff.c) [4]
 
-char **fh_ext_ptr(struct fanotify_fh *fh)
-{
-	return (char **)ALIGN((unsigned long)(fh->fh), __alignof__(char *));
-}
+o/p of xfs_io -c "fiemap -v"
+============================================
+With this patch on patched kernel:-
+testfile.txt:
+ EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+   0: [0..15]:         122802736..122802751    16 0x800
+   1: [16..31]:        122687536..122687551    16   0x1
 
-Probably it's worth it but I wouldn't bother for this series if you don't
-want to.
+without patch on vanilla kernel (no difference):-
+testfile.txt:
+ EXT: FILE-OFFSET      BLOCK-RANGE          TOTAL FLAGS
+   0: [0..15]:         332211376..332211391    16 0x800
+   1: [16..31]:        332722392..332722407    16   0x1
 
-								Honza
+
+o/p of a.out without patch:-
+================
+riteshh-> ./a.out 
+logical: [       0..      15] phys: 332211376..332211391 flags: 0x800 tot: 16
+(0) extent flag = 2048
+
+o/p of a.out with patch (both point 2.a & 2.b could be seen)
+=======================
+riteshh-> ./a.out
+logical: [       0..       7] phys: 122802736..122802743 flags: 0x801 tot: 8
+(0) extent flag = 2049
+
+FYI - In test_fiemap_diff.c test we had 
+a. fm_extent_count = 1
+b. fm_start = 0
+c. fm_length = 4K
+Whereas when we change fm_extent_count = 32, then we don't see any difference.
+
+e.g. output for above difference listed in point 1.b
+====================================================
+
+o/p without patch (block no returned for unwritten block as well)
+=========Testing IOCTL FIBMAP=========
+File size = 16384, blkcnt = 4, blocksize = 4096
+  0   41526422
+  1   41526423
+  2   41590299
+  3   41590300
+
+o/p with patch (0 returned for unwritten block)
+=========Testing IOCTL FIBMAP=========
+File size = 16384, blkcnt = 4, blocksize = 4096
+  0          0          0
+  1          0          0
+  2   15335942      29953
+  3   15335943      29953
+
+Summary:-
+========
+Due to some of the observational differences to user, listed above,
+requesting to please help with a careful review in moving this to iomap.
+Digging into some older threads, it looks like these differences should be fine,
+since the same tools have been working fine with XFS (which uses iomap based
+implementation) [1]
+Also as Ted suggested in [3]: Fiemap & bmap spec could be made based on the ext4
+implementation. But since all the tools also work with xfs which uses iomap
+based fiemap, so we should be good there.
+
+
+References of some previous discussions:
+=======================================
+[RFCv1]: https://www.spinics.net/lists/linux-ext4/msg67077.html
+[RFCv2]: https://marc.info/?l=linux-ext4&m=158020672413871&w=2 
+[PATCHv3]: https://www.spinics.net/lists/linux-ext4/msg70403.html
+[1]: https://www.spinics.net/lists/linux-fsdevel/msg128370.html
+[2]: https://www.spinics.net/lists/linux-fsdevel/msg127675.html
+[3]: https://www.spinics.net/lists/linux-fsdevel/msg128368.html
+[4]: https://raw.githubusercontent.com/riteshharjani/LinuxStudy/master/tools/test_fiemap_diff.c
+[5]: https://marc.info/?l=linux-fsdevel&m=158040005907862&w=2
+[6]: https://marc.info/?l=linux-fsdevel&m=158221859807604&w=2
+[7]: https://marc.info/?l=linux-ext4&m=158228563431539&w=2
+
+
+
+Ritesh Harjani (6):
+  ext4: Add IOMAP_F_MERGED for non-extent based mapping
+  ext4: Optimize ext4_ext_precache for 0 depth
+  ext4: Move ext4 bmap to use iomap infrastructure.
+  ext4: Make ext4_ind_map_blocks work with fiemap
+  ext4: Move ext4_fiemap to use iomap framework.
+  Documentation: Correct the description of FIEMAP_EXTENT_LAST
+
+ Documentation/filesystems/fiemap.txt |  10 +-
+ fs/ext4/extents.c                    | 299 +++++----------------------
+ fs/ext4/inline.c                     |  41 ----
+ fs/ext4/inode.c                      |  22 +-
+ 4 files changed, 80 insertions(+), 292 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.21.0
+
