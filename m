@@ -2,102 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7711713A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:05:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 793631713AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:06:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgB0JFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 04:05:22 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44648 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbgB0JFW (ORCPT
+        id S1728555AbgB0JGa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 04:06:30 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:40103 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728504AbgB0JGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:05:22 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R92mrI100909;
-        Thu, 27 Feb 2020 09:05:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=T8tGCCI7g34NHBNqX3ptq95FJYXCBtLf/FnjowZ3Q9Q=;
- b=QXPNVaWrEnZISnv11ePayKkyMoLgh5et46+pvSuLCJ5HEKvSiLR9M5ev+GB4Kx/6qGD3
- imJiOAfCJOO2LjejTpuWo9Yq8q2wxCfeBRBReTTxECiWCX4CABcWtmNoUWTqjYid+5q+
- 8kTfSPWR1KghuSyYef8pw5146xCMWEjTe8YLth/SUwfzJCe3Ff9HxuDuF391MHJw9fin
- gciin6+83TM0xgHBFmAth8LdWQxm0/7WHJ8/ugOEZpquZSmULv7oRiUx0XGam61e/oU6
- ++UpEn68j/n5HRU5+rGbr3q9jDFu/tPZvzgPivzfWULKNB+ci4z3dsRj15AE3K77YzOv Cw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2ydct39e92-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 09:05:19 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R8ug97006754;
-        Thu, 27 Feb 2020 09:05:18 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2ydcsbvb44-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 09:05:18 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 01R95HqF025334;
-        Thu, 27 Feb 2020 09:05:17 GMT
-Received: from [192.168.1.14] (/114.88.246.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Feb 2020 01:05:17 -0800
-Subject: Re: [PATCH 1/4] io_uring: add IORING_OP_READ{WRITE}V_PI cmd
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, io-uring@vger.kernel.org
-References: <20200226083719.4389-1-bob.liu@oracle.com>
- <20200226083719.4389-2-bob.liu@oracle.com>
- <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <8386e54e-723a-93e3-776c-b2138d077c77@oracle.com>
-Date:   Thu, 27 Feb 2020 17:05:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 27 Feb 2020 04:06:30 -0500
+Received: by mail-il1-f194.google.com with SMTP id i7so1746866ilr.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 01:06:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=syflZTas6oidq14f0UxYrYu5gyw30ZJIZYZtJBdX1EQ=;
+        b=uVvtqnYSB2+1XtA0B60aMQRLYswPzDLcvWft9hp6Gzukh5caGIAR9AsVPgxEtRCfw6
+         8slv9hAADEmxfrw+CndeRW2hCJrx5c39FVnwInaB+F11pJetFgaBBoZO+RrPnq6vgHtq
+         FUoo935KcVG1PyLpVc4OSCA1DOwPPB+w9EEcKmBgMZLTQVDjq2s5O0u4uZNE463j1Yas
+         7snOoiAX08WFKIycEvzJAh27tVH3TCdI0XaTXv5ZuqKL8lolwk8B04AVdO3n1y1mdIqK
+         rjACfNq4HbheXAP9Cu2GS6MC6BS0idjBYUvwAQUgkkZ2YkkBzwkxqfssl7IUPoH+bEHE
+         cOlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=syflZTas6oidq14f0UxYrYu5gyw30ZJIZYZtJBdX1EQ=;
+        b=j/ul2Sd+RK1ykeRXXxbthh4TkOANv8KTikzymUdpUJGbAR+um/ST9hENB40FeeTW3L
+         i6C/oAEQKn7aAx4hnBRWpdW90FBkosQ1CTa0mKO9lCbbXuTTvTzUvQ+I3V719l+5CAxX
+         KPz8jxCqxkeoXM/wVZi/kyfK1afdFBzazG5MA8pBTOoj02c74F4AJ8oCf6mRQrooOeHQ
+         5aoS+qmN/zp/SYregS3NJ1Qp9DH/OmupO7MC88n5Qx3ZdHmzKJ2Plt5B0L6D8ElIG08b
+         fFl6nXyDEvWS1bI3w0XNLW9Y28T2Cezw2+7I41WXUzFkbjMWE0pC+aOd45fGJl7KVRZH
+         8v6Q==
+X-Gm-Message-State: APjAAAVGCSvAgdjgVJ8iEXZ5QTerGT1l+BOAZx6ZHFkabc/7zwb61GOc
+        bLwkCiosFhCi5XOxPOuDjzTGE652kO/P/50Gya2srA==
+X-Google-Smtp-Source: APXvYqysp/V+VucOPKFZSY17Lo5UypySvl7Dpp1ewuRDy7r38kaGBOXejTza6qB6VoeW/wXihtItyuSXQEjVkg7DKXE=
+X-Received: by 2002:a92:d5c3:: with SMTP id d3mr4176605ilq.250.1582794389987;
+ Thu, 27 Feb 2020 01:06:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6e466774-4dc5-861c-58b5-f0cc728bacff@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270073
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270073
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-12-amir73il@gmail.com>
+ <20200226102354.GE10728@quack2.suse.cz> <CAOQ4uxivfnmvXag8+f5wJujqRgp9FW+2_CVD6MSgB40_yb+sHw@mail.gmail.com>
+ <20200226170705.GU10728@quack2.suse.cz> <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 27 Feb 2020 11:06:18 +0200
+Message-ID: <CAOQ4uxih7zhAj6qUp39B_a_On5gv80SKm-VsC4D8ayCrC6oSRw@mail.gmail.com>
+Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
+ child fid's
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/26/20 10:24 PM, Jens Axboe wrote:
-> On 2/26/20 1:37 AM, Bob Liu wrote:
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index a3300e1..98fa3f1 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -62,6 +62,8 @@ enum {
->>  	IORING_OP_NOP,
->>  	IORING_OP_READV,
->>  	IORING_OP_WRITEV,
->> +	IORING_OP_READV_PI,
->> +	IORING_OP_WRITEV_PI,
->>  	IORING_OP_FSYNC,
->>  	IORING_OP_READ_FIXED,
->>  	IORING_OP_WRITE_FIXED,
-> 
-> So this one renumbers everything past IORING_OP_WRITEV, breaking the
-> ABI in a very bad way. I'm guessing that was entirely unintentional?
-> Any new command must go at the end of the list.
-> 
-> You're also not updating io_op_defs[] with the two new commands,
-> which means it won't compile at all. I'm guessing you tested this on
-> an older version of the kernel which didn't have io_op_defs[]?
-> 
+> > So overall I think this would be better. The question is whether the
+> > resulting code will really be more readable. I hope so because the
+> > structures are definitely nicer this way and things belonging logically
+> > together are now together. But you never know until you convert the code...
+> > Would you be willing to try this refactoring?
+>
+> Yes, but I would like to know what you think about the two 6 byte holes
+> Just let that space be wasted for the sake of nicer abstraction?
+> It seems like too much to me.
+>
 
-Yep, will rebase to the latest version next time.
+What if we unite the fh and name into one struct and keep a 32bit hash of
+fh+name inside?
 
+This will allow us to mitigate the cost of memcmp of fh+name in merge
+and get rid of objectid in fsnotify_event as you suggested.
+
+struct fanotify_fh_name {
+         union {
+                struct {
+                       u8 fh_type;
+                       u8 fh_len;
+                       u8 name_len;
+                       u32 hash;
+                };
+                u64 hash_len;
+        };
+        union {
+                unsigned char fh[FANOTIFY_INLINE_FH_LEN];
+                unsigned char *ext_fh;
+        };
+        char name[0];
+};
+
+struct fanotify_fid_event {
+        struct fanotify_event fae;
+        __kernel_fsid_t fsid;
+        struct fanotify_fh_name object_fh; /* name is empty */
+};
+
+struct fanofify_name_event {
+        struct fanotify_fid_event ffe;
+        struct fanotify_fh_name dirent;
+};
+
+So the only anomaly is that we use struct fanotify_fh_name
+to describe object_fh which never has a name.
+
+I think we can live with that and trying to beat that would be
+over abstraction.
+
+Thoughts?
+
+Thanks,
+Amir.
