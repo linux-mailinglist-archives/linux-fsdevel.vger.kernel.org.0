@@ -2,75 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1D317291C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 21:01:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADBA172957
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 21:15:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbgB0UA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 15:00:57 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35979 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730080AbgB0UA5 (ORCPT
+        id S1729711AbgB0UPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 15:15:43 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44071 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbgB0UPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 15:00:57 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so647723ljg.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 12:00:56 -0800 (PST)
+        Thu, 27 Feb 2020 15:15:43 -0500
+Received: by mail-wr1-f66.google.com with SMTP id m16so304831wrx.11;
+        Thu, 27 Feb 2020 12:15:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oQC5XL/giSLKULG9Wvy81a1UMPlWPAivXJ99IMsyzPk=;
-        b=HtiHDXlG0JR18/QlUwHqgHaaMmRjCfGt3buf0uUSKYgBFfx+4J7TF6G+NySGsdnlaH
-         B4rOhvT6Ogi7oPnQxzuHB2lE5g+WnqVnP0+hnLDPqz7duPDZnUrbbdNewWrp/tgU8Cat
-         LnVR7BaEsyOiMmriMtKa0e+wMcEpK3a2vIhlQ=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=J33BqWoSd9tEESJbD+stgo5KGtSSLbabOsGpVtJHHtw=;
+        b=bquWi+8fZQ/VDIaFczUAc6iR3pFqrtHFrYnukMwaqrYXmPWKS3GTtlWh/1V4jC1fYV
+         ir/8z0OHm/dDCckFyGKKwRJiEPAfY3nrpUGDOjA2dlgrgrbv+1BrA+392sHwCPPtV7IN
+         MaDYQ23bZxby7CyhuM+wiR5c5QJIlgZ1yvC8eQILqYIu41AIMZpPzhEczOKLWsbxCmbl
+         uqORjVMnljGGEtv8D28SOuISWjG1S4e4PuZq4nPo/vtHUzW6eIRHx3J1/VgJBt0cZTvV
+         M3Zh90rSgh4d8rHnwgQ+bCDR1Lo9ePuR8STibjpeV+9NQcdWWb45x7hJhUH9MBB6hPQ7
+         z8sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oQC5XL/giSLKULG9Wvy81a1UMPlWPAivXJ99IMsyzPk=;
-        b=n0gq6OBQPzu3Ddmjtl3XzdnGRyqwvG5UXIq31UWV/dz/dgAJU3/zpXlXIdTtF0p8HO
-         RitRgxortFsD4ypcrzS0SDRd9IlFJYVk6NvdgVLpFy+jqA6CbGRQTFydX9hbKQTXSuJk
-         I2Hlw0eIdl25bBE47kOy1a8QoX421DzJEDAJzqdjDjzcWl7G23vtf2nB9IAdTEY9WaFg
-         JSANE1AiPubYeszJr9Fua2mYZez7hRclVQOFIQeC1YIqw7h8FpuwfT1yuWxq2AQ0aXKh
-         Qs+CYiGQYwirueQw93QqkBf6pfxIZOIYpkjvC2cySNnZzSy8mm6xrrtiITE7qMj48Cyq
-         +VHA==
-X-Gm-Message-State: ANhLgQ0r/KW0CQkZfu2Eb7uZ+ImtODrvqR/HJE36Kjb3EUI6e0e1i6sf
-        v2/bIZmVEtcE1NJnC3lRqAglptCySGk=
-X-Google-Smtp-Source: ADFU+vsKOOh85MAkRJwkgum7SHbci5UpncAamAKm2aph4y7mypX/dT4KtYeDGtRJLNK5mfWj4qXJrw==
-X-Received: by 2002:a2e:2c0f:: with SMTP id s15mr432509ljs.81.1582833654755;
-        Thu, 27 Feb 2020 12:00:54 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id u5sm3585662ljl.97.2020.02.27.12.00.53
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Feb 2020 12:00:53 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id r14so343179lfm.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 12:00:53 -0800 (PST)
-X-Received: by 2002:a19:c106:: with SMTP id r6mr603675lff.10.1582833653416;
- Thu, 27 Feb 2020 12:00:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=J33BqWoSd9tEESJbD+stgo5KGtSSLbabOsGpVtJHHtw=;
+        b=cTLEQ0QP0SggpGFzk+GiF0oQcx0U3J4pbVDR2nk79IiRKPorHbUmxc8TVuioP/vw8w
+         ibvbqmpZuS2oFKjKMvbGrIn1lA9mZ/gmJ5MBLtrJAnwlvxhvw0wnuNTBIAUYpr7FiUCe
+         cgIhp1S7+eYhrMNb5GYYl07rGbyYcpelSeNPWXu0ccusNcW+s4Z1Rhg0ZC0DelxS2mhg
+         ORxmOfAcCxyMOnxMsE174mKy6/14zNgrcpN3mDl/tVng/H8Qzzv1KsZIOP/3EdlNgoC7
+         xRM5HrLQZRiHlkBCzXVmFbXgs+HgMUNUKDDqKAZip6b9OLMek+/22dsNt2WgtSM/MG0b
+         WroA==
+X-Gm-Message-State: APjAAAUlUVz8S6f6zxn5Z7ikSPA8gixdXfQMNR+kgoyCQjJ3smt5WGlT
+        rhuWOHI2touSPDj1SkjHAw==
+X-Google-Smtp-Source: APXvYqzFpxNj+R6EzLNVlCdpbjMBg67JDbaynrge1wTN5MEP/xYCmS6Ep6ClwVxwd9grDIWQ7XLKXw==
+X-Received: by 2002:a5d:534c:: with SMTP id t12mr609954wrv.105.1582834541724;
+        Thu, 27 Feb 2020 12:15:41 -0800 (PST)
+Received: from avx2 ([46.53.254.180])
+        by smtp.gmail.com with ESMTPSA id s139sm9380007wme.35.2020.02.27.12.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 12:15:40 -0800 (PST)
+Date:   Thu, 27 Feb 2020 23:15:38 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jbi.octave@gmail.com
+Subject: [PATCH] proc: annotate close_pdeo() for sparse
+Message-ID: <20200227201538.GA30462@avx2>
 MIME-Version: 1.0
-References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200223011626.4103706-1-viro@ZenIV.linux.org.uk>
- <20200223011626.4103706-2-viro@ZenIV.linux.org.uk> <CAHk-=wjE0ey=qg2-5+OHg4kVub4x3XLnatcZj5KfU03dd8kZ0A@mail.gmail.com>
- <20200227194312.GD23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200227194312.GD23230@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Feb 2020 12:00:36 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wje=1xYx0N6ERSZfR8TgjSOY_PA2DSCGbE40GNwOeeF4w@mail.gmail.com>
-Message-ID: <CAHk-=wje=1xYx0N6ERSZfR8TgjSOY_PA2DSCGbE40GNwOeeF4w@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 02/34] fix automount/automount race properly
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 11:43 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Umm...  A bit of reordering in the beginning eliminates discard1, suggesting
-> s/discard2/discard_locked/...  Incremental would be
+From: Jules Irenge <jbi.octave@gmail.com>
 
-Ack, thanks.
+Fix sparse locking imbalance warning:
 
-          Linus
+	warning: context imbalance in close_pdeo() - unexpected unlock
+
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
+
+ fs/proc/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -139,6 +139,7 @@ static void unuse_pde(struct proc_dir_entry *pde)
+ 
+ /* pde is locked on entry, unlocked on exit */
+ static void close_pdeo(struct proc_dir_entry *pde, struct pde_opener *pdeo)
++	__releases(&pde->pde_unload_lock)
+ {
+ 	/*
+ 	 * close() (proc_reg_release()) can't delete an entry and proceed:
