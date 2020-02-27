@@ -2,249 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A792017141B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F55171426
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 10:29:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbgB0JZj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 04:25:39 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:43184 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728454AbgB0JZj (ORCPT
+        id S1728723AbgB0J3O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 04:29:14 -0500
+Received: from mail-il1-f197.google.com ([209.85.166.197]:33648 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728655AbgB0J3M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 04:25:39 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R9NpfU034096;
-        Thu, 27 Feb 2020 09:25:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=8zQDK/9jHRAQFv7hVcZo9tYgIQ+A21KFnO314sYNNq0=;
- b=VtMPzVUFig/EpQoIyPmevr7a2HzESUZJ+FSg6qu2XhZ5M7/xS3YE7C2uI+YY5ouHrbv+
- XYmyIhwUbE5g+cGSDoE5VAspdWSSNlg0RVpehGuQKuaNZGbMqbxVggBNNi767eaOU9TX
- YbOl7EwhNJIHN7r/A86hL3r7CgQsxE6mjVW0p5tlqhaxIArnNejz/eV15Btn87VpWPtd
- 73GFH711TLr6BwCIUvELcszhDXuD1TR/ItcDCjYh6UW36Ef+BKHV1AZZCIh6BSInB/BL
- 6qMEZBmIR3ghfE+ffIVYg/5cyj2JGJje3EklnZ7kvJoVOAvZuvlTX85KmO5DvaY8q7vr CQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2ydcsnhkpu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 09:25:36 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01R9ECHV122368;
-        Thu, 27 Feb 2020 09:23:36 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2ydj4m0n3e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 09:23:36 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01R9NZoU002791;
-        Thu, 27 Feb 2020 09:23:35 GMT
-Received: from [192.168.1.14] (/114.88.246.185)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 27 Feb 2020 01:23:35 -0800
-Subject: Re: [PATCH 2/4] bio-integrity: introduce two funcs handle protect
- information
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-block@vger.kernel.org, axboe@kernel.dk,
-        martin.petersen@oracle.com, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org
-References: <20200226083719.4389-1-bob.liu@oracle.com>
- <20200226083719.4389-3-bob.liu@oracle.com> <20200226160310.GA8044@magnolia>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <fb215042-6882-d51c-0ff9-a8d2487db08f@oracle.com>
-Date:   Thu, 27 Feb 2020 17:23:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 27 Feb 2020 04:29:12 -0500
+Received: by mail-il1-f197.google.com with SMTP id i13so4635801ill.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 01:29:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=a5nwarW/Ch1YAxFwUTvooBTTNGZG4Pb2BJatlqPFCQE=;
+        b=kvzT49aiiGceHnUBAymmbzbgAil6OWWXieIMqQdCBQpRO2aWGzm9ajQDGBvnlSN4FY
+         i498ZPdrEEnvwfvEHs5XeY0RwFzQDI/B5fkQXQsxx1FobFp9YasLk1CjMC8stZZJtQGz
+         Zs7M3ROnnXuIUtgzmEkl/15RFiAED4SmS4ihlC6uXVbVZEUuumMNNlPwtGpaTmnx4NRx
+         uw0LtS7mZL6ZjdIc9wql/yMBqsiCteVOmcGNYHBw9FKpuk5+D3xdzAV8UKSe4hfLlncd
+         4Top4BECvWsJk08DKfILc83KdJkZsoBEzf/N9kkbPUnHq6X7cFJDUisv5ujmuzSIxQya
+         I6NQ==
+X-Gm-Message-State: APjAAAWfRQJQ/q0/0SkWgTKX++L9vuJ5Se0Wez1dqWJoEsPzyQTV2XuX
+        C+SzeRKtwUKlUGWJn/nXvcSpJPEB5WEvyHVxiIGtQceDfVCC
+X-Google-Smtp-Source: APXvYqympk9d8+qZ5FGZeZTSzTy5FAkbhvFXKmFCYRmxoq7y6pwo/OYAI9WUHGn71WYxNNKY1Asd80Nj+Lp1VgEx/dW2UJ0G4aaA
 MIME-Version: 1.0
-In-Reply-To: <20200226160310.GA8044@magnolia>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
- spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270075
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9543 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 spamscore=0 adultscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270075
+X-Received: by 2002:a92:ca8a:: with SMTP id t10mr2702434ilo.210.1582795750709;
+ Thu, 27 Feb 2020 01:29:10 -0800 (PST)
+Date:   Thu, 27 Feb 2020 01:29:10 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007b25c1059f8b5a4f@google.com>
+Subject: KMSAN: uninit-value in simple_attr_read
+From:   syzbot <syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com>
+To:     glider@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/27/20 12:03 AM, Darrick J. Wong wrote:
-> On Wed, Feb 26, 2020 at 04:37:17PM +0800, Bob Liu wrote:
->> Introduce two funcs handle protect information passthrough from
->> user space.
->>
->> iter_slice_protect_info() will slice the last segment as protect
->> information.
->>
->> bio_integrity_prep_from_iovec() attach the protect information to
->> a bio.
->>
->> Signed-off-by: Bob Liu <bob.liu@oracle.com>
->> ---
->>  block/bio-integrity.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/bio.h   | 14 ++++++++++
->>  2 files changed, 91 insertions(+)
->>
->> diff --git a/block/bio-integrity.c b/block/bio-integrity.c
->> index 575df98..0b22c5d 100644
->> --- a/block/bio-integrity.c
->> +++ b/block/bio-integrity.c
->> @@ -12,6 +12,7 @@
->>  #include <linux/bio.h>
->>  #include <linux/workqueue.h>
->>  #include <linux/slab.h>
->> +#include <linux/uio.h>
->>  #include "blk.h"
->>  
->>  #define BIP_INLINE_VECS	4
->> @@ -305,6 +306,53 @@ bool bio_integrity_prep(struct bio *bio)
->>  }
->>  EXPORT_SYMBOL(bio_integrity_prep);
->>  
->> +int bio_integrity_prep_from_iovec(struct bio *bio, struct iovec *pi_iov)
->> +{
->> +	struct blk_integrity *bi = blk_get_integrity(bio->bi_disk);
->> +	struct bio_integrity_payload *bip;
->> +	struct page *user_pi_page;
->> +	int nr_vec_page = 0;
->> +	int ret = 0, interval = 0;
->> +
->> +	if (!pi_iov || !pi_iov->iov_base)
->> +		return 1;
->> +
->> +	nr_vec_page = (pi_iov->iov_len + PAGE_SIZE - 1) >> PAGE_SHIFT;
->> +	if (nr_vec_page > 1) {
->> +		printk("Now only support 1 page containing integrity "
->> +			"metadata, while requires %d pages.\n", nr_vec_page);
->> +		return 1;
-> 
-> I would've thought this would be -EINVAL or something given the -ENOMEM
-> below...?
-> 
->> +	}
->> +
->> +	interval = bio_integrity_intervals(bi, bio_sectors(bio));
->> +	if ((interval * bi->tuple_size) != pi_iov->iov_len)
->> +		return 1;
->> +
->> +	bip = bio_integrity_alloc(bio, GFP_NOIO, nr_vec_page);
->> +	if (IS_ERR(bip))
->> +		return PTR_ERR(bip);
->> +
->> +	bip->bip_iter.bi_size = pi_iov->iov_len;
->> +	bip->bio_iter = bio->bi_iter;
->> +	bip_set_seed(bip, bio->bi_iter.bi_sector);
->> +
->> +	if (bi->flags & BLK_INTEGRITY_IP_CHECKSUM)
->> +		bip->bip_flags |= BIP_IP_CHECKSUM;
->> +
->> +	ret = get_user_pages_fast((unsigned long)(pi_iov->iov_base), nr_vec_page,
->> +			op_is_write(bio_op(bio)) ?  FOLL_WRITE : 0,
->> +			&user_pi_page);
->> +	if (unlikely(ret < 0))
->> +		return 1;
->> +
->> +	ret = bio_integrity_add_page(bio, user_pi_page, pi_iov->iov_len, 0);
->> +	if (unlikely(ret != pi_iov->iov_len))
->> +		return -ENOMEM;
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL(bio_integrity_prep_from_iovec);
->> +
->>  /**
->>   * bio_integrity_verify_fn - Integrity I/O completion worker
->>   * @work:	Work struct stored in bio to be verified
->> @@ -378,6 +426,35 @@ void bio_integrity_advance(struct bio *bio, unsigned int bytes_done)
->>  }
->>  
->>  /**
->> + * iter_slice_protect_info
->> + *
->> + * Description: slice protection information from iter.
->> + * The last iovec contains protection information pass from user space.
-> 
-> What do the return values here mean?
-> 
+Hello,
 
-Will update.
+syzbot found the following crash on:
 
-> Also kinda wondering about the slice & dice of the iovec here, but
-> <shrug> I guess this is RFC. :)
-> 
+HEAD commit:    8bbbc5cf kmsan: don't compile memmove
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=14394265e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cd0e9a6b0e555cc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=fcab69d1ada3e8d6f06b
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1338127ee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161403ede00000
 
-Hmm, I also very hesitate to put it here or lib/iov_iter.c. 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
 
-> --D
-> 
->> + */
->> +int iter_slice_protect_info(struct iov_iter *iter, int nr_pages,
->> +		struct iovec **pi_iov)
->> +{
->> +	size_t len = 0;
->> +
->> +	/* TBD: now only support one bio. */
->> +	if (!iter_is_iovec(iter) || nr_pages >= BIO_MAX_PAGES - 1)
->> +		return 1;
->> +
->> +	/* Last iovec contains protection information. */
->> +	iter->nr_segs--;
->> +	*pi_iov = (struct iovec *)(iter->iov + iter->nr_segs);
->> +
->> +	len = (*pi_iov)->iov_len;
->> +	if (len > 0 && len < iter->count) {
->> +		iter->count -= len;
->> +		return 0;
->> +	}
->> +
->> +	return 1;
->> +}
->> +EXPORT_SYMBOL(iter_slice_protect_info);
->> +
->> +/**
->>   * bio_integrity_trim - Trim integrity vector
->>   * @bio:	bio whose integrity vector to update
->>   *
->> diff --git a/include/linux/bio.h b/include/linux/bio.h
->> index 3cdb84c..6172b13 100644
->> --- a/include/linux/bio.h
->> +++ b/include/linux/bio.h
->> @@ -749,6 +749,8 @@ static inline bool bioset_initialized(struct bio_set *bs)
->>  extern struct bio_integrity_payload *bio_integrity_alloc(struct bio *, gfp_t, unsigned int);
->>  extern int bio_integrity_add_page(struct bio *, struct page *, unsigned int, unsigned int);
->>  extern bool bio_integrity_prep(struct bio *);
->> +extern int bio_integrity_prep_from_iovec(struct bio *bio, struct iovec *pi_iov);
->> +extern int iter_slice_protect_info(struct iov_iter *iter, int nr_pages, struct iovec **pi_iov);
->>  extern void bio_integrity_advance(struct bio *, unsigned int);
->>  extern void bio_integrity_trim(struct bio *);
->>  extern int bio_integrity_clone(struct bio *, struct bio *, gfp_t);
->> @@ -778,6 +780,18 @@ static inline bool bio_integrity_prep(struct bio *bio)
->>  	return true;
->>  }
->>  
->> +static inline int bio_integrity_prep_from_iovec(struct bio *bio,
->> +		struct iovec *pi_iov)
->> +{
->> +	return 0;
->> +}
->> +
->> +static inline int iter_slice_protect_info(struct iov_iter *iter, int nr_pages,
->> +		struct iovec **pi_iov)
->> +{
->> +	return 0;
->> +}
->> +
->>  static inline int bio_integrity_clone(struct bio *bio, struct bio *bio_src,
->>  				      gfp_t gfp_mask)
->>  {
->> -- 
->> 2.9.5
->>
+=====================================================
+BUG: KMSAN: uninit-value in strlen+0x5e/0xa0 lib/string.c:552
+CPU: 1 PID: 11402 Comm: syz-executor230 Not tainted 5.6.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x220 lib/dump_stack.c:118
+ kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:118
+ __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
+ strlen+0x5e/0xa0 lib/string.c:552
+ simple_attr_read+0x1ec/0x740 fs/libfs.c:935
+ debugfs_attr_read+0x13e/0x290 fs/debugfs/file.c:360
+ __vfs_read+0x1a9/0xc80 fs/read_write.c:425
+ vfs_read+0x346/0x6a0 fs/read_write.c:461
+ ksys_read+0x267/0x450 fs/read_write.c:587
+ __do_sys_read fs/read_write.c:597 [inline]
+ __se_sys_read+0x92/0xb0 fs/read_write.c:595
+ __x64_sys_read+0x4a/0x70 fs/read_write.c:595
+ do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x440269
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff09d3bc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440269
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 000000000000000a R09: 000000000000000a
+R10: 0000000000010001 R11: 0000000000000246 R12: 0000000000401af0
+R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
 
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:144 [inline]
+ kmsan_internal_poison_shadow+0x66/0xd0 mm/kmsan/kmsan.c:127
+ kmsan_slab_alloc+0x8a/0xe0 mm/kmsan/kmsan_hooks.c:82
+ slab_alloc_node mm/slub.c:2793 [inline]
+ slab_alloc mm/slub.c:2802 [inline]
+ kmem_cache_alloc_trace+0x6f3/0xd70 mm/slub.c:2819
+ kmalloc include/linux/slab.h:555 [inline]
+ simple_attr_open+0xd4/0x400 fs/libfs.c:894
+ lowpan_enable_fops_open+0x94/0xb0 net/bluetooth/6lowpan.c:1105
+ open_proxy_open+0x657/0x800 fs/debugfs/file.c:189
+ do_dentry_open+0xf89/0x1820 fs/open.c:797
+ vfs_open+0xaf/0xe0 fs/open.c:914
+ do_last fs/namei.c:3490 [inline]
+ path_openat+0x4d57/0x6bd0 fs/namei.c:3607
+ do_filp_open+0x2b8/0x710 fs/namei.c:3637
+ do_sys_openat2+0x92e/0xd40 fs/open.c:1149
+ do_sys_open fs/open.c:1165 [inline]
+ __do_sys_openat fs/open.c:1179 [inline]
+ __se_sys_openat+0x24a/0x2b0 fs/open.c:1174
+ __x64_sys_openat+0x56/0x70 fs/open.c:1174
+ do_syscall_64+0xb8/0x160 arch/x86/entry/common.c:296
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+=====================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
