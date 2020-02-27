@@ -2,78 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48B01172887
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 20:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA601728A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 20:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbgB0TZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 14:25:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47938 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbgB0TZq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 14:25:46 -0500
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6ADC24691;
-        Thu, 27 Feb 2020 19:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582831546;
-        bh=kGU0a0I3IvKdb4w1iUhQ37ywQbN9rjfpMR5iKdjutug=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V3StYee0L66BoNn9KcVM2tPtSK3paFsNrIKznwTf8CK9KxeFhi3ZH/ln7EP5hXIAr
-         HAUNj01Ixcs9roRcSoN5rmOMIs2EkSno4j81M0pJkUBY7UL2ArRgnsY8mn83Xw51Q9
-         aQsDsd891ZxVxCj7opcQJOBy1jaEwhuOgnfsz6oI=
-Date:   Thu, 27 Feb 2020 11:25:44 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v7 3/9] block: blk-crypto-fallback for Inline Encryption
-Message-ID: <20200227192544.GE877@sol.localdomain>
-References: <20200221115050.238976-1-satyat@google.com>
- <20200221115050.238976-4-satyat@google.com>
+        id S1729418AbgB0TdH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 14:33:07 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:39688 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgB0TdH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Feb 2020 14:33:07 -0500
+Received: by mail-qv1-f65.google.com with SMTP id y8so157101qvk.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 11:33:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SHUqZMiqxXrugyTiyJw+5kNiudFRuI7VyrA9wECW0ig=;
+        b=J72fW5mPWHpUAeGa8GWszUuNSkb0QFONZmhovIbvGL9xlofynOtEKg65dV3i2/9vHp
+         NX8jTCbg8aS+DG5SOAUoIPdJiyrWvuQZd82R8x6g6hbO0/py7DLb5MJQ0/XYreQaU11c
+         2/Dkcskm09qrpwQR+4WF/rXKNDZcNTwzVrVkgp32Mmrfji9nhoWrvWf1dIMboI2CVaTR
+         b0lZN2/s2R+ebKkAt2yfWfe45euRfmjbcSMrVunUxx93XVFO5Jc0nRlafpSbd7iZ0pOK
+         00CnKGLYBmkeRkqyqE71ie81uIwq2JSuKSE8qv2wgAhv7lRfcUrpKtEWOOElSYDvGAcm
+         rWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SHUqZMiqxXrugyTiyJw+5kNiudFRuI7VyrA9wECW0ig=;
+        b=hi+/jfwMD6Pl7GL0/dQFViItI86V/9OjHjdgKaj75R3uaDVpkzfC/g2I+RB/UlFUoP
+         CRJClZuw2pWIxky1R9ckDfm5YHl0me0C5Jk4WgykECfv4YlLIzEya4WDv2+eBju6x6t8
+         jN9lYZrw/OhJyLqEXNQOAlVW2OwIPNY/pUsGvUHVPWMaED0+raLEZubkmuYOP1fTBU0r
+         agQWQ8FAkUSR1b49A0uTShzZs2ACmxNHGy/hIj7bW4sCmUILmLDMBQ3CVW+LFGmRJD9g
+         lT/mpBS9NVFNcPsGzrTLK6R/aO1pxln/uLD6otXWNzEeJ675phrBkOCQlhn4NSTTYn8w
+         TFIw==
+X-Gm-Message-State: APjAAAXqMHhCQz9h2j2DihYtEaFJIOu58efb2Ve8UcuGjrKohJ1uIUZ1
+        TJmXfPuOHtN1xtbq8rdArYZrog==
+X-Google-Smtp-Source: APXvYqx7jA/aL2KD5I2k9qdaMge+hyhUwSDtAYGVFKgeefzL8C4Cjur66Z0uHKiPhoj4lA7OoDlcsQ==
+X-Received: by 2002:a0c:e2d2:: with SMTP id t18mr512811qvl.130.1582831986313;
+        Thu, 27 Feb 2020 11:33:06 -0800 (PST)
+Received: from [192.168.1.106] ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id t4sm3670940qkm.82.2020.02.27.11.33.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 11:33:05 -0800 (PST)
+Subject: Re: [PATCH v3 00/25] user_namespace: introduce fsid mappings
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        =?UTF-8?Q?St=c3=a9phane_Graber?= <stgraber@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Jann Horn <jannh@google.com>
+Cc:     smbarber@chromium.org, Seth Forshee <seth.forshee@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Phil Estes <estesp@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        mpawlowski@fb.com
+References: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <2b0fe94b-036a-919e-219b-cc1ba0641781@toxicpanda.com>
+Date:   Thu, 27 Feb 2020 14:33:04 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200221115050.238976-4-satyat@google.com>
+In-Reply-To: <20200218143411.2389182-1-christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 21, 2020 at 03:50:44AM -0800, Satya Tangirala wrote:
-> Blk-crypto delegates crypto operations to inline encryption hardware when
-> available. The separately configurable blk-crypto-fallback contains a
-> software fallback to the kernel crypto API - when enabled, blk-crypto
-> will use this fallback for en/decryption when inline encryption hardware is
-> not available. This lets upper layers not have to worry about whether or
-> not the underlying device has support for inline encryption before
-> deciding to specify an encryption context for a bio, and also allows for
-> testing without actual inline encryption hardware. For more details, refer
-> to Documentation/block/inline-encryption.rst.
+On 2/18/20 9:33 AM, Christian Brauner wrote:
+> Hey everyone,
 > 
-> Signed-off-by: Satya Tangirala <satyat@google.com>
+> This is v3 after (off- and online) discussions with Jann the following
+> changes were made:
+> - To handle nested user namespaces cleanly, efficiently, and with full
+>    backwards compatibility for non fsid-mapping aware workloads we only
+>    allow writing fsid mappings as long as the corresponding id mapping
+>    type has not been written.
+> - Split the patch which adds the internal ability in
+>    kernel/user_namespace to verify and write fsid mappings into tree
+>    patches:
+>    1. [PATCH v3 04/25] fsuidgid: add fsid mapping helpers
+>       patch to implement core helpers for fsid translations (i.e.
+>       make_kfs*id(), from_kfs*id{_munged}(), kfs*id_to_k*id(),
+>       k*id_to_kfs*id()
+>    2. [PATCH v3 05/25] user_namespace: refactor map_write()
+>       patch to refactor map_write() in order to prepare for actual fsid
+>       mappings changes in the following patch. (This should make it
+>       easier to review.)
+>    3. [PATCH v3 06/25] user_namespace: make map_write() support fsid mappings
+>       patch to implement actual fsid mappings support in mape_write()
+> - Let the keyctl infrastructure only operate on kfsid which are always
+>    mapped/looked up in the id mappings similar to what we do for
+>    filesystems that have the same superblock visible in multiple user
+>    namespaces.
+> 
+> This version also comes with minimal tests which I intend to expand in
+> the future.
+> 
+>  From pings and off-list questions and discussions at Google Container
+> Security Summit there seems to be quite a lot of interest in this
+> patchset with use-cases ranging from layer sharing for app containers
+> and k8s, as well as data sharing between containers with different id
+> mappings. I haven't Cced all people because I don't have all the email
+> adresses at hand but I've at least added Phil now. :)
+> 
+I put this into a kernel for our container guys to mess with in order to 
+validate it would actually be useful for real world uses.  I've cc'ed the guy 
+who did all of the work in case you have specific questions.
 
-In v7, only blk_mq_make_request() actually calls blk_crypto_bio_prep().
-That will make the crypto contexts be silently ignored (no fallback) if
-q->make_request_fn != blk_mq_make_request.
+Good news is the interface is acceptable, albeit apparently the whole user ns 
+interface sucks in general.  But you haven't made it worse, so success!
 
-In recent kernels that *hopefully* won't matter in practice since almost
-everyone is using blk_mq_make_request.  But it still seems like a poor design.
-First, it's super important that if someone requests encryption, then they
-either get it or get an error; it should *never* be silently ignored.  Second,
-part of the goal of blk-crypto-fallback is that it should always work, so that
-in principle users don't have to implement the encryption twice, once via
-blk-crypto and once via fs or dm-layer crypto.
+But in testing it there appears to be a problem with tmpfs?  Our applications 
+will use shared memory segments for certain things and it apparently breaks this 
+in interesting ways, it appears to not shift the UID appropriately on tmpfs. 
+This seems to be relatively straightforward to reproduce, but if you have 
+trouble let me know and I'll come up with a shell script that reproduces the 
+problem.
 
-So is there any reason not to keep the blk_crypto_bio_prep() call in
-generic_make_request()?
+We are happy to continue testing these patches to make sure they're working in 
+our container setup, if you want to CC me on future submissions I can build them 
+for our internal testing and validate them as well.  Thanks,
 
-I think performance can't be much of a complaint, since if almost everyone is
-using blk_mq_make_request() then they are making the function call anyway...
-
-- Eric
+Josef
