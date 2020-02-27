@@ -2,388 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73FCB171091
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 06:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 166CB1710A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 06:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbgB0Fiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 00:38:54 -0500
-Received: from mga07.intel.com ([134.134.136.100]:22722 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB0Fix (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 00:38:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 21:38:52 -0800
-X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
-   d="scan'208";a="241933233"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 21:38:52 -0800
-From:   ira.weiny@intel.com
-To:     fstests@vger.kernel.org
-Cc:     Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] xfs/XXX: Add xfs/XXX
-Date:   Wed, 26 Feb 2020 21:38:47 -0800
-Message-Id: <20200227053847.1888-1-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726460AbgB0Fxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 00:53:40 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:43788 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725730AbgB0Fxj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Feb 2020 00:53:39 -0500
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 01R5rc7w007325
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 00:53:38 -0500
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 01R5rXn9010235
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 00:53:38 -0500
+Received: by mail-qv1-f72.google.com with SMTP id f17so2261695qvi.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 21:53:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=ptwIgNl4i28mcg0Z1zyc5XtWjo/QODMLAPuj6bjdS1w=;
+        b=PwSfwT8MgGRI8kFDFL1OKaEnohRd4QwB2frxCViYvKQ3HmusqR/TPg3y3CbuO9w72f
+         NaqGu9OT3VD/vmbaM0uPPUTPZaGZ2m/1sexsOMZqLHew6cy22hXjRrl2iX+mgLbvDcWC
+         L+Kf5NYXdZTVhPQE/ZyzCusHWxBvhb6nwnpwTwoN0EFBJKtjdIVYp2Iz7NwbotyczKwF
+         kfFknvkLuPvZ6PKshjK/hyQF+/cI/oiZbmww9xii3rTSTllbQ4QvEIN1AkxddIAm1kzc
+         5BWx6x97nrlSXUQ65EnpHUBCgBOU5TJxWvUAPPAR1kdunaasxCP7UkihC+s82swfkXbM
+         jZsw==
+X-Gm-Message-State: APjAAAUUvuApsvqrT3FiYVkYdyCSF7ciiuxvOH8rftCKOUKeEYVe1oNk
+        wqbi33mPJXRez3bf7uf+TopOAb8iWCc5TfkHhReUwkFpW9RUi7POw2yVFzcG8HH+c2PRi5kO+X9
+        DMYbZV8PJCGnAYUVQ1EtJwLLflR7B2KXvRTIu
+X-Received: by 2002:aed:36a5:: with SMTP id f34mr2937478qtb.57.1582782813080;
+        Wed, 26 Feb 2020 21:53:33 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyKZNWw/Ucu3Q9y81YAA8eBCVTAtZbF4AqqV3+ZJLEQt/+PiY3p3EXhCgITppc1rAjYtpI8dA==
+X-Received: by 2002:aed:36a5:: with SMTP id f34mr2937463qtb.57.1582782812775;
+        Wed, 26 Feb 2020 21:53:32 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id a23sm2500067qko.77.2020.02.26.21.53.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 21:53:31 -0800 (PST)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Cc:     "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: exfat: remove symlink feature : Additional patch
+In-Reply-To: <TY1PR01MB1578C8F3D1A9F130C5844C6890EB0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <20200226063746.3128-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp> <503049.1582701983@turing-police>
+ <TY1PR01MB1578C8F3D1A9F130C5844C6890EB0@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1582782809_2726P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 27 Feb 2020 00:53:30 -0500
+Message-ID: <59586.1582782810@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+--==_Exmh_1582782809_2726P
+Content-Type: text/plain; charset=us-ascii
 
-Add XXX to test the various setting of dax flags on files.
+On Thu, 27 Feb 2020 02:14:02 +0000, "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" said:
+> Thanks for comment.
+>
+> > Then this should have been [PATCH v2], and the fixed version [PATCH
+> > v3]
+>
+> 2nd patch(Additional patch) not include 1st patch(RFC PATCH).
+> And the 1st patch has been merged into 'staging-next'.
+> Now I can't decide.
+> a) Add only version information to the 2nd patch.
+> b) Merge the 1st and 2nd patches.
+>
+> Which is better for v3?
 
-The final fsx test was derived from Christophs test here but I wanted
-more direct function tests as well so I bundled this together.
+The first part is in-tree, so we don't re-visit it in this case.  You want a
+new patch that consists of *only* the second set of changes, and the changelog
+for the changes for that patch.
 
-https://www.spinics.net/lists/linux-xfs/msg10124.html
+--==_Exmh_1582782809_2726P
+Content-Type: application/pgp-signature
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
 
----
-This tests against V4 and V5:
-https://lore.kernel.org/lkml/20200227052442.22524-1-ira.weiny@intel.com/
----
- tests/xfs/999     | 279 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/xfs/999.out |  21 ++++
- tests/xfs/group   |   1 +
- 3 files changed, 301 insertions(+)
- create mode 100755 tests/xfs/999
- create mode 100644 tests/xfs/999.out
+iQIVAwUBXldZWQdmEQWDXROgAQIe9g//Wa+udzeaAQxzyO1/RnzWU7l+jHb32Ajw
+CvOd+3qd7H0qwL5/yvAXUs23rioz3kaCVYVFfqVUMtVZJx6dju+rSvMAgRC6OLb9
+akWUEM0iL85V4NcjcQfwkf6koYb6wBrC0OKzfT1QRqUT7yeYTjqUxf2e+loHCHd/
+uwGX60hksVsr4IgGRo8+7BISvbR+4DMrc2S6d/Ha2RtXi4FnnOldNcpXMjozCHrS
+IdyqlkAmS1nG3RQsQ1g+iJo9CmwwZ7BL/OWft8yAMq9DBy2JvmhQmCq/dUeKaFnc
+EM91Zh6lr2NYuwia+ff51ERDibuWJW10uxKYlnu/yl/0JUtmY6OHWxMxcD5QGaNy
+F5KgTaRuCaxAsxb5mySNw2xrgu7bdOxVOKr5dSnm1dYeQYzRNG6o8mGsHxqH4JD0
+Kbo8Ftr/RYkJYkhEHcpNKxxiwh/+nAFP5g72af1h605hLUJGAL2QsbBFu+/4aK5q
+x4fsyUvfM78/Q+3tWwR8bPhmEx1hjuD5DNKIKbgEtYE9M9u93YzKcdY34KsE/yIk
+2Ycy9IF/mnP2MCUBcqgQmgZaGmjgeqT4qgGWENEzFRR1qYT6T5cvZkCNS57TVqTJ
++trmkqBVc2aJD/zYibq5kymmBzGnI11N0lq7+nAnYwIEiUrEmzMXuf90vI7ocaP2
+vKVSFcGO0u0=
+=mg3v
+-----END PGP SIGNATURE-----
 
-diff --git a/tests/xfs/999 b/tests/xfs/999
-new file mode 100755
-index 000000000000..b123f1f39894
---- /dev/null
-+++ b/tests/xfs/999
-@@ -0,0 +1,279 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2019 Intel, Corp.  All Rights Reserved.
-+#
-+# FSQA Test No. 999 (temporary)
-+#
-+# Test setting of DAX flag
-+#
-+seq=`basename $0`
-+seqres=$RESULT_DIR/$seq
-+echo "QA output created by $seq"
-+
-+here=`pwd`
-+status=1	# failure is the default!
-+
-+dax_dir=$TEST_DIR/dax-dir
-+dax_sub_dir=$TEST_DIR/dax-dir/dax-sub-dir
-+dax_inh_file=$dax_dir/dax-inh-file
-+dax_non_inh_file=$dax_dir/dax-non-inh-file
-+non_dax=$TEST_DIR/non-dax
-+dax_file=$TEST_DIR/dax-file
-+dax_file_copy=$TEST_DIR/dax-file-copy
-+dax_file_move=$TEST_DIR/dax-file-move
-+data_file=$TEST_DIR/data-file
-+
-+_cleanup() {
-+	rm -rf $TEST_DIR/*
-+}
-+
-+trap "_cleanup ; exit \$status" 0 1 2 3 15
-+
-+# get standard environment, filters and checks
-+. ./common/rc
-+
-+# real QA test starts here
-+_supported_os Linux
-+_require_xfs_io_command "lsattr"
-+_require_xfs_io_command "chattr" "x"
-+_require_xfs_io_command "statx"
-+_require_test
-+
-+function mount_no_dax {
-+	# mount SCRATCH_DEV with dax option, TEST_DEV not
-+	export MOUNT_OPTIONS=""
-+	export TEST_FS_MOUNT_OPTS=""
-+	_test_unmount
-+	_test_mount
-+	_fs_options $TEST_DEV | grep -qw "dax"
-+	if [ "$?" == "0" ]; then
-+		_notrun "we need $TEST_DEV mount without dax"
-+	fi
-+}
-+
-+function mount_dax {
-+	# mount SCRATCH_DEV with dax option, TEST_DEV not
-+	export MOUNT_OPTIONS=""
-+	export TEST_FS_MOUNT_OPTS=""
-+	_test_unmount
-+	_test_mount "-o dax"
-+	_fs_options $TEST_DEV | grep -qw "dax"
-+	if [ "$?" != "0" ]; then
-+		_notrun "we need $TEST_DEV mount with dax"
-+	fi
-+}
-+
-+function check_phys_dax {
-+	xfs_io -c 'lsattr' $1 | awk -e '{ print $1 }' | grep 'x' &> /dev/null
-+	if [ "$?" != "0" ]; then
-+		echo "FAILED: Did NOT find DAX flag on $1"
-+		status=1; exit
-+	fi
-+}
-+
-+function check_effective_dax {
-+	attr=`xfs_io -c 'statx -r' $1 | grep 'stat.attributes' | awk -e '{ print $3 }'`
-+	masked=$(( $attr & 0x2000 ))
-+	if [ "$masked" != "8192" ]; then
-+		echo "FAILED: Did NOT find VFS DAX flag on $1"
-+		status=1; exit
-+	fi
-+}
-+
-+function check_phys_no_dax {
-+	xfs_io -c 'lsattr' $1 | awk -e '{ print $1 }' | grep 'x' &> /dev/null
-+	if [ "$?" == "0" ]; then
-+		echo "FAILED: Found DAX flag on $1"
-+		status=1; exit
-+	fi
-+}
-+
-+function check_effective_no_dax {
-+	attr=`xfs_io -c 'statx -r' $1 | grep 'stat.attributes' | awk -e '{ print $3 }'`
-+	masked=$(( $attr & 0x2000 ))
-+	if [ "$masked" == "8192" ]; then
-+		echo "FAILED: Found VFS DAX flag on $1"
-+		status=1; exit
-+	fi
-+}
-+
-+echo "running tests..."
-+
-+echo "   *** mount w/o dax flag."
-+mount_no_dax
-+
-+echo "   *** mark dax-dir as dax enabled"
-+mkdir $dax_dir
-+xfs_io -c 'chattr +x' $dax_dir
-+check_phys_dax $dax_dir
-+
-+echo "   *** check file inheritance"
-+touch $dax_inh_file
-+check_phys_dax $dax_inh_file
-+check_effective_dax $dax_inh_file
-+
-+echo "   *** check directory inheritance"
-+mkdir $dax_sub_dir
-+check_phys_dax $dax_sub_dir
-+
-+echo "   *** check changing directory"
-+xfs_io -c 'chattr -x' $dax_dir
-+check_phys_no_dax $dax_dir
-+check_effective_no_dax $dax_dir
-+
-+echo "   *** check non file inheritance"
-+touch $dax_non_inh_file
-+check_phys_no_dax $dax_non_inh_file
-+check_effective_no_dax $dax_non_inh_file
-+
-+echo "   *** check that previous file stays enabled"
-+check_phys_dax $dax_inh_file
-+check_effective_dax $dax_inh_file
-+
-+echo "   *** Reset the directory"
-+xfs_io -c 'chattr +x' $dax_dir
-+check_phys_dax $dax_dir
-+
-+
-+# check mount override
-+# ====================
-+
-+echo "   *** Remount fs with mount flag"
-+mount_dax
-+touch $non_dax
-+check_phys_no_dax $non_dax
-+check_effective_dax $non_dax
-+
-+echo "   *** Check for non-dax files to be dax with mount option"
-+check_effective_dax $dax_non_inh_file
-+
-+echo "   *** check for file dax flag 'sticky-ness' after remount"
-+touch $dax_file
-+xfs_io -c 'chattr +x' $dax_file
-+check_phys_dax $dax_file
-+check_effective_dax $dax_file
-+
-+echo "   *** remount w/o mount flag"
-+mount_no_dax
-+check_phys_dax $dax_file
-+check_effective_dax $dax_file
-+
-+check_phys_no_dax $non_dax
-+check_effective_no_dax $non_dax
-+
-+
-+# Check non-zero file operations
-+# ==============================
-+
-+echo "   *** file should change effective but page cache should be empty"
-+$XFS_IO_PROG -f -c "pwrite 0 10000" $data_file > /dev/null
-+xfs_io -c 'chattr +x' $data_file
-+check_phys_dax $data_file
-+check_effective_dax $data_file
-+
-+
-+# Check inheritance on cp, mv
-+# ===========================
-+
-+echo "   *** check inheritance on cp, mv"
-+cp $non_dax $dax_dir/conv-dax
-+check_phys_dax $dax_dir/conv-dax
-+check_effective_dax $dax_dir/conv-dax
-+
-+echo "   *** Moved files 'don't inherit'"
-+mv $non_dax $dax_dir/move-dax
-+check_phys_no_dax $dax_dir/move-dax
-+check_effective_no_dax $dax_dir/move-dax
-+
-+# Check preservation of phys on cp, mv
-+# ====================================
-+
-+mv $dax_file $dax_file_move
-+check_phys_dax $dax_file_move
-+check_effective_dax $dax_file_move
-+
-+cp $dax_file_move $dax_file_copy
-+check_phys_no_dax $dax_file_copy
-+check_effective_no_dax $dax_file_copy
-+
-+
-+# Verify no mode changes on mmap
-+# ==============================
-+
-+echo "   *** check no mode change when mmaped"
-+
-+dd if=/dev/zero of=$dax_file bs=4096 count=10 > $tmp.log 2>&1
-+
-+# set known state.
-+xfs_io -c 'chattr -x' $dax_file
-+check_phys_no_dax $dax_file
-+check_effective_no_dax $dax_file
-+
-+python3 - << EOF > $tmp.log 2>&1 &
-+import mmap
-+import time
-+print ('mmaping "$dax_file"')
-+f=open("$dax_file", "r+b")
-+mm = mmap.mmap(f.fileno(), 0)
-+print ('mmaped "$dax_file"')
-+while True:
-+	time.sleep(1)
-+EOF
-+pid=$!
-+
-+sleep 1
-+
-+# attempt to should fail
-+xfs_io -c 'chattr +x' $dax_file > /dev/null 2>&1
-+check_phys_no_dax $dax_file
-+check_effective_no_dax $dax_file
-+
-+kill -TERM $pid > /dev/null 2>&1
-+wait $pid > /dev/null 2>&1
-+
-+# after mmap released should work
-+xfs_io -c 'chattr +x' $dax_file
-+check_phys_dax $dax_file
-+check_effective_dax $dax_file
-+
-+
-+# Finally run the test stolen from Christoph Hellwig to test changing the mode
-+# while performing a series of operations
-+# =============================================================================
-+
-+function run_fsx {
-+	options=$1
-+
-+	echo "   *** run 'fsx $options' racing with setting/clearing the DAX flag"
-+	$here/ltp/fsx $options -N 20000 $dax_file > $tmp.log 2>&1 &
-+	pid=$!
-+
-+	if [ ! -n "$pid" ]; then
-+		echo "FAILED to start fsx"
-+		exit 255
-+	fi
-+
-+	# NOTE: fsx runs much faster than these mode changes.
-+	for i in `seq 1 500`; do
-+		xfs_io -c 'chattr +x' $dax_file > /dev/null 2>&1
-+		xfs_io -c 'chattr -x' $dax_file > /dev/null 2>&1
-+	done
-+
-+	wait $pid
-+	status=$?
-+	if [ "$status" != "0" ]; then
-+		cat /sys/kernel/debug/tracing/trace > trace_output
-+		echo "FAILED: fsx exited with status : $status"
-+		echo "        see trace_output"
-+		head $dax_file.fsxlog
-+		exit $status
-+	fi
-+	pid=""
-+}
-+
-+run_fsx ""
-+run_fsx "-A"
-+run_fsx "-Z -r 4096 -w 4096"
-+
-+
-+status=0 ; exit
-diff --git a/tests/xfs/999.out b/tests/xfs/999.out
-new file mode 100644
-index 000000000000..ccb13770ca4d
---- /dev/null
-+++ b/tests/xfs/999.out
-@@ -0,0 +1,21 @@
-+QA output created by 999
-+running tests...
-+   *** mount w/o dax flag.
-+   *** mark dax-dir as dax enabled
-+   *** check file inheritance
-+   *** check directory inheritance
-+   *** check changing directory
-+   *** check non file inheritance
-+   *** check that previous file stays enabled
-+   *** Reset the directory
-+   *** Remount fs with mount flag
-+   *** Check for non-dax files to be dax with mount option
-+   *** check for file dax flag 'sticky-ness' after remount
-+   *** remount w/o mount flag
-+   *** file should change effective but page cache should be empty
-+   *** check inheritance on cp, mv
-+   *** Moved files 'don't inherit'
-+   *** check no mode change when mmaped
-+   *** run 'fsx ' racing with setting/clearing the DAX flag
-+   *** run 'fsx -A' racing with setting/clearing the DAX flag
-+   *** run 'fsx -Z -r 4096 -w 4096' racing with setting/clearing the DAX flag
-diff --git a/tests/xfs/group b/tests/xfs/group
-index 522d4bc44d1f..816883a268bf 100644
---- a/tests/xfs/group
-+++ b/tests/xfs/group
-@@ -511,3 +511,4 @@
- 511 auto quick quota
- 512 auto quick acl attr
- 513 auto mount
-+999 auto
--- 
-2.21.0
-
+--==_Exmh_1582782809_2726P--
