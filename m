@@ -2,145 +2,388 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F01EB17108E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 06:38:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73FCB171091
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 06:38:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725884AbgB0Fid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 00:38:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7046 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725730AbgB0Fid (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 00:38:33 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01R5KG4c031110
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 00:38:31 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ydqfvfje7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 00:38:31 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Thu, 27 Feb 2020 05:38:29 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 27 Feb 2020 05:38:26 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01R5cPQo61276334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Feb 2020 05:38:25 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B2F8242047;
-        Thu, 27 Feb 2020 05:38:25 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F4B34203F;
-        Thu, 27 Feb 2020 05:38:23 +0000 (GMT)
-Received: from [9.199.158.169] (unknown [9.199.158.169])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 27 Feb 2020 05:38:23 +0000 (GMT)
-Subject: Re: [PATCHv3 5/6] ext4: Move ext4_fiemap to use iomap framework.
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, linux-ext4@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, hch@infradead.org, cmaiolino@redhat.com
-References: <cover.1582702693.git.riteshh@linux.ibm.com>
- <31caeb6a880e3070ace5dfcb0623fc06f751b443.1582702694.git.riteshh@linux.ibm.com>
- <20200226132720.GQ10728@quack2.suse.cz>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Thu, 27 Feb 2020 11:08:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1725911AbgB0Fiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 00:38:54 -0500
+Received: from mga07.intel.com ([134.134.136.100]:22722 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbgB0Fix (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Feb 2020 00:38:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 21:38:52 -0800
+X-IronPort-AV: E=Sophos;i="5.70,490,1574150400"; 
+   d="scan'208";a="241933233"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.157])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 21:38:52 -0800
+From:   ira.weiny@intel.com
+To:     fstests@vger.kernel.org
+Cc:     Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] xfs/XXX: Add xfs/XXX
+Date:   Wed, 26 Feb 2020 21:38:47 -0800
+Message-Id: <20200227053847.1888-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20200226132720.GQ10728@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20022705-4275-0000-0000-000003A5DC7B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022705-4276-0000-0000-000038BA115F
-Message-Id: <20200227053823.3F4B34203F@d06av24.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-26_09:2020-02-26,2020-02-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- malwarescore=0 suspectscore=0 priorityscore=1501 phishscore=0 adultscore=0
- bulkscore=0 impostorscore=0 lowpriorityscore=0 mlxlogscore=704 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2002270039
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Ira Weiny <ira.weiny@intel.com>
 
+Add XXX to test the various setting of dax flags on files.
 
-On 2/26/20 6:57 PM, Jan Kara wrote:
-> On Wed 26-02-20 15:27:07, Ritesh Harjani wrote:
->> This patch moves ext4_fiemap to use iomap framework.
->> For xattr a new 'ext4_iomap_xattr_ops' is added.
->>
->> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> 
-> ...
-> 
->> -static int ext4_xattr_fiemap(struct inode *inode,
->> -				struct fiemap_extent_info *fieinfo)
->> +static int ext4_iomap_xattr_fiemap(struct inode *inode, struct iomap *iomap)
->>   {
->>   	__u64 physical = 0;
->>   	__u64 length;
->> -	__u32 flags = FIEMAP_EXTENT_LAST;
->>   	int blockbits = inode->i_sb->s_blocksize_bits;
->>   	int error = 0;
->> +	u16 iomap_type;
->>   
->>   	/* in-inode? */
->>   	if (ext4_test_inode_state(inode, EXT4_STATE_XATTR)) {
->> @@ -5130,40 +4928,44 @@ static int ext4_xattr_fiemap(struct inode *inode,
->>   				EXT4_I(inode)->i_extra_isize;
->>   		physical += offset;
->>   		length = EXT4_SB(inode->i_sb)->s_inode_size - offset;
->> -		flags |= FIEMAP_EXTENT_DATA_INLINE;
->>   		brelse(iloc.bh);
->> +		iomap_type = IOMAP_INLINE;
->>   	} else { /* external block */
->>   		physical = (__u64)EXT4_I(inode)->i_file_acl << blockbits;
->>   		length = inode->i_sb->s_blocksize;
->> +		iomap_type = IOMAP_MAPPED;
->>   	}
-> 
-> If i_file_acl is 0 (i.e., no external xattr block), then I think returned
-> iomap should be different...
+The final fsx test was derived from Christophs test here but I wanted
+more direct function tests as well so I bundled this together.
 
-Yes, my bad. Let me fix this please.
+https://www.spinics.net/lists/linux-xfs/msg10124.html
 
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-> 
->> +static int ext4_iomap_xattr_begin(struct inode *inode, loff_t offset,
->> +				  loff_t length, unsigned flags,
->> +				  struct iomap *iomap, struct iomap *srcmap)
->>   {
->> -	ext4_lblk_t start_blk;
->> -	u32 ext4_fiemap_flags = FIEMAP_FLAG_SYNC|FIEMAP_FLAG_XATTR;
->> +	int error;
->>   
->> -	int error = 0;
->> -
->> -	if (ext4_has_inline_data(inode)) {
->> -		int has_inline = 1;
->> +	error = ext4_iomap_xattr_fiemap(inode, iomap);
->> +	if (error == 0 && (offset >= iomap->length))
->> +		error = -ENOENT;
-> 
-> Is ENOENT really correct here? It seems strange to me...
-> 
+---
+This tests against V4 and V5:
+https://lore.kernel.org/lkml/20200227052442.22524-1-ira.weiny@intel.com/
+---
+ tests/xfs/999     | 279 ++++++++++++++++++++++++++++++++++++++++++++++
+ tests/xfs/999.out |  21 ++++
+ tests/xfs/group   |   1 +
+ 3 files changed, 301 insertions(+)
+ create mode 100755 tests/xfs/999
+ create mode 100644 tests/xfs/999.out
 
-Yes, -ENOENT means that there is no mapping beyond this and so iomap
-core will stop querying further in iomap_fiemap.
-I see that we do the same in case of inline mapping too in
-ext4_iomap_begin_report().
-
--ritesh
+diff --git a/tests/xfs/999 b/tests/xfs/999
+new file mode 100755
+index 000000000000..b123f1f39894
+--- /dev/null
++++ b/tests/xfs/999
+@@ -0,0 +1,279 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (c) 2019 Intel, Corp.  All Rights Reserved.
++#
++# FSQA Test No. 999 (temporary)
++#
++# Test setting of DAX flag
++#
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++status=1	# failure is the default!
++
++dax_dir=$TEST_DIR/dax-dir
++dax_sub_dir=$TEST_DIR/dax-dir/dax-sub-dir
++dax_inh_file=$dax_dir/dax-inh-file
++dax_non_inh_file=$dax_dir/dax-non-inh-file
++non_dax=$TEST_DIR/non-dax
++dax_file=$TEST_DIR/dax-file
++dax_file_copy=$TEST_DIR/dax-file-copy
++dax_file_move=$TEST_DIR/dax-file-move
++data_file=$TEST_DIR/data-file
++
++_cleanup() {
++	rm -rf $TEST_DIR/*
++}
++
++trap "_cleanup ; exit \$status" 0 1 2 3 15
++
++# get standard environment, filters and checks
++. ./common/rc
++
++# real QA test starts here
++_supported_os Linux
++_require_xfs_io_command "lsattr"
++_require_xfs_io_command "chattr" "x"
++_require_xfs_io_command "statx"
++_require_test
++
++function mount_no_dax {
++	# mount SCRATCH_DEV with dax option, TEST_DEV not
++	export MOUNT_OPTIONS=""
++	export TEST_FS_MOUNT_OPTS=""
++	_test_unmount
++	_test_mount
++	_fs_options $TEST_DEV | grep -qw "dax"
++	if [ "$?" == "0" ]; then
++		_notrun "we need $TEST_DEV mount without dax"
++	fi
++}
++
++function mount_dax {
++	# mount SCRATCH_DEV with dax option, TEST_DEV not
++	export MOUNT_OPTIONS=""
++	export TEST_FS_MOUNT_OPTS=""
++	_test_unmount
++	_test_mount "-o dax"
++	_fs_options $TEST_DEV | grep -qw "dax"
++	if [ "$?" != "0" ]; then
++		_notrun "we need $TEST_DEV mount with dax"
++	fi
++}
++
++function check_phys_dax {
++	xfs_io -c 'lsattr' $1 | awk -e '{ print $1 }' | grep 'x' &> /dev/null
++	if [ "$?" != "0" ]; then
++		echo "FAILED: Did NOT find DAX flag on $1"
++		status=1; exit
++	fi
++}
++
++function check_effective_dax {
++	attr=`xfs_io -c 'statx -r' $1 | grep 'stat.attributes' | awk -e '{ print $3 }'`
++	masked=$(( $attr & 0x2000 ))
++	if [ "$masked" != "8192" ]; then
++		echo "FAILED: Did NOT find VFS DAX flag on $1"
++		status=1; exit
++	fi
++}
++
++function check_phys_no_dax {
++	xfs_io -c 'lsattr' $1 | awk -e '{ print $1 }' | grep 'x' &> /dev/null
++	if [ "$?" == "0" ]; then
++		echo "FAILED: Found DAX flag on $1"
++		status=1; exit
++	fi
++}
++
++function check_effective_no_dax {
++	attr=`xfs_io -c 'statx -r' $1 | grep 'stat.attributes' | awk -e '{ print $3 }'`
++	masked=$(( $attr & 0x2000 ))
++	if [ "$masked" == "8192" ]; then
++		echo "FAILED: Found VFS DAX flag on $1"
++		status=1; exit
++	fi
++}
++
++echo "running tests..."
++
++echo "   *** mount w/o dax flag."
++mount_no_dax
++
++echo "   *** mark dax-dir as dax enabled"
++mkdir $dax_dir
++xfs_io -c 'chattr +x' $dax_dir
++check_phys_dax $dax_dir
++
++echo "   *** check file inheritance"
++touch $dax_inh_file
++check_phys_dax $dax_inh_file
++check_effective_dax $dax_inh_file
++
++echo "   *** check directory inheritance"
++mkdir $dax_sub_dir
++check_phys_dax $dax_sub_dir
++
++echo "   *** check changing directory"
++xfs_io -c 'chattr -x' $dax_dir
++check_phys_no_dax $dax_dir
++check_effective_no_dax $dax_dir
++
++echo "   *** check non file inheritance"
++touch $dax_non_inh_file
++check_phys_no_dax $dax_non_inh_file
++check_effective_no_dax $dax_non_inh_file
++
++echo "   *** check that previous file stays enabled"
++check_phys_dax $dax_inh_file
++check_effective_dax $dax_inh_file
++
++echo "   *** Reset the directory"
++xfs_io -c 'chattr +x' $dax_dir
++check_phys_dax $dax_dir
++
++
++# check mount override
++# ====================
++
++echo "   *** Remount fs with mount flag"
++mount_dax
++touch $non_dax
++check_phys_no_dax $non_dax
++check_effective_dax $non_dax
++
++echo "   *** Check for non-dax files to be dax with mount option"
++check_effective_dax $dax_non_inh_file
++
++echo "   *** check for file dax flag 'sticky-ness' after remount"
++touch $dax_file
++xfs_io -c 'chattr +x' $dax_file
++check_phys_dax $dax_file
++check_effective_dax $dax_file
++
++echo "   *** remount w/o mount flag"
++mount_no_dax
++check_phys_dax $dax_file
++check_effective_dax $dax_file
++
++check_phys_no_dax $non_dax
++check_effective_no_dax $non_dax
++
++
++# Check non-zero file operations
++# ==============================
++
++echo "   *** file should change effective but page cache should be empty"
++$XFS_IO_PROG -f -c "pwrite 0 10000" $data_file > /dev/null
++xfs_io -c 'chattr +x' $data_file
++check_phys_dax $data_file
++check_effective_dax $data_file
++
++
++# Check inheritance on cp, mv
++# ===========================
++
++echo "   *** check inheritance on cp, mv"
++cp $non_dax $dax_dir/conv-dax
++check_phys_dax $dax_dir/conv-dax
++check_effective_dax $dax_dir/conv-dax
++
++echo "   *** Moved files 'don't inherit'"
++mv $non_dax $dax_dir/move-dax
++check_phys_no_dax $dax_dir/move-dax
++check_effective_no_dax $dax_dir/move-dax
++
++# Check preservation of phys on cp, mv
++# ====================================
++
++mv $dax_file $dax_file_move
++check_phys_dax $dax_file_move
++check_effective_dax $dax_file_move
++
++cp $dax_file_move $dax_file_copy
++check_phys_no_dax $dax_file_copy
++check_effective_no_dax $dax_file_copy
++
++
++# Verify no mode changes on mmap
++# ==============================
++
++echo "   *** check no mode change when mmaped"
++
++dd if=/dev/zero of=$dax_file bs=4096 count=10 > $tmp.log 2>&1
++
++# set known state.
++xfs_io -c 'chattr -x' $dax_file
++check_phys_no_dax $dax_file
++check_effective_no_dax $dax_file
++
++python3 - << EOF > $tmp.log 2>&1 &
++import mmap
++import time
++print ('mmaping "$dax_file"')
++f=open("$dax_file", "r+b")
++mm = mmap.mmap(f.fileno(), 0)
++print ('mmaped "$dax_file"')
++while True:
++	time.sleep(1)
++EOF
++pid=$!
++
++sleep 1
++
++# attempt to should fail
++xfs_io -c 'chattr +x' $dax_file > /dev/null 2>&1
++check_phys_no_dax $dax_file
++check_effective_no_dax $dax_file
++
++kill -TERM $pid > /dev/null 2>&1
++wait $pid > /dev/null 2>&1
++
++# after mmap released should work
++xfs_io -c 'chattr +x' $dax_file
++check_phys_dax $dax_file
++check_effective_dax $dax_file
++
++
++# Finally run the test stolen from Christoph Hellwig to test changing the mode
++# while performing a series of operations
++# =============================================================================
++
++function run_fsx {
++	options=$1
++
++	echo "   *** run 'fsx $options' racing with setting/clearing the DAX flag"
++	$here/ltp/fsx $options -N 20000 $dax_file > $tmp.log 2>&1 &
++	pid=$!
++
++	if [ ! -n "$pid" ]; then
++		echo "FAILED to start fsx"
++		exit 255
++	fi
++
++	# NOTE: fsx runs much faster than these mode changes.
++	for i in `seq 1 500`; do
++		xfs_io -c 'chattr +x' $dax_file > /dev/null 2>&1
++		xfs_io -c 'chattr -x' $dax_file > /dev/null 2>&1
++	done
++
++	wait $pid
++	status=$?
++	if [ "$status" != "0" ]; then
++		cat /sys/kernel/debug/tracing/trace > trace_output
++		echo "FAILED: fsx exited with status : $status"
++		echo "        see trace_output"
++		head $dax_file.fsxlog
++		exit $status
++	fi
++	pid=""
++}
++
++run_fsx ""
++run_fsx "-A"
++run_fsx "-Z -r 4096 -w 4096"
++
++
++status=0 ; exit
+diff --git a/tests/xfs/999.out b/tests/xfs/999.out
+new file mode 100644
+index 000000000000..ccb13770ca4d
+--- /dev/null
++++ b/tests/xfs/999.out
+@@ -0,0 +1,21 @@
++QA output created by 999
++running tests...
++   *** mount w/o dax flag.
++   *** mark dax-dir as dax enabled
++   *** check file inheritance
++   *** check directory inheritance
++   *** check changing directory
++   *** check non file inheritance
++   *** check that previous file stays enabled
++   *** Reset the directory
++   *** Remount fs with mount flag
++   *** Check for non-dax files to be dax with mount option
++   *** check for file dax flag 'sticky-ness' after remount
++   *** remount w/o mount flag
++   *** file should change effective but page cache should be empty
++   *** check inheritance on cp, mv
++   *** Moved files 'don't inherit'
++   *** check no mode change when mmaped
++   *** run 'fsx ' racing with setting/clearing the DAX flag
++   *** run 'fsx -A' racing with setting/clearing the DAX flag
++   *** run 'fsx -Z -r 4096 -w 4096' racing with setting/clearing the DAX flag
+diff --git a/tests/xfs/group b/tests/xfs/group
+index 522d4bc44d1f..816883a268bf 100644
+--- a/tests/xfs/group
++++ b/tests/xfs/group
+@@ -511,3 +511,4 @@
+ 511 auto quick quota
+ 512 auto quick acl attr
+ 513 auto mount
++999 auto
+-- 
+2.21.0
 
