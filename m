@@ -2,265 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79242170F90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 05:19:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A73D3170FC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 05:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbgB0ETu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 23:19:50 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36234 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728221AbgB0ETu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 23:19:50 -0500
-Received: by mail-ot1-f65.google.com with SMTP id j20so1714879otq.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Feb 2020 20:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X4gRZXMjOB57AEVJo2e3HkowIex7LPd2G1TMtfXG5UI=;
-        b=qn7Cuah1Qj9yROUp0BN/9SbYMP7hjdccO3RmO+BPz1AwuLugsyy8vihHNZa/boJdSr
-         TKhpt8R8fCFRLvgI347yWCVtCE17QNf0Ea0j7obSgpt87fjHO8NMZTIp47aOpOu/UmaR
-         1ujT1+pamjE3MYLWLH39jYVzy/21MCB0WMAB0zXYuFDXU7DQEeNYebjwoV50r6KqaKi9
-         Oe7CizZYmApRZkfvlM2S60HyjLLrgmWLp1uTZ73jfdSNpj9IOkmkWQhZIlg0kp8li8jv
-         VpT0ZrW7AkQKX8fR5VX8A1bROxQDWL1IYgkFYb8rHM1JLbg8zZd6kNUvOCcbniEKAuzT
-         qeNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X4gRZXMjOB57AEVJo2e3HkowIex7LPd2G1TMtfXG5UI=;
-        b=ejOU87cViT+RhUFyJKZcTsYapMhzr1uaC3e6QX/TU8OCyI1B7D8dj9KYHQAfqRKhWU
-         sbbpm9tDD92hB/YlSz7D1OkH078PPBwQZJcKsG5WbQ+7ZxBw8nDt/CKP8VXzdMxRa3HU
-         TiC/kCHbvvVypxpHFMHjmTjzqFpZur1yam6doqGU5CejHLnmACgoX8fIPcjGH6aLuxrO
-         aWlIim269lSqYMUCh8JHPLO7QyKYvwRruS48TlPIINCKYfN91q/yNEwZLnpVP/xh2D9H
-         Ab2Oq4IeDvXJ/Wi+CRu6uNQPWm34ApspadbiWyX5hgRG8xYdh2Usf3OeqFY1RmrajP8b
-         abow==
-X-Gm-Message-State: APjAAAV3YX3IM2pqv3x09na2eyBAbJC+xh1T0JCogUUdgobfso0/tHqW
-        T1rcJsRKDRWWlg+wwJ3b8t+W9lF4Rp8nTcOOErL+hg==
-X-Google-Smtp-Source: APXvYqyjmGOe7fu1yJw/v6lyC6XkUWEpKTYreDU5gJgIn0WILUyjSZ8XQKFozgTxeJMdxhCqTVuwTr8XQaKDTSd3V+w=
-X-Received: by 2002:a9d:7852:: with SMTP id c18mr1694635otm.247.1582777189156;
- Wed, 26 Feb 2020 20:19:49 -0800 (PST)
+        id S1728382AbgB0EpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Feb 2020 23:45:12 -0500
+Received: from foss.arm.com ([217.140.110.172]:45610 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728284AbgB0EpM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Feb 2020 23:45:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1595630E;
+        Wed, 26 Feb 2020 20:45:11 -0800 (PST)
+Received: from [10.162.16.120] (a075563-lin.blr.arm.com [10.162.16.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C5943F73B;
+        Wed, 26 Feb 2020 20:45:04 -0800 (PST)
+Subject: Re: [PATCH v7 05/11] arm64: elf: Enable BTI at exec based on ELF
+ program properties
+To:     Mark Brown <broonie@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        =?UTF-8?Q?Kristina_Mart=c5=a1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Martin <Dave.Martin@arm.com>
+References: <20200226155714.43937-1-broonie@kernel.org>
+ <20200226155714.43937-6-broonie@kernel.org>
+From:   Amit Kachhap <amit.kachhap@arm.com>
+Message-ID: <d79ee028-bb03-022a-12a5-37d2a5ab28ed@arm.com>
+Date:   Thu, 27 Feb 2020 10:15:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20200218214841.10076-1-vgoyal@redhat.com> <20200218214841.10076-3-vgoyal@redhat.com>
- <x49lfoxj622.fsf@segfault.boston.devel.redhat.com> <20200220215707.GC10816@redhat.com>
- <x498skv3i5r.fsf@segfault.boston.devel.redhat.com> <20200221201759.GF25974@redhat.com>
- <20200223230330.GE10737@dread.disaster.area> <20200224153844.GB14651@redhat.com>
- <20200227030248.GG10737@dread.disaster.area>
-In-Reply-To: <20200227030248.GG10737@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 26 Feb 2020 20:19:37 -0800
-Message-ID: <CAPcyv4gTSb-xZ2k938HxQeAXATvGg1aSkEGPfrzeQAz9idkgzQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
- arbitrary offset and len
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200226155714.43937-6-broonie@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 7:03 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Mon, Feb 24, 2020 at 10:38:44AM -0500, Vivek Goyal wrote:
-> > On Mon, Feb 24, 2020 at 10:03:30AM +1100, Dave Chinner wrote:
-> >
-> > [..]
-> > > > > > Hi Jeff,
-> > > > > >
-> > > > > > New dax zeroing interface (dax_zero_page_range()) can technically pass
-> > > > > > a range which is less than a sector. Or which is bigger than a sector
-> > > > > > but start and end are not aligned on sector boundaries.
-> > > > >
-> > > > > Sure, but who will call it with misaligned ranges?
-> > > >
-> > > > create a file foo.txt of size 4K and then truncate it.
-> > > >
-> > > > "truncate -s 23 foo.txt". Filesystems try to zero the bytes from 24 to
-> > > > 4095.
-> > >
-> > > This should fail with EIO. Only full page writes should clear the
-> > > bad page state, and partial writes should therefore fail because
-> > > they do not guarantee the data in the filesystem block is all good.
-> > >
-> > > If this zeroing was a buffered write to an address with a bad
-> > > sector, then the writeback will fail and the user will (eventually)
-> > > get an EIO on the file.
-> > >
-> > > DAX should do the same thing, except because the zeroing is
-> > > synchronous (i.e. done directly by the truncate syscall) we can -
-> > > and should - return EIO immediately.
-> > >
-> > > Indeed, with your code, if we then extend the file by truncating up
-> > > back to 4k, then the range between 23 and 512 is still bad, even
-> > > though we've successfully zeroed it and the user knows it. An
-> > > attempt to read anywhere in this range (e.g. 10 bytes at offset 100)
-> > > will fail with EIO, but reading 10 bytes at offset 2000 will
-> > > succeed.
-> >
-> > Hi Dave,
-> >
-> > What is expected if I do "truncate -s 512 foo.txt". Say first sector (0 to
-> > 511) is poisoned and rest don't have poison. Should this fail with -EIO.
->
-> Yes - the filesystem block still contains bad data.
->
-> > In current implementation it does not.
->
-> I'm not surprised - the whole hardware error handling architecture
-> for FS-DAX is fundamentally broken. It was designed for device-dax,
-> and it just doesn't work for FS-DAX.
->
-> For example, to get the hardware error handling to be able to kill
-> userspace applications, a 1:1 physical-to-logical association
-> constraint was added to fs/dax.c:
->
-> /*
->  * TODO: for reflink+dax we need a way to associate a single page with
->  * multiple address_space instances at different linear_page_index()
->  * offsets.
->  */
-> static void dax_associate_entry(void *entry, struct address_space *mapping,
->                 struct vm_area_struct *vma, unsigned long address)
->
-> because device-dax only has *linear mappings* and so has a fixed
-> reverse mapping architecture.
->
-> i.e. the whole hardware error handling infrastructure was designed
-> around the constraints of device-dax. device-dax does not having any
-> structure to serialise access to the physical storage, so locking
-> was added to the mapping tree. THe mapping tree locking is accessed
-> on hardware error via the reverse mappingi association in the struct
-> page and that's how device-dax serialises direct physical storage
-> access against hardware error processing.  And while the page index
-> is locked in the mapping tree, it can walk the process vmas that
-> have the page mapped to kill them so that they don't try to access
-> the bad page.
->
-> That bad physical storage state is carried in a volatile struct page
-> flag, hence requiring some mechanism to make it persistent (the
-> device bad blocks register) and some other mechanism to clear the
-> poison state (direct IO, IIRC).
->
-> It's also a big, nasty, solid roadblock to implementing shared
-> data extents in FS-DAX. We basically have to completely re-architect
-> the hardware error handling for FS-DAX so that such errors are
-> reported to the filesystem first and then the filesystem does what
-> is needed to handle the error.
->
-> None of this works for filesystems because they need to perform
-> different operations depending on what the page that went bad
-> contains. FS-DAX should never trip over an unexpected poisoned page;
-> we do so now because such physical storage errors are completely
-> hidden form the fielsystem.
->
-> What you are trying to do is slap a band-aid over what to do when we
-> hit an unexpected page containing bad data. Filesystems expect to
-> find out about bad data in storage when they marshall the data into
-> or out of memory. They make the assumption that once it is in memory
-> it remains valid on the physical storage. Hence if an in-memory
-> error occurs, we can just toss it away and re-read it from storage,
-> and all is good.
->
-> FS-DAX changes that - we are no longer marshalling data into and out
-> of memory so we don't have a mechanism to get EIO when reading the
-> page into the page cache or writing it back to disk. We also don't
-> have an in-memory copy of the data - the physical storage is the
-> in-memory copy, and so we can't just toss it away when an error
-> occurs.
->
-> What we actually require is instantaneous notification of physical
-> storage errors so we can handle the error immediately. And that, in
-> turn, means we should never poison or see poisoned pages during
-> direct access operations because the filesystem doesn't need to
-> poison pages to prevent user access - it controls how the storage is
-> accessed directly.
->
-> e.g. if this error is in filesystem metadata, we might be able to
-> recover from it as that metadata might have a full copy in memory
-> (metadata is buffered in both XFS and ext4) or we might be able to
-> reconstruct it from other sources. Worst case, we have shut the
-> filesystem down completely so the admin can repair the damage the
-> lost page has caused.
->
-> e.g. The physical page may be located in free space, in which case
-> we don't care and can just zero it so all the bad hardware state is
-> cleared. The page never goes bad or gets poisoned in that case.
->
-> e.g. The physical page may be user data, in which case it may be
-> buffered in the page cache (non-dax) and so can easily be recovered.
-> It may not be recoverable, in which case we need to issue log
-> messages indicating that data has been lost (path, offset, length),
-> and do the VMA walk and kill processes that map that page. Then we
-> can zero the page to clear the bad state.
->
-> If, at any point we can't clear the bad state (e.g. the zeroing or
-> the read-back verification fails), then we need to make sure that
-> filesystem block is marked as allocated in the free space map, then
-> tell the reverse map that it's owner is now "bad storage" so it
-> never gets used again. i.e. this is the persistent bad block
-> storage, but doing it this way results in the rest of the filesystem
-> code never, ever seeing a poisoned page. And users never see it
-> either, because it will never be returned to the free space pool.
->
-> Of course, this relies of the filesystem having reverse mapping
-> capability. XFS already has this funcitonality available as a mkfs
-> option (mkfs.xfs -m rmapbt=1 ...), and we really need this so we can
-> get rid of the association of a physical page with a mapping and
-> file offset that device-dax requires for hardware page error
-> handling.  This means we don't need the physical storage to try to
-> hold filesystem layer reverse mapping information for us, and this
-> also removes the roadblock that the hardware error handling has
-> placed on implementing reflink w/ FS-DAX.
->
-> IOWs, the problem you are trying to solve is a direct result of
-> filesysetms not being informed when a physical pmem page goes bad
-> and the current error handling being implemented at entirely the
-> wrong layer for FS-DAX. It may work for device-dax, but it's most
-> definitely insufficient for correct error handling for filesystems.
->
-> > Anyway, partial page truncate can't ensure that data in rest of the page can
-> > be read back successfully. Memory can get poison after the write and
-> > hence read after truncate will still fail.
->
-> Which is where the notification requirement comes in. Yes, we may
-> still get errors on read or write, but if memory at rest goes bad,
-> we want to handle that and correct it ASAP, not wait days or months
-> for something to trip over the poisoned page before we find out
-> about it.
->
-> > Hence, all we are trying to ensure is that if a poison is known at the
-> > time of writing partial page, then we should return error to user space.
->
-> I think within FS-DAX infrastructure, any access to the data (read
-> or write) within a poisoned page or a page marked with PageError()
-> should return EIO to the caller, unless it's the specific command to
-> clear the error/poison state on the page. What happens with that
-> error state is then up to the caller.
->
+Hi Mark,
 
-I agree with most of the above if you replace "device-dax error
-handling" with "System RAM error handling". It's typical memory error
-handling that injects the page->index and page->mappping dependency.
-In fact it was difficult to map this to device-dax without the hack
-that device-dax does not need to take a page lock. I do think that the
-FS needs this error information, at the same time it's also true that
-historically no FS pushed for this information for page-cache and
-in-memory metadata prior to FS-DAX. So, the design was not "device-dax
-first" it was "existing memory error handling first" and all the warts
-that implied.
+On 2/26/20 9:27 PM, Mark Brown wrote:
+> From: Dave Martin <Dave.Martin@arm.com>
+> 
+> For BTI protection to be as comprehensive as possible, it is
+> desirable to have BTI enabled from process startup.  If this is not
+> done, the process must use mprotect() to enable BTI for each of its
+> executable mappings, but this is painful to do in the libc startup
+> code.  It's simpler and more sound to have the kernel do it
+> instead.
+> 
+> To this end, detect BTI support in the executable (or ELF
+> interpreter, as appropriate), via the
+> NT_GNU_PROGRAM_PROPERTY_TYPE_0 note, and tweak the initial prot
+> flags for the process' executable pages to include PROT_BTI as
+> appropriate.
+> 
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>   arch/arm64/Kconfig           |  3 +++
+>   arch/arm64/include/asm/elf.h | 51 ++++++++++++++++++++++++++++++++++++
+>   arch/arm64/kernel/process.c  | 19 ++++++++++++++
+>   include/uapi/linux/elf.h     |  6 +++++
+>   4 files changed, 79 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index e37f4f07b990..d65d226a77ec 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -9,6 +9,7 @@ config ARM64
+>   	select ACPI_MCFG if (ACPI && PCI)
+>   	select ACPI_SPCR_TABLE if ACPI
+>   	select ACPI_PPTT if ACPI
+> +	select ARCH_BINFMT_ELF_STATE
+>   	select ARCH_CLOCKSOURCE_DATA
+>   	select ARCH_HAS_DEBUG_VIRTUAL
+>   	select ARCH_HAS_DEVMEM_IS_ALLOWED
+> @@ -33,6 +34,7 @@ config ARM64
+>   	select ARCH_HAS_SYSCALL_WRAPPER
+>   	select ARCH_HAS_TEARDOWN_DMA_OPS if IOMMU_SUPPORT
+>   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+> +	select ARCH_HAVE_ELF_PROT
+>   	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+>   	select ARCH_INLINE_READ_LOCK if !PREEMPTION
+>   	select ARCH_INLINE_READ_LOCK_BH if !PREEMPTION
+> @@ -62,6 +64,7 @@ config ARM64
+>   	select ARCH_INLINE_SPIN_UNLOCK_IRQRESTORE if !PREEMPTION
+>   	select ARCH_KEEP_MEMBLOCK
+>   	select ARCH_USE_CMPXCHG_LOCKREF
+> +	select ARCH_USE_GNU_PROPERTY if BINFMT_ELF
+>   	select ARCH_USE_QUEUED_RWLOCKS
+>   	select ARCH_USE_QUEUED_SPINLOCKS
+>   	select ARCH_SUPPORTS_MEMORY_FAILURE
+> diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
+> index b618017205a3..c72e381fa86d 100644
+> --- a/arch/arm64/include/asm/elf.h
+> +++ b/arch/arm64/include/asm/elf.h
+> @@ -114,7 +114,11 @@
+>   
+>   #ifndef __ASSEMBLY__
+>   
+> +#include <uapi/linux/elf.h>
+>   #include <linux/bug.h>
+> +#include <linux/errno.h>
+> +#include <linux/fs.h>
+> +#include <linux/types.h>
+>   #include <asm/processor.h> /* for signal_minsigstksz, used by ARCH_DLINFO */
+>   
+>   typedef unsigned long elf_greg_t;
+> @@ -224,6 +228,53 @@ extern int aarch32_setup_additional_pages(struct linux_binprm *bprm,
+>   
+>   #endif /* CONFIG_COMPAT */
+>   
+> +struct arch_elf_state {
+> +	int flags;
+> +};
+> +
+> +#define ARM64_ELF_BTI		(1 << 0)
+> +
+> +#define INIT_ARCH_ELF_STATE {			\
+> +	.flags = 0,				\
+> +}
+> +
+> +static inline int arch_parse_elf_property(u32 type, const void *data,
+> +					  size_t datasz, bool compat,
+> +					  struct arch_elf_state *arch)
+> +{
+> +	/* No known properties for AArch32 yet */
+> +	if (IS_ENABLED(CONFIG_COMPAT) && compat)
+> +		return 0;
+> +
+> +	if (type == GNU_PROPERTY_AARCH64_FEATURE_1_AND) {
+> +		const u32 *p = data;
+> +
+> +		if (datasz != sizeof(*p))
+> +			return -ENOEXEC;
+> +
+> +		if (IS_ENABLED(CONFIG_ARM64_BTI) &&
+> +		    system_supports_bti() &&
 
-So you want the FS to have error handling for just pmem errors or all
-memory errors? And you want this to be done without the mm core using
-page->index to identify what to unmap when the error happens? Memory
-error scanning is not universally available on all pmem
-implementations, so FS will need to subscribe for memory-error
-handling events. The implementation is clearer for pmem, if the FS is
-only interested in memory error handling events for memory it
-ostensibly owns (mounted pmem) vs other pages that are only
-ephemerally related to the FS (typical RAM).
+system_supports_bti() has inbuilt CONFIG_ARM64_BTI config check.
+
+For all the patch in the series.
+Reviewed-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+
+Cheers,
+Amit
+
+> +		    (*p & GNU_PROPERTY_AARCH64_FEATURE_1_BTI))
+> +			arch->flags |= ARM64_ELF_BTI;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static inline int arch_elf_pt_proc(void *ehdr, void *phdr,
+> +				   struct file *f, bool is_interp,
+> +				   struct arch_elf_state *state)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int arch_check_elf(void *ehdr, bool has_interp,
+> +				 void *interp_ehdr,
+> +				 struct arch_elf_state *state)
+> +{
+> +	return 0;
+> +}
+> +
+>   #endif /* !__ASSEMBLY__ */
+>   
+>   #endif
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index 00626057a384..b8e3faa8d406 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -11,6 +11,7 @@
+>   
+>   #include <linux/compat.h>
+>   #include <linux/efi.h>
+> +#include <linux/elf.h>
+>   #include <linux/export.h>
+>   #include <linux/sched.h>
+>   #include <linux/sched/debug.h>
+> @@ -18,6 +19,7 @@
+>   #include <linux/sched/task_stack.h>
+>   #include <linux/kernel.h>
+>   #include <linux/lockdep.h>
+> +#include <linux/mman.h>
+>   #include <linux/mm.h>
+>   #include <linux/stddef.h>
+>   #include <linux/sysctl.h>
+> @@ -654,3 +656,20 @@ asmlinkage void __sched arm64_preempt_schedule_irq(void)
+>   	if (system_capabilities_finalized())
+>   		preempt_schedule_irq();
+>   }
+> +
+> +#ifdef CONFIG_BINFMT_ELF
+> +int arch_elf_adjust_prot(int prot, const struct arch_elf_state *state,
+> +			 bool has_interp, bool is_interp)
+> +{
+> +	if (is_interp != has_interp)
+> +		return prot;
+> +
+> +	if (!(state->flags & ARM64_ELF_BTI))
+> +		return prot;
+> +
+> +	if (prot & PROT_EXEC)
+> +		prot |= PROT_BTI;
+> +
+> +	return prot;
+> +}
+> +#endif
+> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+> index 20900f4496b7..c6dd0215482e 100644
+> --- a/include/uapi/linux/elf.h
+> +++ b/include/uapi/linux/elf.h
+> @@ -448,4 +448,10 @@ typedef struct elf64_note {
+>     Elf64_Word n_type;	/* Content type */
+>   } Elf64_Nhdr;
+>   
+> +/* .note.gnu.property types for EM_AARCH64: */
+> +#define GNU_PROPERTY_AARCH64_FEATURE_1_AND	0xc0000000
+> +
+> +/* Bits for GNU_PROPERTY_AARCH64_FEATURE_1_BTI */
+> +#define GNU_PROPERTY_AARCH64_FEATURE_1_BTI	(1U << 0)
+> +
+>   #endif /* _UAPI_LINUX_ELF_H */
+> 
