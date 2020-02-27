@@ -2,251 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A73D3170FC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 05:45:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9ADC170FF3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 06:06:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbgB0EpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Feb 2020 23:45:12 -0500
-Received: from foss.arm.com ([217.140.110.172]:45610 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728284AbgB0EpM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Feb 2020 23:45:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1595630E;
-        Wed, 26 Feb 2020 20:45:11 -0800 (PST)
-Received: from [10.162.16.120] (a075563-lin.blr.arm.com [10.162.16.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C5943F73B;
-        Wed, 26 Feb 2020 20:45:04 -0800 (PST)
-Subject: Re: [PATCH v7 05/11] arm64: elf: Enable BTI at exec based on ELF
- program properties
-To:     Mark Brown <broonie@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        =?UTF-8?Q?Kristina_Mart=c5=a1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>
-References: <20200226155714.43937-1-broonie@kernel.org>
- <20200226155714.43937-6-broonie@kernel.org>
-From:   Amit Kachhap <amit.kachhap@arm.com>
-Message-ID: <d79ee028-bb03-022a-12a5-37d2a5ab28ed@arm.com>
-Date:   Thu, 27 Feb 2020 10:15:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1725836AbgB0FGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 00:06:50 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:59977 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725790AbgB0FGu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Feb 2020 00:06:50 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 27D5C737F;
+        Thu, 27 Feb 2020 00:06:47 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Thu, 27 Feb 2020 00:06:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        7VMetkVh205MzER1jhY7QfzeT/S8gk9URVRPcaR9UKY=; b=W2OsanbM4Y8N7In5
+        ulcg2cGkc762HChDxbpL7sdlY3FHEr5UtUaky3Id8B4Ez8PVwLkaF8cfEpICIdBy
+        Xt7n/6Dqk5eI0e9+rMeUws2jM5RFovMCugq/+PvYK5jEXpfQan0q58LWdchZ2bfR
+        WzeY10G1WL4d7N8leKIlgQqyysYWhjhW/BMmasr3oPfa1GOSd5ABB7A3H75gtt/x
+        bXclqh60MTUvIcM/qtScr0uW+euP6nWv4EyQkbvJLNdwZPabxC9Z/wBRlTlTwBmH
+        bfEeQEx3KWLaawlf5FdpkiqtUASSGU5lRdXJ5ZUK8KNvHa6k+A/chvB/Olwq2lLZ
+        Bd1cUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=7VMetkVh205MzER1jhY7QfzeT/S8gk9URVRPcaR9U
+        KY=; b=s2D+WB69gZXt5NsTV7nJlj/+NG6CxkQ5cJWonajElYzKmdNc2fxAODUR5
+        vLjjyzrHRBo1uSgVb7VPVOPbQ4BJkBglTx+kkoUUfPvcKcF7bY+UghGP/dlZWL44
+        WJULFq6b2tHrB2rXxOi08xPrUyu2VxELzKsrZ93L8UfXLlmNFHOpIfiXNDoR7uQW
+        W9BWiBePb2kB6zeA1mtU+YZHeLXHnrCaQo3dIMoH0TgZCKDn7VIv3zP8QqxXQdtA
+        fvdC7SGbyGvO3E9j1HucB7UXo/KbPiLMU4Adiswzw7DTEln6Q8Mzvu8Ey54uHEDS
+        vPQXTN7R6HV1lKXYR7oTMRYpWHV/Q==
+X-ME-Sender: <xms:Zk5XXu8UUkZ2foIoXf2SguUEfEfUsPzeSYQW-32vD9v-SHSFfot_2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleehgdekvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdekrd
+    dukeehrddugeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
+    rhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:Zk5XXjq2kzjheij30NPfrlzINAHm9we_2SZugqbGzz8-L-1hyruffg>
+    <xmx:Zk5XXsLFGLC4IIMpEQT_lEIId5f-TSAaWcnoEPFyYNNEchYsX4B0aQ>
+    <xmx:Zk5XXm71yRDmPqsFHdKQOnobRhiSGeyg8pgFiBiVRJ3G8aXsVPV25Q>
+    <xmx:Z05XXsRQd3afcvSV6Fqqrd1CstsqPgyXFpAuNFt_ETou83LLB_gPXw>
+Received: from mickey.themaw.net (unknown [118.208.185.148])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CE3CA3280059;
+        Thu, 27 Feb 2020 00:06:41 -0500 (EST)
+Message-ID: <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
+ [ver #17]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Thu, 27 Feb 2020 13:06:37 +0800
+In-Reply-To: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+         <1582316494.3376.45.camel@HansenPartnership.com>
+         <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+         <1582556135.3384.4.camel@HansenPartnership.com>
+         <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+         <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+         <1582644535.3361.8.camel@HansenPartnership.com>
+         <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <20200226155714.43937-6-broonie@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mark,
-
-On 2/26/20 9:27 PM, Mark Brown wrote:
-> From: Dave Martin <Dave.Martin@arm.com>
+On Wed, 2020-02-26 at 10:11 +0100, Miklos Szeredi wrote:
+> On Tue, Feb 25, 2020 at 4:29 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
 > 
-> For BTI protection to be as comprehensive as possible, it is
-> desirable to have BTI enabled from process startup.  If this is not
-> done, the process must use mprotect() to enable BTI for each of its
-> executable mappings, but this is painful to do in the libc startup
-> code.  It's simpler and more sound to have the kernel do it
-> instead.
+> > The other thing a file descriptor does that sysfs doesn't is that
+> > it
+> > solves the information leak: if I'm in a mount namespace that has
+> > no
+> > access to certain mounts, I can't fspick them and thus I can't see
+> > the
+> > information.  By default, with sysfs I can.
 > 
-> To this end, detect BTI support in the executable (or ELF
-> interpreter, as appropriate), via the
-> NT_GNU_PROGRAM_PROPERTY_TYPE_0 note, and tweak the initial prot
-> flags for the process' executable pages to include PROT_BTI as
-> appropriate.
+> That's true, but procfs/sysfs has to deal with various namespacing
+> issues anyway.  If this is just about hiding a number of entries,
+> then
+> I don't think that's going to be a big deal.
+
+I didn't see name space considerations in sysfs when I was looking at
+it recently. Obeying name space requirements is likely a lot of work
+in sysfs.
+
 > 
-> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->   arch/arm64/Kconfig           |  3 +++
->   arch/arm64/include/asm/elf.h | 51 ++++++++++++++++++++++++++++++++++++
->   arch/arm64/kernel/process.c  | 19 ++++++++++++++
->   include/uapi/linux/elf.h     |  6 +++++
->   4 files changed, 79 insertions(+)
+> The syscall API is efficient: single syscall per query instead of
+> several, no parsing necessary.
 > 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index e37f4f07b990..d65d226a77ec 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -9,6 +9,7 @@ config ARM64
->   	select ACPI_MCFG if (ACPI && PCI)
->   	select ACPI_SPCR_TABLE if ACPI
->   	select ACPI_PPTT if ACPI
-> +	select ARCH_BINFMT_ELF_STATE
->   	select ARCH_CLOCKSOURCE_DATA
->   	select ARCH_HAS_DEBUG_VIRTUAL
->   	select ARCH_HAS_DEVMEM_IS_ALLOWED
-> @@ -33,6 +34,7 @@ config ARM64
->   	select ARCH_HAS_SYSCALL_WRAPPER
->   	select ARCH_HAS_TEARDOWN_DMA_OPS if IOMMU_SUPPORT
->   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
-> +	select ARCH_HAVE_ELF_PROT
->   	select ARCH_HAVE_NMI_SAFE_CMPXCHG
->   	select ARCH_INLINE_READ_LOCK if !PREEMPTION
->   	select ARCH_INLINE_READ_LOCK_BH if !PREEMPTION
-> @@ -62,6 +64,7 @@ config ARM64
->   	select ARCH_INLINE_SPIN_UNLOCK_IRQRESTORE if !PREEMPTION
->   	select ARCH_KEEP_MEMBLOCK
->   	select ARCH_USE_CMPXCHG_LOCKREF
-> +	select ARCH_USE_GNU_PROPERTY if BINFMT_ELF
->   	select ARCH_USE_QUEUED_RWLOCKS
->   	select ARCH_USE_QUEUED_SPINLOCKS
->   	select ARCH_SUPPORTS_MEMORY_FAILURE
-> diff --git a/arch/arm64/include/asm/elf.h b/arch/arm64/include/asm/elf.h
-> index b618017205a3..c72e381fa86d 100644
-> --- a/arch/arm64/include/asm/elf.h
-> +++ b/arch/arm64/include/asm/elf.h
-> @@ -114,7 +114,11 @@
->   
->   #ifndef __ASSEMBLY__
->   
-> +#include <uapi/linux/elf.h>
->   #include <linux/bug.h>
-> +#include <linux/errno.h>
-> +#include <linux/fs.h>
-> +#include <linux/types.h>
->   #include <asm/processor.h> /* for signal_minsigstksz, used by ARCH_DLINFO */
->   
->   typedef unsigned long elf_greg_t;
-> @@ -224,6 +228,53 @@ extern int aarch32_setup_additional_pages(struct linux_binprm *bprm,
->   
->   #endif /* CONFIG_COMPAT */
->   
-> +struct arch_elf_state {
-> +	int flags;
-> +};
-> +
-> +#define ARM64_ELF_BTI		(1 << 0)
-> +
-> +#define INIT_ARCH_ELF_STATE {			\
-> +	.flags = 0,				\
-> +}
-> +
-> +static inline int arch_parse_elf_property(u32 type, const void *data,
-> +					  size_t datasz, bool compat,
-> +					  struct arch_elf_state *arch)
-> +{
-> +	/* No known properties for AArch32 yet */
-> +	if (IS_ENABLED(CONFIG_COMPAT) && compat)
-> +		return 0;
-> +
-> +	if (type == GNU_PROPERTY_AARCH64_FEATURE_1_AND) {
-> +		const u32 *p = data;
-> +
-> +		if (datasz != sizeof(*p))
-> +			return -ENOEXEC;
-> +
-> +		if (IS_ENABLED(CONFIG_ARM64_BTI) &&
-> +		    system_supports_bti() &&
-
-system_supports_bti() has inbuilt CONFIG_ARM64_BTI config check.
-
-For all the patch in the series.
-Reviewed-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-
-Cheers,
-Amit
-
-> +		    (*p & GNU_PROPERTY_AARCH64_FEATURE_1_BTI))
-> +			arch->flags |= ARM64_ELF_BTI;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int arch_elf_pt_proc(void *ehdr, void *phdr,
-> +				   struct file *f, bool is_interp,
-> +				   struct arch_elf_state *state)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline int arch_check_elf(void *ehdr, bool has_interp,
-> +				 void *interp_ehdr,
-> +				 struct arch_elf_state *state)
-> +{
-> +	return 0;
-> +}
-> +
->   #endif /* !__ASSEMBLY__ */
->   
->   #endif
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index 00626057a384..b8e3faa8d406 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -11,6 +11,7 @@
->   
->   #include <linux/compat.h>
->   #include <linux/efi.h>
-> +#include <linux/elf.h>
->   #include <linux/export.h>
->   #include <linux/sched.h>
->   #include <linux/sched/debug.h>
-> @@ -18,6 +19,7 @@
->   #include <linux/sched/task_stack.h>
->   #include <linux/kernel.h>
->   #include <linux/lockdep.h>
-> +#include <linux/mman.h>
->   #include <linux/mm.h>
->   #include <linux/stddef.h>
->   #include <linux/sysctl.h>
-> @@ -654,3 +656,20 @@ asmlinkage void __sched arm64_preempt_schedule_irq(void)
->   	if (system_capabilities_finalized())
->   		preempt_schedule_irq();
->   }
-> +
-> +#ifdef CONFIG_BINFMT_ELF
-> +int arch_elf_adjust_prot(int prot, const struct arch_elf_state *state,
-> +			 bool has_interp, bool is_interp)
-> +{
-> +	if (is_interp != has_interp)
-> +		return prot;
-> +
-> +	if (!(state->flags & ARM64_ELF_BTI))
-> +		return prot;
-> +
-> +	if (prot & PROT_EXEC)
-> +		prot |= PROT_BTI;
-> +
-> +	return prot;
-> +}
-> +#endif
-> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-> index 20900f4496b7..c6dd0215482e 100644
-> --- a/include/uapi/linux/elf.h
-> +++ b/include/uapi/linux/elf.h
-> @@ -448,4 +448,10 @@ typedef struct elf64_note {
->     Elf64_Word n_type;	/* Content type */
->   } Elf64_Nhdr;
->   
-> +/* .note.gnu.property types for EM_AARCH64: */
-> +#define GNU_PROPERTY_AARCH64_FEATURE_1_AND	0xc0000000
-> +
-> +/* Bits for GNU_PROPERTY_AARCH64_FEATURE_1_BTI */
-> +#define GNU_PROPERTY_AARCH64_FEATURE_1_BTI	(1U << 0)
-> +
->   #endif /* _UAPI_LINUX_ELF_H */
+> However, it is difficult to extend, because the ABI must be updated,
+> possibly libc and util-linux also, so that scripts can also consume
+> the new parameter.  With the sysfs approach only the kernel needs to
+> be updated, and possibly only the filesystem code, not even the VFS.
 > 
+> So I think the question comes down to:  do we need a highly efficient
+> way to query the superblock parameters all at once, or not?
+
+Or a similar question could be, how could a sysfs interface work
+to provide mount information.
+
+Getting information about all mounts might not be too bad but the
+sysfs directory structure that would be needed to represent all
+system mounts (without considering name spaces) would likely
+result in somewhat busy user space code.
+
+For example, given a path, and the path is all I know, how do I
+get mount information?
+
+Ignoring possible multiple mounts on a mount point, call fsinfo()
+with the path and get the id (the path walk is low overhead) to
+use with fsinfo() to get the all the info I need ... done.
+
+Again, ignoring possible multiple mounts on a mount point, and
+assuming there is a sysfs tree enumerating all the system mounts.
+I could open <sysfs base> + mount point path followed buy opening
+and reading the individual attribute files ... a bit more busy
+that one ... particularly if I need to do it for several thousand
+mounts.
+
+Then there's the code that would need to be added to maintain the
+various views in the sysfs tree, which can't be restricted only to
+the VFS because there's file system specific info needed too (the
+maintain a table idea), and that's before considering name space
+handling changes to sysfs.
+
+At the least the question of "do we need a highly efficient way
+to query the superblock parameters all at once" needs to be
+extended to include mount table enumeration as well as getting
+the info.
+
+But this is just me thinking about mount table handling and the
+quite significant problem we now have with user space scanning
+the proc mount tables to get this information.
+
+Ian
+
