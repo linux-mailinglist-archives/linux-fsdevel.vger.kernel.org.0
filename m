@@ -2,131 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD56172B92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Feb 2020 23:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7162172C49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 00:31:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbgB0Wjy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 17:39:54 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50979 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729722AbgB0Wjy (ORCPT
+        id S1729816AbgB0Xbq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 18:31:46 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37540 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728993AbgB0Xbq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 17:39:54 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 34B677EA9D0;
-        Fri, 28 Feb 2020 09:39:47 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j7Ron-0004eO-8O; Fri, 28 Feb 2020 09:39:45 +1100
-Date:   Fri, 28 Feb 2020 09:39:45 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Sandeen <sandeen@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
-Message-ID: <20200227223945.GN10737@dread.disaster.area>
-References: <20200226161404.14136-1-longman@redhat.com>
- <20200226162954.GC24185@bombadil.infradead.org>
- <0e5124a2-d730-5c41-38fd-2c78d9be4940@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e5124a2-d730-5c41-38fd-2c78d9be4940@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=5xOlfOR4AAAA:8 a=z2cq81k1AAAA:20 a=7-415B0cAAAA:8
-        a=mlMlIRDalk7ZbqZ7_3gA:9 a=bReWesNirA5XSw2M:21 a=cHR_8xpGokDfY6ir:21
-        a=CjuIK1q_8ugA:10 a=SGlsW6VomvECssOqsvzv:22 a=biEYGPWJfzWAr4FL6Ov7:22
+        Thu, 27 Feb 2020 18:31:46 -0500
+Received: by mail-pl1-f193.google.com with SMTP id q4so446755pls.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 15:31:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=vTq1zaq3w8Ey6IwphJFu7diB+CHCXa5rJo8d7um3eyc=;
+        b=bCPsH6yEV8hJb/Ba4aHx8v1uGGmP02xuAjwb//xfBW6ZzW/wROl8Exi/EqQRUIGIaM
+         yLJbkdDCS6AruH8qOLFd+4NhLYC7IBZCOt/NaGUE8TnXztnq8HHfS4a2HD0zNDa0QNax
+         RZ+0D8OY/3StZCHhuEgIpXCh+/Q9jtDL4VVD4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vTq1zaq3w8Ey6IwphJFu7diB+CHCXa5rJo8d7um3eyc=;
+        b=QWU6siKCtb0nQm4QuChfc8gnDruj8npBp4j9gb7q2wsp/dLkBebHk9efde8n7Y/r4B
+         rhSxzlAuK+NilZS9a857e/zfboKHzUX4jAOgjlPGUHtAVZoZM+BbxMV0ATJha5kLiby+
+         6C0M2L7GKNdbJe/hzU4ptfI4gjnbJ2laxGqAc+Tb0pzA9duVtST6G2aNPMwgMrqBWvRb
+         LGjfH450+FAxprfT4vT0HqZtptie3ixKvMMSaJ2OgFFLCcvTsWjF8yZxzUy9ws2MGVzK
+         pIVjV+gZQBymjKCT0+eJWQIgyylyQnYy2okZ7ua93MFNFk6js3FP/a3sGIVr62HNW1VN
+         TZng==
+X-Gm-Message-State: APjAAAXLnDF+Zbz77gI3cd3AmTUEbsp361dIV7aPevYwLPsgGU0e7U5r
+        jx4wv4Y/lMvhj7vsSXlFATIL1A==
+X-Google-Smtp-Source: APXvYqwZMfxDqYwISreaoCB9cTBcDytS+qwBtP1hvQSul6wGP/JiK9bR2BH7Z7Dc4SwsinKmQyGJGw==
+X-Received: by 2002:a17:902:9a08:: with SMTP id v8mr1094642plp.251.1582846305185;
+        Thu, 27 Feb 2020 15:31:45 -0800 (PST)
+Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id d69sm9223820pfd.72.2020.02.27.15.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 15:31:44 -0800 (PST)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH] exec: remove comparision of variable i_size of type loff_t against SIZE_MAX
+Date:   Thu, 27 Feb 2020 15:31:33 -0800
+Message-Id: <20200227233133.10383-1-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 27, 2020 at 11:04:40AM -0800, Eric Sandeen wrote:
-> On 2/26/20 8:29 AM, Matthew Wilcox wrote:
-> > On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
-> >> A new sysctl parameter "dentry-dir-max" is introduced which accepts a
-> >> value of 0 (default) for no limit or a positive integer 256 and up. Small
-> >> dentry-dir-max numbers are forbidden to avoid excessive dentry count
-> >> checking which can impact system performance.
-> > 
-> > This is always the wrong approach.  A sysctl is just a way of blaming
-> > the sysadmin for us not being very good at programming.
-> > 
-> > I agree that we need a way to limit the number of negative dentries.
-> > But that limit needs to be dynamic and depend on how the system is being
-> > used, not on how some overworked sysadmin has configured it.
-> > 
-> > So we need an initial estimate for the number of negative dentries that
-> > we need for good performance.  Maybe it's 1000.  It doesn't really matter;
-> > it's going to change dynamically.
-> > 
-> > Then we need a metric to let us know whether it needs to be increased.
-> > Perhaps that's "number of new negative dentries created in the last
-> > second".  And we need to decide how much to increase it; maybe it's by
-> > 50% or maybe by 10%.  Perhaps somewhere between 10-100% depending on
-> > how high the recent rate of negative dentry creation has been.
-> 
-> There are pitfalls to this approach as well.  Consider what libnss
-> does every time it starts up (via curl in this case)
-> 
-> # cat /proc/sys/fs/dentry-state
-> 3154271	3131421	45	0	2863333	0
-> # for I in `seq 1 10`; do curl https://sandeen.net/ &>/dev/null; done
-> # cat /proc/sys/fs/dentry-state
-> 3170738	3147844	45	0	2879882	0
-> 
-> voila, 16k more negative dcache entries, thanks to:
-> 
-> https://github.com/nss-dev/nss/blob/317cb06697d5b953d825e050c1d8c1ee0d647010/lib/softoken/sdb.c#L390
-> 
-> i.e. each time it inits, it will intentionally create up to 10,000 negative
-> dentries which will never be looked up again.
+Remove comparision of (i_size > SIZE_MAX).
+i_size is of type loff_t and can not be great than SIZE_MAX (~(size_t)0).
 
-Sandboxing via memcg restricted cgroups means users and/or
-applications cannot create unbound numbers of negative dentries, and
-that largely solves this problem.
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ fs/exec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For a system daemons whose environment is controlled by a
-systemd unit file, this should be pretty trivial to do, and memcg
-directed memory reclaim will control negative dentry buildup.
-
-For short-lived applications, teardown of the cgroup will free
-all the negative dentries it created - they don't hang around
-forever.
-
-For long lived applications, negative dentries are bound by the
-application memcg limits, and buildup will only affect the
-applications own performance, not that of the whole system.
-
-IOWs, I'd expect this sort of resource control problem to be solved
-at the user, application and/or distro level, not with a huge kernel
-hammer.
-
-> I /think/ the original intent of this work was to limit such rogue
-> applications, so scaling with use probably isn't the way to go.
-
-The original intent was to prevent problems on old kernels that
-supported terabytes of memory but could not use cgroup/memcg
-infrastructure to isolate and contain negative dentry growth.
-That was a much simpler, targeted negative dentry limiting solution,
-not the ... craziness that can be found in this patchset.
-
-Cheers,
-
-Dave.
+diff --git a/fs/exec.c b/fs/exec.c
+index db17be51b112..16c229752f74 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -919,7 +919,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
++	if (max_size > 0 && i_size > max_size) {
+ 		ret = -EFBIG;
+ 		goto out;
+ 	}
 -- 
-Dave Chinner
-david@fromorbit.com
+2.17.1
+
