@@ -2,137 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64A16173C36
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 16:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CBAE173CCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 17:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgB1Pw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 10:52:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54444 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbgB1Pw6 (ORCPT
+        id S1726642AbgB1QYf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 11:24:35 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38488 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgB1QYf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:52:58 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j7hwT-0008I1-Db; Fri, 28 Feb 2020 15:52:45 +0000
-Date:   Fri, 28 Feb 2020 16:52:44 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        Fri, 28 Feb 2020 11:24:35 -0500
+Received: by mail-io1-f67.google.com with SMTP id s24so4026966iog.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2020 08:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bB98tLoF0u0YAiQkQFd8a6MwFlRbdwFA2a9rJyqMwcU=;
+        b=inr1/qyOInYmFN6D425GzWVmy0IT7QRJk3SjPLoFYSH/pO1voh/EdW+SfD8OofD6Bn
+         wvNaWCaLKbDpnb6pOCFOt0X9wayPiilDqg7EASARHhnxnaUyVoJrs35dzHFojcJnpWDF
+         dEnNQkAT4yoK8tzeRd9BPUclNV9H8sVGfsSfM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bB98tLoF0u0YAiQkQFd8a6MwFlRbdwFA2a9rJyqMwcU=;
+        b=ShgHsNcFhaDHl7O8ERdrs1Kbv5mqmnZy5HskwsTd3i3E3uE6uM4xusG3EItytn7Nff
+         kAKKRXoqRNswQ/lcFDSsVg0nzbR7BeV3sBZbs9eAc0zv7i9NaUJ3ea/qspmkqk28sFu6
+         I6jHmQhLAFbcLZ4qGzHpOYYW48As2wRd1tBGkolZ63StY32tcjIkEI03496ZZLMbUZdm
+         dyah6kIJbDnLDI+a4VcD1jGQRi55tw659CV60BQ+3i0iTUzmlY7AS7IiwLccWr7pGCvG
+         ZN+UZj1lWm1nYfW3VOBxL9yxS/Nc5N1lwL55s7/GvGKwgibsdCiYEYlSRe9+/gfZrkn0
+         V1Jg==
+X-Gm-Message-State: APjAAAWifLJlqKgbL/s18BZOUcxMkap+/+XhQ+lCjf9YkZSSOnk8Po/k
+        1nfUPln8moIZWVlwCqqwDRTGbZHzz6SKYY/3nyWqZQ==
+X-Google-Smtp-Source: APXvYqzW4AhONnArihOqANfWi8suDYP+nTtZwmEhAQutobth5sBaSR8sSuEmoVmIoU8B7DsyWsdjOGmol0a5XteeUNc=
+X-Received: by 2002:a02:9988:: with SMTP id a8mr4117936jal.33.1582907074679;
+ Fri, 28 Feb 2020 08:24:34 -0800 (PST)
+MIME-Version: 1.0
+References: <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+ <1582644535.3361.8.camel@HansenPartnership.com> <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+ <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+ <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
+ <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
+ <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+ <20200227151421.3u74ijhqt6ekbiss@ws.net.home> <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
+ <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com> <20200228122712.GA3013026@kroah.com>
+In-Reply-To: <20200228122712.GA3013026@kroah.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 28 Feb 2020 17:24:23 +0100
+Message-ID: <CAJfpegsGgjnyZiB+ionfnnk+_e+5oaC-5nmGq+mLxWs1RcwsPw@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ian Kent <raven@themaw.net>, Karel Zak <kzak@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
         David Howells <dhowells@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
         Jann Horn <jannh@google.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com>
- <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com>
- <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
- <1582644535.3361.8.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1582644535.3361.8.camel@HansenPartnership.com>
+        lkml <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        util-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 07:28:55AM -0800, James Bottomley wrote:
-> On Tue, 2020-02-25 at 12:13 +0000, Steven Whitehouse wrote:
-> > Hi,
-> > 
-> > On 24/02/2020 15:28, Miklos Szeredi wrote:
-> > > On Mon, Feb 24, 2020 at 3:55 PM James Bottomley
-> > > <James.Bottomley@hansenpartnership.com> wrote:
-> > > 
-> > > > Once it's table driven, certainly a sysfs directory becomes
-> > > > possible. The problem with ST_DEV is filesystems like btrfs and
-> > > > xfs that may have multiple devices.
-> > > 
-> > > For XFS there's always  a single sb->s_dev though, that's what
-> > > st_dev will be set to on all files.
-> > > 
-> > > Btrfs subvolume is sort of a lightweight superblock, so basically
-> > > all such st_dev's are aliases of the same master superblock.  So
-> > > lookup of all subvolume st_dev's could result in referencing the
-> > > same underlying struct super_block (just like /proc/$PID will
-> > > reference the same underlying task group regardless of which of the
-> > > task group member's PID is used).
-> > > 
-> > > Having this info in sysfs would spare us a number of issues that a
-> > > set of new syscalls would bring.  The question is, would that be
-> > > enough, or is there a reason that sysfs can't be used to present
-> > > the various filesystem related information that fsinfo is supposed
-> > > to present?
-> > > 
-> > > Thanks,
-> > > Miklos
-> > > 
-> > 
-> > We need a unique id for superblocks anyway. I had wondered about
-> > using s_dev some time back, but for the reasons mentioned earlier in
-> > this thread I think it might just land up being confusing and
-> > difficult to manage. While fake s_devs are created for sbs that don't
-> > have a device, I can't help thinking that something closer to
-> > ifindex, but for superblocks, is needed here. That would avoid the
-> > issue of which device number to use.
-> > 
-> > In fact we need that anyway for the notifications, since without
-> > that  there is a race that can lead to missing remounts of the same
-> > device, in  case a umount/mount pair is missed due to an overrun, and
-> > then fsinfo returns the same device as before, with potentially the
-> > same mount options too. So I think a unique id for a superblock is a
-> > generically useful feature, which would also allow for sensible sysfs
-> > directory naming, if required,
-> 
-> But would this be informative and useful for the user?  I'm sure we can
-> find a persistent id for a persistent superblock, but what about tmpfs
-> ... that's going to have to change with every reboot.  It's going to be
-> remarkably inconvenient if I want to get fsinfo on /run to have to keep
-> finding what the id is.
-> 
-> The other thing a file descriptor does that sysfs doesn't is that it
-> solves the information leak: if I'm in a mount namespace that has no
-> access to certain mounts, I can't fspick them and thus I can't see the
-> information.  By default, with sysfs I can.
+On Fri, Feb 28, 2020 at 1:27 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 
-Difficult to figure out which part of the thread to reply too. :)
+> > Superblocks and mounts could get enumerated by a unique identifier.
+> > mnt_id seems to be good for mounts, s_dev may or may not be good for
+> > superblock, but  s_id (as introduced in this patchset) could be used
+> > instead.
+>
+> So what would the sysfs tree look like with this?
 
-sysfs strikes me as fundamentally misguided for this task.
+For a start something like this:
 
-Init systems or any large-scale daemon will hate parsing things, there's
-that and parts of the reason why mountinfo sucks is because of parsing a
-possibly a potentially enormous file. Exposing information in sysfs will
-require parsing again one way or the other. I've been discussing these
-bottlenecks with Lennart quite a bit and reliable and performant mount
-notifications without needing to parse stuff is very high on the issue
-list. But even if that isn't an issue for some reason the namespace
-aspect is definitely something I'd consider a no-go.
-James has been poking at this a little already and I agree. More
-specifically, sysfs and proc already are a security nightmare for
-namespace-aware workloads and require special care. Not leaking
-information in any way is a difficult task. I mean, over the last two
-years I sent quite a lot of patches to the networking-namespace aware
-part of sysfs alone either fixing information leaks, or making other
-parts namespace aware that weren't and were causing issues (There's
-another large-ish series sitting in Dave's tree right now.). And tbh,
-network namespacing in sysfs is imho trivial compared to what we would
-need to do to handle mount namespacing and especially mount propagation.
-fsinfo() is way cleaner and ultimately simpler approach. We very much
-want it file-descriptor based. The mount api opens up the road to secure
-and _delegatable_ querying of filesystem information.
+mounts/$MOUNT_ID/
+  parent -> ../$PARENT_ID
+  super -> ../../supers/$SUPER_ID
+  root: path from mount root to fs root (could be optional as usually
+they are the same)
+  mountpoint -> $MOUNTPOINT
+  flags: mount flags
+  propagation: mount propagation
+  children/$CHILD_ID -> ../../$CHILD_ID
 
-Christian
+ supers/$SUPER_ID/
+   type: fstype
+   source: mount source (devname)
+   options: csv of mount options
+
+Thanks,
+Miklos
