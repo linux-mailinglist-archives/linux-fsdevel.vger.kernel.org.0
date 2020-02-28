@@ -2,151 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E443A172E55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 02:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3278172E5B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 02:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730346AbgB1BbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 20:31:00 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:40333 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730155AbgB1BbA (ORCPT
+        id S1730509AbgB1Bfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 20:35:44 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37129 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730383AbgB1Bfo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:31:00 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D65E57EAC9F;
-        Fri, 28 Feb 2020 12:30:56 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j7UUQ-0005gj-Iv; Fri, 28 Feb 2020 12:30:54 +1100
-Date:   Fri, 28 Feb 2020 12:30:54 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>
-Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
- arbitrary offset and len
-Message-ID: <20200228013054.GO10737@dread.disaster.area>
-References: <20200218214841.10076-1-vgoyal@redhat.com>
- <20200218214841.10076-3-vgoyal@redhat.com>
- <x49lfoxj622.fsf@segfault.boston.devel.redhat.com>
- <20200220215707.GC10816@redhat.com>
- <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
- <20200221201759.GF25974@redhat.com>
- <20200223230330.GE10737@dread.disaster.area>
- <20200224153844.GB14651@redhat.com>
- <20200227030248.GG10737@dread.disaster.area>
- <CAPcyv4gTSb-xZ2k938HxQeAXATvGg1aSkEGPfrzeQAz9idkgzQ@mail.gmail.com>
+        Thu, 27 Feb 2020 20:35:44 -0500
+Received: by mail-pl1-f193.google.com with SMTP id q4so559710pls.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Feb 2020 17:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bMqEeWlLS8pQIJAtkSYGwz6EETfHigbDwAopBr6aqSw=;
+        b=lgtrW87iuETCM6MZfqHeUbE2DW3RSQUkTb5c9Os5peB3NMgUMmvzYpHhxFIrY0jQXl
+         gTrEBhDd72sK9/GoImcg66uzU3uAqej/TrzMSPyuRvYKJXLyOBQspS9TcAOMJg6azajt
+         4e4q0xU1JkQ3g2MaJrsC9L1l9n0PDkxKG0gN++8ID1WkaCe0ROEz0wYUUsuEolByzx4i
+         fG8Lbqc6k6bo4o2QTP0TttQdc2i28Mmr0Awltak6siB2kyTSpUJ6DCCiYQ+P2cNJRppz
+         ooeJ4vQNEK7hfzeQav9OBK3kBGi0VJ3wFrtbS7/vKcxY6xS/94NshlnQDnSNmwv45TSF
+         5zvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bMqEeWlLS8pQIJAtkSYGwz6EETfHigbDwAopBr6aqSw=;
+        b=XJ34rJC+cuua+nKFralx87FBGYeCsygj0R+oGdbS2V1OYRxfq712olZ43QgX/gurVu
+         mW9lCq3nirm3d+JJHSmTzN6cVf/48H/sED8FegEp5dpEHWfk7BEBYgVrP46fhaEkk6cW
+         VpNcMF7J9CtVKKjM/lWZi7YxId2R0xB2IUect1iZ9lwwtNPimDnDrp4ftzgWow9EOauK
+         83CmDS6hfMWDqVILEvJa74W6kIhCWgw89OsxM85o9N+3WIxRzRLrEHcABfRs1RhKYzA8
+         KqIdMny6WW3me1wZLMI+db25/C7IKzKLT3xpB95FVpPdEALkwnAud7ri6kMUDgbh/psn
+         0UAQ==
+X-Gm-Message-State: APjAAAU0YWrlCvYD4VtGpe31y6htyC4hqIGczOnQwi0nN4EYtYIng79h
+        u9EpxTt2Tve/XYwLg6quppsDvSLGmZo=
+X-Google-Smtp-Source: APXvYqzFAG8op1dk3VkVp/cpqFeD1tiz06LRZypn5EbxphJV/FMkk89RccTVZt4zprSwmIDBPcQEAA==
+X-Received: by 2002:a17:902:426:: with SMTP id 35mr1619596ple.176.1582853742556;
+        Thu, 27 Feb 2020 17:35:42 -0800 (PST)
+Received: from [192.168.1.11] (97-126-123-70.tukw.qwest.net. [97.126.123.70])
+        by smtp.gmail.com with ESMTPSA id c1sm8546037pfa.51.2020.02.27.17.35.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 17:35:41 -0800 (PST)
+Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
+To:     Mark Brown <broonie@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        =?UTF-8?Q?Kristina_Mart=c5=a1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200227174417.23722-1-broonie@kernel.org>
+From:   Richard Henderson <richard.henderson@linaro.org>
+Message-ID: <562edd23-9d86-800e-aae3-e54c92601929@linaro.org>
+Date:   Thu, 27 Feb 2020 17:35:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gTSb-xZ2k938HxQeAXATvGg1aSkEGPfrzeQAz9idkgzQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=7-415B0cAAAA:8 a=NxkpfW6PSC3fqcVbgWsA:9 a=iOAVfZH_XQw0H41z:21
-        a=2HYxUNSYbguoUMYx:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200227174417.23722-1-broonie@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 08:19:37PM -0800, Dan Williams wrote:
-> On Wed, Feb 26, 2020 at 7:03 PM Dave Chinner <david@fromorbit.com> wrote:
-> > On Mon, Feb 24, 2020 at 10:38:44AM -0500, Vivek Goyal wrote:
-> > > Anyway, partial page truncate can't ensure that data in rest of the page can
-> > > be read back successfully. Memory can get poison after the write and
-> > > hence read after truncate will still fail.
-> >
-> > Which is where the notification requirement comes in. Yes, we may
-> > still get errors on read or write, but if memory at rest goes bad,
-> > we want to handle that and correct it ASAP, not wait days or months
-> > for something to trip over the poisoned page before we find out
-> > about it.
-> >
-> > > Hence, all we are trying to ensure is that if a poison is known at the
-> > > time of writing partial page, then we should return error to user space.
-> >
-> > I think within FS-DAX infrastructure, any access to the data (read
-> > or write) within a poisoned page or a page marked with PageError()
-> > should return EIO to the caller, unless it's the specific command to
-> > clear the error/poison state on the page. What happens with that
-> > error state is then up to the caller.
-> >
-> 
-> I agree with most of the above if you replace "device-dax error
-> handling" with "System RAM error handling". It's typical memory error
-> handling that injects the page->index and page->mappping dependency.
+On 2/27/20 9:44 AM, Mark Brown wrote:
+>  * Binutils trunk supports the new ELF note, but this wasn't in a release
+>    the last time I posted this series.  (The situation _might_ have changed
+>    in the meantime...)
 
-I disagree, but that's beside the point and not worth arguing.
+I believe this support is in binutils 2.32.
 
-> So you want the FS to have error handling for just pmem errors or all
-> memory errors?
 
-Just pmem errors in the specific range the filesystem manages - we
-really only care storage errors because those are the only errors
-the filesystem is responsible for handling correctly.
-
-Somebody else can worry about errors that hit page cache pages -
-page cache pages require mapping/index pointers on each page anyway,
-so a generic mechanism for handling those errors can be built into
-the page cache. And if the error is in general kernel memory, then
-it's game over for the entire kernel at that point, not just the
-filesystem.
-
-> And you want this to be done without the mm core using
-> page->index to identify what to unmap when the error happens?
-
-Isn't that exactly what I just said? We get the page address that
-failed, the daxdev can turn that into a sector address and call into
-the filesystem with a {sector, len, errno} tuple. We then do a
-reverse mapping lookup on {sector, len} to find all the owners of
-that range in the filesystem. If it's file data, that owner record
-gives us the inode and the offset into the file, which then gives us
-a {mapping, index} tuple.
-
-Further, the filesytem reverse map is aware that it's blocks can be
-shared by multiple owners, so it will have a record for every inode
-and file offset that maps to that page. Hence we can simply iterate
-the reverse map and do that whacky collect_procs/kill_procs dance
-for every {mapping, index} pair that references the the bad range.
-
-Nothing ever needs to be stored on the struct page...
-
-> Memory
-> error scanning is not universally available on all pmem
-> implementations, so FS will need to subscribe for memory-error
-> handling events.
-
-No. Filesystems interact with the underlying device abstraction, not
-the physical storage that lies behind that device abstraction.  The
-filesystem should not interface with pmem directly in any way (all
-direct accesses are hidden inside fs/dax.c!), nor should it care
-about the quirks of the pmem implementation it is sitting on. That's
-what the daxdev abstraction is supposed to hide from the users of
-the pmem.
-
-IOWs, the daxdev infrastructure subscribes to memory-error event
-subsystem, calls out to the filesystem when an error in a page in
-the daxdev is reported. The filesystem only needs to know the
-{sector, len, errno} tuple related to the error; it is the device's
-responsibility to handle the physical mechanics of listening,
-filtering and translating MCEs to a format the filesystem
-understands....
-
-Another reason it should be provided by the daxdev as a {sector,
-len, errno} tuple is that it also allows non-dax block devices to
-implement the similar error notifications and provide filesystems
-with exactly the same information so the filesystem can start
-auto-recovery processes....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+r~
