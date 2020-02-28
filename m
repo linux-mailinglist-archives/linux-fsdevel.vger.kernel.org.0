@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F1D172CD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 01:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11928172D90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 01:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbgB1ANA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 19:13:00 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:53689 "EHLO
+        id S1730253AbgB1Ane (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 19:43:34 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:57317 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730012AbgB1ANA (ORCPT
+        by vger.kernel.org with ESMTP id S1730120AbgB1And (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 19:13:00 -0500
+        Thu, 27 Feb 2020 19:43:33 -0500
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A495D5D51;
-        Thu, 27 Feb 2020 19:12:58 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 27 Feb 2020 19:12:58 -0500
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2A8B15AE0;
+        Thu, 27 Feb 2020 19:43:32 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 27 Feb 2020 19:43:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         message-id:subject:from:to:cc:date:in-reply-to:references
         :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        w8Q1TP8cNfFZvTOV/us6+HG/JI4ZnetedhTQJKrLS0Q=; b=atFtFNYTdozH94PX
-        Sn5x1jYqyJjFRHQe8WiRHd6AtqdDoijvymz+Ecl6CbG77NcebilOvx7uSvsI0OhM
-        IJsC2tw42dCIeIEm2tQuu8G9FvDWKY5A+PJWtJZoHyE/7hu0vmqTxGga4FyRWAeU
-        e9LlKT7GMMzoA0CgpRVtX23EUe+LtVwjPv0AKpS98AgjJuJO4cZ2i8WHHpRQtIpy
-        8Gu6Q6gLRiuKgSyApdlA80QpE2OzAW6NH0XQrtgYsCHhEPAuyhOTtlLIjvmUNlUn
-        Zhq6ZRYXn5n2nI7p3Bcxesun4O2ZObS6WM9Mzqk19FGsvWJj6eNoP+Iq3n8mjpHR
-        93iCHQ==
+        WDBemPNCysVXmovtXdZ+Fmhvn30nAoiqvFdtKbQjVNU=; b=YK4tHmE6ayv7oVIJ
+        PIKzxzvORN8fBQxtRJ1oevZttnXo50N7fwQRQFL3ZVn/VND4zaIpJ02ycg1nytE6
+        qiCmAyoM+pxXKzYhhFfyMaAMpPg4ibHLWK/+VAhpf7in9Gp6MGc95uErdNwqwP3p
+        uOWlDCMMsdsxRgTPyfUePPUSVa5uYGTG7alWp7JXXfenrXNmrH6G9lihciQU7/iv
+        41pQjPI5aTHoRQUlxGHhPSrz9hKAt54E1VKcaY55bMFvz38ejKhETXw61UQgNgl0
+        3G6l4C09hE6EY9BqYxqMhQA+r2pp4b7jROI9eMCWQ82kYU53qpb9VmFt4xVhmwNu
+        DaTFHw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=w8Q1TP8cNfFZvTOV/us6+HG/JI4ZnetedhTQJKrLS
-        0Q=; b=NThbApITPxaHuh3l01v1Q5rfeThSa7VO3ftgPi1Csm1XbGpzAlIN9Bn/O
-        v4EQmRKmtzbogPCMNau+LWl+9A08DHYghPEXqFqX5169iV/7MA1t1Hx/sjx4IAJx
-        whW+RXTrmdH7Sw6FAvGBS05JXsOHmFwOg4SDfvNKq0+HKLASiXdes5PkoAN3vQ1D
-        qhkQFMm1koR3p6v8kIXLOINIT1j5GUlm3cLZMUCS4RZbi3Cjo9zKpGtRQeqKecsP
-        nf2w2rFm0ljV83iFuUWdNNIFEpI2kG+rB3w1560ceBziaoldsb2Ign74FNj3fPrk
-        PjdskSQXyaMVpYz38Vhy9HzvRk0eQ==
-X-ME-Sender: <xms:CVtYXhhMibnYZG3JOibjFolgMPJ-s2Hix9OENXTo2cAcF1sNFqR6Eg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleejgddvtdcutefuodetggdotefrodftvf
+        :x-sasl-enc; s=fm2; bh=WDBemPNCysVXmovtXdZ+Fmhvn30nAoiqvFdtKbQjV
+        NU=; b=TUQCUY3A02IMlJEITczf1DoElLTggjrGA5tP3XvyovFL7fyyjnnletPnu
+        wE6jCGSF28AnFpuMaCCMkoYD58Hs2ItxicY1EEPnCUTAQMCBhKk/UPS28U4QtmKg
+        emiScc6ba+IQ3tzwDaPSXyCdHWlwgoX6fWNNkvnnZA0YnUxw6ExB/n7xCL4S1Jwm
+        hVyJjLbQisIS9dtEy5/t700+ELFYdw7vSIvHoUN2SioaKU/JqV6h4F971plU8AcZ
+        XymozN7IYpDJyYocKtqGpqQY5loR/xZ0Fi2zA9F9nKspjysw8pAqglLG1ZrqIAYg
+        FpPiDipujWJRroY7Ee18M+ASv4hgg==
+X-ME-Sender: <xms:M2JYXqNFDuvBJMAe_DStK9UVzi9TiRVX_FBlazoBxMGnLXdZyndQeg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleejgddviecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
     vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdelrd
     dukedvrdeludenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
     ohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:CVtYXqDmhZIR2cCU4mRDtITaOpc7gbH103p7U59DjL-nq67UqokIVQ>
-    <xmx:CVtYXhsnZ9-UXyTiZL19e36hRC-FMEV-KsIabzVF7HClrYgYYanJwA>
-    <xmx:CVtYXmI29ddMgqlUNuQPhd_aXZZnfgQACzMCoWvi5gbHDEIUiUpv8w>
-    <xmx:CltYXnPbCfZqJYAgqZI_jNPmlCmK-quLx8hb4LThTNri3Qq44YFuuQ>
+X-ME-Proxy: <xmx:M2JYXjrxjZaSk4WTajunwLrhF1mRY8-rJScrFmJahndKuQ1BcCM_nA>
+    <xmx:M2JYXn6EYVt_6PJnjhtu2bMCOl6tv8cZ3ULM-XiisjfY-yvctgbYDw>
+    <xmx:M2JYXlo534q2lXX69GCRUhjaO2U1j-LAsmFs0S6a55-rYFWTIUmouQ>
+    <xmx:NGJYXp2beQemkZQgYlxxK0iAGrf1SCPK_0x0LSQGEEXZZykcI2pSjQ>
 Received: from mickey.themaw.net (unknown [118.209.182.91])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1BDBA3280059;
-        Thu, 27 Feb 2020 19:12:51 -0500 (EST)
-Message-ID: <ee9da02d77121ecbbdee805e0d2e0aaabdc52ed4.camel@themaw.net>
+        by mail.messagingengine.com (Postfix) with ESMTPA id A6DD53060FDD;
+        Thu, 27 Feb 2020 19:43:25 -0500 (EST)
+Message-ID: <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
 Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
  [ver #17]
 From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>
+To:     Karel Zak <kzak@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Steven Whitehouse <swhiteho@redhat.com>,
@@ -68,15 +68,13 @@ Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Karel Zak <kzak@redhat.com>,
+        lkml <linux-kernel@vger.kernel.org>,
         Lennart Poettering <lennart@poettering.net>,
         Zbigniew =?UTF-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
         util-linux@vger.kernel.org
-Date:   Fri, 28 Feb 2020 08:12:48 +0800
-In-Reply-To: <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
-         <1582316494.3376.45.camel@HansenPartnership.com>
-         <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+Date:   Fri, 28 Feb 2020 08:43:21 +0800
+In-Reply-To: <20200227151421.3u74ijhqt6ekbiss@ws.net.home>
+References: <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
          <1582556135.3384.4.camel@HansenPartnership.com>
          <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
          <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
@@ -86,6 +84,7 @@ References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org
          <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
          <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
          <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+         <20200227151421.3u74ijhqt6ekbiss@ws.net.home>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
@@ -95,106 +94,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-02-27 at 14:45 +0100, Miklos Szeredi wrote:
-> On Thu, Feb 27, 2020 at 12:34 PM Ian Kent <raven@themaw.net> wrote:
-> > On Thu, 2020-02-27 at 10:36 +0100, Miklos Szeredi wrote:
-> > > On Thu, Feb 27, 2020 at 6:06 AM Ian Kent <raven@themaw.net>
-> > > wrote:
-> > > 
-> > > > At the least the question of "do we need a highly efficient way
-> > > > to query the superblock parameters all at once" needs to be
-> > > > extended to include mount table enumeration as well as getting
-> > > > the info.
-> > > > 
-> > > > But this is just me thinking about mount table handling and the
-> > > > quite significant problem we now have with user space scanning
-> > > > the proc mount tables to get this information.
-> > > 
-> > > Right.
-> > > 
-> > > So the problem is that currently autofs needs to rescan the proc
-> > > mount
-> > > table on every change.   The solution to that is to
-> > 
-> > Actually no, that's not quite the problem I see.
-> > 
-> > autofs handles large mount tables fairly well (necessarily) and
-> > in time I plan to remove the need to read the proc tables at all
-> > (that's proven very difficult but I'll get back to that).
-> > 
-> > This has to be done to resolve the age old problem of autofs not
-> > being able to handle large direct mount maps. But, because of
-> > the large number of mounts associated with large direct mount
-> > maps, other system processes are badly affected too.
-> > 
-> > So the problem I want to see fixed is the effect of very large
-> > mount tables on other user space applications, particularly the
-> > effect when a large number of mounts or umounts are performed.
-> > 
-> > Clearly large mount tables not only result from autofs and the
-> > problems caused by them are slightly different to the mount and
-> > umount problem I describe. But they are a problem nevertheless
-> > in the sense that frequent notifications that lead to reading
-> > a large proc mount table has significant overhead that can't be
-> > avoided because the table may have changed since the last time
-> > it was read.
-> > 
-> > It's easy to cause several system processes to peg a fair number
-> > of CPU's when a large number of mounts/umounts are being performed,
-> > namely systemd, udisks2 and a some others. Also I've seen couple
-> > of application processes badly affected purely by the presence of
-> > a large number of mounts in the proc tables, that's not quite so
-> > bad though.
-> > 
-> > >  - add a notification mechanism   - lookup a mount based on path
-> > >  - and a way to selectively query mount/superblock information
-> > based on path ...
-> > > right?
-> > > 
-> > > For the notification we have uevents in sysfs, which also
-> > > supplies
-> > > the
-> > > changed parameters.  Taking aside namespace issues and addressing
-> > > mounts would this work for autofs?
-> > 
-> > The parameters supplied by the notification mechanism are
-> > important.
-> > 
-> > The place this is needed will be libmount since it catches a broad
-> > number of user space applications, including those I mentioned
-> > above
-> > (well at least systemd, I think also udisks2, very probably
-> > others).
-> > 
-> > So that means mount table info. needs to be maintained, whether
-> > that
-> > can be achieved using sysfs I don't know. Creating and maintaining
-> > the sysfs tree would be a big challenge I think.
-> > 
-> > But before trying to work out how to use a notification mechanism
-> > just having a way to get the info provided by the proc tables using
-> > a path alone should give initial immediate improvement in libmount.
+On Thu, 2020-02-27 at 16:14 +0100, Karel Zak wrote:
+> On Thu, Feb 27, 2020 at 02:45:27PM +0100, Miklos Szeredi wrote:
+> > > So the problem I want to see fixed is the effect of very large
+> > > mount tables on other user space applications, particularly the
+> > > effect when a large number of mounts or umounts are performed.
 > 
-> Adding Karel, Lennart, Zbigniew and util-linux@vger...
+> Yes, now you have to generate (in kernel) and parse (in
+> userspace) all mount table to get information about just 
+> one mount table entry. This is typical for umount or systemd.
 > 
-> At a quick glance at libmount and systemd code, it appears that just
-> switching out the implementation in libmount will not be enough:
-> systemd is calling functions like mnt_table_parse_*() when it
-> receives
-> a notification that the mount table changed.
+> > > >  - add a notification mechanism   - lookup a mount based on
+> > > > path
+> > > >  - and a way to selectively query mount/superblock information
+> > > based on path ...
+> 
+> For umount-like use-cases we need mountpoint/ to mount entry
+> conversion; I guess something like open(mountpoint/) + fsinfo() 
+> should be good enough.
+> 
+> For systemd we need the same, but triggered by notification. The
+> ideal
+> solution is to get mount entry ID or FD from notification and later
+> use this
+> ID or FD to ask for details about the mount entry (probably again
+> fsinfo()).
+> The notification has to be usable with in epoll() set.
+> 
+> This solves 99% of our performance issues I guess.
+> 
+> > > So that means mount table info. needs to be maintained, whether
+> > > that
+> > > can be achieved using sysfs I don't know. Creating and
+> > > maintaining
+> > > the sysfs tree would be a big challenge I think.
+> 
+> It will be still necessary to get complete mount table sometimes,
+> but 
+> not in performance sensitive scenarios.
 
-Maybe I wasn't clear, my bad, sorry about that.
+That was my understanding too.
 
-There's no question that change notification handling is needed too.
+Mount table enumeration is possible with fsinfo() but you still
+have to handle each and every mount so improvement there is not
+going to be as much as cases where the proc mount table needs to
+be scanned independently for an individual mount. It will be
+somewhat more straight forward without the need to dissect text
+records though.
 
-I'm claiming that an initial change to use something that can get
-the mount information without using the proc tables alone will give
-an "initial immediate improvement".
+> 
+> I'm not sure about sysfs/, you need somehow resolve namespaces, order
+> of the mount entries (which one is the last one), etc. IMHO translate
+> mountpoint path to sysfs/ path will be complicated.
 
-The work needed to implement mount table change notification
-handling will take much more time and exactly what changes that
-will bring is not clear yet and I do plan to work on that too,
-together with Karel.
+I wonder about that too, after all sysfs contains a tree of nodes
+from which the view is created unlike proc which translates kernel
+information directly based on what the process should see.
+
+We'll need to wait a bit and see what Miklos has in mind for mount
+table enumeration and nothing has been said about name spaces yet.
+
+While fsinfo() is not similar to proc it does handle name spaces
+in a sensible way via. file handles, a bit similar to the proc fs,
+and ordering is catered for in the fsinfo() enumeration in a natural
+way. Not sure how that would be handled using sysfs ...
 
 Ian
 
