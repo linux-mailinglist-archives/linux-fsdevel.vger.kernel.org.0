@@ -2,84 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8CD2173B31
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 16:18:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EA64173B34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 16:20:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbgB1PSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 10:18:46 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:57028 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726650AbgB1PSq (ORCPT
+        id S1726910AbgB1PUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 10:20:51 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:39602 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726650AbgB1PUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:18:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582903125;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0AxcU6JsvObe5CPeEChlcN5Y9RHe8jXuSK77Ya5A3Kw=;
-        b=B9vAZHzoxwswckZXSPMD6REUIo60KwyIL8PLICpN2iE/JZdmu//4dSi2HbzP/4DN6vKAYs
-        k9bRriRzW6/q4oBSF4fYCIMoQExUH4nrxKEV/q5XnlKYhS2pqGgk8RxRKPYAFmV2M5tOzm
-        3E7Y+9nuMTIGAukY78CYk10SEUMrc7A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-242-vzAgs2cUOuKAm2415svqjg-1; Fri, 28 Feb 2020 10:18:39 -0500
-X-MC-Unique: vzAgs2cUOuKAm2415svqjg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 87158189F766;
-        Fri, 28 Feb 2020 15:18:38 +0000 (UTC)
-Received: from localhost (unknown [10.36.118.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DED0B5D9CD;
-        Fri, 28 Feb 2020 15:18:37 +0000 (UTC)
-Date:   Fri, 28 Feb 2020 15:18:36 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fuse: Update stale comment in queue_interrupt()
-Message-ID: <20200228151836.GB330319@stefanha-x1.localdomain>
-References: <158289211567.437388.9236618474068379496.stgit@localhost.localdomain>
+        Fri, 28 Feb 2020 10:20:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01SFInxd161013;
+        Fri, 28 Feb 2020 15:20:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=P+FGiNW4DdarK451Sm5GUQAEbQCtUTRtdQn7l8g186E=;
+ b=P3efOf8QKNLB/anqlYztIKceupjCn5xRmIAMXqBZYfE0vx/8x/vTptSeYNZ5WDK36eeV
+ 9+aSxkriOpFXvTlHkDHx2Y1tEOI7LR3s7uQs83gG0PBcM+v7qBx+d3BFz7/wZQZohLfP
+ WlythMh4/XBsw01zjwKzqGBJQoq0Bdr7rgro29gvd86kMe/5NTvBO3pYCbkYszt6W6TU
+ xpYA1BvkM5gsGKCZGQXxL4jY6wCVlbwpsKgJ9iExnIBpX/XLTySNqTCmQWw5HS4zKc3B
+ OwgPaC0HnzhHIUpQFyTXK1O2XOiNFwFMYwV8azIv+AYkCwRYNr8UrCV7wZ8uo/01k2uL ZA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2ydct3ker1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 15:20:20 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 01SFILlK124979;
+        Fri, 28 Feb 2020 15:20:19 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2ydcs8r4jg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 28 Feb 2020 15:20:19 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 01SFKGt9018141;
+        Fri, 28 Feb 2020 15:20:16 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 28 Feb 2020 07:20:16 -0800
+Date:   Fri, 28 Feb 2020 07:20:15 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, cmaiolino@redhat.com, david@fromorbit.com
+Subject: Re: [PATCHv5 6/6] Documentation: Correct the description of
+ FIEMAP_EXTENT_LAST
+Message-ID: <20200228152015.GC8036@magnolia>
+References: <cover.1582880246.git.riteshh@linux.ibm.com>
+ <5a00e8d4283d6849e0b8f408c8365b31fbc1d153.1582880246.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <158289211567.437388.9236618474068379496.stgit@localhost.localdomain>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <5a00e8d4283d6849e0b8f408c8365b31fbc1d153.1582880246.git.riteshh@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9545 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9545 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2002280121
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---kXdP64Ggrk/fb43R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Feb 28, 2020 at 02:56:59PM +0530, Ritesh Harjani wrote:
+> Currently FIEMAP_EXTENT_LAST is not working consistently across
+> different filesystem's fiemap implementations. So add more information
+> about how else this flag could set in other implementation.
+> 
+> Also in general, user should not completely rely on this flag as
+> such since it could return false value for e.g.
+> when there is a delalloc extent which might get converted during
+> writeback, immediately after the fiemap calls return.
+> 
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-On Fri, Feb 28, 2020 at 03:15:24PM +0300, Kirill Tkhai wrote:
-> Fixes: 04ec5af0776e "fuse: export fuse_end_request()"
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Looks reasonable,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
 > ---
->  fs/fuse/dev.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---kXdP64Ggrk/fb43R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5ZL0wACgkQnKSrs4Gr
-c8hdfwf/RzC3LZA3ryc/0ACwe12ZqWe8GB7U7L9frVA5Dp9iQG61anqWpzs5dBxS
-01KBlXAb6FxqV/Y4l/tLu7z8mAucS166gGhISE6sH7OMdeeg4RcZ1kLT8SSo43ME
-Ec5k1lNxg3S6+N37xKhQGLGyVIHWdvOs1ZJlIrIuBXGExm/4T9oD0lpPvVey6BCM
-9iVcm7ZsraqxR9iDpPriGQRlFzBTEI+m58McRdlW9tb8iUzbrdKyZrbPVAEwauIx
-sh+h3UVtUgS2jZi26N+E12Cw54gOzzkFqZXtYwCJPQzKLgUEth2mS5fUgkS7wt/T
-d+5QBYc402M2AL0CvcDsyPIXtrezgQ==
-=CBkO
------END PGP SIGNATURE-----
-
---kXdP64Ggrk/fb43R--
-
+>  Documentation/filesystems/fiemap.txt | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/fiemap.txt b/Documentation/filesystems/fiemap.txt
+> index f6d9c99103a4..fedfa9b9dde5 100644
+> --- a/Documentation/filesystems/fiemap.txt
+> +++ b/Documentation/filesystems/fiemap.txt
+> @@ -71,8 +71,7 @@ allocated is less than would be required to map the requested range,
+>  the maximum number of extents that can be mapped in the fm_extent[]
+>  array will be returned and fm_mapped_extents will be equal to
+>  fm_extent_count. In that case, the last extent in the array will not
+> -complete the requested range and will not have the FIEMAP_EXTENT_LAST
+> -flag set (see the next section on extent flags).
+> +complete the requested range.
+>  
+>  Each extent is described by a single fiemap_extent structure as
+>  returned in fm_extents.
+> @@ -96,7 +95,7 @@ block size of the file system.  With the exception of extents flagged as
+>  FIEMAP_EXTENT_MERGED, adjacent extents will not be merged.
+>  
+>  The fe_flags field contains flags which describe the extent returned.
+> -A special flag, FIEMAP_EXTENT_LAST is always set on the last extent in
+> +A special flag, FIEMAP_EXTENT_LAST *may be* set on the last extent in
+>  the file so that the process making fiemap calls can determine when no
+>  more extents are available, without having to call the ioctl again.
+>  
+> @@ -115,8 +114,9 @@ data. Note that the opposite is not true - it would be valid for
+>  FIEMAP_EXTENT_NOT_ALIGNED to appear alone.
+>  
+>  * FIEMAP_EXTENT_LAST
+> -This is the last extent in the file. A mapping attempt past this
+> -extent will return nothing.
+> +This is generally the last extent in the file. A mapping attempt past this
+> +extent may return nothing. In some implementations this flag is also set on
+> +the last dataset queried by the user (via fiemap->fm_length).
+>  
+>  * FIEMAP_EXTENT_UNKNOWN
+>  The location of this extent is currently unknown. This may indicate
+> -- 
+> 2.21.0
+> 
