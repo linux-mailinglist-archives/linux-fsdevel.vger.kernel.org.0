@@ -2,177 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C0E5174156
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 22:16:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C85CA17417D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 22:31:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgB1VQX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 16:16:23 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:51290 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726918AbgB1VQX (ORCPT
+        id S1726287AbgB1VbJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 16:31:09 -0500
+Received: from out03.mta.xmission.com ([166.70.13.233]:35396 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgB1VbI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 16:16:23 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EBA1A7E826E;
-        Sat, 29 Feb 2020 08:16:13 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j7mzS-00047t-Te; Sat, 29 Feb 2020 08:16:10 +1100
-Date:   Sat, 29 Feb 2020 08:16:10 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Snitzer <snitzer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Eric Biggers <ebiggers@google.com>, riteshh@linux.ibm.com,
-        krisman@collabora.com, surajjs@amazon.com, dmonakhov@gmail.com,
-        mbobrowski@mbobrowski.org, Eric Whitney <enwlinux@gmail.com>,
-        sblbir@amazon.com, Khazhismel Kumykov <khazhy@google.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
-Message-ID: <20200228211610.GQ10737@dread.disaster.area>
-References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
- <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
- <20200226155521.GA24724@infradead.org>
- <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
- <A57E33D1-3D54-405A-8300-13F117DC4633@dilger.ca>
- <eda406cc-8ce3-e67a-37be-3e525b58d5a1@virtuozzo.com>
- <4933D88C-2A2D-4ACA-823E-BDFEE0CE143F@dilger.ca>
+        Fri, 28 Feb 2020 16:31:08 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j7nDr-0000mO-PJ; Fri, 28 Feb 2020 14:31:04 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j7nDp-0005Of-9H; Fri, 28 Feb 2020 14:31:03 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>
+References: <20200212203833.GQ23230@ZenIV.linux.org.uk>
+        <20200212204124.GR23230@ZenIV.linux.org.uk>
+        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
+        <87lfp7h422.fsf@x220.int.ebiederm.org>
+        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
+        <87pnejf6fz.fsf@x220.int.ebiederm.org>
+        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
+        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
+        <878skmsbyy.fsf_-_@x220.int.ebiederm.org>
+        <87wo86qxcs.fsf_-_@x220.int.ebiederm.org>
+        <20200228203058.jcnqeyvmqhfslcym@wittgenstein>
+Date:   Fri, 28 Feb 2020 15:28:54 -0600
+In-Reply-To: <20200228203058.jcnqeyvmqhfslcym@wittgenstein> (Christian
+        Brauner's message of "Fri, 28 Feb 2020 21:30:58 +0100")
+Message-ID: <87zhd2pfjd.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4933D88C-2A2D-4ACA-823E-BDFEE0CE143F@dilger.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
-        a=TYBLyS7eAAAA:8 a=7-415B0cAAAA:8 a=bsSdMAq58TUpE86ZS_YA:9
-        a=eQITBiZyMYxeg7ov:21 a=_jd0Q9eB9b6pY1G7:21 a=CjuIK1q_8ugA:10
-        a=zvYvwCWiE4KgVXXeO06c:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
+X-XM-SPF: eid=1j7nDp-0005Of-9H;;;mid=<87zhd2pfjd.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18C5s6UU8g6m3GJYbDK37dFKpX40ZtE5BE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong,
+        XM_Body_Dirty_Words autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.5 XM_Body_Dirty_Words Contains a dirty word
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Christian Brauner <christian.brauner@ubuntu.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 2052 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 3.3 (0.2%), b_tie_ro: 2.3 (0.1%), parse: 1.46
+        (0.1%), extract_message_metadata: 27 (1.3%), get_uri_detail_list: 3.7
+        (0.2%), tests_pri_-1000: 21 (1.0%), tests_pri_-950: 1.25 (0.1%),
+        tests_pri_-900: 1.11 (0.1%), tests_pri_-90: 40 (2.0%), check_bayes: 39
+        (1.9%), b_tokenize: 13 (0.6%), b_tok_get_all: 11 (0.6%), b_comp_prob:
+        3.8 (0.2%), b_tok_touch_all: 5.0 (0.2%), b_finish: 0.72 (0.0%),
+        tests_pri_0: 339 (16.5%), check_dkim_signature: 0.65 (0.0%),
+        check_dkim_adsp: 2.2 (0.1%), poll_dns_idle: 1588 (77.4%),
+        tests_pri_10: 2.1 (0.1%), tests_pri_500: 1612 (78.5%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH 2/3] uml: Create a private mount of proc for mconsole
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 08:35:19AM -0700, Andreas Dilger wrote:
-> On Feb 27, 2020, at 5:24 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> > On 27.02.2020 00:51, Andreas Dilger wrote:
-> >> On Feb 26, 2020, at 1:05 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >> In that case, an interesting userspace interface would be an array of
-> >> inode numbers (64-bit please) that should be packed together densely in
-> >> the order they are provided (maybe a flag for that).  That allows the
-> >> filesystem the freedom to find the physical blocks for the allocation,
-> >> while userspace can tell which files are related to each other.
-> > 
-> > So, this interface is 3-in-1:
-> > 
-> > 1)finds a placement for inodes extents;
-> 
-> The target allocation size would be sum(size of inodes), which should
-> be relatively small in your case).
-> 
-> > 2)assigns this space to some temporary donor inode;
-> 
-> Maybe yes, or just reserves that space from being allocated by anyone.
-> 
-> > 3)calls ext4_move_extents() for each of them.
-> 
-> ... using the target space that was reserved earlier
-> 
-> > Do I understand you right?
-> 
-> Correct.  That is my "5 minutes thinking about an interface for grouping
-> small files together without exposing kernel internals" proposal for this.
+Christian Brauner <christian.brauner@ubuntu.com> writes:
 
-You don't need any special kernel interface with XFS for this. It is
-simply:
+> On Fri, Feb 28, 2020 at 02:18:43PM -0600, Eric W. Biederman wrote:
+>> 
+>> The mconsole code only ever accesses proc for the initial pid
+>> namespace.  Instead of depending upon the proc_mnt which is
+>> for proc_flush_task have uml create it's own mount of proc
+>> instead.
+>> 
+>> This allows proc_flush_task to evolve and remove the
+>> need for having a proc_mnt to do it's job.
+>> 
+>> Cc: Jeff Dike <jdike@addtoit.com>
+>> Cc: Richard Weinberger <richard@nod.at>
+>> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+>> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+>> ---
+>>  arch/um/drivers/mconsole_kern.c | 28 +++++++++++++++++++++++++++-
+>>  1 file changed, 27 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/um/drivers/mconsole_kern.c b/arch/um/drivers/mconsole_kern.c
+>> index e8f5c81c2c6c..30575bd92975 100644
+>> --- a/arch/um/drivers/mconsole_kern.c
+>> +++ b/arch/um/drivers/mconsole_kern.c
+>> @@ -36,6 +36,8 @@
+>>  #include "mconsole_kern.h"
+>>  #include <os.h>
+>>  
+>> +static struct vfsmount *proc_mnt = NULL;
+>> +
+>>  static int do_unlink_socket(struct notifier_block *notifier,
+>>  			    unsigned long what, void *data)
+>>  {
+>> @@ -123,7 +125,7 @@ void mconsole_log(struct mc_request *req)
+>>  
+>>  void mconsole_proc(struct mc_request *req)
+>>  {
+>> -	struct vfsmount *mnt = init_pid_ns.proc_mnt;
+>> +	struct vfsmount *mnt = proc_mnt;
+>>  	char *buf;
+>>  	int len;
+>>  	struct file *file;
+>> @@ -134,6 +136,10 @@ void mconsole_proc(struct mc_request *req)
+>>  	ptr += strlen("proc");
+>>  	ptr = skip_spaces(ptr);
+>>  
+>> +	if (!mnt) {
+>> +		mconsole_reply(req, "Proc not available", 1, 0);
+>> +		goto out;
+>> +	}
+>>  	file = file_open_root(mnt->mnt_root, mnt, ptr, O_RDONLY, 0);
+>>  	if (IS_ERR(file)) {
+>>  		mconsole_reply(req, "Failed to open file", 1, 0);
+>> @@ -683,6 +689,24 @@ void mconsole_stack(struct mc_request *req)
+>>  	with_console(req, stack_proc, to);
+>>  }
+>>  
+>> +static int __init mount_proc(void)
+>> +{
+>> +	struct file_system_type *proc_fs_type;
+>> +	struct vfsmount *mnt;
+>> +
+>> +	proc_fs_type = get_fs_type("proc");
+>> +	if (!proc_fs_type)
+>> +		return -ENODEV;
+>> +
+>> +	mnt = kern_mount(proc_fs_type);
+>> +	put_filesystem(proc_fs_type);
+>> +	if (IS_ERR(mnt))
+>> +		return PTR_ERR(mnt);
+>> +
+>> +	proc_mnt = mnt;
+>> +	return 0;
+>> +}
+>> +
+>>  /*
+>>   * Changed by mconsole_setup, which is __setup, and called before SMP is
+>>   * active.
+>> @@ -696,6 +720,8 @@ static int __init mconsole_init(void)
+>>  	int err;
+>>  	char file[UNIX_PATH_MAX];
+>>  
+>> +	mount_proc();
+>
+> Hm, either check the return value or make the mount_proc() void?
+> Probably worth logging something but moving on without proc.
 
-	mkdir tmpdir
-	create O_TMPFILEs in tmpdir
+I modified mconsole_proc (the only place that cares to see if
+it has a valid proc_mnt).
 
-Now all the tmpfiles you create and their data will be co-located
-around the location of the tmpdir inode. This is the natural
-placement policy of the filesystem. i..e the filesystem assumes that
-files in the same directory are all related, so will be accessed
-together and so should be located in relatively close proximity to
-each other.
+So the code already does the moving on without mounting proc
+and continues to work.
 
-This is a locality optimisation technique that is older than XFS. It
-works remarkably well when the filesystem can spread directories
-effectively across it's address space.  It also allows userspace to
-use simple techniques to group (or separate) data files as desired.
-Indeed, this is how xfs_fsr directs locality for it's tmpfiles when
-relocating/defragmenting data....
+Further the code logs something when it tries to use the mount
+of proc and proc is not available.
 
-> > If so, then IMO it's good to start from two inodes, because here may code
-> > a very difficult algorithm of placement of many inodes, which may require
-> > much memory. Is this OK?
-> 
-> Well, if the files are small then it won't be a lot of memory.  Even so,
-> the kernel would only need to copy a few MB at a time in order to get
-> any decent performance, so I don't think that is a huge problem to have
-> several MB of dirty data in flight.
-> 
-> > Can we introduce a flag, that some of inode is unmovable?
-> 
-> There are very few flags left in the ext4_inode->i_flags for use.
-> You could use "IMMUTABLE" or "APPEND_ONLY" to mean that, but they
-> also have other semantics.  The EXT4_NOTAIL_FL is for not merging the
-> tail of a file, but ext4 doesn't have tails (that was in Reiserfs),
-> so we might consider it a generic "do not merge" flag if set?
+I think this can happen if someone is strange enough to compile
+the kernel without proc.  So at least in some scenarios I believe
+it is expected that it will fail.
 
-We've had that in XFS for as long as I can remember. Many
-applications were sensitive to the exact layout of the files they
-created themselves, so having xfs_fsr defrag/move them about would
-cause performance SLAs to be broken.
+So while I think it is good form to generate good error codes in
+the incredibly unlikely case that proc_mount() fails during boot
+I don't see the point of doing anything with them.
 
-Indeed, thanks to XFS, ext4 already has an interface that can be
-used to set/clear a "no defrag" flag such as you are asking for.
-It's the FS_XFLAG_NODEFRAG bit in the FS_IOC_FS[GS]ETXATTR ioctl.
-In XFS, that manages the XFS_DIFLAG_NODEFRAG on-disk inode flag,
-and it has special meaning for directories. From the 'man 3 xfsctl'
-man page where this interface came from:
+> I guess this is user visible in some scenarios but the patch series
+> seems worth it!
 
-      Bit 13 (0x2000) - XFS_XFLAG_NODEFRAG
-	No defragment file bit - the file should be skipped during a
-	defragmentation operation. When applied to  a directory,
-	new files and directories created will inherit the no-defrag
-	bit.
+What scenarios do you think this would be user visible?
 
-> > Can this interface use a knowledge about underlining device discard granuality?
-> 
-> As I wrote above, ext4+mballoc has a very good appreciation for alignment.
-> That was written for RAID storage devices, but it doesn't matter what
-> the reason is.  It isn't clear if flash discard alignment is easily
-> used (it may not be a power-of-two value or similar), but wouldn't be
-> harmful to try.
+The set of calls to mount proc are slightly different, but the options
+to proc when mounting (none) remain the same.
 
-Yup, XFS has the similar (but more complex) alignment controls for
-directing allocation to match the underlying storage
-characteristics. e.g. stripe unit is also the "small file size
-threshold" where the allocation policy changes from packing to
-aligning and separating.
+For the series as a whole the only place where it should be user visible
+is when the proc mount options start getting honored.  AKA when
+hidepid=N starts working as designed again.
 
-> > In the answer to Dave, I wrote a proposition to make fallocate() care about
-> > i_write_hint. Could you please comment what you think about that too?
-> 
-> I'm not against that.  How the two interact would need to be documented
-> first and discussed to see if that makes sene, and then implemented.
-
-Individual filesystems can make their own choices as to what they do
-with write hints, including ignoring them and leaving it for the
-storage device to decide where to physically place the data. Which,
-in many cases, ignoring the hint is the right thing for the
-filesystem to do...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Eric
