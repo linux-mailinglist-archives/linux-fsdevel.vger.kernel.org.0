@@ -2,120 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2BC3173307
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 09:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F6E7173318
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 09:41:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbgB1If3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 03:35:29 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44280 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgB1If3 (ORCPT
+        id S1726579AbgB1Il0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 03:41:26 -0500
+Received: from mx05.melco.co.jp ([192.218.140.145]:59911 "EHLO
+        mx05.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbgB1Il0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 03:35:29 -0500
-Received: by mail-il1-f194.google.com with SMTP id x7so2002972ilq.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2020 00:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OXyFeX6mAXl7ibpfgMxisE4ycSpVpmIz9s5cjNf8Vhw=;
-        b=pn3452AKsTBvGlo0Y5JA0NZltS3uiCzuNxlOu9vIU/91jdvfz1MmnUcdniXZft8fOK
-         uRgelnJFXnk/5446/FJEkurj9vFQkfopb6YzN9hGnaI6ygpIsXBuRwoK4kfbvuwENiZZ
-         0wpCmRg1DtQDcyWKqHDbVr5FOAQOpPzh6yVGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OXyFeX6mAXl7ibpfgMxisE4ycSpVpmIz9s5cjNf8Vhw=;
-        b=olydI646usE7FxlE2qPwdO3JP/4NR1eo8C+Nm9LkmIpkzFYvb+IhRpicoMBNjuUCRv
-         TEzbneW6evL+swY00pehnV/QLgO9Of89A5XzyitLjH+GG+ElBOd2d4iVD+tvk1K5/S14
-         xaZRVL1TZS5NpU19MkQHZjZ83bu/GcgCdhuUY4l9RkKmoCN4x0y2F3F8xWZX5kOg4rfN
-         kMAbNYaBIBHx409WtVSGJ7G0KWvDIdRuNsS1l4Vy9NWQ0YgLdsOPlpzBoE/teS7eOsQM
-         0D9fmNzXFeccROgO6DeG4UIvTYXvAg7T1GIgY/U4SQnVYIWzgKGY+BC4cweHA78mxway
-         Am3Q==
-X-Gm-Message-State: APjAAAUdgoxQnH6qBBdowRmfSl7HAy0xWtzBaB0TfKnjjwgIr0fDHUO6
-        /VynHcyCfxR1WQajAnebYlIBHHMsNqMKWqfxfXm8Hg==
-X-Google-Smtp-Source: APXvYqxjtpW0+aq1pP5LqW+8ExOWmG1iZmCw8TTmpTp910yfA5bDPzQCZIQLWAdbpcyM6H+iB+v7QzmYJWaDKFsm31s=
-X-Received: by 2002:a92:c0c9:: with SMTP id t9mr3379386ilf.174.1582878928605;
- Fri, 28 Feb 2020 00:35:28 -0800 (PST)
-MIME-Version: 1.0
-References: <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
- <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
- <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
- <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
- <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
- <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
- <20200227151421.3u74ijhqt6ekbiss@ws.net.home> <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
-In-Reply-To: <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 28 Feb 2020 09:35:17 +0100
-Message-ID: <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     Ian Kent <raven@themaw.net>
-Cc:     Karel Zak <kzak@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Lennart Poettering <lennart@poettering.net>,
-        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        Fri, 28 Feb 2020 03:41:26 -0500
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id E2A083A41FF;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 48TNLC5q0WzRk4f;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 48TNLC5Vh2zRjtG;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48TNLC5by7zRkCy;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from tux532.tad.melco.co.jp (unknown [133.141.243.226])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 48TNLC582czRkBN;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received:  from tux532.tad.melco.co.jp
+        by tux532.tad.melco.co.jp (unknown) with ESMTP id 01S8fNiQ028362;
+        Fri, 28 Feb 2020 17:41:23 +0900
+Received: from tux390.tad.melco.co.jp (tux390.tad.melco.co.jp [127.0.0.1])
+        by postfix.imss70 (Postfix) with ESMTP id 6A60A17E075;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from tux554.tad.melco.co.jp (tux100.tad.melco.co.jp [10.168.7.223])
+        by tux390.tad.melco.co.jp (Postfix) with ESMTP id 541E017E073;
+        Fri, 28 Feb 2020 17:41:23 +0900 (JST)
+Received: from tux554.tad.melco.co.jp
+        by tux554.tad.melco.co.jp (unknown) with ESMTP id 01S8fNMF032359;
+        Fri, 28 Feb 2020 17:41:23 +0900
+From:   Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
+Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        util-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: exfat: remove 'file creation modes'
+Date:   Fri, 28 Feb 2020 17:40:36 +0900
+Message-Id: <20200228084037.15123-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 1:43 AM Ian Kent <raven@themaw.net> wrote:
+The mode parameter in ffsCreateFile() and create_file() is redundant.
+Remove it and definition.
 
-> > I'm not sure about sysfs/, you need somehow resolve namespaces, order
-> > of the mount entries (which one is the last one), etc. IMHO translate
-> > mountpoint path to sysfs/ path will be complicated.
->
-> I wonder about that too, after all sysfs contains a tree of nodes
-> from which the view is created unlike proc which translates kernel
-> information directly based on what the process should see.
->
-> We'll need to wait a bit and see what Miklos has in mind for mount
-> table enumeration and nothing has been said about name spaces yet.
+Signed-off-by: Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+---
+ drivers/staging/exfat/exfat.h       | 5 +----
+ drivers/staging/exfat/exfat_core.c  | 6 +++---
+ drivers/staging/exfat/exfat_super.c | 7 +++----
+ 3 files changed, 7 insertions(+), 11 deletions(-)
 
-Adding Greg for sysfs knowledge.
+diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+index f588538c67a8..c863d7566b57 100644
+--- a/drivers/staging/exfat/exfat.h
++++ b/drivers/staging/exfat/exfat.h
+@@ -200,9 +200,6 @@ static inline u16 get_row_index(u16 i)
+ #define ATTR_EXTEND		0x000F
+ #define ATTR_RWMASK		0x007E
+ 
+-/* file creation modes */
+-#define FM_REGULAR              0x00
+-
+ #define NUM_UPCASE              2918
+ 
+ #ifdef __LITTLE_ENDIAN
+@@ -698,7 +695,7 @@ s32 exfat_mount(struct super_block *sb, struct pbr_sector_t *p_pbr);
+ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+ 	       struct uni_name_t *p_uniname, struct file_id_t *fid);
+ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+-		struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid);
++		struct uni_name_t *p_uniname, struct file_id_t *fid);
+ void remove_file(struct inode *inode, struct chain_t *p_dir, s32 entry);
+ s32 exfat_rename_file(struct inode *inode, struct chain_t *p_dir, s32 old_entry,
+ 		      struct uni_name_t *p_uniname, struct file_id_t *fid);
+diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+index 941094b08dd9..ceaea1ba1a83 100644
+--- a/drivers/staging/exfat/exfat_core.c
++++ b/drivers/staging/exfat/exfat_core.c
+@@ -2172,7 +2172,7 @@ s32 create_dir(struct inode *inode, struct chain_t *p_dir,
+ }
+ 
+ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+-		struct uni_name_t *p_uniname, u8 mode, struct file_id_t *fid)
++		struct uni_name_t *p_uniname, struct file_id_t *fid)
+ {
+ 	s32 ret, dentry, num_entries;
+ 	struct super_block *sb = inode->i_sb;
+@@ -2190,7 +2190,7 @@ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+ 	/* fill the directory entry information of the created file.
+ 	 * the first cluster is not determined yet. (0)
+ 	 */
+-	ret = exfat_init_dir_entry(sb, p_dir, dentry, TYPE_FILE | mode,
++	ret = exfat_init_dir_entry(sb, p_dir, dentry, TYPE_FILE,
+ 				   CLUSTER_32(0), 0);
+ 	if (ret != 0)
+ 		return ret;
+@@ -2204,7 +2204,7 @@ s32 create_file(struct inode *inode, struct chain_t *p_dir,
+ 	fid->dir.flags = p_dir->flags;
+ 	fid->entry = dentry;
+ 
+-	fid->attr = ATTR_ARCHIVE | mode;
++	fid->attr = ATTR_ARCHIVE;
+ 	fid->flags = 0x03;
+ 	fid->size = 0;
+ 	fid->start_clu = CLUSTER_32(~0);
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 6f3b72eb999d..708398265828 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -617,8 +617,7 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
+ 	return ret;
+ }
+ 
+-static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+-			 struct file_id_t *fid)
++static int ffsCreateFile(struct inode *inode, char *path, struct file_id_t *fid)
+ {
+ 	struct chain_t dir;
+ 	struct uni_name_t uni_name;
+@@ -641,7 +640,7 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+ 	fs_set_vol_flags(sb, VOL_DIRTY);
+ 
+ 	/* create a new file */
+-	ret = create_file(inode, &dir, &uni_name, mode, fid);
++	ret = create_file(inode, &dir, &uni_name, fid);
+ 
+ #ifndef CONFIG_STAGING_EXFAT_DELAYED_SYNC
+ 	fs_sync(sb, true);
+@@ -1834,7 +1833,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
++	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, &fid);
+ 	if (err)
+ 		goto out;
+ 
+-- 
+2.25.1
 
-As far as I understand the sysfs model is, basically:
-
-  - list of devices sorted by class and address
-  - with each class having a given set of attributes
-
-Superblocks and mounts could get enumerated by a unique identifier.
-mnt_id seems to be good for mounts, s_dev may or may not be good for
-superblock, but  s_id (as introduced in this patchset) could be used
-instead.
-
-As for namespaces, that's "just" an access control issue, AFAICS.
-For example a task with a non-initial mount namespace should not have
-access to attributes of mounts outside of its namespace.  Checking
-access to superblock attributes would be similar: scan the list of
-mounts and only allow access if at least one mount would get access.
-
-> While fsinfo() is not similar to proc it does handle name spaces
-> in a sensible way via. file handles, a bit similar to the proc fs,
-> and ordering is catered for in the fsinfo() enumeration in a natural
-> way. Not sure how that would be handled using sysfs ...
-
-I agree that the access control is much more straightforward with
-fsinfo(2) and this may be the single biggest reason to introduce a new
-syscall.
-
-Let's see what others thing.
-
-Thanks,
-Miklos
