@@ -2,155 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F7B1740FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 21:31:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2139217410C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 21:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgB1UbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 15:31:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36414 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbgB1UbF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 15:31:05 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j7mHl-0007J5-9i; Fri, 28 Feb 2020 20:31:01 +0000
-Date:   Fri, 28 Feb 2020 21:30:58 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: Re: [PATCH 2/3] uml: Create a private mount of proc for mconsole
-Message-ID: <20200228203058.jcnqeyvmqhfslcym@wittgenstein>
-References: <20200212203833.GQ23230@ZenIV.linux.org.uk>
- <20200212204124.GR23230@ZenIV.linux.org.uk>
- <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
- <87lfp7h422.fsf@x220.int.ebiederm.org>
- <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
- <87pnejf6fz.fsf@x220.int.ebiederm.org>
- <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
- <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
- <878skmsbyy.fsf_-_@x220.int.ebiederm.org>
- <87wo86qxcs.fsf_-_@x220.int.ebiederm.org>
+        id S1725900AbgB1Ufm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 15:35:42 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54530 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbgB1Ufm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Feb 2020 15:35:42 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id CB895AE95;
+        Fri, 28 Feb 2020 20:35:40 +0000 (UTC)
+Date:   Fri, 28 Feb 2020 14:35:38 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200228203538.s52t64zcurna77cu@fiona>
+References: <20200220152355.5ticlkptc7kwrifz@fiona>
+ <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
+ <20200225205342.GA12066@infradead.org>
+ <20200228194401.o736qvvr4zpklyiz@fiona>
+ <20200228195954.GJ29971@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87wo86qxcs.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <20200228195954.GJ29971@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 02:18:43PM -0600, Eric W. Biederman wrote:
+On 11:59 28/02, Matthew Wilcox wrote:
+> On Fri, Feb 28, 2020 at 01:44:01PM -0600, Goldwyn Rodrigues wrote:
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  		size_t n;
+> >  		if (dio->error) {
+> >  			iov_iter_revert(dio->submit.iter, copied);
+> > -			copied = ret = 0;
+> > +			ret = 0;
+> >  			goto out;
 > 
-> The mconsole code only ever accesses proc for the initial pid
-> namespace.  Instead of depending upon the proc_mnt which is
-> for proc_flush_task have uml create it's own mount of proc
-> instead.
+> There's another change here ... look at the out label
 > 
-> This allows proc_flush_task to evolve and remove the
-> need for having a proc_mnt to do it's job.
+> out:
+>         /* Undo iter limitation to current extent */
+>         iov_iter_reexpand(dio->submit.iter, orig_count - copied);
+>         if (copied)
+>                 return copied;
+>         return ret;
 > 
-> Cc: Jeff Dike <jdike@addtoit.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> ---
->  arch/um/drivers/mconsole_kern.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
+> so you're also changing by how much the iter is reexpanded.  I
+> don't know if it's the appropriate amount; I still don't quite get the
+> iov_iter complexities.
 > 
-> diff --git a/arch/um/drivers/mconsole_kern.c b/arch/um/drivers/mconsole_kern.c
-> index e8f5c81c2c6c..30575bd92975 100644
-> --- a/arch/um/drivers/mconsole_kern.c
-> +++ b/arch/um/drivers/mconsole_kern.c
-> @@ -36,6 +36,8 @@
->  #include "mconsole_kern.h"
->  #include <os.h>
->  
-> +static struct vfsmount *proc_mnt = NULL;
-> +
->  static int do_unlink_socket(struct notifier_block *notifier,
->  			    unsigned long what, void *data)
->  {
-> @@ -123,7 +125,7 @@ void mconsole_log(struct mc_request *req)
->  
->  void mconsole_proc(struct mc_request *req)
->  {
-> -	struct vfsmount *mnt = init_pid_ns.proc_mnt;
-> +	struct vfsmount *mnt = proc_mnt;
->  	char *buf;
->  	int len;
->  	struct file *file;
-> @@ -134,6 +136,10 @@ void mconsole_proc(struct mc_request *req)
->  	ptr += strlen("proc");
->  	ptr = skip_spaces(ptr);
->  
-> +	if (!mnt) {
-> +		mconsole_reply(req, "Proc not available", 1, 0);
-> +		goto out;
-> +	}
->  	file = file_open_root(mnt->mnt_root, mnt, ptr, O_RDONLY, 0);
->  	if (IS_ERR(file)) {
->  		mconsole_reply(req, "Failed to open file", 1, 0);
-> @@ -683,6 +689,24 @@ void mconsole_stack(struct mc_request *req)
->  	with_console(req, stack_proc, to);
->  }
->  
-> +static int __init mount_proc(void)
-> +{
-> +	struct file_system_type *proc_fs_type;
-> +	struct vfsmount *mnt;
-> +
-> +	proc_fs_type = get_fs_type("proc");
-> +	if (!proc_fs_type)
-> +		return -ENODEV;
-> +
-> +	mnt = kern_mount(proc_fs_type);
-> +	put_filesystem(proc_fs_type);
-> +	if (IS_ERR(mnt))
-> +		return PTR_ERR(mnt);
-> +
-> +	proc_mnt = mnt;
-> +	return 0;
-> +}
-> +
->  /*
->   * Changed by mconsole_setup, which is __setup, and called before SMP is
->   * active.
-> @@ -696,6 +720,8 @@ static int __init mconsole_init(void)
->  	int err;
->  	char file[UNIX_PATH_MAX];
->  
-> +	mount_proc();
 
-Hm, either check the return value or make the mount_proc() void?
-Probably worth logging something but moving on without proc.
+Ah, okay. Now I understand what Christoph was saying.
 
-I guess this is user visible in some scenarios but the patch series
-seems worth it!
+I suppose it is safe to remove iov_iter_reexpand(). I don't see any
+other goto to this label which will have a non-zero copied value.
+And we have already performed the iov_iter_revert().
 
-Christian
+-- 
+Goldwyn
