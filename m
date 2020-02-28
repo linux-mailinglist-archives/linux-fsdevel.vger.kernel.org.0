@@ -2,102 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 412DB173C18
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 16:47:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64A16173C36
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 16:53:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbgB1PrU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 10:47:20 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33182 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727124AbgB1PrU (ORCPT
+        id S1727084AbgB1Pw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 10:52:58 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54444 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgB1Pw6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:47:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582904839;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M5VyH6QG78kcYA9fsol/765vHxQ9ZwPBQuyaapR5VWs=;
-        b=JVg/n2sIcC4IqXWiBfR9uLTCNULrI0+Vf20qfHIfrCtL3fW2OEOBMWhc6bOWE5LDSKCCXB
-        a8f90gbhO4svQ3rEoEG7xByaAafSkxniwCLU8J4+9klQG/0dujCsEWEkrxXAUNV5JN09FC
-        qs0A97rdAzw9XYPhhJLWGVz0byOIS/A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-427-mQ_0rQDoOnSMA1s8I2K5_w-1; Fri, 28 Feb 2020 10:47:14 -0500
-X-MC-Unique: mQ_0rQDoOnSMA1s8I2K5_w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51DB4107ACC5;
-        Fri, 28 Feb 2020 15:47:12 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-107.rdu2.redhat.com [10.10.123.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C300390793;
-        Fri, 28 Feb 2020 15:47:08 +0000 (UTC)
-Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Eric Sandeen <sandeen@redhat.com>
-References: <20200226161404.14136-1-longman@redhat.com>
- <20200227083029.GL10737@dread.disaster.area>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <e9625cae-ee3f-3e58-903d-dabc131c8c9b@redhat.com>
-Date:   Fri, 28 Feb 2020 10:47:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 28 Feb 2020 10:52:58 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j7hwT-0008I1-Db; Fri, 28 Feb 2020 15:52:45 +0000
+Date:   Fri, 28 Feb 2020 16:52:44 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com>
+ <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com>
+ <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
+ <1582644535.3361.8.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20200227083029.GL10737@dread.disaster.area>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1582644535.3361.8.camel@HansenPartnership.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2/27/20 3:30 AM, Dave Chinner wrote:
-> On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
->> As there is no limit for negative dentries, it is possible that a sizeable
->> portion of system memory can be tied up in dentry cache slabs. Dentry slabs
->> are generally recalimable if the dentries are in the LRUs. Still having
->> too much memory used up by dentries can be problematic:
-> I don't get it.
->
-> Why isn't the solution simply "constrain the application generating
-> unbound numbers of dentries to a memcg"?
->
-> Then when the memcg runs out of memory, it will start reclaiming the
-> dentries that were allocated inside the memcg that are using all
-> it's resources, thereby preventing unbound growth of the dentry
-> cache.
->
-> I mean, this sort of resource control is exactly what memcgs are
-> supposed to be used for and are already used for. I don't see why we
-> need all this complexity for global dentry resource management when
-> memcgs should already provide an effective means of managing and
-> placing bounds on the amount of memory any specific application can
-> use...
+On Tue, Feb 25, 2020 at 07:28:55AM -0800, James Bottomley wrote:
+> On Tue, 2020-02-25 at 12:13 +0000, Steven Whitehouse wrote:
+> > Hi,
+> > 
+> > On 24/02/2020 15:28, Miklos Szeredi wrote:
+> > > On Mon, Feb 24, 2020 at 3:55 PM James Bottomley
+> > > <James.Bottomley@hansenpartnership.com> wrote:
+> > > 
+> > > > Once it's table driven, certainly a sysfs directory becomes
+> > > > possible. The problem with ST_DEV is filesystems like btrfs and
+> > > > xfs that may have multiple devices.
+> > > 
+> > > For XFS there's always  a single sb->s_dev though, that's what
+> > > st_dev will be set to on all files.
+> > > 
+> > > Btrfs subvolume is sort of a lightweight superblock, so basically
+> > > all such st_dev's are aliases of the same master superblock.  So
+> > > lookup of all subvolume st_dev's could result in referencing the
+> > > same underlying struct super_block (just like /proc/$PID will
+> > > reference the same underlying task group regardless of which of the
+> > > task group member's PID is used).
+> > > 
+> > > Having this info in sysfs would spare us a number of issues that a
+> > > set of new syscalls would bring.  The question is, would that be
+> > > enough, or is there a reason that sysfs can't be used to present
+> > > the various filesystem related information that fsinfo is supposed
+> > > to present?
+> > > 
+> > > Thanks,
+> > > Miklos
+> > > 
+> > 
+> > We need a unique id for superblocks anyway. I had wondered about
+> > using s_dev some time back, but for the reasons mentioned earlier in
+> > this thread I think it might just land up being confusing and
+> > difficult to manage. While fake s_devs are created for sbs that don't
+> > have a device, I can't help thinking that something closer to
+> > ifindex, but for superblocks, is needed here. That would avoid the
+> > issue of which device number to use.
+> > 
+> > In fact we need that anyway for the notifications, since without
+> > that  there is a race that can lead to missing remounts of the same
+> > device, in  case a umount/mount pair is missed due to an overrun, and
+> > then fsinfo returns the same device as before, with potentially the
+> > same mount options too. So I think a unique id for a superblock is a
+> > generically useful feature, which would also allow for sensible sysfs
+> > directory naming, if required,
+> 
+> But would this be informative and useful for the user?  I'm sure we can
+> find a persistent id for a persistent superblock, but what about tmpfs
+> ... that's going to have to change with every reboot.  It's going to be
+> remarkably inconvenient if I want to get fsinfo on /run to have to keep
+> finding what the id is.
+> 
+> The other thing a file descriptor does that sysfs doesn't is that it
+> solves the information leak: if I'm in a mount namespace that has no
+> access to certain mounts, I can't fspick them and thus I can't see the
+> information.  By default, with sysfs I can.
 
-Using memcg is one way to limit the damage. The argument that excessive
-negative dentries can push out existing memory objects that can be more
-useful if left alone still applies. Daemons that run in the root memcg
-has no limitation on how much memory that they can use.
+Difficult to figure out which part of the thread to reply too. :)
 
-There can also be memcgs with high memory limits and long running
-applications. memcg is certainly a useful tool in this regards, but it
-doesn't solve all the problem.
+sysfs strikes me as fundamentally misguided for this task.
 
-Cheers,
-Longman
+Init systems or any large-scale daemon will hate parsing things, there's
+that and parts of the reason why mountinfo sucks is because of parsing a
+possibly a potentially enormous file. Exposing information in sysfs will
+require parsing again one way or the other. I've been discussing these
+bottlenecks with Lennart quite a bit and reliable and performant mount
+notifications without needing to parse stuff is very high on the issue
+list. But even if that isn't an issue for some reason the namespace
+aspect is definitely something I'd consider a no-go.
+James has been poking at this a little already and I agree. More
+specifically, sysfs and proc already are a security nightmare for
+namespace-aware workloads and require special care. Not leaking
+information in any way is a difficult task. I mean, over the last two
+years I sent quite a lot of patches to the networking-namespace aware
+part of sysfs alone either fixing information leaks, or making other
+parts namespace aware that weren't and were causing issues (There's
+another large-ish series sitting in Dave's tree right now.). And tbh,
+network namespacing in sysfs is imho trivial compared to what we would
+need to do to handle mount namespacing and especially mount propagation.
+fsinfo() is way cleaner and ultimately simpler approach. We very much
+want it file-descriptor based. The mount api opens up the road to secure
+and _delegatable_ querying of filesystem information.
 
-
+Christian
