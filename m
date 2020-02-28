@@ -2,132 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B86CA172E4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 02:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E443A172E55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 02:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbgB1BZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Feb 2020 20:25:05 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:42284 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729984AbgB1BZF (ORCPT
+        id S1730346AbgB1BbA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Feb 2020 20:31:00 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:40333 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730155AbgB1BbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Feb 2020 20:25:05 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 48TBfk2HHczKmV0;
-        Fri, 28 Feb 2020 02:25:02 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id E9DZjsHHjp6i; Fri, 28 Feb 2020 02:24:58 +0100 (CET)
-Date:   Fri, 28 Feb 2020 12:24:51 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v2)
-Message-ID: <20200228012451.upnq5r7fdctrk7pv@yavin>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200225012457.GA138294@ZenIV.linux.org.uk>
+        Thu, 27 Feb 2020 20:31:00 -0500
+Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D65E57EAC9F;
+        Fri, 28 Feb 2020 12:30:56 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1j7UUQ-0005gj-Iv; Fri, 28 Feb 2020 12:30:54 +1100
+Date:   Fri, 28 Feb 2020 12:30:54 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Jeff Moyer <jmoyer@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>
+Subject: Re: [PATCH v5 2/8] drivers/pmem: Allow pmem_clear_poison() to accept
+ arbitrary offset and len
+Message-ID: <20200228013054.GO10737@dread.disaster.area>
+References: <20200218214841.10076-1-vgoyal@redhat.com>
+ <20200218214841.10076-3-vgoyal@redhat.com>
+ <x49lfoxj622.fsf@segfault.boston.devel.redhat.com>
+ <20200220215707.GC10816@redhat.com>
+ <x498skv3i5r.fsf@segfault.boston.devel.redhat.com>
+ <20200221201759.GF25974@redhat.com>
+ <20200223230330.GE10737@dread.disaster.area>
+ <20200224153844.GB14651@redhat.com>
+ <20200227030248.GG10737@dread.disaster.area>
+ <CAPcyv4gTSb-xZ2k938HxQeAXATvGg1aSkEGPfrzeQAz9idkgzQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cla7i2c4hyd6w2ul"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200225012457.GA138294@ZenIV.linux.org.uk>
+In-Reply-To: <CAPcyv4gTSb-xZ2k938HxQeAXATvGg1aSkEGPfrzeQAz9idkgzQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
+        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=l697ptgUJYAA:10
+        a=7-415B0cAAAA:8 a=NxkpfW6PSC3fqcVbgWsA:9 a=iOAVfZH_XQw0H41z:21
+        a=2HYxUNSYbguoUMYx:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Feb 26, 2020 at 08:19:37PM -0800, Dan Williams wrote:
+> On Wed, Feb 26, 2020 at 7:03 PM Dave Chinner <david@fromorbit.com> wrote:
+> > On Mon, Feb 24, 2020 at 10:38:44AM -0500, Vivek Goyal wrote:
+> > > Anyway, partial page truncate can't ensure that data in rest of the page can
+> > > be read back successfully. Memory can get poison after the write and
+> > > hence read after truncate will still fail.
+> >
+> > Which is where the notification requirement comes in. Yes, we may
+> > still get errors on read or write, but if memory at rest goes bad,
+> > we want to handle that and correct it ASAP, not wait days or months
+> > for something to trip over the poisoned page before we find out
+> > about it.
+> >
+> > > Hence, all we are trying to ensure is that if a poison is known at the
+> > > time of writing partial page, then we should return error to user space.
+> >
+> > I think within FS-DAX infrastructure, any access to the data (read
+> > or write) within a poisoned page or a page marked with PageError()
+> > should return EIO to the caller, unless it's the specific command to
+> > clear the error/poison state on the page. What happens with that
+> > error state is then up to the caller.
+> >
+> 
+> I agree with most of the above if you replace "device-dax error
+> handling" with "System RAM error handling". It's typical memory error
+> handling that injects the page->index and page->mappping dependency.
 
---cla7i2c4hyd6w2ul
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I disagree, but that's beside the point and not worth arguing.
 
-On 2020-02-25, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Sun, Feb 23, 2020 at 01:12:21AM +0000, Al Viro wrote:
-> > 	This is a slightly extended repost of the patchset posted on
-> > Jan 19.  Current branch is in vfs.git#work.do_last, the main
-> > difference from the last time around being a bit of do_last()
-> > untangling added in the end of series.  #work.openat2 is already
-> > in mainline, which simplifies the series - now it's a straight
-> > branch with no merges.
->=20
-> Whee...  While trying to massage ".." handling towards the use of
-> regular mount crossing semantics, I've found something interesting.
-> Namely, if you start in a directory with overmounted parent,
-> LOOKUP_NO_XDEV resolution of ../something will bloody well cross
-> into the overmount.
+> So you want the FS to have error handling for just pmem errors or all
+> memory errors?
 
-Oh boy...
+Just pmem errors in the specific range the filesystem manages - we
+really only care storage errors because those are the only errors
+the filesystem is responsible for handling correctly.
 
-> Reason: follow_dotdot() (and its RCU counterpart) check for LOOKUP_NO_XDEV
-> when crossing into underlying fs, but not when crossing into overmount
-> of the parent.
->=20
-> Interpretation of .. is basically
->=20
-> loop:	if we are in root					// uncommon
-> 		next =3D current position
-> 	else if we are in root of a mounted filesystem		// more rare
-> 		move to underlying mountpoint
-> 		goto loop
-> 	else
-> 		next =3D parent directory of current position	// most common
->=20
-> 	while next is overmounted				// _VERY_ uncommon
-> 		next =3D whatever's mounted on next
->=20
-> 	move to next
->=20
-> The second loop should've been sharing code with the normal mountpoint
-> crossing.  It doesn't, which has already lead to interesting inconsistenc=
-ies
-> (e.g. autofs generally expects ->d_manage() to be called before crossing
-> into it; here it's not done).  LOOKUP_NO_XDEV has just added one more...
+Somebody else can worry about errors that hit page cache pages -
+page cache pages require mapping/index pointers on each page anyway,
+so a generic mechanism for handling those errors can be built into
+the page cache. And if the error is in general kernel memory, then
+it's game over for the entire kernel at that point, not just the
+filesystem.
 
-You're quite right -- LOOKUP_NO_XDEV should block that and I missed it.
+> And you want this to be done without the mm core using
+> page->index to identify what to unmap when the error happens?
 
-> Incidentally, another inconsistency is LOOKUP_BENEATH treatment in case
-> when we have walked out of the subtree by way of e.g. procfs symlink and
-> then ran into .. in the absolute root (that's
->                 if (!follow_up(&nd->path))
->                         break;
-> in follow_dotdot()).  Shouldn't that give the same reaction as ..
-> in root (EXDEV on LOOKUP_BENEATH, that is)?  It doesn't...
+Isn't that exactly what I just said? We get the page address that
+failed, the daxdev can turn that into a sector address and call into
+the filesystem with a {sector, len, errno} tuple. We then do a
+reverse mapping lookup on {sector, len} to find all the owners of
+that range in the filesystem. If it's file data, that owner record
+gives us the inode and the offset into the file, which then gives us
+a {mapping, index} tuple.
 
-You can't go through procfs symlinks with LOOKUP_BENEATH, but if it's
-possible to do that kind of jump then it should also be blocked (but I
-would say that I'd prefer "block any kind of weird jump").
+Further, the filesytem reverse map is aware that it's blocks can be
+shared by multiple owners, so it will have a record for every inode
+and file offset that maps to that page. Hence we can simply iterate
+the reverse map and do that whacky collect_procs/kill_procs dance
+for every {mapping, index} pair that references the the bad range.
 
-> Another one is about LOOKUP_NO_XDEV again: suppose you have process'
-> root directly overmounted and cwd in the root of whatever's overmounting
-> it.  Resolution of .. will stay in cwd - we have no parent within the
-> chroot jail we are in, so we move to whatever's overmounting that root.
-> Which is the original location.  Should we fail on LOOKUP_NO_XDEV here?
-> Plain .. in the root of chroot jail (not overmounted by anything) does
-> *not*...
+Nothing ever needs to be stored on the struct page...
 
-I think LOOKUP_NO_XDEV should block that since you end up crossing a
-mountpoint.
+> Memory
+> error scanning is not universally available on all pmem
+> implementations, so FS will need to subscribe for memory-error
+> handling events.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+No. Filesystems interact with the underlying device abstraction, not
+the physical storage that lies behind that device abstraction.  The
+filesystem should not interface with pmem directly in any way (all
+direct accesses are hidden inside fs/dax.c!), nor should it care
+about the quirks of the pmem implementation it is sitting on. That's
+what the daxdev abstraction is supposed to hide from the users of
+the pmem.
 
---cla7i2c4hyd6w2ul
-Content-Type: application/pgp-signature; name="signature.asc"
+IOWs, the daxdev infrastructure subscribes to memory-error event
+subsystem, calls out to the filesystem when an error in a page in
+the daxdev is reported. The filesystem only needs to know the
+{sector, len, errno} tuple related to the error; it is the device's
+responsibility to handle the physical mechanics of listening,
+filtering and translating MCEs to a format the filesystem
+understands....
 
------BEGIN PGP SIGNATURE-----
+Another reason it should be provided by the daxdev as a {sector,
+len, errno} tuple is that it also allows non-dax block devices to
+implement the similar error notifications and provide filesystems
+with exactly the same information so the filesystem can start
+auto-recovery processes....
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXlhr4QAKCRCdlLljIbnQ
-EvPAAQCgcdH9xDc0JcNFSyizyIS0NFAVUIhgMKxeMa9A2TNSFgEA0NpX8uhWXCsy
-7vgtGIc1h9SnuYOzjrSIvz0yBm7nww4=
-=JbtI
------END PGP SIGNATURE-----
+Cheers,
 
---cla7i2c4hyd6w2ul--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
