@@ -2,173 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 185E917420A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Feb 2020 23:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 261571742B3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 00:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgB1Wgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Feb 2020 17:36:31 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:41006 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbgB1Wgb (ORCPT
+        id S1726277AbgB1XOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Feb 2020 18:14:11 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40903 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbgB1XOL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Feb 2020 17:36:31 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j7oFA-00048z-A9; Fri, 28 Feb 2020 15:36:28 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j7oF9-0002E6-6T; Fri, 28 Feb 2020 15:36:28 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     <linux-kernel@vger.kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>
-References: <20200210150519.538333-8-gladkov.alexey@gmail.com>
-        <87v9odlxbr.fsf@x220.int.ebiederm.org>
-        <20200212144921.sykucj4mekcziicz@comp-core-i7-2640m-0182e6>
-        <87tv3vkg1a.fsf@x220.int.ebiederm.org>
-        <CAHk-=wg52stFtUxMOxs3afkwDWmWn1JXC7RJ7dPsTrJbnxpZVg@mail.gmail.com>
-        <87v9obipk9.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgwmu4jpmOqW0+Lz0dcem1Fub=ThLHvmLobf_WqCq7bwg@mail.gmail.com>
-        <20200212200335.GO23230@ZenIV.linux.org.uk>
-        <CAHk-=wi+1CPShMFvJNPfnrJ8DD8uVKUOQ5TQzQUNGLUkeoahkg@mail.gmail.com>
-        <20200212203833.GQ23230@ZenIV.linux.org.uk>
-        <20200212204124.GR23230@ZenIV.linux.org.uk>
-        <CAHk-=wi5FOGV_3tALK3n6E2fK3Oa_yCYkYQtCSaXLSEm2DUCKg@mail.gmail.com>
-        <87lfp7h422.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgmn9Qds0VznyphouSZW6e42GWDT5H1dpZg8pyGDGN+=w@mail.gmail.com>
-        <87pnejf6fz.fsf@x220.int.ebiederm.org>
-        <871rqpaswu.fsf_-_@x220.int.ebiederm.org>
-        <871rqk2brn.fsf_-_@x220.int.ebiederm.org>
-        <878skmsbyy.fsf_-_@x220.int.ebiederm.org>
-Date:   Fri, 28 Feb 2020 16:34:20 -0600
-In-Reply-To: <878skmsbyy.fsf_-_@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Fri, 28 Feb 2020 14:17:41 -0600")
-Message-ID: <878skmpcib.fsf_-_@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 28 Feb 2020 18:14:11 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y1so1808165plp.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Feb 2020 15:14:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qYRCFe+0MRQNS4OgeJSALRbvhoDISvltVMM/A8keomE=;
+        b=ZVpx4u+bpNYlQ8XxZ+f5VbCuEBlDevQRfeh/RZjzaQwKmjHUSK4YhdjsexT3HOwCQr
+         J/IEdHl33g1zaJelduV2oMPjTZ0FCQhNps8zU4K7DUyE4MXDFPbPHelmCdY5OkB6U+ww
+         R0vCPzPB+FWSBIKtc+vZgUmX+xHhWvxIcNj62oFdg9rHcWm5mYYkBW2OHpBqkhfh+dG9
+         GI32ASERUQrIM8CnMpvJ+hysNcYv+DsydD3y/HvUCoj037OaLGgJ3cJG7I6EW5H3EG4N
+         b8z3wV5BWGptgho1DbdR5C/p0d5qoUb56TA5jcN3fidIwB4j4r4PnOZmO5Fw850aOIfF
+         V1Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qYRCFe+0MRQNS4OgeJSALRbvhoDISvltVMM/A8keomE=;
+        b=PV8e80h045Suo/f77xgddCNAGfc1ln4T1lq23wNrK4KlV89ZkC/jjRqLnK766hhBF0
+         CFwbLBJem8TzqAdth8UGnKt7Bs+bVprJPWp9uKckBW4iKUCnEGJxvovlJanSCiRE0vpT
+         FD2DgPQB7CG2mqlcoxPXl89rAO+ZXpHGyHpV0ksk+F3D2YYP002Uig3yxuhhqI4QNF+c
+         j4s9ml5vNf0/puejxlnaSc+QGXMYvIf75CdPGiYW9lHF76wD95qLf8ZuQi2OMan1LlzU
+         QLwq+3iIniTkWQ3vr7N/+IlFK2zz7yLMUJhZ5s5IwF5t8s6I4be6aDK6SRUIooRIfgkz
+         l0Gw==
+X-Gm-Message-State: APjAAAVL15tor/Spibqsfn2g32YjpyXL4GzTy1Ff9APBNnPjQJpId2f0
+        i+msBX/tA7qXnFQ2qNPLvXjzGLg1PZc=
+X-Google-Smtp-Source: APXvYqx0CySVh5fXc2TgOxWs832q5LpZeX0rkAWsq8FVK+WvnC1Q6Lj3ciwIS0BP//UODtlU0SLMtQ==
+X-Received: by 2002:a17:902:a608:: with SMTP id u8mr6010424plq.76.1582931649409;
+        Fri, 28 Feb 2020 15:14:09 -0800 (PST)
+Received: from vader.thefacebook.com ([2620:10d:c090:500::6:1714])
+        by smtp.gmail.com with ESMTPSA id q7sm11421878pgk.62.2020.02.28.15.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2020 15:14:08 -0800 (PST)
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH v4 0/9] fs: interface for directly reading/writing compressed data
+Date:   Fri, 28 Feb 2020 15:13:51 -0800
+Message-Id: <cover.1582930832.git.osandov@fb.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j7oF9-0002E6-6T;;;mid=<878skmpcib.fsf_-_@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+NbByb1lQfJAk+7olBYMa3XlQf2trYP+A=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,XMGappySubj_01,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;<linux-kernel@vger.kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 439 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 6 (1.5%), b_tie_ro: 2.0 (0.5%), parse: 1.21
-        (0.3%), extract_message_metadata: 14 (3.1%), get_uri_detail_list: 1.80
-        (0.4%), tests_pri_-1000: 18 (4.1%), tests_pri_-950: 1.78 (0.4%),
-        tests_pri_-900: 1.15 (0.3%), tests_pri_-90: 31 (7.0%), check_bayes: 29
-        (6.6%), b_tokenize: 10 (2.4%), b_tok_get_all: 9 (2.0%), b_comp_prob:
-        3.4 (0.8%), b_tok_touch_all: 3.9 (0.9%), b_finish: 0.68 (0.2%),
-        tests_pri_0: 315 (71.7%), check_dkim_signature: 0.91 (0.2%),
-        check_dkim_adsp: 2.7 (0.6%), poll_dns_idle: 0.54 (0.1%), tests_pri_10:
-        2.3 (0.5%), tests_pri_500: 45 (10.3%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 4/3] pid: Improve the comment about waiting in zap_pid_ns_processes
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Omar Sandoval <osandov@fb.com>
 
-Oleg wrote a very informative comment, but with the removal of
-proc_cleanup_work it is no longer accurate.
+Hello,
 
-Rewrite the comment so that it only talks about the details
-that are still relevant, and hopefully is a little clearer.
+This series adds an API for reading compressed data on a filesystem
+without decompressing it as well as support for writing compressed data
+directly to the filesystem. As with the previous submissions, I've
+included a man page patch describing the API. I have test cases
+(including fsstress support) and example programs which I'll send up
+once the interface is more or less settled [1].
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
- kernel/pid_namespace.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+The main use-case is Btrfs send/receive: currently, when sending data
+from one compressed filesystem to another, the sending side decompresses
+the data and the receiving side recompresses it before writing it out.
+This is wasteful and can be avoided if we can just send and write
+compressed extents. The send part will be implemented in a separate
+series, as this API can stand alone.
 
-diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-index 318fcc6ba301..01f8ba32cc0c 100644
---- a/kernel/pid_namespace.c
-+++ b/kernel/pid_namespace.c
-@@ -224,20 +224,27 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
- 	} while (rc != -ECHILD);
- 
- 	/*
--	 * kernel_wait4() above can't reap the EXIT_DEAD children but we do not
--	 * really care, we could reparent them to the global init. We could
--	 * exit and reap ->child_reaper even if it is not the last thread in
--	 * this pid_ns, free_pid(pid_allocated == 0) calls proc_cleanup_work(),
--	 * pid_ns can not go away until proc_kill_sb() drops the reference.
-+	 * kernel_wait4() misses EXIT_DEAD children, and EXIT_ZOMBIE
-+	 * process whose parents processes are outside of the pid
-+	 * namespace.  Such processes are created with setns()+fork().
- 	 *
--	 * But this ns can also have other tasks injected by setns()+fork().
--	 * Again, ignoring the user visible semantics we do not really need
--	 * to wait until they are all reaped, but they can be reparented to
--	 * us and thus we need to ensure that pid->child_reaper stays valid
--	 * until they all go away. See free_pid()->wake_up_process().
-+	 * If those EXIT_ZOMBIE processes are not reaped by their
-+	 * parents before their parents exit, they will be reparented
-+	 * to pid_ns->child_reaper.  Thus pidns->child_reaper needs to
-+	 * stay valid until they all go away.
- 	 *
--	 * We rely on ignored SIGCHLD, an injected zombie must be autoreaped
--	 * if reparented.
-+	 * The code relies on the the pid_ns->child_reaper ignoring
-+	 * SIGCHILD to cause those EXIT_ZOMBIE processes to be
-+	 * autoreaped if reparented.
-+	 *
-+	 * Semantically it is also desirable to wait for EXIT_ZOMBIE
-+	 * processes before allowing the child_reaper to be reaped, as
-+	 * that gives the invariant that when the init process of a
-+	 * pid namespace is reaped all of the processes in the pid
-+	 * namespace are gone.
-+	 *
-+	 * Once all of the other tasks are gone from the pid_namespace
-+	 * free_pid() will awaken this task.
- 	 */
- 	for (;;) {
- 		set_current_state(TASK_INTERRUPTIBLE);
+I'm fairly happy with the UAPI and VFS interface now. I'd love for Al
+and/or Christoph to take a look at that part. The Btrfs side is mostly
+there, just missing read repair.
+
+Patches 1-3 add the VFS support. Patches 4-7 are Btrfs prep patches.
+Patch 8 adds Btrfs encoded read support and patch 9 adds Btrfs encoded
+write support.
+
+Changes from v3:
+
+- Rebase on v5.6-rc3.
+- Disallow extents with a file length greater than the unencoded
+  length.
+- Drop Btrfs cleanups and fixes that have already been merged.
+- Add Nikolay's reviewed-bys.
+
+Please share any comments on the API or implementation. Thanks!
+
+1: https://github.com/osandov/xfstests/tree/rwf-encoded
+2: https://lore.kernel.org/linux-btrfs/cover.1574273658.git.osandov@fb.com/
+
+Omar Sandoval (9):
+  iov_iter: add copy_struct_from_iter()
+  fs: add O_ALLOW_ENCODED open flag
+  fs: add RWF_ENCODED for reading/writing compressed data
+  btrfs: don't advance offset for compressed bios in btrfs_csum_one_bio()
+  btrfs: add ram_bytes and offset to btrfs_ordered_extent
+  btrfs: support different disk extent size for delalloc
+  btrfs: optionally extend i_size in cow_file_range_inline()
+  btrfs: implement RWF_ENCODED reads
+  btrfs: implement RWF_ENCODED writes
+
+ Documentation/filesystems/encoded_io.rst |  74 ++
+ Documentation/filesystems/index.rst      |   1 +
+ arch/alpha/include/uapi/asm/fcntl.h      |   1 +
+ arch/parisc/include/uapi/asm/fcntl.h     |   1 +
+ arch/sparc/include/uapi/asm/fcntl.h      |   1 +
+ fs/btrfs/compression.c                   |  12 +-
+ fs/btrfs/compression.h                   |   6 +-
+ fs/btrfs/ctree.h                         |   9 +-
+ fs/btrfs/delalloc-space.c                |  38 +-
+ fs/btrfs/delalloc-space.h                |   4 +-
+ fs/btrfs/file-item.c                     |  35 +-
+ fs/btrfs/file.c                          |  55 +-
+ fs/btrfs/inode.c                         | 873 ++++++++++++++++++++---
+ fs/btrfs/ordered-data.c                  |  77 +-
+ fs/btrfs/ordered-data.h                  |  18 +-
+ fs/btrfs/relocation.c                    |   4 +-
+ fs/fcntl.c                               |  10 +-
+ fs/namei.c                               |   4 +
+ include/linux/fcntl.h                    |   2 +-
+ include/linux/fs.h                       |  16 +
+ include/linux/uio.h                      |   2 +
+ include/uapi/asm-generic/fcntl.h         |   4 +
+ include/uapi/linux/fs.h                  |  33 +-
+ lib/iov_iter.c                           |  82 +++
+ mm/filemap.c                             | 166 ++++-
+ 25 files changed, 1306 insertions(+), 222 deletions(-)
+ create mode 100644 Documentation/filesystems/encoded_io.rst
+
 -- 
-2.20.1
+2.25.1
 
