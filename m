@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 872ED1745D1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 10:17:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAC91745D8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 10:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgB2JRj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 04:17:39 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36696 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbgB2JRG (ORCPT
+        id S1726755AbgB2JVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 04:21:53 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52363 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgB2JVx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 04:17:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g83so3700924wme.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 01:17:05 -0800 (PST)
+        Sat, 29 Feb 2020 04:21:53 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so5996773wmc.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 01:21:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=84l+/iPVMM8/hLUieRf6a7Y3yljDnv4PnRrTq7Jpkjg=;
-        b=cHz9xliE+HoEvGGVsxnoiYK5Z1qN46G0Mos7GBEWEeSNyKHWDkuAbgFoR95CSxxsOa
-         HTF0mdtS3RJmE/T0bulXETv1S8b4hXclA5AlrHUJSPX0nHUSIzHzBPY26jGmE6zUMH98
-         x5fFgVI8aslBCQY7dRXSV4T5LmhJcNOG4lW6mT2qgaCo5Kgp6gWm2uCgo25D3YKjQ7t2
-         ru7x4/D620selz0Olgymq1Gy97B3+sD1UG4dbClwyjujmy92q9XQ8PP94zUfWGGgJmvD
-         O6zZpaLAiHT5Sk4CPJVRd0LCowPFB3cPJe56OZhSZLLvM/tmLOeoe8w1E/vraQxps5S0
-         jlQA==
+        bh=2Ue+Dgx3CeJSePHgMAW1fINAp8LiFMrWYxPNI01tF+o=;
+        b=VVPSupxCDZkkwJM0MuDX9yAVNfzq2i20C46ilTipuMbfK6l0nZb/BKn1/XdwebMeiv
+         t2xcgHSniB3MKaroeXK4nR+DcPgDxbWR30zD9RR8oBloBpVXwwEAvELJRhHJheOooch6
+         AL1GBbnr7DrKL7XwdsXHxymQXtL6qu7oDGLHVDq2QA9CBvv2KS3xgfE5//9ZdKO24frF
+         iX0UEZKXNMxk4SOHXamSczkyh2f4Ep9b8YG7nw0VL/FXzcL3t/1rrge9pnAjNePfFQfx
+         94jYhaNVO6BW/X2uUXHrchRqQx8rUFTZymcU84RKq1yf1zkD/xaUjIgfPc9htlsS4L4u
+         fyhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=84l+/iPVMM8/hLUieRf6a7Y3yljDnv4PnRrTq7Jpkjg=;
-        b=cRphO9+fBxTdapJfGlnM09jVLdq9oMDCARg2qMsRjSgZu2+98H05vB1QBHJ+HQMyYX
-         rxxkwlM3/IlA1shvsuCzFbGg/OK/YDtttzUIzM1t8iqHKfNNcfEOqV80Bln1zBDF2CNh
-         Jju6aP2oZ26JVU8cg6JEMUZhnaPIUARfuSfPY0o97Tbgai4VvLEc39frlvSA3dKhHrfD
-         KVv2lhEPNwcPo5bVSfgVgWZmEJ0HY6V/1P48AQW04iHK8PJSVq6KnEaecCQvXKLZTLPb
-         uEBFWtf2otFDPpoVoJWdmRIa6QnpSVGBRjY74vy1kc+GxFxF3aw1I+BdFzymDTsWA0ka
-         NNFw==
-X-Gm-Message-State: APjAAAVdAVpSCzcoaKYif06mCwS5NX3hHb4eQnpGXN40HtEIjnSwZMAc
-        sKwCe/91I9jaj5YDjKpX5tPdrtxNZ5LqNWhmCYM=
-X-Google-Smtp-Source: APXvYqxfLRiVrnYhDu4x+AqoqT6WXSX/Yp2zDg70IB8IAjbVVRQuJ0ZHm+nq/8o1RcPnF9HGEur2CkpJXILJQTL0jqQ=
-X-Received: by 2002:a1c:a789:: with SMTP id q131mr9556538wme.127.1582967824944;
- Sat, 29 Feb 2020 01:17:04 -0800 (PST)
+        bh=2Ue+Dgx3CeJSePHgMAW1fINAp8LiFMrWYxPNI01tF+o=;
+        b=KgnQqFbGz/YtHti1uJyNc4CDeXOGzUnNEUwGyvimqdvWhFT/G3Ru8y5k0BP8nyHyZ4
+         HgH2xjo5e6lvLFMcHkMfz0XN4WW59r/mWheGWH1VKghXVl+NAkcjkK1KffIXtHqmj9rF
+         +1OoHNTAWw570/X6qzxEpypZ7EjxGhIuNBUC7i1+DFyAHr9a+z+7+sD694EQf6B5gvEv
+         XCmfWAIj7jhIIUjhzH2Q3ZqrwyGZTQ6Z5g49761mxnmpPhPItdre8B0iibT8kRppjINo
+         jC7+0NWGIkVVzfwtLpwCiHDWB33SDgeklBebER1/EHfmEfEG6tpZIQbUwxi1jymqmdT3
+         vzNA==
+X-Gm-Message-State: APjAAAV7ZsjHjRcqqetY9wXnU2utn+1D7qhberZHB9WecPW8+/oIIYvl
+        tAeLydzJtYWj5HDag9IyIoVM4vw/zSZyXTIYxJQ=
+X-Google-Smtp-Source: APXvYqwXr3ckvpjnUV3luGA4fCi4IOXlgKlcLyhHcepYxIFSxB+bII3J0lhiHYkO46BI/jCcSRb6B2gBvrulhaqW66Y=
+X-Received: by 2002:a1c:25c5:: with SMTP id l188mr9801660wml.105.1582968108954;
+ Sat, 29 Feb 2020 01:21:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20200228163456.1587-1-vgoyal@redhat.com>
-In-Reply-To: <20200228163456.1587-1-vgoyal@redhat.com>
+References: <20200228163456.1587-1-vgoyal@redhat.com> <20200228163456.1587-3-vgoyal@redhat.com>
+In-Reply-To: <20200228163456.1587-3-vgoyal@redhat.com>
 From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date:   Sat, 29 Feb 2020 10:16:53 +0100
-Message-ID: <CAM9Jb+j46n3Ykca3_F0zb-7U1M5C8KmmH+3uzB1z7MqH60mQBA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] dax/pmem: Provide a dax operation to zero page range
+Date:   Sat, 29 Feb 2020 10:21:37 +0100
+Message-ID: <CAM9Jb+gLczXgFmLJg8a=XThoJT1S8XajFkb8AkjDCV1XXyarqg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/6] dax, pmem: Add a dax operation zero_page_range
 To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         hch@infradead.org, dan.j.williams@intel.com, david@fromorbit.com,
@@ -58,65 +58,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Vivek,
-
 >
-> Hi,
+> Add a dax operation zero_page_range, to zero a page. This will also clear any
+> known poison in the page being zeroed.
 >
-> This is V6 of patches. These patches are also available at.
-
-Looks like cover letter is missing the motivation for the patchset.
-Though I found it in previous posting. Its good to add it in the series
-for anyone joining the discussion at later stages.
-
-Thanks,
-Pankaj
-
+> As of now, zeroing of one page is allowed in a single call. There
+> are no callers which are trying to zero more than a page in a single call.
+> Once we grow the callers which zero more than a page in single call, we
+> can add that support. Primary reason for not doing that yet is that this
+> will add little complexity in dm implementation where a range might be
+> spanning multiple underlying targets and one will have to split the range
+> into multiple sub ranges and call zero_page_range() on individual targets.
 >
-> Changes since V5:
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  drivers/dax/super.c   | 20 ++++++++++++++++++++
+>  drivers/nvdimm/pmem.c | 11 +++++++++++
+>  include/linux/dax.h   |  4 ++++
+>  3 files changed, 35 insertions(+)
 >
-> - Dan Williams preferred ->zero_page_range() to only accept PAGE_SIZE
->   aligned request and clear poison only on page size aligned zeroing. So
->   I changed it accordingly.
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 0aa4b6bc5101..e498daf3c0d7 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -344,6 +344,26 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+>  }
+>  EXPORT_SYMBOL_GPL(dax_copy_to_iter);
 >
-> - Dropped all the modifications which were required to support arbitrary
->   range zeroing with-in a page.
+> +int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+> +                       size_t nr_pages)
+> +{
+> +       if (!dax_alive(dax_dev))
+> +               return -ENXIO;
+> +
+> +       if (!dax_dev->ops->zero_page_range)
+> +               return -EOPNOTSUPP;
+> +       /*
+> +        * There are no callers that want to zero more than one page as of now.
+> +        * Once users are there, this check can be removed after the
+> +        * device mapper code has been updated to split ranges across targets.
+> +        */
+> +       if (nr_pages != 1)
+> +               return -EIO;
+> +
+> +       return dax_dev->ops->zero_page_range(dax_dev, pgoff, nr_pages);
+> +}
+> +EXPORT_SYMBOL_GPL(dax_zero_page_range);
+> +
+>  #ifdef CONFIG_ARCH_HAS_PMEM_API
+>  void arch_wb_cache_pmem(void *addr, size_t size);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 075b11682192..5b774ddd0efb 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -282,6 +282,16 @@ static const struct block_device_operations pmem_fops = {
+>         .revalidate_disk =      nvdimm_revalidate_disk,
+>  };
 >
-> - This patch series also fixes the issue where "truncate -s 512 foo.txt"
->   will fail if first sector of file is poisoned. Currently it succeeds
->   and filesystem expectes whole of the filesystem block to be free of
->   poison at the end of the operation.
+> +static int pmem_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+> +                                   size_t nr_pages)
+> +{
+> +       struct pmem_device *pmem = dax_get_private(dax_dev);
+> +
+> +       return blk_status_to_errno(pmem_do_write(pmem, ZERO_PAGE(0), 0,
+> +                                  PFN_PHYS(pgoff) >> SECTOR_SHIFT,
+> +                                  PAGE_SIZE));
+> +}
+> +
+>  static long pmem_dax_direct_access(struct dax_device *dax_dev,
+>                 pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn)
+>  {
+> @@ -313,6 +323,7 @@ static const struct dax_operations pmem_dax_ops = {
+>         .dax_supported = generic_fsdax_supported,
+>         .copy_from_iter = pmem_copy_from_iter,
+>         .copy_to_iter = pmem_copy_to_iter,
+> +       .zero_page_range = pmem_dax_zero_page_range,
+>  };
 >
-> Christoph, I have dropped your Reviewed-by tag on 1-2 patches because
-> these patches changed substantially. Especially signature of of
-> dax zero_page_range() helper.
+>  static const struct attribute_group *pmem_attribute_groups[] = {
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 328c2dbb4409..71735c430c05 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -34,6 +34,8 @@ struct dax_operations {
+>         /* copy_to_iter: required operation for fs-dax direct-i/o */
+>         size_t (*copy_to_iter)(struct dax_device *, pgoff_t, void *, size_t,
+>                         struct iov_iter *);
+> +       /* zero_page_range: required operation. Zero page range   */
+> +       int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
+>  };
 >
-> Thanks
-> Vivek
+>  extern struct attribute_group dax_attribute_group;
+> @@ -199,6 +201,8 @@ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+>                 size_t bytes, struct iov_iter *i);
+>  size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+>                 size_t bytes, struct iov_iter *i);
+> +int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+> +                       size_t nr_pages);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
 >
-> Vivek Goyal (6):
->   pmem: Add functions for reading/writing page to/from pmem
->   dax, pmem: Add a dax operation zero_page_range
->   s390,dcssblk,dax: Add dax zero_page_range operation to dcssblk driver
->   dm,dax: Add dax zero_page_range operation
->   dax: Use new dax zero page method for zeroing a page
->   dax,iomap: Add helper dax_iomap_zero() to zero a range
->
->  drivers/dax/super.c           | 20 ++++++++
->  drivers/md/dm-linear.c        | 18 +++++++
->  drivers/md/dm-log-writes.c    | 17 ++++++
->  drivers/md/dm-stripe.c        | 23 +++++++++
->  drivers/md/dm.c               | 30 +++++++++++
->  drivers/nvdimm/pmem.c         | 97 ++++++++++++++++++++++-------------
->  drivers/s390/block/dcssblk.c  | 15 ++++++
->  fs/dax.c                      | 59 ++++++++++-----------
->  fs/iomap/buffered-io.c        |  9 +---
->  include/linux/dax.h           | 21 +++-----
->  include/linux/device-mapper.h |  3 ++
->  11 files changed, 221 insertions(+), 91 deletions(-)
->
+>  ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
 > --
 > 2.20.1
+
+Zeroing single page seems right approach for now.
+Reviewed-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
 > _______________________________________________
 > Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
 > To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
