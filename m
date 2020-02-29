@@ -2,367 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF26917488A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 19:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE369174894
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 19:07:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgB2SDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 13:03:42 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52956 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbgB2SDm (ORCPT
+        id S1727397AbgB2SHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 13:07:21 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38323 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbgB2SHV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 13:03:42 -0500
-Received: by mail-pj1-f67.google.com with SMTP id ep11so2640715pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 10:03:40 -0800 (PST)
+        Sat, 29 Feb 2020 13:07:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t11so919898wrw.5;
+        Sat, 29 Feb 2020 10:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=z89W4g4aiTyqMWeFu9TbmpRWadrcXuWSXAxV5E/i9Ks=;
-        b=NUAUSjMc3PylWqoNwD9tmPdW1meYULD//Jlozs3Xa+VZ5Ui3CCoFpfStCRKbMx1a3r
-         F3/Vl9YoQbPRExQjDKDl+Z5TjtfwgSErqpiPASKhCKtkeJDmORLQoqBnHIXaQU96diqY
-         xyoISm6dKqGIti0CFVD+4YQBStyo13x4cVbpJlhWoyvOidgFvCrSQOpc7FVoz2fkwfUU
-         vX4SLHgFgA4LtXPlbJDmqJ25Nu4fYgMONjX3Rogf03cQXkOHYM6RA4x1VmNlADfwRMf7
-         yfpmFipstyhAqK6dUohMXoDNt/4DZ01v4WBnx9lARerqGtZocE+pzlkCw8Vcdwi50sR9
-         EE5g==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Hm4cXoI43gAgA4nrBIzRUu2EXt/W1xMMI5Bz6Dkvkes=;
+        b=DzOsEVcnoPDDcnCrYbqOwyMAfCHTk4hVp350pagLtf0e8yUqiX4bYAB6arg9Ha1HaZ
+         fxx5/OuZVKTC/u5SxkwkduKZzr1wfgY9wwL077PralTWgckdDaostS3XFsADegvqHpnX
+         TRRbpfQYRfqDGXMyaEzPDTQH0Ru6v8K4OgI0AO2c9gFdbqgI+8ERgWP+pWzIVqgJ1pc0
+         +FXw5/YqH3X1ooa1YLP7YmBIeRLTYzIA62LuA/Hr/Pve9pFjwkBoiH8IfyQoxdn+CRnf
+         HNnEM/Bj0gjgCOzMNBvJt+qphVXaJpmhQVtIsC7iTSJMbPxk/JSErOlsicQ6nfr0Nug9
+         PqOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=z89W4g4aiTyqMWeFu9TbmpRWadrcXuWSXAxV5E/i9Ks=;
-        b=DN195Knjoik3M5iDbjcTkOped+T7Rd3rKOgcOrJ6XAKybop/1M+f+Bp+3UxctW9FaR
-         bM4gDb7Uw17ND0PtH+vTdCCmQ0+QLGuF7cP/iXWMbUkL0kVAVZeye1xxoTNr8VQYQ3KW
-         fxs+eWOMQw4aMLcq2lEvwNzA6Uh+SKfnJrNo7Ox99Bs1o6PLtDTpjdzlyoEFLZn5WuQR
-         3LQInn5R/fRO6jLQlUwIsPhejk3e2yY5N5Jb4xfL/UWzwpWh2JRKNlEN1kcXvuAp2DZC
-         RyZIkJlBSCBZaMC01Bv0eBfmI61q+jt25/LHDUeKUxsIQ4OuR5YN1TqSFQma6TwZyOk9
-         n+VQ==
-X-Gm-Message-State: ANhLgQ2IqQpNIqqljI9KqDGcLCdFLhnAP00+gFlQe/+WClR84JA9gleQ
-        tOdwWzzHiy5N9eiRnC1S0RwkLUWy35M=
-X-Google-Smtp-Source: ADFU+vvMt8ivPleB4YG6JegTWPMHA/ki9R8MO9nGfTA1OEmFOIvT68B8kGaLz5bk0qlPx/4kYflYfA==
-X-Received: by 2002:a17:90a:9303:: with SMTP id p3mr3769348pjo.35.1582999419354;
-        Sat, 29 Feb 2020 10:03:39 -0800 (PST)
-Received: from vader ([2607:fb90:8365:d596:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id 5sm2791302pfw.179.2020.02.29.10.03.37
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Hm4cXoI43gAgA4nrBIzRUu2EXt/W1xMMI5Bz6Dkvkes=;
+        b=b0UbeXQ/LDROrFETHbYFeR9fRj6yMyIbkemwZyBO6a0o+9NYwNgHyXplcQC75znC9g
+         oJs27yesroha8kx/2y4yufaP5LL83xJ3xd8kq/j+z5gbarb6BZuJWc/bhKsijYAii2+N
+         HjOFLwcMCJ1w3YNi/TlluaXtFyJ8RDZrH6F5UAM3hS/vaBqqNkAG4FD3z3O195DUytDG
+         tgVnz7T3N1hwxudVAuwqiujK+e3/ekknmFSB9c0OFYebGR/wKyVt4RtF0VrFliIXHkUU
+         VTSta7fO9xmP5WvfardgdxhyZpfMmif3ZvD+9juI2gj7qtsZeqAZp4Gf9b2oiA5YJisc
+         rbew==
+X-Gm-Message-State: APjAAAXqIUYoTFdXaL1gWVAU7stLQjR2VYoX1JU+j1PAIM4Ae0FYUJ9Q
+        u/WvVHxMyz9HXvf2Z8pP+6gIOV4a8wM=
+X-Google-Smtp-Source: APXvYqwUneac0lxNm13oGXPVtzsZ9kIY4PmsP3KRqDCEIl7C9+O/clOnE6+5Bbu2z+3/hHY7U3cMuA==
+X-Received: by 2002:adf:9521:: with SMTP id 30mr11361559wrs.349.1582999639162;
+        Sat, 29 Feb 2020 10:07:19 -0800 (PST)
+Received: from dumbo (ip4da2e549.direct-adsl.nl. [77.162.229.73])
+        by smtp.gmail.com with ESMTPSA id m19sm7272467wmc.34.2020.02.29.10.07.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Feb 2020 10:03:38 -0800 (PST)
-Date:   Sat, 29 Feb 2020 10:03:35 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
-Subject: Re: [PATCH man-pages v4] Document encoded I/O
-Message-ID: <20200229180335.GA157744@vader>
-References: <cover.1582930832.git.osandov@fb.com>
- <00f86ed7c25418599e6067cb1dfb186c90ce7bf3.1582931488.git.osandov@fb.com>
- <CAOQ4uxgym1C3JZHrLhBmEh_T7UbQOukxTBKVzHqp4NSdjredSg@mail.gmail.com>
+        Sat, 29 Feb 2020 10:07:18 -0800 (PST)
+Date:   Sat, 29 Feb 2020 19:07:16 +0100
+From:   Domenico Andreoli <domenico.andreoli@linux.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com, hch@lst.de,
+        akpm@linux-foundation.org, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz
+Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
+ active
+Message-ID: <20200229180716.GA31323@dumbo>
+References: <20200229170825.GX8045@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgym1C3JZHrLhBmEh_T7UbQOukxTBKVzHqp4NSdjredSg@mail.gmail.com>
+In-Reply-To: <20200229170825.GX8045@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 12:28:41PM +0200, Amir Goldstein wrote:
-> > +encoded_io \- overview of encoded I/O
-> > +.SH DESCRIPTION
-> > +Several filesystems (e.g., Btrfs) support transparent encoding
-> > +(e.g., compression, encryption) of data on disk:
-> > +written data is encoded by the kernel before it is written to disk,
-> > +and read data is decoded before being returned to the user.
-> > +In some cases, it is useful to skip this encoding step.
-> > +For example, the user may want to read the compressed contents of a file
-> > +or write pre-compressed data directly to a file.
-> > +This is referred to as "encoded I/O".
-> > +.SS Encoded I/O API
-> > +Encoded I/O is specified with the
-> > +.B RWF_ENCODED
-> > +flag to
-> > +.BR preadv2 (2)
-> > +and
-> > +.BR pwritev2 (2).
-> > +If
-> > +.B RWF_ENCODED
-> > +is specified, then
-> > +.I iov[0].iov_base
-> > +points to an
-> > +.I
-> > +encoded_iov
-> > +structure, defined in
-> > +.I <linux/fs.h>
-> > +as:
-> > +.PP
-> > +.in +4n
-> > +.EX
-> > +struct encoded_iov {
-> > +    __aligned_u64 len;
-> > +    __aligned_u64 unencoded_len;
-> > +    __aligned_u64 unencoded_offset;
-> > +    __u32 compression;
-> > +    __u32 encryption;
-> > +};
+On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> This new API can generate many diverse error conditions that the standard errno
-> codes are not rich enough to describe.
-> Maybe add room for encoded io specific error codes in the metadata structure
-> would be good practice, for example:
-> - compression method not supported
-> - encryption method not supported
-> - the combination of enc/comp is not supported
-> - and so on
-
-I like this idea, but it feels like even more iovec abuse. Namely, for
-pwritev2(), it feels a little off that we'd be copying _to_ user memory
-rather than only copying from. It's probably worth it for better errors,
-though.
-
-> > +.EE
-> > +.in
-> > +.PP
-> > +This may be extended in the future, so
-> > +.I iov[0].iov_len
-> > +must be set to
-> > +.I "sizeof(struct\ encoded_iov)"
-> > +for forward/backward compatibility.
-> > +The remaining buffers contain the encoded data.
-> > +.PP
-> > +.I compression
-> > +and
-> > +.I encryption
-> > +are the encoding fields.
-> > +.I compression
-> > +is one of
-> > +.B ENCODED_IOV_COMPRESSION_NONE
-> > +(zero),
-> > +.BR ENCODED_IOV_COMPRESSION_ZLIB ,
-> > +.BR ENCODED_IOV_COMPRESSION_LZO ,
-> > +or
-> > +.BR ENCODED_IOV_COMPRESSION_ZSTD .
-> > +.I encryption
-> > +is currently always
-> > +.B ENCODED_IOV_ENCRYPTION_NONE
-> > +(zero).
-> > +.PP
-> > +.I unencoded_len
-> > +is the length of the unencoded (i.e., decrypted and decompressed) data.
-> > +.I unencoded_offset
-> > +is the offset into the unencoded data where the data in the file begins
-> > +(less than or equal to
-> > +.IR unencoded_len ).
-> > +.I len
-> > +is the length of the data in the file
-> > +(less than or equal to
-> > +.I unencoded_len
-> > +-
-> > +.IR unencoded_offset ).
-> > +.I
-> > +.PP
-> > +In most cases,
-> > +.I len
-> > +is equal to
-> > +.I unencoded_len
-> > +and
-> > +.I unencoded_offset
-> > +is zero.
-> > +However, it may be necessary to refer to a subset of the unencoded data,
-> > +usually because a read occurred in the middle of an encoded extent,
-> > +because part of an extent was overwritten or deallocated in some
-> > +way (e.g., with
-> > +.BR write (2),
-> > +.BR truncate (2),
-> > +or
-> > +.BR fallocate (2))
-> > +or because part of an extent was added to the file (e.g., with
-> > +.BR ioctl_ficlonerange (2)
-> > +or
-> > +.BR ioctl_fideduperange (2)).
-> > +For example, if
-> > +.I len
-> > +is 300,
-> > +.I unencoded_len
-> > +is 1000,
-> > +and
-> > +.I unencoded_offset
-> > +is 600,
-> > +then the encoded data is 1000 bytes long when decoded,
-> > +of which only the 300 bytes starting at offset 600 are used;
-> > +the first 600 and last 100 bytes should be ignored.
-> > +.PP
-> > +If the unencoded data is actually longer than
-> > +.IR unencoded_len ,
-> > +then it is truncated;
-> > +if it is shorter, then it is extended with zeroes.
+> It turns out that there /is/ one use case for programs being able to
+> write to swap devices, and that is the userspace hibernation code.  The
+> uswsusp ioctls allow userspace to lease parts of swap devices, so turn
+> S_SWAPFILE off when invoking suspend.
 > 
-> I find the unencoded_len/unencoded_offset API extremely confusing and all
-> the clarifications above did not help to ease this feeling.
-> Please remind me why does the API need to expose unencoded details at all.
-> I understand the backup/restore use case for read/write encoded data.
-> I do not understand how unencoded offset info is relevant to this use case
-> or what are the other use cases it is relevant for.
+> Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
+> Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
+> Reported-by: Marian Klein <mkleinsoft@gmail.com>
 
-I agree, it's confusing. However, without this concept on the read side,
-there's no way to represent some file extent layouts, and without the
-write side, those layouts can't be written back out. That would make
-this interface much less useful for backups.
+I also tested it yesterday but was not satisfied, unfortunately I did
+not come with my comment in time.
 
-These cases arise in a few ways on Btrfs:
+Yes, I confirm that the uswsusp works again but also checked that
+swap_relockall() is not triggered at all and therefore after the first
+hibernation cycle the S_SWAPFILE bit remains cleared and the whole
+swap_relockall() is useless.
 
-1. Files with a size unaligned to the block size.
+I'm not sure this patch should be merged in the current form.
 
-   Ignoring inline data, Btrfs always pads data to the filesystem block
-   size when compressing. So, a file with a size unaligned to the block
-   size will end with an extent that decompresses to a multiple of the
-   block size, but logically the file only contains the data up to
-   i_size. In this case, len (length up to i_size) < unencoded_len (full
-   decompressed length). This can arise simply from writing out an
-   unaligned file or from truncating a file unaligned.
+Regards,
+Domenico
 
-2. FICLONERANGE from the middle of an extent.
-
-   Suppose file A has a large compressed extent with
-   len = unencoded_len = 128k and unencoded_offset = 0. If the user does
-   an FICLONERANGE out of the middle of that extent (say, 64k long and
-   4k from the start of the extent), Btrfs creates a "partial" extent
-   which references the original extent (in my example, the result would
-   have len = 64k, unencoded_offset = 4k, and unencoded_len still 128k).
-
-3. Overwriting the middle of an extent.
-
-   In some cases, when the middle of an extent is overwritten (e.g., an
-   O_DIRECT write, FICLONERANGE, or FIDEDUPERANGE), Btrfs splits up the
-   overwritten extents into partial extents referencing the original
-   extent instead of rewriting the whole extent.
-
-These aren't specific to compression or Btrfs' on-disk format. fscrypt
-uses block ciphers for file data, so case 1 is just as relevant for
-that. The way Btrfs handles case 2 is the only sane way I can see for
-supporting FICLONERANGE for encoded data.
-
-> > +.PP
-> > +For
-> > +.BR pwritev2 (),
-> > +the metadata should be specified in
-> > +.IR iov[0] .
-> > +If
-> > +.I iov[0].iov_len
-> > +is less than
-> > +.I "sizeof(struct\ encoded_iov)"
-> > +in the kernel,
-> > +then any fields unknown to userspace are treated as if they were zero;
-> > +if it is greater and any fields unknown to the kernel are non-zero,
-> > +then this returns -1 and sets
-> > +.I errno
-> > +to
-> > +.BR E2BIG .
-> > +The encoded data should be passed in the remaining buffers.
-> > +This returns the number of encoded bytes written (that is, the sum of
-> > +.I iov[n].iov_len
-> > +for 1 <=
-> > +.I n
-> > +<
-> > +.IR iovcnt ;
-> > +partial writes will not occur).
-> > +If the
-> > +.I offset
-> > +argument to
-> > +.BR pwritev2 ()
-> > +is -1, then the file offset is incremented by
-> > +.IR len .
-> > +At least one encoding field must be non-zero.
-> > +Note that the encoded data is not validated when it is written;
-> > +if it is not valid (e.g., it cannot be decompressed),
-> > +then a subsequent read may return an error.
-> > +.PP
-> > +For
-> > +.BR preadv2 (),
-> > +the metadata is returned in
-> > +.IR iov[0] .
-> > +If
-> > +.I iov[0].iov_len
-> > +is less than
-> > +.I "sizeof(struct\ encoded_iov)"
-> > +in the kernel and any fields unknown to userspace are non-zero,
-> > +then this returns -1 and sets
-> > +.I errno
-> > +to
-> > +.BR E2BIG ;
-> > +if it is greater,
-> > +then any fields unknown to the kernel are returned as zero.
-> > +The encoded data is returned in the remaining buffers.
-> > +If the provided buffers are not large enough to return an entire encoded
-> > +extent,
-> > +then this returns -1 and sets
-> > +.I errno
-> > +to
-> > +.BR ENOBUFS .
-> > +This returns the number of encoded bytes read.
-> > +If the
-> > +.I offset
-> > +argument to
-> > +.BR preadv2 ()
-> > +is -1, then the file offset is incremented by
-> > +.IR len .
-> > +This will only return one encoded extent per call.
-> > +This can also read data which is not encoded;
-> > +all encoding fields will be zero in that case.
-> > +.PP
-> > +As the filesystem page cache typically contains decoded data,
-> > +encoded I/O bypasses the page cache.
-> > +.SS Security
-> > +Encoded I/O creates the potential for some security issues:
-> > +.IP * 3
-> > +Encoded writes allow writing arbitrary data which the kernel will decode on
-> > +a subsequent read. Decompression algorithms are complex and may have bugs
-> > +which can be exploited by maliciously crafted data.
-> > +.IP *
-> > +Encoded reads may return data which is not logically present in the file
-> > +(see the discussion of
-> > +.I len
-> > +vs.
-> > +.I unencoded_len
-> > +above).
-> > +It may not be intended for this data to be readable.
-> > +.PP
-> > +Therefore, encoded I/O requires privilege.
-> > +Namely, the
-> > +.B RWF_ENCODED
-> > +flag may only be used when the file was opened with the
-> > +.B O_ALLOW_ENCODED
-> > +flag to
-> > +.BR open (2),
-> > +which requires the
-> > +.B CAP_SYS_ADMIN
-> > +capability.
-> > +.B O_ALLOW_ENCODED
-> > +may be set and cleared with
-> > +.BR fcntl (2).
-> > +Note that it is not cleared on
-> > +.BR fork (2)
-> > +or
-> > +.BR execve (2);
-> > +one may wish to use
-> > +.B O_CLOEXEC
-> > +with
-> > +.BR O_ALLOW_ENCODED .
+> Tested-by: Marian Klein <mkleinsoft@gmail.com>
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  include/linux/swap.h |    1 +
+>  kernel/power/user.c  |   11 ++++++++++-
+>  mm/swapfile.c        |   26 ++++++++++++++++++++++++++
+>  3 files changed, 37 insertions(+), 1 deletion(-)
 > 
-> Sigh! If I were an attacker I would be drooling right now.
-> We want to create a new API to read/write raw encrypted data (even though
-> you have not implemented any encryption yet) and we use the same old
-> vulnerable practices that security people have been fighting for decades?
-> I am not very comfortable with this attitude.
-> I think we should be much more prudent for the first version of the API.
-> 
-> How about not allowing to set O_ALLOW_ENCODED without O_CLOEXEC.
-> We may or may not allow to clear O_CLOEXEC while O_ALLOW_ENCODED
-> is set, in case this is the user intention, but leaving the API as it is is just
-> asking for trouble IMO.
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index 1e99f7ac1d7e..add93e205850 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -458,6 +458,7 @@ extern void swap_free(swp_entry_t);
+>  extern void swapcache_free_entries(swp_entry_t *entries, int n);
+>  extern int free_swap_and_cache(swp_entry_t);
+>  extern int swap_type_of(dev_t, sector_t, struct block_device **);
+> +extern void swap_relockall(void);
+>  extern unsigned int count_swap_pages(int, int);
+>  extern sector_t map_swap_page(struct page *, struct block_device **);
+>  extern sector_t swapdev_block(int, pgoff_t);
+> diff --git a/kernel/power/user.c b/kernel/power/user.c
+> index 77438954cc2b..b11f7037ce5e 100644
+> --- a/kernel/power/user.c
+> +++ b/kernel/power/user.c
+> @@ -271,6 +271,8 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+>  			break;
+>  		}
+>  		error = hibernation_restore(data->platform_support);
+> +		if (!error)
+> +			swap_relockall();
+>  		break;
+>  
+>  	case SNAPSHOT_FREE:
+> @@ -372,10 +374,17 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
+>  			 */
+>  			swdev = new_decode_dev(swap_area.dev);
+>  			if (swdev) {
+> +				struct block_device *bd;
+> +
+>  				offset = swap_area.offset;
+> -				data->swap = swap_type_of(swdev, offset, NULL);
+> +				data->swap = swap_type_of(swdev, offset, &bd);
+>  				if (data->swap < 0)
+>  					error = -ENODEV;
+> +
+> +				inode_lock(bd->bd_inode);
+> +				bd->bd_inode->i_flags &= ~S_SWAPFILE;
+> +				inode_unlock(bd->bd_inode);
+> +				bdput(bd);
+>  			} else {
+>  				data->swap = -1;
+>  				error = -EINVAL;
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index b2a2e45c9a36..439bfb7263d3 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1799,6 +1799,32 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)
+>  	return -ENODEV;
+>  }
+>  
+> +/* Re-lock swap devices after resuming from userspace suspend. */
+> +void swap_relockall(void)
+> +{
+> +	int type;
+> +
+> +	spin_lock(&swap_lock);
+> +	for (type = 0; type < nr_swapfiles; type++) {
+> +		struct swap_info_struct *sis = swap_info[type];
+> +		struct block_device *bdev = bdgrab(sis->bdev);
+> +
+> +		/*
+> +		 * uswsusp only knows how to suspend to block devices, so we
+> +		 * can skip swap files.
+> +		 */
+> +		if (!(sis->flags & SWP_WRITEOK) ||
+> +		    !(sis->flags & SWP_BLKDEV))
+> +			continue;
+> +
+> +		inode_lock(bdev->bd_inode);
+> +		bdev->bd_inode->i_flags |= S_SWAPFILE;
+> +		inode_unlock(bdev->bd_inode);
+> +		bdput(bdev);
+> +	}
+> +	spin_unlock(&swap_lock);
+> +}
+> +
+>  /*
+>   * Get the (PAGE_SIZE) block corresponding to given offset on the swapdev
+>   * corresponding to given index in swap_info (swap type).
 
-Ok, I'm fine with requiring O_CLOEXEC for O_ALLOW_ENCODED on open. I'm
-pretty sure we want to allow clearing it with fcntl, as that is a very
-intentional action.
+-- 
+rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
