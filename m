@@ -2,185 +2,287 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE369174894
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 19:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BC2C174897
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 19:11:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbgB2SHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 13:07:21 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38323 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbgB2SHV (ORCPT
+        id S1727349AbgB2SK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 13:10:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40897 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbgB2SK7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 13:07:21 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t11so919898wrw.5;
-        Sat, 29 Feb 2020 10:07:19 -0800 (PST)
+        Sat, 29 Feb 2020 13:10:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y1so2530580plp.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 10:10:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Hm4cXoI43gAgA4nrBIzRUu2EXt/W1xMMI5Bz6Dkvkes=;
-        b=DzOsEVcnoPDDcnCrYbqOwyMAfCHTk4hVp350pagLtf0e8yUqiX4bYAB6arg9Ha1HaZ
-         fxx5/OuZVKTC/u5SxkwkduKZzr1wfgY9wwL077PralTWgckdDaostS3XFsADegvqHpnX
-         TRRbpfQYRfqDGXMyaEzPDTQH0Ru6v8K4OgI0AO2c9gFdbqgI+8ERgWP+pWzIVqgJ1pc0
-         +FXw5/YqH3X1ooa1YLP7YmBIeRLTYzIA62LuA/Hr/Pve9pFjwkBoiH8IfyQoxdn+CRnf
-         HNnEM/Bj0gjgCOzMNBvJt+qphVXaJpmhQVtIsC7iTSJMbPxk/JSErOlsicQ6nfr0Nug9
-         PqOQ==
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7sy8AOJ/15eT2KVP4UWt2JpZHRiEAQnmxmL1o6lYero=;
+        b=boYMWy0uH+IGGQmZ9jR9o/oMeVuC1J2Vk0aQ4D2AJNgzv3nUtfC9EIbHaRI6i34gPM
+         SbkrlyvZArKyc4DPoNXiYhlrvZn5dJNu4CfnBhWX901WWM9vTpB3uBlLfW5jbtWrSjyo
+         eo4HOrEdyMyaUzvNWnK9V9mTH1+ZoBKjbNRfBGDx2In7lCAptkh5Uv2tyolS0IgUm4cR
+         gXzx3q2/uy3u//9LAxtkRuVB8T3qFjf9e2w/FoBBawSCIHs2k3Q1i+pN7Dbza8GvyuC/
+         JXZFYjEtriuIs7gT4que4PlLtylT4e6HTqDLfvao16GrS3JequXyBMiemXgY+d8lXe6A
+         DBMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Hm4cXoI43gAgA4nrBIzRUu2EXt/W1xMMI5Bz6Dkvkes=;
-        b=b0UbeXQ/LDROrFETHbYFeR9fRj6yMyIbkemwZyBO6a0o+9NYwNgHyXplcQC75znC9g
-         oJs27yesroha8kx/2y4yufaP5LL83xJ3xd8kq/j+z5gbarb6BZuJWc/bhKsijYAii2+N
-         HjOFLwcMCJ1w3YNi/TlluaXtFyJ8RDZrH6F5UAM3hS/vaBqqNkAG4FD3z3O195DUytDG
-         tgVnz7T3N1hwxudVAuwqiujK+e3/ekknmFSB9c0OFYebGR/wKyVt4RtF0VrFliIXHkUU
-         VTSta7fO9xmP5WvfardgdxhyZpfMmif3ZvD+9juI2gj7qtsZeqAZp4Gf9b2oiA5YJisc
-         rbew==
-X-Gm-Message-State: APjAAAXqIUYoTFdXaL1gWVAU7stLQjR2VYoX1JU+j1PAIM4Ae0FYUJ9Q
-        u/WvVHxMyz9HXvf2Z8pP+6gIOV4a8wM=
-X-Google-Smtp-Source: APXvYqwUneac0lxNm13oGXPVtzsZ9kIY4PmsP3KRqDCEIl7C9+O/clOnE6+5Bbu2z+3/hHY7U3cMuA==
-X-Received: by 2002:adf:9521:: with SMTP id 30mr11361559wrs.349.1582999639162;
-        Sat, 29 Feb 2020 10:07:19 -0800 (PST)
-Received: from dumbo (ip4da2e549.direct-adsl.nl. [77.162.229.73])
-        by smtp.gmail.com with ESMTPSA id m19sm7272467wmc.34.2020.02.29.10.07.18
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7sy8AOJ/15eT2KVP4UWt2JpZHRiEAQnmxmL1o6lYero=;
+        b=WvYK74z5RktM653KBIwmZYFRGr8nr1h1t4wujnkUFApqOxT9vw/X8g+DlnNCSt3zh6
+         cQZAsXeLkBbrPse8A/zQXkKgXUU8bsbQn8Hcul7wXdGS1dy7nxZ5C+HHrHd7A0gDgQ4s
+         0XpGfHqZSOp1EBBGblAVJ/BRFqXGewB8uwVdSf62GnNJuUFBfW8KdLOOCG+4IXZrQukq
+         AVwfF1vt3oBS1ccaCF95XTNmVWkOsM5CfjvE7PWegT5CMJ+A0okTu7VsnxygvxAV+xta
+         +zBXWLpRgUfOrXuUaevVRtGzu6i7AF+ephgz+wRtzOVO3HIgERjytYe5c0FABpUlKjZe
+         lYWQ==
+X-Gm-Message-State: APjAAAW42JetwGLyYyQw6AXp8hL7OQnEbBLzYVA7NvdJGtWb4QvYP9MZ
+        9alSmP2w+B0nMae/Id6/QfeJDA==
+X-Google-Smtp-Source: APXvYqybeS5MbSric+KrWp1UODE4dnY4mGpqShiZFnfzfg5BetSTd/rk0guzRj9/e465cj5luyQuQw==
+X-Received: by 2002:a17:902:be04:: with SMTP id r4mr9771281pls.315.1582999857094;
+        Sat, 29 Feb 2020 10:10:57 -0800 (PST)
+Received: from vader ([2607:fb90:8365:d596:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id l37sm6283692pjb.15.2020.02.29.10.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Feb 2020 10:07:18 -0800 (PST)
-Date:   Sat, 29 Feb 2020 19:07:16 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-pm@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com, hch@lst.de,
-        akpm@linux-foundation.org, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz
-Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
- active
-Message-ID: <20200229180716.GA31323@dumbo>
-References: <20200229170825.GX8045@magnolia>
+        Sat, 29 Feb 2020 10:10:56 -0800 (PST)
+Date:   Sat, 29 Feb 2020 10:10:53 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
+Subject: Re: [PATCH v4 3/9] fs: add RWF_ENCODED for reading/writing
+ compressed data
+Message-ID: <20200229181053.GB157744@vader>
+References: <cover.1582930832.git.osandov@fb.com>
+ <4f8b9a66f5f6efdb9cab566581acb292f0b5b528.1582930832.git.osandov@fb.com>
+ <CAOQ4uxi_KRZFiEsDj_yn0f+Zo4tgAkKKcuAp3jiAmB4r7xjiEA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200229170825.GX8045@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAOQ4uxi_KRZFiEsDj_yn0f+Zo4tgAkKKcuAp3jiAmB4r7xjiEA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J. Wong wrote:
-> From: Darrick J. Wong <darrick.wong@oracle.com>
+On Sat, Feb 29, 2020 at 12:40:58PM +0200, Amir Goldstein wrote:
+> On Sat, Feb 29, 2020 at 1:14 AM Omar Sandoval <osandov@osandov.com> wrote:
+> >
+> > From: Omar Sandoval <osandov@fb.com>
+> >
+> > Btrfs supports transparent compression: data written by the user can be
+> > compressed when written to disk and decompressed when read back.
+> > However, we'd like to add an interface to write pre-compressed data
+> > directly to the filesystem, and the matching interface to read
+> > compressed data without decompressing it. This adds support for
+> > so-called "encoded I/O" via preadv2() and pwritev2().
+> >
+> > A new RWF_ENCODED flags indicates that a read or write is "encoded". If
+> > this flag is set, iov[0].iov_base points to a struct encoded_iov which
+> > is used for metadata: namely, the compression algorithm, unencoded
+> > (i.e., decompressed) length, and what subrange of the unencoded data
+> > should be used (needed for truncated or hole-punched extents and when
+> > reading in the middle of an extent). For reads, the filesystem returns
+> > this information; for writes, the caller provides it to the filesystem.
+> > iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
+> > used to extend the interface in the future a la copy_struct_from_user().
+> > The remaining iovecs contain the encoded extent.
+> >
+> > This adds the VFS helpers for supporting encoded I/O and documentation
+> > for filesystem support.
+> >
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > ---
+> >  Documentation/filesystems/encoded_io.rst |  74 ++++++++++
+> >  Documentation/filesystems/index.rst      |   1 +
+> >  include/linux/fs.h                       |  16 +++
+> >  include/uapi/linux/fs.h                  |  33 ++++-
+> >  mm/filemap.c                             | 166 +++++++++++++++++++++--
+> >  5 files changed, 276 insertions(+), 14 deletions(-)
+> >  create mode 100644 Documentation/filesystems/encoded_io.rst
+> >
+> > diff --git a/Documentation/filesystems/encoded_io.rst b/Documentation/filesystems/encoded_io.rst
+> > new file mode 100644
+> > index 000000000000..50405276d866
+> > --- /dev/null
+> > +++ b/Documentation/filesystems/encoded_io.rst
+> > @@ -0,0 +1,74 @@
+> > +===========
+> > +Encoded I/O
+> > +===========
+> > +
+> > +Encoded I/O is a mechanism for reading and writing encoded (e.g., compressed
+> > +and/or encrypted) data directly from/to the filesystem. The userspace interface
+> > +is thoroughly described in the :manpage:`encoded_io(7)` man page; this document
+> > +describes the requirements for filesystem support.
+> > +
+> > +First of all, a filesystem supporting encoded I/O must indicate this by setting
+> > +the ``FMODE_ENCODED_IO`` flag in its ``file_open`` file operation::
+> > +
+> > +    static int foo_file_open(struct inode *inode, struct file *filp)
+> > +    {
+> > +            ...
+> > +            filep->f_mode |= FMODE_ENCODED_IO;
+> > +            ...
+> > +    }
+> > +
+> > +Encoded I/O goes through ``read_iter`` and ``write_iter``, designated by the
+> > +``IOCB_ENCODED`` flag in ``kiocb->ki_flags``.
+> > +
+> > +Reads
+> > +=====
+> > +
+> > +Encoded ``read_iter`` should:
+> > +
+> > +1. Call ``generic_encoded_read_checks()`` to validate the file and buffers
+> > +   provided by userspace.
+> > +2. Initialize the ``encoded_iov`` appropriately.
+> > +3. Copy it to the user with ``copy_encoded_iov_to_iter()``.
+> > +4. Copy the encoded data to the user.
+> > +5. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> > +6. Return the size of the encoded data read, not including the ``encoded_iov``.
+> > +
+> > +There are a few details to be aware of:
+> > +
+> > +* Encoded ``read_iter`` should support reading unencoded data if the extent is
+> > +  not encoded.
+> > +* If the buffers provided by the user are not large enough to contain an entire
+> > +  encoded extent, then ``read_iter`` should return ``-ENOBUFS``. This is to
+> > +  avoid confusing userspace with truncated data that cannot be properly
+> > +  decoded.
+> > +* Reads in the middle of an encoded extent can be returned by setting
+> > +  ``encoded_iov->unencoded_offset`` to non-zero.
+> > +* Truncated unencoded data (e.g., because the file does not end on a block
+> > +  boundary) may be returned by setting ``encoded_iov->len`` to a value smaller
+> > +  value than ``encoded_iov->unencoded_len - encoded_iov->unencoded_offset``.
+> > +
+> > +Writes
+> > +======
+> > +
+> > +Encoded ``write_iter`` should (in addition to the usual accounting/checks done
+> > +by ``write_iter``):
+> > +
+> > +1. Call ``copy_encoded_iov_from_iter()`` to get and validate the
+> > +   ``encoded_iov``.
+> > +2. Call ``generic_encoded_write_checks()`` instead of
+> > +   ``generic_write_checks()``.
+> > +3. Check that the provided encoding in ``encoded_iov`` is supported.
+> > +4. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> > +5. Return the size of the encoded data written.
+> > +
+> > +Again, there are a few details:
+> > +
+> > +* Encoded ``write_iter`` doesn't need to support writing unencoded data.
+> > +* ``write_iter`` should either write all of the encoded data or none of it; it
+> > +  must not do partial writes.
+> > +* ``write_iter`` doesn't need to validate the encoded data; a subsequent read
+> > +  may return, e.g., ``-EIO`` if the data is not valid.
+> > +* The user may lie about the unencoded size of the data; a subsequent read
+> > +  should truncate or zero-extend the unencoded data rather than returning an
+> > +  error.
+> > +* Be careful of page cache coherency.
+> > diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+> > index 386eaad008b2..e074a3f1f856 100644
+> > --- a/Documentation/filesystems/index.rst
+> > +++ b/Documentation/filesystems/index.rst
+> > @@ -37,6 +37,7 @@ filesystem implementations.
+> >     journalling
+> >     fscrypt
+> >     fsverity
+> > +   encoded_io
+> >
+> >  Filesystems
+> >  ===========
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 3cd4fe6b845e..aa7efd3430d1 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -175,6 +175,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+> >  /* File does not contribute to nr_files count */
+> >  #define FMODE_NOACCOUNT                ((__force fmode_t)0x20000000)
+> >
+> > +/* File supports encoded IO */
+> > +#define FMODE_ENCODED_IO       ((__force fmode_t)0x40000000)
+> > +
+> >  /*
+> >   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+> >   * that indicates that they should check the contents of the iovec are
+> > @@ -314,6 +317,7 @@ enum rw_hint {
+> >  #define IOCB_SYNC              (1 << 5)
+> >  #define IOCB_WRITE             (1 << 6)
+> >  #define IOCB_NOWAIT            (1 << 7)
+> > +#define IOCB_ENCODED           (1 << 8)
+> >
+> >  struct kiocb {
+> >         struct file             *ki_filp;
+> > @@ -3109,6 +3113,13 @@ extern int sb_min_blocksize(struct super_block *, int);
+> >  extern int generic_file_mmap(struct file *, struct vm_area_struct *);
+> >  extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
+> >  extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
+> > +struct encoded_iov;
+> > +extern int generic_encoded_write_checks(struct kiocb *,
+> > +                                       const struct encoded_iov *);
+> > +extern int copy_encoded_iov_from_iter(struct encoded_iov *, struct iov_iter *);
+> > +extern ssize_t generic_encoded_read_checks(struct kiocb *, struct iov_iter *);
+> > +extern int copy_encoded_iov_to_iter(const struct encoded_iov *,
+> > +                                   struct iov_iter *);
+> >  extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
+> >                                 struct file *file_out, loff_t pos_out,
+> >                                 loff_t *count, unsigned int remap_flags);
+> > @@ -3434,6 +3445,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+> >                         return -EOPNOTSUPP;
+> >                 ki->ki_flags |= IOCB_NOWAIT;
+> >         }
+> > +       if (flags & RWF_ENCODED) {
+> > +               if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
+> > +                       return -EOPNOTSUPP;
+> > +               ki->ki_flags |= IOCB_ENCODED;
+> > +       }
+> >         if (flags & RWF_HIPRI)
+> >                 ki->ki_flags |= IOCB_HIPRI;
+> >         if (flags & RWF_DSYNC)
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index 379a612f8f1d..f8c6c1e08def 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -278,6 +278,34 @@ struct fsxattr {
+> >                                          SYNC_FILE_RANGE_WAIT_BEFORE | \
+> >                                          SYNC_FILE_RANGE_WAIT_AFTER)
+> >
+> > +enum {
+> > +       ENCODED_IOV_COMPRESSION_NONE,
+> > +#define ENCODED_IOV_COMPRESSION_NONE ENCODED_IOV_COMPRESSION_NONE
+> > +       ENCODED_IOV_COMPRESSION_ZLIB,
+> > +#define ENCODED_IOV_COMPRESSION_ZLIB ENCODED_IOV_COMPRESSION_ZLIB
+> > +       ENCODED_IOV_COMPRESSION_LZO,
+> > +#define ENCODED_IOV_COMPRESSION_LZO ENCODED_IOV_COMPRESSION_LZO
+> > +       ENCODED_IOV_COMPRESSION_ZSTD,
+> > +#define ENCODED_IOV_COMPRESSION_ZSTD ENCODED_IOV_COMPRESSION_ZSTD
+> > +       ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
+> > +};
+> > +
+> > +enum {
+> > +       ENCODED_IOV_ENCRYPTION_NONE,
+> > +#define ENCODED_IOV_ENCRYPTION_NONE ENCODED_IOV_ENCRYPTION_NONE
+> > +       ENCODED_IOV_ENCRYPTION_TYPES = ENCODED_IOV_ENCRYPTION_NONE,
+> > +};
+> > +
 > 
-> It turns out that there /is/ one use case for programs being able to
-> write to swap devices, and that is the userspace hibernation code.  The
-> uswsusp ioctls allow userspace to lease parts of swap devices, so turn
-> S_SWAPFILE off when invoking suspend.
-> 
-> Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-> Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
-> Reported-by: Marian Klein <mkleinsoft@gmail.com>
+> What are those defines???
 
-I also tested it yesterday but was not satisfied, unfortunately I did
-not come with my comment in time.
+They're so you can check whether an enum value is defined in the UAPI
+headers via ifdef. E.g., if we were to add
+ENCODED_IOV_COMPRESSION_SOME_NEW_ALGORITHM, applications could use:
 
-Yes, I confirm that the uswsusp works again but also checked that
-swap_relockall() is not triggered at all and therefore after the first
-hibernation cycle the S_SWAPFILE bit remains cleared and the whole
-swap_relockall() is useless.
+#ifndef ENCODED_IOV_COMPRESSION_SOME_NEW_ALGORITHM
+#define ENCODED_IOV_COMPRESSION_SOME_NEW_ALGORITHM 4
+#endif
 
-I'm not sure this patch should be merged in the current form.
-
-Regards,
-Domenico
-
-> Tested-by: Marian Klein <mkleinsoft@gmail.com>
-> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> ---
->  include/linux/swap.h |    1 +
->  kernel/power/user.c  |   11 ++++++++++-
->  mm/swapfile.c        |   26 ++++++++++++++++++++++++++
->  3 files changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> index 1e99f7ac1d7e..add93e205850 100644
-> --- a/include/linux/swap.h
-> +++ b/include/linux/swap.h
-> @@ -458,6 +458,7 @@ extern void swap_free(swp_entry_t);
->  extern void swapcache_free_entries(swp_entry_t *entries, int n);
->  extern int free_swap_and_cache(swp_entry_t);
->  extern int swap_type_of(dev_t, sector_t, struct block_device **);
-> +extern void swap_relockall(void);
->  extern unsigned int count_swap_pages(int, int);
->  extern sector_t map_swap_page(struct page *, struct block_device **);
->  extern sector_t swapdev_block(int, pgoff_t);
-> diff --git a/kernel/power/user.c b/kernel/power/user.c
-> index 77438954cc2b..b11f7037ce5e 100644
-> --- a/kernel/power/user.c
-> +++ b/kernel/power/user.c
-> @@ -271,6 +271,8 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
->  			break;
->  		}
->  		error = hibernation_restore(data->platform_support);
-> +		if (!error)
-> +			swap_relockall();
->  		break;
->  
->  	case SNAPSHOT_FREE:
-> @@ -372,10 +374,17 @@ static long snapshot_ioctl(struct file *filp, unsigned int cmd,
->  			 */
->  			swdev = new_decode_dev(swap_area.dev);
->  			if (swdev) {
-> +				struct block_device *bd;
-> +
->  				offset = swap_area.offset;
-> -				data->swap = swap_type_of(swdev, offset, NULL);
-> +				data->swap = swap_type_of(swdev, offset, &bd);
->  				if (data->swap < 0)
->  					error = -ENODEV;
-> +
-> +				inode_lock(bd->bd_inode);
-> +				bd->bd_inode->i_flags &= ~S_SWAPFILE;
-> +				inode_unlock(bd->bd_inode);
-> +				bdput(bd);
->  			} else {
->  				data->swap = -1;
->  				error = -EINVAL;
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index b2a2e45c9a36..439bfb7263d3 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1799,6 +1799,32 @@ int swap_type_of(dev_t device, sector_t offset, struct block_device **bdev_p)
->  	return -ENODEV;
->  }
->  
-> +/* Re-lock swap devices after resuming from userspace suspend. */
-> +void swap_relockall(void)
-> +{
-> +	int type;
-> +
-> +	spin_lock(&swap_lock);
-> +	for (type = 0; type < nr_swapfiles; type++) {
-> +		struct swap_info_struct *sis = swap_info[type];
-> +		struct block_device *bdev = bdgrab(sis->bdev);
-> +
-> +		/*
-> +		 * uswsusp only knows how to suspend to block devices, so we
-> +		 * can skip swap files.
-> +		 */
-> +		if (!(sis->flags & SWP_WRITEOK) ||
-> +		    !(sis->flags & SWP_BLKDEV))
-> +			continue;
-> +
-> +		inode_lock(bdev->bd_inode);
-> +		bdev->bd_inode->i_flags |= S_SWAPFILE;
-> +		inode_unlock(bdev->bd_inode);
-> +		bdput(bdev);
-> +	}
-> +	spin_unlock(&swap_lock);
-> +}
-> +
->  /*
->   * Get the (PAGE_SIZE) block corresponding to given offset on the swapdev
->   * corresponding to given index in swap_info (swap type).
-
--- 
-rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
-ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+In my experience, this makes dealing with lagging UAPI headers less
+annoying. This is done elsewhere in UAPI headers (e.g.,
+include/uapi/linux/in.h).
