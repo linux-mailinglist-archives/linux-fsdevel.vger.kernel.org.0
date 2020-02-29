@@ -2,202 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3BA317459A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 09:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872ED1745D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 10:17:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgB2IEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 03:04:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36508 "EHLO
+        id S1727225AbgB2JRj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 04:17:39 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36696 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbgB2IEO (ORCPT
+        with ESMTP id S1727044AbgB2JRG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 03:04:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g83so3601833wme.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 00:04:12 -0800 (PST)
+        Sat, 29 Feb 2020 04:17:06 -0500
+Received: by mail-wm1-f67.google.com with SMTP id g83so3700924wme.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 01:17:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5uuuwXmEYzKMQWHoj3FlOv3W0FcMz6JiZ2HkvpHOxlY=;
-        b=NHbDra58T/LGoW6ToL2m1yJYHBIA52uz+lA/+D9pJUMdOjW6x42+5vYm6+HsegtKvf
-         z4oRg9viu+uCeJocBr1uu54cOt9Ux+7k6yAD28PDK/Uj1YoYX4uU5TzmaODEfvDnYvE8
-         T1ekke2cgSGEtV7gKMMk82ltzoWmJIGQ3a9zq6xw5blJeOcVDnteB8DtZqOY/gUKrIhw
-         tL+R38Dey9qMSKJmE/6qh4IaJbvycIU1hrEsWShwo+Si+dkGawJYcSwJoIHfeeGaN8mT
-         Dx6Ut6tDeCZsT9M03HNyim5y/O1rkBT8U0DxaUqUQ8H+aM7Kse/ArGnDgA7p0zgZ1oIE
-         hAJw==
+        bh=84l+/iPVMM8/hLUieRf6a7Y3yljDnv4PnRrTq7Jpkjg=;
+        b=cHz9xliE+HoEvGGVsxnoiYK5Z1qN46G0Mos7GBEWEeSNyKHWDkuAbgFoR95CSxxsOa
+         HTF0mdtS3RJmE/T0bulXETv1S8b4hXclA5AlrHUJSPX0nHUSIzHzBPY26jGmE6zUMH98
+         x5fFgVI8aslBCQY7dRXSV4T5LmhJcNOG4lW6mT2qgaCo5Kgp6gWm2uCgo25D3YKjQ7t2
+         ru7x4/D620selz0Olgymq1Gy97B3+sD1UG4dbClwyjujmy92q9XQ8PP94zUfWGGgJmvD
+         O6zZpaLAiHT5Sk4CPJVRd0LCowPFB3cPJe56OZhSZLLvM/tmLOeoe8w1E/vraQxps5S0
+         jlQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5uuuwXmEYzKMQWHoj3FlOv3W0FcMz6JiZ2HkvpHOxlY=;
-        b=tgPUiGt/aOAiFzsBiui/GVvn6oItFarBkuvPvYD6qHbrQ6DLWmiymbM7xKg9z8I1Zl
-         9i3I7bdRSHe1+sHkEJMB+eGycOnORRozbLfBeW2H6lWC8gap7LF5Gj9A0MRLElcUIhZK
-         Jvn8zDzGRo1mJBZ5laIpsw/4ZlVT4bXOew2aWIMQ3STc2GhdhdZSDZ5Pmd2RPTfIYZkH
-         C6IuYwZ/lyinWePKjKUicL6uil1DXpfILtz4hBKuYKCFEKn41ZYwPEICGQEx95FrAthl
-         T2XNKhhcYd+6nBmB8Rnxf50ReUrNqmKoClJuAk2x7aTSmQAtOVGbrzXdmDhm2tFaeLBe
-         MiTg==
-X-Gm-Message-State: APjAAAVsbUMU1JBZnG0lI+grVo1rKDnBdJ3tpjm8HXLomAiQRR/SoQ96
-        O6yQz7fQSSzajrL9QFfs7zuBeaoAdiPwVUIHCP4=
-X-Google-Smtp-Source: APXvYqx0csBzSURuS/yibvzs0QZc0eFRxP0mymsBxYXXWF0i4h66voqBNGDpRg+MOvg+NnwvY7slgvvjgmbCqiyqQpQ=
-X-Received: by 2002:a1c:9c52:: with SMTP id f79mr9014466wme.30.1582963452149;
- Sat, 29 Feb 2020 00:04:12 -0800 (PST)
+        bh=84l+/iPVMM8/hLUieRf6a7Y3yljDnv4PnRrTq7Jpkjg=;
+        b=cRphO9+fBxTdapJfGlnM09jVLdq9oMDCARg2qMsRjSgZu2+98H05vB1QBHJ+HQMyYX
+         rxxkwlM3/IlA1shvsuCzFbGg/OK/YDtttzUIzM1t8iqHKfNNcfEOqV80Bln1zBDF2CNh
+         Jju6aP2oZ26JVU8cg6JEMUZhnaPIUARfuSfPY0o97Tbgai4VvLEc39frlvSA3dKhHrfD
+         KVv2lhEPNwcPo5bVSfgVgWZmEJ0HY6V/1P48AQW04iHK8PJSVq6KnEaecCQvXKLZTLPb
+         uEBFWtf2otFDPpoVoJWdmRIa6QnpSVGBRjY74vy1kc+GxFxF3aw1I+BdFzymDTsWA0ka
+         NNFw==
+X-Gm-Message-State: APjAAAVdAVpSCzcoaKYif06mCwS5NX3hHb4eQnpGXN40HtEIjnSwZMAc
+        sKwCe/91I9jaj5YDjKpX5tPdrtxNZ5LqNWhmCYM=
+X-Google-Smtp-Source: APXvYqxfLRiVrnYhDu4x+AqoqT6WXSX/Yp2zDg70IB8IAjbVVRQuJ0ZHm+nq/8o1RcPnF9HGEur2CkpJXILJQTL0jqQ=
+X-Received: by 2002:a1c:a789:: with SMTP id q131mr9556538wme.127.1582967824944;
+ Sat, 29 Feb 2020 01:17:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20200228163456.1587-1-vgoyal@redhat.com> <20200228163456.1587-2-vgoyal@redhat.com>
-In-Reply-To: <20200228163456.1587-2-vgoyal@redhat.com>
+References: <20200228163456.1587-1-vgoyal@redhat.com>
+In-Reply-To: <20200228163456.1587-1-vgoyal@redhat.com>
 From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date:   Sat, 29 Feb 2020 09:04:00 +0100
-Message-ID: <CAM9Jb+gJWH_bC-9fgGdeP5LaSVjJ3JgTnjBxpRJMfe6vbTPOTA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/6] pmem: Add functions for reading/writing page
- to/from pmem
+Date:   Sat, 29 Feb 2020 10:16:53 +0100
+Message-ID: <CAM9Jb+j46n3Ykca3_F0zb-7U1M5C8KmmH+3uzB1z7MqH60mQBA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] dax/pmem: Provide a dax operation to zero page range
 To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
         hch@infradead.org, dan.j.williams@intel.com, david@fromorbit.com,
-        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>
+        dm-devel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 28 Feb 2020 at 17:35, Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> This splits pmem_do_bvec() into pmem_do_read() and pmem_do_write().
-> pmem_do_write() will be used by pmem zero_page_range() as well. Hence
-> sharing the same code.
->
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  drivers/nvdimm/pmem.c | 86 +++++++++++++++++++++++++------------------
->  1 file changed, 50 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 4eae441f86c9..075b11682192 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -136,9 +136,25 @@ static blk_status_t read_pmem(struct page *page, unsigned int off,
->         return BLK_STS_OK;
->  }
->
-> -static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
-> -                       unsigned int len, unsigned int off, unsigned int op,
-> -                       sector_t sector)
-> +static blk_status_t pmem_do_read(struct pmem_device *pmem,
-> +                       struct page *page, unsigned int page_off,
-> +                       sector_t sector, unsigned int len)
-> +{
-> +       blk_status_t rc;
-> +       phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
+Hi Vivek,
 
-minor nit,  maybe 512 is replaced by macro? Looks like its used at multiple
-places, maybe can keep at is for now.
+>
+> Hi,
+>
+> This is V6 of patches. These patches are also available at.
 
-> +       void *pmem_addr = pmem->virt_addr + pmem_off;
-> +
-> +       if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
-> +               return BLK_STS_IOERR;
-> +
-> +       rc = read_pmem(page, page_off, pmem_addr, len);
-> +       flush_dcache_page(page);
-> +       return rc;
-> +}
-> +
-> +static blk_status_t pmem_do_write(struct pmem_device *pmem,
-> +                       struct page *page, unsigned int page_off,
-> +                       sector_t sector, unsigned int len)
->  {
->         blk_status_t rc = BLK_STS_OK;
->         bool bad_pmem = false;
-> @@ -148,34 +164,25 @@ static blk_status_t pmem_do_bvec(struct pmem_device *pmem, struct page *page,
->         if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
->                 bad_pmem = true;
+Looks like cover letter is missing the motivation for the patchset.
+Though I found it in previous posting. Its good to add it in the series
+for anyone joining the discussion at later stages.
+
+Thanks,
+Pankaj
+
 >
-> -       if (!op_is_write(op)) {
-> -               if (unlikely(bad_pmem))
-> -                       rc = BLK_STS_IOERR;
-> -               else {
-> -                       rc = read_pmem(page, off, pmem_addr, len);
-> -                       flush_dcache_page(page);
-> -               }
-> -       } else {
-> -               /*
-> -                * Note that we write the data both before and after
-> -                * clearing poison.  The write before clear poison
-> -                * handles situations where the latest written data is
-> -                * preserved and the clear poison operation simply marks
-> -                * the address range as valid without changing the data.
-> -                * In this case application software can assume that an
-> -                * interrupted write will either return the new good
-> -                * data or an error.
-> -                *
-> -                * However, if pmem_clear_poison() leaves the data in an
-> -                * indeterminate state we need to perform the write
-> -                * after clear poison.
-> -                */
-> -               flush_dcache_page(page);
-> -               write_pmem(pmem_addr, page, off, len);
-> -               if (unlikely(bad_pmem)) {
-> -                       rc = pmem_clear_poison(pmem, pmem_off, len);
-> -                       write_pmem(pmem_addr, page, off, len);
-> -               }
-> +       /*
-> +        * Note that we write the data both before and after
-> +        * clearing poison.  The write before clear poison
-> +        * handles situations where the latest written data is
-> +        * preserved and the clear poison operation simply marks
-> +        * the address range as valid without changing the data.
-> +        * In this case application software can assume that an
-> +        * interrupted write will either return the new good
-> +        * data or an error.
-> +        *
-> +        * However, if pmem_clear_poison() leaves the data in an
-> +        * indeterminate state we need to perform the write
-> +        * after clear poison.
-> +        */
-> +       flush_dcache_page(page);
-> +       write_pmem(pmem_addr, page, page_off, len);
-> +       if (unlikely(bad_pmem)) {
-> +               rc = pmem_clear_poison(pmem, pmem_off, len);
-> +               write_pmem(pmem_addr, page, page_off, len);
->         }
+> Changes since V5:
 >
->         return rc;
-> @@ -197,8 +204,12 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+> - Dan Williams preferred ->zero_page_range() to only accept PAGE_SIZE
+>   aligned request and clear poison only on page size aligned zeroing. So
+>   I changed it accordingly.
 >
->         do_acct = nd_iostat_start(bio, &start);
->         bio_for_each_segment(bvec, bio, iter) {
-> -               rc = pmem_do_bvec(pmem, bvec.bv_page, bvec.bv_len,
-> -                               bvec.bv_offset, bio_op(bio), iter.bi_sector);
-> +               if (op_is_write(bio_op(bio)))
-> +                       rc = pmem_do_write(pmem, bvec.bv_page, bvec.bv_offset,
-> +                               iter.bi_sector, bvec.bv_len);
-> +               else
-> +                       rc = pmem_do_read(pmem, bvec.bv_page, bvec.bv_offset,
-> +                               iter.bi_sector, bvec.bv_len);
->                 if (rc) {
->                         bio->bi_status = rc;
->                         break;
-> @@ -223,9 +234,12 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
->         struct pmem_device *pmem = bdev->bd_queue->queuedata;
->         blk_status_t rc;
+> - Dropped all the modifications which were required to support arbitrary
+>   range zeroing with-in a page.
 >
-> -       rc = pmem_do_bvec(pmem, page, hpage_nr_pages(page) * PAGE_SIZE,
-> -                         0, op, sector);
-> -
-> +       if (op_is_write(op))
-> +               rc = pmem_do_write(pmem, page, 0, sector,
-> +                                  hpage_nr_pages(page) * PAGE_SIZE);
-> +       else
-> +               rc = pmem_do_read(pmem, page, 0, sector,
-> +                                  hpage_nr_pages(page) * PAGE_SIZE);
->         /*
->          * The ->rw_page interface is subtle and tricky.  The core
->          * retries on any error, so we can only invoke page_endio() in
+> - This patch series also fixes the issue where "truncate -s 512 foo.txt"
+>   will fail if first sector of file is poisoned. Currently it succeeds
+>   and filesystem expectes whole of the filesystem block to be free of
+>   poison at the end of the operation.
+>
+> Christoph, I have dropped your Reviewed-by tag on 1-2 patches because
+> these patches changed substantially. Especially signature of of
+> dax zero_page_range() helper.
+>
+> Thanks
+> Vivek
+>
+> Vivek Goyal (6):
+>   pmem: Add functions for reading/writing page to/from pmem
+>   dax, pmem: Add a dax operation zero_page_range
+>   s390,dcssblk,dax: Add dax zero_page_range operation to dcssblk driver
+>   dm,dax: Add dax zero_page_range operation
+>   dax: Use new dax zero page method for zeroing a page
+>   dax,iomap: Add helper dax_iomap_zero() to zero a range
+>
+>  drivers/dax/super.c           | 20 ++++++++
+>  drivers/md/dm-linear.c        | 18 +++++++
+>  drivers/md/dm-log-writes.c    | 17 ++++++
+>  drivers/md/dm-stripe.c        | 23 +++++++++
+>  drivers/md/dm.c               | 30 +++++++++++
+>  drivers/nvdimm/pmem.c         | 97 ++++++++++++++++++++++-------------
+>  drivers/s390/block/dcssblk.c  | 15 ++++++
+>  fs/dax.c                      | 59 ++++++++++-----------
+>  fs/iomap/buffered-io.c        |  9 +---
+>  include/linux/dax.h           | 21 +++-----
+>  include/linux/device-mapper.h |  3 ++
+>  11 files changed, 221 insertions(+), 91 deletions(-)
+>
 > --
 > 2.20.1
-
-Reviewed-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
 > _______________________________________________
 > Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
 > To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
