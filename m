@@ -2,169 +2,316 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEAC91745D8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 10:21:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF330174635
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Feb 2020 11:28:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgB2JVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 04:21:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52363 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbgB2JVx (ORCPT
+        id S1726918AbgB2K24 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 05:28:56 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:44818 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbgB2K24 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 04:21:53 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so5996773wmc.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Feb 2020 01:21:49 -0800 (PST)
+        Sat, 29 Feb 2020 05:28:56 -0500
+Received: by mail-il1-f193.google.com with SMTP id x7so5078563ilq.11;
+        Sat, 29 Feb 2020 02:28:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2Ue+Dgx3CeJSePHgMAW1fINAp8LiFMrWYxPNI01tF+o=;
-        b=VVPSupxCDZkkwJM0MuDX9yAVNfzq2i20C46ilTipuMbfK6l0nZb/BKn1/XdwebMeiv
-         t2xcgHSniB3MKaroeXK4nR+DcPgDxbWR30zD9RR8oBloBpVXwwEAvELJRhHJheOooch6
-         AL1GBbnr7DrKL7XwdsXHxymQXtL6qu7oDGLHVDq2QA9CBvv2KS3xgfE5//9ZdKO24frF
-         iX0UEZKXNMxk4SOHXamSczkyh2f4Ep9b8YG7nw0VL/FXzcL3t/1rrge9pnAjNePfFQfx
-         94jYhaNVO6BW/X2uUXHrchRqQx8rUFTZymcU84RKq1yf1zkD/xaUjIgfPc9htlsS4L4u
-         fyhw==
+        bh=6soXnreFhiLOSWkknvJdeg3Yaqsoja1tXZ4FhCjte5U=;
+        b=AGU1RiEHkOchjo5dKHE5MR4axgGTDMyvm3sMwIvHuJU9OsSsjbt7XZ3CEEgnZ/hN4r
+         07TAfTfXoK/ht9glOlcYetmoxS1BuLaU+aKCjwKgQJkYV254fFjZydbNhyvX+0IRhH0S
+         lASA4nTjlTZbR3cCS47PplihcbXF9/fKR3ZoVnXfo4uW7JYaVv18yPdV6cgVWRHGnOpb
+         tMGhfDOiFzMJZwxtGs8+/mfxaNXzmO+DfcvUwRIsJqHj7ZOe3IMH9YUnAd5H4mvalgeQ
+         Tf+lT7zriFCybLmna+VJRDlMaD2VCDDZTAW5d5MiG1NWCfVwrFyITnzHEefAslTSHIh5
+         iX2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2Ue+Dgx3CeJSePHgMAW1fINAp8LiFMrWYxPNI01tF+o=;
-        b=KgnQqFbGz/YtHti1uJyNc4CDeXOGzUnNEUwGyvimqdvWhFT/G3Ru8y5k0BP8nyHyZ4
-         HgH2xjo5e6lvLFMcHkMfz0XN4WW59r/mWheGWH1VKghXVl+NAkcjkK1KffIXtHqmj9rF
-         +1OoHNTAWw570/X6qzxEpypZ7EjxGhIuNBUC7i1+DFyAHr9a+z+7+sD694EQf6B5gvEv
-         XCmfWAIj7jhIIUjhzH2Q3ZqrwyGZTQ6Z5g49761mxnmpPhPItdre8B0iibT8kRppjINo
-         jC7+0NWGIkVVzfwtLpwCiHDWB33SDgeklBebER1/EHfmEfEG6tpZIQbUwxi1jymqmdT3
-         vzNA==
-X-Gm-Message-State: APjAAAV7ZsjHjRcqqetY9wXnU2utn+1D7qhberZHB9WecPW8+/oIIYvl
-        tAeLydzJtYWj5HDag9IyIoVM4vw/zSZyXTIYxJQ=
-X-Google-Smtp-Source: APXvYqwXr3ckvpjnUV3luGA4fCi4IOXlgKlcLyhHcepYxIFSxB+bII3J0lhiHYkO46BI/jCcSRb6B2gBvrulhaqW66Y=
-X-Received: by 2002:a1c:25c5:: with SMTP id l188mr9801660wml.105.1582968108954;
- Sat, 29 Feb 2020 01:21:48 -0800 (PST)
+        bh=6soXnreFhiLOSWkknvJdeg3Yaqsoja1tXZ4FhCjte5U=;
+        b=Ixc6FDOe2IPfBv463g8v76C5U7fE+pkUZtzbKpYvBc8nVepPHSC/OR96+w1ZnZ6CKa
+         Q7E98NAhnvp7jvUYAoMhsmwxr4Z1z28kvGX87NDeESOpfh8CqphxhP65ljMgc4FLPxdR
+         Iby+7GUcKe5II73EfY4kGEDXgbrQkN/ipv9ywj+Z1b30fxIwdUE4igMI7AVzJY/aZRHm
+         9qYjN/NeeAMfnlQwBccmSLUCWjlHlqx6ItpR1UK+luFjKyGFqYGJyqVzrgRJSyLUahdR
+         gSk/+0ziuvO0yLI5Pb6sN0QVQHBFdL6sw/0hJvWM8PRno4+2oZbGT5STLW6hQJUyygb5
+         F1IQ==
+X-Gm-Message-State: APjAAAXLltTozacraN9CaVO7DD1fxc1nMWYZ5bWfNwMmGT5qrrtUN1sC
+        k4P+I1efSjWFvrjJjOpa3DpYNuqdTXWjkXv4Lxo=
+X-Google-Smtp-Source: APXvYqxqKmpfI/wHw2PtOEfwSHma5sY5tFbujXs2VFal/ky16cm3BXBPQQKfnfQGdW7bjuGBWQl1EbGQWkMvVn4VUas=
+X-Received: by 2002:a92:9f1a:: with SMTP id u26mr8300215ili.72.1582972133413;
+ Sat, 29 Feb 2020 02:28:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20200228163456.1587-1-vgoyal@redhat.com> <20200228163456.1587-3-vgoyal@redhat.com>
-In-Reply-To: <20200228163456.1587-3-vgoyal@redhat.com>
-From:   Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Date:   Sat, 29 Feb 2020 10:21:37 +0100
-Message-ID: <CAM9Jb+gLczXgFmLJg8a=XThoJT1S8XajFkb8AkjDCV1XXyarqg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/6] dax, pmem: Add a dax operation zero_page_range
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com, david@fromorbit.com,
-        dm-devel@redhat.com
+References: <cover.1582930832.git.osandov@fb.com> <00f86ed7c25418599e6067cb1dfb186c90ce7bf3.1582931488.git.osandov@fb.com>
+In-Reply-To: <00f86ed7c25418599e6067cb1dfb186c90ce7bf3.1582931488.git.osandov@fb.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 29 Feb 2020 12:28:41 +0200
+Message-ID: <CAOQ4uxgym1C3JZHrLhBmEh_T7UbQOukxTBKVzHqp4NSdjredSg@mail.gmail.com>
+Subject: Re: [PATCH man-pages v4] Document encoded I/O
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->
-> Add a dax operation zero_page_range, to zero a page. This will also clear any
-> known poison in the page being zeroed.
->
-> As of now, zeroing of one page is allowed in a single call. There
-> are no callers which are trying to zero more than a page in a single call.
-> Once we grow the callers which zero more than a page in single call, we
-> can add that support. Primary reason for not doing that yet is that this
-> will add little complexity in dm implementation where a range might be
-> spanning multiple underlying targets and one will have to split the range
-> into multiple sub ranges and call zero_page_range() on individual targets.
->
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  drivers/dax/super.c   | 20 ++++++++++++++++++++
->  drivers/nvdimm/pmem.c | 11 +++++++++++
->  include/linux/dax.h   |  4 ++++
->  3 files changed, 35 insertions(+)
->
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 0aa4b6bc5101..e498daf3c0d7 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -344,6 +344,26 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
->  }
->  EXPORT_SYMBOL_GPL(dax_copy_to_iter);
->
-> +int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-> +                       size_t nr_pages)
-> +{
-> +       if (!dax_alive(dax_dev))
-> +               return -ENXIO;
-> +
-> +       if (!dax_dev->ops->zero_page_range)
-> +               return -EOPNOTSUPP;
-> +       /*
-> +        * There are no callers that want to zero more than one page as of now.
-> +        * Once users are there, this check can be removed after the
-> +        * device mapper code has been updated to split ranges across targets.
-> +        */
-> +       if (nr_pages != 1)
-> +               return -EIO;
-> +
-> +       return dax_dev->ops->zero_page_range(dax_dev, pgoff, nr_pages);
-> +}
-> +EXPORT_SYMBOL_GPL(dax_zero_page_range);
-> +
->  #ifdef CONFIG_ARCH_HAS_PMEM_API
->  void arch_wb_cache_pmem(void *addr, size_t size);
->  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 075b11682192..5b774ddd0efb 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -282,6 +282,16 @@ static const struct block_device_operations pmem_fops = {
->         .revalidate_disk =      nvdimm_revalidate_disk,
->  };
->
-> +static int pmem_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-> +                                   size_t nr_pages)
-> +{
-> +       struct pmem_device *pmem = dax_get_private(dax_dev);
-> +
-> +       return blk_status_to_errno(pmem_do_write(pmem, ZERO_PAGE(0), 0,
-> +                                  PFN_PHYS(pgoff) >> SECTOR_SHIFT,
-> +                                  PAGE_SIZE));
-> +}
-> +
->  static long pmem_dax_direct_access(struct dax_device *dax_dev,
->                 pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn)
->  {
-> @@ -313,6 +323,7 @@ static const struct dax_operations pmem_dax_ops = {
->         .dax_supported = generic_fsdax_supported,
->         .copy_from_iter = pmem_copy_from_iter,
->         .copy_to_iter = pmem_copy_to_iter,
-> +       .zero_page_range = pmem_dax_zero_page_range,
->  };
->
->  static const struct attribute_group *pmem_attribute_groups[] = {
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 328c2dbb4409..71735c430c05 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -34,6 +34,8 @@ struct dax_operations {
->         /* copy_to_iter: required operation for fs-dax direct-i/o */
->         size_t (*copy_to_iter)(struct dax_device *, pgoff_t, void *, size_t,
->                         struct iov_iter *);
-> +       /* zero_page_range: required operation. Zero page range   */
-> +       int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
->  };
->
->  extern struct attribute_group dax_attribute_group;
-> @@ -199,6 +201,8 @@ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
->                 size_t bytes, struct iov_iter *i);
->  size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
->                 size_t bytes, struct iov_iter *i);
-> +int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
-> +                       size_t nr_pages);
->  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
->
->  ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
-> --
-> 2.20.1
+> +encoded_io \- overview of encoded I/O
+> +.SH DESCRIPTION
+> +Several filesystems (e.g., Btrfs) support transparent encoding
+> +(e.g., compression, encryption) of data on disk:
+> +written data is encoded by the kernel before it is written to disk,
+> +and read data is decoded before being returned to the user.
+> +In some cases, it is useful to skip this encoding step.
+> +For example, the user may want to read the compressed contents of a file
+> +or write pre-compressed data directly to a file.
+> +This is referred to as "encoded I/O".
+> +.SS Encoded I/O API
+> +Encoded I/O is specified with the
+> +.B RWF_ENCODED
+> +flag to
+> +.BR preadv2 (2)
+> +and
+> +.BR pwritev2 (2).
+> +If
+> +.B RWF_ENCODED
+> +is specified, then
+> +.I iov[0].iov_base
+> +points to an
+> +.I
+> +encoded_iov
+> +structure, defined in
+> +.I <linux/fs.h>
+> +as:
+> +.PP
+> +.in +4n
+> +.EX
+> +struct encoded_iov {
+> +    __aligned_u64 len;
+> +    __aligned_u64 unencoded_len;
+> +    __aligned_u64 unencoded_offset;
+> +    __u32 compression;
+> +    __u32 encryption;
+> +};
 
-Zeroing single page seems right approach for now.
-Reviewed-by: Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-> _______________________________________________
-> Linux-nvdimm mailing list -- linux-nvdimm@lists.01.org
-> To unsubscribe send an email to linux-nvdimm-leave@lists.01.org
+This new API can generate many diverse error conditions that the standard errno
+codes are not rich enough to describe.
+Maybe add room for encoded io specific error codes in the metadata structure
+would be good practice, for example:
+- compression method not supported
+- encryption method not supported
+- the combination of enc/comp is not supported
+- and so on
+
+
+> +.EE
+> +.in
+> +.PP
+> +This may be extended in the future, so
+> +.I iov[0].iov_len
+> +must be set to
+> +.I "sizeof(struct\ encoded_iov)"
+> +for forward/backward compatibility.
+> +The remaining buffers contain the encoded data.
+> +.PP
+> +.I compression
+> +and
+> +.I encryption
+> +are the encoding fields.
+> +.I compression
+> +is one of
+> +.B ENCODED_IOV_COMPRESSION_NONE
+> +(zero),
+> +.BR ENCODED_IOV_COMPRESSION_ZLIB ,
+> +.BR ENCODED_IOV_COMPRESSION_LZO ,
+> +or
+> +.BR ENCODED_IOV_COMPRESSION_ZSTD .
+> +.I encryption
+> +is currently always
+> +.B ENCODED_IOV_ENCRYPTION_NONE
+> +(zero).
+> +.PP
+> +.I unencoded_len
+> +is the length of the unencoded (i.e., decrypted and decompressed) data.
+> +.I unencoded_offset
+> +is the offset into the unencoded data where the data in the file begins
+> +(less than or equal to
+> +.IR unencoded_len ).
+> +.I len
+> +is the length of the data in the file
+> +(less than or equal to
+> +.I unencoded_len
+> +-
+> +.IR unencoded_offset ).
+> +.I
+> +.PP
+> +In most cases,
+> +.I len
+> +is equal to
+> +.I unencoded_len
+> +and
+> +.I unencoded_offset
+> +is zero.
+> +However, it may be necessary to refer to a subset of the unencoded data,
+> +usually because a read occurred in the middle of an encoded extent,
+> +because part of an extent was overwritten or deallocated in some
+> +way (e.g., with
+> +.BR write (2),
+> +.BR truncate (2),
+> +or
+> +.BR fallocate (2))
+> +or because part of an extent was added to the file (e.g., with
+> +.BR ioctl_ficlonerange (2)
+> +or
+> +.BR ioctl_fideduperange (2)).
+> +For example, if
+> +.I len
+> +is 300,
+> +.I unencoded_len
+> +is 1000,
+> +and
+> +.I unencoded_offset
+> +is 600,
+> +then the encoded data is 1000 bytes long when decoded,
+> +of which only the 300 bytes starting at offset 600 are used;
+> +the first 600 and last 100 bytes should be ignored.
+> +.PP
+> +If the unencoded data is actually longer than
+> +.IR unencoded_len ,
+> +then it is truncated;
+> +if it is shorter, then it is extended with zeroes.
+
+I find the unencoded_len/unencoded_offset API extremely confusing and all
+the clarifications above did not help to ease this feeling.
+Please remind me why does the API need to expose unencoded details at all.
+I understand the backup/restore use case for read/write encoded data.
+I do not understand how unencoded offset info is relevant to this use case
+or what are the other use cases it is relevant for.
+
+> +.PP
+> +For
+> +.BR pwritev2 (),
+> +the metadata should be specified in
+> +.IR iov[0] .
+> +If
+> +.I iov[0].iov_len
+> +is less than
+> +.I "sizeof(struct\ encoded_iov)"
+> +in the kernel,
+> +then any fields unknown to userspace are treated as if they were zero;
+> +if it is greater and any fields unknown to the kernel are non-zero,
+> +then this returns -1 and sets
+> +.I errno
+> +to
+> +.BR E2BIG .
+> +The encoded data should be passed in the remaining buffers.
+> +This returns the number of encoded bytes written (that is, the sum of
+> +.I iov[n].iov_len
+> +for 1 <=
+> +.I n
+> +<
+> +.IR iovcnt ;
+> +partial writes will not occur).
+> +If the
+> +.I offset
+> +argument to
+> +.BR pwritev2 ()
+> +is -1, then the file offset is incremented by
+> +.IR len .
+> +At least one encoding field must be non-zero.
+> +Note that the encoded data is not validated when it is written;
+> +if it is not valid (e.g., it cannot be decompressed),
+> +then a subsequent read may return an error.
+> +.PP
+> +For
+> +.BR preadv2 (),
+> +the metadata is returned in
+> +.IR iov[0] .
+> +If
+> +.I iov[0].iov_len
+> +is less than
+> +.I "sizeof(struct\ encoded_iov)"
+> +in the kernel and any fields unknown to userspace are non-zero,
+> +then this returns -1 and sets
+> +.I errno
+> +to
+> +.BR E2BIG ;
+> +if it is greater,
+> +then any fields unknown to the kernel are returned as zero.
+> +The encoded data is returned in the remaining buffers.
+> +If the provided buffers are not large enough to return an entire encoded
+> +extent,
+> +then this returns -1 and sets
+> +.I errno
+> +to
+> +.BR ENOBUFS .
+> +This returns the number of encoded bytes read.
+> +If the
+> +.I offset
+> +argument to
+> +.BR preadv2 ()
+> +is -1, then the file offset is incremented by
+> +.IR len .
+> +This will only return one encoded extent per call.
+> +This can also read data which is not encoded;
+> +all encoding fields will be zero in that case.
+> +.PP
+> +As the filesystem page cache typically contains decoded data,
+> +encoded I/O bypasses the page cache.
+> +.SS Security
+> +Encoded I/O creates the potential for some security issues:
+> +.IP * 3
+> +Encoded writes allow writing arbitrary data which the kernel will decode on
+> +a subsequent read. Decompression algorithms are complex and may have bugs
+> +which can be exploited by maliciously crafted data.
+> +.IP *
+> +Encoded reads may return data which is not logically present in the file
+> +(see the discussion of
+> +.I len
+> +vs.
+> +.I unencoded_len
+> +above).
+> +It may not be intended for this data to be readable.
+> +.PP
+> +Therefore, encoded I/O requires privilege.
+> +Namely, the
+> +.B RWF_ENCODED
+> +flag may only be used when the file was opened with the
+> +.B O_ALLOW_ENCODED
+> +flag to
+> +.BR open (2),
+> +which requires the
+> +.B CAP_SYS_ADMIN
+> +capability.
+> +.B O_ALLOW_ENCODED
+> +may be set and cleared with
+> +.BR fcntl (2).
+> +Note that it is not cleared on
+> +.BR fork (2)
+> +or
+> +.BR execve (2);
+> +one may wish to use
+> +.B O_CLOEXEC
+> +with
+> +.BR O_ALLOW_ENCODED .
+
+Sigh! If I were an attacker I would be drooling right now.
+We want to create a new API to read/write raw encrypted data (even though
+you have not implemented any encryption yet) and we use the same old
+vulnerable practices that security people have been fighting for decades?
+I am not very comfortable with this attitude.
+I think we should be much more prudent for the first version of the API.
+
+How about not allowing to set O_ALLOW_ENCODED without O_CLOEXEC.
+We may or may not allow to clear O_CLOEXEC while O_ALLOW_ENCODED
+is set, in case this is the user intention, but leaving the API as it is is just
+asking for trouble IMO.
+
+Thanks,
+Amir.
