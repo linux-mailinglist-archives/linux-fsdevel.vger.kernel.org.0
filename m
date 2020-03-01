@@ -2,31 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61373174EEA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 19:21:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0B9174EED
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 19:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbgCASU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Mar 2020 13:20:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:57374 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgCASU6 (ORCPT
+        id S1726775AbgCASVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Mar 2020 13:21:31 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41732 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726758AbgCASVa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Mar 2020 13:20:58 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8TCK-000733-37; Sun, 01 Mar 2020 18:20:16 +0000
-Date:   Sun, 1 Mar 2020 19:20:14 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
+        Sun, 1 Mar 2020 13:21:30 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v19so7478032ote.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2020 10:21:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vl+p/47GQAMvlM1on1gMGR7KlW+3+hbOHuckhCOrwj8=;
+        b=bX0rE7/Kbt+xy/GSs67GMlp7VaEG4nm8/Urc8KQQABYyaPFqpHwWxlJXGJfWtklvZc
+         K4GWxp0lyiEPXaEiIICPIVAdueUja2k/3XpMJW5cpWctmz2HKNCQ7rdD51729m6QPyem
+         +85M/LvlHc5U93Uv0pE0P56swR582muuOw8IotQrUp8TAFpkt+Xs6+kdDJp0TO/40xM4
+         7Oh2sappSmX8it1XfO+o7tYZ5PY70aijZzD2RvZLBlILFMGxEqZf4SK3BZJskUxfcsjB
+         Q0mDqlgPfTEVyaumTAB4RSMPcMhonT4qZ1aUpFQuHM0WHk+Y03k/cX9oR825i7llamx1
+         8T1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vl+p/47GQAMvlM1on1gMGR7KlW+3+hbOHuckhCOrwj8=;
+        b=Y6Tn4TCLsGVhkt+6xuXlwamVVbhTEI6cUvwZKm6K1FFFdygeDaxw7G6TBNx1CqfPLz
+         EgIQ9uGMxcZ0JjAX2ge5ATLSgdtTTY+EsMBydzbJWJ+DjGi4Nh472YMXgIc7KHC2s69L
+         ideZ7bqDXOloqbKTIsqw9XU+fGp0SFJBqRIbulIVgsnqXBHvWczbszurKE9LBPrvVFAt
+         WbzG411AGjMj5sRT52cvuSDupltQv44zwa0LI4lMWwhmIw6Ah9/BTxv41RNeVmEKO6yN
+         u3HjJeTnRr3jykCe5ByMX3XbUU37WpzDJtZ8KLySdfy46NsYvDOSUgRBrAfm9XkkoCmD
+         75lg==
+X-Gm-Message-State: APjAAAXv6ly08mtYF6rFeh6ESUayOK4gBgO+qVq9UFKpvTet4TjxDJE9
+        j+4zDYZSF9K/lxb6CTTKwehqdioPj/RVcMFX/2mNpg==
+X-Google-Smtp-Source: APXvYqw6D45LqFPVIa5UnAzmqeAgyvkzqYARvALZry1klV1ny8N/BcDkUfrvPSLaIdAoHd8oI1tIwV03Dfkn7rQ5H54=
+X-Received: by 2002:a9d:5e8b:: with SMTP id f11mr10758287otl.110.1583086889943;
+ Sun, 01 Mar 2020 10:21:29 -0800 (PST)
+MIME-Version: 1.0
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Sun, 1 Mar 2020 19:21:03 +0100
+Message-ID: <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+Subject: Re: [PATCH] exec: Fix a deadlock in ptrace
 To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>, Oleg Nesterov <oleg@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+Cc:     Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Andrei Vagin <avagin@gmail.com>,
         Ingo Molnar <mingo@kernel.org>,
@@ -36,134 +65,47 @@ Cc:     Aleksa Sarai <cyphar@cyphar.com>, Oleg Nesterov <oleg@redhat.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Anshuman Khandual <anshuman.khandual@arm.com>,
         David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>,
         James Morris <jamorris@linux.microsoft.com>,
         Kees Cook <keescook@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Shakeel Butt <shakeelb@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Christian Kellner <christian@kellner.me>,
         Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         "Dmitry V. Levin" <ldv@altlinux.org>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH] exec: Fix a deadlock in ptrace
-Message-ID: <20200301182014.emo34zwv5vjaydft@wittgenstein>
-References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <20200301151333.bsjfdjcjddsza2vn@yavin>
- <20200301155829.iiupfihl6z4jkylh@wittgenstein>
- <AM6PR03MB51701494F43B838E49F624C0E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB51701494F43B838E49F624C0E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 05:46:08PM +0000, Bernd Edlinger wrote:
-> On 3/1/20 4:58 PM, Christian Brauner wrote:
-> > On Mon, Mar 02, 2020 at 02:13:33AM +1100, Aleksa Sarai wrote:
-> >> On 2020-03-01, Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
-> >>> This fixes a deadlock in the tracer when tracing a multi-threaded
-> >>> application that calls execve while more than one thread are running.
-> >>>
-> >>> I observed that when running strace on the gcc test suite, it always
-> >>> blocks after a while, when expect calls execve, because other threads
-> >>> have to be terminated.  They send ptrace events, but the strace is no
-> >>> longer able to respond, since it is blocked in vm_access.
-> >>>
-> >>> The deadlock is always happening when strace needs to access the
-> >>> tracees process mmap, while another thread in the tracee starts to
-> >>> execve a child process, but that cannot continue until the
-> >>> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
-> >>>
-> >>> strace          D    0 30614  30584 0x00000000
-> >>> Call Trace:
-> >>> __schedule+0x3ce/0x6e0
-> >>> schedule+0x5c/0xd0
-> >>> schedule_preempt_disabled+0x15/0x20
-> >>> __mutex_lock.isra.13+0x1ec/0x520
-> >>> __mutex_lock_killable_slowpath+0x13/0x20
-> >>> mutex_lock_killable+0x28/0x30
-> >>> mm_access+0x27/0xa0
-> >>> process_vm_rw_core.isra.3+0xff/0x550
-> >>> process_vm_rw+0xdd/0xf0
-> >>> __x64_sys_process_vm_readv+0x31/0x40
-> >>> do_syscall_64+0x64/0x220
-> >>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>>
-> >>> expect          D    0 31933  30876 0x80004003
-> >>> Call Trace:
-> >>> __schedule+0x3ce/0x6e0
-> >>> schedule+0x5c/0xd0
-> >>> flush_old_exec+0xc4/0x770
-> >>> load_elf_binary+0x35a/0x16c0
-> >>> search_binary_handler+0x97/0x1d0
-> >>> __do_execve_file.isra.40+0x5d4/0x8a0
-> >>> __x64_sys_execve+0x49/0x60
-> >>> do_syscall_64+0x64/0x220
-> >>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>>
-> >>> The proposed solution is to have a second mutex that is
-> >>> used in mm_access, so it is allowed to continue while the
-> >>> dying threads are not yet terminated.
-> >>>
-> >>> I also took the opportunity to improve the documentation
-> >>> of prepare_creds, which is obviously out of sync.
-> >>>
-> >>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> >>
-> >> I can't comment on the validity of the patch, but I also found and
-> >> reported this issue in 2016[1] and the discussion quickly veered into
-> >> the problem being more complicated (and uglier) than it seems at first
-> >> glance.
-> >>
-> >> You should probably also Cc stable, given this has been a long-standing
-> >> issue and your patch doesn't look (too) invasive.
-> >>
-> >> [1]: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
-> > 
-> > Yeah, I remember you mentioning this a while back.
-> > 
-> > Bernd, we really want a reproducer for this sent alongside with this
-> > patch added to:
-> > tools/testing/selftests/ptrace/
-> > Having a test for this bug irrespective of whether or not we go with
-> > this as fix seems really worth it.
-> > 
-> 
-> I ran into this issue, because I wanted to fix an issue in the gcc testsuite,
-> namely why it forgets to remove some temp files,
-> so I did the following:
-> 
-> strace -ftt -o trace.txt make check-gcc-c -k -j4
-> 
-> I reproduced with v4.20 and v5.5 kernel, and I don't know why but it is
-> not happening on all systems I tested, maybe it is something that the expect program
-> does, because, always when I try to reproduce this, the deadlock was always in "expect".
-> 
-> I use expect version 5.45 on the computer where the above test freezes after
-> a couple of minutes.
-> 
-> I think the issue with strace is that it is using vm_access to get the parameters
-> of a syscall that is going on in one thread, and that races with another thread
-> that calls execve, and blocks the cred_guard_mutex.
-> 
-> While Olg's test case here, will certainly not be fixed:
-> 
-> https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
-> 
-> he mentions the access to "anything else which needs ->cred_guard_mutex,
-> say open(/proc/$pid/mem)", I don't know for sure how that can be done, but if
-> that is possible, it would probably work as a test case.
-> 
-> What do you think?
+On Sun, Mar 1, 2020 at 12:27 PM Bernd Edlinger
+<bernd.edlinger@hotmail.de> wrote:
+> The proposed solution is to have a second mutex that is
+> used in mm_access, so it is allowed to continue while the
+> dying threads are not yet terminated.
 
-Yeah, anything that calls ptrace_may_access() is fine and
-open(/proc/$pid/mem) will work so long as $pid is not in the same
-thread-group as the caller. A polished version of the reproducer you
-linked in would probably be good.
+Just for context: When I proposed something similar back in 2016,
+https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+was the resulting discussion thread. At least back then, I looked
+through the various existing users of cred_guard_mutex, and the only
+places that couldn't be converted to the new second mutex were
+PTRACE_ATTACH and SECCOMP_FILTER_FLAG_TSYNC.
+
+
+The ideal solution would IMO be something like this: Decide what the
+new task's credentials should be *before* reaching de_thread(),
+install them into a second cred* on the task (together with the new
+dumpability), drop the cred_guard_mutex, and let ptrace_may_access()
+check against both. After that, some further restructuring might even
+allow the cred_guard_mutex to not be held across all of the VFS
+operations that happen early on in execve, which may block
+indefinitely. But that would be pretty complicated, so I think your
+proposed solution makes sense for now, given that nobody has managed
+to implement anything better in the last few years.
