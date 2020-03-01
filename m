@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7A7175053
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 22:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E4117504E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 22:55:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbgCAVzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Mar 2020 16:55:06 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41634 "EHLO
+        id S1727359AbgCAVyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Mar 2020 16:54:49 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41638 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727050AbgCAVwp (ORCPT
+        with ESMTP id S1727052AbgCAVwp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 1 Mar 2020 16:52:45 -0500
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8WVw-003fO2-CK; Sun, 01 Mar 2020 21:52:44 +0000
+        id 1j8WVw-003fO8-H8; Sun, 01 Mar 2020 21:52:44 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v3 24/55] finally fold get_link() into pick_link()
-Date:   Sun,  1 Mar 2020 21:52:09 +0000
-Message-Id: <20200301215240.873899-24-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v3 25/55] sanitize handling of nd->last_type, kill LAST_BIND
+Date:   Sun,  1 Mar 2020 21:52:10 +0000
+Message-Id: <20200301215240.873899-25-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200301215240.873899-1-viro@ZenIV.linux.org.uk>
 References: <20200301215125.GA873525@ZenIV.linux.org.uk>
@@ -34,197 +34,114 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-kill nd->link_inode, while we are at it
+->last_type values are set in 3 places: path_init() (sets to LAST_ROOT),
+link_path_walk (LAST_NORM/DOT/DOTDOT) and pick_link (LAST_BIND).
+
+The are checked in walk_component(), lookup_last() and do_last().
+They also get copied to the caller by filename_parentat().  In the last
+3 cases the value is what we had at the return from link_path_walk().
+In case of walk_component() it's either directly downstream from
+assignment in link_path_walk() or, when called by lookup_last(), the
+value we have at the return from link_path_walk().
+
+The value at the entry into link_path_walk() can survive to return only
+if the pathname contains nothing but slashes.  Note that pick_link()
+never returns such - pure jumps are handled directly.  So for the calls
+of link_path_walk() for trailing symlinks it does not matter what value
+had been there at the entry; the value at the return won't depend upon it.
+
+There are 3 call chains that might have pick_link() storing LAST_BIND:
+
+1) pick_link() from step_into() from walk_component() from
+link_path_walk().  In that case we will either be parsing the next
+component immediately after return into link_path_walk(), which will
+overwrite the ->last_type before anyone has a chance to look at it,
+or we'll fail, in which case nobody will be looking at ->last_type at all.
+
+2) pick_link() from step_into() from walk_component() from lookup_last().
+The value is never looked at due to the above; it won't affect the value
+seen at return from any link_path_walk().
+
+3) pick_link() from step_into() from do_last().  Ditto.
+
+In other words, assignemnt in pick_link() is pointless, and so is
+LAST_BIND itself; nothing ever looks at that value.  Kill it off.
+And make link_path_walk() _always_ assign ->last_type - in the only
+case when the value at the entry might survive to the return that value
+is always LAST_ROOT, inherited from path_init().  Move that assignment
+from path_init() into the beginning of link_path_walk(), to consolidate
+the things.
+
+Historical note: LAST_BIND used to be used for the kludge with trailing
+pure jump symlinks (extra iteration through the top-level loop).
+No point keeping it anymore...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 135 ++++++++++++++++++++++++++++---------------------------------
- 1 file changed, 61 insertions(+), 74 deletions(-)
+ Documentation/filesystems/path-lookup.rst | 7 ++-----
+ fs/namei.c                                | 3 +--
+ include/linux/namei.h                     | 2 +-
+ 3 files changed, 4 insertions(+), 8 deletions(-)
 
+diff --git a/Documentation/filesystems/path-lookup.rst b/Documentation/filesystems/path-lookup.rst
+index a3216979298b..f46b05e9b96c 100644
+--- a/Documentation/filesystems/path-lookup.rst
++++ b/Documentation/filesystems/path-lookup.rst
+@@ -404,11 +404,8 @@ that is the "next" component in the pathname.
+ ``int last_type``
+ ~~~~~~~~~~~~~~~~~
+ 
+-This is one of ``LAST_NORM``, ``LAST_ROOT``, ``LAST_DOT``, ``LAST_DOTDOT``, or
+-``LAST_BIND``.  The ``last`` field is only valid if the type is
+-``LAST_NORM``.  ``LAST_BIND`` is used when following a symlink and no
+-components of the symlink have been processed yet.  Others should be
+-fairly self-explanatory.
++This is one of ``LAST_NORM``, ``LAST_ROOT``, ``LAST_DOT`` or ``LAST_DOTDOT``.
++The ``last`` field is only valid if the type is ``LAST_NORM``.
+ 
+ ``struct path root``
+ ~~~~~~~~~~~~~~~~~~~~
 diff --git a/fs/namei.c b/fs/namei.c
-index fef2c447219d..9b6c3e3edd75 100644
+index 9b6c3e3edd75..56d4adbf4da1 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -503,7 +503,6 @@ struct nameidata {
- 	} *stack, internal[EMBEDDED_LEVELS];
- 	struct filename	*name;
- 	struct nameidata *saved;
--	struct inode	*link_inode;
- 	unsigned	root_seq;
- 	int		dfd;
- } __randomize_layout;
-@@ -962,9 +961,8 @@ int sysctl_protected_regular __read_mostly;
-  *
-  * Returns 0 if following the symlink is allowed, -ve on error.
-  */
--static inline int may_follow_link(struct nameidata *nd)
-+static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
- {
--	const struct inode *inode;
- 	const struct inode *parent;
- 	kuid_t puid;
+@@ -1785,7 +1785,6 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+ 	if (unlikely(error))
+ 		return ERR_PTR(error);
  
-@@ -972,7 +970,6 @@ static inline int may_follow_link(struct nameidata *nd)
- 		return 0;
- 
- 	/* Allowed if owner and follower match. */
--	inode = nd->link_inode;
- 	if (uid_eq(current_cred()->fsuid, inode->i_uid))
- 		return 0;
- 
-@@ -1106,73 +1103,6 @@ static int may_create_in_sticky(umode_t dir_mode, kuid_t dir_uid,
- 	return 0;
- }
- 
--static __always_inline
--const char *get_link(struct nameidata *nd)
--{
--	struct saved *last = nd->stack + nd->depth - 1;
--	struct dentry *dentry = last->link.dentry;
--	struct inode *inode = nd->link_inode;
--	int error;
--	const char *res;
--
--	if (!(nd->flags & LOOKUP_PARENT)) {
--		error = may_follow_link(nd);
--		if (unlikely(error))
--			return ERR_PTR(error);
--	}
--
--	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
--		return ERR_PTR(-ELOOP);
--
--	if (!(nd->flags & LOOKUP_RCU)) {
--		touch_atime(&last->link);
--		cond_resched();
--	} else if (atime_needs_update(&last->link, inode)) {
--		if (unlikely(unlazy_walk(nd)))
--			return ERR_PTR(-ECHILD);
--		touch_atime(&last->link);
--	}
--
--	error = security_inode_follow_link(dentry, inode,
--					   nd->flags & LOOKUP_RCU);
--	if (unlikely(error))
--		return ERR_PTR(error);
--
 -	nd->last_type = LAST_BIND;
--	res = READ_ONCE(inode->i_link);
--	if (!res) {
--		const char * (*get)(struct dentry *, struct inode *,
--				struct delayed_call *);
--		get = inode->i_op->get_link;
--		if (nd->flags & LOOKUP_RCU) {
--			res = get(NULL, inode, &last->done);
--			if (res == ERR_PTR(-ECHILD)) {
--				if (unlikely(unlazy_walk(nd)))
--					return ERR_PTR(-ECHILD);
--				res = get(dentry, inode, &last->done);
--			}
--		} else {
--			res = get(dentry, inode, &last->done);
--		}
--		if (!res)
--			goto all_done;
--		if (IS_ERR(res))
--			return res;
--	}
--	if (*res == '/') {
--		error = nd_jump_root(nd);
--		if (unlikely(error))
--			return ERR_PTR(error);
--		while (unlikely(*++res == '/'))
--			;
--	}
--	if (*res)
--		return res;
--all_done: // pure jump
--	put_link(nd);
--	return NULL;
--}
--
- /*
-  * follow_up - Find the mountpoint of path's vfsmount
-  *
-@@ -1796,8 +1726,10 @@ static inline int handle_dots(struct nameidata *nd, int type)
- static const char *pick_link(struct nameidata *nd, struct path *link,
- 		     struct inode *inode, unsigned seq)
+ 	res = READ_ONCE(inode->i_link);
+ 	if (!res) {
+ 		const char * (*get)(struct dentry *, struct inode *,
+@@ -2123,6 +2122,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
  {
--	int error;
- 	struct saved *last;
-+	const char *res;
-+	int error;
-+
- 	if (unlikely(nd->total_link_count++ >= MAXSYMLINKS)) {
- 		path_to_nameidata(link, nd);
- 		return ERR_PTR(-ELOOP);
-@@ -1828,9 +1760,64 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 	last = nd->stack + nd->depth++;
- 	last->link = *link;
- 	clear_delayed_call(&last->done);
--	nd->link_inode = inode;
- 	last->seq = seq;
--	return get_link(nd);
-+
-+	if (!(nd->flags & LOOKUP_PARENT)) {
-+		error = may_follow_link(nd, inode);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
-+	}
-+
-+	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
-+		return ERR_PTR(-ELOOP);
-+
-+	if (!(nd->flags & LOOKUP_RCU)) {
-+		touch_atime(&last->link);
-+		cond_resched();
-+	} else if (atime_needs_update(&last->link, inode)) {
-+		if (unlikely(unlazy_walk(nd)))
-+			return ERR_PTR(-ECHILD);
-+		touch_atime(&last->link);
-+	}
-+
-+	error = security_inode_follow_link(link->dentry, inode,
-+					   nd->flags & LOOKUP_RCU);
-+	if (unlikely(error))
-+		return ERR_PTR(error);
-+
-+	nd->last_type = LAST_BIND;
-+	res = READ_ONCE(inode->i_link);
-+	if (!res) {
-+		const char * (*get)(struct dentry *, struct inode *,
-+				struct delayed_call *);
-+		get = inode->i_op->get_link;
-+		if (nd->flags & LOOKUP_RCU) {
-+			res = get(NULL, inode, &last->done);
-+			if (res == ERR_PTR(-ECHILD)) {
-+				if (unlikely(unlazy_walk(nd)))
-+					return ERR_PTR(-ECHILD);
-+				res = get(link->dentry, inode, &last->done);
-+			}
-+		} else {
-+			res = get(link->dentry, inode, &last->done);
-+		}
-+		if (!res)
-+			goto all_done;
-+		if (IS_ERR(res))
-+			return res;
-+	}
-+	if (*res == '/') {
-+		error = nd_jump_root(nd);
-+		if (unlikely(error))
-+			return ERR_PTR(error);
-+		while (unlikely(*++res == '/'))
-+			;
-+	}
-+	if (*res)
-+		return res;
-+all_done: // pure jump
-+	put_link(nd);
-+	return NULL;
- }
+ 	int err;
  
- enum {WALK_FOLLOW = 1, WALK_MORE = 2, WALK_NOFOLLOW = 4};
++	nd->last_type = LAST_ROOT;
+ 	if (IS_ERR(name))
+ 		return PTR_ERR(name);
+ 	while (*name=='/')
+@@ -2224,7 +2224,6 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 	if (flags & LOOKUP_RCU)
+ 		rcu_read_lock();
+ 
+-	nd->last_type = LAST_ROOT; /* if there are only slashes... */
+ 	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
+ 	nd->depth = 0;
+ 
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index d9576a051808..a4bb992623c4 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -15,7 +15,7 @@ enum { MAX_NESTED_LINKS = 8 };
+ /*
+  * Type of the last component on LOOKUP_PARENT
+  */
+-enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
++enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ 
+ /* pathwalk mode */
+ #define LOOKUP_FOLLOW		0x0001	/* follow links at the end */
 -- 
 2.11.0
 
