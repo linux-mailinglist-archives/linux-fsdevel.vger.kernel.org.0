@@ -2,143 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2316174E2E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 16:59:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC9E174E72
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 17:26:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbgCAP7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Mar 2020 10:59:16 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55079 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbgCAP7P (ORCPT
+        id S1726627AbgCAQ0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Mar 2020 11:26:37 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:32973 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbgCAQ0h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Mar 2020 10:59:15 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8Qz8-0006pM-Le; Sun, 01 Mar 2020 15:58:30 +0000
-Date:   Sun, 1 Mar 2020 16:58:29 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH] exec: Fix a deadlock in ptrace
-Message-ID: <20200301155829.iiupfihl6z4jkylh@wittgenstein>
-References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <20200301151333.bsjfdjcjddsza2vn@yavin>
+        Sun, 1 Mar 2020 11:26:37 -0500
+Received: by mail-il1-f196.google.com with SMTP id r4so5837344iln.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Mar 2020 08:26:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7Fu/SFHWPJrdodZVxzytASHZbQ3cU0h0DDwJDKjhPkA=;
+        b=YfuH4I2pz3kQJiHoeONb32Dlr+t+Kk90lPCRMd/Q6NgfdKTO9rug4I1SKFvDjFUlf2
+         jXzE4sNRhUHqq2hmFE5fREXsqh8fksIWRLOHbjFaJ9kXnIPRgP0LjsG6Y7gMJylGLW5w
+         q3B4t8yGYNjl78Rn97eMlwHP9IklCkYrlKvBo08tTh95yEx+zWWXdMbc1aze7sFhR7xB
+         cQy3BhDvZuJI1oO1KT0L0IBgcBUpY8FvO7jQfvfl+HEXwfPw1LPTTU3NERRKr/ckYlav
+         Nu2+MIqbsFhYnMBe6jK6TvLoKU22dAbCdt7q6lqJhL8PtiNMqffJ3u4MppnRl3z7AMGR
+         xoqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7Fu/SFHWPJrdodZVxzytASHZbQ3cU0h0DDwJDKjhPkA=;
+        b=AYazfCNkahYI3C75L1Qc9gJBLJo4vekjfOzD43yypVq2YalNBAW8RWFYqKLkG44JDO
+         Rt/GSm5U8a5sH8tUMEuize781ukd4wq9hE/2lEXx97QkbzN6Zf0o/ziqN5ep2e5CtFtj
+         7Bw+eeEjpCjxZCDUPC0HzdmMJjVJdy2nUCrxxILZau5xXdYg9jBqyoncH59sMvwTEHvo
+         ZlU8Bdu8TsJctZITuHC7nsLomPOYQ3dLdHfrtu6BYkwls3xPoE732hA3yF43vVUyL9yk
+         hdghxWIHTuVbUjK3mDR5dyDxRXu45GGFyDmbTuUUyZeHdTa+zSWZeZD9D8zb+GenqRH+
+         zO/g==
+X-Gm-Message-State: APjAAAUjOoGOxaCCf9zCAl7K7MYAomllwNnnsmLbN/onExAmbeEIutc0
+        h5GYvjv8/4gxlphzGtjiTFIIq4K9j+sNmGfVhyPkhyzn
+X-Google-Smtp-Source: APXvYqzMyIGaKPx99XsAsqXJVkY1PO54XE1cuJFcv6kj6XYCkzpyMGCH5sntyL4uusM3cDhDQtUyHHpb6mgWSAWrPiw=
+X-Received: by 2002:a92:6f10:: with SMTP id k16mr13154990ilc.275.1583079996785;
+ Sun, 01 Mar 2020 08:26:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200301151333.bsjfdjcjddsza2vn@yavin>
+References: <20200217131455.31107-1-amir73il@gmail.com> <20200217131455.31107-12-amir73il@gmail.com>
+ <20200226102354.GE10728@quack2.suse.cz> <CAOQ4uxivfnmvXag8+f5wJujqRgp9FW+2_CVD6MSgB40_yb+sHw@mail.gmail.com>
+ <20200226170705.GU10728@quack2.suse.cz> <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
+ <CAOQ4uxih7zhAj6qUp39B_a_On5gv80SKm-VsC4D8ayCrC6oSRw@mail.gmail.com>
+ <20200227112755.GZ10728@quack2.suse.cz> <CAOQ4uxgavT6e97dYEOLV9BUOXQzMw2ADjMoZHTT0euERoZFoJg@mail.gmail.com>
+ <20200227133016.GD10728@quack2.suse.cz> <CAOQ4uxghKxf4Gfw9GX1QZ_ju3RhZcOLxtYnhAn9A3MJtt3PMCQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxghKxf4Gfw9GX1QZ_ju3RhZcOLxtYnhAn9A3MJtt3PMCQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 1 Mar 2020 18:26:25 +0200
+Message-ID: <CAOQ4uxiHA5fM9SjA+XXcGQOg2u4UPvs_-nm+sKXcNXoGKxVgTg@mail.gmail.com>
+Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
+ child fid's
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 02:13:33AM +1100, Aleksa Sarai wrote:
-> On 2020-03-01, Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
-> > This fixes a deadlock in the tracer when tracing a multi-threaded
-> > application that calls execve while more than one thread are running.
-> > 
-> > I observed that when running strace on the gcc test suite, it always
-> > blocks after a while, when expect calls execve, because other threads
-> > have to be terminated.  They send ptrace events, but the strace is no
-> > longer able to respond, since it is blocked in vm_access.
-> > 
-> > The deadlock is always happening when strace needs to access the
-> > tracees process mmap, while another thread in the tracee starts to
-> > execve a child process, but that cannot continue until the
-> > PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
-> > 
-> > strace          D    0 30614  30584 0x00000000
-> > Call Trace:
-> > __schedule+0x3ce/0x6e0
-> > schedule+0x5c/0xd0
-> > schedule_preempt_disabled+0x15/0x20
-> > __mutex_lock.isra.13+0x1ec/0x520
-> > __mutex_lock_killable_slowpath+0x13/0x20
-> > mutex_lock_killable+0x28/0x30
-> > mm_access+0x27/0xa0
-> > process_vm_rw_core.isra.3+0xff/0x550
-> > process_vm_rw+0xdd/0xf0
-> > __x64_sys_process_vm_readv+0x31/0x40
-> > do_syscall_64+0x64/0x220
-> > entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > 
-> > expect          D    0 31933  30876 0x80004003
-> > Call Trace:
-> > __schedule+0x3ce/0x6e0
-> > schedule+0x5c/0xd0
-> > flush_old_exec+0xc4/0x770
-> > load_elf_binary+0x35a/0x16c0
-> > search_binary_handler+0x97/0x1d0
-> > __do_execve_file.isra.40+0x5d4/0x8a0
-> > __x64_sys_execve+0x49/0x60
-> > do_syscall_64+0x64/0x220
-> > entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > 
-> > The proposed solution is to have a second mutex that is
-> > used in mm_access, so it is allowed to continue while the
-> > dying threads are not yet terminated.
-> > 
-> > I also took the opportunity to improve the documentation
-> > of prepare_creds, which is obviously out of sync.
+> > I'd rather do the fanotity_fh padding optimization I outlined in another
+> > email. That would save one long without any packing and the following u8
+> > name_len would get packed tightly after the fanotify_fh by the compiler.
 > >
-> > Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> 
-> I can't comment on the validity of the patch, but I also found and
-> reported this issue in 2016[1] and the discussion quickly veered into
-> the problem being more complicated (and uglier) than it seems at first
-> glance.
-> 
-> You should probably also Cc stable, given this has been a long-standing
-> issue and your patch doesn't look (too) invasive.
-> 
-> [1]: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+>
+> OK. I will try that and the non-inherited variant of perm/name event struct
+> and see how it looks like.
+>
 
-Yeah, I remember you mentioning this a while back.
+Pushed sample code to branch fanotify_name-wip:
 
-Bernd, we really want a reproducer for this sent alongside with this
-patch added to:
-tools/testing/selftests/ptrace/
-Having a test for this bug irrespective of whether or not we go with
-this as fix seems really worth it.
+b5e56d3e1358 fanotify: fanotify_perm_event inherits from fanotify_path_event
+55041285b3b7 fanotify: divorce fanotify_path_event and fanotify_fid_event
 
-Oleg seems to have suggested that a potential alternative fix is to wait
-in de_thread() until all other threads in the thread-group have passed
-exit_notiy(). Right now we only kill them but don't wait. Currently
-de_thread() only waits for the thread-group leader to pass exit_notify()
-whenever a non-thread-group leader thread execs (because the exec'ing
-thread becomes the new thread-group leader with the same pid as the
-former thread-group leader).
+I opted for fanotify_name_event inherits from fanotify_fid_event,
+because it felt
+better this way.
+I wasn't sure about fanotify_perm_event inherits from fanotify_path_event,
+so did that is a separate patch so you can judge both variants.
+IMO, neither variant is that good or bad, so I could go with either.
 
-Christian
+I do like the end result with your suggestions better than fanotify_name-v2.
+If you like this version, I will work the changes into the series.
+
+Thanks,
+Amir.
