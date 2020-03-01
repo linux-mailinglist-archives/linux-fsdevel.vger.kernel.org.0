@@ -2,205 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A99174A5A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 01:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 709E4174A90
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Mar 2020 01:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbgCAAHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Feb 2020 19:07:04 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:60139 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727174AbgCAAHD (ORCPT
+        id S1727237AbgCAArg convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Feb 2020 19:47:36 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33028 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbgCAArf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Feb 2020 19:07:03 -0500
-Received: from dread.disaster.area (pa49-195-202-68.pa.nsw.optusnet.com.au [49.195.202.68])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3E1C17EAD0F;
-        Sun,  1 Mar 2020 11:06:55 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1j8C8D-00053a-FV; Sun, 01 Mar 2020 11:06:53 +1100
-Date:   Sun, 1 Mar 2020 11:06:53 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Snitzer <snitzer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Eric Biggers <ebiggers@google.com>, riteshh@linux.ibm.com,
-        krisman@collabora.com, surajjs@amazon.com, dmonakhov@gmail.com,
-        mbobrowski@mbobrowski.org, Eric Whitney <enwlinux@gmail.com>,
-        sblbir@amazon.com, Khazhismel Kumykov <khazhy@google.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
-Message-ID: <20200301000653.GS10737@dread.disaster.area>
-References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
- <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
- <20200226155521.GA24724@infradead.org>
- <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
- <A57E33D1-3D54-405A-8300-13F117DC4633@dilger.ca>
- <eda406cc-8ce3-e67a-37be-3e525b58d5a1@virtuozzo.com>
- <4933D88C-2A2D-4ACA-823E-BDFEE0CE143F@dilger.ca>
- <20200228211610.GQ10737@dread.disaster.area>
- <F2CA6010-F7E5-4891-A337-FA1FEB32B935@dilger.ca>
+        Sat, 29 Feb 2020 19:47:35 -0500
+Received: by mail-qt1-f196.google.com with SMTP id x8so2819171qts.0;
+        Sat, 29 Feb 2020 16:47:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oH0ncHNV8XxAqVrlyEJMu+Cv/ThtQO/KP6auu0wc1lg=;
+        b=JBiw+nr5O2EgoGHCgthrjTdz7ghd30CabF2c+uundh7dsC4b7mbSbngjk96uxG/jvr
+         e5rRkJRQEGLQ0N+WskZsaKtdNjhtTYIJ9ebgFphHpkwOAIG/JahVu5TZUN1DdcbxT2lW
+         a5mfkrjUFlh3h28Jn7Oh/29PMlxVWDKV8+AIGxrxvr+8EHOwernqvVzetFBN6vl7R5iD
+         R6I6s7fQg+WBe7baqhfaO2AyHfwEum5sjtTiC3wzKC9dRfRSi03eSkBpEwddRxWTwHu9
+         ubAUriskyPyCgI4lZGA+G5gf2rm0F70MgIPmEy2KJnFtzt8qapgn2gQgSm30UvTW9ydw
+         +4pw==
+X-Gm-Message-State: APjAAAX0xrs0KF52khBJ24evfxBsulcYd0Miv0wdFBRXyTjIcgkKksrg
+        d3e97gko8B+0STC7jt5ialP5SVExXk1RNE13vWg=
+X-Google-Smtp-Source: APXvYqyyJpbm+wc92foVb2tgN6GdgD9tF3sjZIJHrWt8MtUjgy13G9NMtx15eXtf5uWPSkPa6budnFBYEhuAcp2cyqM=
+X-Received: by 2002:ac8:12c5:: with SMTP id b5mr10245689qtj.386.1583023654212;
+ Sat, 29 Feb 2020 16:47:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <F2CA6010-F7E5-4891-A337-FA1FEB32B935@dilger.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LYdCFQXi c=1 sm=1 tr=0
-        a=mqTaRPt+QsUAtUurwE173Q==:117 a=mqTaRPt+QsUAtUurwE173Q==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=SS2py6AdgQ4A:10
-        a=7-415B0cAAAA:8 a=TYBLyS7eAAAA:8 a=d3t3XxdUcUBxI7EExOIA:9
-        a=vG0tVmWIGI90jERS:21 a=ssZfECPllHHjBRnG:21 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22 a=zvYvwCWiE4KgVXXeO06c:22
+References: <20200128132539.782286-1-laurent@vivier.eu>
+In-Reply-To: <20200128132539.782286-1-laurent@vivier.eu>
+From:   YunQiang Su <syq@debian.org>
+Date:   Sun, 1 Mar 2020 08:47:23 +0800
+Message-ID: <CAKcpw6W8_a3LPMPTph1asU3dCfjXk-xh5_7+MCEFicwTph+EKg@mail.gmail.com>
+Subject: Re: [PATCH v3] binfmt_misc: pass binfmt_misc flags to the interpreter
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        libc-alpha@sourceware.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 01:12:52PM -0700, Andreas Dilger wrote:
-> On Feb 28, 2020, at 2:16 PM, Dave Chinner <david@fromorbit.com> wrote:
-> > 
-> > On Fri, Feb 28, 2020 at 08:35:19AM -0700, Andreas Dilger wrote:
-> >> On Feb 27, 2020, at 5:24 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >>> 
-> >>> So, this interface is 3-in-1:
-> >>> 
-> >>> 1)finds a placement for inodes extents;
-> >> 
-> >> The target allocation size would be sum(size of inodes), which should
-> >> be relatively small in your case).
-> >> 
-> >>> 2)assigns this space to some temporary donor inode;
-> >> 
-> >> Maybe yes, or just reserves that space from being allocated by anyone.
-> >> 
-> >>> 3)calls ext4_move_extents() for each of them.
-> >> 
-> >> ... using the target space that was reserved earlier
-> >> 
-> >>> Do I understand you right?
-> >> 
-> >> Correct.  That is my "5 minutes thinking about an interface for grouping
-> >> small files together without exposing kernel internals" proposal for this.
-> > 
-> > You don't need any special kernel interface with XFS for this. It is
-> > simply:
-> > 
-> > 	mkdir tmpdir
-> > 	create O_TMPFILEs in tmpdir
-> > 
-> > Now all the tmpfiles you create and their data will be co-located
-> > around the location of the tmpdir inode. This is the natural
-> > placement policy of the filesystem. i..e the filesystem assumes that
-> > files in the same directory are all related, so will be accessed
-> > together and so should be located in relatively close proximity to
-> > each other.
-> 
-> Sure, this will likely get inodes allocate _close_ to each other on
-> ext4 as well (the new directory will preferentially be located in a
-> group that has free space), but it doesn't necessarily result in
-> all of the files being packed densely.  For 1MB+4KB and 1MB-4KB files
-> they will still prefer to be aligned on 1MB boundaries rather than
-> packed together.
+Laurent Vivier <laurent@vivier.eu> 于2020年1月28日周二 下午9:25写道：
+>
+> It can be useful to the interpreter to know which flags are in use.
+>
+> For instance, knowing if the preserve-argv[0] is in use would
+> allow to skip the pathname argument.
+>
+> This patch uses an unused auxiliary vector, AT_FLAGS, to add a
+> flag to inform interpreter if the preserve-argv[0] is enabled.
+>
 
-Userspace can control that, too, simply by choosing to relocate only
-small files into a single directory, then relocating the large files
-in a separate set of operations after flushing the small files and
-having the packed tightly.
+I am suggested to post linux-arch and/or linux-api.
 
-Seriously, userspace has a *lot* of control of how data is located
-and packed simply by grouping the IO it wants to be written together
-into the same logical groups (i.e. directories) in the same temporal
-IO domain...
-
-> >>> Can we introduce a flag, that some of inode is unmovable?
-> >> 
-> >> There are very few flags left in the ext4_inode->i_flags for use.
-> >> You could use "IMMUTABLE" or "APPEND_ONLY" to mean that, but they
-> >> also have other semantics.  The EXT4_NOTAIL_FL is for not merging the
-> >> tail of a file, but ext4 doesn't have tails (that was in Reiserfs),
-> >> so we might consider it a generic "do not merge" flag if set?
-> > 
-> > Indeed, thanks to XFS, ext4 already has an interface that can be
-> > used to set/clear a "no defrag" flag such as you are asking for.
-> > It's the FS_XFLAG_NODEFRAG bit in the FS_IOC_FS[GS]ETXATTR ioctl.
-> > In XFS, that manages the XFS_DIFLAG_NODEFRAG on-disk inode flag,
-> > and it has special meaning for directories. From the 'man 3 xfsctl'
-> > man page where this interface came from:
-> > 
-> >      Bit 13 (0x2000) - XFS_XFLAG_NODEFRAG
-> > 	No defragment file bit - the file should be skipped during a
-> > 	defragmentation operation. When applied to  a directory,
-> > 	new files and directories created will inherit the no-defrag
-> > 	bit.
-> 
-> The interface is not the limiting factor here, but rather the number
-> of flags available in the inode.
-
-Yes, that's an internal ext4 issue, not a userspace API problem.
-
-> Since chattr/lsattr from e2fsprogs
-> was used as "common ground" for a few years, there are a number of
-> flags in the namespace that don't actually have any meaning for ext4.
-
-Yes, that's a shitty API bed that extN made for itself, isn't it?
-We've sucked at API design for a long, long time. :/
-
-But the chattr userspace application is also irrelevant to the
-problem at hand: it already uses the FS_IOC_FS[GS]ETXATTR ioctl
-interface for changing project quota IDs and the per-inode
-inheritance flag. Hence how it manages the new flag is irrelevant,
-but it also means we can't change the definition or behaviour of
-existing flags it controls regardless of what filesystem those flags
-act on.
-
-> One of those flags is:
-> 
-> #define EXT4_NOTAIL_FL    0x00008000 /* file tail should not be merged */
-> 
-> This was added for Reiserfs, but it is not used by any other filesystem,
-> so generalizing it slightly to mean "no migrate" is reasonable.  That
-> doesn't affect Reiserfs in any way, and it would still be possible to
-> also wire up the XFS_XFLAG_NODEFRAG bit to be stored as that flag.
-
-Yes, ext4 could do that, but we are not allowed to redefine long
-standing userspace API flags to mean something completely different.
-That's effectively what you are proposing here if you allow ext4 to
-manipulate the same on-disk flag via both FS_NOTAIL_FL and
-FS_XFLAG_NODEFRAG. ie. the  FS_NOTAIL_FL flag is manipulated by
-FS_IOC_[GS]ETFLAGS and is marked both as user visible and modifiable
-by ext4 even though ti does nothing.
-
-IOWs, to redefine this on-disk flag we would also need to have
-EXT4_IOC_GETFLAGS / EXT4_IOC_SETFLAGS reject attempts to set/clear
-FS_NOTAIL_FL with EOPNOTSUPP or EINVAL. Which we then risk breaking
-applications that use this flag even though ext4 does not implement
-anything other than setting/clearing the flag on demand.
-
-IOWs, we cannot change the meaning of the EXT4_NOTAIL_FL on disk
-flag, because that either changes the user visible behaviour of the
-on-disk flag or it changes the definition of a userspace API flag to
-mean something it was never meant to mean. Neither of those things
-are acceptible changes to make to a generic userspace API.
-
-> It wouldn't be any issue at all to chose an arbitrary unused flag to
-> store this in ext4 inode internally, except that chattr/lsattr are used
-> by a variety of different filesystems, so whatever flag is chosen will
-> immediately also apply to any other filesystem that users use those
-> tools on.
-
-The impact on userspace is only a problem if you re-use a flag ext4
-already exposes to userspace. And that is not allowed if it causes
-the userspace API to be globally redefined for everyone. Which,
-clearly, it would.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> ---
+>
+> Notes:
+>     This can be tested with QEMU from my branch:
+>
+>       https://github.com/vivier/qemu/commits/binfmt-argv0
+>
+>     With something like:
+>
+>       # cp ..../qemu-ppc /chroot/powerpc/jessie
+>
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
+>                             --persistent no --preserve-argv0 yes
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: POC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       sh
+>
+>       # qemu-binfmt-conf.sh --qemu-path / --systemd ppc --credential yes \
+>                             --persistent no --preserve-argv0 no
+>       # systemctl restart systemd-binfmt.service
+>       # cat /proc/sys/fs/binfmt_misc/qemu-ppc
+>       enabled
+>       interpreter //qemu-ppc
+>       flags: OC
+>       offset 0
+>       magic 7f454c4601020100000000000000000000020014
+>       mask ffffffffffffff00fffffffffffffffffffeffff
+>       # chroot /chroot/powerpc/jessie  sh -c 'echo $0'
+>       /bin/sh
+>
+>     v3: mix my patch with one from YunQiang Su and my comments on it
+>         introduce a new flag in the uabi for the AT_FLAGS
+>     v2: only pass special flags (remove Magic and Enabled flags)
+>
+>  fs/binfmt_elf.c              | 5 ++++-
+>  fs/binfmt_elf_fdpic.c        | 5 ++++-
+>  fs/binfmt_misc.c             | 4 +++-
+>  include/linux/binfmts.h      | 4 ++++
+>  include/uapi/linux/binfmts.h | 4 ++++
+>  5 files changed, 19 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index ecd8d2698515..ff918042ceed 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -176,6 +176,7 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>         unsigned char k_rand_bytes[16];
+>         int items;
+>         elf_addr_t *elf_info;
+> +       elf_addr_t flags = 0;
+>         int ei_index = 0;
+>         const struct cred *cred = current_cred();
+>         struct vm_area_struct *vma;
+> @@ -250,7 +251,9 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
+>         NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
+>         NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
+>         NEW_AUX_ENT(AT_BASE, interp_load_addr);
+> -       NEW_AUX_ENT(AT_FLAGS, 0);
+> +       if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +               flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +       NEW_AUX_ENT(AT_FLAGS, flags);
+>         NEW_AUX_ENT(AT_ENTRY, exec->e_entry);
+>         NEW_AUX_ENT(AT_UID, from_kuid_munged(cred->user_ns, cred->uid));
+>         NEW_AUX_ENT(AT_EUID, from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index 240f66663543..abb90d82aa58 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -507,6 +507,7 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+>         char __user *u_platform, *u_base_platform, *p;
+>         int loop;
+>         int nr; /* reset for each csp adjustment */
+> +       unsigned long flags = 0;
+>
+>  #ifdef CONFIG_MMU
+>         /* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
+> @@ -647,7 +648,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
+>         NEW_AUX_ENT(AT_PHENT,   sizeof(struct elf_phdr));
+>         NEW_AUX_ENT(AT_PHNUM,   exec_params->hdr.e_phnum);
+>         NEW_AUX_ENT(AT_BASE,    interp_params->elfhdr_addr);
+> -       NEW_AUX_ENT(AT_FLAGS,   0);
+> +       if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> +               flags |= AT_FLAGS_PRESERVE_ARGV0;
+> +       NEW_AUX_ENT(AT_FLAGS,   flags);
+>         NEW_AUX_ENT(AT_ENTRY,   exec_params->entry_addr);
+>         NEW_AUX_ENT(AT_UID,     (elf_addr_t) from_kuid_munged(cred->user_ns, cred->uid));
+>         NEW_AUX_ENT(AT_EUID,    (elf_addr_t) from_kuid_munged(cred->user_ns, cred->euid));
+> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+> index cdb45829354d..b9acdd26a654 100644
+> --- a/fs/binfmt_misc.c
+> +++ b/fs/binfmt_misc.c
+> @@ -154,7 +154,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
+>         if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+>                 goto ret;
+>
+> -       if (!(fmt->flags & MISC_FMT_PRESERVE_ARGV0)) {
+> +       if (fmt->flags & MISC_FMT_PRESERVE_ARGV0) {
+> +               bprm->interp_flags |= BINPRM_FLAGS_PRESERVE_ARGV0;
+> +       } else {
+>                 retval = remove_arg_zero(bprm);
+>                 if (retval)
+>                         goto ret;
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc633f3be..265b80d5fd6f 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -78,6 +78,10 @@ struct linux_binprm {
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE_BIT 2
+>  #define BINPRM_FLAGS_PATH_INACCESSIBLE (1 << BINPRM_FLAGS_PATH_INACCESSIBLE_BIT)
+>
+> +/* if preserve the argv0 for the interpreter  */
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0_BIT 3
+> +#define BINPRM_FLAGS_PRESERVE_ARGV0 (1 << BINPRM_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  /* Function parameter for binfmt->coredump */
+>  struct coredump_params {
+>         const kernel_siginfo_t *siginfo;
+> diff --git a/include/uapi/linux/binfmts.h b/include/uapi/linux/binfmts.h
+> index 689025d9c185..a70747416130 100644
+> --- a/include/uapi/linux/binfmts.h
+> +++ b/include/uapi/linux/binfmts.h
+> @@ -18,4 +18,8 @@ struct pt_regs;
+>  /* sizeof(linux_binprm->buf) */
+>  #define BINPRM_BUF_SIZE 256
+>
+> +/* if preserve the argv0 for the interpreter  */
+> +#define AT_FLAGS_PRESERVE_ARGV0_BIT 0
+> +#define AT_FLAGS_PRESERVE_ARGV0 (1 << AT_FLAGS_PRESERVE_ARGV0_BIT)
+> +
+>  #endif /* _UAPI_LINUX_BINFMTS_H */
+> --
+> 2.24.1
+>
