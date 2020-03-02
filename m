@@ -2,99 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7A6175DEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 16:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B21C175E16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 16:23:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbgCBPKw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 10:10:52 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:34163 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbgCBPKw (ORCPT
+        id S1727357AbgCBPXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 10:23:34 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:46281 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726751AbgCBPXd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:10:52 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8miV-0001DR-2G; Mon, 02 Mar 2020 15:10:47 +0000
-Date:   Mon, 2 Mar 2020 16:10:46 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        Mon, 2 Mar 2020 10:23:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583162612;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QnN+iIj+lJ/C1dzRk6vOrtrA8A6rdXY2O4R067Olucc=;
+        b=AgtOqEswZbCmVUaju5JwkNR1iMGEbYHsLFocFU4QaEdTEckmEPfLcBWoNoPaySJoW53OnI
+        5zTuzbcbw+OMDE+bZgT7nd2vGQKXPJ+AOq2accFl8NzyDpdNmgSiCmPz+/SXSEVmmiZtbr
+        jjO/8VUFuscnM52lbiXpOoG484yrZVI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-433-HUcrpoOwNeSKqK0Ek5dKSg-1; Mon, 02 Mar 2020 10:23:29 -0500
+X-MC-Unique: HUcrpoOwNeSKqK0Ek5dKSg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C6464101FC6B;
+        Mon,  2 Mar 2020 15:23:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 077B18D553;
+        Mon,  2 Mar 2020 15:23:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200302151021.x5mm54jtoukg4tdk@yavin>
+References: <20200302151021.x5mm54jtoukg4tdk@yavin> <20200302143546.srzk3rnh4o6s76a7@wittgenstein> <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com> <848282.1583159228@warthog.procyon.org.uk> <888183.1583160603@warthog.procyon.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     dhowells@redhat.com,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Florian Weimer <fweimer@redhat.com>, linux-api@vger.kernel.org,
         viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-Message-ID: <20200302151046.447zgo36dmfdr2ik@wittgenstein>
-References: <96563.1582901612@warthog.procyon.org.uk>
- <20200228152427.rv3crd7akwdhta2r@wittgenstein>
- <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
- <20200302115239.pcxvej3szmricxzu@wittgenstein>
- <20200302120503.g5pt4ky3uvb2ly63@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200302120503.g5pt4ky3uvb2ly63@wittgenstein>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <927227.1583162604.1@warthog.procyon.org.uk>
+Date:   Mon, 02 Mar 2020 15:23:24 +0000
+Message-ID: <927228.1583162604@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 01:05:04PM +0100, Christian Brauner wrote:
-> On Mon, Mar 02, 2020 at 12:52:39PM +0100, Christian Brauner wrote:
-> > On Mon, Mar 02, 2020 at 12:30:47PM +0100, Florian Weimer wrote:
-> > > * Christian Brauner:
-> > > 
-> > > > [Cc Florian since that ends up on libc's table sooner or later...]
-> > > 
-> > > I'm not sure what you are after here …
-> > 
-> > Exactly what you've commented below. Input on whether any of these
-> > changes would be either problematic if you e.g. were to implement
-> > openat() on top of openat2() in the future or if it would be problematic
-> > if we e.g. were to really deprecate AT_* flags for new syscalls.
-> > 
-> > > 
-> > > > On Fri, Feb 28, 2020 at 02:53:32PM +0000, David Howells wrote:
-> > > >> 	
-> > > >> I've been told that RESOLVE_* flags, which can be found in linux/openat2.h,
-> > > >> should be used instead of the equivalent AT_* flags for new system calls.  Is
-> > > >> this the case?
-> > > >
-> > > > Imho, it would make sense to use RESOLVE_* flags for new system calls
-> > > > and afair this was the original intention.
-> > > > The alternative is that RESOLVE_* flags are special to openat2(). But
-> > > > that seems strange, imho. The semantics openat2() has might be very
-> > > > useful for new system calls as well which might also want to support
-> > > > parts of AT_* flags (see fsinfo()). So we either end up adding new AT_*
-> > > > flags mirroring the new RESOLVE_* flags or we end up adding new
-> > > > RESOLVE_* flags mirroring parts of AT_* flags. And if that's a
-> > > > possibility I vote for RESOLVE_* flags going forward. The have better
-> > > > naming too imho.
-> > > >
-> > > > An argument against this could be that we might end up causing more
-> > > > confusion for userspace due to yet another set of flags. But maybe this
-> > > > isn't an issue as long as we restrict RESOLVE_* flags to new syscalls.
-> > > > When we introduce a new syscall userspace will have to add support for
-> > > > it anyway.
-> > > 
-> > > I missed the start of the dicussion and what this is about, sorry.
-> > > 
-> > > Regarding open flags, I think the key point for future APIs is to avoid
-> > > using the set of flags for both control of the operation itself
-> > > (O_NOFOLLOW/AT_SYMLINK_NOFOLLOW, O_NOCTTY) and properaties of the
-> > > resulting descriptor (O_RDWR, O_SYNC).  I expect that doing that would
-> 
-> Yeah, we have touched on that already and we have other APIs having
-> related problems. A clean way to avoid this problem is to require new
-> syscalls to either have two flag arguments, or - if appropriate -
-> suggest they make use of struct open_how that was implemented for
-> openat2().
+Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-By the way, if we really means business wrt to: separate resolution from
-fd-property falgs then shouldn't we either require O_NOFOLLOW for
-openat2() be specified in open_how->resolve or disallow O_NOFOLLOW for
-openat2() and introduce a new RESOLVE_* variant?
+> My counter-argument is that most people actually want
+> RESOLVE_NO_SYMLINKS (as evidenced by the countless symlink-related
+> security bugs -- many of which used O_NOFOLLOW incorrectly), it just
+> wasn't available before Linux 5.6.
 
-Christian
+I would quibble as to whether they actually want this in all situations.
+There are some in which the difference in behaviour will conceivably break
+things - though that's more the case for things like stat(), statx(), fsinfo()
+and getxattr() where you might want to be able to query a specific symlink
+than for openat2() where you almost always want to follow it (save O_PATH |
+O_NOFOLLOW).
+
+However, if you're okay with me adding, say, RESOLVE_NO_TERMINAL_SYMLINK and
+RESOLVE_NO_TERMINAL_AUTOMOUNT, I can use these flags.
+
+I don't want to have to allow both RESOLVE_* and AT_*.
+
+David
+
