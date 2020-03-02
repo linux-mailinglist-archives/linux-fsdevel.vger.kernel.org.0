@@ -2,213 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B32E41752BB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 05:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 301C61752E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 05:51:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbgCBEjI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Mar 2020 23:39:08 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40567 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbgCBEjH (ORCPT
+        id S1726905AbgCBEvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Mar 2020 23:51:12 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:34153 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbgCBEvL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Mar 2020 23:39:07 -0500
-Received: by mail-pf1-f194.google.com with SMTP id l184so2321457pfl.7;
-        Sun, 01 Mar 2020 20:39:07 -0800 (PST)
+        Sun, 1 Mar 2020 23:51:11 -0500
+Received: by mail-il1-f194.google.com with SMTP id n11so3145025ild.1;
+        Sun, 01 Mar 2020 20:51:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=alTTveLKTo1elfmHPHzMWxdGHAT1S7u6JKso3Pkl1Tg=;
+        b=bo6FxVVkuiQi2qqGiBTcsY5WIEzeaUkzfWe1ycgrelgG6CrmG4P0xHFu8Dzz3vWHHm
+         sihKM0osjGRfph4Pou1nw/mMJdkE+s54Za0DjZpapvJXDrJ0F/KPGzEU/T7S7i0LeOGU
+         TWujb6cRE13rIbohViCRvfIwZj/9iDjVJovveFUX5hN99TINU3L4ToaFyFhKUVV1ha+/
+         ZYyaYtzul2ywZ4ourfUAGyYIkp9uDlHlUJJfVTfnmttJLpBhYxLNcEeFNImssOZyIMtk
+         Za9QLLO8oS72jPpcK263FwYula9/47t9vGTQbx+W1RckMg55kevzGZbaG767uD+R7Lz8
+         g/bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pEvSzl+X6hYVKhxERuc6e31mt38DDFow1Yrd5wm475s=;
-        b=Nw5zbqolrtfOj6RJ7YurK3HwSyguNBVyKyZJKSltIJCv7wyhLkVtsTKsX/EIl0zrbz
-         LbnnhALKYVHIy6ppEISChICpN9l0m59jPyo2ozTDvqUJH4eO24jSS9PALcaeLrl0eIh4
-         v9+8IpGE4dPeYHNpgESK9eWKtDSK67oLTnnoRkU0bvj/oRv3VS/wXqQceJ0akL7nVP2x
-         qg+mu7i0jvIthaW/7XIJpz/M8/+dt+mT81YuVZaGLUBvjzMcTmfGDPyzbnCZg/tN1LFA
-         /G4KeMdM7RWj2zXmQ8GcpUt7UQdvrbh50u5MQmgOndrdtsn87HcbIC/EUVqXJphBXSJx
-         SMdQ==
-X-Gm-Message-State: APjAAAVr20YMh+dnfhxSJaQJjMAzCwSWvY2VlUnp06BRliSjQKqnPtMR
-        MciUYKOBpUIyj1fcHxAqHVE=
-X-Google-Smtp-Source: APXvYqwRuCnYEwvhl7qqY3I0FXBF6JiH71qUWNDUb5FXj5wH7F/xAtsTjroDCfLGZ7yBJsZ1+gFJNw==
-X-Received: by 2002:aa7:8502:: with SMTP id v2mr15647930pfn.232.1583123946405;
-        Sun, 01 Mar 2020 20:39:06 -0800 (PST)
-Received: from ?IPv6:2601:647:4000:d7:7869:cc6e:b1f7:9f7d? ([2601:647:4000:d7:7869:cc6e:b1f7:9f7d])
-        by smtp.gmail.com with ESMTPSA id o66sm4548494pfb.93.2020.03.01.20.39.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 Mar 2020 20:39:05 -0800 (PST)
-Subject: Re: WARNING: bad unlock balance in rcu_core
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Cc:     syzbot <syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>,
-        Miao Xie <miaoxie@huawei.com>,
-        Anton Altaparmakov <aia21@cantab.net>
-References: <000000000000c0bffa0586795098@google.com>
- <0000000000005edcd0059503b4aa@google.com>
- <20191016100134.GA20076@architecture4>
- <CACT4Y+bG+DyGuj__tTaVqzr3D7jxEaxL=vbtcsfhnAS2iSWvTQ@mail.gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <ac02c4c9-86c2-5c40-5add-b5e7ec0aab7d@acm.org>
-Date:   Sun, 1 Mar 2020 20:39:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=alTTveLKTo1elfmHPHzMWxdGHAT1S7u6JKso3Pkl1Tg=;
+        b=izjZ88WSHifieH+NAlZBrhiy2NVwcWCvgVpqt1ryKtcv6jCFxnkOtYzI7lSKgCuUSW
+         TFna8+1+9B9pHljKjVTTb1MwBgfYiWJlmgYDFT/q7TS6B/ccv6hpZNUC+VDl90g6ul2P
+         zX0Hs4S+ju2Z7JETAwbxmKku8h4sm3+4XTYsXMyYGz0BMDl5xaECpr/z1rQhOj26UKN4
+         xCmJBPbuJWa6yDnoOYgxBn4G2BcWAbra3eIu8CKDwzybwTNeD27uIMtKBwk0iw6/jIMQ
+         SFl8ZzmI/lcPTMCpmm6/Uwrer/Pw0gw9NAMev3jSjU7xVjCghGZ/Rj6AcBqs/IrZSLpb
+         p+MQ==
+X-Gm-Message-State: APjAAAUJYKGhlOTeEdsrvFNjh9I1dmClqe5VgWEC5dHtDKWUensOC0Zg
+        0St2OlVj+P/VIH0wNHUlYyxqVYY/7wc+FmXxo6dsYMcY/Vs=
+X-Google-Smtp-Source: APXvYqxtkZqTWghmGlHaI6suboZ+vFHyCwxVH29YA9XEB9zgnrHkTQ9/Aw28bLyE37Wz+pvOuUAzjnYI2+hTkjM80l0=
+X-Received: by 2002:a92:489a:: with SMTP id j26mr15961954ilg.226.1583124671019;
+ Sun, 01 Mar 2020 20:51:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bG+DyGuj__tTaVqzr3D7jxEaxL=vbtcsfhnAS2iSWvTQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200229170825.GX8045@magnolia> <20200229180716.GA31323@dumbo>
+ <20200229183820.GA8037@magnolia> <20200229200200.GA10970@dumbo> <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+From:   Marian Klein <mkleinsoft@gmail.com>
+Date:   Mon, 2 Mar 2020 04:51:00 +0000
+Message-ID: <CAA0DKYoFR6WhFLLCYO1GPYHGNZ_mi1773LXoXiC=aByvDF1e2w@mail.gmail.com>
+Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is active
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Domenico Andreoli <domenico.andreoli@linux.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-02-27 07:18, Dmitry Vyukov wrote:
-> On Wed, Oct 16, 2019 at 11:58 AM Gao Xiang <gaoxiang25@huawei.com> wrote:
->>
->> Hi,
->>
->> On Wed, Oct 16, 2019 at 02:27:07AM -0700, syzbot wrote:
->>> syzbot has found a reproducer for the following crash on:
->>>
->>> HEAD commit:    0e9d28bc Add linux-next specific files for 20191015
->>> git tree:       linux-next
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=11745608e00000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3d84ca04228b0bf4
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
->>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159d297f600000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16289b30e00000
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+36baa6c2180e959e19b1@syzkaller.appspotmail.com
->>>
->>> =====================================
->>> WARNING: bad unlock balance detected!
->>> 5.4.0-rc3-next-20191015 #0 Not tainted
->>> -------------------------------------
->>> syz-executor276/8897 is trying to release lock (rcu_callback) at:
->>> [<ffffffff8160e7a4>] __write_once_size include/linux/compiler.h:226 [inline]
->>> [<ffffffff8160e7a4>] __rcu_reclaim kernel/rcu/rcu.h:221 [inline]
->>> [<ffffffff8160e7a4>] rcu_do_batch kernel/rcu/tree.c:2157 [inline]
->>> [<ffffffff8160e7a4>] rcu_core+0x574/0x1560 kernel/rcu/tree.c:2377
->>> but there are no more locks to release!
->>>
->>> other info that might help us debug this:
->>> 1 lock held by syz-executor276/8897:
->>>  #0: ffff88809a3cc0d8 (&type->s_umount_key#40/1){+.+.}, at:
->>> alloc_super+0x158/0x910 fs/super.c:229
->>>
->>> stack backtrace:
->>> CPU: 0 PID: 8897 Comm: syz-executor276 Not tainted 5.4.0-rc3-next-20191015
->>> #0
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> Call Trace:
->>>  <IRQ>
->>>  __dump_stack lib/dump_stack.c:77 [inline]
->>>  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->>>  print_unlock_imbalance_bug kernel/locking/lockdep.c:4008 [inline]
->>>  print_unlock_imbalance_bug.cold+0x114/0x123 kernel/locking/lockdep.c:3984
->>>  __lock_release kernel/locking/lockdep.c:4244 [inline]
->>>  lock_release+0x5f2/0x960 kernel/locking/lockdep.c:4505
->>>  rcu_lock_release include/linux/rcupdate.h:213 [inline]
->>>  __rcu_reclaim kernel/rcu/rcu.h:223 [inline]
->>
->> I have little knowledge about this kind of stuff, but after seeing
->> the dashboard https://syzkaller.appspot.com/bug?extid=36baa6c2180e959e19b1
->>
->> I guess this is highly related with ntfs, and in ntfs_fill_super, it
->> has lockdep_off() in ntfs_fill_super...
->>
->> In detail, commit 90c1cba2b3b3 ("locking/lockdep: Zap lock classes even
->> with lock debugging disabled") [1], and free_zapped_rcu....
->>
->> static void free_zapped_rcu(struct rcu_head *ch)
->> {
->>         struct pending_free *pf;
->>         unsigned long flags;
->>
->>         if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
->>                 return;
->>
->>         raw_local_irq_save(flags);
->>         arch_spin_lock(&lockdep_lock);
->>         current->lockdep_recursion = 1;   <--- here
->>
->>         /* closed head */
->>         pf = delayed_free.pf + (delayed_free.index ^ 1);
->>         __free_zapped_classes(pf);
->>         delayed_free.scheduled = false;
->>
->>         /*
->>          * If there's anything on the open list, close and start a new callback.
->>          */
->>         call_rcu_zapped(delayed_free.pf + delayed_free.index);
->>
->>         current->lockdep_recursion = 0;
->>         arch_spin_unlock(&lockdep_lock);
->>         raw_local_irq_restore(flags);
->> }
->>
->> Completely guess and untest since I am not familar with that,
->> but in case of that, Cc related people...
->> If I'm wrong, ignore my comments and unintentional noise....
->>
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=90c1cba2b3b3851c151229f61801919b2904d437
->>
->> Thanks,
->> Gao Xiang
-> 
-> 
-> Still happens a lot for the past 10 months:
-> https://syzkaller.appspot.com/bug?id=0d5bdaf028e4283ad7404609d17e5077f48ff26d
+Hi Darrick
 
-Unless one of the NTFS maintainers steps in, should NTFS perhaps be
-excluded from testing with lockdep enabled? This is what I found in the
-git log of NTFS:
+If security is a concern, maybe it should in kernel config
+( CONFIG_ENABLE_HIBERNATION  =  Y/N )
+For the security hardened server systems with no hibernation need you
+simply configure it to N.
 
-commit 59345374742ee6673c2d04b0fa8c888e881b7209
-Author: Ingo Molnar <mingo@elte.hu>
-Date:   Mon Jul 3 00:25:18 2006 -0700
+Also the concern the other process can hijack s2disk is unlikely. You
+have to realized all processors except for one
+are down (See dmesg bellow.) by the time the snapshot image is being  written.
+So you can disable scheduler time sharing on this only one processor
+when you get snapshot request and no other process can jump in.
 
-    [PATCH] lockdep: annotate NTFS locking rules
+I think you can allow (unlock) writing ONLY to  device specified in
+kernel parameter
+resume=/dev/<swap_device>  and
+only when CONFIG_ENABLE_HIBERNATION  =  Y  and there is only one CPU
+active (CPU0) and
+time sharing scheduler is down and user group from another kernel
+parameter snapshot_gid invoked snapshot.
+For me secure enough. If any rogue  program pretended to be legitimate
+user space hibernation
+program it would have to go via actual hibernation cycle (powering off
+computer) and that would be obvious to user if that was not triggered
+by him
+or configured by him to trigger automatically.
+It is no way a program secretly could write to resume/swap device.
 
-    NTFS uses lots of type-opaque objects which acquire their true
-    identity runtime - so the lock validator needs to be helped in a
-    couple of places to figure out object types.
+For normal users often the security is less of concern as they know
+who works with their laptop , etc.
 
-    Many thanks to Anton Altaparmakov for giving lots of explanations
-    about NTFS locking rules.
 
-    Has no effect on non-lockdep kernels.
+[ 1243.100159] Disabling non-boot CPUs ...
+[ 1243.101448] smpboot: CPU 1 is now offline
+[ 1243.103291] smpboot: CPU 2 is now offline
+[ 1243.104851] smpboot: CPU 3 is now offline
+[ 1243.106522] smpboot: CPU 4 is now offline
+[ 1243.108200] smpboot: CPU 5 is now offline
+[ 1243.109928] smpboot: CPU 6 is now offline
+[ 1243.111501] smpboot: CPU 7 is now offline
+[ 1243.113364] PM: Creating hibernation image:
+[ 1243.597752] PM: Need to copy 161991 pages
+[ 1243.597756] PM: Normal pages needed: 161991 + 1024, available pages: 3967507
+[ 1244.202907] PM: Hibernation image created (161991 pages copied)
 
-Thanks,
-
-Bart.
+On Sun, 1 Mar 2020 at 21:35, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli
+> <domenico.andreoli@linux.com> wrote:
+> >
+> > On Sat, Feb 29, 2020 at 10:38:20AM -0800, Darrick J. Wong wrote:
+> > > On Sat, Feb 29, 2020 at 07:07:16PM +0100, Domenico Andreoli wrote:
+> > > > On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J. Wong wrote:
+> > > > > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > >
+> > > > > It turns out that there /is/ one use case for programs being able to
+> > > > > write to swap devices, and that is the userspace hibernation code.  The
+> > > > > uswsusp ioctls allow userspace to lease parts of swap devices, so turn
+> > > > > S_SWAPFILE off when invoking suspend.
+> > > > >
+> > > > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
+> > > > > Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
+> > > > > Reported-by: Marian Klein <mkleinsoft@gmail.com>
+> > > >
+> > > > I also tested it yesterday but was not satisfied, unfortunately I did
+> > > > not come with my comment in time.
+> > > >
+> > > > Yes, I confirm that the uswsusp works again but also checked that
+> > > > swap_relockall() is not triggered at all and therefore after the first
+> > > > hibernation cycle the S_SWAPFILE bit remains cleared and the whole
+> > > > swap_relockall() is useless.
+> > > >
+> > > > I'm not sure this patch should be merged in the current form.
+> > >
+> > > NNGGHHGGHGH /me is rapidly losing his sanity and will soon just revert
+> > > the whole security feature because I'm getting fed up with people
+> > > yelling at me *while I'm on vacation* trying to *restore* my sanity.  I
+> > > really don't want to be QAing userspace-directed hibernation right now.
+> >
+> > Maybe we could proceed with the first patch to amend the regression and
+> > postpone the improved fix to a later patch? Don't loose sanity for this.
+>
+> I would concur here.
+>
+> > > ...right, the patch is broken because we have to relock the swapfiles in
+> > > whatever code executes after we jump back to the restored kernel, not in
+> > > the one that's doing the restoring.  Does this help?
+> >
+> > I made a few unsuccessful attempts in kernel/power/hibernate.c and
+> > eventually I'm switching to qemu to speed up the test cycle.
+> >
+> > > OTOH, maybe we should just leave the swapfiles unlocked after resume.
+> > > Userspace has clearly demonstrated the one usecase for writing to the
+> > > swapfile, which means anyone could have jumped in while uswsusp was
+> > > running and written whatever crap they wanted to the parts of the swap
+> > > file that weren't leased for the hibernate image.
+> >
+> > Essentially, if the hibernation is supported the swapfile is not totally
+> > safe.
+>
+> But that's only the case with the userspace variant, isn't it?
+>
+> > Maybe user-space hibernation should be a separate option.
+>
+> That actually is not a bad idea at all in my view.
+>
+> Thanks!
