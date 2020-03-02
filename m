@@ -2,162 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D45B175825
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 11:18:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3578175859
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 11:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgCBKS0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 05:18:26 -0500
-Received: from relay.sw.ru ([185.231.240.75]:36310 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbgCBKS0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:18:26 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1j8i91-00038m-Od; Mon, 02 Mar 2020 13:17:51 +0300
-Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, tytso@mit.edu,
-        viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
-        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
-        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
-        dmonakhov@gmail.com, mbobrowski@mbobrowski.org, enwlinux@gmail.com,
-        sblbir@amazon.com, khazhy@google.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
- <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
- <20200226155521.GA24724@infradead.org>
- <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
- <20200227073336.GJ10737@dread.disaster.area>
- <2e2ae13e-0757-0831-216d-b363b1727a0d@virtuozzo.com>
- <20200227215634.GM10737@dread.disaster.area>
- <e4835807-52d2-cce4-ed11-cc58448d3140@virtuozzo.com>
- <20200229224124.GR10737@dread.disaster.area>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <8e729e06-9251-5df4-5ef8-67da61b3cfea@virtuozzo.com>
-Date:   Mon, 2 Mar 2020 13:17:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200229224124.GR10737@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1727107AbgCBKaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 05:30:03 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:33520 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726654AbgCBKaD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 05:30:03 -0500
+Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 022AU2fa021049
+        for <linux-fsdevel@vger.kernel.org>; Mon, 2 Mar 2020 05:30:02 -0500
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 022ATv0j014287
+        for <linux-fsdevel@vger.kernel.org>; Mon, 2 Mar 2020 05:30:02 -0500
+Received: by mail-qv1-f70.google.com with SMTP id cn2so8344605qvb.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 02:30:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=/VcLffZUTgvTWC8ZFO3N6mDeTTtIIDh0TAgvcx3iXEw=;
+        b=JpH93CAnNJtjixDnMN0tm9oBBDWoesntoVBv92afK3vMJZNnwQaVdnP6SF/4VVRxHu
+         zL/PFjGKDTzVSA3+k4vt//B7lvQmRplOg9gCD+83yTqf4MX5oUBN8rTnLy3FYljIVAhF
+         Tw6vM2JKkH58nnSzsFNdXHsAQ581Wh8IgRqZo5Ggy1MOmBEQBzJ+AoTWM6J1YF5IuSJM
+         dg+o1+TyNKy5Ukbx5w+OHGSNc33oxpm4kEtuAAyj6freIWrvuZLg7bRlvtykqDaQ3z2+
+         4hwqU5gsn5G3jMP1GOJgcdIzE9Apy04rpET52UvhCrMyUPLF7vkVgQNWE557Cb5cOYOF
+         0+Qg==
+X-Gm-Message-State: APjAAAWHAlV3CfPCdnEnLvIlYzaMKefiKGWAFq4OUBXIIKduNwvvd7OS
+        t5W4BAOpBa+k6vKAxELMKwnDpdSPMsi1e+Vd4tQGQBn030o3ap3gsL+IS+U62tClegEpjFW62Hu
+        koqDrtU1/0BzlbYkWB5odBmHOzPiYeE3kHQZh
+X-Received: by 2002:a37:4e53:: with SMTP id c80mr14345723qkb.58.1583144996945;
+        Mon, 02 Mar 2020 02:29:56 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwBh6WXMWHNRoxL92FxaSm7tZWkWljn+/lubfFhH1jeDvkVwJTYHB9DmVs0hkAFcj5IVD9Bog==
+X-Received: by 2002:a37:4e53:: with SMTP id c80mr14345713qkb.58.1583144996622;
+        Mon, 02 Mar 2020 02:29:56 -0800 (PST)
+Received: from turing-police ([2601:5c0:c001:c9e1::359])
+        by smtp.gmail.com with ESMTPSA id j17sm10248504qth.27.2020.03.02.02.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 02:29:54 -0800 (PST)
+From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
+X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
+In-Reply-To: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+References: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1583144993_2391P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 02 Mar 2020 05:29:54 -0500
+Message-ID: <240472.1583144994@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01.03.2020 01:41, Dave Chinner wrote:
-> On Fri, Feb 28, 2020 at 03:41:51PM +0300, Kirill Tkhai wrote:
->> On 28.02.2020 00:56, Dave Chinner wrote:
->>> On Thu, Feb 27, 2020 at 02:12:53PM +0300, Kirill Tkhai wrote:
->>>> On 27.02.2020 10:33, Dave Chinner wrote:
->>>>> On Wed, Feb 26, 2020 at 11:05:23PM +0300, Kirill Tkhai wrote:
->>>>>> On 26.02.2020 18:55, Christoph Hellwig wrote:
->>>>>>> On Wed, Feb 26, 2020 at 04:41:16PM +0300, Kirill Tkhai wrote:
->>>>>>>> This adds a support of physical hint for fallocate2() syscall.
->>>>>>>> In case of @physical argument is set for ext4_fallocate(),
->>>>>>>> we try to allocate blocks only from [@phisical, @physical + len]
->>>>>>>> range, while other blocks are not used.
->>>>>>>
->>>>>>> Sorry, but this is a complete bullshit interface.  Userspace has
->>>>>>> absolutely no business even thinking of physical placement.  If you
->>>>>>> want to align allocations to physical block granularity boundaries
->>>>>>> that is the file systems job, not the applications job.
->>>>>>
->>>>>> Why? There are two contradictory actions that filesystem can't do at the same time:
->>>>>>
->>>>>> 1)place files on a distance from each other to minimize number of extents
->>>>>>   on possible future growth;
->>>>>
->>>>> Speculative EOF preallocation at delayed allocation reservation time
->>>>> provides this.
->>>>>
->>>>>> 2)place small files in the same big block of block device.
->>>>>
->>>>> Delayed allocation during writeback packs files smaller than the
->>>>> stripe unit of the filesystem tightly.
->>>>>
->>>>> So, yes, we do both of these things at the same time in XFS, and
->>>>> have for the past 10 years.
->>>>>
->>>>>> At initial allocation time you never know, which file will stop grow in some future,
->>>>>> i.e. which file is suitable for compaction. This knowledge becomes available some time later.
->>>>>> Say, if a file has not been changed for a month, it is suitable for compaction with
->>>>>> another files like it.
->>>>>>
->>>>>> If at allocation time you can determine a file, which won't grow in the future, don't be afraid,
->>>>>> and just share your algorithm here.
->>>>>>
->>>>>> In Virtuozzo we tried to compact ext4 with existing kernel interface:
->>>>>>
->>>>>> https://github.com/dmonakhov/e2fsprogs/blob/e4defrag2/misc/e4defrag2.c
->>>>>>
->>>>>> But it does not work well in many situations, and the main problem is blocks allocation
->>>>>> in desired place is not possible. Block allocator can't behave excellent for everything.
->>>>>>
->>>>>> If this interface bad, can you suggest another interface to make block allocator to know
->>>>>> the behavior expected from him in this specific case?
->>>>>
->>>>> Write once, long term data:
->>>>>
->>>>> 	fcntl(fd, F_SET_RW_HINT, RWH_WRITE_LIFE_EXTREME);
->>>>>
->>>>> That will allow the the storage stack to group all data with the
->>>>> same hint together, both in software and in hardware.
->>>>
->>>> This is interesting option, but it only applicable before write is made. And it's only
->>>> applicable on your own applications. My usecase is defragmentation of containers, where
->>>> any applications may run. Most of applications never care whether long or short-term
->>>> data they write.
->>>
->>> Why is that a problem? They'll be using the default write hint (i.e.
->>> NONE) and so a hint aware allocation policy will be separating that
->>> data from all the other data written with specific hints...
->>>
->>> And you've mentioned that your application has specific *never write
->>> again* selection criteria for data it is repacking. And that
->>> involves rewriting that data.  IOWs, you know exactly what policy
->>> you want to apply before you rewrite the data, and so what other
->>> applications do is completely irrelevant for your repacker...
->>
->> It is not a rewriting data, there is moving data to new place with EXT4_IOC_MOVE_EXT.
-> 
-> "rewriting" is a technical term for reading data at rest and writing
-> it again, whether it be to the same location or to some other
-> location. Changing physical location of data, by definition,
-> requires rewriting data.
-> 
-> EXT4_IOC_MOVE_EXT = data rewrite + extent swap to update the
-> metadata in the original file to point at the new data. Hence it
-> appears to "move" from userspace perspective (hence the name) but
-> under the covers it is rewriting data and fiddling pointers...
+--==_Exmh_1583144993_2391P
+Content-Type: text/plain; charset=us-ascii
 
-Yeah, I understand this. I mean that file remains accessible for external
-users, and external reads/writes are handled properly, and state of file
-remains consistent.
+On Mon, 02 Mar 2020 18:57:15 +0900, Tetsuhiro Kohada said:
+> Clean up d_entry rebuilding in exfat_rename_file() and move_file().
+>
+> -Replace memcpy of d_entry with structure copy.
 
->>> What the filesystem does with the hint is up to the filesystem
->>> and the policies that it's developers decide are appropriate. If
->>> your filesystem doesn't do what you need, talk to the filesystem
->>> developers about implementing the policy you require.
->>
->> Do XFS kernel defrag interfaces allow to pack some randomly chosen
->> small files in 1Mb blocks? Do they allow to pack small 4Kb file into
->> free space after a big file like in example:
-> 
-> No. Randomly selecting small holes for small file writes is a
-> terrible idea from a performance perspective. Hence filling tiny
-> holes (not randomly!) is often only done for metadata allocation
-> (e.g. extent map blocks, which are largely random access anyway) or
-> if there is no other choice for data (e.g. at ENOSPC).
+Those look OK.
 
-I'm speaking more about the possibility. "Random" is from block allocator
-view. But from user view they are not random, these are unmodifiable files.
-Say, static content of website never changes, and these files may be packed
-together to decrease number of occupied 1Mb disc blocks.
+> -Change to use the value already stored in fid.
 
-To pack all files on a disc together is terrible idea, I'm 100% agree with you.
+> -		if (exfat_get_entry_type(epnew) == TYPE_FILE) {
 
-Kirill
+> +		if (fid->type == TYPE_FILE) {
+
+Are you sure this is OK to do? exfat_get_entry_type() does a lot of
+mapping between values, using a file_dentry_t->type, while
+fid->type is a file_id_t->type. and at first read it's not obvious to me whether
+fid->type is guaranteed to have the correct value already.
+
+(The abundant use of 0xNN constants in exfat_get_entry_type()  doesn't
+inspire confidence that it's looking at what you think it's looking at...)
+
+
+
+--==_Exmh_1583144993_2391P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQIVAwUBXlzgIQdmEQWDXROgAQI58g/8DOieHjL/SZ7yeem2t4q7TX4M9CzzWBEA
+gCgEpSqWrxEfRPn4OfLS/S6CMQtDPrdv8mDqvmNIRa0S27G+kvvCdOVbIYDnDIHD
+uqUmHKhPoUdTH+6k4XXErNBO4hG0NlpFAAVEpyY0x3Yo8zK5a6kW9NroYknqHq0g
+/zafLt+WTiwU4InxRznidC4UvQ9Dvi9hMUnEzziYuR/E11ruzpQjfc8gcCkRawh0
+F2bgfjwXhAFdyXGhkJdcfeNjXRMgFUPy4a0fVK32uxSo3kfYJYX0cSzSspkCoZm2
+bIWbR0pg/Lx/AjH1V5JiTK+EQixeC0ujAXmbzGVT2H16cWSMqnFbmVVjRgSBY0fI
+Y/N8HHyLxUx5u87b6B97wvNZiExkDID38Br05uFuOIasOMOMs3fE3mpJ7/J/FRFd
+dUXKZJ6+wni8X4kZVHTleUuZVtQK0hSTZBj3wOL7prAn9uJiCP3b7t6MdfCOegV6
+VcKJyhLvu6LmByPunjU75UTTmWj3dMGYdYDFEDD+jfHBXMh0AX54rHwy4jO0BwU2
+/X+YrqpbOWL8C7+1E//vJq00X+CNyNG98iJ1QJWJV7EOUrUTnnLUa11+DLc9CUtB
+R6r7VF469EJ7MfZG8L0keg5eLSNUQL2H9I8FU1id0xrHxJ7HQtH9lz6Dav1+Bnj4
+bOOVWDTwOt8=
+=DpqH
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1583144993_2391P--
