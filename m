@@ -2,70 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E826F176021
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 17:37:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADBD3176035
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 17:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbgCBQhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 11:37:55 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:50716 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726946AbgCBQhz (ORCPT
+        id S1727250AbgCBQnd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 11:43:33 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38966 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbgCBQnd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:37:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583167074;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fC95qP5SJj04fpXo5+HmQBZoe9M23e68wzRbVjI+h48=;
-        b=fujqORQa8lYmCZW0y9DBwwkGh3gaLkaEvE1+FMXDSTVut+2vf2DcDt5Dm5Xej/zneobcum
-        wxy08Ln2KYYbSpau45AIgTP3Vao0uuO6vhKUQxZtpsGHaDOuYbi3FDkKa5NcwMpy7gJgnW
-        00LHPQeMQTyPgQSMcS1te04LegZwIZM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-416-nBzKOs3jP-GRZrHcsh7How-1; Mon, 02 Mar 2020 11:37:50 -0500
-X-MC-Unique: nBzKOs3jP-GRZrHcsh7How-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AE814101044E;
-        Mon,  2 Mar 2020 16:37:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AA6B60CD3;
-        Mon,  2 Mar 2020 16:37:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200302152458.hznqqssixhlpykgr@yavin>
-References: <20200302152458.hznqqssixhlpykgr@yavin> <20200302143546.srzk3rnh4o6s76a7@wittgenstein> <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com> <848282.1583159228@warthog.procyon.org.uk> <888183.1583160603@warthog.procyon.org.uk> <20200302150528.okjdx2mkluicje4w@wittgenstein>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     dhowells@redhat.com,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Florian Weimer <fweimer@redhat.com>, linux-api@vger.kernel.org,
-        viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+        Mon, 2 Mar 2020 11:43:33 -0500
+Received: by mail-oi1-f195.google.com with SMTP id r16so10908805oie.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 08:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7kNUg6jrLRYXBxRwxs+v6id6LKMnX/sXkRxwLGsubN8=;
+        b=G85budQaXfEQvDNWIalbDXyWPGbmN1VgzYIvybMkE6FjzEE9OQ06bKVGmxbSFZLDeZ
+         NCG1SEAjzWEvnPaBKjkeXOiCbefYDCeZuZT/wMi0k0Z8lRMg1ptUkwT9yyguQl1/2S+o
+         jfJxI20+jwJY/A2UlJ9u9Qil4ApszAgT38+jjcvSvG9xoofpBq921uBU19jjtE1+amxO
+         hwunfbFnfCp0nj6pojNjexPVGNkT+8IQLC8KySny/q03clG9aJQnNSB7rlhWMZOdoDcs
+         Tlc1qt9VorvqgYNwFtqnCnSE57RGtJfTiH7WPMYBRl0+W5TnUTvBhMda5uGFAqYj+Yii
+         VzMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7kNUg6jrLRYXBxRwxs+v6id6LKMnX/sXkRxwLGsubN8=;
+        b=CciyzQL6fwp1YuOdwRtmVsQY1/UdtSNdXJ3q0J7j6BR95ZItJX6Rf3CHnUHe4hWK3L
+         sFK0RKYX58VizMMiUosGRT2OVgZPy2C8fRmNru/36KNTrZ2C5z7Wi2Teyo7GmaS4E2e2
+         UsM2a2+TCJ18Psn/Az7sOUwbvMjZcQSWcyZKpIpnoWHbR1tEY5gR9LYPD2c7t+5Icrsh
+         PWnOB1nj+vwZh58skOTXJHUjnbwMSLqd/XKOM2cG7ww04sr/V/NDe4ltqcSyMjkfteea
+         rt+LozBf2cqKgTa1YdP/zhUr8dKMQ4lbLVeVlrbYEb8DzAB2K7d3zxAvh819fLSyrPbo
+         INjg==
+X-Gm-Message-State: ANhLgQ0XRqH01SqMYSPlG0Qx3XwE5PjKCdEzWw6+Mdo2bvJkgveRSdn+
+        ezEZBaXHEVMf5vBesIHLUPWdBBg4tWMjt1S1u/3wuw==
+X-Google-Smtp-Source: ADFU+vtCTAmOxkVME2G4uhIibjer5xiSuOaaEPJPm0R3+yIEc30FvCfm1FJmjYEn5prQfE7J5MaCm+kNmricQKurjnA=
+X-Received: by 2002:a05:6808:8d0:: with SMTP id k16mr12043oij.68.1583167412109;
+ Mon, 02 Mar 2020 08:43:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <932112.1583167065.1@warthog.procyon.org.uk>
-Date:   Mon, 02 Mar 2020 16:37:45 +0000
-Message-ID: <932113.1583167065@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein> <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org> <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org> <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+In-Reply-To: <875zfmloir.fsf@x220.int.ebiederm.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 2 Mar 2020 17:43:05 +0100
+Message-ID: <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com>
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jamorris@linux.microsoft.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aleksa Sarai <cyphar@cyphar.com> wrote:
+On Mon, Mar 2, 2020 at 5:19 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>
+> > On 3/2/20 4:57 PM, Eric W. Biederman wrote:
+> >> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> >>
+> >>>
+> >>> I tried this with s/EACCESS/EACCES/.
+> >>>
+> >>> The test case in this patch is not fixed, but strace does not freeze,
+> >>> at least with my setup where it did freeze repeatable.
+> >>
+> >> Thanks, That is what I was aiming at.
+> >>
+> >> So we have one method we can pursue to fix this in practice.
+> >>
+> >>> That is
+> >>> obviously because it bypasses the cred_guard_mutex.  But all other
+> >>> process that access this file still freeze, and cannot be
+> >>> interrupted except with kill -9.
+> >>>
+> >>> However that smells like a denial of service, that this
+> >>> simple test case which can be executed by guest, creates a /proc/$pid/mem
+> >>> that freezes any process, even root, when it looks at it.
+> >>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
+> >>
+> >> Yes.  Your the test case in your patch a variant of the original
+> >> problem.
+> >>
+> >>
+> >> I have been staring at this trying to understand the fundamentals of the
+> >> original deeper problem.
+> >>
+> >> The current scope of cred_guard_mutex in exec is because being ptraced
+> >> causes suid exec to act differently.  So we need to know early if we are
+> >> ptraced.
+> >>
+> >
+> > It has a second use, that it prevents two threads entering execve,
+> > which would probably result in disaster.
+>
+> Exec can fail with an error code up until de_thread.  de_thread causes
+> exec to fail with the error code -EAGAIN for the second thread to get
+> into de_thread.
+>
+> So no.  The cred_guard_mutex is not needed for that case at all.
+>
+> >> If that case did not exist we could reduce the scope of the
+> >> cred_guard_mutex in exec to where your patch puts the cred_change_mutex.
+> >>
+> >> I am starting to think reworking how we deal with ptrace and exec is the
+> >> way to solve this problem.
+>
+>
+> I am 99% convinced that the fix is to move cred_guard_mutex down.
 
-> Now let's just hope no new syscalls need both AT_RECURSIVE and
-> RESOLVE_NO_SYMLINKS
+"move cred_guard_mutex down" as in "take it once we've already set up
+the new process, past the point of no return"?
 
-Ummm...  AT_RECURSIVE is used by open_tree() to determine whether to copy just
-the mount it's looking at or the entire subtree from that point.
+> Then right after we take cred_guard_mutex do:
+>         if (ptraced) {
+>                 use_original_creds();
+>         }
+>
+> And call it a day.
+>
+> The details suck but I am 99% certain that would solve everyones
+> problems, and not be too bad to audit either.
 
-David
+Ah, hmm, that sounds like it'll work fine at least when no LSMs are involved.
 
+SELinux normally doesn't do the execution-degrading thing, it just
+blocks the execution completely - see their selinux_bprm_set_creds()
+hook. So I think they'd still need to set some state on the task that
+says "we're currently in the middle of an execution where the target
+task will run in context X", and then check against that in the
+ptrace_may_access hook. Or I suppose they could just kill the task
+near the end of execve, although that'd be kinda ugly.
