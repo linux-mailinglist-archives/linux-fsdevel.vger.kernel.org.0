@@ -2,225 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4426A176199
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 18:52:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E641761FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 19:09:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbgCBRvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 12:51:46 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38825 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbgCBRvo (ORCPT
+        id S1727359AbgCBSJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 13:09:00 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37534 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbgCBSI6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 12:51:44 -0500
-Received: by mail-wm1-f65.google.com with SMTP id u9so210358wml.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 09:51:43 -0800 (PST)
+        Mon, 2 Mar 2020 13:08:58 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 5so152989oiy.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 10:08:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6Kx8nmukttqpHZuRHsPDhtzyv3nWI/Y/L038RHlsnVE=;
-        b=cY3FpIMeyInIz2doBDLxFNAFHqc1qD0znP6ZLavRTpcOQcgXbOs42hRxp/v3oCNQTC
-         gNZMqt0kIvodHf6h1byZ/YfxeVdI9edWJH/rNJ/eiwnWkhz+WE7JsS/+QuczW+PrTEEb
-         C94HRXntlxPyf8uzT1p4+Lfr7XHukd6lFAJR/rsjNyAKcZ0IsnYXOBQeNuXiVlRf+AVA
-         wW4ydVDlTj89sbZMiF9VnmL2IBus+WHKWJ5p1UDZ2Ayixu/1FOoAwOxAFUaF4R0JuCKm
-         QnjRugMytS0vjHaljWCNKaJdIPUYkY+eFg1UxLq0EIj16qbO2eXh7HGtIUeu4FvsPGj3
-         /C/Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PzpHTT1CytF1CxOEOyrFfNGNhtkDEaDUtrYOH2iFLfA=;
+        b=UqoUm420YQqph3lafHzahQC9V4PdPL/4Qyv6M+TEFjDDlhJUhALb/SAIvAmoSGffyg
+         a+snzgE9CJkyJGW23tqeS/3KQPZf8xJ7BanaVOsbMgKmsVis3fA3OOYQ4v4jTJ1AGhBx
+         K9uQcOSkDeBAtHH7P5nmgTAOojjqNLiO2lPI2fA3RN3wz4dmhavt79Zq4NlnBzpJ+OiA
+         y/TbZNOouXWb/oNa3vM1C3IKrlLfcmIRapwpat4xfLEuvxXctHbiwYexiaQCCtswST76
+         0aZ+VZ+Y0oTlg6eIsuwolOfq1+Y8oOzdLvBO6TZUDoqbSO/q1tj2btepq92gHR5lOUfD
+         s1FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6Kx8nmukttqpHZuRHsPDhtzyv3nWI/Y/L038RHlsnVE=;
-        b=DjWchE732GV32D4IQBY1wXlYX699hwcpQtmXVVqONwcAaiQy1L6xOEGA25V9OifLSM
-         v9aVgS9JRvsewJDwTyGhT853DEUP+2A4Q57yXYkP6EQZAJa/1/HZCAoWFybzKt1v5k9U
-         ohaGu8XHBy8OjNkvvF4xGQ32Y+SAEnIjoI5qroFRN9lRo7HsG0woEUK1F6AWgCqOkQJw
-         r+uAWNimVSslxE7IJ/kcEez2a4ad0LHVCQimzGh2TBkbie2ZFkLpakwjhX1qZap2Wu4l
-         zZaUqR0IRD5KdyoH1uPDmGHfQb1zbi7tzMxu7dF+NgTsKQwv2wlRwKsaU9sd5mZuLqBf
-         yr9Q==
-X-Gm-Message-State: ANhLgQ1Yyw+5Iaa1ZQmbqvNTegHY9WxzYwrIbt9zTajRzIHwA19g9doZ
-        ByOeQjh4+3YK3ldB5t6+1rBtNQ==
-X-Google-Smtp-Source: ADFU+vtgPa2Arj/pPLh1i+Bqz7hGA3XBaKwKSk813DrexkuAYMePD9J51tk5ngXW0YRa/3R5XgCfXg==
-X-Received: by 2002:a7b:cb46:: with SMTP id v6mr238182wmj.0.1583171503168;
-        Mon, 02 Mar 2020 09:51:43 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id b10sm163234wmh.48.2020.03.02.09.51.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 09:51:42 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCHv3 1/2] sysctl/sysrq: Remove __sysrq_enabled copy
-Date:   Mon,  2 Mar 2020 17:51:34 +0000
-Message-Id: <20200302175135.269397-2-dima@arista.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200302175135.269397-1-dima@arista.com>
-References: <20200302175135.269397-1-dima@arista.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PzpHTT1CytF1CxOEOyrFfNGNhtkDEaDUtrYOH2iFLfA=;
+        b=ifL6H1FY/HaHik3KEp7pZH6fJTz4yoTjf2xgdGRMn51Ve/rb7SUIkkp+l/ta6FkjEl
+         qNu5OOn/NBtguSimDeBcuk7LWtHSsWSKJUs2wziWFCyUtT/poRaPZ6EcPW69O+tFhO+I
+         FMAb0qdsuyuSCo4fVmSwFdB+c7SkPIYXF3cf5XTSY76W5/BsiZFM29m4rdQ9pm/SjjZx
+         otODox6RfgHV9vFOIIfRxXOFRnjDDxXFRyGUS9Fgc+V7vFMuh+4QFrC7xcFxXgjKHLz7
+         2fEaIqgxxQTFpuZzFxaC1mygj6G+YZDNcYAYOIjhlwwpxaJtOPaC4/yOxcWDsYGQ9Ez7
+         GLVA==
+X-Gm-Message-State: ANhLgQ23NgAwyJ7YLVa3qRps+dOZLhwt6YUW+SshOFHl2hs2boBwPEio
+        EBZ/qzO5EXe8HTyy/rOcc4KJOKzZ7ReD75BwdHRvVw==
+X-Google-Smtp-Source: ADFU+vvElPHbaOkc/ffKR7JWZMzjpg6bZ6JiSaTN3SNT/Yuy1ZmDiKrsYKSVrGwdXREPaOYmbN9ESv+hvKDnpyK2MgA=
+X-Received: by 2002:aca:538e:: with SMTP id h136mr242942oib.39.1583172536153;
+ Mon, 02 Mar 2020 10:08:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein> <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org> <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org> <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org> <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com>
+ <AM6PR03MB5170BD130F15CE1909F59B55E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com> <5e5d45a3.1c69fb81.f99ac.0806@mx.google.com>
+In-Reply-To: <5e5d45a3.1c69fb81.f99ac.0806@mx.google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 2 Mar 2020 19:08:29 +0100
+Message-ID: <CAG48ez0zfutdReRCP38+F2O=LMU11FUQAG59YkaKZY8AJNxSGQ@mail.gmail.com>
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>, linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Many embedded boards have a disconnected TTL level serial which can
-generate some garbage that can lead to spurious false sysrq detects.
+On Mon, Mar 2, 2020 at 6:43 PM <christian@brauner.io> wrote:
+> On March 2, 2020 6:37:27 PM GMT+01:00, Jann Horn <jannh@google.com> wrote:
+> >On Mon, Mar 2, 2020 at 6:01 PM Bernd Edlinger
+> ><bernd.edlinger@hotmail.de> wrote:
+> >> On 3/2/20 5:43 PM, Jann Horn wrote:
+> >> > On Mon, Mar 2, 2020 at 5:19 PM Eric W. Biederman
+> ><ebiederm@xmission.com> wrote:
+[...]
+> >> >> I am 99% convinced that the fix is to move cred_guard_mutex down.
+> >> >
+> >> > "move cred_guard_mutex down" as in "take it once we've already set
+> >up
+> >> > the new process, past the point of no return"?
+> >> >
+> >> >> Then right after we take cred_guard_mutex do:
+> >> >>         if (ptraced) {
+> >> >>                 use_original_creds();
+> >> >>         }
+> >> >>
+> >> >> And call it a day.
+> >> >>
+> >> >> The details suck but I am 99% certain that would solve everyones
+> >> >> problems, and not be too bad to audit either.
+> >> >
+> >> > Ah, hmm, that sounds like it'll work fine at least when no LSMs are
+> >involved.
+> >> >
+> >> > SELinux normally doesn't do the execution-degrading thing, it just
+> >> > blocks the execution completely - see their
+> >selinux_bprm_set_creds()
+> >> > hook. So I think they'd still need to set some state on the task
+> >that
+> >> > says "we're currently in the middle of an execution where the
+> >target
+> >> > task will run in context X", and then check against that in the
+> >> > ptrace_may_access hook. Or I suppose they could just kill the task
+> >> > near the end of execve, although that'd be kinda ugly.
+> >> >
+> >>
+> >> We have current->in_execve for that, right?
+> >> I think when the cred_guard_mutex is taken only in the critical
+> >section,
+> >> then PTRACE_ATTACH could take the guard_mutex, and look at
+> >current->in_execve,
+> >> and just return -EAGAIN in that case, right, everybody happy :)
+> >
+> >It's probably going to mean that things like strace will just randomly
+> >fail to attach to processes if they happen to be in the middle of
+> >execve... but I guess that works?
+>
+> That sounds like an acceptable outcome.
+> We can at least risk it and if we regress
+> revert or come up with the more complex
+> solution suggested in another mail here?
 
-Currently, sysrq can be either completely disabled for serial console
-or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
-commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
-
-At Arista, we have such boards that can generate BREAK and random
-garbage. While disabling sysrq for serial console would solve
-the problem with spurious false sysrq triggers, it's also desirable
-to have a way to enable sysrq back.
-
-Having the way to enable sysrq was beneficial to debug lockups with
-a manual investigation in field and on the other side preventing false
-sysrq detections.
-
-As a preparation to add sysrq_toggle_support() call into uart,
-remove a private copy of sysrq_enabled from sysctl - it should reflect
-the actual status of sysrq.
-
-Furthermore, the private copy isn't correct already in case
-sysrq_always_enabled is true. So, remove __sysrq_enabled and use a
-getter-helper sysrq_mask() to check sysrq_key_op enabled status.
-
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/tty/sysrq.c   | 12 ++++++++++++
- include/linux/sysrq.h |  7 +++++++
- kernel/sysctl.c       | 41 ++++++++++++++++++++++-------------------
- 3 files changed, 41 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index f724962a5906..5e0d0813da55 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -63,6 +63,18 @@ static bool sysrq_on(void)
- 	return sysrq_enabled || sysrq_always_enabled;
- }
- 
-+/**
-+ * sysrq_mask - Getter for sysrq_enabled mask.
-+ *
-+ * Return: 1 if sysrq is always enabled, enabled sysrq_key_op mask otherwise.
-+ */
-+int sysrq_mask(void)
-+{
-+	if (sysrq_always_enabled)
-+		return 1;
-+	return sysrq_enabled;
-+}
-+
- /*
-  * A value of 1 means 'all', other nonzero values are an op mask:
-  */
-diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-index 8c71874e8485..8e159e16850f 100644
---- a/include/linux/sysrq.h
-+++ b/include/linux/sysrq.h
-@@ -50,6 +50,7 @@ int unregister_sysrq_key(int key, struct sysrq_key_op *op);
- struct sysrq_key_op *__sysrq_get_key_op(int key);
- 
- int sysrq_toggle_support(int enable_mask);
-+int sysrq_mask(void);
- 
- #else
- 
-@@ -71,6 +72,12 @@ static inline int unregister_sysrq_key(int key, struct sysrq_key_op *op)
- 	return -EINVAL;
- }
- 
-+static inline int sysrq_mask(void)
-+{
-+	/* Magic SysRq disabled mask */
-+	return 0;
-+}
-+
- #endif
- 
- #endif /* _LINUX_SYSRQ_H */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ad5b88a53c5a..94638f695e60 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -229,25 +229,8 @@ static int proc_dopipe_max_size(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp, loff_t *ppos);
- 
- #ifdef CONFIG_MAGIC_SYSRQ
--/* Note: sysrq code uses its own private copy */
--static int __sysrq_enabled = CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE;
--
- static int sysrq_sysctl_handler(struct ctl_table *table, int write,
--				void __user *buffer, size_t *lenp,
--				loff_t *ppos)
--{
--	int error;
--
--	error = proc_dointvec(table, write, buffer, lenp, ppos);
--	if (error)
--		return error;
--
--	if (write)
--		sysrq_toggle_support(__sysrq_enabled);
--
--	return 0;
--}
--
-+			void __user *buffer, size_t *lenp, loff_t *ppos);
- #endif
- 
- static struct ctl_table kern_table[];
-@@ -747,7 +730,7 @@ static struct ctl_table kern_table[] = {
- #ifdef CONFIG_MAGIC_SYSRQ
- 	{
- 		.procname	= "sysrq",
--		.data		= &__sysrq_enabled,
-+		.data		= NULL,
- 		.maxlen		= sizeof (int),
- 		.mode		= 0644,
- 		.proc_handler	= sysrq_sysctl_handler,
-@@ -2835,6 +2818,26 @@ static int proc_dostring_coredump(struct ctl_table *table, int write,
- }
- #endif
- 
-+#ifdef CONFIG_MAGIC_SYSRQ
-+static int sysrq_sysctl_handler(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int tmp, ret;
-+
-+	tmp = sysrq_mask();
-+
-+	ret = __do_proc_dointvec(&tmp, table, write, buffer,
-+			       lenp, ppos, NULL, NULL);
-+	if (ret || !write)
-+		return ret;
-+
-+	if (write)
-+		sysrq_toggle_support(tmp);
-+
-+	return 0;
-+}
-+#endif
-+
- static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int write,
- 				     void __user *buffer,
- 				     size_t *lenp, loff_t *ppos,
--- 
-2.25.0
-
+Yeah, sounds reasonable, I guess.
