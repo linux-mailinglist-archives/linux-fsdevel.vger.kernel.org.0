@@ -2,75 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3098D175ABD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14915175AE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:54:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgCBMnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 07:43:01 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54184 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727644AbgCBMnB (ORCPT
+        id S1727784AbgCBMyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 07:54:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58284 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727497AbgCBMyd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:43:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583152979;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jBO8EEOjfex8u0t23SNnR9VcuJJE9A6M8SfZYPDK40Y=;
-        b=GFXEFLG0X2b4N3JzzX8EgrEP16EvZbeW4qLE4ziLQ5XIRPOSR6dHeH+rvMFnMWXxWPEJD1
-        ylMOpfdGCoAbYEb3Gn51PpyfXNuvDlvOApqX7d04uFBttX/k29A9d8EHeiYJ4rybHK/Q+7
-        g2NVS+4vHQYmoK/rqv7VQF/+53jsWV4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-327-VdUHncH4OyKzclJAazqbEg-1; Mon, 02 Mar 2020 07:42:56 -0500
-X-MC-Unique: VdUHncH4OyKzclJAazqbEg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9ED5F10CE780;
-        Mon,  2 Mar 2020 12:42:54 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-127.ams2.redhat.com [10.36.116.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F46B5DA2C;
-        Mon,  2 Mar 2020 12:42:52 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-References: <96563.1582901612@warthog.procyon.org.uk>
-        <20200228152427.rv3crd7akwdhta2r@wittgenstein>
-        <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
-        <20200302115239.pcxvej3szmricxzu@wittgenstein>
-        <8736arnel9.fsf@oldenburg2.str.redhat.com>
-        <20200302121959.it3iophjavbhtoyp@wittgenstein>
-        <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
-Date:   Mon, 02 Mar 2020 13:42:50 +0100
-In-Reply-To: <20200302123510.bm3a2zssohwvkaa4@wittgenstein> (Christian
-        Brauner's message of "Mon, 2 Mar 2020 13:35:10 +0100")
-Message-ID: <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Mon, 2 Mar 2020 07:54:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Nhw0MyTwnMoRWiNQ3WoBjVjfgBy1tdHCwpldhLXeSH8=; b=aU8OrciQmEGwZ6570fjY/eMdvR
+        X1kANb83Bq0fTIhznB+kIfB4p/5nRzMJ7czJPnaY1OXFrD/5TUBR+PFPEHLrCqQDQMz6TdNGnZ3Nc
+        7CTNKOiQTzP9xr6E5inn3lrjbzESMTDxTie7XXD9eE0giZ1TpdPHlquxev2i7CD5vvaUX4pDlI2dU
+        UpOW2ruUCQKsYOHi7firLkgbbyjrjLtZeiKJjjjkrXx58gxEFg/iqUxL9SqooGp4tOTSBk+HE88hQ
+        I2cIAioRqtlpmlUcxJlCQMwI6HiYZAF8h+0UoyH3P8FPHC26Re7WppYBXdIp05X7R46PwmGTJVtDk
+        lWMQ6L1w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j8kae-0000q8-Ok; Mon, 02 Mar 2020 12:54:32 +0000
+Date:   Mon, 2 Mar 2020 04:54:32 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     lampahome <pahome.chen@mirlab.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: why do we need utf8 normalization when compare name?
+Message-ID: <20200302125432.GP29971@bombadil.infradead.org>
+References: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Christian Brauner:
+On Mon, Mar 02, 2020 at 05:00:24PM +0800, lampahome wrote:
+> According to case insensitive since kernel 5.2, d_compare will
+> transform string into normalized form and then compare.
+> 
+> But why do we need this normalization function? Could we just compare
+> by utf8 string?
 
-> One difference to openat() is that openat2() doesn't silently ignore
-> unknown flags. But I'm not sure that would matter for iplementing
-> openat() via openat2() since there are no flags that openat() knows about
-> that openat2() doesn't know about afaict. So the only risks would be
-> programs that accidently have a bit set that isn't used yet.
+Have you read https://en.wikipedia.org/wiki/Unicode_equivalence ?
 
-Will there be any new flags for openat in the future?  If not, we can
-just use a constant mask in an openat2-based implementation of openat.
+We need to decide whether a user with a case-insensitive filesystem
+who looks up a file with the name U+00E5 (lower case "a" with ring)
+should find a file which is named U+00C5 (upper case "A" with ring)
+or U+212B (Angstrom sign).
 
-Thanks,
-Florian
+Then there's the question of whether e-acute is stored as U+00E9
+or U+0065 followed by U+0301, and both of those will need to be found
+by a user search for U+00C9 or a user searching for U+0045 U+0301.
 
+So yes, normalisation needs to be done.
