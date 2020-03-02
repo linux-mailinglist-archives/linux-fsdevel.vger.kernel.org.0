@@ -2,115 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3578175859
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 11:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5802517586C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 11:33:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgCBKaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 05:30:03 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:33520 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726654AbgCBKaD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 05:30:03 -0500
-Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 022AU2fa021049
-        for <linux-fsdevel@vger.kernel.org>; Mon, 2 Mar 2020 05:30:02 -0500
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 022ATv0j014287
-        for <linux-fsdevel@vger.kernel.org>; Mon, 2 Mar 2020 05:30:02 -0500
-Received: by mail-qv1-f70.google.com with SMTP id cn2so8344605qvb.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 02:30:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=/VcLffZUTgvTWC8ZFO3N6mDeTTtIIDh0TAgvcx3iXEw=;
-        b=JpH93CAnNJtjixDnMN0tm9oBBDWoesntoVBv92afK3vMJZNnwQaVdnP6SF/4VVRxHu
-         zL/PFjGKDTzVSA3+k4vt//B7lvQmRplOg9gCD+83yTqf4MX5oUBN8rTnLy3FYljIVAhF
-         Tw6vM2JKkH58nnSzsFNdXHsAQ581Wh8IgRqZo5Ggy1MOmBEQBzJ+AoTWM6J1YF5IuSJM
-         dg+o1+TyNKy5Ukbx5w+OHGSNc33oxpm4kEtuAAyj6freIWrvuZLg7bRlvtykqDaQ3z2+
-         4hwqU5gsn5G3jMP1GOJgcdIzE9Apy04rpET52UvhCrMyUPLF7vkVgQNWE557Cb5cOYOF
-         0+Qg==
-X-Gm-Message-State: APjAAAWHAlV3CfPCdnEnLvIlYzaMKefiKGWAFq4OUBXIIKduNwvvd7OS
-        t5W4BAOpBa+k6vKAxELMKwnDpdSPMsi1e+Vd4tQGQBn030o3ap3gsL+IS+U62tClegEpjFW62Hu
-        koqDrtU1/0BzlbYkWB5odBmHOzPiYeE3kHQZh
-X-Received: by 2002:a37:4e53:: with SMTP id c80mr14345723qkb.58.1583144996945;
-        Mon, 02 Mar 2020 02:29:56 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwBh6WXMWHNRoxL92FxaSm7tZWkWljn+/lubfFhH1jeDvkVwJTYHB9DmVs0hkAFcj5IVD9Bog==
-X-Received: by 2002:a37:4e53:: with SMTP id c80mr14345713qkb.58.1583144996622;
-        Mon, 02 Mar 2020 02:29:56 -0800 (PST)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id j17sm10248504qth.27.2020.03.02.02.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 02:29:54 -0800 (PST)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Tetsuhiro Kohada <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
-In-Reply-To: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-References: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1583144993_2391P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
+        id S1727538AbgCBKdc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 05:33:32 -0500
+Received: from relay.sw.ru ([185.231.240.75]:36748 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727097AbgCBKdc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 05:33:32 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1j8iNv-0003Co-6T; Mon, 02 Mar 2020 13:33:15 +0300
+Subject: Re: [PATCH RFC 5/5] ext4: Add fallocate2() support
+To:     Dave Chinner <david@fromorbit.com>,
+        Andreas Dilger <adilger@dilger.ca>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Snitzer <snitzer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Eric Biggers <ebiggers@google.com>, riteshh@linux.ibm.com,
+        krisman@collabora.com, surajjs@amazon.com, dmonakhov@gmail.com,
+        mbobrowski@mbobrowski.org, Eric Whitney <enwlinux@gmail.com>,
+        sblbir@amazon.com, Khazhismel Kumykov <khazhy@google.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <158272447616.281342.14858371265376818660.stgit@localhost.localdomain>
+ <20200226155521.GA24724@infradead.org>
+ <06f9b82c-a519-7053-ec68-a549e02c6f6c@virtuozzo.com>
+ <A57E33D1-3D54-405A-8300-13F117DC4633@dilger.ca>
+ <eda406cc-8ce3-e67a-37be-3e525b58d5a1@virtuozzo.com>
+ <4933D88C-2A2D-4ACA-823E-BDFEE0CE143F@dilger.ca>
+ <20200228211610.GQ10737@dread.disaster.area>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <9c62dfec-4e01-c711-7a94-373616302d08@virtuozzo.com>
+Date:   Mon, 2 Mar 2020 13:33:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200228211610.GQ10737@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 02 Mar 2020 05:29:54 -0500
-Message-ID: <240472.1583144994@turing-police>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---==_Exmh_1583144993_2391P
-Content-Type: text/plain; charset=us-ascii
+On 29.02.2020 00:16, Dave Chinner wrote:
+> On Fri, Feb 28, 2020 at 08:35:19AM -0700, Andreas Dilger wrote:
+>> On Feb 27, 2020, at 5:24 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>> On 27.02.2020 00:51, Andreas Dilger wrote:
+>>>> On Feb 26, 2020, at 1:05 PM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>>> In that case, an interesting userspace interface would be an array of
+>>>> inode numbers (64-bit please) that should be packed together densely in
+>>>> the order they are provided (maybe a flag for that).  That allows the
+>>>> filesystem the freedom to find the physical blocks for the allocation,
+>>>> while userspace can tell which files are related to each other.
+>>>
+>>> So, this interface is 3-in-1:
+>>>
+>>> 1)finds a placement for inodes extents;
+>>
+>> The target allocation size would be sum(size of inodes), which should
+>> be relatively small in your case).
+>>
+>>> 2)assigns this space to some temporary donor inode;
+>>
+>> Maybe yes, or just reserves that space from being allocated by anyone.
+>>
+>>> 3)calls ext4_move_extents() for each of them.
+>>
+>> ... using the target space that was reserved earlier
+>>
+>>> Do I understand you right?
+>>
+>> Correct.  That is my "5 minutes thinking about an interface for grouping
+>> small files together without exposing kernel internals" proposal for this.
+> 
+> You don't need any special kernel interface with XFS for this. It is
+> simply:
+> 
+> 	mkdir tmpdir
+> 	create O_TMPFILEs in tmpdir
+> 
+> Now all the tmpfiles you create and their data will be co-located
+> around the location of the tmpdir inode. This is the natural
+> placement policy of the filesystem. i..e the filesystem assumes that
+> files in the same directory are all related, so will be accessed
+> together and so should be located in relatively close proximity to
+> each other.
 
-On Mon, 02 Mar 2020 18:57:15 +0900, Tetsuhiro Kohada said:
-> Clean up d_entry rebuilding in exfat_rename_file() and move_file().
->
-> -Replace memcpy of d_entry with structure copy.
+Hm, but does this help for my problem? 1)allocate two files in the same directory
+and then 2)move source files there?
 
-Those look OK.
+In case of I have two 512K files ext4 allows the same:
 
-> -Change to use the value already stored in fid.
+1)fallocate() 1M continuous space (this should ends with success in case of disc
+is not almost full);
+2)move both files into newly allocated space.
 
-> -		if (exfat_get_entry_type(epnew) == TYPE_FILE) {
+But this doubles IO, since both of files have to be moved. The ideal solution
+would be to allocate space around one of them and to move the second file there.
 
-> +		if (fid->type == TYPE_FILE) {
+> This is a locality optimisation technique that is older than XFS. It
+> works remarkably well when the filesystem can spread directories
+> effectively across it's address space.  It also allows userspace to
+> use simple techniques to group (or separate) data files as desired.
+> Indeed, this is how xfs_fsr directs locality for it's tmpfiles when
+> relocating/defragmenting data....
+> 
+>>> If so, then IMO it's good to start from two inodes, because here may code
+>>> a very difficult algorithm of placement of many inodes, which may require
+>>> much memory. Is this OK?
+>>
+>> Well, if the files are small then it won't be a lot of memory.  Even so,
+>> the kernel would only need to copy a few MB at a time in order to get
+>> any decent performance, so I don't think that is a huge problem to have
+>> several MB of dirty data in flight.
+>>
+>>> Can we introduce a flag, that some of inode is unmovable?
+>>
+>> There are very few flags left in the ext4_inode->i_flags for use.
+>> You could use "IMMUTABLE" or "APPEND_ONLY" to mean that, but they
+>> also have other semantics.  The EXT4_NOTAIL_FL is for not merging the
+>> tail of a file, but ext4 doesn't have tails (that was in Reiserfs),
+>> so we might consider it a generic "do not merge" flag if set?
+> 
+> We've had that in XFS for as long as I can remember. Many
+> applications were sensitive to the exact layout of the files they
+> created themselves, so having xfs_fsr defrag/move them about would
+> cause performance SLAs to be broken.
+> 
+> Indeed, thanks to XFS, ext4 already has an interface that can be
+> used to set/clear a "no defrag" flag such as you are asking for.
+> It's the FS_XFLAG_NODEFRAG bit in the FS_IOC_FS[GS]ETXATTR ioctl.
+> In XFS, that manages the XFS_DIFLAG_NODEFRAG on-disk inode flag,
+> and it has special meaning for directories. From the 'man 3 xfsctl'
+> man page where this interface came from:
+> 
+>       Bit 13 (0x2000) - XFS_XFLAG_NODEFRAG
+> 	No defragment file bit - the file should be skipped during a
+> 	defragmentation operation. When applied to  a directory,
+> 	new files and directories created will inherit the no-defrag
+> 	bit.
+> 
+>>> Can this interface use a knowledge about underlining device discard granuality?
+>>
+>> As I wrote above, ext4+mballoc has a very good appreciation for alignment.
+>> That was written for RAID storage devices, but it doesn't matter what
+>> the reason is.  It isn't clear if flash discard alignment is easily
+>> used (it may not be a power-of-two value or similar), but wouldn't be
+>> harmful to try.
+> 
+> Yup, XFS has the similar (but more complex) alignment controls for
+> directing allocation to match the underlying storage
+> characteristics. e.g. stripe unit is also the "small file size
+> threshold" where the allocation policy changes from packing to
+> aligning and separating.
+> 
+>>> In the answer to Dave, I wrote a proposition to make fallocate() care about
+>>> i_write_hint. Could you please comment what you think about that too?
+>>
+>> I'm not against that.  How the two interact would need to be documented
+>> first and discussed to see if that makes sene, and then implemented.
+> 
+> Individual filesystems can make their own choices as to what they do
+> with write hints, including ignoring them and leaving it for the
+> storage device to decide where to physically place the data. Which,
+> in many cases, ignoring the hint is the right thing for the
+> filesystem to do...
+> 
+> Cheers,
+> 
+> Dave.
+> 
 
-Are you sure this is OK to do? exfat_get_entry_type() does a lot of
-mapping between values, using a file_dentry_t->type, while
-fid->type is a file_id_t->type. and at first read it's not obvious to me whether
-fid->type is guaranteed to have the correct value already.
-
-(The abundant use of 0xNN constants in exfat_get_entry_type()  doesn't
-inspire confidence that it's looking at what you think it's looking at...)
-
-
-
---==_Exmh_1583144993_2391P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXlzgIQdmEQWDXROgAQI58g/8DOieHjL/SZ7yeem2t4q7TX4M9CzzWBEA
-gCgEpSqWrxEfRPn4OfLS/S6CMQtDPrdv8mDqvmNIRa0S27G+kvvCdOVbIYDnDIHD
-uqUmHKhPoUdTH+6k4XXErNBO4hG0NlpFAAVEpyY0x3Yo8zK5a6kW9NroYknqHq0g
-/zafLt+WTiwU4InxRznidC4UvQ9Dvi9hMUnEzziYuR/E11ruzpQjfc8gcCkRawh0
-F2bgfjwXhAFdyXGhkJdcfeNjXRMgFUPy4a0fVK32uxSo3kfYJYX0cSzSspkCoZm2
-bIWbR0pg/Lx/AjH1V5JiTK+EQixeC0ujAXmbzGVT2H16cWSMqnFbmVVjRgSBY0fI
-Y/N8HHyLxUx5u87b6B97wvNZiExkDID38Br05uFuOIasOMOMs3fE3mpJ7/J/FRFd
-dUXKZJ6+wni8X4kZVHTleUuZVtQK0hSTZBj3wOL7prAn9uJiCP3b7t6MdfCOegV6
-VcKJyhLvu6LmByPunjU75UTTmWj3dMGYdYDFEDD+jfHBXMh0AX54rHwy4jO0BwU2
-/X+YrqpbOWL8C7+1E//vJq00X+CNyNG98iJ1QJWJV7EOUrUTnnLUa11+DLc9CUtB
-R6r7VF469EJ7MfZG8L0keg5eLSNUQL2H9I8FU1id0xrHxJ7HQtH9lz6Dav1+Bnj4
-bOOVWDTwOt8=
-=DpqH
------END PGP SIGNATURE-----
-
---==_Exmh_1583144993_2391P--
