@@ -2,77 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8134A175A9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3098D175ABD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbgCBMfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 07:35:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55830 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbgCBMfN (ORCPT
+        id S1727691AbgCBMnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 07:43:01 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54184 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727644AbgCBMnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:35:13 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8kHv-0003wC-Bf; Mon, 02 Mar 2020 12:35:11 +0000
-Date:   Mon, 2 Mar 2020 13:35:10 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fweimer@redhat.com>
+        Mon, 2 Mar 2020 07:43:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583152979;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jBO8EEOjfex8u0t23SNnR9VcuJJE9A6M8SfZYPDK40Y=;
+        b=GFXEFLG0X2b4N3JzzX8EgrEP16EvZbeW4qLE4ziLQ5XIRPOSR6dHeH+rvMFnMWXxWPEJD1
+        ylMOpfdGCoAbYEb3Gn51PpyfXNuvDlvOApqX7d04uFBttX/k29A9d8EHeiYJ4rybHK/Q+7
+        g2NVS+4vHQYmoK/rqv7VQF/+53jsWV4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-327-VdUHncH4OyKzclJAazqbEg-1; Mon, 02 Mar 2020 07:42:56 -0500
+X-MC-Unique: VdUHncH4OyKzclJAazqbEg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9ED5F10CE780;
+        Mon,  2 Mar 2020 12:42:54 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-127.ams2.redhat.com [10.36.116.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F46B5DA2C;
+        Mon,  2 Mar 2020 12:42:52 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
         viro@zeniv.linux.org.uk, metze@samba.org,
         torvalds@linux-foundation.org, cyphar@cyphar.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-Message-ID: <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
 References: <96563.1582901612@warthog.procyon.org.uk>
- <20200228152427.rv3crd7akwdhta2r@wittgenstein>
- <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
- <20200302115239.pcxvej3szmricxzu@wittgenstein>
- <8736arnel9.fsf@oldenburg2.str.redhat.com>
- <20200302121959.it3iophjavbhtoyp@wittgenstein>
+        <20200228152427.rv3crd7akwdhta2r@wittgenstein>
+        <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+        <20200302115239.pcxvej3szmricxzu@wittgenstein>
+        <8736arnel9.fsf@oldenburg2.str.redhat.com>
+        <20200302121959.it3iophjavbhtoyp@wittgenstein>
+        <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
+Date:   Mon, 02 Mar 2020 13:42:50 +0100
+In-Reply-To: <20200302123510.bm3a2zssohwvkaa4@wittgenstein> (Christian
+        Brauner's message of "Mon, 2 Mar 2020 13:35:10 +0100")
+Message-ID: <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200302121959.it3iophjavbhtoyp@wittgenstein>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 01:20:00PM +0100, Christian Brauner wrote:
-> On Mon, Mar 02, 2020 at 01:09:06PM +0100, Florian Weimer wrote:
-> > * Christian Brauner:
-> > 
-> > >> But that's inconsistent with the rest of the system.  And for example,
-> > >> if you make /etc/resolv.conf a symbolic link, a program which uses a new
-> > >> I/O library (with the new interfaces) will not be able to read it.
-> > >
-> > > Fair, but I expect that e.g. a C library would simply implement openat()
-> > > on top of openat2() if the latter is available and thus could simply
-> > > pass RESOLVE_SYMLINKS so any new I/O library not making use of the
-> > > syscall directly would simply get the old behavior. For anyone using the
-> > > syscall directly they need to know about its exact semantics anyway. But
-> > > again, maybe just having it opt-in is fine.
-> > 
-> > I'm more worried about fancy new libraries which go directly to the new
-> > system calls, but set the wrong defaults for a general-purpose open
-> > operation.
-> > 
-> > Can we pass RESOLVE_SYMLINKS with O_NOFLLOW, so that we can easily
-> > implement open/openat for architectures that provide only the openat2
-> > system call?
-> 
-> You can currently do RESOLVE_NO_SYMLINKS | O_NOFOLLOW. So I'd expect
-> RESOLVE_SYMLINKS | O_NOFOLLOW would work as well. But from what it looks
-> like having no symlink resolution be opt-in seems more likely.
+* Christian Brauner:
 
-One difference to openat() is that openat2() doesn't silently ignore
-unknown flags. But I'm not sure that would matter for iplementing
-openat() via openat2() since there are no flags that openat() knows about
-that openat2() doesn't know about afaict. So the only risks would be
-programs that accidently have a bit set that isn't used yet. But that
-seems unlikely. And I'm not aware of any flag that was deprecated that
-some programs could still pass (a problem we had with CLONE_DETACHED for
-example).
+> One difference to openat() is that openat2() doesn't silently ignore
+> unknown flags. But I'm not sure that would matter for iplementing
+> openat() via openat2() since there are no flags that openat() knows about
+> that openat2() doesn't know about afaict. So the only risks would be
+> programs that accidently have a bit set that isn't used yet.
+
+Will there be any new flags for openat in the future?  If not, we can
+just use a constant mask in an openat2-based implementation of openat.
+
+Thanks,
+Florian
+
