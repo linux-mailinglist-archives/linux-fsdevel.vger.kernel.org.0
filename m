@@ -2,82 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6DB175A53
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6906D175A7F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:28:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgCBMUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 07:20:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55580 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbgCBMUE (ORCPT
+        id S1727895AbgCBM2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 07:28:46 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:37693 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727864AbgCBM2p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:20:04 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8k3E-00033u-Gx; Mon, 02 Mar 2020 12:20:00 +0000
-Date:   Mon, 2 Mar 2020 13:19:59 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-Message-ID: <20200302121959.it3iophjavbhtoyp@wittgenstein>
-References: <96563.1582901612@warthog.procyon.org.uk>
- <20200228152427.rv3crd7akwdhta2r@wittgenstein>
- <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
- <20200302115239.pcxvej3szmricxzu@wittgenstein>
- <8736arnel9.fsf@oldenburg2.str.redhat.com>
+        Mon, 2 Mar 2020 07:28:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583152124;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5DG/vW6TCeCX771cIMr5N8VanNi7DmSktqX7A9P5Lf4=;
+        b=VsJemNTsTuZC8xC8GcYvGTsNDuny4AfTVE+m+JgYgUCFwjOMh2BZbr0HoOo/epysYKo11R
+        4cCktcYhLAMpTZKJp87jzhO6aWFvM/Tapx5mutTE9jo8CwgILyAEF3LGzhGf6dSBbV8Ljp
+        iDxBD9K3wKFKQbDkBfGpmwwRAW0jcr8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-359-GBOwynXFNxyRVY2vU-jPUQ-1; Mon, 02 Mar 2020 07:28:40 -0500
+X-MC-Unique: GBOwynXFNxyRVY2vU-jPUQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 622221B2C988;
+        Mon,  2 Mar 2020 12:28:36 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.70])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DA8D99051B;
+        Mon,  2 Mar 2020 12:28:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon,  2 Mar 2020 13:28:36 +0100 (CET)
+Date:   Mon, 2 Mar 2020 13:28:29 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
+Message-ID: <20200302122828.GA9769@redhat.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+ <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8736arnel9.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 01:09:06PM +0100, Florian Weimer wrote:
-> * Christian Brauner:
-> 
-> >> But that's inconsistent with the rest of the system.  And for example,
-> >> if you make /etc/resolv.conf a symbolic link, a program which uses a new
-> >> I/O library (with the new interfaces) will not be able to read it.
-> >
-> > Fair, but I expect that e.g. a C library would simply implement openat()
-> > on top of openat2() if the latter is available and thus could simply
-> > pass RESOLVE_SYMLINKS so any new I/O library not making use of the
-> > syscall directly would simply get the old behavior. For anyone using the
-> > syscall directly they need to know about its exact semantics anyway. But
-> > again, maybe just having it opt-in is fine.
-> 
-> I'm more worried about fancy new libraries which go directly to the new
-> system calls, but set the wrong defaults for a general-purpose open
-> operation.
-> 
-> Can we pass RESOLVE_SYMLINKS with O_NOFLLOW, so that we can easily
-> implement open/openat for architectures that provide only the openat2
-> system call?
+On 03/01, Bernd Edlinger wrote:
+>
+> This fixes a deadlock in the tracer when tracing a multi-threaded
+> application that calls execve while more than one thread are running.
 
-You can currently do RESOLVE_NO_SYMLINKS | O_NOFOLLOW. So I'd expect
-RESOLVE_SYMLINKS | O_NOFOLLOW would work as well. But from what it looks
-like having no symlink resolution be opt-in seems more likely.
+Heh. Yes, known problem. See my attempt to fix it:
+https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
 
-> 
-> >> AT_SYMLINK_NOFOLLOW only applies to the last pathname component anyway,
-> >> so it's relatively little protection.
-> >
-> > So this is partially why I think it's at least worth considerings: the
-> > new RESOLVE_NO_SYMLINKS flag does block all symlink resolution, not just
-> > for the last component in contrast to AT_SYMLINK_NOFOLLOW. This is
-> > 278121417a72d87fb29dd8c48801f80821e8f75a
-> 
-> RESOLVE_NO_SYMLINKS shouldn't be the default, though (whoever is
-> responsible for applying that default).  Otherwise system administrators
-> can no longer move around data between different file systems and set
-> symbolic links accordingly.
+> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>  	struct mm_struct *mm;
+>  	int err;
+>  
+> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
+> +	err =  mutex_lock_killable(&task->signal->cred_change_mutex);
 
-Ok, maybe then we'll just leave RESOLVE_NO_SYMLINKS as opt-in.
+So if I understand correctly your patch doesn't fix other problems
+with debugger waiting for cred_guard_mutex.
+
+I too do not think this can justify the new mutex in signal_struct...
+
+Oleg.
+
