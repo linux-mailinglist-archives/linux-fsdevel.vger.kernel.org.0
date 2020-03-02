@@ -2,110 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C1F617574B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 10:39:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53A77175798
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 10:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgCBJiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 04:38:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbgCBJix (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 04:38:53 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC4492469C;
-        Mon,  2 Mar 2020 09:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583141932;
-        bh=afyeUw5VnZbUAYoxsLpHi50eMt+vGabCRyRpK0qjkKQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d7FvmEYtAwbRISDQY7cpWbE7ZT2VmfjytHB0Oe5CwmLnlGScTHDDwtdd8WGhgId0i
-         +CCLK/MeafrNAiTtz+T//uVq1jW+TmYqxUCPeO8KmncEje4PVrxfH6HWXFBHukW1Nh
-         2cVO5WvoXFuBx218U3sXyT3ocQItiPz4TChWNmJA=
-Date:   Mon, 2 Mar 2020 10:38:50 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200302093850.GA1998325@kroah.com>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com>
- <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com>
- <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
- <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
- <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+        id S1727573AbgCBJrk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 04:47:40 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:34465 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbgCBJrk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 04:47:40 -0500
+Received: by mail-il1-f195.google.com with SMTP id n11so3734341ild.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 01:47:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Z95wMvnasax5Jw3pk7t4Bey6HFtuXVCo+Ex6Fq0tizk=;
+        b=kAncW+S1a/yDnhBhsf3Nk2MVGPJgPmNNESItSJhaZZXBaVgwVFSya8+iKM8dL2LSKk
+         sEGdhSUZh6voQT4Rdci+ePh7RvoNwj/PKlZnfd0FeLEk9wtdUiCpvt0Pvm7CprC9TscJ
+         NrVGVO2FLeY5EjMy/MzXILiRYzUwMAhs325Ps=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=Z95wMvnasax5Jw3pk7t4Bey6HFtuXVCo+Ex6Fq0tizk=;
+        b=LO0VTleJHcK15he5H08V0xtdiD2c8op04XoFrRnXXgkFgyrg674TlNtlhrBOQ5RHMk
+         Air3IS8Hv/x4QaiVpT9BR5Rlc3Bx5A3K/CMXj1Yd5tQGJIZLZnTffsYgbycF7ZKzXOu3
+         l9t//AqijuHrfym3+m7zFomNlVP0PhtDsyeQf2QBVGZQHFUD38tfBKYYvOy17dm49Qdl
+         rAlzb3Vs3g+VEiMgJOMb8tbrYZLUl+f0PQh3UzVbBEkXsIN3qWuke/q00ZpiGm7uPVKD
+         4Io+RBY1IS2oXxCOPXGgL3O5T8d2TgM8KhGagtvEg5FB+viYuTTCtGWyojOkOXa4z9WM
+         sJcA==
+X-Gm-Message-State: APjAAAWIu0b8HoQEbb75i4WEbjdG66j2YXrR/WSTUJXGWxbItLv1D4F/
+        J9B7Ze5C43W8z208AhnqlLfRNcd7IadTTEfNrY+iv5XT
+X-Google-Smtp-Source: APXvYqyWuCyORSRaeYjGcMyBsQo8VJzWdI3l7SBQL6Aq2zT7PqDO0iZI+/Rya2UA97uMcQQi0cHHVsNdM30hfmeNVas=
+X-Received: by 2002:a92:8847:: with SMTP id h68mr15329876ild.212.1583142459718;
+ Mon, 02 Mar 2020 01:47:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+References: <8736as2ovb.fsf@vostro.rath.org>
+In-Reply-To: <8736as2ovb.fsf@vostro.rath.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 2 Mar 2020 10:47:28 +0100
+Message-ID: <CAJfpegupesjdOe=+rrjPNmsCg_6n-67HrS4w2Pm=w4ZrQOdj1Q@mail.gmail.com>
+Subject: Re: [fuse] Effects of opening with O_DIRECT
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 10:09:51AM +0100, Miklos Szeredi wrote:
-> On Fri, Feb 28, 2020 at 5:36 PM David Howells <dhowells@redhat.com> wrote:
-> >
-> > sysfs also has some other disadvantages for this:
-> >
-> >  (1) There's a potential chicken-and-egg problem in that you have to create a
-> >      bunch of files and dirs in sysfs for every created mount and superblock
-> >      (possibly excluding special ones like the socket mount) - but this
-> >      includes sysfs itself.  This might work - provided you create sysfs
-> >      first.
-> 
-> Sysfs architecture looks something like this (I hope Greg will correct
-> me if I'm wrong):
-> 
-> device driver -> kobj tree <- sysfs tree
-> 
-> The kobj tree is created by the device driver, and the dentry tree is
-> created on demand from the kobj tree.   Lifetime of kobjs is bound to
-> both the sysfs objects and the device but not the other way round.
-> I.e. device can go away while the sysfs object is still being
-> referenced, and sysfs can be freely mounted and unmounted
-> independently of device initialization.
-> 
-> So there's no ordering requirement between sysfs mounts and other
-> mounts.   I might be wrong on the details, since mounts are created
-> very early in the boot process...
-> 
-> >
-> >  (2) sysfs is memory intensive.  The directory structure has to be backed by
-> >      dentries and inodes that linger as long as the referenced object does
-> >      (procfs is more efficient in this regard for files that aren't being
-> >      accessed)
-> 
-> See above: I don't think dentries and inodes are pinned, only kobjs
-> and their associated cruft.  Which may be too heavy, depending on the
-> details of the kobj tree.
+On Sun, Mar 1, 2020 at 2:20 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> Hi,
+>
+> What happens if a file (on a FUSE mountpoint) is opened without
+> O_DIRECT, has some data in the page cache, and is then opened a second
+> with O_DIRECT?
+>
+> Will reads with O_DIRECT come from the page cache (if there's a hit), or
+> be passed through to the fuse daemon?
 
-That is correct, they should not be pinned, that is what kernfs handles
-and why we can handle 30k virtual block devices on a 31bit s390 instance
-:)
+O_DIRECT read will try first directly, and fall back to the cache on
+short or zero return count.
 
-So you shouldn't have to worry about memory for sysfs.
+>
+> What happens to writes (with and without O_DIRECT, and assuming that
+> writeback caching is active)? It seems to me that in order to keep
+> consistent, either caching has to be disabled for both file descriptors
+> or enabled for both...
 
-There are loads of other reasons probably not to use sysfs for this
-instead :)
+This is not a fuse specific problem.   The kernel will try to keep
+things consistent by flushing dirty data before an O_DIRECT read.
+However this mode of operation is not recommended.  See open(2)
+manpage:
 
-thanks,
+       Applications should avoid mixing O_DIRECT and normal I/O  to  the  s=
+ame
+       file,  and  especially  to  overlapping  byte regions in the same fi=
+le.
+       Even when the filesystem correctly handles the coherency issues in t=
+his
+       situation,  overall  I/O  throughput  is likely to be slower than us=
+ing
+       either mode alone.  Likewise, applications should avoid mixing  mmap=
+(2)
+       of files with direct I/O to the same files.
 
-greg k-h
+[...]
+       In summary, O_DIRECT is a potentially powerful tool that should be u=
+sed
+       with  caution.   It  is  recommended  that  applications  treat  use=
+ of
+       O_DIRECT as a performance option which is disabled by default.
+
+              "The thing that has always disturbed me about O_DIRECT  is  t=
+hat
+              the whole interface is just stupid, and was probably designed=
+ by
+              a  deranged  monkey  on  some  serious   mind-controlling   s=
+ub=E2=80=90
+              stances."=E2=80=94Linus
+
+Thanks,
+Miklos
