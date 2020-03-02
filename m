@@ -2,67 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AABD6175AF7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:55:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E80175BA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 14:31:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgCBMze (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 07:55:34 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56364 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbgCBMze (ORCPT
+        id S1727659AbgCBNbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 08:31:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45268 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbgCBNbS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:55:34 -0500
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1j8kbc-0005MT-1m; Mon, 02 Mar 2020 12:55:32 +0000
-Date:   Mon, 2 Mar 2020 13:55:31 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        viro@zeniv.linux.org.uk, metze@samba.org,
-        torvalds@linux-foundation.org, cyphar@cyphar.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
-Message-ID: <20200302125531.7z2viveb3zxhqkuj@wittgenstein>
-References: <96563.1582901612@warthog.procyon.org.uk>
- <20200228152427.rv3crd7akwdhta2r@wittgenstein>
- <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
- <20200302115239.pcxvej3szmricxzu@wittgenstein>
- <8736arnel9.fsf@oldenburg2.str.redhat.com>
- <20200302121959.it3iophjavbhtoyp@wittgenstein>
- <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
- <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
+        Mon, 2 Mar 2020 08:31:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KbznAPswHClelMjNWfA7bjoq++3NKITW9yM0deHTCL8=; b=NfbIpzfNvBcHydrxbk9tgBanS7
+        DcfczDuC7koH0n08/ebKQMf9c+wJ8d+6IM5W+RyVqbpqYebldd+G1rIsnqPpr71iHAqfjZBNdFUjO
+        yeWOVQd8g0abkjXSEsIUfg5AzTDQanDk8FvfczUPYDgroY45bY242W0IExB4QYBIYS6T0cQKnoMnE
+        Nb5RxIYs3aHdoacsjpg3AZle06jAuHPzq46h/y3Y+mLW25ByGb5l8j2f2gh9T8Q4/c5DZcklzToGl
+        GGLclRoD8ERVj9G/XeLIlnB1R+EjksuLaPQkPc6o0Owlj/RovxFOt+f3SXE0uwyBy4Gv2iCnGMhMV
+        QXCQAouA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j8lAD-0007rD-5q; Mon, 02 Mar 2020 13:31:17 +0000
+Date:   Mon, 2 Mar 2020 05:31:17 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com
+Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200302133117.GA24496@infradead.org>
+References: <20200220152355.5ticlkptc7kwrifz@fiona>
+ <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
+ <20200225205342.GA12066@infradead.org>
+ <20200228194401.o736qvvr4zpklyiz@fiona>
+ <20200228195954.GJ29971@bombadil.infradead.org>
+ <20200228203538.s52t64zcurna77cu@fiona>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <20200228203538.s52t64zcurna77cu@fiona>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 01:42:50PM +0100, Florian Weimer wrote:
-> * Christian Brauner:
+On Fri, Feb 28, 2020 at 02:35:38PM -0600, Goldwyn Rodrigues wrote:
 > 
-> > One difference to openat() is that openat2() doesn't silently ignore
-> > unknown flags. But I'm not sure that would matter for iplementing
-> > openat() via openat2() since there are no flags that openat() knows about
-> > that openat2() doesn't know about afaict. So the only risks would be
-> > programs that accidently have a bit set that isn't used yet.
+> Ah, okay. Now I understand what Christoph was saying.
 > 
-> Will there be any new flags for openat in the future?  If not, we can
-> just use a constant mask in an openat2-based implementation of openat.
+> I suppose it is safe to remove iov_iter_reexpand(). I don't see any
+> other goto to this label which will have a non-zero copied value.
+> And we have already performed the iov_iter_revert().
 
-From past experiences with other syscalls I would expect that any new
-features would only be available through openat2().
-The way I see it in general is that a revised version of a syscall
-basically deprecates the old syscall _wrt to new features_, i.e. new
-features will only be available through the revised version unless there
-are very strong reasons to also allow it in the old version (security
-bug or whatever).
-(But I don't want to be presumptuous here and pretend I can make any
-definiteve statement. Ultimately it's up to the community, I guess. :))
-
-Christian
+I don't really understand the iov_iter complexities either, at least
+not without spending sifnificant time with the implementation.  But
+the important thing is that you document the changes in behavior and
+your findings on why you think it is safe.
