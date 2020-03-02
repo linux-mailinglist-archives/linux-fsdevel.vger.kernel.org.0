@@ -2,465 +2,676 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 202A81753EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 07:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD30175415
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 07:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbgCBGkf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 01:40:35 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:36176 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726204AbgCBGke (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 01:40:34 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j8ekd-0001Co-C0; Sun, 01 Mar 2020 23:40:27 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j8ekZ-0007Je-VK; Sun, 01 Mar 2020 23:40:26 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1727053AbgCBGs3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 01:48:29 -0500
+Received: from foss.arm.com ([217.140.110.172]:56834 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbgCBGs3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 01:48:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFB4A106F;
+        Sun,  1 Mar 2020 22:48:27 -0800 (PST)
+Received: from p8cg001049571a15.arm.com (unknown [10.163.1.119])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 042053F6CF;
+        Sun,  1 Mar 2020 22:52:16 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>
-References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
-        <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
-        <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
-        <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Mon, 02 Mar 2020 00:38:14 -0600
-In-Reply-To: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Sun, 1 Mar 2020 20:34:16 +0000")
-Message-ID: <87a74zmfc9.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j8ekZ-0007Je-VK;;;mid=<87a74zmfc9.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1//e7nTlsRN0fvWenFVh7U2fAMKCnUdZyE=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_XMDrugObfuBody_00
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 T_XMDrugObfuBody_00 obfuscated drug references
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 2479 ms - load_scoreonly_sql: 0.02 (0.0%),
-        signal_user_changed: 2.8 (0.1%), b_tie_ro: 1.94 (0.1%), parse: 1.11
-        (0.0%), extract_message_metadata: 16 (0.6%), get_uri_detail_list: 5
-        (0.2%), tests_pri_-1000: 14 (0.6%), tests_pri_-950: 1.01 (0.0%),
-        tests_pri_-900: 0.84 (0.0%), tests_pri_-90: 53 (2.2%), check_bayes: 52
-        (2.1%), b_tokenize: 21 (0.9%), b_tok_get_all: 18 (0.7%), b_comp_prob:
-        3.6 (0.1%), b_tok_touch_all: 7 (0.3%), b_finish: 0.58 (0.0%),
-        tests_pri_0: 671 (27.1%), check_dkim_signature: 0.55 (0.0%),
-        check_dkim_adsp: 2.5 (0.1%), poll_dns_idle: 1706 (68.8%),
-        tests_pri_10: 1.49 (0.1%), tests_pri_500: 1715 (69.1%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Hugh Dickins <hughd@google.com>, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
+Date:   Mon,  2 Mar 2020 12:17:46 +0530
+Message-Id: <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
+References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+This adds the following new VMA flag wrappers which will replace current
+open encodings across various places. This should not have any functional
+implications.
 
-> This fixes a deadlock in the tracer when tracing a multi-threaded
-> application that calls execve while more than one thread are running.
->
-> I observed that when running strace on the gcc test suite, it always
-> blocks after a while, when expect calls execve, because other threads
-> have to be terminated.  They send ptrace events, but the strace is no
-> longer able to respond, since it is blocked in vm_access.
->
-> The deadlock is always happening when strace needs to access the
-> tracees process mmap, while another thread in the tracee starts to
-> execve a child process, but that cannot continue until the
-> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+vma_is_dontdump()
+vma_is_noreserve()
+vma_is_special()
+vma_is_locked()
+vma_is_mergeable()
+vma_is_softdirty()
+vma_is_thp()
+vma_is_nothp()
 
-I think your patch works, but I don't think to solve your case another
-mutex is necessary.  Possibly it is justified, but I hesitate to
-introduce yet another concept in the code.
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: sparclinux@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ arch/sparc/include/asm/mman.h |  2 +-
+ fs/binfmt_elf.c               |  2 +-
+ fs/proc/task_mmu.c            | 14 ++++++-------
+ include/linux/huge_mm.h       |  4 ++--
+ include/linux/mm.h            | 39 +++++++++++++++++++++++++++++++++++
+ kernel/events/core.c          |  2 +-
+ kernel/events/uprobes.c       |  2 +-
+ mm/gup.c                      |  2 +-
+ mm/huge_memory.c              |  6 +++---
+ mm/hugetlb.c                  |  4 ++--
+ mm/ksm.c                      |  8 +++----
+ mm/madvise.c                  |  4 ++--
+ mm/memory.c                   |  4 ++--
+ mm/migrate.c                  |  4 ++--
+ mm/mlock.c                    |  4 ++--
+ mm/mmap.c                     | 16 +++++++-------
+ mm/mprotect.c                 |  2 +-
+ mm/mremap.c                   |  4 ++--
+ mm/msync.c                    |  3 +--
+ mm/rmap.c                     |  6 +++---
+ mm/shmem.c                    |  8 +++----
+ 21 files changed, 89 insertions(+), 51 deletions(-)
 
-Having read elsewhere in the thread that this does not solve the problem
-Oleg has mentioned I am really hesitant to add more complexity to the
-situation.
-
-
-For your case there is a straight forward and local workaround.
-
-When the current task is ptracing the target task don't bother with
-cred_gaurd_mutex and ptrace_may_access in access_mm as those tests
-have already passed.  Instead just confirm the ptrace status. AKA
-the permission check in ptraces_access_vm.
-
-I think something like this is all we need.
-
-diff --git a/kernel/fork.c b/kernel/fork.c
-index cee89229606a..b0ab98c84589 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1224,6 +1224,16 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
- 	struct mm_struct *mm;
- 	int err;
+diff --git a/arch/sparc/include/asm/mman.h b/arch/sparc/include/asm/mman.h
+index f94532f25db1..661c56add451 100644
+--- a/arch/sparc/include/asm/mman.h
++++ b/arch/sparc/include/asm/mman.h
+@@ -80,7 +80,7 @@ static inline int sparc_validate_prot(unsigned long prot, unsigned long addr)
+ 				 * tags on them. Disallow ADI on mergeable
+ 				 * pages.
+ 				 */
+-				if (vma->vm_flags & VM_MERGEABLE)
++				if (vma_is_mergeable(vma))
+ 					return 0;
+ 			}
+ 		}
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 1eb63867e266..5d41047a4a77 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1305,7 +1305,7 @@ static unsigned long vma_dump_size(struct vm_area_struct *vma,
+ 	if (always_dump_vma(vma))
+ 		goto whole;
  
-+	if (task->ptrace && (current == task->parent)) {
-+		mm = get_task_mm(task);
-+		if ((get_dumpable(mm) != SUID_DUMP_USER) &&
-+		    !ptracer_capable(task, mm->user_ns)) {
-+			mmput(mm);
-+			mm = ERR_PTR(-EACCESS);
-+		}
-+		return mm;
-+	}
+-	if (vma->vm_flags & VM_DONTDUMP)
++	if (vma_is_dontdump(vma))
+ 		return 0;
+ 
+ 	/* support for DAX */
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 3ba9ae83bff5..e425a8cc6c15 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -523,7 +523,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
+-	bool locked = !!(vma->vm_flags & VM_LOCKED);
++	bool locked = vma_is_locked(vma);
+ 	struct page *page = NULL;
+ 
+ 	if (pte_present(*pte)) {
+@@ -575,7 +575,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
+-	bool locked = !!(vma->vm_flags & VM_LOCKED);
++	bool locked = vma_is_locked(vma);
+ 	struct page *page;
+ 
+ 	/* FOLL_DUMP will return -EFAULT on huge zero page */
+@@ -1187,7 +1187,7 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+ 		tlb_gather_mmu(&tlb, mm, 0, -1);
+ 		if (type == CLEAR_REFS_SOFT_DIRTY) {
+ 			for (vma = mm->mmap; vma; vma = vma->vm_next) {
+-				if (!(vma->vm_flags & VM_SOFTDIRTY))
++				if (!vma_is_softdirty(vma))
+ 					continue;
+ 				up_read(&mm->mmap_sem);
+ 				if (down_write_killable(&mm->mmap_sem)) {
+@@ -1309,7 +1309,7 @@ static int pagemap_pte_hole(unsigned long start, unsigned long end,
+ 			break;
+ 
+ 		/* Addresses in the VMA. */
+-		if (vma->vm_flags & VM_SOFTDIRTY)
++		if (vma_is_softdirty(vma))
+ 			pme = make_pme(0, PM_SOFT_DIRTY);
+ 		for (; addr < min(end, vma->vm_end); addr += PAGE_SIZE) {
+ 			err = add_to_pagemap(addr, &pme, pm);
+@@ -1354,7 +1354,7 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+ 		flags |= PM_FILE;
+ 	if (page && page_mapcount(page) == 1)
+ 		flags |= PM_MMAP_EXCLUSIVE;
+-	if (vma->vm_flags & VM_SOFTDIRTY)
++	if (vma_is_softdirty(vma))
+ 		flags |= PM_SOFT_DIRTY;
+ 
+ 	return make_pme(frame, flags);
+@@ -1376,7 +1376,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 		pmd_t pmd = *pmdp;
+ 		struct page *page = NULL;
+ 
+-		if (vma->vm_flags & VM_SOFTDIRTY)
++		if (vma_is_softdirty(vma))
+ 			flags |= PM_SOFT_DIRTY;
+ 
+ 		if (pmd_present(pmd)) {
+@@ -1464,7 +1464,7 @@ static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
+ 	int err = 0;
+ 	pte_t pte;
+ 
+-	if (vma->vm_flags & VM_SOFTDIRTY)
++	if (vma_is_softdirty(vma))
+ 		flags |= PM_SOFT_DIRTY;
+ 
+ 	pte = huge_ptep_get(ptep);
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 5aca3d1bdb32..e04bd9eef47e 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -97,7 +97,7 @@ extern unsigned long transparent_hugepage_flags;
+  */
+ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+ {
+-	if (vma->vm_flags & VM_NOHUGEPAGE)
++	if (vma_is_nothp(vma))
+ 		return false;
+ 
+ 	if (is_vma_temporary_stack(vma))
+@@ -119,7 +119,7 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+ 
+ 	if (transparent_hugepage_flags &
+ 				(1 << TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG))
+-		return !!(vma->vm_flags & VM_HUGEPAGE);
++		return vma_is_thp(vma);
+ 
+ 	return false;
+ }
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 525026df1e58..4927e939a51d 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -563,6 +563,45 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
+ 	return vma->vm_flags & VM_ACCESS_FLAGS;
+ }
+ 
++static inline bool vma_is_dontdump(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_DONTDUMP;
++}
 +
- 	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
- 	if (err)
- 		return ERR_PTR(err);
++static inline bool vma_is_noreserve(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_NORESERVE;
++}
++
++static inline bool vma_is_special(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_SPECIAL;
++}
++
++static inline bool vma_is_locked(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_LOCKED;
++}
++
++static inline bool vma_is_thp(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_HUGEPAGE;
++}
++
++static inline bool vma_is_nothp(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_NOHUGEPAGE;
++}
++
++static inline bool vma_is_mergeable(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_MERGEABLE;
++}
++
++static inline bool vma_is_softdirty(struct vm_area_struct *vma)
++{
++	return vma->vm_flags & VM_SOFTDIRTY;
++}
+ #ifdef CONFIG_SHMEM
+ /*
+  * The vma_is_shmem is not inline because it is used only by slow
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index ef5be3ed0580..8f7a4b15026a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -7692,7 +7692,7 @@ static void perf_event_mmap_event(struct perf_mmap_event *mmap_event)
+ 		flags |= MAP_DENYWRITE;
+ 	if (vma->vm_flags & VM_MAYEXEC)
+ 		flags |= MAP_EXECUTABLE;
+-	if (vma->vm_flags & VM_LOCKED)
++	if (vma_is_locked(vma))
+ 		flags |= MAP_LOCKED;
+ 	if (is_vm_hugetlb_page(vma))
+ 		flags |= MAP_HUGETLB;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index ece7e13f6e4a..5527098c1912 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -211,7 +211,7 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
+ 		try_to_free_swap(old_page);
+ 	page_vma_mapped_walk_done(&pvmw);
+ 
+-	if (vma->vm_flags & VM_LOCKED)
++	if (vma_is_locked(vma))
+ 		munlock_vma_page(old_page);
+ 	put_page(old_page);
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index 58c8cbfeded6..ca23d23a90f2 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -289,7 +289,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 		 */
+ 		mark_page_accessed(page);
+ 	}
+-	if ((flags & FOLL_MLOCK) && (vma->vm_flags & VM_LOCKED)) {
++	if ((flags & FOLL_MLOCK) && vma_is_locked(vma)) {
+ 		/* Do not mlock pte-mapped THP */
+ 		if (PageTransCompound(page))
+ 			goto out;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index b08b199f9a11..d59ecb872ff2 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -674,7 +674,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+  */
+ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma)
+ {
+-	const bool vma_madvised = !!(vma->vm_flags & VM_HUGEPAGE);
++	const bool vma_madvised = vma_is_thp(vma);
+ 
+ 	/* Always do synchronous compaction */
+ 	if (test_bit(TRANSPARENT_HUGEPAGE_DEFRAG_DIRECT_FLAG, &transparent_hugepage_flags))
+@@ -1499,7 +1499,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+ 	VM_BUG_ON_PAGE(!PageHead(page) && !is_zone_device_page(page), page);
+ 	if (flags & FOLL_TOUCH)
+ 		touch_pmd(vma, addr, pmd, flags);
+-	if ((flags & FOLL_MLOCK) && (vma->vm_flags & VM_LOCKED)) {
++	if ((flags & FOLL_MLOCK) && vma_is_locked(vma)) {
+ 		/*
+ 		 * We don't mlock() pte-mapped THPs. This way we can avoid
+ 		 * leaking mlocked pages into non-VM_LOCKED VMAs.
+@@ -3082,7 +3082,7 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
+ 	else
+ 		page_add_file_rmap(new, true);
+ 	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
+-	if ((vma->vm_flags & VM_LOCKED) && !PageDoubleMap(new))
++	if (vma_is_locked(vma) && !PageDoubleMap(new))
+ 		mlock_vma_page(new);
+ 	update_mmu_cache_pmd(vma, address, pvmw->pmd);
+ }
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index dd8737a94bec..efe40f533224 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -757,7 +757,7 @@ void reset_vma_resv_huge_pages(struct vm_area_struct *vma)
+ /* Returns true if the VMA has associated reserve pages */
+ static bool vma_has_reserves(struct vm_area_struct *vma, long chg)
+ {
+-	if (vma->vm_flags & VM_NORESERVE) {
++	if (vma_is_noreserve(vma)) {
+ 		/*
+ 		 * This address is already reserved by other process(chg == 0),
+ 		 * so, we should decrement reserved count. Without decrementing,
+@@ -4558,7 +4558,7 @@ int hugetlb_reserve_pages(struct inode *inode,
+ 	 * attempt will be made for VM_NORESERVE to allocate a page
+ 	 * without using reserves
+ 	 */
+-	if (vm_flags & VM_NORESERVE)
++	if (vma_is_noreserve(vma))
+ 		return 0;
+ 
+ 	/*
+diff --git a/mm/ksm.c b/mm/ksm.c
+index d17c7d57d0d8..8bf11a543c27 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -525,7 +525,7 @@ static struct vm_area_struct *find_mergeable_vma(struct mm_struct *mm,
+ 	vma = find_vma(mm, addr);
+ 	if (!vma || vma->vm_start > addr)
+ 		return NULL;
+-	if (!(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
++	if (!vma_is_mergeable(vma) || !vma->anon_vma)
+ 		return NULL;
+ 	return vma;
+ }
+@@ -980,7 +980,7 @@ static int unmerge_and_remove_all_rmap_items(void)
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next) {
+ 			if (ksm_test_exit(mm))
+ 				break;
+-			if (!(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
++			if (!vma_is_mergeable(vma) || !vma->anon_vma)
+ 				continue;
+ 			err = unmerge_ksm_pages(vma,
+ 						vma->vm_start, vma->vm_end);
+@@ -1251,7 +1251,7 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
+ 			err = replace_page(vma, page, kpage, orig_pte);
+ 	}
+ 
+-	if ((vma->vm_flags & VM_LOCKED) && kpage && !err) {
++	if (vma_is_locked(vma) && kpage && !err) {
+ 		munlock_vma_page(page);
+ 		if (!PageMlocked(kpage)) {
+ 			unlock_page(page);
+@@ -2284,7 +2284,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 		vma = find_vma(mm, ksm_scan.address);
+ 
+ 	for (; vma; vma = vma->vm_next) {
+-		if (!(vma->vm_flags & VM_MERGEABLE))
++		if (!vma_is_mergeable(vma))
+ 			continue;
+ 		if (ksm_scan.address < vma->vm_start)
+ 			ksm_scan.address = vma->vm_start;
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 43b47d3fae02..ffd6a4ff4c99 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -106,7 +106,7 @@ static long madvise_behavior(struct vm_area_struct *vma,
+ 		new_flags |= VM_DONTDUMP;
+ 		break;
+ 	case MADV_DODUMP:
+-		if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) {
++		if (!is_vm_hugetlb_page(vma) && vma_is_special(vma)) {
+ 			error = -EINVAL;
+ 			goto out;
+ 		}
+@@ -821,7 +821,7 @@ static long madvise_remove(struct vm_area_struct *vma,
+ 
+ 	*prev = NULL;	/* tell sys_madvise we drop mmap_sem */
+ 
+-	if (vma->vm_flags & VM_LOCKED)
++	if (vma_is_locked(vma))
+ 		return -EINVAL;
+ 
+ 	f = vma->vm_file;
+diff --git a/mm/memory.c b/mm/memory.c
+index 2f07747612b7..c45386dae91b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2604,7 +2604,7 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
+ 		 * Don't let another task, with possibly unlocked vma,
+ 		 * keep the mlocked page.
+ 		 */
+-		if (page_copied && (vma->vm_flags & VM_LOCKED)) {
++		if (page_copied && vma_is_locked(vma)) {
+ 			lock_page(old_page);	/* LRU manipulation */
+ 			if (PageMlocked(old_page))
+ 				munlock_vma_page(old_page);
+@@ -3083,7 +3083,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 
+ 	swap_free(entry);
+ 	if (mem_cgroup_swap_full(page) ||
+-	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
++	    vma_is_locked(vma) || PageMlocked(page))
+ 		try_to_free_swap(page);
+ 	unlock_page(page);
+ 	if (page != swapcache && swapcache) {
+diff --git a/mm/migrate.c b/mm/migrate.c
+index b1092876e537..45ac5b750e77 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -270,7 +270,7 @@ static bool remove_migration_pte(struct page *page, struct vm_area_struct *vma,
+ 			else
+ 				page_add_file_rmap(new, false);
+ 		}
+-		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(new))
++		if (vma_is_locked(vma) && !PageTransCompound(new))
+ 			mlock_vma_page(new);
+ 
+ 		if (PageTransHuge(page) && PageMlocked(page))
+@@ -2664,7 +2664,7 @@ int migrate_vma_setup(struct migrate_vma *args)
+ 	args->start &= PAGE_MASK;
+ 	args->end &= PAGE_MASK;
+ 	if (!args->vma || is_vm_hugetlb_page(args->vma) ||
+-	    (args->vma->vm_flags & VM_SPECIAL) || vma_is_dax(args->vma))
++	    (vma_is_special(args->vma) || vma_is_dax(args->vma))
+ 		return -EINVAL;
+ 	if (nr_pages <= 0)
+ 		return -EINVAL;
+diff --git a/mm/mlock.c b/mm/mlock.c
+index a72c1eeded77..3d4f66f2dee9 100644
+--- a/mm/mlock.c
++++ b/mm/mlock.c
+@@ -526,7 +526,7 @@ static int mlock_fixup(struct vm_area_struct *vma, struct vm_area_struct **prev,
+ 	int lock = !!(newflags & VM_LOCKED);
+ 	vm_flags_t old_flags = vma->vm_flags;
+ 
+-	if (newflags == vma->vm_flags || (vma->vm_flags & VM_SPECIAL) ||
++	if (newflags == vma->vm_flags || vma_is_special(vma) ||
+ 	    is_vm_hugetlb_page(vma) || vma == get_gate_vma(current->mm) ||
+ 	    vma_is_dax(vma))
+ 		/* don't set VM_LOCKED or VM_LOCKONFAULT and don't count */
+@@ -654,7 +654,7 @@ static unsigned long count_mm_mlocked_page_nr(struct mm_struct *mm,
+ 			continue;
+ 		if (start + len <=  vma->vm_start)
+ 			break;
+-		if (vma->vm_flags & VM_LOCKED) {
++		if (vma_is_locked(vma)) {
+ 			if (start > vma->vm_start)
+ 				count -= (start - vma->vm_start);
+ 			if (start + len < vma->vm_end) {
+diff --git a/mm/mmap.c b/mm/mmap.c
+index f9a01763857b..c93cad8aa9ac 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2279,7 +2279,7 @@ static int acct_stack_growth(struct vm_area_struct *vma,
+ 		return -ENOMEM;
+ 
+ 	/* mlock limit tests */
+-	if (vma->vm_flags & VM_LOCKED) {
++	if (vma_is_locked(vma)) {
+ 		unsigned long locked;
+ 		unsigned long limit;
+ 		locked = mm->locked_vm + grow;
+@@ -2374,7 +2374,7 @@ int expand_upwards(struct vm_area_struct *vma, unsigned long address)
+ 				 * against concurrent vma expansions.
+ 				 */
+ 				spin_lock(&mm->page_table_lock);
+-				if (vma->vm_flags & VM_LOCKED)
++				if (vma_is_locked(vma))
+ 					mm->locked_vm += grow;
+ 				vm_stat_account(mm, vma->vm_flags, grow);
+ 				anon_vma_interval_tree_pre_update_vma(vma);
+@@ -2454,7 +2454,7 @@ int expand_downwards(struct vm_area_struct *vma,
+ 				 * against concurrent vma expansions.
+ 				 */
+ 				spin_lock(&mm->page_table_lock);
+-				if (vma->vm_flags & VM_LOCKED)
++				if (vma_is_locked(vma))
+ 					mm->locked_vm += grow;
+ 				vm_stat_account(mm, vma->vm_flags, grow);
+ 				anon_vma_interval_tree_pre_update_vma(vma);
+@@ -2508,7 +2508,7 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 	/* don't alter vm_end if the coredump is running */
+ 	if (!prev || !mmget_still_valid(mm) || expand_stack(prev, addr))
+ 		return NULL;
+-	if (prev->vm_flags & VM_LOCKED)
++	if (vma_is_locked(prev))
+ 		populate_vma_page_range(prev, addr, prev->vm_end, NULL);
+ 	return prev;
+ }
+@@ -2538,7 +2538,7 @@ find_extend_vma(struct mm_struct *mm, unsigned long addr)
+ 	start = vma->vm_start;
+ 	if (expand_stack(vma, addr))
+ 		return NULL;
+-	if (vma->vm_flags & VM_LOCKED)
++	if (vma_is_locked(vma))
+ 		populate_vma_page_range(vma, addr, start, NULL);
+ 	return vma;
+ }
+@@ -2790,7 +2790,7 @@ int __do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	if (mm->locked_vm) {
+ 		struct vm_area_struct *tmp = vma;
+ 		while (tmp && tmp->vm_start < end) {
+-			if (tmp->vm_flags & VM_LOCKED) {
++			if (vma_is_locked(tmp)) {
+ 				mm->locked_vm -= vma_pages(tmp);
+ 				munlock_vma_pages_all(tmp);
+ 			}
+@@ -2925,7 +2925,7 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 
+ 	flags &= MAP_NONBLOCK;
+ 	flags |= MAP_SHARED | MAP_FIXED | MAP_POPULATE;
+-	if (vma->vm_flags & VM_LOCKED) {
++	if (vma_is_locked(vma)) {
+ 		struct vm_area_struct *tmp;
+ 		flags |= MAP_LOCKED;
+ 
+@@ -3105,7 +3105,7 @@ void exit_mmap(struct mm_struct *mm)
+ 	if (mm->locked_vm) {
+ 		vma = mm->mmap;
+ 		while (vma) {
+-			if (vma->vm_flags & VM_LOCKED)
++			if (vma_is_locked(vma))
+ 				munlock_vma_pages_all(vma);
+ 			vma = vma->vm_next;
+ 		}
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 4921a4211c6b..d7d4629979fc 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -117,7 +117,7 @@ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 			/* Avoid taking write faults for known dirty pages */
+ 			if (dirty_accountable && pte_dirty(ptent) &&
+ 					(pte_soft_dirty(ptent) ||
+-					 !(vma->vm_flags & VM_SOFTDIRTY))) {
++					 !vma_is_softdirty(vma))) {
+ 				ptent = pte_mkwrite(ptent);
+ 			}
+ 			ptep_modify_prot_commit(vma, addr, pte, oldpte, ptent);
+diff --git a/mm/mremap.c b/mm/mremap.c
+index af363063ea23..25d5ecbb783f 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -472,7 +472,7 @@ static struct vm_area_struct *vma_to_resize(unsigned long addr,
+ 	if (vma->vm_flags & (VM_DONTEXPAND | VM_PFNMAP))
+ 		return ERR_PTR(-EFAULT);
+ 
+-	if (vma->vm_flags & VM_LOCKED) {
++	if (vma_is_locked(vma)) {
+ 		unsigned long locked, lock_limit;
+ 		locked = mm->locked_vm << PAGE_SHIFT;
+ 		lock_limit = rlimit(RLIMIT_MEMLOCK);
+@@ -681,7 +681,7 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsigned long, old_len,
+ 			}
+ 
+ 			vm_stat_account(mm, vma->vm_flags, pages);
+-			if (vma->vm_flags & VM_LOCKED) {
++			if (vma_is_locked(vma)) {
+ 				mm->locked_vm += pages;
+ 				locked = true;
+ 				new_addr = addr;
+diff --git a/mm/msync.c b/mm/msync.c
+index c3bd3e75f687..e02327f8ccca 100644
+--- a/mm/msync.c
++++ b/mm/msync.c
+@@ -75,8 +75,7 @@ SYSCALL_DEFINE3(msync, unsigned long, start, size_t, len, int, flags)
+ 			unmapped_error = -ENOMEM;
+ 		}
+ 		/* Here vma->vm_start <= start < vma->vm_end. */
+-		if ((flags & MS_INVALIDATE) &&
+-				(vma->vm_flags & VM_LOCKED)) {
++		if ((flags & MS_INVALIDATE) && vma_is_locked(vma)) {
+ 			error = -EBUSY;
+ 			goto out_unlock;
+ 		}
+diff --git a/mm/rmap.c b/mm/rmap.c
+index b3e381919835..b7941238aea9 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -785,7 +785,7 @@ static bool page_referenced_one(struct page *page, struct vm_area_struct *vma,
+ 	while (page_vma_mapped_walk(&pvmw)) {
+ 		address = pvmw.address;
+ 
+-		if (vma->vm_flags & VM_LOCKED) {
++		if (vma_is_locked(vma)) {
+ 			page_vma_mapped_walk_done(&pvmw);
+ 			pra->vm_flags |= VM_LOCKED;
+ 			return false; /* To break the loop */
+@@ -1379,7 +1379,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 	enum ttu_flags flags = (enum ttu_flags)arg;
+ 
+ 	/* munlock has nothing to gain from examining un-locked vmas */
+-	if ((flags & TTU_MUNLOCK) && !(vma->vm_flags & VM_LOCKED))
++	if ((flags & TTU_MUNLOCK) && !vma_is_locked(vma))
+ 		return true;
+ 
+ 	if (IS_ENABLED(CONFIG_MIGRATION) && (flags & TTU_MIGRATION) &&
+@@ -1429,7 +1429,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 		 * skipped over this mm) then we should reactivate it.
+ 		 */
+ 		if (!(flags & TTU_IGNORE_MLOCK)) {
+-			if (vma->vm_flags & VM_LOCKED) {
++			if (vma_is_locked(vma)) {
+ 				/* PTE-mapped THP are never mlocked */
+ 				if (!PageTransCompound(page)) {
+ 					/*
+diff --git a/mm/shmem.c b/mm/shmem.c
+index aad3ba74b0e9..23fb58bb1e94 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2058,10 +2058,10 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 
+ 	sgp = SGP_CACHE;
+ 
+-	if ((vma->vm_flags & VM_NOHUGEPAGE) ||
++	if (vma_is_nothp(vma) ||
+ 	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+ 		sgp = SGP_NOHUGE;
+-	else if (vma->vm_flags & VM_HUGEPAGE)
++	else if (vma_is_thp(vma))
+ 		sgp = SGP_HUGE;
+ 
+ 	err = shmem_getpage_gfp(inode, vmf->pgoff, &vmf->page, sgp,
+@@ -3986,7 +3986,7 @@ bool shmem_huge_enabled(struct vm_area_struct *vma)
+ 	loff_t i_size;
+ 	pgoff_t off;
+ 
+-	if ((vma->vm_flags & VM_NOHUGEPAGE) ||
++	if (vma_is_nothp(vma) ||
+ 	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+ 		return false;
+ 	if (shmem_huge == SHMEM_HUGE_FORCE)
+@@ -4007,7 +4007,7 @@ bool shmem_huge_enabled(struct vm_area_struct *vma)
+ 			/* fall through */
+ 		case SHMEM_HUGE_ADVISE:
+ 			/* TODO: implement fadvise() hints */
+-			return (vma->vm_flags & VM_HUGEPAGE);
++			return (vma_is_thp(vma));
+ 		default:
+ 			VM_BUG_ON(1);
+ 			return false;
+-- 
+2.20.1
 
-Does this solve your test case?
-
-The patch above is short the approriate locking for the ptrace attached
-check.  (tasklist_lock I think).  But is enough to illustrate the idea,
-and it is probably a check we want in any event so that if the tracer
-starts dropping privileges process_vm_readv and process_vm_writev will
-still be usable by the tracer.
-
-Eric
-
-
-> strace          D    0 30614  30584 0x00000000
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> schedule_preempt_disabled+0x15/0x20
-> __mutex_lock.isra.13+0x1ec/0x520
-> __mutex_lock_killable_slowpath+0x13/0x20
-> mutex_lock_killable+0x28/0x30
-> mm_access+0x27/0xa0
-> process_vm_rw_core.isra.3+0xff/0x550
-> process_vm_rw+0xdd/0xf0
-> __x64_sys_process_vm_readv+0x31/0x40
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> expect          D    0 31933  30876 0x80004003
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> flush_old_exec+0xc4/0x770
-> load_elf_binary+0x35a/0x16c0
-> search_binary_handler+0x97/0x1d0
-> __do_execve_file.isra.40+0x5d4/0x8a0
-> __x64_sys_execve+0x49/0x60
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> The proposed solution is to have a second mutex that is
-> used in mm_access, so it is allowed to continue while the
-> dying threads are not yet terminated.
->
-> I also took the opportunity to improve the documentation
-> of prepare_creds, which is obviously out of sync.
->
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> ---
->  Documentation/security/credentials.rst    | 18 ++++++------
->  fs/exec.c                                 |  9 ++++++
->  include/linux/binfmts.h                   |  6 +++-
->  include/linux/sched/signal.h              |  1 +
->  init/init_task.c                          |  1 +
->  kernel/cred.c                             |  2 +-
->  kernel/fork.c                             |  5 ++--
->  mm/process_vm_access.c                    |  2 +-
->  tools/testing/selftests/ptrace/Makefile   |  4 +--
->  tools/testing/selftests/ptrace/vmaccess.c | 46 +++++++++++++++++++++++++++++++
->  10 files changed, 79 insertions(+), 15 deletions(-)
->  create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
->
-> v2: adds a test case which passes when this patch is applied.
->
->
-> diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
-> index 282e79f..c98e0a8 100644
-> --- a/Documentation/security/credentials.rst
-> +++ b/Documentation/security/credentials.rst
-> @@ -437,9 +437,13 @@ new set of credentials by calling::
->  
->  	struct cred *prepare_creds(void);
->  
-> -this locks current->cred_replace_mutex and then allocates and constructs a
-> -duplicate of the current process's credentials, returning with the mutex still
-> -held if successful.  It returns NULL if not successful (out of memory).
-> +this allocates and constructs a duplicate of the current process's credentials.
-> +It returns NULL if not successful (out of memory).
-> +
-> +If called from __do_execve_file, the mutex current->signal->cred_guard_mutex
-> +is acquired before this function gets called, and the mutex
-> +current->signal->cred_change_mutex is acquired later, while the credentials
-> +and the process mmap are actually changed.
->  
->  The mutex prevents ``ptrace()`` from altering the ptrace state of a process
->  while security checks on credentials construction and changing is taking place
-> @@ -466,9 +470,8 @@ by calling::
->  
->  This will alter various aspects of the credentials and the process, giving the
->  LSM a chance to do likewise, then it will use ``rcu_assign_pointer()`` to
-> -actually commit the new credentials to ``current->cred``, it will release
-> -``current->cred_replace_mutex`` to allow ``ptrace()`` to take place, and it
-> -will notify the scheduler and others of the changes.
-> +actually commit the new credentials to ``current->cred``, and it will notify
-> +the scheduler and others of the changes.
->  
->  This function is guaranteed to return 0, so that it can be tail-called at the
->  end of such functions as ``sys_setresuid()``.
-> @@ -486,8 +489,7 @@ invoked::
->  
->  	void abort_creds(struct cred *new);
->  
-> -This releases the lock on ``current->cred_replace_mutex`` that
-> -``prepare_creds()`` got and then releases the new credentials.
-> +This releases the new credentials.
->  
->  
->  A typical credentials alteration function would look something like this::
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 74d88da..a6884e4 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1266,6 +1266,12 @@ int flush_old_exec(struct linux_binprm * bprm)
->  	if (retval)
->  		goto out;
->  
-> +	retval = mutex_lock_killable(&current->signal->cred_change_mutex);
-> +	if (retval)
-> +		goto out;
-> +
-> +	bprm->called_flush_old_exec = 1;
-> +
->  	/*
->  	 * Must be called _before_ exec_mmap() as bprm->mm is
->  	 * not visibile until then. This also enables the update
-> @@ -1420,6 +1426,8 @@ static void free_bprm(struct linux_binprm *bprm)
->  {
->  	free_arg_pages(bprm);
->  	if (bprm->cred) {
-> +		if (bprm->called_flush_old_exec)
-> +			mutex_unlock(&current->signal->cred_change_mutex);
->  		mutex_unlock(&current->signal->cred_guard_mutex);
->  		abort_creds(bprm->cred);
->  	}
-> @@ -1469,6 +1477,7 @@ void install_exec_creds(struct linux_binprm *bprm)
->  	 * credentials; any time after this it may be unlocked.
->  	 */
->  	security_bprm_committed_creds(bprm);
-> +	mutex_unlock(&current->signal->cred_change_mutex);
->  	mutex_unlock(&current->signal->cred_guard_mutex);
->  }
->  EXPORT_SYMBOL(install_exec_creds);
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index b40fc63..2e1318b 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -44,7 +44,11 @@ struct linux_binprm {
->  		 * exec has happened. Used to sanitize execution environment
->  		 * and to set AT_SECURE auxv for glibc.
->  		 */
-> -		secureexec:1;
-> +		secureexec:1,
-> +		/*
-> +		 * Set by flush_old_exec, when the cred_change_mutex is taken.
-> +		 */
-> +		called_flush_old_exec:1;
->  #ifdef __alpha__
->  	unsigned int taso:1;
->  #endif
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 8805025..37eeabe 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -225,6 +225,7 @@ struct signal_struct {
->  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
->  					 * credential calculations
->  					 * (notably. ptrace) */
-> +	struct mutex cred_change_mutex; /* guard against credentials change */
->  } __randomize_layout;
->  
->  /*
-> diff --git a/init/init_task.c b/init/init_task.c
-> index 9e5cbe5..6cd9a0f 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -26,6 +26,7 @@
->  	.multiprocess	= HLIST_HEAD_INIT,
->  	.rlim		= INIT_RLIMITS,
->  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
-> +	.cred_change_mutex = __MUTEX_INITIALIZER(init_signals.cred_change_mutex),
->  #ifdef CONFIG_POSIX_TIMERS
->  	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
->  	.cputimer	= {
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 809a985..e4c78de 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -676,7 +676,7 @@ void __init cred_init(void)
->   *
->   * Returns the new credentials or NULL if out of memory.
->   *
-> - * Does not take, and does not return holding current->cred_replace_mutex.
-> + * Does not take, and does not return holding ->cred_guard_mutex.
->   */
->  struct cred *prepare_kernel_cred(struct task_struct *daemon)
->  {
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 0808095..0395154 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
->  	struct mm_struct *mm;
->  	int err;
->  
-> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	err =  mutex_lock_killable(&task->signal->cred_change_mutex);
->  	if (err)
->  		return ERR_PTR(err);
->  
-> @@ -1234,7 +1234,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
->  		mmput(mm);
->  		mm = ERR_PTR(-EACCES);
->  	}
-> -	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	mutex_unlock(&task->signal->cred_change_mutex);
->  
->  	return mm;
->  }
-> @@ -1594,6 +1594,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
->  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
->  
->  	mutex_init(&sig->cred_guard_mutex);
-> +	mutex_init(&sig->cred_change_mutex);
->  
->  	return 0;
->  }
-> diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-> index 357aa7b..b3e6eb5 100644
-> --- a/mm/process_vm_access.c
-> +++ b/mm/process_vm_access.c
-> @@ -204,7 +204,7 @@ static ssize_t process_vm_rw_core(pid_t pid, struct iov_iter *iter,
->  	if (!mm || IS_ERR(mm)) {
->  		rc = IS_ERR(mm) ? PTR_ERR(mm) : -ESRCH;
->  		/*
-> -		 * Explicitly map EACCES to EPERM as EPERM is a more a
-> +		 * Explicitly map EACCES to EPERM as EPERM is a more
->  		 * appropriate error code for process_vw_readv/writev
->  		 */
->  		if (rc == -EACCES)
-> diff --git a/tools/testing/selftests/ptrace/Makefile b/tools/testing/selftests/ptrace/Makefile
-> index c0b7f89..2f1f532 100644
-> --- a/tools/testing/selftests/ptrace/Makefile
-> +++ b/tools/testing/selftests/ptrace/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS += -iquote../../../../include/uapi -Wall
-> +CFLAGS += -std=c99 -pthread -iquote../../../../include/uapi -Wall
->  
-> -TEST_GEN_PROGS := get_syscall_info peeksiginfo
-> +TEST_GEN_PROGS := get_syscall_info peeksiginfo vmaccess
->  
->  include ../lib.mk
-> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
-> new file mode 100644
-> index 0000000..ef08c9f
-> --- /dev/null
-> +++ b/tools/testing/selftests/ptrace/vmaccess.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2020 Bernd Edlinger <bernd.edlinger@hotmail.de>
-> + * All rights reserved.
-> + *
-> + * Check whether /proc/$pid/mem can be accessed without causing deadlocks
-> + * when de_thread is blocked with ->cred_guard_mutex held.
-> + */
-> +
-> +#include "../kselftest_harness.h"
-> +#include <stdio.h>
-> +#include <fcntl.h>
-> +#include <pthread.h>
-> +#include <signal.h>
-> +#include <unistd.h>
-> +#include <sys/ptrace.h>
-> +
-> +static void *thread(void *arg)
-> +{
-> +	ptrace(PTRACE_TRACEME, 0, 0, 0);
-> +	return NULL;
-> +}
-> +
-> +TEST(vmaccess)
-> +{
-> +	int f, pid = fork();
-> +	char mm[64];
-> +
-> +	if (!pid) {
-> +		pthread_t pt;
-> +		pthread_create(&pt, NULL, thread, NULL);
-> +		pthread_join(pt, NULL);
-> +		execlp("true", "true", NULL);
-> +	}
-> +
-> +	sleep(1);
-> +	sprintf(mm, "/proc/%d/mem", pid);
-> +	f = open(mm, O_RDONLY);
-> +	ASSERT_LE(0, f)
-> +		close(f);
-> +	/* this is not fixed! ptrace(PTRACE_ATTACH, pid, 0,0); */
-> +	f = kill(pid, SIGCONT);
-> +	ASSERT_EQ(0, f);
-> +}
-> +
-> +TEST_HARNESS_MAIN
