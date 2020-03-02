@@ -2,73 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B64175D89
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 15:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C48175DD7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 16:05:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbgCBOuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 09:50:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:30596 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727112AbgCBOuL (ORCPT
+        id S1727393AbgCBPFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 10:05:16 -0500
+Received: from mout-p-101.mailbox.org ([80.241.56.151]:30410 "EHLO
+        mout-p-101.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbgCBPFQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 09:50:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583160610;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rHjGdoM/kz+qPoO2ABvyQ7EE/HX9YQYgQRurjxXqWRI=;
-        b=EWN/RYMiQp6lFddu0qr5dLsRVBkcfGZFxhqJVywgv/jlZIk+mN5koN+tvLzWYayVpP3grn
-        LWOY/3u6e99WKAZEWMF6vb2jDlojRJDgWf6lsu3+04JkElDn3foi6t9A/B5DGO3aECfe5o
-        +zR7VF47XHO0Q6XwkhHDHOQUsVAYRs4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-349-BIe46xGPNi2Gkh1qTttGxQ-1; Mon, 02 Mar 2020 09:50:09 -0500
-X-MC-Unique: BIe46xGPNi2Gkh1qTttGxQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 2 Mar 2020 10:05:16 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50DC41084420;
-        Mon,  2 Mar 2020 14:50:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 64C677386B;
-        Mon,  2 Mar 2020 14:50:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200302143546.srzk3rnh4o6s76a7@wittgenstein>
-References: <20200302143546.srzk3rnh4o6s76a7@wittgenstein> <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com> <848282.1583159228@warthog.procyon.org.uk>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     dhowells@redhat.com, Florian Weimer <fweimer@redhat.com>,
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 48WNjj5B4XzKmgy;
+        Mon,  2 Mar 2020 16:05:13 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id JQEoqVqSuZg2; Mon,  2 Mar 2020 16:05:10 +0100 (CET)
+Date:   Tue, 3 Mar 2020 02:04:59 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         linux-api@vger.kernel.org, viro@zeniv.linux.org.uk,
-        metze@samba.org, torvalds@linux-foundation.org, cyphar@cyphar.com,
+        metze@samba.org, torvalds@linux-foundation.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+Message-ID: <20200302150459.zu3eo5so66vrji4w@yavin>
+References: <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+ <96563.1582901612@warthog.procyon.org.uk>
+ <20200228152427.rv3crd7akwdhta2r@wittgenstein>
+ <859019.1583159423@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <888182.1583160603.1@warthog.procyon.org.uk>
-Date:   Mon, 02 Mar 2020 14:50:03 +0000
-Message-ID: <888183.1583160603@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="srr2nycvnmhscg5l"
+Content-Disposition: inline
+In-Reply-To: <859019.1583159423@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner <christian.brauner@ubuntu.com> wrote:
 
-> I think we settled this and can agree on RESOLVE_NO_SYMLINKS being the
-> right thing to do, i.e. not resolving symlinks will stay opt-in.
-> Or is your worry even with the current semantics of openat2()? I don't
-> see the issue since O_NOFOLLOW still works with openat2().
+--srr2nycvnmhscg5l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Say, for example, my home dir is on a network volume somewhere and /home has a
-symlink pointing to it.  RESOLVE_NO_SYMLINKS cannot be used to access a file
-inside my homedir if the pathwalk would go through /home/dhowells - this would
-affect fsinfo() - so RESOLVE_NO_SYMLINKS is not a substitute for
-AT_SYMLINK_NOFOLLOW (O_NOFOLLOW would not come into it).
+On 2020-03-02, David Howells <dhowells@redhat.com> wrote:
+> Florian Weimer <fweimer@redhat.com> wrote:
+>=20
+> > Regarding open flags, I think the key point for future APIs is to avoid
+> > using the set of flags for both control of the operation itself
+> > (O_NOFOLLOW/AT_SYMLINK_NOFOLLOW, O_NOCTTY) and properaties of the
+> > resulting descriptor (O_RDWR, O_SYNC).  I expect that doing that would
+> > help code that has to re-create an equivalent descriptor.  The operation
+> > flags are largely irrelevant to that if you can get the descriptor by
+> > other means.
+>=20
+> It would also be nice to sort out the problem with O_CLOEXEC.  That can h=
+ave a
+> different value, depending on the arch - so it excludes at least three bi=
+ts
+> from the O_* flag set.
 
-David
+Not to mention there are (at least?) three or four different values for
+_CLOEXEC for different syscalls...
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--srr2nycvnmhscg5l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXl0gmQAKCRCdlLljIbnQ
+Eo7SAP9PealEn3lKj+b8hZYp6P0KfxGubwWRVoi9l1VdUvarNgD/QAMhskbDrH+M
+rphWjsN4FWzH+8qNavLDTyruNZ8+nQk=
+=0CCy
+-----END PGP SIGNATURE-----
+
+--srr2nycvnmhscg5l--
