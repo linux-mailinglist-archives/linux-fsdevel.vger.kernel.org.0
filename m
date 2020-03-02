@@ -2,60 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14915175AE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AABD6175AF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 13:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727784AbgCBMyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 07:54:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbgCBMyd (ORCPT
+        id S1727799AbgCBMze (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 07:55:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56364 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbgCBMze (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 07:54:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Nhw0MyTwnMoRWiNQ3WoBjVjfgBy1tdHCwpldhLXeSH8=; b=aU8OrciQmEGwZ6570fjY/eMdvR
-        X1kANb83Bq0fTIhznB+kIfB4p/5nRzMJ7czJPnaY1OXFrD/5TUBR+PFPEHLrCqQDQMz6TdNGnZ3Nc
-        7CTNKOiQTzP9xr6E5inn3lrjbzESMTDxTie7XXD9eE0giZ1TpdPHlquxev2i7CD5vvaUX4pDlI2dU
-        UpOW2ruUCQKsYOHi7firLkgbbyjrjLtZeiKJjjjkrXx58gxEFg/iqUxL9SqooGp4tOTSBk+HE88hQ
-        I2cIAioRqtlpmlUcxJlCQMwI6HiYZAF8h+0UoyH3P8FPHC26Re7WppYBXdIp05X7R46PwmGTJVtDk
-        lWMQ6L1w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8kae-0000q8-Ok; Mon, 02 Mar 2020 12:54:32 +0000
-Date:   Mon, 2 Mar 2020 04:54:32 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     lampahome <pahome.chen@mirlab.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: why do we need utf8 normalization when compare name?
-Message-ID: <20200302125432.GP29971@bombadil.infradead.org>
-References: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
+        Mon, 2 Mar 2020 07:55:34 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j8kbc-0005MT-1m; Mon, 02 Mar 2020 12:55:32 +0000
+Date:   Mon, 2 Mar 2020 13:55:31 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        viro@zeniv.linux.org.uk, metze@samba.org,
+        torvalds@linux-foundation.org, cyphar@cyphar.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
+Message-ID: <20200302125531.7z2viveb3zxhqkuj@wittgenstein>
+References: <96563.1582901612@warthog.procyon.org.uk>
+ <20200228152427.rv3crd7akwdhta2r@wittgenstein>
+ <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+ <20200302115239.pcxvej3szmricxzu@wittgenstein>
+ <8736arnel9.fsf@oldenburg2.str.redhat.com>
+ <20200302121959.it3iophjavbhtoyp@wittgenstein>
+ <20200302123510.bm3a2zssohwvkaa4@wittgenstein>
+ <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
+In-Reply-To: <87y2sjlygl.fsf@oldenburg2.str.redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 05:00:24PM +0800, lampahome wrote:
-> According to case insensitive since kernel 5.2, d_compare will
-> transform string into normalized form and then compare.
+On Mon, Mar 02, 2020 at 01:42:50PM +0100, Florian Weimer wrote:
+> * Christian Brauner:
 > 
-> But why do we need this normalization function? Could we just compare
-> by utf8 string?
+> > One difference to openat() is that openat2() doesn't silently ignore
+> > unknown flags. But I'm not sure that would matter for iplementing
+> > openat() via openat2() since there are no flags that openat() knows about
+> > that openat2() doesn't know about afaict. So the only risks would be
+> > programs that accidently have a bit set that isn't used yet.
+> 
+> Will there be any new flags for openat in the future?  If not, we can
+> just use a constant mask in an openat2-based implementation of openat.
 
-Have you read https://en.wikipedia.org/wiki/Unicode_equivalence ?
+From past experiences with other syscalls I would expect that any new
+features would only be available through openat2().
+The way I see it in general is that a revised version of a syscall
+basically deprecates the old syscall _wrt to new features_, i.e. new
+features will only be available through the revised version unless there
+are very strong reasons to also allow it in the old version (security
+bug or whatever).
+(But I don't want to be presumptuous here and pretend I can make any
+definiteve statement. Ultimately it's up to the community, I guess. :))
 
-We need to decide whether a user with a case-insensitive filesystem
-who looks up a file with the name U+00E5 (lower case "a" with ring)
-should find a file which is named U+00C5 (upper case "A" with ring)
-or U+212B (Angstrom sign).
-
-Then there's the question of whether e-acute is stored as U+00E9
-or U+0065 followed by U+0301, and both of those will need to be found
-by a user search for U+00C9 or a user searching for U+0045 U+0301.
-
-So yes, normalisation needs to be done.
+Christian
