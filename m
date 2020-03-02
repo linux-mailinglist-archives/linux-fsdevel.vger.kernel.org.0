@@ -2,126 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF751764EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 21:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F851764F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 21:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgCBU3A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 15:29:00 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:50027 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726263AbgCBU27 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 15:28:59 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id E02217CF;
-        Mon,  2 Mar 2020 15:28:58 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 02 Mar 2020 15:28:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:cc:subject:references:date:in-reply-to:message-id
-        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
-        Ww9qGc+lcoLsKB6qm47YN46Hs/OW9aokKUSjQbk+rdk=; b=g8jZPnFFFjLpeqe2
-        XTQmJo99obPuLd8cMi9nJn1DHXfK/y3DwOquh2OdsfDOFAh5PdoQVCEadG6Rg6rs
-        Le6J1/ZBq4iwNhEdzG9ijzkEaeQxr44r2C0A+Ax0l3Z7HiyLD+BUCOYgK88evBz5
-        1sjdym2lq5gsky+H8/1egOXg7qmKFvAvcQYfHX0mI554/J/reidyVx4w5TKXBL0Y
-        QTh8cEYoEk1TFsuYcZwRLETq3L5xqPZVLqdbSGjBjpLA9aL1Khe5TXwReA+SyiZL
-        z94fJWX0Krwngj748MtgX6KBi5ANHvH7pQolK2SmUDL91fBsXojhNsLaD6C7zwYG
-        PpdaFw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=Ww9qGc+lcoLsKB6qm47YN46Hs/OW9aokKUSjQbk+r
-        dk=; b=yBYY4b/N9J8jpaREnNXPrgUJ5AeoFAzOhL47EgemlDuKdGkCswiWP166u
-        utXWaLGwpo8jpBmrUvjmaBRvbZYsj7uJUxEp6ALZcPZu0ulILBEihKvzzjDkeeIP
-        vAHbhefQZqivla03mDo8Ta3WkA7SAajAGcAt2pzLwrJSYRdzVZY3wbwsC2VlFgdf
-        EsnDz7vBst9n8/+esMohoxOiOKXAkbx0buaoUkIyriItKeOqjLwOUn4lDTt+Av6r
-        luCpI3wC24StEx7AzFs9AZ5jJaN4Ruu0Q6T9dT98LspS7n6HgHe2D8WQiTHel4mo
-        Qwi+flKpnN7crU1WhfjFwMyn66nhA==
-X-ME-Sender: <xms:imxdXg-MXR98bHVMyoBgNYHfhn3tod3pcVIZm4jmQAqEGGv04I-owA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddtgedgudefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufhffjgfkfgggtgfgsehtqhdttddtreejnecuhfhrohhmpefpihhk
-    ohhlrghushcutfgrthhhuceopfhikhholhgruhhssehrrghthhdrohhrgheqnecukfhppe
-    dukeehrdefrdelgedrudelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhhrdhorhhg
-X-ME-Proxy: <xmx:imxdXlAJKUhNz43puknZqjnO_oazXelQ1EvZ8yVNkJJ4qMuiIsS0tg>
-    <xmx:imxdXozglZwemLOZdcTIQ8wAlkdXZPSgWDtGIEVEqlZIUr6YuVtPGA>
-    <xmx:imxdXiQDMpUPvivKN1Sf8P2jtOxRdx7Ig-eA2bhpCmRS3Z5hmjlV-Q>
-    <xmx:imxdXu0yNpl5CafFHLZ9ikagGBr-ZbnL9nuVnBFLn2Gx3cWM027VVQ>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0170F328005E;
-        Mon,  2 Mar 2020 15:28:58 -0500 (EST)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 07572D6;
-        Mon,  2 Mar 2020 20:28:57 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id D2966E00B8; Mon,  2 Mar 2020 20:28:56 +0000 (GMT)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [fuse] Effects of opening with O_DIRECT
-References: <8736as2ovb.fsf@vostro.rath.org>
-        <CAJfpegupesjdOe=+rrjPNmsCg_6n-67HrS4w2Pm=w4ZrQOdj1Q@mail.gmail.com>
-Mail-Copies-To: never
-Mail-Followup-To: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel
-        <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
-Date:   Mon, 02 Mar 2020 20:28:56 +0000
-In-Reply-To: <CAJfpegupesjdOe=+rrjPNmsCg_6n-67HrS4w2Pm=w4ZrQOdj1Q@mail.gmail.com>
-        (Miklos Szeredi's message of "Mon, 2 Mar 2020 10:47:28 +0100")
-Message-ID: <8736aqv6uv.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1726695AbgCBU3C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 15:29:02 -0500
+Received: from mail-oln040092064044.outbound.protection.outlook.com ([40.92.64.44]:44199
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725911AbgCBU3B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 15:29:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fTNljQOlo/VItxs1j0Fi5N+zMmwEKrqF/1+8tFozmgzXtESspeEJpb5VmBpIcZfahl5fah5AsvmqWXqLH7zLFuSEGuTQacFAM3r3xW06rKdQi+2l4IG8jEGKHcJxoVJ2pTCwVHsyCPqKHqOLSPU6gSG0MgGE4slDpOuhQzKZeHq1RJZeDyXL2nI8H43HRmWPVxD4nklr7H+xrmNy8ye4UHV4X/GmJsH+NwGV1yyZp8yiX/8JTD7x2Ka00HVwdQLIFLmTU8N+Ap2/eUfkVwnhauiBNyMwGO8sdMvXlgAIjS7ilBQ71fSQEReTtLfy1WrZokLUoNQBrLGqK2jiYVkFZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9WItZN0YFIgwuGDkDEsDC/sqmYi0bb5gVZBC8nxRJ/E=;
+ b=Q9hvojDEjJ1G9f9SF1D5LgoYkcXymvG3skAbRhSbRQLgG1JG418+RTblZpn4Hc6MpdbAIaru5L0g/nknkpDNhEPEbE4yXu3M8AmabzDrzaUpmv18de10p380TRRpuabCTW+20xmtemAknc6Ug47hy8ZSjSROwGi2RrKbGGAufIkLKAT9cAI9vtZUATBmgk4eFE9i0DDivNVw9ziQ6Ez2L818yyBIkAfWdxoYus4tdvpWb4AJ1DHvz5sQj7W+tTJPcc/P06a/L/dHG5nYyEysRUVXByJT2OZIN2kRcL5PLcCmneafQSwlAgQF0PEIfOf0CIBwi/qA/szYW+wfBo1LDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR01FT058.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:e400:7e18::35) by
+ HE1EUR01HT174.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e18::124)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Mon, 2 Mar
+ 2020 20:28:56 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.0.58) by
+ HE1EUR01FT058.mail.protection.outlook.com (10.152.0.218) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 20:28:56 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
+ 20:28:56 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR0102CA0023.eurprd01.prod.exchangelabs.com (2603:10a6:208:14::36) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 20:28:54 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCHv3] exec: Fix a deadlock in ptrace
+Thread-Topic: [PATCHv3] exec: Fix a deadlock in ptrace
+Thread-Index: AQHV8M6l6N/OOmCoxkO4zYjKB9YU8Kg1wMQA
+Date:   Mon, 2 Mar 2020 20:28:56 +0000
+Message-ID: <AM6PR03MB51709CFCC54A25681C87DABAE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
+ <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com>
+ <AM6PR03MB5170BD130F15CE1909F59B55E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <CAG48ez1jj_J3PtENWvu8piFGsik6RvuyD38ie48TYr2k1Rbf3A@mail.gmail.com>
+ <5e5d45a3.1c69fb81.f99ac.0806@mx.google.com>
+ <CAG48ez0zfutdReRCP38+F2O=LMU11FUQAG59YkaKZY8AJNxSGQ@mail.gmail.com>
+ <AM6PR03MB517034D7787B305832FEA885E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB517034D7787B305832FEA885E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR0102CA0023.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:14::36) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:787DD6075D33EEEDAEE3E26861DF4223AC06363B82E577E006F6A557BB55324F;UpperCasedChecksum:2B76CB72DBD1AAE991D4CB4B16B2532DEF00E963AA4A4A30B3351A60950B7833;SizeAsReceived:9897;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [8hP23OIvzx9SHL5EUzvkrbLR1Am349/n]
+x-microsoft-original-message-id: <2413bf2b-6663-892d-4898-3ff2cc543d30@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: b9ae2766-c41a-4bd8-5934-08d7bee854a8
+x-ms-traffictypediagnostic: HE1EUR01HT174:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SKuFG1FQpeLCmrj5VXY87qA6kKnLO/nBsr9IKsmshVGR34OdWvSQyhaIPBlFhLTEL6e+xF34B2obzfLm48T7UAyCV4nmj+KmkY/jYgUdt6JHmLL5Z3sQptdTmVRAjB3BF4mGBnXdIVONfpf7T+H37Ln8tC8Zf1wPU2WZUDcTCaR8FhAwADkIkRfBpwkdzpvP
+x-ms-exchange-antispam-messagedata: +jwvXQKamDUFGuKNA03o7tEV+/tc4QqAg7aKpBanW2ksZ6pDii2n+opRdV2pDmq9eHWso+4egPZ902wAp4S0BblV+N5V0Czy2DQZH1mbO9NuPb2RN1F1atay1BJl7akmtY4QnLWEp5Mp4zqrhz71Pw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <273077F5A4E6CE4C8F92F03DD763FF0F@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9ae2766-c41a-4bd8-5934-08d7bee854a8
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 20:28:56.1301
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT174
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mar 02 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Sun, Mar 1, 2020 at 2:20 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
->>
->> Hi,
->>
->> What happens if a file (on a FUSE mountpoint) is opened without
->> O_DIRECT, has some data in the page cache, and is then opened a second
->> with O_DIRECT?
->>
->> Will reads with O_DIRECT come from the page cache (if there's a hit), or
->> be passed through to the fuse daemon?
->
-> O_DIRECT read will try first directly, and fall back to the cache on
-> short or zero return count.
->
->>
->> What happens to writes (with and without O_DIRECT, and assuming that
->> writeback caching is active)? It seems to me that in order to keep
->> consistent, either caching has to be disabled for both file descriptors
->> or enabled for both...
->
-> This is not a fuse specific problem.   The kernel will try to keep
-> things consistent by flushing dirty data before an O_DIRECT read.
-> However this mode of operation is not recommended.  See open(2)
-> manpage:
-[...]
-
-Is there currently any other way to execute a read request while making
-sure that data does not end-up in the page cache (unless it happens to
-be there already)?
-
-I have full control of userspace, so I could do something like read from
-a pseudo-extended attribute (assuming there's no size limitations), but
-I'm not sure if this is better than O_DIRECT...
-
-
-Best,
--Nikolaus
-
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+T24gMy8yLzIwIDk6MTAgUE0sIEJlcm5kIEVkbGluZ2VyIHdyb3RlOg0KPiAtLS0gYS9pbmNsdWRl
+L2xpbnV4L2JpbmZtdHMuaA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L2JpbmZtdHMuaA0KPiBAQCAt
+NDQsNyArNDQsMTEgQEAgc3RydWN0IGxpbnV4X2JpbnBybSB7DQo+ICAJCSAqIGV4ZWMgaGFzIGhh
+cHBlbmVkLiBVc2VkIHRvIHNhbml0aXplIGV4ZWN1dGlvbiBlbnZpcm9ubWVudA0KPiAgCQkgKiBh
+bmQgdG8gc2V0IEFUX1NFQ1VSRSBhdXh2IGZvciBnbGliYy4NCj4gIAkJICovDQo+IC0JCXNlY3Vy
+ZWV4ZWM6MTsNCj4gKwkJc2VjdXJlZXhlYzoxLA0KPiArCQkvKg0KPiArCQkgKiBTZXQgYnkgZmx1
+c2hfb2xkX2V4ZWMsIHdoZW4gdGhlIGNyZWRfY2hhbmdlX211dGV4IGlzIHRha2VuLg0KDQpPb3Bz
+LCBtaXNzZWQgdG8gdXBkYXRlIHRoaXMgY29tbWVudCwgc2hvdWxkIGJlICJ3aGVuIHRoZSBjcmVk
+X2d1YXJkX211dGV4IGlzIHRha2VuIi4NCg0KSSdsbCBzZW5kIGEgbmV3IHBhdGNoIGxhdGVyLg0K
+DQpCZXJuZC4NCg0KPiArCQkgKi8NCj4gKwkJY2FsbGVkX2ZsdXNoX29sZF9leGVjOjE7DQo+ICAj
+aWZkZWYgX19hbHBoYV9fDQo+ICAJdW5zaWduZWQgaW50IHRhc286MTsNCj4gICNlbmRpZg0K
