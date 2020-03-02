@@ -2,149 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C254C17553D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 09:10:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5917C175636
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 09:44:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgCBIKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 03:10:18 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726313AbgCBIKS (ORCPT
+        id S1727209AbgCBIn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 03:43:56 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44071 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbgCBInz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 03:10:18 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02289SGq038487
-        for <linux-fsdevel@vger.kernel.org>; Mon, 2 Mar 2020 03:10:17 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2yfnbeec48-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 03:10:17 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-fsdevel@vger.kernel.org> from <riteshh@linux.ibm.com>;
-        Mon, 2 Mar 2020 08:10:15 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 2 Mar 2020 08:10:10 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0228A9M757344066
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 2 Mar 2020 08:10:10 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E485DA4055;
-        Mon,  2 Mar 2020 08:10:09 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B710A4070;
-        Mon,  2 Mar 2020 08:10:07 +0000 (GMT)
-Received: from [9.199.158.200] (unknown [9.199.158.200])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  2 Mar 2020 08:10:07 +0000 (GMT)
-Subject: Re: [PATCHv5 6/6] Documentation: Correct the description of
- FIEMAP_EXTENT_LAST
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com, hch@infradead.org, cmaiolino@redhat.com,
-        david@fromorbit.com
-References: <cover.1582880246.git.riteshh@linux.ibm.com>
- <5a00e8d4283d6849e0b8f408c8365b31fbc1d153.1582880246.git.riteshh@linux.ibm.com>
- <20200228153650.GG29971@bombadil.infradead.org>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Mon, 2 Mar 2020 13:40:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Mon, 2 Mar 2020 03:43:55 -0500
+Received: by mail-io1-f67.google.com with SMTP id u17so5632136iog.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 00:43:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ka6ngPWkB4uI/pE1Q1K94PHmSULgTaZNjlFBTfefkw4=;
+        b=akz1HiDkzR/7aKhVBglfubu1x0knfiykucl/aRzUbwrNlqM8z3WDiA3Iil6Z9OI56T
+         ChR/IQN1e7+3dN+PzJK9dYmO7ShfXhI/evyAyzUN1+AqipbTrdEURd4rjQfSGax9hS5M
+         TdtlzKpbJ9nHP2YuSvOD/07ec4ijpwDRMIsNI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ka6ngPWkB4uI/pE1Q1K94PHmSULgTaZNjlFBTfefkw4=;
+        b=oiOrBI1Ai2lnAh6y3UiQFwbXfmfiYF6FiiXGVpP0o83A78FjyXnCdqZUicBpVvXOOi
+         FGbNsmVmFTNGe8F8CQHm7YW473cbuiyvX9bTIDEs55mF/FV0USyfXbGwtUsJMkZx7rwP
+         F31wPy77RPUbpOQ9mxbzoPLqMWerGjR25n5cww5FnVnXl9xuo+sFBifv2jnWudjoaDUa
+         Qj6uTSaQLA+P/uw+b2i+WNKIKf6Hgc6MONTlTFGLnx492tuvj570fq2BzGSSQmTrHnxA
+         TkgfcMAXgiDUfJh6rcOwLLNfvN424yAzsWd2T2iQNIkVkYWavtHslwi+hh2RD2gaveOT
+         q4lQ==
+X-Gm-Message-State: APjAAAXfzJ363ER/I+Jq9+B6RhysUV6gSipmexKDQgvXMlgakwGdAIwF
+        MYhbBrPXZpfeijtYWyT37DAjYmKgE7mgLzQI0EGZYQ==
+X-Google-Smtp-Source: APXvYqw1ZD3GqI+wwXF1yHR/xgqidz3T6IX49RJ/ZKk0JVp+iUAGPsw+BghGio8C/Q5imdQEykUPaa6oLyfcghCbfaU=
+X-Received: by 2002:a02:5b8a:: with SMTP id g132mr12738776jab.78.1583138634949;
+ Mon, 02 Mar 2020 00:43:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200228153650.GG29971@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 20030208-0028-0000-0000-000003DFD14E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20030208-0029-0000-0000-000024A4F937
-Message-Id: <20200302081007.8B710A4070@d06av23.portsmouth.uk.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-02_02:2020-02-28,2020-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- clxscore=1015 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003020063
+References: <CAOssrKfaxnHswrKejedFzmYTbYivJ++cPes4c91+BJDfgH4xJA@mail.gmail.com>
+ <1c8db4e2b707f958316941d8edd2073ee7e7b22c.camel@themaw.net>
+ <CAJfpegtRoXnPm5_sMYPL2L6FCZU52Tn8wk7NcW-dm4_2x=dD3Q@mail.gmail.com>
+ <3e656465c427487e4ea14151b77d391d52cd6bad.camel@themaw.net>
+ <CAJfpegu5xLcR=QbAOnUrL49QTem6X6ok7nPU+kLFnNHdPXSh1A@mail.gmail.com>
+ <20200227151421.3u74ijhqt6ekbiss@ws.net.home> <ba2b44cc1382c62be3ac896a5476c8e1dc7c0230.camel@themaw.net>
+ <CAJfpeguXPmw+PfZJFOscGLm0oe7dUQY4CYXazx9=x020Fbe86A@mail.gmail.com>
+ <20200228122712.GA3013026@kroah.com> <CAJfpegsGgjnyZiB+ionfnnk+_e+5oaC-5nmGq+mLxWs1RcwsPw@mail.gmail.com>
+ <20200228171504.GK23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200228171504.GK23230@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 2 Mar 2020 09:43:43 +0100
+Message-ID: <CAJfpegviKdx9LWRQ_nLc7q67CvYxbpAFct6ukt6QHyiNY0faYw@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ian Kent <raven@themaw.net>, Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Lennart Poettering <lennart@poettering.net>,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>,
+        util-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Feb 28, 2020 at 6:15 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, Feb 28, 2020 at 05:24:23PM +0100, Miklos Szeredi wrote:
+> > On Fri, Feb 28, 2020 at 1:27 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> >
+> > > > Superblocks and mounts could get enumerated by a unique identifier.
+> > > > mnt_id seems to be good for mounts, s_dev may or may not be good for
+> > > > superblock, but  s_id (as introduced in this patchset) could be used
+> > > > instead.
+> > >
+> > > So what would the sysfs tree look like with this?
+> >
+> > For a start something like this:
+> >
+> > mounts/$MOUNT_ID/
+> >   parent -> ../$PARENT_ID
+> >   super -> ../../supers/$SUPER_ID
+> >   root: path from mount root to fs root (could be optional as usually
+> > they are the same)
+> >   mountpoint -> $MOUNTPOINT
+> >   flags: mount flags
+> >   propagation: mount propagation
+> >   children/$CHILD_ID -> ../../$CHILD_ID
+> >
+> >  supers/$SUPER_ID/
+> >    type: fstype
+> >    source: mount source (devname)
+> >    options: csv of mount options
+>
+> Oh, wonderful.  So let me see if I got it right - any namespace operation
+> can create/destroy/move around an arbitrary amount of sysfs objects.
 
+Parent/children symlinks may be excessive...
 
-On 2/28/20 9:06 PM, Matthew Wilcox wrote:
-> On Fri, Feb 28, 2020 at 02:56:59PM +0530, Ritesh Harjani wrote:
->> Currently FIEMAP_EXTENT_LAST is not working consistently across
->> different filesystem's fiemap implementations. So add more information
->> about how else this flag could set in other implementation.
->>
->> Also in general, user should not completely rely on this flag as
->> such since it could return false value for e.g.
->> when there is a delalloc extent which might get converted during
->> writeback, immediately after the fiemap calls return.
->>
->> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
->> ---
->>   Documentation/filesystems/fiemap.txt | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/filesystems/fiemap.txt b/Documentation/filesystems/fiemap.txt
->> index f6d9c99103a4..fedfa9b9dde5 100644
->> --- a/Documentation/filesystems/fiemap.txt
->> +++ b/Documentation/filesystems/fiemap.txt
->> @@ -71,8 +71,7 @@ allocated is less than would be required to map the requested range,
->>   the maximum number of extents that can be mapped in the fm_extent[]
->>   array will be returned and fm_mapped_extents will be equal to
->>   fm_extent_count. In that case, the last extent in the array will not
->> -complete the requested range and will not have the FIEMAP_EXTENT_LAST
->> -flag set (see the next section on extent flags).
->> +complete the requested range.
-> 
-> This sentence still seems like it should be true.  If the filesystem knows
-> there are more extents to come, it will definitely not set the LAST flag.
-> 
+> Better yet, we suddenly have to express the lifetime rules for struct mount
+> and struct superblock in terms of struct device garbage.
 
-sure.
+How so?   struct mount and struct superblock would hold a ref on
+struct device, not the other way round.
 
->> @@ -96,7 +95,7 @@ block size of the file system.  With the exception of extents flagged as
->>   FIEMAP_EXTENT_MERGED, adjacent extents will not be merged.
->>   
->>   The fe_flags field contains flags which describe the extent returned.
->> -A special flag, FIEMAP_EXTENT_LAST is always set on the last extent in
->> +A special flag, FIEMAP_EXTENT_LAST *may be* set on the last extent in
->>   the file so that the process making fiemap calls can determine when no
->>   more extents are available, without having to call the ioctl again.
-> 
-> I'm not sure I'd highlight 'may be' here.
+In any case, I'm not insistent on the use of sysfs device classes for
+this; struct device (488B) does seem too heavy for struct mount
+(328B).
 
-Sure.
+What I'm pretty sure about is that a read(2) based interface would be
+way more useful than the syscall multiplexer that the current proposal
+is.
 
-> 
->> @@ -115,8 +114,9 @@ data. Note that the opposite is not true - it would be valid for
->>   FIEMAP_EXTENT_NOT_ALIGNED to appear alone.
->>   
->>   * FIEMAP_EXTENT_LAST
->> -This is the last extent in the file. A mapping attempt past this
->> -extent will return nothing.
->> +This is generally the last extent in the file. A mapping attempt past this
->> +extent may return nothing. In some implementations this flag is also set on
->> +the last dataset queried by the user (via fiemap->fm_length).
-> 
-> The word 'dataset' is used nowhere else in this document.  How about
-> 
-> "Some filesystems set this flag to indicate this extent is the last one in
-> the range queried by the user"
-
-Sure.
-
-Thanks for the review.
-Will make the suggested changes and send a v6.
-
--ritesh
-
+Thanks,
+Miklos
