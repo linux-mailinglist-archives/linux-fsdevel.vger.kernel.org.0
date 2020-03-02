@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B11175E9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 16:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D0B5175ED1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 16:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbgCBPnb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 2 Mar 2020 10:43:31 -0500
-Received: from mail-oln040092071065.outbound.protection.outlook.com ([40.92.71.65]:35899
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1727461AbgCBP4N convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 2 Mar 2020 10:56:13 -0500
+Received: from mail-oln040092064094.outbound.protection.outlook.com ([40.92.64.94]:12774
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727305AbgCBPna (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 10:43:30 -0500
+        id S1727401AbgCBP4L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Mar 2020 10:56:11 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SFt7S5IqhRMS2BtfMLmzqQ6AdzISDqFm9cmLVm7Vw2BsO4Du5ViS2uIC9LPj9H2eCpk1M2BDDDsy3p8sOJlUzu2uopzLCi9Ccm5FDSzj1nWBvd+TuPAZmmz6oLW2Wfhbx9FgrHNcBGpkQu/wQVHd8a915OdiJbHQLl0YWVvotSiZb3tPUNB3QUd27n4+9zD8PojMvQVR5DREB9D9DVRV8rIFLXQq2MYrHhWeOUP06uObwUnwszddEYRAnuwmZX/sBA37mc2PSQfK7KHd6Ujtpn3jzdhOya7T4HwUAhx7Z0u0j5Loe1OwMscrVknTpn8nzhNm/CrquOGa0qTnFzxi5g==
+ b=l2r3lvduDL96KS0h0EN+7YkSAgje1jk+5tNPueNh3896BYDWWc5Euj89wNeorAf+i+XQ4oAcQE5FLJ1MT1c9UXTxXVeXf8HhgoiQxlDsuaPWwiWI4Wsv/BRUja8QhjUaEW26tHDP5DFU9fnrg6fU9YKfvy9aP/prZqb/k79qFZjYyVO5Gpc2uRM4n8tPsZNtC7T0MuOFyj17VZ6MXq1Ig+mVPiJpysZz0893ZAKGaTmpWpMVJ58sXFU8iA99gZKshoXcsKxfg8RonimPSg1ol882GyiFB55K8G3hqt5pQ/vP54SII9CtkHoWBT80M+UOJ0uXHVQ49XOBtjKg01EI4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aKll1uYXY/p4lporydDRyPbyHI3XYNaz0hS7oe1Ogas=;
- b=FsvVBSbar+IL1Rxk1F67qCrt3dvGMZ6e0kyODDP51JvdmiUd/EFDnbAovWbiqx03wB6Vjqew/cX6DJNu1XnevKaxntid6vNx/uZEgkRxCfZCzTmnGtGjArby6Td7rlQVeAetihrx8gET8lIJwXybKJ245YgXNsAPd8QyYwfZ447gZENrbKYM39FuyV1F1CuECUdgIPOCMNOrat4ZP3d9/sKOW97yCAeosCt/ts8onLtTqAbOHQOXJ+o3Unhuu5B9jDygHqrKz5R0SGhNuIWjAIMMgnyvbAHyXZ2a+6cM3q4BnsGk8idlbGNcZkLicjmfp/qvgbfws1lIOeXpW4AUbg==
+ bh=D+Kd81xLm1x3TxoEszHoxLRpj/1LPM1dSZ2/tf9dSgw=;
+ b=PmJA18Lywan1RnlRmim+xy+Px27lFm8eH6q8ZWG8aNfsHhYqeD/JL43NlVaV2Uqkx5OqqAEc6R+C4x3FJ6FSrjuDC2uA6P7aY9sb6B7etQBMWAwevGa+rkPo802JZJFFQI9/sB3J1qurcCH1ByhPxaiAYsCdK3V4tgPZHe+Jgjug3qkijLkw1OGE75A89/JHUVFlntbqBskbfGdSHQKOyTT++CdHNZeQzRJQ6Toq/ZNlWDBY6tVbIG78xZp8z9A4J3rP5HUcWM8jlxelfVCo5vgtOY3sxazEPhk55dJNnnwOyqVJq/Shux9dcnBYxD0iUNM6uo7ltWk8oZTAZVNxaw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
-Received: from DB5EUR03FT054.eop-EUR03.prod.protection.outlook.com
- (2a01:111:e400:7e0a::36) by
- DB5EUR03HT063.eop-EUR03.prod.protection.outlook.com (2a01:111:e400:7e0a::231)
+Received: from VE1EUR01FT020.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:e400:7e19::39) by
+ VE1EUR01HT123.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e19::346)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Mon, 2 Mar
- 2020 15:43:24 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.20.55) by
- DB5EUR03FT054.mail.protection.outlook.com (10.152.20.248) with Microsoft SMTP
+ 2020 15:56:07 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.2.58) by
+ VE1EUR01FT020.mail.protection.outlook.com (10.152.2.234) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15 via Frontend Transport; Mon, 2 Mar 2020 15:43:24 +0000
+ 15.20.2772.14 via Frontend Transport; Mon, 2 Mar 2020 15:56:05 +0000
 Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
  ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
  ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 2 Mar 2020
- 15:43:24 +0000
-Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0052.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1d::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Mon, 2 Mar 2020 15:43:22 +0000
+ 15:56:04 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR06CA0075.eurprd06.prod.outlook.com (2603:10a6:208:fa::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.19 via Frontend Transport; Mon, 2 Mar 2020 15:56:03 +0000
 From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Oleg Nesterov <oleg@redhat.com>
 CC:     Jann Horn <jannh@google.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexey Dobriyan <adobriyan@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
         Frederic Weisbecker <frederic@kernel.org>,
         Andrei Vagin <avagin@gmail.com>,
         Ingo Molnar <mingo@kernel.org>,
@@ -71,125 +71,99 @@ CC:     Jann Horn <jannh@google.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>
 Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
 Thread-Topic: [PATCHv2] exec: Fix a deadlock in ptrace
-Thread-Index: AQHV8AjGwZG4WijWc0+aQpdADP+q6qg02ufjgACXoYA=
-Date:   Mon, 2 Mar 2020 15:43:24 +0000
-Message-ID: <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Thread-Index: AQHV8AjGwZG4WijWc0+aQpdADP+q6qg1PBaAgAA5/QA=
+Date:   Mon, 2 Mar 2020 15:56:04 +0000
+Message-ID: <AM6PR03MB51706D69E3F0126237DDD110E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
 References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
  <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
  <20200301185244.zkofjus6xtgkx4s3@wittgenstein>
  <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
  <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74zmfc9.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87a74zmfc9.fsf@x220.int.ebiederm.org>
+ <20200302122828.GA9769@redhat.com>
+In-Reply-To: <20200302122828.GA9769@redhat.com>
 Accept-Language: en-US, en-GB, de-DE
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: ZR0P278CA0052.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1d::21) To AM6PR03MB5170.eurprd03.prod.outlook.com
+x-clientproxiedby: AM0PR06CA0075.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::16) To AM6PR03MB5170.eurprd03.prod.outlook.com
  (2603:10a6:20b:ca::23)
-x-incomingtopheadermarker: OriginalChecksum:C65645E00256BFF0EF483D4ABF04F7ED9CADCA7DA782503334C81EE275B55748;UpperCasedChecksum:B5B02A4BC8C9B6E7E3C31595013F4DCA6C0D23C66AB23D6F5B8892FBA4152BEE;SizeAsReceived:9189;Count:50
+x-incomingtopheadermarker: OriginalChecksum:3859E16BF71A8EC6423EB232D80AE29A1E09FEE95B4D7450D9F8D23EAC84772D;UpperCasedChecksum:B223ECFEDCD92A9F2C1781AAC90A39F9E0AA91ECCB1C8618827A1BBCB80C5D95;SizeAsReceived:9182;Count:50
 x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [dyEnYHlm0P0uZkeIkkriIIvlZ6DvQ6d1]
-x-microsoft-original-message-id: <61e5cb52-cf93-3203-ad57-174abbff19af@hotmail.de>
+x-tmn:  [RgRM/hymeKlspWJoHmyR0Ulb73pdTH9g]
+x-microsoft-original-message-id: <a3723c53-2c41-ed50-309f-ba0d8555f67b@hotmail.de>
 x-ms-publictraffictype: Email
 x-incomingheadercount: 50
 x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: 293008bd-2da8-4d78-0182-08d7bec0715c
-x-ms-traffictypediagnostic: DB5EUR03HT063:
+x-ms-office365-filtering-correlation-id: b61d0c25-2554-4b5a-1def-08d7bec23679
+x-ms-traffictypediagnostic: VE1EUR01HT123:
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8YGYe8UrOXFcm3aSssWupgEEhVcVi9JVL1E2AABGe5vjDQjaRww+7cLsEzPLfb8+6ywdEkeCyWNtByP5r9IZy43Lxrt3a+VuWVfL1b98GWRsl95OA82pgEEiMSiH7Xn4qY+h8/BAFJt/lQKR/+R2IUce2BZZCwil4w5jWmOdVe12Au0vujeQovOjjeQM6lWd
-x-ms-exchange-antispam-messagedata: nGOltsXFW+coIa96+DJIrZYklzcnSMqhRstON9t0wQZXsG8UocU/d/wvILxFg70AO2koqTfnfvn73bVCRlWMZFHiFC1bEmNsKKc8Ofucn1WWhD7Vw+pNbvhxFR0QqeYZ62u+1cOuZTpNrhEp4FVvZw==
+x-microsoft-antispam-message-info: zGFfTOXtwopFCtyvp7ptFwafemwNiCw/uWpTmVi+SLPvY/6zuwibbsn8jTFPu/q2u2H6q8coBRQSeCgdgFDYwHrY3rtF5IsrQXElOAMtsrgIiN5EHlgln0I7tWBp6pwuZO7kOf9/huDfs3VB5dZWQAnep8rzczUeg+2gWknmc1KDpBTdjEbspnnS2QTbrGb2lvk4zzlDGbQQ27IB//zFxqMUM5tkCXNn1q4/dbz4gEE=
+x-ms-exchange-antispam-messagedata: 5b5OpsuSrxieJKpRNkYaSOPnTdNv+Phjlo/8abt2jrLPA/WxuhhMsDmFiKcLHzV+6jKJLoxI6QI9LkQJHYJcQn0kl/B+AwkcAN4XXQUap6t+GL3Qw5sqxWNdwePFmm7WZmHpszbmMt79ctrvP8Wu2w==
 x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <82B95786708D07499487862F589BAAC3@eurprd03.prod.outlook.com>
+Content-ID: <AF6DD11A35CDD44D93462FA5182F8F18@eurprd03.prod.outlook.com>
 Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 293008bd-2da8-4d78-0182-08d7bec0715c
+X-MS-Exchange-CrossTenant-Network-Message-Id: b61d0c25-2554-4b5a-1def-08d7bec23679
 X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 15:43:24.7444
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2020 15:56:04.6412
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Internet
 X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT063
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR01HT123
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/2/20 7:38 AM, Eric W. Biederman wrote:
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> 
+
+
+On 3/2/20 1:28 PM, Oleg Nesterov wrote:
+> On 03/01, Bernd Edlinger wrote:
+>>
 >> This fixes a deadlock in the tracer when tracing a multi-threaded
 >> application that calls execve while more than one thread are running.
->>
->> I observed that when running strace on the gcc test suite, it always
->> blocks after a while, when expect calls execve, because other threads
->> have to be terminated.  They send ptrace events, but the strace is no
->> longer able to respond, since it is blocked in vm_access.
->>
->> The deadlock is always happening when strace needs to access the
->> tracees process mmap, while another thread in the tracee starts to
->> execve a child process, but that cannot continue until the
->> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
 > 
-> I think your patch works, but I don't think to solve your case another
-> mutex is necessary.  Possibly it is justified, but I hesitate to
-> introduce yet another concept in the code.
+> Heh. Yes, known problem. See my attempt to fix it:
+> https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
 > 
-> Having read elsewhere in the thread that this does not solve the problem
-> Oleg has mentioned I am really hesitant to add more complexity to the
-> situation.
+>> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>>  	struct mm_struct *mm;
+>>  	int err;
+>>  
+>> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
+>> +	err =  mutex_lock_killable(&task->signal->cred_change_mutex);
 > 
-> 
-> For your case there is a straight forward and local workaround.
-> 
-> When the current task is ptracing the target task don't bother with
-> cred_gaurd_mutex and ptrace_may_access in access_mm as those tests
-> have already passed.  Instead just confirm the ptrace status. AKA
-> the permission check in ptraces_access_vm.
-> 
-> I think something like this is all we need.
-> 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index cee89229606a..b0ab98c84589 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1224,6 +1224,16 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
->  	struct mm_struct *mm;
->  	int err;
->  
-> +	if (task->ptrace && (current == task->parent)) {
-> +		mm = get_task_mm(task);
-> +		if ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> +		    !ptracer_capable(task, mm->user_ns)) {
-> +			mmput(mm);
-> +			mm = ERR_PTR(-EACCESS);
-> +		}
-> +		return mm;
-> +	}
-> +
->  	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
->  	if (err)
->  		return ERR_PTR(err);
-> 
-> Does this solve your test case?
+> So if I understand correctly your patch doesn't fix other problems
+> with debugger waiting for cred_guard_mutex.
 > 
 
-I tried this with s/EACCESS/EACCES/.
+No, but I see this just as a first step.
 
-The test case in this patch is not fixed, but strace does not freeze,
-at least with my setup where it did freeze repeatable.  That is
-obviously because it bypasses the cred_guard_mutex.  But all other
-process that access this file still freeze, and cannot be
-interrupted except with kill -9.
+> I too do not think this can justify the new mutex in signal_struct...
+> 
 
-However that smells like a denial of service, that this
-simple test case which can be executed by guest, creates a /proc/$pid/mem
-that freezes any process, even root, when it looks at it.
-I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
+I think for the vm_access the semantic of this mutex is clear, that it
+prevents the credentials to change while it is held by vm_access,
+and probably other places can take advantage of this mutex as well.
+
+While on the other hand, the cred_guard_mutex is needed to avoid two
+threads calling execve at the same time.  So that is needed as well.
+
+What remains is probably making PTHREAD_ATTACH detect that the process
+is currently in execve, and make that call fail in that situation.
+I have not thought in depth about that problem, but it will probably
+just need the right mutex to access current->in_execve.
 
 
+That's at least how I see it.
+
+
+Thanks
 Bernd.
+
+
+
