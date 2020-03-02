@@ -2,64 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7E80175BA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 14:31:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA48175CFD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 15:27:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbgCBNbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 08:31:18 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45268 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbgCBNbS (ORCPT
+        id S1727085AbgCBO1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 09:27:17 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:26628 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727075AbgCBO1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 08:31:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KbznAPswHClelMjNWfA7bjoq++3NKITW9yM0deHTCL8=; b=NfbIpzfNvBcHydrxbk9tgBanS7
-        DcfczDuC7koH0n08/ebKQMf9c+wJ8d+6IM5W+RyVqbpqYebldd+G1rIsnqPpr71iHAqfjZBNdFUjO
-        yeWOVQd8g0abkjXSEsIUfg5AzTDQanDk8FvfczUPYDgroY45bY242W0IExB4QYBIYS6T0cQKnoMnE
-        Nb5RxIYs3aHdoacsjpg3AZle06jAuHPzq46h/y3Y+mLW25ByGb5l8j2f2gh9T8Q4/c5DZcklzToGl
-        GGLclRoD8ERVj9G/XeLIlnB1R+EjksuLaPQkPc6o0Owlj/RovxFOt+f3SXE0uwyBy4Gv2iCnGMhMV
-        QXCQAouA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j8lAD-0007rD-5q; Mon, 02 Mar 2020 13:31:17 +0000
-Date:   Mon, 2 Mar 2020 05:31:17 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        darrick.wong@oracle.com
-Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
- iomap_dio_bio_actor
-Message-ID: <20200302133117.GA24496@infradead.org>
-References: <20200220152355.5ticlkptc7kwrifz@fiona>
- <20200221045110.612705204E@d06av21.portsmouth.uk.ibm.com>
- <20200225205342.GA12066@infradead.org>
- <20200228194401.o736qvvr4zpklyiz@fiona>
- <20200228195954.GJ29971@bombadil.infradead.org>
- <20200228203538.s52t64zcurna77cu@fiona>
+        Mon, 2 Mar 2020 09:27:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583159235;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3+UBgX7eoIkK/t5w+2bDxE2KMKopb4wrJcspZOaATZ0=;
+        b=gLPXoq9j2Ddth4kHHrUT+yoZNC2EXO9wBYs6XFF8OQArxN/86xpB4CKJ5YbCz6ejtWdPa/
+        DXjN/PQa8gpJeDBB9OHwSFs9SooRKubU5mzXcKD1OO2K3yuzYAlTnkNWF+RatzxTGE4W2Z
+        5zS63FHAcukjpyqHZaWHOkTZ57mDzPc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-72-_RitG97wNkGAfE8aopeJaA-1; Mon, 02 Mar 2020 09:27:12 -0500
+X-MC-Unique: _RitG97wNkGAfE8aopeJaA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DDC02107ACCC;
+        Mon,  2 Mar 2020 14:27:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D890C5D9C9;
+        Mon,  2 Mar 2020 14:27:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200302115239.pcxvej3szmricxzu@wittgenstein>
+References: <20200302115239.pcxvej3szmricxzu@wittgenstein> <96563.1582901612@warthog.procyon.org.uk> <20200228152427.rv3crd7akwdhta2r@wittgenstein> <87h7z7ngd4.fsf@oldenburg2.str.redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     dhowells@redhat.com, Florian Weimer <fweimer@redhat.com>,
+        linux-api@vger.kernel.org, viro@zeniv.linux.org.uk,
+        metze@samba.org, torvalds@linux-foundation.org, cyphar@cyphar.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Have RESOLVE_* flags superseded AT_* flags for new syscalls?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200228203538.s52t64zcurna77cu@fiona>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <848281.1583159228.1@warthog.procyon.org.uk>
+Date:   Mon, 02 Mar 2020 14:27:08 +0000
+Message-ID: <848282.1583159228@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 28, 2020 at 02:35:38PM -0600, Goldwyn Rodrigues wrote:
-> 
-> Ah, okay. Now I understand what Christoph was saying.
-> 
-> I suppose it is safe to remove iov_iter_reexpand(). I don't see any
-> other goto to this label which will have a non-zero copied value.
-> And we have already performed the iov_iter_revert().
+Christian Brauner <christian.brauner@ubuntu.com> wrote:
 
-I don't really understand the iov_iter complexities either, at least
-not without spending sifnificant time with the implementation.  But
-the important thing is that you document the changes in behavior and
-your findings on why you think it is safe.
+> > AT_SYMLINK_NOFOLLOW only applies to the last pathname component anyway,
+> > so it's relatively little protection.
+> 
+> So this is partially why I think it's at least worth considerings: the
+> new RESOLVE_NO_SYMLINKS flag does block all symlink resolution, not just
+> for the last component in contrast to AT_SYMLINK_NOFOLLOW. This is
+> 278121417a72d87fb29dd8c48801f80821e8f75a
+
+That sounds like a potentially significant UAPI change.  What will that break?
+
+David
+
