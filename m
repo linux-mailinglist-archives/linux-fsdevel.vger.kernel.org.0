@@ -2,173 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADBD3176035
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 17:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C51176088
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Mar 2020 17:57:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgCBQnd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 11:43:33 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38966 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbgCBQnd (ORCPT
+        id S1727261AbgCBQ46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 11:56:58 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:53437 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726775AbgCBQ46 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 11:43:33 -0500
-Received: by mail-oi1-f195.google.com with SMTP id r16so10908805oie.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 08:43:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7kNUg6jrLRYXBxRwxs+v6id6LKMnX/sXkRxwLGsubN8=;
-        b=G85budQaXfEQvDNWIalbDXyWPGbmN1VgzYIvybMkE6FjzEE9OQ06bKVGmxbSFZLDeZ
-         NCG1SEAjzWEvnPaBKjkeXOiCbefYDCeZuZT/wMi0k0Z8lRMg1ptUkwT9yyguQl1/2S+o
-         jfJxI20+jwJY/A2UlJ9u9Qil4ApszAgT38+jjcvSvG9xoofpBq921uBU19jjtE1+amxO
-         hwunfbFnfCp0nj6pojNjexPVGNkT+8IQLC8KySny/q03clG9aJQnNSB7rlhWMZOdoDcs
-         Tlc1qt9VorvqgYNwFtqnCnSE57RGtJfTiH7WPMYBRl0+W5TnUTvBhMda5uGFAqYj+Yii
-         VzMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7kNUg6jrLRYXBxRwxs+v6id6LKMnX/sXkRxwLGsubN8=;
-        b=CciyzQL6fwp1YuOdwRtmVsQY1/UdtSNdXJ3q0J7j6BR95ZItJX6Rf3CHnUHe4hWK3L
-         sFK0RKYX58VizMMiUosGRT2OVgZPy2C8fRmNru/36KNTrZ2C5z7Wi2Teyo7GmaS4E2e2
-         UsM2a2+TCJ18Psn/Az7sOUwbvMjZcQSWcyZKpIpnoWHbR1tEY5gR9LYPD2c7t+5Icrsh
-         PWnOB1nj+vwZh58skOTXJHUjnbwMSLqd/XKOM2cG7ww04sr/V/NDe4ltqcSyMjkfteea
-         rt+LozBf2cqKgTa1YdP/zhUr8dKMQ4lbLVeVlrbYEb8DzAB2K7d3zxAvh819fLSyrPbo
-         INjg==
-X-Gm-Message-State: ANhLgQ0XRqH01SqMYSPlG0Qx3XwE5PjKCdEzWw6+Mdo2bvJkgveRSdn+
-        ezEZBaXHEVMf5vBesIHLUPWdBBg4tWMjt1S1u/3wuw==
-X-Google-Smtp-Source: ADFU+vtCTAmOxkVME2G4uhIibjer5xiSuOaaEPJPm0R3+yIEc30FvCfm1FJmjYEn5prQfE7J5MaCm+kNmricQKurjnA=
-X-Received: by 2002:a05:6808:8d0:: with SMTP id k16mr12043oij.68.1583167412109;
- Mon, 02 Mar 2020 08:43:32 -0800 (PST)
+        Mon, 2 Mar 2020 11:56:58 -0500
+Received: from callcc.thunk.org (guestnat-104-133-0-105.corp.google.com [104.133.0.105] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 022Gub0E024528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 2 Mar 2020 11:56:38 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 1BA5842045B; Mon,  2 Mar 2020 11:56:37 -0500 (EST)
+Date:   Mon, 2 Mar 2020 11:56:37 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        snitzer@redhat.com, jack@suse.cz, ebiggers@google.com,
+        riteshh@linux.ibm.com, krisman@collabora.com, surajjs@amazon.com,
+        dmonakhov@gmail.com, mbobrowski@mbobrowski.org, enwlinux@gmail.com,
+        sblbir@amazon.com, khazhy@google.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/5] fs, ext4: Physical blocks placement hint for
+ fallocate(0): fallocate2(). TP defrag.
+Message-ID: <20200302165637.GA6826@mit.edu>
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
 MIME-Version: 1.0
-References: <AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <CAG48ez3QHVpMJ9Rb_Q4LEE6uAqQJeS1Myu82U=fgvUfoeiscgw@mail.gmail.com>
- <20200301185244.zkofjus6xtgkx4s3@wittgenstein> <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
- <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74zmfc9.fsf@x220.int.ebiederm.org> <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87k142lpfz.fsf@x220.int.ebiederm.org> <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfmloir.fsf@x220.int.ebiederm.org>
-In-Reply-To: <875zfmloir.fsf@x220.int.ebiederm.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 2 Mar 2020 17:43:05 +0100
-Message-ID: <CAG48ez0iXMD0mduKWHG6GZZoR+s2jXy776zwiRd+tFADCEiBEw@mail.gmail.com>
-Subject: Re: [PATCHv2] exec: Fix a deadlock in ptrace
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        James Morris <jamorris@linux.microsoft.com>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 5:19 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->
-> > On 3/2/20 4:57 PM, Eric W. Biederman wrote:
-> >> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
-> >>
-> >>>
-> >>> I tried this with s/EACCESS/EACCES/.
-> >>>
-> >>> The test case in this patch is not fixed, but strace does not freeze,
-> >>> at least with my setup where it did freeze repeatable.
-> >>
-> >> Thanks, That is what I was aiming at.
-> >>
-> >> So we have one method we can pursue to fix this in practice.
-> >>
-> >>> That is
-> >>> obviously because it bypasses the cred_guard_mutex.  But all other
-> >>> process that access this file still freeze, and cannot be
-> >>> interrupted except with kill -9.
-> >>>
-> >>> However that smells like a denial of service, that this
-> >>> simple test case which can be executed by guest, creates a /proc/$pid/mem
-> >>> that freezes any process, even root, when it looks at it.
-> >>> I mean: "ln -s README /proc/$pid/mem" would be a nice bomb.
-> >>
-> >> Yes.  Your the test case in your patch a variant of the original
-> >> problem.
-> >>
-> >>
-> >> I have been staring at this trying to understand the fundamentals of the
-> >> original deeper problem.
-> >>
-> >> The current scope of cred_guard_mutex in exec is because being ptraced
-> >> causes suid exec to act differently.  So we need to know early if we are
-> >> ptraced.
-> >>
-> >
-> > It has a second use, that it prevents two threads entering execve,
-> > which would probably result in disaster.
->
-> Exec can fail with an error code up until de_thread.  de_thread causes
-> exec to fail with the error code -EAGAIN for the second thread to get
-> into de_thread.
->
-> So no.  The cred_guard_mutex is not needed for that case at all.
->
-> >> If that case did not exist we could reduce the scope of the
-> >> cred_guard_mutex in exec to where your patch puts the cred_change_mutex.
-> >>
-> >> I am starting to think reworking how we deal with ptrace and exec is the
-> >> way to solve this problem.
->
->
-> I am 99% convinced that the fix is to move cred_guard_mutex down.
+Kirill,
 
-"move cred_guard_mutex down" as in "take it once we've already set up
-the new process, past the point of no return"?
+In a couple of your comments on this patch series, you mentioned
+"defragmentation".  Is that because you're trying to use this as part
+of e4defrag, or at least, using EXT4_IOC_MOVE_EXT?
 
-> Then right after we take cred_guard_mutex do:
->         if (ptraced) {
->                 use_original_creds();
->         }
->
-> And call it a day.
->
-> The details suck but I am 99% certain that would solve everyones
-> problems, and not be too bad to audit either.
+If that's the case, you should note that input parameter for that
+ioctl is:
 
-Ah, hmm, that sounds like it'll work fine at least when no LSMs are involved.
+struct move_extent {
+	__u32 reserved;		/* should be zero */
+	__u32 donor_fd;		/* donor file descriptor */
+	__u64 orig_start;	/* logical start offset in block for orig */
+	__u64 donor_start;	/* logical start offset in block for donor */
+	__u64 len;		/* block length to be moved */
+	__u64 moved_len;	/* moved block length */
+};
 
-SELinux normally doesn't do the execution-degrading thing, it just
-blocks the execution completely - see their selinux_bprm_set_creds()
-hook. So I think they'd still need to set some state on the task that
-says "we're currently in the middle of an execution where the target
-task will run in context X", and then check against that in the
-ptrace_may_access hook. Or I suppose they could just kill the task
-near the end of execve, although that'd be kinda ugly.
+Note that the donor_start is separate from the start of the file that
+is being defragged.  So you could have the userspace application
+fallocate a large chunk of space for that donor file, and then use
+that donor file to defrag multiple files if you want to close pack
+them.
+
+Many years ago, back when LSF/MM colocated with a larger
+storage-focused conference so we could manage to origanize an ext4
+developer's workshop, we had talked about ways we create kernel
+support for a more powerful userspace defragger, which could also
+defragment the free space, so that future block allocations were more
+likely to be successful.
+
+The discussions surrounded interfaces where userspace could block (or
+at least strongly dissuade unless the only other alternative was
+returning ENOSPC) the kernel from allocating out of a certain number
+of block groups.  And then also to have an interface where for a
+particular process (namely, the defragger), to make the kernel
+strongly prefer that allocations come out of an ordered list of block
+groups.
+
+(Of course these days, now that the cool kids are all embracing eBPF,
+one could imagine a privileged interface where the defragger could
+install some kind of eBPF program which provided enhanced policy to
+ext4's block allocator.)
+
+No one ever really followed through with this, in part because the
+details of allowing userspace (and it would have to be privileged
+userspace) to dictate policy to the block allocator has all sorts of
+potential pitfalls, and in part because no company was really
+interested in funding the engineering work.  In addition, I'll note
+that the windows world, the need and interest for defragging has gone
+done significantly with the advent more sophisticated file systems
+like NTFSv5, which doesn't need defragging nearly as often as say, the
+FAT file system.  And I think if anything, the interst in doing work
+with e4defrag has decreased even more over the years.
+
+That being said, there has been some interest in making changes to
+both the block allocator and some kind of on-line defrag which is
+optimized for low-end flash (such as the kind found in android
+handsets).  There, the need to be careful that we don't end up
+increasing the write wearout becomes even more critical, although the
+GC work which f2fs does involve extra moving around of data blocks,
+and phones have seemed to do fine.  Of course, the typical phone only
+has to last 2-3 years before the battery dies, the screen gets
+cracked, and/or the owner decides they want the latest cool toy from
+the phone manufacturers.  :-)
+
+In any case, if your goal is really some interface to support on-line
+defragmentation for ext4, you want to consider whether the
+EXT4_IOC_MOVE_EXTENT interface is sufficiently powerful such that you
+don't really need to mess around with new block allocation hints.
+
+Cheers,
+
+						- Ted
