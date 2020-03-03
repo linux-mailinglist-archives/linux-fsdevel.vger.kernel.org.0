@@ -2,100 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A596417721C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 10:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9835177253
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 10:26:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbgCCJN2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 04:13:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:44396 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbgCCJN2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:13:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D0B62F;
-        Tue,  3 Mar 2020 01:13:27 -0800 (PST)
-Received: from [10.162.16.51] (p8cg001049571a15.blr.arm.com [10.162.16.51])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 802903F6C4;
-        Tue,  3 Mar 2020 01:13:23 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
-To:     Hugh Dickins <hughd@google.com>
-Cc:     linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
- <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
- <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
-Message-ID: <ce7dd2ac-26e8-d83c-46d0-0c61609be417@arm.com>
-Date:   Tue, 3 Mar 2020 14:43:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728079AbgCCJ0d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 04:26:33 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:45530 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727644AbgCCJ0d (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:26:33 -0500
+Received: by mail-il1-f193.google.com with SMTP id p8so2114271iln.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 01:26:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q9Z8EsyPHV9U0NaiC6B9M0rvBM6gtbnKLyzu2j7BTPk=;
+        b=jTYYh8x31RkzNU33Z6lQeUgOoxxpnukS+yid4FC8FJzzyyH0SDDGWJ7wmGFqxzt1U3
+         ifsrEQ7nwWxkNrLVlPAYrCXiE7lSYj+WiO72qZu3u+/Oo03L4Xpoloy0eSa5/wZjMVQH
+         faFgkLebRgrbn85uVDC/g5bh+gX1xho/fGSc0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q9Z8EsyPHV9U0NaiC6B9M0rvBM6gtbnKLyzu2j7BTPk=;
+        b=lC7pA4CXCPoYvBWqkJyxoTLCyw43v7KCkTm2JJ3j9dfr7+YaY97RhVrnILykIBWrlW
+         P7VyQr5F0sgjobwJ0zmHpuAskLzfM84nHCQJ2vn78KKTxSQ8+EfaFjR30mLNmwtryWmN
+         CC79nPedEkVyr/0ApcyKGXbNJ3Nihe1idA9P6Sg8j8k70fREueI1KvMZkM+bxqzVeocz
+         cLaHnzfB8IoVkdFHLnvT/wu8E/k1JrRoaby10IZQk1JCn/nOlG5ISQPqCsAuI5EKqjyv
+         OFv/GC+Bl4sXzY05jdu/6Z8ixVnmdSnS9EgWdtmyccYsT5aK8iK71hkUOgH+8ZfRcofa
+         Mdww==
+X-Gm-Message-State: ANhLgQ3RV1NVhtnqeke9XXPao+l6TTcb1XHB0whSyArLH+t7zs9wB/hJ
+        rj196xZastnFpQ9O2RXNATyVBc4NGAS5RuujixodRg==
+X-Google-Smtp-Source: ADFU+vskIDQQ4v2+q55l4lXqoUZZbVj8UY7SarjpCJCCHM9M7LqyjVaTqkIaH0IvB20GTwnkNr3zZG8eQdj4RMYQWMA=
+X-Received: by 2002:a92:8d41:: with SMTP id s62mr3559102ild.63.1583227592332;
+ Tue, 03 Mar 2020 01:26:32 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com> <1509948.1583226773@warthog.procyon.org.uk>
+In-Reply-To: <1509948.1583226773@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 3 Mar 2020 10:26:21 +0100
+Message-ID: <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Mar 3, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > I'm doing a patch.   Let's see how it fares in the face of all these
+> > preconceptions.
+>
+> Don't forget the efficiency criterion.  One reason for going with fsinfo(2) is
+> that scanning /proc/mounts when there are a lot of mounts in the system is
+> slow (not to mention the global lock that is held during the read).
+>
+> Now, going with sysfs files on top of procfs links might avoid the global
+> lock, and you can avoid rereading the options string if you export a change
+> notification, but you're going to end up injecting a whole lot of pathwalk
+> latency into the system.
 
+Completely irrelevant.  Cached lookup is so much optimized, that you
+won't be able to see any of it.
 
-On 03/03/2020 12:04 PM, Hugh Dickins wrote:
-> On Mon, 2 Mar 2020, Anshuman Khandual wrote:
-> 
->> This adds the following new VMA flag wrappers which will replace current
->> open encodings across various places. This should not have any functional
->> implications.
->>
->> vma_is_dontdump()
->> vma_is_noreserve()
->> vma_is_special()
->> vma_is_locked()
->> vma_is_mergeable()
->> vma_is_softdirty()
->> vma_is_thp()
->> vma_is_nothp()
-> 
-> Why?? Please don't. I am not at all keen on your 1/3 and 2/3 (some
-> of us actually like to see what the VM_ flags are where they're used,
-> without having to chase through scattered wrappers hiding them),
-> but this 3/3 particularly upset me.
+No, I don't think this is going to be a performance issue at all, but
+if anything we could introduce a syscall
 
-Can understand your reservations regarding 3/3. But I had called that out
-in the series cover letter that this patch can be dropped if related code
-churn is not justified.
+  ssize_t readfile(int dfd, const char *path, char *buf, size_t
+bufsize, int flags);
 
-But 1/3 does create a default flag combination for VM_DATA_DEFAULT_FLAGS
-with a value that is used by multiple platforms at the moment. This is
-very similar to the existing VM_STACK_DEFAULT_FLAGS which has a default
-value. Then why cannot VM_DATA_DEFAULT_FLAGS have one ? More over this
-also saves some code duplication across platforms.
+that is basically the equivalent of open + read + close, or even a
+vectored variant that reads multiple files.  But that's off topic
+again, since I don't think there's going to be any performance issue
+even with plain I/O syscalls.
 
-Regarding the patch 2/3, when there are many existing VMA flag overrides
-like VM_STACK_FLAGS, VM_STACK_INCOMPLETE_SETUP, VM_INIT_DEF_MASK etc why
-cannot a commonly used VMA flag combination with a very specific meaning
-(i.e accessibility) get one. Do you have any particular concern here
-which I might be missing.
+>
+> On top of that, it isn't going to help with the case that I'm working towards
+> implementing where a container manager can monitor for mounts taking place
+> inside the container and supervise them.  What I'm proposing is that during
+> the action phase (eg. FSCONFIG_CMD_CREATE), fsconfig() would hand an fd
+> referring to the context under construction to the manager, which would then
+> be able to call fsinfo() to query it and fsconfig() to adjust it, reject it or
+> permit it.  Something like:
+>
+>         fd = receive_context_to_supervise();
+>         struct fsinfo_params params = {
+>                 .flags          = FSINFO_FLAGS_QUERY_FSCONTEXT,
+>                 .request        = FSINFO_ATTR_SB_OPTIONS,
+>         };
+>         fsinfo(fd, NULL, &params, sizeof(params), buffer, sizeof(buffer));
+>         supervise_parameters(buffer);
+>         fsconfig(fd, FSCONFIG_SET_FLAG, "hard", NULL, 0);
+>         fsconfig(fd, FSCONFIG_SET_STRING, "vers", "4.2", 0);
+>         fsconfig(fd, FSCONFIG_CMD_SUPERVISE_CREATE, NULL, NULL, 0);
+>         struct fsinfo_params params = {
+>                 .flags          = FSINFO_FLAGS_QUERY_FSCONTEXT,
+>                 .request        = FSINFO_ATTR_SB_NOTIFICATIONS,
+>         };
+>         struct fsinfo_sb_notifications sbnotify;
+>         fsinfo(fd, NULL, &params, sizeof(params), &sbnotify, sizeof(sbnotify));
+>         watch_super(fd, "", AT_EMPTY_PATH, watch_fd, 0x03);
+>         fsconfig(fd, FSCONFIG_CMD_SUPERVISE_PERMIT, NULL, NULL, 0);
+>         close(fd);
+>
+> However, the supervised mount may be happening in a completely different set
+> of namespaces, in which case the supervisor presumably wouldn't be able to see
+> the links in procfs and the relevant portions of sysfs.
 
-> 
-> There is a good reason for the (hideously named) is_vm_hugetlb_page(vma):
-> to save "#ifdef CONFIG_HUGETLB_PAGE"s all over (though I suspect the
-> same could have been achieved much more nicely by #define VM_HUGETLB 0);
-> but hiding all flags in vma_is_whatever()s is counter-productive churn.
+It would be a "jump" link to the otherwise invisible directory.
 
-Makes sense, I can understand your reservation here.
-
-> 
-> Improved readability? Not to my eyes.
-
-As mentioned before, I dont feel strongly about patch 3/3 and will drop.
+Thanks,
+Miklos
