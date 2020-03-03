@@ -2,102 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFD41776A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:05:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A821776B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbgCCNEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 08:04:23 -0500
-Received: from mail-qt1-f172.google.com ([209.85.160.172]:45668 "EHLO
-        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729297AbgCCNEX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:04:23 -0500
-Received: by mail-qt1-f172.google.com with SMTP id a4so2650019qto.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 05:04:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jV9MOqj3WfpAvtB6pN8ntyBJlB6ixy+o1z9uv0T/wJ8=;
-        b=e1czJgeczWvVajGwOP+z+FkY1TGYcksRitzO/boEV+27Up3xOd+ML1WMd36/dvfmtX
-         FSHAl7TeJT7R2g+9BGewO7uEFH3wcoTDWPy/AJP/4dkarpzlvPjbnzepEQLzP0Qv10uk
-         jJKJIS+e53attz6FAuvIfhQRiIX4guOAblBMFsskoFxJTYfKU3bdLh0lGG7az7iETbjw
-         ePF+dYPzFd+NQ5zBwaZb2pBDL9KnYdc1DmkqM9exgDQ+7VCTmYo2lfWs503C9M2SSYe5
-         eZMHz86oOZZWfvLy5uHqJg0TY7xRY6EK3iK9cTm/duhnAugML/wJNbIF65Tlp2ULES3h
-         9Etw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=jV9MOqj3WfpAvtB6pN8ntyBJlB6ixy+o1z9uv0T/wJ8=;
-        b=GPOgGEv+lUbfQ1DI/3gA0SsyQY9rute6UEtzqTYXKu45BYDC6kZXXmZUdpJ7eTwofE
-         nIITcT+OLruwEo/Y4hRfc08Xml0vcqHkOgNeUkMVc/vOwysAoRr5qJMsINwgRxy/Ltg9
-         vrXttUzc4yBplEg56CfE617U/ZKx0lXiQDUBW+ldU9XjXsWYNnf5uJQSNZz4VgWrLgPi
-         +BY8a9s1K8PlTEjAMI30aIlWAZQcOIr42O2fROhlEMZrT1SNNqQC9CJoCcyHpc0I5YW4
-         9Kxh0REFyxynnwbmakGGNnVFAgO0p+t0wr1/5BwF7J9Ed9yN9+9CkanuTHpVUZqo+StG
-         4DSg==
-X-Gm-Message-State: ANhLgQ2kBsgKDHi0UL+IX4AyRc0Q92wdrNk1ikcQvq2g5fuOoe66JO5O
-        8gXkGCsaJTIBVw5ORQBphsM=
-X-Google-Smtp-Source: ADFU+vstoC3xFL6LK08SXwDvPUGTjYp3QYPGY5MkFBS7kLk9J+plna+Y2j509AStPcVDIZFAVjEGPA==
-X-Received: by 2002:ac8:5283:: with SMTP id s3mr4236292qtn.47.1583240662300;
-        Tue, 03 Mar 2020 05:04:22 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::7f70])
-        by smtp.gmail.com with ESMTPSA id t13sm11860006qkm.60.2020.03.03.05.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 05:04:21 -0800 (PST)
-Date:   Tue, 3 Mar 2020 08:04:21 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Michael Stapelberg <michael+lkml@stapelberg.ch>,
-        Jack Smith <smith.jack.sidman@gmail.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
- on some machines?
-Message-ID: <20200303130421.GA5186@mtj.thefacebook.com>
-References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
- <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
- <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
- <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
- <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
- <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
+        id S1728588AbgCCNKW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 08:10:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725932AbgCCNKW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:10:22 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B309820842;
+        Tue,  3 Mar 2020 13:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583241021;
+        bh=GUivKWtJ0hc5w+IWW+xdUUVwt4AOV4xypfGmVeG8obk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=2DHptrzLvXGqjt4aF8ToOLoi8KlVSviu7WYm+bc5etPR1UyLZfjEArvUVCjms2MSo
+         JRtbUxKrFFjb6YgIKxmDMkhWTdAugW/zC/mQ4anP0LGlbUyjTr84Ek/VBshwgcBFRe
+         tCQBp8L/sdiu6b2wCS6UEg+Vo54Oy5An8iQ7SPJ8=
+Message-ID: <a4415d7d5d75e6af4cb275f753068186342ef7be.camel@kernel.org>
+Subject: Re: [PATCH v4 0/2] vfs: have syncfs() return error when there are
+ writeback errors
+From:   Jeff Layton <jlayton@kernel.org>
+To:     viro@zeniv.linux.org.uk, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, andres@anarazel.de, willy@infradead.org,
+        dhowells@redhat.com, hch@infradead.org, jack@suse.cz,
+        david@fromorbit.com, David Howells <dhowells@redhat.com>
+Date:   Tue, 03 Mar 2020 08:10:19 -0500
+In-Reply-To: <20200213210255.871579-1-jlayton@kernel.org>
+References: <20200213210255.871579-1-jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-Sorry about the delay.
-
-On Wed, Feb 26, 2020 at 08:59:55PM +0100, Miklos Szeredi wrote:
-> - apparently memcpy is copying downwards (from largest address to
-> smallest address).  Not sure why, when I run the reproducer, it copies
-> upwards.
-> - there's a slow batch of reads of the first ~4MB of data, then a
-> quick writeback
-> - there's a quick read of the rest (~95MB) of data, then a quick
-> writeback of the same
+On Thu, 2020-02-13 at 16:02 -0500, Jeff Layton wrote:
+> v4:
+> - switch to dedicated errseq_t cursor in struct file for syncfs
+> - drop ioctl for fetching the errseq_t without syncing
 > 
-> Plots of the whole and closeups of slow and quick segments attached.
-> X axis is time, Y axis is offset.
+> This is the fourth posting of this patchset. After thinking about it
+> more, I think multiplexing file->f_wb_err based on O_PATH open is just
+> too weird. I think it'd be better if syncfs() "just worked" as expected
+> no matter what sort of fd you use, or how you multiplex it with fsync.
 > 
-> Tejun, could this behavior be attributed to dirty throttling?  What
-> would be the best way to trace this?
+> Also (at least on x86_64) there is currently a 4 byte pad at the end of
+> the struct so this doesn't end up growing the memory utilization anyway.
+> Does anyone object to doing this?
+> 
+> I've also dropped the ioctl patch. I have a draft patch to expose that
+> via fsinfo, but that functionality is really separate from returning an
+> error to syncfs. We can look at that after the syncfs piece is settled.
+> 
+> Jeff Layton (2):
+>   vfs: track per-sb writeback errors and report them to syncfs
+>   buffer: record blockdev write errors in super_block that it backs
+> 
+>  drivers/dax/device.c    |  1 +
+>  fs/buffer.c             |  2 ++
+>  fs/file_table.c         |  1 +
+>  fs/open.c               |  3 +--
+>  fs/sync.c               |  6 ++++--
+>  include/linux/fs.h      | 16 ++++++++++++++++
+>  include/linux/pagemap.h |  5 ++++-
+>  7 files changed, 29 insertions(+), 5 deletions(-)
+> 
 
-Yeah, seems likely. Can you please try offcputime (or just sample
-/proc/PID/stack) and see whether it's in balance dirty pages?
+Hi Al,
 
-  https://github.com/iovisor/bcc/blob/master/tools/offcputime.py
+Wondering if you've had a chance to look at these yet? I think it makes
+sense -- the only part I'm not sure about is adding a field to struct
+file. That ends up inside the 4-byte pad at the end on x86_64, so my
+hope is that that's not a problem.
 
-If it's dirty throttling, the next step would be watching the bdp
-tracepoints to find out what kind of numbers it's getting.
+If you're too busy at the moment, then maybe Andrew can help shepherd
+this in instead?
 
-Thanks.
-
+Thanks,
 -- 
-tejun
+Jeff Layton <jlayton@kernel.org>
+
