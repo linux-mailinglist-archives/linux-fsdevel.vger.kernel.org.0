@@ -2,80 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C83F177B1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 16:54:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8526F177B29
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 16:55:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729907AbgCCPyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 10:54:04 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:36910 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729819AbgCCPyE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 10:54:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583250842;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AOExeUOyNDqAFm6mopMdpHTa+bOM1g1XII8yprReEI8=;
-        b=XO76EkJ8o9YtmCty2py+KB23MwLDUnITSUSbDn/oY0ld2/MDh/vo2cO87M13xLwvlt0P6G
-        iziCd51oEi1QvhDJwf5Q3+kMUm7QN6RHDRkJE0c6/QPLFjZDq23BzOtKOnNkBC4RBguBrY
-        jmRNMxnyCv4Z7FQq9tcq45XyCbhl3DU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-373-EDcCpvkjO_-vX5ams9tUzA-1; Tue, 03 Mar 2020 10:53:59 -0500
-X-MC-Unique: EDcCpvkjO_-vX5ams9tUzA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729680AbgCCPzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 10:55:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729577AbgCCPzY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 10:55:24 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EC33710CE78A;
-        Tue,  3 Mar 2020 15:53:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 76EF8100EBA4;
-        Tue,  3 Mar 2020 15:53:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200303152352.GA221026@kroah.com>
-References: <20200303152352.GA221026@kroah.com> <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com> <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net> <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com> <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com> <20200303113814.rsqhljkch6tgorpu@ws.net.home> <20200303130347.GA2302029@kroah.com> <20200303131434.GA2373427@kroah.com> <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com> <20200303142351.vtc2ldqltev5jo4h@wittgenstein>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+        by mail.kernel.org (Postfix) with ESMTPSA id 5559120866;
+        Tue,  3 Mar 2020 15:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583250924;
+        bh=UGdXaHoMkI2mtHF9nsoYia1Fwcd76iZNyx5ZnrXedcs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YRoJVFSMzPTj9B2dJX4KD2NQin2bjap4pJVp8rJ8uAh6LBsdaBe/1PynQjLhWWiLh
+         obdqnCWGgryQKoLQlxaXFBROkTja7CF4CCKuZnIDQV5b+Nn+i/HrhjdiIakEeZ/SWJ
+         8TIuiuYMzO4bbn6F4huLsKk+4MC3QFyfkslK4ztU=
+Message-ID: <e06d74ad7dc02fb3df9ab4ae26203a85ea2ed67e.camel@kernel.org>
+Subject: Re: [PATCH] fcntl: Distribute switch variables for initialization
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Kees Cook <keescook@chromium.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Alexander Potapenko <glider@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 03 Mar 2020 10:55:22 -0500
+In-Reply-To: <202003022040.40A32072@keescook>
+References: <20200220062243.68809-1-keescook@chromium.org>
+         <202003022040.40A32072@keescook>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1842202.1583250829.1@warthog.procyon.org.uk>
-Date:   Tue, 03 Mar 2020 15:53:49 +0000
-Message-ID: <1842203.1583250829@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Mon, 2020-03-02 at 20:41 -0800, Kees Cook wrote:
+> On Wed, Feb 19, 2020 at 10:22:43PM -0800, Kees Cook wrote:
+> > Variables declared in a switch statement before any case statements
+> > cannot be automatically initialized with compiler instrumentation (as
+> > they are not part of any execution flow). With GCC's proposed automatic
+> > stack variable initialization feature, this triggers a warning (and they
+> > don't get initialized). Clang's automatic stack variable initialization
+> > (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+> > doesn't initialize such variables[1]. Note that these warnings (or silent
+> > skipping) happen before the dead-store elimination optimization phase,
+> > so even when the automatic initializations are later elided in favor of
+> > direct initializations, the warnings remain.
+> > 
+> > To avoid these problems, move such variables into the "case" where
+> > they're used or lift them up into the main function body.
+> > 
+> > fs/fcntl.c: In function ‘send_sigio_to_task’:
+> > fs/fcntl.c:738:20: warning: statement will never be executed [-Wswitch-unreachable]
+> >   738 |   kernel_siginfo_t si;
+> >       |                    ^~
+> > 
+> > [1] https://bugs.llvm.org/show_bug.cgi?id=44916
+> > 
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Ping. Can someone pick this up, please?
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> > ---
+> >  fs/fcntl.c |    6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 9bc167562ee8..2e4c0fa2074b 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -735,8 +735,9 @@ static void send_sigio_to_task(struct task_struct *p,
+> >  		return;
+> >  
+> >  	switch (signum) {
+> > -		kernel_siginfo_t si;
+> > -		default:
+> > +		default: {
+> > +			kernel_siginfo_t si;
+> > +
+> >  			/* Queue a rt signal with the appropriate fd as its
+> >  			   value.  We use SI_SIGIO as the source, not 
+> >  			   SI_KERNEL, since kernel signals always get 
+> > @@ -769,6 +770,7 @@ static void send_sigio_to_task(struct task_struct *p,
+> >  			si.si_fd    = fd;
+> >  			if (!do_send_sig_info(signum, &si, p, type))
+> >  				break;
+> > +		}
+> >  		/* fall-through - fall back on the old plain SIGIO signal */
+> >  		case 0:
+> >  			do_send_sig_info(SIGIO, SEND_SIG_PRIV, p, type);
+> > 
 
-> If you look at the patch I posted in this thread, I think it properly
-> supports open_how and RESOLVE_* flags.  But remember it's opening a file
-> that is already present, in RO mode, no creation allowed, so most of the
-> open_how interactions are limited.
+Sure, looks straightforward enough. I'll pick it up for v5.7.
 
-Something we should consider adding to openat2() at some point is the ability
-to lock on open/create.  Various network filesystems support it.
-
-David
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
