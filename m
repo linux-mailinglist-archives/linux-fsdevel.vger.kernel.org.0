@@ -2,214 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6781783B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 21:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FEC21783C7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 21:15:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbgCCULO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 15:11:14 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:41204 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727862AbgCCULO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 15:11:14 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j9Dsi-0002GA-R5; Tue, 03 Mar 2020 13:11:08 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1j9DsW-0007aC-CC; Tue, 03 Mar 2020 13:11:08 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
+        id S1731388AbgCCUPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 15:15:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730352AbgCCUPV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 15:15:21 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 162B920CC7;
+        Tue,  3 Mar 2020 20:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583266518;
+        bh=KNVnLGdyUhMWXTVbWxn9KbP0sS7e0UnfGOEqTIW/oEU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZqAMJW3P72+S7v0gazyt3aVIYN7idSRVWHybc/orGA3aAern4y76oXsuCS1m1Imdl
+         eQneEB5bpRCmB6ry43tOwrTRPdPT1WwRxxw2+hmI2W2rKskcKZzpsh/OE76yt/BqrG
+         n6iW3ZDy8YL0sJM8HUYqOjHQ6IWsZ9YKbwMgf384=
+Date:   Tue, 3 Mar 2020 21:15:16 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>,
         David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74zmfc9.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87k142lpfz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <875zfmloir.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nmjulm.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Tue, 03 Mar 2020 14:08:44 -0600
-In-Reply-To: <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Tue, 3 Mar 2020 16:48:01 +0000")
-Message-ID: <87a74xi4kz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200303201516.GA1136381@kroah.com>
+References: <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+ <20200303130347.GA2302029@kroah.com>
+ <20200303131434.GA2373427@kroah.com>
+ <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
+ <20200303134316.GA2509660@kroah.com>
+ <CAJfpegtFyZqSRzo3uuXp1S2_jJJ29DL=xAwKjpEGvyG7=AzabA@mail.gmail.com>
+ <20200303142958.GB47158@kroah.com>
+ <CAG48ez1sdUJzp85oqBw8vCpc3E4Sb26M9pj2zHhnKpb-1+f4vg@mail.gmail.com>
+ <20200303165103.GA731597@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1j9DsW-0007aC-CC;;;mid=<87a74xi4kz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18F6HBvD5EFsjRqfjRChWMHQNE7HoAAFNk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4839]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 829 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 17 (2.0%), b_tie_ro: 16 (1.9%), parse: 1.40
-        (0.2%), extract_message_metadata: 15 (1.8%), get_uri_detail_list: 2.3
-        (0.3%), tests_pri_-1000: 24 (2.8%), tests_pri_-950: 1.57 (0.2%),
-        tests_pri_-900: 1.34 (0.2%), tests_pri_-90: 49 (6.0%), check_bayes: 48
-        (5.7%), b_tokenize: 19 (2.3%), b_tok_get_all: 12 (1.5%), b_comp_prob:
-        3.3 (0.4%), b_tok_touch_all: 4.7 (0.6%), b_finish: 0.59 (0.1%),
-        tests_pri_0: 706 (85.2%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 11 (1.3%), poll_dns_idle: 7 (0.9%), tests_pri_10: 2.6
-        (0.3%), tests_pri_500: 7 (0.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303165103.GA731597@kroah.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On Tue, Mar 03, 2020 at 05:51:03PM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Mar 03, 2020 at 03:40:24PM +0100, Jann Horn wrote:
+> > On Tue, Mar 3, 2020 at 3:30 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > > On Tue, Mar 03, 2020 at 03:10:50PM +0100, Miklos Szeredi wrote:
+> > > > On Tue, Mar 3, 2020 at 2:43 PM Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
+> > > >
+> > > > > > If buffer is too small to fit the whole file, return error.
+> > > > >
+> > > > > Why?  What's wrong with just returning the bytes asked for?  If someone
+> > > > > only wants 5 bytes from the front of a file, it should be fine to give
+> > > > > that to them, right?
+> > > >
+> > > > I think we need to signal in some way to the caller that the result
+> > > > was truncated (see readlink(2), getxattr(2), getcwd(2)), otherwise the
+> > > > caller might be surprised.
+> > >
+> > > But that's not the way a "normal" read works.  Short reads are fine, if
+> > > the file isn't big enough.  That's how char device nodes work all the
+> > > time as well, and this kind of is like that, or some kind of "stream" to
+> > > read from.
+> > >
+> > > If you think the file is bigger, then you, as the caller, can just pass
+> > > in a bigger buffer if you want to (i.e. you can stat the thing and
+> > > determine the size beforehand.)
+> > >
+> > > Think of the "normal" use case here, a sysfs read with a PAGE_SIZE
+> > > buffer.  That way userspace "knows" it will always read all of the data
+> > > it can from the file, we don't have to do any seeking or determining
+> > > real file size, or anything else like that.
+> > >
+> > > We return the number of bytes read as well, so we "know" if we did a
+> > > short read, and also, you could imply, if the number of bytes read are
+> > > the exact same as the number of bytes of the buffer, maybe the file is
+> > > either that exact size, or bigger.
+> > >
+> > > This should be "simple", let's not make it complex if we can help it :)
+> > >
+> > > > > > Verify that the number of bytes read matches the file size, otherwise
+> > > > > > return error (may need to loop?).
+> > > > >
+> > > > > No, we can't "match file size" as sysfs files do not really have a sane
+> > > > > "size".  So I don't want to loop at all here, one-shot, that's all you
+> > > > > get :)
+> > > >
+> > > > Hmm.  I understand the no-size thing.  But looping until EOF (i.e.
+> > > > until read return zero) might be a good idea regardless, because short
+> > > > reads are allowed.
+> > >
+> > > If you want to loop, then do a userspace open/read-loop/close cycle.
+> > > That's not what this syscall should be for.
+> > >
+> > > Should we call it: readfile-only-one-try-i-hope-my-buffer-is-big-enough()?  :)
+> > 
+> > So how is this supposed to work in e.g. the following case?
+> > 
+> > ========================================
+> > $ cat map_lots_and_read_maps.c
+> > #include <sys/mman.h>
+> > #include <fcntl.h>
+> > #include <unistd.h>
+> > 
+> > int main(void) {
+> >   for (int i=0; i<1000; i++) {
+> >     mmap(NULL, 0x1000, (i&1)?PROT_READ:PROT_NONE,
+> > MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+> >   }
+> >   int maps = open("/proc/self/maps", O_RDONLY);
+> >   static char buf[0x100000];
+> >   int res;
+> >   do {
+> >     res = read(maps, buf, sizeof(buf));
+> >   } while (res > 0);
+> > }
+> > $ gcc -o map_lots_and_read_maps map_lots_and_read_maps.c
+> > $ strace -e trace='!mmap' ./map_lots_and_read_maps
+> > execve("./map_lots_and_read_maps", ["./map_lots_and_read_maps"],
+> > 0x7ffebd297ac0 /* 51 vars */) = 0
+> > brk(NULL)                               = 0x563a1184f000
+> > access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+> > openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+> > fstat(3, {st_mode=S_IFREG|0644, st_size=208479, ...}) = 0
+> > close(3)                                = 0
+> > openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+> > read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\320l\2\0\0\0\0\0"...,
+> > 832) = 832
+> > fstat(3, {st_mode=S_IFREG|0755, st_size=1820104, ...}) = 0
+> > mprotect(0x7fb5c2d1a000, 1642496, PROT_NONE) = 0
+> > close(3)                                = 0
+> > arch_prctl(ARCH_SET_FS, 0x7fb5c2eb6500) = 0
+> > mprotect(0x7fb5c2eab000, 12288, PROT_READ) = 0
+> > mprotect(0x563a103e4000, 4096, PROT_READ) = 0
+> > mprotect(0x7fb5c2f12000, 4096, PROT_READ) = 0
+> > munmap(0x7fb5c2eb7000, 208479)          = 0
+> > openat(AT_FDCWD, "/proc/self/maps", O_RDONLY) = 3
+> > read(3, "563a103e1000-563a103e2000 r--p 0"..., 1048576) = 4075
+> > read(3, "7fb5c2985000-7fb5c2986000 ---p 0"..., 1048576) = 4067
+> > read(3, "7fb5c29d8000-7fb5c29d9000 r--p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2a2b000-7fb5c2a2c000 ---p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2a7e000-7fb5c2a7f000 r--p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2ad1000-7fb5c2ad2000 ---p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2b24000-7fb5c2b25000 r--p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2b77000-7fb5c2b78000 ---p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2bca000-7fb5c2bcb000 r--p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2c1d000-7fb5c2c1e000 ---p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2c70000-7fb5c2c71000 r--p 0"..., 1048576) = 4067
+> > read(3, "7fb5c2cc3000-7fb5c2cc4000 ---p 0"..., 1048576) = 4078
+> > read(3, "7fb5c2eca000-7fb5c2ecb000 r--p 0"..., 1048576) = 2388
+> > read(3, "", 1048576)                    = 0
+> > exit_group(0)                           = ?
+> > +++ exited with 0 +++
+> > $
+> > ========================================
+> > 
+> > The kernel is randomly returning short reads *with different lengths*
+> > that are vaguely around PAGE_SIZE, no matter how big the buffer
+> > supplied by userspace is. And while repeated read() calls will return
+> > consistent state thanks to the seqfile magic, repeated readfile()
+> > calls will probably return garbage with half-complete lines.
+> 
+> Ah crap, I forgot about seqfile, I was only considering the "simple"
+> cases that sysfs provides.
+> 
+> Ok, Miklos, you were totally right, I'll loop and read until the end of
+> file or buffer, which ever comes first.
 
-> On 3/3/20 4:18 PM, Eric W. Biederman wrote:
->> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
->>> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
->>> new file mode 100644
->>> index 0000000..6d8a048
->>> --- /dev/null
->>> +++ b/tools/testing/selftests/ptrace/vmaccess.c
->>> @@ -0,0 +1,66 @@
->>> +// SPDX-License-Identifier: GPL-2.0+
->>> +/*
->>> + * Copyright (c) 2020 Bernd Edlinger <bernd.edlinger@hotmail.de>
->>> + * All rights reserved.
->>> + *
->>> + * Check whether /proc/$pid/mem can be accessed without causing deadlocks
->>> + * when de_thread is blocked with ->cred_guard_mutex held.
->>> + */
->>> +
->>> +#include "../kselftest_harness.h"
->>> +#include <stdio.h>
->>> +#include <fcntl.h>
->>> +#include <pthread.h>
->>> +#include <signal.h>
->>> +#include <unistd.h>
->>> +#include <sys/ptrace.h>
->>> +
->>> +static void *thread(void *arg)
->>> +{
->>> +	ptrace(PTRACE_TRACEME, 0, 0L, 0L);
->>> +	return NULL;
->>> +}
->>> +
->>> +TEST(vmaccess)
->>> +{
->>> +	int f, pid = fork();
->>> +	char mm[64];
->>> +
->>> +	if (!pid) {
->>> +		pthread_t pt;
->>> +
->>> +		pthread_create(&pt, NULL, thread, NULL);
->>> +		pthread_join(pt, NULL);
->>> +		execlp("true", "true", NULL);
->>> +	}
->>> +
->>> +	sleep(1);
->>> +	sprintf(mm, "/proc/%d/mem", pid);
->>> +	f = open(mm, O_RDONLY);
->>> +	ASSERT_LE(0, f);
->>> +	close(f);
->>> +	f = kill(pid, SIGCONT);
->>> +	ASSERT_EQ(0, f);
->>> +}
->>> +
->>> +TEST(attach)
->>> +{
->>> +	int f, pid = fork();
->>> +
->>> +	if (!pid) {
->>> +		pthread_t pt;
->>> +
->>> +		pthread_create(&pt, NULL, thread, NULL);
->>> +		pthread_join(pt, NULL);
->>> +		execlp("true", "true", NULL);
->>> +	}
->>> +
->>> +	sleep(1);
->>> +	f = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
->> 
->> To be meaningful this code needs to learn to loop when
->> ptrace returns -EAGAIN.
->> 
->> Because that is pretty much what any self respecting user space
->> process will do.
->> 
->> At which point I am not certain we can say that the behavior has
->> sufficiently improved not to be a deadlock.
->> 
->
-> In this special dead-duck test it won't work, but it would
-> still be lots more transparent what is going on, since previously
-> you had two zombie process, and no way to even output debug
-> messages, which also all self respecting user space processes
-> should do.
+Hm, nope, this works just fine with the single "read" call.  I can read
+/proc/self/maps with a single buffer, also larger files like
+/sys/kernel/debug/usb/devices work just fine.
 
-Agreed it is more transparent.  So if you are going to deadlock
-it is better.
+So maybe it is all sane without a loop.
 
-My previous proposal (which I admit is more work to implement) would
-actually allow succeeding in this case and so it would not be subject to
-a dead lock (even via -EGAIN) at this point.
+I'll try to get rid of the fd now, and despite the interest in io_uring,
+this might be a lot more "simple" overall.
 
-> So yes, I can at least give a good example and re-try it several
-> times together with wait4 which a tracer is expected to do.
+thanks,
 
-Thank you,
-
-Eric
+greg k-h
