@@ -2,69 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 774C9176A32
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 02:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B660176AA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 03:26:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgCCBtF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 20:49:05 -0500
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:41998 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbgCCBtF (ORCPT
+        id S1727067AbgCCC0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 21:26:52 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37299 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbgCCC0v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 20:49:05 -0500
-Received: by mail-lj1-f173.google.com with SMTP id q19so743725ljp.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 17:49:03 -0800 (PST)
+        Mon, 2 Mar 2020 21:26:51 -0500
+Received: by mail-pf1-f196.google.com with SMTP id p14so669751pfn.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 18:26:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mirlab-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=r/4TK4RpSOsZG1KYz157/rVP7bhcgbrwMq9gvsQBpSE=;
-        b=WOqssWS1QIrJEQysDIBeZnlnC3TVwM/clsfKrxa8W0mlF8iDgI38/oJxklFjEPhBjj
-         yjFmIcnmIvpI6ZWY1mOXnU2uHLBOxE/dkUta7wYvUHOnjlLF9yyjEY6ZdKT07/uGftqX
-         Z+be1jpr3yHB0zguCDZwbByH3OeRMMBqTR+z3yYszh16NwM8kC5zNkYDApeKRrjiGqXY
-         BrVQ9xfOyXVFjP0SCr/6wL/Wrpi1EH2iNtqFg6RoEwZg6+40O4GI96r6rvbIP0kb7td4
-         GgnK2BqbEtwzUuXLfFQww+/0M/bC8NEFqDhKDrRu9ZRoA/5U/0D9C32dVAthX2kKMzEq
-         07vQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uuCIfBrJnhC2RWZ3b46zhSPALaCgRQ8Eg5B/pVuFDGA=;
+        b=cZpK/HtsEcWQ/CTSUQ1ubLYsVROBY8QOJEFoLwD66YBoteVTZuqDc2IoIDVno0Al7C
+         SCXMT7VYKs9/cnCjAXky2ULLkm0bntcqMWmtEFYaHImX5ZSCHtkI/WzDqQTmEhiLLchm
+         ut6E8bdbRO0GJnMDZkms29ClVRGdfGh2pMejQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=r/4TK4RpSOsZG1KYz157/rVP7bhcgbrwMq9gvsQBpSE=;
-        b=DUqXDORTXXwaV9KLZi9T5qpxKcVowxwjS4ODtnMOH1NZSNXaHpNdm9+4T/c/bJkP8Q
-         Z6XA4ZxhlltGpnc5josd84d9/BLwwZKWcR+SS0PL8Sp3qBi7IzKM5vE7BleiMDlGuLqf
-         9D5fvL1B8urs9aEBDR7ey+CoRZ/AMC0UJxMoTgX8GRjuc5TLCpcXsyC5nP14DwRcars4
-         zTXNcU9UbYwV2rjf6Ia4FS3A8e4JAvZtxOGVPgtpgasLvlnvCPahiD0bJ8Rw6PrvGmdN
-         C3gkNCuGDL9tvnB1jsn30Ai598M8/uy3WewXyJnpLjjmLjXoL7loe9xQb6BnilLVMaa2
-         coQg==
-X-Gm-Message-State: ANhLgQ3hKRhS6cHwW5vWRvI+wzMMwRcxAsN32XWLFvRYcNqOHCUb8Ts8
-        2HujfRtY46ziMspO7jh5oLRQKuGz/L90n8NrSK0oyg==
-X-Google-Smtp-Source: ADFU+vsEiDn/HoUUhMS6Uzq8YFYaGK1WeU3lCbywAsX4x/xp9zTRrFFSVOmzBWmSwyb8aEOOykO6+y7m2/NBWC3IVAg=
-X-Received: by 2002:a2e:99cc:: with SMTP id l12mr660926ljj.271.1583200142999;
- Mon, 02 Mar 2020 17:49:02 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uuCIfBrJnhC2RWZ3b46zhSPALaCgRQ8Eg5B/pVuFDGA=;
+        b=H/tChzvDXlLQPmld5+l2R8kymCmyudQ6e1/iqF12Au6FhfrNtnyJaJ85UtfZ5xe3Fi
+         HONnO0l6JhDcdZZ8o/SIe7bhvPg8kgwQgcqPSVHx95SbboTsTXhUc0NADZM7u8ooavFv
+         r9NAYiYdNBvJ72acfrOPTuD3rn6+BDjjfJ4IZSusqtp8tllWBfu4SPPb/CldpOiCaeH8
+         aWH6v7zqurmnPuOffU+ooCRGt4dTFc31Qt9yek8DZno5r/Y7Khnteqhb5A1pbSwJRr3V
+         mPh5fLfuxU7zG72vN2IMDQ8Qo1exO229rbuFTWIKx+6JEeA/MZ3jzlQ6Tn5g1Abzxb0Q
+         XWFw==
+X-Gm-Message-State: ANhLgQ1HObQDwi8YsFTNbbLgWibFHuab87xVgiJX/n1ICTrjrCFkoLO2
+        D8QVdRfbKDHDC97PGnFXqHOQdw==
+X-Google-Smtp-Source: ADFU+vvlcm87xXubPEMs3IXv/wlZn0X627KVNbEgL+NdE0Sm9XRM6huUjL2wvS3j84kucVc1XqEGfw==
+X-Received: by 2002:a62:f94d:: with SMTP id g13mr1940932pfm.60.1583202410115;
+        Mon, 02 Mar 2020 18:26:50 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id ay10sm449077pjb.37.2020.03.02.18.26.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 18:26:49 -0800 (PST)
+Date:   Mon, 2 Mar 2020 18:26:47 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv4] exec: Fix a deadlock in ptrace
+Message-ID: <202003021531.C77EF10@keescook>
+References: <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
+ <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
-References: <CAB3eZfv4VSj6_XBBdHK12iX_RakhvXnTCFAmQfwogR34uySo3Q@mail.gmail.com>
- <20200302103754.nsvtne2vvduug77e@yavin> <20200302104741.b5lypijqlbpq5lgz@yavin>
-In-Reply-To: <20200302104741.b5lypijqlbpq5lgz@yavin>
-From:   lampahome <pahome.chen@mirlab.org>
-Date:   Tue, 3 Mar 2020 09:48:50 +0800
-Message-ID: <CAB3eZfuAXaT4YTBSZ4sGe=NP8=71OT8wu7zXMzOjkd4NzjtXag@mail.gmail.com>
-Subject: Re: why do we need utf8 normalization when compare name?
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Sorry, a better example would've been "=C3=B1" (U+00F1). You can also
-> represent it as "n" (U+006E) followed by "=E2=97=8C=CC=83" (U+0303 -- "co=
-mbining
-> tilde"). Both forms are defined by Unicode to be canonically equivalent
-> so it would be incorrect to treat the two Unicode strings differently
-> (that isn't quite the case for "=C3=85").
+On Mon, Mar 02, 2020 at 10:18:07PM +0000, Bernd Edlinger wrote:
+> This fixes a deadlock in the tracer when tracing a multi-threaded
+> application that calls execve while more than one thread are running.
+> 
+> I observed that when running strace on the gcc test suite, it always
+> blocks after a while, when expect calls execve, because other threads
+> have to be terminated.  They send ptrace events, but the strace is no
+> longer able to respond, since it is blocked in vm_access.
+> 
+> The deadlock is always happening when strace needs to access the
+> tracees process mmap, while another thread in the tracee starts to
+> execve a child process, but that cannot continue until the
+> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+> 
+> strace          D    0 30614  30584 0x00000000
+> Call Trace:
+> __schedule+0x3ce/0x6e0
+> schedule+0x5c/0xd0
+> schedule_preempt_disabled+0x15/0x20
+> __mutex_lock.isra.13+0x1ec/0x520
+> __mutex_lock_killable_slowpath+0x13/0x20
+> mutex_lock_killable+0x28/0x30
+> mm_access+0x27/0xa0
+> process_vm_rw_core.isra.3+0xff/0x550
+> process_vm_rw+0xdd/0xf0
+> __x64_sys_process_vm_readv+0x31/0x40
+> do_syscall_64+0x64/0x220
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> expect          D    0 31933  30876 0x80004003
+> Call Trace:
+> __schedule+0x3ce/0x6e0
+> schedule+0x5c/0xd0
+> flush_old_exec+0xc4/0x770
+> load_elf_binary+0x35a/0x16c0
+> search_binary_handler+0x97/0x1d0
+> __do_execve_file.isra.40+0x5d4/0x8a0
+> __x64_sys_execve+0x49/0x60
+> do_syscall_64+0x64/0x220
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> The proposed solution is to take the cred_guard_mutex only
+> in a critical section at the beginning, and at the end of the
+> execve function, and let PTRACE_ATTACH fail with EAGAIN while
+> execve is not complete, but other functions like vm_access are
+> allowed to complete normally.
 
-So utf8-normalize will convert  "=C3=B1" (U+00F1) and "n" (U+006E) followed
-by "=E2=97=8C=CC=83" to a utf8 code, and both are the same, right?
-Then compare it byte by byte.
+Sorry to be bummer, but I don't think this will work. A few more things
+during the exec process depend on cred_guard_mutex being held.
+
+If I'm reading this patch correctly, this changes the lifetime of the
+cred_guard_mutex lock to be:
+	- during prepare_bprm_creds()
+	- from flush_old_exec() through install_exec_creds()
+Before, cred_guard_mutex was held from prepare_bprm_creds() through
+install_exec_creds().
+
+That means, for example, that check_unsafe_exec()'s documented invariant
+is violated:
+    /*
+     * determine how safe it is to execute the proposed program
+     * - the caller must hold ->cred_guard_mutex to protect against
+     *   PTRACE_ATTACH or seccomp thread-sync
+     */
+    static void check_unsafe_exec(struct linux_binprm *bprm) ...
+which is looking at no_new_privs as well as other details, and making
+decisions about the bprm state from the current state.
+
+I think it also means that the potentially multiple invocations
+of bprm_fill_uid() (via prepare_binprm() via binfmt_script.c and
+binfmt_misc.c) would be changing bprm->cred details (uid, gid) without
+a lock (another place where current's no_new_privs is evaluated).
+
+Related, it also means that cred_guard_mutex is unheld for every
+invocation of search_binary_handler() (which can loop via the previously
+mentioned binfmt_script.c and binfmt_misc.c), if any of them have hidden
+dependencies on cred_guard_mutex. (Thought I only see bprm_fill_uid()
+currently.)
+
+For seccomp, the expectations about existing thread states risks races
+too. There are two locks held for TSYNC:
+- current->sighand->siglock is held to keep new threads from
+  appearing/disappearing, which would destroy filter refcounting and
+  lead to memory corruption.
+- cred_guard_mutex is held to keep no_new_privs in sync with filters to
+  avoid no_new_privs and filter confusion during exec, which could
+  lead to exploitable setuid conditions (see below).
+
+Just racing a malicious thread during TSYNC is not a very strong
+example (a malicious thread could do lots of fun things to "current"
+before it ever got near calling TSYNC), but I think there is the risk
+of mismatched/confused states that we don't want to allow. One is a
+particularly bad state that could lead to privilege escalations (in the
+form of the old "sendmail doesn't check setuid" flaw; if a setuid process
+has a filter attached that silently fails a priv-dropping setuid call
+and continues execution with elevated privs, it can be tricked into
+doing bad things on behalf of the unprivileged parent, which was the
+primary goal of the original use of cred_guard_mutex with TSYNC[1]):
+
+thread A clones thread B
+thread B starts setuid exec
+thread A sets no_new_privs
+thread A calls seccomp with TSYNC
+thread A in seccomp_sync_threads() sets seccomp filter on self and thread B
+thread B passes check_unsafe_exec() with no_new_privs unset
+thread B reaches bprm_fill_uid() with no_new_privs unset and gains privs
+thread A still in seccomp_sync_threads() sets no_new_privs on thread B
+thread B finishes exec, now running with elevated privs, a filter chosen
+         by thread A, _and_ nnp set (which doesn't matter)
+
+With the original locking, thread B will fail check_unsafe_exec()
+because filter and nnp state are changed together, with "atomicity"
+protected by the cred_guard_mutex.
+
+And this is just the bad state I _can_ see. I'm worried there are more...
+
+All this said, I do see a small similarity here to the work I did to
+stabilize stack rlimits (there was an ongoing problem with making multiple
+decisions for the bprm based on current's state -- but current's state
+was mutable during exec). For this, I saved rlim_stack to bprm and ignored
+current's copy until exec ended and then stored bprm's copy into current.
+If the only problem anyone can see here is the handling of no_new_privs,
+we might be able to solve that similarly, at least disentangling tsync/nnp
+from cred_guard_mutex.
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/20140625142121.GD7892@redhat.com/
+
+-- 
+Kees Cook
