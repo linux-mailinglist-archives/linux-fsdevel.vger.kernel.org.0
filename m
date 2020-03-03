@@ -2,218 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A6D1782D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 20:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB121782E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 20:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbgCCTHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 14:07:44 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:46002 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730355AbgCCTHn (ORCPT
+        id S1730658AbgCCTKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 14:10:46 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44592 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbgCCTKq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 14:07:43 -0500
-Received: by mail-il1-f193.google.com with SMTP id p8so3740840iln.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 11:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zXPZ9A67qwmOg7igLgXKoR5AdobcYJckvv+S7pUuvQY=;
-        b=RVsmivnszCvULa3sdd8ZiSiDR7on5w6WX87+33rE5AEVBNk6MRJYP3fph1RK0dq+3I
-         PVYA/XQHyd3jA2zktgFe/M7Qbb9zXtDddA2swswtnomhrCjOq1d8+gEwvnEPYDJRJ8Hy
-         8JAFgDr6sr5vVhYetEB6vikYsVX0y6X8imD4xpPqEEwM385D86VL2YFIrkdROv3op8EI
-         RqLYvEXKZ5EdLAqOCJMvPwKWvxqm+EHR8AN9xZ4V9RbQ5lXzgOPH/ZZupOsi6NUuxu6R
-         R9EXa1SrOzS+QluyNBtjXUjtrkegqlVnnacCTudR/qKi8MBDZ6BVjtCMR61tFgIG1n3/
-         iXig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zXPZ9A67qwmOg7igLgXKoR5AdobcYJckvv+S7pUuvQY=;
-        b=rQjWuP6UZ/S5nAIQP65vF9DSHqE41cri7go3IDEUskS2CyIftEvI1XKbca/6A/MHGE
-         Q9/0SGSOaK+4mY+ife6rPpFW6XNYPIvIqTSWMFitqJRH/BZIo4EM2RtidFYG3H8DaBFJ
-         VfXad0mFiupPE47yJoYb38hxuCOAu7frj2SOPnXR5tZZNS9Zf6bh+EwoVnOKzleeJI2W
-         ovNoOzElpWrtFa5SuK9ljdObFFniD6tPXJCqUQXkSArj27QMwIJdYGN6z9IkIBV8Pwe+
-         2QK6yslXqvLW2Eb+PTAm96QEzsEpsxvYJ4Pn4kdvgXTMQL3t69yLP5uJOPxM/oUGLTmt
-         W0cw==
-X-Gm-Message-State: ANhLgQ1Dprgz3S5RGmXManlU546LeV9/VPaDOYiuOHGyPPC/Wm68c3Wg
-        EBnC+nuC39vGXnwvYK1VWqo3hA==
-X-Google-Smtp-Source: ADFU+vuQjHxyW/mK7WjwkVP659P3n5h/bmVjdQMY9rkFbwUjk2zxIIY5IPzahRooNGOex1K/NE8Z9g==
-X-Received: by 2002:a92:7e9d:: with SMTP id q29mr6105954ill.29.1583262460436;
-        Tue, 03 Mar 2020 11:07:40 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id j78sm5446799ili.37.2020.03.03.11.07.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2020 11:07:39 -0800 (PST)
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-To:     Jeff Layton <jlayton@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk>
- <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
- <20200303113814.rsqhljkch6tgorpu@ws.net.home>
- <20200303130347.GA2302029@kroah.com> <20200303131434.GA2373427@kroah.com>
- <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
- <20200303134316.GA2509660@kroah.com> <20200303141030.GA2811@kroah.com>
- <CAG48ez3Z2V8J7dpO6t8nw7O2cMJ6z8vwLZXLAoKGH3OnCb-7JQ@mail.gmail.com>
- <20200303142407.GA47158@kroah.com>
- <030888a2-db3e-919d-d8ef-79dcc10779f9@kernel.dk>
- <acb1753c78a019fb0d54ba29077cef144047f70f.camel@kernel.org>
- <7a05adc8-1ca9-c900-7b24-305f1b3a9b86@kernel.dk>
- <dbb06c63c17c23fcacdd99e8b2266804ee39ffe5.camel@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5394c5c4-aeb8-97d5-8347-e763a1abd9ed@kernel.dk>
-Date:   Tue, 3 Mar 2020 12:07:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 3 Mar 2020 14:10:46 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023Ir0pJ186991;
+        Tue, 3 Mar 2020 19:10:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=itPWarMeQA3WmAwT6OL429iQpx9zdaE7TABEZnL1AeY=;
+ b=oGUxG/wye0sJ7/60kqz5tDpZV6ld71MSDmMepDYW2PdPff3FWmMnqtrzpMeRY2S/iolL
+ UGLQl9AU2nyuspF6EN9P2Jgv6TXQK/ZjxtIlyOTXGwTTPaRivx9kqTSqcknTnKM4ycnS
+ XSp7QABER8uQwSmS6jPnu8SPWM6pK11AyU0j53wHnvZ/knr1ZOUHQSk1B9kgnxyL41Vk
+ HhrewsDsOP6+A2KOJ/RN71PDSTANb9penoNJzozj/Y9eekZ9Nevokak5HcH4GR6lHvDF
+ nrnAdpfHT/Kk2aS0Hv2rTPdTj7SuAlfq935rPOR4zU0c4m1Yf0PJzfgBC0mLGtIqSOrC NQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2yghn356pq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 19:10:27 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023Iqg3F124836;
+        Tue, 3 Mar 2020 19:10:27 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2yg1rmwtyb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Mar 2020 19:10:26 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 023JAOS7006589;
+        Tue, 3 Mar 2020 19:10:25 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Mar 2020 11:10:24 -0800
+Date:   Tue, 3 Mar 2020 11:10:23 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     domenico.andreoli@linux.com, mkleinsoft@gmail.com, hch@lst.de,
+        akpm@linux-foundation.org, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, viro@zeniv.linux.org.uk
+Subject: [PATCH] vfs: partially revert "don't allow writes to swap files"
+Message-ID: <20200303191023.GD8037@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <dbb06c63c17c23fcacdd99e8b2266804ee39ffe5.camel@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=940
+ suspectscore=0 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003030124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003030124
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/3/20 12:02 PM, Jeff Layton wrote:
-> On Tue, 2020-03-03 at 09:55 -0700, Jens Axboe wrote:
->> On 3/3/20 9:51 AM, Jeff Layton wrote:
->>> On Tue, 2020-03-03 at 08:44 -0700, Jens Axboe wrote:
->>>> On 3/3/20 7:24 AM, Greg Kroah-Hartman wrote:
->>>>> On Tue, Mar 03, 2020 at 03:13:26PM +0100, Jann Horn wrote:
->>>>>> On Tue, Mar 3, 2020 at 3:10 PM Greg Kroah-Hartman
->>>>>> <gregkh@linuxfoundation.org> wrote:
->>>>>>> On Tue, Mar 03, 2020 at 02:43:16PM +0100, Greg Kroah-Hartman wrote:
->>>>>>>> On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
->>>>>>>>> On Tue, Mar 3, 2020 at 2:14 PM Greg Kroah-Hartman
->>>>>>>>> <gregkh@linuxfoundation.org> wrote:
->>>>>>>>>
->>>>>>>>>>> Unlimited beers for a 21-line kernel patch?  Sign me up!
->>>>>>>>>>>
->>>>>>>>>>> Totally untested, barely compiled patch below.
->>>>>>>>>>
->>>>>>>>>> Ok, that didn't even build, let me try this for real now...
->>>>>>>>>
->>>>>>>>> Some comments on the interface:
->>>>>>>>
->>>>>>>> Ok, hey, let's do this proper :)
->>>>>>>
->>>>>>> Alright, how about this patch.
->>>>>>>
->>>>>>> Actually tested with some simple sysfs files.
->>>>>>>
->>>>>>> If people don't strongly object, I'll add "real" tests to it, hook it up
->>>>>>> to all arches, write a manpage, and all the fun fluff a new syscall
->>>>>>> deserves and submit it "for real".
->>>>>>
->>>>>> Just FYI, io_uring is moving towards the same kind of thing... IIRC
->>>>>> you can already use it to batch a bunch of open() calls, then batch a
->>>>>> bunch of read() calls on all the new fds and close them at the same
->>>>>> time. And I think they're planning to add support for doing
->>>>>> open()+read()+close() all in one go, too, except that it's a bit
->>>>>> complicated because passing forward the file descriptor in a generic
->>>>>> way is a bit complicated.
->>>>>
->>>>> It is complicated, I wouldn't recommend using io_ring for reading a
->>>>> bunch of procfs or sysfs files, that feels like a ton of overkill with
->>>>> too much setup/teardown to make it worth while.
->>>>>
->>>>> But maybe not, will have to watch and see how it goes.
->>>>
->>>> It really isn't, and I too thinks it makes more sense than having a
->>>> system call just for the explicit purpose of open/read/close. As Jann
->>>> said, you can't currently do a linked sequence of open/read/close,
->>>> because the fd passing between them isn't done. But that will come in
->>>> the future. If the use case is "a bunch of files", then you could
->>>> trivially do "open bunch", "read bunch", "close bunch" in three separate
->>>> steps.
->>>>
->>>> Curious what the use case is for this that warrants a special system
->>>> call?
->>>>
->>>
->>> Agreed. I'd really rather see something more general-purpose than the
->>> proposed readfile(). At least with NFS and SMB, you can compound
->>> together fairly arbitrary sorts of operations, and it'd be nice to be
->>> able to pattern calls into the kernel for those sorts of uses.
->>>
->>> So, NFSv4 has the concept of a current_stateid that is maintained by the
->>> server. So basically you can do all this (e.g.) in a single compound:
->>>
->>> open <some filehandle get a stateid>
->>> write <using that stateid>
->>> close <same stateid>
->>>
->>> It'd be nice to be able to do something similar with io_uring. Make it
->>> so that when you do an open, you set the "current fd" inside the
->>> kernel's context, and then be able to issue io_uring requests that
->>> specify a magic "fd" value that use it.
->>>
->>> That would be a really useful pattern.
->>
->> For io_uring, you can link requests that you submit into a chain. Each
->> link in the chain is done in sequence. Which means that you could do:
->>
->> <open some file><read from that file><close that file>
->>
->> in a single sequence. The only thing that is missing right now is a way
->> to have the return of that open propagated to the 'fd' of the read and
->> close, and it's actually one of the topics to discuss at LSFMM next
->> month.
->>
->> One approach would be to use BPF to handle this passing, another
->> suggestion has been to have the read/close specify some magic 'fd' value
->> that just means "inherit fd from result of previous". The latter sounds
->> very close to the stateid you mention above, and the upside here is that
->> it wouldn't explode the necessary toolchain to need to include BPF.
->>
->> In other words, this is really close to being reality and practically
->> feasible.
->>
-> 
-> Excellent.
-> 
-> Yes, the latter is exactly what I had in mind for this. I suspect that
-> that would cover a large fraction of the potential use-cases for this.
-> 
-> Basically, all you'd need to do is keep a pointer to struct file in the
-> internal state for the chain. Then, allow userland to specify some magic
-> fd value for subsequent chained operations that says to use that instead
-> of consulting the fdtable. Maybe use -4096 (-MAX_ERRNO - 1)?
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-Yeah I think that'd be a suitable way to signal that.
+In commit dc617f29dbe5 we tried to prevent userspace programs from
+writing to active swap devices.  However, it turns out that userspace
+hibernation requires the ability to write the hibernation image to a
+swap device, so revert the write path checks.
 
-> That would cover the smb or nfs server sort of use cases, I think. For
-> the sysfs cases, I guess you'd need to dispatch several chains, but that
-> doesn't sound _too_ onerous.
+Fixes: dc617f29dbe5 ("vfs: don't allow writes to swap files")
+Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
+Reported-by: Marian Klein <mkleinsoft@gmail.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ fs/block_dev.c |    3 ---
+ mm/filemap.c   |    3 ---
+ mm/memory.c    |    4 ----
+ mm/mmap.c      |    8 ++------
+ 4 files changed, 2 insertions(+), 16 deletions(-)
 
-The magic fd would be per-chain, so doing multiple chains wouldn't
-really matter at all.
-
-Let me try and hack this up, should be pretty trivial.
-
-> In fact, with that you should even be able to emulate the proposed
-> readlink syscall in a userland library.
-
-Exactly
-
--- 
-Jens Axboe
-
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 69bf2fb6f7cd..08b088dac1f0 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -2001,9 +2001,6 @@ ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (bdev_read_only(I_BDEV(bd_inode)))
+ 		return -EPERM;
+ 
+-	if (IS_SWAPFILE(bd_inode))
+-		return -ETXTBSY;
+-
+ 	if (!iov_iter_count(from))
+ 		return 0;
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1784478270e1..d1b8cd15b2bf 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2920,9 +2920,6 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	loff_t count;
+ 	int ret;
+ 
+-	if (IS_SWAPFILE(inode))
+-		return -ETXTBSY;
+-
+ 	if (!iov_iter_count(from))
+ 		return 0;
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index 0bccc622e482..e908490f7034 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2357,10 +2357,6 @@ static vm_fault_t do_page_mkwrite(struct vm_fault *vmf)
+ 
+ 	vmf->flags = FAULT_FLAG_WRITE|FAULT_FLAG_MKWRITE;
+ 
+-	if (vmf->vma->vm_file &&
+-	    IS_SWAPFILE(vmf->vma->vm_file->f_mapping->host))
+-		return VM_FAULT_SIGBUS;
+-
+ 	ret = vmf->vma->vm_ops->page_mkwrite(vmf);
+ 	/* Restore original flags so that caller is not surprised */
+ 	vmf->flags = old_flags;
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d681a20eb4ea..77d086139e13 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1461,12 +1461,8 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 		case MAP_SHARED_VALIDATE:
+ 			if (flags & ~flags_mask)
+ 				return -EOPNOTSUPP;
+-			if (prot & PROT_WRITE) {
+-				if (!(file->f_mode & FMODE_WRITE))
+-					return -EACCES;
+-				if (IS_SWAPFILE(file->f_mapping->host))
+-					return -ETXTBSY;
+-			}
++			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
++				return -EACCES;
+ 
+ 			/*
+ 			 * Make sure we don't allow writing to an append-only
