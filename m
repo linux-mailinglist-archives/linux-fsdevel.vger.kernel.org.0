@@ -2,195 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D17C5177957
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:42:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90005177A47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 16:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbgCCOky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 09:40:54 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33211 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbgCCOkx (ORCPT
+        id S1729843AbgCCPVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 10:21:12 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:51874 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbgCCPVL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:40:53 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a20so3230227otl.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 06:40:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/mBWi97cRQrHShTl1wrJlc6BFZ2cxgJKMQ2xHrdnm0o=;
-        b=CrqZYCge8xKex30AAOHdpb0X5fD036JnHc2WvUXS0REQgZ4bU3rWlAlHCJ7350y6/q
-         Vlc0QA4cUYJ6GGYyIHxmwoQuxu9rZ3SV7ScZsy460bxcGCTSmhH0znlPJ8ioY1vCqu3f
-         pKvh7iLZb4C7L6aGAl/AmTDdazhseXNLBtvB3zKNBDckQmes2vUe9LmZBay+1fSBICiJ
-         dZ+P5ZDkHh9H7JYdpds2XJ4Wgqbk4fXxUHh5UGbZQ2qy8Oy7jfxZAgQEnrcLsk/vt+IL
-         XqvrpfzAP/USd+K1viA+k9OwkXLq2EwdIKML34OB8ZWksYGLjRuXZvCSjdYu1mOIwtjq
-         4JDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/mBWi97cRQrHShTl1wrJlc6BFZ2cxgJKMQ2xHrdnm0o=;
-        b=OPn/A+QoIH9UCw2Ea8Tb15pliV2Yjvw18yVyhc5pCxu5Eqy9UsNG6949JmMDZIGsOf
-         LbVo6JkguBcxuir3As4Jdr3n6j6CpNg7Vg/Nhr6a6dwnTXwnWRRITThXeeJ+gNvR0r3M
-         FoFfrtsGyom3rXwW+rCa3n8YgDcr8OrD/3YCaEeXocjc390gWlg14qirSJ58ovzwdKjG
-         FOY96OYWwgc1fwLLG3oodnoZi6e7rpcO0JOPikx5zQkfVvAxETqLOxXvLVduVFLZbpyK
-         im2LbJJ/d2ERpiM8IRI6Yv26PUGDV2l5xZKePQUrqR3lrGOhAy+odSvo+6o6KzVRwke0
-         ZzeA==
-X-Gm-Message-State: ANhLgQ2BQvQivEC5wXy4qePvj54leTU7HB972WjN11mcDomaLHNjSE7/
-        KqKTXKGfSS2Vwo000X6ozLKFgNJuXcIoXOPgcr4JCQ==
-X-Google-Smtp-Source: ADFU+vu2yfaWH2buwSbocuTlemn870P5bOwMPwqx/zPpaBU68d+JJKh9qyzCZC8XdU+TPpl8/WgjPAFlQtdumGuIKqM=
-X-Received: by 2002:a05:6830:1d6e:: with SMTP id l14mr3567202oti.32.1583246452097;
- Tue, 03 Mar 2020 06:40:52 -0800 (PST)
-MIME-Version: 1.0
-References: <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
- <20200303113814.rsqhljkch6tgorpu@ws.net.home> <20200303130347.GA2302029@kroah.com>
- <20200303131434.GA2373427@kroah.com> <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
- <20200303134316.GA2509660@kroah.com> <CAJfpegtFyZqSRzo3uuXp1S2_jJJ29DL=xAwKjpEGvyG7=AzabA@mail.gmail.com>
- <20200303142958.GB47158@kroah.com>
-In-Reply-To: <20200303142958.GB47158@kroah.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 3 Mar 2020 15:40:24 +0100
-Message-ID: <CAG48ez1sdUJzp85oqBw8vCpc3E4Sb26M9pj2zHhnKpb-1+f4vg@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>,
+        Tue, 3 Mar 2020 10:21:11 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j99Lt-0008Dj-DE; Tue, 03 Mar 2020 08:20:57 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j99Ls-00074l-Ha; Tue, 03 Mar 2020 08:20:57 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
         David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74zmfc9.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87k142lpfz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <875zfmloir.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nmjulm.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <202003021531.C77EF10@keescook>
+        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Tue, 03 Mar 2020 09:18:44 -0600
+In-Reply-To: <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Tue, 3 Mar 2020 13:02:51 +0000")
+Message-ID: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1j99Ls-00074l-Ha;;;mid=<87v9nlii0b.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19rGY6nP+Gy6pmv+g93hLTd2evDLDDhunA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=8.0 tests=ALL_TRUSTED,BAYES_40,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+        *      [score: 0.3807]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 400 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.4 (0.6%), b_tie_ro: 1.67 (0.4%), parse: 0.86
+        (0.2%), extract_message_metadata: 9 (2.3%), get_uri_detail_list: 1.73
+        (0.4%), tests_pri_-1000: 14 (3.5%), tests_pri_-950: 0.99 (0.2%),
+        tests_pri_-900: 0.84 (0.2%), tests_pri_-90: 36 (8.9%), check_bayes: 35
+        (8.6%), b_tokenize: 11 (2.7%), b_tok_get_all: 13 (3.3%), b_comp_prob:
+        2.4 (0.6%), b_tok_touch_all: 5 (1.3%), b_finish: 0.61 (0.2%),
+        tests_pri_0: 327 (81.7%), check_dkim_signature: 0.47 (0.1%),
+        check_dkim_adsp: 2.3 (0.6%), poll_dns_idle: 0.87 (0.2%), tests_pri_10:
+        1.70 (0.4%), tests_pri_500: 5.0 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 3:30 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Tue, Mar 03, 2020 at 03:10:50PM +0100, Miklos Szeredi wrote:
-> > On Tue, Mar 3, 2020 at 2:43 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
-> >
-> > > > If buffer is too small to fit the whole file, return error.
-> > >
-> > > Why?  What's wrong with just returning the bytes asked for?  If someone
-> > > only wants 5 bytes from the front of a file, it should be fine to give
-> > > that to them, right?
-> >
-> > I think we need to signal in some way to the caller that the result
-> > was truncated (see readlink(2), getxattr(2), getcwd(2)), otherwise the
-> > caller might be surprised.
->
-> But that's not the way a "normal" read works.  Short reads are fine, if
-> the file isn't big enough.  That's how char device nodes work all the
-> time as well, and this kind of is like that, or some kind of "stream" to
-> read from.
->
-> If you think the file is bigger, then you, as the caller, can just pass
-> in a bigger buffer if you want to (i.e. you can stat the thing and
-> determine the size beforehand.)
->
-> Think of the "normal" use case here, a sysfs read with a PAGE_SIZE
-> buffer.  That way userspace "knows" it will always read all of the data
-> it can from the file, we don't have to do any seeking or determining
-> real file size, or anything else like that.
->
-> We return the number of bytes read as well, so we "know" if we did a
-> short read, and also, you could imply, if the number of bytes read are
-> the exact same as the number of bytes of the buffer, maybe the file is
-> either that exact size, or bigger.
->
-> This should be "simple", let's not make it complex if we can help it :)
->
-> > > > Verify that the number of bytes read matches the file size, otherwise
-> > > > return error (may need to loop?).
-> > >
-> > > No, we can't "match file size" as sysfs files do not really have a sane
-> > > "size".  So I don't want to loop at all here, one-shot, that's all you
-> > > get :)
-> >
-> > Hmm.  I understand the no-size thing.  But looping until EOF (i.e.
-> > until read return zero) might be a good idea regardless, because short
-> > reads are allowed.
->
-> If you want to loop, then do a userspace open/read-loop/close cycle.
-> That's not what this syscall should be for.
->
-> Should we call it: readfile-only-one-try-i-hope-my-buffer-is-big-enough()?  :)
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
-So how is this supposed to work in e.g. the following case?
+> This fixes a deadlock in the tracer when tracing a multi-threaded
+> application that calls execve while more than one thread are running.
+>
+> I observed that when running strace on the gcc test suite, it always
+> blocks after a while, when expect calls execve, because other threads
+> have to be terminated.  They send ptrace events, but the strace is no
+> longer able to respond, since it is blocked in vm_access.
+>
+> The deadlock is always happening when strace needs to access the
+> tracees process mmap, while another thread in the tracee starts to
+> execve a child process, but that cannot continue until the
+> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
 
-========================================
-$ cat map_lots_and_read_maps.c
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
+A couple of things.
 
-int main(void) {
-  for (int i=0; i<1000; i++) {
-    mmap(NULL, 0x1000, (i&1)?PROT_READ:PROT_NONE,
-MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-  }
-  int maps = open("/proc/self/maps", O_RDONLY);
-  static char buf[0x100000];
-  int res;
-  do {
-    res = read(maps, buf, sizeof(buf));
-  } while (res > 0);
-}
-$ gcc -o map_lots_and_read_maps map_lots_and_read_maps.c
-$ strace -e trace='!mmap' ./map_lots_and_read_maps
-execve("./map_lots_and_read_maps", ["./map_lots_and_read_maps"],
-0x7ffebd297ac0 /* 51 vars */) = 0
-brk(NULL)                               = 0x563a1184f000
-access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
-openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-fstat(3, {st_mode=S_IFREG|0644, st_size=208479, ...}) = 0
-close(3)                                = 0
-openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
-read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\320l\2\0\0\0\0\0"...,
-832) = 832
-fstat(3, {st_mode=S_IFREG|0755, st_size=1820104, ...}) = 0
-mprotect(0x7fb5c2d1a000, 1642496, PROT_NONE) = 0
-close(3)                                = 0
-arch_prctl(ARCH_SET_FS, 0x7fb5c2eb6500) = 0
-mprotect(0x7fb5c2eab000, 12288, PROT_READ) = 0
-mprotect(0x563a103e4000, 4096, PROT_READ) = 0
-mprotect(0x7fb5c2f12000, 4096, PROT_READ) = 0
-munmap(0x7fb5c2eb7000, 208479)          = 0
-openat(AT_FDCWD, "/proc/self/maps", O_RDONLY) = 3
-read(3, "563a103e1000-563a103e2000 r--p 0"..., 1048576) = 4075
-read(3, "7fb5c2985000-7fb5c2986000 ---p 0"..., 1048576) = 4067
-read(3, "7fb5c29d8000-7fb5c29d9000 r--p 0"..., 1048576) = 4067
-read(3, "7fb5c2a2b000-7fb5c2a2c000 ---p 0"..., 1048576) = 4067
-read(3, "7fb5c2a7e000-7fb5c2a7f000 r--p 0"..., 1048576) = 4067
-read(3, "7fb5c2ad1000-7fb5c2ad2000 ---p 0"..., 1048576) = 4067
-read(3, "7fb5c2b24000-7fb5c2b25000 r--p 0"..., 1048576) = 4067
-read(3, "7fb5c2b77000-7fb5c2b78000 ---p 0"..., 1048576) = 4067
-read(3, "7fb5c2bca000-7fb5c2bcb000 r--p 0"..., 1048576) = 4067
-read(3, "7fb5c2c1d000-7fb5c2c1e000 ---p 0"..., 1048576) = 4067
-read(3, "7fb5c2c70000-7fb5c2c71000 r--p 0"..., 1048576) = 4067
-read(3, "7fb5c2cc3000-7fb5c2cc4000 ---p 0"..., 1048576) = 4078
-read(3, "7fb5c2eca000-7fb5c2ecb000 r--p 0"..., 1048576) = 2388
-read(3, "", 1048576)                    = 0
-exit_group(0)                           = ?
-+++ exited with 0 +++
-$
-========================================
+Why do we think it is safe to change the behavior exposed to userspace?
+Not the deadlock but all of the times the current code would not
+deadlock?
 
-The kernel is randomly returning short reads *with different lengths*
-that are vaguely around PAGE_SIZE, no matter how big the buffer
-supplied by userspace is. And while repeated read() calls will return
-consistent state thanks to the seqfile magic, repeated readfile()
-calls will probably return garbage with half-complete lines.
+Especially given that this is a small window it might be hard for people
+to track down and report so we need a strong argument that this won't
+break existing userspace before we just change things.
+
+Usually surveying all of the users of a system call that we can find
+and checking to see if they might be affected by the change in behavior
+is difficult enough that we usually opt for not being lazy and
+preserving the behavior.
+
+This patch is up to two changes in behavior now, that could potentially
+affect a whole array of programs.  Adding linux-api so that this change
+in behavior can be documented if/when this change goes through.
+
+If you can split the documentation and test fixes out into separate
+patches that would help reviewing this code, or please make it explicit
+that the your are changing documentation about behavior that is changing
+with this patch.
+
+Eric
+
+> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
+> new file mode 100644
+> index 0000000..6d8a048
+> --- /dev/null
+> +++ b/tools/testing/selftests/ptrace/vmaccess.c
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (c) 2020 Bernd Edlinger <bernd.edlinger@hotmail.de>
+> + * All rights reserved.
+> + *
+> + * Check whether /proc/$pid/mem can be accessed without causing deadlocks
+> + * when de_thread is blocked with ->cred_guard_mutex held.
+> + */
+> +
+> +#include "../kselftest_harness.h"
+> +#include <stdio.h>
+> +#include <fcntl.h>
+> +#include <pthread.h>
+> +#include <signal.h>
+> +#include <unistd.h>
+> +#include <sys/ptrace.h>
+> +
+> +static void *thread(void *arg)
+> +{
+> +	ptrace(PTRACE_TRACEME, 0, 0L, 0L);
+> +	return NULL;
+> +}
+> +
+> +TEST(vmaccess)
+> +{
+> +	int f, pid = fork();
+> +	char mm[64];
+> +
+> +	if (!pid) {
+> +		pthread_t pt;
+> +
+> +		pthread_create(&pt, NULL, thread, NULL);
+> +		pthread_join(pt, NULL);
+> +		execlp("true", "true", NULL);
+> +	}
+> +
+> +	sleep(1);
+> +	sprintf(mm, "/proc/%d/mem", pid);
+> +	f = open(mm, O_RDONLY);
+> +	ASSERT_LE(0, f);
+> +	close(f);
+> +	f = kill(pid, SIGCONT);
+> +	ASSERT_EQ(0, f);
+> +}
+> +
+> +TEST(attach)
+> +{
+> +	int f, pid = fork();
+> +
+> +	if (!pid) {
+> +		pthread_t pt;
+> +
+> +		pthread_create(&pt, NULL, thread, NULL);
+> +		pthread_join(pt, NULL);
+> +		execlp("true", "true", NULL);
+> +	}
+> +
+> +	sleep(1);
+> +	f = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+
+To be meaningful this code needs to learn to loop when
+ptrace returns -EAGAIN.
+
+Because that is pretty much what any self respecting user space
+process will do.
+
+At which point I am not certain we can say that the behavior has
+sufficiently improved not to be a deadlock.
+
+> +	ASSERT_EQ(EAGAIN, errno);
+> +	ASSERT_EQ(f, -1);
+> +	f = kill(pid, SIGCONT);
+> +	ASSERT_EQ(0, f);
+> +}
+> +
+> +TEST_HARNESS_MAIN
+
+Eric
