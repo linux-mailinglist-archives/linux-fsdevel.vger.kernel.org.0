@@ -2,131 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E92C17769C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CFD41776A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:05:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbgCCNDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 08:03:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729249AbgCCNDu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:03:50 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36E6D20866;
-        Tue,  3 Mar 2020 13:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583240629;
-        bh=f5TALLM7M04mw4MFMI6suvBwcBH6Hd4opudh07oYOZ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HGZKD28dn34LE53PY7JnKdnnaep5PxSNdTqI9Rf14XPqJI6mRPHPh6qiVXbKKyccK
-         Cs5GgBp32G+tzfpxv+05TCf4nQAoKK71wdKCP/p860chfn/v9IsbG7IAEwh+XTdJig
-         iBvKRptwEaPe33EjTDzrITZpsidZvqdzKAdmvw2g=
-Date:   Tue, 3 Mar 2020 14:03:47 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200303130347.GA2302029@kroah.com>
-References: <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
- <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
- <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk>
- <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
- <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+        id S1729307AbgCCNEX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 08:04:23 -0500
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:45668 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729297AbgCCNEX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 08:04:23 -0500
+Received: by mail-qt1-f172.google.com with SMTP id a4so2650019qto.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 05:04:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jV9MOqj3WfpAvtB6pN8ntyBJlB6ixy+o1z9uv0T/wJ8=;
+        b=e1czJgeczWvVajGwOP+z+FkY1TGYcksRitzO/boEV+27Up3xOd+ML1WMd36/dvfmtX
+         FSHAl7TeJT7R2g+9BGewO7uEFH3wcoTDWPy/AJP/4dkarpzlvPjbnzepEQLzP0Qv10uk
+         jJKJIS+e53attz6FAuvIfhQRiIX4guOAblBMFsskoFxJTYfKU3bdLh0lGG7az7iETbjw
+         ePF+dYPzFd+NQ5zBwaZb2pBDL9KnYdc1DmkqM9exgDQ+7VCTmYo2lfWs503C9M2SSYe5
+         eZMHz86oOZZWfvLy5uHqJg0TY7xRY6EK3iK9cTm/duhnAugML/wJNbIF65Tlp2ULES3h
+         9Etw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=jV9MOqj3WfpAvtB6pN8ntyBJlB6ixy+o1z9uv0T/wJ8=;
+        b=GPOgGEv+lUbfQ1DI/3gA0SsyQY9rute6UEtzqTYXKu45BYDC6kZXXmZUdpJ7eTwofE
+         nIITcT+OLruwEo/Y4hRfc08Xml0vcqHkOgNeUkMVc/vOwysAoRr5qJMsINwgRxy/Ltg9
+         vrXttUzc4yBplEg56CfE617U/ZKx0lXiQDUBW+ldU9XjXsWYNnf5uJQSNZz4VgWrLgPi
+         +BY8a9s1K8PlTEjAMI30aIlWAZQcOIr42O2fROhlEMZrT1SNNqQC9CJoCcyHpc0I5YW4
+         9Kxh0REFyxynnwbmakGGNnVFAgO0p+t0wr1/5BwF7J9Ed9yN9+9CkanuTHpVUZqo+StG
+         4DSg==
+X-Gm-Message-State: ANhLgQ2kBsgKDHi0UL+IX4AyRc0Q92wdrNk1ikcQvq2g5fuOoe66JO5O
+        8gXkGCsaJTIBVw5ORQBphsM=
+X-Google-Smtp-Source: ADFU+vstoC3xFL6LK08SXwDvPUGTjYp3QYPGY5MkFBS7kLk9J+plna+Y2j509AStPcVDIZFAVjEGPA==
+X-Received: by 2002:ac8:5283:: with SMTP id s3mr4236292qtn.47.1583240662300;
+        Tue, 03 Mar 2020 05:04:22 -0800 (PST)
+Received: from localhost ([2620:10d:c091:500::7f70])
+        by smtp.gmail.com with ESMTPSA id t13sm11860006qkm.60.2020.03.03.05.04.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 05:04:21 -0800 (PST)
+Date:   Tue, 3 Mar 2020 08:04:21 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Michael Stapelberg <michael+lkml@stapelberg.ch>,
+        Jack Smith <smith.jack.sidman@gmail.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
+ on some machines?
+Message-ID: <20200303130421.GA5186@mtj.thefacebook.com>
+References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
+ <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
+ <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
+ <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
+ <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
+ <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+In-Reply-To: <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 12:38:14PM +0100, Karel Zak wrote:
-> On Tue, Mar 03, 2020 at 10:26:21AM +0100, Miklos Szeredi wrote:
-> > No, I don't think this is going to be a performance issue at all, but
-> > if anything we could introduce a syscall
-> > 
-> >   ssize_t readfile(int dfd, const char *path, char *buf, size_t
-> > bufsize, int flags);
+Hello,
+
+Sorry about the delay.
+
+On Wed, Feb 26, 2020 at 08:59:55PM +0100, Miklos Szeredi wrote:
+> - apparently memcpy is copying downwards (from largest address to
+> smallest address).  Not sure why, when I run the reproducer, it copies
+> upwards.
+> - there's a slow batch of reads of the first ~4MB of data, then a
+> quick writeback
+> - there's a quick read of the rest (~95MB) of data, then a quick
+> writeback of the same
 > 
-> off-topic, but I'll buy you many many beers if you implement it ;-),
-> because open + read + close is pretty common for /sys and /proc in
-> many userspace tools; for example ps, top, lsblk, lsmem, lsns, udevd
-> etc. is all about it.
+> Plots of the whole and closeups of slow and quick segments attached.
+> X axis is time, Y axis is offset.
+> 
+> Tejun, could this behavior be attributed to dirty throttling?  What
+> would be the best way to trace this?
 
-Unlimited beers for a 21-line kernel patch?  Sign me up!
+Yeah, seems likely. Can you please try offcputime (or just sample
+/proc/PID/stack) and see whether it's in balance dirty pages?
 
-Totally untested, barely compiled patch below.
+  https://github.com/iovisor/bcc/blob/master/tools/offcputime.py
 
-Actually, I like this idea (the syscall, not just the unlimited beers).
-Maybe this could make a lot of sense, I'll write some actual tests for
-it now that syscalls are getting "heavy" again due to CPU vendors
-finally paying the price for their madness...
+If it's dirty throttling, the next step would be watching the bdp
+tracepoints to find out what kind of numbers it's getting.
 
-thanks,
+Thanks.
 
-greg k-h
--------------------
-
-
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 44d510bc9b78..178cd45340e2 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -359,6 +359,7 @@
- 435	common	clone3			__x64_sys_clone3/ptregs
- 437	common	openat2			__x64_sys_openat2
- 438	common	pidfd_getfd		__x64_sys_pidfd_getfd
-+439	common	readfile		__x86_sys_readfile
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/open.c b/fs/open.c
-index 0788b3715731..1a830fada750 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1340,3 +1340,23 @@ int stream_open(struct inode *inode, struct file *filp)
- }
- 
- EXPORT_SYMBOL(stream_open);
-+
-+SYSCALL_DEFINE5(readfile, int, dfd, const char __user *, filename,
-+		char __user *, buffer, size_t, bufsize, int, flags)
-+{
-+	int retval;
-+	int fd;
-+
-+	if (force_o_largefile())
-+		flags |= O_LARGEFILE;
-+
-+	fd = do_sys_open(dfd, filename, flags, O_RDONLY);
-+	if (fd <= 0)
-+		return fd;
-+
-+	retval = ksys_read(fd, buffer, bufsize);
-+
-+	__close_fd(current->files, fd);
-+
-+	return retval;
-+}
+-- 
+tejun
