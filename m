@@ -2,119 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C91D5177464
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 11:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D385217743D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 11:32:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbgCCKi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 05:38:27 -0500
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:10875 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727830AbgCCKi1 (ORCPT
+        id S1728706AbgCCKcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 05:32:46 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:43213 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728634AbgCCKcp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 05:38:27 -0500
-X-Greylist: delayed 571 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 05:38:25 EST
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id B82083F881;
-        Tue,  3 Mar 2020 11:28:53 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=Tfjs5oLF;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id s3blhQnFXu75; Tue,  3 Mar 2020 11:28:50 +0100 (CET)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 5AF3F3F87B;
-        Tue,  3 Mar 2020 11:28:48 +0100 (CET)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 8D824360106;
-        Tue,  3 Mar 2020 11:28:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1583231328; bh=d4ZXiMRg8uF7RPcPj29OCuil/iLI6P2uZAb1Jx0dCfg=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=Tfjs5oLFNfSMESYwK4MTjhF0ZC5XKK+jn2UjEhRupIVIe6trMmNomtGfVUm9fiowd
-         Yx68aLlwxuT1F1lbN7HuwESsU9FZsM9xko1a36YM5M5kCSRySqiPKr7cy1uXMOaq1h
-         mTrypW3NnxirGzVFH+3jcydIfY9vZ5tUlNLmwQaw=
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Subject: Ack to merge through DRM? WAS [PATCH v5 1/9] fs: Constify vma
- argument to vma_is_dax
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200303102247.4635-1-thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <4a49f27b-71a6-0e61-70d9-5fcb6cd58c3f@shipmail.org>
-Date:   Tue, 3 Mar 2020 11:28:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Tue, 3 Mar 2020 05:32:45 -0500
+Received: by mail-il1-f195.google.com with SMTP id o18so2279421ilg.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 02:32:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4OjMBCp185rGeJiYNbICf2InVl2PDcWD4SEMMWbNn20=;
+        b=EgBq0A2ueanm2MvysZvBDL8USSRx6pTzWx2f04bJ4DFxzma7xFHZNG2+Rg4SZkgd+O
+         K26n1FQBeiKe8uXeeDPX7xyIybxQZzyZVVzfse2xhJ/Cz1Oj1bDVo17iaVLZVj0WRG8s
+         nQx5gnQ9btpq29VS2/nKW+UhtVD3Ik2avMa90=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4OjMBCp185rGeJiYNbICf2InVl2PDcWD4SEMMWbNn20=;
+        b=NsCd7+PJnT6EbLUApzMl6wUmu7eX9oPBF6sqQm0tTw26jx4KswNnrLEU27LB/Dh3tR
+         jxfpcWWX/AHMTz74V7h9ztxp5CTLnwog/1C62BqIgURzoxkUf9j/fVWaU8lSzjuBJdPd
+         7PRnJpQtec2BWFgn5yEPCjFXYXmgT8iVgmQ/1jn6chmuN+m1LZxYtTJ/gpjjWs+Z/Wd7
+         9jJjQPWMJKKVeLhOQz2j6wb5VV54fPtYweqKHjAaRR+JV4jejxyT7lqEzaRtQ1kuHcCF
+         fBbHp/Q3CJsqdZWNCck4hfNu21cZzVcm58WeQ8ApOgLdMkq3mFTdVdvjd9Ng8fXizOQJ
+         1++Q==
+X-Gm-Message-State: ANhLgQ0Dz08WCKllTJURbkDpGSUTQAnCbVyKMNim2F1koK2gh0C/enpg
+        diZGvbVfWuIPZJHNBBrN/pdQzWeIIb+q+KqpGtHcojSM
+X-Google-Smtp-Source: ADFU+vtBUu4UN/503DlgMuAkB/+JNw29l5C01S+SzUIIjaQZb5bNvIbrd2zfhpo/xTL/HkTPnrVFO0z7X5d23lRKXyY=
+X-Received: by 2002:a92:89cb:: with SMTP id w72mr3979428ilk.252.1583231564670;
+ Tue, 03 Mar 2020 02:32:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200303102247.4635-1-thomas_os@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <CAJfpegtemv64mpmTRT6ViHmsWq4nNE4KQvuHkNCYozRU7dQd8Q@mail.gmail.com> <06d2dbf0-4580-3812-bb14-34c6aa615747@redhat.com>
+In-Reply-To: <06d2dbf0-4580-3812-bb14-34c6aa615747@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 3 Mar 2020 11:32:33 +0100
+Message-ID: <CAJfpegsW5S3dRhhfGyAnhLEDjBxMQRBda5fsnXQ+=S=4YR0MCA@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>, Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexander,
+On Tue, Mar 3, 2020 at 11:22 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>
+> Hi,
+>
+> On 03/03/2020 09:48, Miklos Szeredi wrote:
+> > On Tue, Mar 3, 2020 at 10:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> On Tue, Mar 3, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
+> >>> Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >>>
+> >>>> I'm doing a patch.   Let's see how it fares in the face of all these
+> >>>> preconceptions.
+> >>> Don't forget the efficiency criterion.  One reason for going with fsinfo(2) is
+> >>> that scanning /proc/mounts when there are a lot of mounts in the system is
+> >>> slow (not to mention the global lock that is held during the read).
+> > BTW, I do feel that there's room for improvement in userspace code as
+> > well.  Even quite big mount table could be scanned for *changes* very
+> > efficiently.  l.e. cache previous contents of /proc/self/mountinfo and
+> > compare with new contents, line-by-line.  Only need to parse the
+> > changed/added/removed lines.
+> >
+> > Also it would be pretty easy to throttle the number of updates so
+> > systemd et al. wouldn't hog the system with unnecessary processing.
+> >
+> > Thanks,
+> > Miklos
+> >
+>
+> At least having patches to compare would allow us to look at the
+> performance here and gain some numbers, which would be helpful to frame
+> the discussions. However I'm not seeing how it would be easy to throttle
+> updates... they occur at whatever rate they are generated and this can
+> be fairly high. Also I'm not sure that I follow how the notifications
+> and the dumping of the whole table are synchronized in this case, either.
 
-Could you ack merging the below patch through a DRM tree?
+What I meant is optimizing current userspace without additional kernel
+infrastructure.   Since currently there's only the monolithic
+/proc/self/mountinfo, it's reasonable that if the rate of change is
+very high, then we don't re-read this table on every change, only
+within a reasonable time limit (e.g. 1s) to provide timely updates.
+Re-reading the table on every change would (does?) slow down the
+system so that the actual updates would even be slower, so throttling
+in this case very much  makes sense.
+
+Once we have per-mount information from the kernel, throttling updates
+probably does not make sense.
 
 Thanks,
-
-Thomas Hellstrom
-
-
-From: Thomas Hellstrom <thellstrom@vmware.com>
-
-
-The function is used by upcoming vma_is_special_huge() with which we want
-to use a const vma argument. Since for vma_is_dax() the vma argument is
-only dereferenced for reading, constify it.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Roland Scheidegger <sroland@vmware.com>
-Acked-by: Christian König <christian.koenig@amd.com>
----
-include/linux/fs.h | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3cd4fe6b845e..2b38ce5b73ad 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3391,7 +3391,7 @@ static inline bool io_is_direct(struct file *filp)
-return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
-}
--static inline bool vma_is_dax(struct vm_area_struct *vma)
-+static inline bool vma_is_dax(const struct vm_area_struct *vma)
-{
-return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
-}
-
--- 
-2.21.1
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+Miklos
