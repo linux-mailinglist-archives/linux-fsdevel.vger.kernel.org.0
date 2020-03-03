@@ -2,96 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAE56177734
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:35:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 851B417778D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 14:43:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbgCCNey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 08:34:54 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:43237 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbgCCNey (ORCPT
+        id S1727753AbgCCNnF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 08:43:05 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:44125 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726650AbgCCNnE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 08:34:54 -0500
-Received: by mail-il1-f194.google.com with SMTP id o18so2724124ilg.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 05:34:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d8UZDr3lZGFyJivNM6em5ybzB9qz5QGiZZazZdznXqk=;
-        b=eEQq5fiMKdVd42vqfExJKz3i8PtBQaz26xc++cNx+VS/zkeI5e09ipMisnSMiHdrf5
-         u+xmYZFz/xI0z/5+EySdWurVl96IIsUyghbPc5Vppji0ZZ9iQNhE7e1tgdNfKcxWAAes
-         y80ESNGhn+KNkkn+eLigS588MUERmZAN3AgMs=
+        Tue, 3 Mar 2020 08:43:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583242984;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qYqCecXVRlR+2rlzLpmUVtnJB+J6hg7uQq9+x2JC+eo=;
+        b=IjrOwimKM9NHSrUhT8ASdS92J2AWI4EI0aqDEzgPEqsMzlVWDH9MMFBDQIZc3nlYtS3Hgu
+        YM7X0tQHbxFpq5JpQGnax04TWaHxtJFptMxeuewFc1ZPhBu1vf9N+TXziyeFWB+bVXz+MT
+        vc3JdAsozFgJVPpRLbe7XKisWNIoOOE=
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
+ [209.85.210.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-315-A0vyfd6HMsy3QARGvXoNJg-1; Tue, 03 Mar 2020 08:43:02 -0500
+X-MC-Unique: A0vyfd6HMsy3QARGvXoNJg-1
+Received: by mail-ot1-f69.google.com with SMTP id x21so1887189otp.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 05:43:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d8UZDr3lZGFyJivNM6em5ybzB9qz5QGiZZazZdznXqk=;
-        b=HUoXz8pRJzujbm0WLUOiQHxpRD+TN74EFHA00KItCB3o8ha4TmmUIvSCcbJJpe8Z5J
-         N/OC5PieHdA5f0bxhVOfUK8oUssJEfOulxogbhPg0MXIqrqhiuBVUmYXiyGv8UlojrDc
-         aYKofgrjCaeNWBwX4yvR9jIGzJX0CBRBzHu1rKS2+vsId1GGAiyDLp9ob5vxiqtVNjAF
-         a+88ZAV7jcFeVNpAcxALQiJSV6WMNC1RwZ+odis2+czuBNjnuK0crxS0jEcG7/CpG9+g
-         b3AeBbf8ulOM+uig5pL4TbfCI7xrrFW7lyM4JIpQD/RYYrNhugqfcAr5YGtPNgTNGmHL
-         UPFA==
-X-Gm-Message-State: ANhLgQ20G/dPNX8/98evCErzj7iirUckEMIjRw+jaSQj93L451J0kC2x
-        CMXBEvR7luzcX3fV5ZhcJjvBVQVpspOWodu+MN+l3g==
-X-Google-Smtp-Source: ADFU+vse5bB7gLvCvFy8XryGmsALFqGE4Oyf3LKEtJstP+x5Mc4KlKOxwSw8ylASXSSbsPp5ZHBKAyS4fw1aRsVzAO8=
-X-Received: by 2002:a92:8847:: with SMTP id h68mr4667878ild.212.1583242493712;
- Tue, 03 Mar 2020 05:34:53 -0800 (PST)
+        bh=qYqCecXVRlR+2rlzLpmUVtnJB+J6hg7uQq9+x2JC+eo=;
+        b=Ut2qTlXf9O9tTONa3kgqeAVpnrjP7zSO3MP2R4dmuyoUZEbCXWpG8kJXVXtNnhqruq
+         aTd7ZxgIId6x3+IJP2O53LfgiGVKgvIbvFujsWK51LYDZPmKiVetr3uSnkv/00uX6FAC
+         DkYBoJXt+yoTyltdQKrpPBpzK7ukM9Zs/0GfOVboneiNFmbM8VEvCkTLGkXHX2BiX8WQ
+         ZPh4oboBPq9i+RvjYlBHoWLTTNKkxPVDtyl3/I11WkB3Z0Qe9hk+T5g5Wh36pWtlO+2R
+         vxzH2dLHmyuFUXWzI951Ne9Axt+0Kvy8lOiSzYiXioX9ou/SAOBbw4+YLLl25Z+ykiui
+         wqgQ==
+X-Gm-Message-State: ANhLgQ1Znz0zfrtZYl1o5THLToqToAxapECVRXNGJ5FdEVO0YkA+/JVO
+        aIzh0A4dzzMCPpuoCeTc2kYTKeTk0eYoaW5TOHIbk9NW2XIbD5lhcjJm3Xo1wFaTa2rSzjbw9Uf
+        jJyWyT/ZFgrXKGuMA5SqCv4+Ysiv3MB1mKJueUeDZHQ==
+X-Received: by 2002:a05:6830:14cc:: with SMTP id t12mr3202783otq.95.1583242981536;
+        Tue, 03 Mar 2020 05:43:01 -0800 (PST)
+X-Google-Smtp-Source: ADFU+vudt52Af+flRk9YuhIuciNYNsv/YASW8si71vo633TKOR2fCs3v2DVvffyzzCffmDmisvHy2i6IW7ibHQG+Gsc=
+X-Received: by 2002:a05:6830:14cc:: with SMTP id t12mr3202766otq.95.1583242981228;
+ Tue, 03 Mar 2020 05:43:01 -0800 (PST)
 MIME-Version: 1.0
-References: <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
- <20200303113814.rsqhljkch6tgorpu@ws.net.home> <20200303130347.GA2302029@kroah.com>
- <20200303131434.GA2373427@kroah.com>
-In-Reply-To: <20200303131434.GA2373427@kroah.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 3 Mar 2020 14:34:42 +0100
-Message-ID: <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Karel Zak <kzak@redhat.com>, David Howells <dhowells@redhat.com>,
-        Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+References: <20200221173722.538788-1-hch@lst.de>
+In-Reply-To: <20200221173722.538788-1-hch@lst.de>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Tue, 3 Mar 2020 14:42:50 +0100
+Message-ID: <CAHc6FU5RM5c0dopuJmCEJmPkwM6TUy60xnSWRpH2qHdX09B1pw@mail.gmail.com>
+Subject: Re: [PATCH] fs: move the posix_acl_fix_xattr_{to_from}_user out of
+ xattr code
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 2:14 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Miklos,
 
-> > Unlimited beers for a 21-line kernel patch?  Sign me up!
-> >
-> > Totally untested, barely compiled patch below.
+On Fri, Feb 21, 2020 at 7:01 PM Christoph Hellwig <hch@lst.de> wrote:
+> There is no excuse to ever perform actions related to a specific handler
+> directly from the generic xattr code as we have handler that understand
+> the specific data in given attrs.  As a nice sideeffect this removes
+> tons of pointless boilerplate code.
 >
-> Ok, that didn't even build, let me try this for real now...
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Some comments on the interface:
-
-O_LARGEFILE can be unconditional, since offsets are not exposed to the caller.
-
-Use the openat2 style arguments; limit the accepted flags to sane ones
-(e.g. don't let this syscall create a file).
-
-If buffer is too small to fit the whole file, return error.
-
-Verify that the number of bytes read matches the file size, otherwise
-return error (may need to loop?).
+can you please review this change from an overlayfs point of view?
 
 Thanks,
-Miklos
+Andreas
+
+> ---
+>  fs/posix_acl.c                  | 62 ++-------------------------------
+>  fs/xattr.c                      |  8 +----
+>  include/linux/posix_acl_xattr.h | 12 -------
+>  3 files changed, 3 insertions(+), 79 deletions(-)
+>
+> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+> index 249672bf54fe..09f1b7d186f0 100644
+> --- a/fs/posix_acl.c
+> +++ b/fs/posix_acl.c
+> @@ -663,64 +663,6 @@ int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
+>  }
+>  EXPORT_SYMBOL(posix_acl_update_mode);
+>
+> -/*
+> - * Fix up the uids and gids in posix acl extended attributes in place.
+> - */
+> -static void posix_acl_fix_xattr_userns(
+> -       struct user_namespace *to, struct user_namespace *from,
+> -       void *value, size_t size)
+> -{
+> -       struct posix_acl_xattr_header *header = value;
+> -       struct posix_acl_xattr_entry *entry = (void *)(header + 1), *end;
+> -       int count;
+> -       kuid_t uid;
+> -       kgid_t gid;
+> -
+> -       if (!value)
+> -               return;
+> -       if (size < sizeof(struct posix_acl_xattr_header))
+> -               return;
+> -       if (header->a_version != cpu_to_le32(POSIX_ACL_XATTR_VERSION))
+> -               return;
+> -
+> -       count = posix_acl_xattr_count(size);
+> -       if (count < 0)
+> -               return;
+> -       if (count == 0)
+> -               return;
+> -
+> -       for (end = entry + count; entry != end; entry++) {
+> -               switch(le16_to_cpu(entry->e_tag)) {
+> -               case ACL_USER:
+> -                       uid = make_kuid(from, le32_to_cpu(entry->e_id));
+> -                       entry->e_id = cpu_to_le32(from_kuid(to, uid));
+> -                       break;
+> -               case ACL_GROUP:
+> -                       gid = make_kgid(from, le32_to_cpu(entry->e_id));
+> -                       entry->e_id = cpu_to_le32(from_kgid(to, gid));
+> -                       break;
+> -               default:
+> -                       break;
+> -               }
+> -       }
+> -}
+> -
+> -void posix_acl_fix_xattr_from_user(void *value, size_t size)
+> -{
+> -       struct user_namespace *user_ns = current_user_ns();
+> -       if (user_ns == &init_user_ns)
+> -               return;
+> -       posix_acl_fix_xattr_userns(&init_user_ns, user_ns, value, size);
+> -}
+> -
+> -void posix_acl_fix_xattr_to_user(void *value, size_t size)
+> -{
+> -       struct user_namespace *user_ns = current_user_ns();
+> -       if (user_ns == &init_user_ns)
+> -               return;
+> -       posix_acl_fix_xattr_userns(user_ns, &init_user_ns, value, size);
+> -}
+> -
+>  /*
+>   * Convert from extended attribute to in-memory representation.
+>   */
+> @@ -851,7 +793,7 @@ posix_acl_xattr_get(const struct xattr_handler *handler,
+>         if (acl == NULL)
+>                 return -ENODATA;
+>
+> -       error = posix_acl_to_xattr(&init_user_ns, acl, value, size);
+> +       error = posix_acl_to_xattr(current_user_ns(), acl, value, size);
+>         posix_acl_release(acl);
+>
+>         return error;
+> @@ -889,7 +831,7 @@ posix_acl_xattr_set(const struct xattr_handler *handler,
+>         int ret;
+>
+>         if (value) {
+> -               acl = posix_acl_from_xattr(&init_user_ns, value, size);
+> +               acl = posix_acl_from_xattr(current_user_ns(), value, size);
+>                 if (IS_ERR(acl))
+>                         return PTR_ERR(acl);
+>         }
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 90dd78f0eb27..c31e9a9ea172 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -437,10 +437,7 @@ setxattr(struct dentry *d, const char __user *name, const void __user *value,
+>                         error = -EFAULT;
+>                         goto out;
+>                 }
+> -               if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+> -                   (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+> -                       posix_acl_fix_xattr_from_user(kvalue, size);
+> -               else if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
+> +               if (strcmp(kname, XATTR_NAME_CAPS) == 0) {
+>                         error = cap_convert_nscap(d, &kvalue, size);
+>                         if (error < 0)
+>                                 goto out;
+> @@ -537,9 +534,6 @@ getxattr(struct dentry *d, const char __user *name, void __user *value,
+>
+>         error = vfs_getxattr(d, kname, kvalue, size);
+>         if (error > 0) {
+> -               if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+> -                   (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+> -                       posix_acl_fix_xattr_to_user(kvalue, error);
+>                 if (size && copy_to_user(value, kvalue, error))
+>                         error = -EFAULT;
+>         } else if (error == -ERANGE && size >= XATTR_SIZE_MAX) {
+> diff --git a/include/linux/posix_acl_xattr.h b/include/linux/posix_acl_xattr.h
+> index 2387709991b5..8f5e70a1bd05 100644
+> --- a/include/linux/posix_acl_xattr.h
+> +++ b/include/linux/posix_acl_xattr.h
+> @@ -32,18 +32,6 @@ posix_acl_xattr_count(size_t size)
+>         return size / sizeof(struct posix_acl_xattr_entry);
+>  }
+>
+> -#ifdef CONFIG_FS_POSIX_ACL
+> -void posix_acl_fix_xattr_from_user(void *value, size_t size);
+> -void posix_acl_fix_xattr_to_user(void *value, size_t size);
+> -#else
+> -static inline void posix_acl_fix_xattr_from_user(void *value, size_t size)
+> -{
+> -}
+> -static inline void posix_acl_fix_xattr_to_user(void *value, size_t size)
+> -{
+> -}
+> -#endif
+> -
+>  struct posix_acl *posix_acl_from_xattr(struct user_namespace *user_ns,
+>                                        const void *value, size_t size);
+>  int posix_acl_to_xattr(struct user_namespace *user_ns,
+> --
+> 2.24.1
+>
+
