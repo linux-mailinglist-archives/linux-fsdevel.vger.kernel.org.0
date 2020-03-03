@@ -2,75 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF9917848D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 22:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 044931784AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 22:11:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732315AbgCCVGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 16:06:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43232 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729880AbgCCVGA (ORCPT
+        id S1732431AbgCCVLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 16:11:15 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:51746 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732422AbgCCVLP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 16:06:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=r8BD7PDvNtyj7rApxVf93dDwSISVOUC1PGpaU2/FE/8=; b=eHiytz6XTjdrIw6LB6wROAZf/N
-        VM5R41zbAXp2ZO6UcEVb0oYbjhiQTjiDWdEHjFMnVqIz1Mokv1zy21/3QNYOzIFBn7qXptR8p39i9
-        GwVH6m1mKCwX/CbvNysb4Ug7ZWGrrlJOIpuf1gl5wQZmd8c4LaAmajRVpNheNn6s08lhU+5NjCfnQ
-        ZyK47p8WKXQ1xW9mWTfKg7E8KZLVCvld8tTgJRzKORgzoV2du4OfdvAQEz2P+x86pN04Rx/OG0x8B
-        g1U1vA3vY9RowCfkm1Ys9EG+mtuBRgAcnT57FH0byMQccCgJNqtRvNQ8jCcmLTX0Fpx1JyI5wKgZt
-        esdZvzyA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9Ejn-0007Q7-JQ; Tue, 03 Mar 2020 21:05:59 +0000
-Date:   Tue, 3 Mar 2020 13:05:59 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] proc: Use ppos instead of m->version
-Message-ID: <20200303210559.GV29971@bombadil.infradead.org>
-References: <20200229165910.24605-1-willy@infradead.org>
- <20200229165910.24605-4-willy@infradead.org>
- <20200303195529.GA17768@avx2>
- <20200303202923.GT29971@bombadil.infradead.org>
- <20200303205303.GA10772@avx2>
+        Tue, 3 Mar 2020 16:11:15 -0500
+Received: by mail-pj1-f67.google.com with SMTP id l8so1913013pjy.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 13:11:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=r6q0DPuFy1mAtJuSAiMz7w4srajxqnfipEX7Gy6ZAFQ=;
+        b=Vr9laNZhX8SMnV0houi9WlY1wvzPQx9E7i4R/qO9l+MfwRn603HnTOXB/j0g/TT2p5
+         KPVX/menTdQ08/g/8Ng4n5AJmF1mT50yjWbl3AnXYb/EvA66oCq2TlTBDVbQXpkdlTCJ
+         ie8OseG56iFZm0MxeiW91FXSxC2t5pvfgUosQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=r6q0DPuFy1mAtJuSAiMz7w4srajxqnfipEX7Gy6ZAFQ=;
+        b=YQtS+9blMFBIjLm/A0yQj9mSsHg0ak0XG/TY1FdRVi9PvCPyRjh4U6tRKw2PjqBUG0
+         oCZSIO6WRpkw03IwpEekfhMmjsqnJF3X9EJIfHeSmXRJQJffXWIHtGW0q4yMEfaZ9MP2
+         5sYaaHPAE7NSH8ivz3VL4wqmvCabVNUW2hLl/R6BGDWbysPYZqDvSadM8o+L/KZTyhun
+         gaF0wPJKoTMP4UswZ+fzzROHSZJ69XhW/Py93yj6gCjR7CI9dH8bpVt1a/nu2AnOOPUl
+         txRSE0Vk1x8bgP0As5qmZg1360gcLjD+c7U1sZcPv/+P02W7QpwUAT2hFZEOPQEbUqYt
+         qbqA==
+X-Gm-Message-State: ANhLgQ0nRa9Z7DoUu6uewamSPtFPq08ZG0D/DoNBHDPo+ctCceFfPbJt
+        47Skjamv7nRrnNV5hX9hNiwfKCPfZkM=
+X-Google-Smtp-Source: ADFU+vt+JB3T6f7Z3SScsrYCpiEa675gWMHdof0twNnrB39g3RtC8mXdZDZvl/oosIAGandDnKIPRg==
+X-Received: by 2002:a17:902:9b8a:: with SMTP id y10mr5723381plp.114.1583269874614;
+        Tue, 03 Mar 2020 13:11:14 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d22sm134532pja.14.2020.03.03.13.11.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 13:11:13 -0800 (PST)
+Date:   Tue, 3 Mar 2020 13:11:12 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexander Potapenko <glider@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fcntl: Distribute switch variables for initialization
+Message-ID: <202003031310.40AF706A8@keescook>
+References: <20200220062243.68809-1-keescook@chromium.org>
+ <202003022040.40A32072@keescook>
+ <e06d74ad7dc02fb3df9ab4ae26203a85ea2ed67e.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200303205303.GA10772@avx2>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e06d74ad7dc02fb3df9ab4ae26203a85ea2ed67e.camel@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 11:53:03PM +0300, Alexey Dobriyan wrote:
-> On Tue, Mar 03, 2020 at 12:29:23PM -0800, Matthew Wilcox wrote:
-> > On Tue, Mar 03, 2020 at 10:55:29PM +0300, Alexey Dobriyan wrote:
-> > > On Sat, Feb 29, 2020 at 08:59:08AM -0800, Matthew Wilcox wrote:
-> > > > -static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-> > > > +static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
+On Tue, Mar 03, 2020 at 10:55:22AM -0500, Jeff Layton wrote:
+> On Mon, 2020-03-02 at 20:41 -0800, Kees Cook wrote:
+> > On Wed, Feb 19, 2020 at 10:22:43PM -0800, Kees Cook wrote:
+> > > Variables declared in a switch statement before any case statements
+> > > cannot be automatically initialized with compiler instrumentation (as
+> > > they are not part of any execution flow). With GCC's proposed automatic
+> > > stack variable initialization feature, this triggers a warning (and they
+> > > don't get initialized). Clang's automatic stack variable initialization
+> > > (via CONFIG_INIT_STACK_ALL=y) doesn't throw a warning, but it also
+> > > doesn't initialize such variables[1]. Note that these warnings (or silent
+> > > skipping) happen before the dead-store elimination optimization phase,
+> > > so even when the automatic initializations are later elided in favor of
+> > > direct initializations, the warnings remain.
 > > > 
-> > > This looks like hungarian notation.
+> > > To avoid these problems, move such variables into the "case" where
+> > > they're used or lift them up into the main function body.
+> > > 
+> > > fs/fcntl.c: In function ‘send_sigio_to_task’:
+> > > fs/fcntl.c:738:20: warning: statement will never be executed [-Wswitch-unreachable]
+> > >   738 |   kernel_siginfo_t si;
+> > >       |                    ^~
+> > > 
+> > > [1] https://bugs.llvm.org/show_bug.cgi?id=44916
+> > > 
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
 > > 
-> > It's the standard naming convention used throughout the VFS.  loff_t is
-> > pos, loff_t * is ppos.
+> > Ping. Can someone pick this up, please?
 > > 
-> > $ git grep 'loff_t \*' fs/*.c |wc
-> >      77     556    5233
-> > $ git grep 'loff_t \*ppos' fs/*.c |wc
-> >      43     309    2974
-> > $ git grep 'loff_t \*pos' fs/*.c |wc
-> >      22     168    1524
+> > Thanks!
+> > 
+> > -Kees
+> > 
+> > > ---
+> > >  fs/fcntl.c |    6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > > index 9bc167562ee8..2e4c0fa2074b 100644
+> > > --- a/fs/fcntl.c
+> > > +++ b/fs/fcntl.c
+> > > @@ -735,8 +735,9 @@ static void send_sigio_to_task(struct task_struct *p,
+> > >  		return;
+> > >  
+> > >  	switch (signum) {
+> > > -		kernel_siginfo_t si;
+> > > -		default:
+> > > +		default: {
+> > > +			kernel_siginfo_t si;
+> > > +
+> > >  			/* Queue a rt signal with the appropriate fd as its
+> > >  			   value.  We use SI_SIGIO as the source, not 
+> > >  			   SI_KERNEL, since kernel signals always get 
+> > > @@ -769,6 +770,7 @@ static void send_sigio_to_task(struct task_struct *p,
+> > >  			si.si_fd    = fd;
+> > >  			if (!do_send_sig_info(signum, &si, p, type))
+> > >  				break;
+> > > +		}
+> > >  		/* fall-through - fall back on the old plain SIGIO signal */
+> > >  		case 0:
+> > >  			do_send_sig_info(SIGIO, SEND_SIG_PRIV, p, type);
+> > > 
 > 
-> Yes, people copy-pasted terrible thing for years!
-> Oh well, whatever...
+> Sure, looks straightforward enough. I'll pick it up for v5.7.
 
-In an environment where we sometimes pass loff_t and sometimes pass
-loff_t *, this convention is a great way to catch copy-and-paste mistakes.
-If I have 'pos += done' in a function which takes a loff_t pos, and I
-copy-and-paste it to a function which takes a 'loff_t *pos', it's going
-to create a bug that hits at runtime.  If that function takes an
-loff_t *ppos instead, it'll be a compile-time error, and I'll know to
-transform it to *ppos += done;
+Awesome; thank you!
 
+-Kees
+
+> 
+> Thanks,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
+
+-- 
+Kees Cook
