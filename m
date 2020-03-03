@@ -2,154 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C27D11782B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 20:04:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3BE11782B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 20:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbgCCTCk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 14:02:40 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:54812 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbgCCTCk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 14:02:40 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023Ism57023677;
-        Tue, 3 Mar 2020 19:02:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=oTkPNBpAzjaa07bjjcQ0CyjgwQohmsclEvvqNhFVktI=;
- b=XCq6bFWgzAXgkdEpmxiuLWO77fbh4sQWOF3n0sGzC+bWNPpl1z5g2RnT6c7LJ9mrdE5C
- GjrhU3hPIra10/NPPy88SYEv8dbdb+pgyldYyDUYh5SzyZTH5/tHVubymyu55NLNdYBq
- K6GsdkkAkF2CaQt6iKaI9pl39aDfWPm/KFqH0Qr8shgqynX9Qaavyoze6VLEEnTI5umg
- VOlNVhop/psdnnwVIeer+faw2ufPhyrhIwB8bvaLVkC9/O++707pYJ3bEVtPD/6FEQdq
- ZVN5SBwgG0CvFkMjiW4zJLMjoFZpDbOeXf4682R62Zv44vS9c0BRkEMd7M6WsPKR7jLE CA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2yffcuhe6n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 19:02:20 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 023IqRNn071830;
-        Tue, 3 Mar 2020 19:02:20 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2yg1p55ham-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Mar 2020 19:02:20 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 023J2Eh3013290;
-        Tue, 3 Mar 2020 19:02:14 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Mar 2020 11:02:13 -0800
-Date:   Tue, 3 Mar 2020 11:02:12 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Domenico Andreoli <domenico.andreoli@linux.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
- active
-Message-ID: <20200303190212.GC8037@magnolia>
-References: <20200229170825.GX8045@magnolia>
- <20200229180716.GA31323@dumbo>
- <20200229183820.GA8037@magnolia>
- <20200229200200.GA10970@dumbo>
- <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
+        id S1729487AbgCCTCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 14:02:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728089AbgCCTCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 14:02:18 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CEEB20866;
+        Tue,  3 Mar 2020 19:02:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583262136;
+        bh=qpII4wdYHJwhFAnCde4eYkRsLi/qDHubQHybtAXjWsM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=gGpKtYj4Zyd/XRowpu2VnXeYovcLUpEgl7/Vpd0xHAtiNH6nTNlnCcwxOO3l/6hgY
+         uAfYATLBg/pMAbBATqT45hwqBoWRVA51ZW2wG6YNCvEJG5yg51nNJKet243+LknQmZ
+         Xz/fAJW7FOAgTl0uXByEPlcVtiTUnWepBiZBG8VQ=
+Message-ID: <dbb06c63c17c23fcacdd99e8b2266804ee39ffe5.camel@kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
+ [ver #17]
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jann Horn <jannh@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Tue, 03 Mar 2020 14:02:13 -0500
+In-Reply-To: <7a05adc8-1ca9-c900-7b24-305f1b3a9b86@kernel.dk>
+References: <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+         <1509948.1583226773@warthog.procyon.org.uk>
+         <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+         <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+         <20200303130347.GA2302029@kroah.com> <20200303131434.GA2373427@kroah.com>
+         <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
+         <20200303134316.GA2509660@kroah.com> <20200303141030.GA2811@kroah.com>
+         <CAG48ez3Z2V8J7dpO6t8nw7O2cMJ6z8vwLZXLAoKGH3OnCb-7JQ@mail.gmail.com>
+         <20200303142407.GA47158@kroah.com>
+         <030888a2-db3e-919d-d8ef-79dcc10779f9@kernel.dk>
+         <acb1753c78a019fb0d54ba29077cef144047f70f.camel@kernel.org>
+         <7a05adc8-1ca9-c900-7b24-305f1b3a9b86@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 spamscore=0 adultscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030124
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9549 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 suspectscore=0 spamscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003030124
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 01, 2020 at 10:35:36PM +0100, Rafael J. Wysocki wrote:
-> On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli
-> <domenico.andreoli@linux.com> wrote:
-> >
-> > On Sat, Feb 29, 2020 at 10:38:20AM -0800, Darrick J. Wong wrote:
-> > > On Sat, Feb 29, 2020 at 07:07:16PM +0100, Domenico Andreoli wrote:
-> > > > On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J. Wong wrote:
-> > > > > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > > > >
-> > > > > It turns out that there /is/ one use case for programs being able to
-> > > > > write to swap devices, and that is the userspace hibernation code.  The
-> > > > > uswsusp ioctls allow userspace to lease parts of swap devices, so turn
-> > > > > S_SWAPFILE off when invoking suspend.
-> > > > >
-> > > > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-> > > > > Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
-> > > > > Reported-by: Marian Klein <mkleinsoft@gmail.com>
-> > > >
-> > > > I also tested it yesterday but was not satisfied, unfortunately I did
-> > > > not come with my comment in time.
-> > > >
-> > > > Yes, I confirm that the uswsusp works again but also checked that
-> > > > swap_relockall() is not triggered at all and therefore after the first
-> > > > hibernation cycle the S_SWAPFILE bit remains cleared and the whole
-> > > > swap_relockall() is useless.
-> > > >
-> > > > I'm not sure this patch should be merged in the current form.
-> > >
-> > > NNGGHHGGHGH /me is rapidly losing his sanity and will soon just revert
-> > > the whole security feature because I'm getting fed up with people
-> > > yelling at me *while I'm on vacation* trying to *restore* my sanity.  I
-> > > really don't want to be QAing userspace-directed hibernation right now.
-> >
-> > Maybe we could proceed with the first patch to amend the regression and
-> > postpone the improved fix to a later patch? Don't loose sanity for this.
+On Tue, 2020-03-03 at 09:55 -0700, Jens Axboe wrote:
+> On 3/3/20 9:51 AM, Jeff Layton wrote:
+> > On Tue, 2020-03-03 at 08:44 -0700, Jens Axboe wrote:
+> > > On 3/3/20 7:24 AM, Greg Kroah-Hartman wrote:
+> > > > On Tue, Mar 03, 2020 at 03:13:26PM +0100, Jann Horn wrote:
+> > > > > On Tue, Mar 3, 2020 at 3:10 PM Greg Kroah-Hartman
+> > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > On Tue, Mar 03, 2020 at 02:43:16PM +0100, Greg Kroah-Hartman wrote:
+> > > > > > > On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
+> > > > > > > > On Tue, Mar 3, 2020 at 2:14 PM Greg Kroah-Hartman
+> > > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > > 
+> > > > > > > > > > Unlimited beers for a 21-line kernel patch?  Sign me up!
+> > > > > > > > > > 
+> > > > > > > > > > Totally untested, barely compiled patch below.
+> > > > > > > > > 
+> > > > > > > > > Ok, that didn't even build, let me try this for real now...
+> > > > > > > > 
+> > > > > > > > Some comments on the interface:
+> > > > > > > 
+> > > > > > > Ok, hey, let's do this proper :)
+> > > > > > 
+> > > > > > Alright, how about this patch.
+> > > > > > 
+> > > > > > Actually tested with some simple sysfs files.
+> > > > > > 
+> > > > > > If people don't strongly object, I'll add "real" tests to it, hook it up
+> > > > > > to all arches, write a manpage, and all the fun fluff a new syscall
+> > > > > > deserves and submit it "for real".
+> > > > > 
+> > > > > Just FYI, io_uring is moving towards the same kind of thing... IIRC
+> > > > > you can already use it to batch a bunch of open() calls, then batch a
+> > > > > bunch of read() calls on all the new fds and close them at the same
+> > > > > time. And I think they're planning to add support for doing
+> > > > > open()+read()+close() all in one go, too, except that it's a bit
+> > > > > complicated because passing forward the file descriptor in a generic
+> > > > > way is a bit complicated.
+> > > > 
+> > > > It is complicated, I wouldn't recommend using io_ring for reading a
+> > > > bunch of procfs or sysfs files, that feels like a ton of overkill with
+> > > > too much setup/teardown to make it worth while.
+> > > > 
+> > > > But maybe not, will have to watch and see how it goes.
+> > > 
+> > > It really isn't, and I too thinks it makes more sense than having a
+> > > system call just for the explicit purpose of open/read/close. As Jann
+> > > said, you can't currently do a linked sequence of open/read/close,
+> > > because the fd passing between them isn't done. But that will come in
+> > > the future. If the use case is "a bunch of files", then you could
+> > > trivially do "open bunch", "read bunch", "close bunch" in three separate
+> > > steps.
+> > > 
+> > > Curious what the use case is for this that warrants a special system
+> > > call?
+> > > 
+> > 
+> > Agreed. I'd really rather see something more general-purpose than the
+> > proposed readfile(). At least with NFS and SMB, you can compound
+> > together fairly arbitrary sorts of operations, and it'd be nice to be
+> > able to pattern calls into the kernel for those sorts of uses.
+> > 
+> > So, NFSv4 has the concept of a current_stateid that is maintained by the
+> > server. So basically you can do all this (e.g.) in a single compound:
+> > 
+> > open <some filehandle get a stateid>
+> > write <using that stateid>
+> > close <same stateid>
+> > 
+> > It'd be nice to be able to do something similar with io_uring. Make it
+> > so that when you do an open, you set the "current fd" inside the
+> > kernel's context, and then be able to issue io_uring requests that
+> > specify a magic "fd" value that use it.
+> > 
+> > That would be a really useful pattern.
 > 
-> I would concur here.
+> For io_uring, you can link requests that you submit into a chain. Each
+> link in the chain is done in sequence. Which means that you could do:
 > 
-> > > ...right, the patch is broken because we have to relock the swapfiles in
-> > > whatever code executes after we jump back to the restored kernel, not in
-> > > the one that's doing the restoring.  Does this help?
-> >
-> > I made a few unsuccessful attempts in kernel/power/hibernate.c and
-> > eventually I'm switching to qemu to speed up the test cycle.
-> >
-> > > OTOH, maybe we should just leave the swapfiles unlocked after resume.
-> > > Userspace has clearly demonstrated the one usecase for writing to the
-> > > swapfile, which means anyone could have jumped in while uswsusp was
-> > > running and written whatever crap they wanted to the parts of the swap
-> > > file that weren't leased for the hibernate image.
-> >
-> > Essentially, if the hibernation is supported the swapfile is not totally
-> > safe.
+> <open some file><read from that file><close that file>
 > 
-> But that's only the case with the userspace variant, isn't it?
-
-Yes.
-
-> > Maybe user-space hibernation should be a separate option.
+> in a single sequence. The only thing that is missing right now is a way
+> to have the return of that open propagated to the 'fd' of the read and
+> close, and it's actually one of the topics to discuss at LSFMM next
+> month.
 > 
-> That actually is not a bad idea at all in my view.
+> One approach would be to use BPF to handle this passing, another
+> suggestion has been to have the read/close specify some magic 'fd' value
+> that just means "inherit fd from result of previous". The latter sounds
+> very close to the stateid you mention above, and the upside here is that
+> it wouldn't explode the necessary toolchain to need to include BPF.
+> 
+> In other words, this is really close to being reality and practically
+> feasible.
+> 
 
-The trouble with kconfig options is that the distros will be pressued
-into setting CONFIG_HIBERNATE_USERSPACE=y to avoid regressing their
-uswsusp users, which makes the added security code pointless.  As this
-has clearly sucked me into a conflict that I don't have the resources to
-pursue, I'm going to revert the write patch checks and move on with
-life.
+Excellent.
 
---D
+Yes, the latter is exactly what I had in mind for this. I suspect that
+that would cover a large fraction of the potential use-cases for this.
 
-> Thanks!
+Basically, all you'd need to do is keep a pointer to struct file in the
+internal state for the chain. Then, allow userland to specify some magic
+fd value for subsequent chained operations that says to use that instead
+of consulting the fdtable. Maybe use -4096 (-MAX_ERRNO - 1)?
+
+That would cover the smb or nfs server sort of use cases, I think. For
+the sysfs cases, I guess you'd need to dispatch several chains, but that
+doesn't sound _too_ onerous.
+
+In fact, with that you should even be able to emulate the proposed
+readlink syscall in a userland library.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
