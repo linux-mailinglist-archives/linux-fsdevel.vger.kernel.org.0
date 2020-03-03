@@ -2,146 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 856AB17857A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 23:18:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0DD1785F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 23:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbgCCWRv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 17:17:51 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:12682 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726766AbgCCWRv (ORCPT
+        id S1728204AbgCCWvb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 17:51:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34402 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727805AbgCCWv3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 17:17:51 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 023MFRWE032483;
-        Tue, 3 Mar 2020 14:17:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=oeiPRpVowtMN7tTumZLA2VCI6/Dh9OLasJPzFeiZYQE=;
- b=Va1fmd4J4nvG1RxhkMD4/vQFigYZqJGAXzFxfVSYKZuau5v9AfqG9UWmoEptlqFYoFFi
- XIEbZiTqAJEkM01/vgZFoFruajhD2nphAARVjxJqpSP350F1HJXATHrTbLc+w6PJGQCV
- qin9AgN5Dsq0w6r40HMf9EQJhCnbHMwhu4s= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yhbxwnsjn-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 03 Mar 2020 14:17:39 -0800
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.36.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1779.2; Tue, 3 Mar 2020 14:17:34 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IeV3QIOLSt18fnuYPK8KHnInK/16iTycPaKOrP0T7opJvDpT4RkxIhOO4tXZKoToDWsKgt0GaavPmPpEYqP9dk11JEy7QJx2hqW9YhUjJvmgFTa+4fRZnVoYZ5IwN3A6/EJAgRgKKJqAA0YdtqB7v8Ai1FNI5LZYuwL+9xBYcANa4Pdj39m5JoFlpCVkBuS4/HNqwVbBQgwMoIqFToYUQMl/BHZVUYv9ynKX2cLOZLPGua60dpgFRP18XuLNNsb31JuzAlWH3iJ83N1OBEGm85LiCkKv0z8LQ+liPGHf9jLUQGUtFZcvsSBeq8L+mdQNT1s5RBPeoKmZ1CWict5vmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeiPRpVowtMN7tTumZLA2VCI6/Dh9OLasJPzFeiZYQE=;
- b=m3NLd62LwYTCo9IHh5lQ5ZczV8F1TXHyO3QYVjP1p0BdHXZQDVAPTX2pIVU5DUjy22RJx1JW5Q/Vs77d5Eb/QpuGdxXm89XQeTwFVd9Kc/2UjgMayZN29dAHO5dSwi6DDSrSSX+YbU6EAdfzdMLjR6d9JNb6Sq6zsRIsmezO0Ri/Y+TlcQRD1OoVNKbefJusNSXJEeTI4mBFU1N1d0vvIlKtk/r9OjnIRdkramWJE9mtETA7UD7bLbFSZ/ItyYiCKLexH/mTM3jm5TpR+QTgpdPYP7WfzG/5bZQD36/Z4yp74xjMpOQhMLSoGqZzqsPPMKyL4oq0NZfqDAFIWRK33A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeiPRpVowtMN7tTumZLA2VCI6/Dh9OLasJPzFeiZYQE=;
- b=I6Y/yrMKq0Iqalgj84K+F/tAZ84tvAk6Xeolnj/5HEeXAdD6ULT5DXmGY756h0klDbTKuOQgputBcT4irba26tHDfIkm/QMUB8jzOoGWDOt/gnE6BlNbhS5mrPyjXX2Xto4DEACFuFtwB7yO5iO9OfEjsNeniDlexDW2u4Txmdw=
-Received: from MWHPR15MB1661.namprd15.prod.outlook.com (2603:10b6:300:124::23)
- by MWHPR15MB1951.namprd15.prod.outlook.com (2603:10b6:320:30::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
- 2020 22:17:33 +0000
-Received: from MWHPR15MB1661.namprd15.prod.outlook.com
- ([fe80::90a5:3eb0:b2a8:dc5e]) by MWHPR15MB1661.namprd15.prod.outlook.com
- ([fe80::90a5:3eb0:b2a8:dc5e%11]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
- 22:17:33 +0000
-Date:   Tue, 3 Mar 2020 14:17:29 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Andreas Dilger <adilger@dilger.ca>
-CC:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Perepechko <andrew.perepechko@seagate.com>,
-        Theodore Ts'o <tytso@mit.edu>, Gioh Kim <gioh.kim@lge.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] ext4: use non-movable memory for superblock readahead
-Message-ID: <20200303221729.GA722016@carbon.dhcp.thefacebook.com>
-References: <20200229001411.128010-1-guro@fb.com>
- <26E49EB9-DAD4-4BAB-A7A7-7DC6B45CD2B8@dilger.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26E49EB9-DAD4-4BAB-A7A7-7DC6B45CD2B8@dilger.ca>
-X-ClientProxiedBy: MWHPR1201CA0008.namprd12.prod.outlook.com
- (2603:10b6:301:4a::18) To MWHPR15MB1661.namprd15.prod.outlook.com
- (2603:10b6:300:124::23)
+        Tue, 3 Mar 2020 17:51:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id i10so3395058wmd.1;
+        Tue, 03 Mar 2020 14:51:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=laP7MxKBVV8c2S6Jis3XJOTsg2fYmzkinHKDY5LAHSk=;
+        b=JD1txqd3IOGqSsEqt8swCfUFgbBgrPmhiSEutbN0R9gWxPYPjvJGz7I+lufHRQFhzZ
+         230hUW4irIpjhepNk5MHpNvzC6Azn0NKKId0AZFSs0Ud1yYc/aa3rot6w4szQi3ZQ+bn
+         dAQuZ0cG/rz4//MiUtHKdS1qOimj5UeSOopTeBh+9H/hRnOmQbfrDrQcp5SXA+a9hHz2
+         hGJicNpF0L+lw3V2XqXAE9wihOueNXKNIcc+e/QIiiIvWks2YVgN0t0uZ4N4l50EI41k
+         E+/8GhLa/rGjLL0eHS/PgQyT6uRHxHncWOG8qbQeWVkM1U/+D04dGuDJ73YI1bN8E1l6
+         iCdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=laP7MxKBVV8c2S6Jis3XJOTsg2fYmzkinHKDY5LAHSk=;
+        b=b2LIvOzy/AzKgNs5I0Lq0wnxoDywEV7oc/JHEhnIJaIycOIqZX0JKR/lbHxi4YzQAq
+         2YzxeH2fR2/szqIcwX7MSKhVVPyC7qXaE/6d7Y5FLphIN4h06BkC+Vf6AMYhk/5j/JLB
+         WP1Vq/aF6YRvgjhU/hm2rBIFGmrtSmoop2GCeMDac9i8169pE8oPMf88C52hNzVJGeuL
+         eyRTBIVH09SysDpwMvI4eng7n/4QXgCRd0+FTydmq7icvFyeVMQWP5aUDPSFm2xW4F3K
+         8iRhQVaXHajl7E2849Re4QAiF8DJiLiian6yZbeFYdWS2QtQ3tAUIw2ln8BYXpTernRj
+         VKDA==
+X-Gm-Message-State: ANhLgQ0A1PBn3HSbdhPfyXAaXvyG9NDJIHZj99WWHIfGOgQquBtrOCXQ
+        6QH3GIhpwkj8tV6svzzeQg0=
+X-Google-Smtp-Source: ADFU+vsxB4sIIDqZMMAXSkE88XTGtmj3FYVjpd4o7rClO/ylj6m4q6JJ2hinEfE1z/DBpSVtYkgMvg==
+X-Received: by 2002:a1c:7ed0:: with SMTP id z199mr760362wmc.52.1583275886930;
+        Tue, 03 Mar 2020 14:51:26 -0800 (PST)
+Received: from localhost ([185.220.101.77])
+        by smtp.gmail.com with ESMTPSA id b18sm36280260wrm.86.2020.03.03.14.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Mar 2020 14:51:26 -0800 (PST)
+Date:   Tue, 03 Mar 2020 22:51:22 +0000
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20200303190212.GC8037@magnolia>
+References: <20200229170825.GX8045@magnolia> <20200229180716.GA31323@dumbo> <20200229183820.GA8037@magnolia> <20200229200200.GA10970@dumbo> <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com> <20200303190212.GC8037@magnolia>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.dhcp.thefacebook.com (2620:10d:c090:500::5:cf7) by MWHPR1201CA0008.namprd12.prod.outlook.com (2603:10b6:301:4a::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Tue, 3 Mar 2020 22:17:32 +0000
-X-Originating-IP: [2620:10d:c090:500::5:cf7]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d6d901be-8e05-4d0e-9f1e-08d7bfc0ab75
-X-MS-TrafficTypeDiagnostic: MWHPR15MB1951:
-X-Microsoft-Antispam-PRVS: <MWHPR15MB1951CAD29B2BC78B468B0553BEE40@MWHPR15MB1951.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:346;
-X-Forefront-PRVS: 03319F6FEF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(396003)(376002)(366004)(136003)(189003)(199004)(66946007)(53546011)(52116002)(7696005)(66476007)(6916009)(81166006)(81156014)(6666004)(6506007)(316002)(33656002)(8676002)(54906003)(55016002)(1076003)(66556008)(478600001)(9686003)(16526019)(2906002)(8936002)(5660300002)(186003)(86362001)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1951;H:MWHPR15MB1661.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: RUvMMA+i20aa9E41YG17FQb474X4yvx/MFvKzXDX5z8PsMv5DuH7on+2LDTudOqXCVzzkaPnSeMlkdTe/G2beBnSJaFSG+iw8HIulDZl2iBmoPoomEZYBjtEYcfyHv3oy/whiETkeH4f1J/LCBZ6sGI0noyQILaqodsSNqYlpP5vasYDLESzCcrY2VCh+QKjL7wdIysixH5uvDC9uEXnIeGmUvtvK19XAVJk5dLTcrkKIq8DTM5ol2KMFTnVwxbkC9QpHEh5LwxzCq/NYvnNhlBEdTbxhPAQSxVhorMMiihH+D71Fp1WRpmKw+MpLdVIvLDfSFKF1AfyBXXlY5uhcld1oHkK58jwo99FXyCnXtksYWjypMtxcs5aw8p4sXO5zwbPgyfhTTV0BpWEUz6poLin7/d7YYz1KRU7+q0nPPwFLL+EppNgwRnUUNC1+6BO
-X-MS-Exchange-AntiSpam-MessageData: nWeGk7L6jTLmKDLiidFXtdV8ebJE6rzPCxxpUE1ulrGRHtJzdOLjTjA3f2nv/TcXWlCLz4HR5ipp4BlZJvoHc9A8G1f82QmXadoaGBidxlg4GQHYcvQgLhvJkvODoFoN2XsUrrAFjQPBPg/jmwpaYof0MeMOKrZNr1t6LXbsqHHEm6h114vKve8Spmpumguq
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6d901be-8e05-4d0e-9f1e-08d7bfc0ab75
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Mar 2020 22:17:32.9981
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WR8tbktagvFcLi0imIpM3ADNlK/uncPr+BjQSrtonfVctQh7ja8tSIYIWVNpiGBc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1951
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-03_07:2020-03-03,2020-03-03 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 impostorscore=0
- mlxscore=0 lowpriorityscore=0 spamscore=0 phishscore=0 adultscore=0
- mlxlogscore=801 bulkscore=0 malwarescore=0 suspectscore=1 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003030143
-X-FB-Internal: deliver
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is active
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+CC:     Domenico Andreoli <domenico.andreoli@linux.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+From:   Domenico Andreoli <domenico.andreoli.it@gmail.com>
+Message-ID: <9E4A0457-39B1-45E2-AEA2-22C730BF2C4F@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 12:49:13AM -0700, Andreas Dilger wrote:
-> On Feb 28, 2020, at 5:14 PM, Roman Gushchin <guro@fb.com> wrote:
-> > 
-> > Since commit a8ac900b8163 ("ext4: use non-movable memory for the
-> > superblock") buffers for ext4 superblock were allocated using
-> > the sb_bread_unmovable() helper which allocated buffer heads
-> > out of non-movable memory blocks. It was necessarily to not block
-> > page migrations and do not cause cma allocation failures.
-> > 
-> > However commit 85c8f176a611 ("ext4: preload block group descriptors")
-> > broke this by introducing pre-reading of the ext4 superblock.
-> > The problem is that __breadahead() is using __getblk() underneath,
-> > which allocates buffer heads out of movable memory.
-> > 
-> > It resulted in page migration failures I've seen on a machine
-> > with an ext4 partition and a preallocated cma area.
-> > 
-> > Fix this by introducing sb_breadahead_unmovable() and
-> > __breadahead_gfp() helpers which use non-movable memory for buffer
-> > head allocations and use them for the ext4 superblock readahead.
-> > 
-> > v2: found a similar issue in __ext4_get_inode_loc()
-> > 
-> > Fixes: 85c8f176a611 ("ext4: preload block group descriptors")
-> > Signed-off-by: Roman Gushchin <guro@fb.com>
-> 
-> Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 
-Is it good to go?
-Can it go through the ext4 tree?
 
-Thanks!
+On March 3, 2020 7:02:12 PM UTC, "Darrick J=2E Wong" <darrick=2Ewong@oracl=
+e=2Ecom> wrote:
+>On Sun, Mar 01, 2020 at 10:35:36PM +0100, Rafael J=2E Wysocki wrote:
+>> On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli
+>> <domenico=2Eandreoli@linux=2Ecom> wrote:
+>> >
+>> > On Sat, Feb 29, 2020 at 10:38:20AM -0800, Darrick J=2E Wong wrote:
+>> > > On Sat, Feb 29, 2020 at 07:07:16PM +0100, Domenico Andreoli
+>wrote:
+>> > > > On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J=2E Wong
+>wrote:
+>> > > > > From: Darrick J=2E Wong <darrick=2Ewong@oracle=2Ecom>
+>> > > > >
+>> > > > > It turns out that there /is/ one use case for programs being
+>able to
+>> > > > > write to swap devices, and that is the userspace hibernation
+>code=2E  The
+>> > > > > uswsusp ioctls allow userspace to lease parts of swap
+>devices, so turn
+>> > > > > S_SWAPFILE off when invoking suspend=2E
+>> > > > >
+>> > > > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap
+>devices")
+>> > > > > Reported-by: Domenico Andreoli <domenico=2Eandreoli@linux=2Ecom=
+>
+>> > > > > Reported-by: Marian Klein <mkleinsoft@gmail=2Ecom>
+>> > > >
+>> > > > I also tested it yesterday but was not satisfied, unfortunately
+>I did
+>> > > > not come with my comment in time=2E
+>> > > >
+>> > > > Yes, I confirm that the uswsusp works again but also checked
+>that
+>> > > > swap_relockall() is not triggered at all and therefore after
+>the first
+>> > > > hibernation cycle the S_SWAPFILE bit remains cleared and the
+>whole
+>> > > > swap_relockall() is useless=2E
+>> > > >
+>> > > > I'm not sure this patch should be merged in the current form=2E
+>> > >
+>> > > NNGGHHGGHGH /me is rapidly losing his sanity and will soon just
+>revert
+>> > > the whole security feature because I'm getting fed up with people
+>> > > yelling at me *while I'm on vacation* trying to *restore* my
+>sanity=2E  I
+>> > > really don't want to be QAing userspace-directed hibernation
+>right now=2E
+>> >
+>> > Maybe we could proceed with the first patch to amend the regression
+>and
+>> > postpone the improved fix to a later patch? Don't loose sanity for
+>this=2E
+>>=20
+>> I would concur here=2E
+>>=20
+>> > > =2E=2E=2Eright, the patch is broken because we have to relock the
+>swapfiles in
+>> > > whatever code executes after we jump back to the restored kernel,
+>not in
+>> > > the one that's doing the restoring=2E  Does this help?
+>> >
+>> > I made a few unsuccessful attempts in kernel/power/hibernate=2Ec and
+>> > eventually I'm switching to qemu to speed up the test cycle=2E
+>> >
+>> > > OTOH, maybe we should just leave the swapfiles unlocked after
+>resume=2E
+>> > > Userspace has clearly demonstrated the one usecase for writing to
+>the
+>> > > swapfile, which means anyone could have jumped in while uswsusp
+>was
+>> > > running and written whatever crap they wanted to the parts of the
+>swap
+>> > > file that weren't leased for the hibernate image=2E
+>> >
+>> > Essentially, if the hibernation is supported the swapfile is not
+>totally
+>> > safe=2E
+>>=20
+>> But that's only the case with the userspace variant, isn't it?
+>
+>Yes=2E
+>
+>> > Maybe user-space hibernation should be a separate option=2E
+>>=20
+>> That actually is not a bad idea at all in my view=2E
+>
+>The trouble with kconfig options is that the distros will be pressued
+>into setting CONFIG_HIBERNATE_USERSPACE=3Dy to avoid regressing their
+>uswsusp users, which makes the added security code pointless=2E  As this
+
+True but there are not only distros otherwise the kernel would not have an=
+y option at all=2E
+
+It's actually very nice that if hibernation is disabled no userspace is ev=
+er allowed to write to the swap=2E
+
+>has clearly sucked me into a conflict that I don't have the resources
+>to
+>pursue, I'm going to revert the write patch checks and move on with
+>life=2E
+
+I don't see the need of reverting anything, I can deal with these issues i=
+f you are busy on something else=2E
+
+>
+>--D
+>
+>> Thanks!
