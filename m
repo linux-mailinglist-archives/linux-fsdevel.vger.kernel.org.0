@@ -2,185 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863BD177516
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 12:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C235017753A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 12:23:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbgCCLJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 06:09:43 -0500
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:35363 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727972AbgCCLJn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 06:09:43 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 792F0917;
-        Tue,  3 Mar 2020 06:09:41 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 03 Mar 2020 06:09:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        5TX+uCNcQY2aavXB/mLwr/V1IcyxUJrKJUSz6Rc4B54=; b=cPtWI4rAcgAEtVhz
-        YiA2svSMnAuv80t8d6DJfDrV4htEnAOzAzMcOvQgrMkNB3Q+NnGXh8y+4pgcMiu+
-        O8a7uDLDcsaY43Jkf/10qJlwmpkFp8kbZMb2XyihW4qF9Fq1Evbk608wDcp42Bw5
-        tE5xWqsU90mgPaLkntu+WJqXN0CLoxRu5XJvnedDU4nWGj/LA13xcVO11keLg7Z6
-        1LWcThfjiSh/YHpJnZKBsftxkU9whki0egMWJBWPq5/ycY59KUBLBiAmD1RJkr74
-        EDrTD+FEsi0+0ztqHb3CjKFhRuDPXpDhdMHinLC3g06SeXKK5iwzXyAJChQaOZIn
-        9pHNaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=5TX+uCNcQY2aavXB/mLwr/V1IcyxUJrKJUSz6Rc4B
-        54=; b=Qhb/sMzXoT71dHreZn15FCny+qul8QXE6Dq+hmbPwSMOeQIf83PkDPpeX
-        KNmt0ZuQ428jqjAc4htqtnOLh/W7v2sMZTuEVHOZWdMSjTmsMLeAm8jaIoRtVo6J
-        NFt1QMDJbvIo+Zkk4+LRCgQ7RL5ih61CO+kHK/1xmCSpZB1F4uxCgRcuIqwy9yeL
-        5E8yQ0+qEJ/ax7f9K2e9lFwZ73IswDF05EhAOovsnyZd3uMaedVzKdryQJYPsudb
-        rmNA7MlZLoWO1yx+i23v606qpptdOxEwdvQHMTyYIhQi7DkWI0SKZcWUYvOAzqN5
-        rNnGwQJMR0+OZSDV3fB9l5eY7POOw==
-X-ME-Sender: <xms:9DpeXvy5Ez0mQEBDUYfUXoPto1afIT6zXjTQX5c9zpyO3_pcERpzsw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddtiedgvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucffohhmrghinhepjhgrnh
-    gvshhtrhgvvghtrdgtohhmnecukfhppeduudekrddvtdekrddukedtrddvtddvnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhgrvhgvnhesth
-    hhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:9DpeXuGzChvI_2mxEnOFMOWIucZ7QYRl68_DAgdP6YoJcdB68IEegg>
-    <xmx:9DpeXtkvAsik0zrhT3akz8u7b7WZRU3clQDRXHp5T5E12RygzwvUVw>
-    <xmx:9DpeXiTZ43DPSUhn4vfmx61ucq14uEdFPQcF1QvkfvJzQOJh5Q_R0A>
-    <xmx:9TpeXkXtkDC3tkVL01bw-0UGI9GC3bVbh8YDgNRu7U_JjoJJhhIk-oA7p1P23w8y>
-Received: from mickey.themaw.net (unknown [118.208.180.202])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 863E53280062;
-        Tue,  3 Mar 2020 06:09:35 -0500 (EST)
-Message-ID: <7e8e4b1b1e282a11757252dbe02445171f6f9675.camel@themaw.net>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
- [ver #17]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Steven Whitehouse <swhiteho@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Tue, 03 Mar 2020 19:09:31 +0800
-In-Reply-To: <CAJfpegsW5S3dRhhfGyAnhLEDjBxMQRBda5fsnXQ+=S=4YR0MCA@mail.gmail.com>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
-         <1582316494.3376.45.camel@HansenPartnership.com>       
- <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>   
- <1582556135.3384.4.camel@HansenPartnership.com>        
- <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>   
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>      
- <1582644535.3361.8.camel@HansenPartnership.com>        
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> 
- <107666.1582907766@warthog.procyon.org.uk>     
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>   
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>    
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>   
- <1509948.1583226773@warthog.procyon.org.uk>    
- <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>   
- <CAJfpegtemv64mpmTRT6ViHmsWq4nNE4KQvuHkNCYozRU7dQd8Q@mail.gmail.com>   
- <06d2dbf0-4580-3812-bb14-34c6aa615747@redhat.com>      
- <CAJfpegsW5S3dRhhfGyAnhLEDjBxMQRBda5fsnXQ+=S=4YR0MCA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1728456AbgCCLXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 06:23:36 -0500
+Received: from mail-oln040092067031.outbound.protection.outlook.com ([40.92.67.31]:38373
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728374AbgCCLXg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 06:23:36 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZQejSuuiWG3F8zI58009atzNFO4LoNsslDwRM+t92e38a2rxfRp3SIW07181vTZyKcZ2TaoG9TmZOi4OBulKdPRlJ78KZlPmmL7Gfn6p8fc3eTOZusV2heNaxGPAjX6uQclnS6aX4Y4iYvxLqGiLL9bChi73yyor1Pg/fiKY1ZPPNC4p7p7JN/bbSD2st885cZchVQefOIYOaj85ScHPYqzvFmqed5z9cas1x4Du0FwM+zuUS/2gjC4mm1xVrHsgIWk3sJQYmwxpL9noHjALWi8FKA6+1EafsO6zDhnjgPZFd7nVHAnty722mJyrwunxp0EVZZBCWvCD0+hWbyuhCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bi9h3sQp5Fjur8g8LCJt1GQ2imEjfSTksNKIpeKdcPs=;
+ b=Bk8G1SEltKaZYa+ycepVkuCD8+pyEzTLaW6YROpbF7HVzkv/V+uyvHflHu2zPgffoFlif4YZlWnbhBYEpyGPlDr4dpEmmFIUACTfn6fecOW5dHRdztF3JNb48l2II45vYSuO9ebOFAiDXnJgDWXOVGqQOCrY0TWlyuxEOIMM8IjaBsBWFLMxXLcfFKuHXQ5KalDO2yh5457a+fQ+08pnGjp2fA3dD2lLKCcHQyvdc1oDo0NMWI9LuGJ77fXOEp4cq9UgtsscrW4ZvrnKQxGtVrKQrELpTu9hI58GoHA50UEm1Lr7W4d+pmFcS4Vws0KeUassdI4HOJNMnKX39iKjZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR02FT037.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:e400:7e1d::35) by
+ HE1EUR02HT165.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1d::239)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
+ 2020 11:23:31 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.10.54) by
+ HE1EUR02FT037.mail.protection.outlook.com (10.152.10.205) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.15 via Frontend Transport; Tue, 3 Mar 2020 11:23:31 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 11:23:31 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR01CA0109.eurprd01.prod.exchangelabs.com (2603:10a6:208:168::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Tue, 3 Mar 2020 11:23:30 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv4] exec: Fix a deadlock in ptrace
+Thread-Topic: [PATCHv4] exec: Fix a deadlock in ptrace
+Thread-Index: AQHV8OBzc5kV6gCKfE+vkD4wYYEirqg2JJ+AgABtUACAABrXAIAADcyA
+Date:   Tue, 3 Mar 2020 11:23:31 +0000
+Message-ID: <AM6PR03MB51706AE0FE7DA0F3F507F6BAE4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74zmfc9.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170E03613104B2ACE32F057E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5170E03613104B2ACE32F057E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR01CA0109.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:168::14) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:2472DEA6027607CB5A200246027E2FA3F4AA6FCE89AD573462F53366B269DA3A;UpperCasedChecksum:785365FC4FA3CE599406044206362DC58EF921E2C33B7FA8BCBAD834AA23D294;SizeAsReceived:9615;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [zw/mh3ppBNYMucu6VHXP8T2ZRIYX3eY6]
+x-microsoft-original-message-id: <1856cb82-976f-3af3-05e8-4678592183cc@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 857cb9f1-f9cb-4c3f-1c12-08d7bf654d8f
+x-ms-traffictypediagnostic: HE1EUR02HT165:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2EDaDqqQVkOIm28fh0lDkXAl3ksrgu+ezMZgm5InqvsfLa9byXwjaSUqyCuAQEg4hcqPzE/zXsGXvsf5IVl2ZBl+pUcTk1ydNYZ2/m8MtV6eL+s/boh8aKk1rvWQFmshOWe6oBt97/RcU3GpB8+L2eboFTgE3AFVkqqiL8NW4cIl1j5cxQnSilxEoAHUBxqT
+x-ms-exchange-antispam-messagedata: VZENhCCNHMjf4K8P1+qAHGthdd10/VzzDJeU9c9sL4d0fyP9ASdhpkZN3LwVmZKrt01/xdNf7ou/tFZf+xsmCnXgDaqE/+IncE6Lofl+uoCM/LCecVbZpXa82nKmFiVPHmbrs+UDD2vaxtXddw4e3w==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B8BB21DE58DFF541A5F20C5C0C084BA5@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 857cb9f1-f9cb-4c3f-1c12-08d7bf654d8f
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 11:23:31.3229
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT165
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-03-03 at 11:32 +0100, Miklos Szeredi wrote:
-> On Tue, Mar 3, 2020 at 11:22 AM Steven Whitehouse <
-> swhiteho@redhat.com> wrote:
-> > Hi,
-> > 
-> > On 03/03/2020 09:48, Miklos Szeredi wrote:
-> > > On Tue, Mar 3, 2020 at 10:26 AM Miklos Szeredi <miklos@szeredi.hu
-> > > > wrote:
-> > > > On Tue, Mar 3, 2020 at 10:13 AM David Howells <
-> > > > dhowells@redhat.com> wrote:
-> > > > > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > > 
-> > > > > > I'm doing a patch.   Let's see how it fares in the face of
-> > > > > > all these
-> > > > > > preconceptions.
-> > > > > Don't forget the efficiency criterion.  One reason for going
-> > > > > with fsinfo(2) is
-> > > > > that scanning /proc/mounts when there are a lot of mounts in
-> > > > > the system is
-> > > > > slow (not to mention the global lock that is held during the
-> > > > > read).
-> > > BTW, I do feel that there's room for improvement in userspace
-> > > code as
-> > > well.  Even quite big mount table could be scanned for *changes*
-> > > very
-> > > efficiently.  l.e. cache previous contents of
-> > > /proc/self/mountinfo and
-> > > compare with new contents, line-by-line.  Only need to parse the
-> > > changed/added/removed lines.
-> > > 
-> > > Also it would be pretty easy to throttle the number of updates so
-> > > systemd et al. wouldn't hog the system with unnecessary
-> > > processing.
-> > > 
-> > > Thanks,
-> > > Miklos
-> > > 
-> > 
-> > At least having patches to compare would allow us to look at the
-> > performance here and gain some numbers, which would be helpful to
-> > frame
-> > the discussions. However I'm not seeing how it would be easy to
-> > throttle
-> > updates... they occur at whatever rate they are generated and this
-> > can
-> > be fairly high. Also I'm not sure that I follow how the
-> > notifications
-> > and the dumping of the whole table are synchronized in this case,
-> > either.
-> 
-> What I meant is optimizing current userspace without additional
-> kernel
-> infrastructure.   Since currently there's only the monolithic
-> /proc/self/mountinfo, it's reasonable that if the rate of change is
-> very high, then we don't re-read this table on every change, only
-> within a reasonable time limit (e.g. 1s) to provide timely updates.
-> Re-reading the table on every change would (does?) slow down the
-> system so that the actual updates would even be slower, so throttling
-> in this case very much  makes sense.
-
-Optimizing user space is a huge task.
-
-For example, consider this (which is related to a recent upstream
-discussion I had):
-https://blog.janestreet.com/troubleshooting-systemd-with-systemtap/
-
-Working on improving libmount is really useful but that can't help
-with inherently inefficient approaches to keeping info. current
-which is actually needed at times.
-
-> 
-> Once we have per-mount information from the kernel, throttling
-> updates
-> probably does not make sense.
-
-And can easily lead to application problems. Throttling will
-lead to an inability to have up to date information upon which
-application decisions are made.
-
-I don't think it's a viable solution to the separate problem
-of a large number of notifications either.
-
-Ian
-
+T24gMy8zLzIwIDExOjM0IEFNLCBCZXJuZCBFZGxpbmdlciB3cm90ZToNCj4gT24gMy8zLzIwIDk6
+NTggQU0sIENocmlzdGlhbiBCcmF1bmVyIHdyb3RlOg0KPj4gU28gb25lIGlzc3VlIEkgc2VlIHdp
+dGggaGF2aW5nIHRvIHJlYWNxdWlyZSB0aGUgY3JlZF9ndWFyZF9tdXRleCBtaWdodA0KPj4gYmUg
+dGhhdCB0aGlzIHdvdWxkIGFsbG93IHRhc2tzIGhvbGRpbmcgdGhlIGNyZWRfZ3VhcmRfbXV0ZXgg
+dG8gYmxvY2sgYQ0KPj4ga2lsbGVkIGV4ZWMnaW5nIHRhc2sgZnJvbSBleGl0aW5nLCByaWdodD8N
+Cj4+DQo+IA0KPiBZZXMgbWF5YmUsIGJ1dCBJIHRoaW5rIGl0IHdpbGwgbm90IGJlIHdvcnNlIHRo
+YW4gaXQgaXMgbm93Lg0KPiBTaW5jZSB0aGUgc2Vjb25kIHRpbWUgdGhlIG11dGV4IGlzIGFjcXVp
+cmVkIGl0IGlzIGRvbmUgd2l0aA0KPiBtdXRleF9sb2NrX2tpbGxhYmxlLCBzbyBhdCBsZWFzdCBr
+aWxsIC05IHNob3VsZCBnZXQgaXQgdGVybWluYXRlZC4NCj4gDQoNCg0KDQo+ICBzdGF0aWMgdm9p
+ZCBmcmVlX2Jwcm0oc3RydWN0IGxpbnV4X2JpbnBybSAqYnBybSkNCj4gIHsNCj4gIAlmcmVlX2Fy
+Z19wYWdlcyhicHJtKTsNCj4gIAlpZiAoYnBybS0+Y3JlZCkgew0KPiArCQlpZiAoIWJwcm0tPmNh
+bGxlZF9mbHVzaF9vbGRfZXhlYykNCj4gKwkJCW11dGV4X2xvY2soJmN1cnJlbnQtPnNpZ25hbC0+
+Y3JlZF9ndWFyZF9tdXRleCk7DQo+ICsJCWN1cnJlbnQtPnNpZ25hbC0+Y3JlZF9sb2NrZWRfZm9y
+X3B0cmFjZSA9IGZhbHNlOw0KPiAgCQltdXRleF91bmxvY2soJmN1cnJlbnQtPnNpZ25hbC0+Y3Jl
+ZF9ndWFyZF9tdXRleCk7DQoNCg0KSG1tLCBjb3VnaC4uLg0KYWN0dWFsbHkgd2hlbiB0aGUgbXV0
+ZXhfbG9ja19raWxsYWJsZSBmYWlscywgZHVlIHRvIGtpbGwgLTksIGluIGZsdXNoX29sZF9leGVj
+DQpmcmVlX2Jwcm0gbG9ja3MgdGhlIHNhbWUgbXV0ZXgsIHRoaXMgdGltZSB1bmtpbGxhYmxlLCBi
+dXQgSSBzaG91bGQgYmV0dGVyIGRvDQptdXRleF9sb2NrX2tpbGxhYmxlIGhlcmUsIGFuZCBpZiB0
+aGF0IGZhaWxzLCBJIGNhbiBsZWF2ZSBjcmVkX2xvY2tlZF9mb3JfcHRyYWNlLA0KaXQgc2hvdWxk
+bid0IG1hdHRlciwgc2luY2UgdGhpcyBpcyBhIGZhdGFsIHNpZ25hbCBhbnl3YXksIHJpZ2h0Pw0K
+DQpCZXJuZC4NCg==
