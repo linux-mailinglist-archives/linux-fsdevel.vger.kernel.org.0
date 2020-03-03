@@ -2,185 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC41176ECD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 06:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 682F7176F81
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 07:34:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbgCCFf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 00:35:59 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:60435 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725440AbgCCFf7 (ORCPT
+        id S1725765AbgCCGeE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 01:34:04 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:34332 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbgCCGeE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 00:35:59 -0500
-X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Mar 2020 00:35:58 EST
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 63E5B787;
-        Tue,  3 Mar 2020 00:28:08 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 03 Mar 2020 00:28:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        tggywWKtWN6rOIFQkxL1pkuJH5gISL+DxeYq7A1sess=; b=BT76Yia40KWvlkva
-        zxMUOgQ2cGh1G4CgkSd9LSzdv6pa1NSdycnVvMLIAVXgY/qhSZv23Enfe5LwvSnP
-        EnOyOczk5IZPIJRHEDJkuzShBusCvGpFbRToi16x1NH36tS8pUdzBY1l+MY3l/hn
-        3FMSPuh2SfVOobkPUkwnGw/UccwiqHsKL4E9hDUsBQ0iLvArw7joxKkF16ZHoYv2
-        E2El88/+YeVWpdiv+bC97e7YkaCsEUXGNpEZTBNPOzuVRQDwQOeYnz/yCLphwOjh
-        LbUyx0HxZiXgrSsL8xISkG5XZw0P3tPw8lObQw3cHKcF94+LuBDHiJ2hJk5DLQjk
-        get+tg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=tggywWKtWN6rOIFQkxL1pkuJH5gISL+DxeYq7A1se
-        ss=; b=QYQzeOweAI6VXarA2WPokNZgWLn9+9ymb4ttoNqRCfHxTNHhxuA1BuqNe
-        xTzy0j8EY5psHGRl0hN3M9HQ75NBopgkUJe99IZ9mrMkMrDTVIKTN1fbqJnbwIsK
-        ZinT2nK5jeO/rgN9iP9tYYdgXipgMH6bd61QrW8MZs7aWgHrr6O6AhUcaEs6NMxJ
-        xMmh+N17h9gyHfggea6TB/h1iXycAMPYuCaV3AOoLb6/B9LjninTWgnJHHnJW79G
-        J+gJYgCH7vyGZUxIZN2kDUBkelGsy+vdobfXYqltBvRVI2itWDPNbqub+VVshRsp
-        SuGV0KQiaOgwoPizuH00f9zHo8JPg==
-X-ME-Sender: <xms:5-pdXob4_nYgt6Xv3olZHafeY_RAXl33XID-x9IQfj-50psJfCWBZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedruddthedgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtke
-    drudekkedruddufeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:5-pdXjtjPUhJpUrat2dtwXqjRd7o7dkdXYQl5BCmRTlhLtqRiA46mQ>
-    <xmx:5-pdXqklOYvRTdr_YfOo66U3N9UpaBO0MiXA2l2MTD-ORWFcBBWZ2w>
-    <xmx:5-pdXtSQKK-8LkAHPy4LgZi-xc-kfvOQfipkBj6UYVTlgBWOyS23AA>
-    <xmx:6OpdXmO82PQkDUhPw6K3YcoKRcEXvaxWUsOnkooWBiT2W0PMJfmVhAEzQgDBqNWa>
-Received: from mickey.themaw.net (unknown [118.208.188.113])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 76C9A328005A;
-        Tue,  3 Mar 2020 00:28:02 -0500 (EST)
-Message-ID: <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications
- [ver #17]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date:   Tue, 03 Mar 2020 13:27:59 +0800
-In-Reply-To: <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
-         <1582316494.3376.45.camel@HansenPartnership.com>
-         <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
-         <1582556135.3384.4.camel@HansenPartnership.com>
-         <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
-         <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com>
-         <1582644535.3361.8.camel@HansenPartnership.com>
-         <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein>
-         <107666.1582907766@warthog.procyon.org.uk>
-         <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        Tue, 3 Mar 2020 01:34:04 -0500
+Received: by mail-ot1-f42.google.com with SMTP id j16so1957864otl.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 22:34:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
+        b=RT+Kea4iOHlH9H/H9pNH1Sk5JZ4dns1gAbgYhpwbXqqZbzVX5jEh1et1qoLilG5wVs
+         oO2JK/0A0BWeTpwrk38qIZ6XZ4P3iBdLicT+oqLeMT/lp5vTN+FuRTu9OOkmhkC8cJca
+         VNnFYWcAPZnYcrYLsnEGl2OTcQKWgZgulNDfrJbAPifq7V9ST4c9TsnqL5L3xl31itA7
+         zTqGIMx5oodNwYKcTa39nYsVUZd9viLRjg7pyd6NoVpKZ1KakGNLr2ZMf2jo0YkKKo7G
+         qZSY6uQZE16aoTg0ZtnBdaWfz1YWULza/Pk+PtsfaW25hJEnjirgGc/h7Hl4hMWxRARM
+         8K9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
+        b=GhtzSdv/l6wpyQ1JB7hFmpMk4tMwrYWrkwXSUGhuPWhjHlYYtlj0x3WdI/kA0aOryG
+         aA1QpD0cii689gqYmBKRFMImfSzU9w7PcQvf9pRU8k33JmSeTG/Ob2lT612tNGwIO5dV
+         Gbst70HxkdJe4eUL8AnPeMhjFxzn1xcbQKvHQtcB4Da29KFHa0TLVOye21SyhEm8Q9Tm
+         7/WPWYe7TGDo47QmjUAWgqhRx5wlDZaJGI5DZfMzDhNgved5FAoSf18U54V8h6+sbGcU
+         Hl2oyvmieH9QN6+yD2wq8e2nmBMreHIgM5R5qTVZNxTfAfDLJSy2Oq0/k/Ijl81eZlNs
+         Y1RQ==
+X-Gm-Message-State: ANhLgQ0e3zXYR2OVg8CHdaS15Iyay5YZ2H1Mm9Z7TbL7pTYZOaG/6rTg
+        9W0khxRIVHmQvg/OOvKkpu9syQ==
+X-Google-Smtp-Source: ADFU+vt+oiBRDRmtU/BlPEpanrfpTiCQDOW8t3tex0y3+5iv9DRGttD0LyFJlWuDDjetCc5tLiQDxw==
+X-Received: by 2002:a05:6830:1203:: with SMTP id r3mr2352162otp.230.1583217243235;
+        Mon, 02 Mar 2020 22:34:03 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id z10sm7243729oih.1.2020.03.02.22.34.01
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Mar 2020 22:34:02 -0800 (PST)
+Date:   Mon, 2 Mar 2020 22:34:00 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+cc:     linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Hugh Dickins <hughd@google.com>, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
+In-Reply-To: <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+Message-ID: <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
+References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com> <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-03-02 at 10:09 +0100, Miklos Szeredi wrote:
-> On Fri, Feb 28, 2020 at 5:36 PM David Howells <dhowells@redhat.com>
-> wrote:
-> > sysfs also has some other disadvantages for this:
-> > 
-> >  (1) There's a potential chicken-and-egg problem in that you have
-> > to create a
-> >      bunch of files and dirs in sysfs for every created mount and
-> > superblock
-> >      (possibly excluding special ones like the socket mount) - but
-> > this
-> >      includes sysfs itself.  This might work - provided you create
-> > sysfs
-> >      first.
-> 
-> Sysfs architecture looks something like this (I hope Greg will
-> correct
-> me if I'm wrong):
-> 
-> device driver -> kobj tree <- sysfs tree
-> 
-> The kobj tree is created by the device driver, and the dentry tree is
-> created on demand from the kobj tree.   Lifetime of kobjs is bound to
-> both the sysfs objects and the device but not the other way round.
-> I.e. device can go away while the sysfs object is still being
-> referenced, and sysfs can be freely mounted and unmounted
-> independently of device initialization.
-> 
-> So there's no ordering requirement between sysfs mounts and other
-> mounts.   I might be wrong on the details, since mounts are created
-> very early in the boot process...
-> 
-> >  (2) sysfs is memory intensive.  The directory structure has to be
-> > backed by
-> >      dentries and inodes that linger as long as the referenced
-> > object does
-> >      (procfs is more efficient in this regard for files that aren't
-> > being
-> >      accessed)
-> 
-> See above: I don't think dentries and inodes are pinned, only kobjs
-> and their associated cruft.  Which may be too heavy, depending on the
-> details of the kobj tree.
-> 
-> >  (3) It gives people extra, indirect ways to pin mount objects and
-> >      superblocks.
-> 
-> See above.
-> 
-> > For the moment, fsinfo() gives you three ways of referring to a
-> > filesystem
-> > object:
-> > 
-> >  (a) Directly by path.
-> 
-> A path is always representable by an O_PATH descriptor.
-> 
-> >  (b) By path associated with an fd.
-> 
-> See my proposal about linking from /proc/$PID/fdmount/$FD ->
-> /sys/devices/virtual/mounts/$MOUNT_ID.
-> 
-> >  (c) By mount ID (perm checked by working back up the tree).
-> 
-> Check that perm on lookup of /sys/devices/virtual/mounts/$MOUNT_ID.
-> The proc symlink would bypass the lookup check by directly jumping to
-> the mountinfo dir.
-> 
-> > but will need to add:
-> > 
-> >  (d) By fscontext fd (which is hard to find in sysfs).  Indeed, the
-> > superblock
-> >      may not even exist yet.
-> 
-> Proc symlink would work for that too.
+On Mon, 2 Mar 2020, Anshuman Khandual wrote:
 
-There's mounts enumeration too, ordering is required to identify the
-top (or bottom depending on terminology) with more than one mount on
-a mount point.
-
+> This adds the following new VMA flag wrappers which will replace current
+> open encodings across various places. This should not have any functional
+> implications.
 > 
-> If sysfs is too heavy, this could be proc or a completely new
-> filesystem.  The implementation is much less relevant at this stage
-> of
-> the discussion than the interface.
+> vma_is_dontdump()
+> vma_is_noreserve()
+> vma_is_special()
+> vma_is_locked()
+> vma_is_mergeable()
+> vma_is_softdirty()
+> vma_is_thp()
+> vma_is_nothp()
 
-Ha, proc with the seq file interface, that's already proved to not
-work properly and looks difficult to fix.
+Why?? Please don't. I am not at all keen on your 1/3 and 2/3 (some
+of us actually like to see what the VM_ flags are where they're used,
+without having to chase through scattered wrappers hiding them),
+but this 3/3 particularly upset me.
 
-Ian
+There is a good reason for the (hideously named) is_vm_hugetlb_page(vma):
+to save "#ifdef CONFIG_HUGETLB_PAGE"s all over (though I suspect the
+same could have been achieved much more nicely by #define VM_HUGETLB 0);
+but hiding all flags in vma_is_whatever()s is counter-productive churn.
 
+Improved readability? Not to my eyes.
+
+Hugh
