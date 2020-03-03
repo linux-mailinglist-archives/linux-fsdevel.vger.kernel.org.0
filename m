@@ -2,102 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 682F7176F81
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 07:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BE2917704A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 08:46:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725765AbgCCGeE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 01:34:04 -0500
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:34332 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbgCCGeE (ORCPT
+        id S1727637AbgCCHqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 02:46:23 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33503 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbgCCHqW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 01:34:04 -0500
-Received: by mail-ot1-f42.google.com with SMTP id j16so1957864otl.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 22:34:03 -0800 (PST)
+        Tue, 3 Mar 2020 02:46:22 -0500
+Received: by mail-il1-f195.google.com with SMTP id r4so1950358iln.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 23:46:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
-        b=RT+Kea4iOHlH9H/H9pNH1Sk5JZ4dns1gAbgYhpwbXqqZbzVX5jEh1et1qoLilG5wVs
-         oO2JK/0A0BWeTpwrk38qIZ6XZ4P3iBdLicT+oqLeMT/lp5vTN+FuRTu9OOkmhkC8cJca
-         VNnFYWcAPZnYcrYLsnEGl2OTcQKWgZgulNDfrJbAPifq7V9ST4c9TsnqL5L3xl31itA7
-         zTqGIMx5oodNwYKcTa39nYsVUZd9viLRjg7pyd6NoVpKZ1KakGNLr2ZMf2jo0YkKKo7G
-         qZSY6uQZE16aoTg0ZtnBdaWfz1YWULza/Pk+PtsfaW25hJEnjirgGc/h7Hl4hMWxRARM
-         8K9Q==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ELZPyz+JMM9KR/Aq1ALyZfnG+hF1PW/nIOxRAiYMFlA=;
+        b=h//WCX1u89UHh6CAN0ekseTsItC2J5xMQfHl6n0s1N9AX+zx70w8Zxu0fuym78HBDv
+         ZEt42SF+RPlW0mcOJcki5T5Usfq7aLeqO1zd9I0brS5E9QMGuQHA63EHHUADxREX/OqS
+         gy0aUO+wM4MvJT1ssK9MvsaXJZqHt+TItge3Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=nd/TEeW4LQOvJMaEt1rZVabT2kTJB3dRDcejupbt5xY=;
-        b=GhtzSdv/l6wpyQ1JB7hFmpMk4tMwrYWrkwXSUGhuPWhjHlYYtlj0x3WdI/kA0aOryG
-         aA1QpD0cii689gqYmBKRFMImfSzU9w7PcQvf9pRU8k33JmSeTG/Ob2lT612tNGwIO5dV
-         Gbst70HxkdJe4eUL8AnPeMhjFxzn1xcbQKvHQtcB4Da29KFHa0TLVOye21SyhEm8Q9Tm
-         7/WPWYe7TGDo47QmjUAWgqhRx5wlDZaJGI5DZfMzDhNgved5FAoSf18U54V8h6+sbGcU
-         Hl2oyvmieH9QN6+yD2wq8e2nmBMreHIgM5R5qTVZNxTfAfDLJSy2Oq0/k/Ijl81eZlNs
-         Y1RQ==
-X-Gm-Message-State: ANhLgQ0e3zXYR2OVg8CHdaS15Iyay5YZ2H1Mm9Z7TbL7pTYZOaG/6rTg
-        9W0khxRIVHmQvg/OOvKkpu9syQ==
-X-Google-Smtp-Source: ADFU+vt+oiBRDRmtU/BlPEpanrfpTiCQDOW8t3tex0y3+5iv9DRGttD0LyFJlWuDDjetCc5tLiQDxw==
-X-Received: by 2002:a05:6830:1203:: with SMTP id r3mr2352162otp.230.1583217243235;
-        Mon, 02 Mar 2020 22:34:03 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id z10sm7243729oih.1.2020.03.02.22.34.01
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Mar 2020 22:34:02 -0800 (PST)
-Date:   Mon, 2 Mar 2020 22:34:00 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-cc:     linux-mm@kvack.org, "David S. Miller" <davem@davemloft.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Hugh Dickins <hughd@google.com>, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
-In-Reply-To: <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
-Message-ID: <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
-References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com> <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ELZPyz+JMM9KR/Aq1ALyZfnG+hF1PW/nIOxRAiYMFlA=;
+        b=hpnpXRt4MZ2VXSpS8+5UlU8Yr42EiHi8RPFXrrLpqj7lLEyKyA3XQ6m9XRIH3lJL7z
+         64OV0wuRfCq2QE4+cxB1y6Bi5T/VFXtTCqpVOjZ/6MP9DciSG+RgcYEjTTiJA5Z+12e+
+         W7YGJVYE9KNi5XuLnH3cJnhHROu+vP22RyJtv0UkYkOJpWPWoRikkl0kxZwCYPqZ6Uip
+         x0p9O6TzLvrrovM3bQ+BnbuGrWLclHCmpRxgB6vMyT+YE9MlHB3JD4K/ZqF++7ftlvt/
+         /65sOmM6aLJixkhTl2PDUkOCMVklp1a+rMSVKDkzJ4FdH0AqZUUxHnwVvyZh7+6XzXDw
+         HGYA==
+X-Gm-Message-State: ANhLgQ3QuQ6FXUyMq8KVhC6W+OTO2/Q0EabFPWgDjJWUTOMv2eWleE3c
+        QzkVfy2AtCTXcl0GMn4+nhcXNyejLqQOPAcqANyLNQ==
+X-Google-Smtp-Source: ADFU+vvEp1VOCUcDcLeAQYAAy2siLYtK8Vfu/WGfBBl0ZwK2hZRppZiOkMiVlWL/6lKu5Nh0cVOfH98k5NauZOHJE88=
+X-Received: by 2002:a05:6e02:f43:: with SMTP id y3mr3580059ilj.174.1583221580782;
+ Mon, 02 Mar 2020 23:46:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
+ <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com> <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+In-Reply-To: <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 3 Mar 2020 08:46:09 +0100
+Message-ID: <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2 Mar 2020, Anshuman Khandual wrote:
+On Tue, Mar 3, 2020 at 6:28 AM Ian Kent <raven@themaw.net> wrote:
+>
+> On Mon, 2020-03-02 at 10:09 +0100, Miklos Szeredi wrote:
+> > On Fri, Feb 28, 2020 at 5:36 PM David Howells <dhowells@redhat.com>
+> > wrote:
+> > > sysfs also has some other disadvantages for this:
+> > >
+> > >  (1) There's a potential chicken-and-egg problem in that you have
+> > > to create a
+> > >      bunch of files and dirs in sysfs for every created mount and
+> > > superblock
+> > >      (possibly excluding special ones like the socket mount) - but
+> > > this
+> > >      includes sysfs itself.  This might work - provided you create
+> > > sysfs
+> > >      first.
+> >
+> > Sysfs architecture looks something like this (I hope Greg will
+> > correct
+> > me if I'm wrong):
+> >
+> > device driver -> kobj tree <- sysfs tree
+> >
+> > The kobj tree is created by the device driver, and the dentry tree is
+> > created on demand from the kobj tree.   Lifetime of kobjs is bound to
+> > both the sysfs objects and the device but not the other way round.
+> > I.e. device can go away while the sysfs object is still being
+> > referenced, and sysfs can be freely mounted and unmounted
+> > independently of device initialization.
+> >
+> > So there's no ordering requirement between sysfs mounts and other
+> > mounts.   I might be wrong on the details, since mounts are created
+> > very early in the boot process...
+> >
+> > >  (2) sysfs is memory intensive.  The directory structure has to be
+> > > backed by
+> > >      dentries and inodes that linger as long as the referenced
+> > > object does
+> > >      (procfs is more efficient in this regard for files that aren't
+> > > being
+> > >      accessed)
+> >
+> > See above: I don't think dentries and inodes are pinned, only kobjs
+> > and their associated cruft.  Which may be too heavy, depending on the
+> > details of the kobj tree.
+> >
+> > >  (3) It gives people extra, indirect ways to pin mount objects and
+> > >      superblocks.
+> >
+> > See above.
+> >
+> > > For the moment, fsinfo() gives you three ways of referring to a
+> > > filesystem
+> > > object:
+> > >
+> > >  (a) Directly by path.
+> >
+> > A path is always representable by an O_PATH descriptor.
+> >
+> > >  (b) By path associated with an fd.
+> >
+> > See my proposal about linking from /proc/$PID/fdmount/$FD ->
+> > /sys/devices/virtual/mounts/$MOUNT_ID.
+> >
+> > >  (c) By mount ID (perm checked by working back up the tree).
+> >
+> > Check that perm on lookup of /sys/devices/virtual/mounts/$MOUNT_ID.
+> > The proc symlink would bypass the lookup check by directly jumping to
+> > the mountinfo dir.
+> >
+> > > but will need to add:
+> > >
+> > >  (d) By fscontext fd (which is hard to find in sysfs).  Indeed, the
+> > > superblock
+> > >      may not even exist yet.
+> >
+> > Proc symlink would work for that too.
+>
+> There's mounts enumeration too, ordering is required to identify the
+> top (or bottom depending on terminology) with more than one mount on
+> a mount point.
+>
+> >
+> > If sysfs is too heavy, this could be proc or a completely new
+> > filesystem.  The implementation is much less relevant at this stage
+> > of
+> > the discussion than the interface.
+>
+> Ha, proc with the seq file interface, that's already proved to not
+> work properly and looks difficult to fix.
 
-> This adds the following new VMA flag wrappers which will replace current
-> open encodings across various places. This should not have any functional
-> implications.
-> 
-> vma_is_dontdump()
-> vma_is_noreserve()
-> vma_is_special()
-> vma_is_locked()
-> vma_is_mergeable()
-> vma_is_softdirty()
-> vma_is_thp()
-> vma_is_nothp()
+I'm doing a patch.   Let's see how it fares in the face of all these
+preconceptions.
 
-Why?? Please don't. I am not at all keen on your 1/3 and 2/3 (some
-of us actually like to see what the VM_ flags are where they're used,
-without having to chase through scattered wrappers hiding them),
-but this 3/3 particularly upset me.
-
-There is a good reason for the (hideously named) is_vm_hugetlb_page(vma):
-to save "#ifdef CONFIG_HUGETLB_PAGE"s all over (though I suspect the
-same could have been achieved much more nicely by #define VM_HUGETLB 0);
-but hiding all flags in vma_is_whatever()s is counter-productive churn.
-
-Improved readability? Not to my eyes.
-
-Hugh
+Thanks,
+Miklos
