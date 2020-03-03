@@ -2,112 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E17617782D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:04:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70670177854
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:09:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbgCCOEL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 09:04:11 -0500
-Received: from mail-oi1-f176.google.com ([209.85.167.176]:42371 "EHLO
-        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729286AbgCCOEL (ORCPT
+        id S1729532AbgCCOJX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 09:09:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28084 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727913AbgCCOJW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:04:11 -0500
-Received: by mail-oi1-f176.google.com with SMTP id l12so3064899oil.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 06:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5SOsGdj13iAaTZ5WnVwP1r7WHAp30ZWrAWiWCxl86dM=;
-        b=WxAW7Dq+cdbY0wtzLnAM2VlH2TSqf4NXmWBVUykvoeNKu0upZemvsUnyBkF6IVuIIi
-         ge8LIPJGIc7tyrcvEi9PkbtSuNZqCtSW326CHfIEAuKScUYB3QAWYP6rjvWNYRrZVarD
-         vDAU2Bz+ZyBQ/HQYTcnjBzps25tyC/mU4q9mqLUd72qwxTT7BW17y+WZZuvkJ0UouMZw
-         y1F57GzeMqh3Lpt1FHacKHEjZgeSd+0o8Qp8f+ThBtHSTmcZPaWT6BigNNyqaIAVpQWL
-         0ZtY5+S2XM7utg8TdrU/zn9Ta5TszvzcKNVgNs34lSQOx3EnqjVJbhbtjVbWmxuRhTTU
-         Ilig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5SOsGdj13iAaTZ5WnVwP1r7WHAp30ZWrAWiWCxl86dM=;
-        b=NyE/3XAhF5KblXTYS7HNbIb7g04D3gzS2XLfcgGrzuIVWLFdoGrbKmyWCt/IdtIJOF
-         yxvVRulxpWpMRc48KNyxeRsh8nvZxDVl4RzP8e6Sfdmwm3WLEPvXNXm2o8PadHPFoguL
-         LdA2Uyuy0L7Tl+iFqKiH1UApZIfceXqTWrzIj31CuZOf91NmHomGEQmBfFnOSRs16GGT
-         c2w2E6yqyI+eD6LSfkoiVTdnhYl7zleyK3CJi/4chq4de/816y44PUhjPZp0alH8w05s
-         vk8FN+Svzb/TqdzTHKsUVPhQ3AdZR3n4DspKl6QnIHs5U19U2S3txMKZl9+en/QFafik
-         B/gw==
-X-Gm-Message-State: ANhLgQ3V36dt3ZF6+3/lEHFdJ/HMrLNhFa+cp8AsAyv8vm14FZv/Y+UE
-        MgG53kTwer7Au2Tp4K7gKFq0Sml6VWdkdjIKQgrUUQ==
-X-Google-Smtp-Source: ADFU+vvDhfQa1++FCih/IiclAQTyIDsZwsxz4995CMfE9/X3UT6uuPnEn6drjU/bt5ti5p0OT6FOt9cdLWOZlWUaKhA=
-X-Received: by 2002:aca:c45:: with SMTP id i5mr2392065oiy.111.1583244250138;
- Tue, 03 Mar 2020 06:04:10 -0800 (PST)
+        Tue, 3 Mar 2020 09:09:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583244561;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=f1oQbBmvrBGg0OPWPnhd5xlRIiyvJNmigaWzMX+f8Oo=;
+        b=Mbj6dnG1ialAAXo85UB1FudrsH5KfVBnpymo4m9nLMI9IbX7dx3563pFDwGdwaTUVrNzku
+        yLw4A3Ah2GtxpEXq/xWgYKztV1KJXH69ZwNDtz2Z1qRAGPVzT+GKUIHfsa1qcGtrEM9x6K
+        kNiLtdFlCTaZkdyOnGmwlMRXdzTCuGw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-451-V0i0Dt2SOYSUsHpCEce_5g-1; Tue, 03 Mar 2020 09:09:19 -0500
+X-MC-Unique: V0i0Dt2SOYSUsHpCEce_5g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 995FA18B9FC1;
+        Tue,  3 Mar 2020 14:09:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A16BA60BE1;
+        Tue,  3 Mar 2020 14:09:14 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200303130347.GA2302029@kroah.com>
+References: <20200303130347.GA2302029@kroah.com> <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com> <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk> <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com> <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net> <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com> <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com> <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     dhowells@redhat.com, Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
 MIME-Version: 1.0
-References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
- <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
- <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
- <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
- <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
- <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com> <20200303130421.GA5186@mtj.thefacebook.com>
-In-Reply-To: <20200303130421.GA5186@mtj.thefacebook.com>
-From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
-Date:   Tue, 3 Mar 2020 15:03:58 +0100
-Message-ID: <CANnVG6=i1VmWF0aN1tJo5+NxTv6ycVOQJnpFiqbD7ZRVR6T4=Q@mail.gmail.com>
-Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
- on some machines?
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Jack Smith <smith.jack.sidman@gmail.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1656812.1583244553.1@warthog.procyon.org.uk>
+Date:   Tue, 03 Mar 2020 14:09:13 +0000
+Message-ID: <1656813.1583244553@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Here=E2=80=99s a /proc/<pid>/stack from when the issue is happening:
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-[<0>] balance_dirty_pages_ratelimited+0x2ca/0x3b0
-[<0>] __handle_mm_fault+0xe6e/0x1280
-[<0>] handle_mm_fault+0xbe/0x1d0
-[<0>] __do_page_fault+0x249/0x4f0
-[<0>] page_fault+0x1e/0x30
+> Actually, I like this idea (the syscall,
 
-How can I obtain the numbers for the next step?
+It might mesh well with atomic_open in some way.
 
-Thanks,
+David
 
-On Tue, Mar 3, 2020 at 2:04 PM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> Sorry about the delay.
->
-> On Wed, Feb 26, 2020 at 08:59:55PM +0100, Miklos Szeredi wrote:
-> > - apparently memcpy is copying downwards (from largest address to
-> > smallest address).  Not sure why, when I run the reproducer, it copies
-> > upwards.
-> > - there's a slow batch of reads of the first ~4MB of data, then a
-> > quick writeback
-> > - there's a quick read of the rest (~95MB) of data, then a quick
-> > writeback of the same
-> >
-> > Plots of the whole and closeups of slow and quick segments attached.
-> > X axis is time, Y axis is offset.
-> >
-> > Tejun, could this behavior be attributed to dirty throttling?  What
-> > would be the best way to trace this?
->
-> Yeah, seems likely. Can you please try offcputime (or just sample
-> /proc/PID/stack) and see whether it's in balance dirty pages?
->
->   https://github.com/iovisor/bcc/blob/master/tools/offcputime.py
->
-> If it's dirty throttling, the next step would be watching the bdp
-> tracepoints to find out what kind of numbers it's getting.
->
-> Thanks.
->
-> --
-> tejun
