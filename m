@@ -2,146 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C235017753A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 12:23:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8330C177550
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 12:34:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbgCCLXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 06:23:36 -0500
-Received: from mail-oln040092067031.outbound.protection.outlook.com ([40.92.67.31]:38373
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728374AbgCCLXg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 06:23:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZQejSuuiWG3F8zI58009atzNFO4LoNsslDwRM+t92e38a2rxfRp3SIW07181vTZyKcZ2TaoG9TmZOi4OBulKdPRlJ78KZlPmmL7Gfn6p8fc3eTOZusV2heNaxGPAjX6uQclnS6aX4Y4iYvxLqGiLL9bChi73yyor1Pg/fiKY1ZPPNC4p7p7JN/bbSD2st885cZchVQefOIYOaj85ScHPYqzvFmqed5z9cas1x4Du0FwM+zuUS/2gjC4mm1xVrHsgIWk3sJQYmwxpL9noHjALWi8FKA6+1EafsO6zDhnjgPZFd7nVHAnty722mJyrwunxp0EVZZBCWvCD0+hWbyuhCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bi9h3sQp5Fjur8g8LCJt1GQ2imEjfSTksNKIpeKdcPs=;
- b=Bk8G1SEltKaZYa+ycepVkuCD8+pyEzTLaW6YROpbF7HVzkv/V+uyvHflHu2zPgffoFlif4YZlWnbhBYEpyGPlDr4dpEmmFIUACTfn6fecOW5dHRdztF3JNb48l2II45vYSuO9ebOFAiDXnJgDWXOVGqQOCrY0TWlyuxEOIMM8IjaBsBWFLMxXLcfFKuHXQ5KalDO2yh5457a+fQ+08pnGjp2fA3dD2lLKCcHQyvdc1oDo0NMWI9LuGJ77fXOEp4cq9UgtsscrW4ZvrnKQxGtVrKQrELpTu9hI58GoHA50UEm1Lr7W4d+pmFcS4Vws0KeUassdI4HOJNMnKX39iKjZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from HE1EUR02FT037.eop-EUR02.prod.protection.outlook.com
- (2a01:111:e400:7e1d::35) by
- HE1EUR02HT165.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1d::239)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15; Tue, 3 Mar
- 2020 11:23:31 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.10.54) by
- HE1EUR02FT037.mail.protection.outlook.com (10.152.10.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.15 via Frontend Transport; Tue, 3 Mar 2020 11:23:31 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
- 11:23:31 +0000
-Received: from [192.168.1.101] (92.77.140.102) by AM0PR01CA0109.eurprd01.prod.exchangelabs.com (2603:10a6:208:168::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.14 via Frontend Transport; Tue, 3 Mar 2020 11:23:30 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>
-CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCHv4] exec: Fix a deadlock in ptrace
-Thread-Topic: [PATCHv4] exec: Fix a deadlock in ptrace
-Thread-Index: AQHV8OBzc5kV6gCKfE+vkD4wYYEirqg2JJ+AgABtUACAABrXAIAADcyA
-Date:   Tue, 3 Mar 2020 11:23:31 +0000
-Message-ID: <AM6PR03MB51706AE0FE7DA0F3F507F6BAE4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74zmfc9.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87k142lpfz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfmloir.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nmjulm.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <202003021531.C77EF10@keescook>
- <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
- <AM6PR03MB5170E03613104B2ACE32F057E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB5170E03613104B2ACE32F057E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM0PR01CA0109.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:168::14) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-x-incomingtopheadermarker: OriginalChecksum:2472DEA6027607CB5A200246027E2FA3F4AA6FCE89AD573462F53366B269DA3A;UpperCasedChecksum:785365FC4FA3CE599406044206362DC58EF921E2C33B7FA8BCBAD834AA23D294;SizeAsReceived:9615;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [zw/mh3ppBNYMucu6VHXP8T2ZRIYX3eY6]
-x-microsoft-original-message-id: <1856cb82-976f-3af3-05e8-4678592183cc@hotmail.de>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: 857cb9f1-f9cb-4c3f-1c12-08d7bf654d8f
-x-ms-traffictypediagnostic: HE1EUR02HT165:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2EDaDqqQVkOIm28fh0lDkXAl3ksrgu+ezMZgm5InqvsfLa9byXwjaSUqyCuAQEg4hcqPzE/zXsGXvsf5IVl2ZBl+pUcTk1ydNYZ2/m8MtV6eL+s/boh8aKk1rvWQFmshOWe6oBt97/RcU3GpB8+L2eboFTgE3AFVkqqiL8NW4cIl1j5cxQnSilxEoAHUBxqT
-x-ms-exchange-antispam-messagedata: VZENhCCNHMjf4K8P1+qAHGthdd10/VzzDJeU9c9sL4d0fyP9ASdhpkZN3LwVmZKrt01/xdNf7ou/tFZf+xsmCnXgDaqE/+IncE6Lofl+uoCM/LCecVbZpXa82nKmFiVPHmbrs+UDD2vaxtXddw4e3w==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B8BB21DE58DFF541A5F20C5C0C084BA5@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727922AbgCCLeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 06:34:00 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:32894 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgCCLeA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 06:34:00 -0500
+Received: by mail-il1-f195.google.com with SMTP id r4so2478302iln.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 03:34:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6byiiSiBg+O9qfUoKK2ksV0ZQAH63X1Hb8rEqsCdvnA=;
+        b=BDwb6Aqrx0xtaZxAiJzRl8XeyjQnOY6DfKQWnfKlSJyw80tDndkNTO1YIRtxXiY32u
+         jX+rF79QYJ93n6uKhvAsKktrD0A98qVn8g0o2FP4zpYgjGgDbSp4ye0NeZ/S6xaEu/9P
+         jinoTbqOhlXGvA2nE26OcaLpGlhLDzhcnIkuA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6byiiSiBg+O9qfUoKK2ksV0ZQAH63X1Hb8rEqsCdvnA=;
+        b=IRcwfB8cgC2LOXfoSf66kmFBBW+t3Dh+5ObSGN1va7I8h8O4qchzfhr/2xu/H2jvjS
+         it+BNwV5xCWlcNlhk2/5UW196KYiFbag3T8OpiCTm1GbTFZihmTIZFiucoIVHd3+Lx2F
+         oKtDWAqh/eSA6fJ95XulRsxHyIxsG20y4UCQBTIQbW0mVcipevdEe1DmFqQztDAv58L6
+         rloKVvscQS6NGhYaRMHsMrNJbaZsjfpWL39LSYgSZj0GKHoeZe0gJ32aX0DKY/r+SmTk
+         qism5An7zvL2fPP2bjsv2IcC1CotT6JB42tFnfIVnpmcQx1HGPs703BIcvNfMhZRcl9L
+         +plQ==
+X-Gm-Message-State: ANhLgQ0fG4SSj/xV3ahg8V23zugtCcriYCpmTv6chjXKNns19rfDHnRm
+        N17bwUeOrOG5gFHZpGFWdSQ1n4l4uNh4sZ9oljpqoA==
+X-Google-Smtp-Source: ADFU+vtdZi1ZHmFd0i6HeNGyBbTzdkdeTY8UruU2lDGdtfEbDHYjU8QcXctIQ1YFTTxOKq3DU5hMTC1oZ34IhqBV7I8=
+X-Received: by 2002:a92:89cb:: with SMTP id w72mr4195534ilk.252.1583235239625;
+ Tue, 03 Mar 2020 03:33:59 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 857cb9f1-f9cb-4c3f-1c12-08d7bf654d8f
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 11:23:31.3229
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT165
+References: <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <20200303100045.zqntjjjv6npvs5zl@wittgenstein> <CAJfpegu_O=wQsewDWdM39dhkrEoMPG4ZBkTQOsWTgFnYmvrLeA@mail.gmail.com>
+ <20200303102541.diud7za3vvjvqco4@wittgenstein>
+In-Reply-To: <20200303102541.diud7za3vvjvqco4@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 3 Mar 2020 12:33:48 +0100
+Message-ID: <CAJfpegu7CTmE8XfL-Oqp3KkjJNU5FM+VJxohFfK9dO+xnJAdYA@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     David Howells <dhowells@redhat.com>, Ian Kent <raven@themaw.net>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMy8zLzIwIDExOjM0IEFNLCBCZXJuZCBFZGxpbmdlciB3cm90ZToNCj4gT24gMy8zLzIwIDk6
-NTggQU0sIENocmlzdGlhbiBCcmF1bmVyIHdyb3RlOg0KPj4gU28gb25lIGlzc3VlIEkgc2VlIHdp
-dGggaGF2aW5nIHRvIHJlYWNxdWlyZSB0aGUgY3JlZF9ndWFyZF9tdXRleCBtaWdodA0KPj4gYmUg
-dGhhdCB0aGlzIHdvdWxkIGFsbG93IHRhc2tzIGhvbGRpbmcgdGhlIGNyZWRfZ3VhcmRfbXV0ZXgg
-dG8gYmxvY2sgYQ0KPj4ga2lsbGVkIGV4ZWMnaW5nIHRhc2sgZnJvbSBleGl0aW5nLCByaWdodD8N
-Cj4+DQo+IA0KPiBZZXMgbWF5YmUsIGJ1dCBJIHRoaW5rIGl0IHdpbGwgbm90IGJlIHdvcnNlIHRo
-YW4gaXQgaXMgbm93Lg0KPiBTaW5jZSB0aGUgc2Vjb25kIHRpbWUgdGhlIG11dGV4IGlzIGFjcXVp
-cmVkIGl0IGlzIGRvbmUgd2l0aA0KPiBtdXRleF9sb2NrX2tpbGxhYmxlLCBzbyBhdCBsZWFzdCBr
-aWxsIC05IHNob3VsZCBnZXQgaXQgdGVybWluYXRlZC4NCj4gDQoNCg0KDQo+ICBzdGF0aWMgdm9p
-ZCBmcmVlX2Jwcm0oc3RydWN0IGxpbnV4X2JpbnBybSAqYnBybSkNCj4gIHsNCj4gIAlmcmVlX2Fy
-Z19wYWdlcyhicHJtKTsNCj4gIAlpZiAoYnBybS0+Y3JlZCkgew0KPiArCQlpZiAoIWJwcm0tPmNh
-bGxlZF9mbHVzaF9vbGRfZXhlYykNCj4gKwkJCW11dGV4X2xvY2soJmN1cnJlbnQtPnNpZ25hbC0+
-Y3JlZF9ndWFyZF9tdXRleCk7DQo+ICsJCWN1cnJlbnQtPnNpZ25hbC0+Y3JlZF9sb2NrZWRfZm9y
-X3B0cmFjZSA9IGZhbHNlOw0KPiAgCQltdXRleF91bmxvY2soJmN1cnJlbnQtPnNpZ25hbC0+Y3Jl
-ZF9ndWFyZF9tdXRleCk7DQoNCg0KSG1tLCBjb3VnaC4uLg0KYWN0dWFsbHkgd2hlbiB0aGUgbXV0
-ZXhfbG9ja19raWxsYWJsZSBmYWlscywgZHVlIHRvIGtpbGwgLTksIGluIGZsdXNoX29sZF9leGVj
-DQpmcmVlX2Jwcm0gbG9ja3MgdGhlIHNhbWUgbXV0ZXgsIHRoaXMgdGltZSB1bmtpbGxhYmxlLCBi
-dXQgSSBzaG91bGQgYmV0dGVyIGRvDQptdXRleF9sb2NrX2tpbGxhYmxlIGhlcmUsIGFuZCBpZiB0
-aGF0IGZhaWxzLCBJIGNhbiBsZWF2ZSBjcmVkX2xvY2tlZF9mb3JfcHRyYWNlLA0KaXQgc2hvdWxk
-bid0IG1hdHRlciwgc2luY2UgdGhpcyBpcyBhIGZhdGFsIHNpZ25hbCBhbnl3YXksIHJpZ2h0Pw0K
-DQpCZXJuZC4NCg==
+On Tue, Mar 3, 2020 at 11:25 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Tue, Mar 03, 2020 at 11:13:50AM +0100, Miklos Szeredi wrote:
+> > On Tue, Mar 3, 2020 at 11:00 AM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+
+> > > More magic links to beam you around sounds like a bad idea. We had a
+> > > bunch of CVEs around them in containers and they were one of the major
+> > > reasons behind us pushing for openat2(). That's why it has a
+> > > RESOLVE_NO_MAGICLINKS flag.
+> >
+> > No, that link wouldn't beam you around at all, it would end up in an
+> > internally mounted instance of a mountfs, a safe place where no
+>
+> Even if it is a magic link to a safe place it's a magic link. They
+> aren't a great solution to this problem. fsinfo() is cleaner and
+> simpler as it creates a context for a supervised mount which gives the a
+> managing application fine-grained control and makes it easily
+> extendable.
+
+Yeah, it's a nice and clean interface in the ioctl(2) sense. Sure,
+fsinfo() is way better than ioctl(), but it at the core it's still the
+same syscall multiplexer, do everything hack.
+
+> Also, we're apparently at the point where it seems were suggesting
+> another (pseudo)filesystem to get information about filesystems.
+
+Implementation detail.  Why would you care?
+
+Thanks,
+Miklos
