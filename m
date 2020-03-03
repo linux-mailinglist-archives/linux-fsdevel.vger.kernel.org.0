@@ -2,96 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6F081778CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:25:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5101778E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbgCCOZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 09:25:15 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34364 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCCOZO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:25:14 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 59so1712604qtb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 06:25:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qz8bhnv0I8TXyq1XMurQya8Qmu0LrE3c6IwRtArQcqU=;
-        b=W07icVy3fNTM0LqYTX3/r2GpDfvgpWX1kFWwW/kHp/eoQeC7MVE9uLi1RmAF6d8kix
-         P8EMRVI2CKrF1rksdOdFwqd9iTKrUK+ro5WSp/xHU0j/DvYkQ4m645UWU9RKRFFJrHvA
-         AwH/2jkSgmRXpj2Asprh6lDKSVC0TfIK+rli5kfRICBhI9WYwbMEwwVJsewDI4E9etvt
-         7iOWAzF8CTjJB6U+pBd7EkMAAbXp9QeVGJRU+aHQVkyqFUQf5oZHv+stfZAHhWv4o0ox
-         Xxf4VRclR19n9S4TgwKY1mCShsOq9VZ7zHaz3UPlDebPZb7GhwnrMw52yvpb8Z1A83Za
-         OpeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=qz8bhnv0I8TXyq1XMurQya8Qmu0LrE3c6IwRtArQcqU=;
-        b=YHwnBMKog53N8m8CKwOB5Wbbc48YbfSoxYTikIdiJTjnxIkt9qas5/31VPfMepaG0v
-         Agp3t9w+bzcz51OORHhX74GOjnF55Cmc+/cS+qNM48qLxgadsX4Dtvov6OYngowv19gs
-         moBtnj/E5yzXRk/xO5CvoO1rRIAL68eyyCV7/mTya0LO3gd+poXKtJkaX6dpIP7ca2ec
-         q4Elp/wNhpb3CFOYzppFJAQ263p/Pe1BmVF0tzT28RfkAKnKD3WWW00R2adWu4gTDjV9
-         GJheXRH7LD7WAxshVTdfVnlwwottW4GmUv55KyVucO5lpYvEa8eSBFurPwVmUXKkMhmm
-         0rVQ==
-X-Gm-Message-State: ANhLgQ1ovv0SxOQ2OoqJE88aASOzxYL+f3xxbjSN2hKaFLmrD518jZed
-        K9ctcxx8ZYwpCo86shAZuFg=
-X-Google-Smtp-Source: ADFU+vvUdf/gf6lmbS0a1RQDQG8eIk8sCAy+gJCldsN0M4lFk9ta89/AvaDgb2th4n6W+s3FHhxv9g==
-X-Received: by 2002:ac8:1688:: with SMTP id r8mr4681278qtj.144.1583245513690;
-        Tue, 03 Mar 2020 06:25:13 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::7f70])
-        by smtp.gmail.com with ESMTPSA id f89sm3436621qtb.7.2020.03.03.06.25.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 06:25:13 -0800 (PST)
-Date:   Tue, 3 Mar 2020 09:25:12 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Michael Stapelberg <michael+lkml@stapelberg.ch>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Jack Smith <smith.jack.sidman@gmail.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
- on some machines?
-Message-ID: <20200303142512.GC189690@mtj.thefacebook.com>
-References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
- <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
- <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
- <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
- <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
- <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
- <20200303130421.GA5186@mtj.thefacebook.com>
- <CANnVG6=i1VmWF0aN1tJo5+NxTv6ycVOQJnpFiqbD7ZRVR6T4=Q@mail.gmail.com>
- <20200303141311.GA189690@mtj.thefacebook.com>
- <CANnVG6=9mYACk5tR2xD08r_sGWEeZ0rHZAmJ90U-8h3+iSMvbA@mail.gmail.com>
+        id S1728741AbgCCOaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 09:30:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728158AbgCCOaB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 09:30:01 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43EDD20838;
+        Tue,  3 Mar 2020 14:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583245800;
+        bh=TcPA+2mgGtrFwfhcuBqjUOhNVvQpXnWRqswktmXfAMM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=duZsmPCxeAc5VhRa0Yt6P9WfVSUnLBKf/3B/UANogYCOeSUPd8Uo99JWWas4fX3Ct
+         bFsA4K6GVvXuLmrLjvy/eSQZxixIY1E4SvnF9XQPei/asikOPZlIcrsGdX84Zs3Sgq
+         S5fk2IOfMPJ+86ehQE8QG+laU36tf2Ln3yx1WP54=
+Date:   Tue, 3 Mar 2020 15:29:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Karel Zak <kzak@redhat.com>, David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
+ #17]
+Message-ID: <20200303142958.GB47158@kroah.com>
+References: <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <1509948.1583226773@warthog.procyon.org.uk>
+ <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
+ <20200303113814.rsqhljkch6tgorpu@ws.net.home>
+ <20200303130347.GA2302029@kroah.com>
+ <20200303131434.GA2373427@kroah.com>
+ <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com>
+ <20200303134316.GA2509660@kroah.com>
+ <CAJfpegtFyZqSRzo3uuXp1S2_jJJ29DL=xAwKjpEGvyG7=AzabA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANnVG6=9mYACk5tR2xD08r_sGWEeZ0rHZAmJ90U-8h3+iSMvbA@mail.gmail.com>
+In-Reply-To: <CAJfpegtFyZqSRzo3uuXp1S2_jJJ29DL=xAwKjpEGvyG7=AzabA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 03:21:47PM +0100, Michael Stapelberg wrote:
-> Find attached trace.log (cat /sys/kernel/debug/tracing/trace) and
-> fuse-debug.log (FUSE daemon with timestamps).
+On Tue, Mar 03, 2020 at 03:10:50PM +0100, Miklos Szeredi wrote:
+> On Tue, Mar 3, 2020 at 2:43 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Mar 03, 2020 at 02:34:42PM +0100, Miklos Szeredi wrote:
 > 
-> Does that tell you something, or do we need more data? (If so, how?)
+> > > If buffer is too small to fit the whole file, return error.
+> >
+> > Why?  What's wrong with just returning the bytes asked for?  If someone
+> > only wants 5 bytes from the front of a file, it should be fine to give
+> > that to them, right?
+> 
+> I think we need to signal in some way to the caller that the result
+> was truncated (see readlink(2), getxattr(2), getcwd(2)), otherwise the
+> caller might be surprised.
 
-This is likely the culprit.
+But that's not the way a "normal" read works.  Short reads are fine, if
+the file isn't big enough.  That's how char device nodes work all the
+time as well, and this kind of is like that, or some kind of "stream" to
+read from.
 
- .... 1319822.406198: balance_dirty_pages: ... bdi_dirty=68 dirty_ratelimit=28 ...
+If you think the file is bigger, then you, as the caller, can just pass
+in a bigger buffer if you want to (i.e. you can stat the thing and
+determine the size beforehand.)
 
-For whatever reason, bdp calculated that the dirty throttling
-threshold for the fuse device is 28 pages which is extremely low. Need
-to track down how that number came to be. I'm afraid from here on it'd
-mostly be reading source code and sprinkling printks around but the
-debugging really comes down to figuring out how we ended up with 68
-and 28.
+Think of the "normal" use case here, a sysfs read with a PAGE_SIZE
+buffer.  That way userspace "knows" it will always read all of the data
+it can from the file, we don't have to do any seeking or determining
+real file size, or anything else like that.
 
-Thanks.
+We return the number of bytes read as well, so we "know" if we did a
+short read, and also, you could imply, if the number of bytes read are
+the exact same as the number of bytes of the buffer, maybe the file is
+either that exact size, or bigger.
 
--- 
-tejun
+This should be "simple", let's not make it complex if we can help it :)
+
+> > > Verify that the number of bytes read matches the file size, otherwise
+> > > return error (may need to loop?).
+> >
+> > No, we can't "match file size" as sysfs files do not really have a sane
+> > "size".  So I don't want to loop at all here, one-shot, that's all you
+> > get :)
+> 
+> Hmm.  I understand the no-size thing.  But looping until EOF (i.e.
+> until read return zero) might be a good idea regardless, because short
+> reads are allowed.
+
+If you want to loop, then do a userspace open/read-loop/close cycle.
+That's not what this syscall should be for.
+
+Should we call it: readfile-only-one-try-i-hope-my-buffer-is-big-enough()?  :)
+
+thanks,
+
+greg k-h
