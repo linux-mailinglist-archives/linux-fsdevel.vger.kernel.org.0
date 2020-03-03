@@ -2,184 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0DD1785F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 23:51:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C80B1786AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 00:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728204AbgCCWvb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 17:51:31 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34402 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727805AbgCCWv3 (ORCPT
+        id S1727903AbgCCXu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 18:50:59 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:50906 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbgCCXu7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 17:51:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id i10so3395058wmd.1;
-        Tue, 03 Mar 2020 14:51:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=laP7MxKBVV8c2S6Jis3XJOTsg2fYmzkinHKDY5LAHSk=;
-        b=JD1txqd3IOGqSsEqt8swCfUFgbBgrPmhiSEutbN0R9gWxPYPjvJGz7I+lufHRQFhzZ
-         230hUW4irIpjhepNk5MHpNvzC6Azn0NKKId0AZFSs0Ud1yYc/aa3rot6w4szQi3ZQ+bn
-         dAQuZ0cG/rz4//MiUtHKdS1qOimj5UeSOopTeBh+9H/hRnOmQbfrDrQcp5SXA+a9hHz2
-         hGJicNpF0L+lw3V2XqXAE9wihOueNXKNIcc+e/QIiiIvWks2YVgN0t0uZ4N4l50EI41k
-         E+/8GhLa/rGjLL0eHS/PgQyT6uRHxHncWOG8qbQeWVkM1U/+D04dGuDJ73YI1bN8E1l6
-         iCdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=laP7MxKBVV8c2S6Jis3XJOTsg2fYmzkinHKDY5LAHSk=;
-        b=b2LIvOzy/AzKgNs5I0Lq0wnxoDywEV7oc/JHEhnIJaIycOIqZX0JKR/lbHxi4YzQAq
-         2YzxeH2fR2/szqIcwX7MSKhVVPyC7qXaE/6d7Y5FLphIN4h06BkC+Vf6AMYhk/5j/JLB
-         WP1Vq/aF6YRvgjhU/hm2rBIFGmrtSmoop2GCeMDac9i8169pE8oPMf88C52hNzVJGeuL
-         eyRTBIVH09SysDpwMvI4eng7n/4QXgCRd0+FTydmq7icvFyeVMQWP5aUDPSFm2xW4F3K
-         8iRhQVaXHajl7E2849Re4QAiF8DJiLiian6yZbeFYdWS2QtQ3tAUIw2ln8BYXpTernRj
-         VKDA==
-X-Gm-Message-State: ANhLgQ0A1PBn3HSbdhPfyXAaXvyG9NDJIHZj99WWHIfGOgQquBtrOCXQ
-        6QH3GIhpwkj8tV6svzzeQg0=
-X-Google-Smtp-Source: ADFU+vsxB4sIIDqZMMAXSkE88XTGtmj3FYVjpd4o7rClO/ylj6m4q6JJ2hinEfE1z/DBpSVtYkgMvg==
-X-Received: by 2002:a1c:7ed0:: with SMTP id z199mr760362wmc.52.1583275886930;
-        Tue, 03 Mar 2020 14:51:26 -0800 (PST)
-Received: from localhost ([185.220.101.77])
-        by smtp.gmail.com with ESMTPSA id b18sm36280260wrm.86.2020.03.03.14.51.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Mar 2020 14:51:26 -0800 (PST)
-Date:   Tue, 03 Mar 2020 22:51:22 +0000
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20200303190212.GC8037@magnolia>
-References: <20200229170825.GX8045@magnolia> <20200229180716.GA31323@dumbo> <20200229183820.GA8037@magnolia> <20200229200200.GA10970@dumbo> <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com> <20200303190212.GC8037@magnolia>
+        Tue, 3 Mar 2020 18:50:59 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9HJS-0006h4-7F; Tue, 03 Mar 2020 16:50:58 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1j9HJF-0000FX-Kq; Tue, 03 Mar 2020 16:50:57 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+        <20200301215125.GA873525@ZenIV.linux.org.uk>
+        <CAHk-=wh1Q=H-YstHZRKfEw2McUBX2_TfTc=+5N-iH8DSGz44Qg@mail.gmail.com>
+        <20200302003926.GM23230@ZenIV.linux.org.uk>
+Date:   Tue, 03 Mar 2020 17:48:31 -0600
+In-Reply-To: <20200302003926.GM23230@ZenIV.linux.org.uk> (Al Viro's message of
+        "Mon, 2 Mar 2020 00:39:26 +0000")
+Message-ID: <87o8tdgfu8.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is active
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-CC:     Domenico Andreoli <domenico.andreoli@linux.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-From:   Domenico Andreoli <domenico.andreoli.it@gmail.com>
-Message-ID: <9E4A0457-39B1-45E2-AEA2-22C730BF2C4F@gmail.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1j9HJF-0000FX-Kq;;;mid=<87o8tdgfu8.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18MPB9/ctLiB1zinwxXNaRDXt7z8LOurDo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
+        T_TooManySym_01 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1849]
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 12049 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 8 (0.1%), b_tie_ro: 7 (0.1%), parse: 1.92 (0.0%),
+        extract_message_metadata: 16 (0.1%), get_uri_detail_list: 2.2 (0.0%),
+        tests_pri_-1000: 8 (0.1%), tests_pri_-950: 1.47 (0.0%),
+        tests_pri_-900: 1.18 (0.0%), tests_pri_-90: 26 (0.2%), check_bayes: 25
+        (0.2%), b_tokenize: 7 (0.1%), b_tok_get_all: 8 (0.1%), b_comp_prob:
+        2.9 (0.0%), b_tok_touch_all: 4.0 (0.0%), b_finish: 0.75 (0.0%),
+        tests_pri_0: 587 (4.9%), check_dkim_signature: 0.61 (0.0%),
+        check_dkim_adsp: 2.4 (0.0%), poll_dns_idle: 11376 (94.4%),
+        tests_pri_10: 2.4 (0.0%), tests_pri_500: 11392 (94.5%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v3)
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-
-On March 3, 2020 7:02:12 PM UTC, "Darrick J=2E Wong" <darrick=2Ewong@oracl=
-e=2Ecom> wrote:
->On Sun, Mar 01, 2020 at 10:35:36PM +0100, Rafael J=2E Wysocki wrote:
->> On Sat, Feb 29, 2020 at 9:02 PM Domenico Andreoli
->> <domenico=2Eandreoli@linux=2Ecom> wrote:
+> On Sun, Mar 01, 2020 at 04:34:06PM -0600, Linus Torvalds wrote:
+>> On Sun, Mar 1, 2020 at 3:51 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >> >
->> > On Sat, Feb 29, 2020 at 10:38:20AM -0800, Darrick J=2E Wong wrote:
->> > > On Sat, Feb 29, 2020 at 07:07:16PM +0100, Domenico Andreoli
->wrote:
->> > > > On Sat, Feb 29, 2020 at 09:08:25AM -0800, Darrick J=2E Wong
->wrote:
->> > > > > From: Darrick J=2E Wong <darrick=2Ewong@oracle=2Ecom>
->> > > > >
->> > > > > It turns out that there /is/ one use case for programs being
->able to
->> > > > > write to swap devices, and that is the userspace hibernation
->code=2E  The
->> > > > > uswsusp ioctls allow userspace to lease parts of swap
->devices, so turn
->> > > > > S_SWAPFILE off when invoking suspend=2E
->> > > > >
->> > > > > Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap
->devices")
->> > > > > Reported-by: Domenico Andreoli <domenico=2Eandreoli@linux=2Ecom=
+>> >         Extended since the last repost.  The branch is in #work.dotdot;
+>> > #work.do_last is its beginning (about 2/3 of the total), slightly
+>> > reworked since the last time.
+>> 
+>> I'm traveling, so only a quick read-through.
+>> 
+>> One request: can you add the total diffstat to the cover letter (along
+>> with what you used as a base)?
 >
->> > > > > Reported-by: Marian Klein <mkleinsoft@gmail=2Ecom>
->> > > >
->> > > > I also tested it yesterday but was not satisfied, unfortunately
->I did
->> > > > not come with my comment in time=2E
->> > > >
->> > > > Yes, I confirm that the uswsusp works again but also checked
->that
->> > > > swap_relockall() is not triggered at all and therefore after
->the first
->> > > > hibernation cycle the S_SWAPFILE bit remains cleared and the
->whole
->> > > > swap_relockall() is useless=2E
->> > > >
->> > > > I'm not sure this patch should be merged in the current form=2E
->> > >
->> > > NNGGHHGGHGH /me is rapidly losing his sanity and will soon just
->revert
->> > > the whole security feature because I'm getting fed up with people
->> > > yelling at me *while I'm on vacation* trying to *restore* my
->sanity=2E  I
->> > > really don't want to be QAing userspace-directed hibernation
->right now=2E
->> >
->> > Maybe we could proceed with the first patch to amend the regression
->and
->> > postpone the improved fix to a later patch? Don't loose sanity for
->this=2E
->>=20
->> I would concur here=2E
->>=20
->> > > =2E=2E=2Eright, the patch is broken because we have to relock the
->swapfiles in
->> > > whatever code executes after we jump back to the restored kernel,
->not in
->> > > the one that's doing the restoring=2E  Does this help?
->> >
->> > I made a few unsuccessful attempts in kernel/power/hibernate=2Ec and
->> > eventually I'm switching to qemu to speed up the test cycle=2E
->> >
->> > > OTOH, maybe we should just leave the swapfiles unlocked after
->resume=2E
->> > > Userspace has clearly demonstrated the one usecase for writing to
->the
->> > > swapfile, which means anyone could have jumped in while uswsusp
->was
->> > > running and written whatever crap they wanted to the parts of the
->swap
->> > > file that weren't leased for the hibernate image=2E
->> >
->> > Essentially, if the hibernation is supported the swapfile is not
->totally
->> > safe=2E
->>=20
->> But that's only the case with the userspace variant, isn't it?
+> Sure, no problem (and the base is still -rc1)
 >
->Yes=2E
+>> I did apply it to a branch just to look
+>> at it more closely, so I can see the final diffstat that way:
+>> 
+>>  Documentation/filesystems/path-lookup.rst |    7 +-
+>>  fs/autofs/dev-ioctl.c                     |    6 +-
+>>  fs/internal.h                             |    1 -
+>>  fs/namei.c                                | 1333 +++++++++------------
+>>  fs/namespace.c                            |   96 +-
+>>  fs/open.c                                 |    4 +-
+>>  include/linux/namei.h                     |    4 +-
+>>  7 files changed, 642 insertions(+), 809 deletions(-)
+>> 
+>> but it would have been nice to see in your explanation too.
+>> 
+>> Anyway, from a quick read-through, I don't see anything that raises my
+>> hackles - you've fixed the goto label naming, and I didn't notice
+>> anything else odd.
+>> 
+>> Maybe that was because I wasn't careful enough. But the final line
+>> count certainly speaks for the series..
 >
->> > Maybe user-space hibernation should be a separate option=2E
->>=20
->> That actually is not a bad idea at all in my view=2E
+> Heh...  Part of my metrics is actually "how large a sheet of paper does
+> one need to fit the call graph on" ;-)
 >
->The trouble with kconfig options is that the distros will be pressued
->into setting CONFIG_HIBERNATE_USERSPACE=3Dy to avoid regressing their
->uswsusp users, which makes the added security code pointless=2E  As this
+> I hope it gets serious beating, though - it touches pretty much every
+> codepath in pathname resolution.  Is there any way to sic the bots on
+> a branch, short of "push it into -next and wait for screams"?
 
-True but there are not only distros otherwise the kernel would not have an=
-y option at all=2E
+Last I looked pushing a branch to kernel.org was enough for the
+kbuild bots.  Sending patches to LKML is also enough for those bots.
 
-It's actually very nice that if hibernation is disabled no userspace is ev=
-er allowed to write to the swap=2E
+I don't know if that kind of bot is what you need testing your code.
 
->has clearly sucked me into a conflict that I don't have the resources
->to
->pursue, I'm going to revert the write patch checks and move on with
->life=2E
+Eric
 
-I don't see the need of reverting anything, I can deal with these issues i=
-f you are busy on something else=2E
-
->
->--D
->
->> Thanks!
