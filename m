@@ -2,84 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 572681778A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C651778B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 15:22:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgCCOUH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 09:20:07 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:50524 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725932AbgCCOUH (ORCPT
+        id S1728794AbgCCOVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 09:21:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44158 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728113AbgCCOVY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 09:20:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583245206;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gP09PkMcAbB+aqERIzsOakmbWC4dSi+WdMqM2DGrLiw=;
-        b=a0+yFjRBD0QTe5dbXgK8CcqR5OwXG4+TExXVz2Qs4HQd6wkVfduN6rseU84/GzJJNRqXXl
-        4fHjK0MJFitsiYAWCNHXNrejWH/9+qcF5BCSeR2pYiQgUjJ6D31JqDAodDop/aVV9mAvYi
-        SAYWJsFqXjNe6s7/6ku1yuMbEdtTWds=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-487-12-YiS5SOA6KUj7hkxmUvw-1; Tue, 03 Mar 2020 09:20:04 -0500
-X-MC-Unique: 12-YiS5SOA6KUj7hkxmUvw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85E8E802698;
-        Tue,  3 Mar 2020 14:20:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD24D101D493;
-        Tue,  3 Mar 2020 14:19:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200303141030.GA2811@kroah.com>
-References: <20200303141030.GA2811@kroah.com> <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com> <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net> <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com> <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com> <20200303113814.rsqhljkch6tgorpu@ws.net.home> <20200303130347.GA2302029@kroah.com> <20200303131434.GA2373427@kroah.com> <CAJfpegt0aQVvoDeBXOu2xZh+atZQ+q5uQ_JRxe46E8cZ7sHRwg@mail.gmail.com> <20200303134316.GA2509660@kroah.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+        Tue, 3 Mar 2020 09:21:24 -0500
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1j98Pg-0002Id-SV; Tue, 03 Mar 2020 14:20:49 +0000
+Date:   Tue, 3 Mar 2020 15:20:47 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv4] exec: Fix a deadlock in ptrace
+Message-ID: <20200303142047.mrenhvhihe5sm5wv@wittgenstein>
+References: <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170E03613104B2ACE32F057E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51706AE0FE7DA0F3F507F6BAE4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1657842.1583245198.1@warthog.procyon.org.uk>
-Date:   Tue, 03 Mar 2020 14:19:58 +0000
-Message-ID: <1657843.1583245198@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB51706AE0FE7DA0F3F507F6BAE4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Tue, Mar 03, 2020 at 11:23:31AM +0000, Bernd Edlinger wrote:
+> On 3/3/20 11:34 AM, Bernd Edlinger wrote:
+> > On 3/3/20 9:58 AM, Christian Brauner wrote:
+> >> So one issue I see with having to reacquire the cred_guard_mutex might
+> >> be that this would allow tasks holding the cred_guard_mutex to block a
+> >> killed exec'ing task from exiting, right?
+> >>
+> > 
+> > Yes maybe, but I think it will not be worse than it is now.
+> > Since the second time the mutex is acquired it is done with
+> > mutex_lock_killable, so at least kill -9 should get it terminated.
+> > 
+> 
+> 
+> 
+> >  static void free_bprm(struct linux_binprm *bprm)
+> >  {
+> >  	free_arg_pages(bprm);
+> >  	if (bprm->cred) {
+> > +		if (!bprm->called_flush_old_exec)
+> > +			mutex_lock(&current->signal->cred_guard_mutex);
+> > +		current->signal->cred_locked_for_ptrace = false;
+> >  		mutex_unlock(&current->signal->cred_guard_mutex);
+> 
+> 
+> Hmm, cough...
+> actually when the mutex_lock_killable fails, due to kill -9, in flush_old_exec
+> free_bprm locks the same mutex, this time unkillable, but I should better do
+> mutex_lock_killable here, and if that fails, I can leave cred_locked_for_ptrace,
+> it shouldn't matter, since this is a fatal signal anyway, right?
 
-> +	fd = do_sys_open(dfd, filename, flags, 0000);
-> +	if (fd <= 0)
-> +		return fd;
-> +
-> +	retval = ksys_read(fd, buffer, bufsize);
-> +
-> +	__close_fd(current->files, fd);
-
-If you can use dentry_open() and vfs_read(), you might be able to avoid
-dealing with file descriptors entirely.  That might make it worth a syscall.
-
-You're going to be asked for writefile() you know ;-)
-
-David
-
+I think so, yes.
