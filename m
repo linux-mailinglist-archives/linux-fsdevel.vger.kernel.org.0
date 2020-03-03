@@ -2,98 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE371772E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 10:48:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33599177337
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 10:57:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbgCCJsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Mar 2020 04:48:13 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:47032 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbgCCJsN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Mar 2020 04:48:13 -0500
-Received: by mail-io1-f68.google.com with SMTP id x21so2797253iox.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 01:48:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tmUyb7I5QZ5m7l+map6/TTENM00J/X4NTs6U2t9bq9A=;
-        b=UnASBZv2HlRYHTnSbEdv3S4dGBVCqpFO4bwftl15quBrWH6ERWwR//dlevRkFdHY8u
-         Y1NGzPTLB9xA+UewKqkD/sN3CSE6cUYJqxDKljs3apGO9RPeOZ5k4nfs7l8GKFHMahrT
-         564xMuqnPGrSdkI6+TAepvlKpFkwSitRCuoro=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tmUyb7I5QZ5m7l+map6/TTENM00J/X4NTs6U2t9bq9A=;
-        b=VNfcqYG4Zq9QopsQU7mAhF+L04s2Zp4SMQLHDUgTAtxepOPtrn+cBqnLq+795RYX6f
-         0yufjESxGkT2TVBkLANkfQIf5hq24UO9wNtttkfEJG1dLFSahq3fJxzudcgefHpZceOx
-         DCv2l07QjlqUfI1taaUBlcpYVI3mTH2zLXUOChTWDblnEtchN6wxhQN+tPmYj4PxNyik
-         KAixHi0LSNfOknTIrmigM61kGZVgw/IjkKx/t1ZjiscAk+BvB8brq7FDsnAIB5tUtbc9
-         wkBzffm01r5lxGp44s2d03R5d2NclCU5PyQeBwcwgbv8lkal1ghPuz7yo/gVWpPYZ+l0
-         Xo7Q==
-X-Gm-Message-State: ANhLgQ1XJG0956FRURlbbpHPgxDZCjRc/ZKsAssdH5vzfwGW6U7HyqSe
-        BMNV2xi+68vS6MWv2Ualz7XZfqitu4Wln1ikjxdq2g==
-X-Google-Smtp-Source: ADFU+vvvtLDcbP4JULdPm70drjm3KqEySXTBU2b4yubEl0GoNv8K14LSHW2jEphUEwc0usp5xzdPCj2rr+ecQM93dBg=
-X-Received: by 2002:a02:6a10:: with SMTP id l16mr3126436jac.77.1583228892582;
- Tue, 03 Mar 2020 01:48:12 -0800 (PST)
+        id S1728369AbgCCJ5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Mar 2020 04:57:50 -0500
+Received: from relay.sw.ru ([185.231.240.75]:57328 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726694AbgCCJ5u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Mar 2020 04:57:50 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1j94Id-0003K4-IT; Tue, 03 Mar 2020 12:57:15 +0300
+Subject: Re: [PATCH RFC 0/5] fs, ext4: Physical blocks placement hint for
+ fallocate(0): fallocate2(). TP defrag.
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, adilger.kernel@dilger.ca
+Cc:     viro@zeniv.linux.org.uk, snitzer@redhat.com, jack@suse.cz,
+        ebiggers@google.com, riteshh@linux.ibm.com, krisman@collabora.com,
+        surajjs@amazon.com, dmonakhov@gmail.com, mbobrowski@mbobrowski.org,
+        enwlinux@gmail.com, sblbir@amazon.com, khazhy@google.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <20200302165637.GA6826@mit.edu>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <2b2bb85f-8062-648a-1b6e-7d655bf43c96@virtuozzo.com>
+Date:   Tue, 3 Mar 2020 12:57:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
- <1582316494.3376.45.camel@HansenPartnership.com> <CAOssrKehjnTwbc6A1VagM5hG_32hy3mXZenx_PdGgcUGxYOaLQ@mail.gmail.com>
- <1582556135.3384.4.camel@HansenPartnership.com> <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
- <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
- <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk> <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
-In-Reply-To: <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 3 Mar 2020 10:48:01 +0100
-Message-ID: <CAJfpegtemv64mpmTRT6ViHmsWq4nNE4KQvuHkNCYozRU7dQd8Q@mail.gmail.com>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200302165637.GA6826@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 3, 2020 at 10:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, Mar 3, 2020 at 10:13 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > > I'm doing a patch.   Let's see how it fares in the face of all these
-> > > preconceptions.
-> >
-> > Don't forget the efficiency criterion.  One reason for going with fsinfo(2) is
-> > that scanning /proc/mounts when there are a lot of mounts in the system is
-> > slow (not to mention the global lock that is held during the read).
+Hi, Ted,
 
-BTW, I do feel that there's room for improvement in userspace code as
-well.  Even quite big mount table could be scanned for *changes* very
-efficiently.  l.e. cache previous contents of /proc/self/mountinfo and
-compare with new contents, line-by-line.  Only need to parse the
-changed/added/removed lines.
+On 02.03.2020 19:56, Theodore Y. Ts'o wrote:
+> Kirill,
+> 
+> In a couple of your comments on this patch series, you mentioned
+> "defragmentation".  Is that because you're trying to use this as part
+> of e4defrag, or at least, using EXT4_IOC_MOVE_EXT?
+> 
+> If that's the case, you should note that input parameter for that
+> ioctl is:
+> 
+> struct move_extent {
+> 	__u32 reserved;		/* should be zero */
+> 	__u32 donor_fd;		/* donor file descriptor */
+> 	__u64 orig_start;	/* logical start offset in block for orig */
+> 	__u64 donor_start;	/* logical start offset in block for donor */
+> 	__u64 len;		/* block length to be moved */
+> 	__u64 moved_len;	/* moved block length */
+> };
+> 
+> Note that the donor_start is separate from the start of the file that
+> is being defragged.  So you could have the userspace application
+> fallocate a large chunk of space for that donor file, and then use
+> that donor file to defrag multiple files if you want to close pack
+> them.
 
-Also it would be pretty easy to throttle the number of updates so
-systemd et al. wouldn't hog the system with unnecessary processing.
+The practice shows it's not so. Your suggestion was the first thing we tried,
+but it works bad and just doubles/triples IO.
+
+Let we have two files of 512Kb, and they are placed in separate 1Mb clusters:
+
+[[512Kb file][512Kb free]][[512Kb file][512Kb free]]
+
+We want to pack both of files in the same 1Mb cluster. Packed together on block device,
+they will be in the same server of underlining distributed storage file system.
+This gives a big performance improvement, and this is the price I aimed.
+
+In case of I fallocate a large hunk for both of them, I have to move them
+both to this new hunk. So, instead of moving 512Kb of data, we will have to move
+1Mb of data, i.e. double size, which is counterproductive.
+
+Imaging another situation, when we have 
+[[1020Kb file]][4Kb free]][[4Kb file][1020Kb free]]
+
+Here we may just move [4Kb file] into [4Kb free]. But your suggestion again forces
+us to move 1Mb instead of 4Kb, which makes IO 256 times worse! This is terrible!
+And this is the thing I try prevent with finding a suitable new interface.
+
+> Many years ago, back when LSF/MM colocated with a larger
+> storage-focused conference so we could manage to origanize an ext4
+> developer's workshop, we had talked about ways we create kernel
+> support for a more powerful userspace defragger, which could also
+> defragment the free space, so that future block allocations were more
+> likely to be successful.
+> 
+> The discussions surrounded interfaces where userspace could block (or
+> at least strongly dissuade unless the only other alternative was
+> returning ENOSPC) the kernel from allocating out of a certain number
+> of block groups.  And then also to have an interface where for a
+> particular process (namely, the defragger), to make the kernel
+> strongly prefer that allocations come out of an ordered list of block
+> groups.
+> 
+> (Of course these days, now that the cool kids are all embracing eBPF,
+> one could imagine a privileged interface where the defragger could
+> install some kind of eBPF program which provided enhanced policy to
+> ext4's block allocator.)
+> 
+> No one ever really followed through with this, in part because the
+> details of allowing userspace (and it would have to be privileged
+> userspace) to dictate policy to the block allocator has all sorts of
+> potential pitfalls, and in part because no company was really
+> interested in funding the engineering work.  In addition, I'll note
+> that the windows world, the need and interest for defragging has gone
+> done significantly with the advent more sophisticated file systems
+> like NTFSv5, which doesn't need defragging nearly as often as say, the
+> FAT file system.  And I think if anything, the interst in doing work
+> with e4defrag has decreased even more over the years.
+> 
+> That being said, there has been some interest in making changes to
+> both the block allocator and some kind of on-line defrag which is
+> optimized for low-end flash (such as the kind found in android
+> handsets).  There, the need to be careful that we don't end up
+> increasing the write wearout becomes even more critical, although the
+> GC work which f2fs does involve extra moving around of data blocks,
+> and phones have seemed to do fine.  Of course, the typical phone only
+> has to last 2-3 years before the battery dies, the screen gets
+> cracked, and/or the owner decides they want the latest cool toy from
+> the phone manufacturers.  :-)
+> 
+> In any case, if your goal is really some interface to support on-line
+> defragmentation for ext4, you want to consider whether the
+> EXT4_IOC_MOVE_EXTENT interface is sufficiently powerful such that you
+> don't really need to mess around with new block allocation hints.
+
+It's powerful, but it does not allow to create an effective defragmentation
+tool for my usecase. See the examples above. I do not want to replace
+EXT4_IOC_MOVE_EXTENT I just want an interface to be able to allocate
+a space close to some existing file and reduce IO at defragmentation time.
+This is just only thing I need in this patchset.
+
+I can't climb into maintainers heads and find a thing, which will be suitable
+for you. I did my try and suggested the interface. In case of it's not OK
+for you, could you, please, suggest another one, which will work for my usecase?
+The thesis "EXT4_IOC_MOVE_EXTENT is enough for everything" does not work for me :(
+Are you OK with interface suggested by Andreas?
 
 Thanks,
-Miklos
+Kirill
+
+
+
+
+
+
