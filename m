@@ -2,229 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B660176AA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 03:26:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D500D176D75
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Mar 2020 04:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCCC0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Mar 2020 21:26:52 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37299 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbgCCC0v (ORCPT
+        id S1727095AbgCCDI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Mar 2020 22:08:59 -0500
+Received: from mx04.melco.co.jp ([192.218.140.144]:47920 "EHLO
+        mx04.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727059AbgCCDI7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Mar 2020 21:26:51 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p14so669751pfn.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Mar 2020 18:26:50 -0800 (PST)
+        Mon, 2 Mar 2020 22:08:59 -0500
+Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
+        by mx04.melco.co.jp (Postfix) with ESMTP id 846723A429F;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mr04.melco.co.jp (unknown [127.0.0.1])
+        by mr04.imss (Postfix) with ESMTP id 48Whmn3Pb2zRkB6;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr04.melco.co.jp (Postfix) with ESMTP id 48Whmn35M4zRkB0;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 48Whmn31wmzRkFV;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+Received: from JPN01-TY1-obe.outbound.protection.outlook.com (unknown [104.47.93.57])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 48Whmn2rwKzRk8g;
+        Tue,  3 Mar 2020 12:08:57 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BkyW5athoTX+RgLyX6ls4Xy0hulBZBBNOsMVHEScNcF0CcK5V09+Tv32EP1JdNq3L1mJ1hlP2e98zStWs4m+BhOPjcW6vozAl+G+T8IPPgDm2unq5G8hyifd/eCxGcHcoNyRh1SpKrWaL4qyFZVkHqv+Apv1lcgvYpDsEo7XSxD17vwElaKxJquFzA4m4rxfaElTO9eIb4j/CMtXT1fJ+3k7kqGTP2/1eBSWcZTPp62bMHYXGTXsiG6qocXyep/QmpHZH3pEwk+3UPV+0MiunJN6WJc6vC5nHKvkvljWcXwk39HyEjWzI/67CfptvnLFgb9ZIyTitBPmYjgLc5xfPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yfKPKzdPJesgnDQAI0INMfNawCjAxxgZeZmOQlgnPg=;
+ b=AVWT9XGflOCTs/VN0k+78/Tj6ecQ1vG1kh6LzgmUTQIIngsePil3+tk0UjE4yz8uQVszugq90WZaSSI5zcmWnVduOrv3nSs/AIkQwUKhbo0EbfUuR8BeBCs9nRNBCSWEyLA/93xeAK4lod66fG2ewEamQqvhN89ne7HSHNzDD/HYJ4ZtjC/b7glJx6NcNhIWMM2GdCChmWXjHsPGRt0+PbQvxN1hZMj1S+5Zj3zbRjGCH/Bt6vXfgdEKyMSQPRxilz6Ryo4VrmMcNlAOvTPmjlikFrPBfq9HINS+BJC56LvIQJuGHD/pugoSIv0jZEjf8wBbGGjPM9rUr6wuEktftQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uuCIfBrJnhC2RWZ3b46zhSPALaCgRQ8Eg5B/pVuFDGA=;
-        b=cZpK/HtsEcWQ/CTSUQ1ubLYsVROBY8QOJEFoLwD66YBoteVTZuqDc2IoIDVno0Al7C
-         SCXMT7VYKs9/cnCjAXky2ULLkm0bntcqMWmtEFYaHImX5ZSCHtkI/WzDqQTmEhiLLchm
-         ut6E8bdbRO0GJnMDZkms29ClVRGdfGh2pMejQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uuCIfBrJnhC2RWZ3b46zhSPALaCgRQ8Eg5B/pVuFDGA=;
-        b=H/tChzvDXlLQPmld5+l2R8kymCmyudQ6e1/iqF12Au6FhfrNtnyJaJ85UtfZ5xe3Fi
-         HONnO0l6JhDcdZZ8o/SIe7bhvPg8kgwQgcqPSVHx95SbboTsTXhUc0NADZM7u8ooavFv
-         r9NAYiYdNBvJ72acfrOPTuD3rn6+BDjjfJ4IZSusqtp8tllWBfu4SPPb/CldpOiCaeH8
-         aWH6v7zqurmnPuOffU+ooCRGt4dTFc31Qt9yek8DZno5r/Y7Khnteqhb5A1pbSwJRr3V
-         mPh5fLfuxU7zG72vN2IMDQ8Qo1exO229rbuFTWIKx+6JEeA/MZ3jzlQ6Tn5g1Abzxb0Q
-         XWFw==
-X-Gm-Message-State: ANhLgQ1HObQDwi8YsFTNbbLgWibFHuab87xVgiJX/n1ICTrjrCFkoLO2
-        D8QVdRfbKDHDC97PGnFXqHOQdw==
-X-Google-Smtp-Source: ADFU+vvlcm87xXubPEMs3IXv/wlZn0X627KVNbEgL+NdE0Sm9XRM6huUjL2wvS3j84kucVc1XqEGfw==
-X-Received: by 2002:a62:f94d:: with SMTP id g13mr1940932pfm.60.1583202410115;
-        Mon, 02 Mar 2020 18:26:50 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id ay10sm449077pjb.37.2020.03.02.18.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 18:26:49 -0800 (PST)
-Date:   Mon, 2 Mar 2020 18:26:47 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0yfKPKzdPJesgnDQAI0INMfNawCjAxxgZeZmOQlgnPg=;
+ b=g/Y0M5hH34E9ewCBe4tIxSRGY0OwNAig92o/3LD6Q0s1017CGXJURMLRpxF9pKCxMnENhGPQHelSlFHmVQp+spTPZe+vr1S0pvhYMWhERCf36j8pCx8rEWI1ycGK0gZPzGuCq3jPimWWjzahTaY5gXZPqmWv37Ecw9TUfEvuwtk=
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com (52.133.161.22) by
+ TY2SPR01MB0005.jpnprd01.prod.outlook.com (20.177.79.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2772.14; Tue, 3 Mar 2020 03:08:57 +0000
+Received: from TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b]) by TY1PR01MB1578.jpnprd01.prod.outlook.com
+ ([fe80::1cea:e753:3a3b:8e1b%7]) with mapi id 15.20.2772.019; Tue, 3 Mar 2020
+ 03:08:56 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     =?utf-8?B?J1ZhbGRpcyBLbMSTdG5pZWtzJw==?= <valdis.kletnieks@vt.edu>
+CC:     "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCHv4] exec: Fix a deadlock in ptrace
-Message-ID: <202003021531.C77EF10@keescook>
-References: <CAG48ez3mnYc84iFCA25-rbJdSBi3jh9hkp569XZTbFc_9WYbZw@mail.gmail.com>
- <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74zmfc9.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87k142lpfz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfmloir.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nmjulm.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
+Thread-Topic: [PATCH 1/2] staging: exfat: clean up d_entry rebuilding.
+Thread-Index: AQHV8Hj2ji1miSANjk6rmTkVPsyLB6g1GhQAgAESGHA=
+Date:   Tue, 3 Mar 2020 03:07:51 +0000
+Deferred-Delivery: Tue, 3 Mar 2020 03:08:50 +0000
+Message-ID: <TY1PR01MB1578983D124E99FB66FB707190E40@TY1PR01MB1578.jpnprd01.prod.outlook.com>
+References: <20200302095716.64155-1-Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+ <240472.1583144994@turing-police>
+In-Reply-To: <240472.1583144994@turing-police>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp; 
+x-originating-ip: [121.80.0.162]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7feadd93-8d99-4a43-3eb6-08d7bf203673
+x-ms-traffictypediagnostic: TY2SPR01MB0005:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY2SPR01MB000544A54401FE5B35B43C6B90E40@TY2SPR01MB0005.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 03319F6FEF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(366004)(376002)(189003)(199004)(6916009)(316002)(186003)(2906002)(26005)(9686003)(8936002)(6666004)(71200400001)(55016002)(6506007)(5660300002)(33656002)(7696005)(54906003)(81156014)(8676002)(86362001)(81166006)(52536014)(66446008)(66946007)(4326008)(66556008)(64756008)(66476007)(478600001)(76116006);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2SPR01MB0005;H:TY1PR01MB1578.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: dc.MitsubishiElectric.co.jp does
+ not designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VwpV1P+QpRbZO4byViXe5aXYk2tRy7Y2ezVOh/TrDqo7ZQ1cNb6Uet3dtbAUG/rA6eobxX/F8nUM3vH6/0PJr+jNm+tZrOLZbEGvn4zhmSwOQgshebfcCFoJbyO16/lcySnHCv8hDTmZhpQPU0udBth4l9QJps+rJRV1GhJ+UzmNu/9dY29E89mnFafhQ1KyhaqGujfi9h7Sg+PN8FRBQvxRqXdtyL6ajW9lwr2qsJHBscD94vezIGcu/5mEOYgrDBk4I+NwswKv0iY6U8tYK7aeK3QouFTxGHHE9yoPvV3RaLipQFkJXEfdLmDWSyg998OdEec9abXasJk1TOzuNOehHxLkN+ddmjXyyxFV6EZKC1ZeYkEsxihrv243vXzwwEpsWopN9IHfcH1u7gn9qVQIn/aZMrIITKH6g8wRUrxQwVMtH/8O9QMZWell0lvG
+x-ms-exchange-antispam-messagedata: NdF1Hqo6PKYVG0iBhwXzbEqcAJQgGHG2wENIMHAk6sQRZqCtliWXIfWqI0zYdHrc5wLJNAYrfx05JgdQGGy2pvAPYCoEQOS+KiM0/yJpBscX8qYHECCVPU4uxnUPU37Mdm25HmuHCymM4eizbs5BFg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7feadd93-8d99-4a43-3eb6-08d7bf203673
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2020 03:08:56.8336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U7ok4QDb59CtKOB9RXZvrgn2RYeZCrOzc4gbRhExWDiOo5PaWj1PxHd7rSaxklUZuWvj0YTHe1id7KW9LsCz8A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2SPR01MB0005
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 02, 2020 at 10:18:07PM +0000, Bernd Edlinger wrote:
-> This fixes a deadlock in the tracer when tracing a multi-threaded
-> application that calls execve while more than one thread are running.
-> 
-> I observed that when running strace on the gcc test suite, it always
-> blocks after a while, when expect calls execve, because other threads
-> have to be terminated.  They send ptrace events, but the strace is no
-> longer able to respond, since it is blocked in vm_access.
-> 
-> The deadlock is always happening when strace needs to access the
-> tracees process mmap, while another thread in the tracee starts to
-> execve a child process, but that cannot continue until the
-> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
-> 
-> strace          D    0 30614  30584 0x00000000
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> schedule_preempt_disabled+0x15/0x20
-> __mutex_lock.isra.13+0x1ec/0x520
-> __mutex_lock_killable_slowpath+0x13/0x20
-> mutex_lock_killable+0x28/0x30
-> mm_access+0x27/0xa0
-> process_vm_rw_core.isra.3+0xff/0x550
-> process_vm_rw+0xdd/0xf0
-> __x64_sys_process_vm_readv+0x31/0x40
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> expect          D    0 31933  30876 0x80004003
-> Call Trace:
-> __schedule+0x3ce/0x6e0
-> schedule+0x5c/0xd0
-> flush_old_exec+0xc4/0x770
-> load_elf_binary+0x35a/0x16c0
-> search_binary_handler+0x97/0x1d0
-> __do_execve_file.isra.40+0x5d4/0x8a0
-> __x64_sys_execve+0x49/0x60
-> do_syscall_64+0x64/0x220
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> The proposed solution is to take the cred_guard_mutex only
-> in a critical section at the beginning, and at the end of the
-> execve function, and let PTRACE_ATTACH fail with EAGAIN while
-> execve is not complete, but other functions like vm_access are
-> allowed to complete normally.
-
-Sorry to be bummer, but I don't think this will work. A few more things
-during the exec process depend on cred_guard_mutex being held.
-
-If I'm reading this patch correctly, this changes the lifetime of the
-cred_guard_mutex lock to be:
-	- during prepare_bprm_creds()
-	- from flush_old_exec() through install_exec_creds()
-Before, cred_guard_mutex was held from prepare_bprm_creds() through
-install_exec_creds().
-
-That means, for example, that check_unsafe_exec()'s documented invariant
-is violated:
-    /*
-     * determine how safe it is to execute the proposed program
-     * - the caller must hold ->cred_guard_mutex to protect against
-     *   PTRACE_ATTACH or seccomp thread-sync
-     */
-    static void check_unsafe_exec(struct linux_binprm *bprm) ...
-which is looking at no_new_privs as well as other details, and making
-decisions about the bprm state from the current state.
-
-I think it also means that the potentially multiple invocations
-of bprm_fill_uid() (via prepare_binprm() via binfmt_script.c and
-binfmt_misc.c) would be changing bprm->cred details (uid, gid) without
-a lock (another place where current's no_new_privs is evaluated).
-
-Related, it also means that cred_guard_mutex is unheld for every
-invocation of search_binary_handler() (which can loop via the previously
-mentioned binfmt_script.c and binfmt_misc.c), if any of them have hidden
-dependencies on cred_guard_mutex. (Thought I only see bprm_fill_uid()
-currently.)
-
-For seccomp, the expectations about existing thread states risks races
-too. There are two locks held for TSYNC:
-- current->sighand->siglock is held to keep new threads from
-  appearing/disappearing, which would destroy filter refcounting and
-  lead to memory corruption.
-- cred_guard_mutex is held to keep no_new_privs in sync with filters to
-  avoid no_new_privs and filter confusion during exec, which could
-  lead to exploitable setuid conditions (see below).
-
-Just racing a malicious thread during TSYNC is not a very strong
-example (a malicious thread could do lots of fun things to "current"
-before it ever got near calling TSYNC), but I think there is the risk
-of mismatched/confused states that we don't want to allow. One is a
-particularly bad state that could lead to privilege escalations (in the
-form of the old "sendmail doesn't check setuid" flaw; if a setuid process
-has a filter attached that silently fails a priv-dropping setuid call
-and continues execution with elevated privs, it can be tricked into
-doing bad things on behalf of the unprivileged parent, which was the
-primary goal of the original use of cred_guard_mutex with TSYNC[1]):
-
-thread A clones thread B
-thread B starts setuid exec
-thread A sets no_new_privs
-thread A calls seccomp with TSYNC
-thread A in seccomp_sync_threads() sets seccomp filter on self and thread B
-thread B passes check_unsafe_exec() with no_new_privs unset
-thread B reaches bprm_fill_uid() with no_new_privs unset and gains privs
-thread A still in seccomp_sync_threads() sets no_new_privs on thread B
-thread B finishes exec, now running with elevated privs, a filter chosen
-         by thread A, _and_ nnp set (which doesn't matter)
-
-With the original locking, thread B will fail check_unsafe_exec()
-because filter and nnp state are changed together, with "atomicity"
-protected by the cred_guard_mutex.
-
-And this is just the bad state I _can_ see. I'm worried there are more...
-
-All this said, I do see a small similarity here to the work I did to
-stabilize stack rlimits (there was an ongoing problem with making multiple
-decisions for the bprm based on current's state -- but current's state
-was mutable during exec). For this, I saved rlim_stack to bprm and ignored
-current's copy until exec ended and then stored bprm's copy into current.
-If the only problem anyone can see here is the handling of no_new_privs,
-we might be able to solve that similarly, at least disentangling tsync/nnp
-from cred_guard_mutex.
-
--Kees
-
-[1] https://lore.kernel.org/lkml/20140625142121.GD7892@redhat.com/
-
--- 
-Kees Cook
+VGhhbmtzIGZvciB5b3VyIGNvbW1lbnQuDQoNCj4gQXJlIHlvdSBzdXJlIHRoaXMgaXMgT0sgdG8g
+ZG8/IGV4ZmF0X2dldF9lbnRyeV90eXBlKCkgZG9lcyBhIGxvdCBvZiANCj4gbWFwcGluZyBiZXR3
+ZWVuIHZhbHVlcywgdXNpbmcgYSBmaWxlX2RlbnRyeV90LT50eXBlLCB3aGlsZQ0KPiBmaWQtPnR5
+cGUgaXMgYSBmaWxlX2lkX3QtPnR5cGUuDQoNClRoZSBmaWQgYXJndW1lbnQgb2YgZXhmYXRfcmVu
+YW1lX2ZpbGUoKS9tb3ZlX2ZpbGUoKWZyb20gb2xkX2RlbnRyeS0+ZmlkIG9mIGV4ZmF0X3JlbmFt
+ZSgpLg0KICogZXhmYXRfcmVuYW1lX2ZpbGUoKSA8LSBmZnNNb3ZlRmlsZSgpIDwtIGV4ZmF0X3Jl
+bmFtZSgpDQogKiBtb3ZlX2ZpbGUoKSA8LSBmZnNNb3ZlRmlsZSgpIDwtIGV4ZmF0X3JlbmFtZSgp
+DQoNClRoZSB2YWx1ZSB0aGF0IHZmcyBzZXRzIHRvIHRoZSBvbGRfZGVudHJ5IG9mIGV4ZmF0X3Jl
+bmFtZSgpIGlzIHRoZSBkZW50cnkgdmFsdWUgcmV0dXJuZWQgYnkgZXhmYXRfbG9va3VwKCksIGV4
+ZmF0X2NyZWF0ZSgpLCBhbmQgY3JlYXRlX2RpcigpLg0KSW4gZWFjaCBmdW5jdGlvbiwgdGhlIHZh
+bHVlIG9mIGRlbnRyeS0+ZmlkIGlzIGluaXRpYWxpemVkIHRvIGZpZC0+dHlwZSBhdCBjcmVhdGVf
+ZmlsZSgpLCBmZnNMb29rdXBGaWxlKCksIGFuZCBjcmVhdGVfZGlyKCkuDQoNCiAqIGNyZWF0ZV9m
+aWxlKCkgPC0gZmZzQ3JlYXRlRmlsZSgpIDwtZXhmYXRfY3JlYXRlKCkNCiAqIGZmc0xvb2t1cEZp
+bGUoKSA8LSBleGZhdF9maW5kKCkgPC1leGZhdF9sb29rdXAoKQ0KICogZXhmYXRfbWtkaXIoKSA8
+LSBmZnNDcmVhdGVEaXIoKSA8LWNyZWF0ZV9kaXIoKQ0KDQo+IGFuZCBhdCBmaXJzdCByZWFkIGl0
+J3Mgbm90IG9idmlvdXMgdG8gDQo+IGZpZC0+bWUgd2hldGhlciB0eXBlIGlzIGd1YXJhbnRlZWQg
+dG8gaGF2ZSB0aGUgY29ycmVjdCB2YWx1ZSBhbHJlYWR5Lg0KDQpBIHZhbGlkIHZhbHVlIGlzIHNl
+dCBpbiBmaWQtPnR5cGUgZm9yIGFsbCBwYXRocy4NCldoYXQgZG8geW91IHRoaW5rPw0KDQotLQ0K
+S29oYWRhIFRldHN1aGlybyA8S29oYWRhLlRldHN1aGlyb0BkYy5NaXRzdWJpc2hpRWxlY3RyaWMu
+Y28uanA+DQoNCg0K
