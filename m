@@ -2,123 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D43A1795B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 17:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8D41795F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 17:59:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388260AbgCDQtV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 11:49:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388063AbgCDQtV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:49:21 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730097AbgCDQ71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 11:59:27 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56065 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730083AbgCDQ70 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 11:59:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583341165;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=KqxwdR9zKaulXRhlk1T+G9VOHSY6Ymue2z8amR6F1KU=;
+        b=Jat86Nd2/vP5Rqi153praOJL8pTGE4/jKqIJPvrmX+G10BRtIx3LlP3Qj2GSZ9aR0yCZDm
+        m2j+kvAVpKV2eJddpmFoLpokFDqhTvIUVHxOd1dbVZbYaeaZA6ZoGhrk7XgcM5Inuj5x8b
+        HBwGP+plEAipZwKdgzmWFA/r0nQXvz0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-353-fJ9H8TuJPLCKuKyZqwwO-w-1; Wed, 04 Mar 2020 11:59:12 -0500
+X-MC-Unique: fJ9H8TuJPLCKuKyZqwwO-w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2C2922B48;
-        Wed,  4 Mar 2020 16:49:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583340556;
-        bh=htZq3MKYG3/FJ8bILu0qqA54TuTZg4n2O0B4bA60sUA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QFw/Q1NY4B+y7WTrekje+ZpgNyFzrIcZ7UTABnDsnjgXf0am4nQsbW5ZVxTNNjWld
-         6g3+cMHNGJFGxmjYQ7wuvpNbSuU4C8wJW0QIQn6siOMOjhXevPQyX+4tWUsOTV/oDy
-         NWsKv9WocDxBZSqHQrN8bsD7sTiXcsBN4pte4wXQ=
-Date:   Wed, 4 Mar 2020 17:49:13 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>, Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver
- #17]
-Message-ID: <20200304164913.GB1763256@kroah.com>
-References: <107666.1582907766@warthog.procyon.org.uk>
- <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
- <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
- <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
- <1509948.1583226773@warthog.procyon.org.uk>
- <CAJfpegtOwyaWpNfjomRVOt8NKqT94O5n4-LOHTR7YZT9fadVHA@mail.gmail.com>
- <20200303113814.rsqhljkch6tgorpu@ws.net.home>
- <20200303130347.GA2302029@kroah.com>
- <33d900c8061c40f70ba2b9d1855fd6bd1c2b68bb.camel@themaw.net>
- <20200304152241.iaiulvl5xisnuxp6@ws.net.home>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61817100550E;
+        Wed,  4 Mar 2020 16:59:11 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C9E97388D;
+        Wed,  4 Mar 2020 16:59:03 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 334872257D2; Wed,  4 Mar 2020 11:59:03 -0500 (EST)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu
+Cc:     vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com,
+        mst@redhat.com
+Subject: [PATCH 00/20] virtiofs: Add DAX support
+Date:   Wed,  4 Mar 2020 11:58:25 -0500
+Message-Id: <20200304165845.3081-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304152241.iaiulvl5xisnuxp6@ws.net.home>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 04:22:41PM +0100, Karel Zak wrote:
-> On Wed, Mar 04, 2020 at 10:01:33AM +0800, Ian Kent wrote:
-> > On Tue, 2020-03-03 at 14:03 +0100, Greg Kroah-Hartman wrote:
-> > > Actually, I like this idea (the syscall, not just the unlimited
-> > > beers).
-> > > Maybe this could make a lot of sense, I'll write some actual tests
-> > > for
-> > > it now that syscalls are getting "heavy" again due to CPU vendors
-> > > finally paying the price for their madness...
-> > 
-> > The problem isn't with open->read->close but with the mount info.
-> > changing between reads (ie. seq file read takes and drops the
-> > needed lock between reads at least once).
-> 
-> readfile() is not reaction to mountinfo. 
-> 
-> The motivation is that we have many places with trivial
-> open->read->close for very small text files due to /sys and /proc. The
-> current way how kernel delivers these small strings to userspace seems
-> pretty inefficient if we can do the same by one syscall.
-> 
->     Karel
-> 
-> $ strace -e openat,read,close -c ps aux
-> ...
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  43.32    0.004190           4       987           read
->  31.42    0.003039           3       844         4 openat
->  25.26    0.002443           2       842           close
-> ------ ----------- ----------- --------- --------- ----------------
-> 100.00    0.009672                  2673         4 total
-> 
-> $ strace -e openat,read,close -c lsns
-> ...
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  39.95    0.001567           2       593           openat
->  30.93    0.001213           2       597           close
->  29.12    0.001142           3       365           read
-> ------ ----------- ----------- --------- --------- ----------------
-> 100.00    0.003922                  1555           total
-> 
-> 
-> $ strace -e openat,read,close -c lscpu
-> ...
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  44.67    0.001480           7       189        52 openat
->  34.77    0.001152           6       180           read
->  20.56    0.000681           4       140           close
-> ------ ----------- ----------- --------- --------- ----------------
-> 100.00    0.003313                   509        52 total
+Hi,
 
-As a "real-world" test, would you recommend me converting one of the
-above tools to my implementation of readfile to see how/if it actually
-makes sense, or do you have some other tool you would rather see me try?
+This patch series adds DAX support to virtiofs filesystem. This allows
+bypassing guest page cache and allows mapping host page cache directly
+in guest address space.
 
-thanks,
+When a page of file is needed, guest sends a request to map that page
+(in host page cache) in qemu address space. Inside guest this is
+a physical memory range controlled by virtiofs device. And guest
+directly maps this physical address range using DAX and hence gets
+access to file data on host.
 
-greg k-h
+This can speed up things considerably in many situations. Also this
+can result in substantial memory savings as file data does not have
+to be copied in guest and it is directly accessed from host page
+cache.
+
+Most of the changes are limited to fuse/virtiofs. There are couple
+of changes needed in generic dax infrastructure and couple of changes
+in virtio to be able to access shared memory region.
+
+These patches apply on top of 5.6-rc4 and are also available here.
+
+https://github.com/rhvgoyal/linux/commits/vivek-04-march-2020
+
+Any review or feedback is welcome.
+
+Performance
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+I have basically run bunch of fio jobs to get a sense of speed of
+various operations. I wrote a simple wrapper script to run fio jobs
+3 times and take their average and report it. These scripts and fio
+jobs are available here.
+
+https://github.com/rhvgoyal/virtiofs-tests
+
+I set up a directory on ramfs on host and exported that directory inside
+guest using virtio-fs and ran tests inside guests. Ran tests with
+cache=3Dnone both with dax enabled and disabled. cache=3Dnone option
+enforces no caching happens in guest both for data and metadata.
+
+Test Setup
+-----------
+- A fedora 29 host with 376Gi RAM, 2 sockets (20 cores per socket, 2
+  threads per core)
+
+- Using ramfs on host as backing store. 4 fio files of 8G each.
+
+- Created a VM with 64 VCPUS and 64GB memory. An 64GB cache window (for d=
+ax
+  mmap).
+
+Test Results
+------------
+- Results in two configurations have been reported.=20
+  virtio-fs (cache=3Dnone) and virtio-fs (cache=3Dnone + dax).
+
+  There are other caching modes as well but to me cache=3Dnone seemed mos=
+t
+  interesting for now because it does not cache anything in guest
+  and provides strong coherence. Other modes which provide less strong
+  coherence and hence are faster are yet to be benchmarked.
+
+- Three fio ioengines psync, libaio and mmap have been used.
+
+- I/O Workload of randread, radwrite, seqread and seqwrite have been run.
+
+- Each file size is 8G. Block size 4K. iodepth=3D16=20
+
+- "multi" means same operation was done with 4 jobs and each job is
+  operating on a file of size 8G.=20
+
+- Some results are "0 (KiB/s)". That means that particular operation is
+  not supported in that configuration.
+
+NAME                    I/O Operation           BW(Read/Write)
+virtiofs-cache-none     seqread-psync           35(MiB/s)
+virtiofs-cache-none-dax seqread-psync           643(MiB/s)
+
+virtiofs-cache-none     seqread-psync-multi     219(MiB/s)
+virtiofs-cache-none-dax seqread-psync-multi     2132(MiB/s)
+
+virtiofs-cache-none     seqread-mmap            0(KiB/s)
+virtiofs-cache-none-dax seqread-mmap            741(MiB/s)
+
+virtiofs-cache-none     seqread-mmap-multi      0(KiB/s)
+virtiofs-cache-none-dax seqread-mmap-multi      2530(MiB/s)
+
+virtiofs-cache-none     seqread-libaio          293(MiB/s)
+virtiofs-cache-none-dax seqread-libaio          425(MiB/s)
+
+virtiofs-cache-none     seqread-libaio-multi    207(MiB/s)
+virtiofs-cache-none-dax seqread-libaio-multi    1543(MiB/s)
+
+virtiofs-cache-none     randread-psync          36(MiB/s)
+virtiofs-cache-none-dax randread-psync          572(MiB/s)
+
+virtiofs-cache-none     randread-psync-multi    211(MiB/s)
+virtiofs-cache-none-dax randread-psync-multi    1764(MiB/s)
+
+virtiofs-cache-none     randread-mmap           0(KiB/s)
+virtiofs-cache-none-dax randread-mmap           719(MiB/s)
+
+virtiofs-cache-none     randread-mmap-multi     0(KiB/s)
+virtiofs-cache-none-dax randread-mmap-multi     2005(MiB/s)
+
+virtiofs-cache-none     randread-libaio         300(MiB/s)
+virtiofs-cache-none-dax randread-libaio         413(MiB/s)
+
+virtiofs-cache-none     randread-libaio-multi   327(MiB/s)
+virtiofs-cache-none-dax randread-libaio-multi   1326(MiB/s)
+
+virtiofs-cache-none     seqwrite-psync          34(MiB/s)
+virtiofs-cache-none-dax seqwrite-psync          494(MiB/s)
+
+virtiofs-cache-none     seqwrite-psync-multi    223(MiB/s)
+virtiofs-cache-none-dax seqwrite-psync-multi    1680(MiB/s)
+
+virtiofs-cache-none     seqwrite-mmap           0(KiB/s)
+virtiofs-cache-none-dax seqwrite-mmap           1217(MiB/s)
+
+virtiofs-cache-none     seqwrite-mmap-multi     0(KiB/s)
+virtiofs-cache-none-dax seqwrite-mmap-multi     2359(MiB/s)
+
+virtiofs-cache-none     seqwrite-libaio         282(MiB/s)
+virtiofs-cache-none-dax seqwrite-libaio         348(MiB/s)
+
+virtiofs-cache-none     seqwrite-libaio-multi   320(MiB/s)
+virtiofs-cache-none-dax seqwrite-libaio-multi   1255(MiB/s)
+
+virtiofs-cache-none     randwrite-psync         32(MiB/s)
+virtiofs-cache-none-dax randwrite-psync         458(MiB/s)
+
+virtiofs-cache-none     randwrite-psync-multi   213(MiB/s)
+virtiofs-cache-none-dax randwrite-psync-multi   1343(MiB/s)
+
+virtiofs-cache-none     randwrite-mmap          0(KiB/s)
+virtiofs-cache-none-dax randwrite-mmap          663(MiB/s)
+
+virtiofs-cache-none     randwrite-mmap-multi    0(KiB/s)
+virtiofs-cache-none-dax randwrite-mmap-multi    1820(MiB/s)
+
+virtiofs-cache-none     randwrite-libaio        292(MiB/s)
+virtiofs-cache-none-dax randwrite-libaio        341(MiB/s)
+
+virtiofs-cache-none     randwrite-libaio-multi  322(MiB/s)
+virtiofs-cache-none-dax randwrite-libaio-multi  1094(MiB/s)
+
+Conclusion
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+- virtio-fs with dax enabled is significantly faster and memory
+  effiecient as comapred to non-dax operation.
+
+Note:
+  Right now dax window is 64G and max fio file size is 32G as well (4
+  files of 8G each). That means everything fits into dax window and no
+  reclaim is needed. Dax window reclaim logic is slower and if file
+  size is bigger than dax window size, performance slows down.
+
+Thanks
+Vivek
+
+Sebastien Boeuf (3):
+  virtio: Add get_shm_region method
+  virtio: Implement get_shm_region for PCI transport
+  virtio: Implement get_shm_region for MMIO transport
+
+Stefan Hajnoczi (2):
+  virtio_fs, dax: Set up virtio_fs dax_device
+  fuse,dax: add DAX mmap support
+
+Vivek Goyal (15):
+  dax: Modify bdev_dax_pgoff() to handle NULL bdev
+  dax: Create a range version of dax_layout_busy_page()
+  virtiofs: Provide a helper function for virtqueue initialization
+  fuse: Get rid of no_mount_options
+  fuse,virtiofs: Add a mount option to enable dax
+  fuse,virtiofs: Keep a list of free dax memory ranges
+  fuse: implement FUSE_INIT map_alignment field
+  fuse: Introduce setupmapping/removemapping commands
+  fuse, dax: Implement dax read/write operations
+  fuse, dax: Take ->i_mmap_sem lock during dax page fault
+  fuse,virtiofs: Define dax address space operations
+  fuse,virtiofs: Maintain a list of busy elements
+  fuse: Release file in process context
+  fuse: Take inode lock for dax inode truncation
+  fuse,virtiofs: Add logic to free up a memory range
+
+ drivers/dax/super.c                |    3 +-
+ drivers/virtio/virtio_mmio.c       |   32 +
+ drivers/virtio/virtio_pci_modern.c |  107 +++
+ fs/dax.c                           |   66 +-
+ fs/fuse/dir.c                      |    2 +
+ fs/fuse/file.c                     | 1162 +++++++++++++++++++++++++++-
+ fs/fuse/fuse_i.h                   |  109 ++-
+ fs/fuse/inode.c                    |  148 +++-
+ fs/fuse/virtio_fs.c                |  250 +++++-
+ include/linux/dax.h                |    6 +
+ include/linux/virtio_config.h      |   17 +
+ include/uapi/linux/fuse.h          |   42 +-
+ include/uapi/linux/virtio_fs.h     |    3 +
+ include/uapi/linux/virtio_mmio.h   |   11 +
+ include/uapi/linux/virtio_pci.h    |   11 +-
+ 15 files changed, 1888 insertions(+), 81 deletions(-)
+
+--=20
+2.20.1
+
