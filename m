@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCC8179184
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 14:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEB1179239
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 15:23:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729509AbgCDNho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 08:37:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59622 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729461AbgCDNhn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 08:37:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D9E02B12A;
-        Wed,  4 Mar 2020 13:37:40 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B36D61E0E99; Wed,  4 Mar 2020 14:37:38 +0100 (CET)
-Date:   Wed, 4 Mar 2020 14:37:38 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     Christoph Hellwig <hch@lst.de>, jack@suse.cz,
-        Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
-        bvanassche@acm.org, keith.busch@intel.com, tglx@linutronix.de,
-        mwilck@suse.com, yuyufen@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: disk revalidation updates and OOM
-Message-ID: <20200304133738.GF21048@quack2.suse.cz>
-References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
+        id S1729487AbgCDOW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 09:22:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41146 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726748AbgCDOW7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 09:22:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=AnbrYHfpg3ftWazDwotORReAOaIVQFxlC0lPYzO9Yq8=; b=IIcJhveN6A4+vTmO7IuKo+YtEO
+        Y2gwjm6u8Yu2uWohjfQUqTGadI6U92dDBfsVWpS2yJAtT/L/IevjKw8lDK0j5siO++lIwZu67R+0t
+        RiaBM9PScHuj+6VbI7+ih1UPTh4iJqVjvGRCdQfZoZQtYfGoLYja12Aoe/qe8wGOgNeIq9sHTTK48
+        quQWCNVpBeRWBU6N1HPxQNAtjbXhEGBFCg7mkg/Onertb2gYdklEXkQ7J0lwkWyTfW3IMypKk5bH8
+        UtxmAEoHagsFl1vOMBGHuJq66oreUNJZMB2ji7xEkjwvawyiHH4mRwFzBUkZYZepWHjQoVr1k7kfT
+        xj5dy3VA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9UvL-0004Na-Cr; Wed, 04 Mar 2020 14:22:59 +0000
+Date:   Wed, 4 Mar 2020 06:22:59 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH] iomap: Fix writepage tracepoint pgoff
+Message-ID: <20200304142259.GF29971@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+From: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-On Mon 02-03-20 11:55:44, He Zhe wrote:
-> Since the following commit
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.5/disk-revalidate&id=6917d0689993f46d97d40dd66c601d0fd5b1dbdd
-> until now(v5.6-rc4),
-> 
-> If we start udisksd service of systemd(v244), systemd-udevd will scan
-> /dev/hdc (the cdrom device created by default in qemu(v4.2.0)).
-> systemd-udevd will endlessly run and cause OOM.
+page_offset() confusingly returns the number of bytes from the
+beginning of the file and not the pgoff, which the tracepoint claims
+to be returning.  We're already returning the number of bytes from the
+beginning of the file in the 'offset' parameter, so correct the pgoff
+to be what was apparently intended.
 
-Thanks for report! The commit you mention has this:
+Fixes: 0b1b213fcf3a ("xfs: event tracing support")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-There is a small behavior change in that we now send the kevent change
-notice also if we were not invalidating but no partitions were found, which
-seems like the right thing to do.
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index d6ba705f938a..ebc89ec5e6c7 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -56,7 +56,7 @@ DECLARE_EVENT_CLASS(iomap_page_class,
+ 	TP_fast_assign(
+ 		__entry->dev = inode->i_sb->s_dev;
+ 		__entry->ino = inode->i_ino;
+-		__entry->pgoff = page_offset(page);
++		__entry->pgoff = page->index;
+ 		__entry->size = i_size_read(inode);
+ 		__entry->offset = off;
+ 		__entry->length = len;
 
-And apparently this confuses systemd-udevd because it tries to open
-/dev/hdc in response to KOBJ_CHANGE event on that device and the open calls
-rescan_partitions() which generates another KOBJ_CHANGE event.  So I'm
-afraid we'll have to revert to the old behavior of not sending KOBJ_CHANGE
-event when there are no partitions found. Christoph?
-
-								Honza
---
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
