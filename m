@@ -2,59 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA21179A8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B696179A91
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgCDVAi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 16:00:38 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:34736 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgCDVAi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:00:38 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9b83-005NzE-Dj; Wed, 04 Mar 2020 21:00:31 +0000
-Date:   Wed, 4 Mar 2020 21:00:31 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v3)
-Message-ID: <20200304210031.GT23230@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200301215125.GA873525@ZenIV.linux.org.uk>
- <CAHk-=wh1Q=H-YstHZRKfEw2McUBX2_TfTc=+5N-iH8DSGz44Qg@mail.gmail.com>
- <20200302003926.GM23230@ZenIV.linux.org.uk>
- <87o8tdgfu8.fsf@x220.int.ebiederm.org>
- <20200304002434.GO23230@ZenIV.linux.org.uk>
- <87wo80g0bo.fsf@x220.int.ebiederm.org>
- <20200304065547.GP23230@ZenIV.linux.org.uk>
- <20200304105946.4xseo3jokcnpptrj@yavin>
+        id S2388230AbgCDVBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 16:01:12 -0500
+Received: from ms.lwn.net ([45.79.88.28]:47252 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbgCDVBM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 16:01:12 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 8AFF97F5;
+        Wed,  4 Mar 2020 21:01:11 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 14:01:10 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
+Message-ID: <20200304140110.1951004f@lwn.net>
+In-Reply-To: <alpine.DEB.2.21.2003042145340.2698@felia>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+        <20200304131035.731a3947@lwn.net>
+        <alpine.DEB.2.21.2003042145340.2698@felia>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304105946.4xseo3jokcnpptrj@yavin>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 09:59:46PM +1100, Aleksa Sarai wrote:
+On Wed, 4 Mar 2020 21:50:39 +0100 (CET)
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
 
-> > FWIW, I'm putting together some litmus tests for pathwalk semantics -
-> > one of the things I'd like to discuss at LSF; quite a few codepaths
-> > are simply not touched by anything in xfstests.
+> > Thanks for fixing these, but ... what tree did you generate the patch
+> > against?  I doesn't come close to applying to docs-next.
+> >  
 > 
-> I won't be at LSF unfortunately, but this is something I would be very
-> interested in helping with -- one of the things I've noticed is the lack
-> of a test-suite for some of the more generic VFS bits (such as namei).
+> My patch was based on next-20200303, probably too much noise on 
+> MAINTAINERS, such that it does not apply cleanly on docs-next.
+> If you want, I can send a patch that fits to docs-next. Anyway, merging 
+> will be similarly difficult later :(
 
-BTW, has anyone tried to run tests with oprofile and see how much of the
-core kernel gets exercised?  That looks like an obvious thing to try -
-at least the places outside of spin_lock_irq() ought to get lit after
-a while...
+Merge conflicts in MAINTAINERS are almost always trivial to resolve -
+Stephen won't mind :)
 
-Have any CI folks tried doing that, or am I missing some obvious reason
-why that is not feasible?
+Thanks,
+
+jon
