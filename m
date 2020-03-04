@@ -2,114 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9922178C95
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 09:34:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF806178ECA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 11:47:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbgCDIeP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 03:34:15 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55898 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728301AbgCDIeO (ORCPT
+        id S2387774AbgCDKr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 05:47:28 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38535 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387488AbgCDKr1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:34:14 -0500
-Received: by mail-wm1-f65.google.com with SMTP id 6so918895wmi.5;
-        Wed, 04 Mar 2020 00:34:12 -0800 (PST)
+        Wed, 4 Mar 2020 05:47:27 -0500
+Received: by mail-ed1-f66.google.com with SMTP id e25so1751036edq.5;
+        Wed, 04 Mar 2020 02:47:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nayxdGYrrbMcrJKKUbiZVGz59/2NTLulIF1ZtrT47ek=;
-        b=cA910Sct3AMljocPVycm3ISQnbULt2Dp+2t4oFbXMzpoCb+1ao26K70iGqKD+FitKL
-         /2nZ7tcj36mMW2mPY6Em4FDY4RrodpTwHOcxTICDOeB2aML7yK8Mgdi1ViKJSd4NqNUP
-         Nu6LH0bFO5TyeYKkL8KS8I0WwBz+i3srnfYET7saaRhPFh5DKT6RjqbXcXc5TsboBem3
-         wPMlEkYa/bjdcd2V3Ww5j+AvmrMrD1SvIs7ZmRyZ0mG3x/X7sSYQg8Z7K1cMbgfOTmUQ
-         Ko2jRDVflT4LeXsZemovrNYMqBa3fgBL2i8zxAMR4zvWeilQcdgGLuucGuSDxEGI5GrR
-         rPig==
+        h=from:to:cc:subject:date:message-id;
+        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
+        b=drTJ2zTMj0NNTZz8bc6a7Qn9zT9Qkuo5l8l38x7+6y1beHr0FBGlK/Re5BDWKyeD+l
+         kdVh3Jxm2m3t5SCQl24C/QuaCD9kjRZZ9oRTRI2tXAB+3DmjU4lQT6woIGKyDe8Dg1s2
+         cjUAzathkzY7gd5/KxgEgwp8PmO/dHTFtkfE8NxeBhas24s+4DYimHvDe7KCCtfDHxE3
+         6iYEXmG61vBibkXmvkAs8G7MoGCsS81jLRsF8joiK1TsFxb98cCO1H3X/FbnWzyRSx/R
+         kXPKyoNnMfSowRHQBe2CMXfsNsjKSCIlHJ5L+eXmz1gUYIjqNlB3Bi/2uucf22iNzSmF
+         Nbjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nayxdGYrrbMcrJKKUbiZVGz59/2NTLulIF1ZtrT47ek=;
-        b=LA2qQFOLHBhWGP0G8QvnZdtgQAZ9C6btWHJDFkD+C4KdARyoibCQwbQhyPhPVm09GG
-         YJIGBhhlYw1zM73VmJY1OCn2Zgrhcpy9UmG0P33yaXjrRLwVDgGEjlcjR3U9u7DzD7Dq
-         0iYDrfGrQQuSjE+kEUMvUjQg8BGUyOsFO/uzqW0MBkttq0nAlNsb+cD7/Ku3bzSm0eVU
-         3cZclwBxzkvVJHp+1tEIVrTBvSTH5zMJbF0L0O6q1HVZ0gNIrCwXQh3XjIYq39xAwPUE
-         r74vNbDvwzZNRqLH604m1vEgk/K9GWZJkQtGjgjdcC030nLcHpaAsVSysast41j+govF
-         Otzg==
-X-Gm-Message-State: ANhLgQ1kNIqHqzdJP23LdNSPk0J/nWnZsKrzNEF89PAw5dHTIaTGSBEb
-        rtFAKNYN5K8XWw/+w8fUpEI=
-X-Google-Smtp-Source: ADFU+vsXmm1DvvLyrlqHs80fl4XcTC+zghUs61AIKoiW7wsI1tA9IZuzEY5ZKMXvbLStbZ+Dj59Dlg==
-X-Received: by 2002:a05:600c:3ce:: with SMTP id z14mr2566093wmd.106.1583310851550;
-        Wed, 04 Mar 2020 00:34:11 -0800 (PST)
-Received: from dumbo ([83.137.6.114])
-        by smtp.gmail.com with ESMTPSA id z16sm37081963wrp.33.2020.03.04.00.34.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
+        b=KNkB39CYXDpio5YDiNTIA+yBXmtSCWsD2STl6HT/J1WWFQUaJq44dwoCyGe/0S3gA8
+         PMhmGzALCf+FeqP/nN4hkwYsltrJjaW714CmpPwGNYSPy4fEqef8EImnKrjisA2eXYxl
+         EUvLNelCgg93Hp/kt9chAtz2ZxJC1IMkYRCHHo7wvlUAr7s8sLT6FkfUELa5n8jeJoNK
+         oK+J1LDpreVloWMj3nzLzAvJebs++vCTuXNUfq7vl0TsWJGK0Kc4ebluuI8M4TV5uhNI
+         LbVVyD0rEVvPz9oUUHbR35IgM90pLbtalMdqYks3x/sDY5c21GJR6n9d51PwHAcmByPZ
+         Pygg==
+X-Gm-Message-State: ANhLgQ3j/+njcs0+xgI5YH6BzqffLbCLS38l41fFxh+TTgARqlkxp+CR
+        iNqZZSvcjXXO57VDkT53t3A4BJyC4x4=
+X-Google-Smtp-Source: ADFU+vseIgFS3ZIL+3zyZq5qbs5LEoXF3Ie+FFY6418MPbDsbyXXQiJ4InDXicWMqYfHwlHZx0Rpxw==
+X-Received: by 2002:a50:d0d0:: with SMTP id g16mr2114242edf.187.1583318845457;
+        Wed, 04 Mar 2020 02:47:25 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
+        by smtp.gmail.com with ESMTPSA id 29sm1122854ejb.4.2020.03.04.02.47.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 00:34:10 -0800 (PST)
-Date:   Wed, 4 Mar 2020 09:34:08 +0100
-From:   Domenico Andreoli <domenico.andreoli.it@gmail.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
- active
-Message-ID: <20200304083408.GA14584@dumbo>
-References: <20200229170825.GX8045@magnolia>
- <20200229180716.GA31323@dumbo>
- <20200229183820.GA8037@magnolia>
- <20200229200200.GA10970@dumbo>
- <CAJZ5v0iHaZyfuTnqJyM6u=UU=+W6yRuM_Q6iUvB2UudANuwfgA@mail.gmail.com>
- <20200303190212.GC8037@magnolia>
- <9E4A0457-39B1-45E2-AEA2-22C730BF2C4F@gmail.com>
- <20200304011840.GD1752567@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304011840.GD1752567@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 04 Mar 2020 02:47:24 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linux-doc@vger.kernel.org,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        linux-bluetooth@vger.kernel.org,
+        Alexander Aring <alex.aring@gmail.com>,
+        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
+        linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
+Date:   Wed,  4 Mar 2020 11:47:17 +0100
+Message-Id: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 05:18:40PM -0800, Darrick J. Wong wrote:
-> On Tue, Mar 03, 2020 at 10:51:22PM +0000, Domenico Andreoli wrote:
-> > 
-> > I don't see the need of reverting anything, I can deal with these
-> > issues if you are busy on something else.
-> 
-> If you want to work on the patch, please do!  Starting from the revert
-> patch I sent earlier, I /think/ only the first chunk (the one that
-> touches blkdev_write_iter) of that patch actually has to be applied to
-> re-enable uswsusp.  That could probably be turned into:
-> 
-> 	if (IS_SWAPFILE(...) && !IS_ENABLED(HIBERNATION))
-> 		return -ETXTBSY;
+Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
+renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
 
-I've just sent such patch, I don't know how it will play with the whole
-revert of yesterday and that akpm has already taken in his tree.
+Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-Ideally this should go in 5.6-rc and also in stable kernels > 5.2.
+  warning: no file matches F: Documentation/networking/6lowpan.txt
 
-> 
-> Though perhaps a better thing to check here rather than the Kconfig
-> option is whether or not the system is locked out against hibernation?
-> e.g.,
-> 
-> 	if (IS_SWAPFILE(...) && !hibernation_available())
-> 		return -EXTBSY;
+Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
 
-This is the kind of improved fix I'm going to prepare for a coming
-merge window.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+Mauro, please ack.
+Marcel, please pick for bluetooth-next.
 
-Regards,
-Domenico
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e19b275f2ac2..d064049aad1b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -176,7 +176,7 @@ L:	linux-wpan@vger.kernel.org
+ S:	Maintained
+ F:	net/6lowpan/
+ F:	include/net/6lowpan.h
+-F:	Documentation/networking/6lowpan.txt
++F:	Documentation/networking/6lowpan.rst
+ 
+ 6PACK NETWORK DRIVER FOR AX.25
+ M:	Andreas Koensgen <ajk@comnets.uni-bremen.de>
 -- 
-rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
-ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
+2.17.1
+
