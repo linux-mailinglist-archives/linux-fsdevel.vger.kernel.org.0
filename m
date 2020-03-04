@@ -2,105 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C930E17980E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 19:37:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D717179815
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 19:38:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbgCDShs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 13:37:48 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43308 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730004AbgCDShs (ORCPT
+        id S1730065AbgCDSim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 13:38:42 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33000 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbgCDSim (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 13:37:48 -0500
-Received: by mail-io1-f65.google.com with SMTP id n21so3507855ioo.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 10:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wh0qFjW/qHneQSqg+QQx1XFOZYzFNeLir404hhmmk8A=;
-        b=iB6D5KmyEc3L8QegN7XRaZrSaz+3zxQkc9SriWcXcKD5qmINgB237OLXeEG3VIIufZ
-         FvcVyrcvqBEKHtgKJcOPxk0q0ghNUJPqL6gHXxeQS+vZsIYY1oT2XqA8KYFBZgY7xzlt
-         QzDuoRgNtzNN14mC1S1RlEXMdj7luaqoLjH9jbn033e2Yg7yKPLpYDUQ68orP1GLOokD
-         HAaRyA4w3EhgOHVDb8fzIQbNZEIKGKas0uXpvco/6TWXkYyYAn4/WQr+1trfzaAyM4Xv
-         5UraL+b08FmBCu5kqtheb1dGuTsE8WJEUNQixqV6yuvc4jdNKDeXf+OZVhlQyPtyx8pb
-         JkpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wh0qFjW/qHneQSqg+QQx1XFOZYzFNeLir404hhmmk8A=;
-        b=WkHgK6g32RGYQqeNh2duOdLC4NECcBbzQIEcRemq6oV/y8mteWs2OmhA7MBPOpRAeM
-         xH1aI125ZDfNwXElv28oQcfspJNMVZGo3KNmpa23kY36rBvEoiJrxWaRY5wx2EaCUNx1
-         z80gHMgrG5VFfW1cLcdr7iBdI4C97mNkRUhEjg8PL7Uv/AoWeTDQmabl+jT0v73T7jgm
-         +5d1k8OC5+znnOBBO4/YfSDNO4NfYPMya1QM8s057dFcHs/TDIY3rB51mp28Mjrt+Lmy
-         /p7iUkrcx8oAl6Lrto5vioq4t8BYJU0LuBEA4IH7O25q1v9RGW+YVFvgQY17hQzZi7pv
-         JQCQ==
-X-Gm-Message-State: ANhLgQ05TydxRsGW3Xzs5KrGuRRJB8agXqrAZhg+5SOYQDTOwQIkix3t
-        DUwztX92Ae3oz3OmqtZhjcpXUQ==
-X-Google-Smtp-Source: ADFU+vsarnSkFGccdJ+tjh1uW/LPY+9/izVSa2ywAEhv/Y2brEmeYq0uF0XYMk03CKqAXA5hAXDoOg==
-X-Received: by 2002:a02:780f:: with SMTP id p15mr3875002jac.91.1583347066713;
-        Wed, 04 Mar 2020 10:37:46 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h14sm2049272iow.23.2020.03.04.10.37.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 10:37:46 -0800 (PST)
-Subject: Re: [PATCH -next] io_uring: Fix unused function warnings
-To:     Stefano Garzarella <sgarzare@redhat.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200304075352.31132-1-yuehaibing@huawei.com>
- <20200304164806.3bsr2v7cvpq7sw5e@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5a1c612a-9efa-1fc8-e264-1a064d4a4435@kernel.dk>
-Date:   Wed, 4 Mar 2020 11:37:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 4 Mar 2020 13:38:42 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9Yub-005KCg-A2; Wed, 04 Mar 2020 18:38:30 +0000
+Date:   Wed, 4 Mar 2020 18:38:29 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mattias Nissler <mnissler@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Raul Rangel <rrangel@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Benjamin Gordon <bmgordon@google.com>,
+        Micah Morton <mortonm@google.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Ross Zwisler <zwisler@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v6] Add a "nosymfollow" mount option.
+Message-ID: <20200304183829.GR23230@ZenIV.linux.org.uk>
+References: <20200304173446.122990-1-zwisler@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200304164806.3bsr2v7cvpq7sw5e@steredhat>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200304173446.122990-1-zwisler@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/4/20 9:48 AM, Stefano Garzarella wrote:
-> On Wed, Mar 04, 2020 at 03:53:52PM +0800, YueHaibing wrote:
->> If CONFIG_NET is not set, gcc warns:
->>
->> fs/io_uring.c:3110:12: warning: io_setup_async_msg defined but not used [-Wunused-function]
->>  static int io_setup_async_msg(struct io_kiocb *req,
->>             ^~~~~~~~~~~~~~~~~~
->>
->> There are many funcions wraped by CONFIG_NET, move them
->> together to simplify code, also fix this warning.
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  fs/io_uring.c | 98 ++++++++++++++++++++++++++++++++++-------------------------
->>  1 file changed, 57 insertions(+), 41 deletions(-)
->>
+On Wed, Mar 04, 2020 at 10:34:46AM -0700, Ross Zwisler wrote:
+> From: Mattias Nissler <mnissler@chromium.org>
 > 
-> Since the code under the ifdef/else/endif blocks now are huge, would it make
-> sense to add some comments for better readability?
+> For mounts that have the new "nosymfollow" option, don't follow symlinks
+> when resolving paths. The new option is similar in spirit to the
+> existing "nodev", "noexec", and "nosuid" options, as well as to the
+> LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
+> variants have been supporting the "nosymfollow" mount option for a long
+> time with equivalent implementations.
 > 
-> I mean something like this:
+> Note that symlinks may still be created on file systems mounted with
+> the "nosymfollow" option present. readlink() remains functional, so
+> user space code that is aware of symlinks can still choose to follow
+> them explicitly.
 > 
-> #if defined(CONFIG_NET)
-> ...
-> #else /* !CONFIG_NET */
-> ...
-> #endif /* CONFIG_NET */
+> Setting the "nosymfollow" mount option helps prevent privileged
+> writers from modifying files unintentionally in case there is an
+> unexpected link along the accessed path. The "nosymfollow" option is
+> thus useful as a defensive measure for systems that need to deal with
+> untrusted file systems in privileged contexts.
+> 
+> More information on the history and motivation for this patch can be
+> found here:
+> 
+> https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-traversal
+> 
+> Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
+> ---
+> Resending v6 which was previously posted here [0].
+> 
+> Aleksa, if I've addressed all of your feedback, would you mind adding
+> your Reviewed-by?
+> 
+> Andrew, would you please consider merging this?
 
-I applied it with that addition. Also had to adapt it quite a bit, as
-the prototypes changed. I'm guessing the branch used was a few days
-old?
+NAK.  It's not that I hated the patch, but I call hard moratorium on
+fs/namei.c features this cycle.
 
--- 
-Jens Axboe
+Reason: very massive rewrite of the entire area about to hit -next.
+Moreover, that rewrite is still in the "might be reordered/rebased/whatnot"
+stage.  The patches had been posted on fsdevel, along with the warning
+that it's going into -next shortly.
 
+Folks, we are close enough to losing control of complexity in that
+code.  It needs to be sanitized, or we'll get into a state where the
+average amount of new bugs introduced by fixing an old one exceeds 1.
+
+There had been several complexity injections into that thing over
+years (r/o bind-mounts, original RCU pathwalk merge, atomic_open,
+mount traps, openat2 to name some) and while some of that got eventually
+cleaned up, there's a lot of subtle stuff accumulated in the area.
+It can be sanitized and I am doing just that (62 commits in the local
+branch at the moment).  If that gets in the way of someone's patches -
+too fucking bad.  The stuff already in needs to be integrated properly;
+that gets priority over additional security hardening any day, especially
+since this cycle has already seen
+	* user-triggerable oops in several years old hardening stuff
+(use-after-free, unlikely to be escalatable beyond null pointer
+dereference).  And I'm not blaming the patch authors - liveness analysis
+in do_last() as it is in mainline is a nightmare.
+	* my own brown paperbag braino in attempt to fix that.
+Fortunately that one was easily caught by fuzzers and it was trivial to fix
+once found.  Again, liveness analysis (and data invariants) from hell...
+	* gaps in LOOKUP_NO_XDEV (openat2 series, just merged).  Missed
+on review.  Reason: several places implementing mount crossing, with
+varying amount of divergence between them.  One got missed...
+	* rather interesting corner cases of aushit vs. open vs. NFS.
+Fairly old ones, at that.  Still sorting that one out...
+
+Anyway, the bottom line is: leave fs/namei.c (especially around the
+pathwalk-related code) alone for now.  Or work on top of the posted
+series, but expect it to change quite a bit under you.  Trying to
+dump that fun job on akpm is unlikely to work.  And if all of that
+comes as a surprise since you are not following fsdevel, consider
+doing so in the future, please.
+
+PS:
+al@dizzy:~/linux/trees/vfs$ git diff --stat v5.6-rc1..HEAD fs/namei.c
+ fs/namei.c | 1408 +++++++++++++++++++++++++++++++++++++++++++----------------------------------------------------------
+ 1 file changed, 597 insertions(+), 811 deletions(-)
+al@dizzy:~/linux/trees/vfs$ wc -l fs/namei.c
+4723 fs/namei.c
+
+The affected area is almost exclusively in core pathname resolution
+code.
