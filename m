@@ -2,77 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AB6B179420
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 16:55:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CC9179499
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 17:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbgCDPz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 10:55:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53454 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbgCDPz3 (ORCPT
+        id S1729838AbgCDQLK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 11:11:10 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37771 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729823AbgCDQLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 10:55:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9QQq9u6kSfHiorY+/vLIa3epilFmkrg1M/ZbdVdNKdY=; b=tM9xZtDis4Q/g4RkNbzO+uGs0A
-        ZHxmPKRRssL3h9i1PyPKQ/k5uPlfJNbBBLJSSKXqsiftmQf3kGfm2F/ijAvEX5mf3WMwOQVeNDaPr
-        t56qEfCRxfoOUvVQzlYCDBzuJ+sS1glG7ZIKn6fa4Kw/+FHEzPfDvb8FIRmw0GxKQWDknP2Df9WX2
-        H6B8QQMiv+tcGEH3huMe+ZVtUunmeJo2tY5wr9WM0/XXPUJyr9q9xffd2ZpHH9PAShIAxds/tKazF
-        jM9jbVA5IBQ8BB+4TnpgD6QTj8yUiLFd/IHzphu2c5NiX0ycuB317scVYSDa4tw2K35Q6RUWAHrIk
-        iAbrf4SQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9WMq-0003Zd-Rw; Wed, 04 Mar 2020 15:55:28 +0000
-Date:   Wed, 4 Mar 2020 07:55:28 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v2] iomap: Remove pgoff from tracepoints
-Message-ID: <20200304155528.GJ17565@infradead.org>
-References: <20200304154706.GH29971@bombadil.infradead.org>
+        Wed, 4 Mar 2020 11:11:10 -0500
+Received: by mail-io1-f66.google.com with SMTP id c17so3003090ioc.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 08:11:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hMEhfSBOuHBIl6yeEV5DUSKkA5QymXhcDODBiotx5S4=;
+        b=M6T8IJrP2imFH0Yrd72S712RTyLiBCBZZIWukQqQGCNrzxUDeKQu+PKXQBiP9CDW2H
+         mlHwDsX+W9ASgLJqXkUJnHsYp6dMv5PNAIM+ZT80/uVANpT/Tbmh4N59WO3elb0FAsQC
+         gfqYvlbSsf1UyETpTERI2GLvpo1mqkHwGPlGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hMEhfSBOuHBIl6yeEV5DUSKkA5QymXhcDODBiotx5S4=;
+        b=fhUw4A2hYCi1+aqpScUaR0/34qS4UiNBR/0Z5t6oN7/nS7EK9W/xBtGLyGGPfgLcSL
+         HbjnhE1WfCgj3lYZo3YeM3b+IYMWaeox3u9PIyscMNMs9m9oeNV/PFPSttU79uYKtjcP
+         F8WTAdhx1PC8+m8HJWFjvgqmble+a7W+HzCinZ29QjIugj6aWiH7jjjaYIjaSpdnTuZX
+         uNJOYWWkCUWnJ9aGYe/iLl8ae7ArNpKz8wY2ElKxwftKUzzNhKKZ/2GjCDZL+suBSEWR
+         XYEdE+34BhtVKzsrc7KiPiQ15mAD6BFeoRj/vhXamq4zkaLYjL+9c/ND6x2wOfQGcLQt
+         OiQg==
+X-Gm-Message-State: ANhLgQ0C1/geto/ZQlH73Wiqg9spVKpXnv80JOlqjox3QVujSNzvM6RV
+        D4saYLHFh9DH3DCMX5qCo0M6udRwk7OSGnxS+1wf/Q==
+X-Google-Smtp-Source: ADFU+vv3dF1eDGfu6HnlNnsm2H3QO09qbn9v3Km2uZitDG2c+ztP3h8bSrNDMa2kQSpJfI9anLFWwxmDff5HPQtsH5U=
+X-Received: by 2002:a6b:f409:: with SMTP id i9mr2669177iog.212.1583338269532;
+ Wed, 04 Mar 2020 08:11:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304154706.GH29971@bombadil.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 4 Mar 2020 17:10:58 +0100
+Message-ID: <CAJfpeguyyC=E51gJ3EkQjLsqjZ8Mt35Eu7f9cQtBJaTFEcxoRg@mail.gmail.com>
+Subject: Re: [PATCH 10/17] fsinfo: Allow mount information to be queried [ver #17]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 07:47:06AM -0800, Matthew Wilcox wrote:
-> From: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> The 'pgoff' displayed by the tracepoints wasn't a pgoff at all; it
-> was a byte offset from the start of the file.  We already emit that in
-> the form of the 'offset', so we can just remove pgoff.  That means we
-> can remove 'page' as an argument to the tracepoint, and rename this
-> type of tracepoint from being a page class to being a range class.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 7057ef155a29..cab29ffb2b40 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -487,7 +487,7 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
->  int
->  iomap_releasepage(struct page *page, gfp_t gfp_mask)
->  {
-> -	trace_iomap_releasepage(page->mapping->host, page, 0, 0);
-> +	trace_iomap_releasepage(page->mapping->host, 0, 0);
+On Fri, Feb 21, 2020 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
+ +
+> +/*
+> + * Return information about the submounts relative to path.
+> + */
+> +int fsinfo_generic_mount_children(struct path *path, struct fsinfo_context *ctx)
+> +{
+> +       struct fsinfo_mount_child record;
+> +       struct mount *m, *child;
+> +
+> +       if (!path->mnt)
+> +               return -ENODATA;
+> +
+> +       m = real_mount(path->mnt);
+> +
+> +       rcu_read_lock();
+> +       list_for_each_entry_rcu(child, &m->mnt_mounts, mnt_child) {
 
-I think we should pass page_offset() for the offset here now.  Maybe
-also PAGE_SIZE len for completeness while we're at it.
+mnt_mounts is not using _rcu primitives, so why is this rcu safe?
 
-> @@ -1503,7 +1503,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  	u64 end_offset;
->  	loff_t offset;
->  
-> -	trace_iomap_writepage(inode, page, 0, 0);
-> +	trace_iomap_writepage(inode, 0, 0);
-
-Same here.
+Thanks,
+Miklos
