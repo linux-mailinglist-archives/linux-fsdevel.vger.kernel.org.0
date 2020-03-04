@@ -2,110 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 548B3179649
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 18:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB43D17969A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 18:22:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbgCDRGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 12:06:55 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52685 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgCDRGy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 12:06:54 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so2981079wmc.2;
-        Wed, 04 Mar 2020 09:06:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=eAvOIF6AGY3vlZ1kzI6VwMQbeJQz/suMmkKBmXk6J8Y=;
-        b=UzWuKWhwSTJKSKcktovi82mOWChrc/f0KtLo4X5rUYd9T9r93VZEsjULHytd8lrxv5
-         YIjTecmQzPuwr7GMOVXPUDzk7lTvc126GlJ12boC1Sz8lUEzTYLgcL4e4+ZzBgZnaXgV
-         yJnsaPX9X5VH511KEtLXIvytDFOzksJdNlA9OVlQIJHT1qYZpqldWsMilzD7CoLwojYe
-         dUPg13pM6AO6vwLFYzO4RMgsvkXMOQwQ7VjuWB5iu3uobCoFQICIbneHO+1KAYyyzoAT
-         rs+eqJyYPk72BAxEhnWCrgwDElzuYrpfn0wpJMW+tKXYEHArAEXOCq/oElUgKrHDfO1x
-         49+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=eAvOIF6AGY3vlZ1kzI6VwMQbeJQz/suMmkKBmXk6J8Y=;
-        b=kCRGx/qbvGHvOIExprw0DDgkP+eOmEhGn+Aq946pDkC+5ITaDABqXsREVseqztX9bj
-         imCTr/cd3ElcID1uCdt9MhKJkePYFyHBcGR0uYm9vtAGCVSYCIR5A8uTk6Tfh3DNfiyI
-         n1q05AtsU523nCq8bRaRxpUdcQ2KlwJaA8k/YJftyN/tzQ4CnA1PWtLu6XIv1j0n45Jn
-         BG6FxGm6e1n4PUG3G/6yNmsTnvHby5DuF2e7fcvay4kpaKC5XvH9+3fY6Vsf2NkDZVZ1
-         CQY5OlNqDLJxlS1t71GsB64Ah4WWZ7oBkAQ3q7NyGGrRBuUvlMJI/6WZ1+R0erHK7U0B
-         k2KQ==
-X-Gm-Message-State: ANhLgQ10xC8+0hoqQtyHTo3rg3tLU5Lz5s6NqdtfvnMzIX3D2WC9qxyO
-        Cav+OHza28a77rtmWqiMeM0=
-X-Google-Smtp-Source: ADFU+vs1u9SfcjF5RGIglTQpijbTZfS8yfBBuwrm2uVF6l/ojNbTblWiBQyIEcYPkcSSRfs4nBBHBQ==
-X-Received: by 2002:a1c:c906:: with SMTP id f6mr4622479wmb.16.1583341611386;
-        Wed, 04 Mar 2020 09:06:51 -0800 (PST)
-Received: from dumbo ([83.137.6.114])
-        by smtp.gmail.com with ESMTPSA id o8sm4841231wmh.15.2020.03.04.09.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 09:06:50 -0800 (PST)
-Date:   Wed, 4 Mar 2020 18:06:46 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2] hibernate: Allow uswsusp to write to swap
-Message-ID: <20200304170646.GA31552@dumbo>
+        id S1729843AbgCDRWY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 12:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbgCDRWY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 12:22:24 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EF8F217F4;
+        Wed,  4 Mar 2020 17:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583342544;
+        bh=59/11F8FK+NgHEqVfA1CIFRhJRwwbcCjpLhWz66g7tg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ze4VX0GD2G5O4jX1r48ZRIOgSdG8neWKYYRrOmbOUEcPyHVsa07VUMb1eunVOehg/
+         ZH0CTDurZL2PhkUAo8i7Du4Lsd5znb5Wggps9wMuLP7QcXmtLOFTisJRRZyXNVi0s/
+         zNq8jOjyiegmR7xyhjzXl0S6P/ecOe/1cXdK7oNU=
+Date:   Wed, 4 Mar 2020 18:22:21 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Yufen Yu <yuyufen@huawei.com>, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, bvanassche@acm.org, tytso@mit.edu
+Subject: Re: [PATCH v2 3/7] bdi: protect device lifetime with RCU
+Message-ID: <20200304172221.GA1864270@kroah.com>
+References: <20200226111851.55348-1-yuyufen@huawei.com>
+ <20200226111851.55348-4-yuyufen@huawei.com>
+ <20200304170543.GJ189690@mtj.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200304170543.GJ189690@mtj.thefacebook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Domenico Andreoli <domenico.andreoli@linux.com>
+On Wed, Mar 04, 2020 at 12:05:43PM -0500, Tejun Heo wrote:
+> Hello,
+> 
+> It might be better to put this patch at the end rather than in the
+> middle so that when this patch is applied things are actually fixed.
+> 
+> > +struct bdi_rcu_device {
+> > +	struct device dev;
+> > +	struct rcu_head rcu_head;
+> > +};
+> 
+> (cc'ing Greg)
+> 
+> Greg, block layer switches association between backing_device_info and
+> its struct device and needs to protect it with RCU. Yufen did so by
+> introducing a wrapping struct around struct device like above. Do you
+> think it'd make sense to just embed rcu_head into struct device and
+> let put_device() to RCU release by default?
 
-It turns out that there is one use case for programs being able to
-write to swap devices, and that is the userspace hibernation code.
+Ugh, I was dreading the fact that this day might sometime come...
 
-Quick fix: disable the S_SWAPFILE check if hibernation is configured.
+In theory, the reference counting for struct device shouldn't need to
+use rcu at all, right?  what is driving the need to use rcu for
+backing_device_info?  Are these being destroyed/used so often that rcu
+really is the best solution and the existing reference counting doesn't
+work properly?
 
-Fixes: dc617f29dbe5 ("vfs: don't allow writes to swap files")
-Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
-Reported-by: Marian Klein <mkleinsoft@gmail.com>
-Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
+Some context is needed here.
 
-v2:
- - use hibernation_available() instead of IS_ENABLED(CONFIG_HIBERNATE)
- - make Fixes: point to the right commit
+thanks,
 
----
- fs/block_dev.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-Index: b/fs/block_dev.c
-===================================================================
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -34,6 +34,7 @@
- #include <linux/task_io_accounting_ops.h>
- #include <linux/falloc.h>
- #include <linux/uaccess.h>
-+#include <linux/suspend.h>
- #include "internal.h"
- 
- struct bdev_inode {
-@@ -2001,7 +2002,8 @@ ssize_t blkdev_write_iter(struct kiocb *
- 	if (bdev_read_only(I_BDEV(bd_inode)))
- 		return -EPERM;
- 
--	if (IS_SWAPFILE(bd_inode))
-+	/* uswsusp needs write permission to the swap */
-+	if (IS_SWAPFILE(bd_inode) && !hibernation_available())
- 		return -ETXTBSY;
- 
- 	if (!iov_iter_count(from))
+greg k-h
