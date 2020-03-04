@@ -2,266 +2,312 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4360179B1E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE98179B3F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:49:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387931AbgCDVkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 16:40:06 -0500
-Received: from mail-pj1-f74.google.com ([209.85.216.74]:57616 "EHLO
-        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729936AbgCDVkG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:40:06 -0500
-Received: by mail-pj1-f74.google.com with SMTP id ca1so1659839pjb.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 13:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=qZ8if+Ch4cFUq+p9Td5MU18RPQJ1fprXY5s5kw9wj+E=;
-        b=NzXkPw5INYLzoOt54Fe0tr8pbefBrriYHknUVnnDzv9Z1vqmmGadAq3R5xbPfUoz0p
-         0V7oaQizSxwtazlhV8PQ/MaOhz2jwurQZFcGNW0lMdZae5innCu9m8LHI6TAzKHyg9xO
-         vDacJv+36aqVrmoBJ9SMNwwd1655bL4gniN4hYgXB/VK3eMLWbs1/axQeTTynE9QjKH4
-         +bKgOqVtf25Po4LE8cPzkGXbUiCcKMCZNB3SsrTnMy95qDQ1x37YY677zZswVNhNjPDB
-         T41OJD9KghQy+b0z80TWVgNKOW6l8hJBMhqXLyI3i1f99hEjleYbqTITqQ18Qlwd6hAb
-         j1wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=qZ8if+Ch4cFUq+p9Td5MU18RPQJ1fprXY5s5kw9wj+E=;
-        b=B81oT1Hg4VzEDPw1X3KgNOO5DT8+AltMEReu4U0iCPcD+bYkPQRVJrBEFx9QvzrOTw
-         AI5tvL+4Bjry8hnhLR45v0hDIeR8c/zoe6CTZBX/h9P2Xes9fMFqZnG4ox8XaKJLxw84
-         2u9z3PbdWv9F00TNHEmbXtwqT27MzTx7wWVsyxaW744EohYMV/O4HjFJP357knqlMrZV
-         6+tfKJvPi5RUYYPmJ1vzbjzbR+w5cs/ZbHYbH22/AB3vTXKkzaI68mUiMbjDjNp6bJ78
-         8/bFQv2hham3onir2KckRgRv7wfae7UltG190lzAQNzQVks9g6xPNuAGHW5UIUaESmn/
-         +Jkw==
-X-Gm-Message-State: ANhLgQ1JjVdlTnA48Sg+XgQaDRItZcnWyslnT/mT4+pqqMyfUuJfLlFy
-        dvNbdd/k/+k4abd8klmUOsXv2c0=
-X-Google-Smtp-Source: ADFU+vvBJl4b2tNe0jcyk1rfgRMrYda87mLj0u87GFE6qjl/MecY+OFdsSCVwPWrDN2KbNoP+Pnxv1c=
-X-Received: by 2002:a63:441e:: with SMTP id r30mr4273492pga.51.1583358004604;
- Wed, 04 Mar 2020 13:40:04 -0800 (PST)
-Date:   Wed,  4 Mar 2020 13:39:41 -0800
-Message-Id: <20200304213941.112303-1-xii@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-Subject: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
-From:   Xi Wang <xii@google.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Xi Wang <xii@google.com>,
-        Paul Turner <pjt@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S2388371AbgCDVtj convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 4 Mar 2020 16:49:39 -0500
+Received: from mail-db8eur05olkn2109.outbound.protection.outlook.com ([40.92.89.109]:25569
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388312AbgCDVtj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 16:49:39 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=faVfl4i2bhOq47UwmwwBE4WAuC40LduroLmpI1zSzlNIcsRC8eXIYdI8jpru5wv2wMVWrIDQoaAH+n9+Ir39YY6Uj6Z+aRxbgXFAReL+7n7FYSjZeFfiun4E8Gk94GhQdU3z+KSEGpu6jGe7QoTcKqDjp0mIR8wAxA+1rsbQ0sUSVcwKSg/3M7QBYDEjj5dK9TNCF3TWskyxIYG/ZOVCBDu/0TGu9wmHPPW4VUSCiKOoAPsmFQ/mxZTZGp/81+KyDrMk/sdZJuT5laFd19BHcIGRLwn2qgon/9TPwxrlVxEUTyxMF5yrMoJSwJPEfBLbpCH6DZ41lxBkKOSLYEvJgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ftFa1GiedZ3jm/A2BqFQP2k/AONu/ZjVDQ4zBX76Wnw=;
+ b=a6GYoKu1t1zOf+tArdvN6/ejCVX7C3YZ2+1YlnFc5gEALOndGgQ+TE1hqlfvwlamtYif+omzq4vWkWvBVp/2QZjFav1kbPlfS1Nz/3dcNtZ5fpfSPMBoHGDFgxE9j27Ijj7/RxfSXrdGNXOfpFrQka580VV0fUnQaYv3Byq6KG5cUA086g4ztIZzU8iVwpjap3FNbxUfWqcVRhDsa5leej3sPkuoLXw+d3RXJ0DVit5zEUdBTJC8RTuSxdQ/wNlW4ut+R8qHonW9Y1zGzikwlhM3fUZhMuyUQrFpn2Pq9ohtzmBR03bJwJRECZ08+Ys/72CRbbT0wjghuDKPkn8/hg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DB8EUR05FT056.eop-eur05.prod.protection.outlook.com
+ (2a01:111:e400:fc0f::38) by
+ DB8EUR05HT032.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc0f::404)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Wed, 4 Mar
+ 2020 21:49:33 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.233.238.54) by
+ DB8EUR05FT056.mail.protection.outlook.com (10.233.238.156) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Wed, 4 Mar 2020 21:49:33 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Wed, 4 Mar 2020
+ 21:49:33 +0000
+Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0025.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::12) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2772.15 via Frontend Transport; Wed, 4 Mar 2020 21:49:31 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCHv5] exec: Fix a deadlock in ptrace
+Thread-Topic: [PATCHv5] exec: Fix a deadlock in ptrace
+Thread-Index: AQHV8VwLHjttz8YuA0eRTVSvUK/ceqg2/AiMgAAYPYCAAFh/v4ABFW8AgAAhC+yAAFeZgA==
+Date:   Wed, 4 Mar 2020 21:49:33 +0000
+Message-ID: <AM6PR03MB51701E2F405F6DBF1EEB57CDE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB517071DEF894C3D72D2B4AE2E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87k142lpfz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51704206634C009500A8080DE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfmloir.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: ZR0P278CA0025.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1c::12) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:62557CB1650F786308CCE2073097CE1614B856109F3345292D529D2901D1A4D4;UpperCasedChecksum:ADB2B4E1F815808B98D8E4E333C5EF8D604270ECA2274020740A89F380E57CCB;SizeAsReceived:9901;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [hGT579yfJmYGShynABRdCgRPJ7kcf4cf]
+x-microsoft-original-message-id: <c4122dd4-11bd-e18e-f72f-e5a3856cffab@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 31a93ffe-eced-457c-9cee-08d7c085ecb7
+x-ms-traffictypediagnostic: DB8EUR05HT032:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QtjHXyi4ws101j77dyyvsFKDYW89fY4JyZUZ2ZY+BQZIlSsFxzAb3gFgPeTf5PRTdgCtAjIfIpfMbIsmNIG+VBXYg71BB2V6EE5YYq7/lz6jNlJaUFXecEDmFcE+VzExmgECXOI7Jyg5X4DdpLJkJlwWYQk6toDK4F/lINrwmi4c2RaRCEAIKeFoBbCJxoAt
+x-ms-exchange-antispam-messagedata: lFPCn6i+g4ysEllPkUjew0NUljmOE1f6bFKyxfjpMnTOoCXjXJ3+B6B4g74HevRTENeSVVx5Lrx9XUcuNrv8RarJ3QYEHO5zKdqw4eMHwYcLjq8a8kGnGeJ9ZZ6Y4h4ZIrwY89J2CMl7uRAUqEqb+g==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <9D992DE6E53E02479452C77CA67DBE6C@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31a93ffe-eced-457c-9cee-08d7c085ecb7
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2020 21:49:33.4981
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8EUR05HT032
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The main purpose of kernel watchdog is to test whether scheduler can
-still schedule tasks on a cpu. In order to reduce latency from
-periodically invoking watchdog reset in thread context, we can simply
-touch watchdog from pick_next_task in scheduler. Compared to actually
-resetting watchdog from cpu stop / migration threads, we lose coverage
-on: a migration thread actually get picked and we actually context
-switch to the migration thread. Both steps are heavily protected by
-kernel locks and unlikely to silently fail. Thus the change would
-provide the same level of protection with less overhead.
+On 3/4/20 5:33 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> On 3/3/20 9:08 PM, Eric W. Biederman wrote:
+>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>
+>>>> On 3/3/20 4:18 PM, Eric W. Biederman wrote:
+>>>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>>>> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
+>>>>>> new file mode 100644
+>>>>>> index 0000000..6d8a048
+>>>>>> --- /dev/null
+>>>>>> +++ b/tools/testing/selftests/ptrace/vmaccess.c
+>>>>>> @@ -0,0 +1,66 @@
+>>>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>>>> +/*
+>>>>>> + * Copyright (c) 2020 Bernd Edlinger <bernd.edlinger@hotmail.de>
+>>>>>> + * All rights reserved.
+>>>>>> + *
+>>>>>> + * Check whether /proc/$pid/mem can be accessed without causing deadlocks
+>>>>>> + * when de_thread is blocked with ->cred_guard_mutex held.
+>>>>>> + */
+>>>>>> +
+>>>>>> +#include "../kselftest_harness.h"
+>>>>>> +#include <stdio.h>
+>>>>>> +#include <fcntl.h>
+>>>>>> +#include <pthread.h>
+>>>>>> +#include <signal.h>
+>>>>>> +#include <unistd.h>
+>>>>>> +#include <sys/ptrace.h>
+>>>>>> +
+>>>>>> +static void *thread(void *arg)
+>>>>>> +{
+>>>>>> +	ptrace(PTRACE_TRACEME, 0, 0L, 0L);
+>>>>>> +	return NULL;
+>>>>>> +}
+>>>>>> +
+>>>>>> +TEST(vmaccess)
+>>>>>> +{
+>>>>>> +	int f, pid = fork();
+>>>>>> +	char mm[64];
+>>>>>> +
+>>>>>> +	if (!pid) {
+>>>>>> +		pthread_t pt;
+>>>>>> +
+>>>>>> +		pthread_create(&pt, NULL, thread, NULL);
+>>>>>> +		pthread_join(pt, NULL);
+>>>>>> +		execlp("true", "true", NULL);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	sleep(1);
+>>>>>> +	sprintf(mm, "/proc/%d/mem", pid);
+>>>>>> +	f = open(mm, O_RDONLY);
+>>>>>> +	ASSERT_LE(0, f);
+>>>>>> +	close(f);
+>>>>>> +	f = kill(pid, SIGCONT);
+>>>>>> +	ASSERT_EQ(0, f);
+>>>>>> +}
+>>>>>> +
+>>>>>> +TEST(attach)
+>>>>>> +{
+>>>>>> +	int f, pid = fork();
+>>>>>> +
+>>>>>> +	if (!pid) {
+>>>>>> +		pthread_t pt;
+>>>>>> +
+>>>>>> +		pthread_create(&pt, NULL, thread, NULL);
+>>>>>> +		pthread_join(pt, NULL);
+>>>>>> +		execlp("true", "true", NULL);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	sleep(1);
+>>>>>> +	f = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
+>>>>>
+>>>>> To be meaningful this code needs to learn to loop when
+>>>>> ptrace returns -EAGAIN.
+>>>>>
+>>>>> Because that is pretty much what any self respecting user space
+>>>>> process will do.
+>>>>>
+>>>>> At which point I am not certain we can say that the behavior has
+>>>>> sufficiently improved not to be a deadlock.
+>>>>>
+>>>>
+>>>> In this special dead-duck test it won't work, but it would
+>>>> still be lots more transparent what is going on, since previously
+>>>> you had two zombie process, and no way to even output debug
+>>>> messages, which also all self respecting user space processes
+>>>> should do.
+>>>
+>>> Agreed it is more transparent.  So if you are going to deadlock
+>>> it is better.
+>>>
+>>> My previous proposal (which I admit is more work to implement) would
+>>> actually allow succeeding in this case and so it would not be subject to
+>>> a dead lock (even via -EGAIN) at this point.
+>>>
+>>>> So yes, I can at least give a good example and re-try it several
+>>>> times together with wait4 which a tracer is expected to do.
+>>>
+>>> Thank you,
+>>>
+>>> Eric
+>>>
+>>
+>> Okay, I think it can be done with minimal API changes,
+>> but it needs two mutexes, one that guards the execve,
+>> and one that guards only the credentials.
+>>
+>> If no traced sibling thread exists, the mutexes are used this way:
+>> lock(exec_guard_mutex)
+>> cred_locked_in_execve = true;
+>> de_thread()
+>> lock(cred_guard_mutex)
+>> unlock(cred_guard_mutex)
+>> cred_locked_in_execve = false;
+>> unlock(exec_guard_mutex)
+>>
+>> so effectively no API change at all.
+>>
+>> If a traced sibling thread exists, the mutexes are used differently:
+>> lock(exec_guard_mutex)
+>> cred_locked_in_execve = true;
+>> unlock(exec_guard_mutex)
+>> de_thread()
+>> lock(cred_guard_mutex)
+>> unlock(cred_guard_mutex)
+>> lock(exec_guard_mutex)
+>> cred_locked_in_execve = false;
+>> unlock(exec_guard_mutex)
+>>
+>> Only the case changes that would deadlock anyway.
+> 
+> 
+> Let me propose a slight alternative that I think sets us up for long
+> term success.
+> 
+> Leave cred_guard_mutex as is, but declare it undesirable.  The
+> cred_guard_mutex as designed really is something we should get rid of.
+> As it it can sleep over several different userspace accesses.  The
+> copying of the exec arguments is technically as prone to deadlock as the
+> ptrace case.
+> 
+> Add a new mutex with a better name perhaps "exec_change_mutex" that is
+> used to guard the changes that exec makes to a process.
+> 
+> Then we gradually shift all the cred_guard_mutex users over to the new
+> mutex.  AKA one patch per user of cred_guard_mutex.  At each patch that
+> shifts things over we will have the opportunity to review the code to
+> see that there no funny dependencies that were missed.
+> 
+> I will sign up for working on the no_new_privs and ptrace_attach cases
+> as I think I can make those happen.  Especially no_new_privs.
+> 
+> Getting the easier cases will resolve your issues and put things on a
+> better footing.
+> 
+> Eric
+> 
 
-The new way vs the old way to touch the watchdogs is configurable
-from:
+Okay, however I think we will need two mutexes in the long term.
 
-/proc/sys/kernel/watchdog_touch_in_thread_interval
+So currently I have reduced the cred_guard_mutex to protect just
+the loading of the executable code in the process vm, since that
+is what works for vm_access, (one of the test cases).
+And another mutex that protects the whole execve function, that
+is need for ptrace, (and seccomp).
+But I have only a test case for ptrace.
 
-The value means:
-0: Always touch watchdog from pick_next_task
-1: Always touch watchdog from migration thread
-N (N>0): Touch watchdog from migration thread once in every N
-         invocations, and touch watchdog from pick_next_task for
-         other invocations.
 
-Suggested-by: Paul Turner <pjt@google.com>
-Signed-off-by: Xi Wang <xii@google.com>
----
- kernel/sched/core.c | 36 ++++++++++++++++++++++++++++++++++--
- kernel/sysctl.c     | 11 ++++++++++-
- kernel/watchdog.c   | 39 ++++++++++++++++++++++++++++++++++-----
- 3 files changed, 78 insertions(+), 8 deletions(-)
+If I understand that right, I should not recycle cred_guard_mutex
+but leave it as is, and create two additional mutexes which will
+take over step by step.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1a9983da4408..9d8e00760d1c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3898,6 +3898,27 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
- 	schedstat_inc(this_rq()->sched_count);
- }
- 
-+#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-+
-+DEFINE_PER_CPU(bool, sched_should_touch_watchdog);
-+
-+void touch_watchdog_from_sched(void);
-+
-+/* Helper called by watchdog code */
-+void resched_for_watchdog(void)
-+{
-+	unsigned long flags;
-+	struct rq *rq = this_rq();
-+
-+	this_cpu_write(sched_should_touch_watchdog, true);
-+	raw_spin_lock_irqsave(&rq->lock, flags);
-+	/* Trigger resched for code in pick_next_task to touch watchdog */
-+	resched_curr(rq);
-+	raw_spin_unlock_irqrestore(&rq->lock, flags);
-+}
-+
-+#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
-+
- /*
-  * Pick up the highest-prio task:
-  */
-@@ -3927,7 +3948,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 			p = pick_next_task_idle(rq);
- 		}
- 
--		return p;
-+		goto out;
- 	}
- 
- restart:
-@@ -3951,11 +3972,22 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	for_each_class(class) {
- 		p = class->pick_next_task(rq);
- 		if (p)
--			return p;
-+			goto out;
- 	}
- 
- 	/* The idle class should always have a runnable task: */
- 	BUG();
-+
-+out:
-+
-+#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-+	if (this_cpu_read(sched_should_touch_watchdog)) {
-+		touch_watchdog_from_sched();
-+		this_cpu_write(sched_should_touch_watchdog, false);
-+	}
-+#endif
-+
-+	return p;
- }
- 
- /*
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ad5b88a53c5a..adb4b11fbccb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -118,6 +118,9 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- #ifndef CONFIG_MMU
- extern int sysctl_nr_trim_pages;
- #endif
-+#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-+extern unsigned int sysctl_watchdog_touch_in_thread_interval;
-+#endif
- 
- /* Constants used for minimum and  maximum */
- #ifdef CONFIG_LOCKUP_DETECTOR
-@@ -961,6 +964,13 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
- 	},
-+	{
-+		.procname	= "watchdog_touch_in_thread_interval",
-+		.data		= &sysctl_watchdog_touch_in_thread_interval,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
- #ifdef CONFIG_SMP
- 	{
- 		.procname	= "softlockup_all_cpu_backtrace",
-@@ -996,7 +1006,6 @@ static struct ctl_table kern_table[] = {
- #endif /* CONFIG_SMP */
- #endif
- #endif
--
- #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
- 	{
- 		.procname       = "unknown_nmi_panic",
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index b6b1f54a7837..f9138c29db48 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -49,6 +49,16 @@ static struct cpumask watchdog_allowed_mask __read_mostly;
- struct cpumask watchdog_cpumask __read_mostly;
- unsigned long *watchdog_cpumask_bits = cpumask_bits(&watchdog_cpumask);
- 
-+#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-+/*
-+ * 0: Always touch watchdog from pick_next_task
-+ * 1: Always touch watchdog from migration thread
-+ * N (N>0): Touch watchdog from migration thread once in every N invocations,
-+ *          and touch watchdog from pick_next_task for other invocations.
-+ */
-+unsigned int sysctl_watchdog_touch_in_thread_interval = 10;
-+#endif
-+
- #ifdef CONFIG_HARDLOCKUP_DETECTOR
- /*
-  * Should we panic when a soft-lockup or hard-lockup occurs:
-@@ -356,6 +366,9 @@ static int softlockup_fn(void *data)
- 	return 0;
- }
- 
-+static DEFINE_PER_CPU(unsigned int, num_watchdog_wakeup_skipped);
-+void resched_for_watchdog(void);
-+
- /* watchdog kicker functions */
- static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- {
-@@ -371,11 +384,20 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
- 	watchdog_interrupt_count();
- 
- 	/* kick the softlockup detector */
--	if (completion_done(this_cpu_ptr(&softlockup_completion))) {
--		reinit_completion(this_cpu_ptr(&softlockup_completion));
--		stop_one_cpu_nowait(smp_processor_id(),
--				softlockup_fn, NULL,
--				this_cpu_ptr(&softlockup_stop_work));
-+	if ((!sysctl_watchdog_touch_in_thread_interval ||
-+	  sysctl_watchdog_touch_in_thread_interval > this_cpu_read(num_watchdog_wakeup_skipped) + 1)) {
-+		this_cpu_write(num_watchdog_wakeup_skipped, sysctl_watchdog_touch_in_thread_interval ?
-+		  this_cpu_read(num_watchdog_wakeup_skipped) + 1 : 0);
-+		/* touch watchdog from pick_next_task */
-+		resched_for_watchdog();
-+	} else {
-+		this_cpu_write(num_watchdog_wakeup_skipped, 0);
-+		if (completion_done(this_cpu_ptr(&softlockup_completion))) {
-+			reinit_completion(this_cpu_ptr(&softlockup_completion));
-+			stop_one_cpu_nowait(smp_processor_id(),
-+					softlockup_fn, NULL,
-+					this_cpu_ptr(&softlockup_stop_work));
-+		}
- 	}
- 
- 	/* .. and repeat */
-@@ -526,6 +548,13 @@ static int softlockup_start_fn(void *data)
- 	return 0;
- }
- 
-+
-+/* Similar to watchdog thread function but called from pick_next_task */
-+void touch_watchdog_from_sched(void)
-+{
-+	__touch_watchdog();
-+}
-+
- static void softlockup_start_all(void)
- {
- 	int cpu;
--- 
-2.25.1.481.gfbce0eb801-goog
+Sounds reasonable, indeed.
 
+I will send an update (v6) what I have right now,
+but just for information, so you can see how my minimal API-Change
+approach works.
+
+
+Bernd.
