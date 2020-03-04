@@ -2,108 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCC317927B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 15:40:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 424F11792E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 15:58:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbgCDOkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 09:40:07 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46533 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbgCDOkG (ORCPT
+        id S1727835AbgCDO60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 09:58:26 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44651 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbgCDO60 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 09:40:06 -0500
-Received: by mail-io1-f67.google.com with SMTP id x21so2590461iox.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 06:40:05 -0800 (PST)
+        Wed, 4 Mar 2020 09:58:26 -0500
+Received: by mail-io1-f66.google.com with SMTP id u17so2677000iog.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 06:58:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=Zn9CxSVlchouOG4GZgk7Nm4O/NAB0SnMeBa/JRkGZQ9G1OUrvvluEsXpyBEz8p0mbm
-         7wYFzOiTNUdcvsrB6Rvv5CcuSi1CFmYKyGmQmVo8he30G67WaU8kY5ZmaCpX13/5okzl
-         KA6BcOXHqW21m8kffBdz9LGa8fLlHe/L+vgJkgYOgJU1kYf0fqdurzWAaaMthk9C24R4
-         PZ/4+OTiTWx44fuJjJuJajQQLJPFuchVQ9vRd62Ti3X+1x87hzclf65iIwzpQLwcyk9S
-         juAGN51NgAopyDzlSLFxItv/TCemR9SYKMqZSNW27phIVAWaxpAEjIXz34t1ePEh6V+R
-         cxLg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MI1PXuWt7Kag0MFTc+PiKW4eyxOQoHf1qp779Es8aXg=;
+        b=jlEbGqj0JV8uts4QRzcS6Eajtw0tKvhkbeliNCbF4uNcgjKTS/ufjxuns+h7Dpv6oK
+         iRjdlxhkwkZI1FmdhgsHRZm18X+J/tCJza8pnjG/RS/TKmekikpIX0g4Ktub7s/SxPOV
+         trmM3oYR2IE7l7X78+F/LxlrLp+ecQgRRpBjY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dMGVVFarDw73CfV5fUTk6Su35UJvJOifOzDgrmDUXRc=;
-        b=j/BAwIEB5bME7+e6yz0qGZbgKA74ErilGeXNuHZzQ2QIdy5UkLrODwDbNdoh2qVRai
-         rnYgmFUu00N7wQJstcTsk0k3cAVFRL4Zq0cDLRwMotwCr0AeZ3MiJ780lmKX+/tEbFV6
-         AdUxBc2xZel1r8iNo9JbxYvJTSfOdABY2eQYChYh/spGkxXXTxd4G0fDP23pJ6i4o1Q3
-         udjRNz9TtCwJxAh2yzM7+1wIhOXrYbMgGrKMydH8WIAZ2cAlDfliVzBIJalxwGfeITSX
-         UOh0XgOHxZfoJcZA8AEyU1ixFwzQk9UeO+K4J+2DKrcDQTjUACH0/FiAzS5u1AgRux4W
-         LjKw==
-X-Gm-Message-State: ANhLgQ1DZKIwpf6iwlcXxx3aSwM7nIQtXWGhPoQLG+RwfzuY5aw/gjXt
-        ur+n5u6VKXvO36lYYNFtvMQ+dg==
-X-Google-Smtp-Source: ADFU+vubGPSo6Z/AKTb62TsrXVcF66QjDDSgPTJ2s+8TaTBeohcH0WybO8+xeSzKqgfJmF8AzmAnRQ==
-X-Received: by 2002:a6b:3756:: with SMTP id e83mr2523436ioa.133.1583332805008;
-        Wed, 04 Mar 2020 06:40:05 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c24sm6544597iom.0.2020.03.04.06.40.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 06:40:04 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
-Date:   Wed, 4 Mar 2020 07:40:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MI1PXuWt7Kag0MFTc+PiKW4eyxOQoHf1qp779Es8aXg=;
+        b=G1LgYNFqw0MmnJ4q1zoelC44S1R2+7TeTgikF5xNc3gaOVnBpJQJXM3x8XFz4OGpWv
+         rvuUsMbqRSVz3J6FQyhEIpXSSeVNvQ6vBgSNQKuwWpwVvnWZFkbBjTZoQ/LsJgnVT1LW
+         RlwQz5XTY0qCuB8p6ueKGPt/VpPbSx6A2HtiX1PWV/gKw3EyDD1VbD+3DHpS1AcGgQyb
+         SjxV9b4HptpflJM2vBvH3244JI5yzc7PzghDY/iUffsXK0KpITqKPet4SgeLyi3Panqg
+         Fxr7EAkDmWsqq0DtKVR1Rg+Yfgw+rr0EAkQci9GBsXm3cfl+XPdIrffKYjg7ynnxWGlE
+         X5AQ==
+X-Gm-Message-State: ANhLgQ3ZQkkldgBUFxQyiTcwgAdcVssx4EqbLGOZEaaYy4dnJgLgzi/K
+        5yblaHSrgIIODI7cgx+e8zzmJUj4PLzYLkZz73vRPA==
+X-Google-Smtp-Source: ADFU+vt7iszIUbYisTGd86KHNUYtvuTdfoY/g3ldBLGb8T53mnRCU8tRd+55HaV44wyYtBstlDMXhGVD9Q344+TQJSs=
+X-Received: by 2002:a02:558a:: with SMTP id e132mr3150631jab.58.1583333905701;
+ Wed, 04 Mar 2020 06:58:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <158230810644.2185128.16726948836367716086.stgit@warthog.procyon.org.uk>
+ <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158230818859.2185128.8921928947340497977.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 4 Mar 2020 15:58:14 +0100
+Message-ID: <CAJfpegtcNorH0uBbmodOj5WZXRjXnbzRXWbX7+A=qf02LDJCtg@mail.gmail.com>
+Subject: Re: [PATCH 10/17] fsinfo: Allow mount information to be queried [ver #17]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
-> On Fri, Feb 7, 2020 at 9:14 AM syzbot
-> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>
->> Unfortunately, I don't have any reproducer for this crash yet.
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
-> 
-> +io_uring maintainers
-> 
-> Here is a repro:
-> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+On Fri, Feb 21, 2020 at 7:03 PM David Howells <dhowells@redhat.com> wrote:
 
-I've queued up a fix for this:
+> +/*
+> + * Return the path of this mount relative to its parent and clipped to
+> + * the current chroot.
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+And clipped to nothing if outside current root.  The code doesn't
+appear to care, which to me seems like a hole.
 
--- 
-Jens Axboe
+And btw, what is the point of only showing path relative to parent
+mount?  This way it's impossible to get a consistent path from root
+due to mount/dentry tree changes between calls to fsinfo().
 
+Thanks,
+Miklos
