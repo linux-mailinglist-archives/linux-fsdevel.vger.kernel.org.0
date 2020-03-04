@@ -2,112 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4343A179AE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:26:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4360179B1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 22:40:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbgCDV0Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 16:26:24 -0500
-Received: from smtprelay0215.hostedemail.com ([216.40.44.215]:45176 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388364AbgCDV0Y (ORCPT
+        id S2387931AbgCDVkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 16:40:06 -0500
+Received: from mail-pj1-f74.google.com ([209.85.216.74]:57616 "EHLO
+        mail-pj1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729936AbgCDVkG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 16:26:24 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 0BF45100E7B42;
-        Wed,  4 Mar 2020 21:26:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2525:2553:2561:2564:2682:2685:2693:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7514:7903:7974:8985:9025:9108:10004:10400:10848:10967:11232:11658:11914:12043:12050:12296:12297:12555:12663:12740:12760:12895:12986:13161:13184:13229:13439:13618:13846:14096:14097:14181:14659:14721:21080:21325:21433:21451:21627:21740:21749:21811:21939:21972:30003:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: top47_1a6fca43cfd3c
-X-Filterd-Recvd-Size: 3754
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  4 Mar 2020 21:26:21 +0000 (UTC)
-Message-ID: <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-From:   Joe Perches <joe@perches.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 04 Mar 2020 13:24:48 -0800
-In-Reply-To: <20200304212846.0c79c6da@coco.lan>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-         <20200304131035.731a3947@lwn.net> <20200304212846.0c79c6da@coco.lan>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 4 Mar 2020 16:40:06 -0500
+Received: by mail-pj1-f74.google.com with SMTP id ca1so1659839pjb.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Mar 2020 13:40:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=qZ8if+Ch4cFUq+p9Td5MU18RPQJ1fprXY5s5kw9wj+E=;
+        b=NzXkPw5INYLzoOt54Fe0tr8pbefBrriYHknUVnnDzv9Z1vqmmGadAq3R5xbPfUoz0p
+         0V7oaQizSxwtazlhV8PQ/MaOhz2jwurQZFcGNW0lMdZae5innCu9m8LHI6TAzKHyg9xO
+         vDacJv+36aqVrmoBJ9SMNwwd1655bL4gniN4hYgXB/VK3eMLWbs1/axQeTTynE9QjKH4
+         +bKgOqVtf25Po4LE8cPzkGXbUiCcKMCZNB3SsrTnMy95qDQ1x37YY677zZswVNhNjPDB
+         T41OJD9KghQy+b0z80TWVgNKOW6l8hJBMhqXLyI3i1f99hEjleYbqTITqQ18Qlwd6hAb
+         j1wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=qZ8if+Ch4cFUq+p9Td5MU18RPQJ1fprXY5s5kw9wj+E=;
+        b=B81oT1Hg4VzEDPw1X3KgNOO5DT8+AltMEReu4U0iCPcD+bYkPQRVJrBEFx9QvzrOTw
+         AI5tvL+4Bjry8hnhLR45v0hDIeR8c/zoe6CTZBX/h9P2Xes9fMFqZnG4ox8XaKJLxw84
+         2u9z3PbdWv9F00TNHEmbXtwqT27MzTx7wWVsyxaW744EohYMV/O4HjFJP357knqlMrZV
+         6+tfKJvPi5RUYYPmJ1vzbjzbR+w5cs/ZbHYbH22/AB3vTXKkzaI68mUiMbjDjNp6bJ78
+         8/bFQv2hham3onir2KckRgRv7wfae7UltG190lzAQNzQVks9g6xPNuAGHW5UIUaESmn/
+         +Jkw==
+X-Gm-Message-State: ANhLgQ1JjVdlTnA48Sg+XgQaDRItZcnWyslnT/mT4+pqqMyfUuJfLlFy
+        dvNbdd/k/+k4abd8klmUOsXv2c0=
+X-Google-Smtp-Source: ADFU+vvBJl4b2tNe0jcyk1rfgRMrYda87mLj0u87GFE6qjl/MecY+OFdsSCVwPWrDN2KbNoP+Pnxv1c=
+X-Received: by 2002:a63:441e:: with SMTP id r30mr4273492pga.51.1583358004604;
+ Wed, 04 Mar 2020 13:40:04 -0800 (PST)
+Date:   Wed,  4 Mar 2020 13:39:41 -0800
+Message-Id: <20200304213941.112303-1-xii@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+Subject: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
+From:   Xi Wang <xii@google.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Xi Wang <xii@google.com>,
+        Paul Turner <pjt@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-03-04 at 21:28 +0100, Mauro Carvalho Chehab wrote:
-> Em Wed, 4 Mar 2020 13:10:35 -0700
-> Jonathan Corbet <corbet@lwn.net> escreveu:
-> 
-> > On Wed,  4 Mar 2020 08:29:50 +0100
-> > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-> > 
-> > > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
-> > > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
-> > > converts many Documentation/filesystems/ files to ReST.
-> > > 
-> > > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
-> > > warnings on Documentation/filesystems/ of this kind:
-> > > 
-> > >   warning: no file matches F: Documentation/filesystems/...
-> > > 
-> > > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
-> > > patch series and address the 27 warnings.
-> > > 
-> > > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > > ---
-> > > Mauro, please ack.
-> > > Jonathan, pick pick this patch for doc-next.  
-> > 
-> > Sigh, I need to work a MAINTAINERS check into my workflow...
-> > 
-> > Thanks for fixing these, but ... what tree did you generate the patch
-> > against?  I doesn't come close to applying to docs-next.
-> 
-> I'm starting to suspect that maybe the best workflow would be to just 
-> apply the patches at docs-next keeping links broken, and then run
-> ./scripts/documentation-file-ref-check --fix by the end of a merge
-> window, addressing such breakages.
+The main purpose of kernel watchdog is to test whether scheduler can
+still schedule tasks on a cpu. In order to reduce latency from
+periodically invoking watchdog reset in thread context, we can simply
+touch watchdog from pick_next_task in scheduler. Compared to actually
+resetting watchdog from cpu stop / migration threads, we lose coverage
+on: a migration thread actually get picked and we actually context
+switch to the migration thread. Both steps are heavily protected by
+kernel locks and unlikely to silently fail. Thus the change would
+provide the same level of protection with less overhead.
 
-I'm not sure at all that that script will always do the
-right thing with MAINTAINERS, but it seems to work OK
-except for some renames where a .txt file was directly
-renamed to a .rst file in the same directory where there
-was a similarly named file in a different directory.
+The new way vs the old way to touch the watchdogs is configurable
+from:
 
-Likely the direct rename of a filename extension from
-.txt to .rst should always be applied by the script.
+/proc/sys/kernel/watchdog_touch_in_thread_interval
 
-Anyway, for -next as of today:
+The value means:
+0: Always touch watchdog from pick_next_task
+1: Always touch watchdog from migration thread
+N (N>0): Touch watchdog from migration thread once in every N
+         invocations, and touch watchdog from pick_next_task for
+         other invocations.
 
-$ git diff --shortstat
- 64 files changed, 116 insertions(+), 116 deletions(-)
+Suggested-by: Paul Turner <pjt@google.com>
+Signed-off-by: Xi Wang <xii@google.com>
+---
+ kernel/sched/core.c | 36 ++++++++++++++++++++++++++++++++++--
+ kernel/sysctl.c     | 11 ++++++++++-
+ kernel/watchdog.c   | 39 ++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 78 insertions(+), 8 deletions(-)
 
-> There are usually lots of churn outside the merge window.
-> 
-> Another alternative would be to split the MAINTAINERS file on a
-> per-subsystem basis. If I remember well, someone proposed this once at
-> LKML. I vaguely remember that there were even a patch (or RFC)
-> adding support for such thing for get_maintainers.pl.
-
-Yeah.  get_maintainer.pl does work if the MAINTAINERS
-file is split up a few different ways.
-
-There was also a tool to do the MAINTAINERS split.
-https://lore.kernel.org/patchwork/patch/817857/
-
-I doubt that would matter at all given today's tools and
-the general mechanisms of maintainers renaming files and
-not running checkpatch in the first place.
-
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1a9983da4408..9d8e00760d1c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3898,6 +3898,27 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
+ 	schedstat_inc(this_rq()->sched_count);
+ }
+ 
++#ifdef CONFIG_SOFTLOCKUP_DETECTOR
++
++DEFINE_PER_CPU(bool, sched_should_touch_watchdog);
++
++void touch_watchdog_from_sched(void);
++
++/* Helper called by watchdog code */
++void resched_for_watchdog(void)
++{
++	unsigned long flags;
++	struct rq *rq = this_rq();
++
++	this_cpu_write(sched_should_touch_watchdog, true);
++	raw_spin_lock_irqsave(&rq->lock, flags);
++	/* Trigger resched for code in pick_next_task to touch watchdog */
++	resched_curr(rq);
++	raw_spin_unlock_irqrestore(&rq->lock, flags);
++}
++
++#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
++
+ /*
+  * Pick up the highest-prio task:
+  */
+@@ -3927,7 +3948,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 			p = pick_next_task_idle(rq);
+ 		}
+ 
+-		return p;
++		goto out;
+ 	}
+ 
+ restart:
+@@ -3951,11 +3972,22 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 	for_each_class(class) {
+ 		p = class->pick_next_task(rq);
+ 		if (p)
+-			return p;
++			goto out;
+ 	}
+ 
+ 	/* The idle class should always have a runnable task: */
+ 	BUG();
++
++out:
++
++#ifdef CONFIG_SOFTLOCKUP_DETECTOR
++	if (this_cpu_read(sched_should_touch_watchdog)) {
++		touch_watchdog_from_sched();
++		this_cpu_write(sched_should_touch_watchdog, false);
++	}
++#endif
++
++	return p;
+ }
+ 
+ /*
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ad5b88a53c5a..adb4b11fbccb 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -118,6 +118,9 @@ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+ #ifndef CONFIG_MMU
+ extern int sysctl_nr_trim_pages;
+ #endif
++#ifdef CONFIG_SOFTLOCKUP_DETECTOR
++extern unsigned int sysctl_watchdog_touch_in_thread_interval;
++#endif
+ 
+ /* Constants used for minimum and  maximum */
+ #ifdef CONFIG_LOCKUP_DETECTOR
+@@ -961,6 +964,13 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
++	{
++		.procname	= "watchdog_touch_in_thread_interval",
++		.data		= &sysctl_watchdog_touch_in_thread_interval,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
+ #ifdef CONFIG_SMP
+ 	{
+ 		.procname	= "softlockup_all_cpu_backtrace",
+@@ -996,7 +1006,6 @@ static struct ctl_table kern_table[] = {
+ #endif /* CONFIG_SMP */
+ #endif
+ #endif
+-
+ #if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_X86)
+ 	{
+ 		.procname       = "unknown_nmi_panic",
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index b6b1f54a7837..f9138c29db48 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -49,6 +49,16 @@ static struct cpumask watchdog_allowed_mask __read_mostly;
+ struct cpumask watchdog_cpumask __read_mostly;
+ unsigned long *watchdog_cpumask_bits = cpumask_bits(&watchdog_cpumask);
+ 
++#ifdef CONFIG_SOFTLOCKUP_DETECTOR
++/*
++ * 0: Always touch watchdog from pick_next_task
++ * 1: Always touch watchdog from migration thread
++ * N (N>0): Touch watchdog from migration thread once in every N invocations,
++ *          and touch watchdog from pick_next_task for other invocations.
++ */
++unsigned int sysctl_watchdog_touch_in_thread_interval = 10;
++#endif
++
+ #ifdef CONFIG_HARDLOCKUP_DETECTOR
+ /*
+  * Should we panic when a soft-lockup or hard-lockup occurs:
+@@ -356,6 +366,9 @@ static int softlockup_fn(void *data)
+ 	return 0;
+ }
+ 
++static DEFINE_PER_CPU(unsigned int, num_watchdog_wakeup_skipped);
++void resched_for_watchdog(void);
++
+ /* watchdog kicker functions */
+ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
+ {
+@@ -371,11 +384,20 @@ static enum hrtimer_restart watchdog_timer_fn(struct hrtimer *hrtimer)
+ 	watchdog_interrupt_count();
+ 
+ 	/* kick the softlockup detector */
+-	if (completion_done(this_cpu_ptr(&softlockup_completion))) {
+-		reinit_completion(this_cpu_ptr(&softlockup_completion));
+-		stop_one_cpu_nowait(smp_processor_id(),
+-				softlockup_fn, NULL,
+-				this_cpu_ptr(&softlockup_stop_work));
++	if ((!sysctl_watchdog_touch_in_thread_interval ||
++	  sysctl_watchdog_touch_in_thread_interval > this_cpu_read(num_watchdog_wakeup_skipped) + 1)) {
++		this_cpu_write(num_watchdog_wakeup_skipped, sysctl_watchdog_touch_in_thread_interval ?
++		  this_cpu_read(num_watchdog_wakeup_skipped) + 1 : 0);
++		/* touch watchdog from pick_next_task */
++		resched_for_watchdog();
++	} else {
++		this_cpu_write(num_watchdog_wakeup_skipped, 0);
++		if (completion_done(this_cpu_ptr(&softlockup_completion))) {
++			reinit_completion(this_cpu_ptr(&softlockup_completion));
++			stop_one_cpu_nowait(smp_processor_id(),
++					softlockup_fn, NULL,
++					this_cpu_ptr(&softlockup_stop_work));
++		}
+ 	}
+ 
+ 	/* .. and repeat */
+@@ -526,6 +548,13 @@ static int softlockup_start_fn(void *data)
+ 	return 0;
+ }
+ 
++
++/* Similar to watchdog thread function but called from pick_next_task */
++void touch_watchdog_from_sched(void)
++{
++	__touch_watchdog();
++}
++
+ static void softlockup_start_all(void)
+ {
+ 	int cpu;
+-- 
+2.25.1.481.gfbce0eb801-goog
 
