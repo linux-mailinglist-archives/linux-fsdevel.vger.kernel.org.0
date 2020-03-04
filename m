@@ -2,53 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDA5A178C89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 09:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9922178C95
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 09:34:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbgCDI0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 03:26:35 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52812 "EHLO
+        id S1728904AbgCDIeP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 03:34:15 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55898 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbgCDI0e (ORCPT
+        with ESMTP id S1728301AbgCDIeO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 03:26:34 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p9so897817wmc.2;
-        Wed, 04 Mar 2020 00:26:33 -0800 (PST)
+        Wed, 4 Mar 2020 03:34:14 -0500
+Received: by mail-wm1-f65.google.com with SMTP id 6so918895wmi.5;
+        Wed, 04 Mar 2020 00:34:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:resent-from:resent-date:resent-message-id:resent-to:date
-         :from:to:cc:subject:message-id:references:mime-version
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=cew+TTcIlK2By1bAt5CHCB+JbVcMMEPMguJwF68q6nc=;
-        b=EkGDq+M902cBO3hGsFctGZEpXVHP36fXlc32Rl6xk16tnjw64LxLDxz/lFLgINWm/Z
-         C/yaFDEEmhgPZrTbzxQxuWJgXybNi3qjCD8WeW/5tMCCcxizyM0H/RCPzPEfcPl+IQdU
-         Pi75F8tVezaToHcvKCuiy5VrC+9NrUMxtsBwek7s2aVSzYwMEF74j3KcggLoFr1GQEyp
-         eZgjsohxI6JBj1BXccjYALKFUFbBoxPWDTnvChlhwUa5Gk4mNW0cMXtbzKB54z/i5FYt
-         Wo0h/9JXjsZ4dxpZJC+nkULdUwyZ5ZkJTmv3quOP6BIpWW6bMH7n1MF5GkATpZt/VgNr
-         MQJQ==
+        bh=nayxdGYrrbMcrJKKUbiZVGz59/2NTLulIF1ZtrT47ek=;
+        b=cA910Sct3AMljocPVycm3ISQnbULt2Dp+2t4oFbXMzpoCb+1ao26K70iGqKD+FitKL
+         /2nZ7tcj36mMW2mPY6Em4FDY4RrodpTwHOcxTICDOeB2aML7yK8Mgdi1ViKJSd4NqNUP
+         Nu6LH0bFO5TyeYKkL8KS8I0WwBz+i3srnfYET7saaRhPFh5DKT6RjqbXcXc5TsboBem3
+         wPMlEkYa/bjdcd2V3Ww5j+AvmrMrD1SvIs7ZmRyZ0mG3x/X7sSYQg8Z7K1cMbgfOTmUQ
+         Ko2jRDVflT4LeXsZemovrNYMqBa3fgBL2i8zxAMR4zvWeilQcdgGLuucGuSDxEGI5GrR
+         rPig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:resent-from:resent-date:resent-message-id
-         :resent-to:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cew+TTcIlK2By1bAt5CHCB+JbVcMMEPMguJwF68q6nc=;
-        b=JZyecqF9DsjFsheVmMiWDButvkhMynxq6+dhimaOa0R2cg4nxANLAD7k4jii9q37jk
-         8XjQe8NOfxeahrWVLtJ3tS5ugjQtnCdZMa3AJM4HqW1syizM2uNgWgo8RgGC19kn/H+H
-         /Gtb8TKbp5j0dPkyJBWheOCH2uuYaT8Uv7tg7rCivIAtPOCgMIHwWm3rbC00FW91qTwq
-         E+4VxHRsm1CXqdUgmBoYEjKLUWSW5XOUQxjSCGzEqwiNF3h1oyi+IKRqDsuvoTFTLJmt
-         9M/Dhf7s6WXGXPJrI6b/S6hc8sUuO3sK4MVQCUezSB5IIcyGwPERwdBdArPuPkByeJ7E
-         cOCQ==
-X-Gm-Message-State: ANhLgQ0ZKG+oEyjdIUospA8CSaVLNpRHOpHj8BQ3gNgHX1gUfvNMdmGf
-        oLXTRTZAxyha+CFIan8czhs=
-X-Google-Smtp-Source: ADFU+vu7adAidQTk9w40n9EY1EUCejzXdBQ6wWbVxorNNvSm/fXI6OMtAlZDLhyHCq1lsHgvoY8Dxg==
-X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr2387419wmf.63.1583310392885;
-        Wed, 04 Mar 2020 00:26:32 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nayxdGYrrbMcrJKKUbiZVGz59/2NTLulIF1ZtrT47ek=;
+        b=LA2qQFOLHBhWGP0G8QvnZdtgQAZ9C6btWHJDFkD+C4KdARyoibCQwbQhyPhPVm09GG
+         YJIGBhhlYw1zM73VmJY1OCn2Zgrhcpy9UmG0P33yaXjrRLwVDgGEjlcjR3U9u7DzD7Dq
+         0iYDrfGrQQuSjE+kEUMvUjQg8BGUyOsFO/uzqW0MBkttq0nAlNsb+cD7/Ku3bzSm0eVU
+         3cZclwBxzkvVJHp+1tEIVrTBvSTH5zMJbF0L0O6q1HVZ0gNIrCwXQh3XjIYq39xAwPUE
+         r74vNbDvwzZNRqLH604m1vEgk/K9GWZJkQtGjgjdcC030nLcHpaAsVSysast41j+govF
+         Otzg==
+X-Gm-Message-State: ANhLgQ1kNIqHqzdJP23LdNSPk0J/nWnZsKrzNEF89PAw5dHTIaTGSBEb
+        rtFAKNYN5K8XWw/+w8fUpEI=
+X-Google-Smtp-Source: ADFU+vsXmm1DvvLyrlqHs80fl4XcTC+zghUs61AIKoiW7wsI1tA9IZuzEY5ZKMXvbLStbZ+Dj59Dlg==
+X-Received: by 2002:a05:600c:3ce:: with SMTP id z14mr2566093wmd.106.1583310851550;
+        Wed, 04 Mar 2020 00:34:11 -0800 (PST)
 Received: from dumbo ([83.137.6.114])
-        by smtp.gmail.com with ESMTPSA id j14sm38671237wrn.32.2020.03.04.00.26.31
+        by smtp.gmail.com with ESMTPSA id z16sm37081963wrp.33.2020.03.04.00.34.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 00:26:32 -0800 (PST)
-Date:   Wed, 4 Mar 2020 09:23:27 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
+        Wed, 04 Mar 2020 00:34:10 -0800 (PST)
+Date:   Wed, 4 Mar 2020 09:34:08 +0100
+From:   Domenico Andreoli <domenico.andreoli.it@gmail.com>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
@@ -58,8 +56,9 @@ Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH] hibernate: Allow uswsusp to write to swap
-Message-ID: <20200304082327.GA14236@dumbo>
+Subject: Re: [PATCH] hibernate: unlock swap bdev for writing when uswsusp is
+ active
+Message-ID: <20200304083408.GA14584@dumbo>
 References: <20200229170825.GX8045@magnolia>
  <20200229180716.GA31323@dumbo>
  <20200229183820.GA8037@magnolia>
@@ -78,33 +77,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Domenico Andreoli <domenico.andreoli@linux.com>
+On Tue, Mar 03, 2020 at 05:18:40PM -0800, Darrick J. Wong wrote:
+> On Tue, Mar 03, 2020 at 10:51:22PM +0000, Domenico Andreoli wrote:
+> > 
+> > I don't see the need of reverting anything, I can deal with these
+> > issues if you are busy on something else.
+> 
+> If you want to work on the patch, please do!  Starting from the revert
+> patch I sent earlier, I /think/ only the first chunk (the one that
+> touches blkdev_write_iter) of that patch actually has to be applied to
+> re-enable uswsusp.  That could probably be turned into:
+> 
+> 	if (IS_SWAPFILE(...) && !IS_ENABLED(HIBERNATION))
+> 		return -ETXTBSY;
 
-It turns out that there is one use case for programs being able to
-write to swap devices, and that is the userspace hibernation code.
+I've just sent such patch, I don't know how it will play with the whole
+revert of yesterday and that akpm has already taken in his tree.
 
-Quick fix: disable the S_SWAPFILE check if hibernation is configured.
+Ideally this should go in 5.6-rc and also in stable kernels > 5.2.
 
-Fixes: 1638045c3677 ("mm: set S_SWAPFILE on blockdev swap devices")
-Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
-Reported-by: Marian Klein <mkleinsoft@gmail.com>
-Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
+> 
+> Though perhaps a better thing to check here rather than the Kconfig
+> option is whether or not the system is locked out against hibernation?
+> e.g.,
+> 
+> 	if (IS_SWAPFILE(...) && !hibernation_available())
+> 		return -EXTBSY;
 
----
- fs/block_dev.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This is the kind of improved fix I'm going to prepare for a coming
+merge window.
 
-Index: b/fs/block_dev.c
-===================================================================
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -2001,7 +2001,8 @@ ssize_t blkdev_write_iter(struct kiocb *
- 	if (bdev_read_only(I_BDEV(bd_inode)))
- 		return -EPERM;
- 
--	if (IS_SWAPFILE(bd_inode))
-+	/* uswsusp needs to write to the swap */
-+	if (IS_SWAPFILE(bd_inode) && !IS_ENABLED(CONFIG_HIBERNATION))
- 		return -ETXTBSY;
- 
- 	if (!iov_iter_count(from))
+Regards,
+Domenico
+
+-- 
+rsa4096: 3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+ed25519: FFB4 0CC3 7F2E 091D F7DA  356E CC79 2832 ED38 CB05
