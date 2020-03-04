@@ -2,55 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 850411794C7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 17:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 048351794ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 17:21:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbgCDQQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 11:16:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38120 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726561AbgCDQQk (ORCPT
+        id S2388218AbgCDQVO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 11:21:14 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59402 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388215AbgCDQVO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 11:16:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=p1fGfBNWSAsTiZjh+6A1Y3Vp0yNK0hm9DzZrJQURvpw=; b=C8xWf5NGbIVN9T0mcaAsK69l+J
-        NLlhI7FXSixgmAPqGLg82aMXGIHqtmuWsSk7xHK7SStSA7K7R5elwfkT73SrV1YP6j1NgrhNLiIBn
-        pceh4ASlFNADx9Z9+6cOUqyjtQHXHPJy7ubT1QVWKJ10UWbnsYnYXs3p7TYt0VwUJjYYTKdRMW6AP
-        +o3qb7/kHiYfzlprWbPdjfUtp0zVmwsnBOr8AgOWdpEyPxpzRNgg5YFe/fdQNGKfJ/rSTBH30VM9Y
-        8J6jx7iNoRsNdlUB/o509eTvX9eRhxm2zGpH4BKfiaDLN6rFmLW1Z0RIEAsQp8EfBKPlPXLUU5FXt
-        q+X939zA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9WhJ-0005Qk-3b; Wed, 04 Mar 2020 16:16:37 +0000
-Date:   Wed, 4 Mar 2020 08:16:37 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Pankaj Gupta <pankaj.gupta.linux@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, hch@infradead.org,
-        dan.j.williams@intel.com, david@fromorbit.com, dm-devel@redhat.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6 1/6] pmem: Add functions for reading/writing page
- to/from pmem
-Message-ID: <20200304161637.GA16390@infradead.org>
-References: <20200228163456.1587-1-vgoyal@redhat.com>
- <20200228163456.1587-2-vgoyal@redhat.com>
- <CAM9Jb+gJWH_bC-9fgGdeP5LaSVjJ3JgTnjBxpRJMfe6vbTPOTA@mail.gmail.com>
+        Wed, 4 Mar 2020 11:21:14 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j9WlP-005GmR-La; Wed, 04 Mar 2020 16:20:51 +0000
+Date:   Wed, 4 Mar 2020 16:20:51 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v3)
+Message-ID: <20200304162051.GQ23230@ZenIV.linux.org.uk>
+References: <20200223011154.GY23230@ZenIV.linux.org.uk>
+ <20200301215125.GA873525@ZenIV.linux.org.uk>
+ <CAHk-=wh1Q=H-YstHZRKfEw2McUBX2_TfTc=+5N-iH8DSGz44Qg@mail.gmail.com>
+ <20200302003926.GM23230@ZenIV.linux.org.uk>
+ <87o8tdgfu8.fsf@x220.int.ebiederm.org>
+ <20200304002434.GO23230@ZenIV.linux.org.uk>
+ <87wo80g0bo.fsf@x220.int.ebiederm.org>
+ <20200304065547.GP23230@ZenIV.linux.org.uk>
+ <20200304132812.GE29971@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAM9Jb+gJWH_bC-9fgGdeP5LaSVjJ3JgTnjBxpRJMfe6vbTPOTA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200304132812.GE29971@bombadil.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Feb 29, 2020 at 09:04:00AM +0100, Pankaj Gupta wrote:
-> > +       phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
+On Wed, Mar 04, 2020 at 05:28:12AM -0800, Matthew Wilcox wrote:
+> On Wed, Mar 04, 2020 at 06:55:47AM +0000, Al Viro wrote:
+> > On Tue, Mar 03, 2020 at 11:23:39PM -0600, Eric W. Biederman wrote:
+> > > Do the xfs-tests cover that sort of thing?
+> > > The emphasis is stress testing the filesystem not the VFS but there is a
+> > > lot of overlap between the two.
+> > 
+> > I do run xfstests.  But "runs in KVM without visible slowdowns" != "won't
+> > cause them on 48-core bare metal".  And this area (especially when it
+> > comes to RCU mode) can be, er, interesting in that respect.
+> > 
+> > FWIW, I'm putting together some litmus tests for pathwalk semantics -
+> > one of the things I'd like to discuss at LSF; quite a few codepaths
+> > are simply not touched by anything in xfstests.
 > 
-> minor nit,  maybe 512 is replaced by macro? Looks like its used at multiple
-> places, maybe can keep at is for now.
+> Might be more appropriate for LTP than xfstests?  will-it-scale might be
+> the right place for performance benchmarks.
 
-That would be the existing SECTOR_SIZE macro.
+Might be...  I do run LTP as well, but it's still a 4-way KVM on a 6-way
+amd64 host (phenom II X6 1100T) - not well-suited for catching scalability
+issues.
+
+Litmus tests mentioned above are more about verifying the semantics;
+I hadn't moved past the "bunch of home-grown scripts creating setups
+that would exercise the codepaths in question + trivial pieces
+in C, pretty much limited to syscall()" stage with that; moving those
+to LTP framework is something I'll need to look into.  Might very well
+make sense; for now I just want a way to get test coverage of that code
+with minimal headache.
