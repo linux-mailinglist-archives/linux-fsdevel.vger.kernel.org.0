@@ -2,326 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B144178C09
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 08:59:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A7C178C0C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 08:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbgCDH7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 02:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725283AbgCDH7K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 02:59:10 -0500
-Received: from coco.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44EEF20866;
-        Wed,  4 Mar 2020 07:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583308749;
-        bh=L1H6M6gHwQJT8kztc/VbrbHKbYCULOj2sy5j6VFNTfo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N+7+aGCpY4pXsBoQatFuCnXxv+ulHMk3hh82Mr1Ws2jzCnJpOiWtUfvpPouFL3/3K
-         uyYJi2OyCBUoytQW56KFc12VBaDMc/DXNrjTPJtODNKCPZO0xWTUgYzZYdyhJ+vmjc
-         ZaXhKTmj/sguZHsKRF2a2+9R7rXBZBYf/HIn9jVU=
-Date:   Wed, 4 Mar 2020 08:59:05 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-Message-ID: <20200304085905.6b71fe8c@coco.lan>
-In-Reply-To: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1728741AbgCDH7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 02:59:42 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42780 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728692AbgCDH7m (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 02:59:42 -0500
+Received: by mail-qt1-f195.google.com with SMTP id r6so684262qtt.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Mar 2020 23:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZvfFfoiDvwomK27nl9TtMPE/YuB+BqiJw1pTlVud7/c=;
+        b=YZB8Lub8KYqPzHJRFlphw/+Mj19Z9y5xuVLO2ElE3XuVlf8XOkgKNjJ5MjYMkGZ46C
+         4Ken3VTO87z/yUAGQ4TkHJoh64RM135Al1/JDHh68rhVPTajEk/ztz3o1nJJaRdwE5SC
+         QUkXp5XyhdQb3+TPYfp1MI6QT38qas+33Nd9Iqx+q1rOi0lqxExvdmi68QlGPX8msWP7
+         hkKSK1YGr0/vtgMgh8TN+L48Lj5j5Vjy7CoRGIMqXpiy40c9UloXFu2IZJpVDPEs8ciJ
+         LGIYZr7ni/xf2H4l+qDhmmrtj5KbReGx328yS0cAo1n7m7dhUnQptPapD/XuuUVJqIn9
+         sClg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZvfFfoiDvwomK27nl9TtMPE/YuB+BqiJw1pTlVud7/c=;
+        b=aEsXV86yXKw6zh+h0RSj7ROTS1KlQ6oJ07ol3WRa7rhQKXZVTEkQhqGzFF725ehNmW
+         rGseB2vLW/F6fHAMtlNejRCAmVcqwobwx2/Z2daUHTxKtLIrolG5l2tXoDmDryyOWe9k
+         BLgYqA1w5orL60OfPLSMD8Pg9BMJm9T16J+PlNdw72vGx3fsjdNqAbxzEGT5Hnhy88xJ
+         HTD3HbFpB8BpES7LJRVSEUosB2u/cI4HFuL22vuN6JP5b1fk+jZcUfl6gOxgjWkl2h9b
+         f8Udy4ie7/fGhnFfpDaPasefkBJ+cugo6kyGRxvaZpeOeuYGG++51Vh1j+mge2UdsrSb
+         JhpQ==
+X-Gm-Message-State: ANhLgQ1rV15qwXFpcayQEVdAPK+fJYybK0gNOsa6Is3aZaEM3s2uA8my
+        4Ly7K/AXGKJymJnBHbClIja6JC5ZFvx3IEvmzfwIvw==
+X-Google-Smtp-Source: ADFU+vuBXAS2lNdsEI9fkEjYC/iIIwvlVsaIwmxbP7wV7qqfPL1XIHUe4oobQJ4iczwiKUbjul/qLGKw3hYVqhfymfE=
+X-Received: by 2002:ac8:3533:: with SMTP id y48mr1325776qtb.380.1583308780858;
+ Tue, 03 Mar 2020 23:59:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <00000000000067c6df059df7f9f5@google.com>
+In-Reply-To: <00000000000067c6df059df7f9f5@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 4 Mar 2020 08:59:29 +0100
+Message-ID: <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+To:     syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Wed,  4 Mar 2020 08:29:50 +0100
-Lukas Bulwahn <lukas.bulwahn@gmail.com> escreveu:
+On Fri, Feb 7, 2020 at 9:14 AM syzbot
+<syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
 
-> Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
-> ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
-> converts many Documentation/filesystems/ files to ReST.
-> 
-> Since then, ./scripts/get_maintainer.pl --self-test complains with 27
-> warnings on Documentation/filesystems/ of this kind:
-> 
->   warning: no file matches F: Documentation/filesystems/...
-> 
-> Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
-> patch series and address the 27 warnings.
-> 
-> Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
++io_uring maintainers
 
-Acked-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Here is a repro:
+https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+
+> ==================================================================
+> BUG: KASAN: use-after-free in percpu_ref_call_confirm_rcu lib/percpu-refcount.c:126 [inline]
+> BUG: KASAN: use-after-free in percpu_ref_switch_to_atomic_rcu+0x3f7/0x400 lib/percpu-refcount.c:165
+> Read of size 1 at addr ffff8880a8d91830 by task swapper/0/0
+>
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1fb/0x318 lib/dump_stack.c:118
+>  print_address_description+0x74/0x5c0 mm/kasan/report.c:374
+>  __kasan_report+0x149/0x1c0 mm/kasan/report.c:506
+>  kasan_report+0x26/0x50 mm/kasan/common.c:641
+>  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+>  percpu_ref_call_confirm_rcu lib/percpu-refcount.c:126 [inline]
+>  percpu_ref_switch_to_atomic_rcu+0x3f7/0x400 lib/percpu-refcount.c:165
+>  rcu_do_batch kernel/rcu/tree.c:2186 [inline]
+>  rcu_core+0x81b/0x10c0 kernel/rcu/tree.c:2410
+>  rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2419
+>  __do_softirq+0x283/0x7bd kernel/softirq.c:292
+>  invoke_softirq kernel/softirq.c:373 [inline]
+>  irq_exit+0x227/0x230 kernel/softirq.c:413
+>  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>  smp_apic_timer_interrupt+0x113/0x280 arch/x86/kernel/apic/apic.c:1137
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+>  </IRQ>
+> RIP: 0010:native_safe_halt+0x12/0x20 arch/x86/include/asm/irqflags.h:61
+> Code: 89 d9 80 e1 07 80 c1 03 38 c1 7c ba 48 89 df e8 e4 5f 9d f9 eb b0 cc cc 55 48 89 e5 e9 07 00 00 00 0f 00 2d 62 17 4c 00 fb f4 <5d> c3 66 90 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 e9 07 00 00
+> RSP: 0018:ffffffff89207db8 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> RAX: 1ffffffff1255a25 RBX: ffffffff89275b00 RCX: dffffc0000000000
+> RDX: 0000000000000000 RSI: ffffffff812c06aa RDI: ffffffff89276344
+> RBP: ffffffff89207db8 R08: ffffffff89276358 R09: fffffbfff124eb61
+> R10: fffffbfff124eb61 R11: 0000000000000000 R12: 1ffffffff124eb60
+> R13: dffffc0000000000 R14: dffffc0000000000 R15: 1ffffffff1255a23
+>  arch_safe_halt arch/x86/include/asm/paravirt.h:144 [inline]
+>  default_idle+0x50/0x70 arch/x86/kernel/process.c:695
+>  arch_cpu_idle+0xa/0x10 arch/x86/kernel/process.c:686
+>  default_idle_call+0x59/0xa0 kernel/sched/idle.c:94
+>  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+>  do_idle+0x1ec/0x630 kernel/sched/idle.c:269
+>  cpu_startup_entry+0x25/0x30 kernel/sched/idle.c:361
+>  rest_init+0x29d/0x2b0 init/main.c:450
+>  arch_call_rest_init+0xe/0x10
+>  start_kernel+0x676/0x777 init/main.c:784
+>  x86_64_start_reservations+0x18/0x2e arch/x86/kernel/head64.c:490
+>  x86_64_start_kernel+0x7a/0x7d arch/x86/kernel/head64.c:471
+>  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+>
+> Allocated by task 25166:
+>  save_stack mm/kasan/common.c:72 [inline]
+>  set_track mm/kasan/common.c:80 [inline]
+>  __kasan_kmalloc+0x118/0x1c0 mm/kasan/common.c:515
+>  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:529
+>  kmem_cache_alloc_trace+0x221/0x2f0 mm/slab.c:3551
+>  kmalloc include/linux/slab.h:555 [inline]
+>  kzalloc include/linux/slab.h:669 [inline]
+>  io_sqe_files_register fs/io_uring.c:5528 [inline]
+>  __io_uring_register fs/io_uring.c:6875 [inline]
+>  __do_sys_io_uring_register fs/io_uring.c:6955 [inline]
+>  __se_sys_io_uring_register+0x1df4/0x3260 fs/io_uring.c:6937
+>  __x64_sys_io_uring_register+0x9b/0xb0 fs/io_uring.c:6937
+>  do_syscall_64+0xf7/0x1c0 arch/x86/entry/common.c:294
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 25160:
+>  save_stack mm/kasan/common.c:72 [inline]
+>  set_track mm/kasan/common.c:80 [inline]
+>  kasan_set_free_info mm/kasan/common.c:337 [inline]
+>  __kasan_slab_free+0x12e/0x1e0 mm/kasan/common.c:476
+>  kasan_slab_free+0xe/0x10 mm/kasan/common.c:485
+>  __cache_free mm/slab.c:3426 [inline]
+>  kfree+0x10d/0x220 mm/slab.c:3757
+>  io_sqe_files_unregister+0x238/0x2b0 fs/io_uring.c:5250
+>  io_ring_ctx_free fs/io_uring.c:6229 [inline]
+>  io_ring_ctx_wait_and_kill+0x343d/0x3b00 fs/io_uring.c:6310
+>  io_uring_release+0x5d/0x70 fs/io_uring.c:6318
+>  __fput+0x2e4/0x740 fs/file_table.c:280
+>  ____fput+0x15/0x20 fs/file_table.c:313
+>  task_work_run+0x176/0x1b0 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>  exit_to_usermode_loop arch/x86/entry/common.c:164 [inline]
+>  prepare_exit_to_usermode+0x480/0x5b0 arch/x86/entry/common.c:195
+>  syscall_return_slowpath+0x113/0x4a0 arch/x86/entry/common.c:278
+>  do_syscall_64+0x11f/0x1c0 arch/x86/entry/common.c:304
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8880a8d91800
+>  which belongs to the cache kmalloc-256 of size 256
+> The buggy address is located 48 bytes inside of
+>  256-byte region [ffff8880a8d91800, ffff8880a8d91900)
+> The buggy address belongs to the page:
+> page:ffffea0002a36440 refcount:1 mapcount:0 mapping:ffff8880aa4008c0 index:0x0
+> flags: 0xfffe0000000200(slab)
+> raw: 00fffe0000000200 ffffea000265d2c8 ffffea00022f7948 ffff8880aa4008c0
+> raw: 0000000000000000 ffff8880a8d91000 0000000100000008 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8880a8d91700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff8880a8d91780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> >ffff8880a8d91800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                      ^
+>  ffff8880a8d91880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8880a8d91900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
 > ---
-> Mauro, please ack.
-> Jonathan, pick pick this patch for doc-next.
-> 
-> Note there are still two further warnings remaining in Documentation:
-> 
->   warning: no file matches F: Documentation/networking/6lowpan.txt
->   warning: no file matches F: Documentation/kobject.txt
-> 
-> Patches for those warnings will follow.
-
-Btw, those can easily be fixed with:
-
-	./scripts/documentation-file-ref-check --fix
-
-I had already a similar patch to this one already on my tree, intending
-to submit later today. You were faster than me on that ;-)
-
-> 
->  MAINTAINERS | 54 ++++++++++++++++++++++++++---------------------------
->  1 file changed, 27 insertions(+), 27 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 46fdb834d1fb..e19b275f2ac2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -214,7 +214,7 @@ Q:	http://patchwork.kernel.org/project/v9fs-devel/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ericvh/v9fs.git
->  T:	git git://github.com/martinetd/linux.git
->  S:	Maintained
-> -F:	Documentation/filesystems/9p.txt
-> +F:	Documentation/filesystems/9p.rst
->  F:	fs/9p/
->  F:	net/9p/
->  F:	include/net/9p/
-> @@ -584,7 +584,7 @@ AFFS FILE SYSTEM
->  M:	David Sterba <dsterba@suse.com>
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Odd Fixes
-> -F:	Documentation/filesystems/affs.txt
-> +F:	Documentation/filesystems/affs.rst
->  F:	fs/affs/
->  
->  AFS FILESYSTEM
-> @@ -593,7 +593,7 @@ L:	linux-afs@lists.infradead.org
->  S:	Supported
->  F:	fs/afs/
->  F:	include/trace/events/afs.h
-> -F:	Documentation/filesystems/afs.txt
-> +F:	Documentation/filesystems/afs.rst
->  W:	https://www.infradead.org/~dhowells/kafs/
->  
->  AGPGART DRIVER
-> @@ -3076,7 +3076,7 @@ M:	Luis de Bethencourt <luisbg@kernel.org>
->  M:	Salah Triki <salah.triki@gmail.com>
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/luisbg/linux-befs.git
-> -F:	Documentation/filesystems/befs.txt
-> +F:	Documentation/filesystems/befs.rst
->  F:	fs/befs/
->  
->  BFQ I/O SCHEDULER
-> @@ -3090,7 +3090,7 @@ F:	Documentation/block/bfq-iosched.rst
->  BFS FILE SYSTEM
->  M:	"Tigran A. Aivazian" <aivazian.tigran@gmail.com>
->  S:	Maintained
-> -F:	Documentation/filesystems/bfs.txt
-> +F:	Documentation/filesystems/bfs.rst
->  F:	fs/bfs/
->  F:	include/uapi/linux/bfs_fs.h
->  
-> @@ -3623,7 +3623,7 @@ W:	http://btrfs.wiki.kernel.org/
->  Q:	http://patchwork.kernel.org/project/linux-btrfs/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mason/linux-btrfs.git
->  S:	Maintained
-> -F:	Documentation/filesystems/btrfs.txt
-> +F:	Documentation/filesystems/btrfs.rst
->  F:	fs/btrfs/
->  F:	include/linux/btrfs*
->  F:	include/uapi/linux/btrfs*
-> @@ -3920,7 +3920,7 @@ W:	http://ceph.com/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
->  T:	git git://github.com/ceph/ceph-client.git
->  S:	Supported
-> -F:	Documentation/filesystems/ceph.txt
-> +F:	Documentation/filesystems/ceph.rst
->  F:	fs/ceph/
->  
->  CERTIFICATE HANDLING
-> @@ -4432,7 +4432,7 @@ F:	include/linux/cpuidle.h
->  CRAMFS FILESYSTEM
->  M:	Nicolas Pitre <nico@fluxnic.net>
->  S:	Maintained
-> -F:	Documentation/filesystems/cramfs.txt
-> +F:	Documentation/filesystems/cramfs.rst
->  F:	fs/cramfs/
->  
->  CREATIVE SB0540
-> @@ -5975,7 +5975,7 @@ W:	http://ecryptfs.org
->  W:	https://launchpad.net/ecryptfs
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git
->  S:	Odd Fixes
-> -F:	Documentation/filesystems/ecryptfs.txt
-> +F:	Documentation/filesystems/ecryptfs.rst
->  F:	fs/ecryptfs/
->  
->  EDAC-AMD64
-> @@ -6297,7 +6297,7 @@ M:	Chao Yu <yuchao0@huawei.com>
->  L:	linux-erofs@lists.ozlabs.org
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
-> -F:	Documentation/filesystems/erofs.txt
-> +F:	Documentation/filesystems/erofs.rst
->  F:	fs/erofs/
->  F:	include/trace/events/erofs.h
->  
-> @@ -6358,7 +6358,7 @@ EXT2 FILE SYSTEM
->  M:	Jan Kara <jack@suse.com>
->  L:	linux-ext4@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/filesystems/ext2.txt
-> +F:	Documentation/filesystems/ext2.rst
->  F:	fs/ext2/
->  F:	include/linux/ext2*
->  
-> @@ -6432,7 +6432,7 @@ L:	linux-f2fs-devel@lists.sourceforge.net
->  W:	https://f2fs.wiki.kernel.org/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
->  S:	Maintained
-> -F:	Documentation/filesystems/f2fs.txt
-> +F:	Documentation/filesystems/f2fs.rst
->  F:	Documentation/ABI/testing/sysfs-fs-f2fs
->  F:	fs/f2fs/
->  F:	include/linux/f2fs_fs.h
-> @@ -7474,13 +7474,13 @@ F:	drivers/infiniband/hw/hfi1
->  HFS FILESYSTEM
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Orphan
-> -F:	Documentation/filesystems/hfs.txt
-> +F:	Documentation/filesystems/hfs.rst
->  F:	fs/hfs/
->  
->  HFSPLUS FILESYSTEM
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Orphan
-> -F:	Documentation/filesystems/hfsplus.txt
-> +F:	Documentation/filesystems/hfsplus.rst
->  F:	fs/hfsplus/
->  
->  HGA FRAMEBUFFER DRIVER
-> @@ -8351,7 +8351,7 @@ M:	Jan Kara <jack@suse.cz>
->  R:	Amir Goldstein <amir73il@gmail.com>
->  L:	linux-fsdevel@vger.kernel.org
->  S:	Maintained
-> -F:	Documentation/filesystems/inotify.txt
-> +F:	Documentation/filesystems/inotify.rst
->  F:	fs/notify/inotify/
->  F:	include/linux/inotify.h
->  F:	include/uapi/linux/inotify.h
-> @@ -11854,7 +11854,7 @@ W:	https://nilfs.sourceforge.io/
->  W:	https://nilfs.osdn.jp/
->  T:	git git://github.com/konis/nilfs2.git
->  S:	Supported
-> -F:	Documentation/filesystems/nilfs2.txt
-> +F:	Documentation/filesystems/nilfs2.rst
->  F:	fs/nilfs2/
->  F:	include/trace/events/nilfs2.h
->  F:	include/uapi/linux/nilfs2_api.h
-> @@ -11963,7 +11963,7 @@ L:	linux-ntfs-dev@lists.sourceforge.net
->  W:	http://www.tuxera.com/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
->  S:	Supported
-> -F:	Documentation/filesystems/ntfs.txt
-> +F:	Documentation/filesystems/ntfs.rst
->  F:	fs/ntfs/
->  
->  NUBUS SUBSYSTEM
-> @@ -12309,7 +12309,7 @@ OMFS FILESYSTEM
->  M:	Bob Copeland <me@bobcopeland.com>
->  L:	linux-karma-devel@lists.sourceforge.net
->  S:	Maintained
-> -F:	Documentation/filesystems/omfs.txt
-> +F:	Documentation/filesystems/omfs.rst
->  F:	fs/omfs/
->  
->  OMNIKEY CARDMAN 4000 DRIVER
-> @@ -12557,8 +12557,8 @@ M:	Joseph Qi <joseph.qi@linux.alibaba.com>
->  L:	ocfs2-devel@oss.oracle.com (moderated for non-subscribers)
->  W:	http://ocfs2.wiki.kernel.org
->  S:	Supported
-> -F:	Documentation/filesystems/ocfs2.txt
-> -F:	Documentation/filesystems/dlmfs.txt
-> +F:	Documentation/filesystems/ocfs2.rst
-> +F:	Documentation/filesystems/dlmfs.rst
->  F:	fs/ocfs2/
->  
->  ORANGEFS FILESYSTEM
-> @@ -12568,7 +12568,7 @@ L:	devel@lists.orangefs.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
->  S:	Supported
->  F:	fs/orangefs/
-> -F:	Documentation/filesystems/orangefs.txt
-> +F:	Documentation/filesystems/orangefs.rst
->  
->  ORINOCO DRIVER
->  L:	linux-wireless@vger.kernel.org
-> @@ -13530,7 +13530,7 @@ S:	Maintained
->  F:	fs/proc/
->  F:	include/linux/proc_fs.h
->  F:	tools/testing/selftests/proc/
-> -F:	Documentation/filesystems/proc.txt
-> +F:	Documentation/filesystems/proc.rst
->  
->  PROC SYSCTL
->  M:	Luis Chamberlain <mcgrof@kernel.org>
-> @@ -15818,7 +15818,7 @@ L:	squashfs-devel@lists.sourceforge.net (subscribers-only)
->  W:	http://squashfs.org.uk
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pkl/squashfs-next.git
->  S:	Maintained
-> -F:	Documentation/filesystems/squashfs.txt
-> +F:	Documentation/filesystems/squashfs.rst
->  F:	fs/squashfs/
->  
->  SRM (Alpha) environment access
-> @@ -16261,7 +16261,7 @@ F:	drivers/platform/x86/system76_acpi.c
->  SYSV FILESYSTEM
->  M:	Christoph Hellwig <hch@infradead.org>
->  S:	Maintained
-> -F:	Documentation/filesystems/sysv-fs.txt
-> +F:	Documentation/filesystems/sysv-fs.rst
->  F:	fs/sysv/
->  F:	include/linux/sysv_fs.h
->  
-> @@ -17126,7 +17126,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git next
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git fixes
->  W:	http://www.linux-mtd.infradead.org/doc/ubifs.html
->  S:	Supported
-> -F:	Documentation/filesystems/ubifs.txt
-> +F:	Documentation/filesystems/ubifs.rst
->  F:	fs/ubifs/
->  
->  UCLINUX (M68KNOMMU AND COLDFIRE)
-> @@ -17145,7 +17145,7 @@ F:	arch/m68k/include/asm/*_no.*
->  UDF FILESYSTEM
->  M:	Jan Kara <jack@suse.com>
->  S:	Maintained
-> -F:	Documentation/filesystems/udf.txt
-> +F:	Documentation/filesystems/udf.rst
->  F:	fs/udf/
->  
->  UDRAW TABLET
-> @@ -18585,7 +18585,7 @@ L:	linux-fsdevel@vger.kernel.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git
->  S:	Maintained
->  F:	fs/zonefs/
-> -F:	Documentation/filesystems/zonefs.txt
-> +F:	Documentation/filesystems/zonefs.rst
->  
->  ZPOOL COMPRESSED PAGE STORAGE API
->  M:	Dan Streetman <ddstreet@ieee.org>
-
-
-Thanks,
-Mauro
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000067c6df059df7f9f5%40google.com.
