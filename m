@@ -2,65 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1710317997E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 21:07:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42E83179994
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 21:10:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbgCDUH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 15:07:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56568 "EHLO mail.kernel.org"
+        id S2388003AbgCDUKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 15:10:37 -0500
+Received: from ms.lwn.net ([45.79.88.28]:47028 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726440AbgCDUH2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 15:07:28 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1729175AbgCDUKg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 15:10:36 -0500
+Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C99D021739;
-        Wed,  4 Mar 2020 20:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583352448;
-        bh=OhH4Qz3RV4GUmNk48J4XpX4M/dWRlT017BqsJpHwBqQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XXp/r9RkraLOUsK1ISfVxq0qvjHM1+3SbAA0gZCNKVdc4UqNZvwSNiZblz+/zWRiF
-         WdzcUp82k78OYhR6PgcSGi5WHfTAUDs+wNaqpl49ljyVZFuS7oBSKTwludRuZyz8MO
-         +2rOGMfoSBg9tzSCv0HsXa8XBm02LUf4p08WkJjQ=
-Date:   Wed, 4 Mar 2020 21:07:25 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Yufen Yu <yuyufen@huawei.com>, axboe@kernel.dk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, bvanassche@acm.org, tytso@mit.edu
-Subject: Re: [PATCH v2 0/7] bdi: fix use-after-free for bdi device
-Message-ID: <20200304200725.GB1906005@kroah.com>
-References: <20200226111851.55348-1-yuyufen@huawei.com>
- <20200304172907.GA1864710@kroah.com>
- <20200304185739.GN189690@mtj.thefacebook.com>
+        by ms.lwn.net (Postfix) with ESMTPSA id 11F68537;
+        Wed,  4 Mar 2020 20:10:36 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 13:10:35 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
+Message-ID: <20200304131035.731a3947@lwn.net>
+In-Reply-To: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304185739.GN189690@mtj.thefacebook.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 01:57:39PM -0500, Tejun Heo wrote:
-> Hey, Greg.
+On Wed,  4 Mar 2020 08:29:50 +0100
+Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+
+> Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+> ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+> converts many Documentation/filesystems/ files to ReST.
 > 
-> On Wed, Mar 04, 2020 at 06:29:07PM +0100, Greg KH wrote:
-> > How does that happen?  Who has access to a kobject without also having
-> > the reference count incremented at the same time?  Is this through sysfs
-> > or somewhere within the kernel itself?
+> Since then, ./scripts/get_maintainer.pl --self-test complains with 27
+> warnings on Documentation/filesystems/ of this kind:
 > 
-> Hopefully, this part was addressed in the other reply.
-
-Yes, thanks.
-
-> > The struct device refcount should be all that is needed, don't use RCU
-> > just to "delay freeing this object until some later time because someone
-> > else might have a pointer to id".  That's ripe for disaster.
+>   warning: no file matches F: Documentation/filesystems/...
 > 
-> I think it's an idiomatic use of rcu given the circumstances. Whether
-> the circumstances are reasonable is totally debatable.
+> Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+> patch series and address the 27 warnings.
+> 
+> Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+> Mauro, please ack.
+> Jonathan, pick pick this patch for doc-next.
 
-They are not reasonable :)
+Sigh, I need to work a MAINTAINERS check into my workflow...
 
+Thanks for fixing these, but ... what tree did you generate the patch
+against?  I doesn't come close to applying to docs-next.
+
+Thanks,
+
+jon
