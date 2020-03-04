@@ -2,81 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D69D179927
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 20:44:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D72B17997A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 21:06:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbgCDToz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 14:44:55 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33884 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728614AbgCDToz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 14:44:55 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9Zwp-005Lwh-P2; Wed, 04 Mar 2020 19:44:51 +0000
-Date:   Wed, 4 Mar 2020 19:44:51 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>, mszeredi@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: How to abuse RCU to scan the children of a mount?
-Message-ID: <20200304194451.GS23230@ZenIV.linux.org.uk>
-References: <3173159.1583343916@warthog.procyon.org.uk>
- <20200304192816.GI2935@paulmck-ThinkPad-P72>
+        id S1728512AbgCDUGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 15:06:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbgCDUGD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 15:06:03 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BED52084E;
+        Wed,  4 Mar 2020 20:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583352362;
+        bh=osoJB3Af195Y3PFS+hxKdBPcCaye1fL7HWQ2JbsfPX0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IeS4LkZ20W0zV6iKD2uJbMPshlUoSupeW0/AE8qeUqF0rhulKQpd+1ZammbpgbgYR
+         R/+bZEP/6HR7iva5GTicIjsptvK/EhV19C3Ong8qytiaRNeZ/tNA1YZOLJBXc4kixu
+         cgcJFeTwdTAo4TNMi7Jqyfk7mZ8NbOCRlbxOuUSc=
+Date:   Wed, 4 Mar 2020 21:05:59 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Yufen Yu <yuyufen@huawei.com>, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, bvanassche@acm.org, tytso@mit.edu
+Subject: Re: [PATCH v2 3/7] bdi: protect device lifetime with RCU
+Message-ID: <20200304200559.GA1906005@kroah.com>
+References: <20200226111851.55348-1-yuyufen@huawei.com>
+ <20200226111851.55348-4-yuyufen@huawei.com>
+ <20200304170543.GJ189690@mtj.thefacebook.com>
+ <20200304172221.GA1864270@kroah.com>
+ <20200304185056.GM189690@mtj.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200304192816.GI2935@paulmck-ThinkPad-P72>
+In-Reply-To: <20200304185056.GM189690@mtj.thefacebook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 11:28:16AM -0800, Paul E. McKenney wrote:
+On Wed, Mar 04, 2020 at 01:50:56PM -0500, Tejun Heo wrote:
+> Hello,
+> 
+> On Wed, Mar 04, 2020 at 06:22:21PM +0100, Greg Kroah-Hartman wrote:
+> > Ugh, I was dreading the fact that this day might sometime come...
+> > 
+> > In theory, the reference counting for struct device shouldn't need to
+> > use rcu at all, right?  what is driving the need to use rcu for
+> 
+> Lifetime rules in block layer are kinda nebulous. Some of it comes
+> from the fact that some objects are reused. Instead of the usual,
+> create-use-release, they get repurposed to be associated with
+> something else. When looking at such an object from some paths, we
+> don't necessarily have ownership of all of the members.
 
-> Huh.  The mount structure isn't suffering from a shortage of list_head
-> structures, is it?
-> 
-> So the following can happen, then?
-> 
-> o	The __attach_mnt() function adds a struct mount to its parent
-> 	list, but in a non-RCU manner.	Unless there is some other
-> 	safeguard, the list_add_tail() in this function needs to be
-> 	list_add_tail_rcu().
-> 
-> o	I am assuming that the various non-RCU traversals that I see,
-> 	for example, next_mnt(), are protected by lock_mount_hash().
-> 	Especially skip_mnt_tree(), which uses mnt_mounts.prev.  (I didn't
-> 	find any exceptions, but I don't claim an exhaustive search.)
-> 
-> o	The umount_tree() function's use of list_del_init() looks like
-> 	it could trap an RCU reader in the newly singular list formed
-> 	by the removal.  It appears that there are other functions that
-> 	use list_del_init() on this list, though I cannot claim any sort
-> 	of familiarity with this code.
-> 
-> 	So, do you need to add a check for child->mnt_child being in this
-> 	self-referential state within fsinfo_generic_mount_children()?
-> 
-> 	Plus list_del_init() doesn't mark its stores, though
-> 	some would argue that unmarked stores are OK in this situation.
-> 
-> o	There might be other operations in need of RCU-ification.
-> 
-> 	Maybe the list_add_tail() in umount_tree(), but it is not
-> 	immediately clear that this is adding a new element instead of
-> 	re-inserting an element already exposed to readers.
+That's horrid, it's not like block devices are on some "fast path" for
+tear-down, we should do it correctly.
 
-IMO all of that is a good argument *against* trying to pull any kind of RCU
-games here.  Access to these lists is assumed to be serialized on
-mount_lock spinlock component held exclusive and unless there is a very
-good reason to go for something trickier, let's not.
+> > backing_device_info?  Are these being destroyed/used so often that rcu
+> > really is the best solution and the existing reference counting doesn't
+> > work properly?
+> 
+> It's more that there are entry points which can only ensure that just
+> the top level object is valid and the member objects might be going or
+> coming as we're looking at it.
 
-Hash chains are supposed to be walked under rcu_read_lock(), requiring
-to recheck the mount_lock seqcount *AND* with use of legitimize_mnt()
-if you are to try and get a reference out of that.  ->mnt_parent chains
-also can be walked in the same conditions (subject to the same
-requirements).  The policy with everything else is
-	* get mount_lock spinlock exclusive or
-	* get namespace_sem or
-	* just fucking don't do it.
+That's not ok, a "member object" can only be valid if you have a
+reference to it.  If you remove the object, you then drop the reference,
+shouldn't that be the correct thing to do?
+
+thanks,
+
+greg k-h
