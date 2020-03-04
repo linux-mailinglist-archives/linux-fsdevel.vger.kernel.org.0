@@ -2,84 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA77178EFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 11:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 393DC179052
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 13:26:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387793AbgCDKyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 05:54:15 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42765 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387488AbgCDKyP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:54:15 -0500
-Received: by mail-ed1-f68.google.com with SMTP id n18so1751139edw.9;
-        Wed, 04 Mar 2020 02:54:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=8QzbFRA6IiNqJw3VB0sSGW2728BIelU6Zm/h4QWjC/w=;
-        b=ifTB9k2SIikX0bXRmoJBSygY26Cjc/b/hJVS57tW6GKkPrISn9kSGbIL4IN9JuqyxD
-         bBjfXiVCqlThb50ciVclbQS1FK0UNQ+tyrNed7yR9YWM2UR6NdER+UsZEk2utYiUrKSc
-         Bzk9KD55Izv+ey7gCz8bBv3Po9SDD/Vzafn2pHgZw6aZM0kGXZutz6O1BF8XEy6g912v
-         J6MCSay7vyXL/1IVGiOtkrQXU8OxGfNjcMHQQGc98vvxJ6fT9Hc9xaQQ4/cWC3oQ5u6Y
-         hhjpjzrov8DCakHO/5M7S55ct20LvTKO3z2PRPc9sG3g8WjEjWjeKmfEnvi/URTXVmpy
-         o9Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=8QzbFRA6IiNqJw3VB0sSGW2728BIelU6Zm/h4QWjC/w=;
-        b=jYjm8IsC8zcid4B+d85NDGKi4TfxhM0Lyo6P4NOfH7L8w0xKjyoHX+iolbbOL5fDum
-         etMBvyznuRfOMnKseQWfz2KaJOH2E7xPKLVSdbFQ/L0unCVhinOV8gAdPicswZqW9Oa6
-         estFP0qRj55mt0s9IEdO9XY1dCQ2uy45gi+11UTJOXOlRmdTtLq9ZQf0iphcfLSxlx5U
-         1jb6+Rff1W8bjnPmwSmO4DnkYdGD/H2Ehg831tMNP3CsVUIRDOF5Tdt4mLDIx/+3mwXO
-         8mvYg+9AlOQRex/yTdY9xgZ5Cho9K7zByyNKZh2bW8frXUpqm27flQEju7exfbd/lBAj
-         cV6g==
-X-Gm-Message-State: ANhLgQ3xf2igBIyfx0w6wZpuuybssn3FKZrzQhArt2fNTMECkJe1MH1Y
-        zkk4s5f/dT1VLDMJfPpgVGA=
-X-Google-Smtp-Source: ADFU+vvlTrDBpWeylkN1foJZYPynGXH45f0hE15eWSEP2mWXW9xtOm4h8Y9mGhvXCjW7PhUWOCCmeQ==
-X-Received: by 2002:a05:6402:b85:: with SMTP id cf5mr1996726edb.27.1583319253470;
-        Wed, 04 Mar 2020 02:54:13 -0800 (PST)
-Received: from felia ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
-        by smtp.gmail.com with ESMTPSA id u5sm856485edy.61.2020.03.04.02.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 02:54:12 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
-Date:   Wed, 4 Mar 2020 11:54:04 +0100 (CET)
-X-X-Sender: lukas@felia
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-In-Reply-To: <20200304085905.6b71fe8c@coco.lan>
-Message-ID: <alpine.DEB.2.21.2003041152030.6023@felia>
-References: <20200304072950.10532-1-lukas.bulwahn@gmail.com> <20200304085905.6b71fe8c@coco.lan>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2387954AbgCDM0L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 07:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387919AbgCDM0L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:26:11 -0500
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 157422146E;
+        Wed,  4 Mar 2020 12:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583324770;
+        bh=Schwq0Exu/YFnqdajuZIF0iUkVHTdZxrxvRFFIH4D0c=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UpMWQaVrQb1Ty19BpWLKKvBS+4Tcjz40/eTJPFOvLa5U/Cd9weUU3tEiWZXZ2ph1D
+         6MBY6QwjrNVTvynHamL4M4q/G8ECaoyuN+rJaEeW7UGIGhFMehe7kz9dwi2wPHwJ8F
+         RBXIA1T0+R44ROHRYLB3tRFWw6meL2kRiJ9rOR1s=
+Message-ID: <c542702fd57606ee4874d632364303558ec33220.camel@kernel.org>
+Subject: Re: [PATCH] locks: fix a potential use-after-free problem when
+ wakeup a waiter
+From:   Jeff Layton <jlayton@kernel.org>
+To:     yangerkun <yangerkun@huawei.com>, viro@zeniv.linux.org.uk,
+        neilb@suse.com
+Cc:     linux-fsdevel@vger.kernel.org, yi.zhang@huawei.com
+Date:   Wed, 04 Mar 2020 07:26:08 -0500
+In-Reply-To: <20200304072556.2762-1-yangerkun@huawei.com>
+References: <20200304072556.2762-1-yangerkun@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On Wed, 4 Mar 2020, Mauro Carvalho Chehab wrote:
-
+On Wed, 2020-03-04 at 15:25 +0800, yangerkun wrote:
+> '16306a61d3b7 ("fs/locks: always delete_block after waiting.")' add the
+> logic to check waiter->fl_blocker without blocked_lock_lock. And it will
+> trigger a UAF when we try to wakeup some waiter：
 > 
-> Btw, those can easily be fixed with:
+> Thread 1 has create a write flock a on file, and now thread 2 try to
+> unlock and delete flock a, thread 3 try to add flock b on the same file.
 > 
-> 	./scripts/documentation-file-ref-check --fix
+> Thread2                         Thread3
+>                                 flock syscall(create flock b)
+> 	                        ...flock_lock_inode_wait
+> 				    flock_lock_inode(will insert
+> 				    our fl_blocked_member list
+> 				    to flock a's fl_blocked_requests)
+> 				   sleep
+> flock syscall(unlock)
+> ...flock_lock_inode_wait
+>     locks_delete_lock_ctx
+>     ...__locks_wake_up_blocks
+>         __locks_delete_blocks(
+> 	b->fl_blocker = NULL)
+> 	...
+>                                    break by a signal
+> 				   locks_delete_block
+> 				    b->fl_blocker == NULL &&
+> 				    list_empty(&b->fl_blocked_requests)
+> 	                            success, return directly
+> 				 locks_free_lock b
+> 	wake_up(&b->fl_waiter)
+> 	trigger UAF
 > 
-> I had already a similar patch to this one already on my tree, intending
-> to submit later today. You were faster than me on that ;-)
+> Fix it by remove this logic, and this patch may also fix CVE-2019-19769.
 > 
+> Fixes: 16306a61d3b7 ("fs/locks: always delete_block after waiting.")
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
+> ---
+>  fs/locks.c | 14 --------------
+>  1 file changed, 14 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 44b6da032842..426b55d333d5 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -753,20 +753,6 @@ int locks_delete_block(struct file_lock *waiter)
+>  {
+>  	int status = -ENOENT;
+>  
+> -	/*
+> -	 * If fl_blocker is NULL, it won't be set again as this thread
+> -	 * "owns" the lock and is the only one that might try to claim
+> -	 * the lock.  So it is safe to test fl_blocker locklessly.
+> -	 * Also if fl_blocker is NULL, this waiter is not listed on
+> -	 * fl_blocked_requests for some lock, so no other request can
+> -	 * be added to the list of fl_blocked_requests for this
+> -	 * request.  So if fl_blocker is NULL, it is safe to
+> -	 * locklessly check if fl_blocked_requests is empty.  If both
+> -	 * of these checks succeed, there is no need to take the lock.
+> -	 */
+> -	if (waiter->fl_blocker == NULL &&
+> -	    list_empty(&waiter->fl_blocked_requests))
+> -		return status;
+>  	spin_lock(&blocked_lock_lock);
+>  	if (waiter->fl_blocker)
+>  		status = 0;
 
-Thanks for the hint. It is always good to know about the various check and 
-clean-up scripts.
+Well spotted, but is this sufficient to fix the issue?
 
-Lukas
+If Thread2 gets scheduled off before the wake_up but after removing the
+block, then it seems like it could hit the same problem regardless of
+whether you took the spinlock or not in that codepath.
+
+The core problem seems to be that we don't have any guarantee that
+waiter "b" will still be around once the spinlock has been dropped in
+the unlock codepath.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
