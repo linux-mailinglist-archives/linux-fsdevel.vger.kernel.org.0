@@ -2,63 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E221799C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 21:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5660A1799CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 21:29:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388394AbgCDU0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 15:26:36 -0500
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:38018 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387926AbgCDU0g (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 15:26:36 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 78662100E7B45;
-        Wed,  4 Mar 2020 20:26:34 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3866:3867:3870:3872:4321:5007:7514:7903:10004:10400:10848:10967:11232:11658:11914:12297:12740:12760:12895:13069:13132:13184:13229:13231:13311:13357:13439:13618:14181:14659:14721:21080:21451:21627:21740:21984:30054:30069:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: hot73_565b5f8ad3729
-X-Filterd-Recvd-Size: 1567
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Wed,  4 Mar 2020 20:26:33 +0000 (UTC)
-Message-ID: <9c1c1b5e3a59705a501cbb713f1d0e44cc71e788.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
-From:   Joe Perches <joe@perches.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        id S2387905AbgCDU2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 15:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387469AbgCDU2x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 15:28:53 -0500
+Received: from coco.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 903A920870;
+        Wed,  4 Mar 2020 20:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583353732;
+        bh=W/R/FWArGtnpFP7wkWD+JUcgbM7aaWuG7tLZ/8wBXGw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tDe8gBT9u5HZ078rKAVe1u1xlBXjWnRp/sN6UmaMUBd29a99fJgOOdO/WXbl9sonb
+         KY3uqJ0I77CUk2Lqz0Rv7xccr9s7dWXipag9r9p3nTpLEqjXUSqFsHealLWICYRSe5
+         sEI3clS6XIBDHCTF495XzP/Mc5y9l8/KcU21bHvA=
+Date:   Wed, 4 Mar 2020 21:28:46 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 04 Mar 2020 12:24:59 -0800
+Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
+Message-ID: <20200304212846.0c79c6da@coco.lan>
 In-Reply-To: <20200304131035.731a3947@lwn.net>
 References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
-         <20200304131035.731a3947@lwn.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        <20200304131035.731a3947@lwn.net>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-03-04 at 13:10 -0700, Jonathan Corbet wrote:
+Em Wed, 4 Mar 2020 13:10:35 -0700
+Jonathan Corbet <corbet@lwn.net> escreveu:
+
 > On Wed,  4 Mar 2020 08:29:50 +0100
 > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
-[]
-> > ./scripts/get_maintainer.pl --self-test complains with 27
+> 
+> > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+> > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+> > converts many Documentation/filesystems/ files to ReST.
+> > 
+> > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
 > > warnings on Documentation/filesystems/ of this kind:
 > > 
 > >   warning: no file matches F: Documentation/filesystems/...
-[]
+> > 
+> > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+> > patch series and address the 27 warnings.
+> > 
+> > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > ---
+> > Mauro, please ack.
+> > Jonathan, pick pick this patch for doc-next.  
+> 
 > Sigh, I need to work a MAINTAINERS check into my workflow...
+> 
+> Thanks for fixing these, but ... what tree did you generate the patch
+> against?  I doesn't come close to applying to docs-next.
 
-checkpatch already bleats a warning on patches with any
-file move or rename.
+I'm starting to suspect that maybe the best workflow would be to just 
+apply the patches at docs-next keeping links broken, and then run
+./scripts/documentation-file-ref-check --fix by the end of a merge
+window, addressing such breakages.
 
-It would be difficult to impossible to implement a real
-pattern verification mechanism in checkpatch though.
+There are usually lots of churn outside the merge window.
 
+Another alternative would be to split the MAINTAINERS file on a
+per-subsystem basis. If I remember well, someone proposed this once at
+LKML. I vaguely remember that there were even a patch (or RFC)
+adding support for such thing for get_maintainers.pl.
 
+Thanks,
+Mauro
