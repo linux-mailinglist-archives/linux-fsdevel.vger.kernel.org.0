@@ -2,98 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF806178ECA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 11:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA77178EFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 11:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387774AbgCDKr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 05:47:28 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38535 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387488AbgCDKr1 (ORCPT
+        id S2387793AbgCDKyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 05:54:15 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42765 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387488AbgCDKyP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 05:47:27 -0500
-Received: by mail-ed1-f66.google.com with SMTP id e25so1751036edq.5;
-        Wed, 04 Mar 2020 02:47:26 -0800 (PST)
+        Wed, 4 Mar 2020 05:54:15 -0500
+Received: by mail-ed1-f68.google.com with SMTP id n18so1751139edw.9;
+        Wed, 04 Mar 2020 02:54:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
-        b=drTJ2zTMj0NNTZz8bc6a7Qn9zT9Qkuo5l8l38x7+6y1beHr0FBGlK/Re5BDWKyeD+l
-         kdVh3Jxm2m3t5SCQl24C/QuaCD9kjRZZ9oRTRI2tXAB+3DmjU4lQT6woIGKyDe8Dg1s2
-         cjUAzathkzY7gd5/KxgEgwp8PmO/dHTFtkfE8NxeBhas24s+4DYimHvDe7KCCtfDHxE3
-         6iYEXmG61vBibkXmvkAs8G7MoGCsS81jLRsF8joiK1TsFxb98cCO1H3X/FbnWzyRSx/R
-         kXPKyoNnMfSowRHQBe2CMXfsNsjKSCIlHJ5L+eXmz1gUYIjqNlB3Bi/2uucf22iNzSmF
-         Nbjg==
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=8QzbFRA6IiNqJw3VB0sSGW2728BIelU6Zm/h4QWjC/w=;
+        b=ifTB9k2SIikX0bXRmoJBSygY26Cjc/b/hJVS57tW6GKkPrISn9kSGbIL4IN9JuqyxD
+         bBjfXiVCqlThb50ciVclbQS1FK0UNQ+tyrNed7yR9YWM2UR6NdER+UsZEk2utYiUrKSc
+         Bzk9KD55Izv+ey7gCz8bBv3Po9SDD/Vzafn2pHgZw6aZM0kGXZutz6O1BF8XEy6g912v
+         J6MCSay7vyXL/1IVGiOtkrQXU8OxGfNjcMHQQGc98vvxJ6fT9Hc9xaQQ4/cWC3oQ5u6Y
+         hhjpjzrov8DCakHO/5M7S55ct20LvTKO3z2PRPc9sG3g8WjEjWjeKmfEnvi/URTXVmpy
+         o9Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=b6DQCUS0+Ug7UlNm5mZo2LZjk1wdwZ8PPHxJgscamZg=;
-        b=KNkB39CYXDpio5YDiNTIA+yBXmtSCWsD2STl6HT/J1WWFQUaJq44dwoCyGe/0S3gA8
-         PMhmGzALCf+FeqP/nN4hkwYsltrJjaW714CmpPwGNYSPy4fEqef8EImnKrjisA2eXYxl
-         EUvLNelCgg93Hp/kt9chAtz2ZxJC1IMkYRCHHo7wvlUAr7s8sLT6FkfUELa5n8jeJoNK
-         oK+J1LDpreVloWMj3nzLzAvJebs++vCTuXNUfq7vl0TsWJGK0Kc4ebluuI8M4TV5uhNI
-         LbVVyD0rEVvPz9oUUHbR35IgM90pLbtalMdqYks3x/sDY5c21GJR6n9d51PwHAcmByPZ
-         Pygg==
-X-Gm-Message-State: ANhLgQ3j/+njcs0+xgI5YH6BzqffLbCLS38l41fFxh+TTgARqlkxp+CR
-        iNqZZSvcjXXO57VDkT53t3A4BJyC4x4=
-X-Google-Smtp-Source: ADFU+vseIgFS3ZIL+3zyZq5qbs5LEoXF3Ie+FFY6418MPbDsbyXXQiJ4InDXicWMqYfHwlHZx0Rpxw==
-X-Received: by 2002:a50:d0d0:: with SMTP id g16mr2114242edf.187.1583318845457;
-        Wed, 04 Mar 2020 02:47:25 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
-        by smtp.gmail.com with ESMTPSA id 29sm1122854ejb.4.2020.03.04.02.47.24
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=8QzbFRA6IiNqJw3VB0sSGW2728BIelU6Zm/h4QWjC/w=;
+        b=jYjm8IsC8zcid4B+d85NDGKi4TfxhM0Lyo6P4NOfH7L8w0xKjyoHX+iolbbOL5fDum
+         etMBvyznuRfOMnKseQWfz2KaJOH2E7xPKLVSdbFQ/L0unCVhinOV8gAdPicswZqW9Oa6
+         estFP0qRj55mt0s9IEdO9XY1dCQ2uy45gi+11UTJOXOlRmdTtLq9ZQf0iphcfLSxlx5U
+         1jb6+Rff1W8bjnPmwSmO4DnkYdGD/H2Ehg831tMNP3CsVUIRDOF5Tdt4mLDIx/+3mwXO
+         8mvYg+9AlOQRex/yTdY9xgZ5Cho9K7zByyNKZh2bW8frXUpqm27flQEju7exfbd/lBAj
+         cV6g==
+X-Gm-Message-State: ANhLgQ3xf2igBIyfx0w6wZpuuybssn3FKZrzQhArt2fNTMECkJe1MH1Y
+        zkk4s5f/dT1VLDMJfPpgVGA=
+X-Google-Smtp-Source: ADFU+vvlTrDBpWeylkN1foJZYPynGXH45f0hE15eWSEP2mWXW9xtOm4h8Y9mGhvXCjW7PhUWOCCmeQ==
+X-Received: by 2002:a05:6402:b85:: with SMTP id cf5mr1996726edb.27.1583319253470;
+        Wed, 04 Mar 2020 02:54:13 -0800 (PST)
+Received: from felia ([2001:16b8:2d16:4100:3093:39f0:d3ca:23c6])
+        by smtp.gmail.com with ESMTPSA id u5sm856485edy.61.2020.03.04.02.54.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 02:47:24 -0800 (PST)
+        Wed, 04 Mar 2020 02:54:12 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     linux-doc@vger.kernel.org,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        linux-bluetooth@vger.kernel.org,
-        Alexander Aring <alex.aring@gmail.com>,
-        Jukka Rissanen <jukka.rissanen@linux.intel.com>,
-        linux-wpan@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Joe Perches <joe@perches.com>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] MAINTAINERS: adjust to 6lowpan doc ReST conversion
-Date:   Wed,  4 Mar 2020 11:47:17 +0100
-Message-Id: <20200304104717.5841-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+X-Google-Original-From: Lukas Bulwahn <lukas@gmail.com>
+Date:   Wed, 4 Mar 2020 11:54:04 +0100 (CET)
+X-X-Sender: lukas@felia
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
+In-Reply-To: <20200304085905.6b71fe8c@coco.lan>
+Message-ID: <alpine.DEB.2.21.2003041152030.6023@felia>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com> <20200304085905.6b71fe8c@coco.lan>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 107db7ec7838 ("docs: networking: convert 6lowpan.txt to ReST")
-renamed 6lowpan.txt to 6lowpan.rst for the ReST conversion.
 
-Since then, ./scripts/get_maintainer.pl --self-test complains:
 
-  warning: no file matches F: Documentation/networking/6lowpan.txt
+On Wed, 4 Mar 2020, Mauro Carvalho Chehab wrote:
 
-Adjust 6LOWPAN GENERIC (BTLE/IEEE 802.15.4) entry in MAINTAINERS.
+> 
+> Btw, those can easily be fixed with:
+> 
+> 	./scripts/documentation-file-ref-check --fix
+> 
+> I had already a similar patch to this one already on my tree, intending
+> to submit later today. You were faster than me on that ;-)
+> 
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-Mauro, please ack.
-Marcel, please pick for bluetooth-next.
+Thanks for the hint. It is always good to know about the various check and 
+clean-up scripts.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e19b275f2ac2..d064049aad1b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -176,7 +176,7 @@ L:	linux-wpan@vger.kernel.org
- S:	Maintained
- F:	net/6lowpan/
- F:	include/net/6lowpan.h
--F:	Documentation/networking/6lowpan.txt
-+F:	Documentation/networking/6lowpan.rst
- 
- 6PACK NETWORK DRIVER FOR AX.25
- M:	Andreas Koensgen <ajk@comnets.uni-bremen.de>
--- 
-2.17.1
-
+Lukas
