@@ -2,136 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E08CA179076
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 13:34:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A575717908F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 13:42:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388021AbgCDMeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 07:34:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60714 "EHLO mail.kernel.org"
+        id S2388048AbgCDMmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 07:42:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51316 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387975AbgCDMeS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 07:34:18 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E47520838;
-        Wed,  4 Mar 2020 12:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583325256;
-        bh=/bB6MBrLrs7XTtF1eNjahUB8Nz4Jzn3lD6LQWfUYMxw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=01M4k9roA9bqdQkt8HWPOPPsim6fyLm/K61anRpvHRYiBkXq7xc4g6fBW7s16Lc//
-         DJLnUSNYqbTQ85WQMUqsoN27TgFgCnfj/hegPGsTlIgOrG1GYb8i1XeaYeGGeTkwyn
-         D9AWrrsgvuU1O3nEZp5RNHcX7bB2XKrCM0PW9icU=
-Message-ID: <a88b7dff7e0455b62b3efd01a0db9da84203eebd.camel@kernel.org>
-Subject: Re: [PATCH] locks: fix a potential use-after-free problem when
- wakeup a waiter
-From:   Jeff Layton <jlayton@kernel.org>
-To:     yangerkun <yangerkun@huawei.com>, viro@zeniv.linux.org.uk,
-        neilb@suse.com
-Cc:     linux-fsdevel@vger.kernel.org, yi.zhang@huawei.com
-Date:   Wed, 04 Mar 2020 07:34:15 -0500
-In-Reply-To: <c542702fd57606ee4874d632364303558ec33220.camel@kernel.org>
-References: <20200304072556.2762-1-yangerkun@huawei.com>
-         <c542702fd57606ee4874d632364303558ec33220.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S2388023AbgCDMmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 07:42:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 96B46B360;
+        Wed,  4 Mar 2020 12:42:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C735B1E0E99; Wed,  4 Mar 2020 13:42:11 +0100 (CET)
+Date:   Wed, 4 Mar 2020 13:42:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>, jack@suse.cz,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        hch@infradead.org, cmaiolino@redhat.com, david@fromorbit.com
+Subject: Re: [PATCHv5 3/6] ext4: Move ext4 bmap to use iomap infrastructure.
+Message-ID: <20200304124211.GC21048@quack2.suse.cz>
+References: <cover.1582880246.git.riteshh@linux.ibm.com>
+ <8bbd53bd719d5ccfecafcce93f2bf1d7955a44af.1582880246.git.riteshh@linux.ibm.com>
+ <20200228152524.GE8036@magnolia>
+ <20200302085840.A41E3A4053@d06av23.portsmouth.uk.ibm.com>
+ <20200303154709.GB8037@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303154709.GB8037@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-03-04 at 07:26 -0500, Jeff Layton wrote:
-> On Wed, 2020-03-04 at 15:25 +0800, yangerkun wrote:
-> > '16306a61d3b7 ("fs/locks: always delete_block after waiting.")' add the
-> > logic to check waiter->fl_blocker without blocked_lock_lock. And it will
-> > trigger a UAF when we try to wakeup some waiter：
+On Tue 03-03-20 07:47:09, Darrick J. Wong wrote:
+> On Mon, Mar 02, 2020 at 02:28:39PM +0530, Ritesh Harjani wrote:
 > > 
-> > Thread 1 has create a write flock a on file, and now thread 2 try to
-> > unlock and delete flock a, thread 3 try to add flock b on the same file.
 > > 
-> > Thread2                         Thread3
-> >                                 flock syscall(create flock b)
-> > 	                        ...flock_lock_inode_wait
-> > 				    flock_lock_inode(will insert
-> > 				    our fl_blocked_member list
-> > 				    to flock a's fl_blocked_requests)
-> > 				   sleep
-> > flock syscall(unlock)
-> > ...flock_lock_inode_wait
-> >     locks_delete_lock_ctx
-> >     ...__locks_wake_up_blocks
-> >         __locks_delete_blocks(
-> > 	b->fl_blocker = NULL)
-> > 	...
-> >                                    break by a signal
-> > 				   locks_delete_block
-> > 				    b->fl_blocker == NULL &&
-> > 				    list_empty(&b->fl_blocked_requests)
-> > 	                            success, return directly
-> > 				 locks_free_lock b
-> > 	wake_up(&b->fl_waiter)
-> > 	trigger UAF
+> > On 2/28/20 8:55 PM, Darrick J. Wong wrote:
+> > > On Fri, Feb 28, 2020 at 02:56:56PM +0530, Ritesh Harjani wrote:
+> > > > ext4_iomap_begin is already implemented which provides ext4_map_blocks,
+> > > > so just move the API from generic_block_bmap to iomap_bmap for iomap
+> > > > conversion.
+> > > > 
+> > > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> > > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > > ---
+> > > >   fs/ext4/inode.c | 2 +-
+> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > > > index 6cf3b969dc86..81fccbae0aea 100644
+> > > > --- a/fs/ext4/inode.c
+> > > > +++ b/fs/ext4/inode.c
+> > > > @@ -3214,7 +3214,7 @@ static sector_t ext4_bmap(struct address_space *mapping, sector_t block)
+> > > >   			return 0;
+> > > >   	}
+> > > > -	return generic_block_bmap(mapping, block, ext4_get_block);
+> > > > +	return iomap_bmap(mapping, block, &ext4_iomap_ops);
+> > > 
+> > > /me notes that iomap_bmap will filemap_write_and_wait for you, so one
+> > > could optimize ext4_bmap to avoid the double-flush by moving the
+> > > filemap_write_and_wait at the top of the function into the JDATA state
+> > > clearing block.
 > > 
-> > Fix it by remove this logic, and this patch may also fix CVE-2019-19769.
+> > IIUC, delalloc and data=journal mode are both mutually exclusive.
+> > So we could get rid of calling filemap_write_and_wait() all together
+> > from ext4_bmap().
+> > And as you pointed filemap_write_and_wait() is called by default in
+> > iomap_bmap which should cover for delalloc case.
 > > 
-> > Fixes: 16306a61d3b7 ("fs/locks: always delete_block after waiting.")
-> > Signed-off-by: yangerkun <yangerkun@huawei.com>
-> > ---
-> >  fs/locks.c | 14 --------------
-> >  1 file changed, 14 deletions(-)
 > > 
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 44b6da032842..426b55d333d5 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -753,20 +753,6 @@ int locks_delete_block(struct file_lock *waiter)
-> >  {
-> >  	int status = -ENOENT;
-> >  
-> > -	/*
-> > -	 * If fl_blocker is NULL, it won't be set again as this thread
-> > -	 * "owns" the lock and is the only one that might try to claim
-> > -	 * the lock.  So it is safe to test fl_blocker locklessly.
-> > -	 * Also if fl_blocker is NULL, this waiter is not listed on
-> > -	 * fl_blocked_requests for some lock, so no other request can
-> > -	 * be added to the list of fl_blocked_requests for this
-> > -	 * request.  So if fl_blocker is NULL, it is safe to
-> > -	 * locklessly check if fl_blocked_requests is empty.  If both
-> > -	 * of these checks succeed, there is no need to take the lock.
-> > -	 */
-> > -	if (waiter->fl_blocker == NULL &&
-> > -	    list_empty(&waiter->fl_blocked_requests))
-> > -		return status;
-> >  	spin_lock(&blocked_lock_lock);
-> >  	if (waiter->fl_blocker)
-> >  		status = 0;
+> > @Jan/Darrick,
+> > Could you check if the attached patch looks good. If yes then
+> > will add your Reviewed-by and send a v6.
+> > 
+> > Thanks for the review!!
+> > 
+> > -ritesh
+> > 
+> > 
 > 
-> Well spotted, but is this sufficient to fix the issue?
+> > From 93f560d9a483b4f389056e543012d0941734a8f4 Mon Sep 17 00:00:00 2001
+> > From: Ritesh Harjani <riteshh@linux.ibm.com>
+> > Date: Tue, 20 Aug 2019 18:36:33 +0530
+> > Subject: [PATCH 3/6] ext4: Move ext4 bmap to use iomap infrastructure.
+> > 
+> > ext4_iomap_begin is already implemented which provides ext4_map_blocks,
+> > so just move the API from generic_block_bmap to iomap_bmap for iomap
+> > conversion.
+> > 
+> > Also no need to call for filemap_write_and_wait() any more in ext4_bmap
+> > since data=journal mode anyway doesn't support delalloc and for all other
+> > cases iomap_bmap() anyway calls the same function, so no need for doing
+> > it twice.
+> > 
+> > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 > 
-> If Thread2 gets scheduled off before the wake_up but after removing the
-> block, then it seems like it could hit the same problem regardless of
-> whether you took the spinlock or not in that codepath.
+> Hmmm.  I don't recall how jdata actually works, but I get the impression
+> here that we're trying to flush dirty data out to the journal and then
+> out to disk, and then drop the JDATA state from the inode.  This
+> mechanism exists (I guess?) so that dirty file pages get checkpointed
+> out of jbd2 back into the filesystem so that bmap() returns meaningful
+> results to lilo.
+
+Exactly. E.g. when we are journalling data, we fill hole through mmap, we will
+have block allocated as unwritten and we need to write it out so that the
+data gets to the journal and then do journal flush to get the data to disk
+so that lilo can read it from the devices. So removing
+filemap_write_and_wait() when journalling data is wrong.
+
+> This makes me wonder if you still need the filemap_write_and_wait in the
+> JDATA case because otherwise the journal flush won't have the effect of
+> writing all the dirty pagecache back to the filesystem?  OTOH I suppose
+> the implicit write-and-wait call after we clear JDATA will not be
+> writing to the journal.
 > 
-> The core problem seems to be that we don't have any guarantee that
-> waiter "b" will still be around once the spinlock has been dropped in
-> the unlock codepath.
-> 
+> Even more weirdly, the FIEMAP code doesn't drop JDATA at all...?
 
-Nevermind. I think your patch is correct now that I've looked again. 
+Yeah, it should do that but that's only performance optimization so that we
+bother with journal flushing only when someone uses block mapping call on
+a file with journalled dirty data. So you can hardly notice the bug by
+testing...
 
-Thread2 is still holding the blocked_lock_lock, and that should be
-enough to prevent the block from being freed out from under it. Since we
-have to take the blocked_lock_lock in this codepath, that ensures that
-Thread2 is either able to safely issue the wake_up, of that it won't
-find the block on the list.
+								Honza
 
-I'll go ahead and put this in linux-next for now, and will plan to get
-this to Linus before v5.6 ships.
-
-Thanks!
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
