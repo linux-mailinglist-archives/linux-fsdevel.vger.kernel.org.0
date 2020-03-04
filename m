@@ -2,79 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A17178B01
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 07:55:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF46B178B08
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Mar 2020 07:58:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbgCDGzv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 01:55:51 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52406 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbgCDGzu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 01:55:50 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9NwZ-004wMP-8p; Wed, 04 Mar 2020 06:55:47 +0000
-Date:   Wed, 4 Mar 2020 06:55:47 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v3)
-Message-ID: <20200304065547.GP23230@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200301215125.GA873525@ZenIV.linux.org.uk>
- <CAHk-=wh1Q=H-YstHZRKfEw2McUBX2_TfTc=+5N-iH8DSGz44Qg@mail.gmail.com>
- <20200302003926.GM23230@ZenIV.linux.org.uk>
- <87o8tdgfu8.fsf@x220.int.ebiederm.org>
- <20200304002434.GO23230@ZenIV.linux.org.uk>
- <87wo80g0bo.fsf@x220.int.ebiederm.org>
+        id S1728409AbgCDG6G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 01:58:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36282 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728216AbgCDG6G (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 01:58:06 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0BD34999C45BB105C7BD;
+        Wed,  4 Mar 2020 14:58:00 +0800 (CST)
+Received: from fedora-aep.huawei.cmm (10.175.113.49) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 4 Mar 2020 14:57:52 +0800
+From:   yangerkun <yangerkun@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <neilb@suse.com>, <jlayton@kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <yangerkun@huawei.com>
+Subject: [PATCH] locks: fix a potential use-after-free problem when wakeup a waiter
+Date:   Wed, 4 Mar 2020 15:25:56 +0800
+Message-ID: <20200304072556.2762-1-yangerkun@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wo80g0bo.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.49]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 11:23:39PM -0600, Eric W. Biederman wrote:
-> Al Viro <viro@zeniv.linux.org.uk> writes:
-> 
-> > On Tue, Mar 03, 2020 at 05:48:31PM -0600, Eric W. Biederman wrote:
-> >
-> >> > I hope it gets serious beating, though - it touches pretty much every
-> >> > codepath in pathname resolution.  Is there any way to sic the bots on
-> >> > a branch, short of "push it into -next and wait for screams"?
-> >> 
-> >> Last I looked pushing a branch to kernel.org was enough for the
-> >> kbuild bots.  Sending patches to LKML is also enough for those bots.
-> >> 
-> >> I don't know if that kind of bot is what you need testing your code.
-> >
-> > Build bots are generally nice, but in this case... pretty much all of
-> > the changes are in fs/namei.c, which is not all that sensitive to
-> > config/architecture/whatnot.  Sure, something like "is audit enabled?"
-> > may affect the build problems, but not much beyond that.
-> >
-> > What was that Intel-run(?) bot that posts "such-and-such metrics has
-> > 42% regression on such-and-such commit" from time to time?
-> > <checks>
-> > Subject: [locking/qspinlock] 7b6da71157: unixbench.score 8.4% improvement
-> > seems to be the latest of that sort,
-> > From: kernel test robot <rong.a.chen@intel.com>
-> >
-> > Not sure how much of pathwalk-heavy loads is covered by profiling
-> > bots of that sort, unfortunately... ;-/
-> 
-> Do the xfs-tests cover that sort of thing?
-> The emphasis is stress testing the filesystem not the VFS but there is a
-> lot of overlap between the two.
+'16306a61d3b7 ("fs/locks: always delete_block after waiting.")' add the
+logic to check waiter->fl_blocker without blocked_lock_lock. And it will
+trigger a UAF when we try to wakeup some waiter：
 
-I do run xfstests.  But "runs in KVM without visible slowdowns" != "won't
-cause them on 48-core bare metal".  And this area (especially when it
-comes to RCU mode) can be, er, interesting in that respect.
+Thread 1 has create a write flock a on file, and now thread 2 try to
+unlock and delete flock a, thread 3 try to add flock b on the same file.
 
-FWIW, I'm putting together some litmus tests for pathwalk semantics -
-one of the things I'd like to discuss at LSF; quite a few codepaths
-are simply not touched by anything in xfstests.
+Thread2                         Thread3
+                                flock syscall(create flock b)
+	                        ...flock_lock_inode_wait
+				    flock_lock_inode(will insert
+				    our fl_blocked_member list
+				    to flock a's fl_blocked_requests)
+				   sleep
+flock syscall(unlock)
+...flock_lock_inode_wait
+    locks_delete_lock_ctx
+    ...__locks_wake_up_blocks
+        __locks_delete_blocks(
+	b->fl_blocker = NULL)
+	...
+                                   break by a signal
+				   locks_delete_block
+				    b->fl_blocker == NULL &&
+				    list_empty(&b->fl_blocked_requests)
+	                            success, return directly
+				 locks_free_lock b
+	wake_up(&b->fl_waiter)
+	trigger UAF
+
+Fix it by remove this logic, and this patch may also fix CVE-2019-19769.
+
+Fixes: 16306a61d3b7 ("fs/locks: always delete_block after waiting.")
+Signed-off-by: yangerkun <yangerkun@huawei.com>
+---
+ fs/locks.c | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 44b6da032842..426b55d333d5 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -753,20 +753,6 @@ int locks_delete_block(struct file_lock *waiter)
+ {
+ 	int status = -ENOENT;
+ 
+-	/*
+-	 * If fl_blocker is NULL, it won't be set again as this thread
+-	 * "owns" the lock and is the only one that might try to claim
+-	 * the lock.  So it is safe to test fl_blocker locklessly.
+-	 * Also if fl_blocker is NULL, this waiter is not listed on
+-	 * fl_blocked_requests for some lock, so no other request can
+-	 * be added to the list of fl_blocked_requests for this
+-	 * request.  So if fl_blocker is NULL, it is safe to
+-	 * locklessly check if fl_blocked_requests is empty.  If both
+-	 * of these checks succeed, there is no need to take the lock.
+-	 */
+-	if (waiter->fl_blocker == NULL &&
+-	    list_empty(&waiter->fl_blocked_requests))
+-		return status;
+ 	spin_lock(&blocked_lock_lock);
+ 	if (waiter->fl_blocker)
+ 		status = 0;
+-- 
+2.17.2
+
