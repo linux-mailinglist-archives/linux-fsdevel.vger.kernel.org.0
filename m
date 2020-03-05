@@ -2,195 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A665817A93F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 16:52:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5AC17A945
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 16:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgCEPvt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 10:51:49 -0500
-Received: from verein.lst.de ([213.95.11.211]:60065 "EHLO verein.lst.de"
+        id S1726887AbgCEPx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 10:53:27 -0500
+Received: from verein.lst.de ([213.95.11.211]:60069 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbgCEPvt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 10:51:49 -0500
+        id S1725977AbgCEPx1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 10:53:27 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id D812468B05; Thu,  5 Mar 2020 16:51:44 +0100 (CET)
-Date:   Thu, 5 Mar 2020 16:51:44 +0100
+        id 7B6A568B05; Thu,  5 Mar 2020 16:53:24 +0100 (CET)
+Date:   Thu, 5 Mar 2020 16:53:24 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     ira.weiny@intel.com
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        valdis.kletnieks@vt.edu, hch@lst.de, sj1557.seo@samsung.com,
+        pali.rohar@gmail.com, arnd@arndb.de, linkinjeon@gmail.com,
         torvalds@linux-foundation.org
-Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations
- V5
-Message-ID: <20200305155144.GA5598@lst.de>
-References: <20200227052442.22524-1-ira.weiny@intel.com>
+Subject: Re: [PATCH v14 00/14] add the latest exfat driver
+Message-ID: <20200305155324.GA5660@lst.de>
+References: <CGME20200302062613epcas1p2969203b10bc3b7c41e0d4ffe9a08a3e9@epcas1p2.samsung.com> <20200302062145.1719-1-namjae.jeon@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200227052442.22524-1-ira.weiny@intel.com>
+In-Reply-To: <20200302062145.1719-1-namjae.jeon@samsung.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FYI, I still will fully NAK any series that adds additional locks
-and thus atomic instructions to basically every fs call, and grows
-the inode by a rw_semaphore plus and atomic64_t.  I also think the
-whole idea of switching operation vectors at runtime is fatally flawed
-and we should never add such code, nevermind just for a fringe usecase
-of a fringe feature.
+Al,
 
-On Wed, Feb 26, 2020 at 09:24:30PM -0800, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
+are you going to pick this up, or should Namjae go through the pains
+of setting up his own git tree to feed to Linus?
+
+On Mon, Mar 02, 2020 at 03:21:31PM +0900, Namjae Jeon wrote:
+> This adds the latest Samsung exfat driver to fs/exfat. This is an
+> implementation of the Microsoft exFAT specification. Previous versions
+> of this shipped with millions of Android phones, and a random previous
+> snaphot has been merged in drivers/staging/.
 > 
-> Changes from V4:
-> 	* Open code the aops lock rather than add it to the xfs_ilock()
-> 	  subsystem (Darrick's comments were obsoleted by this change)
-> 	* Fix lkp build suggestions and bugs
+> Compared to the sdfat driver shipped on the phones the following changes
+> have been made:
 > 
-> Changes from V3:
-> 	* Remove global locking...  :-D
-> 	* put back per inode locking and remove pre-mature optimizations
-> 	* Fix issues with Directories having IS_DAX() set
-> 	* Fix kernel crash issues reported by Jeff
-> 	* Add some clean up patches
-> 	* Consolidate diflags to iflags functions
-> 	* Update/add documentation
-> 	* Reorder/rename patches quite a bit
+>  - the support for vfat has been removed as that is already supported
+>    by fs/fat
+>  - driver has been renamed to exfat
+>  - the code has been refactored and clean up to fully integrate into
+>    the upstream Linux version and follow the Linux coding style
+>  - metadata operations like create, lookup and readdir have been further
+>    optimized
+>  - various major and minor bugs have been fixed
 > 
-> Changes from V2:
+> We plan to treat this version as the future upstream for the code base
+> once merged, and all new features and bug fixes will go upstream first.
 > 
-> 	* Move i_dax_sem to be a global percpu_rw_sem rather than per inode
-> 		Internal discussions with Dan determined this would be easier,
-> 		just as performant, and slightly less overhead that having it
-> 		in the SB as suggested by Jan
-> 	* Fix locking order in comments and throughout code
-> 	* Change "mode" to "state" throughout commits
-> 	* Add CONFIG_FS_DAX wrapper to disable inode_[un]lock_state() when not
-> 		configured
-> 	* Add static branch for which is activated by a device which supports
-> 		DAX in XFS
-> 	* Change "lock/unlock" to up/down read/write as appropriate
-> 		Previous names were over simplified
-> 	* Update comments/documentation
+> v14:
+>  - update file system parameter handling. 
 > 
-> 	* Remove the xfs specific lock to the vfs (global) layer.
-> 	* Fix i_dax_sem locking order and comments
+> v13:
+>  - rcu-delay unloading nls, freeing upcase table and sbi.
+>  - Switch to ->free_inode().
+>  - Push rcu_barrier() from deactivate_locked_super() to filesystems.
+>  - Remove unused variables in exfat_sb_info structure.
 > 
-> 	* Move 'i_mapped' count from struct inode to struct address_space and
-> 		rename it to mmap_count
-> 	* Add inode_has_mappings() call
+> v12:
+>  - Merge the #12 patch into the #11 patch.
+>  - Remove an incorrect comment about time_offset mount option.
 > 
-> 	* Fix build issues
-> 	* Clean up syntax spacing and minor issues
-> 	* Update man page text for STATX_ATTR_DAX
-> 	* Add reviewed-by's
-> 	* Rebase to 5.6
+> v11:
+>  - Use current_time instead of ktime_get_real_ts64.
+>  - Add i_crtime in exfat inode.
+>  - Drop the clamping min/max timestamp.
+>  - Merge exfat_init_file_entry into exfat_init_dir_entry.
+>  - Initialize the msec fields in exfat_init_dir_entry.
+>  - Change timestamps written to disk always get stored in UTC instead of
+>    active timezone.
+>  - Update EXFAT_DEFAULT_IOCHARSET description in Kconfig.
+>  - exfat_get/set_entry_time() take a time_ms argument.
 > 
-> 	Rename patch:
-> 		from: fs/xfs: Add lock/unlock state to xfs
-> 		to: fs/xfs: Add write DAX lock to xfs layer
-> 	Add patch:
-> 		fs/xfs: Clarify lockdep dependency for xfs_isilocked()
-> 	Drop patch:
-> 		fs/xfs: Fix truncate up
+> v10:
+>  - Make PBR structures as packed structure.
+>  - Fix build error on 32 bit system.
+>  - Change L suffix of UNIX_SECS_2108 macro with LL suffix to work
+>    on both 32/64bit system.
+>  - Rework exfat time handling.
+>  - Don't warp exfat specification URLs.
+>  - Add _FS suffix to config name.
+>  - Remove case_sensitive mount option.
+>  - iocharset=utf8 mount option work as utf8 option.
+>  - Rename the misleading nls names to corresponding ones.
+>  - Fix wrong header guard name of exfat_fs.h.
+>  - Remove the unneeded braces of macros in exfat_fs.h.
+>  - Move the ondisk values to exfat_raw.h
+>  - Put the operators at the previous line in exfat_cluster_to_sector().
+>  - Braces of EXFAT_DELETE macro would outside the ~.
+>  - Directly use exfat dentry field name.
+>  - Add EXFAT_CLUSTERS_UNTRACKED macro.
+>  - Remove both sets of inner braces in exfat_set_vol_flags().
+>  - Replace is_reserved_cluster() with an explicit check
+>    for EXFAT_EOF_CLUSTER.
+>  - Initialize superblock s_time_gran/max/min.
+>  - Clean-up exfat_bmap and exfat_get_block().
+>  - Fix wrong boundlen to avoid potential buffer overflow
+>    in exfat_convert_char_to_ucs2().
+>  - Process length value as 1 when conversion is failed.
+>  - Replace union exfat_timezone with masking the valid bit.
+>  - Change exfat_cmp_uniname() with exfat_uniname_ncmp().
+>  - Remove struct exfat_timestamp.
+>  - Add atime update support.
+>  - Add time_offset mount option.
+>  - Remove unneeded CLUSTER_32 macro.
+>  - Process utf16 surrogate pair as one character.
+>  - Rename MUST_ZERO_LEN to PBR64_RESERVED_LEN.
+>  - Simplify is_exfat function by just using memchr_inv().
+>  - Remove __exfat_init_name_hash.
+>  - Remove exfat_striptail_len.
+>  - Split dentry ops for the utf8 vs non-utf8 cases.
 > 
+> v9:
+>  - Add support time zone.
+>  - Fix data past EOF resulting from fsx testsuite.
+>  - Remove obsolete comments in __exfat_resolve_path().
+>  - Remove unused file attributes macros.
+>  - Remove unneeded #if BITS_PER_LONG.
 > 
-> At LSF/MM'19 [1] [2] we discussed applications that overestimate memory
-> consumption due to their inability to detect whether the kernel will
-> instantiate page cache for a file, and cases where a global dax enable via a
-> mount option is too coarse.
+> v8:
+>  - Rearrange the function grouping in exfat_fs.h
+>    (exfat_count_dir_entries, exfat_get_dentry, exfat_get_dentry_set,
+>     exfat_find_location).
+>  - Mark exfat_extract_uni_name(), exfat_get_uniname_from_ext_entry() and
+>    exfat_mirror_bh() as static.
 > 
-> The following patch series enables selecting the use of DAX on individual files
-> and/or directories on xfs, and lays some groundwork to do so in ext4.  In this
-> scheme the dax mount option can be omitted to allow the per-file property to
-> take effect.
+> v7:
+>  - Add the helpers macros for bitmap and fat entry to improve readability.
+>  - Rename exfat_test_bitmap to exfat_find_free_bitmap.
+>  - Merge exfat_get_num_entries into exfat_calc_num_entries.
+>  - Add EXFAT_DATA_CLUSTERS and EXFAT_RESERVED_CLUSTERS macro.
+>  - Add the macros for EXFAT BIOS block(JUMP_BOOT_LEN, OEM_NAME_LEN,
+>    MUST_BE_ZERO_LEN).
+>  - Add the macros for EXFAT entry type (IS_EXFAT_CRITICAL_PRI,
+>    IS_EXFAT_BENIGN_PRI, IS_EXFAT_CRITICAL_SEC).
+>  - Add EXFAT_FILE_NAME_LEN macro.
+>  - Change the data type of is_dir with bool in __exfat_write_inode().
+>  - Change the data type of sync with bool in exfat_set_vol_flags().
+>  - Merge __exfat_set_vol_flags into exfat_set_vol_flags.
+>  - Fix wrong statfs->f_namelen.
 > 
-> The insight at LSF/MM was to separate the per-mount or per-file "physical"
-> capability switch from an "effective" attribute for the file.
+> v6:
+>  - Fix always false comparison due to limited range of allow_utime's data
+>    type.
+>  - Move bh into loop in exfat_find_dir_entry().
+>  - Move entry_uniname and unichar variables into
+>    an if "entry_type == TYPE_EXTEND" branch.
 > 
-> At LSF/MM we discussed the difficulties of switching the DAX state of a file
-> with active mappings / page cache.  It was thought the races could be avoided
-> by limiting DAX state flips to 0-length files.
+> v5:
+>  - Remove a blank line between the message and the error code in
+>    exfat_load_upcase_table.
+>  - Move brelse to the end of the while loop and rename release_bh label
+>    to free_table in exfat_load_upcase_table.
+>  - Move an error code assignment after a failed function call.
+>  - Rename labels and directly return instead of goto.
+>  - Improve the exception handling in exfat_get_dentry_set().
+>  - Remove ->d_time leftover.
+>  - fix boolreturn.cocci warnings.
 > 
-> However, this turns out to not be true.[3] This is because address space
-> operations (a_ops) may be in use at any time the inode is referenced and users
-> have expressed a desire to be able to change the DAX state on a file with data
-> in it.  For those reasons this patch set allows changing the DAX state flag on
-> a file as long as it is not current mapped.
+> v4:
+>  - Declare ALLOC_FAT_CHAIN and ALLOC_NO_FAT_CHAIN macros.
+>  - Rename labels with proper name.
+>  - Remove blank lines.
+>  - Remove pointer check for bh.
+>  - Move ep into loop in exfat_load_bitmap().
+>  - Replace READ/WRITE_ONCE() with test_and_clear_bit() and set_bit().
+>  - Change exfat_allow_set_time return type with bool.
 > 
-> Details of when and how DAX state can be changed on a file is included in a
-> documentation patch.
+> v3:
+>  - fix wrong sbi->s_dirt set.
 > 
-> It should be noted that the physical DAX flag inheritance is not shown in this
-> patch set as it was maintained from previous work on XFS.  The physical DAX
-> flag and it's inheritance will need to be added to other file systems for user
-> control. 
+> v2:
+>  - Check the bitmap count up to the total clusters.
+>  - Rename goto labels in several places.
+>  - Change time mode type with enumeration.
+>  - Directly return error instead of goto at first error check.
+>  - Combine seq_printf calls into a single one.
 > 
-> As submitted this works on real hardware testing.
+> Namjae Jeon (13):
+>   exfat: add in-memory and on-disk structures and headers
+>   exfat: add super block operations
+>   exfat: add inode operations
+>   exfat: add directory operations
+>   exfat: add file operations
+>   exfat: add fat entry operations
+>   exfat: add bitmap operations
+>   exfat: add exfat cache
+>   exfat: add misc operations
+>   exfat: add nls operations
+>   exfat: add Kconfig and Makefile
+>   MAINTAINERS: add exfat filesystem
+>   staging: exfat: make staging/exfat and fs/exfat mutually exclusive
 > 
+> Valdis Kletnieks (1):
+>   exfat: update file system parameter handling
 > 
-> [1] https://lwn.net/Articles/787973/
-> [2] https://lwn.net/Articles/787233/
-> [3] https://lkml.org/lkml/2019/10/20/96
-> [4] https://patchwork.kernel.org/patch/11310511/
-> 
-> 
-> To: linux-kernel@vger.kernel.org
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: "Theodore Y. Ts'o" <tytso@mit.edu>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: linux-xfs@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> 
-> 
-> Ira Weiny (12):
->   fs/xfs: Remove unnecessary initialization of i_rwsem
->   fs: Remove unneeded IS_DAX() check
->   fs/stat: Define DAX statx attribute
->   fs/xfs: Isolate the physical DAX flag from enabled
->   fs/xfs: Create function xfs_inode_enable_dax()
->   fs: Add locking for a dynamic address space operations state
->   fs: Prevent DAX state change if file is mmap'ed
->   fs/xfs: Hold off aops users while changing DAX state
->   fs/xfs: Clean up locking in dax invalidate
->   fs/xfs: Allow toggle of effective DAX flag
->   fs/xfs: Remove xfs_diflags_to_linux()
->   Documentation/dax: Update Usage section
-> 
->  Documentation/filesystems/dax.txt | 84 +++++++++++++++++++++++++-
->  Documentation/filesystems/vfs.rst | 16 +++++
->  fs/attr.c                         |  1 +
->  fs/inode.c                        | 16 ++++-
->  fs/iomap/buffered-io.c            |  1 +
->  fs/open.c                         |  4 ++
->  fs/stat.c                         |  5 ++
->  fs/xfs/xfs_icache.c               |  5 +-
->  fs/xfs/xfs_inode.h                |  2 +
->  fs/xfs/xfs_ioctl.c                | 98 +++++++++++++++----------------
->  fs/xfs/xfs_iops.c                 | 69 +++++++++++++++-------
->  include/linux/fs.h                | 73 ++++++++++++++++++++++-
->  include/uapi/linux/stat.h         |  1 +
->  mm/fadvise.c                      |  7 ++-
->  mm/filemap.c                      |  4 ++
->  mm/huge_memory.c                  |  1 +
->  mm/khugepaged.c                   |  2 +
->  mm/mmap.c                         | 19 +++++-
->  mm/util.c                         |  9 ++-
->  19 files changed, 328 insertions(+), 89 deletions(-)
+>  MAINTAINERS                   |    7 +
+>  drivers/staging/exfat/Kconfig |    2 +-
+>  fs/Kconfig                    |    3 +-
+>  fs/Makefile                   |    1 +
+>  fs/exfat/Kconfig              |   21 +
+>  fs/exfat/Makefile             |    8 +
+>  fs/exfat/balloc.c             |  280 +++++++
+>  fs/exfat/cache.c              |  325 ++++++++
+>  fs/exfat/dir.c                | 1238 ++++++++++++++++++++++++++++
+>  fs/exfat/exfat_fs.h           |  519 ++++++++++++
+>  fs/exfat/exfat_raw.h          |  184 +++++
+>  fs/exfat/fatent.c             |  463 +++++++++++
+>  fs/exfat/file.c               |  360 ++++++++
+>  fs/exfat/inode.c              |  671 +++++++++++++++
+>  fs/exfat/misc.c               |  163 ++++
+>  fs/exfat/namei.c              | 1448 +++++++++++++++++++++++++++++++++
+>  fs/exfat/nls.c                |  831 +++++++++++++++++++
+>  fs/exfat/super.c              |  722 ++++++++++++++++
+>  18 files changed, 7244 insertions(+), 2 deletions(-)
+>  create mode 100644 fs/exfat/Kconfig
+>  create mode 100644 fs/exfat/Makefile
+>  create mode 100644 fs/exfat/balloc.c
+>  create mode 100644 fs/exfat/cache.c
+>  create mode 100644 fs/exfat/dir.c
+>  create mode 100644 fs/exfat/exfat_fs.h
+>  create mode 100644 fs/exfat/exfat_raw.h
+>  create mode 100644 fs/exfat/fatent.c
+>  create mode 100644 fs/exfat/file.c
+>  create mode 100644 fs/exfat/inode.c
+>  create mode 100644 fs/exfat/misc.c
+>  create mode 100644 fs/exfat/namei.c
+>  create mode 100644 fs/exfat/nls.c
+>  create mode 100644 fs/exfat/super.c
 > 
 > -- 
-> 2.21.0
+> 2.17.1
 ---end quoted text---
