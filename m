@@ -2,35 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D18179E22
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 04:11:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DC22179FD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 07:14:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725861AbgCEDL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 22:11:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51052 "EHLO mail.kernel.org"
+        id S1725866AbgCEGOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 01:14:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbgCEDL0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 22:11:26 -0500
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1725818AbgCEGOi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 01:14:38 -0500
+Received: from coco.lan (ip5f5ad4e9.dynamic.kabel-deutschland.de [95.90.212.233])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF24520866;
-        Thu,  5 Mar 2020 03:11:24 +0000 (UTC)
-Date:   Wed, 4 Mar 2020 22:11:23 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Xi Wang <xii@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Paul Turner <pjt@google.com>
-Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
-Message-ID: <20200304221123.7cef48d7@oasis.local.home>
-In-Reply-To: <20200304213941.112303-1-xii@google.com>
-References: <20200304213941.112303-1-xii@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18AB82073D;
+        Thu,  5 Mar 2020 06:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583388877;
+        bh=+FpE/LMdtG5BhsGwvEKqTJMLpXq5lLNK2BRtoZJXypY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HXXu8yPyVZYJa0yyyg+lJOIoxLTTughoUgC4k7QnWRZBwSzNMw1DS7kTqKqnZe6hv
+         WxxD5eV6NZpJk9ckOzWL6vCUwIwkf31t9il/hx8YDxhpWEo4VVqG9x1PPqD996SJZl
+         vbJd7CIlOn6GESTas7M/VBoZAnU0RZKsW/ouPjpk=
+Date:   Thu, 5 Mar 2020 07:14:31 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: adjust to filesystem doc ReST conversion
+Message-ID: <20200305071431.66362e3c@coco.lan>
+In-Reply-To: <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
+References: <20200304072950.10532-1-lukas.bulwahn@gmail.com>
+        <20200304131035.731a3947@lwn.net>
+        <20200304212846.0c79c6da@coco.lan>
+        <ed040dd417d578e1ab4491d116c6ac1431142385.camel@perches.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -39,75 +46,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed,  4 Mar 2020 13:39:41 -0800
-Xi Wang <xii@google.com> wrote:
+Em Wed, 04 Mar 2020 13:24:48 -0800
+Joe Perches <joe@perches.com> escreveu:
 
-> The main purpose of kernel watchdog is to test whether scheduler can
-> still schedule tasks on a cpu. In order to reduce latency from
-> periodically invoking watchdog reset in thread context, we can simply
-> touch watchdog from pick_next_task in scheduler. Compared to actually
-> resetting watchdog from cpu stop / migration threads, we lose coverage
-> on: a migration thread actually get picked and we actually context
-> switch to the migration thread. Both steps are heavily protected by
-> kernel locks and unlikely to silently fail. Thus the change would
-> provide the same level of protection with less overhead.
+> On Wed, 2020-03-04 at 21:28 +0100, Mauro Carvalho Chehab wrote:
+> > Em Wed, 4 Mar 2020 13:10:35 -0700
+> > Jonathan Corbet <corbet@lwn.net> escreveu:
+> >   
+> > > On Wed,  4 Mar 2020 08:29:50 +0100
+> > > Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+> > >   
+> > > > Mauro's patch series <cover.1581955849.git.mchehab+huawei@kernel.org>
+> > > > ("[PATCH 00/44] Manually convert filesystem FS documents to ReST")
+> > > > converts many Documentation/filesystems/ files to ReST.
+> > > > 
+> > > > Since then, ./scripts/get_maintainer.pl --self-test complains with 27
+> > > > warnings on Documentation/filesystems/ of this kind:
+> > > > 
+> > > >   warning: no file matches F: Documentation/filesystems/...
+> > > > 
+> > > > Adjust MAINTAINERS entries to all files converted from .txt to .rst in the
+> > > > patch series and address the 27 warnings.
+> > > > 
+> > > > Link: https://lore.kernel.org/linux-erofs/cover.1581955849.git.mchehab+huawei@kernel.org
+> > > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> > > > ---
+> > > > Mauro, please ack.
+> > > > Jonathan, pick pick this patch for doc-next.    
+> > > 
+> > > Sigh, I need to work a MAINTAINERS check into my workflow...
+> > > 
+> > > Thanks for fixing these, but ... what tree did you generate the patch
+> > > against?  I doesn't come close to applying to docs-next.  
+> > 
+> > I'm starting to suspect that maybe the best workflow would be to just 
+> > apply the patches at docs-next keeping links broken, and then run
+> > ./scripts/documentation-file-ref-check --fix by the end of a merge
+> > window, addressing such breakages.  
+> 
+> I'm not sure at all that that script will always do the
+> right thing with MAINTAINERS,
 
-Have any measurements showing the drop in overhead?
+As it is based on some heuristics, whomever runs it should
+double-check the results.
+
+> but it seems to work OK
+> except for some renames where a .txt file was directly
+> renamed to a .rst file in the same directory where there
+> was a similarly named file in a different directory.
+
+Yeah, the script could be smarter to catch this case.
+
+> Likely the direct rename of a filename extension from
+> .txt to .rst should always be applied by the script.
+
+Yeah, makes sense to me. Yet, I got one exception for this:
+I found somewhere a case were there are both foo.txt and foo.rst,
+both with different contents.
+
+The solution I took were to rename foo.txt to bar.txt,
+adjusting the cross-references, then convert bar.txt to
+bar.rst.
+
+In any case, we're close to finish the conversion. I have
+already patches that convert everything to .rst (with a couple of
+exceptions), and I took the care of doing the cross-reference fixes 
+there. I'm still adjusting some things on this tree. My current plans
+are to have them all applied up to Kernel 5.8, and then start looking
+on better organizing the docs (I'm already doing that for media docs).
+
+Once all of those patches get merged, .txt -> .rst will
+be an exception.
 
 > 
-> The new way vs the old way to touch the watchdogs is configurable
-> from:
+> Anyway, for -next as of today:
 > 
-> /proc/sys/kernel/watchdog_touch_in_thread_interval
+> $ git diff --shortstat
+>  64 files changed, 116 insertions(+), 116 deletions(-)
 > 
-> The value means:
-> 0: Always touch watchdog from pick_next_task
-> 1: Always touch watchdog from migration thread
-> N (N>0): Touch watchdog from migration thread once in every N
->          invocations, and touch watchdog from pick_next_task for
->          other invocations.
+> > There are usually lots of churn outside the merge window.
+> > 
+> > Another alternative would be to split the MAINTAINERS file on a
+> > per-subsystem basis. If I remember well, someone proposed this once at
+> > LKML. I vaguely remember that there were even a patch (or RFC)
+> > adding support for such thing for get_maintainers.pl.  
 > 
-> Suggested-by: Paul Turner <pjt@google.com>
-> Signed-off-by: Xi Wang <xii@google.com>
-> ---
->  kernel/sched/core.c | 36 ++++++++++++++++++++++++++++++++++--
->  kernel/sysctl.c     | 11 ++++++++++-
->  kernel/watchdog.c   | 39 ++++++++++++++++++++++++++++++++++-----
->  3 files changed, 78 insertions(+), 8 deletions(-)
+> Yeah.  get_maintainer.pl does work if the MAINTAINERS
+> file is split up a few different ways.
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 1a9983da4408..9d8e00760d1c 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3898,6 +3898,27 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
->  	schedstat_inc(this_rq()->sched_count);
->  }
->  
-> +#ifdef CONFIG_SOFTLOCKUP_DETECTOR
-> +
-> +DEFINE_PER_CPU(bool, sched_should_touch_watchdog);
-> +
-> +void touch_watchdog_from_sched(void);
-> +
-> +/* Helper called by watchdog code */
-> +void resched_for_watchdog(void)
-> +{
-> +	unsigned long flags;
-> +	struct rq *rq = this_rq();
-> +
-> +	this_cpu_write(sched_should_touch_watchdog, true);
+> There was also a tool to do the MAINTAINERS split.
+> https://lore.kernel.org/patchwork/patch/817857/
+> 
+> I doubt that would matter at all given today's tools and
+> the general mechanisms of maintainers renaming files and
+> not running checkpatch in the first place.
 
-Perhaps we should have a preempt_disable, otherwise it is possible
-to get preempted here.
+Yeah, it may not produce any concrete results on some parts.
+It may help to reduce the conflicts there, though. Also, I guess
+some maintainers will take more care, if they start to have
+their own */MAINTAINERS files.
 
--- Steve
-
-> +	raw_spin_lock_irqsave(&rq->lock, flags);
-> +	/* Trigger resched for code in pick_next_task to touch watchdog */
-> +	resched_curr(rq);
-> +	raw_spin_unlock_irqrestore(&rq->lock, flags);
-> +}
-> +
-> +#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
-> +
-
+Thanks,
+Mauro
