@@ -2,127 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A669617B1E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 23:54:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A027517B1F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 23:56:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbgCEWyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 17:54:09 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33827 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgCEWyJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 17:54:09 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z15so158286wrl.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2020 14:54:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KiDTbwvMn8WO9wINMLyHXgdgqSVs97pcrSC3Kr6hZio=;
-        b=b1JAp8/IJOWv1m+6Ozb9cLVBTaZ5wHLqQQgeQusaZVS6W3rnbnp/lPkH0qGznO4pyL
-         p4sMiQhR8IRLXYbFM3loBE7piAUHqV7dn0SuAPILrm0A9e/no2Q00SuI3L47iXeWImk5
-         yWWwW7qGg05rrmK182hAktdzxTMCU7+pwq5zY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KiDTbwvMn8WO9wINMLyHXgdgqSVs97pcrSC3Kr6hZio=;
-        b=aCEBKM91OGBYOsY4AooE+DP/hQVVplLvEXi8HbP27K+QJ8hUzxqzHmv+IzF7I9lyyG
-         ZLRlLvbTANeuMASZSHr/F8oKCS3tAmkJGCQF2OmTqQne1hpDqr++C+elgTSDRjgcefzB
-         z4YF0Ia3liR6JHnHCDRgGR8M++rjRb1VgTHiWfzWiGc5DbLOYevxUAQCH9bswqTpJcYE
-         cpJvTlS1j3ff8MNu5Qg+bRJ2Oonz7rBFfctIga3/wSqK1NrPcwUKuM0ho6yzXcLDKQaY
-         vQkpaRi8+Fedt9fKYwoOxEG6crUj5CP7qxTOZKf3dcbXThzK3bs05GEiEfwTDdcjDdTK
-         uJDQ==
-X-Gm-Message-State: ANhLgQ2fqqfnWY//zmKhMEC01FzbW8Bha4Q7TMyCIu5VyAzTdlkJuaug
-        3kt4vg3Q7PNicx36v1j7KZo1B2ix6TirYQLlO2wPJQ==
-X-Google-Smtp-Source: ADFU+vuGBZvhgCiZerEs9r/+vkeGo1ctGGm1GxI5fgLBC8zGqFJJ+m4kRso/QZZ/pDKzt7VSXofXra2cS2bkJaijp9c=
-X-Received: by 2002:adf:fc12:: with SMTP id i18mr202355wrr.354.1583448845752;
- Thu, 05 Mar 2020 14:54:05 -0800 (PST)
+        id S1726702AbgCEW4H convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 5 Mar 2020 17:56:07 -0500
+Received: from mail-vi1eur05olkn2104.outbound.protection.outlook.com ([40.92.90.104]:45153
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726128AbgCEW4H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 17:56:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U6A4qZbNCfGWsXeIvdr6kqJ/amkE8yIxfPp3e2pQ9jrWrDXGD5SLIa9j0eh4tvKHLu8YZb+elX5+wPMD5IsFZuky3cVz0ZZfgh0THuB5S/uIH+HVcVvfzzRrav232g1fI8F7H5EgSXyjZ7v0/Ib7eSYFCrl3G82Uezl661X42JrCF9o0LS3f2E8+2xoGsltT9SnQIHGPAmKLaG9O4caS2bskoBQ+a1adORZpDIkK2Olmeb1Td2PqgZSsCJC8yiy3fQaBCPjgjuhyKK0Canhqw8gF2ZrD+oqavYJpm1BBRZUgqsfUi6c+6cZ/qs1gW+Om7ojr6FZA5yahbShqvC2ENQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KDdC9hvKRliCZOl6sjx6IJBf9FDU4elCX2xh61mM2Vk=;
+ b=L459/foOwKYign+QhAvjUFqlnJ8D6ng4ORV7GqRO3T3Cy2vNwQzs14fZeVl6CZ868B3NGhiTNxsIBfCnJVO2mfCojlue7FMN2gvCUVSg9avuFzDb3GRGFQwn2ITJMa/R30AZLPp/OMMBMsvOzj276OX3tmBTXn5meqJMK01I09FRVgMZMi3g341etIn5jghAEbbFpe9IxidDELm3lXjrZVCnjliNVlmiNoXKEmUyFykTVNpSu+MmN48GS0nxzp+ICH+vGThai8LOyb+LfZZ1BAE1KCfriAe/87UupRyTh3HskvSJ8P1Z2oiYwF0dQ3b56ewzq/X2/xhOi2Bua4iR+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from AM6EUR05FT004.eop-eur05.prod.protection.outlook.com
+ (2a01:111:e400:fc11::39) by
+ AM6EUR05HT175.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc11::267)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Thu, 5 Mar
+ 2020 22:56:01 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.233.240.53) by
+ AM6EUR05FT004.mail.protection.outlook.com (10.233.240.227) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Thu, 5 Mar 2020 22:56:01 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Thu, 5 Mar 2020
+ 22:56:01 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR05CA0063.eurprd05.prod.outlook.com (2603:10a6:208:be::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Thu, 5 Mar 2020 22:56:00 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
+Thread-Topic: [PATCH 1/2] exec: Properly mark the point of no return
+Thread-Index: AQHV8zOIDtdt4OHpy0WII6Z+9AZegqg6nBAA
+Date:   Thu, 5 Mar 2020 22:56:01 +0000
+Message-ID: <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR05CA0063.eurprd05.prod.outlook.com
+ (2603:10a6:208:be::40) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:272380709DEB80306E9009F61E2997677429D2C3BDF0FBC3F0F15DDDC349B10F;UpperCasedChecksum:21F0A5716B0852942E038A9075DF8A415A4691F0A163A0DD201B056A0DF548A6;SizeAsReceived:9890;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [izdHMbh3bnDYSfTpdS4ROrLapHN4x4DX]
+x-microsoft-original-message-id: <d4003229-394f-e962-109c-875fbdd1198e@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 11b256b2-15fb-4537-cef8-08d7c158604b
+x-ms-traffictypediagnostic: AM6EUR05HT175:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 0hjSR8sFoP5pZfY+2ji5Jjh2SJ5FnTvekp7+oWOwi4CDGhi8CryMEW/7/hNAwR6I85x1Xj2/KfPJb/moNfZYh4vzurGzhyYqSfE2rTb1IYqqUSRYIIujq7CiTvJavuJRvEgMn1O91dXTDtuVUWSw4VZb+0etlV+bZwWQR+V5UxVN2SOPH/gQFX/RGVyw3p5l
+x-ms-exchange-antispam-messagedata: 3ENPk+OnLtZ3ZFws88q3ivvo8YLOSnhbyGhaUDLajUerqrTkxEHXStoKK9P3fZ+W7UaHkq/2qrGZfxF9FqXJ+0bHEF/9RLX/0xYz/cO/KHe31mtPREQ29BoL6HkY4g0GyjBqrrUzxB1CB8DVN71OxQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <0B2ECCD68E9FD54C97C2891C56840623@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20200305193511.28621-1-ignat@cloudflare.com> <1583442550.3927.47.camel@HansenPartnership.com>
- <20200305222117.GA1291132@rani.riverdale.lan>
-In-Reply-To: <20200305222117.GA1291132@rani.riverdale.lan>
-From:   Ignat Korchagin <ignat@cloudflare.com>
-Date:   Thu, 5 Mar 2020 22:53:54 +0000
-Message-ID: <CALrw=nH3pOmjUqN44MkBPcBCXU4VrgT36Bs0R66aSdLPg08XQg@mail.gmail.com>
-Subject: Re: [PATCH] mnt: add support for non-rootfs initramfs
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11b256b2-15fb-4537-cef8-08d7c158604b
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2020 22:56:01.7235
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6EUR05HT175
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 10:21 PM Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> On Thu, Mar 05, 2020 at 01:09:10PM -0800, James Bottomley wrote:
-> > On Thu, 2020-03-05 at 19:35 +0000, Ignat Korchagin wrote:
-> > > The main need for this is to support container runtimes on stateless
-> > > Linux system (pivot_root system call from initramfs).
-> > >
-> > > Normally, the task of initramfs is to mount and switch to a "real"
-> > > root filesystem. However, on stateless systems (booting over the
-> > > network) it is just convenient to have your "real" filesystem as
-> > > initramfs from the start.
-> > >
-> > > This, however, breaks different container runtimes, because they
-> > > usually use pivot_root system call after creating their mount
-> > > namespace. But pivot_root does not work from initramfs, because
-> > > initramfs runs form rootfs, which is the root of the mount tree and
-> > > can't be unmounted.
-> >
-> > Can you say more about why this is a problem?  We use pivot_root to
-> > pivot from the initramfs rootfs to the newly discovered and mounted
-> > real root ... the same mechanism should work for a container (mount
-> > namespace) running from initramfs ... why doesn't it?
->
-> Not sure how it interacts with mount namespaces, but we don't use
-> pivot_root to go from rootfs to the real root. We use switch_root, which
-> moves the new root onto the old / using mount with MS_MOVE and then
-> chroot to it.
->
-> https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt
->
-> >
-> > The sequence usually looks like: create and enter a mount namespace,
-> > build a tmpfs for the container in some $root directory then do
-> >
-> >
-> >     cd $root
-> >     mkdir old-root
-> >     pivot_root . old-root
-> >     mount --
-> > make-rprivate /old-root
-> >     umount -l /old-root
-> >     rmdir /old-root
-> >
-> > Once that's done you're disconnected from the initramfs root.  The
-> > sequence is really no accident because it's what the initramfs would
-> > have done to pivot to the new root anyway (that's where container
-> > people got it from).
-> >
-> >
-> > James
-> >
+On 3/5/20 10:15 PM, Eric W. Biederman wrote:
+> 
+> Add a flag binfmt->unrecoverable to mark when execution has gotten to
+> the point where it is impossible to return to userspace with the
+> calling process unchanged.
+> 
+> While techinically this state starts as soon as de_thread starts
+> killing threads, the only return path at that point is if there is a
+> fatal signal pending.  I have choosen instead to set unrecoverable
+> when the killing stops, and there are possibilities of failures other
+> than fatal signals.  In particular it is possible for the allocation
+> of a new sighand structure to fail.
+> 
+> Setting unrecoverable at this point has the benefit that other actions
+> can be taken after the other threads are all dead, and the
+> unrecoverable flag can double as a flag that those actions have been
+> taken.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/exec.c               | 7 ++++---
+>  include/linux/binfmts.h | 7 ++++++-
+>  2 files changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index db17be51b112..c243f9660d46 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1061,7 +1061,7 @@ static int exec_mmap(struct mm_struct *mm)
+>   * disturbing other processes.  (Other processes might share the signal
+>   * table via the CLONE_SIGHAND option to clone().)
+>   */
+> -static int de_thread(struct task_struct *tsk)
+> +static int de_thread(struct linux_binprm *bprm, struct task_struct *tsk)
+>  {
+>  	struct signal_struct *sig = tsk->signal;
+>  	struct sighand_struct *oldsighand = tsk->sighand;
+> @@ -1182,6 +1182,7 @@ static int de_thread(struct task_struct *tsk)
+>  		release_task(leader);
+>  	}
+>  
+> +	bprm->unrecoverable = true;
+>  	sig->group_exit_task = NULL;
+>  	sig->notify_count = 0;
+>  
 
-Yes, to add to Arvind's point the above sequence will only work for
-"old style" initrd (block ramdisk with some filesystem image on top),
-but will not work for the "new style" initramfs (just a disguised
-tmpfs). The sequence will fail on "pivot_root" with EINVAL (see
-pivot_root(2)). In fact this patch conceptually tries to have the same
-behaviour as with "old style" initrd. As currently, if you use initrd:
-1. The kernel will create an empty "dummy" initramfs
-2. Create a ramdisk
-3. Unpack the FS image into the ramdisk
-4. Mount the the disk
-5. Do switch_root/move etc
+ah, sorry, 
+        if (thread_group_empty(tsk))
+                goto no_thread_group;
+will skip this:
 
-So we have initial mount tree as: rootfs->some_initrd_fs
-(and pivot_root works here and you get empty rootfs by default)
+        sig->group_exit_task = NULL;
+        sig->notify_count = 0;
 
-With this option we have similar in the end: rootfs->tmpfs
-and rootfs is empty, because the kernel never unpacked anything there.
+no_thread_group:
+        /* we have changed execution domain */
+        tsk->exit_signal = SIGCHLD;
+
+so I think the bprm->unrecoverable = true; should be here?
+
+
+Bernd.
+> @@ -1266,7 +1267,7 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	 * Make sure we have a private signal table and that
+>  	 * we are unassociated from the previous thread group.
+>  	 */
+> -	retval = de_thread(current);
+> +	retval = de_thread(bprm, current);
+>  	if (retval)
+>  		goto out;
+>  
+> @@ -1664,7 +1665,7 @@ int search_binary_handler(struct linux_binprm *bprm)
+>  
+>  		read_lock(&binfmt_lock);
+>  		put_binfmt(fmt);
+> -		if (retval < 0 && !bprm->mm) {
+> +		if (retval < 0 && bprm->unrecoverable) {
+>  			/* we got to flush_old_exec() and failed after it */
+>  			read_unlock(&binfmt_lock);
+>  			force_sigsegv(SIGSEGV);
+> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> index b40fc633f3be..12263115ce7a 100644
+> --- a/include/linux/binfmts.h
+> +++ b/include/linux/binfmts.h
+> @@ -44,7 +44,12 @@ struct linux_binprm {
+>  		 * exec has happened. Used to sanitize execution environment
+>  		 * and to set AT_SECURE auxv for glibc.
+>  		 */
+> -		secureexec:1;
+> +		secureexec:1,
+> +		/*
+> +		 * Set when changes have been made that prevent returning
+> +		 * to userspace.
+> +		 */
+> +		unrecoverable:1;
+>  #ifdef __alpha__
+>  	unsigned int taso:1;
+>  #endif
+> 
