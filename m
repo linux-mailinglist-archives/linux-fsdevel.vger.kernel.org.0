@@ -2,96 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A58A17AF36
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 20:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA5A17AF60
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 21:06:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbgCETyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 14:54:15 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33758 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgCETyP (ORCPT
+        id S1726191AbgCEUF7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 15:05:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55160 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbgCEUF7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 14:54:15 -0500
-Received: by mail-oi1-f193.google.com with SMTP id q81so122895oig.0;
-        Thu, 05 Mar 2020 11:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZqWlHzyhCikKFonKGJ0xmTAmithkM6Eizd/S+WaA0WU=;
-        b=ixCHyDItow1nSYhZ6w6LHPnqSFv2mlCCjNfKPn1J861HUMBgqH1tLJuonJWQSo/7ZR
-         MgPkgYi9rYzeqjxhCTu5yjXwhSWH9umr6QxK52m5BltUuaR2D6D6VOFtYnY9BsOlF6CJ
-         kwNr/BRIQL6zFwA6CcP7Qh+o5EflMWMRxK3UpsNba7U/GnBT3UO4mUNsPlcVYE+nfXb8
-         ikXqFfz7504DcINa4WNOtqiWs4TCiD+mxtUzpfjyLfLrLtqVHIeEzJ9VQbbw1DGdKlRz
-         HIqWZn6b+XacjUYvKPryHEDuUFzYJqkdL4/Tk4uODbXej19cR94tTqLb3E58TLr3x0l8
-         hhnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZqWlHzyhCikKFonKGJ0xmTAmithkM6Eizd/S+WaA0WU=;
-        b=Q+VXem1Lp/NyJ/h4jHV2UyE06qF9we6q3BVNwp8w/gBJJS2FB9zNM8CYF69Diu9+TG
-         21x2P4Dan1D6wh2ATskQDM74baG6GTqDakjCQV/IgJ0qkN5l8B7wLvL+Jwvvopg7uG8h
-         gycQgCOVPkWR1xTnV7ptdeKGNYfNQPU3u4MIHkLggMI3qB3Cm51bXxRk6SHysR9AFtRt
-         UwOaQaTZspCBrzCesX5E6gn94ZpEQ1RwgVhHJGFB9kimU9TxZQNdQrSgtTZiERX3UeN6
-         Q6bAX+G212OLioZlcmczF91ijSi++AxfugAaVqdt2m5GdtkK7C5r0ZRqbQUGi0eJ0NAz
-         qXqg==
-X-Gm-Message-State: ANhLgQ3DSLQZ2HkwAj/wKelB6G8UtGI4A95HN7Sz3mdMvEFt58mIDfni
-        DTd2KPPT0hesf4Z2YZWtO9RrH9bh9/VBF76Y7+g=
-X-Google-Smtp-Source: ADFU+vsFgMEhG5cWn4vZxf3o8RE62gjhlPqvGlsp6zUxbicUiaEpyE4+4xPyUpLOwe8dbk+NW/AFjlioIwk110UMLlY=
-X-Received: by 2002:aca:170c:: with SMTP id j12mr83643oii.50.1583438052868;
- Thu, 05 Mar 2020 11:54:12 -0800 (PST)
+        Thu, 5 Mar 2020 15:05:59 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3Dvk022598;
+        Thu, 5 Mar 2020 20:05:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=t8CAWsgw/ELAbr5QnCrpPBQ505nk1Vu1ytI4BAQPrjk=;
+ b=qw5KAu+5x/mirpb96LhLseOQBeoE1g3KqE56X2xHk0uyspvS/7d79kx9XbhpTUcU7uj3
+ dvVo/KBxCSR/2onyknlNQJSLw325k5akEGJ/QT2uC9/SkdupNuXCdQwRCpVEkizLrZF9
+ 6ewlsMmbqeNpMWBFXrIpQA3d1cjozQq6CFYv0+NVRD5HPArWkNpPxmURjVvgxOXZxEWN
+ e/H4O4ZZp9I/kabwHM/XtyLc2NPfxv63pFsl13+SjpeA5JUGyhoI/bGsWHfw9sWnMsQq
+ Ky358/r857GJoJ90QY0CwjiuGBf3vNOzjIiROeHrsuO/CxErp6Ce4w8po/6ZjBGator+ Yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2yghn3k7ck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 20:05:55 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 025K3BNE121033;
+        Thu, 5 Mar 2020 20:05:55 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2yg1h48kdp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 05 Mar 2020 20:05:54 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 025K5sBK007254;
+        Thu, 5 Mar 2020 20:05:54 GMT
+Received: from kili.mountain (/41.210.146.162)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 05 Mar 2020 12:05:53 -0800
+Date:   Thu, 5 Mar 2020 23:05:44 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: Fix error handling in
+ __io_compat_recvmsg_copy_hdr()
+Message-ID: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
 MIME-Version: 1.0
-References: <20200214154854.6746-1-sashal@kernel.org> <20200214154854.6746-542-sashal@kernel.org>
- <CANaxB-zjYecWpjMoX6dXY3B5HtVu8+G9npRnaX2FnTvp9XucTw@mail.gmail.com>
- <CAHk-=wjd6BKXEpU0MfEaHuOEK-StRToEcYuu6NpVfR0tR5d6xw@mail.gmail.com>
- <CAHk-=wgs8E4JYVJHaRV2hMn3dxUnM8i0Kn2mA1SjzJdsbB9tXw@mail.gmail.com>
- <CAHk-=wiaDvYHBt8oyZGOp2XwJW4wNXVAchqTFuVBvASTFx_KfA@mail.gmail.com>
- <20200218182041.GB24185@bombadil.infradead.org> <CAHk-=wi8Q8xtZt1iKcqSaV1demDnyixXT+GyDZi-Lk61K3+9rw@mail.gmail.com>
- <20200218223325.GA143300@gmail.com> <CAHk-=wgKHFB9-XggwOmBCJde3V35Mw9g+vGnt0JGjfGbSgtWhQ@mail.gmail.com>
- <CANaxB-xTTDcshttGnVMgDLm96CC8FYsQT4LpobvCWSQym2=8qA@mail.gmail.com> <CAHk-=wgpHbbOhYtxC1rrZ4xjm1GSfZk6_roKU4++3TQVFDMXiw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgpHbbOhYtxC1rrZ4xjm1GSfZk6_roKU4++3TQVFDMXiw@mail.gmail.com>
-From:   Andrei Vagin <avagin@gmail.com>
-Date:   Thu, 5 Mar 2020 11:54:01 -0800
-Message-ID: <CANaxB-y6_OF4GMKUC=GssEY7Q-sH8y23F3wP2XT31=izSUvHSw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.5 542/542] pipe: use exclusive waits when
- reading or writing
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2003050116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
+ definitions=main-2003050116
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 10:41 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, Mar 5, 2020 at 12:20 PM Andrei Vagin <avagin@gmail.com> wrote:
-> >
-> > After this change, one more criu test became flaky. This is due to one
-> > of corner cases, so I am not sure that we need to fix something in the
-> > kernel. I have fixed this issue in the test. I am not sure that this
-> > will affect any real applications.
->
-> It's an interesting test-case, but it's really not doing anything you
-> should rely on.
+We need to check if __get_compat_msghdr() fails and return immediately
+on error.  Also if compat_import_iovec() fails then we should return a
+negative error code, but the current behavior is to just return
+success.
 
-I'm agree with this.
+Fixes: ede6c476b57d ("io_uring: add IOSQE_BUFFER_SELECT support for IORING_OP_RECVMSG")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/io_uring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> But if CRIU itself depends on this behavior (rather than just a test),
-> then I guess we need to.
->
-> So is it just a test-case, or does CRIU itself depend on that "reads
-> get full buffers"? As mentioned, that really _is_ fundamentally broken
-> if there is any chance of signals..
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d7c42bd04c78..c1a59cde2d88 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3684,6 +3684,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 	msg_compat = (struct compat_msghdr __user *) sr->msg;
+ 	ret = __get_compat_msghdr(&io->msg.msg, msg_compat, &io->msg.uaddr,
+ 					&ptr, &len);
++	if (ret)
++		return ret;
+ 
+ 	uiov = compat_ptr(ptr);
+ 	if (req->flags & REQ_F_BUFFER_SELECT) {
+@@ -3703,8 +3705,8 @@ static int __io_compat_recvmsg_copy_hdr(struct io_kiocb *req,
+ 		ret = compat_import_iovec(READ, uiov, len, UIO_FASTIOV,
+ 						&io->msg.iov,
+ 						&io->msg.msg.msg_iter);
+-		if (ret > 0)
+-			ret = 0;
++		if (ret < 0)
++			return ret;
+ 	}
+ 
+ 	return 0;
+-- 
+2.11.0
 
-No, it doesn't. I'm agree that we can wait  an report from a real app.
-
-Thanks!
-Andrei
