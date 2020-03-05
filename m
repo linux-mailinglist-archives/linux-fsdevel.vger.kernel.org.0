@@ -2,90 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE33317A192
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 09:42:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE2F17A216
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 10:17:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgCEIma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 03:42:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbgCEIm3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 03:42:29 -0500
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BF482146E;
-        Thu,  5 Mar 2020 08:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583397749;
-        bh=K/56YT+etKnoKYjtDmkQrf9U3Pw0mVZKDfdV/kmF4ks=;
-        h=From:To:Cc:Subject:Date:From;
-        b=R37w+oJeIdHqMiqGjA3IcdEQaYStFgKRJ90nIWmmQIJ+tqio/I6Sjxb5GOyK6x59/
-         bZgSoVH/ljq8omzN71BE5Q/8QiGQwxl2qkU0Tx6SPVUHGClNHtsepqWO9Q5SHBFqwQ
-         JlrZ/avFlhIJeUfAFnny/KFFFrNFQf04GaSRuMFY=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fscrypt: don't evict dirty inodes after removing key
-Date:   Thu,  5 Mar 2020 00:41:38 -0800
-Message-Id: <20200305084138.653498-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        id S1726141AbgCEJQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 04:16:31 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:11935 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725816AbgCEJQb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 04:16:31 -0500
+X-UUID: 672c733cef6941dea7ba533c344ee0be-20200305
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=kpiqrfWIacgjKLiLWLGT9gO7LZYPAEBqZuMrrpG6/+0=;
+        b=e1uR1eXr/oH/WxQrsS/6G19c8yvMVUCDaMDEyGsSElteJVeSs1Mp+D+YloSO9vEIw9cEUPyGKw3h++cngUajTi7KYLgEahxNcAJTO/gIJj+o0aR1X9clAcCG7/qgisHx9vk6lSOQgg6Dtm5SMjoVA3YuK2N11SN1cY94xfgFxlI=;
+X-UUID: 672c733cef6941dea7ba533c344ee0be-20200305
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <walter-zh.wu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2088496652; Thu, 05 Mar 2020 17:16:24 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 5 Mar
+ 2020 17:15:40 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 5 Mar 2020 17:15:37 +0800
+Message-ID: <1583399782.17146.14.camel@mtksdccf07>
+Subject: Re: mmotm 2020-03-03-22-28 uploaded (warning: objtool:)
+From:   Walter Wu <walter-zh.wu@mediatek.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>, <akpm@linux-foundation.org>,
+        <broonie@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-next@vger.kernel.org>, <mhocko@suse.cz>,
+        <mm-commits@vger.kernel.org>, <sfr@canb.auug.org.au>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, <dvyukov@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Thu, 5 Mar 2020 17:16:22 +0800
+In-Reply-To: <20200305081842.GB2619@hirez.programming.kicks-ass.net>
+References: <20200304062843.9yA6NunM5%akpm@linux-foundation.org>
+         <cd1c6bd2-3db3-0058-f3b4-36b2221544a0@infradead.org>
+         <20200305081717.GT2596@hirez.programming.kicks-ass.net>
+         <20200305081842.GB2619@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
-
-After FS_IOC_REMOVE_ENCRYPTION_KEY removes a key, it syncs the
-filesystem and tries to get and put all inodes that were unlocked by the
-key so that unused inodes get evicted via fscrypt_drop_inode().
-Normally, the inodes are all clean due to the sync.
-
-However, after the filesystem is sync'ed, userspace can modify and close
-one of the files.  (Userspace is *supposed* to close the files before
-removing the key.  But it doesn't always happen, and the kernel can't
-assume it.)  This causes the inode to be dirtied and have i_count == 0.
-Then, fscrypt_drop_inode() failed to consider this case and indicated
-that the inode can be dropped, causing the write to be lost.
-
-On f2fs, other problems such as a filesystem freeze could occur due to
-the inode being freed while still on f2fs's dirty inode list.
-
-Fix this bug by making fscrypt_drop_inode() only drop clean inodes.
-
-I've written an xfstest which detects this bug on ext4, f2fs, and ubifs.
-
-Fixes: b1c0ec3599f4 ("fscrypt: add FS_IOC_REMOVE_ENCRYPTION_KEY ioctl")
-Cc: <stable@vger.kernel.org> # v5.4+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/crypto/keysetup.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-index 65cb09fa6ead..08c9f216a54d 100644
---- a/fs/crypto/keysetup.c
-+++ b/fs/crypto/keysetup.c
-@@ -538,6 +538,15 @@ int fscrypt_drop_inode(struct inode *inode)
- 		return 0;
- 	mk = ci->ci_master_key->payload.data[0];
- 
-+	/*
-+	 * With proper, non-racy use of FS_IOC_REMOVE_ENCRYPTION_KEY, all inodes
-+	 * protected by the key were cleaned by sync_filesystem().  But if
-+	 * userspace is still using the files, inodes can be dirtied between
-+	 * then and now.  We mustn't lose any writes, so skip dirty inodes here.
-+	 */
-+	if (inode->i_state & I_DIRTY_ALL)
-+		return 0;
-+
- 	/*
- 	 * Note: since we aren't holding ->mk_secret_sem, the result here can
- 	 * immediately become outdated.  But there's no correctness problem with
--- 
-2.25.1
+T24gVGh1LCAyMDIwLTAzLTA1IGF0IDA5OjE4ICswMTAwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToN
+Cj4gT24gVGh1LCBNYXIgMDUsIDIwMjAgYXQgMDk6MTc6MTdBTSArMDEwMCwgUGV0ZXIgWmlqbHN0
+cmEgd3JvdGU6DQo+ID4gT24gV2VkLCBNYXIgMDQsIDIwMjAgYXQgMDk6MzQ6NDlBTSAtMDgwMCwg
+UmFuZHkgRHVubGFwIHdyb3RlOg0KPiANCj4gPiA+IG1tL2thc2FuL2NvbW1vbi5vOiB3YXJuaW5n
+OiBvYmp0b29sOiBrYXNhbl9yZXBvcnQoKSsweDEzOiBjYWxsIHRvIHJlcG9ydF9lbmFibGVkKCkg
+d2l0aCBVQUNDRVNTIGVuYWJsZWQNCj4gPiANCj4gPiBJIHVzZWQgbmV4dC9tYXN0ZXIgaW5zdGVh
+ZCwgYW5kIGZvdW5kIHRoZSBiZWxvdyBicm9rZW4gY29tbWl0DQo+ID4gcmVzcG9uc2libGUgZm9y
+IHRoaXMuDQo+IA0KPiA+IEBAIC02MzQsMTIgKzYzNywyMCBAQCB2b2lkIGthc2FuX2ZyZWVfc2hh
+ZG93KGNvbnN0IHN0cnVjdCB2bV9zdHJ1Y3QgKnZtKQ0KPiA+ICAjZW5kaWYNCj4gPiAgDQo+ID4g
+IGV4dGVybiB2b2lkIF9fa2FzYW5fcmVwb3J0KHVuc2lnbmVkIGxvbmcgYWRkciwgc2l6ZV90IHNp
+emUsIGJvb2wgaXNfd3JpdGUsIHVuc2lnbmVkIGxvbmcgaXApOw0KPiA+ICtleHRlcm4gYm9vbCBy
+ZXBvcnRfZW5hYmxlZCh2b2lkKTsNCj4gPiAgDQo+ID4gLXZvaWQga2FzYW5fcmVwb3J0KHVuc2ln
+bmVkIGxvbmcgYWRkciwgc2l6ZV90IHNpemUsIGJvb2wgaXNfd3JpdGUsIHVuc2lnbmVkIGxvbmcg
+aXApDQo+ID4gK2Jvb2wga2FzYW5fcmVwb3J0KHVuc2lnbmVkIGxvbmcgYWRkciwgc2l6ZV90IHNp
+emUsIGJvb2wgaXNfd3JpdGUsIHVuc2lnbmVkIGxvbmcgaXApDQo+ID4gIHsNCj4gPiAtCXVuc2ln
+bmVkIGxvbmcgZmxhZ3MgPSB1c2VyX2FjY2Vzc19zYXZlKCk7DQo+ID4gKwl1bnNpZ25lZCBsb25n
+IGZsYWdzOw0KPiA+ICsNCj4gPiArCWlmIChsaWtlbHkoIXJlcG9ydF9lbmFibGVkKCkpKQ0KPiA+
+ICsJCXJldHVybiBmYWxzZTsNCj4gDQo+IFRoaXMgYWRkcyBhbiBleHBsaWNpdCBjYWxsIGJlZm9y
+ZSB0aGUgdXNlcl9hY2Nlc3Nfc2F2ZSgpIGFuZCB0aGF0IGlzIGENCj4gc3RyYWlnaHQgb24gYnVn
+Lg0KPiANCkhpIFBldGVyLA0KDQpUaGFua3MgZm9yIHlvdXIgaGVscC4gVW5mb3J0dW5hdGVseSwg
+SSBkb24ndCByZXByb2R1Y2UgaXQgaW4gb3VyDQplbnZpcm9ubWVudCwgc28gSSBoYXZlIGFza2Vk
+IFN0ZXBoZW4sIGlmIEkgY2FuIHJlcHJvZHVjZSBpdCwgdGhlbiB3ZQ0Kd2lsbCBzZW5kIG5ldyBw
+YXRjaC4NCg0KDQpUaGFua3MuDQoNCldhbHRlcg0KDQo+ID4gKw0KPiA+ICsJZmxhZ3MgPSB1c2Vy
+X2FjY2Vzc19zYXZlKCk7DQo+ID4gIAlfX2thc2FuX3JlcG9ydChhZGRyLCBzaXplLCBpc193cml0
+ZSwgaXApOw0KPiA+ICAJdXNlcl9hY2Nlc3NfcmVzdG9yZShmbGFncyk7DQo+ID4gKw0KPiA+ICsJ
+cmV0dXJuIHRydWU7DQo+ID4gIH0NCg0K
 
