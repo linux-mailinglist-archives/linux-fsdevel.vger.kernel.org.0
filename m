@@ -2,132 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E3A817AB22
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 18:04:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A88117ACB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 18:22:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgCEREN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 12:04:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35008 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbgCEREN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 12:04:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=vF3Qg1jYVPL0fMpAIJJ4hQLf8PLL9mugK11wImvRR4I=; b=FiF59DD7vx7aBlltd/4aw7x57/
-        GaZd9usctGv0IU3Gl089qW9i9VcxMvq97k5+zt7P+tTeB0UTg3pyvjtMTKVaa6HVDvI8GwzqU2S13
-        F1zzzkUHDo3n7j9zwXeZiJuSLU8RpMJCgIqqxUq3S5XUTuMz1SiMXsf6DAop0haWe7IgS42lp0V4D
-        1ZyjHXa2tZWiSiN2mTNPkmPsmRPBqyj7mPDQR0wUJpoKsUdozDTNoTGxj09l/y5T9j+Xy6TlsjhMQ
-        6NYn2Xy/k+vUzXzlyvbY7B46PWRy4tJqSUrerDFCyCe5DT6FUBa/8hJ0VyeJ2X5J+ni31FKBGWdCQ
-        mWI35ZAw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1j9tuq-0007DD-EB; Thu, 05 Mar 2020 17:04:08 +0000
-Subject: Re: mmotm 2020-03-03-22-28 uploaded (warning: objtool:)
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Walter Wu <walter-zh.wu@mediatek.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Josh Poimboeuf <jpoimboe@redhat.com>, dvyukov@google.com
-References: <20200304062843.9yA6NunM5%akpm@linux-foundation.org>
- <cd1c6bd2-3db3-0058-f3b4-36b2221544a0@infradead.org>
- <20200305081717.GT2596@hirez.programming.kicks-ass.net>
- <20200305081842.GB2619@hirez.programming.kicks-ass.net>
- <1583399782.17146.14.camel@mtksdccf07>
- <20200305095436.GV2596@hirez.programming.kicks-ass.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <eb96f240-63ba-c1b1-7696-07ace3ffe13b@infradead.org>
-Date:   Thu, 5 Mar 2020 09:04:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727549AbgCEROG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 12:14:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727540AbgCEROF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 12:14:05 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF9DD2187F;
+        Thu,  5 Mar 2020 17:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583428444;
+        bh=WM3B9THmEF55zk3OTZZderU0nlzCLh950wnLGPA8kgM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dsoiJEiDMVvzMKMFY2nJgrR4cG3HF9wNjzcOoz1e0N34wU6sMD1X9Igkk0f+ohy/l
+         BY0YEjF+vQVgCqFU7d+s2CvMk8zxMVk5Um2JfLyThvNTgiblZn51/JZnYBgEZDy1qw
+         CWaEtwfhTxDXDfSGlJcR7/XmPkKYyjAJ50BMxgw8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 40/67] io_uring: fix poll_list race for SETUP_IOPOLL|SETUP_SQPOLL
+Date:   Thu,  5 Mar 2020 12:12:41 -0500
+Message-Id: <20200305171309.29118-40-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200305171309.29118-1-sashal@kernel.org>
+References: <20200305171309.29118-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200305095436.GV2596@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/5/20 1:54 AM, Peter Zijlstra wrote:
-> On Thu, Mar 05, 2020 at 05:16:22PM +0800, Walter Wu wrote:
->> On Thu, 2020-03-05 at 09:18 +0100, Peter Zijlstra wrote:
->>> On Thu, Mar 05, 2020 at 09:17:17AM +0100, Peter Zijlstra wrote:
->>>> On Wed, Mar 04, 2020 at 09:34:49AM -0800, Randy Dunlap wrote:
->>>
->>>>> mm/kasan/common.o: warning: objtool: kasan_report()+0x13: call to report_enabled() with UACCESS enabled
->>>>
->>>> I used next/master instead, and found the below broken commit
->>>> responsible for this.
+From: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
 
-Yes, I see that same warning in linux-next of 20200305.
+[ Upstream commit bdcd3eab2a9ae0ac93f27275b6895dd95e5bf360 ]
 
->>>> @@ -634,12 +637,20 @@ void kasan_free_shadow(const struct vm_struct *vm)
->>>>  #endif
->>>>  
->>>>  extern void __kasan_report(unsigned long addr, size_t size, bool is_write, unsigned long ip);
->>>> +extern bool report_enabled(void);
->>>>  
->>>> -void kasan_report(unsigned long addr, size_t size, bool is_write, unsigned long ip)
->>>> +bool kasan_report(unsigned long addr, size_t size, bool is_write, unsigned long ip)
->>>>  {
->>>> -	unsigned long flags = user_access_save();
->>>> +	unsigned long flags;
->>>> +
->>>> +	if (likely(!report_enabled()))
->>>> +		return false;
->>>
->>> This adds an explicit call before the user_access_save() and that is a
->>> straight on bug.
->>>
->> Hi Peter,
->>
->> Thanks for your help. Unfortunately, I don't reproduce it in our
->> environment, so I have asked Stephen, if I can reproduce it, then we
->> will send new patch.
-> 
-> The patch is trivial; and all you need is an x86_64 (cross) compiler to
-> reproduce.
-> 
-> 
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index ad2dc0c9cc17..2906358e42f0 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -618,16 +618,17 @@ extern bool report_enabled(void);
->  
->  bool kasan_report(unsigned long addr, size_t size, bool is_write, unsigned long ip)
->  {
-> -	unsigned long flags;
-> +	unsigned long flags = user_access_save();
-> +	bool ret = false;
->  
-> -	if (likely(!report_enabled()))
-> -		return false;
-> +	if (likely(report_enabled())) {
-> +		__kasan_report(addr, size, is_write, ip);
-> +		ret = true;
-> +	}
->  
-> -	flags = user_access_save();
-> -	__kasan_report(addr, size, is_write, ip);
->  	user_access_restore(flags);
->  
-> -	return true;
-> +	return ret;
->  }
->  
->  #ifdef CONFIG_MEMORY_HOTPLUG
-> 
+After making ext4 support iopoll method:
+  let ext4_file_operations's iopoll method be iomap_dio_iopoll(),
+we found fio can easily hang in fio_ioring_getevents() with below fio
+job:
+    rm -f testfile; sync;
+    sudo fio -name=fiotest -filename=testfile -iodepth=128 -thread
+-rw=write -ioengine=io_uring  -hipri=1 -sqthread_poll=1 -direct=1
+-bs=4k -size=10G -numjobs=8 -runtime=2000 -group_reporting
+with IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL enabled.
 
-and that fixes the warning.  Thanks.
+There are two issues that results in this hang, one reason is that
+when IORING_SETUP_SQPOLL and IORING_SETUP_IOPOLL are enabled, fio
+does not use io_uring_enter to get completed events, it relies on
+kernel io_sq_thread to poll for completed events.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Another reason is that there is a race: when io_submit_sqes() in
+io_sq_thread() submits a batch of sqes, variable 'inflight' will
+record the number of submitted reqs, then io_sq_thread will poll for
+reqs which have been added to poll_list. But note, if some previous
+reqs have been punted to io worker, these reqs will won't be in
+poll_list timely. io_sq_thread() will only poll for a part of previous
+submitted reqs, and then find poll_list is empty, reset variable
+'inflight' to be zero. If app just waits these deferred reqs and does
+not wake up io_sq_thread again, then hang happens.
 
+For app that entirely relies on io_sq_thread to poll completed requests,
+let io_iopoll_req_issued() wake up io_sq_thread properly when adding new
+element to poll_list, and when io_sq_thread prepares to sleep, check
+whether poll_list is empty again, if not empty, continue to poll.
+
+Signed-off-by: Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 59 +++++++++++++++++++++++----------------------------
+ 1 file changed, 27 insertions(+), 32 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 678c62782ba3b..95df7026ac5aa 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1435,6 +1435,10 @@ static void io_iopoll_req_issued(struct io_kiocb *req)
+ 		list_add(&req->list, &ctx->poll_list);
+ 	else
+ 		list_add_tail(&req->list, &ctx->poll_list);
++
++	if ((ctx->flags & IORING_SETUP_SQPOLL) &&
++	    wq_has_sleeper(&ctx->sqo_wait))
++		wake_up(&ctx->sqo_wait);
+ }
+ 
+ static void io_file_put(struct io_submit_state *state)
+@@ -3847,9 +3851,8 @@ static int io_sq_thread(void *data)
+ 	const struct cred *old_cred;
+ 	mm_segment_t old_fs;
+ 	DEFINE_WAIT(wait);
+-	unsigned inflight;
+ 	unsigned long timeout;
+-	int ret;
++	int ret = 0;
+ 
+ 	complete(&ctx->completions[1]);
+ 
+@@ -3857,39 +3860,19 @@ static int io_sq_thread(void *data)
+ 	set_fs(USER_DS);
+ 	old_cred = override_creds(ctx->creds);
+ 
+-	ret = timeout = inflight = 0;
++	timeout = jiffies + ctx->sq_thread_idle;
+ 	while (!kthread_should_park()) {
+ 		unsigned int to_submit;
+ 
+-		if (inflight) {
++		if (!list_empty(&ctx->poll_list)) {
+ 			unsigned nr_events = 0;
+ 
+-			if (ctx->flags & IORING_SETUP_IOPOLL) {
+-				/*
+-				 * inflight is the count of the maximum possible
+-				 * entries we submitted, but it can be smaller
+-				 * if we dropped some of them. If we don't have
+-				 * poll entries available, then we know that we
+-				 * have nothing left to poll for. Reset the
+-				 * inflight count to zero in that case.
+-				 */
+-				mutex_lock(&ctx->uring_lock);
+-				if (!list_empty(&ctx->poll_list))
+-					io_iopoll_getevents(ctx, &nr_events, 0);
+-				else
+-					inflight = 0;
+-				mutex_unlock(&ctx->uring_lock);
+-			} else {
+-				/*
+-				 * Normal IO, just pretend everything completed.
+-				 * We don't have to poll completions for that.
+-				 */
+-				nr_events = inflight;
+-			}
+-
+-			inflight -= nr_events;
+-			if (!inflight)
++			mutex_lock(&ctx->uring_lock);
++			if (!list_empty(&ctx->poll_list))
++				io_iopoll_getevents(ctx, &nr_events, 0);
++			else
+ 				timeout = jiffies + ctx->sq_thread_idle;
++			mutex_unlock(&ctx->uring_lock);
+ 		}
+ 
+ 		to_submit = io_sqring_entries(ctx);
+@@ -3918,7 +3901,7 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (inflight ||
++			if (!list_empty(&ctx->poll_list) ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				cond_resched();
+@@ -3928,6 +3911,19 @@ static int io_sq_thread(void *data)
+ 			prepare_to_wait(&ctx->sqo_wait, &wait,
+ 						TASK_INTERRUPTIBLE);
+ 
++			/*
++			 * While doing polled IO, before going to sleep, we need
++			 * to check if there are new reqs added to poll_list, it
++			 * is because reqs may have been punted to io worker and
++			 * will be added to poll_list later, hence check the
++			 * poll_list again.
++			 */
++			if ((ctx->flags & IORING_SETUP_IOPOLL) &&
++			    !list_empty_careful(&ctx->poll_list)) {
++				finish_wait(&ctx->sqo_wait, &wait);
++				continue;
++			}
++
+ 			/* Tell userspace we may need a wakeup call */
+ 			ctx->rings->sq_flags |= IORING_SQ_NEED_WAKEUP;
+ 			/* make sure to read SQ tail after writing flags */
+@@ -3956,8 +3952,7 @@ static int io_sq_thread(void *data)
+ 		mutex_lock(&ctx->uring_lock);
+ 		ret = io_submit_sqes(ctx, to_submit, NULL, -1, &cur_mm, true);
+ 		mutex_unlock(&ctx->uring_lock);
+-		if (ret > 0)
+-			inflight += ret;
++		timeout = jiffies + ctx->sq_thread_idle;
+ 	}
+ 
+ 	set_fs(old_fs);
 -- 
-~Randy
+2.20.1
+
