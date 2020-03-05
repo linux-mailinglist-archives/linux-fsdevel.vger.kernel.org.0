@@ -2,113 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD720179D41
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 02:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D18179E22
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Mar 2020 04:11:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgCEBWO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Mar 2020 20:22:14 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33352 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbgCEBWO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Mar 2020 20:22:14 -0500
-Received: by mail-qk1-f195.google.com with SMTP id p62so3758445qkb.0;
-        Wed, 04 Mar 2020 17:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mkRpzA3P6Y6jkl5RHlE/gdhWCOjS5JJwXY+64DkVtvk=;
-        b=IVvswKI5FcePlVqii0KjisuzTyaE4hqtQPii6g5g7nzs8TSHRPj5cGrUJFRbJaWHe3
-         lCP5b4rix2ph1ZnASZSCehCkGWQMHL+OnwA5poKq5sxMo2NSNEEThKlZUXwx5iOcGHzR
-         Y6xrSiJs35ipRGZPDQTWtckK+xMgUH7Wd1HED1w8m0rx+f9q6vs3q24LH9WSNB2wkkwT
-         /OnoOOnNSM1JqGRz48WsogumYeQSqCRpczkkstha1ztw413GHh741CFeP08pwRl5tARJ
-         2TKLZBCMzTKl0DDbXTlIEQ1r2Gd3VmrBkvxn/ljkl4gdpgCUZoN2kX9vkpdhbOzQw3NN
-         hYhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=mkRpzA3P6Y6jkl5RHlE/gdhWCOjS5JJwXY+64DkVtvk=;
-        b=GVIxknnOB6XuE1i0SpH7UaVjpvu3r6jv2LYqciUE0IkSISrqTZsSJsFHRLhnzr7ysY
-         HGBRKNKHgpDYBSvc0nPymF8AnVxQjvr3VAsxG0P0OrZMyyYCWP1dRMTSvqBAWdKWnkxG
-         BU5y08JYMcQLfKcP7YG9dcuxpGjDkuxVUixYlRDFm8EaXxbi97YnboJeIr5Qi8YxAJdY
-         JreuMdXq+qLjqJs1ZkbU7j5Rlgi8Oam7U6QFZhVGwr7t+RNlsQIO/4mGvvSShdB1U7i0
-         WlNe8s/n7LklqhtAL7bvSWm30Bn/JDBIQu8xjAl7/TkHZ3Q+2iEkRAXiH5tPE25+5dfZ
-         Yt6Q==
-X-Gm-Message-State: ANhLgQ2QltdHMZs4+COcas2kxndFxqAdFHekwI7suMnXu9F6xuVEsuyp
-        W2+hlhT31cYm8jX3V64dIEM=
-X-Google-Smtp-Source: ADFU+vv/q/xU9Iic5X8zYiNPGWfhthYWWHcfoAeZJTBukjahlC8x9E825Q5m3MW7qjNgyUSLYWwOgQ==
-X-Received: by 2002:a05:620a:16d0:: with SMTP id a16mr5895817qkn.296.1583371333145;
-        Wed, 04 Mar 2020 17:22:13 -0800 (PST)
-Received: from localhost ([71.172.127.161])
-        by smtp.gmail.com with ESMTPSA id c204sm15065044qke.2.2020.03.04.17.22.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Mar 2020 17:22:12 -0800 (PST)
-Date:   Wed, 4 Mar 2020 20:22:11 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Yufen Yu <yuyufen@huawei.com>, axboe@kernel.dk,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, bvanassche@acm.org, tytso@mit.edu
-Subject: Re: [PATCH v2 3/7] bdi: protect device lifetime with RCU
-Message-ID: <20200305012211.GA33199@mtj.duckdns.org>
-References: <20200226111851.55348-1-yuyufen@huawei.com>
- <20200226111851.55348-4-yuyufen@huawei.com>
- <20200304170543.GJ189690@mtj.thefacebook.com>
- <20200304172221.GA1864270@kroah.com>
- <20200304185056.GM189690@mtj.thefacebook.com>
- <20200304200559.GA1906005@kroah.com>
+        id S1725861AbgCEDL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Mar 2020 22:11:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbgCEDL0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 4 Mar 2020 22:11:26 -0500
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF24520866;
+        Thu,  5 Mar 2020 03:11:24 +0000 (UTC)
+Date:   Wed, 4 Mar 2020 22:11:23 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Xi Wang <xii@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Paul Turner <pjt@google.com>
+Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
+Message-ID: <20200304221123.7cef48d7@oasis.local.home>
+In-Reply-To: <20200304213941.112303-1-xii@google.com>
+References: <20200304213941.112303-1-xii@google.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304200559.GA1906005@kroah.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed,  4 Mar 2020 13:39:41 -0800
+Xi Wang <xii@google.com> wrote:
 
-On Wed, Mar 04, 2020 at 09:05:59PM +0100, Greg Kroah-Hartman wrote:
-> > Lifetime rules in block layer are kinda nebulous. Some of it comes
-> > from the fact that some objects are reused. Instead of the usual,
-> > create-use-release, they get repurposed to be associated with
-> > something else. When looking at such an object from some paths, we
-> > don't necessarily have ownership of all of the members.
+> The main purpose of kernel watchdog is to test whether scheduler can
+> still schedule tasks on a cpu. In order to reduce latency from
+> periodically invoking watchdog reset in thread context, we can simply
+> touch watchdog from pick_next_task in scheduler. Compared to actually
+> resetting watchdog from cpu stop / migration threads, we lose coverage
+> on: a migration thread actually get picked and we actually context
+> switch to the migration thread. Both steps are heavily protected by
+> kernel locks and unlikely to silently fail. Thus the change would
+> provide the same level of protection with less overhead.
+
+Have any measurements showing the drop in overhead?
+
 > 
-> That's horrid, it's not like block devices are on some "fast path" for
-> tear-down, we should do it correctly.
-
-Yeah, it got retrofitted umpteenth times from the really early days. I
-don't think much of it is intentionally designed to be this way.
-
-> > > backing_device_info?  Are these being destroyed/used so often that rcu
-> > > really is the best solution and the existing reference counting doesn't
-> > > work properly?
-> > 
-> > It's more that there are entry points which can only ensure that just
-> > the top level object is valid and the member objects might be going or
-> > coming as we're looking at it.
+> The new way vs the old way to touch the watchdogs is configurable
+> from:
 > 
-> That's not ok, a "member object" can only be valid if you have a
-> reference to it.  If you remove the object, you then drop the reference,
-> shouldn't that be the correct thing to do?
+> /proc/sys/kernel/watchdog_touch_in_thread_interval
+> 
+> The value means:
+> 0: Always touch watchdog from pick_next_task
+> 1: Always touch watchdog from migration thread
+> N (N>0): Touch watchdog from migration thread once in every N
+>          invocations, and touch watchdog from pick_next_task for
+>          other invocations.
+> 
+> Suggested-by: Paul Turner <pjt@google.com>
+> Signed-off-by: Xi Wang <xii@google.com>
+> ---
+>  kernel/sched/core.c | 36 ++++++++++++++++++++++++++++++++++--
+>  kernel/sysctl.c     | 11 ++++++++++-
+>  kernel/watchdog.c   | 39 ++++++++++++++++++++++++++++++++++-----
+>  3 files changed, 78 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 1a9983da4408..9d8e00760d1c 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3898,6 +3898,27 @@ static inline void schedule_debug(struct task_struct *prev, bool preempt)
+>  	schedstat_inc(this_rq()->sched_count);
+>  }
+>  
+> +#ifdef CONFIG_SOFTLOCKUP_DETECTOR
+> +
+> +DEFINE_PER_CPU(bool, sched_should_touch_watchdog);
+> +
+> +void touch_watchdog_from_sched(void);
+> +
+> +/* Helper called by watchdog code */
+> +void resched_for_watchdog(void)
+> +{
+> +	unsigned long flags;
+> +	struct rq *rq = this_rq();
+> +
+> +	this_cpu_write(sched_should_touch_watchdog, true);
 
-I mean, it depends. There are two layers of objects and the top level
-object has two stacked lifetime rules. The "active" usage pins
-everything as usual. The "shallower" usage only has full access to the
-top level and when it reaches down into members it needs a different
-mechanism to ensure its validity. Given a clean slate, I don't think
-we'd go for this design for these objects but the usage isn't
-fundamentally broken.
+Perhaps we should have a preempt_disable, otherwise it is possible
+to get preempted here.
 
-Idk, for the problem at hand, the choice is between patching it up by
-copying the name and RCU protecting ->dev access at least for now.
-Both are nasty in their own ways but copying does have a smaller blast
-radius. So, copy for now?
+-- Steve
 
-Thanks.
+> +	raw_spin_lock_irqsave(&rq->lock, flags);
+> +	/* Trigger resched for code in pick_next_task to touch watchdog */
+> +	resched_curr(rq);
+> +	raw_spin_unlock_irqrestore(&rq->lock, flags);
+> +}
+> +
+> +#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
+> +
 
--- 
-tejun
