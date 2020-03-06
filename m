@@ -2,101 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB17817C05C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 15:36:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9931A17C0AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 15:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCFOgh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 09:36:37 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52778 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbgCFOgh (ORCPT
+        id S1727320AbgCFOnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 09:43:51 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:48717 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727334AbgCFOnt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:36:37 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026EZt8N119834;
-        Fri, 6 Mar 2020 14:36:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=xa65RcA52aSBC9k32u2gnoNOdze/X6lwyq6dnX69pNM=;
- b=P88AOonRfnU1JRYDh7zY2PZrjrAjh5Uu0+nLglIKN+BXnnEZi9EmfdHUvgQ9YFFWwoo2
- MLiLc2/apoBnta6LzJICVwlbvuMxM7ypm/mdTZv6Zlew3UH3kz46sVnOUe9DVKy5TPF+
- qdWkWD3RJIJ22PrjDWZ/74Zgedg7nASUzF1Ixz9kH8ktMJKDLrPZidks9upo5FTI8p7J
- byPH9GDFtxLD51TDdVAGUCGAsJ2BFkVLxkCzhZVtGpohaa8DhwKAejFz8Zli4s1YofEu
- lN28zbQqxe1nhguOwtTEixSpS9p27qqybb0HAhsJZybyow4A1R2XPvDVDTaaRHqC6JOf EQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2ykgys27dy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 14:36:01 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 026EWxgG188705;
-        Fri, 6 Mar 2020 14:36:00 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2yg1s0t5r6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Mar 2020 14:36:00 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 026EZwWS006594;
-        Fri, 6 Mar 2020 14:35:58 GMT
-Received: from kadam (/41.210.146.162)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Mar 2020 06:35:57 -0800
-Date:   Fri, 6 Mar 2020 17:35:52 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-Message-ID: <20200306143552.GC19839@kadam>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
- <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+        Fri, 6 Mar 2020 09:43:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583505828;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8zS24+hgqMgXxDrHvOtYHhXkklLLaRqFr5tO/jCmpNA=;
+        b=PpGsWK9pvnOz9DXfwjjc464Wk+0XXGBBLp3wSd1ckrdlSmPO+wAmcwb3a5hGk1ADUeW2gv
+        Qxv+wB3MiaemxHG6VhLKi1Xp21sf4MLFB41Qu/0I8gMGzlvMWmTatmFLRLByqneIRuOQUX
+        7kASK9jASIYOJ4XMGzKCbNL3F1kwhfo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-75-13YqOVG-N-K2QjmFm0H8jA-1; Fri, 06 Mar 2020 09:43:46 -0500
+X-MC-Unique: 13YqOVG-N-K2QjmFm0H8jA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE4DF18AB2C2;
+        Fri,  6 Mar 2020 14:43:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F15475D9CD;
+        Fri,  6 Mar 2020 14:43:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200306135632.j7kidnqm3edji6cz@wittgenstein>
+References: <20200306135632.j7kidnqm3edji6cz@wittgenstein> <3774367.1583430213@warthog.procyon.org.uk>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        metze@samba.org, cyphar@cyphar.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] Mark AT_* path flags as deprecated and add missing RESOLVE_ flags
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=750
- suspectscore=2 malwarescore=0 adultscore=0 spamscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003060103
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9551 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 lowpriorityscore=0
- mlxscore=0 mlxlogscore=796 bulkscore=0 impostorscore=0 phishscore=0
- adultscore=0 priorityscore=1501 spamscore=0 clxscore=1011 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003060103
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4040641.1583505822.1@warthog.procyon.org.uk>
+Date:   Fri, 06 Mar 2020 14:43:42 +0000
+Message-ID: <4040642.1583505822@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Christian Brauner <christian.brauner@ubuntu.com> wrote:
 
-There a bunch of similar bugs.  It's seems a common anti-pattern.
+> > +	if (flags & O_NOFOLLOW)
+> > +		lookup_flags &= ~LOOKUP_FOLLOW;
+> 
+> Odd change. But I guess you're doing it for the sake of consistency
+> because of how you treat NO_TERMINAL_SYMLINKS below.
 
-block/blk-cgroup.c:85 blkg_free() warn: freeing 'blkg' which has percpu_ref_exit()
-block/blk-core.c:558 blk_alloc_queue_node() warn: freeing 'q' which has percpu_ref_exit()
-drivers/md/md.c:5528 md_free() warn: freeing 'mddev' which has percpu_ref_exit()
-drivers/target/target_core_transport.c:583 transport_free_session() warn: freeing 'se_sess' which has percpu_ref_exit()
-fs/aio.c:592 free_ioctx() warn: freeing 'ctx' which has percpu_ref_exit()
-fs/aio.c:806 ioctx_alloc() warn: freeing 'ctx' which has percpu_ref_exit()
-fs/io_uring.c:6115 io_sqe_files_unregister() warn: freeing 'data' which has percpu_ref_exit()
-fs/io_uring.c:6431 io_sqe_files_register() warn: freeing 'ctx->file_data' which has percpu_ref_exit()
-fs/io_uring.c:7134 io_ring_ctx_free() warn: freeing 'ctx' which has percpu_ref_exit()
-kernel/cgroup/cgroup.c:4948 css_free_rwork_fn() warn: freeing 'css' which has percpu_ref_exit()
-mm/backing-dev.c:615 cgwb_create() warn: freeing 'wb' which has percpu_ref_exit()
+Not really.  The default is to follow.  Both remove the LOOKUP_FOLLOW flag and
+neither set it.
 
-regards,
-dan carpenter
+David
 
