@@ -2,169 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457EB17C3AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:08:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E03217C412
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:18:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCFRIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 12:08:16 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40727 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbgCFRIQ (ORCPT
+        id S1726928AbgCFRSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 12:18:20 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:56238 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbgCFRSU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:08:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id d8so2774785ion.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 09:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kz7F9w9m8ZO7isygce7jzuADVkhqvNGk0rHiKeOUV28=;
-        b=hhZWK8fZp6R2bJvjZm23pEpYCjXEl/tKqzpidDMouyXr4lZ+/ttOlxzS+d2fVI1CAd
-         NNe5rbe4pQn/syiH0qRCT2B3SuO2YlNr1kGOt7hBpTU6DQMOXPw0jfXk/eX2hUJP9pN8
-         fM3rWBCs1PUa2Enu+2sYp6VVjf1XKdl/40vwGgNcjOkUkCTfXb41faAnaAdQD91hNiAj
-         ydVMUkgqJjUV4icfpRXWDoTUY54reM1oXnJVos5vYQU+S/avOxxVkCrF28lmw3NKBVO4
-         1BZGTvTEoNMJoS00OkujrzyMY7jbIaK70i80bL5ebuROi7tiNoRSTTVa2x7g0JW3SSHx
-         JZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kz7F9w9m8ZO7isygce7jzuADVkhqvNGk0rHiKeOUV28=;
-        b=Xiavy/K85rIpAo3XG7c95HBK3pSKN28UQDFO7YxHa2O0ofHD14rcitfJ5qLOlRbqzC
-         NflPqqSkqf9wAPG0LWGZq58zPwtujiiS5zYDfUP/q4ijGvh0mu1oLsuqAI8qkMJuNcxn
-         wEPa4vNKqHRfF09sliYZJnq1ew8dW4GDMveic8wYn31RvoEzC1LcYVVK2o/VY/+uDlWH
-         AbWem06lJobIg73PLOWfWkf8iF8fW7BLi4DxozVCgqPXymSxe6/3hs3ZtCBKjAnjorM9
-         dchZBq8lxfGnD/b4c/zclLxodMA6Zez1cQJ8/yHNTc15nUdaZmyl8A2ATDsWyHlyhoYF
-         3u9A==
-X-Gm-Message-State: ANhLgQ1f/yEaQk8zWLIGZ0Dc/Y9CgjmVCueEZJgsHmiWoEs3ev7GSrJk
-        wnuGE2kSwOSqM2MHIA08tL4iDg==
-X-Google-Smtp-Source: ADFU+vvePiQDyDOClLaaJfWxLjUd6Wuore2UNcMCRYiANtgsUDZ0ItNn/czzA9dx6XLBxVdITYoMfA==
-X-Received: by 2002:a6b:3c13:: with SMTP id k19mr3868711iob.25.1583514495003;
-        Fri, 06 Mar 2020 09:08:15 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w16sm11673783ilq.5.2020.03.06.09.08.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 09:08:14 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-From:   Jens Axboe <axboe@kernel.dk>
-To:     paulmck@kernel.org, Jann Horn <jannh@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
- <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
- <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
- <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
- <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
- <20200306164443.GU2935@paulmck-ThinkPad-P72>
- <11921f78-c6f2-660b-5e33-11599c2f9a4b@kernel.dk>
-Message-ID: <944a495e-8e4c-4efd-3560-565603bef3ac@kernel.dk>
-Date:   Fri, 6 Mar 2020 10:08:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Fri, 6 Mar 2020 12:18:20 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jAGc4-0001Lk-Ci; Fri, 06 Mar 2020 10:18:16 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jAGc3-0002xI-5G; Fri, 06 Mar 2020 10:18:15 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <202003021531.C77EF10@keescook>
+        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74xi4kz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
+        <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87pndqax3j.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170688693E4114CA9367211E4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Fri, 06 Mar 2020 11:16:00 -0600
+In-Reply-To: <AM6PR03MB5170688693E4114CA9367211E4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Fri, 6 Mar 2020 16:26:34 +0000")
+Message-ID: <87v9nh9zfz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <11921f78-c6f2-660b-5e33-11599c2f9a4b@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1jAGc3-0002xI-5G;;;mid=<87v9nh9zfz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19gmt4QeYoR+3AHca+FGN8CxL45iobMdDI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4958]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 577 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 4.7 (0.8%), b_tie_ro: 3.8 (0.7%), parse: 1.59
+        (0.3%), extract_message_metadata: 16 (2.7%), get_uri_detail_list: 1.14
+        (0.2%), tests_pri_-1000: 26 (4.6%), tests_pri_-950: 1.69 (0.3%),
+        tests_pri_-900: 1.48 (0.3%), tests_pri_-90: 36 (6.3%), check_bayes: 34
+        (6.0%), b_tokenize: 17 (3.0%), b_tok_get_all: 9 (1.5%), b_comp_prob:
+        3.0 (0.5%), b_tok_touch_all: 3.4 (0.6%), b_finish: 0.65 (0.1%),
+        tests_pri_0: 475 (82.3%), check_dkim_signature: 0.56 (0.1%),
+        check_dkim_adsp: 3.0 (0.5%), poll_dns_idle: 0.64 (0.1%), tests_pri_10:
+        2.4 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/6/20 10:00 AM, Jens Axboe wrote:
-> On 3/6/20 9:44 AM, Paul E. McKenney wrote:
->> On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
->>> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>> On 3/6/20 7:57 AM, Jann Horn wrote:
->>>>> +paulmck
->>>>>
->>>>> On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
->>>>>>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
->>>>>>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>>>>>>>
->>>>>>>> Hello,
->>>>>>>>
->>>>>>>> syzbot found the following crash on:
->>>>>>>>
->>>>>>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->>>>>>>> git tree:       upstream
->>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->>>>>>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>>>>>>>
->>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>>
->>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>>>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
->>>>>>>
->>>>>>> +io_uring maintainers
->>>>>>>
->>>>>>> Here is a repro:
->>>>>>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
->>>>>>
->>>>>> I've queued up a fix for this:
->>>>>>
->>>>>> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
->>>>>
->>>>> I believe that this fix relies on call_rcu() having FIFO ordering; but
->>>>> <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
->>>>> says:
->>>>>
->>>>> | call_rcu() normally acts only on CPU-local state[...] It simply
->>>>> enqueues the rcu_head structure on a per-CPU list,
->>
->> Indeed.  For but one example, if there was a CPU-to-CPU migration between
->> the two call_rcu() invocations, it would not be at all surprising for
->> the two callbacks to execute out of order.
->>
->>>>> Is this fix really correct?
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+
+> On 3/6/20 6:09 AM, Eric W. Biederman wrote:
+>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>> 
+>>> On 3/5/20 10:15 PM, Eric W. Biederman wrote:
 >>>>
->>>> That's a good point, there's a potentially stronger guarantee we need
->>>> here that isn't "nobody is inside an RCU critical section", but rather
->>>> that we're depending on a previous call_rcu() to have happened. Hence I
->>>> think you are right - it'll shrink the window drastically, since the
->>>> previous callback is already queued up, but it's not a full close.
+>>>> Add a flag binfmt->unrecoverable to mark when execution has gotten to
+>>>> the point where it is impossible to return to userspace with the
+>>>> calling process unchanged.
 >>>>
->>>> Hmm...
->>>
->>> You could potentially hack up the semantics you want by doing a
->>> call_rcu() whose callback does another call_rcu(), or something like
->>> that - but I'd like to hear paulmck's opinion on this first.
->>
->> That would work!
->>
->> Or, alternatively, do an rcu_barrier() between the two calls to
->> call_rcu(), assuming that the use case can tolerate rcu_barrier()
->> overhead and latency.
-> 
-> If the nested call_rcu() works, that seems greatly preferable to needing
-> the rcu_barrier(), even if that would not be a showstopper for me. The
-> nested call_rcu() is just a bit odd, but with a comment it should be OK.
-> 
-> Incremental here I'm going to test, would just fold in of course.
+>>>> While techinically this state starts as soon as de_thread starts
+>
+> typo: s/techinically/technically/
 
-Been running for a few minutes just fine, I'm going to leave the
-reproducer beating on it for a few hours. But here's the folded in
-final:
+>>>> killing threads, the only return path at that point is if there is a
+>>>> fatal signal pending.  I have choosen instead to set unrecoverable
+>
+> I'm not good at english, is this chosen ?
+>
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=fae702294a6a0774ceb3cf250be79e7fe207250a
+Yes.  Defintley worth fixing.
 
--- 
-Jens Axboe
-
+Eric
