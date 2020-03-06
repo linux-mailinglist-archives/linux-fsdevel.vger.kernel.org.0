@@ -2,111 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5978517BB7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 12:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 010C417BBAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 12:30:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgCFLTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 06:19:47 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39920 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbgCFLTr (ORCPT
+        id S1726194AbgCFLaK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 6 Mar 2020 06:30:10 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44732 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbgCFLaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:19:47 -0500
-Received: by mail-il1-f194.google.com with SMTP id q87so1426698ill.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 03:19:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ir8o12rJwmPSb5QkT+B5JmD9MtNoZUDj5M/xzDDH8kc=;
-        b=h9CS+eWaNCLkeAgjLdg31tqwtPAJMNWX7CZ0eLNtgKtQw9MiD/aejGYJy/pBccUrZu
-         eu7KWsJVQ6zS2//SLYJFgQQEEdnR1t0/rlY0OQ9XKetfh0jxQIZl7RQwE8Vsi2mUkTZ5
-         h5tOiu3LZyCrLs/Uv/PMMnhTnbN45KzOglhvqpzpzSV9cHkpkVwRpcdN8iTXzlW3FksH
-         brP/PMs2QBAlkLftW1mrQD/0HWR2zBnj1cU+JwiHCMOWUSx7YOmnrPJCJ9o1+NrkujKE
-         SV27cVqyqOWe6idbAk0CCos1J/wXjX836KxA4xjwkBVHX5D8oU8vA/60v3FkSreHyDbs
-         RNxQ==
+        Fri, 6 Mar 2020 06:30:10 -0500
+Received: by mail-qk1-f196.google.com with SMTP id f198so1889167qke.11;
+        Fri, 06 Mar 2020 03:30:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ir8o12rJwmPSb5QkT+B5JmD9MtNoZUDj5M/xzDDH8kc=;
-        b=aSZXWxN+fqVY0E0YAaKvuJ14GPo8IEXIfgGYfyiTd2I73TlWurwAkKMQidmfhWxskc
-         2jjCB2dK9Ng9d2tvCa7C3ByTGS7F3/EKAR18pkCUDa3Yqq/o4bNg6SOsSiIFlquhVNYz
-         bM2NZJd6mtIViPzeCulTj6r8TCb9kUXBm/zYBgmZOVwljVsrUkpeZZ35GdiMDk2ult9c
-         xpTZxXi1eqOfTtV1CWRSgya97dGrizGFZkBm/ZV7HNysD5vxouKVkBZoOJlpevTPPuHo
-         VE+QhasKFFAZhdtPHOsN0Cn5XQTxTdk8RXdE2DIs7YucXxf6GOVIesUJItsV4dlJiYtM
-         pPng==
-X-Gm-Message-State: ANhLgQ13h0XBWd67OwDDigCn2kadoNJCaO6JCRt8lhL40lIvPWw+CjIc
-        vOhz6GY5kcT9PqoT7AR9X2qVi8ovX2IX3ewtN/aOQ2Ee
-X-Google-Smtp-Source: ADFU+vuNaDwGhbyksvrn8zn/eWvf/jFYe2ljDVOqprGo+fpXItvFYuFfn3GAFT9mjsEhjrbhUVnfTJTUjRhqq9I0Azc=
-X-Received: by 2002:a92:dc03:: with SMTP id t3mr2780492iln.137.1583493586429;
- Fri, 06 Mar 2020 03:19:46 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Nna0nsguv2U+v9ziNQRL80k09HbQlLvP1j4KtjoAo7M=;
+        b=P7EcwBcK7dx8cF79C9pN3P6os2Z3YL6AU/wh0wx1LLH1l78jY4kiL53d5woVTM5qNl
+         zOzIhESzoLvN1T5kdKAfTD6rEiWYYQmj+xeoVvPw7HKmTpokbVUhNvpt/vCeC++Y0PcH
+         wHOg/i20WypsCUUFgbqe6UFtxftO/ptP3eLWTbAjYWfrB/oSVIeVXeKCRK/Mq3AiPiwG
+         k4Z1KVUXJK31T5j3cxAUY4fkAhBuFMhJ9kQquP2yjt/XYVvIHr687XaoKLW7wJ1X81a6
+         3WHz4RRRyGYR3Cz2V8fxrqB+uhS0usmz1JcTQn6297qOtrPwKhMR0BC3oFg/fOhY8eh/
+         o9wg==
+X-Gm-Message-State: ANhLgQ2znZ8XFgc+mygHmuNsTYQFfSoyz/gjmjdDUHVshFUUVC/DZaxY
+        LOX4AjZ68l09qOI7Cmd7s9HwHNWz9Jum35wfD7Q=
+X-Google-Smtp-Source: ADFU+vsdbMUXZ/9+PsZX4vmn+uiZw3tJKm/S0yTnSyg72ZSBwF9YNhD0HM8bKgqMu40FTOyith2U60eZc5tP18laC8U=
+X-Received: by 2002:a37:6646:: with SMTP id a67mr2383615qkc.457.1583494209166;
+ Fri, 06 Mar 2020 03:30:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20200226102354.GE10728@quack2.suse.cz> <CAOQ4uxivfnmvXag8+f5wJujqRgp9FW+2_CVD6MSgB40_yb+sHw@mail.gmail.com>
- <20200226170705.GU10728@quack2.suse.cz> <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
- <CAOQ4uxih7zhAj6qUp39B_a_On5gv80SKm-VsC4D8ayCrC6oSRw@mail.gmail.com>
- <20200227112755.GZ10728@quack2.suse.cz> <CAOQ4uxgavT6e97dYEOLV9BUOXQzMw2ADjMoZHTT0euERoZFoJg@mail.gmail.com>
- <20200227133016.GD10728@quack2.suse.cz> <CAOQ4uxghKxf4Gfw9GX1QZ_ju3RhZcOLxtYnhAn9A3MJtt3PMCQ@mail.gmail.com>
- <CAOQ4uxiHA5fM9SjA+XXcGQOg2u4UPvs_-nm+sKXcNXoGKxVgTg@mail.gmail.com> <20200305154908.GK21048@quack2.suse.cz>
-In-Reply-To: <20200305154908.GK21048@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 6 Mar 2020 13:19:34 +0200
-Message-ID: <CAOQ4uxgJPkYOL5-jj=b+z5dG5DK8spzYUD7_OfMdBwh4gnTUYg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
- child fid's
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200306080905.173466-1-syq@debian.org> <87r1y53npd.fsf@mid.deneb.enyo.de>
+ <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu> <87mu8t3mlw.fsf@mid.deneb.enyo.de>
+ <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
+In-Reply-To: <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
+From:   YunQiang Su <syq@debian.org>
+Date:   Fri, 6 Mar 2020 19:29:57 +0800
+Message-ID: <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
+Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     Florian Weimer <fw@deneb.enyo.de>, torvalds@linux-foundation.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        akpm@linux-foundation.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        libc-alpha@sourceware.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 5, 2020 at 5:49 PM Jan Kara <jack@suse.cz> wrote:
+Laurent Vivier <laurent@vivier.eu> 于2020年3月6日周五 下午7:13写道：
 >
-> Hi Amir!
->
-> On Sun 01-03-20 18:26:25, Amir Goldstein wrote:
-> > > > I'd rather do the fanotity_fh padding optimization I outlined in another
-> > > > email. That would save one long without any packing and the following u8
-> > > > name_len would get packed tightly after the fanotify_fh by the compiler.
-> > > >
-> > >
-> > > OK. I will try that and the non-inherited variant of perm/name event struct
-> > > and see how it looks like.
-> > >
+> Le 06/03/2020 à 09:37, Florian Weimer a écrit :
+> > * Laurent Vivier:
 > >
-> > Pushed sample code to branch fanotify_name-wip:
+> >> Le 06/03/2020 à 09:13, Florian Weimer a écrit :
+> >>> * YunQiang Su:
+> >>>
+> >>>> +  if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+> >>>> +          flags |= AT_FLAGS_PRESERVE_ARGV0;
+> >>>> +  NEW_AUX_ENT(AT_FLAGS, flags);
+> >>>
+> >>> Is it necessary to reuse AT_FLAGS?  I think it's cleaner to define a
+> >>> separate AT_ tag dedicated to binfmt_misc.
+> >>
+> >> Not necessary, but it seemed simpler and cleaner to re-use a flag that
+> >> is marked as unused and with a name matching the new role. It avoids to
+> >> patch other packages (like glibc) to add it as it is already defined.
 > >
-> > b5e56d3e1358 fanotify: fanotify_perm_event inherits from fanotify_path_event
-> > 55041285b3b7 fanotify: divorce fanotify_path_event and fanotify_fid_event
+> > You still need to define AT_FLAGS_PRESERVE_ARGV0.  At that point, you
+> > might as well define AT_BINFMT and AT_BINFMT_PRESERVE_ARGV0.
+> >
 >
-> Thanks for the work!
+> Yes, you're right.
 >
-> > I opted for fanotify_name_event inherits from fanotify_fid_event,
-> > because it felt better this way.
+> But is there any reason to not reuse AT_FLAGS?
+
+AT_* only has 32 slot and now. I was afraid that maybe we shouldn't take one.
+   /* AT_* values 18 through 22 are reserved */
+   27,28,29,30 are not used now.
+Which should we use?
+
 >
-> I've commented on github in the patches - I'm not sure the inheritance
-> really brings a significant benefit and it costs 6 bytes per name event.
-> Maybe there can be more simplifications gained from the inheritance (but I
-> think the move of fsid out of fanotify_fid mostly precludes that) but at
-> this point it doesn't seem to be worth it to me.
->
-
-As agreed on github discussion, the padding is a non issue.
-To see what the benefit of inherit fanotify_fid_event is, I did a test patch
-to get rid of it and pushed the result to fanotify_name-wip:
-
-* b7eb8314c61b - fanotify: do not inherit fanotify_name_event from
-fanotify_fid_event
-
-IMO, the removal of inheritance in this struct is artificial and
-brings no benefit.
-There is not a single line of code that improved IMO vs. several added
-helpers which abstract something that is pretty obvious.
-
-That said, I don't mind going with this variant.
-Let me you what your final call is.
-
-Thanks,
-Amir.
+> Thanks,
+> Laurent
