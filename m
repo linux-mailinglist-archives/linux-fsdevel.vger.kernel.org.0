@@ -2,65 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAC9117B851
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 09:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C5617B86A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 09:39:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgCFI3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 03:29:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58596 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgCFI3L (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 03:29:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dUfwQLOj8gTmHvihfqzWXTVzRKkIcObRg1X77vA4m4w=; b=YsWuJHAKFg51vuQ+BgUeru9Mrv
-        /TJPD2dWVY+tuHloYwNGrdRCUeGcm8ApCbKuGqwp3XrUAUWwtzYFPt+CPYB7/dqI6m35Gw+v7F72D
-        LMjFOy3ItG3DNm0pVztV29IH+O2x3U5GOXpl3YReidZrHxyV4HViWezx1F3ghJqxp8vb2X4+6HHik
-        A0p+EEQmCzLzp26psVDVfKRpMxYZAWJLaEiQZgCDZtB2tgTbyv1WclmISnaRloXQq4qK4N8a5pa0X
-        nx9XSQ5t8E6iH1Yvpxia8roNnG9l8Qpp42mjP4CF3Uhxk5uQ0aT/jVS3t3cDX3CKvuk6oAZcJfGzq
-        6e7HAh1Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jA8Ln-0001iP-3S; Fri, 06 Mar 2020 08:28:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ADBD5300606;
-        Fri,  6 Mar 2020 09:28:52 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 740A02009BA14; Fri,  6 Mar 2020 09:28:52 +0100 (CET)
-Date:   Fri, 6 Mar 2020 09:28:52 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Xi Wang <xii@google.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Paul Turner <pjt@google.com>
-Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
-Message-ID: <20200306082852.GB12561@hirez.programming.kicks-ass.net>
-References: <20200304213941.112303-1-xii@google.com>
- <20200305075742.GR2596@hirez.programming.kicks-ass.net>
- <87blpad6b2.fsf@nanos.tec.linutronix.de>
- <CAOBoifgHNag0P33PKg81iNoCjxenJHfBZG-t-8aEkr_Tjf7o_w@mail.gmail.com>
+        id S1726237AbgCFIjS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 6 Mar 2020 03:39:18 -0500
+Received: from albireo.enyo.de ([37.24.231.21]:54812 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbgCFIjS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Mar 2020 03:39:18 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jA8Vi-0000GF-K5; Fri, 06 Mar 2020 08:39:10 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jA8U7-00026r-DL; Fri, 06 Mar 2020 09:37:31 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     Laurent Vivier <laurent@vivier.eu>
+Cc:     YunQiang Su <syq@debian.org>, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, James.Bottomley@hansenpartnership.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        libc-alpha@sourceware.org
+Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
+References: <20200306080905.173466-1-syq@debian.org>
+        <87r1y53npd.fsf@mid.deneb.enyo.de>
+        <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu>
+Date:   Fri, 06 Mar 2020 09:37:31 +0100
+In-Reply-To: <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu> (Laurent
+        Vivier's message of "Fri, 6 Mar 2020 09:21:46 +0100")
+Message-ID: <87mu8t3mlw.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOBoifgHNag0P33PKg81iNoCjxenJHfBZG-t-8aEkr_Tjf7o_w@mail.gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+* Laurent Vivier:
 
+> Le 06/03/2020 à 09:13, Florian Weimer a écrit :
+>> * YunQiang Su:
+>> 
+>>> +	if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
+>>> +		flags |= AT_FLAGS_PRESERVE_ARGV0;
+>>> +	NEW_AUX_ENT(AT_FLAGS, flags);
+>> 
+>> Is it necessary to reuse AT_FLAGS?  I think it's cleaner to define a
+>> separate AT_ tag dedicated to binfmt_misc.
+>
+> Not necessary, but it seemed simpler and cleaner to re-use a flag that
+> is marked as unused and with a name matching the new role. It avoids to
+> patch other packages (like glibc) to add it as it is already defined.
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+You still need to define AT_FLAGS_PRESERVE_ARGV0.  At that point, you
+might as well define AT_BINFMT and AT_BINFMT_PRESERVE_ARGV0.
