@@ -2,69 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 514EA17C103
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 15:56:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F3C17C108
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 15:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgCFO4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 09:56:20 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:42262 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726674AbgCFO4T (ORCPT
+        id S1727080AbgCFO5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 09:57:11 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:43600 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727073AbgCFO5L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 09:56:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583506578;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VvNfBP6h/YjLYDbQgpAqGLfV7p/dFrBKdGIUKmuZy+w=;
-        b=R1xKTAn6a4FkmHNLcv77uFzt5LAF/6wo5SJ0N88y+sqzJY9Worl4G5WAYWfcM7/OYFAjnu
-        2iEkPwWcvd/xRuZqGvpu+KDfjkGZckkRja21LwwxMvbMP48PtPCFvbpoiV2yCArRMfJbEj
-        tJv9jbfyOd6y+rvubUWORCczYCUQlXo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-OA2bfNzCNW2ep838-KW2qg-1; Fri, 06 Mar 2020 09:56:16 -0500
-X-MC-Unique: OA2bfNzCNW2ep838-KW2qg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3E96A19251A7;
-        Fri,  6 Mar 2020 14:56:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AA985D9CD;
-        Fri,  6 Mar 2020 14:56:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200306134407.zjiiieg3m6ce5uts@yavin>
-References: <20200306134407.zjiiieg3m6ce5uts@yavin> <4e915f46-093b-c566-1746-938dbd6dcf62@samba.org> <3774367.1583430213@warthog.procyon.org.uk> <3786501.1583440507@warthog.procyon.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     dhowells@redhat.com, Stefan Metzmacher <metze@samba.org>,
-        linux-api@vger.kernel.org, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, christian.brauner@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH] Mark AT_* path flags as deprecated and add missing RESOLVE_ flags
+        Fri, 6 Mar 2020 09:57:11 -0500
+Received: by mail-il1-f194.google.com with SMTP id o18so2254194ilg.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 06:57:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mOBDoHnwRUB6vwJ5ZeCRAwk2NHenQL0R+1AwgPwm1qE=;
+        b=HXHhLtM7yadtcuawGuR/OolVcyzzUwR6+kgjtly2wv0V5luD4vNO0QpleQk5Dk5XOb
+         fdz9J2+kig02fdSVirJqAp18bp6KUZd9c7P+RAb8Gqwwrw3/BegJs72qOSJcbWYcMDn2
+         e5Z3azZNgU/Akp1RU13aiVdZco/PDOn1Z/wChXDaUH+IKsgnJmC0EsptUgkj5bLRWVHq
+         F0r6MkykcfjX3gImtb+R3n8BOPkWtnaAZ3j4NQPOEhOE8fLIGsmxcKLjt4nR/jSR+sTX
+         xNBd+/XhD2lJ/7pZb8+DI5G2ZtpbNN3J10BRKg5xdPBGAh7MX1ohE0y5nboGn67j/r06
+         5MQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mOBDoHnwRUB6vwJ5ZeCRAwk2NHenQL0R+1AwgPwm1qE=;
+        b=kbhZPhzd66uEh1Zc9lHrOr/CO4WJjfqnkK9et8Mb7YHeFTR8R37zmKythdoovW06yr
+         f3KrE/ghvvJX5nbKzMfdiNZnDXlajApeVBKgyEvphKUySHiusLD2XoyrYbEaD2EUHqE4
+         9wgFkW1lHSXSKc06cS9GwyvP0zhZ8Up7mTfNkY0ufqd84F5siMjVzP/KM/9i/rdqGcIi
+         mm+dPhKs9CeeFMiS+dpcPM2Da0sqS5wUpEbD390OV09RCIWhaRxVmPBs1+6QPLeVXheY
+         IKw1SEtRvQRMW2ylJeaLUhJKy9W164iPY/1bdklcs9kfbeZw/IWtKz9vppCKeBsJMBE9
+         oW7w==
+X-Gm-Message-State: ANhLgQ0T6DkZTR3zcSZIV/Ix/hMpcHlZ1pKQW8fvVT+9nk5e0JArEX77
+        JETP/DVFqtgjibjcOyOMaXAMJA==
+X-Google-Smtp-Source: ADFU+vsb0EQMaZ5kM8m27eRB9mgYotBgbREMPaoSXXxO9J3hPpn3+mi0MHsuNlsVAhCgEZAhSU0zqA==
+X-Received: by 2002:a92:9603:: with SMTP id g3mr3712133ilh.231.1583506630398;
+        Fri, 06 Mar 2020 06:57:10 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d70sm133312ill.11.2020.03.06.06.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2020 06:57:09 -0800 (PST)
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <00000000000067c6df059df7f9f5@google.com>
+ <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+ <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+ <20200306143552.GC19839@kadam>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b816920b-a211-80c0-ceca-f716954b9f96@kernel.dk>
+Date:   Fri, 6 Mar 2020 07:57:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4041660.1583506572.1@warthog.procyon.org.uk>
-Date:   Fri, 06 Mar 2020 14:56:12 +0000
-Message-ID: <4041661.1583506572@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200306143552.GC19839@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aleksa Sarai <cyphar@cyphar.com> wrote:
+On 3/6/20 7:35 AM, Dan Carpenter wrote:
+> 
+> There a bunch of similar bugs.  It's seems a common anti-pattern.
+> 
+> block/blk-cgroup.c:85 blkg_free() warn: freeing 'blkg' which has percpu_ref_exit()
+> block/blk-core.c:558 blk_alloc_queue_node() warn: freeing 'q' which has percpu_ref_exit()
+> drivers/md/md.c:5528 md_free() warn: freeing 'mddev' which has percpu_ref_exit()
+> drivers/target/target_core_transport.c:583 transport_free_session() warn: freeing 'se_sess' which has percpu_ref_exit()
+> fs/aio.c:592 free_ioctx() warn: freeing 'ctx' which has percpu_ref_exit()
+> fs/aio.c:806 ioctx_alloc() warn: freeing 'ctx' which has percpu_ref_exit()
+> fs/io_uring.c:6115 io_sqe_files_unregister() warn: freeing 'data' which has percpu_ref_exit()
+> fs/io_uring.c:6431 io_sqe_files_register() warn: freeing 'ctx->file_data' which has percpu_ref_exit()
+> fs/io_uring.c:7134 io_ring_ctx_free() warn: freeing 'ctx' which has percpu_ref_exit()
+> kernel/cgroup/cgroup.c:4948 css_free_rwork_fn() warn: freeing 'css' which has percpu_ref_exit()
+> mm/backing-dev.c:615 cgwb_create() warn: freeing 'wb' which has percpu_ref_exit()
 
-> But please (for now) also reserve RESOLVE_NO_AUTOMOUNTS, which would
-> apply the same restriction for all path components.
+The file table io_uring issue is using the ref in a funky way, switching
+in and out of atomic if we need to quiesce it. That's different from
+other use cases, that just use it as a "normal" reference. Hence for the
+funky use case, you can potentially have a switch in progress when you
+exit the ref. You really want to wait for that, the easiest solution is
+to punt the exit + free to an RCU callback, if there's nothing else you
+need to handle once the switch is done.
 
-I'm not going to do that for the moment.  There will be objections if it isn't
-wired up for at least something - but at the moment Al doesn't want people
-going and making conflicting changes in fs/namei.c with what he's doing.
+So I would not be so quick to assume that similar patterns (exit + free)
+have similar issues.
 
-David
+-- 
+Jens Axboe
 
