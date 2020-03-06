@@ -2,90 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010C417BBAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 12:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7EAF17BBDE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 12:42:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbgCFLaK convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 6 Mar 2020 06:30:10 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44732 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbgCFLaK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 06:30:10 -0500
-Received: by mail-qk1-f196.google.com with SMTP id f198so1889167qke.11;
-        Fri, 06 Mar 2020 03:30:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Nna0nsguv2U+v9ziNQRL80k09HbQlLvP1j4KtjoAo7M=;
-        b=P7EcwBcK7dx8cF79C9pN3P6os2Z3YL6AU/wh0wx1LLH1l78jY4kiL53d5woVTM5qNl
-         zOzIhESzoLvN1T5kdKAfTD6rEiWYYQmj+xeoVvPw7HKmTpokbVUhNvpt/vCeC++Y0PcH
-         wHOg/i20WypsCUUFgbqe6UFtxftO/ptP3eLWTbAjYWfrB/oSVIeVXeKCRK/Mq3AiPiwG
-         k4Z1KVUXJK31T5j3cxAUY4fkAhBuFMhJ9kQquP2yjt/XYVvIHr687XaoKLW7wJ1X81a6
-         3WHz4RRRyGYR3Cz2V8fxrqB+uhS0usmz1JcTQn6297qOtrPwKhMR0BC3oFg/fOhY8eh/
-         o9wg==
-X-Gm-Message-State: ANhLgQ2znZ8XFgc+mygHmuNsTYQFfSoyz/gjmjdDUHVshFUUVC/DZaxY
-        LOX4AjZ68l09qOI7Cmd7s9HwHNWz9Jum35wfD7Q=
-X-Google-Smtp-Source: ADFU+vsdbMUXZ/9+PsZX4vmn+uiZw3tJKm/S0yTnSyg72ZSBwF9YNhD0HM8bKgqMu40FTOyith2U60eZc5tP18laC8U=
-X-Received: by 2002:a37:6646:: with SMTP id a67mr2383615qkc.457.1583494209166;
- Fri, 06 Mar 2020 03:30:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20200306080905.173466-1-syq@debian.org> <87r1y53npd.fsf@mid.deneb.enyo.de>
- <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu> <87mu8t3mlw.fsf@mid.deneb.enyo.de>
- <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
-In-Reply-To: <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
-From:   YunQiang Su <syq@debian.org>
-Date:   Fri, 6 Mar 2020 19:29:57 +0800
-Message-ID: <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
-Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
-To:     Laurent Vivier <laurent@vivier.eu>
-Cc:     Florian Weimer <fw@deneb.enyo.de>, torvalds@linux-foundation.org,
+        id S1726307AbgCFLm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 06:42:26 -0500
+Received: from albireo.enyo.de ([37.24.231.21]:57960 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbgCFLm0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Mar 2020 06:42:26 -0500
+Received: from [172.17.203.2] (helo=deneb.enyo.de)
+        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1jABMw-00028i-VZ; Fri, 06 Mar 2020 11:42:18 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.92)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1jABLL-00050q-TL; Fri, 06 Mar 2020 12:40:39 +0100
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     YunQiang Su <syq@debian.org>
+Cc:     Laurent Vivier <laurent@vivier.eu>, torvalds@linux-foundation.org,
         Greg KH <gregkh@linuxfoundation.org>,
         akpm@linux-foundation.org, Al Viro <viro@zeniv.linux.org.uk>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
         libc-alpha@sourceware.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH] binfmt_misc: pass binfmt_misc P flag to the interpreter
+References: <20200306080905.173466-1-syq@debian.org>
+        <87r1y53npd.fsf@mid.deneb.enyo.de>
+        <8441f497-61eb-5c14-bf1e-c90a464105a7@vivier.eu>
+        <87mu8t3mlw.fsf@mid.deneb.enyo.de>
+        <40da389d-4e74-2644-2e7c-04d988fcc26f@vivier.eu>
+        <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
+Date:   Fri, 06 Mar 2020 12:40:39 +0100
+In-Reply-To: <CAKcpw6WEO5Rmsv+WFkOMrkH+0jwtFKKy7b2n3U9xgv-xGC0UUQ@mail.gmail.com>
+        (YunQiang Su's message of "Fri, 6 Mar 2020 19:29:57 +0800")
+Message-ID: <87v9nhzp6w.fsf@mid.deneb.enyo.de>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Laurent Vivier <laurent@vivier.eu> 于2020年3月6日周五 下午7:13写道：
->
-> Le 06/03/2020 à 09:37, Florian Weimer a écrit :
-> > * Laurent Vivier:
-> >
-> >> Le 06/03/2020 à 09:13, Florian Weimer a écrit :
-> >>> * YunQiang Su:
-> >>>
-> >>>> +  if (bprm->interp_flags & BINPRM_FLAGS_PRESERVE_ARGV0)
-> >>>> +          flags |= AT_FLAGS_PRESERVE_ARGV0;
-> >>>> +  NEW_AUX_ENT(AT_FLAGS, flags);
-> >>>
-> >>> Is it necessary to reuse AT_FLAGS?  I think it's cleaner to define a
-> >>> separate AT_ tag dedicated to binfmt_misc.
-> >>
-> >> Not necessary, but it seemed simpler and cleaner to re-use a flag that
-> >> is marked as unused and with a name matching the new role. It avoids to
-> >> patch other packages (like glibc) to add it as it is already defined.
-> >
-> > You still need to define AT_FLAGS_PRESERVE_ARGV0.  At that point, you
-> > might as well define AT_BINFMT and AT_BINFMT_PRESERVE_ARGV0.
-> >
->
-> Yes, you're right.
->
-> But is there any reason to not reuse AT_FLAGS?
+* YunQiang Su:
 
-AT_* only has 32 slot and now. I was afraid that maybe we shouldn't take one.
-   /* AT_* values 18 through 22 are reserved */
-   27,28,29,30 are not used now.
-Which should we use?
+> AT_* only has 32 slot and now. I was afraid that maybe we shouldn't take one.
+>    /* AT_* values 18 through 22 are reserved */
+>    27,28,29,30 are not used now.
+> Which should we use?
 
->
-> Thanks,
-> Laurent
+Where does this limit of 32 tags come from?  I don't see it from a
+userspace perspective.
