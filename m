@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 914E617C365
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFB5117C3A8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:07:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgCFRBw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 12:01:52 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.61]:17313 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726171AbgCFRBw (ORCPT
+        id S1726462AbgCFRHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 12:07:51 -0500
+Received: from gateway31.websitewelcome.com ([192.185.144.97]:12034 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726140AbgCFRHu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:01:52 -0500
-X-Greylist: delayed 1210 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 12:01:51 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 48A121D792
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2020 10:41:41 -0600 (CST)
+        Fri, 6 Mar 2020 12:07:50 -0500
+X-Greylist: delayed 1422 seconds by postgrey-1.27 at vger.kernel.org; Fri, 06 Mar 2020 12:07:50 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id D0FD8565EF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Mar 2020 10:44:07 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id AG2fjT4iJAGTXAG2fjahBP; Fri, 06 Mar 2020 10:41:41 -0600
+        id AG51jNZJCRP4zAG51jkegk; Fri, 06 Mar 2020 10:44:07 -0600
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
@@ -26,26 +26,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
         :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YGd4yOt6uoISkY81G59OqxRmykcrtE06U9TVbe/QucQ=; b=c1Z0UpyHFgs/ANLeLX1hAufEn4
-        vLKduJy9pbBG77cCmwNLTBWfzDETINqrHJwsnGmeV6NoSoYtn756/scrbX8FjAbLqpzKpmXj7ftR0
-        4Nz7xpxeEynkSnAd2S8/Ock0nYBWt3QfynaBfkwaxxLak05WHeg1EYsYxzU9kNxOxvTUrR27XaMkV
-        72TZw1kT231uWQhKVAiiK3s0V3YMXLj09kYH5CeAWOdX0WF+evQGnFZhNeO2yvvQvpRrJ6O/P66JP
-        ohl2HdtfLoJJAK1jUfOUOsNEiHYN523zbdc0bFZxTJsi98IDOouCHMwanp2vMp6rM2Cx0H35S0B8k
-        wClzpDaw==;
-Received: from [201.166.190.53] (port=51758 helo=embeddedor)
+        bh=4949jWfNFN1LuKCp4152G5zJnK9VURS26JWdKzebTl8=; b=pbJ8v8Rjw8Waa3sCJFWCCg/4Zr
+        JLZcujPDZo6DGBnxpiVT8/sj5C4Q/S7lg/GlBtpJl47aH85EFViK6u6wWsIwD/I/qkCQWV2CWNEth
+        h5FRlKuCamjf9igMkmOYgjmtI9eKWBxyrHYA2tnEUgZdYh6RN9bktPvCsEnBtl3M81jX994AAlm+7
+        jEqaQp5hUmg9IkyjLHRmN/m7ddVsdgHDPeA9kXCpELGMAJHwX9m+lhidS6CE8tCAU0TJM7UD8K4lY
+        FUmb+RIvvG58YhWt4tXMvB1haWRf+rj08yYyGoC7LM190hD5i+oGyRq6ptNyiJSyY+eNPQAIo0u48
+        jsBM53+w==;
+Received: from [201.166.190.127] (port=51762 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1jAG2c-001q4M-Nb; Fri, 06 Mar 2020 10:41:39 -0600
-Date:   Fri, 6 Mar 2020 10:44:46 -0600
+        id 1jAG50-001rRz-1d; Fri, 06 Mar 2020 10:44:06 -0600
+Date:   Fri, 6 Mar 2020 10:47:12 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org,
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] aio: Replace zero-length array with flexible-array
- member
-Message-ID: <20200306164446.GA21604@embeddedor>
+Subject: [PATCH][next] fs/binfmt_elf.c: Replace zero-length array with
+ flexible-array member
+Message-ID: <20200306164712.GA21930@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -56,15 +54,15 @@ X-AntiAbuse: Original Domain - vger.kernel.org
 X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
 X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
-X-Source-IP: 201.166.190.53
+X-Source-IP: 201.166.190.127
 X-Source-L: No
-X-Exim-ID: 1jAG2c-001q4M-Nb
+X-Exim-ID: 1jAG50-001rRz-1d
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [201.166.190.53]:51758
+X-Source-Sender: (embeddedor) [201.166.190.127]:51762
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
+X-Email-Count: 7
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -102,22 +100,22 @@ This issue was found with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/aio.c | 2 +-
+ fs/binfmt_elf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 94f2b9256c0c..13c4be7f00f0 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -68,7 +68,7 @@ struct aio_ring {
- 	unsigned	header_length;	/* size of aio_ring */
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 13f25e241ac4..6a7f1fc26eb1 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1664,7 +1664,7 @@ struct elf_thread_core_info {
+ 	struct elf_thread_core_info *next;
+ 	struct task_struct *task;
+ 	struct elf_prstatus prstatus;
+-	struct memelfnote notes[0];
++	struct memelfnote notes[];
+ };
  
- 
--	struct io_event		io_events[0];
-+	struct io_event		io_events[];
- }; /* 128 bytes + ring size */
- 
- /*
+ struct elf_note_info {
 -- 
 2.25.0
 
