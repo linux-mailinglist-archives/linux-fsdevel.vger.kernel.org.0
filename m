@@ -2,135 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61E6417B629
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 06:21:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84EDC17B732
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 08:11:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbgCFFVT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 00:21:19 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:56224 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbgCFFVS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 00:21:18 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jA5QD-0006OO-JB; Thu, 05 Mar 2020 22:21:17 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jA5QC-0004ty-VK; Thu, 05 Mar 2020 22:21:17 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
+        id S1726166AbgCFHLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 02:11:11 -0500
+Received: from hr2.samba.org ([144.76.82.148]:56764 "EHLO hr2.samba.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbgCFHLK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Mar 2020 02:11:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Date:Message-ID:From:Cc:To;
+        bh=6QPYRrmXg5zVDYQiNmpupY1dvEtoH2L7qRd7PuW6OLM=; b=WYZAvwZTAW9AAGX41fR0coySUF
+        YqRxJxPPuX56gHT2yKRFaasUrEd9xIxei2naoAzQAMBtOwIut1wzpal4pKmKKFpgw7a2JHKwgDjnx
+        nNO9j9+A3K+fc1s1I3rINrZAL9gFS+F1T7oRF1He+X+X8v39oOSD0znozc6+fldaJRM/sDFyLosi3
+        PgAoGfDsypT1ot2nbo2ZjXtHAvA8XJ9APH1B9buF8zGU1gzM2PGrFzHaPa1edUJgnlucd+hlRYazH
+        SCL3o6+/y4AnuhjcrPYFisYfUYxfzmJm/adjcaXbFGI10H2xGqLQVuxIU2Ya7+vAyasYbBnwCP4Ee
+        PW64eWBNrBAEgWyjmXQQfIe3hgD25atXIDl1KZLpVLECO25dt3ki8fzXQdWodvbaTLpWnU4ZQNf9z
+        OWvCuP0CbFmHzX22AwUoeHCiaftbzFFLza3tWAcT6SAlL0nZSB3NQe4sFbNbK/9Mj3Z+JC+XWMvv4
+        BnzIWoCcpnJJ8/DBqtVa2R26;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jA78R-0003Pw-Sm; Fri, 06 Mar 2020 07:11:04 +0000
+Subject: Re: [LSF/MM/BPF TOPIC] How to make disconnected operation work?
+To:     Jeff Layton <jlayton@redhat.com>,
         David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51707ABF20B6CBBECC34865FE4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nmjulm.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB51705EB9A5E911295BDF8D2FE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Thu, 05 Mar 2020 23:19:03 -0600
-In-Reply-To: <AM6PR03MB51705EB9A5E911295BDF8D2FE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Thu, 5 Mar 2020 22:34:07 +0000")
-Message-ID: <87blpaawmw.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        lsf-pc@lists.linux-foundation.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <14196.1575902815@warthog.procyon.org.uk>
+ <8d872ab39c590dbfc6f02230dddb8740630f1444.camel@redhat.com>
+From:   Steven French <sfrench@samba.org>
+Message-ID: <9d5d8081-9c41-aa9d-1ae4-0b09c3a940d4@samba.org>
+Date:   Fri, 6 Mar 2020 01:11:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jA5QC-0004ty-VK;;;mid=<87blpaawmw.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18xi+IMFulUpbVXvPZlB47PFQOqvybEWgY=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
-        version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4846]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 231 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.6 (2.0%), b_tie_ro: 3.5 (1.5%), parse: 1.21
-        (0.5%), extract_message_metadata: 11 (4.6%), get_uri_detail_list: 0.55
-        (0.2%), tests_pri_-1000: 14 (6.0%), tests_pri_-950: 0.96 (0.4%),
-        tests_pri_-900: 0.86 (0.4%), tests_pri_-90: 21 (9.2%), check_bayes: 20
-        (8.6%), b_tokenize: 7 (3.1%), b_tok_get_all: 6 (2.6%), b_comp_prob:
-        1.32 (0.6%), b_tok_touch_all: 3.4 (1.5%), b_finish: 0.67 (0.3%),
-        tests_pri_0: 165 (71.6%), check_dkim_signature: 0.38 (0.2%),
-        check_dkim_adsp: 2.5 (1.1%), poll_dns_idle: 1.14 (0.5%), tests_pri_10:
-        2.6 (1.1%), tests_pri_500: 6 (2.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <8d872ab39c590dbfc6f02230dddb8740630f1444.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+As discussed in hallway discussions at Linux Storage Conference - this 
+would make a good topic for LSF/MM
 
-> On 3/5/20 10:15 PM, Eric W. Biederman wrote:
->> @@ -1266,7 +1267,7 @@ int flush_old_exec(struct linux_binprm * bprm)
->>  	 * Make sure we have a private signal table and that
->>  	 * we are unassociated from the previous thread group.
->>  	 */
->> -	retval = de_thread(current);
->> +	retval = de_thread(bprm, current);
+On 12/9/19 5:14 PM, Jeff Layton wrote:
+> On Mon, 2019-12-09 at 14:46 +0000, David Howells wrote:
+>> I've been rewriting fscache and cachefiles to massively simplify it and make
+>> use of the kiocb interface to do direct-I/O to/from the netfs's pages which
+>> didn't exist when I first did this.
+>>
+>> 	https://lore.kernel.org/lkml/24942.1573667720@warthog.procyon.org.uk/
+>> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter
+>>
+>> I'm getting towards the point where it's working and able to do basic caching
+>> once again.  So now I've been thinking about what it'd take to support
+>> disconnected operation.  Here's a list of things that I think need to be
+>> considered or dealt with:
+>>
+> I'm quite interested in this too. I see that you've already given a lot
+> of thought to potential interfaces here. I think we'll end up having to
+> add a fair number of new interfaces to make something like this work.
 >
-> can we get rid of passing current as parameter here?
-
-With a separate patch.  It makes the patch less clear if I make that
-change in this one.
-
-Eric
+>>   (1) Making sure the working set is present in the cache.
+>>
+>>       - Userspace (find/cat/tar)
+>>       - Splice netfs -> cache
+>>       - Metadata storage (e.g. directories)
+>>       - Permissions caching
+>>
+>>   (2) Making sure the working set doesn't get culled.
+>>
+>>       - Pinning API (cachectl() syscall?)
+>>       - Allow culling to be disabled entirely on a cache
+>>       - Per-fs/per-dir config
+>>
+>>   (3) Switching into/out of disconnected mode.
+>>
+>>       - Manual, automatic
+>>       - On what granularity?
+>>         - Entirety of fs (eg. all nfs)
+>>         - By logical unit (server, volume, cell, share)
+>>
+>>   (4) Local changes in disconnected mode.
+>>
+>>       - Journal
+>>       - File identifier allocation
+> Yep, necessary if you want to allow disconnected creates. By coincidence
+> I'm working an (experimental) patchset now to add async create support
+> to kcephfs, and part of that involves delegating out ranges of inode
+> numbers. I may have some experience to report with it by the time LSF
+> rolls around.
+>
+>>       - statx flag to indicate provisional nature of info
+>>       - New error codes
+>> 	- EDISCONNECTED - Op not available in disconnected mode
+>> 	- EDISCONDATA - Data not available in disconnected mode
+>> 	- EDISCONPERM - Permission cannot be checked in disconnected mode
+>> 	- EDISCONFULL - Disconnected mode cache full
+>>       - SIGIO support?
+>>
+>>   (5) Reconnection.
+>>
+>>       - Proactive or JIT synchronisation
+>>         - Authentication
+>>       - Conflict detection and resolution
+>> 	 - ECONFLICTED - Disconnected mode resolution failed
+> ECONFLICTED sort of implies that reconnection will be manual. If it
+> happens automagically in the background you'll have no way to report
+> such errors.
+>
+> Also, you'll need some mechanism to know what inodes are conflicted.
+> This is the real difficult part of this problem, IMO.
+>
+>
+>>       - Journal replay
+>>       - Directory 'diffing' to find remote deletions
+>>       - Symlink and other non-regular file comparison
+>>
+>>   (6) Conflict resolution.
+>>
+>>       - Automatic where possible
+>>         - Just create/remove new non-regular files if possible
+>>         - How to handle permission differences?
+>>       - How to let userspace access conflicts?
+>>         - Move local copy to 'lost+found'-like directory
+>>         	 - Might not have been completely downloaded
+>>         - New open() flags?
+>>         	 - O_SERVER_VARIANT, O_CLIENT_VARIANT, O_RESOLVED_VARIANT
+>>         - fcntl() to switch variants?
+>>
+> Again, conflict resolution is the difficult part. Maybe the right
+> solution is to look at snapshotting-style interfaces -- i.e., handle a
+> disconnected mount sort of like you would a writable snapshot. Do any
+> (local) fs' currently offer writable snapshots, btw?
+>
+>>   (7) GUI integration.
+>>
+>>       - Entering/exiting disconnected mode notification/switches.
+>>       - Resolution required notification.
+>>       - Cache getting full notification.
+>>
+>> Can anyone think of any more considerations?  What do you think of the
+>> proposed error codes and open flags?  Is that the best way to do this?
+>>
+>> David
+>>
