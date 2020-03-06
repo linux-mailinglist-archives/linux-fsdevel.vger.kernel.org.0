@@ -2,92 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73EF617B31C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 01:45:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A7417B412
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 02:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbgCFAp5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Mar 2020 19:45:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53126 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbgCFAp5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Mar 2020 19:45:57 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD56E2070E;
-        Fri,  6 Mar 2020 00:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583455557;
-        bh=fGx37LlA+EG4g7xaMt+UAx7ZpIiPij5CT5m8UDigDpE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MW4Vk6JvFjyAkqLILduCSVnHoFDTP44wh8BDtkn3mMCcS3QOVTbqORQOYyHbCVBo6
-         QB7uLmdz+7k/bhThcepfO6I4noScDXO4lwBfZrbsjO7nJq/F7DXS/DLq9PNlIrm/0Y
-         LUoljjpLlpCbARZKFMZ3rRkGhG9eAYDUb82nAOiM=
-Date:   Thu, 5 Mar 2020 16:45:55 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: lazytime causing inodes to remain dirty after sync?
-Message-ID: <20200306004555.GB225345@gmail.com>
+        id S1726382AbgCFB4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Mar 2020 20:56:01 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33115 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgCFB4B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Mar 2020 20:56:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n7so308846pfn.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Mar 2020 17:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
+        b=m0uGG95jnfdlAWS1zW5wrVlOCbHvBqS4pnLjhYDwoHSUSeZ0mdxsG7TrEgIOVlMyjJ
+         XkqhXyi+g1rDj4yGoOYDzALFjGqSGhoAURaZPXV1WpQCz5ZEz8K7+C/j8ypaEekRQ5vX
+         nG83Vbtwn11cHwxzs5q997ZKprD0v4/UHFRFyf84aZqL35AcJR4+nYOiO3zDUbZSHMEb
+         ctLVvigiannkuT0QAk7SzuW6eUfJ5dkrx+E007kPyW4wT/qn6WevAXqYPHJ9Tu67CPjF
+         HZhrubOk0/1pK7pirS8FoMwv/UibUoJ8ZYbez9HmrKF9Uj6vcglRbIPFmyM28N3iKiBN
+         ekmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kaXeesIPPJMvPx4kXVh7gCp+Z3uzVmJEDAEEcWfSDtk=;
+        b=P84hqeV20icM2pd/trJ4opd1SRTTid6AWo3J16P3HXkDXdHaBYOEayJSoTZA4HYeth
+         IDXUTRu9zWDaf0bgOpqArn0qpYSZURA1kyRsUzlrnzvsAwe2dczcGaoycziqgzK+6bcf
+         5WyPGGajDcR1rrNK0J5VkxX3Y0R0nPGJpo3IZsT2ks+ndQkXFkgJlBNVk4OIL4uinMPz
+         hWn6zyx5BQiSCTp6bKWONIAtp9FqBlPkaJ+F7yVaZ0jmF+P7EXGyateQ7YCj+3VnPxaB
+         E/EhC+25tULAL+BivY1iE/9S5EpPa6+sh8/k50VdvbYOSOb1aokZnYnSDA8FfB4FeoPD
+         Hy2Q==
+X-Gm-Message-State: ANhLgQ1b8xdiaotClV9kb4A9ZkJSJebH70GI6w43W+2RXquGepK5CZDC
+        2BrrvP2RvBAu6wOqhEi0fsak7Q==
+X-Google-Smtp-Source: ADFU+vtqOTPBL+DI0/5IBgeGnVtrkQZjNncicf0Rr++POXk8uMRWYzPeLE+yHx0D7xZIm9ix3RJqHg==
+X-Received: by 2002:a63:d10c:: with SMTP id k12mr962268pgg.392.1583459758864;
+        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id x16sm6615906pfq.40.2020.03.05.17.55.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Mar 2020 17:55:58 -0800 (PST)
+Subject: Re: [PATCH] io_uring: Fix error handling in
+ __io_compat_recvmsg_copy_hdr()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8ae4f1e1-9158-4ec8-e6fc-87c836093b89@kernel.dk>
+Date:   Thu, 5 Mar 2020 18:55:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200305200544.5wmrfo7hbfybp3w5@kili.mountain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While testing my patch "fscrypt: don't evict dirty inodes after removing key"
-(https://lkml.kernel.org/r/20200305084138.653498-1-ebiggers@kernel.org), I've
-run into an issue where even after the filesystem is sync'ed and no files are
-in-use, inodes can remain dirty if the filesystem is mounted with -o lazytime.
-Thus, my patch causes some inodes to not be evicted when they should be.
+On 3/5/20 1:05 PM, Dan Carpenter wrote:
+> We need to check if __get_compat_msghdr() fails and return immediately
+> on error.  Also if compat_import_iovec() fails then we should return a
+> negative error code, but the current behavior is to just return
+> success.
 
-(lazytime is the default on f2fs, but ext4 supports it too.)
+Thanks, that certainly looks better... Applied.
 
-This is caused by the following code in __writeback_single_inode() that
-redirties the inode if its access time is dirty:
+-- 
+Jens Axboe
 
-	if (dirty & I_DIRTY_TIME)
-		mark_inode_dirty_sync(inode);
-	/* Don't write the inode if only I_DIRTY_PAGES was set */
-	if (dirty & ~I_DIRTY_PAGES) {
-		int err = write_inode(inode, wbc);
-		if (ret == 0)
-			ret = err;
-	}
-	trace_writeback_single_inode(inode, wbc, nr_to_write);
-	return ret;
-
-Here's a reproducer in the kvm-xfstests test appliance which demonstrates the
-problem using sync(), without fscrypt involved at all:
-
-	sysctl vm.dirty_expire_centisecs=500
-	umount /vdc
-	mkfs.ext4 -F /dev/vdc
-	mount /vdc -o lazytime
-	echo contents > /vdc/file
-	sync
-	ino=$(stat -c %i /vdc/file)
-	echo 1 | tee /sys/kernel/debug/tracing/events/writeback/writeback_{single_inode_start,mark_inode_dirty,lazytime}/enable
-	echo "ino == $ino" | tee /sys/kernel/debug/tracing/events/writeback/writeback_{single_inode_start,mark_inode_dirty,lazytime}/filter
-	echo > /sys/kernel/debug/tracing/trace
-	cat /vdc/file > /dev/null
-	sync
-	cat /sys/kernel/debug/tracing/trace_pipe
-
-The tracing shows that the inode for /vdc/file is written during the sync at
-7.28s.  But then, still during the sync, it's immediately re-dirtied.  It then
-gets written again later in the background, after the sync.
-
-             cat-286   [001] ...1     7.279433: writeback_mark_inode_dirty: bdi 254:32: ino=12 state= flags=I_DIRTY_TIME
-    kworker/u8:0-8     [003] ...1     7.282647: writeback_single_inode_start: bdi 254:32: ino=12 state=I_SYNC|I_DIRTY_TIME|I_DIRTY_TIME_EXPIRED dirtied_when=4294879420 age=0 index=1 to_write=9223372036854775807 wrote=0 cgroup_ino=1
-    kworker/u8:0-8     [003] ...2     7.282660: writeback_lazytime: dev 254,32 ino 12 dirtied 4294879420 state I_SYNC|I_DIRTY_TIME|I_DIRTY_TIME_EXPIRED mode 0100644
-    kworker/u8:0-8     [003] ...1     7.283204: writeback_mark_inode_dirty: bdi 254:32: ino=12 state=I_SYNC flags=I_DIRTY_SYNC
-    kworker/u8:0-8     [003] ...1    12.412079: writeback_single_inode_start: bdi 254:32: ino=12 state=I_DIRTY_SYNC|I_SYNC dirtied_when=4294879421 age=5 index=1 to_write=13312 wrote=0 cgroup_ino=1
-
-Is this behavior intentional at all?  It seems like a bug; it seems the inode
-should be written just once, during the sync.  
-
-- Eric
