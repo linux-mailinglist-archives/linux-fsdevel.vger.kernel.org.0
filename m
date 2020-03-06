@@ -2,206 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDB517C432
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:21:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED75717C498
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 18:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbgCFRVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 12:21:34 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36182 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbgCFRVe (ORCPT
+        id S1726462AbgCFRiC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 12:38:02 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:56058 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725935AbgCFRiC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:21:34 -0500
-Received: by mail-io1-f68.google.com with SMTP id d15so2841505iog.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 09:21:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UpJ/sy4Eqlqc62xJ9CGPbulBS93p2b28hl6znlt+s3U=;
-        b=O/6eGHTVYcHkiG251FGLtEObmFqV0XFSf6lwS4Z+IVRMTSHQdIq547eK8C06y3PMoQ
-         4PN9yO+rlr/bvY0hcKXlQhEOltlEH985MxXSFTHKNrW8xwzFt4JEwmGpx6EzRJ8+8Sse
-         G4MQsphafaUpkUhI15XT6cEyAzSF3ccgJRKXUw5ocgwNaBMTCmC7XOGdBesQRBm7dyC1
-         ieItttY+ZC3S/q6/uIEWofTLGnfszPsjfm4ay6VaFklIbiSQF4uHuDpcJtJqSa/D0ov1
-         McWnHnAYObmYXxAPocMHWUt4duL4Kb4rnTAsf3me+RM/q5K5MS/hgSE9Q+j8LnklJSrz
-         5Hug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UpJ/sy4Eqlqc62xJ9CGPbulBS93p2b28hl6znlt+s3U=;
-        b=PN9/VnPWiKRJYzgexvBoAMkAmnKsFTmaytu4htiS/mTNjXDKxboCdh+vfpKxbq/z47
-         cRtopbMjw5QQsef8QEqKyYEW0qxfeB3uXe4Rx6wiCTHMpHm9saGiOoBcv3PQ+Ymj5VRq
-         DoZuTOuSPo7rVtvgQwG6Mrw/JuEEM0ecKxB8Gt1+TKPUvW1j1h2gfhr5bgGpZ4ChIZAo
-         4lRD+OnYQS+laVeI659uEu0JOKTMUAEwwNIiqJIzr93/F9Ya70VZm1L+SVLMJE8e+mlb
-         4xZ/IGuaMNdDzQMoqg8jdjiY0v2BIEI+2dzyBZ7sgfPOTSUsu/Gq9XtQ0Nkwk3cllgJz
-         VE6A==
-X-Gm-Message-State: ANhLgQ3cfuJR+v/kVYhtBEB6pq90Jhjmg1rP79n+Hz+TpmJxvALgPCls
-        97bg4bJlE3m+Rq26P3QUvEasOQ==
-X-Google-Smtp-Source: ADFU+vubeWQ/bYcExUcJpxub9/GalDT9lSUcZrh8Uyp0P3zVAJZ0o+k+cKU0ijuUPObvYLcIczD2tg==
-X-Received: by 2002:a02:950d:: with SMTP id y13mr3949524jah.139.1583515293076;
-        Fri, 06 Mar 2020 09:21:33 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w1sm4012794ilo.30.2020.03.06.09.21.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 09:21:32 -0800 (PST)
-Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
-To:     paulmck@kernel.org
-Cc:     Jann Horn <jannh@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-References: <00000000000067c6df059df7f9f5@google.com>
- <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
- <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
- <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
- <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
- <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
- <20200306164443.GU2935@paulmck-ThinkPad-P72>
- <11921f78-c6f2-660b-5e33-11599c2f9a4b@kernel.dk>
- <20200306171911.GA2935@paulmck-ThinkPad-P72>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f94ca345-d888-e95f-e091-ca60f34ae095@kernel.dk>
-Date:   Fri, 6 Mar 2020 10:21:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200306171911.GA2935@paulmck-ThinkPad-P72>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 6 Mar 2020 12:38:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id AEEB78EE11D;
+        Fri,  6 Mar 2020 09:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1583516281;
+        bh=xEKu/eKkZNBH2WLwIN8gBntJSW3UGFxHLP7pWKKPyt0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=vZMnZaLngoVwWGLvZ5rKtsBWOfvxjWispu9XBK1SoqmkGe51plCQYvk5yEPP80Bxj
+         BTNbO4Z4tW6NfMZePV/hXWvPDJnOz5qX8gNSFxv6XT3AXH+pdTbqYafkc0030ZnDU7
+         EEhl2mSZXPvwOapRQWo9pUwYlEjtFbRlvsStx5M8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Qy21NkEM44CE; Fri,  6 Mar 2020 09:38:01 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id CC04C8EE0F8;
+        Fri,  6 Mar 2020 09:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1583516281;
+        bh=xEKu/eKkZNBH2WLwIN8gBntJSW3UGFxHLP7pWKKPyt0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=vZMnZaLngoVwWGLvZ5rKtsBWOfvxjWispu9XBK1SoqmkGe51plCQYvk5yEPP80Bxj
+         BTNbO4Z4tW6NfMZePV/hXWvPDJnOz5qX8gNSFxv6XT3AXH+pdTbqYafkc0030ZnDU7
+         EEhl2mSZXPvwOapRQWo9pUwYlEjtFbRlvsStx5M8=
+Message-ID: <1583516279.3653.71.camel@HansenPartnership.com>
+Subject: Re: [LSFMMBPF TOPIC] Killing LSFMMBPF
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>
+Cc:     lsf-pc <lsf-pc@lists.linuxfoundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>, bpf@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Date:   Fri, 06 Mar 2020 09:37:59 -0800
+In-Reply-To: <20200306160548.GB25710@bombadil.infradead.org>
+References: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
+         <20200306160548.GB25710@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/6/20 10:19 AM, Paul E. McKenney wrote:
-> On Fri, Mar 06, 2020 at 10:00:19AM -0700, Jens Axboe wrote:
->> On 3/6/20 9:44 AM, Paul E. McKenney wrote:
->>> On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
->>>> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>> On 3/6/20 7:57 AM, Jann Horn wrote:
->>>>>> +paulmck
->>>>>>
->>>>>> On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>>>> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
->>>>>>>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
->>>>>>>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
->>>>>>>>>
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> syzbot found the following crash on:
->>>>>>>>>
->>>>>>>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
->>>>>>>>> git tree:       upstream
->>>>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
->>>>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
->>>>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
->>>>>>>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>>>>>>>>
->>>>>>>>> Unfortunately, I don't have any reproducer for this crash yet.
->>>>>>>>>
->>>>>>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>>>>>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
->>>>>>>>
->>>>>>>> +io_uring maintainers
->>>>>>>>
->>>>>>>> Here is a repro:
->>>>>>>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
->>>>>>>
->>>>>>> I've queued up a fix for this:
->>>>>>>
->>>>>>> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
->>>>>>
->>>>>> I believe that this fix relies on call_rcu() having FIFO ordering; but
->>>>>> <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
->>>>>> says:
->>>>>>
->>>>>> | call_rcu() normally acts only on CPU-local state[...] It simply
->>>>>> enqueues the rcu_head structure on a per-CPU list,
->>>
->>> Indeed.  For but one example, if there was a CPU-to-CPU migration between
->>> the two call_rcu() invocations, it would not be at all surprising for
->>> the two callbacks to execute out of order.
->>>
->>>>>> Is this fix really correct?
->>>>>
->>>>> That's a good point, there's a potentially stronger guarantee we need
->>>>> here that isn't "nobody is inside an RCU critical section", but rather
->>>>> that we're depending on a previous call_rcu() to have happened. Hence I
->>>>> think you are right - it'll shrink the window drastically, since the
->>>>> previous callback is already queued up, but it's not a full close.
->>>>>
->>>>> Hmm...
->>>>
->>>> You could potentially hack up the semantics you want by doing a
->>>> call_rcu() whose callback does another call_rcu(), or something like
->>>> that - but I'd like to hear paulmck's opinion on this first.
->>>
->>> That would work!
->>>
->>> Or, alternatively, do an rcu_barrier() between the two calls to
->>> call_rcu(), assuming that the use case can tolerate rcu_barrier()
->>> overhead and latency.
->>
->> If the nested call_rcu() works, that seems greatly preferable to needing
->> the rcu_barrier(), even if that would not be a showstopper for me. The
->> nested call_rcu() is just a bit odd, but with a comment it should be OK.
->>
->> Incremental here I'm going to test, would just fold in of course.
->>
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index f3218fc81943..95ba95b4d8ec 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -5330,7 +5330,7 @@ static void io_file_ref_kill(struct percpu_ref *ref)
->>  	complete(&data->done);
->>  }
->>  
->> -static void io_file_ref_exit_and_free(struct rcu_head *rcu)
->> +static void __io_file_ref_exit_and_free(struct rcu_head *rcu)
->>  {
->>  	struct fixed_file_data *data = container_of(rcu, struct fixed_file_data,
->>  							rcu);
->> @@ -5338,6 +5338,18 @@ static void io_file_ref_exit_and_free(struct rcu_head *rcu)
->>  	kfree(data);
->>  }
->>  
->> +static void io_file_ref_exit_and_free(struct rcu_head *rcu)
->> +{
->> +	/*
->> +	 * We need to order our exit+free call again the potentially
->> +	 * existing call_rcu() for switching to atomic. One way to do that
->> +	 * is to have this rcu callback queue the final put and free, as we
->> +	 * could otherwise a pre-existing atomic switch complete _after_
->> +	 * the free callback we queued.
->> +	 */
->> +	call_rcu(rcu, __io_file_ref_exit_and_free);
->> +}
->> +
->>  static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
->>  {
->>  	struct fixed_file_data *data = ctx->file_data;
-> 
-> Looks good to me!
+On Fri, 2020-03-06 at 08:05 -0800, Matthew Wilcox wrote:
+[...]
+> 2. Charge attendees $300 for a 3-day conference.  This seems to be
+> the going rate (eg BSDCan, PGCon).  This allows the conference to be
+> self-funding without sponsors, and any sponsorship can go towards
+> evening events, food, travel bursaries, etc.
 
-Thanks Paul! I talked to Paul in private, but here's the final version
-with updated comment and attributions.
+Can I just inject a dose of reality here:  The most costly thing is
+Venue rental (which comes with a F&B minimum) and the continuous Tea
+and Coffee.  Last year for Plumbers, the venue cost us $37k and the
+breaks $132k (including a lunch buffet, which was a requirement of the
+venue rental).  Given we had 500 attendees, that, alone is $340 per
+head already.  Now we could cut out the continuous tea and coffee ...
+and the espresso machines you all raved about last year cost us about
+$7 per shot.  But it's not just this, it's also AV (microphones and
+projectors) and recording, and fast internet access.  That all came to
+about $100k last year (or an extra $200 per head).  So you can see,
+running at the level Plumbers does you're already looking at $540 a
+head, which, co-incidentally is close to our attendee fee.  To get to
+$300 per head, you lot will have to give up something in addition to
+the espresso machines, what is it to be?
 
-https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=c1e2148f8ecb26863b899d402a823dab8e26efd1
-
--- 
-Jens Axboe
+James
 
