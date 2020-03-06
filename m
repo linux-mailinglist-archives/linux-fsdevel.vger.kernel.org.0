@@ -2,150 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D76417C2E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 17:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3999317C2EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 17:29:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgCFQ0k convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 6 Mar 2020 11:26:40 -0500
-Received: from mail-oln040092074103.outbound.protection.outlook.com ([40.92.74.103]:51330
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726166AbgCFQ0j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:26:39 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mndLkuF/4+ZA8pg23sQ9BVkOtGDP0VE5c+lpIaJUjY5YySiJ2Avseh8fQonLow2E+UilVMoEs2iHF8hIC3VRAYouAh7Vwqg1H2dkuzyrrUc+cEH0xzOtpEo6ph2m6pjj2PkW4o7NLJ3jmEFjinyknuVti1ODKfTi0Q/5XGP42GPICaX422J4muvDnUTzaSwmamuwyiclT/DWWLH0OYvY333u8b8OfKvt4OvVtw+uJ6ppL3cuMjOLsUnp2tnf0za8aONfin53ImrsJhDV5Q4R0OhBK+wOPG8b8nTBqAF4mI3CGFtrdq+D1ckftSU/1lPT8YgVvWW8G07TBEKtQTZ+sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Io7E+Ui2qIzTcTCR72QAGn67K2nLZUYLahWMx2SMUc=;
- b=X57kxxxfGDnewALInZkbNePdMoLa4oQkduU6T3p6vZKjlh/r2O+Qk9EXP4RKbWDVVWYK+V3jnggakzBFmAsyFgHXAite5gAeq3akrWpdaplqaLetAlV1Zqayc3zIByJoFTBT1LTkHtMVoOxWTr6hr5MAej6Wgo+CAqi+RRpPuKSWIe651eQirSas0L+RVXN1Y3Yh/qR1DBJlJpTD0QYoMuJVo2m4fU+i+IZ7D/LdoXOP4t5UGgMaW2MAyC51gUo5hmsYNoUXOkT5CsVesO3q953423vsUXE2AA9+cj1gTghAMUpjJKIPlwZ+s2kD5Usi/175kxzmB/xtrbL9M+OvUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from VI1EUR04FT058.eop-eur04.prod.protection.outlook.com
- (2a01:111:e400:7e0e::36) by
- VI1EUR04HT180.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0e::66)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Fri, 6 Mar
- 2020 16:26:35 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.28.57) by
- VI1EUR04FT058.mail.protection.outlook.com (10.152.29.71) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.11 via Frontend Transport; Fri, 6 Mar 2020 16:26:35 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Fri, 6 Mar 2020
- 16:26:35 +0000
-Received: from [192.168.1.101] (92.77.140.102) by ZRAP278CA0014.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Fri, 6 Mar 2020 16:26:33 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-CC:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 1/2] exec: Properly mark the point of no return
-Thread-Topic: [PATCH 1/2] exec: Properly mark the point of no return
-Thread-Index: AQHV8zOIDtdt4OHpy0WII6Z+9AZegqg6nBAAgABo5giAALyfgA==
-Date:   Fri, 6 Mar 2020 16:26:34 +0000
-Message-ID: <AM6PR03MB5170688693E4114CA9367211E4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <202003021531.C77EF10@keescook>
- <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
- <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nlii0b.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87o8tacxl3.fsf_-_@x220.int.ebiederm.org>
- <AM6PR03MB5170B05CFDAF21D8A99B7E48E4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87pndqax3j.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87pndqax3j.fsf@x220.int.ebiederm.org>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: ZRAP278CA0014.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:10::24) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-x-incomingtopheadermarker: OriginalChecksum:DA816E1DEDC4BA9DF9DBBBF2CC39CA4E2C4664A595A9424824BFDAF23294FBD6;UpperCasedChecksum:E1114A9E9CF3C62F1A20B426AF6762161E7A0FAD8694E8A5FE36B25F189AB47F;SizeAsReceived:9897;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [w3tKcLr0mKFaBaS1K/cxK7beXyXo0iyJ]
-x-microsoft-original-message-id: <4fe01e54-2f0f-3381-ed4c-e90f63741717@hotmail.de>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: ec1878a5-305e-44f8-082d-08d7c1eb2307
-x-ms-traffictypediagnostic: VI1EUR04HT180:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: V3jE/pm2bdQm0TxXo+FfbjDhjLWDPgMmRhMVcgCeHk/31mvdiWIA/DuG/043D396eT0QhFXCyL7dSirFLnZdhQ6U12OdMjsWMC+kR0KRZ3jsaIHXyNtRD30l2bWbKtgFn8hQJZ/5gNNJH9yux7NmmfgrO0/veRe2FrUNcfobzZSqwf+29d8me5/Go+45oAnG
-x-ms-exchange-antispam-messagedata: k+uC5fcaLM7rehNPDQoZeMxt3OfEGzH7p2/ZRbCOhIoecExfA2Ouq1x+euM5xUOFLKbkSJ2wIMD5//t/wWfpdjfvSV3a+CYfh5EKJWqtpiDWQu8cFt0i+4gka2bxuT4/7Yh5+doi7cT4MnQZBcmZtg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <7C09FD473FD1FA4FA82AF05D172951FF@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        id S1726382AbgCFQ3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 11:29:04 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60305 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgCFQ3E (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Mar 2020 11:29:04 -0500
+Received: from ip-109-40-130-104.web.vodafone.de ([109.40.130.104] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jAFqN-0000CM-K3; Fri, 06 Mar 2020 16:28:59 +0000
+Date:   Fri, 6 Mar 2020 17:28:58 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        lsf-pc <lsf-pc@lists.linuxfoundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Btrfs BTRFS <linux-btrfs@vger.kernel.org>, bpf@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [LSFMMBPF TOPIC] Killing LSFMMBPF
+Message-ID: <20200306162858.zy6u3tvutxvf27yw@wittgenstein>
+References: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
+ <1583511310.3653.33.camel@HansenPartnership.com>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec1878a5-305e-44f8-082d-08d7c1eb2307
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2020 16:26:34.9940
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1EUR04HT180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1583511310.3653.33.camel@HansenPartnership.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/6/20 6:09 AM, Eric W. Biederman wrote:
-> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On Fri, Mar 06, 2020 at 08:15:10AM -0800, James Bottomley wrote:
+> On Fri, 2020-03-06 at 09:35 -0500, Josef Bacik wrote:
+> > Many people have suggested this elsewhere, but I think we really need
+> > to seriously consider it.  Most of us all go to the Linux Plumbers
+> > conference.  We could accomplish our main goals with Plumbers without
+> > having to deal with all of the above problems.
 > 
->> On 3/5/20 10:15 PM, Eric W. Biederman wrote:
->>>
->>> Add a flag binfmt->unrecoverable to mark when execution has gotten to
->>> the point where it is impossible to return to userspace with the
->>> calling process unchanged.
->>>
->>> While techinically this state starts as soon as de_thread starts
+> [I'm on the Plumbers PC, but not speaking for them, just making general
+> observations based on my long history helping to run Plumbers]
+> 
+> Plumbers has basically reached the size where we can't realistically
+> expand without moving to the bigger venues and changing our evening
+> events ... it's already been a huge struggle in Lisbon and Halifax
+> trying to find a Restaurant big enough for the closing party.
+> 
+> The other reason for struggling to keep Plumbers around 500 is that the
+> value of simply running into people and having an accidental hallway
+> track, which is seen as a huge benefit of plumbers, starts diminishing.
+>  In fact, having a working hallway starts to become a problem as well
+> as we go up in numbers (plus in that survey we keep sending out those
+> who reply don't want plumbers to grow too much in size).
+> 
+> The other problem is content: you're a 3 day 4 track event and we're a
+> 3 day 6 track event.  We get enough schedule angst from 6 tracks ... 10
+> would likely become hugely difficult.  If we move to 5 days, we'd have
+> to shove the Maintainer Summit on the Weekend (you can explain that one
+> to Linus) but we'd still be in danger of the day 4 burn out people used
+> to complain about when OLS and KS were co-located.
+> 
+> So, before you suggest Plumbers as the magic answer consider that the
+> problems you cite below don't magically go away, they just become
+> someone else's headache.
+> 
+> That's not to say this isn't a good idea, it's just to execute it we'd
+> have to transform Plumbers and we should have a community conversation
+> about that involving the current Plumbers PC before deciding it's the
+> best option.
 
-typo: s/techinically/technically/
-
->>> killing threads, the only return path at that point is if there is a
->>> fatal signal pending.  I have choosen instead to set unrecoverable
-
-I'm not good at english, is this chosen ?
-
-
-Bernd.
+It's unlikely that this could still be done given that we're also facing
+a little uncertainty for Plumbers. It seems like a lot of additional
+syncing would be needed.
+But the main concern I have is that co-locating both is probably quite
+challenging for anyone attending both especially when organizing
+something like a microconference.
