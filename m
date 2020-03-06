@@ -2,156 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56BC117C1D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 16:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D12F117C1DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 16:34:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbgCFPal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 10:30:41 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36438 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbgCFPal (ORCPT
+        id S1726237AbgCFPeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 10:34:31 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42781 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbgCFPeb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 10:30:41 -0500
-Received: by mail-il1-f196.google.com with SMTP id b17so2399320iln.3;
-        Fri, 06 Mar 2020 07:30:39 -0800 (PST)
+        Fri, 6 Mar 2020 10:34:31 -0500
+Received: by mail-io1-f68.google.com with SMTP id q128so2450310iof.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 07:34:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CaUvvlUUv9vAigVAnuJ2Dl3vfVEvB3Ndkue79uzAzJs=;
-        b=J6AvZ7QtBCSBaZVjgr1qzZNBaDxjmmwwvtrGr2f8BspXkp1CfeVJLJ0ALiA2tpfpIL
-         Dt+eMXbKcmgmlBm7c6dy8mZJ939UUU4k7YtGYNVhxHMxJVv2wsAQxRlqZIJaVBXTEjD4
-         cnU0hS2ybpJY3WR1Z1Mn1M0pgX95zbS7y0A84C+q01pzTNKPu1eoXGVKZc53cxZkg1dA
-         TKlZSUHkDNVKjksHKSaHwlXMcG4zXG64h20QFrHrl2K68PPvKTS10EDZTL46fAZV9NE5
-         a7naCRe+2J0VKofVE1gqRM+tvO7D+zRuwW+4cdfkBCvxiD2mrPbE5zPtKA3BraZpfn8h
-         jAvA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=i4gZAHKM5OgHpwpoUr8vvAtzzBGa02whKHhEoVE9mEM=;
+        b=G9n5QPlMISshbixsE+ie6E13cNyBLXq6JKRGFjB4EP/S6Zrh0gMhC1EgqWO1uaiM9I
+         nmFP2D+ghRJwsNVvev4DcCCKo4U/OO9W5LMqH9qt/4nrlcK3KfPYLN32uN/SaEuFAykQ
+         ouTmEboOt7VPd5B+wOtqh90mgfJ4d4GPVkSrF9VjtdnE5O7AcPRidOQ11uwJWcXC6UOn
+         tezGudUm9cWHg6X/3E9T/SpNy+JO5Rc4FMSj7NGmcPtue0uuMEBch6sE4fn4gc0pmeTY
+         8fcT0U5DxWtmiohEecpi1xqc8Fp4NiWAx3cxckUL3p/bynqs1q7MuEGMqxEkKaK5R1vZ
+         JiAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CaUvvlUUv9vAigVAnuJ2Dl3vfVEvB3Ndkue79uzAzJs=;
-        b=ksgdW9UMkdK3xztjDMGFuyqt8bdmJ4eA6CgADN6HrGPo2DbAQPAbYmR1AOdOK+hTHB
-         OYpePTSeS7QvJ9qtceARVT6gO2R5ervmA1IDIFWNBwNI8OzdfC3Slg0RZPrfmhWLjw3t
-         y0fhOkeLe1ibS87CZyzKQsX3dHAjwIbD+CWKDvDkIo2uth51g/CqaSvSxuLkMyuwvi4S
-         xjFQTV9icTddBGrdRXV1oGpGxxzD3nu8QHIj3THV6GHW7fBNAPNmsXmse3jlzV5QFf5g
-         94/rLy+dgrDKP6y06lMwGTvYtpJkpy2r6QkylqVFcs7nUvPabHnquCCmidIViIIvCxmw
-         xBfA==
-X-Gm-Message-State: ANhLgQ07JhnsVGiFTRDf2vDLNCWhL9+igN8FWfqLMwWsE9R1VS9PXXJR
-        tkfcBf62UKzIQmlLVu50INmElfCb9u9KWRpRrEL92w==
-X-Google-Smtp-Source: ADFU+vu4KOzq3lSXEUVGr2ih0QhccA2P1sa4V5JsgJfhOk4JJl0/m84ZBrWnh+8HjLsfNQkEeeJ3lU/dThrteAO7iAQ=
-X-Received: by 2002:a92:9f1a:: with SMTP id u26mr3838288ili.72.1583508638771;
- Fri, 06 Mar 2020 07:30:38 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i4gZAHKM5OgHpwpoUr8vvAtzzBGa02whKHhEoVE9mEM=;
+        b=GhsBlQSGXR8vadtg0mUsQfMsMDgtnGh30tu5G4DMPqMXSSqr77m36OrcLEt5RqN4qp
+         yhLYROjQyeEDIJLWDFeDY2tc7NBoEtBRy1Q9mOS9SAsBQScyBZ9c9Hu2A4jAZGgUwgb5
+         ILNTN1tmcX376wNx/rxIgG+cqCnHHV+TYP4sm1wou2gx1nmH0j9u5SQve5M3kYOQKfYE
+         euPWUy7ezawDx04VDrRMDK53lMyhEGoCyPRSJgWnjLTSH9CAHwP2FAGdzSzeHJVJSrRr
+         O833IIRY6cnuFYum9GSA0ipkj/5USpamyTfZY2SndqkoE8tYAmVoUzrSk0va6mp46+Pt
+         s80w==
+X-Gm-Message-State: ANhLgQ3c0MUWQf8JyRH4X664PQTbWHOJy2Gq5fforxM4XCM62wn9GkuX
+        skMeWD2i7b3fSRZr8Q7rBcJbdw==
+X-Google-Smtp-Source: ADFU+vug7Cj8FKlRvlPKGAirleW76RbGogy3OvOy3tIjfeIbCVJ6CH/wBoqBqQPyQv9Ge53C1LIRCA==
+X-Received: by 2002:a05:6638:e8b:: with SMTP id p11mr3464609jas.11.1583508870767;
+        Fri, 06 Mar 2020 07:34:30 -0800 (PST)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l17sm11448757ilc.49.2020.03.06.07.34.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2020 07:34:30 -0800 (PST)
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+To:     Jann Horn <jannh@google.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+References: <00000000000067c6df059df7f9f5@google.com>
+ <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+ <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+ <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
+Date:   Fri, 6 Mar 2020 08:34:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
-In-Reply-To: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 6 Mar 2020 17:30:27 +0200
-Message-ID: <CAOQ4uxjJ794BRJZeGKPMBmL7WbUVh1SHWXe9XaSfzq5d46hd0w@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSFMMBPF TOPIC] Killing LSFMMBPF
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     lsf-pc <lsf-pc@lists.linuxfoundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>, bpf@vger.kernel.org,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 6, 2020 at 4:35 PM Josef Bacik <josef@toxicpanda.com> wrote:
->
-> Hello,
->
-> This has been a topic that I've been thinking about a lot recently, mostly
-> because of the giant amount of work that has been organizing LSFMMBPF.  I was
-> going to wait until afterwards to bring it up, hoping that maybe it was just me
-> being done with the whole process and that time would give me a different
-> perspective, but recent discussions has made it clear I'm not the only one.
->
-> LSFMMBPF is not useful to me personally, and not an optimal use of the
-> communities time.  The things that we want to get out of LSFMMBPF are (generally)
->
-> 1) Reach consensus on any multi-subsystem contentious changes that have come up
-> over the past year.
->
-> 2) Inform our fellow developers of new things that we are working on that we
-> would like help with, or need to think about for the upcoming year.
->
-> 3) "Hallway track".  We are after all a community, and I for one like spending
-> time with developers that I don't get to interact with on a daily basis.
->
-> 4) Provide a way to help integrate new developers into the community with face
-> time.  It is far easier to work with people once you can put a face to a name,
-> and this is especially valuable for new developers.
->
+On 3/6/20 7:57 AM, Jann Horn wrote:
+> +paulmck
+> 
+> On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
+>> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
+>>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
+>>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
+>>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
+>>>
+>>> +io_uring maintainers
+>>>
+>>> Here is a repro:
+>>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+>>
+>> I've queued up a fix for this:
+>>
+>> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+> 
+> I believe that this fix relies on call_rcu() having FIFO ordering; but
+> <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
+> says:
+> 
+> | call_rcu() normally acts only on CPU-local state[...] It simply
+> enqueues the rcu_head structure on a per-CPU list,
+> 
+> Is this fix really correct?
 
-5) There is another unspoken benefit that people wanted to get from LSF/MM (*)
-and you mentioned it below that is to get the high level VFS/MM maintainer
-in the room.
+That's a good point, there's a potentially stronger guarantee we need
+here that isn't "nobody is inside an RCU critical section", but rather
+that we're depending on a previous call_rcu() to have happened. Hence I
+think you are right - it'll shrink the window drastically, since the
+previous callback is already queued up, but it's not a full close.
 
-I think that was not always the case with Plumbers (not sure?), but if LF is
-going the make sure that Plumbers stays co-located with the maintainers
-summit and we "nominate" Plumbers as the official replacement for LSF/MM,
-then this will probably sort itself out.
+Hmm...
 
-(*) I've intentionally left out BPF, because I think it always has a miniconf
-of its own in Plumbers anyway.
+-- 
+Jens Axboe
 
-> These are all really good goals, and why we love the idea of LSFMMBPF.  But
-> having attended these things every year for the last 13 years, it has become
-> less and less of these things, at least from my perspective.  A few problems (as
-> I see them) are
->
-> 1) The invitation process.  We've tried many different things, and I think we
-> generally do a good job here, but the fact is if I don't know somebody I'm not
-> going to give them a very high rating, making it difficult to actually bring in
-> new people.
->
-> 2) There are so many of us.  Especially with the addition of the BPF crowd we
-> are now larger than ever.  This makes problem #1 even more apparent, even if I
-> weighted some of the new people higher who's slot should they take instead?  I
-> have 0 problems finding 20 people in the FS community who should absolutely be
-> in the room.  But now I'm trying to squeeze in 1-5 extra people.  Propagate that
-> across all the tracks and now we're at an extra 20ish people.
->
-> 3) Half the people I want to talk to aren't even in the room.  This may be a
-> uniquely file system track problem, but most of my work is in btrfs, and I want
-> to talk to my fellow btrfs developers.  But again, we're trying to invite an
-> entire community, so many of them simply don't request invitations, or just
-> don't get invited.
->
-> 3) Sponsorships.  This is still the best way to get to all of the core
-> developers, so we're getting more and more sponsors in order to buy their slots
-> to get access to people.  This is working as intended, and I'm not putting down
-> our awesome sponsors, but this again adds to the amount of people that are
-> showing up at what is supposed to be a working conference.
->
-> 4) Presentations.  90% of the conference is 1-2 people standing at the front of
-> the room, talking to a room of 20-100 people, with only a few people in the
-> audience who cares.  We do our best to curate the presentations so we're not
-> wasting peoples time, but in the end I don't care what David Howells is doing
-> with mount, I trust him to do the right thing and he really just needs to trap
-> Viro in a room to work it out, he doesn't need all of us.
->
-> 5) Actually planning this thing.  I have been on the PC for at least the last 5
-> years, and this year I'm running the whole thing.  We specifically laid out
-> plans to rotate in new blood so this sort of thing stopped happening, and this
-> year we've done a good job of that.  However it is a giant amount of work for
-> anybody involved, especially for the whole conference chair.  Add in something
-> like COVID-19 to the mix and now I just want to burn the whole thing to the
-> ground.  Planning this thing is not free, it does require work and effort.
->
-> So what do I propose?  I propose we kill LSFMMBPF.
->
-> Many people have suggested this elsewhere, but I think we really need to
-> seriously consider it.  Most of us all go to the Linux Plumbers conference.  We
-
-Some of us have had to choose whether to go to LSF/MM or to Plumbers in a
-given year. I know that merging them will make it easier for me.
-
-Thanks,
-Amir.
