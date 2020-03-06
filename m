@@ -2,129 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F4E17C303
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 17:31:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C11EA17C338
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Mar 2020 17:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbgCFQbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 11:31:49 -0500
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:45626 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbgCFQbt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 11:31:49 -0500
-Received: by mail-qt1-f182.google.com with SMTP id a4so2102102qto.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Mar 2020 08:31:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UUSOJf+zzacEOEP9td3eEtXJWkTaibOb7Kq1LOm7AIg=;
-        b=Sa9/tVXXId0i+ZkGnCOQqMm/YwmWBR6mR5Ert555HnfoqDYeWAyStfmeKNig1vQ6lT
-         JSU6LwefTLFnXO059CxcX5hoSrgXp3DK+ZvC8+0f2Ndb9Oh8zKuNn8QjdZ5YIBpwsN1A
-         Y3b6owF+xPxDq3J2FpHKeYk4ACb7Z6VDzWTXGRU5cN+PRbM1SVWIOGaL2iDpJP0XNXG1
-         6r0Con0dYegUQQcNrLBwhemitVup6gffpqAolIUljsz710Bol1blQvCKg+k+eSNFdzHT
-         u67YAxGd0FuG40KNnSbaPS/hNPtqCiccdXcDxhu9d4e9ozFh/hYCI31Uv9Qd0AalNCla
-         E1JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UUSOJf+zzacEOEP9td3eEtXJWkTaibOb7Kq1LOm7AIg=;
-        b=dNmumIe4xvAPwtFcXwxLoq8Sf1ylVAmP7nF+Vq9NmY/KeuPfjhxkFOTe7zVaLM5yk7
-         ZXHbmrBSs5k+yawsiz66L9+0GtO/a1nSDIInmtp+VGqKhAnTwEj5F6GKO989k1C3x1BQ
-         0NBKKPzf8Bnq3J6rKQgFAjdJv7WW1xyj7GN5lkHilg3V4P4eZOGmpTXaeI96vtTigxgd
-         NJosFFDlzyBFUgggomgAcWkOnRtLXHXEop577l15drtQZ7/UXgdbxaK5odSV84AkZt8q
-         NzcPtb5r4P7p3lR0XkIiz7nbtv4Qu2+o8asMBgzSUUDuwKDqi42Qbz82miuna3i7Ohq1
-         KYPw==
-X-Gm-Message-State: ANhLgQ2YaDzO6NihYqSlomVXmIbImRbY5MmBhvReCYMrVoxEi80bULOX
-        3U9mhKv46g79nlWn/gmUPS1zkw==
-X-Google-Smtp-Source: ADFU+vvDeMAzUoSiB4u1rD7bbt/71U5nIFGqZVf2AiNnhdP0rj/eFgB6XllAkXoq6eYBnOKu7Yp1Gg==
-X-Received: by 2002:ac8:3027:: with SMTP id f36mr3638204qte.76.1583512307131;
-        Fri, 06 Mar 2020 08:31:47 -0800 (PST)
-Received: from [192.168.1.106] ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id 17sm995481qkm.105.2020.03.06.08.31.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Mar 2020 08:31:46 -0800 (PST)
-Subject: Re: [LSFMMBPF TOPIC] Killing LSFMMBPF
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     lsf-pc <lsf-pc@lists.linuxfoundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>, bpf@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
-References: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
- <1583511310.3653.33.camel@HansenPartnership.com>
- <20200306162858.zy6u3tvutxvf27yw@wittgenstein>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <e928fa83-3076-8c7a-7c99-91bf63f3c8ee@toxicpanda.com>
-Date:   Fri, 6 Mar 2020 11:31:45 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        id S1726738AbgCFQoo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 11:44:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbgCFQoo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Mar 2020 11:44:44 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39A3A2072A;
+        Fri,  6 Mar 2020 16:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583513083;
+        bh=uM6BBzCXa6HAUuOEGiA8P2jf81J77c6GVb5q3IeM3R4=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=suKLdZ7u99Tu+TZXXLBW/DTPMhhpoblbweU/aMPVupcPWtgSo/+q6IAK70+gMPfRL
+         ah5o8KFpGEyp2Ul18AA3nzRoMfgJYb3P5A7YF5u3e5JqpvT3J9JTC8iW7bZG8EUK/I
+         jZckRz4TQB2vJtmbOVkawf2lRhrHScoF9i7hpsxg=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 0E85935226BF; Fri,  6 Mar 2020 08:44:43 -0800 (PST)
+Date:   Fri, 6 Mar 2020 08:44:43 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: KASAN: use-after-free Read in percpu_ref_switch_to_atomic_rcu
+Message-ID: <20200306164443.GU2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <00000000000067c6df059df7f9f5@google.com>
+ <CACT4Y+ZVLs7O84qixsvFqk_Nur1WOaCU81RiCwDf3wOqvHB-ag@mail.gmail.com>
+ <3f805e51-1db7-3e57-c9a3-15a20699ea54@kernel.dk>
+ <CAG48ez3DUAraFL1+agBX=1JVxzh_e2GR=UpX5JUaoyi+1gQ=6w@mail.gmail.com>
+ <075e7fbe-aeec-cb7d-9338-8eb4e1576293@kernel.dk>
+ <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200306162858.zy6u3tvutxvf27yw@wittgenstein>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez07bD4sr5hpDhUKe2g5ETk0iYb6PCWqyofPuJbXz1z+hw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/6/20 11:28 AM, Christian Brauner wrote:
-> On Fri, Mar 06, 2020 at 08:15:10AM -0800, James Bottomley wrote:
->> On Fri, 2020-03-06 at 09:35 -0500, Josef Bacik wrote:
->>> Many people have suggested this elsewhere, but I think we really need
->>> to seriously consider it.  Most of us all go to the Linux Plumbers
->>> conference.  We could accomplish our main goals with Plumbers without
->>> having to deal with all of the above problems.
->>
->> [I'm on the Plumbers PC, but not speaking for them, just making general
->> observations based on my long history helping to run Plumbers]
->>
->> Plumbers has basically reached the size where we can't realistically
->> expand without moving to the bigger venues and changing our evening
->> events ... it's already been a huge struggle in Lisbon and Halifax
->> trying to find a Restaurant big enough for the closing party.
->>
->> The other reason for struggling to keep Plumbers around 500 is that the
->> value of simply running into people and having an accidental hallway
->> track, which is seen as a huge benefit of plumbers, starts diminishing.
->>   In fact, having a working hallway starts to become a problem as well
->> as we go up in numbers (plus in that survey we keep sending out those
->> who reply don't want plumbers to grow too much in size).
->>
->> The other problem is content: you're a 3 day 4 track event and we're a
->> 3 day 6 track event.  We get enough schedule angst from 6 tracks ... 10
->> would likely become hugely difficult.  If we move to 5 days, we'd have
->> to shove the Maintainer Summit on the Weekend (you can explain that one
->> to Linus) but we'd still be in danger of the day 4 burn out people used
->> to complain about when OLS and KS were co-located.
->>
->> So, before you suggest Plumbers as the magic answer consider that the
->> problems you cite below don't magically go away, they just become
->> someone else's headache.
->>
->> That's not to say this isn't a good idea, it's just to execute it we'd
->> have to transform Plumbers and we should have a community conversation
->> about that involving the current Plumbers PC before deciding it's the
->> best option.
+On Fri, Mar 06, 2020 at 04:36:20PM +0100, Jann Horn wrote:
+> On Fri, Mar 6, 2020 at 4:34 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > On 3/6/20 7:57 AM, Jann Horn wrote:
+> > > +paulmck
+> > >
+> > > On Wed, Mar 4, 2020 at 3:40 PM Jens Axboe <axboe@kernel.dk> wrote:
+> > >> On 3/4/20 12:59 AM, Dmitry Vyukov wrote:
+> > >>> On Fri, Feb 7, 2020 at 9:14 AM syzbot
+> > >>> <syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com> wrote:
+> > >>>>
+> > >>>> Hello,
+> > >>>>
+> > >>>> syzbot found the following crash on:
+> > >>>>
+> > >>>> HEAD commit:    4c7d00cc Merge tag 'pwm/for-5.6-rc1' of git://git.kernel.o..
+> > >>>> git tree:       upstream
+> > >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12fec785e00000
+> > >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=e162021ddededa72
+> > >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e017e49c39ab484ac87a
+> > >>>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> > >>>>
+> > >>>> Unfortunately, I don't have any reproducer for this crash yet.
+> > >>>>
+> > >>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > >>>> Reported-by: syzbot+e017e49c39ab484ac87a@syzkaller.appspotmail.com
+> > >>>
+> > >>> +io_uring maintainers
+> > >>>
+> > >>> Here is a repro:
+> > >>> https://gist.githubusercontent.com/dvyukov/6b340beab6483a036f4186e7378882ce/raw/cd1922185516453c201df8eded1d4b006a6d6a3a/gistfile1.txt
+> > >>
+> > >> I've queued up a fix for this:
+> > >>
+> > >> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.6&id=9875fe3dc4b8cff1f1b440fb925054a5124403c3
+> > >
+> > > I believe that this fix relies on call_rcu() having FIFO ordering; but
+> > > <https://www.kernel.org/doc/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html#Callback%20Registry>
+> > > says:
+> > >
+> > > | call_rcu() normally acts only on CPU-local state[...] It simply
+> > > enqueues the rcu_head structure on a per-CPU list,
+
+Indeed.  For but one example, if there was a CPU-to-CPU migration between
+the two call_rcu() invocations, it would not be at all surprising for
+the two callbacks to execute out of order.
+
+> > > Is this fix really correct?
+> >
+> > That's a good point, there's a potentially stronger guarantee we need
+> > here that isn't "nobody is inside an RCU critical section", but rather
+> > that we're depending on a previous call_rcu() to have happened. Hence I
+> > think you are right - it'll shrink the window drastically, since the
+> > previous callback is already queued up, but it's not a full close.
+> >
+> > Hmm...
 > 
-> It's unlikely that this could still be done given that we're also facing
-> a little uncertainty for Plumbers. It seems like a lot of additional
-> syncing would be needed.
-> But the main concern I have is that co-locating both is probably quite
-> challenging for anyone attending both especially when organizing
-> something like a microconference.
-> 
+> You could potentially hack up the semantics you want by doing a
+> call_rcu() whose callback does another call_rcu(), or something like
+> that - but I'd like to hear paulmck's opinion on this first.
 
-Yeah I want to be clear I'm not talking about this years conference, I'm talking 
-about future conferences and if/how we want to make changes.
+That would work!
 
-I picked plumbers because by-in-large the overlap between plumbers attendance 
-and LSFMMBPF attendance is pretty large, but obviously it doesn't have to be 
-just that.  Ted and others have suggested having a larger more inclusive 
-conference opposite of plumbers, which I think is a really cool idea.  Thanks,
+Or, alternatively, do an rcu_barrier() between the two calls to
+call_rcu(), assuming that the use case can tolerate rcu_barrier()
+overhead and latency.
 
-Josef
+							Thanx, Paul
