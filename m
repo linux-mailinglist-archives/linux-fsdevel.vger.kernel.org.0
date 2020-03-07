@@ -2,105 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 445CF17CFC6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2020 20:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8A017D011
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2020 21:48:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbgCGTMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Mar 2020 14:12:22 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48764 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726116AbgCGTMV (ORCPT
+        id S1726292AbgCGUst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Mar 2020 15:48:49 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:36619 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgCGUst (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Mar 2020 14:12:21 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D37C58EE0FD;
-        Sat,  7 Mar 2020 11:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1583608340;
-        bh=OTExqST3EIQqKYzie7fnIaR9F29Rbki864Xhub7443Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lILO1w8M5X5MwVyf0UEV37EwwviKKsvMyy4/5iphxqtCwYMOHDpAIjCX1N3HBcACW
-         paVYE2nnpzAA6emW6A2rS2m1Ngr4nuk0SD5mL3oP0zYojh+pQUZsbn82C/A2ycnNej
-         EUvA3YXNlXdt1T6udIPdWAR2Rz05afODy1IufW54=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jvVAu3loizWQ; Sat,  7 Mar 2020 11:12:20 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E099B8EE0D7;
-        Sat,  7 Mar 2020 11:12:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1583608340;
-        bh=OTExqST3EIQqKYzie7fnIaR9F29Rbki864Xhub7443Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lILO1w8M5X5MwVyf0UEV37EwwviKKsvMyy4/5iphxqtCwYMOHDpAIjCX1N3HBcACW
-         paVYE2nnpzAA6emW6A2rS2m1Ngr4nuk0SD5mL3oP0zYojh+pQUZsbn82C/A2ycnNej
-         EUvA3YXNlXdt1T6udIPdWAR2Rz05afODy1IufW54=
-Message-ID: <1583608338.20291.28.camel@HansenPartnership.com>
-Subject: Re: [LSFMMBPF TOPIC] LSFMMBPF 2020 COVID-19 status update
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        lsf-pc <lsf-pc@lists.linuxfoundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        Btrfs BTRFS <linux-btrfs@vger.kernel.org>, bpf@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-block@vger.kernel.org
-Date:   Sat, 07 Mar 2020 11:12:18 -0800
-In-Reply-To: <20200307185420.GG2236@42.do-not-panic.com>
-References: <b506a373-c127-b92e-9824-16e8267fc910@toxicpanda.com>
-         <20200306155611.GA167883@mit.edu>
-         <20200307185420.GG2236@42.do-not-panic.com>
+        Sat, 7 Mar 2020 15:48:49 -0500
+Received: by mail-il1-f196.google.com with SMTP id b17so5270294iln.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Mar 2020 12:48:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZlaiWBNqvrdyvkEefn9yJWjZp7C2bAb1YLICnuJhP8I=;
+        b=PV3bf2R9X3sQruGbBjzJvFY4AOshOxYvj+SiyibH20IZIQwjIExrhsqLUFM6P6R+lL
+         LrAJRQjI/qJXCe04P0VvuJgkt9vJeW2qTNk71iIlLi/SHzLO0MvLutNTnfsD4TjmaXrj
+         pun1BhXPZ65cZKYbR1qBfSXAyqWEqWfjqbGtM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZlaiWBNqvrdyvkEefn9yJWjZp7C2bAb1YLICnuJhP8I=;
+        b=eYEXFyuLzO1GZjwP++ld/5M0K5ps7rxjLxRzjC/ItciKNyZ8LacX0fRh/jJWcPDT5t
+         9e2MIESKVVOAHDvW3jG3VaAQIwWF+oLx/sP8/AAbMcx9HN7kEuqU4u3NAFmb3bzA/m5c
+         6/mzl/quVnq2WMQLD+fFQ/b7ux2zpPB/gqjQ9YiR0ChWyFZGUJdfTGYeZ+/q1qNKf6v9
+         2ub9RVqYtS/vTcqswRTTCbOVQLCL2HfMUoTVQKsAfXCtfmK78VManTS9/JQi29SCvaQ9
+         Us7Kh3ILtexxJ2RgJLQzG13Bv+gIV7pqAmSEZUE2bqicrAjq2nQXOJN/hc8pkpyNMQUQ
+         EhYw==
+X-Gm-Message-State: ANhLgQ3lEcU8B/uG86pn6Q5fcOVP7S4xI5edR9UP3GyBwLblev0hzUqP
+        7BvshT3ajldjLUcT8VdCcf8lQ+YQ85FC8yTk1LFLzw==
+X-Google-Smtp-Source: ADFU+vskwVXCTzkhh+ZXd7Wbqe2WHoM17S7U48HvUGcGrtwnAQOiiNlg5R1xofLf5jp6bJ1vVeTIGj3wJCAenoDZ5x8=
+X-Received: by 2002:a92:d745:: with SMTP id e5mr8793655ilq.285.1583614126795;
+ Sat, 07 Mar 2020 12:48:46 -0800 (PST)
+MIME-Version: 1.0
+References: <1582556135.3384.4.camel@HansenPartnership.com>
+ <CAJfpegsk6BsVhUgHNwJgZrqcNP66wS0fhCXo_2sLt__goYGPWg@mail.gmail.com>
+ <a657a80e-8913-d1f3-0ffe-d582f5cb9aa2@redhat.com> <1582644535.3361.8.camel@HansenPartnership.com>
+ <20200228155244.k4h4hz3dqhl7q7ks@wittgenstein> <107666.1582907766@warthog.procyon.org.uk>
+ <CAJfpegu0qHBZ7iK=R4ajmmHC4g=Yz56otpKMy5w-y0UxJ1zO+Q@mail.gmail.com>
+ <0403cda7345e34c800eec8e2870a1917a8c07e5c.camel@themaw.net>
+ <CAJfpegtu6VqhPdcudu79TX3e=_NZaJ+Md3harBGV7Bg_-+fR8Q@mail.gmail.com>
+ <20200306162549.GA28467@miu.piliscsaba.redhat.com> <20200307094834.GA3888906@kroah.com>
+In-Reply-To: <20200307094834.GA3888906@kroah.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Sat, 7 Mar 2020 21:48:35 +0100
+Message-ID: <CAJfpegvOi0ZPEW4Aq8N8SPDwiEw8Tgzo-ngf30WNmHXBdfHnqA@mail.gmail.com>
+Subject: Re: [PATCH 00/17] VFS: Filesystem information and notifications [ver #17]
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 2020-03-07 at 18:54 +0000, Luis Chamberlain wrote:
-> On Fri, Mar 06, 2020 at 10:56:11AM -0500, Theodore Y. Ts'o wrote:
-> > Should we have LSF/MM/BPF in 2020 and COVID-19?
-[...]
-> If we have to learn from efforts required to continue on with the in
-> light of the risks, we can look at what SCALE 18 is doing, taking
-> place right now in Pasadena [1], their page lists a list of proactive
-> measures required on their part to help alleviate fears and just good
-> best practices at this point in time.
+On Sat, Mar 7, 2020 at 10:48 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Mar 06, 2020 at 05:25:49PM +0100, Miklos Szeredi wrote:
+> > On Tue, Mar 03, 2020 at 08:46:09AM +0100, Miklos Szeredi wrote:
+> > >
+> > > I'm doing a patch.   Let's see how it fares in the face of all these
+> > > preconceptions.
+> >
+> > Here's a first cut.  Doesn't yet have superblock info, just mount info.
+> > Probably has rough edges, but appears to work.
+> >
+> > I started with sysfs, then kernfs, then went with a custom filesystem, because
+> > neither could do what I wanted.
+>
+> Hm, what is wrong with kernfs that prevented you from using it here?
+> Just complexity or something else?
 
-I agree Scale18x is the poster child for following WHO advice to the
-letter, but there are crucial differences:
+I wanted to have a single instance covering all the namespaces, with
+just a filtered view depending on which namespace the task is looking
+at it.
 
-   1. Scale18x has a lot of local attendees, so the conference can go
-      ahead somewhat easily with local content and local attendees.  We
-      have no-one for LSF/MM/BPF in Palm Springs.
-   2. Scale18x did have some issues with non-local content because of
-      corporate travel bans.  The whole of LSF/MM/BPF is non-local content
-      and would thus be significantly disrupted.
+Having a kernfs_node for each attribute is also rather heavy compared
+to the size of struct mount.
 
-The big problem with 2. is that a lot of corporate policies at the
-moment are unconsidered blanket bans.  Even corporations who do
-consider better might still be stricter than the WHO advice.  So my
-company, IBM, is saying events >1000 cancel and events <1000 use your
-own discretion provided they're promising to obey all the health
-guidelines.  If I'd been presenting at Scale18x I'd have had to cancel,
-even though under our guidelines I can still go to LSF/MM/BPF
-
-> The landscape seems positive, if we want, to move forward in Palm
-> Springs then.
-
-For a counter example, just look at the LF Member summit which was due
-to happen just after Scale18x:
-
-https://events.linuxfoundation.org/lf-member-summit/
-
-and that's a smaller event than Scale18x.  Remember too that the LF
-runs LSF/MM so if they decide to cancel, there's not much the
-organizing committee can do about it.
-
-James
-
+Thanks,
+Miklos
