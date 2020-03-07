@@ -2,223 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0CC17C9EF
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2020 01:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4C8F17CA22
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Mar 2020 02:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbgCGAwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Mar 2020 19:52:04 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:43580 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726231AbgCGAwD (ORCPT
+        id S1726928AbgCGBFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Mar 2020 20:05:30 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:55008 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbgCGBFa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Mar 2020 19:52:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0270i0Oc125345;
-        Sat, 7 Mar 2020 00:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=cGlP2xDtxWov+ixpsS87ko90M5TohN95IcRoc4L1azk=;
- b=XeUM6n3N899mRQZM2Zp7Yw37DzQhvnQDaiP+XjyjyXHCIJJmU41iY9RAuXbDqH2o3Mrc
- LnwXj0Ac0aKLmsEPDjm7FcmGmE5rrx0m2xsus/CDjaLIkz+mQfv60m5yhTwq5SOBdZ6Q
- ZoCv6bnPdAEs5ZGh7WB/eYXqdIIyxjfdiLoMUgTKyNuPIJzEntXoKUkPJJOYgPJhUQeq
- n6Ld411Q51vKLS2vw1ueOVU2uCqcf/AZn8Qz8DXpjtUInIYnoPw6s3kWPqq8XNjk3f7P
- M21QHLKF9mC+EiPW/h4X5wpF5RbLU/8gKcdI5AbDf8wB+I5pDGaGLtZvP7plNNIRhSWU eQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2ykgys4sjh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 07 Mar 2020 00:51:34 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0270gx2l047830;
-        Sat, 7 Mar 2020 00:51:34 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2ym0qutfk9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 07 Mar 2020 00:51:34 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0270pOGa013311;
-        Sat, 7 Mar 2020 00:51:24 GMT
-Received: from localhost (/10.159.149.78)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 06 Mar 2020 16:51:24 -0800
-Date:   Fri, 6 Mar 2020 16:51:22 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
-        hch@infradead.org, cmaiolino@redhat.com, david@fromorbit.com
-Subject: Re: [PATCHv5 3/6] ext4: Move ext4 bmap to use iomap infrastructure.
-Message-ID: <20200307005122.GI1752567@magnolia>
-References: <cover.1582880246.git.riteshh@linux.ibm.com>
- <8bbd53bd719d5ccfecafcce93f2bf1d7955a44af.1582880246.git.riteshh@linux.ibm.com>
- <20200228152524.GE8036@magnolia>
- <20200302085840.A41E3A4053@d06av23.portsmouth.uk.ibm.com>
- <20200303154709.GB8037@magnolia>
- <20200304124211.GC21048@quack2.suse.cz>
- <20200306174932.9D81D4C04E@d06av22.portsmouth.uk.ibm.com>
+        Fri, 6 Mar 2020 20:05:30 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jANuA-0007Im-T1; Fri, 06 Mar 2020 18:05:26 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jANu8-0006Ld-L3; Fri, 06 Mar 2020 18:05:26 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <202003021531.C77EF10@keescook>
+        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87v9nlii0b.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87a74xi4kz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87imjicxjw.fsf_-_@x220.int.ebiederm.org>
+        <AM6PR03MB5170375DBF699D4F3DC7A08DE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87k13yawpp.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170E9D0DB405EC051F7731CE4E30@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87sgil87s3.fsf@x220.int.ebiederm.org>
+        <87a74t86cs.fsf@x220.int.ebiederm.org>
+Date:   Fri, 06 Mar 2020 19:03:10 -0600
+In-Reply-To: <87a74t86cs.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Fri, 06 Mar 2020 16:29:39 -0600")
+Message-ID: <87v9nh6koh.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200306174932.9D81D4C04E@d06av22.portsmouth.uk.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9552 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2003070001
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9552 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0 phishscore=0
- adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003070001
+Content-Type: text/plain
+X-XM-SPF: eid=1jANu8-0006Ld-L3;;;mid=<87v9nh6koh.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19ga0TG/cHLdEFkXj9eUOD1GvS7qbzyimM=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4833]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1761 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.96 (0.1%), parse: 1.12
+        (0.1%), extract_message_metadata: 15 (0.9%), get_uri_detail_list: 2.1
+        (0.1%), tests_pri_-1000: 24 (1.3%), tests_pri_-950: 1.30 (0.1%),
+        tests_pri_-900: 1.14 (0.1%), tests_pri_-90: 33 (1.9%), check_bayes: 31
+        (1.8%), b_tokenize: 13 (0.7%), b_tok_get_all: 9 (0.5%), b_comp_prob:
+        3.3 (0.2%), b_tok_touch_all: 3.8 (0.2%), b_finish: 0.79 (0.0%),
+        tests_pri_0: 585 (33.2%), check_dkim_signature: 0.67 (0.0%),
+        check_dkim_adsp: 2.5 (0.1%), poll_dns_idle: 1080 (61.3%),
+        tests_pri_10: 1.99 (0.1%), tests_pri_500: 1092 (62.0%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH 2/2] exec: Add a exec_update_mutex to replace cred_guard_mutex
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 06, 2020 at 11:19:31PM +0530, Ritesh Harjani wrote:
-> 
-> 
-> On 3/4/20 6:12 PM, Jan Kara wrote:
-> > On Tue 03-03-20 07:47:09, Darrick J. Wong wrote:
-> > > On Mon, Mar 02, 2020 at 02:28:39PM +0530, Ritesh Harjani wrote:
-> > > > 
-> > > > 
-> > > > On 2/28/20 8:55 PM, Darrick J. Wong wrote:
-> > > > > On Fri, Feb 28, 2020 at 02:56:56PM +0530, Ritesh Harjani wrote:
-> > > > > > ext4_iomap_begin is already implemented which provides ext4_map_blocks,
-> > > > > > so just move the API from generic_block_bmap to iomap_bmap for iomap
-> > > > > > conversion.
-> > > > > > 
-> > > > > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> > > > > > Reviewed-by: Jan Kara <jack@suse.cz>
-> > > > > > ---
-> > > > > >    fs/ext4/inode.c | 2 +-
-> > > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > > > > > index 6cf3b969dc86..81fccbae0aea 100644
-> > > > > > --- a/fs/ext4/inode.c
-> > > > > > +++ b/fs/ext4/inode.c
-> > > > > > @@ -3214,7 +3214,7 @@ static sector_t ext4_bmap(struct address_space *mapping, sector_t block)
-> > > > > >    			return 0;
-> > > > > >    	}
-> > > > > > -	return generic_block_bmap(mapping, block, ext4_get_block);
-> > > > > > +	return iomap_bmap(mapping, block, &ext4_iomap_ops);
-> > > > > 
-> > > > > /me notes that iomap_bmap will filemap_write_and_wait for you, so one
-> > > > > could optimize ext4_bmap to avoid the double-flush by moving the
-> > > > > filemap_write_and_wait at the top of the function into the JDATA state
-> > > > > clearing block.
-> > > > 
-> > > > IIUC, delalloc and data=journal mode are both mutually exclusive.
-> > > > So we could get rid of calling filemap_write_and_wait() all together
-> > > > from ext4_bmap().
-> > > > And as you pointed filemap_write_and_wait() is called by default in
-> > > > iomap_bmap which should cover for delalloc case.
-> > > > 
-> > > > 
-> > > > @Jan/Darrick,
-> > > > Could you check if the attached patch looks good. If yes then
-> > > > will add your Reviewed-by and send a v6.
-> > > > 
-> > > > Thanks for the review!!
-> > > > 
-> > > > -ritesh
-> > > > 
-> > > > 
-> > > 
-> > > >  From 93f560d9a483b4f389056e543012d0941734a8f4 Mon Sep 17 00:00:00 2001
-> > > > From: Ritesh Harjani <riteshh@linux.ibm.com>
-> > > > Date: Tue, 20 Aug 2019 18:36:33 +0530
-> > > > Subject: [PATCH 3/6] ext4: Move ext4 bmap to use iomap infrastructure.
-> > > > 
-> > > > ext4_iomap_begin is already implemented which provides ext4_map_blocks,
-> > > > so just move the API from generic_block_bmap to iomap_bmap for iomap
-> > > > conversion.
-> > > > 
-> > > > Also no need to call for filemap_write_and_wait() any more in ext4_bmap
-> > > > since data=journal mode anyway doesn't support delalloc and for all other
-> > > > cases iomap_bmap() anyway calls the same function, so no need for doing
-> > > > it twice.
-> > > > 
-> > > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> > > 
-> > > Hmmm.  I don't recall how jdata actually works, but I get the impression
-> > > here that we're trying to flush dirty data out to the journal and then
-> > > out to disk, and then drop the JDATA state from the inode.  This
-> > > mechanism exists (I guess?) so that dirty file pages get checkpointed
-> > > out of jbd2 back into the filesystem so that bmap() returns meaningful
-> > > results to lilo.
-> > 
-> > Exactly. E.g. when we are journalling data, we fill hole through mmap, we will
-> > have block allocated as unwritten and we need to write it out so that the
-> > data gets to the journal and then do journal flush to get the data to disk
-> 
-> So in data=journal case in ext4_page_mkwrite the data buffer will also
-> be marked as, to be journalled. So does jbd2_journal_flush() itself
-> don't take care of writing back any dirty page cache before it commit
-> that transaction? and after then checkpoint it?
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-Er... this sentence is a little garbled, but I think the answer you're
-looking for is:
+> ebiederm@xmission.com (Eric W. Biederman) writes:
+>
+>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>
+>>> On 3/6/20 6:17 AM, Eric W. Biederman wrote:
+>>>> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+>>>> 
+>>>>> On 3/5/20 10:16 PM, Eric W. Biederman wrote:
+>>>>>>
+>>>>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+>>>>>> over the userspace accesses as the arguments from userspace are read.
+>>>>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+>>>>>> threads are killed.  The cred_guard_mutex is held over
+>>>>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+>>>>>>
+>>>
+>>> I am all for this patch, and the direction it is heading, Eric.
+>>>
+>>> I just wanted to add a note that I think it is
+>>> possible that exec_mm_release can also invoke put_user(0, tsk->clear_child_tid),
+>>> under the new exec_update_mutex, since vm_access increments the
+>>> mm->mm_users, under the cred_update_mutex, but releases the mutex,
+>>> and the caller can hold the reference for a while and then exec_mmap is not
+>>> releasing the last reference.
+>>
+>> Good catch.  I really appreciate your close look at the details.
+>>
+>> I am wondering if process_vm_readv and process_vm_writev could be
+>> safely changed to use mmgrab and mmdrop, instead of mmget and mmput.
+>>
+>> That would resolve the potential issue you have pointed out.  I just
+>> haven't figured out if it is safe.  The mm code has been seriously
+>> refactored since I knew how it all worked.
+>
+> Nope, mmget can not be replaced by mmgrab.
+>
+> It might be possible to do something creative like store a cred in place
+> of the userns on the mm and use that for mm_access permission checks.
+> Still we are talking a pretty narrow window, and a case that no one has
+> figured out how to trigger yet.  So I will leave that corner case as
+> something for future improvements.
 
-"Yes, writeback (i.e. filemap_write_and_wait) attaches the dirty blocks
-to a journal transaction; then jbd2_journal_flush forces the transaction
-data out to the on-disk journal; and it also checkpoints the journal so
-that the dirty blocks are then written back into the filesystem."
+My brain is restless and keep looking at it.
 
-> Sorry my knowledge about jbd2 is very naive.
-> 
-> > so that lilo can read it from the devices. So removing
-> > filemap_write_and_wait() when journalling data is wrong.
-> 
-> Sure I understand this part. But was just curious on above query.
-> Otherwise, IIUC, we will have to add
-> filemap_write_and_wait() for JDATA case as well before calling
-> for jbd2_journal_flush(). Will add this as a separate patch.
+The worst case is processes created with CLONE_VM|CLONE_CHILD_CLEARTID
+but not CLONE_THREAD.  For those that put_user will occur ever time
+in exec_mmap.
 
-Well you could just move it...
+The only solution that I can see is to move taking the new mutex after
+exec_mm_release.  Which may be feasible given how close exec_mmap
+follows de_thread.
 
-bmap()
-{
-	/*
-	 * In data=journal mode, we must checkpoint the journal to
-	 * ensure that any dirty blocks in the journalare checkpointed
-	 * to the location that we return to userspace.  Clear JDATA so
-	 * that future writes will not be written through the journal.
-	 */
-	if (JDATA) {
-		filemap_write_and_wait(...);
-		clear JDATA
-		jbd2_journal_flush(...);
-	}
+I am going to sleep on that and perhaps I will be able to see how to
+move taking the mutex lower.
 
-	return iomap_bmap(...);
-}
+It would be very nice not to have a known issue going into this set of
+changes.
 
-(or did "Will add this as a separate patch" refer to fixing FIEMAP?)
+Eric
 
---D
-
-> 
-> -ritesh
-> 
-> > 
-> > > This makes me wonder if you still need the filemap_write_and_wait in the
-> > > JDATA case because otherwise the journal flush won't have the effect of
-> > > writing all the dirty pagecache back to the filesystem?  OTOH I suppose
-> > > the implicit write-and-wait call after we clear JDATA will not be
-> > > writing to the journal.
-> > > 
-> > > Even more weirdly, the FIEMAP code doesn't drop JDATA at all...?
-> > 
-> > Yeah, it should do that but that's only performance optimization so that we
-> > bother with journal flushing only when someone uses block mapping call on
-> > a file with journalled dirty data. So you can hardly notice the bug by
-> > testing...
-> > 
-> > 								Honza
-> > 
-> 
