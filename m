@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E944E17D484
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 16:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE32417D52A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 18:10:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbgCHPqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Mar 2020 11:46:09 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41580 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726260AbgCHPqJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Mar 2020 11:46:09 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B9C7A421F7899F3EB101
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2020 23:45:52 +0800 (CST)
-Received: from [127.0.0.1] (10.177.253.249) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Sun, 8 Mar 2020
- 23:45:51 +0800
-To:     Miklos Szeredi <miklos@szeredi.hu>
-From:   piaojun <piaojun@huawei.com>
-Subject: [QUESTION] How to enlarge the max write pages of fuse request
-CC:     <linux-fsdevel@vger.kernel.org>
-Message-ID: <5E651328.4090305@huawei.com>
-Date:   Sun, 8 Mar 2020 23:45:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        id S1726354AbgCHRKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Mar 2020 13:10:09 -0400
+Received: from www752.sakura.ne.jp ([59.106.19.202]:57156 "EHLO
+        www752.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbgCHRKJ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Mar 2020 13:10:09 -0400
+X-Greylist: delayed 4106 seconds by postgrey-1.27 at vger.kernel.org; Sun, 08 Mar 2020 13:10:07 EDT
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028FpPAT061629;
+        Mon, 9 Mar 2020 00:51:25 +0900 (JST)
+        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
+Received: from www752.sakura.ne.jp (59.106.19.202)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
+ Mon, 09 Mar 2020 00:51:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
+Received: from www752.sakura.ne.jp (localhost [127.0.0.1])
+        by www752.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 028FpOhJ061610;
+        Mon, 9 Mar 2020 00:51:25 +0900 (JST)
+        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
+Received: (from hokusetubad@localhost)
+        by www752.sakura.ne.jp (8.15.2/8.15.2/Submit) id 028FpOOQ061609;
+        Mon, 9 Mar 2020 00:51:24 +0900 (JST)
+        (envelope-from postmaster@hokusetubad.sakura.ne.jp)
+Message-Id: <202003081551.028FpOOQ061609@www752.sakura.ne.jp>
+X-Authentication-Warning: www752.sakura.ne.jp: hokusetubad set sender to postmaster@hokusetubad.sakura.ne.jp using -f
+Subject: BUSINESS PROPOSAL
+From:   postmaster@hokusetubad.sakura.ne.jp
+Reply-To: abulkareem461@gmail.com
+To:     nJreyes@midway.edu
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date:   Mon, 09 Mar 2020 00:51:24 +0900
+Content-Type: text/plain; charset="ISO-2022-JP"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Miklos,
+Dearest Friend
 
-I want to enlarge the fuse request's bufsize from 128K to 1MB for more
-bandwidth as follows, but it does not work.
-
-1. In libfuse, setting fuse_init_out:
-outarg->max_write = 1024 * 1024; // 1MB
-outarg->max_pages = 256; // 1MB
-
-2. In kernel, fuse_send_write just handle 4B once a time, and failed at
-last despite 'req->max_pages' is already set to 256. I wonder if some
-more adaption needed or I just went the wrong way? Looking forward to
-your rely.
-
-Thanks,
-Jun
-
+I am Mr Abdul Kareem working with Emirate NBD Bank Dubai,United Arab Emirate as Finance Manager.
+I have a very profitable Business that concerns you and will benefit both of us after completion.
+Kindly get back to me for more details.
+Awaiting your response.
+Regards
+Abdul Kareem
