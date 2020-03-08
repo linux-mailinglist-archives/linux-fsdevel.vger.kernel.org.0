@@ -2,143 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07AE917D424
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 15:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E0E17D435
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 15:32:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbgCHOTz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Mar 2020 10:19:55 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33316 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgCHOTz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Mar 2020 10:19:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IVcvIDGwJZYeIvUKfXFgN/rhffyZlyGXJDMHZ+yeVcA=; b=K5AdU8Ceyd0YtsCSwH4Hj1L38
-        t2ufNPUr4XC7GAFtajzsm47ier9yjsvWFQFWu0mCa1G7QppuiMbitZqbvPb4aJTWZ6pJLLx5Vshe/
-        v2GvvL//7hb/7KOIAClcoZKG+252QJOCA2dceM7z7uL5PQHeC+XBtuH35BLfESIsNh8UZSSXotv36
-        IcQJ6QRe3rswhZLX5YD26pP6u/QHUOsyEf8Nxkcs4Mw2s76sw15OdagnLghnPml3AGrTEiVnAoOe0
-        DrgNb5R9cwFl1AYqDm4dBYoVPLxS++dlkn7dtqHabMQYYxUTAnLekyjyDyNA/t5H9PRrwV9RJoYw7
-        I5Ik0L//Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33732)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jAwmE-0000p8-0s; Sun, 08 Mar 2020 14:19:34 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jAwm3-0002Se-Bj; Sun, 08 Mar 2020 14:19:23 +0000
-Date:   Sun, 8 Mar 2020 14:19:23 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200308141923.GI25745@shell.armlinux.org.uk>
-References: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
- <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk>
- <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
- <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
+        id S1726271AbgCHOch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Mar 2020 10:32:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51088 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726259AbgCHOcg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Mar 2020 10:32:36 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52CF720848;
+        Sun,  8 Mar 2020 14:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583677956;
+        bh=tSJSpSnJtqOKsizi3MhYYRytrtTLb6EioI5Eke+POK0=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=P69927BQ2i9zgjdGUH3dzPYoejOXJMHbK43Z5k3uvlrfDNevEbvqg+brPT3CAn7Cj
+         ZEwn9Y/8B1amn+V6gW1AkSCeq4fB/YTi7HlDtVOw+KPe5tLpsTKF+8jrlJ0mqXeWFQ
+         UVLG9AcfQ+Z/n4B3KCujs2AP7vXyjn0bXy/VswBw=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 213F535226BD; Sun,  8 Mar 2020 07:32:36 -0700 (PDT)
+Date:   Sun, 8 Mar 2020 07:32:36 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Howells <dhowells@redhat.com>, mszeredi@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: How to abuse RCU to scan the children of a mount?
+Message-ID: <20200308143236.GB2935@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <3173159.1583343916@warthog.procyon.org.uk>
+ <20200304192816.GI2935@paulmck-ThinkPad-P72>
+ <20200304194451.GS23230@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200304194451.GS23230@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> On Fri, Mar 6, 2020 at 9:36 PM Nishanth Menon <nm@ti.com> wrote:
-> > On 13:11-20200226, santosh.shilimkar@oracle.com wrote:
+On Wed, Mar 04, 2020 at 07:44:51PM +0000, Al Viro wrote:
+> On Wed, Mar 04, 2020 at 11:28:16AM -0800, Paul E. McKenney wrote:
 > 
-> >
-> > ~few 1000s still relevant spread between 4G and 8G (confirmed that both
-> > are present, relevant and in use).
-> >
-> > I wish we could sunset, but unfortunately, I am told(and agree)
-> > that we should'nt just leave products (and these are long term
-> > products stuck in critical parts in our world) hanging in the air, and
-> > migrations to newer kernel do still take place periodically (the best
-> > I can talk in public forum at least).
+> > Huh.  The mount structure isn't suffering from a shortage of list_head
+> > structures, is it?
+> > 
+> > So the following can happen, then?
+> > 
+> > o	The __attach_mnt() function adds a struct mount to its parent
+> > 	list, but in a non-RCU manner.	Unless there is some other
+> > 	safeguard, the list_add_tail() in this function needs to be
+> > 	list_add_tail_rcu().
+> > 
+> > o	I am assuming that the various non-RCU traversals that I see,
+> > 	for example, next_mnt(), are protected by lock_mount_hash().
+> > 	Especially skip_mnt_tree(), which uses mnt_mounts.prev.  (I didn't
+> > 	find any exceptions, but I don't claim an exhaustive search.)
+> > 
+> > o	The umount_tree() function's use of list_del_init() looks like
+> > 	it could trap an RCU reader in the newly singular list formed
+> > 	by the removal.  It appears that there are other functions that
+> > 	use list_del_init() on this list, though I cannot claim any sort
+> > 	of familiarity with this code.
+> > 
+> > 	So, do you need to add a check for child->mnt_child being in this
+> > 	self-referential state within fsinfo_generic_mount_children()?
+> > 
+> > 	Plus list_del_init() doesn't mark its stores, though
+> > 	some would argue that unmarked stores are OK in this situation.
+> > 
+> > o	There might be other operations in need of RCU-ification.
+> > 
+> > 	Maybe the list_add_tail() in umount_tree(), but it is not
+> > 	immediately clear that this is adding a new element instead of
+> > 	re-inserting an element already exposed to readers.
 > 
-> Thank you for the clear answer!
+> IMO all of that is a good argument *against* trying to pull any kind of RCU
+> games here.  Access to these lists is assumed to be serialized on
+> mount_lock spinlock component held exclusive and unless there is a very
+> good reason to go for something trickier, let's not.
 > 
-> I agree we should certainly not break any such use cases, and for the
-> 8GB case there is not really a good replacement (using zram/zswap
-> instead of highmem could work for some new workloads, but would be a
-> rather risky change for an upgrade on already deployed systems).
-> 
-> I hope it's ok to ask the same question every few years until you are
-> reasonably sure that the users are ready to stop upgrading kernels
-> beyond the following LTS kernel version. We can also do the same
-> thing for the other 32-bit platforms that exceed the maximum amount
-> of lowmem, and document which ones are known.
-> 
-> In the meantime, it would seem useful to increase the amount of
-> lowmem that can be used by default, using a combination of some
-> of the changes mentioned earlier
-> 
-> - add a VMSPLIT_2G_OPT config option for non-LPAE ARM kernels
->   to handle the common i.MX6 case with 2GB of RAM without highmem
-> 
-> - make VMSPLIT_2G_OPT (without LPAE) or VMSPLIT_2G (with
->   LPAE) the default in most ARM defconfig files as well as distros,
->   and disable highmem where possible, to see what breaks.
-> 
-> - extend zswap to use all the available high memory for swap space
->   when highmem is disabled.
+> Hash chains are supposed to be walked under rcu_read_lock(), requiring
+> to recheck the mount_lock seqcount *AND* with use of legitimize_mnt()
+> if you are to try and get a reference out of that.  ->mnt_parent chains
+> also can be walked in the same conditions (subject to the same
+> requirements).  The policy with everything else is
+> 	* get mount_lock spinlock exclusive or
+> 	* get namespace_sem or
+> 	* just fucking don't do it.
 
-I don't think that's a good idea.  Running debian stable kernels on my
-8GB laptop, I have problems when leaving firefox running long before
-even half the 16GB of swap gets consumed - the entire machine slows
-down very quickly when it starts swapping more than about 2 or so GB.
-It seems either the kernel has become quite bad at selecting pages to
-evict.
+I have no idea what David's performance requirements are.  But yes,
+of course, if locking suffices, use locking, be happy, and get on with
+your life.
 
-It gets to the point where any git operation has a battle to fight
-for RAM, despite not touching anything else other than git.
+It looks like David would otherwise have been gathering information
+while holding some sort of lock (as you say above), then releasing that
+lock before actually using the gathered information.  Therefore, should
+it turns out that locking is to slow does not suffice for David's use
+case, and if the issues I identified above disqualify RCU (which would
+be unsurprising, especially given that the above is unlikely to be an
+exhaustive list), then another option is to maintain a separate data
+structure that keeps the needed information.  When the mounts change,
+the next lookup would grab the needed locks and regenerate this separate
+data structure.  Otherwise, just do lookup in the separate data structure.
 
-The behaviour is much like firefox is locking memory into core, but
-that doesn't seem to be what's actually going on.  I've never really
-got to the bottom of it though.
+But again, if just locking and traversing the main data structure
+suffices, agreed, just do that, be happy, and get on with life.
 
-This is with 64-bit kernel and userspace.
-
-So, I'd suggest that trading off RAM available through highmem for VM
-space available through zswap is likely a bad idea if you have a
-workload that requires 4GB of RAM on a 32-bit machine.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+							Thanx, Paul
