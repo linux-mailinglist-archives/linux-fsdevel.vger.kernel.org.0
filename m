@@ -2,116 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E0E17D435
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 15:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E944E17D484
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Mar 2020 16:46:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgCHOch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Mar 2020 10:32:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51088 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726259AbgCHOcg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Mar 2020 10:32:36 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52CF720848;
-        Sun,  8 Mar 2020 14:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583677956;
-        bh=tSJSpSnJtqOKsizi3MhYYRytrtTLb6EioI5Eke+POK0=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=P69927BQ2i9zgjdGUH3dzPYoejOXJMHbK43Z5k3uvlrfDNevEbvqg+brPT3CAn7Cj
-         ZEwn9Y/8B1amn+V6gW1AkSCeq4fB/YTi7HlDtVOw+KPe5tLpsTKF+8jrlJ0mqXeWFQ
-         UVLG9AcfQ+Z/n4B3KCujs2AP7vXyjn0bXy/VswBw=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 213F535226BD; Sun,  8 Mar 2020 07:32:36 -0700 (PDT)
-Date:   Sun, 8 Mar 2020 07:32:36 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>, mszeredi@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: How to abuse RCU to scan the children of a mount?
-Message-ID: <20200308143236.GB2935@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <3173159.1583343916@warthog.procyon.org.uk>
- <20200304192816.GI2935@paulmck-ThinkPad-P72>
- <20200304194451.GS23230@ZenIV.linux.org.uk>
+        id S1726289AbgCHPqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Mar 2020 11:46:09 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41580 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726260AbgCHPqJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Mar 2020 11:46:09 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B9C7A421F7899F3EB101
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Mar 2020 23:45:52 +0800 (CST)
+Received: from [127.0.0.1] (10.177.253.249) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Sun, 8 Mar 2020
+ 23:45:51 +0800
+To:     Miklos Szeredi <miklos@szeredi.hu>
+From:   piaojun <piaojun@huawei.com>
+Subject: [QUESTION] How to enlarge the max write pages of fuse request
+CC:     <linux-fsdevel@vger.kernel.org>
+Message-ID: <5E651328.4090305@huawei.com>
+Date:   Sun, 8 Mar 2020 23:45:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304194451.GS23230@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 07:44:51PM +0000, Al Viro wrote:
-> On Wed, Mar 04, 2020 at 11:28:16AM -0800, Paul E. McKenney wrote:
-> 
-> > Huh.  The mount structure isn't suffering from a shortage of list_head
-> > structures, is it?
-> > 
-> > So the following can happen, then?
-> > 
-> > o	The __attach_mnt() function adds a struct mount to its parent
-> > 	list, but in a non-RCU manner.	Unless there is some other
-> > 	safeguard, the list_add_tail() in this function needs to be
-> > 	list_add_tail_rcu().
-> > 
-> > o	I am assuming that the various non-RCU traversals that I see,
-> > 	for example, next_mnt(), are protected by lock_mount_hash().
-> > 	Especially skip_mnt_tree(), which uses mnt_mounts.prev.  (I didn't
-> > 	find any exceptions, but I don't claim an exhaustive search.)
-> > 
-> > o	The umount_tree() function's use of list_del_init() looks like
-> > 	it could trap an RCU reader in the newly singular list formed
-> > 	by the removal.  It appears that there are other functions that
-> > 	use list_del_init() on this list, though I cannot claim any sort
-> > 	of familiarity with this code.
-> > 
-> > 	So, do you need to add a check for child->mnt_child being in this
-> > 	self-referential state within fsinfo_generic_mount_children()?
-> > 
-> > 	Plus list_del_init() doesn't mark its stores, though
-> > 	some would argue that unmarked stores are OK in this situation.
-> > 
-> > o	There might be other operations in need of RCU-ification.
-> > 
-> > 	Maybe the list_add_tail() in umount_tree(), but it is not
-> > 	immediately clear that this is adding a new element instead of
-> > 	re-inserting an element already exposed to readers.
-> 
-> IMO all of that is a good argument *against* trying to pull any kind of RCU
-> games here.  Access to these lists is assumed to be serialized on
-> mount_lock spinlock component held exclusive and unless there is a very
-> good reason to go for something trickier, let's not.
-> 
-> Hash chains are supposed to be walked under rcu_read_lock(), requiring
-> to recheck the mount_lock seqcount *AND* with use of legitimize_mnt()
-> if you are to try and get a reference out of that.  ->mnt_parent chains
-> also can be walked in the same conditions (subject to the same
-> requirements).  The policy with everything else is
-> 	* get mount_lock spinlock exclusive or
-> 	* get namespace_sem or
-> 	* just fucking don't do it.
+Hi Miklos,
 
-I have no idea what David's performance requirements are.  But yes,
-of course, if locking suffices, use locking, be happy, and get on with
-your life.
+I want to enlarge the fuse request's bufsize from 128K to 1MB for more
+bandwidth as follows, but it does not work.
 
-It looks like David would otherwise have been gathering information
-while holding some sort of lock (as you say above), then releasing that
-lock before actually using the gathered information.  Therefore, should
-it turns out that locking is to slow does not suffice for David's use
-case, and if the issues I identified above disqualify RCU (which would
-be unsurprising, especially given that the above is unlikely to be an
-exhaustive list), then another option is to maintain a separate data
-structure that keeps the needed information.  When the mounts change,
-the next lookup would grab the needed locks and regenerate this separate
-data structure.  Otherwise, just do lookup in the separate data structure.
+1. In libfuse, setting fuse_init_out:
+outarg->max_write = 1024 * 1024; // 1MB
+outarg->max_pages = 256; // 1MB
 
-But again, if just locking and traversing the main data structure
-suffices, agreed, just do that, be happy, and get on with life.
+2. In kernel, fuse_send_write just handle 4B once a time, and failed at
+last despite 'req->max_pages' is already set to 256. I wonder if some
+more adaption needed or I just went the wrong way? Looking forward to
+your rely.
 
-							Thanx, Paul
+Thanks,
+Jun
+
