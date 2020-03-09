@@ -2,65 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DC017E87E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:32:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF5617E879
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:31:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbgCITbv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 15:31:51 -0400
-Received: from smtprelay0221.hostedemail.com ([216.40.44.221]:48014 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726106AbgCITbv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:31:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id D9FB01025604F;
-        Mon,  9 Mar 2020 19:31:49 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3867:3872:4321:4362:5007:8603:10004:10400:10848:11026:11232:11658:11914:12048:12296:12297:12555:12740:12760:12895:13069:13311:13357:13439:14181:14254:14659:14721:21080:21451:21627:21990:30001:30002:30003:30004:30005:30006:30007:30008:30009:30010:30011:30012:30013:30014:30015:30016:30017:30018:30019:30020:30021:30022:30023:30024:30025:30026:30027:30028:30029:30030:30031:30032:30033:30034:30035:30036:30037:30038:30039:30040:30041:30042:30043:30044:30045:30046:30047:30048:30049:30050:30051:30052:30053:30054:30055:30057:30058:30059:30060:30061:30062:30063:30064:30065:30066:30067:30068:30069:30070:30071:30072:30073:30074:30075:30076:30077:30078:30079:30080:30081:30082:30083:30084:30085:30086:30087:30088:30089:30090:30091,0,RBL:none,Cac
-X-HE-Tag: desk11_2ce8ed604532a
-X-Filterd-Recvd-Size: 1434
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  9 Mar 2020 19:31:48 +0000 (UTC)
-Message-ID: <19abedb11fae1b96aa052090e7a0d5bbea416824.camel@perches.com>
-Subject: Re: [PATCH] xattr: NULL initialize name in simple_xattr_alloc
-From:   Joe Perches <joe@perches.com>
-To:     Daniel Xu <dxu@dxuuu.xyz>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kernel-team@fb.com
-Date:   Mon, 09 Mar 2020 12:30:07 -0700
-In-Reply-To: <20200309183719.3451-1-dxu@dxuuu.xyz>
-References: <20200309183719.3451-1-dxu@dxuuu.xyz>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        id S1726275AbgCITa6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 9 Mar 2020 15:30:58 -0400
+Received: from mail-oln040092073073.outbound.protection.outlook.com ([40.92.73.73]:43971
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726106AbgCITa5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:30:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WQS9JVkpHcFeZxqgH/0JGbj5Cds27H8qPYwSn1Tl1ZxWhWOyD2xr7uNRDfarncOaQc9JL1lrPyvpwpdiT9GvufZHIXYQoEpK8JQ/0UGQJDQI6rJc5X9Pw7DiwFCp275Ax+UpEbalu1I0SzrdLGPwJGiAMks7kWxuMhQpnVm9lXcAfUu6Z+Vze7XkFgZZRFxpoYTFD9ySodW+0tK3u+LhRP4jHhgOGQoQ7h+ol/3M9JO9NZeyPOKUKLuxPYgCg8RbkfYtgBhTgvfWfH0rpqUQBA7R8mcZz+YGWSsjSOgP8Au3BNyQMMl077GdZ3C9gSMZ9N/shlNBXoh2HjQTaZ6Sqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jxx6MlQD/1BAFg8WI2pnsDjsoz3s+EOs2w5Pc/bBL/4=;
+ b=gdqKrYKZ9HZWUqGjiVoL5N87BcFyZurhBCVcW7VQLqJ2Yaft2N4ZE8+3cCTPZJVWDltR2XCYgUYSxEIve/I+CYqWX3f7msLefXNjPcKxFFbnf1GwCjom2MSoSZiODMXPtCiRHc/kdUNrqVXnFytCkxHjG9RyBUqKVkzAEJPHkFGomWbHdGeuIC0F+GXeUrMaxPjmgungJ9JO4+XwAH4q7kPVReaCY7Ew6j8V80Df00JiF2s+kOxg2a1za9tKrrZQ+NfkG3u+KEIK3QMaGopdmWtnaziNKRuMbx9RtRJuURihdzKaRb3srDfojs0ystLcjYaEG//V8m0/ik8b29TzLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR04FT025.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0d::33) by
+ HE1EUR04HT222.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0d::105)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 19:30:13 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.26.60) by
+ HE1EUR04FT025.mail.protection.outlook.com (10.152.27.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 19:30:13 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 9 Mar 2020
+ 19:30:13 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR01CA0025.eurprd01.prod.exchangelabs.com (2603:10a6:208:69::38) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Mon, 9 Mar 2020 19:30:07 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
+ de_thread
+Thread-Topic: [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of
+ de_thread
+Thread-Index: AQHV9ZIEZxv0OjAlrUW8EbkPvU5OCqhApyIA
+Date:   Mon, 9 Mar 2020 19:30:13 +0000
+Message-ID: <AM6PR03MB5170B4D58F3FA5D33FE7657AE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR01CA0025.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:69::38) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:1D11F3C52AA20EBC430DB346C09A4699A65F93F93FDB2F1ABAF13885F9D9B20A;UpperCasedChecksum:F65111DBCA5A0AC806A7EA7BA1E0E4446D647E0342302557EC34E3FF14B48D07;SizeAsReceived:9916;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [OcD0NgGcG0JZG4F3xK7jxWsbdT9smler]
+x-microsoft-original-message-id: <49c40113-05fa-e31d-478a-d01915ed0059@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: d7a4e64a-a427-4c0e-b75b-08d7c4604967
+x-ms-traffictypediagnostic: HE1EUR04HT222:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sNkwfI6O9nw/LbblTEqNANU0FcxXdbSkAk5YU+vMggTkwlweJGhwZuLThErFUiRkCtAyW+7xoxZAPX5JRxdR1b56GRqLIhB979M4xDYKdOEqJvBN7tCzaV9jVpEF0Z2laBH/nECodfbIvF69rmQJtsrnW3B3IovHZsAqIxayr9xQ/uen3I3y6Dc73o/rsdk5
+x-ms-exchange-antispam-messagedata: vwHuoFtHtZ6FSlkk/P+IIWY5p10IbcCxjKqwOho3gWhDGBLd6Ucr1iC3EMUbdtgN2mhPOAmzdno8TicB5PfqWRF/DsPrOqoMf5zHy3rh/no/ppzQCjMfzjK5je2i2ca/SgVJSWHDHKOioh4pPaS2JQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <3386F6868CEAF14D9BF18D15F4701AD9@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7a4e64a-a427-4c0e-b75b-08d7c4604967
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 19:30:13.2687
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR04HT222
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-03-09 at 11:37 -0700, Daniel Xu wrote:
-> It's preferable to initialize structs to a deterministic state.
-
-Thanks Daniel.
-
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  fs/xattr.c | 1 +
->  1 file changed, 1 insertion(+)
+On 3/8/20 10:36 PM, Eric W. Biederman wrote:
 > 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 90dd78f0eb27..92b324c265d2 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -821,6 +821,7 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
->  	if (!new_xattr)
->  		return NULL;
->  
-> +	new_xattr->name = NULL;
->  	new_xattr->size = size;
->  	memcpy(new_xattr->value, value, size);
->  	return new_xattr;
+> These functions have very little to do with de_thread move them out
+> of de_thread an into flush_old_exec proper so it can be more clearly
+> seen what flush_old_exec is doing.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
+Reviewed-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+
+
+Bernd.
+> ---
+>  fs/exec.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index ff74b9a74d34..215d86f77b63 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1189,11 +1189,6 @@ static int de_thread(struct task_struct *tsk)
+>  	/* we have changed execution domain */
+>  	tsk->exit_signal = SIGCHLD;
+>  
+> -#ifdef CONFIG_POSIX_TIMERS
+> -	exit_itimers(sig);
+> -	flush_itimer_signals();
+> -#endif
+> -
+>  	BUG_ON(!thread_group_leader(tsk));
+>  	return 0;
+>  
+> @@ -1277,6 +1272,11 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	if (retval)
+>  		goto out;
+>  
+> +#ifdef CONFIG_POSIX_TIMERS
+> +	exit_itimers(me->signal);
+> +	flush_itimer_signals();
+> +#endif
+> +
+>  	/*
+>  	 * Make the signal table private.
+>  	 */
+> 
