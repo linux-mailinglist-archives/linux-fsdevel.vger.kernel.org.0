@@ -2,96 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC16517EABA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 22:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B456817EAEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 22:13:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgCIVFH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 17:05:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:57536 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbgCIVFH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 17:05:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1222D1FB;
-        Mon,  9 Mar 2020 14:05:07 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 891E23F534;
-        Mon,  9 Mar 2020 14:05:06 -0700 (PDT)
-Date:   Mon, 9 Mar 2020 21:05:05 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
-Message-ID: <20200309210505.GM4101@sirena.org.uk>
-References: <20200227174417.23722-1-broonie@kernel.org>
- <20200306102729.GC2503422@arrakis.emea.arm.com>
+        id S1726859AbgCIVNN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 17:13:13 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36988 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726838AbgCIVNM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:13:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583788392;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Il8BHXhlu0rpVwjSDD1TcJtiqIzjydKT/JxTacOBPvo=;
+        b=ZHNtAPJPBiIT91FePIAP1f47Yx2Cy84ctHB4ZOHid8hy4Q7A0gGlYNRoyIibXVoIDHAhrO
+        lLi/nNbG5VqiImXmEZb+TwbbXbR7AhIXXKjBdGAFE5Phvq0qpGOu5v8wvRrgmT6xyEXGyw
+        9D15T728ZK1UbPiTwI5aWTKFj0LvYVw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-408-8LJQfvrlOuG6Zr6VQp3twA-1; Mon, 09 Mar 2020 17:13:10 -0400
+X-MC-Unique: 8LJQfvrlOuG6Zr6VQp3twA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4C9F3107ACC9;
+        Mon,  9 Mar 2020 21:13:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 499805D9CA;
+        Mon,  9 Mar 2020 21:13:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <a2012ba2-e322-39e2-fa80-c8d4aef501de@samba.org>
+References: <a2012ba2-e322-39e2-fa80-c8d4aef501de@samba.org> <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk> <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, Aleksa Sarai <cyphar@cyphar.com>,
+        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
+        jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
+        jlayton@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qySB1iFW++5nzUxH"
-Content-Disposition: inline
-In-Reply-To: <20200306102729.GC2503422@arrakis.emea.arm.com>
-X-Cookie: Above all things, reverence yourself.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <530114.1583788384.1@warthog.procyon.org.uk>
+Date:   Mon, 09 Mar 2020 21:13:04 +0000
+Message-ID: <530115.1583788384@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Stefan Metzmacher <metze@samba.org> wrote:
 
---qySB1iFW++5nzUxH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Automounting is currently forced by doing an open(), so adding support to
+> > openat2() for RESOLVE_NO_TRAILING_AUTOMOUNTS is not trivial.
+> 
+> lookup_flags &= ~LOOKUP_AUTOMOUNT won't work?
 
-On Fri, Mar 06, 2020 at 10:27:29AM +0000, Catalin Marinas wrote:
-> On Thu, Feb 27, 2020 at 05:44:06PM +0000, Mark Brown wrote:
+No.  LOOKUP_OPEN overrides that.
 
-> > This patch series implements support for ARMv8.5-A Branch Target
-> > Identification (BTI), which is a control flow integrity protection
-> > feature introduced as part of the ARMv8.5-A extensions.
+David
 
-> Does this series affect uprobes in any way? I.e. can you probe a landing
-> pad?
-
-You can't probe a landing pad, uprobes on landing pads will be silently
-ignored so the program isn't disrupted, you just don't get the expected
-trace from those uprobes.  This isn't new with the BTI support since
-the landing pads are generally pointer auth instructions, these already
-can't be probed regardless of what's going on with this series.  It's
-already on the list to get sorted.
-
---qySB1iFW++5nzUxH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5mr4AACgkQJNaLcl1U
-h9Blwwf8CR8zwN1uUuwJWSzyItw8ZiSf2fLHJ6Smgao/rc/O876dKM+ZZQqzuQ3B
-kG8nQyocUyEa7jghPeuTnqveuK4hpSDe/++EG1Ncl+7gMe8pmbTLVfOCYZzs1TPc
-3QiBL54YSDsAtYFT/Q+2Q27pv4vP3Xm7vsyhvWHYujG6HuFVt3Oco0Nnh8ipL6Eo
-XPOS5rfxJTLe2vcwFfj6Nf03zK+DoS2gU4LAXCjQeXGuwGep9BYzoEQhXk8srTA7
-ZJSrDH0XTMYRRmkmHTcppBRfqbKwES2xZYt6GDRWKqG7yvnEcq+v1MFR2Mgw87ZA
-eQr2xNhLMxU8o5zqjJiwHMI5S3jMoQ==
-=TGul
------END PGP SIGNATURE-----
-
---qySB1iFW++5nzUxH--
