@@ -2,45 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 521D217E293
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 15:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE8217E29B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 15:37:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgCIOcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 10:32:42 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40699 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbgCIOcl (ORCPT
+        id S1726729AbgCIOg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 10:36:59 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45014 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbgCIOg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:32:41 -0400
-Received: by mail-ot1-f67.google.com with SMTP id x19so9736299otp.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2020 07:32:41 -0700 (PDT)
+        Mon, 9 Mar 2020 10:36:58 -0400
+Received: by mail-io1-f66.google.com with SMTP id t26so1577375ios.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2020 07:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=wwttuEgJLrHDrsoeti/WRvxYN1vo6oc1Gkxoo3LNrYk=;
-        b=Y56O/CGGKX6JjG/tEDKs8wpA5NNiUKYMORJsS8olRIwd59un5niG5ggzfTBmi4Bg07
-         0H1ibRSQqIFB7VLHmmT06mg5RCILlUW9t/SD5sGQJJ+U2GSY/lIu0s1ea36tIEZ+XJzI
-         TBxZrdg5Cy1scfui5yXeQFBJ6rw2oHdp6vaaS5yN66UQLQrp4pvVYm+KPahqIj00uVqY
-         HQNpDynu37ITkchS+hc7B7c37s81wORIk3IBpeMvwVwHzb2V6ZlelvM7adcK5iT48dsk
-         HNg+ObkT602w7saoTpwRHm88aaE9h1QcmHAJ7Az283YsljOM3K/Dctx5oa157lQ8mGbm
-         GW1g==
+        bh=51InxWWK77yS5DHpUHA7Fenj4mp1m4T9V+UnkAOMMZ0=;
+        b=TLR3iyeVnSbM6bO3JpXDa5vsrJxMy0mMRwc8CL4J+V2F7yF4jQCDNGLDId5PhvQ0Zg
+         Y3zKHJP58aR7NNkaAq59H9FJMS/60a3KttxsLMwWi5tGLWqSJ58K2v+5sJ6NpsV30KrV
+         o7LF7+zwxo3xmDbkiVK2Cw4HtCz+/ceuWqVv4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wwttuEgJLrHDrsoeti/WRvxYN1vo6oc1Gkxoo3LNrYk=;
-        b=cH/F7uwqltoel9BiTQkJSUsSIrdf5TcooDsH4G6U+ofdj2nW/yeGLTzR3PeDLoC1eh
-         CSFfkYFAiSjGwINuU8wsjil39bQdGWo3iSOmsSNEV/e3Ws6Jxiik33MbnxUHO6vbz9Et
-         gx3Q4JI1ZgvWM0T3ONdCLKPmcmghf7YlZhus0/8lWB1WETQOMj0HljOClHCsaAD0/HM3
-         TQNp1Vxz0Ucidy5KuI/iaqi1TiNTnzGgBfnHYgnzNe8a07R//tnVID1VpkzE0VPQwVdi
-         a+xCzZlkSW4S4ViPnMW61Dt+y/snMJadtta3rX0x4KsGJL30+xCWBaTlumeSaBnostA1
-         sd1A==
-X-Gm-Message-State: ANhLgQ08SIMIkNduvLYF21QXWB1jUJTThhl1fMF5nmEv/NAcvI3cxoLt
-        /q3GL9LpZMXbQN+3DtAwvLeKbz/Zog2PPUkfs62UqQ==
-X-Google-Smtp-Source: ADFU+vurIp6uaBT8quIe8mrP94VZjXTFnvdeCAPZtjSz8BnPkGOgpzEY/LeTYfHsFd1fuP3uoZtuU1x60QjucjHoAY8=
-X-Received: by 2002:a9d:3e89:: with SMTP id b9mr13399637otc.3.1583764360881;
- Mon, 09 Mar 2020 07:32:40 -0700 (PDT)
+        bh=51InxWWK77yS5DHpUHA7Fenj4mp1m4T9V+UnkAOMMZ0=;
+        b=lE9kaq6gMABibvXQng0LUql32gY70NgbSEAwRN0rYiAyRFe3ymvnkC0T9M7FO3b2iz
+         FqJuKyrUYyFDEpA80hYVwpyoe0TGdHLiIqm0b/hMwPW46WVPKGdcRegiWBIHP3Udlv1A
+         /CRSdEG4ibrBQ1eiY+GtJFe1Wiv+2mt7WtNJ7a9EdOjkgrIMxF7eczEolR7iOa6mYTcy
+         zlqVcUxNRqo4A5WR2ar1uVMZnVFW8YacZ1Zrt25n3ppGUoN68ONXAi10BttSgqx9SmxF
+         UKPkHygBk8eOiVwt4flO9L8XqBLattoLuwOJAMb2CmSvDvtK+7hVLkfrdn1UYibIe2n1
+         Hv4w==
+X-Gm-Message-State: ANhLgQ3kwxca1ShGPCiA2r4sdDwwEi5X+4JsqDnF29KUexVLu7v7V58l
+        D7EBAzw36fS9Vjo0sL4zAwUNVeYrcp0/sUnKjJ/zlQ==
+X-Google-Smtp-Source: ADFU+vuUwyKjXTL/6WA5OX+bDXb1PydHUkWzDUGosTSn49xcylKL0bn5XvkQ1bMsSoOk2LCMLrMqVd4gBdKs0VRb3jk=
+X-Received: by 2002:a6b:5905:: with SMTP id n5mr2907560iob.59.1583764618197;
+ Mon, 09 Mar 2020 07:36:58 -0700 (PDT)
 MIME-Version: 1.0
 References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
  <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
@@ -51,14 +48,15 @@ References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
  <20200303130421.GA5186@mtj.thefacebook.com> <CANnVG6=i1VmWF0aN1tJo5+NxTv6ycVOQJnpFiqbD7ZRVR6T4=Q@mail.gmail.com>
  <20200303141311.GA189690@mtj.thefacebook.com> <CANnVG6=9mYACk5tR2xD08r_sGWEeZ0rHZAmJ90U-8h3+iSMvbA@mail.gmail.com>
  <20200303142512.GC189690@mtj.thefacebook.com> <CANnVG6=yf82CcwmdmawmjTP2CskD-WhcvkLnkZs7hs0OG7KcTg@mail.gmail.com>
-In-Reply-To: <CANnVG6=yf82CcwmdmawmjTP2CskD-WhcvkLnkZs7hs0OG7KcTg@mail.gmail.com>
-From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
-Date:   Mon, 9 Mar 2020 15:32:29 +0100
-Message-ID: <CANnVG6n=_PhhpgLo2ByGeJrrAaNOLond3GQJhobge7Ob2hfJrQ@mail.gmail.com>
+ <CANnVG6n=_PhhpgLo2ByGeJrrAaNOLond3GQJhobge7Ob2hfJrQ@mail.gmail.com>
+In-Reply-To: <CANnVG6n=_PhhpgLo2ByGeJrrAaNOLond3GQJhobge7Ob2hfJrQ@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 9 Mar 2020 15:36:47 +0100
+Message-ID: <CAJfpegsWwsmzWb6C61NXKh=TEGsc=TaSSEAsixbBvw_qF4R6YQ@mail.gmail.com>
 Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
  on some machines?
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+To:     Michael Stapelberg <michael+lkml@stapelberg.ch>
+Cc:     Tejun Heo <tj@kernel.org>,
         Jack Smith <smith.jack.sidman@gmail.com>,
         fuse-devel <fuse-devel@lists.sourceforge.net>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
@@ -69,57 +67,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Here=E2=80=99s one more thing I noticed: when polling
-/sys/kernel/debug/bdi/0:93/stats, I see that BdiDirtied and BdiWritten
-remain at their original values while the kernel sends FUSE read
-requests, and only goes up when the kernel transitions into sending
-FUSE write requests. Notably, the page dirtying throttling happens in
-the read phase, which is most likely why the write bandwidth is
-(correctly) measured as 0.
-
-Do we have any ideas on why the kernel sends FUSE reads at all?
-
-On Thu, Mar 5, 2020 at 3:45 PM Michael Stapelberg
+On Mon, Mar 9, 2020 at 3:32 PM Michael Stapelberg
 <michael+lkml@stapelberg.ch> wrote:
 >
-> Thanks for taking a look!
+> Here=E2=80=99s one more thing I noticed: when polling
+> /sys/kernel/debug/bdi/0:93/stats, I see that BdiDirtied and BdiWritten
+> remain at their original values while the kernel sends FUSE read
+> requests, and only goes up when the kernel transitions into sending
+> FUSE write requests. Notably, the page dirtying throttling happens in
+> the read phase, which is most likely why the write bandwidth is
+> (correctly) measured as 0.
 >
-> Find attached a trace file which illustrates that the device=E2=80=99s wr=
-ite
-> bandwidth (write_bw) decreases from the initial 100 MB/s down to,
-> eventually, 0 (not included in the trace). When seeing the
-> pathologically slow write-back performance, I observed write_bw=3D0!
->
-> The trace was generated with these tracepoints enabled:
-> echo 1 > /sys/kernel/debug/tracing/events/writeback/balance_dirty_pages/e=
-nable
-> echo 1 > /sys/kernel/debug/tracing/events/writeback/bdi_dirty_ratelimit/e=
-nable
->
-> I wonder why the measured write bandwidth decreases so much. Any thoughts=
-?
->
-> On Tue, Mar 3, 2020 at 3:25 PM Tejun Heo <tj@kernel.org> wrote:
-> >
-> > On Tue, Mar 03, 2020 at 03:21:47PM +0100, Michael Stapelberg wrote:
-> > > Find attached trace.log (cat /sys/kernel/debug/tracing/trace) and
-> > > fuse-debug.log (FUSE daemon with timestamps).
-> > >
-> > > Does that tell you something, or do we need more data? (If so, how?)
-> >
-> > This is likely the culprit.
-> >
-> >  .... 1319822.406198: balance_dirty_pages: ... bdi_dirty=3D68 dirty_rat=
-elimit=3D28 ...
-> >
-> > For whatever reason, bdp calculated that the dirty throttling
-> > threshold for the fuse device is 28 pages which is extremely low. Need
-> > to track down how that number came to be. I'm afraid from here on it'd
-> > mostly be reading source code and sprinkling printks around but the
-> > debugging really comes down to figuring out how we ended up with 68
-> > and 28.
-> >
-> > Thanks.
-> >
-> > --
-> > tejun
+> Do we have any ideas on why the kernel sends FUSE reads at all?
+
+Memory writes (stores) need the memory page to be up-to-date wrt. the
+backing file before proceeding.   This means that if the page hasn't
+yet been cached by the kernel, it needs to be read first.
+
+Thanks,
+Miklos
