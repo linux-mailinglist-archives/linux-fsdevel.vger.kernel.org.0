@@ -2,176 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1677E17E22C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 15:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 521D217E293
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 15:32:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbgCIOFB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 10:05:01 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49144 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgCIOFB (ORCPT
+        id S1726695AbgCIOcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 10:32:42 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40699 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbgCIOcl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 10:05:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=d26Ye+vMRYj5g5ykorwl/W5eqkd9joFbNEWspN4ENAs=; b=Xl4UNnGtpQtUvm2BgVXiCnesn
-        7sfNE6HTuF5M1sEiacWYVtLUj7JcKknJbqaOlmfa4Uc1uchICRc2UPtoZKgJ0Z4TIX9KenW7nmUtk
-        jmKticzXy8ktdt2H4UZBTcBKr1oqKdgzkaVXoyOHbYCTnXmzv7j7ETY8ebK4+jq9qBgW1p3TbEVdp
-        iMM3SFdsMiP7+ayIeGrD3Lh5qVn0R0EmfK9Ubo8B0qSyLSX6K+7nW1r6FIzw6VM/1qJeGmbKeg0bK
-        f1I3tsqkvGx8S3xga4Nb3k3LYM0BLa3gIM5rWVU8XT09RkrZFk5zOv1Eqy34iooGn9DOWutdB77v4
-        BXyB9MVUQ==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:50736)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1jBJ1T-0007Ja-5X; Mon, 09 Mar 2020 14:04:47 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1jBJ1L-0003Qb-Vi; Mon, 09 Mar 2020 14:04:40 +0000
-Date:   Mon, 9 Mar 2020 14:04:39 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200309140439.GL25745@shell.armlinux.org.uk>
-References: <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk>
- <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
- <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
- <20200308141923.GI25745@shell.armlinux.org.uk>
- <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
+        Mon, 9 Mar 2020 10:32:41 -0400
+Received: by mail-ot1-f67.google.com with SMTP id x19so9736299otp.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Mar 2020 07:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wwttuEgJLrHDrsoeti/WRvxYN1vo6oc1Gkxoo3LNrYk=;
+        b=Y56O/CGGKX6JjG/tEDKs8wpA5NNiUKYMORJsS8olRIwd59un5niG5ggzfTBmi4Bg07
+         0H1ibRSQqIFB7VLHmmT06mg5RCILlUW9t/SD5sGQJJ+U2GSY/lIu0s1ea36tIEZ+XJzI
+         TBxZrdg5Cy1scfui5yXeQFBJ6rw2oHdp6vaaS5yN66UQLQrp4pvVYm+KPahqIj00uVqY
+         HQNpDynu37ITkchS+hc7B7c37s81wORIk3IBpeMvwVwHzb2V6ZlelvM7adcK5iT48dsk
+         HNg+ObkT602w7saoTpwRHm88aaE9h1QcmHAJ7Az283YsljOM3K/Dctx5oa157lQ8mGbm
+         GW1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wwttuEgJLrHDrsoeti/WRvxYN1vo6oc1Gkxoo3LNrYk=;
+        b=cH/F7uwqltoel9BiTQkJSUsSIrdf5TcooDsH4G6U+ofdj2nW/yeGLTzR3PeDLoC1eh
+         CSFfkYFAiSjGwINuU8wsjil39bQdGWo3iSOmsSNEV/e3Ws6Jxiik33MbnxUHO6vbz9Et
+         gx3Q4JI1ZgvWM0T3ONdCLKPmcmghf7YlZhus0/8lWB1WETQOMj0HljOClHCsaAD0/HM3
+         TQNp1Vxz0Ucidy5KuI/iaqi1TiNTnzGgBfnHYgnzNe8a07R//tnVID1VpkzE0VPQwVdi
+         a+xCzZlkSW4S4ViPnMW61Dt+y/snMJadtta3rX0x4KsGJL30+xCWBaTlumeSaBnostA1
+         sd1A==
+X-Gm-Message-State: ANhLgQ08SIMIkNduvLYF21QXWB1jUJTThhl1fMF5nmEv/NAcvI3cxoLt
+        /q3GL9LpZMXbQN+3DtAwvLeKbz/Zog2PPUkfs62UqQ==
+X-Google-Smtp-Source: ADFU+vurIp6uaBT8quIe8mrP94VZjXTFnvdeCAPZtjSz8BnPkGOgpzEY/LeTYfHsFd1fuP3uoZtuU1x60QjucjHoAY8=
+X-Received: by 2002:a9d:3e89:: with SMTP id b9mr13399637otc.3.1583764360881;
+ Mon, 09 Mar 2020 07:32:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
+ <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
+ <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
+ <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
+ <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
+ <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
+ <20200303130421.GA5186@mtj.thefacebook.com> <CANnVG6=i1VmWF0aN1tJo5+NxTv6ycVOQJnpFiqbD7ZRVR6T4=Q@mail.gmail.com>
+ <20200303141311.GA189690@mtj.thefacebook.com> <CANnVG6=9mYACk5tR2xD08r_sGWEeZ0rHZAmJ90U-8h3+iSMvbA@mail.gmail.com>
+ <20200303142512.GC189690@mtj.thefacebook.com> <CANnVG6=yf82CcwmdmawmjTP2CskD-WhcvkLnkZs7hs0OG7KcTg@mail.gmail.com>
+In-Reply-To: <CANnVG6=yf82CcwmdmawmjTP2CskD-WhcvkLnkZs7hs0OG7KcTg@mail.gmail.com>
+From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
+Date:   Mon, 9 Mar 2020 15:32:29 +0100
+Message-ID: <CANnVG6n=_PhhpgLo2ByGeJrrAaNOLond3GQJhobge7Ob2hfJrQ@mail.gmail.com>
+Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
+ on some machines?
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Jack Smith <smith.jack.sidman@gmail.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 02:33:26PM +0100, Arnd Bergmann wrote:
-> On Sun, Mar 8, 2020 at 3:20 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> > > On Fri, Mar 6, 2020 at 9:36 PM Nishanth Menon <nm@ti.com> wrote:
-> > > > On 13:11-20200226, santosh.shilimkar@oracle.com wrote:
+Here=E2=80=99s one more thing I noticed: when polling
+/sys/kernel/debug/bdi/0:93/stats, I see that BdiDirtied and BdiWritten
+remain at their original values while the kernel sends FUSE read
+requests, and only goes up when the kernel transitions into sending
+FUSE write requests. Notably, the page dirtying throttling happens in
+the read phase, which is most likely why the write bandwidth is
+(correctly) measured as 0.
+
+Do we have any ideas on why the kernel sends FUSE reads at all?
+
+On Thu, Mar 5, 2020 at 3:45 PM Michael Stapelberg
+<michael+lkml@stapelberg.ch> wrote:
+>
+> Thanks for taking a look!
+>
+> Find attached a trace file which illustrates that the device=E2=80=99s wr=
+ite
+> bandwidth (write_bw) decreases from the initial 100 MB/s down to,
+> eventually, 0 (not included in the trace). When seeing the
+> pathologically slow write-back performance, I observed write_bw=3D0!
+>
+> The trace was generated with these tracepoints enabled:
+> echo 1 > /sys/kernel/debug/tracing/events/writeback/balance_dirty_pages/e=
+nable
+> echo 1 > /sys/kernel/debug/tracing/events/writeback/bdi_dirty_ratelimit/e=
+nable
+>
+> I wonder why the measured write bandwidth decreases so much. Any thoughts=
+?
+>
+> On Tue, Mar 3, 2020 at 3:25 PM Tejun Heo <tj@kernel.org> wrote:
 > >
-> > > - extend zswap to use all the available high memory for swap space
-> > >   when highmem is disabled.
+> > On Tue, Mar 03, 2020 at 03:21:47PM +0100, Michael Stapelberg wrote:
+> > > Find attached trace.log (cat /sys/kernel/debug/tracing/trace) and
+> > > fuse-debug.log (FUSE daemon with timestamps).
+> > >
+> > > Does that tell you something, or do we need more data? (If so, how?)
 > >
-> > I don't think that's a good idea.  Running debian stable kernels on my
-> > 8GB laptop, I have problems when leaving firefox running long before
-> > even half the 16GB of swap gets consumed - the entire machine slows
-> > down very quickly when it starts swapping more than about 2 or so GB.
-> > It seems either the kernel has become quite bad at selecting pages to
-> > evict.
+> > This is likely the culprit.
 > >
-> > It gets to the point where any git operation has a battle to fight
-> > for RAM, despite not touching anything else other than git.
+> >  .... 1319822.406198: balance_dirty_pages: ... bdi_dirty=3D68 dirty_rat=
+elimit=3D28 ...
 > >
-> > The behaviour is much like firefox is locking memory into core, but
-> > that doesn't seem to be what's actually going on.  I've never really
-> > got to the bottom of it though.
+> > For whatever reason, bdp calculated that the dirty throttling
+> > threshold for the fuse device is 28 pages which is extremely low. Need
+> > to track down how that number came to be. I'm afraid from here on it'd
+> > mostly be reading source code and sprinkling printks around but the
+> > debugging really comes down to figuring out how we ended up with 68
+> > and 28.
 > >
-> > This is with 64-bit kernel and userspace.
-> 
-> I agree there is something going wrong on your machine, but I
-> don't really see how that relates to my suggestion.
-
-You are suggesting for a 4GB machine to use 2GB of RAM for normal
-usage via an optimised virtual space layout, and 2GB of RAM for
-swap using ZSWAP, rather than having 4GB of RAM available via the
-present highmem / lowmem system.
-
-I'm saying that is quite risky given the behaviours I'm seeing,
-where modern Linux seems to be struggling to work out what pages
-it should be evicting.
-
-I think Linux performs way better when it doesn't have to use
-swap.
-
-> > So, I'd suggest that trading off RAM available through highmem for VM
-> > space available through zswap is likely a bad idea if you have a
-> > workload that requires 4GB of RAM on a 32-bit machine.
-> 
-> Aside from every workload being different, I was thinking of
-> these general observations:
-> 
-> - If we are looking at a future without highmem, then it's better to use
->   the extra memory for something than not using it. zswap seems like
->   a reasonable use.
-
-I think that's still a very open question, one which hasn't been
-answered yet.
-
-> - A lot of embedded systems are configured to have no swap at all,
->   which can be for good or not-so-good reasons. Having some
->   swap space available often improves things, even if it comes
->   out of RAM.
-
-How do you come up with that assertion?  What is the evidence behind
-it?
-
-This is kind of the crux of my point in the previous email: Linux
-with swap performs way worse for me - if I had 16GB of RAM in my
-laptop, I bet it would perform better than my current 8GB with a
-16GB swap file - where, when the swap file gets around 8GB full,
-the system as a whole starts to struggle.
-
-That's about a 50/50 split of VM space between RAM and swap.
-
-Proposing 2GB+ swap 2GB RAM would potentially place these machines
-into the same situation as my laptop, and if it also results in
-a loss of performance, we could end up with regression reports.
-
-> - A particularly important case to optimize for is 2GB of RAM with
->   LPAE enabled. With CONFIG_VMSPLIT_2G and highmem, this
->   leads to the paradox -ENOMEM when 256MB of highmem are
->   full while plenty of lowmem is available. With highmem disabled,
->   you avoid that at the cost of losing 12% of RAM.
-
-What happened to requests for memory from highmem being able to be
-sourced from lowmem if highmem wasn't available?  That used to be
-standard kernel behaviour.
-
-> - With 4GB+ of RAM and CONFIG_VMSPLIT_2G or
->   CONFIG_VMSPLIT_3G, using gigabytes of RAM for swap
->   space would usually be worse than highmem, but once
->   we have VMSPLIT_4G_4G, it's the same situation as above
->   with 6% of RAM used for zswap instead of highmem.
-
-I think the chances of that happening are very slim - I doubt there
-is the will to invest the energy amongst what is left of the 32-bit
-ARM community.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 10.2Mbps down 587kbps up
+> > Thanks.
+> >
+> > --
+> > tejun
