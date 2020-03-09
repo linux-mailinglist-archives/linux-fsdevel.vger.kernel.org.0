@@ -2,138 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FBF217E145
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 14:34:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A4617E19B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 14:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgCINdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 09:33:46 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:53183 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbgCINdq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 09:33:46 -0400
-Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mft3h-1jrX2P2EMT-00gDOE; Mon, 09 Mar 2020 14:33:44 +0100
-Received: by mail-qv1-f53.google.com with SMTP id m2so4309429qvu.13;
-        Mon, 09 Mar 2020 06:33:44 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ2cGAClHxhhKYxLdxfmsD+WXhy1WPw1CGiz4PpyJrVPFMQhm1vZ
-        gxUOAsFjnRqYkKxWoVVmtYkFkSBzVSkA5bYA5zg=
-X-Google-Smtp-Source: ADFU+vsS4g4CC/jX/g0SgAYUCTcdMUWjdRoIcEGypTKOhZlhcLLVL+lmJ8nsucH78bEHlCzzMXlxQq29RStvENsZj44=
-X-Received: by 2002:a0c:f647:: with SMTP id s7mr14720813qvm.4.1583760823316;
- Mon, 09 Mar 2020 06:33:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
- <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com> <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com> <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com> <20200308141923.GI25745@shell.armlinux.org.uk>
-In-Reply-To: <20200308141923.GI25745@shell.armlinux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 9 Mar 2020 14:33:26 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
-Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726758AbgCINp6 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 9 Mar 2020 09:45:58 -0400
+Received: from mail-oln040092069109.outbound.protection.outlook.com ([40.92.69.109]:15648
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726720AbgCINp6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Mar 2020 09:45:58 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=T9IScGzvU8L67rmtAj/zc/nOJEnDxtAYddUn8VD0DZnhAkwtq6CsZzABhwFPbRV8G8sAHC8ElrTO6Y2nYaTIKmyxzb/AqCs1HVEoxTlmGqmo/SZw7LBVjrrzqAYyhghQ/kbI2AD6KEKIc/mWXhv876FLtxpnBtqjrxJW2Pnmyn7X9yDVjwObumvauRNuTX9psXkkBmY/ZlwxOe8363UynQvn0RmWhDAUX6oiC+kWUtx0pWJtFLQhAznqdfk+WRkAgWS8w6ob2x7r4zYVA4JO+Rrt+9bFgjQhIwM381R5YCYZgsWAA5PUS7gA/oxUQrbRdzp7p/nin2ZSSQ8OZ9IcBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7HXds6Q+11jQaIEKLExMVNC1Wx7+1+Af0RzE8zZ+hBY=;
+ b=jgTSASowan6dUKioXtc7z6mpkUFJq0tcZLGm1cLka/HCVN/ORRuOtdajQAkF0jgwL6UPFfSRQjx+fQugpfr9iphCj3cQmKn/AWFGD+K1zepRhBedJIhuNwZTAUAgpxM/uqfSF7eNZGc8vaat+jUxHJPLwR1RLnQhBiSNgKN61dSKEOtLO8yKEVDI0rB7FGjz8g8D0pUrW3ODFcnIpWOgPSVBvmqKa91pBx7QucGLCA5FIorSYTPKaEuxO5WB8XvmwWgctv204UeyBUcNmgd5ZUncFfRVbSn5VmR1DruamUQ0HSt4NSYxj+V31sFlf8hH91agTAUO6PWYv7dmYvylFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from HE1EUR02FT038.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:e400:7e1d::36) by
+ HE1EUR02HT174.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1d::490)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 13:45:52 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.10.54) by
+ HE1EUR02FT038.mail.protection.outlook.com (10.152.11.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 13:45:52 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 9 Mar 2020
+ 13:45:52 +0000
+Received: from [192.168.1.101] (92.77.140.102) by FR2P281CA0022.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:14::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.15 via Frontend Transport; Mon, 9 Mar 2020 13:45:51 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:4Uk+eoxAdYLQYHRtietrYb/hTUc9UW68fZ0BAFbzJwMndYqTN4Y
- sTOPub1ZgVM71gXs3eC8FIDH0TINzzRgwsAbaNrajuJNM8rOOm+L5YzOyby0c2wyVccUHbS
- wvM2hT/dKoAJqHTNDktPnQmeRsPrd0uzzuqgJFJeAKkD+5iv7Er0Bp9nXGMn5MPodnNyptz
- gPERQcI/KqH3hodQSIklQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:H87OSnfdRG0=:3Huc2lYEQZdXcoQyysvwu/
- MAAnJcFQsh7prCScZjCUCeiKCR14VSlb333panzZgcBxJAD2uCYrcZlk855x/hV/CoJY3jB5S
- PIbzwXAPWyb0iWqwH6ASOSNT8CduNHk3JQqdF5HWk7jhvHblMPjltBtU2PzToD7HhYgSOMjI7
- Hn9ttSzzgQARATgxNtTmzDCmc91V4u84BSf6NRle04a8gvGmFU76fxdXk71UGDLSRhpQa3clg
- GqRxgn8w4TxBCmGZX6slaYcyHYKqe77Jdb1xYXAcuVVnMGqyWcYfsQaHdwpOnZLjIhmhGKKK2
- /CbUu1MaRoat9o16AMShuyB+vYAqTcONL2pFPtW0+BUtAK7ZDl5IsaZv+/YgFpjo/MVAAKQTT
- R5Q2TF3c9b1n6kbWYNWGYo3mMjjcQIjf16meh9Hx+oMEdl5w+kPH5T269PZ1GvL2b9UJPMoDK
- 0+SdJZyP5Bgedn2COyuPlunE6Kyg1Oq4bslI4U48OyO7M4DKUFcEXrNfZRtzQT5YAUU9u9MTU
- 1eOuRu894Wc2tlJzylqH0lvsG6QZsukyJ5ZwcSN/JPMEVpdStFgfSQneRiGrOoI8aERZAS6ak
- JdSgN+jsLsO+M7m/G9qoDIFP8qH9V6KP0m0BGuPRszLZlUZgaKTVKY+6O4pNzetH97w9rIoAD
- 9ugEDpjccUr6wYECB76ZMdz1oSDdEYN0AePLPptxXIN5Oxwu+fOJVZUDXngIPrOSqPRvY4VBU
- +8rcPB4kJUA1r+HMyJjBivMwSPNM3+lIvUXOt/pjpURU8Hb6wrbU90B3YN3NiWKvdsKpCalGo
- 7XVzyBzrmdDtDpJKubwKCqqB5Q03xmGDsnypK3l5VBB5Eukits=
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Topic: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+Thread-Index: AQHV9ZJHYfsGvDLnM0SksOJ5MpqOZahARvEA
+Date:   Mon, 9 Mar 2020 13:45:52 +0000
+Message-ID: <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: FR2P281CA0022.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:14::9) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:C8EDBA1F05C561CF3BB4B45B988EA7AC398CC95AA926D55BE60041CF42968EBF;UpperCasedChecksum:4C0B955CC6DA8074080DD2C8D8152A121E3344CFA53DB0EFC92D14C6A0F32C00;SizeAsReceived:9871;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [7tYKb0jPB66M7v/f58HxmMHbKML6mDV9]
+x-microsoft-original-message-id: <3576ca27-c68a-308a-9ddd-f76d163f81e8@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 44b748a1-c14c-42f9-5846-08d7c4302ef5
+x-ms-traffictypediagnostic: HE1EUR02HT174:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: VJu1xTPVWop4UxIZDKT10eupaGw0QfN3FCeMSQ0LKXismnUscAXRHbGFZcI381sxu9FXdDbHNVVd9rbpIZamsO1/tZhd3nrG9fxo/onm72SYdfFtsuP+CCDi12EsyGs6BCRX8UfcTxv6T66AVnP5xGlLGVL4PCjg4l5IEqGqiZbw1o02zO+wGPDu9eI7lok6
+x-ms-exchange-antispam-messagedata: CNDUBxT8GpIyfrFfVgTyBSIObU39JrZ7PuzGPfd+dOM9ToJwic7uL2ep5Sf1VZu8xw0txeZaQLvpLnhUEuDzN3Yu45nL6vGPwrww8CfbgB0SJrXeuYFj5m9P9uzF2g1IvMCECBnTCuFNZ243vSfFPg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <25EC084D81A12142B470F4D19192D000@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44b748a1-c14c-42f9-5846-08d7c4302ef5
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 13:45:52.5307
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT174
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 8, 2020 at 3:20 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
-> On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> > On Fri, Mar 6, 2020 at 9:36 PM Nishanth Menon <nm@ti.com> wrote:
-> > > On 13:11-20200226, santosh.shilimkar@oracle.com wrote:
->
-> > - extend zswap to use all the available high memory for swap space
-> >   when highmem is disabled.
->
-> I don't think that's a good idea.  Running debian stable kernels on my
-> 8GB laptop, I have problems when leaving firefox running long before
-> even half the 16GB of swap gets consumed - the entire machine slows
-> down very quickly when it starts swapping more than about 2 or so GB.
-> It seems either the kernel has become quite bad at selecting pages to
-> evict.
->
-> It gets to the point where any git operation has a battle to fight
-> for RAM, despite not touching anything else other than git.
->
-> The behaviour is much like firefox is locking memory into core, but
-> that doesn't seem to be what's actually going on.  I've never really
-> got to the bottom of it though.
->
-> This is with 64-bit kernel and userspace.
+On 3/8/20 10:38 PM, Eric W. Biederman wrote:
+> 
+> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+> over the userspace accesses as the arguments from userspace are read.
+> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
 
-I agree there is something going wrong on your machine, but I
-don't really see how that relates to my suggestion.
+... is held while waiting for the trace parent to handle PTRACE_EVENT_EXIT
+or something?
 
-> So, I'd suggest that trading off RAM available through highmem for VM
-> space available through zswap is likely a bad idea if you have a
-> workload that requires 4GB of RAM on a 32-bit machine.
+I wonder if we also should mention that
+it is held while waiting for the trace parent to
+receive the exit code with "wait"?
 
-Aside from every workload being different, I was thinking of
-these general observations:
+> threads are killed.  The cred_guard_mutex is held over
+> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+> 
+> Any of those can result in deadlock, as the cred_guard_mutex is held
+> over a possible indefinite userspace waits for userspace.
+> 
+> Add exec_update_mutex that is only held over exec updating process
 
-- If we are looking at a future without highmem, then it's better to use
-  the extra memory for something than not using it. zswap seems like
-  a reasonable use.
+Add ?
 
-- A lot of embedded systems are configured to have no swap at all,
-  which can be for good or not-so-good reasons. Having some
-  swap space available often improves things, even if it comes
-  out of RAM.
+> with the new contents of exec, so that code that needs not to be
+> confused by exec changing the mm and the cred in ways that can not
+> happen during ordinary execution of a process.
+> 
+> The plan is to switch the users of cred_guard_mutex to
+> exec_udpate_mutex one by one.  This lets us move forward while still
 
-- A particularly important case to optimize for is 2GB of RAM with
-  LPAE enabled. With CONFIG_VMSPLIT_2G and highmem, this
-  leads to the paradox -ENOMEM when 256MB of highmem are
-  full while plenty of lowmem is available. With highmem disabled,
-  you avoid that at the cost of losing 12% of RAM.
+s/udpate/update/
 
-- With 4GB+ of RAM and CONFIG_VMSPLIT_2G or
-  CONFIG_VMSPLIT_3G, using gigabytes of RAM for swap
-  space would usually be worse than highmem, but once
-  we have VMSPLIT_4G_4G, it's the same situation as above
-  with 6% of RAM used for zswap instead of highmem.
 
-       Arnd
+Bernd.
