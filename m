@@ -2,179 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E64617E008
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 13:20:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FBF217E145
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 14:34:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCIMTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 08:19:54 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54973 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726677AbgCIMTy (ORCPT
+        id S1726523AbgCINdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 09:33:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:53183 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbgCINdq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:19:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583756393;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GyJi62FBwsHTe3Zl4H44iXaw4BfzG8ra8uaMuD9rQ7s=;
-        b=bKXVbKzqgRe5FH/3GQb3LFZqmwwPQPG9A2M++Qsvtf3KoDbTTSFLYmBcsIwL3DwjIWMTYB
-        anpiy9c9PQ9BaiUKa0HXqM5nsML1TQtTlYQZzkeTk+WetYprPaR/69qqf78aWyuEhJ3KKH
-        84vv7ItkUXWgvt2ztNlD0Bg2Q9p4U5Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-42-Wsrr7mZfMMSBkoQbAWtN0g-1; Mon, 09 Mar 2020 08:19:51 -0400
-X-MC-Unique: Wsrr7mZfMMSBkoQbAWtN0g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6E51A100550E;
-        Mon,  9 Mar 2020 12:19:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF4FE1001B3F;
-        Mon,  9 Mar 2020 12:19:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 17/17] watch_queue: sample: Display superblock
- notifications [ver #4]
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, dhowells@redhat.com, casey@schaufler-ca.com,
-        sds@tycho.nsa.gov, nicolas.dichtel@6wind.com, raven@themaw.net,
-        christian@brauner.io, andres@anarazel.de, jlayton@redhat.com,
-        dray@redhat.com, kzak@redhat.com, keyrings@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 09 Mar 2020 12:19:46 +0000
-Message-ID: <158375638603.334846.5465237543300472274.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158375623086.334846.16121725232323108842.stgit@warthog.procyon.org.uk>
-References: <158375623086.334846.16121725232323108842.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.21
+        Mon, 9 Mar 2020 09:33:46 -0400
+Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mft3h-1jrX2P2EMT-00gDOE; Mon, 09 Mar 2020 14:33:44 +0100
+Received: by mail-qv1-f53.google.com with SMTP id m2so4309429qvu.13;
+        Mon, 09 Mar 2020 06:33:44 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2cGAClHxhhKYxLdxfmsD+WXhy1WPw1CGiz4PpyJrVPFMQhm1vZ
+        gxUOAsFjnRqYkKxWoVVmtYkFkSBzVSkA5bYA5zg=
+X-Google-Smtp-Source: ADFU+vsS4g4CC/jX/g0SgAYUCTcdMUWjdRoIcEGypTKOhZlhcLLVL+lmJ8nsucH78bEHlCzzMXlxQq29RStvENsZj44=
+X-Received: by 2002:a0c:f647:: with SMTP id s7mr14720813qvm.4.1583760823316;
+ Mon, 09 Mar 2020 06:33:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <CAHk-=wiGbz3oRvAVFtN-whW-d2F-STKsP1MZT4m_VeycAr1_VQ@mail.gmail.com>
+ <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com> <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com> <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com> <20200308141923.GI25745@shell.armlinux.org.uk>
+In-Reply-To: <20200308141923.GI25745@shell.armlinux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 9 Mar 2020 14:33:26 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
+Message-ID: <CAK8P3a2Gz5H_fcNtW0yCCjO1cRNa0nyd568sDYR0nNphu49YqQ@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:4Uk+eoxAdYLQYHRtietrYb/hTUc9UW68fZ0BAFbzJwMndYqTN4Y
+ sTOPub1ZgVM71gXs3eC8FIDH0TINzzRgwsAbaNrajuJNM8rOOm+L5YzOyby0c2wyVccUHbS
+ wvM2hT/dKoAJqHTNDktPnQmeRsPrd0uzzuqgJFJeAKkD+5iv7Er0Bp9nXGMn5MPodnNyptz
+ gPERQcI/KqH3hodQSIklQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H87OSnfdRG0=:3Huc2lYEQZdXcoQyysvwu/
+ MAAnJcFQsh7prCScZjCUCeiKCR14VSlb333panzZgcBxJAD2uCYrcZlk855x/hV/CoJY3jB5S
+ PIbzwXAPWyb0iWqwH6ASOSNT8CduNHk3JQqdF5HWk7jhvHblMPjltBtU2PzToD7HhYgSOMjI7
+ Hn9ttSzzgQARATgxNtTmzDCmc91V4u84BSf6NRle04a8gvGmFU76fxdXk71UGDLSRhpQa3clg
+ GqRxgn8w4TxBCmGZX6slaYcyHYKqe77Jdb1xYXAcuVVnMGqyWcYfsQaHdwpOnZLjIhmhGKKK2
+ /CbUu1MaRoat9o16AMShuyB+vYAqTcONL2pFPtW0+BUtAK7ZDl5IsaZv+/YgFpjo/MVAAKQTT
+ R5Q2TF3c9b1n6kbWYNWGYo3mMjjcQIjf16meh9Hx+oMEdl5w+kPH5T269PZ1GvL2b9UJPMoDK
+ 0+SdJZyP5Bgedn2COyuPlunE6Kyg1Oq4bslI4U48OyO7M4DKUFcEXrNfZRtzQT5YAUU9u9MTU
+ 1eOuRu894Wc2tlJzylqH0lvsG6QZsukyJ5ZwcSN/JPMEVpdStFgfSQneRiGrOoI8aERZAS6ak
+ JdSgN+jsLsO+M7m/G9qoDIFP8qH9V6KP0m0BGuPRszLZlUZgaKTVKY+6O4pNzetH97w9rIoAD
+ 9ugEDpjccUr6wYECB76ZMdz1oSDdEYN0AePLPptxXIN5Oxwu+fOJVZUDXngIPrOSqPRvY4VBU
+ +8rcPB4kJUA1r+HMyJjBivMwSPNM3+lIvUXOt/pjpURU8Hb6wrbU90B3YN3NiWKvdsKpCalGo
+ 7XVzyBzrmdDtDpJKubwKCqqB5Q03xmGDsnypK3l5VBB5Eukits=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The notification is run as:
+On Sun, Mar 8, 2020 at 3:20 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> > On Fri, Mar 6, 2020 at 9:36 PM Nishanth Menon <nm@ti.com> wrote:
+> > > On 13:11-20200226, santosh.shilimkar@oracle.com wrote:
+>
+> > - extend zswap to use all the available high memory for swap space
+> >   when highmem is disabled.
+>
+> I don't think that's a good idea.  Running debian stable kernels on my
+> 8GB laptop, I have problems when leaving firefox running long before
+> even half the 16GB of swap gets consumed - the entire machine slows
+> down very quickly when it starts swapping more than about 2 or so GB.
+> It seems either the kernel has become quite bad at selecting pages to
+> evict.
+>
+> It gets to the point where any git operation has a battle to fight
+> for RAM, despite not touching anything else other than git.
+>
+> The behaviour is much like firefox is locking memory into core, but
+> that doesn't seem to be what's actually going on.  I've never really
+> got to the bottom of it though.
+>
+> This is with 64-bit kernel and userspace.
 
-	./watch_test
+I agree there is something going wrong on your machine, but I
+don't really see how that relates to my suggestion.
 
-and it then watches "/mnt" for superblock notifications:
+> So, I'd suggest that trading off RAM available through highmem for VM
+> space available through zswap is likely a bad idea if you have a
+> workload that requires 4GB of RAM on a 32-bit machine.
 
-	# mount -t tmpfs none /mnt
-	# ./watch_test &
-	# mount -o remount,ro /mnt
-	# mount -o remount,rw /mnt
+Aside from every workload being different, I was thinking of
+these general observations:
 
-producing:
+- If we are looking at a future without highmem, then it's better to use
+  the extra memory for something than not using it. zswap seems like
+  a reasonable use.
 
-	# ./watch_test
-	NOTIFY[000]: ty=000003 sy=00 i=03010010
-	SUPER 157eb57ca7 change=0[readonly]
-	read() = 16
-	NOTIFY[000]: ty=000002 sy=04 i=02010010
-	MOUNT 000001a0 change=4[setattr] aux=0
-	read() = 16
-	NOTIFY[000]: ty=000002 sy=04 i=02010010
-	MOUNT 000001a0 change=4[setattr] aux=0
+- A lot of embedded systems are configured to have no swap at all,
+  which can be for good or not-so-good reasons. Having some
+  swap space available often improves things, even if it comes
+  out of RAM.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+- A particularly important case to optimize for is 2GB of RAM with
+  LPAE enabled. With CONFIG_VMSPLIT_2G and highmem, this
+  leads to the paradox -ENOMEM when 256MB of highmem are
+  full while plenty of lowmem is available. With highmem disabled,
+  you avoid that at the cost of losing 12% of RAM.
 
- samples/watch_queue/watch_test.c |   39 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+- With 4GB+ of RAM and CONFIG_VMSPLIT_2G or
+  CONFIG_VMSPLIT_3G, using gigabytes of RAM for swap
+  space would usually be worse than highmem, but once
+  we have VMSPLIT_4G_4G, it's the same situation as above
+  with 6% of RAM used for zswap instead of highmem.
 
-diff --git a/samples/watch_queue/watch_test.c b/samples/watch_queue/watch_test.c
-index 49d185150506..eea3bd8c6569 100644
---- a/samples/watch_queue/watch_test.c
-+++ b/samples/watch_queue/watch_test.c
-@@ -29,6 +29,9 @@
- #ifndef __NR_watch_mount
- #define __NR_watch_mount -1
- #endif
-+#ifndef __NR_watch_sb
-+#define __NR_watch_sb -1
-+#endif
- 
- #define BUF_SIZE 256
- 
-@@ -82,6 +85,24 @@ static void saw_mount_change(struct watch_notification *n, size_t len)
- 	       m->triggered_on, n->subtype, mount_subtypes[n->subtype], m->changed_mount);
- }
- 
-+static const char *super_subtypes[256] = {
-+	[NOTIFY_SUPERBLOCK_READONLY]	= "readonly",
-+	[NOTIFY_SUPERBLOCK_ERROR]	= "error",
-+	[NOTIFY_SUPERBLOCK_EDQUOT]	= "edquot",
-+	[NOTIFY_SUPERBLOCK_NETWORK]	= "network",
-+};
-+
-+static void saw_super_change(struct watch_notification *n, size_t len)
-+{
-+	struct superblock_notification *s = (struct superblock_notification *)n;
-+
-+	if (len < sizeof(struct superblock_notification))
-+		return;
-+
-+	printf("SUPER %08llx change=%u[%s]\n",
-+	       s->sb_id, n->subtype, super_subtypes[n->subtype]);
-+}
-+
- /*
-  * Consume and display events.
-  */
-@@ -161,6 +182,9 @@ static void consumer(int fd)
- 			case WATCH_TYPE_MOUNT_NOTIFY:
- 				saw_mount_change(&n.n, len);
- 				break;
-+			case WATCH_TYPE_SB_NOTIFY:
-+				saw_super_change(&n.n, len);
-+				break;
- 			}
- 
- 			p += len;
-@@ -169,7 +193,7 @@ static void consumer(int fd)
- }
- 
- static struct watch_notification_filter filter = {
--	.nr_filters	= 2,
-+	.nr_filters	= 3,
- 	.filters = {
- 		[0]	= {
- 			.type			= WATCH_TYPE_KEY_NOTIFY,
-@@ -180,6 +204,14 @@ static struct watch_notification_filter filter = {
- 			// Reject move-from notifications
- 			.subtype_filter[0]	= UINT_MAX & ~(1 << NOTIFY_MOUNT_MOVE_FROM),
- 		},
-+		[2]	= {
-+			.type			= WATCH_TYPE_SB_NOTIFY,
-+			// Only accept notification of changes to R/O state
-+			.subtype_filter[0]	= (1 << NOTIFY_SUPERBLOCK_READONLY),
-+			// Only accept notifications of change-to-R/O
-+			.info_mask		= WATCH_INFO_FLAG_0,
-+			.info_filter		= WATCH_INFO_FLAG_0,
-+		},
- 	},
- };
- 
-@@ -218,6 +250,11 @@ int main(int argc, char **argv)
- 		exit(1);
- 	}
- 
-+	if (syscall(__NR_watch_sb, AT_FDCWD, "/mnt", 0, fd, 0x03) == -1) {
-+		perror("watch_sb");
-+		exit(1);
-+	}
-+
- 	consumer(fd);
- 	exit(0);
- }
-
-
+       Arnd
