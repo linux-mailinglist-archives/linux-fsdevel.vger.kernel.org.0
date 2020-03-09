@@ -2,123 +2,371 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B40ED17DF72
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 13:01:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC62117DFAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 13:17:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbgCIMBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 08:01:41 -0400
-Received: from mout.web.de ([212.227.15.14]:37345 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbgCIMBk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 08:01:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1583755285;
-        bh=rziJM53QWPLw2h+NFNA0oVLKnePui2TOJR7KKhLlKoo=;
-        h=X-UI-Sender-Class:Cc:Subject:To:From:Date;
-        b=pxkg9Kxd7I8YQbUeVS8nQSET9Iawf2LEh1iA7CbLjVrQYSs+Z1W5IC0v2e1Iqq4La
-         /T7vRsrry9WLSmBxY+7Un/V/eFsvHGDLitIfo6trCoOZCKD1ZkF58EB90AaPk7AUqi
-         PLUI5zP63SxzFrDBiJt7u9XtD/wkqrRgV6jyhPj0=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.135.147.116]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0LoYJu-1jqeac3fbO-00gUN3; Mon, 09
- Mar 2020 13:01:25 +0100
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Subject: Re: [PATCH v14 00/14] add the latest exfat driver
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-From:   Markus Elfring <Markus.Elfring@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <82902684-6daf-4eec-b1aa-3ba746898eff@web.de>
-Date:   Mon, 9 Mar 2020 13:01:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726480AbgCIMR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 08:17:27 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54317 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726467AbgCIMR1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Mar 2020 08:17:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583756244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=SEQ6uct5tI15AYQ4SaQAQ4DERyocB1GIPl4gaR9IcIk=;
+        b=D7PWsoviuNXBP2oYWhOZbv7vVyzRM5AP87Vk06MqVS/jJ2/Y/CxVogMlZYnuserK19wTtF
+        R2nvj2ogkwMZBNQnRbCNnWeG0SqFC1nSQrISpi+cJYYpDtUJWSm0yjU3jRw97BjDI2kGhQ
+        4cqM7MgQE4G9tksGgMzkkP56rh0VmBM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-427-Maxk_8jbMJemu9sRXx1MOg-1; Mon, 09 Mar 2020 08:17:18 -0400
+X-MC-Unique: Maxk_8jbMJemu9sRXx1MOg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD24818A5511;
+        Mon,  9 Mar 2020 12:17:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CC7421001DC0;
+        Mon,  9 Mar 2020 12:17:11 +0000 (UTC)
+Subject: [RFC PATCH 00/17] pipe: Keyrings,
+ mount and superblock notifications [ver #4]
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        dhowells@redhat.com, casey@schaufler-ca.com, sds@tycho.nsa.gov,
+        nicolas.dichtel@6wind.com, raven@themaw.net, christian@brauner.io,
+        andres@anarazel.de, jlayton@redhat.com, dray@redhat.com,
+        kzak@redhat.com, keyrings@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 09 Mar 2020 12:17:11 +0000
+Message-ID: <158375623086.334846.16121725232323108842.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.21
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2OnXjI5R4EaBwJcwHXapGHQVbHXel9nMTPk3hH+JlaHz7yb3wLU
- 53ps6G22rSIjPYPp/J9pgbips2cBM9VyUlMAi/I9tkUKFZUiWSYIDxEOxZWkhbNMs/xmTkd
- BrT4HqqI8O6J6Jw5EjolEgTWlcIWit/rUkmyYc9AYhwggsmGz6hJgoKjDIXxdMh3jt7Yb87
- HhV/MKoB6oMDvbbAJkD0Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:iO14Kcfz//o=:CQMyeYw4Vy4SEAxVJ9CGU/
- fPZymbpnpZ77rVp7V7Q9sd5Nu05bWHRC0DWjVo/s8rge9zkJ+cDmwoD+OJtYZ9Hsc5eTRHWcU
- LCieuAJGU7w0pAAV2rA5q1nLY3jtTvVnOvI2GQHk6ZI0SJl/s2tfPo4pqqn3HOGgO1powPTT9
- 4Ygt9FoNXGzqNFpGgDpaWYpdXR7tU/HAiYA8mWNb3zh/nxwVsSw8t787mAOAKge0LnVH6Pz67
- v9xc7vTW4Fp0zMtyCd8k5i2ke1+LrhERkbqe6TkdTkIdI3W9VcR4rOZBCH48kpPSwKhqB5A4b
- 8mZjnCXG/mUYcPsBs8X31ELkQN/KMEo68XG+gMRW4ollVwWy6uy4TFBeXQsSUvN9PRWY8HfH/
- eq1nndA3EGBjbC/OWeeyNhzuB7qTOSdNcvurb2UuHjwmUNz2Ctr+2Db666Vbo3ZURkzVHSkR7
- mc1hW2PeoCSG/TLbRM160kdXKBcx7GO3SVGF5W9+wmKhnBJSmxJJWgc0W5sD3uaq4sBPby2jC
- mfoqpfNKroHgGHJVxglHomRBLbCsuRgn3gzgklopepExfTneRZr5y5pZ2rZ6apkpRSVK7bvlf
- Fbi8G4DNb+Bo2ho6OXdSe542cr2KTzvwCENxycfHjr5c+InumBc0U1vobLMdMd88UEQgUurfz
- nIa69+8AA7TgQu+U6Ykh0cUqJjR/hAjp5/7YcM/fP94da3micQVgEBbJrarpHs/RNShLXVw3X
- Nd5ccUZZFFBw9V6A+94Fv7JnGyhCPKHKKPJCpBCoM6+5gft6saF4D85sWqnfGVoL1modZs5is
- orEgrhP2ZdviTTogxkmoilvKlBLDdYVlQ+INA0BUuicLqaxoTPMtgYrN6yvg5K5C5GoiNG7tn
- XPPdWVUJsHHWND+8LJrEvbEvh4fNqX583yflbfQ2zZDTTTPANc1n+wlg1Ryf7ZmofNTanOwjc
- VL+Z+gjKUxv0Du8XH8fbz7vdRVU0DOMw0tkXt2s6JB181QXfxEmCtbhuFq5JMwQR62Gl6bCec
- KAqEX7srZQy2T51hbsMRjE9Aa1dNgngV3PSmp/FNltPxd7e852eyIxgP30H9ldkmLxMcPaQiD
- YpMum6p6OuB43eNmbgUj6gYIYWBZejAfdf7j9EkAzVu/IbQGHAA+mO2Kbh1q4h2xv4AylhFvS
- 8n7JmQmKqAj770K9ZCxwe9vdHO2KpyvikNaJLCCRpEBvByTjijJdhk9BTWwsDvFy46jTO6+zF
- HQRlIKQHsPUeIErDY
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> v14:
-> - update file system parameter handling.
 
-How long will it take until further implementation details will get
-any more software development attention?
+Here's a set of patches to add a general notification queue concept and to
+add event sources such as:
 
-Regards,
-Markus
+ (1) Keys/keyrings, such as linking and unlinking keys and changing their
+     attributes.
+
+ (2) Mount topology events, such as mounting, unmounting, mount expiry,
+     mount reconfiguration.
+
+ (3) Superblock events, such as R/W<->R/O changes, quota overrun and I/O
+     errors (not complete yet).
+
+LSM hooks are included:
+
+ (1) A set of hooks are provided that allow an LSM to rule on whether or
+     not a watch may be set.  Each of these hooks takes a different
+     "watched object" parameter, so they're not really shareable.  The LSM
+     should use current's credentials.  [Wanted by SELinux & Smack]
+
+ (2) A hook is provided to allow an LSM to rule on whether or not a
+     particular message may be posted to a particular queue.  This is given
+     the credentials from the event generator (which may be the system) and
+     the watch setter.  [Wanted by Smack]
+
+I've provided SELinux and Smack with implementations of some of these hooks.
+
+
+WHY
+===
+
+ (1) Key/keyring notifications.
+
+     If you have your kerberos tickets in a file/directory, your gnome
+     desktop will monitor that using something like fanotify and tell you
+     if your credentials cache changes.
+
+     We also have the ability to cache your kerberos tickets in the
+     session, user or persistent keyring so that it isn't left around on
+     disk across a reboot or logout.  Keyrings, however, cannot currently
+     be monitored asynchronously, so the desktop has to poll for it - not
+     so good on a laptop.
+
+     This source will allow the desktop to avoid the need to poll.  Here's
+     a pull request for usage by gnome-online-accounts:
+
+	https://gitlab.gnome.org/GNOME/gnome-online-accounts/merge_requests/47
+
+ (2) Mount notifications.
+
+     This one is wanted to avoid repeated trawling of /proc/mounts or
+     similar to work out changes to the mount object attributes and mount
+     topology.  I'm told that the proc file holding the namespace_sem is a
+     point of contention, especially as the process of generating the text
+     descriptions of the mounts/superblocks can be quite involved.
+
+     Whilst you can use poll() on /proc/mounts, it doesn't give you any
+     clues as to what changed.  The notification generated here directly
+     indicates the mounts involved in any particular event and gives an
+     idea of what the change was.
+
+     This is combined with a new fsinfo() system call that allows, amongst
+     other things, the ability to retrieve in one go an { id,
+     change_counter } tuple from all the children of a specified mount,
+     allowing buffer overruns to be dealt with quickly.
+
+     This is of use to systemd to improve efficiency:
+
+	https://lore.kernel.org/linux-fsdevel/20200227151421.3u74ijhqt6ekbiss@ws.net.home/
+
+     And it's not just Red Hat that's potentially interested in this:
+
+	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
+
+ (3) Superblock notifications.
+
+     This one is provided to allow systemd or the desktop to more easily
+     detect events such as I/O errors and EDQUOT/ENOSPC.  This would be of
+     interest to Postgres:
+
+	https://lore.kernel.org/linux-fsdevel/20200211005626.7yqjf5rbs3vbwagd@alap3.anarazel.de/
+
+Design decisions:
+
+ (1) The notification queue is built on top of a standard pipe.  Messages
+     are effectively spliced in.  The pipe is opened with a special flag:
+
+	pipe2(fds, O_NOTIFICATION_PIPE);
+
+     The special flag has the same value as O_EXCL (which doesn't seem like
+     it will ever be applicable in this context)[?].  It is given up front
+     to make it a lot easier to prohibit splice and co. from accessing the
+     pipe.
+
+     [?] Should this be done some other way?  I'd rather not use up a new
+     	 O_* flag if I can avoid it - should I add a pipe3() system call
+     	 instead?
+
+     The pipe is then configured::
+
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_SIZE, queue_depth);
+	ioctl(fds[1], IOC_WATCH_QUEUE_SET_FILTER, &filter);
+
+     Messages are then read out of the pipe using read().
+
+ (2) It should be possible to allow write() to insert data into the
+     notification pipes too, but this is currently disabled as the kernel
+     has to be able to insert messages into the pipe *without* holding
+     pipe->mutex and the code to make this work needs careful auditing.
+
+ (3) sendfile(), splice() and vmsplice() are disabled on notification pipes
+     because of the pipe->mutex issue and also because they sometimes want
+     to revert what they just did - but one or more notification messages
+     might've been interleaved in the ring.
+
+ (4) The kernel inserts messages with the wait queue spinlock held.  This
+     means that pipe_read() and pipe_write() have to take the spinlock to
+     update the queue pointers.
+
+ (5) Records in the buffer are binary, typed and have a length so that they
+     can be of varying size.
+
+     This allows multiple heterogeneous sources to share a common buffer;
+     there are 16 million types available, of which I've used just a few,
+     so there is scope for others to be used.  Tags may be specified when a
+     watchpoint is created to help distinguish the sources.
+
+ (6) Records are filterable as types have up to 256 subtypes that can be
+     individually filtered.  Other filtration is also available.
+
+ (7) Notification pipes don't interfere with each other; each may be bound
+     to a different set of watches.  Any particular notification will be
+     copied to all the queues that are currently watching for it - and only
+     those that are watching for it.
+
+ (8) When recording a notification, the kernel will not sleep, but will
+     rather mark a queue as having lost a message if there's insufficient
+     space.  read() will fabricate a loss notification message at an
+     appropriate point later.
+
+ (9) The notification pipe is created and then watchpoints are attached to
+     it, using one of:
+
+	keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[1], 0x01);
+	watch_mount(AT_FDCWD, "/", 0, fd, 0x02);
+	watch_sb(AT_FDCWD, "/mnt", 0, fd, 0x03);
+
+     where in both cases, fd indicates the queue and the number after is a
+     tag between 0 and 255.
+
+(10) Watches are removed if either the notification pipe is destroyed or
+     the watched object is destroyed.  In the latter case, a message will
+     be generated indicating the enforced watch removal.
+
+
+Things I want to avoid:
+
+ (1) Introducing features that make the core VFS dependent on the network
+     stack or networking namespaces (ie. usage of netlink).
+
+ (2) Dumping all this stuff into dmesg and having a daemon that sits there
+     parsing the output and distributing it as this then puts the
+     responsibility for security into userspace and makes handling
+     namespaces tricky.  Further, dmesg might not exist or might be
+     inaccessible inside a container.
+
+ (3) Letting users see events they shouldn't be able to see.
+
+
+Testing and manpages:
+
+ (*) The keyutils tree has a pipe-watch branch that has keyctl commands for
+     making use of notifications.  Proposed manual pages can also be found
+     on this branch, though a couple of them really need to go to the main
+     manpages repository instead.
+
+     If the kernel supports the watching of keys, then running "make test"
+     on that branch will cause the testing infrastructure to spawn a
+     monitoring process on the side that monitors a notifications pipe for
+     all the key/keyring changes induced by the tests and they'll all be
+     checked off to make sure they happened.
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/log/?h=pipe-watch
+
+ (*) A test program is provided (samples/watch_queue/watch_test) that can
+     be used to monitor for keyrings, mount and superblock events.
+     Information on the notifications is simply logged to stdout.
+
+The kernel patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications-pipe-core
+
+Changes:
+
+ ver #4:
+
+ (*) Dropped USB and device notifications for the moment as there's some
+     dispute over whether another avenue should be used for USB
+     notifications.
+
+ (*) Include mount and superblock event sources in the patchset.
+
+     - These now increment event counters that fsinfo() will be able to
+       retrieve (separate patch set).
+
+ ver #3:
+
+ (*) Rebase to after latest upstream pipe patches.
+ (*) Fix a missing ref get in add_watch_to_object().
+
+ ver #2:
+
+ (*) Declare O_NOTIFICATION_PIPE to use and switch it to be the same value
+     as O_EXCL rather then O_TMPFILE (the latter is a bit nasty in its
+     implementation).
+
+ ver #1:
+
+ (*) Build on top of standard pipes instead of having a driver.
+
+David
+---
+David Howells (17):
+      uapi: General notification queue definitions
+      security: Add hooks to rule on setting a watch
+      security: Add a hook for the point of notification insertion
+      pipe: Add O_NOTIFICATION_PIPE
+      pipe: Add general notification queue support
+      watch_queue: Add a key/keyring notification facility
+      Add sample notification program
+      pipe: Allow buffers to be marked read-whole-or-error for notifications
+      pipe: Add notification lossage handling
+      selinux: Implement the watch_key security hook
+      smack: Implement the watch_key and post_notification hooks
+      watch_queue: Add security hooks to rule on setting mount and sb watches
+      watch_queue: Implement mount topology and attribute change notifications
+      watch_queue: sample: Display mount tree change notifications
+      watch_queue: Introduce a non-repeating system-unique superblock ID
+      watch_queue: Add superblock notifications
+      watch_queue: sample: Display superblock notifications
+
+
+ Documentation/security/keys/core.rst               |   58 ++
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 
+ Documentation/watch_queue.rst                      |  354 +++++++++++
+ arch/alpha/kernel/syscalls/syscall.tbl             |    2 
+ arch/arm/tools/syscall.tbl                         |    2 
+ arch/arm64/include/asm/unistd.h                    |    2 
+ arch/ia64/kernel/syscalls/syscall.tbl              |    2 
+ arch/m68k/kernel/syscalls/syscall.tbl              |    2 
+ arch/microblaze/kernel/syscalls/syscall.tbl        |    2 
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |    2 
+ arch/mips/kernel/syscalls/syscall_n64.tbl          |    2 
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |    2 
+ arch/parisc/kernel/syscalls/syscall.tbl            |    2 
+ arch/powerpc/kernel/syscalls/syscall.tbl           |    2 
+ arch/s390/kernel/syscalls/syscall.tbl              |    2 
+ arch/sh/kernel/syscalls/syscall.tbl                |    2 
+ arch/sparc/kernel/syscalls/syscall.tbl             |    2 
+ arch/x86/entry/syscalls/syscall_32.tbl             |    2 
+ arch/x86/entry/syscalls/syscall_64.tbl             |    2 
+ arch/xtensa/kernel/syscalls/syscall.tbl            |    2 
+ fs/Kconfig                                         |   21 +
+ fs/Makefile                                        |    1 
+ fs/internal.h                                      |    1 
+ fs/mount.h                                         |   35 +
+ fs/mount_notify.c                                  |  186 ++++++
+ fs/namespace.c                                     |   22 +
+ fs/pipe.c                                          |  242 +++++--
+ fs/splice.c                                        |   12 
+ fs/super.c                                         |  156 +++++
+ include/linux/dcache.h                             |    1 
+ include/linux/fs.h                                 |   84 +++
+ include/linux/key.h                                |    3 
+ include/linux/lsm_audit.h                          |    1 
+ include/linux/lsm_hooks.h                          |   62 ++
+ include/linux/pipe_fs_i.h                          |   27 +
+ include/linux/security.h                           |   47 +
+ include/linux/syscalls.h                           |    4 
+ include/linux/watch_queue.h                        |  127 ++++
+ include/uapi/asm-generic/unistd.h                  |    6 
+ include/uapi/linux/keyctl.h                        |    2 
+ include/uapi/linux/watch_queue.h                   |  163 +++++
+ init/Kconfig                                       |   12 
+ kernel/Makefile                                    |    1 
+ kernel/sys_ni.c                                    |    6 
+ kernel/watch_queue.c                               |  659 ++++++++++++++++++++
+ samples/Kconfig                                    |    6 
+ samples/Makefile                                   |    1 
+ samples/watch_queue/Makefile                       |    7 
+ samples/watch_queue/watch_test.c                   |  260 ++++++++
+ security/keys/Kconfig                              |    9 
+ security/keys/compat.c                             |    3 
+ security/keys/gc.c                                 |    5 
+ security/keys/internal.h                           |   30 +
+ security/keys/key.c                                |   38 +
+ security/keys/keyctl.c                             |   99 +++
+ security/keys/keyring.c                            |   20 -
+ security/keys/request_key.c                        |    4 
+ security/security.c                                |   37 +
+ security/selinux/hooks.c                           |   14 
+ security/smack/smack_lsm.c                         |   83 ++-
+ 60 files changed, 2837 insertions(+), 107 deletions(-)
+ create mode 100644 Documentation/watch_queue.rst
+ create mode 100644 fs/mount_notify.c
+ create mode 100644 include/linux/watch_queue.h
+ create mode 100644 include/uapi/linux/watch_queue.h
+ create mode 100644 kernel/watch_queue.c
+ create mode 100644 samples/watch_queue/Makefile
+ create mode 100644 samples/watch_queue/watch_test.c
+
+
