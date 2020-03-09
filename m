@@ -2,157 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74E7717E907
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0215D17E945
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:52:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgCITqi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 15:46:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:46091 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgCITqi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:46:38 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MMGZS-1isD500wxK-00JM4f; Mon, 09 Mar 2020 20:46:36 +0100
-Received: by mail-qk1-f181.google.com with SMTP id c145so4695230qke.12;
-        Mon, 09 Mar 2020 12:46:35 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3rq6yzydjwfH0UH1dKg+FjDRwxNNz1MOIEGKZue9mEMqQln0ao
-        MvGgtLDZC+DAzcC1iQE1mJ6Li6ZvtnQs/WBOCCc=
-X-Google-Smtp-Source: ADFU+vvmBvMz+V6RDUU++ZwSagdLLK5RIhqNTJ7v8Q8rLCrbads695yLqa65IiOBHxFXCnfQzEWO8L12fWPy8qQjUb0=
-X-Received: by 2002:a37:6455:: with SMTP id y82mr7117037qkb.286.1583783194930;
- Mon, 09 Mar 2020 12:46:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
- <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
- <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com> <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com> <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
- <20200309155945.GA4124965@arrakis.emea.arm.com> <20200309160919.GM25745@shell.armlinux.org.uk>
-In-Reply-To: <20200309160919.GM25745@shell.armlinux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 9 Mar 2020 20:46:18 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
-Message-ID: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726307AbgCITwo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 9 Mar 2020 15:52:44 -0400
+Received: from mail-vi1eur05olkn2104.outbound.protection.outlook.com ([40.92.90.104]:7584
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725992AbgCITwn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:52:43 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LR5UP4nTXlbz2VSPanyoMb4DvKn1Zoud47dOxIaTPqOmya0bjr/Q7M0UmZ3duUxb7iIiJ752I8jrw3FT9bM7mbFRjXEvNWidhhf6CbC4OdTfsGVE5WCWUvrTPzx6YVZ2H7XJH8hw7yIzb/AsH/MDl3a9SPwLVfklYkwBNNFBlfINBDQ5JJhGZMEP66B5QPEvJ9pg7NmhL2fdIgvrta6oEkuFvdleekdsCMoIGhQHRGoqqA7uaNZimXeVnO85kfaK7Ls/dzB+uSsD5M5dcgAsRNIvvz8zn1JkWNivg8l/dlxmdTPgCOMa47hV50Vq5E79nS1a0Vw1VlsUs9vgvbJAPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=us7arMLgUlBinqeZu1Mkp+JM24VyW/yqREJVsjdZp6Q=;
+ b=HISgO7i7QNl/28ZDpwnSD97ugP9S+2K0ywa/zRvyRPExtckec02LRwxwv2GE2m5ueG4tU28fYA4heLDKAdl5/aocPkjiJyyVsdx//zHueICENyl42lb3sKhYsMLiTpQ4+Y25yiakqZFs83mvmFpk9gxuV12uc+WeZ6iuLmCb/QGS2VkrtfS6y9LeuLRasKapyHKHNEbiDBsiWgxN0cEiAikLI/ivy8KZNuU+ewhP7s4l5wfB4J237zonZCFzj4TZr0eB8E8cKkVDJ6iFIoIQgYBga3hin6kFzUG967cCUPCFCIKgiJaZSiv9wwa2bbxfzK3+bGcVUPWG74dBtY+GWA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from DB8EUR05FT061.eop-eur05.prod.protection.outlook.com
+ (2a01:111:e400:fc0f::37) by
+ DB8EUR05HT254.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc0f::480)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 9 Mar
+ 2020 19:52:38 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.233.238.56) by
+ DB8EUR05FT061.mail.protection.outlook.com (10.233.238.67) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.11 via Frontend Transport; Mon, 9 Mar 2020 19:52:38 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2772.019; Mon, 9 Mar 2020
+ 19:52:38 +0000
+Received: from [192.168.1.101] (92.77.140.102) by AM0PR06CA0073.eurprd06.prod.outlook.com (2603:10a6:208:fa::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.14 via Frontend Transport; Mon, 9 Mar 2020 19:52:37 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:bBz45YywharMfMeD3eAylez7Ounvj65HPQEEQib3QyJAizH9t4T
- +vrg8YPRfP/wkc3x9uVrXC2fg1vn05X8acW5S8uqkcfR611JV6haZdbjIhjZOb5VXAEIU7T
- fybLcm2xzaHPSwnjc1kRg9m+mHJtEcSLp71hOXsnfW8NT9ZsZ+77b5tzERPVbdF5887rNI9
- R/z93tWt8v4tBo0ketAlA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3oD3vabjtEQ=:uf5dhXYr9zoCuZp/lYOLA5
- PMvgD5mIkR064YxlKT9lB+1ZGq9kjrwQgLDsImiD6z35fFl31b+HKsYetkDDL1KgDNsGs8M7k
- R1oaj4voGgjyPF+t/AH1FC1GG21eGzAlGvdYZUA/ttauCDUVjk4pmuHZ6VyeRnl1Ot+RJfeOw
- TQOmSiRDpq3XKzdxVLTEWSaViFdPTlimJ3fkutFcsSgBQGiZfOqrpOl8TT8JCl1pqupugg9hQ
- rwCyvTyDjnvaZ7XwMjJN9ItTabaTDn9Vx7UCDraGDVCoBZfxJTNaIGABGpOlw7SUXZUK2IxXc
- i6cNH6p26cVgZE4vSvRteQJI2n7d69OjCsdybhGfx9TyRi5lJO0DpPdPYu9zEETpKU4chZ4f4
- +Y5zL0Sj11hxzvJB7WJ3HNTrjQ36RqNHQJyOk0+BBS8G4lmd+vCsfx0escAzCknKVz+GllMtD
- T2krPnnyoNH29/Jjzj9+YogN+uuV0TtadjHmXr81PmSab1wmnbQd+PDVzQIBjEdF8Ylv8pHZP
- T4vscLw+V3j6KzvOhE8jqoOo/Cc915U/2we96med5LcBIDZWVPfqIw9EktqpjyiCb4B6dYrqE
- UUN260UVYq2b+emfbsHeXhR89Zb9G6y8DkaL4LdlNHbRS4tdEVL/LRBSE7NKbx2IVtICC/I+4
- CSNaLWcxGUeMYw8bu9a70dy5x8VswT8xhcLEIApDzhChO/frkrPgWvK8tn3qVK6Of5/a865PQ
- EMNJbhkUIdHZM31hdABugNVrNCiucPw4T7qtSeT/8yrURvJj/oag3CwyRAN6QBCto4EHOrCdc
- Hb4ckkyulIukGhi2eVQv4bNmqFLqSnIhrJrsDbsFMERWMa2DQQ=
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in
+ flush_old_exec
+Thread-Topic: [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in
+ flush_old_exec
+Thread-Index: AQHV9ZIq8LqSeoOzkk+o9CTpCnOInKhAqHsAgAADjVGAAAFjAA==
+Date:   Mon, 9 Mar 2020 19:52:38 +0000
+Message-ID: <AM6PR03MB51709D441EE6830DC8CE3090E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <875zfe5xzb.fsf_-_@x220.int.ebiederm.org>
+ <AM6PR03MB5170C3A4319BA6A057C3CCACE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv2xz510.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87tv2xz510.fsf@x220.int.ebiederm.org>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM0PR06CA0073.eurprd06.prod.outlook.com
+ (2603:10a6:208:fa::14) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+x-incomingtopheadermarker: OriginalChecksum:E052DB8E0D4BE9F52D3BB250C54FCE66C8E08203BC122772396A1B3B47280602;UpperCasedChecksum:D2B8584132588694E957B129C60342ECF08B154AE93F08996C18C724C5FD4F63;SizeAsReceived:9906;Count:50
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [gg8QiKW80X8x8ER3daN6HWEBHHRMradi]
+x-microsoft-original-message-id: <bd039513-aafc-8200-d63c-e4d345c35c21@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 50
+x-eopattributedmessage: 0
+x-ms-office365-filtering-correlation-id: 6e585488-bf69-4a39-5fc5-08d7c4636b81
+x-ms-traffictypediagnostic: DB8EUR05HT254:
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 6QJ1WYrUSrzeSIAWhwAyprirzoT32kImPYMAY4VcRk/gMufeUzP38OS8sB6tdYzIP0Vd9PdZx+HIAmEvqO3Wl+d5tadaQfufGZQ/qT2Ulyop8XKQzmpkuZtpstmzlcwyQiHCpQ1Db3hSO99znan8QWpT+EEv51ww56Bf00vCAlfyVkc3CCmcOZ5um5PtVQnC
+x-ms-exchange-antispam-messagedata: Su4XjFp3ZwTE/nkD8ppkkZwR3LyyEtggQmpSHLQVK3qnGjUZ1inFOMYGLWZxZ2cUK/joDA9TWF+yHb2TQgFQZlksSqBtLNGZ4eadbSEm6cuci6FQqO9QlzbMMBowfGCGM7uQwLG36QbPG0atzhVLUw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <3D428C8F34AC3245A2ECA39F23444B91@eurprd03.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e585488-bf69-4a39-5fc5-08d7c4636b81
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2020 19:52:38.3929
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8EUR05HT254
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 5:09 PM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
-> On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
-> > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> > > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
-> > >   to see if it can be done, and what the overhead is. This is probably
-> > >   more work than the others combined, but also the most promising
-> > >   as it allows the most user address space and physical ram to be used.
-> >
-> > A rough outline of such support (and likely to miss some corner cases):
-> >
-> > 1. Kernel runs with its own ASID and non-global page tables.
-> >
-> > 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
-> >    between user and kernel.
-> >
-> > 3. uaccess routines need to be reworked to pin the user pages in memory
-> >    (get_user_pages()) and access them via the kernel address space.
-> >
-> > Point 3 is probably the ugliest and it would introduce a noticeable
-> > slowdown in certain syscalls.
 
-There are probably a number of ways to do the basic design. The idea
-I had (again, probably missing more corner cases than either of you
-two that actually understand the details of the mmu):
 
-- Assuming we have LPAE, run the kernel vmlinux and modules inside
-  the vmalloc space, in the top 256MB or 512MB on TTBR1
+On 3/9/20 8:45 PM, Eric W. Biederman wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+> 
+>> On 3/8/20 10:38 PM, Eric W. Biederman wrote:
+>>>
+>>> This consolidation allows the creation of a mutex to replace
+>>> cred_guard_mutex that is not held of possible indefinite userspace
+>>
+>> can you also reword this "held of" thing here as well?
+> 
+> Done:
+> 
+>     exec: Move exec_mmap right after de_thread in flush_old_exec
+>     
+>     I have read through the code in exec_mmap and I do not see anything
+>     that depends on sighand or the sighand lock, or on signals in anyway
+>     so this should be safe.
+>     
+>     This rearrangement of code has two siginficant benefits.  It makes
 
-- Map all the physical RAM (up to 3.75GB) into a reserved ASID
-  with TTBR0
+watch out: sig_i_nificant
 
-- Flip TTBR0 on kernel entry/exit, and again during user access.
+>     the determination of passing the point of no return by testing bprm->mm
+>     accurate.  All failures prior to that point in flush_old_exec are
+>     either truly recoverable or they are fatal.
+>     
+>     Futher this consolidates all of the possible indefinite waits for
 
-This is probably more work to implement than your idea, but
-I would hope this has a lower overhead on most microarchitectures
-as it doesn't require pinning the pages. Depending on the
-microarchitecture, I'd hope the overhead would be comparable
-to that of ARM64_SW_TTBR0_PAN.
+Add some r to "Futher", please?
 
-> We also need to consider that it has implications for the single-kernel
-> support; a kernel doing this kind of switching would likely be horrid
-> for a kernel supporting v6+ with VIPT aliasing caches.  Would we be
-> adding a new red line between kernels supporting VIPT-aliasing caches
-> (present in earlier v6 implementations) and kernels using this system?
-
-I would initially do it for LPAE only, given that this is already an
-incompatible config option. I don't think there are any v6 machines with
-more than 1GB of RAM (the maximum for AST2500), and the only distro
-that ships a v6+ multiplatform kernel is Raspbian, which in turn needs
-a separate LPAE kernel for the large-memory machines anyway.
-
-Only doing it for LPAE would still cover the vast majority of systems that
-actually shipped with more than 2GB. There are a couple of exceptions,
-i.e. early  Cubox i4x4, the Calxeda Highbank developer system and the
-Novena Laptop, which I would guess have a limited life expectancy
-(before users stop updating kernels) no longer than the 8GB
-Keystone-2.
-
-Based on that, I would hope that the ARMv7 distros can keep shipping
-the two kernel images they already ship:
-
-- The non-LPAE kernel modified to VMSPLIT_2G_OPT, not using highmem
-  on anything up to 2GB, but still supporting the handful of remaining
-  Cortex-A9s with 4GB using highmem until they are completely obsolete.
-
-- The LPAE kernel modified to use a newly added VMSPLIT_4G_4G,
-   with details to be worked out.
-
-Most new systems tend to be based on Cortex-A7 with no more than 2GB,
-so those could run either configuration well.  If we find the 2GB of user
-address space too limiting for the non-LPAE config, or I missed some
-important pre-LPAE systems with 4GB that need to be supported for longer
-than other highmem systems, that can probably be added later.
-
-    Arnd
+>     userspace together at the top of flush_old_exec.  The possible wait
+>     for a ptracer on PTRACE_EVENT_EXIT, the possible wait for a page fault
+>     to be resolved in clear_child_tid, and the possible wait for a page
+>     fault in exit_robust_list.
+>     
+>     This consolidation allows the creation of a mutex to replace
+>     cred_guard_mutex that is not held over possible indefinite userspace
+>     waits.  Which will allow removing deadlock scenarios from the kernel.
+>     
+>     Reviewed-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>     Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Eric
+> 
