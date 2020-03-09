@@ -2,155 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C96B17E90C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E7717E907
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Mar 2020 20:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbgCITrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Mar 2020 15:47:36 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33434 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbgCITrg (ORCPT
+        id S1726520AbgCITqi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Mar 2020 15:46:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:46091 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgCITqi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:47:36 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBONC-0000ls-98; Mon, 09 Mar 2020 13:47:34 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBONB-0006yu-FV; Mon, 09 Mar 2020 13:47:34 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nmjulm.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003021531.C77EF10@keescook>
-        <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
-        <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87v9nlii0b.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87a74xi4kz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <875zfe5xzb.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170C3A4319BA6A057C3CCACE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Mon, 09 Mar 2020 14:45:15 -0500
-In-Reply-To: <AM6PR03MB5170C3A4319BA6A057C3CCACE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Mon, 9 Mar 2020 19:34:59 +0000")
-Message-ID: <87tv2xz510.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 9 Mar 2020 15:46:38 -0400
+Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MMGZS-1isD500wxK-00JM4f; Mon, 09 Mar 2020 20:46:36 +0100
+Received: by mail-qk1-f181.google.com with SMTP id c145so4695230qke.12;
+        Mon, 09 Mar 2020 12:46:35 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ3rq6yzydjwfH0UH1dKg+FjDRwxNNz1MOIEGKZue9mEMqQln0ao
+        MvGgtLDZC+DAzcC1iQE1mJ6Li6ZvtnQs/WBOCCc=
+X-Google-Smtp-Source: ADFU+vvmBvMz+V6RDUU++ZwSagdLLK5RIhqNTJ7v8Q8rLCrbads695yLqa65IiOBHxFXCnfQzEWO8L12fWPy8qQjUb0=
+X-Received: by 2002:a37:6455:: with SMTP id y82mr7117037qkb.286.1583783194930;
+ Mon, 09 Mar 2020 12:46:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBONB-0006yu-FV;;;mid=<87tv2xz510.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19PMadbznaJfutgyOFU+nq1+wKoP70FUBk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4895]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 346 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.3 (0.7%), b_tie_ro: 1.48 (0.4%), parse: 0.96
-        (0.3%), extract_message_metadata: 14 (3.9%), get_uri_detail_list: 1.16
-        (0.3%), tests_pri_-1000: 27 (7.7%), tests_pri_-950: 1.15 (0.3%),
-        tests_pri_-900: 0.98 (0.3%), tests_pri_-90: 32 (9.1%), check_bayes: 30
-        (8.8%), b_tokenize: 10 (3.0%), b_tok_get_all: 7 (2.1%), b_comp_prob:
-        2.2 (0.6%), b_tok_touch_all: 3.8 (1.1%), b_finish: 0.60 (0.2%),
-        tests_pri_0: 256 (73.9%), check_dkim_signature: 0.53 (0.2%),
-        check_dkim_adsp: 2.3 (0.7%), poll_dns_idle: 0.69 (0.2%), tests_pri_10:
-        2.9 (0.8%), tests_pri_500: 8 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in flush_old_exec
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20200211164701.4ac88d9222e23d1e8cc57c51@linux-foundation.org>
+ <CAHk-=wg1ZDADD3Vuw_sXhmBOrQ2xsp8YWxmtWiA6vG0RT-ZQ+A@mail.gmail.com>
+ <20200212085004.GL25745@shell.armlinux.org.uk> <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com> <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com> <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
+ <20200309155945.GA4124965@arrakis.emea.arm.com> <20200309160919.GM25745@shell.armlinux.org.uk>
+In-Reply-To: <20200309160919.GM25745@shell.armlinux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 9 Mar 2020 20:46:18 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
+Message-ID: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker LRU
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:bBz45YywharMfMeD3eAylez7Ounvj65HPQEEQib3QyJAizH9t4T
+ +vrg8YPRfP/wkc3x9uVrXC2fg1vn05X8acW5S8uqkcfR611JV6haZdbjIhjZOb5VXAEIU7T
+ fybLcm2xzaHPSwnjc1kRg9m+mHJtEcSLp71hOXsnfW8NT9ZsZ+77b5tzERPVbdF5887rNI9
+ R/z93tWt8v4tBo0ketAlA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3oD3vabjtEQ=:uf5dhXYr9zoCuZp/lYOLA5
+ PMvgD5mIkR064YxlKT9lB+1ZGq9kjrwQgLDsImiD6z35fFl31b+HKsYetkDDL1KgDNsGs8M7k
+ R1oaj4voGgjyPF+t/AH1FC1GG21eGzAlGvdYZUA/ttauCDUVjk4pmuHZ6VyeRnl1Ot+RJfeOw
+ TQOmSiRDpq3XKzdxVLTEWSaViFdPTlimJ3fkutFcsSgBQGiZfOqrpOl8TT8JCl1pqupugg9hQ
+ rwCyvTyDjnvaZ7XwMjJN9ItTabaTDn9Vx7UCDraGDVCoBZfxJTNaIGABGpOlw7SUXZUK2IxXc
+ i6cNH6p26cVgZE4vSvRteQJI2n7d69OjCsdybhGfx9TyRi5lJO0DpPdPYu9zEETpKU4chZ4f4
+ +Y5zL0Sj11hxzvJB7WJ3HNTrjQ36RqNHQJyOk0+BBS8G4lmd+vCsfx0escAzCknKVz+GllMtD
+ T2krPnnyoNH29/Jjzj9+YogN+uuV0TtadjHmXr81PmSab1wmnbQd+PDVzQIBjEdF8Ylv8pHZP
+ T4vscLw+V3j6KzvOhE8jqoOo/Cc915U/2we96med5LcBIDZWVPfqIw9EktqpjyiCb4B6dYrqE
+ UUN260UVYq2b+emfbsHeXhR89Zb9G6y8DkaL4LdlNHbRS4tdEVL/LRBSE7NKbx2IVtICC/I+4
+ CSNaLWcxGUeMYw8bu9a70dy5x8VswT8xhcLEIApDzhChO/frkrPgWvK8tn3qVK6Of5/a865PQ
+ EMNJbhkUIdHZM31hdABugNVrNCiucPw4T7qtSeT/8yrURvJj/oag3CwyRAN6QBCto4EHOrCdc
+ Hb4ckkyulIukGhi2eVQv4bNmqFLqSnIhrJrsDbsFMERWMa2DQQ=
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+On Mon, Mar 9, 2020 at 5:09 PM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
+> > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> > > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
+> > >   to see if it can be done, and what the overhead is. This is probably
+> > >   more work than the others combined, but also the most promising
+> > >   as it allows the most user address space and physical ram to be used.
+> >
+> > A rough outline of such support (and likely to miss some corner cases):
+> >
+> > 1. Kernel runs with its own ASID and non-global page tables.
+> >
+> > 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
+> >    between user and kernel.
+> >
+> > 3. uaccess routines need to be reworked to pin the user pages in memory
+> >    (get_user_pages()) and access them via the kernel address space.
+> >
+> > Point 3 is probably the ugliest and it would introduce a noticeable
+> > slowdown in certain syscalls.
 
-> On 3/8/20 10:38 PM, Eric W. Biederman wrote:
->> 
->> This consolidation allows the creation of a mutex to replace
->> cred_guard_mutex that is not held of possible indefinite userspace
->
-> can you also reword this "held of" thing here as well?
+There are probably a number of ways to do the basic design. The idea
+I had (again, probably missing more corner cases than either of you
+two that actually understand the details of the mmu):
 
-Done:
+- Assuming we have LPAE, run the kernel vmlinux and modules inside
+  the vmalloc space, in the top 256MB or 512MB on TTBR1
 
-    exec: Move exec_mmap right after de_thread in flush_old_exec
-    
-    I have read through the code in exec_mmap and I do not see anything
-    that depends on sighand or the sighand lock, or on signals in anyway
-    so this should be safe.
-    
-    This rearrangement of code has two siginficant benefits.  It makes
-    the determination of passing the point of no return by testing bprm->mm
-    accurate.  All failures prior to that point in flush_old_exec are
-    either truly recoverable or they are fatal.
-    
-    Futher this consolidates all of the possible indefinite waits for
-    userspace together at the top of flush_old_exec.  The possible wait
-    for a ptracer on PTRACE_EVENT_EXIT, the possible wait for a page fault
-    to be resolved in clear_child_tid, and the possible wait for a page
-    fault in exit_robust_list.
-    
-    This consolidation allows the creation of a mutex to replace
-    cred_guard_mutex that is not held over possible indefinite userspace
-    waits.  Which will allow removing deadlock scenarios from the kernel.
-    
-    Reviewed-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-    Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+- Map all the physical RAM (up to 3.75GB) into a reserved ASID
+  with TTBR0
 
-Eric
+- Flip TTBR0 on kernel entry/exit, and again during user access.
+
+This is probably more work to implement than your idea, but
+I would hope this has a lower overhead on most microarchitectures
+as it doesn't require pinning the pages. Depending on the
+microarchitecture, I'd hope the overhead would be comparable
+to that of ARM64_SW_TTBR0_PAN.
+
+> We also need to consider that it has implications for the single-kernel
+> support; a kernel doing this kind of switching would likely be horrid
+> for a kernel supporting v6+ with VIPT aliasing caches.  Would we be
+> adding a new red line between kernels supporting VIPT-aliasing caches
+> (present in earlier v6 implementations) and kernels using this system?
+
+I would initially do it for LPAE only, given that this is already an
+incompatible config option. I don't think there are any v6 machines with
+more than 1GB of RAM (the maximum for AST2500), and the only distro
+that ships a v6+ multiplatform kernel is Raspbian, which in turn needs
+a separate LPAE kernel for the large-memory machines anyway.
+
+Only doing it for LPAE would still cover the vast majority of systems that
+actually shipped with more than 2GB. There are a couple of exceptions,
+i.e. early  Cubox i4x4, the Calxeda Highbank developer system and the
+Novena Laptop, which I would guess have a limited life expectancy
+(before users stop updating kernels) no longer than the 8GB
+Keystone-2.
+
+Based on that, I would hope that the ARMv7 distros can keep shipping
+the two kernel images they already ship:
+
+- The non-LPAE kernel modified to VMSPLIT_2G_OPT, not using highmem
+  on anything up to 2GB, but still supporting the handful of remaining
+  Cortex-A9s with 4GB using highmem until they are completely obsolete.
+
+- The LPAE kernel modified to use a newly added VMSPLIT_4G_4G,
+   with details to be worked out.
+
+Most new systems tend to be based on Cortex-A7 with no more than 2GB,
+so those could run either configuration well.  If we find the 2GB of user
+address space too limiting for the non-LPAE config, or I missed some
+important pre-LPAE systems with 4GB that need to be supported for longer
+than other highmem systems, that can probably be added later.
+
+    Arnd
