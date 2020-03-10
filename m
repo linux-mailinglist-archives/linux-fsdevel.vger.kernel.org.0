@@ -2,75 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D77F617F75A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 13:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0FD017F741
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 13:18:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgCJM0G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 08:26:06 -0400
-Received: from mail.11d01.mspz7.gob.ec ([190.152.145.91]:58098 "EHLO
-        mail.11d01.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJM0G (ORCPT
+        id S1726389AbgCJMSl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 08:18:41 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52017 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726273AbgCJMSl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 08:26:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTP id D08C32F6F43D;
-        Tue, 10 Mar 2020 03:47:49 -0500 (-05)
-Received: from mail.11d01.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d01.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id vqgJzS9q_wJo; Tue, 10 Mar 2020 03:47:49 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTP id 5F3312F6B624;
-        Tue, 10 Mar 2020 03:09:15 -0500 (-05)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.11d01.mspz7.gob.ec 5F3312F6B624
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=11d01.mspz7.gob.ec;
-        s=50CBC7E4-8BED-11E9-AF6C-F1A741A224D3; t=1583827756;
-        bh=o+H3O7n1+zJcXo0FhJs7spyf8HmE4ClnBa/Y2Gk0DL0=;
-        h=Content-Type:MIME-Version:Content-Transfer-Encoding:Subject:To:
-         From:Date:Reply-To:Message-Id;
-        b=Z6b3NzaM+NzKru1oCmMK7uMCDTii5MewcKIkaywr8llRkvKOG3upeXPAgFZdFCGZO
-         yp/mrYKW199SZTfrsG0dX8J74nEv1Ped9/Z+ULHYv+BC7nQpoolURPpLowcYlso/jq
-         evpcIW/lEKzFdsFkY5ydHnVBtGKT1GegSmFBJd/g=
-X-Virus-Scanned: amavisd-new at 11d01.mspz7.gob.ec
-Received: from mail.11d01.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d01.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id cIFIcgsQ-_SF; Tue, 10 Mar 2020 03:09:15 -0500 (-05)
-Received: from [10.19.167.32] (unknown [105.0.4.171])
-        by mail.11d01.mspz7.gob.ec (Postfix) with ESMTPSA id B870D2F6658C;
-        Tue, 10 Mar 2020 02:40:55 -0500 (-05)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 10 Mar 2020 08:18:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583842718;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=On3jrUJ3qJSEovCH5Mvj0GPbi4DtGWxMoOE2wJW9Vps=;
+        b=cmtURjQ9MQtU8tCMp4GnGcZ8yEh5GINTi0XnNkYDrDjGTppzEvHgsJRdzOONfnpf5fCIO7
+        JiW2kOPWxtABeW4TfkFt+Vto7TeivTIsVw7LMSQNZSSso/5YReXE4BtkjWPy+ZvzXxHX0w
+        NQ263/GdBAZog2Kc9Y2FW3SPbzVx0/o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-79-PbGEKDs0OnqHC_wsSkBcAQ-1; Tue, 10 Mar 2020 08:18:37 -0400
+X-MC-Unique: PbGEKDs0OnqHC_wsSkBcAQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 983E71402;
+        Tue, 10 Mar 2020 12:18:35 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0D2F27189;
+        Tue, 10 Mar 2020 12:18:32 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 5F29D220291; Tue, 10 Mar 2020 08:18:32 -0400 (EDT)
+Date:   Tue, 10 Mar 2020 08:18:32 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        hch@infradead.org, dan.j.williams@intel.com
+Cc:     david@fromorbit.com, jmoyer@redhat.com, dm-devel@redhat.com
+Subject: Re: [PATCH v6 0/6] dax/pmem: Provide a dax operation to zero page
+ range
+Message-ID: <20200310121832.GA38440@redhat.com>
+References: <20200228163456.1587-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
-To:     Recipients <ronald.pena@11d01.mspz7.gob.ec>
-From:   ''Michael weirsky'' <ronald.pena@11d01.mspz7.gob.ec>
-Date:   Tue, 10 Mar 2020 10:10:24 +0200
-Reply-To: mikeweirskyspende@gmail.com
-Message-Id: <20200310074055.B870D2F6658C@mail.11d01.mspz7.gob.ec>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200228163456.1587-1-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lieber Freund,
+On Fri, Feb 28, 2020 at 11:34:50AM -0500, Vivek Goyal wrote:
+> Hi,
+> 
+> This is V6 of patches. These patches are also available at.
 
-Ich bin Herr Mike Weirsky, New Jersey, Vereinigte Staaten von Amerika, der =
-Mega-Gewinner von $ 273million In Mega Millions Jackpot, spende ich an 5 zu=
-f=C3=A4llige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Ma=
-il nach einem Spinball ausgew=C3=A4hlt.Ich habe den gr=C3=B6=C3=9Ften Teil =
-meines Verm=C3=B6gens auf eine Reihe von Wohlt=C3=A4tigkeitsorganisationen =
-und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die =
-Summe von =E2=82=AC 2.000.000,00 an Sie als eine der ausgew=C3=A4hlten 5 zu=
- spenden, um meine Gewinne zu =C3=BCberpr=C3=BCfen.
-Das ist dein Spendencode: [MW530342019]
-www.youtube.com/watch?v=3Dun8yRTmrYMY
+Hi Dan,
 
-Antworten Sie mit dem SPENDE-CODE an diese =
+Ping. Does this patch series look fine to you?
 
+Vivek
 
-E-Mail:mikeweirskyspende@gmail.com
+> 
+> Changes since V5:
+> 
+> - Dan Williams preferred ->zero_page_range() to only accept PAGE_SIZE
+>   aligned request and clear poison only on page size aligned zeroing. So
+>   I changed it accordingly. 
+> 
+> - Dropped all the modifications which were required to support arbitrary
+>   range zeroing with-in a page.
+> 
+> - This patch series also fixes the issue where "truncate -s 512 foo.txt"
+>   will fail if first sector of file is poisoned. Currently it succeeds
+>   and filesystem expectes whole of the filesystem block to be free of
+>   poison at the end of the operation.
+> 
+> Christoph, I have dropped your Reviewed-by tag on 1-2 patches because
+> these patches changed substantially. Especially signature of of
+> dax zero_page_range() helper.
+> 
+> Thanks
+> Vivek
+> 
+> Vivek Goyal (6):
+>   pmem: Add functions for reading/writing page to/from pmem
+>   dax, pmem: Add a dax operation zero_page_range
+>   s390,dcssblk,dax: Add dax zero_page_range operation to dcssblk driver
+>   dm,dax: Add dax zero_page_range operation
+>   dax: Use new dax zero page method for zeroing a page
+>   dax,iomap: Add helper dax_iomap_zero() to zero a range
+> 
+>  drivers/dax/super.c           | 20 ++++++++
+>  drivers/md/dm-linear.c        | 18 +++++++
+>  drivers/md/dm-log-writes.c    | 17 ++++++
+>  drivers/md/dm-stripe.c        | 23 +++++++++
+>  drivers/md/dm.c               | 30 +++++++++++
+>  drivers/nvdimm/pmem.c         | 97 ++++++++++++++++++++++-------------
+>  drivers/s390/block/dcssblk.c  | 15 ++++++
+>  fs/dax.c                      | 59 ++++++++++-----------
+>  fs/iomap/buffered-io.c        |  9 +---
+>  include/linux/dax.h           | 21 +++-----
+>  include/linux/device-mapper.h |  3 ++
+>  11 files changed, 221 insertions(+), 91 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
 
-Ich hoffe, Sie und Ihre Familie gl=C3=BCcklich zu machen.
-
-Gr=C3=BC=C3=9Fe
-Herr Mike Weirsky
