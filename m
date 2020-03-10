@@ -2,178 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96835180910
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 21:22:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 037E718091B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 21:26:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbgCJUWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 16:22:51 -0400
-Received: from mail-oln040092064048.outbound.protection.outlook.com ([40.92.64.48]:13873
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726271AbgCJUWv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:22:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fyy9rVWfIi0ZLcOh9NP/2Ybi87RgWVxqCAtHekZYcw/EpIRXxsK4Vx/ZyuBpwv6Cg/Et1fZakQZLPVHn6mNVE2vNixNQreP6Oe4Ja5YIaA4NtK7XtmL/1+i4EIcSVcF4ohNszp00VViA5NScEYCIhZNA/maWDABc0bMctHgH1qNTLjo24MogI02wOdPwDb4Q7YaJJlMeLGw6kIYz+7jV59ZdfIKEgIeWr+IZmlDr/LUO9XVHLNV0G3LlDMJdclbvo7tCQto8nRDo5+/v6lvhfazi25vwVPjyyTsrVYBGJrPb6yBbnaa6tRyiucTeTZNs1B47WMGgx2qEkur9HDMM5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mcXB5XtDW/edbdTpwusVzq1L82skS1gFXqVS9psypK0=;
- b=c3O6kSTUW3rwRjrFu3HMlDxTTrOOlrF5NJX63RX37YMyfK03e+k9+xYxcYz2QSxQ0jrUJ+THmuhnS9np2Xu9peqnBrzo7Xww8RAMYUIXBEsxb1Pjn8u/EXEVsOhWV9N9JSV1wPDSjiqMN9zq1qQAJru+h+4haEXzdXnuELB1DM4bs4aYn5L12OKRrVoTShdB6Kdu7tPS92svuB8V9HJztNw3NBqrhFvc44brLI+4JOe8e5BChe9OEi5m8wms7EGRe9J5mqqzWPOdfAEBVmTZz/Fbk5FJk18J4ru/M6O6hkqlJsIFWbD3EXCRVcTx+6fOHpL1CI2INaXpXUMKm6NwEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from VE1EUR01FT006.eop-EUR01.prod.protection.outlook.com
- (2a01:111:e400:7e19::35) by
- VE1EUR01HT071.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e19::152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Tue, 10 Mar
- 2020 20:22:44 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.2.60) by
- VE1EUR01FT006.mail.protection.outlook.com (10.152.2.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.11 via Frontend Transport; Tue, 10 Mar 2020 20:22:44 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:3CE61C4B30ED919C1D3E3EDD324DF5C05B73CCFB3F236699179013E6DD687BDC;UpperCasedChecksum:AEDC134E5B3D3B2925787B5CF20DB733AC0D6676C08BC3BB6EF68BC4ACE0E56D;SizeAsReceived:11076;Count:50
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2793.013; Tue, 10 Mar 2020
- 20:22:43 +0000
-Subject: Re: [PATCH] pidfd: Stop taking cred_guard_mutex
-To:     Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1726315AbgCJU0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 16:26:14 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36287 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJU0O (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Mar 2020 16:26:14 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g62so2861614wme.1;
+        Tue, 10 Mar 2020 13:26:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JqYk8R4UPwKS97k6zpIyj5riBjZ7GjDwEcUa5Ekupac=;
+        b=tCkxaKUGWKNb+HTFdm5JbBkMM4KtNpMAde+z/oWZh3mOGSVZ2p5N/0MdlVGcB8K27b
+         3ARO+n2hD1B00XYU/Y/P9RfKsDcCWTRsIkZYDjf1fWtRuvqJJUzrfduyJbeidLDwsxJi
+         apRYCKwT1z4pdpgXFVifYp++iYW1EHHw4fdRZUAP5VdrWn4scSsSsvpA2uYe8u3nMsx6
+         4gZyM6cLKDY8khJubIx5bQR1L+922dEpo4MAtMLgJQ5/GoxL814HlZTenVZeWdeTbyuE
+         531KTbZpXTCmUlUfmx9MDq8sCPIlcKWJDuulZy+9563ns1wcWGpLzHpEW8qlzpfBeNSL
+         7/0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JqYk8R4UPwKS97k6zpIyj5riBjZ7GjDwEcUa5Ekupac=;
+        b=V6wN2DPztC6sn5Or5tulihCVHS5QJYVs0I1ReTM+1D0OmVAldrKEO17JpfLcT6Yvx0
+         dsY85I1fAAuitKMaJdaN5JtID6Gex7Da4J7pVobcPfplDkMscJ419/8g656Y0aCCgYlQ
+         9Dz6BgA6Abf9nKTpcvv9tizSUdLB8LFBtRrtbQ8XjZE1Bg3BWgiy61dCWyA904sU9bYO
+         i9W1eAGwNf/8fGoINsEN/LyhDRw64GuF1ZrM/XxD9o9ezryhWimHXMdKbZke+BcAHFaj
+         J58rQssxwwcakkEAoUO8JPBsJBXp/zjGbHdPlfeDPD1Ei6/3KwWQAJwfJ/PmfHxyLOhL
+         Kq8Q==
+X-Gm-Message-State: ANhLgQ3FZCQz9o6JnVTf8est9Memn+lzlCKBydU0wljBgvROql6dTO7/
+        Ht7ZVmFnAFC9eYQblqwsxL341P8=
+X-Google-Smtp-Source: ADFU+vvQS3dt6GEtid3fA+7d9DuJE3zKvSKgS14keG2HQAca41GrUO3nrwsCDXKWZ+MwILBlwMptqw==
+X-Received: by 2002:a1c:7e08:: with SMTP id z8mr3581832wmc.166.1583871972104;
+        Tue, 10 Mar 2020 13:26:12 -0700 (PDT)
+Received: from avx2 ([46.53.249.42])
+        by smtp.gmail.com with ESMTPSA id c2sm5593845wma.39.2020.03.10.13.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 13:26:11 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 23:26:09 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+        "David S. Miller" <davem@davemloft.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sargun Dhillon <sargun@sargun.me>
-References: <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
- <20200309195909.h2lv5uawce5wgryx@wittgenstein>
- <877dztz415.fsf@x220.int.ebiederm.org>
- <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
- <87k13txnig.fsf@x220.int.ebiederm.org>
- <20200310085540.pztaty2mj62xt2nm@wittgenstein>
- <87wo7svy96.fsf_-_@x220.int.ebiederm.org>
- <CAG48ez2cUZMVOAXfHPNjKjYsMSaWkjUjOCHo0KYZ+oXQUW4viA@mail.gmail.com>
- <87k13sui1p.fsf@x220.int.ebiederm.org>
- <CAG48ez2vRgaEVJ=Rs8gn6HkGO6syL8MpSOUq7BNN+OUE1uYxCA@mail.gmail.com>
- <CAG48ez1LjW1xAGe-5tNtstCWxG2bkiHaQUMOcJNjx=z-2Wc2Jw@mail.gmail.com>
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Message-ID: <AM6PR03MB5170AF454A8A9C37891B12B2E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Tue, 10 Mar 2020 21:22:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <CAG48ez1LjW1xAGe-5tNtstCWxG2bkiHaQUMOcJNjx=z-2Wc2Jw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR0202CA0033.eurprd02.prod.outlook.com
- (2603:10a6:208:1::46) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <7fec923a-0c06-b3c6-4d1c-8ffb3519eb0b@hotmail.de>
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
+Message-ID: <20200310202609.GA6287@avx2>
+References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
+ <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
+ <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
+ <ce7dd2ac-26e8-d83c-46d0-0c61609be417@arm.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by AM0PR0202CA0033.eurprd02.prod.outlook.com (2603:10a6:208:1::46) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Tue, 10 Mar 2020 20:22:41 +0000
-X-Microsoft-Original-Message-ID: <7fec923a-0c06-b3c6-4d1c-8ffb3519eb0b@hotmail.de>
-X-TMN:  [aY89ty6Xt9qP2QHF2IaNBexmBBz8dkRA]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: 13e8903e-ea6c-4526-8199-08d7c530c98e
-X-MS-TrafficTypeDiagnostic: VE1EUR01HT071:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: QkxE4mMk6tSDP+UWD5iUrYlrTJ3Aeue0iIsK0QsbJikWLq6nnBzlcQg0c/llesJ24sM93h45h5LMTPmqO7IP3Q+Z7pw3Dp18QWaz4FM+0fyn1kw0FB9TtxuI8NxD6Qtz9GrWfAK3mW8BhXxlAy9S6CSWYlJYKOpAT5qbBLIFPdKVAHMVCkmVH1gfu7qAH5nE
-X-MS-Exchange-AntiSpam-MessageData: 1DCOQLrn/aCJKAHLqkDJxKluroCpBT5TS5sYnA87kM+ObmAi+rYw8oDyKMmreKgDYrqsTgvUmOBySYjxyZSna52y01KtUgSRp62aayhGWHbzyJoR7ZzM4jHY0UjyTLDdDYJe8OKXCONrB6HDW7xweA==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13e8903e-ea6c-4526-8199-08d7c530c98e
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2020 20:22:42.9684
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR01HT071
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ce7dd2ac-26e8-d83c-46d0-0c61609be417@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/10/20 9:10 PM, Jann Horn wrote:
-> On Tue, Mar 10, 2020 at 9:00 PM Jann Horn <jannh@google.com> wrote:
->> On Tue, Mar 10, 2020 at 8:29 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>> Jann Horn <jannh@google.com> writes:
->>>> On Tue, Mar 10, 2020 at 7:54 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>>>> During exec some file descriptors are closed and the files struct is
->>>>> unshared.  But all of that can happen at other times and it has the
->>>>> same protections during exec as at ordinary times.  So stop taking the
->>>>> cred_guard_mutex as it is useless.
->>>>>
->>>>> Furthermore he cred_guard_mutex is a bad idea because it is deadlock
->>>>> prone, as it is held in serveral while waiting possibly indefinitely
->>>>> for userspace to do something.
-> [...]
->>>> If you make this change, then if this races with execution of a setuid
->>>> program that afterwards e.g. opens a unix domain socket, an attacker
->>>> will be able to steal that socket and inject messages into
->>>> communication with things like DBus. procfs currently has the same
->>>> race, and that still needs to be fixed, but at least procfs doesn't
->>>> let you open things like sockets because they don't have a working
->>>> ->open handler, and it enforces the normal permission check for
->>>> opening files.
->>>
->>> It isn't only exec that can change credentials.  Do we need a lock for
->>> changing credentials?
-> [...]
->>> If we need a lock around credential change let's design and build that.
->>> Having a mismatch between what a lock is designed to do, and what
->>> people use it for can only result in other bugs as people get confused.
->>
->> Hmm... what benefits do we get from making it a separate lock? I guess
->> it would allow us to make it a per-task lock instead of a
->> signal_struct-wide one? That might be helpful...
+On Tue, Mar 03, 2020 at 02:43:21PM +0530, Anshuman Khandual wrote:
+> On 03/03/2020 12:04 PM, Hugh Dickins wrote:
+> > On Mon, 2 Mar 2020, Anshuman Khandual wrote:
+
+> >> vma_is_dontdump()
+> >> vma_is_noreserve()
+> >> vma_is_special()
+> >> vma_is_locked()
+> >> vma_is_mergeable()
+> >> vma_is_softdirty()
+> >> vma_is_thp()
+> >> vma_is_nothp()
+
+> > Improved readability? Not to my eyes.
 > 
-> But actually, isn't the core purpose of the cred_guard_mutex to guard
-> against concurrent credential changes anyway? That's what almost
-> everyone uses it for, and it's in the name...
-> 
+> As mentioned before, I dont feel strongly about patch 3/3 and will drop.
 
-The main reason d'etre of exec_update_mutex is to get a consitent
-view of task->mm and task credentials.
-
-The reason why you want the cred_guard_mutex, is that some action
-is changing the resulting credentials that the execve is about
-to install, and that is the data flow in the opposite direction.
-
-
-Bernd.
+Should be "const struct vm_area_struct *" anyway.
