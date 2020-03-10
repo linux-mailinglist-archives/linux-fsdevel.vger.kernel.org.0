@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB0021809B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 21:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E47C1809CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 22:00:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgCJU57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 16:57:59 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36900 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbgCJU57 (ORCPT
+        id S1727141AbgCJVAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 17:00:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33881 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbgCJVAp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:57:59 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z12so6865117pgl.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 13:57:57 -0700 (PDT)
+        Tue, 10 Mar 2020 17:00:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 23so47107pfj.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 14:00:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=NSnXjtw6BvnjWDGIhdIRejbxeFIsypmUSM0EVeQ+Uig=;
-        b=XNQHeyRLT95Iz7HO7tqkWQ6/sSMwGKo5bd80/1Q/QaJ5M1YExD2yISBVWEW/n3lAUr
-         tkv7AJhIRjzO2Hjw1Eu493BeCu5akkQFw7U5n327J4keqaqVy3NZZOnH0sOQ4c7EAwkY
-         Nfumx3a1xGu9L0OrAtTbJl9mO3bqLw6ZrWiD4=
+        bh=8rwWaGaAnCRv7abCrLVGP/12v6tm69sSb/N4biM+MpU=;
+        b=E4fHeovRMCTEHPf2Y5E/1XX89oUv6PPRO7U0xbU19Ojqt9o6vTvNVOrSjmjVlksK0u
+         WT3MVOTY1M10Pq6ui6+/FqibefM1Uq0luC+0aYMB0nLC3CZ3xdern/rFtpoTc70jV0mw
+         55hRTwk9a28dM92Eddl4f7pViHS37XCoNZMBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=NSnXjtw6BvnjWDGIhdIRejbxeFIsypmUSM0EVeQ+Uig=;
-        b=J6cvtAhV1HIB+MYgPehxom0TEaDrf8fYWcV81Xfg8oEg/DvkpOhaSVCCQ8TsD7NsQO
-         gVbi2Lx3Dm3wjJU2JLxnDlLrwzeCcV7qnb4DRcC0ZIvdrMKRB/9GXVfQepZXV6MV64xu
-         6qvETbFQaGSTVqGzfhLbpPfc5rASzTMQCEgaQVm0axUM4yxLV9dKtNeY9NJa2MMLOGNC
-         fzjd4kvmnf7VBZOn1Z0v1EWKvniEC+tg789JyccwYkCuFI3tVPQu0CFz8yf1O0uLohrH
-         DJqT9F+gt7dyMlEf7SIGjGU1bALXXda031jmUdlg50W3vpq9jZOxK/EDwO0eFGvWvRbQ
-         uqLA==
-X-Gm-Message-State: ANhLgQ264EMR+RzHsgZJWBbCpJAokv5qYyj+LJcrOMk5vcH60RpUmG0c
-        3YpW54jFisRDMil46rMJTld0/Q==
-X-Google-Smtp-Source: ADFU+vu4EeH+yVMv9tpwMaGvHwzGMhYFOuE0iRroLbEdduwZiXXe1msMJtUJMFBKLAERB9nEKnQ+wg==
-X-Received: by 2002:a63:650:: with SMTP id 77mr16314387pgg.201.1583873877277;
-        Tue, 10 Mar 2020 13:57:57 -0700 (PDT)
+        bh=8rwWaGaAnCRv7abCrLVGP/12v6tm69sSb/N4biM+MpU=;
+        b=OUn6ymcaAub+h5bu3KDiuh1PqHGfLrbWTQxFgzvebS0Tt3Tt90xbauaUWVicFzUKL8
+         tF9cLTm+FTIydvDs7/0Foh/ZzAm+R5kD9AEJZI/5YvvFWMnTirc3EoGA9nVp1EeMmitk
+         /q2lhNunq4h66W9+/6R/Jxzdo77NTw61lPKble0rf21ldij/8TaokeN/LbKnryW8r5Jo
+         YxYRS6qaZeSCf82l7bqqGLw/2xWG0nplILoo7lNS4TJ01/MoMojEJmHWEVHhzX0rPRl2
+         X+gunnGMJekm+aEqy7NveLAmIXIO8Fjl7tTfcVDIOTVBXQnsBBwLUUSIvOCvl9zTFzyf
+         7joQ==
+X-Gm-Message-State: ANhLgQ166ZL53PpwbNSH30jY/1EgQDvYxrZ3NxfJ5J26uUd4CPeeoz9F
+        o/a5p6ElxIyNRx6xuZlLnG2QRg==
+X-Google-Smtp-Source: ADFU+vvzzBsNUhcLuygLAbVhS+hIcIHULf8laQU65uTwnTJV1Vz6m0g3VGILMP5riK69aqdvEmItOA==
+X-Received: by 2002:a63:2542:: with SMTP id l63mr22436554pgl.312.1583874043288;
+        Tue, 10 Mar 2020 14:00:43 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d186sm30572689pfc.8.2020.03.10.13.57.56
+        by smtp.gmail.com with ESMTPSA id c201sm3106135pfc.73.2020.03.10.14.00.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 13:57:56 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 13:57:55 -0700
+        Tue, 10 Mar 2020 14:00:41 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 14:00:40 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
 Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -76,68 +76,113 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and
- call it separately
-Message-ID: <202003101356.A2B9885F17@keescook>
-References: <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
- <202003101319.BAE7B535A@keescook>
- <AM6PR03MB5170BDBF7D6E4AC63B40E9C0E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Subject: Re: [PATCH 1/4] exec: Fix a deadlock in ptrace
+Message-ID: <202003101359.8BEE26F322@keescook>
+References: <878sk94eay.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y12yc7.fsf@x220.int.ebiederm.org>
+ <87k13t2xpd.fsf@x220.int.ebiederm.org>
+ <87d09l2x5n.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rq12vxu.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <877dzt1fnf.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM6PR03MB5170BDBF7D6E4AC63B40E9C0E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 09:34:03PM +0100, Bernd Edlinger wrote:
-> On 3/10/20 9:29 PM, Kees Cook wrote:
-> > On Sun, Mar 08, 2020 at 04:36:17PM -0500, Eric W. Biederman wrote:
-> >>
-> >> This makes the code clearer and makes it easier to implement a mutex
-> >> that is not taken over any locations that may block indefinitely waiting
-> >> for userspace.
-> >>
-> >> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> ---
-> >>  fs/exec.c | 39 ++++++++++++++++++++++++++-------------
-> >>  1 file changed, 26 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/fs/exec.c b/fs/exec.c
-> >> index c3f34791f2f0..ff74b9a74d34 100644
-> >> --- a/fs/exec.c
-> >> +++ b/fs/exec.c
-> >> @@ -1194,6 +1194,23 @@ static int de_thread(struct task_struct *tsk)
-> >>  	flush_itimer_signals();
-> >>  #endif
-> > 
-> > Semi-related (existing behavior): in de_thread(), what keeps the thread
-> > group from changing? i.e.:
-> > 
-> >         if (thread_group_empty(tsk))
-> >                 goto no_thread_group;
-> > 
-> >         /*
-> >          * Kill all other threads in the thread group.
-> >          */
-> >         spin_lock_irq(lock);
-> > 	... kill other threads under lock ...
-> > 
-> > Why is the thread_group_emtpy() test not under lock?
-> > 
+On Tue, Mar 10, 2020 at 02:43:41PM +0100, Bernd Edlinger wrote:
+> This fixes a deadlock in the tracer when tracing a multi-threaded
+> application that calls execve while more than one thread are running.
 > 
-> A new thread cannot created when only one thread is executing,
-> right?
+> I observed that when running strace on the gcc test suite, it always
+> blocks after a while, when expect calls execve, because other threads
+> have to be terminated.  They send ptrace events, but the strace is no
+> longer able to respond, since it is blocked in vm_access.
+> 
+> The deadlock is always happening when strace needs to access the
+> tracees process mmap, while another thread in the tracee starts to
+> execve a child process, but that cannot continue until the
+> PTRACE_EVENT_EXIT is handled and the WIFEXITED event is received:
+> 
+> strace          D    0 30614  30584 0x00000000
+> Call Trace:
+> __schedule+0x3ce/0x6e0
+> schedule+0x5c/0xd0
+> schedule_preempt_disabled+0x15/0x20
+> __mutex_lock.isra.13+0x1ec/0x520
+> __mutex_lock_killable_slowpath+0x13/0x20
+> mutex_lock_killable+0x28/0x30
+> mm_access+0x27/0xa0
+> process_vm_rw_core.isra.3+0xff/0x550
+> process_vm_rw+0xdd/0xf0
+> __x64_sys_process_vm_readv+0x31/0x40
+> do_syscall_64+0x64/0x220
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> expect          D    0 31933  30876 0x80004003
+> Call Trace:
+> __schedule+0x3ce/0x6e0
+> schedule+0x5c/0xd0
+> flush_old_exec+0xc4/0x770
+> load_elf_binary+0x35a/0x16c0
+> search_binary_handler+0x97/0x1d0
+> __do_execve_file.isra.40+0x5d4/0x8a0
+> __x64_sys_execve+0x49/0x60
+> do_syscall_64+0x64/0x220
+> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> This changes mm_access to use the new exec_update_mutex
+> instead of cred_guard_mutex.
+> 
+> This patch is based on the following patch by Eric W. Biederman:
+> "[PATCH 0/5] Infrastructure to allow fixing exec deadlocks"
+> Link: https://lore.kernel.org/lkml/87v9ne5y4y.fsf_-_@x220.int.ebiederm.org/
+> 
+> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-*face palm* Yes, of course. :) I'm thinking too hard.
+Cool, yes, on top of the new infrastructure this looks correct to me --
+the new mutex wraps mm changes and mm_access() is looking at *drum roll*
+the mm! :)
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  kernel/fork.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index c12595a..5720ff3 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1224,7 +1224,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>  	struct mm_struct *mm;
+>  	int err;
+>  
+> -	err =  mutex_lock_killable(&task->signal->cred_guard_mutex);
+> +	err =  mutex_lock_killable(&task->signal->exec_update_mutex);
+>  	if (err)
+>  		return ERR_PTR(err);
+>  
+> @@ -1234,7 +1234,7 @@ struct mm_struct *mm_access(struct task_struct *task, unsigned int mode)
+>  		mmput(mm);
+>  		mm = ERR_PTR(-EACCES);
+>  	}
+> -	mutex_unlock(&task->signal->cred_guard_mutex);
+> +	mutex_unlock(&task->signal->exec_update_mutex);
+>  
+>  	return mm;
+>  }
+> -- 
+> 1.9.1
 
 -- 
 Kees Cook
