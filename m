@@ -2,129 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F8F180A5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 22:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63625180A76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 22:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgCJV1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 17:27:19 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29362 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726100AbgCJV1T (ORCPT
+        id S1727551AbgCJVad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 17:30:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58351 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbgCJVad (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:27:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583875638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=elF36Gh6wAO43EXQWi3veY++EdOPHWUl7a5YAiXhFTQ=;
-        b=HziVMxK2D5RJcYF0bqBbXWQ4EDx1t0YTx09F0AKtSze4CAM39HvESxL4VhtXPm8gIjJ2yC
-        Xzk353m2CIwXQXo10qBUNwzvgSvQ5ZikWL/laAXQnJA+KfgXFfq1NbNIPZMiop6NKdJNBY
-        k5h56Vg36nn4E+oElzwpeqAx7ehH/TM=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-177-5wkyNo8WNc-wW39XlW0zzA-1; Tue, 10 Mar 2020 17:27:16 -0400
-X-MC-Unique: 5wkyNo8WNc-wW39XlW0zzA-1
-Received: by mail-qt1-f197.google.com with SMTP id y11so7874839qtn.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 14:27:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=elF36Gh6wAO43EXQWi3veY++EdOPHWUl7a5YAiXhFTQ=;
-        b=CV9KXyppP3teu05KGZCyi8RQZpg+8kJj/iPZUOHI+mmowpMd672qCnxTXX6Uf1GXwl
-         4i8vV45XI4HGpgO1wjjnIpQLM/+nNaLUhvCHs4XTvlnSABwEWwSXxfQrTzC49krMdQc6
-         rKZbnZ6LTljrK+qlOAtoC3JlxEDfvf/GlKZwWeHd29kbuGzxHwJpSDfQDl5Fug7x8lKv
-         +cGKMR71Kr6HmxzyUGPVb2mj0YYWtnqj23hlGgeIz1BrcDEUVhSM10pSRCpCs4X8XEeH
-         FPx+cXmRCG2v98dp0GKsAnUD3yZ4PLTO0h0Llc8c26T67K+vhcrB6Zb17TS4FSLpoxn9
-         jZxg==
-X-Gm-Message-State: ANhLgQ1lUcDYFyZBRudVlqXcALyDEH5z10iVlhql7hYuw7hKXi6ZB7cK
-        w26K9C9lK1ApUni7LSQicfem9gFJA7nZWI6KNM6ZyuQIeYEbLm9CiMSl6Vdhqs6vp9XhrdOu8wY
-        VcqzowhQUtIsgI6VaEtecKnYXcg==
-X-Received: by 2002:a37:40d2:: with SMTP id n201mr21535563qka.211.1583875636364;
-        Tue, 10 Mar 2020 14:27:16 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vtXf2G2CIG42koICoLhPiploL8mRnMRgCVqT/plH2Fo1ASYnuHMzPvSDT2uyk6rvt8fR12jmg==
-X-Received: by 2002:a37:40d2:: with SMTP id n201mr21535545qka.211.1583875636149;
-        Tue, 10 Mar 2020 14:27:16 -0700 (PDT)
-Received: from redhat.com (bzq-79-178-2-19.red.bezeqint.net. [79.178.2.19])
-        by smtp.gmail.com with ESMTPSA id x51sm3774837qtj.82.2020.03.10.14.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:27:14 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 17:27:09 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com,
-        Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH 04/20] virtio: Implement get_shm_region for PCI transport
-Message-ID: <20200310172603-mutt-send-email-mst@kernel.org>
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-5-vgoyal@redhat.com>
- <20200310071043-mutt-send-email-mst@kernel.org>
- <20200310184720.GD38440@redhat.com>
+        Tue, 10 Mar 2020 17:30:33 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBmRs-0000sm-Qb; Tue, 10 Mar 2020 21:30:00 +0000
+Date:   Tue, 10 Mar 2020 22:29:57 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Jann Horn <jannh@google.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sargun Dhillon <sargun@sargun.me>
+Subject: Re: [PATCH] pidfd: Stop taking cred_guard_mutex
+Message-ID: <20200310212957.aatd4yzjwsyudi2g@wittgenstein>
+References: <877dztz415.fsf@x220.int.ebiederm.org>
+ <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
+ <87k13txnig.fsf@x220.int.ebiederm.org>
+ <20200310085540.pztaty2mj62xt2nm@wittgenstein>
+ <87wo7svy96.fsf_-_@x220.int.ebiederm.org>
+ <CAG48ez2cUZMVOAXfHPNjKjYsMSaWkjUjOCHo0KYZ+oXQUW4viA@mail.gmail.com>
+ <87k13sui1p.fsf@x220.int.ebiederm.org>
+ <CAG48ez2vRgaEVJ=Rs8gn6HkGO6syL8MpSOUq7BNN+OUE1uYxCA@mail.gmail.com>
+ <CAG48ez1LjW1xAGe-5tNtstCWxG2bkiHaQUMOcJNjx=z-2Wc2Jw@mail.gmail.com>
+ <87lfo8rkqo.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200310184720.GD38440@redhat.com>
+In-Reply-To: <87lfo8rkqo.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:47:20PM -0400, Vivek Goyal wrote:
-> On Tue, Mar 10, 2020 at 07:12:25AM -0400, Michael S. Tsirkin wrote:
-> [..]
-> > > +static bool vp_get_shm_region(struct virtio_device *vdev,
-> > > +			      struct virtio_shm_region *region, u8 id)
-> > > +{
-> > > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > > +	u8 bar;
-> > > +	u64 offset, len;
-> > > +	phys_addr_t phys_addr;
-> > > +	size_t bar_len;
-> > > +	int ret;
-> > > +
-> > > +	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
-> > > +		return false;
-> > > +	}
-> > > +
-> > > +	ret = pci_request_region(pci_dev, bar, "virtio-pci-shm");
-> > > +	if (ret < 0) {
-> > > +		dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
-> > > +			__func__);
-> > > +		return false;
-> > > +	}
-> > > +
-> > > +	phys_addr = pci_resource_start(pci_dev, bar);
-> > > +	bar_len = pci_resource_len(pci_dev, bar);
-> > > +
-> > > +        if (offset + len > bar_len) {
-> > > +                dev_err(&pci_dev->dev,
-> > > +                        "%s: bar shorter than cap offset+len\n",
-> > > +                        __func__);
-> > > +                return false;
-> > > +        }
-> > > +
-> > 
-> > Something wrong with indentation here.
+On Tue, Mar 10, 2020 at 03:57:35PM -0500, Eric W. Biederman wrote:
+> Jann Horn <jannh@google.com> writes:
 > 
-> Will fix all indentation related issues in this patch.
+> > On Tue, Mar 10, 2020 at 9:00 PM Jann Horn <jannh@google.com> wrote:
+> >> On Tue, Mar 10, 2020 at 8:29 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> > Jann Horn <jannh@google.com> writes:
+> >> > > On Tue, Mar 10, 2020 at 7:54 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> > >> During exec some file descriptors are closed and the files struct is
+> >> > >> unshared.  But all of that can happen at other times and it has the
+> >> > >> same protections during exec as at ordinary times.  So stop taking the
+> >> > >> cred_guard_mutex as it is useless.
+> >> > >>
+> >> > >> Furthermore he cred_guard_mutex is a bad idea because it is deadlock
+> >> > >> prone, as it is held in serveral while waiting possibly indefinitely
+> >> > >> for userspace to do something.
+> > [...]
+> >> > > If you make this change, then if this races with execution of a setuid
+> >> > > program that afterwards e.g. opens a unix domain socket, an attacker
+> >> > > will be able to steal that socket and inject messages into
+> >> > > communication with things like DBus. procfs currently has the same
+> >> > > race, and that still needs to be fixed, but at least procfs doesn't
+> >> > > let you open things like sockets because they don't have a working
+> >> > > ->open handler, and it enforces the normal permission check for
+> >> > > opening files.
+> >> >
+> >> > It isn't only exec that can change credentials.  Do we need a lock for
+> >> > changing credentials?
+> > [...]
+> >> > If we need a lock around credential change let's design and build that.
+> >> > Having a mismatch between what a lock is designed to do, and what
+> >> > people use it for can only result in other bugs as people get confused.
+> >>
+> >> Hmm... what benefits do we get from making it a separate lock? I guess
+> >> it would allow us to make it a per-task lock instead of a
+> >> signal_struct-wide one? That might be helpful...
+> >
+> > But actually, isn't the core purpose of the cred_guard_mutex to guard
+> > against concurrent credential changes anyway? That's what almost
+> > everyone uses it for, and it's in the name...
 > 
-> > Also as long as you are validating things, it's worth checking
-> > offset + len does not overflow.
+> Having been through all of the users nope.
 > 
-> Something like addition of following lines?
+> Maybe someone tried to repurpose for that.  I haven't traced through
+> when it went the it was renamed from cred_exec_mutex to
+> cred_guard_mutex.
 > 
-> +       if ((offset + len) < offset) {
-> +               dev_err(&pci_dev->dev, "%s: cap offset+len overflow detected\n",
-> +                       __func__);
-> +               return false;
-> +       }
+> The original purpose was to make make exec and ptrace deadlock.  But it
+> was seen as being there to allow safely calculating the new credentials
+> before the point of now return.  Because if a process is ptraced or not
+> affects the new credential calculations.  Unfortunately offering that
+> guarantee fundamentally leads to deadlock.
 > 
-> Vivek
+> So ptrace_attach and seccomp use the cred_guard_mutex to guarantee
+> a deadlock.
+> 
+> The common use is to take cred_guard_mutex to guard the window when
+> credentials and process details are out of sync in exec.  But there
+> is at least do_io_accounting that seems to have the same justification
+> for holding __pidfd_fget.
+> 
+> With effort I suspect we can replace exec_change_mutex with task_lock.
+> When we are guaranteed to be single threaded placing exec_change_mutex
+> in signal_struct doesn't really help us (except maybe in some races?).
+> 
+> The deep problem is no one really understands cred_guard_mutex so it is
+> a mess.  Code with poorly defined semantics is always wrong somewhere
 
-That should do it.
-
+This is a good point. When discussing patches sensitive to credential
+changes cred_guard_mutex was always introduced as having the purpose to
+guard against concurrent credential changes. And I'm pretty sure that
+that's how most people have been using it for quite a long time. I mean,
+it's at least the case for seccomp and proc and probably quite a few
+more. So the problem seems to me that it has clear _intended_ semantics
+that runs into issues in all sorts of cases. So if cred_guard_mutex is
+not that then we seem to need to provide something that serves it's
+intended purpose.
