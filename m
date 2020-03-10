@@ -2,131 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB1461801D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 16:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4FB180202
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 16:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgCJPaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 11:30:39 -0400
-Received: from mail-dm6nam12on2088.outbound.protection.outlook.com ([40.107.243.88]:18221
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726269AbgCJPaj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:30:39 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j92WTDvh85LL9DjTAR8v1qBUT6rHQIJYP2ejN356QiHPU/f6oFBMiEwKklJP89U3G48acfh7qFhtMxCv5VSiFmJO3yjCqCJqg52hpZFwIlWqRLkXlHhJWC9RKqdcCLXhqh5BJGbbqj0MCUzD6MDdo8NlaPGiM+TWEG4MKQBQi0s0E/s4mJuYsxis5MMksyHd/FNpwfni0N9e+egnIeJcoURXelcmSJk6vOXE5Z3M3sMKrIsodTTWmVzA7gjeYY0zJ00j0sEVORjGMiMJDH6vPtzYsR/ex/JK9nub62VQjRN9E1w0mmQY5Yu7TspwfS8PgrEHaSxNu13Bn5F5n6fmHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0fkQcfTs9wPsVJrL8XcAVA/W2xyJK4+3au428pQxJD0=;
- b=d2x0n4pHEvWvtChACl+SFHLA5qacJWCfZfNhGdOiLcNI9irxSvsvc8eE01J1aMapRTdCcpIo7f5wCetHqmoP+ovmcVElLE4f4eqTA0P1bU74Fixr0vJb+OkUcOBxl1EilYpA4eKAhpOOrvuu4OxAzzBY5MhxIxgx1ySzwcvoG+rVJGVSwO0C0AvnRG43q+dP+jag9J1Vd28pV289yz/g1cwfxVAALKsEoxP/npWndzOdQQ/jPm6EkTWc68RbmV/yxGg4islO+A8IGpvubuSDyco9jdeovrN2UNohGsFmkmiHY6wBG/wmHNrtEpmrFD0BU+j5rEIcoEPVH0mwb65yTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0fkQcfTs9wPsVJrL8XcAVA/W2xyJK4+3au428pQxJD0=;
- b=aXMcvl5MsOPsibU3jrxJZmnjzVPwcfh1ZWAr4UGi90cN52gsKxiefIXlyvai1zxb04g5LFArpMuFqMMNAfqqCJGMkRI70vJhK2a5oMKiMhAzxhkBRq4sPJBz4hfvnatIe2c/0RJzNNt8S2oUce+td9HSfXH9w+boLw60BLM/874=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Zhe.He@windriver.com; 
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
- by SN6PR11MB3200.namprd11.prod.outlook.com (2603:10b6:805:ba::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Tue, 10 Mar
- 2020 15:30:37 +0000
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2793.013; Tue, 10 Mar 2020
- 15:30:36 +0000
-Subject: Re: disk revalidation updates and OOM
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     jack@suse.cz, Jens Axboe <axboe@kernel.dk>,
-        viro@zeniv.linux.org.uk, bvanassche@acm.org, keith.busch@intel.com,
-        tglx@linutronix.de, mwilck@suse.com, yuyufen@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
- <20200310074018.GB26381@lst.de>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com>
-Date:   Tue, 10 Mar 2020 23:30:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200310074018.GB26381@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: HK2PR02CA0156.apcprd02.prod.outlook.com
- (2603:1096:201:1f::16) To SN6PR11MB3360.namprd11.prod.outlook.com
- (2603:10b6:805:c8::30)
+        id S1726492AbgCJPiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 11:38:05 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:44554 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgCJPiF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:38:05 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBgxE-0001AS-RF; Tue, 10 Mar 2020 09:38:00 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jBgxD-0000sr-Jr; Tue, 10 Mar 2020 09:38:00 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
+        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+        <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <878sk94eay.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <87r1y12yc7.fsf@x220.int.ebiederm.org>
+        <87k13t2xpd.fsf@x220.int.ebiederm.org>
+        <87d09l2x5n.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <871rq12vxu.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        <877dzt1fnf.fsf@x220.int.ebiederm.org>
+        <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Tue, 10 Mar 2020 10:35:41 -0500
+In-Reply-To: <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        (Bernd Edlinger's message of "Tue, 10 Mar 2020 14:43:21 +0100")
+Message-ID: <875zfcxlwy.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [128.224.162.175] (60.247.85.82) by HK2PR02CA0156.apcprd02.prod.outlook.com (2603:1096:201:1f::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Tue, 10 Mar 2020 15:30:33 +0000
-X-Originating-IP: [60.247.85.82]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 842dd433-f9c8-43cb-3eeb-08d7c507fb31
-X-MS-TrafficTypeDiagnostic: SN6PR11MB3200:
-X-Microsoft-Antispam-PRVS: <SN6PR11MB3200197A777544B228C1AD128FFF0@SN6PR11MB3200.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:605;
-X-Forefront-PRVS: 033857D0BD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39840400004)(346002)(366004)(136003)(376002)(396003)(189003)(199004)(7416002)(5660300002)(478600001)(86362001)(2616005)(66556008)(16576012)(316002)(66946007)(31696002)(6666004)(956004)(66476007)(53546011)(966005)(52116002)(31686004)(6916009)(186003)(16526019)(4326008)(6486002)(2906002)(36756003)(81166006)(6706004)(81156014)(8676002)(8936002)(26005)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB3200;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: windriver.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: M6YDGfgPPRC3180Dz7vzM5fs4tVEE783SlORKAtMeyith8DmIqaQ1LKmK4tiHc9IWDk8pWyfyxikt+0zmTXkfFAfLzT2gO6vDUhSqOAKy/kXhFJZDA53X+BWB26M/q7/es45HSHEsldN5pHE5ER+C9Vxz5CczSsicR29ShOCM0dCh2XZ1VkbvWgwmAk7dQlOF4X33gDrP1A6XzS2AI9V6VpKpC3RlKMqgGhixnAEHVrKQMkpsJlx6K/LT2dACH4H4vEu4EU/9a6whM9F9Vz5wvH7yKJhfFm/sEevxbcBtp/RpnUb6nfVIKP9uvxEdYCAkv1BT4nWayTbwXMQvtVNWnYaOCa7eHEaWlBHz35zwLscO91T2UcOvm9psd09E6SxcNTqSXGFWTdqXCGJ3Abz9QR8XP7Tilp05ItiRTT9Ve9sac9yChYc4D2ehxb1zVTi+I9qbrX8OOeD3lRbu0y9NWUQuzusjvSV1+XwbobHchW8NGxJh6BJa15kzawwhUtkH2DbPibsz9X7aKimwk/bwnW3c97YU6xmYFbQJLc0/Efz76u79/4hxtLfjScfNj30VXMv5kJy8dBp4CRV8eCQ2LVzVHxudL91LjPHOwYoa9M=
-X-MS-Exchange-AntiSpam-MessageData: YdhU9ISHZfYoZ5+rG/I9JgUBacgvVbVmyqBKJtRoai8XOI7kDwsU6GJL5ceF0vacNueuTefOVX12BGtUY2M22utmHNLBnKKQ1TWqaon8+q/s+GHIajtgsJqV2919uMS3YZ2ONourotqNnNHckVq3NQ==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 842dd433-f9c8-43cb-3eeb-08d7c507fb31
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2020 15:30:36.7735
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VUwm0dOaOWwDV+WM5FjFSZ7HX7eSmOqOUgysBh4vTzS3HeWEIILp4MiMqNGfmzQXxhh0keIH8RzIBSKthJuG1Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3200
+Content-Type: text/plain
+X-XM-SPF: eid=1jBgxD-0000sr-Jr;;;mid=<875zfcxlwy.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18NOUXxtLcovq85kyfc0MbvMJLCG3mnAmU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4887]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Bernd Edlinger <bernd.edlinger@hotmail.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 698 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 6 (0.8%), b_tie_ro: 3.6 (0.5%), parse: 0.98
+        (0.1%), extract_message_metadata: 11 (1.5%), get_uri_detail_list: 0.89
+        (0.1%), tests_pri_-1000: 8 (1.2%), tests_pri_-950: 1.24 (0.2%),
+        tests_pri_-900: 1.05 (0.2%), tests_pri_-90: 32 (4.5%), check_bayes: 30
+        (4.2%), b_tokenize: 12 (1.7%), b_tok_get_all: 8 (1.1%), b_comp_prob:
+        3.6 (0.5%), b_tok_touch_all: 3.8 (0.5%), b_finish: 0.66 (0.1%),
+        tests_pri_0: 627 (89.8%), check_dkim_signature: 0.50 (0.1%),
+        check_dkim_adsp: 2.1 (0.3%), poll_dns_idle: 0.30 (0.0%), tests_pri_10:
+        2.0 (0.3%), tests_pri_500: 6 (0.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/4] Use new infrastructure to fix deadlocks in execve
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 
+> This is a follow up on Eric's patch series to
+> fix the deadlocks observed with ptracing when execve
+> in multi-threaded applications.
+>
+> This fixes the simple and most important case where
+> the cred_guard_mutex causes strace to deadlock.
+>
+> This also adds a test case (which is only partially
+> fixed so far, the rest of the fixes will follow
+> soon).
+>
+> Two trivial comment fixes are also included.
+>
+> Bernd Edlinger (4):
+>   exec: Fix a deadlock in ptrace
+>   selftests/ptrace: add test cases for dead-locks
+>   mm: docs: Fix a comment in process_vm_rw_core
+>   kernel: doc: remove outdated comment in prepare_kernel_cred
+>
+>  kernel/cred.c                             |  2 -
+>  kernel/fork.c                             |  4 +-
+>  mm/process_vm_access.c                    |  2 +-
+>  tools/testing/selftests/ptrace/Makefile   |  4 +-
+>  tools/testing/selftests/ptrace/vmaccess.c | 86 +++++++++++++++++++++++++++++++
+>  5 files changed, 91 insertions(+), 7 deletions(-)
+>  create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
 
-On 3/10/20 3:40 PM, Christoph Hellwig wrote:
-> On Mon, Mar 02, 2020 at 11:55:44AM +0800, He Zhe wrote:
->> Hi,
->>
->> Since the following commit
->> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-5.5/disk-revalidate&id=6917d0689993f46d97d40dd66c601d0fd5b1dbdd
->> until now(v5.6-rc4),
->>
->> If we start udisksd service of systemd(v244), systemd-udevd will scan /dev/hdc
->> (the cdrom device created by default in qemu(v4.2.0)). systemd-udevd will
->> endlessly run and cause OOM.
->>
->>
->>
->> It works well by reverting the following series of commits.
->>
->> 979c690d block: move clearing bd_invalidated into check_disk_size_change
->> f0b870d block: remove (__)blkdev_reread_part as an exported API
->> 142fe8f block: fix bdev_disk_changed for non-partitioned devices
->> a1548b6 block: move rescan_partitions to fs/block_dev.c
->> 6917d06 block: merge invalidate_partitions into rescan_partitions
-> So this is the exact requirement of commits to be reverted from a bisect
-> or just a first guess?
+Applied.
 
-Many commits failed to build or boot during bisection.
-
-At least the following four have to be reverted to make it work.
-
-979c690d block: move clearing bd_invalidated into check_disk_size_change
-f0b870d block: remove (__)blkdev_reread_part as an exported API
-142fe8f block: fix bdev_disk_changed for non-partitioned devices
-a1548b6 block: move rescan_partitions to fs/block_dev.c
-
-Regards,
-Zhe
-
+Thank you,
+Eric
 
