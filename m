@@ -2,92 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8512417FBD7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 14:17:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA3F17FEA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 14:36:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgCJNQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 09:16:54 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:45922 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbgCJNQx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:16:53 -0400
-Received: by mail-il1-f193.google.com with SMTP id p1so7927091ils.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 06:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=y5Sujs7GLxJBMNkcS+nL3z7G2RBtvC5q1PspN29iEkI=;
-        b=gGF/9GTjQX7REmRD6yzo9gIB3jOxxdpaFdunuZ08/AJCyp2J3Dbl4quT8r1/QZoZ79
-         KL1P2ismnGCJV4XWhnFrRgKBKLH9ZBK+fHRFNPm1gUgCggv0LD1Q0vwd6Mm5cnJfHcOY
-         ftYNa7tPtXnEP2f9W/E5c1efb4hZ2EgWRY9QA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=y5Sujs7GLxJBMNkcS+nL3z7G2RBtvC5q1PspN29iEkI=;
-        b=GTr/y5jk5lxo5eDqxNA3MtPfj+rL8OqKFmRfKwgYNm5ZyU0qJR516B8Q+IFmK+VkP0
-         TIhb1FWYKrPTXY9jAxRgCcKF2o7T5J+EGwDDHOQqZ/LYyAd6uHWDHizN6QdDaNSiGvwn
-         lpTV6WrFv2Af0snO1FQK4nSIQiWScZxlMN2SWH6sv4eNpm6/v/Y1569E9rTx0RVh0Y7A
-         GFTmEgKcP49TFz8Q8H/AmFJwq3Q9mDr/9rUhRHsc2A5HO+jJdXZHdnxv/hB0d38T83xg
-         kg3YPZEXwcM8Rwa62oN54l1+w+TdNwyGhQZpmYZCub+lBiKh6/Txji3vmbhBiN9PwhXN
-         8JHg==
-X-Gm-Message-State: ANhLgQ0qOGgCnesK2tA/u7uSUp6HBnrIaAEb/Wc+niXQaoyr2GdtosnM
-        vNoUh6ePkdcnaG4FoED0+1CiEwtg0hdLk/Y0UAhmWQ==
-X-Google-Smtp-Source: ADFU+vtpdXIOB+Y2PjtlvE0H658znX+xqPsw6UaTa5d8hoEzJfNBkQKAYpQyT3+/cO7swwYlU6P8e/BhhQ3M6b7Z4Rg=
-X-Received: by 2002:a92:9602:: with SMTP id g2mr19732783ilh.212.1583846212569;
- Tue, 10 Mar 2020 06:16:52 -0700 (PDT)
+        id S1727949AbgCJNgo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 09:36:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:35116 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727333AbgCJMm2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Mar 2020 08:42:28 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 177C130E;
+        Tue, 10 Mar 2020 05:42:28 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D64B3F67D;
+        Tue, 10 Mar 2020 05:42:27 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 12:42:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
+Message-ID: <20200310124226.GC4106@sirena.org.uk>
+References: <20200227174417.23722-1-broonie@kernel.org>
+ <20200306102729.GC2503422@arrakis.emea.arm.com>
+ <20200309210505.GM4101@sirena.org.uk>
 MIME-Version: 1.0
-References: <8736as2ovb.fsf@vostro.rath.org> <CAJfpegupesjdOe=+rrjPNmsCg_6n-67HrS4w2Pm=w4ZrQOdj1Q@mail.gmail.com>
- <8736aqv6uv.fsf@vostro.rath.org>
-In-Reply-To: <8736aqv6uv.fsf@vostro.rath.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Mar 2020 14:16:41 +0100
-Message-ID: <CAJfpegsALuMOxK_Bkry6Cwh76M5sihaJFVT36Z70BXO0FsEGKw@mail.gmail.com>
-Subject: Re: [fuse] Effects of opening with O_DIRECT
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="XMCwj5IQnwKtuyBG"
+Content-Disposition: inline
+In-Reply-To: <20200309210505.GM4101@sirena.org.uk>
+X-Cookie: In space, no one can hear you fart.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 2, 2020 at 9:29 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
->
-> On Mar 02 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > On Sun, Mar 1, 2020 at 2:20 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
-> >>
-> >> Hi,
-> >>
-> >> What happens if a file (on a FUSE mountpoint) is opened without
-> >> O_DIRECT, has some data in the page cache, and is then opened a second
-> >> with O_DIRECT?
-> >>
-> >> Will reads with O_DIRECT come from the page cache (if there's a hit), or
-> >> be passed through to the fuse daemon?
-> >
-> > O_DIRECT read will try first directly, and fall back to the cache on
-> > short or zero return count.
-> >
-> >>
-> >> What happens to writes (with and without O_DIRECT, and assuming that
-> >> writeback caching is active)? It seems to me that in order to keep
-> >> consistent, either caching has to be disabled for both file descriptors
-> >> or enabled for both...
-> >
-> > This is not a fuse specific problem.   The kernel will try to keep
-> > things consistent by flushing dirty data before an O_DIRECT read.
-> > However this mode of operation is not recommended.  See open(2)
-> > manpage:
-> [...]
->
-> Is there currently any other way to execute a read request while making
-> sure that data does not end-up in the page cache (unless it happens to
-> be there already)?
 
-Hmm, that sounds something like posix_fadvise(..., POSIX_FADV_DONTNEED).
+--XMCwj5IQnwKtuyBG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Miklos
+On Mon, Mar 09, 2020 at 09:05:05PM +0000, Mark Brown wrote:
+> On Fri, Mar 06, 2020 at 10:27:29AM +0000, Catalin Marinas wrote:
+
+> > Does this series affect uprobes in any way? I.e. can you probe a landing
+> > pad?
+
+> You can't probe a landing pad, uprobes on landing pads will be silently
+> ignored so the program isn't disrupted, you just don't get the expected
+> trace from those uprobes.  This isn't new with the BTI support since
+> the landing pads are generally pointer auth instructions, these already
+> can't be probed regardless of what's going on with this series.  It's
+> already on the list to get sorted.
+
+Sorry, I realized thanks to Amit's off-list prompting that I was testing
+that I was verifying with the wrong kernel binary here (user error since
+it took me a while to sort out uprobes) so this isn't quite right - you
+can probe the landing pads with or without this series.
+
+--XMCwj5IQnwKtuyBG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5nizEACgkQJNaLcl1U
+h9CwvAf/ZRKRyzQ70X79x8NhEkUSVp2jprVe6r4y/8/g449xGTTicMDIWQKGeikg
+Z2v/GrsJ7+EAW4fiTl3dz+srzmuQCLS+67Dk/PwL4G4l8eJKQlBVj8BpiAASUml6
+mx3mbdZSIfcRKgz3BbzAsmW6p186TYm1Eh0MAQJhN11goYRuZjs0MNTDwZ0RuvSZ
+76rUJVdjbiFhjam1Et05p4G8HDQFKU0QArmyibQtCz1kU9+7affCfVyXFj3bnXx4
+qepGxIs1ld2UGb4lZ1BdlDxDpQoaQ+nVPxPRic0loZbovKlASlaSyKuRFl49jYg1
+8wHzzFxXeERLY2RJGZxzvae6Fq1zzA==
+=fbe8
+-----END PGP SIGNATURE-----
+
+--XMCwj5IQnwKtuyBG--
