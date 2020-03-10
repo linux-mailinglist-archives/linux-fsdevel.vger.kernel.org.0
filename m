@@ -2,261 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB8B180A92
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 22:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B89180AD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 22:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbgCJVgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 17:36:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38792 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbgCJVgY (ORCPT
+        id S1726463AbgCJVvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 17:51:09 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43120 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbgCJVvJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 17:36:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x7so11170pgh.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 14:36:23 -0700 (PDT)
+        Tue, 10 Mar 2020 17:51:09 -0400
+Received: by mail-ot1-f66.google.com with SMTP id a6so6855291otb.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 14:51:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NWf0TdeJvck0pCGGb01hva0XMggef5ubqIU9iaLUhUA=;
-        b=NXdmMClgabWQioF4yjl5Jwd3G2+POPv9SbUzVwujJhh2o2BxjxxPsjmZx+RtR3ZTkT
-         fid8mFGefGZRDOe9uPgT1YkjFUTL2YObjeqf7oy5iWafQQpc/Nr/eBX6Dqq2cvpJd3wt
-         zEwIhTLVA6qRzzVmFGqNT3JOmI0cC8+6pR2cc=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vb0GLcs/8L01cTZ3HReaJOKCCqFsvClKHIQrRrGWG3I=;
+        b=ML2h3mATLzke2m39a1Y6P/zDeHMxWqmWXR8CmeCANV0lcaQJmDMP4U3tgRYj3VwNVk
+         gcrsdaOTXdOK+JjqpLxko+kEbnGIn7QupEmi+2Q0b4vwqC6coa38rR0r7QcCru31DAfk
+         sP5TSdEzlau5ApuVktDVZXO2kqn+tioqibI+YdajtqBI/IN2FQIVXJjbMrmTR6N8aagK
+         4bYw66E+LCk5utYxoMeGj/mgh0bXybW9Hy21qFbJP8VzcWirKwIuqM4fg53vOIcf2M5G
+         457LG5EtugTnBxKo2TqABdeUV2BIWYtxrAYSp56R1HBngCTQ7tFbkZP+oMTR4otrECVK
+         bGtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NWf0TdeJvck0pCGGb01hva0XMggef5ubqIU9iaLUhUA=;
-        b=hRqDMBOLsOLV00IxR8VDRWiisSPcwEEp+OK37NJKD71b1D++l+DVmFkFdgblcXTb24
-         H6oT9rQOPjNvqC/FnZ4+8BixFLl8CpeRXHgBlyPNb6TMO9daKsqExPrVmrzYUYf7tzDp
-         vjEPPqHjFxQI74hcxWuIBp1GL0FF2UsPTjgKbBVvG300m6D761iDJkKWMd9yYoYrJGr8
-         Ell6rbJ/Aogx25e62UoNdn6pBMDySr5gN8owCMlP4ENO0PXprm+ETncv2478k8IjlVKk
-         vYEhqrpoASGj4tzofu1c9i6TR7jc+CYkr1poIq55gzmH8uk0vokFTOfAa9N1B3B4W1p5
-         Jbsg==
-X-Gm-Message-State: ANhLgQ11aMo1w46BuSUyJ0xCTWTxmaPWAY3dOsW77d+OUUVC9eMr98mL
-        yoqOojCr5EhG0ONIDZk0KayycQ==
-X-Google-Smtp-Source: ADFU+vs/Uypr3q8a3tw+hkF+0Zw9ymbsnPXTwDAQkVznHvEHqBvv2ESuGLkB9ZYHjVG64HW7T+09ig==
-X-Received: by 2002:a65:44cd:: with SMTP id g13mr23586615pgs.365.1583876182960;
-        Tue, 10 Mar 2020 14:36:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g11sm20159100pfo.184.2020.03.10.14.36.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 14:36:21 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 14:36:20 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/4] selftests/ptrace: add test cases for dead-locks
-Message-ID: <202003101401.9A4FD3F@keescook>
-References: <878sk94eay.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y12yc7.fsf@x220.int.ebiederm.org>
- <87k13t2xpd.fsf@x220.int.ebiederm.org>
- <87d09l2x5n.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <871rq12vxu.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <877dzt1fnf.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vb0GLcs/8L01cTZ3HReaJOKCCqFsvClKHIQrRrGWG3I=;
+        b=XL3nGvDqhiyg5flPe/CXMpsHEowM7UmiPbidG4Jdp6dfpl4116gwH/hkmJ8yWqY40r
+         NKoKkuCbY2L50Pj4/8XlTHG8fe6+GFSCzbdiFcBc3gRde7fR+cP1vXGxFUfP1SPrdmTJ
+         AUmKatnVCYChuRUFxmBLSWcM9PUaOp28j4hzIgOZaWH/NIWLWUAHQH8n1LzvxRfbnvS+
+         c7gwPUr4/9Xjg/TnFB8gHwOp8AlfYxNDA4KpkkLusyapLy+anDD8bc+ZrcIYeyfv3e0k
+         GMw1eiz2AeAgz99IbC0QgqObzZV6oB8OQrE5ZH4qYWFCZaipH/gFaugN7/1XBfjODYHQ
+         WdwQ==
+X-Gm-Message-State: ANhLgQ107tKuLUubHVCkTXlUZPdPVFEShtbic+jFD7LSp7BqN+7RbPnG
+        KWixNysFl4a2QiGa3tcagrQcFea2qt0emMVbBOT2yw==
+X-Google-Smtp-Source: ADFU+vv6rIwq0naQzaPUTbSTkQPR9MrTSMoZs8D8+Kw1FxXqF+vvTQ6t7/pUXhQZwCfMKjxzfvYNNNcfLsXZgyFIH1w=
+X-Received: by 2002:a9d:2028:: with SMTP id n37mr19373893ota.127.1583877064482;
+ Tue, 10 Mar 2020 14:51:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+References: <20200213194157.5877-1-sds@tycho.nsa.gov> <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
+ <eb2dbe22-91af-17c6-3dfb-d9ec619a4d7a@schaufler-ca.com> <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
+ <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com> <CAEjxPJ4+NM6-tfOeZ6UQfas6=KxtBTAk6f23GEyLomFn3K3qew@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4+NM6-tfOeZ6UQfas6=KxtBTAk6f23GEyLomFn3K3qew@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 10 Mar 2020 14:50:27 -0700
+Message-ID: <CAKOZuevcz+fvfhRXPx2iZGtkk6+FjVj3ZSaGGT8DfwsOJR0k3A@mail.gmail.com>
+Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
+ anon inodes
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        SElinux list <selinux@vger.kernel.org>, kvm@vger.kernel.org,
+        Nick Kralevich <nnk@google.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 02:44:01PM +0100, Bernd Edlinger wrote:
-> This adds test cases for ptrace deadlocks.
-> 
-> Additionally fixes a compile problem in get_syscall_info.c,
-> observed with gcc-4.8.4:
-> 
-> get_syscall_info.c: In function 'get_syscall_info':
-> get_syscall_info.c:93:3: error: 'for' loop initial declarations are only
->                                  allowed in C99 mode
->    for (unsigned int i = 0; i < ARRAY_SIZE(args); ++i) {
->    ^
-> get_syscall_info.c:93:3: note: use option -std=c99 or -std=gnu99 to compile
->                                your code
+On Tue, Mar 10, 2020 at 11:25 AM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Tue, Mar 10, 2020 at 2:11 PM Daniel Colascione <dancol@google.com> wrote:
+> >
+> > On Thu, Feb 20, 2020 at 10:50 AM Daniel Colascione <dancol@google.com> wrote:
+> > >
+> > > On Thu, Feb 20, 2020 at 10:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > >
+> > > > On 2/17/2020 4:14 PM, Paul Moore wrote:
+> > > > > On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> > > > >> Add support for labeling and controlling access to files attached to anon
+> > > > >> inodes. Introduce extended interfaces for creating such files to permit
+> > > > >> passing a related file as an input to decide how to label the anon
+> > > > >> inode. Define a security hook for initializing the anon inode security
+> > > > >> attributes. Security attributes are either inherited from a related file
+> > > > >> or determined based on some combination of the creating task and policy
+> > > > >> (in the case of SELinux, using type_transition rules).  As an
+> > > > >> example user of the inheritance support, convert kvm to use the new
+> > > > >> interface for passing the related file so that the anon inode can inherit
+> > > > >> the security attributes of /dev/kvm and provide consistent access control
+> > > > >> for subsequent ioctl operations.  Other users of anon inodes, including
+> > > > >> userfaultfd, will default to the transition-based mechanism instead.
+> > > > >>
+> > > > >> Compared to the series in
+> > > > >> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
+> > > > >> this approach differs in that it does not require creation of a separate
+> > > > >> anonymous inode for each file (instead storing the per-instance security
+> > > > >> information in the file security blob), it applies labeling and control
+> > > > >> to all users of anonymous inodes rather than requiring opt-in via a new
+> > > > >> flag, it supports labeling based on a related inode if provided,
+> > > > >> it relies on type transitions to compute the label of the anon inode
+> > > > >> when there is no related inode, and it does not require introducing a new
+> > > > >> security class for each user of anonymous inodes.
+> > > > >>
+> > > > >> On the other hand, the approach in this patch does expose the name passed
+> > > > >> by the creator of the anon inode to the policy (an indirect mapping could
+> > > > >> be provided within SELinux if these names aren't considered to be stable),
+> > > > >> requires the definition of type_transition rules to distinguish userfaultfd
+> > > > >> inodes from proc inodes based on type since they share the same class,
+> > > > >> doesn't support denying the creation of anonymous inodes (making the hook
+> > > > >> added by this patch return something other than void is problematic due to
+> > > > >> it being called after the file is already allocated and error handling in
+> > > > >> the callers can't presently account for this scenario and end up calling
+> > > > >> release methods multiple times), and may be more expensive
+> > > > >> (security_transition_sid overhead on each anon inode allocation).
+> > > > >>
+> > > > >> We are primarily posting this RFC patch now so that the two different
+> > > > >> approaches can be concretely compared.  We anticipate a hybrid of the
+> > > > >> two approaches being the likely outcome in the end.  In particular
+> > > > >> if support for allocating a separate inode for each of these files
+> > > > >> is acceptable, then we would favor storing the security information
+> > > > >> in the inode security blob and using it instead of the file security
+> > > > >> blob.
+> > > > > Bringing this back up in hopes of attracting some attention from the
+> > > > > fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
+> > > > > perspective we would prefer to attach the security blob to the inode
+> > > > > as opposed to the file struct; does anyone have any objections to
+> > > > > that?
+> > > >
+> > > > Sorry for the delay - been sick the past few days.
+> > > >
+> > > > I agree that the inode is a better place than the file for information
+> > > > about the inode. This is especially true for Smack, which uses
+> > > > multiple extended attributes in some cases. I don't believe that any
+> > > > except the access label will be relevant to anonymous inodes, but
+> > > > I can imagine security modules with policies that would.
+> > > >
+> > > > I am always an advocate of full xattr support. It goes a long
+> > > > way in reducing the number and complexity of special case interfaces.
+> > >
+> > > It sounds like we have broad consensus on using the inode to hold
+> > > security information, implying that anon_inodes should create new
+> > > inodes. Do any of the VFS people want to object?
+> >
+> > Ping?
+>
+> I'd recommend refreshing your patch series to incorporate feedback on
+> the previous version and re-post,
+> including viro and linux-fsdevel on the cc, and see if they have any
+> comments on it.
 
-*discomfort noises* (see below)
-
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> ---
->  tools/testing/selftests/ptrace/Makefile   |  4 +-
->  tools/testing/selftests/ptrace/vmaccess.c | 86 +++++++++++++++++++++++++++++++
->  2 files changed, 88 insertions(+), 2 deletions(-)
->  create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
-> 
-> diff --git a/tools/testing/selftests/ptrace/Makefile b/tools/testing/selftests/ptrace/Makefile
-> index c0b7f89..2f1f532 100644
-> --- a/tools/testing/selftests/ptrace/Makefile
-> +++ b/tools/testing/selftests/ptrace/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS += -iquote../../../../include/uapi -Wall
-> +CFLAGS += -std=c99 -pthread -iquote../../../../include/uapi -Wall
-
-This isn't the common solution in the kernel (the variable declaration
-would just be lifted out of the loop), but as it's selftest code, which
-does lots of special things ... I *guess* this is okay.
-
->  
-> -TEST_GEN_PROGS := get_syscall_info peeksiginfo
-> +TEST_GEN_PROGS := get_syscall_info peeksiginfo vmaccess
-
-I love having this deadlock test added to the selftests.
-
-I think I need to make an improvement to the test harness, though, as
-the failure mode right now just blows up after the 30 second timeout
-and leaves this deadlocked:
-
-$ ./vmaccess
-[==========] Running 2 tests from 1 test cases.
-[ RUN      ] global.vmaccess
-Alarm clock
-$ ps
-  PID TTY          TIME CMD
- 2605 pts/0    00:00:00 bash
-23360 pts/0    00:00:00 vmaccess
-23361 pts/0    00:00:00 vmaccess
-23363 pts/0    00:00:00 ps
-
-But that's mostly unrelated to this code.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
->  
->  include ../lib.mk
-> diff --git a/tools/testing/selftests/ptrace/vmaccess.c b/tools/testing/selftests/ptrace/vmaccess.c
-> new file mode 100644
-> index 0000000..4db327b
-> --- /dev/null
-> +++ b/tools/testing/selftests/ptrace/vmaccess.c
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2020 Bernd Edlinger <bernd.edlinger@hotmail.de>
-> + * All rights reserved.
-> + *
-> + * Check whether /proc/$pid/mem can be accessed without causing deadlocks
-> + * when de_thread is blocked with ->cred_guard_mutex held.
-> + */
-> +
-> +#include "../kselftest_harness.h"
-> +#include <stdio.h>
-> +#include <fcntl.h>
-> +#include <pthread.h>
-> +#include <signal.h>
-> +#include <unistd.h>
-> +#include <sys/ptrace.h>
-> +
-> +static void *thread(void *arg)
-> +{
-> +	ptrace(PTRACE_TRACEME, 0, 0L, 0L);
-> +	return NULL;
-> +}
-> +
-> +TEST(vmaccess)
-> +{
-> +	int f, pid = fork();
-> +	char mm[64];
-> +
-> +	if (!pid) {
-> +		pthread_t pt;
-> +
-> +		pthread_create(&pt, NULL, thread, NULL);
-> +		pthread_join(pt, NULL);
-> +		execlp("true", "true", NULL);
-> +	}
-> +
-> +	sleep(1);
-> +	sprintf(mm, "/proc/%d/mem", pid);
-> +	f = open(mm, O_RDONLY);
-> +	ASSERT_GE(f, 0);
-> +	close(f);
-> +	f = kill(pid, SIGCONT);
-> +	ASSERT_EQ(f, 0);
-> +}
-> +
-> +TEST(attach)
-> +{
-> +	int s, k, pid = fork();
-> +
-> +	if (!pid) {
-> +		pthread_t pt;
-> +
-> +		pthread_create(&pt, NULL, thread, NULL);
-> +		pthread_join(pt, NULL);
-> +		execlp("sleep", "sleep", "2", NULL);
-> +	}
-> +
-> +	sleep(1);
-> +	k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
-> +	ASSERT_EQ(errno, EAGAIN);
-> +	ASSERT_EQ(k, -1);
-> +	k = waitpid(-1, &s, WNOHANG);
-> +	ASSERT_NE(k, -1);
-> +	ASSERT_NE(k, 0);
-> +	ASSERT_NE(k, pid);
-> +	ASSERT_EQ(WIFEXITED(s), 1);
-> +	ASSERT_EQ(WEXITSTATUS(s), 0);
-> +	sleep(1);
-> +	k = ptrace(PTRACE_ATTACH, pid, 0L, 0L);
-> +	ASSERT_EQ(k, 0);
-> +	k = waitpid(-1, &s, 0);
-> +	ASSERT_EQ(k, pid);
-> +	ASSERT_EQ(WIFSTOPPED(s), 1);
-> +	ASSERT_EQ(WSTOPSIG(s), SIGSTOP);
-> +	k = ptrace(PTRACE_DETACH, pid, 0L, 0L);
-> +	ASSERT_EQ(k, 0);
-> +	k = waitpid(-1, &s, 0);
-> +	ASSERT_EQ(k, pid);
-> +	ASSERT_EQ(WIFEXITED(s), 1);
-> +	ASSERT_EQ(WEXITSTATUS(s), 0);
-> +	k = waitpid(-1, NULL, 0);
-> +	ASSERT_EQ(k, -1);
-> +	ASSERT_EQ(errno, ECHILD);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> -- 
-> 1.9.1
-
--- 
-Kees Cook
+I don't think there's anything in the patch series that needs to
+change right now. AFAICT, we're still just waiting on comment from the
+VFS people, who should be on this thread. Did I miss something?
