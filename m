@@ -2,154 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4FB180202
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 16:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1305180296
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 16:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgCJPiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 11:38:05 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:44554 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgCJPiF (ORCPT
+        id S1726604AbgCJP5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 11:57:06 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46196 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbgCJP5G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 11:38:05 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBgxE-0001AS-RF; Tue, 10 Mar 2020 09:38:00 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jBgxD-0000sr-Jr; Tue, 10 Mar 2020 09:38:00 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y8dqqz.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
-        <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
-        <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
-        <AM6PR03MB5170BC58D90BAD80CDEF3F8BE4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <878sk94eay.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB517086003BD2C32E199690A3E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <87r1y12yc7.fsf@x220.int.ebiederm.org>
-        <87k13t2xpd.fsf@x220.int.ebiederm.org>
-        <87d09l2x5n.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <871rq12vxu.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <877dzt1fnf.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Tue, 10 Mar 2020 10:35:41 -0500
-In-Reply-To: <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        (Bernd Edlinger's message of "Tue, 10 Mar 2020 14:43:21 +0100")
-Message-ID: <875zfcxlwy.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 10 Mar 2020 11:57:06 -0400
+Received: from mail-wm1-f72.google.com ([209.85.128.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1jBhFf-0001iP-C8
+        for linux-fsdevel@vger.kernel.org; Tue, 10 Mar 2020 15:57:03 +0000
+Received: by mail-wm1-f72.google.com with SMTP id z12so569984wml.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 08:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5bU2bAsKCmhGtQG8kyL29QcjXAg6Y2S3H5JueO4Uiyo=;
+        b=Bmrrz6aqiEQ3FYX7RXJIbs2KoeD3Mj3rZ4sLmvYk9nEAZ/aAcm9Y4SCT6lLd5CB4lq
+         wkzGsb6aYtGKhcWCTXq5i4Z7IpLKI1nRVVywoHLvIX5pCQx/rzbKSVwZDB3HTaPJp4De
+         XUsF+29UT6DKNGOjnXoQiFFY3vVXjdN7NuX2j+mFhDdXXIkc+wfvS2M0IhhI8B3vlWG+
+         Vrru7sqkOYZUv67Lwx+WWOxdqkyH+MTYIFGFQiJYA7CBs194esIV/rmFEd95k1tp7m7T
+         LGL9IkboUXg+Nn7UV5uEzn4Lh05fxqZH3QQ8OjwmxybO/1xLXB7S6dbW4/wbLuIMAU3H
+         icnA==
+X-Gm-Message-State: ANhLgQ2ah4TXEdObrK18Hhr0F7uvrEFl/8ebRtjYMMGI2l+eN5gKUvNm
+        p9O+sQTC9L3TSdaYk/KsY/H9ugPYRQuqXcUgVt4uYT02r/UhM9VZY1sAjf8BoxDEfCJiIp7RLW1
+        cORTdTQ8x2zHRcWw5kNZBcKTzH8Ay47JvNed2VutuFE8=
+X-Received: by 2002:a5d:4382:: with SMTP id i2mr27043805wrq.424.1583855822760;
+        Tue, 10 Mar 2020 08:57:02 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vtwXC/I1eK0vh+vQ0Rr6XLMpACaGQdcAhI6O2uc9M49Po4n8L+6y3hqKiqs5jQnam6z0Du/0g==
+X-Received: by 2002:a5d:4382:: with SMTP id i2mr27043774wrq.424.1583855822450;
+        Tue, 10 Mar 2020 08:57:02 -0700 (PDT)
+Received: from localhost (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
+        by smtp.gmail.com with ESMTPSA id r19sm4461075wmh.26.2020.03.10.08.57.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Mar 2020 08:57:01 -0700 (PDT)
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-doc@vger.kernel.org, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
+        gpiccoli@canonical.com, kernel@gpiccoli.net,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] kernel/hung_task.c: Introduce sysctl to print all traces when a hung task is detected
+Date:   Tue, 10 Mar 2020 12:56:50 -0300
+Message-Id: <20200310155650.17968-1-gpiccoli@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jBgxD-0000sr-Jr;;;mid=<875zfcxlwy.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18NOUXxtLcovq85kyfc0MbvMJLCG3mnAmU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4887]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Bernd Edlinger <bernd.edlinger@hotmail.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 698 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 6 (0.8%), b_tie_ro: 3.6 (0.5%), parse: 0.98
-        (0.1%), extract_message_metadata: 11 (1.5%), get_uri_detail_list: 0.89
-        (0.1%), tests_pri_-1000: 8 (1.2%), tests_pri_-950: 1.24 (0.2%),
-        tests_pri_-900: 1.05 (0.2%), tests_pri_-90: 32 (4.5%), check_bayes: 30
-        (4.2%), b_tokenize: 12 (1.7%), b_tok_get_all: 8 (1.1%), b_comp_prob:
-        3.6 (0.5%), b_tok_touch_all: 3.8 (0.5%), b_finish: 0.66 (0.1%),
-        tests_pri_0: 627 (89.8%), check_dkim_signature: 0.50 (0.1%),
-        check_dkim_adsp: 2.1 (0.3%), poll_dns_idle: 0.30 (0.0%), tests_pri_10:
-        2.0 (0.3%), tests_pri_500: 6 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 0/4] Use new infrastructure to fix deadlocks in execve
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
+Commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks before panic")
+introduced a change in that we started to show all CPUs backtraces when a
+hung task is detected _and_ the sysctl/kernel parameter "hung_task_panic"
+is set. The idea is good, because usually when observing deadlocks (that
+may lead to hung tasks), the culprit is another task holding a lock and
+not necessarily the task detected as hung.
 
-> This is a follow up on Eric's patch series to
-> fix the deadlocks observed with ptracing when execve
-> in multi-threaded applications.
->
-> This fixes the simple and most important case where
-> the cred_guard_mutex causes strace to deadlock.
->
-> This also adds a test case (which is only partially
-> fixed so far, the rest of the fixes will follow
-> soon).
->
-> Two trivial comment fixes are also included.
->
-> Bernd Edlinger (4):
->   exec: Fix a deadlock in ptrace
->   selftests/ptrace: add test cases for dead-locks
->   mm: docs: Fix a comment in process_vm_rw_core
->   kernel: doc: remove outdated comment in prepare_kernel_cred
->
->  kernel/cred.c                             |  2 -
->  kernel/fork.c                             |  4 +-
->  mm/process_vm_access.c                    |  2 +-
->  tools/testing/selftests/ptrace/Makefile   |  4 +-
->  tools/testing/selftests/ptrace/vmaccess.c | 86 +++++++++++++++++++++++++++++++
->  5 files changed, 91 insertions(+), 7 deletions(-)
->  create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
+The problem with this approach is that dumping backtraces is a slightly
+expensive task, specially printing that on console (and specially in many
+CPU machines, as servers commonly found nowadays). So, users that plan to
+collect a kdump to investigate the hung tasks and narrow down the deadlock
+definitely don't need the CPUs backtrace on dmesg/console, which will delay
+the panic and pollute the log (crash tool would easily grab all CPUs traces
+with 'bt -a' command).
+Also, there's the reciprocal scenario: some users may be interested in
+seeing the CPUs backtraces but not have the system panic when a hung task
+is detected. The current approach hence is almost as embedding a policy in
+the kernel, by forcing the CPUs backtraces' dump (only) on hung_task_panic.
 
-Applied.
+This patch decouples the panic event on hung task from the CPUs backtraces
+dump, by creating (and documenting) a new sysctl/kernel parameter called
+"hung_task_all_cpu_backtrace", analog to the approach taken on soft/hard
+lockups, that have both a panic and an "all_cpu_backtrace" sysctl to allow
+individual control. The new mechanism for dumping the CPUs backtraces on
+hung task detection respects "hung_task_warnings" by not dumping the
+traces in case there's no warnings left.
 
-Thank you,
-Eric
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Guilherme G. Piccoli <gpiccoli@canonical.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  6 ++++
+ Documentation/admin-guide/sysctl/kernel.rst   | 15 ++++++++++
+ include/linux/sched/sysctl.h                  |  7 +++++
+ kernel/hung_task.c                            | 30 +++++++++++++++++--
+ kernel/sysctl.c                               | 11 +++++++
+ 5 files changed, 67 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index adf77ead02c3..4c6595b5f6c8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1453,6 +1453,12 @@
+ 			x86-64 are 2M (when the CPU supports "pse") and 1G
+ 			(when the CPU supports the "pdpe1gb" cpuinfo flag).
+ 
++	hung_task_all_cpu_backtrace=
++			[KNL] Should kernel generates backtraces on all cpus
++			when a hung task is detected. Defaults to 0 and can
++			be controlled by hung_task_all_cpu_backtrace sysctl.
++			Format: <integer>
++
+ 	hung_task_panic=
+ 			[KNL] Should the hung task detector generate panics.
+ 			Format: <integer>
+diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
+index 95b2f3256323..218c717c1354 100644
+--- a/Documentation/admin-guide/sysctl/kernel.rst
++++ b/Documentation/admin-guide/sysctl/kernel.rst
+@@ -40,6 +40,7 @@ show up in /proc/sys/kernel:
+ - hotplug
+ - hardlockup_all_cpu_backtrace
+ - hardlockup_panic
++- hung_task_all_cpu_backtrace
+ - hung_task_panic
+ - hung_task_check_count
+ - hung_task_timeout_secs
+@@ -339,6 +340,20 @@ Path for the hotplug policy agent.
+ Default value is "/sbin/hotplug".
+ 
+ 
++hung_task_all_cpu_backtrace:
++================
++
++Determines if kernel should NMI all CPUs to dump their backtraces when
++a hung task is detected. This file shows up if CONFIG_DETECT_HUNG_TASK
++and CONFIG_SMP are enabled.
++
++0: Won't show all CPUs backtraces when a hung task is detected.
++This is the default behavior.
++
++1: Will NMI all CPUs and dump their backtraces when a hung task
++is detected.
++
++
+ hung_task_panic:
+ ================
+ 
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index d4f6215ee03f..8cd29440ec8a 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -7,6 +7,13 @@
+ struct ctl_table;
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK
++
++#ifdef CONFIG_SMP
++extern unsigned int sysctl_hung_task_all_cpu_backtrace;
++#else
++#define sysctl_hung_task_all_cpu_backtrace 0
++#endif /* CONFIG_SMP */
++
+ extern int	     sysctl_hung_task_check_count;
+ extern unsigned int  sysctl_hung_task_panic;
+ extern unsigned long sysctl_hung_task_timeout_secs;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 14a625c16cb3..54152b26117e 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -53,9 +53,28 @@ int __read_mostly sysctl_hung_task_warnings = 10;
+ static int __read_mostly did_panic;
+ static bool hung_task_show_lock;
+ static bool hung_task_call_panic;
++static bool hung_task_show_bt;
+ 
+ static struct task_struct *watchdog_task;
+ 
++#ifdef CONFIG_SMP
++/*
++ * Should we dump all CPUs backtraces in a hung task event?
++ * Defaults to 0, can be changed either via cmdline or sysctl.
++ */
++unsigned int __read_mostly sysctl_hung_task_all_cpu_backtrace;
++
++static int __init hung_task_backtrace_setup(char *str)
++{
++	int rc = kstrtouint(str, 0, &sysctl_hung_task_all_cpu_backtrace);
++
++	if (rc)
++		return rc;
++	return 1;
++}
++__setup("hung_task_all_cpu_backtrace=", hung_task_backtrace_setup);
++#endif /* CONFIG_SMP */
++
+ /*
+  * Should we panic (and reboot, if panic_timeout= is set) when a
+  * hung task is detected:
+@@ -137,6 +156,9 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 			" disables this message.\n");
+ 		sched_show_task(t);
+ 		hung_task_show_lock = true;
++
++		if (sysctl_hung_task_all_cpu_backtrace)
++			hung_task_show_bt = true;
+ 	}
+ 
+ 	touch_nmi_watchdog();
+@@ -201,10 +223,14 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	rcu_read_unlock();
+ 	if (hung_task_show_lock)
+ 		debug_show_all_locks();
+-	if (hung_task_call_panic) {
++
++	if (hung_task_show_bt) {
++		hung_task_show_bt = false;
+ 		trigger_all_cpu_backtrace();
++	}
++
++	if (hung_task_call_panic)
+ 		panic("hung_task: blocked tasks");
+-	}
+ }
+ 
+ static long hung_timeout_jiffies(unsigned long last_checked,
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ad5b88a53c5a..238f268de486 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1098,6 +1098,17 @@ static struct ctl_table kern_table[] = {
+ 	},
+ #endif
+ #ifdef CONFIG_DETECT_HUNG_TASK
++#ifdef CONFIG_SMP
++	{
++		.procname	= "hung_task_all_cpu_backtrace",
++		.data		= &sysctl_hung_task_all_cpu_backtrace,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++#endif /* CONFIG_SMP */
+ 	{
+ 		.procname	= "hung_task_panic",
+ 		.data		= &sysctl_hung_task_panic,
+-- 
+2.25.1
 
