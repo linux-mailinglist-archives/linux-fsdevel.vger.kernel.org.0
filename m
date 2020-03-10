@@ -2,94 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 037E718091B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 21:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B51180925
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 21:29:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbgCJU0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 16:26:14 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36287 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgCJU0O (ORCPT
+        id S1726599AbgCJU32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 16:29:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39163 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbgCJU32 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:26:14 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g62so2861614wme.1;
-        Tue, 10 Mar 2020 13:26:12 -0700 (PDT)
+        Tue, 10 Mar 2020 16:29:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id w65so6489934pfb.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 13:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JqYk8R4UPwKS97k6zpIyj5riBjZ7GjDwEcUa5Ekupac=;
-        b=tCkxaKUGWKNb+HTFdm5JbBkMM4KtNpMAde+z/oWZh3mOGSVZ2p5N/0MdlVGcB8K27b
-         3ARO+n2hD1B00XYU/Y/P9RfKsDcCWTRsIkZYDjf1fWtRuvqJJUzrfduyJbeidLDwsxJi
-         apRYCKwT1z4pdpgXFVifYp++iYW1EHHw4fdRZUAP5VdrWn4scSsSsvpA2uYe8u3nMsx6
-         4gZyM6cLKDY8khJubIx5bQR1L+922dEpo4MAtMLgJQ5/GoxL814HlZTenVZeWdeTbyuE
-         531KTbZpXTCmUlUfmx9MDq8sCPIlcKWJDuulZy+9563ns1wcWGpLzHpEW8qlzpfBeNSL
-         7/0A==
+         :content-disposition:in-reply-to;
+        bh=dsBrIU5gUV1pckyA8GSxROnnJLAsyLmC/ypr4CZES9w=;
+        b=aVfJW5cxRWyiGAhHyjizHuTpIP1CVGeiD5PpVOAX8E13XOV2zio+KZuEB352+Nm2aP
+         Llx5rft1lxfSQ6IyZMXJ54Wa89MxWC2kb8lpY1CeaItXOQO8e4J60iuFcsOvf/0Lj9YI
+         lmf6stuUg2ygsiOeBvjwo8agJiJGT80VmqQCo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JqYk8R4UPwKS97k6zpIyj5riBjZ7GjDwEcUa5Ekupac=;
-        b=V6wN2DPztC6sn5Or5tulihCVHS5QJYVs0I1ReTM+1D0OmVAldrKEO17JpfLcT6Yvx0
-         dsY85I1fAAuitKMaJdaN5JtID6Gex7Da4J7pVobcPfplDkMscJ419/8g656Y0aCCgYlQ
-         9Dz6BgA6Abf9nKTpcvv9tizSUdLB8LFBtRrtbQ8XjZE1Bg3BWgiy61dCWyA904sU9bYO
-         i9W1eAGwNf/8fGoINsEN/LyhDRw64GuF1ZrM/XxD9o9ezryhWimHXMdKbZke+BcAHFaj
-         J58rQssxwwcakkEAoUO8JPBsJBXp/zjGbHdPlfeDPD1Ei6/3KwWQAJwfJ/PmfHxyLOhL
-         Kq8Q==
-X-Gm-Message-State: ANhLgQ3FZCQz9o6JnVTf8est9Memn+lzlCKBydU0wljBgvROql6dTO7/
-        Ht7ZVmFnAFC9eYQblqwsxL341P8=
-X-Google-Smtp-Source: ADFU+vvQS3dt6GEtid3fA+7d9DuJE3zKvSKgS14keG2HQAca41GrUO3nrwsCDXKWZ+MwILBlwMptqw==
-X-Received: by 2002:a1c:7e08:: with SMTP id z8mr3581832wmc.166.1583871972104;
-        Tue, 10 Mar 2020 13:26:12 -0700 (PDT)
-Received: from avx2 ([46.53.249.42])
-        by smtp.gmail.com with ESMTPSA id c2sm5593845wma.39.2020.03.10.13.26.10
+         :mime-version:content-disposition:in-reply-to;
+        bh=dsBrIU5gUV1pckyA8GSxROnnJLAsyLmC/ypr4CZES9w=;
+        b=ncIZ282Fv5u4CeQ0d/qd4K/wuxjbef/nWxgxsXaE2XB0+1o2+iU4urKQknP9a7RRGs
+         wi/JxXpXtDOtDZ7weUhL3gGHW+XiE/rCZeNi65iijsSd3Tl1+M76mD+dQNh1Di30vZi/
+         AvDBqUi3ZFmOgUK8me092uD9Ttof5G/q51vrRn47yRSzs98y09SdtUGHUOEqXY15vqNX
+         cteRPpNTBLd9buCruhElristFgsxY/w+eV313hE3dCjvBAvbz96bMvAlB6IQCyndkUFZ
+         cNh3i2KMxlOW1zAv9Ro7qACOfXvU1oSorl24YHPzZrkD0ccMzkwKcv+YO0CjIjHWceAv
+         wP3Q==
+X-Gm-Message-State: ANhLgQ1Hz4niZNHM7yw4safAqUSQ1K28ArmD2LB/sVLxyOC7edcY7e51
+        P1MtFfmhuAK5odrRB9bjwCeB4Q==
+X-Google-Smtp-Source: ADFU+vtvXImBX+SYYOzRy21wWe3GqfJUMiYo6Vi8Qk8uuP81efgz5a4jBX0nQr4DVT8wDqrCYZcPwg==
+X-Received: by 2002:a63:7f05:: with SMTP id a5mr22593983pgd.327.1583872166829;
+        Tue, 10 Mar 2020 13:29:26 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f4sm13279103pfn.116.2020.03.10.13.29.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 13:26:11 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 23:26:09 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
-        "David S. Miller" <davem@davemloft.net>,
+        Tue, 10 Mar 2020 13:29:25 -0700 (PDT)
+Date:   Tue, 10 Mar 2020 13:29:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 3/3] mm/vma: Introduce some more VMA flag wrappers
-Message-ID: <20200310202609.GA6287@avx2>
-References: <1583131666-15531-1-git-send-email-anshuman.khandual@arm.com>
- <1583131666-15531-4-git-send-email-anshuman.khandual@arm.com>
- <alpine.LSU.2.11.2003022212090.1344@eggly.anvils>
- <ce7dd2ac-26e8-d83c-46d0-0c61609be417@arm.com>
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and
+ call it separately
+Message-ID: <202003101319.BAE7B535A@keescook>
+References: <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ce7dd2ac-26e8-d83c-46d0-0c61609be417@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87k13u5y26.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 02:43:21PM +0530, Anshuman Khandual wrote:
-> On 03/03/2020 12:04 PM, Hugh Dickins wrote:
-> > On Mon, 2 Mar 2020, Anshuman Khandual wrote:
-
-> >> vma_is_dontdump()
-> >> vma_is_noreserve()
-> >> vma_is_special()
-> >> vma_is_locked()
-> >> vma_is_mergeable()
-> >> vma_is_softdirty()
-> >> vma_is_thp()
-> >> vma_is_nothp()
-
-> > Improved readability? Not to my eyes.
+On Sun, Mar 08, 2020 at 04:36:17PM -0500, Eric W. Biederman wrote:
 > 
-> As mentioned before, I dont feel strongly about patch 3/3 and will drop.
+> This makes the code clearer and makes it easier to implement a mutex
+> that is not taken over any locations that may block indefinitely waiting
+> for userspace.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/exec.c | 39 ++++++++++++++++++++++++++-------------
+>  1 file changed, 26 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index c3f34791f2f0..ff74b9a74d34 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1194,6 +1194,23 @@ static int de_thread(struct task_struct *tsk)
+>  	flush_itimer_signals();
+>  #endif
 
-Should be "const struct vm_area_struct *" anyway.
+Semi-related (existing behavior): in de_thread(), what keeps the thread
+group from changing? i.e.:
+
+        if (thread_group_empty(tsk))
+                goto no_thread_group;
+
+        /*
+         * Kill all other threads in the thread group.
+         */
+        spin_lock_irq(lock);
+	... kill other threads under lock ...
+
+Why is the thread_group_emtpy() test not under lock?
+
+>  
+> +	BUG_ON(!thread_group_leader(tsk));
+> +	return 0;
+> +
+> +killed:
+> +	/* protects against exit_notify() and __exit_signal() */
+
+I wonder if include/linux/sched/task.h's definition of tasklist_lock
+should explicitly gain note about group_exit_task and notify_count,
+or, alternatively, signal.h's section on these fields should gain a
+comment? tasklist_lock is unmentioned in signal.h... :(
+
+> +	read_lock(&tasklist_lock);
+> +	sig->group_exit_task = NULL;
+> +	sig->notify_count = 0;
+> +	read_unlock(&tasklist_lock);
+> +	return -EAGAIN;
+> +}
+> +
+> +
+> +static int unshare_sighand(struct task_struct *me)
+> +{
+> +	struct sighand_struct *oldsighand = me->sighand;
+> +
+>  	if (refcount_read(&oldsighand->count) != 1) {
+>  		struct sighand_struct *newsighand;
+>  		/*
+> @@ -1210,23 +1227,13 @@ static int de_thread(struct task_struct *tsk)
+>  
+>  		write_lock_irq(&tasklist_lock);
+>  		spin_lock(&oldsighand->siglock);
+> -		rcu_assign_pointer(tsk->sighand, newsighand);
+> +		rcu_assign_pointer(me->sighand, newsighand);
+>  		spin_unlock(&oldsighand->siglock);
+>  		write_unlock_irq(&tasklist_lock);
+>  
+>  		__cleanup_sighand(oldsighand);
+>  	}
+> -
+> -	BUG_ON(!thread_group_leader(tsk));
+>  	return 0;
+> -
+> -killed:
+> -	/* protects against exit_notify() and __exit_signal() */
+> -	read_lock(&tasklist_lock);
+> -	sig->group_exit_task = NULL;
+> -	sig->notify_count = 0;
+> -	read_unlock(&tasklist_lock);
+> -	return -EAGAIN;
+>  }
+>  
+>  char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+> @@ -1264,13 +1271,19 @@ int flush_old_exec(struct linux_binprm * bprm)
+>  	int retval;
+>  
+>  	/*
+> -	 * Make sure we have a private signal table and that
+> -	 * we are unassociated from the previous thread group.
+> +	 * Make this the only thread in the thread group.
+>  	 */
+>  	retval = de_thread(me);
+>  	if (retval)
+>  		goto out;
+>  
+> +	/*
+> +	 * Make the signal table private.
+> +	 */
+> +	retval = unshare_sighand(me);
+> +	if (retval)
+> +		goto out;
+> +
+>  	/*
+>  	 * Must be called _before_ exec_mmap() as bprm->mm is
+>  	 * not visibile until then. This also enables the update
+> -- 
+> 2.25.0
+
+Otherwise, yes, sensible separation.
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
