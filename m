@@ -2,137 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCEA1805E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 19:10:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C32918060B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 19:19:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCJSKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 14:10:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33412 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgCJSKN (ORCPT
+        id S1726487AbgCJSTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 14:19:49 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27302 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726414AbgCJSTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:10:13 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f13so15285889ljp.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 11:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GAmrLSm94M3atxor6m3MBGNU1T3aJwAms1a60E3OcKQ=;
-        b=E4Gh5FebxbswQObtHkMKLa0I1vxP38Xyu9we0WSALKU9brqcmL7dmgK5DPgBi0vtGt
-         OCLEcIv+wlGiaPr/aZzGWrh3C2GCorpWLWvzGmTExo1WIkd5cOXbmEz/PNc1Nce2bWNb
-         MO1ty0KtN9jj98dselZJN/RU3YxMNgohQiTzVr0ujRZdljdUfPEMa86uPKlKMgmqEjd7
-         7puKGvXBmhiuGcL0ITpKvmrRv1gCP6RcvRMvm2Rp5JZUvGM5UjUAdTpQUbo2QI6Pnsj+
-         7i7kQRLJXarHpzmGH7INlZlEHEfpWE1zujmaiianXg7IXVsEvq/5l8bcP+9wdmtziTPi
-         NK7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GAmrLSm94M3atxor6m3MBGNU1T3aJwAms1a60E3OcKQ=;
-        b=t36DUfRxPqcDqesWzZB+5faLvDPaEOUJ0eIASn8mH8qv2tQAtgHZyqkXWw+aEKn+5L
-         UwhceX+jmcbypq+OL5zEmOszJJm/O7+CrxLKrWzwVJJFu+4gEeS4KoiiBwPSzOH1Ucv4
-         jYth+gBK//I+8akV69KCGWh6QbeOuIS+1mUbIDPYIpxzzml0MK/bzjqCWYSnOgAJXzYr
-         MDmGgNfMtW3vBik8rpyAzyQzqHlQkoTdP/+w5ykGTF0KQcx7zUYoDLbthKVygKKN4w+e
-         f08b4cey6Ig0kQntxBqDgJApbmYW8L6zbQdHKSavXHwgbNp/wXZFH0sm32IsRwlkue3J
-         SjCg==
-X-Gm-Message-State: ANhLgQ3p96oIDYZ1jd4Vik3rpfYoSub/IheY7kzo8CBY9Mwwb2/HqI3q
-        Uh5QIiYyQ5OtJBQ80qcZB/HilTumeRRiAjj6m9cj5w==
-X-Google-Smtp-Source: ADFU+vv0bRCpZ9upS082ADo1baaiIcsgHRiEr/NQ/XsGlkb1/DnYR7EmtbYbw4Q/00elQBj/MZtk5RGryisNcNPLl5A=
-X-Received: by 2002:a2e:800a:: with SMTP id j10mr10367065ljg.23.1583863810659;
- Tue, 10 Mar 2020 11:10:10 -0700 (PDT)
+        Tue, 10 Mar 2020 14:19:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583864388;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uG8IW8F1ik89QcwueTgT7AHnM1mDO66s69ntPDpnl4s=;
+        b=ZfafQFSJLhX+9tidrId0WsL3+G8Kr5daypTyVTwyzunVb5a0RV9/Aw/sSDuprMIyaS3S1K
+        7eYiA2vKdeL9KcDI9X2eib5wFeB/0pwsfwyJs/CmxKC8gD2S+SV8hqvGLmkMWLcEYy1rt2
+        e38mbZSu+RCCmp+bc8udA/DRZiuJbJw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-qCnev14MMHGNwVmv-MTKbw-1; Tue, 10 Mar 2020 14:19:46 -0400
+X-MC-Unique: qCnev14MMHGNwVmv-MTKbw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 75CB618B5FA2;
+        Tue, 10 Mar 2020 18:19:45 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 34B678F358;
+        Tue, 10 Mar 2020 18:19:37 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id AE75422021D; Tue, 10 Mar 2020 14:19:36 -0400 (EDT)
+Date:   Tue, 10 Mar 2020 14:19:36 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stefan Hajnoczi <stefanha@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        dgilbert@redhat.com, mst@redhat.com,
+        Sebastien Boeuf <sebastien.boeuf@intel.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH 04/20] virtio: Implement get_shm_region for PCI transport
+Message-ID: <20200310181936.GC38440@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-5-vgoyal@redhat.com>
+ <20200310110437.GI140737@stefanha-x1.localdomain>
 MIME-Version: 1.0
-References: <20200213194157.5877-1-sds@tycho.nsa.gov> <CAHC9VhSsjrgu2Jn+yiV5Bz_wt2x5bgEXdhjqLA+duWYNo4gOtw@mail.gmail.com>
- <eb2dbe22-91af-17c6-3dfb-d9ec619a4d7a@schaufler-ca.com> <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
-In-Reply-To: <CAKOZueuus6fVqrKsfNgSYGo-kXJ3f6Mv_NJZStY1Uo934=SjDw@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 10 Mar 2020 11:09:34 -0700
-Message-ID: <CAKOZuetUvu=maOmHXjCqkHaYEN5Sf+pKBc3BZ+qpy1tE1NJ9xQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] security,anon_inodes,kvm: enable security support for
- anon inodes
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Sandeep Patil <sspatil@google.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        SElinux list <selinux@vger.kernel.org>, kvm@vger.kernel.org,
-        Nick Kralevich <nnk@google.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310110437.GI140737@stefanha-x1.localdomain>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 10:50 AM Daniel Colascione <dancol@google.com> wrote:
->
-> On Thu, Feb 20, 2020 at 10:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On 2/17/2020 4:14 PM, Paul Moore wrote:
-> > > On Thu, Feb 13, 2020 at 2:41 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> > >> Add support for labeling and controlling access to files attached to anon
-> > >> inodes. Introduce extended interfaces for creating such files to permit
-> > >> passing a related file as an input to decide how to label the anon
-> > >> inode. Define a security hook for initializing the anon inode security
-> > >> attributes. Security attributes are either inherited from a related file
-> > >> or determined based on some combination of the creating task and policy
-> > >> (in the case of SELinux, using type_transition rules).  As an
-> > >> example user of the inheritance support, convert kvm to use the new
-> > >> interface for passing the related file so that the anon inode can inherit
-> > >> the security attributes of /dev/kvm and provide consistent access control
-> > >> for subsequent ioctl operations.  Other users of anon inodes, including
-> > >> userfaultfd, will default to the transition-based mechanism instead.
-> > >>
-> > >> Compared to the series in
-> > >> https://lore.kernel.org/selinux/20200211225547.235083-1-dancol@google.com/,
-> > >> this approach differs in that it does not require creation of a separate
-> > >> anonymous inode for each file (instead storing the per-instance security
-> > >> information in the file security blob), it applies labeling and control
-> > >> to all users of anonymous inodes rather than requiring opt-in via a new
-> > >> flag, it supports labeling based on a related inode if provided,
-> > >> it relies on type transitions to compute the label of the anon inode
-> > >> when there is no related inode, and it does not require introducing a new
-> > >> security class for each user of anonymous inodes.
-> > >>
-> > >> On the other hand, the approach in this patch does expose the name passed
-> > >> by the creator of the anon inode to the policy (an indirect mapping could
-> > >> be provided within SELinux if these names aren't considered to be stable),
-> > >> requires the definition of type_transition rules to distinguish userfaultfd
-> > >> inodes from proc inodes based on type since they share the same class,
-> > >> doesn't support denying the creation of anonymous inodes (making the hook
-> > >> added by this patch return something other than void is problematic due to
-> > >> it being called after the file is already allocated and error handling in
-> > >> the callers can't presently account for this scenario and end up calling
-> > >> release methods multiple times), and may be more expensive
-> > >> (security_transition_sid overhead on each anon inode allocation).
-> > >>
-> > >> We are primarily posting this RFC patch now so that the two different
-> > >> approaches can be concretely compared.  We anticipate a hybrid of the
-> > >> two approaches being the likely outcome in the end.  In particular
-> > >> if support for allocating a separate inode for each of these files
-> > >> is acceptable, then we would favor storing the security information
-> > >> in the inode security blob and using it instead of the file security
-> > >> blob.
-> > > Bringing this back up in hopes of attracting some attention from the
-> > > fs-devel crowd and Al.  As Stephen already mentioned, from a SELinux
-> > > perspective we would prefer to attach the security blob to the inode
-> > > as opposed to the file struct; does anyone have any objections to
-> > > that?
-> >
-> > Sorry for the delay - been sick the past few days.
-> >
-> > I agree that the inode is a better place than the file for information
-> > about the inode. This is especially true for Smack, which uses
-> > multiple extended attributes in some cases. I don't believe that any
-> > except the access label will be relevant to anonymous inodes, but
-> > I can imagine security modules with policies that would.
-> >
-> > I am always an advocate of full xattr support. It goes a long
-> > way in reducing the number and complexity of special case interfaces.
->
-> It sounds like we have broad consensus on using the inode to hold
-> security information, implying that anon_inodes should create new
-> inodes. Do any of the VFS people want to object?
+On Tue, Mar 10, 2020 at 11:04:37AM +0000, Stefan Hajnoczi wrote:
+> On Wed, Mar 04, 2020 at 11:58:29AM -0500, Vivek Goyal wrote:
+> > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> > index 7abcc50838b8..52f179411015 100644
+> > --- a/drivers/virtio/virtio_pci_modern.c
+> > +++ b/drivers/virtio/virtio_pci_modern.c
+> > @@ -443,6 +443,111 @@ static void del_vq(struct virtio_pci_vq_info *info)
+> >  	vring_del_virtqueue(vq);
+> >  }
+> >  
+> > +static int virtio_pci_find_shm_cap(struct pci_dev *dev,
+> > +                                   u8 required_id,
+> > +                                   u8 *bar, u64 *offset, u64 *len)
+> > +{
+> > +	int pos;
+> > +
+> > +        for (pos = pci_find_capability(dev, PCI_CAP_ID_VNDR);
+> 
+> Please fix the mixed tabs vs space indentation in this patch.
 
-Ping?
+Will do. There are plenty of these in this patch.
+
+> 
+> > +static bool vp_get_shm_region(struct virtio_device *vdev,
+> > +			      struct virtio_shm_region *region, u8 id)
+> > +{
+> > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
+> > +	u8 bar;
+> > +	u64 offset, len;
+> > +	phys_addr_t phys_addr;
+> > +	size_t bar_len;
+> > +	int ret;
+> > +
+> > +	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
+> > +		return false;
+> > +	}
+> > +
+> > +	ret = pci_request_region(pci_dev, bar, "virtio-pci-shm");
+> > +	if (ret < 0) {
+> > +		dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
+> > +			__func__);
+> > +		return false;
+> > +	}
+> > +
+> > +	phys_addr = pci_resource_start(pci_dev, bar);
+> > +	bar_len = pci_resource_len(pci_dev, bar);
+> > +
+> > +        if (offset + len > bar_len) {
+> > +                dev_err(&pci_dev->dev,
+> > +                        "%s: bar shorter than cap offset+len\n",
+> > +                        __func__);
+> > +                return false;
+> > +        }
+> > +
+> > +	region->len = len;
+> > +	region->addr = (u64) phys_addr + offset;
+> > +
+> > +	return true;
+> > +}
+> 
+> Missing pci_release_region()?
+
+Good catch. We don't have a mechanism to call pci_relese_region() and 
+virtio-mmio device's ->get_shm_region() implementation does not even
+seem to reserve the resources.
+
+So how about we leave this resource reservation to the caller.
+->get_shm_region() just returns the addr/len pair of requested resource.
+
+Something like this patch.
+
+---
+ drivers/virtio/virtio_pci_modern.c |    8 --------
+ fs/fuse/virtio_fs.c                |   13 ++++++++++---
+ 2 files changed, 10 insertions(+), 11 deletions(-)
+
+Index: redhat-linux/fs/fuse/virtio_fs.c
+===================================================================
+--- redhat-linux.orig/fs/fuse/virtio_fs.c	2020-03-10 09:13:34.624565666 -0400
++++ redhat-linux/fs/fuse/virtio_fs.c	2020-03-10 14:11:10.970284651 -0400
+@@ -763,11 +763,18 @@ static int virtio_fs_setup_dax(struct vi
+ 	if (!have_cache) {
+ 		dev_notice(&vdev->dev, "%s: No cache capability\n", __func__);
+ 		return 0;
+-	} else {
+-		dev_notice(&vdev->dev, "Cache len: 0x%llx @ 0x%llx\n",
+-			   cache_reg.len, cache_reg.addr);
+ 	}
+ 
++	if (!devm_request_mem_region(&vdev->dev, cache_reg.addr, cache_reg.len,
++				     dev_name(&vdev->dev))) {
++		dev_warn(&vdev->dev, "could not reserve region addr=0x%llx"
++			 " len=0x%llx\n", cache_reg.addr, cache_reg.len);
++		return -EBUSY;
++        }
++
++	dev_notice(&vdev->dev, "Cache len: 0x%llx @ 0x%llx\n", cache_reg.len,
++		   cache_reg.addr);
++
+ 	pgmap = devm_kzalloc(&vdev->dev, sizeof(*pgmap), GFP_KERNEL);
+ 	if (!pgmap)
+ 		return -ENOMEM;
+Index: redhat-linux/drivers/virtio/virtio_pci_modern.c
+===================================================================
+--- redhat-linux.orig/drivers/virtio/virtio_pci_modern.c	2020-03-10 08:51:36.886565666 -0400
++++ redhat-linux/drivers/virtio/virtio_pci_modern.c	2020-03-10 13:43:15.168753543 -0400
+@@ -511,19 +511,11 @@ static bool vp_get_shm_region(struct vir
+ 	u64 offset, len;
+ 	phys_addr_t phys_addr;
+ 	size_t bar_len;
+-	int ret;
+ 
+ 	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
+ 		return false;
+ 	}
+ 
+-	ret = pci_request_region(pci_dev, bar, "virtio-pci-shm");
+-	if (ret < 0) {
+-		dev_err(&pci_dev->dev, "%s: failed to request BAR\n",
+-			__func__);
+-		return false;
+-	}
+-
+ 	phys_addr = pci_resource_start(pci_dev, bar);
+ 	bar_len = pci_resource_len(pci_dev, bar);
+ 
+
