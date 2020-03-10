@@ -2,79 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E18F21807AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 20:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DBC1807BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 20:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbgCJTJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 15:09:04 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:41215 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgCJTJD (ORCPT
+        id S1726918AbgCJTPl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 15:15:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55079 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbgCJTPl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 15:09:03 -0400
-Received: by mail-io1-f68.google.com with SMTP id m25so13910240ioo.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 12:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=REgvRIGaQFX0rJ2F2E0SSglQVamoeuGWdGmoF/N5lus=;
-        b=HJVoZ3BVHYzJMf4JMkMnAD/QpaYgATC2WqGx7eeKdOmuRZictZ/zGUEUJt4b1gMiXu
-         0hawPVlcNtzk8ul9yZ6a3Y6I2WQaEeTlcyn5Z3vQTvShCy89CqDr1vcYG5JRvKrTEs+s
-         nGCJPvFnL9RJmti4Z6r3S8VHzjAQ5mxioY1DQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=REgvRIGaQFX0rJ2F2E0SSglQVamoeuGWdGmoF/N5lus=;
-        b=KjeEw/ujDz+rec3dfz6xQkCCYv1ym6s2XPBDtGKr0zOJDdNbzkvOpFLo/H9+k4aolU
-         EgkL6YntSzaaeMNy1JQFnc1oEh9Uj+IypI1n+4KPAz3eIbMC+vld5xfnSNGYyCN0L4lt
-         Z4WaRmr1Yv4LX288BhyHqk90EjE3WEdbm+WHP13GGrI5egEKc2nXQ/VSWoGq4KfXpThQ
-         pfZd9P6LdloP03my/1MaMQZM5QyKZU4o/T2KjEv1mpmRPOyMKP2j+Hx9BT4cErBZqOr9
-         2VAoDHB/bqlAQ7bhfwcjKb9B7E8DhdkepkgQPUetpDOGRALbeLsXnrRu0MLLYjEFhKcw
-         N8Rw==
-X-Gm-Message-State: ANhLgQ31HWgkv8AHrRiyAzZfjz+LnlBnxrM0w9uJ4f6GOv34D13yST78
-        O4kTxyESmIZ0Y+Drr+DVzRpYsX3UlMi2wHzmYn6dSBE8
-X-Google-Smtp-Source: ADFU+vuG+d8Im8838zI+qtuRmWvZmmjvYtfKPkg2IQY7hI/u2Ov9hDcEWzOo40BkQfw9QtWyzDu6ag/5o11778wjtro=
-X-Received: by 2002:a5d:934d:: with SMTP id i13mr19073480ioo.154.1583867340913;
- Tue, 10 Mar 2020 12:09:00 -0700 (PDT)
+        Tue, 10 Mar 2020 15:15:41 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBkLJ-0000Bk-RP; Tue, 10 Mar 2020 19:15:06 +0000
+Date:   Tue, 10 Mar 2020 20:15:02 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sargun Dhillon <sargun@sargun.me>
+Subject: Re: [PATCH] pidfd: Stop taking cred_guard_mutex
+Message-ID: <20200310191502.qcqxfkhh5k2gxyzp@wittgenstein>
+References: <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org>
+ <20200309195909.h2lv5uawce5wgryx@wittgenstein>
+ <877dztz415.fsf@x220.int.ebiederm.org>
+ <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
+ <87k13txnig.fsf@x220.int.ebiederm.org>
+ <20200310085540.pztaty2mj62xt2nm@wittgenstein>
+ <87wo7svy96.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <1583270111-76859-1-git-send-email-bo.liu@linux.alibaba.com>
- <CAJfpegtFWqEAV-Jb_KoHihJ5-UpU=JkdxEg_stz6JM5OP_LXMQ@mail.gmail.com> <20200310184640.5djxclzt6gqkq4v3@rsjd01523.et2sqa>
-In-Reply-To: <20200310184640.5djxclzt6gqkq4v3@rsjd01523.et2sqa>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Mar 2020 20:08:49 +0100
-Message-ID: <CAJfpegtUkfwZXZ977HeC7pJ+2rFVwyr0pk-ru4J7z1-TVafcSQ@mail.gmail.com>
-Subject: Re: [PATCH] fuse: make written data persistent after writing
-To:     Liu Bo <bo.liu@linux.alibaba.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>, virtio-fs@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87wo7svy96.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 7:46 PM Liu Bo <bo.liu@linux.alibaba.com> wrote:
->
-> On Tue, Mar 10, 2020 at 11:14:17AM +0100, Miklos Szeredi wrote:
-> > On Tue, Mar 3, 2020 at 10:15 PM Liu Bo <bo.liu@linux.alibaba.com> wrote:
-> > >
-> > > If this is a DSYNC write, make sure we push it to stable storage now
-> > > that we've written data.
-> >
-> > If this is direct I/O then why do we need an fysnc() call?
-> >
-> > The only thing needed should be correct setting O_DSYNC in the flags
-> > field of the WRITE request, and it appears to me that that is already
-> > being done.
->
-> Given direct IO itself doesn't guarantee FUA or FLUSH, I think we
-> still need such a fsync() call to make sure a FUA/FLUSH is sent after
-> direct IO.
+On Tue, Mar 10, 2020 at 01:52:05PM -0500, Eric W. Biederman wrote:
+> 
+> During exec some file descriptors are closed and the files struct is
+> unshared.  But all of that can happen at other times and it has the
+> same protections during exec as at ordinary times.  So stop taking the
+> cred_guard_mutex as it is useless.
+> 
+> Furthermore he cred_guard_mutex is a bad idea because it is deadlock
+> prone, as it is held in serveral while waiting possibly indefinitely
+> for userspace to do something.
+> 
+> Cc: Sargun Dhillon <sargun@sargun.me>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 8649c322f75c ("pid: Implement pidfd_getfd syscall")
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  kernel/pid.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> Christian if you don't have any objections I will take this one through
+> my tree.
 
-What I mean is that the server itself can call fsync(2) from the WRITE
-request if it finds that fi->flags contains O_DSYNC.
+Sure.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-Thanks,
-Miklos
+> 
+> I tried to figure out why this code path takes the cred_guard_mutex and
+> the archive on lore.kernel.org was not helpful in finding that part of
+> the conversation.
+
+Let me think a little harder and hopefully get back to you with a
+sensible explanation.
