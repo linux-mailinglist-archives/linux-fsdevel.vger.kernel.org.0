@@ -2,132 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B025117F352
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 10:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C2A617F3A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Mar 2020 10:31:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgCJJSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Mar 2020 05:18:21 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:35822 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbgCJJSV (ORCPT
+        id S1726501AbgCJJbW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Mar 2020 05:31:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58141 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbgCJJbW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Mar 2020 05:18:21 -0400
-Received: by mail-il1-f196.google.com with SMTP id g126so11342410ilh.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Mar 2020 02:18:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hhr2JQNCTfwAz5fM8AxpKXVAk7m03eW/WPRPp++R3bc=;
-        b=CLeuNfcd8lneEopBSQtHp3Kt+HipoV0gZP6IuZpydHV2/p4TlsVqkfu5HowfqMTXt4
-         B6Nes0PUjpXtVP2DD/+CYwm5MJkMF1NpiN6Pigz83+0gVtQu29MQJHpZf1loCCFWgnuY
-         NvSCicUjakpnIekJzu1+qB/DP+TL60iT/Mg+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hhr2JQNCTfwAz5fM8AxpKXVAk7m03eW/WPRPp++R3bc=;
-        b=cxED51knbM3gGZiijsxw3gpi0SY/p5GH+fFrLIRCFG9JRufR30yCKmQlP21lE1Ahon
-         D6DardoqIHT2bIeAgExAiPI5paNHlrsWi2qCKnqowFsXozg39iEnb23EZJc5pdglcB3t
-         uS/Cv3lgHTbsYZkjXKcZhLYLp3ZBW5zq75prI/iygX4brxWbrFEJzLgcsI0mLYVVQBbl
-         6+JuBFXG3ekACjw5NVX3e+PvT6CrsdkNLXFFHnrThdFmWISJa66lajg9iT3gQMfl/SQZ
-         sk8922A50vq3I9B9m1e56+Td7bqeEuabnEjbQmiU0nPlghX5CGS26wiiwePrjGaHrpQ3
-         YUkg==
-X-Gm-Message-State: ANhLgQ0iaG7FNoIAaJTO0wa9grzlbOvjVb+55GIFOE5IoI/aFCCXCpMr
-        aiEIGnyLoKuJXECUMcX5YoZma/EgBKTjIjPyJspJ1g==
-X-Google-Smtp-Source: ADFU+vugKYA3Ig1dwzBjyGS81nr/dzb7dU1rNPjVpJ6bTLDiyqMRJ04NHueIU+BRzWkQaOZi8m5WZXZZBMnnCNWaxaA=
-X-Received: by 2002:a92:9602:: with SMTP id g2mr18883520ilh.212.1583831899169;
- Tue, 10 Mar 2020 02:18:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <20200309200238.GB28467@miu.piliscsaba.redhat.com> <537182.1583794373@warthog.procyon.org.uk>
-In-Reply-To: <537182.1583794373@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 Mar 2020 10:18:08 +0100
-Message-ID: <CAJfpegt9TqfyJuk0G-OJdWLiKuxSeY0cQKK=1GVf1fStA9COBw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] VFS: Filesystem information [ver #18]
+        Tue, 10 Mar 2020 05:31:22 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jBbEL-0006Oe-CB; Tue, 10 Mar 2020 09:31:17 +0000
+Date:   Tue, 10 Mar 2020 10:31:16 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Stefan Metzmacher <metze@samba.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-api@vger.kernel.org, raven@themaw.net, mszeredi@redhat.com,
+        christian@brauner.io, jannh@google.com, darrick.wong@oracle.com,
+        kzak@redhat.com, jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/14] fsinfo: Add fsinfo() syscall to query filesystem
+ information [ver #18]
+Message-ID: <20200310093116.ylq6vaunr6js4eyy@wittgenstein>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376246603.344135.4335596732820276494.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <158376246603.344135.4335596732820276494.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 9, 2020 at 11:53 PM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > >  (1) It can be targetted.  It makes it easy to query directly by path or
-> > >      fd, but can also query by mount ID or fscontext fd.  procfs and sysfs
-> > >      cannot do three of these things easily.
-> >
-> > See above: with the addition of open(path, O_PATH) it can do all of these.
->
-> That's a horrible interface.  To query a file by path, you have to do:
->
->         fd = open(path, O_PATH);
->         sprintf(procpath, "/proc/self/fdmount/%u/<attr>");
->         fd2 = open(procpath, O_RDONLY);
->         read(fd2, ...);
->         close(fd2);
->         close(fd);
->
-> See point (3) about efficiency also.  You're having to open *two* files.
+On Mon, Mar 09, 2020 at 02:01:06PM +0000, David Howells wrote:
+> Add a system call to allow filesystem information to be queried.  A request
+> value can be given to indicate the desired attribute.  Support is provided
+> for enumerating multi-value attributes.
+> 
+> ===============
+> NEW SYSTEM CALL
+> ===============
+> 
+> The new system call looks like:
+> 
+> 	int ret = fsinfo(int dfd,
+> 			 const char *pathname,
+> 			 const struct fsinfo_params *params,
+> 			 size_t params_size,
+> 			 void *result_buffer,
+> 			 size_t result_buf_size);
+> 
+> The params parameter optionally points to a block of parameters:
+> 
+> 	struct fsinfo_params {
+> 		__u32	resolve_flags;
+> 		__u32	flags;
+> 		__u32	request;
+> 		__u32	Nth;
+> 		__u32	Mth;
+> 	};
+> 
+> If params is NULL, the default is that params->request is
+> FSINFO_ATTR_STATFS and all the other fields are 0.  params_size indicates
+> the size of the parameter struct.  If the parameter block is short compared
+> to what the kernel expects, the missing length will be set to 0; if the
+> parameter block is longer, an error will be given if the excess is not all
+> zeros.
+> 
+> The object to be queried is specified as follows - part param->flags
+> indicates the type of reference:
+> 
+>  (1) FSINFO_FLAGS_QUERY_PATH - dfd, pathname and at_flags indicate a
+>      filesystem object to query.  There is no separate system call
+>      providing an analogue of lstat() - RESOLVE_NO_TRAILING_SYMLINKS should
+>      be set in at_flags instead.  RESOLVE_NO_TRAILING_AUTOMOUNTS can also
+>      be used to an allow automount point to be queried without triggering
+>      it.
+> 
+>  (2) FSINFO_FLAGS_QUERY_FD - dfd indicates a file descriptor pointing to
+>      the filesystem object to query.  pathname should be NULL.
+> 
+>  (3) FSINFO_FLAGS_QUERY_MOUNT - pathname indicates the numeric ID of the
+>      mountpoint to query as a string.  dfd is used to constrain which
+>      mounts can be accessed.  If dfd is AT_FDCWD, the mount must be within
+>      the subtree rooted at chroot, otherwise the mount must be within the
+>      subtree rooted at the directory specified by dfd.
+> 
+>  (4) In the future FSINFO_FLAGS_QUERY_FSCONTEXT will be added - dfd will
+>      indicate a context handle fd obtained from fsopen() or fspick(),
+>      allowing that to be queried before the target superblock is attached
+>      to the filesystem or even created.
+> 
+> params->request indicates the attribute/attributes to be queried.  This can
+> be one of:
+> 
+> 	FSINFO_ATTR_STATFS		- statfs-style info
+> 	FSINFO_ATTR_IDS			- Filesystem IDs
+> 	FSINFO_ATTR_LIMITS		- Filesystem limits
+> 	FSINFO_ATTR_SUPPORTS		- Support for statx, ioctl, etc.
+> 	FSINFO_ATTR_TIMESTAMP_INFO	- Inode timestamp info
+> 	FSINFO_ATTR_VOLUME_ID		- Volume ID (string)
+> 	FSINFO_ATTR_VOLUME_UUID		- Volume UUID
+> 	FSINFO_ATTR_VOLUME_NAME		- Volume name (string)
+> 	FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO - Information about attr Nth
+> 	FSINFO_ATTR_FSINFO_ATTRIBUTES	- List of supported attrs
+> 
+> Some attributes (such as the servers backing a network filesystem) can have
+> multiple values.  These can be enumerated by setting params->Nth and
+> params->Mth to 0, 1, ... until ENODATA is returned.
+> 
+> result_buffer and result_buf_size point to the reply buffer.  The buffer is
+> filled up to the specified size, even if this means truncating the reply.
+> The size of the full reply is returned, irrespective of the amount data
+> that was copied.  In future versions, this will allow extra fields to be
+> tacked on to the end of the reply, but anyone not expecting them will only
+> get the subset they're expecting.  If either buffer of result_buf_size are
+> 0, no copy will take place and the data size will be returned.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-api@vger.kernel.org
 
-I completely agree, opening two files is surely going to kill
-performance of application needing to retrieve a billion mount
-attributes per second.</sarcasm>
+You're missing to wire-up the syscall into the arm64 unistd32.h table
+and this is all in one patch. I'd rather do it like we have done for all
+other syscalls recently, and split this into:
+- actual syscall implementation
+- final wiring-up patch
+Will make it easier to apply and spot merge conflicts when multiple
+syscalls are proposed. I'm going to respond to this mail here with two
+patches. One could replace this one I'm responding to and the other one
+should probably go on top of the series.
+(Please note that the same missing arm64 unistd32.h handling also likely
+ affects the watch syscalls as I haven't seen them in there when I added
+ fsinfo().)
 
-> > >  (2) Easier to provide LSM oversight.  Is the accessing process allowed to
-> > >      query information pertinent to a particular file?
-> >
-> > Not quite sure why this would be easier for a new ad-hoc interface than for
-> > the well established filesystem API.
->
-> You're right.  That's why fsinfo() uses standard pathwalk where possible,
-> e.g.:
->
->         fsinfo(AT_FDCWD, "/path/to/file", ...);
->
-> or a fairly standard fd-querying interface:
->
->         fsinfo(fd, "", { resolve_flags = RESOLVE_EMPTY_PATH },  ...);
->
-> to query an open file descriptor.  These are well-established filesystem APIs.
-
-Yes.  The problem is with the "..." part where you pass random
-structures to a function.   That's useful sometimes, but at the very
-least it breaks type safety, and not what I would call a "clean" API.
-
-> > Now onto the advantages of a filesystem based API:
-> >
-> >  - immediately usable from all programming languages, including scripts
->
-> This is not true.  You can't open O_PATH from shell scripts, so you can't
-> query things by path that you can't or shouldn't open (dev file paths, for
-> example; symlinks).
-
-Yes.  However, you just wrote the core of a utility that could do this
-(in 6 lines, no less).  Now try that feat with fsinfo(2)!
-
-Thanks,
-Miklos
