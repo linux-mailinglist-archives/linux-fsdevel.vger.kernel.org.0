@@ -2,139 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8582F181B00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D379B181B27
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:29:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbgCKOTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 10:19:30 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39996 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbgCKOTa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:19:30 -0400
-Received: by mail-il1-f194.google.com with SMTP id g6so2136687ilc.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 07:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=69ujJbtlPdE8oHv4nVIHA9iuyZRWDdoY3VvgQ+IBL2s=;
-        b=cGM2MeQBmZSBuReLBU5d5sTRAoFDL2XQyMomBEOKrqeyIMkpsthwL9Qv2AhBzaksHC
-         FZlfcVPmnf9pOrb3hqBmXEtqtUjv86fzG9yFxvtSAhUSNpTVjDmB73wbXrbIMMTcJZ9W
-         zNerL5x3klshUWu2R6Mt6dC6OSXgWwOaqpPMg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=69ujJbtlPdE8oHv4nVIHA9iuyZRWDdoY3VvgQ+IBL2s=;
-        b=pf4A55iB75zpYkHaAzSFFZq5A7Z91xiHlOLTJ2P8WENgwmc6LqXEM5jWyNPpZft4TC
-         qEg96DaZZlvjO3mhCUTIflPVEoKyCoL6S0ziReWGEVY1hNcURqmAFlFAEbxSYT5UyWo/
-         JGrh1IP1W/LEMC5VJhzIUq08k4TRJoHQlCMGR+7mr/B+gc6qWCfHzzATQA/aAxj7XLgj
-         qK4zPJNlpQ9UlU0TbDHeFku1fqzy9IcQ49dLfw+LTt2BbHFQDzfoLODlT9wZBlAUZuND
-         JwM76Q3YfwZs1S92n0DbOtLWmotit0j1UG3qdvIUYoup7gGQvMU8mdg3PbWMQfnqASGv
-         2MGQ==
-X-Gm-Message-State: ANhLgQ1IyMkHFIctYN/szP+mY5xsmDADj3BhEDPJLkt3/ZDuB1GeU6vq
-        gjmKBBTKIv8S6EagSgZnk6Zw/8ZX9syGkdvnggtumQ==
-X-Google-Smtp-Source: ADFU+vvoUOuyvMliGwkz0P8h8ggIixG2ZD2Fxb/0cgUuBOmTlGIQvpOe4dIt1GjgKNufXq4bt8ec4c0D2ckAdFT+N1E=
-X-Received: by 2002:a92:d745:: with SMTP id e5mr3226635ilq.285.1583936369678;
- Wed, 11 Mar 2020 07:19:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200304165845.3081-1-vgoyal@redhat.com> <20200304165845.3081-13-vgoyal@redhat.com>
- <CAJfpeguY8gDYVp_q3-W6JNA24zCry+SfWmEW2zuHLQLhmyUB3Q@mail.gmail.com>
- <20200310203321.GF38440@redhat.com> <CAOQ4uxh2WdLdbcMp+qvQCX2hiBx+hLO1z5wkZtc-7GCuDdsthw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxh2WdLdbcMp+qvQCX2hiBx+hLO1z5wkZtc-7GCuDdsthw@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 11 Mar 2020 15:19:18 +0100
-Message-ID: <CAJfpeguwqEsPLtph73AG7bhm1Dp4ahyJtyW=Ud7L-OFwyEmwWg@mail.gmail.com>
-Subject: Re: [PATCH 12/20] fuse: Introduce setupmapping/removemapping commands
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        id S1729498AbgCKO3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 10:29:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:50372 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729057AbgCKO3L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:29:11 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CF0F31B;
+        Wed, 11 Mar 2020 07:29:10 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEA6A3F67D;
+        Wed, 11 Mar 2020 07:29:07 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 14:29:05 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
+ LRU
+Message-ID: <20200311142905.GI3216816@arrakis.emea.arm.com>
+References: <20200212085004.GL25745@shell.armlinux.org.uk>
+ <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
+ <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
+ <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
+ <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
+ <20200306203439.peytghdqragjfhdx@kahuna>
+ <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
+ <20200309155945.GA4124965@arrakis.emea.arm.com>
+ <20200309160919.GM25745@shell.armlinux.org.uk>
+ <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 8:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Mar 10, 2020 at 10:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Tue, Mar 10, 2020 at 08:49:49PM +0100, Miklos Szeredi wrote:
-> > > On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > Introduce two new fuse commands to setup/remove memory mappings. This
-> > > > will be used to setup/tear down file mapping in dax window.
-> > > >
-> > > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > > > Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
-> > > > ---
-> > > >  include/uapi/linux/fuse.h | 37 +++++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 37 insertions(+)
-> > > >
-> > > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> > > > index 5b85819e045f..62633555d547 100644
-> > > > --- a/include/uapi/linux/fuse.h
-> > > > +++ b/include/uapi/linux/fuse.h
-> > > > @@ -894,4 +894,41 @@ struct fuse_copy_file_range_in {
-> > > >         uint64_t        flags;
-> > > >  };
-> > > >
-> > > > +#define FUSE_SETUPMAPPING_ENTRIES 8
-> > > > +#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
-> > > > +struct fuse_setupmapping_in {
-> > > > +       /* An already open handle */
-> > > > +       uint64_t        fh;
-> > > > +       /* Offset into the file to start the mapping */
-> > > > +       uint64_t        foffset;
-> > > > +       /* Length of mapping required */
-> > > > +       uint64_t        len;
-> > > > +       /* Flags, FUSE_SETUPMAPPING_FLAG_* */
-> > > > +       uint64_t        flags;
-> > > > +       /* Offset in Memory Window */
-> > > > +       uint64_t        moffset;
-> > > > +};
-> > > > +
-> > > > +struct fuse_setupmapping_out {
-> > > > +       /* Offsets into the cache of mappings */
-> > > > +       uint64_t        coffset[FUSE_SETUPMAPPING_ENTRIES];
-> > > > +        /* Lengths of each mapping */
-> > > > +        uint64_t       len[FUSE_SETUPMAPPING_ENTRIES];
-> > > > +};
+On Mon, Mar 09, 2020 at 08:46:18PM +0100, Arnd Bergmann wrote:
+> On Mon, Mar 9, 2020 at 5:09 PM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
+> > On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
+> > > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
+> > > > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
+> > > >   to see if it can be done, and what the overhead is. This is probably
+> > > >   more work than the others combined, but also the most promising
+> > > >   as it allows the most user address space and physical ram to be used.
 > > >
-> > > fuse_setupmapping_out together with FUSE_SETUPMAPPING_ENTRIES seem to be unused.
-> >
-> > This looks like leftover from the old code. I will get rid of it. Thanks.
-> >
->
-> Hmm. I wonder if we should keep some out args for future extensions.
-> Maybe return the mapped size even though it is all or nothing at this
-> point?
->
-> I have interest in a similar FUSE mapping functionality that was prototyped
-> by Miklos and published here:
-> https://lore.kernel.org/linux-fsdevel/CAJfpegtjEoE7H8tayLaQHG9fRSBiVuaspnmPr2oQiOZXVB1+7g@mail.gmail.com/
->
-> In this prototype, a FUSE_MAP command is used by the server to map a
-> range of file to the kernel for io. The command in args are quite similar to
-> those in fuse_setupmapping_in, but since the server is on the same host,
-> the mapping response is {mapfd, offset, size}.
+> > > A rough outline of such support (and likely to miss some corner cases):
+> > >
+> > > 1. Kernel runs with its own ASID and non-global page tables.
+> > >
+> > > 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
+> > >    between user and kernel.
+> > >
+> > > 3. uaccess routines need to be reworked to pin the user pages in memory
+> > >    (get_user_pages()) and access them via the kernel address space.
+> > >
+> > > Point 3 is probably the ugliest and it would introduce a noticeable
+> > > slowdown in certain syscalls.
+> 
+> There are probably a number of ways to do the basic design. The idea
+> I had (again, probably missing more corner cases than either of you
+> two that actually understand the details of the mmu):
+> 
+> - Assuming we have LPAE, run the kernel vmlinux and modules inside
+>   the vmalloc space, in the top 256MB or 512MB on TTBR1
+> 
+> - Map all the physical RAM (up to 3.75GB) into a reserved ASID
+>   with TTBR0
+> 
+> - Flip TTBR0 on kernel entry/exit, and again during user access.
+> 
+> This is probably more work to implement than your idea, but
+> I would hope this has a lower overhead on most microarchitectures
+> as it doesn't require pinning the pages. Depending on the
+> microarchitecture, I'd hope the overhead would be comparable
+> to that of ARM64_SW_TTBR0_PAN.
 
-Right.  So the difference is in which entity allocates the mapping.
-IOW whether the {fd, offset, size} is input or output in the protocol.
+This still doesn't solve the copy_{from,to}_user() case where both
+address spaces need to be available during copy. So you either pin the
+user pages in memory and access them via the kernel mapping or you
+temporarily map (kmap?) the destination/source kernel address. The
+overhead I'd expect to be significantly greater than ARM64_SW_TTBR0_PAN
+for the uaccess routines. For user entry/exit, your suggestion is
+probably comparable with SW PAN.
 
-I don't remember the reasons for going with the mapping being
-allocated by the client, not the other way round.   Vivek?
-
-If the allocation were to be by the server, we could share the request
-type and possibly some code between the two, although the I/O
-mechanism would still be different.
-
-Thanks,
-Miklos
+-- 
+Catalin
