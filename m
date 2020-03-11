@@ -2,163 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0FC181B8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D385181BDB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbgCKOlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 10:41:40 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33305 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729057AbgCKOlk (ORCPT
+        id S1729963AbgCKO4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 10:56:36 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37876 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729961AbgCKO4g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:41:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583937699;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oi39w6c8WmZF4VD2SAl+7GXpBzzUSxdZMb4is4/iUjc=;
-        b=gDGVqloeKy0uQKg4vzmBANyzcKd2gl+QBhSRa2dtO3ej8UUI9ML5pEvl5XZytR6bjMeeB9
-        oyrUY7e6XvyHDWON1LqpKheKvFibS/G8y6V+nOjm2llZHehHfxxFILoficoqIctwXPQKW5
-        F/+s7PQ4DkGO4HSiMWdBsox21GRRXOE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-369-oaGi-oZRO3uadCugnnOKxA-1; Wed, 11 Mar 2020 10:41:35 -0400
-X-MC-Unique: oaGi-oZRO3uadCugnnOKxA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B2B31088384;
-        Wed, 11 Mar 2020 14:41:33 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F268960C18;
-        Wed, 11 Mar 2020 14:41:24 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 84EA122021D; Wed, 11 Mar 2020 10:41:24 -0400 (EDT)
-Date:   Wed, 11 Mar 2020 10:41:24 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>
-Subject: Re: [PATCH 12/20] fuse: Introduce setupmapping/removemapping commands
-Message-ID: <20200311144124.GB83257@redhat.com>
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-13-vgoyal@redhat.com>
- <CAJfpeguY8gDYVp_q3-W6JNA24zCry+SfWmEW2zuHLQLhmyUB3Q@mail.gmail.com>
- <20200310203321.GF38440@redhat.com>
- <CAOQ4uxh2WdLdbcMp+qvQCX2hiBx+hLO1z5wkZtc-7GCuDdsthw@mail.gmail.com>
- <CAJfpeguwqEsPLtph73AG7bhm1Dp4ahyJtyW=Ud7L-OFwyEmwWg@mail.gmail.com>
+        Wed, 11 Mar 2020 10:56:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b3so2252241otp.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 07:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ouxKLWRXOtqbKDl0q+UmOju78v5owF0LnUPYL3Cn3Kg=;
+        b=Xc7KTwBmSvnyR04w7xAsoM4QolF0XcaryYGGSqywW6r0XlqYx9XvikGX4w7bLlxxLJ
+         7Q9AwD+7i/TJ2mStAI9eb2ob9VCt6KgwBw+LR3gAYpgM3S9uQWoNLD+xlKhWnCsJiDsd
+         gQ/4BkYOpVHRSRCowJu6XRQFruet41lwL6gwC6z3ZSErV3n8O+X2f+eZSuo5E01C3UV8
+         tyeHf9B1wPr69eyCIlYMAQR5+WIsB75Z+R5FBKu1iRw02ws17iiqnH3dVPNo9lJU7J88
+         tpacvkSbf6Ri5ZPR6z68IF56hdGSxpTT8rbI4/vpexPf/ozipoU+b1l6PAcyKYZfa7Y6
+         rVAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ouxKLWRXOtqbKDl0q+UmOju78v5owF0LnUPYL3Cn3Kg=;
+        b=SqjkNHWiDI8GxVoSLlSxosW3m8bSYWqufocO2ja2LVv0aaYoEYX8qClRItRmEnAker
+         ZddAhrlajkPBb4O1Qt4C0UVpjNrhm/vWOPlLVKm8Tok4YVsxMXd/OZ6pjxN5IsX5fyV6
+         jkIc2bzGjDLLH2tKMI+BhAGJJ6Ypwij/oTouD/ZG+/gEYZkHiNk2vs35O/drswTAYCXq
+         YgA0CEbTWQHcKRyPkqzThH0yjAsFAGTMJNh2LdLwD4VccTq0XZdcH9JQSXW+5yAblOFm
+         BLehI4a+tPQqwW1P37IS5qVhW7T/w4vFK4Fvq4wm29+qcPrMKMNkFNyblFFH6sINuF5l
+         uVbQ==
+X-Gm-Message-State: ANhLgQ2HM0kUY6o3GNeiqQ29orefrIJllm92zGiTWDzjhr5Ey9Adz8Cd
+        9Nk0K+TAaCc9lVibGqDhq4x5aWHJpn866FJUiElpvA==
+X-Google-Smtp-Source: ADFU+vsoVPEYUzYAEvw3qgsbNcHFvKCUWY2EnYgxb3/1wEn7Xj5CByupWPUTgv6N0jalxR0NpVo1qN7c0CgaHTbYtAA=
+X-Received: by 2002:a4a:a8c6:: with SMTP id r6mr553536oom.21.1583938593523;
+ Wed, 11 Mar 2020 07:56:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpeguwqEsPLtph73AG7bhm1Dp4ahyJtyW=Ud7L-OFwyEmwWg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <87r1y8dqqz.fsf@x220.int.ebiederm.org> <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org> <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87eeu25y14.fsf_-_@x220.int.ebiederm.org> <20200309195909.h2lv5uawce5wgryx@wittgenstein>
+ <877dztz415.fsf@x220.int.ebiederm.org> <20200309201729.yk5sd26v4bz4gtou@wittgenstein>
+ <87k13txnig.fsf@x220.int.ebiederm.org> <20200310085540.pztaty2mj62xt2nm@wittgenstein>
+ <87wo7svy96.fsf_-_@x220.int.ebiederm.org> <CAG48ez2cUZMVOAXfHPNjKjYsMSaWkjUjOCHo0KYZ+oXQUW4viA@mail.gmail.com>
+ <87k13sui1p.fsf@x220.int.ebiederm.org> <CAG48ez2vRgaEVJ=Rs8gn6HkGO6syL8MpSOUq7BNN+OUE1uYxCA@mail.gmail.com>
+ <CAG48ez1LjW1xAGe-5tNtstCWxG2bkiHaQUMOcJNjx=z-2Wc2Jw@mail.gmail.com>
+ <AM6PR03MB5170AF454A8A9C37891B12B2E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <5a8b2794-b498-af33-1327-ff2861cff83f@hotmail.de>
+In-Reply-To: <5a8b2794-b498-af33-1327-ff2861cff83f@hotmail.de>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 11 Mar 2020 15:56:07 +0100
+Message-ID: <CAG48ez33hx0NavmLub1QjzTw_DJuyRtkB71Mm35Hmp1x+DjmFA@mail.gmail.com>
+Subject: Re: [PATCH] pidfd: Stop taking cred_guard_mutex
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "avagin@gmail.com" <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "duyuyang@gmail.com" <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "christian@kellner.me" <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "sargun@sargun.me" <sargun@sargun.me>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 03:19:18PM +0100, Miklos Szeredi wrote:
-> On Wed, Mar 11, 2020 at 8:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
+On Wed, Mar 11, 2020 at 7:12 AM Bernd Edlinger
+<bernd.edlinger@hotmail.de> wrote:
+> On 3/10/20 9:22 PM, Bernd Edlinger wrote:
+> > On 3/10/20 9:10 PM, Jann Horn wrote:
+> >> On Tue, Mar 10, 2020 at 9:00 PM Jann Horn <jannh@google.com> wrote:
+> >>> On Tue, Mar 10, 2020 at 8:29 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>>> Jann Horn <jannh@google.com> writes:
+> >>>>> On Tue, Mar 10, 2020 at 7:54 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>>>>> During exec some file descriptors are closed and the files struct is
+> >>>>>> unshared.  But all of that can happen at other times and it has the
+> >>>>>> same protections during exec as at ordinary times.  So stop taking the
+> >>>>>> cred_guard_mutex as it is useless.
+> >>>>>>
+> >>>>>> Furthermore he cred_guard_mutex is a bad idea because it is deadlock
+> >>>>>> prone, as it is held in serveral while waiting possibly indefinitely
+> >>>>>> for userspace to do something.
+> >> [...]
+> >>>>> If you make this change, then if this races with execution of a setuid
+> >>>>> program that afterwards e.g. opens a unix domain socket, an attacker
+> >>>>> will be able to steal that socket and inject messages into
+> >>>>> communication with things like DBus. procfs currently has the same
+> >>>>> race, and that still needs to be fixed, but at least procfs doesn't
+> >>>>> let you open things like sockets because they don't have a working
+> >>>>> ->open handler, and it enforces the normal permission check for
+> >>>>> opening files.
+> >>>>
+> >>>> It isn't only exec that can change credentials.  Do we need a lock for
+> >>>> changing credentials?
+> >> [...]
+> >>>> If we need a lock around credential change let's design and build that.
+> >>>> Having a mismatch between what a lock is designed to do, and what
+> >>>> people use it for can only result in other bugs as people get confused.
+> >>>
+> >>> Hmm... what benefits do we get from making it a separate lock? I guess
+> >>> it would allow us to make it a per-task lock instead of a
+> >>> signal_struct-wide one? That might be helpful...
+> >>
+> >> But actually, isn't the core purpose of the cred_guard_mutex to guard
+> >> against concurrent credential changes anyway? That's what almost
+> >> everyone uses it for, and it's in the name...
+> >>
 > >
-> > On Tue, Mar 10, 2020 at 10:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Tue, Mar 10, 2020 at 08:49:49PM +0100, Miklos Szeredi wrote:
-> > > > On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > >
-> > > > > Introduce two new fuse commands to setup/remove memory mappings. This
-> > > > > will be used to setup/tear down file mapping in dax window.
-> > > > >
-> > > > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > > > > Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
-> > > > > ---
-> > > > >  include/uapi/linux/fuse.h | 37 +++++++++++++++++++++++++++++++++++++
-> > > > >  1 file changed, 37 insertions(+)
-> > > > >
-> > > > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> > > > > index 5b85819e045f..62633555d547 100644
-> > > > > --- a/include/uapi/linux/fuse.h
-> > > > > +++ b/include/uapi/linux/fuse.h
-> > > > > @@ -894,4 +894,41 @@ struct fuse_copy_file_range_in {
-> > > > >         uint64_t        flags;
-> > > > >  };
-> > > > >
-> > > > > +#define FUSE_SETUPMAPPING_ENTRIES 8
-> > > > > +#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
-> > > > > +struct fuse_setupmapping_in {
-> > > > > +       /* An already open handle */
-> > > > > +       uint64_t        fh;
-> > > > > +       /* Offset into the file to start the mapping */
-> > > > > +       uint64_t        foffset;
-> > > > > +       /* Length of mapping required */
-> > > > > +       uint64_t        len;
-> > > > > +       /* Flags, FUSE_SETUPMAPPING_FLAG_* */
-> > > > > +       uint64_t        flags;
-> > > > > +       /* Offset in Memory Window */
-> > > > > +       uint64_t        moffset;
-> > > > > +};
-> > > > > +
-> > > > > +struct fuse_setupmapping_out {
-> > > > > +       /* Offsets into the cache of mappings */
-> > > > > +       uint64_t        coffset[FUSE_SETUPMAPPING_ENTRIES];
-> > > > > +        /* Lengths of each mapping */
-> > > > > +        uint64_t       len[FUSE_SETUPMAPPING_ENTRIES];
-> > > > > +};
-> > > >
-> > > > fuse_setupmapping_out together with FUSE_SETUPMAPPING_ENTRIES seem to be unused.
-> > >
-> > > This looks like leftover from the old code. I will get rid of it. Thanks.
-> > >
+> > The main reason d'etre of exec_update_mutex is to get a consitent
+> > view of task->mm and task credentials.
+> > > The reason why you want the cred_guard_mutex, is that some action
+> > is changing the resulting credentials that the execve is about
+> > to install, and that is the data flow in the opposite direction.
 > >
-> > Hmm. I wonder if we should keep some out args for future extensions.
-> > Maybe return the mapped size even though it is all or nothing at this
-> > point?
-> >
-> > I have interest in a similar FUSE mapping functionality that was prototyped
-> > by Miklos and published here:
-> > https://lore.kernel.org/linux-fsdevel/CAJfpegtjEoE7H8tayLaQHG9fRSBiVuaspnmPr2oQiOZXVB1+7g@mail.gmail.com/
-> >
-> > In this prototype, a FUSE_MAP command is used by the server to map a
-> > range of file to the kernel for io. The command in args are quite similar to
-> > those in fuse_setupmapping_in, but since the server is on the same host,
-> > the mapping response is {mapfd, offset, size}.
-> 
-> Right.  So the difference is in which entity allocates the mapping.
-> IOW whether the {fd, offset, size} is input or output in the protocol.
-> 
-> I don't remember the reasons for going with the mapping being
-> allocated by the client, not the other way round.   Vivek?
+>
+> So in other words, you need the exec_update_mutex when you
+> access another thread's credentials and possibly the mmap at the
+> same time.
 
-I think one of the main reasons is memory reclaim. Once all ranges in 
-a cache range are allocated, we need to free a memory range which can be
-reused. And client has all the logic to free up that range so that it can
-be remapped and reused for a different file/offset. Server will not know
-any of this. So I will think that for virtiofs, server might not be
-able to decide where to map a section of file and it has to be told
-explicitly by the client.
+Or the file descriptor table, or register state, ...
 
-> 
-> If the allocation were to be by the server, we could share the request
-> type and possibly some code between the two, although the I/O
-> mechanism would still be different.
-> 
+> You need no mutex at all when you are just accessing or
+> even changing the credentials of the current thread.  (If another
+> thread is doing execve, your task will be killed, and wether
+> or not the credentials were changed does not matter any more)
 
-So input parameters of both FUSE_SETUPMAPPING and FUSE_MAP seem
-similar (except the moffset field).  Given output of FUSE_MAP reqeust
-is very different, I would think it will be easier to have it as a
-separate command.
-
-Or can it be some sort of optional output args which can differentiate
-between two types of requests. 
-
-/me personally finds it simpler to have separate command instead of
-overloading FUSE_SETUPMAPPING. But its your call. :-) 
-
-Vivek
-
+Only if the only access checks you care about are those related to mm access.
