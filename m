@@ -2,135 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F31181F4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 18:24:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D40B7181F5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 18:26:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730385AbgCKRYl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 13:24:41 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:44082 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730195AbgCKRYk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:24:40 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TsK.c7b_1583947470;
-Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TsK.c7b_1583947470)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 12 Mar 2020 01:24:36 +0800
-Date:   Thu, 12 Mar 2020 01:24:30 +0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 20/20] fuse,virtiofs: Add logic to free up a memory range
-Message-ID: <20200311172429.wmiflrlube3k2rkw@rsjd01523.et2sqa>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-21-vgoyal@redhat.com>
- <20200311051641.l6gonmmyb4o5rcrb@rsjd01523.et2sqa>
- <20200311125923.GA83257@redhat.com>
+        id S1730388AbgCKRZ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 13:25:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:52444 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730363AbgCKRZ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 13:25:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64C8A1FB;
+        Wed, 11 Mar 2020 10:25:58 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB7193F6CF;
+        Wed, 11 Mar 2020 10:25:57 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 17:25:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
+Message-ID: <20200311172556.GJ5411@sirena.org.uk>
+References: <20200227174417.23722-1-broonie@kernel.org>
+ <20200306102729.GC2503422@arrakis.emea.arm.com>
+ <20200309210505.GM4101@sirena.org.uk>
+ <20200310124226.GC4106@sirena.org.uk>
+ <20200311162858.GK3216816@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Xssso5lpTBgMxDfe"
 Content-Disposition: inline
-In-Reply-To: <20200311125923.GA83257@redhat.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20200311162858.GK3216816@arrakis.emea.arm.com>
+X-Cookie: I'm a Lisp variable -- bind me!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 08:59:23AM -0400, Vivek Goyal wrote:
-> On Wed, Mar 11, 2020 at 01:16:42PM +0800, Liu Bo wrote:
-> 
-> [..]
-> > > @@ -719,6 +723,7 @@ void fuse_conn_put(struct fuse_conn *fc)
-> > >  	if (refcount_dec_and_test(&fc->count)) {
-> > >  		struct fuse_iqueue *fiq = &fc->iq;
-> > >  
-> > > +		flush_delayed_work(&fc->dax_free_work);
-> > 
-> > Today while debugging another case, I realized that flushing work here
-> > at the very last fuse_conn_put() is a bit too late, here's my analysis,
-> > 
-> >          umount                                                   kthread
-> > 
-> > deactivate_locked_super
-> >   ->virtio_kill_sb                                            try_to_free_dmap_chunks
-> >     ->generic_shutdown_super                                    ->igrab()
-> >                                                                 ...
-> >      ->evict_inodes()  -> check all inodes' count
-> >      ->fuse_conn_put                                            ->iput
-> >  ->virtio_fs_free_devs
-> >    ->fuse_dev_free
-> >      ->fuse_conn_put // vq1
-> >    ->fuse_dev_free
-> >      ->fuse_conn_put // vq2
-> >        ->flush_delayed_work
-> > 
-> > The above can end up with a warning message reported by evict_inodes()
-> > about stable inodes.
-> 
-> Hi Liu Bo,
-> 
-> Which warning is that? Can you point me to it in code.
->
 
-Hmm, it was actually in generic_shutdow_super,
----
-              printk("VFS: Busy inodes after unmount of %s. "
-                           "Self-destruct in 5 seconds.  Have a nice day...\n",
----
+--Xssso5lpTBgMxDfe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > So I think it's necessary to put either
-> > cancel_delayed_work_sync() or flush_delayed_work() before going to
-> > generic_shutdown_super().
-> 
-> In general I agree that shutting down memory range freeing worker
-> earling in unmount/shutdown sequence makes sense. It does not seem
-> to help to let it run while filesystem is going away. How about following
-> patch.
-> 
-> ---
->  fs/fuse/inode.c     |    1 -
->  fs/fuse/virtio_fs.c |    5 +++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> Index: redhat-linux/fs/fuse/virtio_fs.c
-> ===================================================================
-> --- redhat-linux.orig/fs/fuse/virtio_fs.c	2020-03-10 14:11:10.970284651 -0400
-> +++ redhat-linux/fs/fuse/virtio_fs.c	2020-03-11 08:27:08.103330039 -0400
-> @@ -1295,6 +1295,11 @@ static void virtio_kill_sb(struct super_
->  	vfs = fc->iq.priv;
->  	fsvq = &vfs->vqs[VQ_HIPRIO];
->  
-> +	/* Stop dax worker. Soon evict_inodes() will be called which will
-> +	 * free all memory ranges belonging to all inodes.
-> +	 */
-> +	flush_delayed_work(&fc->dax_free_work);
-> +
->  	/* Stop forget queue. Soon destroy will be sent */
->  	spin_lock(&fsvq->lock);
->  	fsvq->connected = false;
-> Index: redhat-linux/fs/fuse/inode.c
-> ===================================================================
-> --- redhat-linux.orig/fs/fuse/inode.c	2020-03-10 09:13:35.132565666 -0400
-> +++ redhat-linux/fs/fuse/inode.c	2020-03-11 08:22:02.685330039 -0400
-> @@ -723,7 +723,6 @@ void fuse_conn_put(struct fuse_conn *fc)
->  	if (refcount_dec_and_test(&fc->count)) {
->  		struct fuse_iqueue *fiq = &fc->iq;
->  
-> -		flush_delayed_work(&fc->dax_free_work);
->  		if (fc->dax_dev)
->  			fuse_free_dax_mem_ranges(&fc->free_ranges);
->  		if (fiq->ops->release)
+On Wed, Mar 11, 2020 at 04:28:58PM +0000, Catalin Marinas wrote:
+> On Tue, Mar 10, 2020 at 12:42:26PM +0000, Mark Brown wrote:
 
-Looks good, it should be safe now, but I feel like
-cancel_delayed_work_sync() would be a good alternative for "stop dax
-worker".
+> > Sorry, I realized thanks to Amit's off-list prompting that I was testing
+> > that I was verifying with the wrong kernel binary here (user error since
+> > it took me a while to sort out uprobes) so this isn't quite right - you
+> > can probe the landing pads with or without this series.
 
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+> Can we not change aarch64_insn_is_nop() to actually return true only for
+> NOP and ignore everything else in the hint space? We tend to re-use the
+> hint instructions for new things in the architecture, so I'd rather
+> white-list what we know we can safely probe than black-listing only some
+> of the hint instructions.
 
-Fine with either folding directly or a new patch, thanks for fixing it.
+That's literally the patch I am sitting on which made the difference
+with the testing on the wrong binary.
 
-thanks,
--liubo
+> I haven't assessed the effort of doing the above (probably not a lot)
+> but as a short-term workaround we could add the BTI and PAC hint
+> instructions to the aarch64_insn_is_nop() (though my preferred option is
+> the white-list one).
+
+The only thing I've seen in testing with just NOPs whitelisted is an
+inability to probe the PAC instructions which isn't the best user
+experience, especially since the effect is that the probes get silently
+ignored.  This isn't extensive userspace testing though.  Adding
+whitelisting of the BTI and PAC hints would definitely be a safer as a
+first step though.  I can post either version?
+
+--Xssso5lpTBgMxDfe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5pHyMACgkQJNaLcl1U
+h9DzqAf+N5eQpuCTzUhAIY7PldVhZpWztsdMphseLhvdpMuxuYytqZg+qcir93sK
+xhkpSByIe6/jwCgyGKMTcBSb4B3d0P+0Ag1Xt0MHNvMNmGYqgHbsdAlVcQVY/Aog
+cDRqEVNOu1JUpxOJzB7fU8alfxrcw1lv30oJ/35I0tb6KYPOYm5ZjiLy9BA8bfhA
+gaCPy6o6J2jAa7Ps0RGWz5hHAWcs66gVPb83kcKf233tIFuUdC3QQm249riue23f
+mQnmjz5T7fu8WKI4vC9YwX91jUtHvOr/cJrw3B6UMJlCCzQS+Kl4OtwNm+gK6v55
+Q0temUNAKiyce6V2f8Akx5iUtQ3hjQ==
+=WXTz
+-----END PGP SIGNATURE-----
+
+--Xssso5lpTBgMxDfe--
