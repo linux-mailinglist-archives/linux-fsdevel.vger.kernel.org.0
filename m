@@ -2,116 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7619B182037
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 19:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C130182034
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 19:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbgCKSAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 14:00:12 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44687 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730663AbgCKSAK (ORCPT
+        id S1730658AbgCKSAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 14:00:07 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42252 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730628AbgCKSAH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:00:10 -0400
-Received: by mail-lf1-f67.google.com with SMTP id b186so2410172lfg.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 11:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
-        b=ckkZBdQmXywHGIbczwxKoXJtM5bn1Q4zF8980dmDzUAerY42Vnt79h0/hrgko+maFY
-         g6W5qtOcDU0FR7TReGj9YV2UAWuNcF/lAEUT03GfvSsuEW22s7MzLhczmTz71ew7VoeG
-         9tipLpaaHNIEBXH+b/EPSFlrBcI9QWo4iyKEg=
+        Wed, 11 Mar 2020 14:00:07 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t3so1440204plz.9;
+        Wed, 11 Mar 2020 11:00:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dpqDD1Wo+HKU40oDoKA/BJI8LsaHpPP8z3qrK9mKasM=;
-        b=rxfk9oe5G6gYgNvFj1Enig/PmX2YbJkzrKwKMmy3aoYX0SssfXSWFCdPFTEKaqmXrv
-         OjFCoshll2qaiRAdRaGI4IBdcpwsqD0nrlFrW3I3SEBQJ4zqVhT8LtKUemCbyf1ESveW
-         nt8oA+Y1ajU9HR85NNN7znRLmNIqL3ozKmnYqulBDI/yDa0jbV5PxW/2po4Z8j6838IP
-         zsR+k+SGIWf0T6wdhp8qC1zW5ViWQvzH8fLEBNah3sTLYy7d8HxPxTeaCyll6LW29jhY
-         NtuD274TFLkR+pRMaQ75bcccKz1d8vbLS86Ax4qqW3PiqHpP+gbqfhuaTYKd3gblQI/l
-         Fsjg==
-X-Gm-Message-State: ANhLgQ3QebjRfScxsTRYavW6hjAW79+W+z55iaUu/MMwHzqfQWgX0IjX
-        8E4o/fWr55xJs1R3EdS4JONR5oPgfLk=
-X-Google-Smtp-Source: ADFU+vsql6gat8Hmi8gW8F3CUXliw14NUIj22VA8BFmZkpg/r4uehrnYwv4xztThvtUTnVItdTO1CQ==
-X-Received: by 2002:ac2:5473:: with SMTP id e19mr2830081lfn.24.1583949608170;
-        Wed, 11 Mar 2020 11:00:08 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id x11sm23774903ljj.47.2020.03.11.11.00.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id o10so3351631ljc.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
-X-Received: by 2002:a2e:5850:: with SMTP id x16mr2622296ljd.209.1583949607115;
- Wed, 11 Mar 2020 11:00:07 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wwhX25/MET8QrcbasZhYLKMqqolygHI/eQ5a9pFMQLM=;
+        b=heAdWIvlhSww5E4qd14FqNHaDeo3dff3WP/swgXv0emHeU63Glftb9GJLUlJWbjyrj
+         GO1j9bI58Hdty5eMm7DNIXpEL1I6qxFdrcJEe4TCg01QP4rN3aNQIegdB+YMcwyF8MNn
+         pF91aKepqzBDRLkObAIeYcYXnvpo1oVgeuBCix1xHiE9uVHievwO9zkAKRJsYdwjQTv9
+         3uLKFP8rshEju1sb3ZlyOrtIMZ7TeZpQcNZFKmnj1457zWSmUbiWPHnlqIItbQuiRP2Q
+         0UjpY27f+rEniK3GH3pcdysEy4kW1bf1cDPAijwSUQ5Wpr+0MHkMXHmBbumCk5dOeezK
+         5N6g==
+X-Gm-Message-State: ANhLgQ0exLRtfBMHUygXqxKh4nNVcfeLMkhCfuUcNrKjwqPBFHDR+/jg
+        JOr+nO5+DClR+Y/Ko14cDNKObev34Ow=
+X-Google-Smtp-Source: ADFU+vsZd2BOR037GX5lKsWCv+MzF0JAEkRbjb+gfTOrY4TuDmVf2XF5QMKJEke+N2/u5EtLwWVXsA==
+X-Received: by 2002:a17:902:bd42:: with SMTP id b2mr4232933plx.34.1583949603971;
+        Wed, 11 Mar 2020 11:00:03 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id o126sm4906100pfb.140.2020.03.11.11.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 11:00:02 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 297A64028E; Wed, 11 Mar 2020 18:00:02 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 18:00:02 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     NeilBrown <neilb@suse.com>, Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] kmod: make request_module() return an error when
+ autoloading is disabled
+Message-ID: <20200311180002.GN11244@42.do-not-panic.com>
+References: <20200310223731.126894-1-ebiggers@kernel.org>
+ <20200311043221.GK11244@42.do-not-panic.com>
+ <20200311052620.GD46757@gmail.com>
+ <20200311063130.GL11244@42.do-not-panic.com>
+ <20200311173545.GA20006@gmail.com>
 MIME-Version: 1.0
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin> <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
-In-Reply-To: <580352.1583825105@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 11 Mar 2020 10:59:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
-Message-ID: <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200311173545.GA20006@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 12:25 AM David Howells <dhowells@redhat.com> wrote:
-?
-> Okay.  So what's the equivalent of AT_SYMLINK_NOFOLLOW in RESOLVE_* flag
-> terms?
+On Wed, Mar 11, 2020 at 10:35:45AM -0700, Eric Biggers wrote:
+> On Wed, Mar 11, 2020 at 06:31:30AM +0000, Luis Chamberlain wrote:
+> > On Tue, Mar 10, 2020 at 10:26:20PM -0700, Eric Biggers wrote:
+> > > On Wed, Mar 11, 2020 at 04:32:21AM +0000, Luis Chamberlain wrote:
+> > > > On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
+> > > > > From: Eric Biggers <ebiggers@google.com>
+> > > > > 
+> > > > > It's long been possible to disable kernel module autoloading completely
+> > > > > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
+> > > > > preferable
+> > > > 
+> > > > preferable but ... not documented. Or was this documented or recommended
+> > > > somewhere?
+> > > > 
+> > > > > to setting it to a nonexistent file since it avoids the
+> > > > > overhead of an attempted execve(), avoids potential deadlocks, and
+> > > > > avoids the call to security_kernel_module_request() and thus on
+> > > > > SELinux-based systems eliminates the need to write SELinux rules to
+> > > > > dontaudit module_request.
+> > > 
+> > > Not that I know of, though I didn't look too hard.  proc(5) mentions
+> > > /proc/sys/kernel/modprobe but doesn't mention the empty string case.
+> > > 
+> > > In any case, it's been supported for a long time, and it's useful for the
+> > > reasons I mentioned.
+> > 
+> > Sure. I think then its important to document it as such then, or perhaps
+> > make a kconfig option which sets this to empty and document it on the
+> > kconfig entry.
+> 
+> I'll send a man-pages patch to document it in proc(5).
+> 
+> Most users, including the one I have in mind, should just be able to run
+> 'echo > /proc/sys/kernel/modprobe' early in the boot process.  So I don't think
+> the need for a kconfig option to control the default value has been clearly
+> demonstrated yet.  You're certainly welcome to send a patch for it if you
+> believe it would be useful, though.
 
-Nothing.
+When doing a rewrite of some of this code I did wonder who would use
+this and clear it out. A kconfig entry would remove any doubt over its
+use and would allow one to skip the userspace / early init requirement
+to empty it out, therefore actually being safer because you are not
+racing against modules being loaded.
 
-openat2() takes two sets of flags. We'll never get rid of
-AT_SYMLINK_NOFOLLOW / O_NOFOLLOW, and we've added RESOLVE_NO_SYMLINKS
-to the new set of flags. It's just a separate namespace.
+Is avoiding the race more suitable for your needs than echo'ing early on boot?
 
-We will _not_ be adding a RESOLVE_XYZ flag for O_NOFOLLOW or
-AT_SYMLINK_NOFOLLOW. At least not visible to user space - because as
-people already figured out, that just causes problems with consistency
-issues.
-
-And yes, the fact that we then have three different user-visible
-namespaces (O_xyz flags for open(), AT_xyz flags for linkat(), and now
-RESOLVE_xyz flags for openat2()) is sad and messy. But it's an
-inherent messiness from just how the world works. We can't get rid of
-it.
-
-If we need linkat2() and friends, so be it. Do we?
-
-Could we have a _fourth_ set of flags that are simply for internal use
-that is a superset of them all? Sure. But no, it's almost certainly
-not worth it. Four is not better than three.
-
-Now, some type-safety in the kernel to make sure that we can't mix
-AT_xyz with O_xyz or RESOLVE_xyz - that might be worth it. Although
-judging by past experience, not enough people run sparse for it to
-really be worth it.
-
-               Linus
-
-PS. Yeah, we also have that LOOKUP_xyz namespace, and the access mode
-namespace, so we already have those internal format versions too.
+  Luis
