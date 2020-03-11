@@ -2,152 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE07180ED3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 05:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A69F8180EF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 05:32:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbgCKEDz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 00:03:55 -0400
-Received: from mail-eopbgr770072.outbound.protection.outlook.com ([40.107.77.72]:35150
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725379AbgCKEDz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 00:03:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a/knOl/+cZEbv2jPXy/ozNPU7/U9u2/+kADOd839FMdTZbt75Dx0YRyo+nK90tJuIGNXMwykPfvA2yiA0KsID9s5oZtozN+NRo5MHzGDQWThs61z9dF9hPm/CVXVvdKj5CjA4Zh7G0JokVpScaTb5FOsNAigzNjXYHCMat15oi337G7m8GqXC9ty4Hem25iyLWxmNYddub/nyBThffntIcxNaK3wXyWSiKFL+qs8An/7MglQeHSkEL5yKXNFeMY2JWAeqMOlsqqCJp2QU9PQTU6woifB/EHFedM0z9Cqqgb/I0yQJUugjDXMGzRU9cd8YvmOlasdEj92oKS9Qr8sWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wnqGGJ/YZIcJnZUnivCOZ7zrQrNsQLPkFMGyTpbbaGo=;
- b=Nn/DXQjhcFkdX8Rq3nHaqR9Lw/qnZvNv+7K9sPmRIGObkjxBvnv+uVaWu6ArELqWxpxnYQw/KH2Xl9jYbBItfzttYTKmJ70AFdb66inD9KiSjJk0zp8X6wX+oXa3rosttlN2W8zNMHVFR/jLWptgFuthG42kCQA6NpM84yd7wrViNjt22RZfUUWe2cQ6w9YUtgmURS5c3+Ohs3zvRdeoSiq1QFafDAKJnh2PhO9YrhpFOSBMF92nOep1RkgUx+w8hLpUi9ilinOo+eRCwzEiNbHAEZc6B5A7gIfxBNEb952EjVaypIv8egsYVbV7FbxYbns5x2z/fxkbZwlOR5Ffmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=windriversystems.onmicrosoft.com;
- s=selector2-windriversystems-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wnqGGJ/YZIcJnZUnivCOZ7zrQrNsQLPkFMGyTpbbaGo=;
- b=oqzQpnQI3LhAzA69iB28hRQoz7zGbsh1TnPC7HL5yD/iUhX9ZkJYVNkUz6wqzoRr/kHVXuanm13PMwcWq06fN7+apZj/BDM/oVm70+B3XRjs199ly3j8OJQ9bUvNSE9S76nsz9QX4ej5ug+f4oBTnpBtFdhX3MEiggcDo5qVWMg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Zhe.He@windriver.com; 
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
- by SN6PR11MB3326.namprd11.prod.outlook.com (2603:10b6:805:bc::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.17; Wed, 11 Mar
- 2020 04:03:52 +0000
-Received: from SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
- ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
- 04:03:52 +0000
-Subject: Re: disk revalidation updates and OOM
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     jack@suse.cz, Jens Axboe <axboe@kernel.dk>,
-        viro@zeniv.linux.org.uk, bvanassche@acm.org, keith.busch@intel.com,
-        tglx@linutronix.de, mwilck@suse.com, yuyufen@huawei.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
- <20200310074018.GB26381@lst.de>
- <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com>
- <20200310162647.GA6361@lst.de>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
-Date:   Wed, 11 Mar 2020 12:03:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-In-Reply-To: <20200310162647.GA6361@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: HK2PR04CA0089.apcprd04.prod.outlook.com
- (2603:1096:202:15::33) To SN6PR11MB3360.namprd11.prod.outlook.com
- (2603:10b6:805:c8::30)
+        id S1726160AbgCKEcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 00:32:25 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:53581 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbgCKEcZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 00:32:25 -0400
+Received: by mail-pj1-f68.google.com with SMTP id l36so306775pjb.3;
+        Tue, 10 Mar 2020 21:32:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y9CqbWhfL4v92L67bT4ytPNxC+GiQd5penxrum1IdpY=;
+        b=N1Fy5y+D5FEggQp2glrbO3Rvu3KhR+BVyRTZAH+CKis/923M0wvRcDrHY47rzK567e
+         GImXA0l0SSKPZCYuiwrjl3EHb+W2EwkBO7YUIPRI/wEqGhBVxgrZKvPGvTXWABTRuXYr
+         af30ap3ZY8lYbU8AG6FAMpIbcBj4+KasRFh8B3wnV/FZD440ODdGPmPQHEYvQ1+SfAsJ
+         DsLZYzVgXQDfWsWIkcVkDeeUtf81NedOLO8hm0hYy4eUZbiOgJQ59Cw3F120fwiZpMcO
+         m9oq4BZau66fGcWBjIE2En/EfFRuv7paKzMKByQS2um2sH/d884WkJfUR0jRQuxbvB/X
+         Y49w==
+X-Gm-Message-State: ANhLgQ0Kt//oPP34Vj4sfqJ+h+o+yokhszqTH9fQmBKpCTQwBXl1fBfS
+        3PrL+g7b8PjwWtxgHEEBmsc=
+X-Google-Smtp-Source: ADFU+vv/Bu1s/jQ9NTGwcpCjIK6EDBpnZRP/AXC+VdHskcPECDxP/kpl/aj6kWv4dY5WgXspkPnFgg==
+X-Received: by 2002:a17:90a:da01:: with SMTP id e1mr1489918pjv.100.1583901143645;
+        Tue, 10 Mar 2020 21:32:23 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id b10sm3845793pjo.32.2020.03.10.21.32.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 21:32:22 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id C909C4028E; Wed, 11 Mar 2020 04:32:21 +0000 (UTC)
+Date:   Wed, 11 Mar 2020 04:32:21 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>, NeilBrown <neilb@suse.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] kmod: make request_module() return an error when
+ autoloading is disabled
+Message-ID: <20200311043221.GK11244@42.do-not-panic.com>
+References: <20200310223731.126894-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [128.224.162.175] (60.247.85.82) by HK2PR04CA0089.apcprd04.prod.outlook.com (2603:1096:202:15::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Wed, 11 Mar 2020 04:03:48 +0000
-X-Originating-IP: [60.247.85.82]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b9d315c3-787b-4613-0f20-08d7c57135d2
-X-MS-TrafficTypeDiagnostic: SN6PR11MB3326:
-X-Microsoft-Antispam-PRVS: <SN6PR11MB33262F37B1467137265B66E28FFC0@SN6PR11MB3326.namprd11.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 0339F89554
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39850400004)(346002)(136003)(199004)(7416002)(5660300002)(478600001)(66946007)(2616005)(66556008)(31696002)(16576012)(316002)(53546011)(6666004)(956004)(66476007)(86362001)(4326008)(16526019)(186003)(6706004)(36756003)(6916009)(52116002)(8936002)(2906002)(31686004)(81166006)(81156014)(8676002)(6486002)(26005)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB3326;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: windriver.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6nhI65631lvmXxV54X7imbeEedGahUGyggZJkItO8E7twz4cMjuXh1GFiDkuLSC6Q1V6m1ih+8jTyRjtgUqUS1HxvTgXdB2uYEuL1VUuwusaq0d/r+K0Q4bYtTiAfI0d0K9z+QfXSJJOAvkFtQCUsItCDyDOh7a7vgmK3tuCvb3ceF5VaMe3LqeKKUaLDMzTrwutzvyrOuuvnOTRXJIvU2ZExUe7xpBWtoGB9z5NVfl9LC5Yu0vbuAm/r5QmtLvMlMg/sEZZPqJJwJMTAYRRfNUImuQ/FnHYRmOYpEzNr6p74wMgC8WnlerCejx663n0CGOYeXsMkCur62incy607yZNhemSP1Qs+i9bCvXtdFbCeknN99i/ViucD1KD1tDh/HhHBu8b6dLbWi/GEZptNFfp4YRk30kzQFo0BYbvpY3j60Zg7bOmBR3BJpVEeqoV8EghzaBXjhqslSbRuiz3qlvwwLAdXz4SFXuvZ35aQUOjwlUFGKodztlPvKxfortLbVQd4pxGpFWg0yEgk/QpiIAsewxx8vPNhEY8IdoivIM=
-X-MS-Exchange-AntiSpam-MessageData: BedbGS+2nS9CO5QJBC7eE+rsTzoovuNbosfvHruMKaYtqRuNtvex4Eg7TZ98mDnwEG+VWnFWmLRv7b+6ufhl4ZKlf8I8porx1mhDwdlphNwK3fYxBy+LJtwg4XiiQh/7VST0eNghLeRdiaDitpst7Q==
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9d315c3-787b-4613-0f20-08d7c57135d2
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 04:03:52.3618
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0NvsCwhHK+tkhvM0pSwpSIkl0TzcWUyIgQzdqImYoFZ/YvAxllf3B98HBXfciHWHhIKhXZZJJz3MKhb7Z/EJvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3326
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200310223731.126894-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> It's long been possible to disable kernel module autoloading completely
+> by setting /proc/sys/kernel/modprobe to the empty string.  This can be
+> preferable
 
+preferable but ... not documented. Or was this documented or recommended
+somewhere?
 
-On 3/11/20 12:26 AM, Christoph Hellwig wrote:
-> On Tue, Mar 10, 2020 at 11:30:27PM +0800, He Zhe wrote:
->>> So this is the exact requirement of commits to be reverted from a bisect
->>> or just a first guess?
->> Many commits failed to build or boot during bisection.
->>
->> At least the following four have to be reverted to make it work.
->>
->> 979c690d block: move clearing bd_invalidated into check_disk_size_change
->> f0b870d block: remove (__)blkdev_reread_part as an exported API
->> 142fe8f block: fix bdev_disk_changed for non-partitioned devices
->> a1548b6 block: move rescan_partitions to fs/block_dev.c
-> Just to make sure we are on the same page:  if you revert all four it
-> works, if you rever all but
->
-> a1548b6 block: move rescan_partitions to fs/block_dev.c
->
-> it doesn't?
+> to setting it to a nonexistent file since it avoids the
+> overhead of an attempted execve(), avoids potential deadlocks, and
+> avoids the call to security_kernel_module_request() and thus on
+> SELinux-based systems eliminates the need to write SELinux rules to
+> dontaudit module_request.
+> 
+> However, when module autoloading is disabled in this way,
+> request_module() returns 0.  This is broken because callers expect 0 to
+> mean that the module was successfully loaded.
 
-After reverting 142fe8f, rescan_partitions would be called in block/ioctl.c
-and cause a build failure. So I need to also revert a1548b6 to provide
-rescan_partitions.
+However this is implicitly not true. For instance, as Neil recently
+chased down -- blacklisting a module today returns 0 as well, and so
+this corner case is implicitly set to return 0.
 
-OR if I manually add the following diff instead of reverting a1548b6, then yes,
-it works too.
+> Apparently this was never noticed because this method of disabling
+> module autoloading isn't used much, and also most callers don't use the
+> return value of request_module() since it's always necessary to check
+> whether the module registered its functionality or not anyway.
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index 8d724d11c8f5..bac562604cd0 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -192,6 +192,7 @@ static int compat_blkpg_ioctl(struct block_device *bdev,
-  * acquire bd_mutex. This API should be used in case that
-  * caller has held bd_mutex already.
-  */
-+extern int rescan_partitions(struct gendisk *disk, struct block_device *bdev, bool invalidate);
- int __blkdev_reread_part(struct block_device *bdev)
- {
-        struct gendisk *disk = bdev->bd_disk;
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index ec10dacd18d0..30da0bc85c31 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1508,7 +1508,7 @@ EXPORT_SYMBOL(bd_set_size);
+Right, the de-facto practice of verification of a module to be loaded is
+for each caller to ensure with whatever heuristic it needs to ensure the
+module is loaded.
 
- static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part);
+> But
+> improperly returning 0 can indeed confuse a few callers, for example
+> get_fs_type() in fs/filesystems.c where it causes a WARNING to be hit:
+> 
+> 	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+> 		fs = __get_fs_type(name, len);
+> 		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
+> 	}
+> 
+> This is easily reproduced with:
+> 
+> 	echo > /proc/sys/kernel/modprobe
+> 	mount -t NONEXISTENT none /
+> 
+> It causes:
+> 
+> 	request_module fs-NONEXISTENT succeeded, but still no fs?
+> 	WARNING: CPU: 1 PID: 1106 at fs/filesystems.c:275 get_fs_type+0xd6/0xf0
+> 	[...]
 
--static int rescan_partitions(struct gendisk *disk, struct block_device *bdev,
-+int rescan_partitions(struct gendisk *disk, struct block_device *bdev,
-                bool invalidate)
- {
-        int ret;
+Thanks for reporting this.
 
+> Arguably this warning is broken and should be removed, since the module
+> could have been unloaded already.
 
-Zhe
+No, the warning is present *because* debuggins issues for when the
+module which did not load is a rootfs is *really* hard to debug. Then,
+if the culprit of the issue is a userspace modprobe bug (it happens)
+this makes debugging *very* difficult as you won't know what failed at
+all, you just get a silent failed boot.
 
+> However, request_module() should also
+> correctly return an error when it fails.  So let's make it return
+> -ENOENT, which matches the error when the modprobe binary doesn't exist.
 
+This is a user experience change though, and I wouldn't have on my radar
+who would use this, and expects the old behaviour. Josh, would you by
+chance?
+
+I'd like this to be more an RFC first so we get vetted parties to
+review. I take it this and Neil's case are cases we should revisit now,
+properly document as we didn't before, ensure we don't break anything,
+and also extend the respective kmod selftests to ensure we don't break
+these corner cases in the future.
+
+> Cc: stable@vger.kernel.org
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jeff Vander Stoep <jeffv@google.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  kernel/kmod.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/kmod.c b/kernel/kmod.c
+> index bc6addd9152b..a2de58de6ab6 100644
+> --- a/kernel/kmod.c
+> +++ b/kernel/kmod.c
+> @@ -120,7 +120,7 @@ static int call_modprobe(char *module_name, int wait)
+>   * invoke it.
+>   *
+>   * If module auto-loading support is disabled then this function
+> - * becomes a no-operation.
+> + * simply returns -ENOENT.
+>   */
+>  int __request_module(bool wait, const char *fmt, ...)
+>  {
+> @@ -137,7 +137,7 @@ int __request_module(bool wait, const char *fmt, ...)
+>  	WARN_ON_ONCE(wait && current_is_async());
+>  
+>  	if (!modprobe_path[0])
+> -		return 0;
+> +		return -ENOENT;
+>  
+>  	va_start(args, fmt);
+>  	ret = vsnprintf(module_name, MODULE_NAME_LEN, fmt, args);
+> -- 
+> 2.25.1.481.gfbce0eb801-goog
+> 
