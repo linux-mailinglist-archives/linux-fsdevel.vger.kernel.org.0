@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E6BD18226F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:33:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D9D1182270
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:33:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbgCKTdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 15:33:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:54420 "EHLO foss.arm.com"
+        id S1731385AbgCKTd0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 15:33:26 -0400
+Received: from foss.arm.com ([217.140.110.172]:54442 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731365AbgCKTdX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:33:23 -0400
+        id S1731376AbgCKTdZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:33:25 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8C7C1FB;
-        Wed, 11 Mar 2020 12:33:22 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 180887FA;
+        Wed, 11 Mar 2020 12:33:25 -0700 (PDT)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 396BF3F534;
-        Wed, 11 Mar 2020 12:33:22 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D6D33F534;
+        Wed, 11 Mar 2020 12:33:24 -0700 (PDT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>
@@ -40,10 +40,11 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Sudakshina Das <sudi.das@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Daniel Kiss <daniel.kiss@arm.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH v9 11/13] arm64: mm: Display guarded pages in ptdump
-Date:   Wed, 11 Mar 2020 19:26:06 +0000
-Message-Id: <20200311192608.40095-12-broonie@kernel.org>
+Subject: [PATCH v9 12/13] mm: smaps: Report arm64 guarded pages in smaps
+Date:   Wed, 11 Mar 2020 19:26:07 +0000
+Message-Id: <20200311192608.40095-13-broonie@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200311192608.40095-1-broonie@kernel.org>
 References: <20200311192608.40095-1-broonie@kernel.org>
@@ -54,33 +55,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-v8.5-BTI introduces the GP field in stage 1 translation tables which
-indicates that blocks and pages with it set are guarded pages for which
-branch target identification checks should be performed. Decode this
-when dumping the page tables to aid debugging.
+From: Daniel Kiss <daniel.kiss@arm.com>
 
+The arm64 Branch Target Identification support is activated by marking
+executable pages as guarded pages.  Report pages mapped this way in
+smaps to aid diagnostics.
+
+Signed-off-by: Daniel Kiss <daniel.kiss@arm.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/arm64/mm/dump.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ Documentation/filesystems/proc.txt | 1 +
+ fs/proc/task_mmu.c                 | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 860c00ec8bd3..78163b7a7dde 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -145,6 +145,11 @@ static const struct prot_bits pte_bits[] = {
- 		.val	= PTE_UXN,
- 		.set	= "UXN",
- 		.clear	= "   ",
-+	}, {
-+		.mask	= PTE_GP,
-+		.val	= PTE_GP,
-+		.set	= "GP",
-+		.clear	= "  ",
- 	}, {
- 		.mask	= PTE_ATTRINDX_MASK,
- 		.val	= PTE_ATTRINDX(MT_DEVICE_nGnRnE),
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 99ca040e3f90..ed5465d0f435 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -519,6 +519,7 @@ manner. The codes are the following:
+     hg  - huge page advise flag
+     nh  - no-huge page advise flag
+     mg  - mergable advise flag
++    bt  - arm64 BTI guarded page
+ 
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 3ba9ae83bff5..1e3409c484d1 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -668,6 +668,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_ARCH_1)]	= "ar",
+ 		[ilog2(VM_WIPEONFORK)]	= "wf",
+ 		[ilog2(VM_DONTDUMP)]	= "dd",
++#ifdef CONFIG_ARM64_BTI
++		[ilog2(VM_ARM64_BTI)]	= "bt",
++#endif
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+ 		[ilog2(VM_SOFTDIRTY)]	= "sd",
+ #endif
 -- 
 2.20.1
 
