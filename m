@@ -2,113 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D379B181B27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:29:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF0FC181B8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 15:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbgCKO3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 10:29:11 -0400
-Received: from foss.arm.com ([217.140.110.172]:50372 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729057AbgCKO3L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 10:29:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CF0F31B;
-        Wed, 11 Mar 2020 07:29:10 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.71])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEA6A3F67D;
-        Wed, 11 Mar 2020 07:29:07 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 14:29:05 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        id S1729927AbgCKOlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 10:41:40 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33305 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729057AbgCKOlk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 10:41:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1583937699;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oi39w6c8WmZF4VD2SAl+7GXpBzzUSxdZMb4is4/iUjc=;
+        b=gDGVqloeKy0uQKg4vzmBANyzcKd2gl+QBhSRa2dtO3ej8UUI9ML5pEvl5XZytR6bjMeeB9
+        oyrUY7e6XvyHDWON1LqpKheKvFibS/G8y6V+nOjm2llZHehHfxxFILoficoqIctwXPQKW5
+        F/+s7PQ4DkGO4HSiMWdBsox21GRRXOE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-369-oaGi-oZRO3uadCugnnOKxA-1; Wed, 11 Mar 2020 10:41:35 -0400
+X-MC-Unique: oaGi-oZRO3uadCugnnOKxA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8B2B31088384;
+        Wed, 11 Mar 2020 14:41:33 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F268960C18;
+        Wed, 11 Mar 2020 14:41:24 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 84EA122021D; Wed, 11 Mar 2020 10:41:24 -0400 (EDT)
+Date:   Wed, 11 Mar 2020 10:41:24 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com, Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH] vfs: keep inodes with page cache off the inode shrinker
- LRU
-Message-ID: <20200311142905.GI3216816@arrakis.emea.arm.com>
-References: <20200212085004.GL25745@shell.armlinux.org.uk>
- <CAK8P3a3pzgVvwyDhHPoiSOqyv+h_ixbsdWMqG3sELenRJqFuew@mail.gmail.com>
- <671b05bc-7237-7422-3ece-f1a4a3652c92@oracle.com>
- <CAK8P3a13jGdjVW1TzvCKjRBg-Yscs_WB2K1kw9AzRfn3G9a=-Q@mail.gmail.com>
- <7c4c1459-60d5-24c8-6eb9-da299ead99ea@oracle.com>
- <20200306203439.peytghdqragjfhdx@kahuna>
- <CAK8P3a0Gyqu7kzO1JF=j9=jJ0T5ut=hbKepvke-2bppuPNKTuQ@mail.gmail.com>
- <20200309155945.GA4124965@arrakis.emea.arm.com>
- <20200309160919.GM25745@shell.armlinux.org.uk>
- <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Subject: Re: [PATCH 12/20] fuse: Introduce setupmapping/removemapping commands
+Message-ID: <20200311144124.GB83257@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-13-vgoyal@redhat.com>
+ <CAJfpeguY8gDYVp_q3-W6JNA24zCry+SfWmEW2zuHLQLhmyUB3Q@mail.gmail.com>
+ <20200310203321.GF38440@redhat.com>
+ <CAOQ4uxh2WdLdbcMp+qvQCX2hiBx+hLO1z5wkZtc-7GCuDdsthw@mail.gmail.com>
+ <CAJfpeguwqEsPLtph73AG7bhm1Dp4ahyJtyW=Ud7L-OFwyEmwWg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2yyJLmkifpSabMwtUiAvumMPwLEzT5RpsBA=LYn=ZXUw@mail.gmail.com>
+In-Reply-To: <CAJfpeguwqEsPLtph73AG7bhm1Dp4ahyJtyW=Ud7L-OFwyEmwWg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 08:46:18PM +0100, Arnd Bergmann wrote:
-> On Mon, Mar 9, 2020 at 5:09 PM Russell King - ARM Linux admin
-> <linux@armlinux.org.uk> wrote:
-> > On Mon, Mar 09, 2020 at 03:59:45PM +0000, Catalin Marinas wrote:
-> > > On Sun, Mar 08, 2020 at 11:58:52AM +0100, Arnd Bergmann wrote:
-> > > > - revisit CONFIG_VMSPLIT_4G_4G for arm32 (and maybe mips32)
-> > > >   to see if it can be done, and what the overhead is. This is probably
-> > > >   more work than the others combined, but also the most promising
-> > > >   as it allows the most user address space and physical ram to be used.
+On Wed, Mar 11, 2020 at 03:19:18PM +0100, Miklos Szeredi wrote:
+> On Wed, Mar 11, 2020 at 8:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Tue, Mar 10, 2020 at 10:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 > > >
-> > > A rough outline of such support (and likely to miss some corner cases):
+> > > On Tue, Mar 10, 2020 at 08:49:49PM +0100, Miklos Szeredi wrote:
+> > > > On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > >
+> > > > > Introduce two new fuse commands to setup/remove memory mappings. This
+> > > > > will be used to setup/tear down file mapping in dax window.
+> > > > >
+> > > > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > > > > Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
+> > > > > ---
+> > > > >  include/uapi/linux/fuse.h | 37 +++++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 37 insertions(+)
+> > > > >
+> > > > > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > > > > index 5b85819e045f..62633555d547 100644
+> > > > > --- a/include/uapi/linux/fuse.h
+> > > > > +++ b/include/uapi/linux/fuse.h
+> > > > > @@ -894,4 +894,41 @@ struct fuse_copy_file_range_in {
+> > > > >         uint64_t        flags;
+> > > > >  };
+> > > > >
+> > > > > +#define FUSE_SETUPMAPPING_ENTRIES 8
+> > > > > +#define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
+> > > > > +struct fuse_setupmapping_in {
+> > > > > +       /* An already open handle */
+> > > > > +       uint64_t        fh;
+> > > > > +       /* Offset into the file to start the mapping */
+> > > > > +       uint64_t        foffset;
+> > > > > +       /* Length of mapping required */
+> > > > > +       uint64_t        len;
+> > > > > +       /* Flags, FUSE_SETUPMAPPING_FLAG_* */
+> > > > > +       uint64_t        flags;
+> > > > > +       /* Offset in Memory Window */
+> > > > > +       uint64_t        moffset;
+> > > > > +};
+> > > > > +
+> > > > > +struct fuse_setupmapping_out {
+> > > > > +       /* Offsets into the cache of mappings */
+> > > > > +       uint64_t        coffset[FUSE_SETUPMAPPING_ENTRIES];
+> > > > > +        /* Lengths of each mapping */
+> > > > > +        uint64_t       len[FUSE_SETUPMAPPING_ENTRIES];
+> > > > > +};
+> > > >
+> > > > fuse_setupmapping_out together with FUSE_SETUPMAPPING_ENTRIES seem to be unused.
 > > >
-> > > 1. Kernel runs with its own ASID and non-global page tables.
+> > > This looks like leftover from the old code. I will get rid of it. Thanks.
 > > >
-> > > 2. Trampoline code on exception entry/exit to handle the TTBR0 switching
-> > >    between user and kernel.
-> > >
-> > > 3. uaccess routines need to be reworked to pin the user pages in memory
-> > >    (get_user_pages()) and access them via the kernel address space.
-> > >
-> > > Point 3 is probably the ugliest and it would introduce a noticeable
-> > > slowdown in certain syscalls.
+> >
+> > Hmm. I wonder if we should keep some out args for future extensions.
+> > Maybe return the mapped size even though it is all or nothing at this
+> > point?
+> >
+> > I have interest in a similar FUSE mapping functionality that was prototyped
+> > by Miklos and published here:
+> > https://lore.kernel.org/linux-fsdevel/CAJfpegtjEoE7H8tayLaQHG9fRSBiVuaspnmPr2oQiOZXVB1+7g@mail.gmail.com/
+> >
+> > In this prototype, a FUSE_MAP command is used by the server to map a
+> > range of file to the kernel for io. The command in args are quite similar to
+> > those in fuse_setupmapping_in, but since the server is on the same host,
+> > the mapping response is {mapfd, offset, size}.
 > 
-> There are probably a number of ways to do the basic design. The idea
-> I had (again, probably missing more corner cases than either of you
-> two that actually understand the details of the mmu):
+> Right.  So the difference is in which entity allocates the mapping.
+> IOW whether the {fd, offset, size} is input or output in the protocol.
 > 
-> - Assuming we have LPAE, run the kernel vmlinux and modules inside
->   the vmalloc space, in the top 256MB or 512MB on TTBR1
-> 
-> - Map all the physical RAM (up to 3.75GB) into a reserved ASID
->   with TTBR0
-> 
-> - Flip TTBR0 on kernel entry/exit, and again during user access.
-> 
-> This is probably more work to implement than your idea, but
-> I would hope this has a lower overhead on most microarchitectures
-> as it doesn't require pinning the pages. Depending on the
-> microarchitecture, I'd hope the overhead would be comparable
-> to that of ARM64_SW_TTBR0_PAN.
+> I don't remember the reasons for going with the mapping being
+> allocated by the client, not the other way round.   Vivek?
 
-This still doesn't solve the copy_{from,to}_user() case where both
-address spaces need to be available during copy. So you either pin the
-user pages in memory and access them via the kernel mapping or you
-temporarily map (kmap?) the destination/source kernel address. The
-overhead I'd expect to be significantly greater than ARM64_SW_TTBR0_PAN
-for the uaccess routines. For user entry/exit, your suggestion is
-probably comparable with SW PAN.
+I think one of the main reasons is memory reclaim. Once all ranges in 
+a cache range are allocated, we need to free a memory range which can be
+reused. And client has all the logic to free up that range so that it can
+be remapped and reused for a different file/offset. Server will not know
+any of this. So I will think that for virtiofs, server might not be
+able to decide where to map a section of file and it has to be told
+explicitly by the client.
 
--- 
-Catalin
+> 
+> If the allocation were to be by the server, we could share the request
+> type and possibly some code between the two, although the I/O
+> mechanism would still be different.
+> 
+
+So input parameters of both FUSE_SETUPMAPPING and FUSE_MAP seem
+similar (except the moffset field).  Given output of FUSE_MAP reqeust
+is very different, I would think it will be easier to have it as a
+separate command.
+
+Or can it be some sort of optional output args which can differentiate
+between two types of requests. 
+
+/me personally finds it simpler to have separate command instead of
+overloading FUSE_SETUPMAPPING. But its your call. :-) 
+
+Vivek
+
