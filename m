@@ -2,87 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B964B182046
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 19:01:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC96182053
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 19:03:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbgCKSBL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 14:01:11 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43387 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730468AbgCKSBK (ORCPT
+        id S1730668AbgCKSDb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 14:03:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37541 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730468AbgCKSDb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 14:01:10 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c144so1753931pfb.10;
-        Wed, 11 Mar 2020 11:01:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4rbFCslqjgH4sXZwXRxajxY2P/fkCA2L0OS7xWGtM24=;
-        b=gEBaAL1S79UPP4QUiKP2Fi8zuRAbPMoOO44U4NArFUQrk9iyjBNphW8J+WOGy5UUz2
-         /zyMIuEPLwLXK82aBe7LVi3564xY/MrR0CKArKWmwlh+ipou1AMILeOYU2Y5GDsnNWh9
-         K5emTXokFSQ+FzIgp9e3N68iiVX50fbpviPtVQ2BkIdeJ2970TbHl/8G3vyte6NE3LYa
-         i1D4U0o6jNZOVI5KKQ4cB3FQ7xgwVIzxkq6Kqey8Rw3ioabICTXSFL/+tnE5LIS9AGHc
-         M7aniFuRKCtDCAvowATGCK8nZgyPXN/90Zko5w71s7x/DL/Bea4eUB/zyhdWGBwQoI/M
-         AV3Q==
-X-Gm-Message-State: ANhLgQ07O9LW/6KbhYJo4Qbrsdnlad5yDUUfqs2MLg1v4jmq0nIoQ2a1
-        GqzSqenoDf4W9S+7xuwlesAuw5ArxUw=
-X-Google-Smtp-Source: ADFU+vv3iN5bf6Nx81FXMawuf3VzC8L33BaYvuVyxtyYoRAzzmsqgFyyXWtfhSheMAx7NV680qGZ1Q==
-X-Received: by 2002:a63:6202:: with SMTP id w2mr3994411pgb.154.1583949669546;
-        Wed, 11 Mar 2020 11:01:09 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id w190sm1323524pfc.219.2020.03.11.11.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 11:01:08 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id D91F14028E; Wed, 11 Mar 2020 18:01:07 +0000 (UTC)
-Date:   Wed, 11 Mar 2020 18:01:07 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
+        Wed, 11 Mar 2020 14:03:31 -0400
+Received: from 2.general.sarnold.us.vpn ([10.172.64.71] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <seth.arnold@canonical.com>)
+        id 1jC5hY-0003jD-1j; Wed, 11 Mar 2020 18:03:28 +0000
+Date:   Wed, 11 Mar 2020 18:03:26 +0000
+From:   Seth Arnold <seth.arnold@canonical.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH] kmod: make request_module() return an error when
- autoloading is disabled
-Message-ID: <20200311180107.GO11244@42.do-not-panic.com>
-References: <20200310223731.126894-1-ebiggers@kernel.org>
- <202003111026.2BBE41C@keescook>
- <20200311174134.GB20006@gmail.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs_parse: Remove pr_notice() about each validation
+Message-ID: <20200311180326.GA2007141@millbarge>
+References: <202003061617.A8835CAAF@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200311174134.GB20006@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <202003061617.A8835CAAF@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 10:41:34AM -0700, Eric Biggers wrote:
-> On Wed, Mar 11, 2020 at 10:28:07AM -0700, Kees Cook wrote:
-> > On Tue, Mar 10, 2020 at 03:37:31PM -0700, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > It's long been possible to disable kernel module autoloading completely
-> > > by setting /proc/sys/kernel/modprobe to the empty string.  This can be
-> > 
-> > Hunh. I've never seen that before. :) I've always used;
-> > 
-> > echo 1 > /proc/sys/kernel/modules_disabled
-> > 
-> > Regardless,
-> > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
+On Fri, Mar 06, 2020 at 04:20:02PM -0800, Kees Cook wrote:
+> This notice fills my boot logs with scary-looking asterisks but doesn't
+> really tell me anything. Let's just remove it; validation errors
+> are already reported separately, so this is just a redundant list of
+> filesystems.
 > 
-> modules_disabled is different because it disables *all* module loading, not just
-> autoloading.
+> $ dmesg | grep VALIDATE
+> [    0.306256] *** VALIDATE tmpfs ***
+> [    0.307422] *** VALIDATE proc ***
+> [    0.308355] *** VALIDATE cgroup ***
+> [    0.308741] *** VALIDATE cgroup2 ***
+> [    0.813256] *** VALIDATE bpf ***
+> [    0.815272] *** VALIDATE ramfs ***
+> [    0.815665] *** VALIDATE hugetlbfs ***
+> [    0.876970] *** VALIDATE nfs ***
+> [    0.877383] *** VALIDATE nfs4 ***
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Clarifying this on your patch would be useful, otherwise its lost
-tribal knowledge.
+Excellent, these messages haven't been useful in helping users diagnose
+problems and they look quite noisy considering how mundane they are.
 
- LUis
+Reviewed-by: Seth Arnold <seth.arnold@canonical.com>
+
+Thanks
+
+> ---
+>  fs/fs_parser.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index 7e6fb43f9541..ab53e42a874a 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -368,8 +368,6 @@ bool fs_validate_description(const char *name,
+>  	const struct fs_parameter_spec *param, *p2;
+>  	bool good = true;
+>  
+> -	pr_notice("*** VALIDATE %s ***\n", name);
+> -
+>  	for (param = desc; param->name; param++) {
+>  		/* Check for duplicate parameter names */
+>  		for (p2 = desc; p2 < param; p2++) {
+> -- 
+> 2.20.1
+> 
+> 
+> -- 
+> Kees Cook
