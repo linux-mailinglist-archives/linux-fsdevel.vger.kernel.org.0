@@ -2,153 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA98182198
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AB581821E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:15:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbgCKTKV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 15:10:21 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35482 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730705AbgCKTKV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:10:21 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u68so1872365pfb.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 12:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KcVIrCgeM2L71oQ0HCuZKZl5I3Zr+0M/E39SQWV0gp4=;
-        b=aAhh+xSkXE2t12sKK6saJVYSmf5MEARRfmtM9BDdPnG9hOhY9hMiwRX70zMMhmadP8
-         AEe0v12Bn33gajUeD1uQ8UKiOyi2zoq7FIlGGcSTWYQXUe84sEe6lGBVcgqvS8yfdCxA
-         BqGVlEbMZdiVCE8GlL7i8viPdEpQyi+6TSziw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KcVIrCgeM2L71oQ0HCuZKZl5I3Zr+0M/E39SQWV0gp4=;
-        b=gVNa/OCe6HbXBTsRAJe96/PVr9X6inxht2BL3T8Ce49k3gbsW9J4gf2O28nVqa9BEz
-         IaeuboY4W+rvAtDiUawSNZqyIrk0dlD4oDfaki6D8Eo42hcEf0nYG0K+b1eIN7xD1Q5n
-         lupMKcB7u83Zb8ilL0/iZqYw+KbVvqu4wtv3i26lC0pAoKGLFVbiRMWf/Wc9EPrRZuHD
-         KbaditGd1WNSWJwPXIo7h2xa0Ut+78UrNCfnUYKi5GUMYLyeeVlnIAKiZSaBhd04ngZp
-         D2EZhhSLwijNJ1bwcRpa10eHfFtvF76bt3BodCaf6pYZUay0ZEzYleeEbaha0rD9FSXg
-         lXsQ==
-X-Gm-Message-State: ANhLgQ3wM1c38Q4oerAgFF/fKxL1WIFF7glBu72E1tkhTAoQwe+ribA1
-        EfMMgmStof6LFSQyisiJMdGCnA==
-X-Google-Smtp-Source: ADFU+vt4NOtfCQB7oRTvrmQkPz4WbsEGCcbOLVTPV1BJcvkD6Dr4oGu+cuFqlafAZoPG2TJB9TQ2XQ==
-X-Received: by 2002:aa7:8687:: with SMTP id d7mr4225994pfo.247.1583953820089;
-        Wed, 11 Mar 2020 12:10:20 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e10sm9854448pfm.121.2020.03.11.12.10.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2020 12:10:19 -0700 (PDT)
-Date:   Wed, 11 Mar 2020 12:10:18 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        id S1731299AbgCKTPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 15:15:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:53884 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731297AbgCKTPW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:15:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E81C21FB;
+        Wed, 11 Mar 2020 12:15:21 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02A0A3F534;
+        Wed, 11 Mar 2020 12:15:21 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 19:15:19 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Richard Henderson <richard.henderson@linaro.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 2/4] proc: Use new infrastructure to fix deadlocks in
- execve
-Message-ID: <202003111208.640025F75@keescook>
-References: <87r1y12yc7.fsf@x220.int.ebiederm.org>
- <87k13t2xpd.fsf@x220.int.ebiederm.org>
- <87d09l2x5n.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <871rq12vxu.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <877dzt1fnf.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <875zfcxlwy.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
+Message-ID: <20200311191519.GK5411@sirena.org.uk>
+References: <20200227174417.23722-1-broonie@kernel.org>
+ <562edd23-9d86-800e-aae3-e54c92601929@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mGCtrYeZ202LI9ZG"
 Content-Disposition: inline
-In-Reply-To: <AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+In-Reply-To: <562edd23-9d86-800e-aae3-e54c92601929@linaro.org>
+X-Cookie: I'm a Lisp variable -- bind me!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 06:45:32PM +0100, Bernd Edlinger wrote:
-> This changes lock_trace to use the new exec_update_mutex
-> instead of cred_guard_mutex.
-> 
-> This fixes possible deadlocks when the trace is accessing
-> /proc/$pid/stack for instance.
-> 
-> This should be safe, as the credentials are only used for reading,
-> and task->mm is updated on execve under the new exec_update_mutex.
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-I have the same question here as in 3/4. I should probably rescind my
-Reviewed-by until I'm convinced about the security-safety of this -- why
-is this not a race against cred changes?
+--mGCtrYeZ202LI9ZG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--Kees
+On Thu, Feb 27, 2020 at 05:35:39PM -0800, Richard Henderson wrote:
+> On 2/27/20 9:44 AM, Mark Brown wrote:
+> >  * Binutils trunk supports the new ELF note, but this wasn't in a release
+> >    the last time I posted this series.  (The situation _might_ have changed
+> >    in the meantime...)
 
-> ---
->  fs/proc/base.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index ebea950..4fdfe4f 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -403,11 +403,11 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
->  
->  static int lock_trace(struct task_struct *task)
->  {
-> -	int err = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> +	int err = mutex_lock_killable(&task->signal->exec_update_mutex);
->  	if (err)
->  		return err;
->  	if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_FSCREDS)) {
-> -		mutex_unlock(&task->signal->cred_guard_mutex);
-> +		mutex_unlock(&task->signal->exec_update_mutex);
->  		return -EPERM;
->  	}
->  	return 0;
-> @@ -415,7 +415,7 @@ static int lock_trace(struct task_struct *task)
->  
->  static void unlock_trace(struct task_struct *task)
->  {
-> -	mutex_unlock(&task->signal->cred_guard_mutex);
-> +	mutex_unlock(&task->signal->exec_update_mutex);
->  }
->  
->  #ifdef CONFIG_STACKTRACE
-> -- 
-> 1.9.1
+> I believe this support is in binutils 2.32.
 
--- 
-Kees Cook
+It looks like it's actually 2.33 but either way it's in a release,
+thanks for prompting me to check.  I've updated this for v9.
+
+--mGCtrYeZ202LI9ZG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5pOMYACgkQJNaLcl1U
+h9AOkgf/SY/gSI7QW/Lbe29z6/u9w1lrepP1itRV8ICgiWASwxjzBxEUDfHMgTsV
+Ng7Lx+w79lkeoWKj1id3jmu9SXG8pAmKiBpnc/iGNpkUs1evKFp2XyaqMLl5w1mO
+DaNzX4HwWOKK6mjLXS1ferTsYgP0h0SnrJpODS/3HbvD6Txoi8b/m+XvAqiKrJi9
+UiPK06ESXjNibgAx2JUDWtuKumjSFWEEGXDx2q6lCI06ZEvBIdkSK5aB0yJwYJqc
+k60lhGcyCoMK6T9zNOCutbhZbQpGMlr+GInkEjkuuf/xo6SLfmuZx5hiFJHAumim
+NrgBSedG1UXpaC5rINKAgEc2IacPkQ==
+=4P3c
+-----END PGP SIGNATURE-----
+
+--mGCtrYeZ202LI9ZG--
