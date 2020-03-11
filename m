@@ -2,176 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 343191822CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36BF418234B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 21:30:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387411AbgCKTvR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 15:51:17 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:48866 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731030AbgCKTvQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:51:16 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jC7Nn-0003gw-M1; Wed, 11 Mar 2020 13:51:11 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jC7Nm-0007Ul-Q4; Wed, 11 Mar 2020 13:51:11 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        id S1729067AbgCKUad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 16:30:33 -0400
+Received: from mail-eopbgr70113.outbound.protection.outlook.com ([40.107.7.113]:32739
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725834AbgCKUad (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 16:30:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NcDHzljmYiuqp8O7LBA+zCo+oUFYbd3J1K4Mvzj6yojfPMwsw87TZ9LagYXYG2lfkyokMzXXkodYsQ5suPR955waN89RMfRKvNj4e9NtE978xntCmTRvS5yyIvWg6o1yBkzZXlxswL4PZKyRag1MQ6qNcrZkrTFQEnzRfxgU+vC78tQojBVEMbOgMJ1A7Kb25lBxJtrcSbttjsbIgmt93PcV7GPZ/+yn/D/8+6CJGn9nKnFnLGwzCtZVSroVEFZLzCh3lojK0LOZOMeMZrDduBHYIt4WTgDjnePiqoCJVqsCY9hfAW+jg1K1R/mEKuf46YAinb/RrSmsCML7YR++VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b0yl7zRlyMlmgoGfqsSMtYXEC9jwdZkegJeEM5qfq9c=;
+ b=MeQmh9n0FzoGvKIJA3OOqEeTbP4ba6Y0sD9LplxFPVq7d4m2gljoQ7kj5ZKQJjHvIYuu6g+JP30IlDJ/U4quWWAfaNS0Emy+j1bDJWPEBEYElTB7hHXVSWNuW9CxI+lu5fxRXTtwdPnYm2Kvs+pnTSABXNm+ml0Qg6L9AHDYI33bOpboxS8AiG8aL599fjmxbKc1GRlYhYGBlV62vaIvcHuv920xk/3IjdkEWFpcGP/EGNVRJie/cXzfyCNfRq6uSSZmA/agimg7ybXK7EjklsMElaDkvlozZhMoOtySwf3Vad1fTeKfgFpERDqge+Cxixhs43FTpQWXbVs/P7SLHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b0yl7zRlyMlmgoGfqsSMtYXEC9jwdZkegJeEM5qfq9c=;
+ b=cX1tvW0W02nchJuhnLOvqVEIxmHESxUFOc5V3Lj8fzjHjsT0I4SvKU8h96Xvwgu8YSlgpz2UkznxXRVmPfhHh37ikmRMy85xA9YSRuSEkXYmJ9sp0Dt7BXW1VY64pKB4v0ckZx+EzR/aPY1pet6MesIV4NDyLqsJYPfdou8j4ck=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com (52.135.128.26) by
+ DB7PR08MB3321.eurprd08.prod.outlook.com (52.134.111.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Wed, 11 Mar 2020 20:30:29 +0000
+Received: from DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::5cbb:db23:aa64:5a91]) by DB7PR08MB3276.eurprd08.prod.outlook.com
+ ([fe80::5cbb:db23:aa64:5a91%3]) with mapi id 15.20.2793.018; Wed, 11 Mar 2020
+ 20:30:29 +0000
+Subject: Re: [PATCH RFC 0/5] fs, ext4: Physical blocks placement hint for
+ fallocate(0): fallocate2(). TP defrag.
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm\@kvack.org" <linux-mm@kvack.org>,
-        "stable\@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api\@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <87r1y12yc7.fsf@x220.int.ebiederm.org>
-        <87k13t2xpd.fsf@x220.int.ebiederm.org>
-        <87d09l2x5n.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <871rq12vxu.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <877dzt1fnf.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <875zfcxlwy.fsf@x220.int.ebiederm.org>
-        <AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-        <202003111203.738487D@keescook>
-Date:   Wed, 11 Mar 2020 14:48:50 -0500
-In-Reply-To: <202003111203.738487D@keescook> (Kees Cook's message of "Wed, 11
-        Mar 2020 12:08:08 -0700")
-Message-ID: <87pndin04d.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mike Snitzer <snitzer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Eric Biggers <ebiggers@google.com>, riteshh@linux.ibm.com,
+        krisman@collabora.com, surajjs@amazon.com,
+        Dmitry Monakhov <dmonakhov@gmail.com>,
+        mbobrowski@mbobrowski.org, Eric Whitney <enwlinux@gmail.com>,
+        sblbir@amazon.com, Khazhismel Kumykov <khazhy@google.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <158272427715.281342.10873281294835953645.stgit@localhost.localdomain>
+ <20200302165637.GA6826@mit.edu>
+ <2b2bb85f-8062-648a-1b6e-7d655bf43c96@virtuozzo.com>
+ <C4175F35-E9D4-4B79-B1A0-047A51DE3287@dilger.ca>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <46c1ed68-ba2f-5738-1257-8fd1b6b87023@virtuozzo.com>
+Date:   Wed, 11 Mar 2020 23:29:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+In-Reply-To: <C4175F35-E9D4-4B79-B1A0-047A51DE3287@dilger.ca>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: HE1P189CA0007.EURP189.PROD.OUTLOOK.COM (2603:10a6:7:53::20)
+ To DB7PR08MB3276.eurprd08.prod.outlook.com (2603:10a6:5:21::26)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jC7Nm-0007Ul-Q4;;;mid=<87pndin04d.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+d5+rrjcsoE4xtiynlnq3fJUCLMY6zpyU=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
-        XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 421 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.4 (0.8%), b_tie_ro: 2.2 (0.5%), parse: 1.74
-        (0.4%), extract_message_metadata: 24 (5.6%), get_uri_detail_list: 2.6
-        (0.6%), tests_pri_-1000: 39 (9.3%), tests_pri_-950: 1.53 (0.4%),
-        tests_pri_-900: 1.26 (0.3%), tests_pri_-90: 34 (8.1%), check_bayes: 33
-        (7.7%), b_tokenize: 14 (3.4%), b_tok_get_all: 9 (2.1%), b_comp_prob:
-        2.8 (0.7%), b_tok_touch_all: 4.1 (1.0%), b_finish: 0.70 (0.2%),
-        tests_pri_0: 288 (68.3%), check_dkim_signature: 0.84 (0.2%),
-        check_dkim_adsp: 2.1 (0.5%), poll_dns_idle: 0.35 (0.1%), tests_pri_10:
-        4.2 (1.0%), tests_pri_500: 19 (4.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 3/4] proc: io_accounting: Use new infrastructure to fix deadlocks in execve
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (176.14.212.145) by HE1P189CA0007.EURP189.PROD.OUTLOOK.COM (2603:10a6:7:53::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.16 via Frontend Transport; Wed, 11 Mar 2020 20:30:26 +0000
+X-Originating-IP: [176.14.212.145]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 1f73dc87-1d5c-4a24-8aae-08d7c5fb0a12
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3321:
+X-Microsoft-Antispam-PRVS: <DB7PR08MB3321F2636224796328F0B471CDFC0@DB7PR08MB3321.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Forefront-PRVS: 0339F89554
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(396003)(39850400004)(346002)(199004)(6916009)(6486002)(6506007)(478600001)(53546011)(36756003)(2906002)(31686004)(81156014)(8676002)(81166006)(8936002)(86362001)(54906003)(316002)(6512007)(52116002)(16526019)(66476007)(2616005)(956004)(186003)(66946007)(66556008)(5660300002)(26005)(4326008)(7416002)(6666004)(31696002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3321;H:DB7PR08MB3276.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: u3/v+7kh7T3makMNH8m+HR/wdVLpPNdvmjNT76doQ52iEZ3IZrBU9Fs66vkPKOVsGdBiXzN1EQ/IPvFtmheOw1rJVHpi8ovTW4j2GMckRdoItuZkLexWEoT2vP6x68ceItoRsN8tl0wPE1cRHdEBTvadJywW/Ru0BRoI1v1dtiqtgTTICnLgtf7Anx1PhiYtvlqWVbj97v0HPGwM7+ATuOuXybmkE/PljNODe/cKaiiDnSD6KzTQNOpD6i1D+qJHa1PQslBQAxlkMCKQ+urOtkMMZFXRCVXTHXmTgeLgddlbhv6Lt1xhtkEmEOz1qxse++GYMehF3xIpyKOF7sYbSe01VbHedgR4XYwmFuLErguOiVCgt9brcKBJKk2QDVebK5tEGr3QQgqm1azQfSqutfcTQeOJeXrRdqs9UcIqAXRZ4u3b24WkzxbpwTdVveod
+X-MS-Exchange-AntiSpam-MessageData: fDeyh5lPegIvSmGjPdzCQPqNMuT72Ws5ZnTOJo1mS/TxT7ciD3oX2bva4zsev6YqYdUdUYhjeh2MVP08GuylhYIP0AYZ/d6Da1KQ9ly2HiPEAue7mE0CSwyiTFfG76WUp+Ez+jyUt3kwI2T0PD5Bcg==
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f73dc87-1d5c-4a24-8aae-08d7c5fb0a12
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 20:30:29.4573
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0FpP9bUNiJHPX/C2ZD4s2I9cUS1yRTuVOZztD2ojnwOkdHXDzxDp6TIabHHyXLJj1j0M469FE4c0CQuVLlz8hA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3321
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> writes:
+On 11.03.2020 22:26, Andreas Dilger wrote:
+> On Mar 3, 2020, at 2:57 AM, Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>
+>> On 02.03.2020 19:56, Theodore Y. Ts'o wrote:
+>>> Kirill,
+>>>
+>>> In a couple of your comments on this patch series, you mentioned
+>>> "defragmentation".  Is that because you're trying to use this as part
+>>> of e4defrag, or at least, using EXT4_IOC_MOVE_EXT?
+>>>
+>>> If that's the case, you should note that input parameter for that
+>>> ioctl is:
+>>>
+>>> struct move_extent {
+>>> 	__u32 reserved;		/* should be zero */
+>>> 	__u32 donor_fd;		/* donor file descriptor */
+>>> 	__u64 orig_start;	/* logical start offset in block for orig */
+>>> 	__u64 donor_start;	/* logical start offset in block for donor */
+>>> 	__u64 len;		/* block length to be moved */
+>>> 	__u64 moved_len;	/* moved block length */
+>>> };
+>>>
+>>> Note that the donor_start is separate from the start of the file that
+>>> is being defragged.  So you could have the userspace application
+>>> fallocate a large chunk of space for that donor file, and then use
+>>> that donor file to defrag multiple files if you want to close pack
+>>> them.
+>>
+>> The practice shows it's not so. Your suggestion was the first thing we tried,
+>> but it works bad and just doubles/triples IO.
+>>
+>> Let we have two files of 512Kb, and they are placed in separate 1Mb clusters:
+>>
+>> [[512Kb file][512Kb free]][[512Kb file][512Kb free]]
+>>
+>> We want to pack both of files in the same 1Mb cluster. Packed together on block
+>> device, they will be in the same server of underlining distributed storage file
+>> system. This gives a big performance improvement, and this is the price I aimed.
+>>
+>> In case of I fallocate a large hunk for both of them, I have to move them
+>> both to this new hunk. So, instead of moving 512Kb of data, we will have to move
+>> 1Mb of data, i.e. double size, which is counterproductive.
+>>
+>> Imaging another situation, when we have
+>> [[1020Kb file]][4Kb free]][[4Kb file][1020Kb free]]
+>>
+>> Here we may just move [4Kb file] into [4Kb free]. But your suggestion again
+>> forces us to move 1Mb instead of 4Kb, which makes IO 256 times worse! This is
+>> terrible! And this is the thing I try prevent with finding a new interface.
+> 
+> One idea I had, which may work for your use case, is to run fallocate() on
+> the *1MB-4KB file* to allocate the last 4KB in that hunk, then use that block
+> as the donor file for the 1MB+4KB file.  The ext4 allocation algorithms should
+> always give you that 4KB chunk if it is free, and that avoids the need to try
+> and force the allocator to select that block through some other method.
 
-> On Tue, Mar 10, 2020 at 06:45:47PM +0100, Bernd Edlinger wrote:
->> This changes do_io_accounting to use the new exec_update_mutex
->> instead of cred_guard_mutex.
->> 
->> This fixes possible deadlocks when the trace is accessing
->> /proc/$pid/io for instance.
->> 
->> This should be safe, as the credentials are only used for reading.
->
-> I'd like to see the rationale described better here for why it should be
-> safe. I'm still not seeing why this is safe here, as we might check
-> ptrace_may_access() with one cred and then iterate io accounting with a
-> different credential...
->
-> What am I missing?
+Do you mean the following:
 
-The rational for non-regression is that exec_update_mutex covers all
-of the same tsk->cred changes as cred_guard_mutex.  Therefore we are not
-any worse off, and we avoid the deadlock.
+1)fallocate() 4K at the end of *1MB-4KB* the first file (==> this increases the file length).
+2)EXT4_IOC_MOVE_EXT *4KB* the second file in that new hunk.
+3)truncate 4KB at the end of the first file.
 
-As for safety.  Jann's argument that the only interesting credential
-change is in exec applies.  All other credential changes that have any
-effect on permission checks make the new cred non-dumpable (excepions
-apply see the code).
+?
 
-So I think this is a non-regressing change.  A safe change.
+If so, this can't be an online defrag, since some process may want to increase *1MB-4KB*
+file in between. This will just bring to data corruption.
+Another problem is that power lose between 1 and 3 will result in that file length remain
+*1MB* instead of *1MB-4KB*.
 
-I don't think either version of this code is fully correct.
-
-Eric
-
->> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
->> ---
->>  fs/proc/base.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 4fdfe4f..529d0c6 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -2770,7 +2770,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
->>  	unsigned long flags;
->>  	int result;
->>  
->> -	result = mutex_lock_killable(&task->signal->cred_guard_mutex);
->> +	result = mutex_lock_killable(&task->signal->exec_update_mutex);
->>  	if (result)
->>  		return result;
->>  
->> @@ -2806,7 +2806,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
->>  	result = 0;
->>  
->>  out_unlock:
->> -	mutex_unlock(&task->signal->cred_guard_mutex);
->> +	mutex_unlock(&task->signal->exec_update_mutex);
->>  	return result;
->>  }
->>  
->> -- 
->> 1.9.1
+So, we still need some kernel support to implement this.
