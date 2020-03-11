@@ -2,83 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F43181EC3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 18:08:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B06181F1A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 18:20:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730436AbgCKRHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 13:07:51 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40348 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730322AbgCKRHu (ORCPT
+        id S1730446AbgCKRU0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 13:20:26 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42791 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730322AbgCKRU0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 13:07:50 -0400
-Received: by mail-oi1-f194.google.com with SMTP id y71so2606843oia.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 10:07:50 -0700 (PDT)
+        Wed, 11 Mar 2020 13:20:26 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t3so1393218plz.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Mar 2020 10:20:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l2lvDdSLPhmcM0nXdmXNuB/sfxCFsfZa1DAwoATiN2U=;
-        b=C9ioYl0fzU/vmkecoyhX5BivhKG5b1jtS5V7vkjWOi0PiELjheJ1R7QdbXo9TuQysN
-         1IY2fq/TBnNmInGLeEDCh9Qg2FQPnwr45qh6swtd5Q15fbPVwPnXkCsXB+xAGAvG4adz
-         4pNukYlTfGqeQfrlNRzbfK46LmVnw+4AdBzAKJ4KQ+UvRNhB5A0lbDMBYMN58JDrQch+
-         oX7mhxiYWNyX5vHzUU02K0pFLjUB+uLzDkt4Ih+CrGHBmXGEGor3jeQlS9bS4aed6zJR
-         BNVlWCs49Q2ZXXJf0Kl9+b5Oc1HBCpMZOUmjYXZdiHusPlLa5qph+Sy0JONGt0kTD9Q4
-         qxBA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=P6EKaX1yk36UPbpCr2MJbOIatu0Z5wCwvN3X/nog/c4=;
+        b=LIlHm+edvk5lAktjIoXzhtiMe7TTT/WwRCOMvZQCRPYaM69mTOO4DszMDJXXb9PdZZ
+         ob6Qobrw3w6Ag6uVvMMeXLqv/UlP2LWjlRzi95wn7vhHMu4GxIGYERXnK+nXSZ+cccTO
+         9igVbvTcDlKDU1TbWaTuP5QwiMLQtZdaWIC78=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l2lvDdSLPhmcM0nXdmXNuB/sfxCFsfZa1DAwoATiN2U=;
-        b=jyaQMnGGMjzJYNFfVDUyqDFaiHVz++7+c4cpNIxNWmO/AUUlF0diX+zZnuQlKZ4SUS
-         sfiyMl2TjtOk3Q7RZvlmlIz/48IPm5/s1R3MuJA3ZGECmBttmMOhMfmCU5vQ48mcuNAJ
-         MykMtR5Sxa5XUzOi9b63I8bBjcLDUH2cAS86NJyarAOgaTEuNYNhMbHhjpo991u5JakE
-         VPBGjEkliJVVxzzPqN8slryrTgMMfW1IfJe6L451L0pNremSumtn5tIHVkvGU2p4Pd0n
-         Vi+iKr3AQet44VIAV2FsFRYOhvD2MJBA/xjWSwXV5248GMt3pgC2ySXcMNhU0HqsDCS+
-         iL5Q==
-X-Gm-Message-State: ANhLgQ3ggq2iyjaCUK8FkJfPs8u7qMBNsE5qZoc9BSvLPOUWb7X+oQFR
-        BbHjf7NTGOcwVwo21V1oBCt5GviwUMl3Lv+340lmGg==
-X-Google-Smtp-Source: ADFU+vtHWaxjCHodf/i8X2TsY67+jZq3h7w3Q9evQy7tS+y4d+px/3vFxbGvBUdESzEm1GeGh5OUonvksn5m8/27xO4=
-X-Received: by 2002:a54:4585:: with SMTP id z5mr2651107oib.149.1583946470021;
- Wed, 11 Mar 2020 10:07:50 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=P6EKaX1yk36UPbpCr2MJbOIatu0Z5wCwvN3X/nog/c4=;
+        b=aooUMEGNc3f1NZmEg6+qqu4V/5yW7XNtDn//+h/BuXy82K9EjFKelvMr5A7gLsNL3u
+         aRlX4kQ7ApnC8lNB+tS9q/7/yAVxp31D71G+56oV5UV6OzWEAwTJYWTZUeUpcyGfKpJT
+         8MHGNR47u9dPaed4zk4h+w1CWLjhHQF8KtYhdCwmmxnQqa2X9M4cF2874gq8PHgK0jp4
+         DetAbA5cTBo58Qwj9YmvrWzlIZUf0e/y3+f4re1V3CaV17XezAKLEv530mD+HcXTxTy5
+         PECI5J1NXUcVK1D0unzcNXYInp0CCBQspFcoQlHxDYekzwyLYF3mmOM4NuA3wbW1zV9D
+         9q7w==
+X-Gm-Message-State: ANhLgQ0o/qaZXB3LacP68jmpt2v5xGAudknCmUFjH5aDU/rrGJRE+7al
+        P8CRPXDTR2Ti+pdBtg/4BYpgDUOkRto=
+X-Google-Smtp-Source: ADFU+vv/0NCgP3hBuxLBflFF34xjIGPeo/MBF1uHeyjSSzOUs4fjmSmfzp3rj/UTad09GD08/7v+/Q==
+X-Received: by 2002:a17:90a:cb90:: with SMTP id a16mr1689261pju.80.1583947224699;
+        Wed, 11 Mar 2020 10:20:24 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id v123sm24901012pfb.85.2020.03.11.10.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2020 10:20:23 -0700 (PDT)
+Date:   Wed, 11 Mar 2020 10:20:22 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs_parse: Remove pr_notice() about each validation
+Message-ID: <202003111015.E263BE9448@keescook>
+References: <202003061617.A8835CAAF@keescook>
 MIME-Version: 1.0
-References: <20200227052442.22524-1-ira.weiny@intel.com> <20200305155144.GA5598@lst.de>
- <20200309170437.GA271052@iweiny-DESK2.sc.intel.com> <20200311033614.GQ1752567@magnolia>
- <20200311063942.GE10776@dread.disaster.area> <20200311064412.GA11819@lst.de>
-In-Reply-To: <20200311064412.GA11819@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 11 Mar 2020 10:07:38 -0700
-Message-ID: <CAPcyv4jk5i0hPpqbZNPhUH8wKPS66pd48xNoPnQpy6vt72+i=w@mail.gmail.com>
-Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations V5
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202003061617.A8835CAAF@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 11:44 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Wed, Mar 11, 2020 at 05:39:42PM +1100, Dave Chinner wrote:
-> > IOWs, the dax_associate_page() related functionality probably needs
-> > to be a filesystem callout - part of the aops vector, I think, so
-> > that device dax can still use it. That way XFS can go it's own way,
-> > while ext4 and device dax can continue to use the existing mechanism
-> > mechanisn that is currently implemented....
->
-> s/XFS/XFS with rmap/, as most XFS file systems currently don't have
-> that enabled we'll also need to keep the legacy path around.
+Hi Andrew,
 
-Agree, it needs to be an opt-in capability as ext4 and xfs w/o rmap
-will stay on the legacy path for the foreseeable future.
+Can you pick this up in -mm?
+
+Thanks!
+
+-Kees
+
+On Fri, Mar 06, 2020 at 04:20:02PM -0800, Kees Cook wrote:
+> This notice fills my boot logs with scary-looking asterisks but doesn't
+> really tell me anything. Let's just remove it; validation errors
+> are already reported separately, so this is just a redundant list of
+> filesystems.
+> 
+> $ dmesg | grep VALIDATE
+> [    0.306256] *** VALIDATE tmpfs ***
+> [    0.307422] *** VALIDATE proc ***
+> [    0.308355] *** VALIDATE cgroup ***
+> [    0.308741] *** VALIDATE cgroup2 ***
+> [    0.813256] *** VALIDATE bpf ***
+> [    0.815272] *** VALIDATE ramfs ***
+> [    0.815665] *** VALIDATE hugetlbfs ***
+> [    0.876970] *** VALIDATE nfs ***
+> [    0.877383] *** VALIDATE nfs4 ***
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  fs/fs_parser.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> index 7e6fb43f9541..ab53e42a874a 100644
+> --- a/fs/fs_parser.c
+> +++ b/fs/fs_parser.c
+> @@ -368,8 +368,6 @@ bool fs_validate_description(const char *name,
+>  	const struct fs_parameter_spec *param, *p2;
+>  	bool good = true;
+>  
+> -	pr_notice("*** VALIDATE %s ***\n", name);
+> -
+>  	for (param = desc; param->name; param++) {
+>  		/* Check for duplicate parameter names */
+>  		for (p2 = desc; p2 < param; p2++) {
+> -- 
+> 2.20.1
+> 
+> 
+> -- 
+> Kees Cook
+
+-- 
+Kees Cook
