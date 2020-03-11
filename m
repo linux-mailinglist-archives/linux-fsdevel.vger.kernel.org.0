@@ -2,125 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1053F1822A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:40:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B6C1822C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Mar 2020 20:48:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731178AbgCKTkC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Mar 2020 15:40:02 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49473 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730913AbgCKTkA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Mar 2020 15:40:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1583955599;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0iJaznCc2W6ynUzCi8XYKyKVbQgxJcuIbZRmVPm98Cs=;
-        b=FDYbUc5Fb0l3MoVWXKjoymfbE5lhKYehKWVVN/q9/W+N0zFtrSX5DheAUDual40LZjFmLv
-        6yz5JAU7oSJBKOyHAuiiTh3FkG6RFPcSCmh/YYNmSwFFrkMJxc+ycVbcONWeATJp9iiVyh
-        vH8vkqouhyqpOf8Futc7QqDfaXASe7E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-286-3ir9tEcdPryhDjRmk-jl7w-1; Wed, 11 Mar 2020 15:39:53 -0400
-X-MC-Unique: 3ir9tEcdPryhDjRmk-jl7w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9D85190D340;
-        Wed, 11 Mar 2020 19:39:51 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0ECDA92D24;
-        Wed, 11 Mar 2020 19:39:44 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9763222021D; Wed, 11 Mar 2020 15:39:43 -0400 (EDT)
-Date:   Wed, 11 Mar 2020 15:39:43 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>, mst@redhat.com
-Subject: Re: [PATCH 00/20] virtiofs: Add DAX support
-Message-ID: <20200311193943.GE83257@redhat.com>
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <CAOQ4uxi_Xrf+iyP6KVugFgLOfzUvscMr0de0KxQo+jHNBCA9oA@mail.gmail.com>
- <20200311184830.GC83257@redhat.com>
- <CAOQ4uxjja3cReO28qOd-YGmhU-_KrLxOCaBeqZYydxPAte9_pg@mail.gmail.com>
+        id S2387407AbgCKTsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Mar 2020 15:48:43 -0400
+Received: from mail-vi1eur05olkn2043.outbound.protection.outlook.com ([40.92.90.43]:50048
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730705AbgCKTsl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 11 Mar 2020 15:48:41 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J8NEwoeAFioSFIOQiQUtA9WAMmB+oVV0s74oA04vTvhMGmvCVjNGg2TpfhLoeDgjs7ckjASkVcM9hhH9WdSWU7YTC4Xlu/2BeXsxhoheLkf0HJXSLKeCHFZobFNFi4PJvSKT/fslywa6CCBEdvMhkL1D69MaHmbkTgFMTK+pLfXD3nPff4TgcOvJSF8tZmDpWJsKiYxGN5ZSHoBCbQSD2FbYQLWwt0QtQV+AKZfrg/EhakXVfSVKEDVUwwn98gPysZTjhGSC7D9BsNifv+AZrIw1kNulhQF/gVRDGYBDIMxRGq7a4K7k0SKL0QR1kBO0Mn+ubGm6oIfEkzGnD+0bLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vsscKs0P5jyU2LHhrYkdbgvnKWhlHbB0QpXnPagrln8=;
+ b=fHjJFugl2p8GOcOb9RAR1h+cSNBRcxLNW+nNA1IYxLJk8BnnqQtwnPG1mOJwrm02FeQokI4kVDnqipNa6HWMruKILTR+M8d6jNG4/o05rj1gy1LG0f04TiO9VdwXMDHKhhUCQX8xzXYEBYWfG69/iOlKmtshcecbE8CmSVtkN9hFlY5NL0d0X8Q8+T9JqsR4NBqL+sS6Ku0eRvHCwiT2PcW6k6zDDZR8Hl2TDKUlj4Wp7UaLklSQ1kkDxNjmKMWs7FObYmN0LYKoX5CyQvoRCgZfxtUwMvgIP8kijwo34ceOmdkRRHe0Dkb8X8imOEdkEwKeV5T2pbvea0AedCpdWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from VI1EUR05FT027.eop-eur05.prod.protection.outlook.com
+ (2a01:111:e400:fc12::36) by
+ VI1EUR05HT105.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc12::392)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Wed, 11 Mar
+ 2020 19:48:33 +0000
+Received: from PR2PR03MB5179.eurprd03.prod.outlook.com (10.233.242.56) by
+ VI1EUR05FT027.mail.protection.outlook.com (10.233.242.209) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13 via Frontend Transport; Wed, 11 Mar 2020 19:48:33 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:FAB945D2B34D4EFAC4DBFD187298691FD6C823159495DCDC001B7FD28278D05A;UpperCasedChecksum:EADB10275C5B21F815CCF6A0C3D4BE24A629B26DE934B31006B168A0BF411FD8;SizeAsReceived:9941;Count:50
+Received: from PR2PR03MB5179.eurprd03.prod.outlook.com
+ ([fe80::5914:cd4e:9863:88c2]) by PR2PR03MB5179.eurprd03.prod.outlook.com
+ ([fe80::5914:cd4e:9863:88c2%5]) with mapi id 15.20.2793.013; Wed, 11 Mar 2020
+ 19:48:33 +0000
+Subject: Re: [PATCH 3/4] proc: io_accounting: Use new infrastructure to fix
+ deadlocks in execve
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <87r1y12yc7.fsf@x220.int.ebiederm.org>
+ <87k13t2xpd.fsf@x220.int.ebiederm.org> <87d09l2x5n.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170F0F9DC18F5EA77C9A857E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rq12vxu.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170DF45E3245F55B95CCD91E4FE0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <877dzt1fnf.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51701C6F60699F99C5C67E0BE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <875zfcxlwy.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003111203.738487D@keescook>
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <PR2PR03MB51793050A9C93CC2EBEF86B3E4FC0@PR2PR03MB5179.eurprd03.prod.outlook.com>
+Date:   Wed, 11 Mar 2020 20:48:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <202003111203.738487D@keescook>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM4PR0701CA0010.eurprd07.prod.outlook.com
+ (2603:10a6:200:42::20) To PR2PR03MB5179.eurprd03.prod.outlook.com
+ (2603:10a6:101:25::12)
+X-Microsoft-Original-Message-ID: <39910082-2854-132b-4f4f-5cb36ae86400@hotmail.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjja3cReO28qOd-YGmhU-_KrLxOCaBeqZYydxPAte9_pg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by AM4PR0701CA0010.eurprd07.prod.outlook.com (2603:10a6:200:42::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.7 via Frontend Transport; Wed, 11 Mar 2020 19:48:31 +0000
+X-Microsoft-Original-Message-ID: <39910082-2854-132b-4f4f-5cb36ae86400@hotmail.de>
+X-TMN:  [63zg36Uak5VhpA77nTTr6TqJcIutlNup]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 50
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: da2c8154-b793-45f2-70c4-08d7c5f52e57
+X-MS-TrafficTypeDiagnostic: VI1EUR05HT105:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zWd+v+xeCZKIQ4mfXXvRjRcB3XdpB7KsBOQzdQsaUZlA7LXjxYAtKegqNSUathgXFsU/VIOCPZruD/ZMMXB2Y9ohb3L1F74+cZQpT3djxwcf9dRK++mYhcUNBjeFfEp0xdjvPlPyooOMP0wpW24e/cC6/v8d0BYLUvBXb00fVKkFtbSIhGNMwP+m6xF9nK9A
+X-MS-Exchange-AntiSpam-MessageData: r7Gso8je51C8bHqcpuokpObQSpFKilSYZNH3jC+bqzrIdb8xdZCDsIvJpC+kq4QGygSbrdtQ7dA6gfXG6CAIvkRY2eU84NDHVCuMbFYtHbP+FU6zI3p55ZS8houha5au9PUobZ5JKsLE8nePXrwSRA==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da2c8154-b793-45f2-70c4-08d7c5f52e57
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2020 19:48:33.6733
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1EUR05HT105
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 09:32:17PM +0200, Amir Goldstein wrote:
-> On Wed, Mar 11, 2020 at 8:48 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Wed, Mar 11, 2020 at 07:22:51AM +0200, Amir Goldstein wrote:
-> > > On Wed, Mar 4, 2020 at 7:01 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > This patch series adds DAX support to virtiofs filesystem. This allows
-> > > > bypassing guest page cache and allows mapping host page cache directly
-> > > > in guest address space.
-> > > >
-> > > > When a page of file is needed, guest sends a request to map that page
-> > > > (in host page cache) in qemu address space. Inside guest this is
-> > > > a physical memory range controlled by virtiofs device. And guest
-> > > > directly maps this physical address range using DAX and hence gets
-> > > > access to file data on host.
-> > > >
-> > > > This can speed up things considerably in many situations. Also this
-> > > > can result in substantial memory savings as file data does not have
-> > > > to be copied in guest and it is directly accessed from host page
-> > > > cache.
-> > > >
-> > > > Most of the changes are limited to fuse/virtiofs. There are couple
-> > > > of changes needed in generic dax infrastructure and couple of changes
-> > > > in virtio to be able to access shared memory region.
-> > > >
-> > > > These patches apply on top of 5.6-rc4 and are also available here.
-> > > >
-> > > > https://github.com/rhvgoyal/linux/commits/vivek-04-march-2020
-> > > >
-> > > > Any review or feedback is welcome.
-> > > >
-> > > [...]
-> > > >  drivers/dax/super.c                |    3 +-
-> > > >  drivers/virtio/virtio_mmio.c       |   32 +
-> > > >  drivers/virtio/virtio_pci_modern.c |  107 +++
-> > > >  fs/dax.c                           |   66 +-
-> > > >  fs/fuse/dir.c                      |    2 +
-> > > >  fs/fuse/file.c                     | 1162 +++++++++++++++++++++++++++-
-> > >
-> > > That's a big addition to already big file.c.
-> > > Maybe split dax specific code to dax.c?
-> > > Can be a post series cleanup too.
-> >
-> > How about fs/fuse/iomap.c instead. This will have all the iomap related logic
-> > as well as all the dax range allocation/free logic which is required
-> > by iomap logic. That moves about 900 lines of code from file.c to iomap.c
-> >
+On 3/11/20 8:08 PM, Kees Cook wrote:
+> On Tue, Mar 10, 2020 at 06:45:47PM +0100, Bernd Edlinger wrote:
+>> This changes do_io_accounting to use the new exec_update_mutex
+>> instead of cred_guard_mutex.
+>>
+>> This fixes possible deadlocks when the trace is accessing
+>> /proc/$pid/io for instance.
+>>
+>> This should be safe, as the credentials are only used for reading.
 > 
-> Fine by me. I didn't take time to study the code in file.c
-> I just noticed is has grown a lot bigger and wasn't sure that
-> it made sense. Up to you. Only if you think the result would be nicer
-> to maintain.
+> I'd like to see the rationale described better here for why it should be
+> safe. I'm still not seeing why this is safe here, as we might check
+> ptrace_may_access() with one cred and then iterate io accounting with a
+> different credential...
+> 
+> What am I missing?
+> 
 
-I am happy to move this code to a separate file. In fact I think we could
-probably break it further into another file say dax-mapping.c or something
-like that where all the memory range allocation/reclaim logic goes and
-iomap logic remains in iomap.c.
+The same here, even if execve is already started, the credentials
+are not actually changed until the execve acquired the exec_update_mutex.
 
-But that's probably a future cleanup if code in this file continues to grow.
+The data flow is from the task->cred => do_io_accounting,
+if the data flow would be from do_io_accounting => task's no new privs
+you would see an entirely different patch.
 
-Vivek
+I am open for suggestions how to improve the description, or even
+add a comment from time to time :)
 
+Thanks
+Bernd.
+
+> -Kees
+> 
+>>
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>> ---
+>>  fs/proc/base.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index 4fdfe4f..529d0c6 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -2770,7 +2770,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
+>>  	unsigned long flags;
+>>  	int result;
+>>  
+>> -	result = mutex_lock_killable(&task->signal->cred_guard_mutex);
+>> +	result = mutex_lock_killable(&task->signal->exec_update_mutex);
+>>  	if (result)
+>>  		return result;
+>>  
+>> @@ -2806,7 +2806,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
+>>  	result = 0;
+>>  
+>>  out_unlock:
+>> -	mutex_unlock(&task->signal->cred_guard_mutex);
+>> +	mutex_unlock(&task->signal->exec_update_mutex);
+>>  	return result;
+>>  }
+>>  
+>> -- 
+>> 1.9.1
+> 
