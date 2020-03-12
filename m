@@ -2,115 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E285182D72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 11:26:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD42182D96
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 11:28:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgCLK0U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 06:26:20 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20758 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726310AbgCLK0U (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:26:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584008779;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mOBS2wli+ub8UNg/a0qe1B6uGroDbB2RmIKqhZCROdo=;
-        b=N16BGhWSowpR9+KhhiEOua05ybl4WeD8bC5LDzPJAM4KRkbz6LGi43srWXJNO7t5GJ4eQw
-        WYf56snqYF8vCMpbVh9sCx6dqStijmMI7sxui0DjkvhKP7b/PLfyvh3LuNPLRJcGjHmtuk
-        hY3mawBc7gof1ONBT/INPt5NIuwfmsY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-118-DhXxdGWqOnSZkj73jKhAyg-1; Thu, 12 Mar 2020 06:26:15 -0400
-X-MC-Unique: DhXxdGWqOnSZkj73jKhAyg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9FBEDDB62;
-        Thu, 12 Mar 2020 10:26:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 508BD10013A1;
-        Thu, 12 Mar 2020 10:26:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1015227.1584007677@warthog.procyon.org.uk>
-References: <1015227.1584007677@warthog.procyon.org.uk> <969260.1584004779@warthog.procyon.org.uk>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     dhowells@redhat.com, mbobrowski@mbobrowski.org,
-        darrick.wong@oracle.com, jack@suse.cz, hch@lst.de,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: btrfs may be broken too - Re: Is ext4_dio_read_iter() broken?
+        id S1726784AbgCLK2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 06:28:24 -0400
+Received: from relay.sw.ru ([185.231.240.75]:40258 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbgCLK2X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Mar 2020 06:28:23 -0400
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1jCL3s-0005To-55; Thu, 12 Mar 2020 13:27:32 +0300
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nmjulm.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170B976E6387FDDAD59A118E4E70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003021531.C77EF10@keescook>
+ <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
+ <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87v9nlii0b.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87a74xi4kz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87r1y8dqqz.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
+ <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
+ <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
+Date:   Thu, 12 Mar 2020 13:27:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1016627.1584008770.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 12 Mar 2020 10:26:10 +0000
-Message-ID: <1016628.1584008770@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+On 09.03.2020 00:38, Eric W. Biederman wrote:
+> 
+> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
+> over the userspace accesses as the arguments from userspace are read.
+> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
+> threads are killed.  The cred_guard_mutex is held over
+> "put_user(0, tsk->clear_child_tid)" in exit_mm().
+> 
+> Any of those can result in deadlock, as the cred_guard_mutex is held
+> over a possible indefinite userspace waits for userspace.
+> 
+> Add exec_update_mutex that is only held over exec updating process
+> with the new contents of exec, so that code that needs not to be
+> confused by exec changing the mm and the cred in ways that can not
+> happen during ordinary execution of a process.
+> 
+> The plan is to switch the users of cred_guard_mutex to
+> exec_udpate_mutex one by one.  This lets us move forward while still
+> being careful and not introducing any regressions.
+> 
+> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  fs/exec.c                    | 9 +++++++++
+>  include/linux/sched/signal.h | 9 ++++++++-
+>  init/init_task.c             | 1 +
+>  kernel/fork.c                | 1 +
+>  4 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index d820a7272a76..ffeebb1f167b 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1014,6 +1014,7 @@ static int exec_mmap(struct mm_struct *mm)
+>  {
+>  	struct task_struct *tsk;
+>  	struct mm_struct *old_mm, *active_mm;
+> +	int ret;
+>  
+>  	/* Notify parent that we're no longer interested in the old VM */
+>  	tsk = current;
+> @@ -1034,6 +1035,11 @@ static int exec_mmap(struct mm_struct *mm)
+>  			return -EINTR;
+>  		}
+>  	}
+> +
+> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+> +	if (ret)
+> +		return ret;
 
-> > Is ext4_dio_read_iter() broken?  It calls:
-> > =
+You missed old_mm->mmap_sem unlock. See here:
 
-> > 	file_accessed(iocb->ki_filp);
-> > =
-
-> > at the end of the function - but surely iocb should be expected to hav=
-e been
-> > freed when iocb->ki_complete() was called?
-> =
-
-> I think it's actually worse than that.  You also can't call
-> inode_unlock_shared(inode) because you no longer own a ref on the inode =
-since
-> ->ki_complete() is expected to call fput() on iocb->ki_filp.
-> =
-
-> Yes, you own a shared lock on it, but unless somewhere along the
-> fput-dput-iput chain the inode lock is taken exclusively, the inode can =
-be
-> freed whilst you're still holding the lock.
-> =
-
-> Oh - and ext4_dax_read_iter() is also similarly broken.
-> =
-
-> And xfs_file_dio_aio_read() appears to be broken as it touches the inode=
- after
-> calling iomap_dio_rw() to unlock it.
-
-Seems btrfs_file_write_iter() is also broken:
-
-	if (iocb->ki_flags & IOCB_DIRECT) {
-		num_written =3D __btrfs_direct_write(iocb, from);
-	} else {
-		num_written =3D btrfs_buffered_write(iocb, from);
-		if (num_written > 0)
-			iocb->ki_pos =3D pos + num_written;
-		if (clean_page)
-			pagecache_isize_extended(inode, oldsize,
-						i_size_read(inode));
-	}
-
-	inode_unlock(inode);
-
-But if __btrfs_direct_write() returned -EIOCBQUEUED then inode may have be=
-en
-deallocated by the point it's calling inode_unlock().  Holding the lock is=
- not
-a preventative measure that I can see.
-
-David
-
+diff --git a/fs/exec.c b/fs/exec.c
+index 47582cd97f86..d557bac3e862 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1063,8 +1063,11 @@ static int exec_mmap(struct mm_struct *mm)
+ 	}
+ 
+ 	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
+-	if (ret)
++	if (ret) {
++		if (old_mm)
++			up_read(&old_mm->mmap_sem);
+ 		return ret;
++	}
+ 
+ 	task_lock(tsk);
+ 	active_mm = tsk->active_mm;
