@@ -2,81 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52287182D09
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 11:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7BC182D50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 11:20:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgCLKIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 06:08:04 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36232 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726044AbgCLKIE (ORCPT
+        id S1726677AbgCLKUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 06:20:12 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44077 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgCLKUL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:08:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584007683;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UREMN3SChoR23ul+gfDOcGQfVoGjOsof5Gn863j6Nd4=;
-        b=MzglNq44XB+zf0N2ytutSrPUdnmFugYfapsjgHVrpIEzAgUZxOJjwLDMUCEbVkwqanL09Y
-        RIZzan8dPHqwMFrHScgLDBqzdtIAcVnzItvqkxjI7vhM0Q37Qrl3XCpeWI7tj9R3bS4FCY
-        cHGQmCJqDq+//hGEDsGZZvsPYGC4Jdo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-242-HwXjt_E_PU-qSYhRePSKpw-1; Thu, 12 Mar 2020 06:08:01 -0400
-X-MC-Unique: HwXjt_E_PU-qSYhRePSKpw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DBA34189D6D3;
-        Thu, 12 Mar 2020 10:07:59 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-182.rdu2.redhat.com [10.10.120.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E57D3277AD;
-        Thu, 12 Mar 2020 10:07:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <969260.1584004779@warthog.procyon.org.uk>
-References: <969260.1584004779@warthog.procyon.org.uk>
-To:     mbobrowski@mbobrowski.org, darrick.wong@oracle.com
-Cc:     dhowells@redhat.com, jack@suse.cz, hch@lst.de,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Thu, 12 Mar 2020 06:20:11 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 37so2840093pgm.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Mar 2020 03:20:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pjZji4vANWBvK/LYuH8B7sdZ9t4UkGDVwURMSZ9njK8=;
+        b=potDI4g+QjXEc9+afuaYX9soMYgDWWQzZz7gVpTfQplIeba8QefsQ40UC+IJO3iIcZ
+         z+WmIMzG+S1bxjkqGXJeHLDOii5RqFc0ly1/YhVcLGWxt/enxgD9pGI7dl3LyFyfcDGX
+         IDey2/sxN5FsQih8BMd2XjMudopxKgnXjjwz9LmU38rMLKpz0P2pUHevAs8h7wsIaWLC
+         YAs6yJS/YBLU3ONShfWTLQORogCpXiKP5gMn7/6GjGsyl36yuV2iWPDSt7cPXbkrEVqs
+         w32iKu3xwArajG36huZnBsT3BOwpFW3GdzQ6ghCU75G7KziLxb3M079Dr94tpuj9Sdei
+         n58Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pjZji4vANWBvK/LYuH8B7sdZ9t4UkGDVwURMSZ9njK8=;
+        b=oZLIdlxLdZgeKviUnOaYCNxK2t/VsgOJhaIOjqr1lJD32DDgn5HZlLC3YSRZFPkWmD
+         Zb9d/OKcYw7F2l+oYyhGrw9HzY8G31y32b8EiT0ThmVQK4xBQKs/nEdpAincDYAe1Xo6
+         Gfo1ObYGm4tOH6qhHMD/+IY+igLJinQ3xNBit7DpgCq6DnDMTLb7dC2V+U7z6T+iWqNz
+         VRn8xxCLqUu53Z4m29szX8THqj5BGNJgP/MJ1HSvrSTKfrA6Ne0e3es/QZOma74uCb8g
+         cLpRZC+dc32ww8tchYDe3IYAcj2snIOen+X4P4QW9fZlzbLFFtp29Iz2nmJGPDxsIvgt
+         R0jw==
+X-Gm-Message-State: ANhLgQ0D+vab0m31RzktStpv4hrXJqF6WTetf+h7BW2k3p2RTOoxZTr+
+        B7D6fNZg7LjrUXULHiYCZu7L
+X-Google-Smtp-Source: ADFU+vudp1XNo6n7FBeUcZB1ofc0XRuAME3/cOyJSh2mzNC1En9Bsndamnl/jT4bdJLL0ij+ESqIwA==
+X-Received: by 2002:a63:4453:: with SMTP id t19mr6701136pgk.381.1584008408207;
+        Thu, 12 Mar 2020 03:20:08 -0700 (PDT)
+Received: from athena.bobrowski.net (49.37.70.115.static.exetel.com.au. [115.70.37.49])
+        by smtp.gmail.com with ESMTPSA id nh4sm8124459pjb.39.2020.03.12.03.20.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 03:20:07 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 21:20:02 +1100
+From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     jack@suse.cz, linux-ext4@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: Is ext4_dio_read_iter() broken? - and xfs_file_dio_aio_read()
+Subject: Re: Is ext4_dio_read_iter() broken?
+Message-ID: <20200312102002.GA6585@athena.bobrowski.net>
+References: <969260.1584004779@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1015226.1584007677.1@warthog.procyon.org.uk>
-Date:   Thu, 12 Mar 2020 10:07:57 +0000
-Message-ID: <1015227.1584007677@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <969260.1584004779@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
-
+On Thu, Mar 12, 2020 at 09:19:39AM +0000, David Howells wrote:
+> Hi Matthew,
+> 
 > Is ext4_dio_read_iter() broken?  It calls:
 > 
 > 	file_accessed(iocb->ki_filp);
 > 
 > at the end of the function - but surely iocb should be expected to have been
 > freed when iocb->ki_complete() was called?
+> 
+> In my cachefiles rewrite, I'm seeing the attached kasan dump.  The offending
+> RIP, ext4_file_read_iter+0x12b is at the above line, where it is trying to
+> read iocb->ki_filp.
+>
+> Here's an excerpt of the relevant bits from my code:
+> 
+> 	static void cachefiles_read_complete(struct kiocb *iocb, long ret, long ret2)
+> 	{
+> 		struct cachefiles_kiocb *ki =
+> 			container_of(iocb, struct cachefiles_kiocb, iocb);
+> 		struct fscache_io_request *req = ki->req;
+> 	...
+> 		fput(ki->iocb.ki_filp);
+> 		kfree(ki);
+> 		fscache_end_io_operation(req->cookie);
+> 	...
+> 	}
 
-I think it's actually worse than that.  You also can't call
-inode_unlock_shared(inode) because you no longer own a ref on the inode since
-->ki_complete() is expected to call fput() on iocb->ki_filp.
+I'm not exactly sure what you're rewriting, although from this excerpt
+the way that this is implemented would sure cause the UAF in
+ext4_dio_read_iter().
 
-Yes, you own a shared lock on it, but unless somewhere along the
-fput-dput-iput chain the inode lock is taken exclusively, the inode can be
-freed whilst you're still holding the lock.
+I don't forsee any issues with calling file_accessed(iocb->ki_filp);
+prior to calling into the iomap infrastructure, unless I'm totally
+missing something obvious...
 
-Oh - and ext4_dax_read_iter() is also similarly broken.
-
-And xfs_file_dio_aio_read() appears to be broken as it touches the inode after
-calling iomap_dio_rw() to unlock it.
-
-David
-
+/M
