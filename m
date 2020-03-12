@@ -2,153 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A292183B4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E413183B9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:45:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbgCLV1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 17:27:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42433 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbgCLV1x (ORCPT
+        id S1726554AbgCLVps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 17:45:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35420 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbgCLVps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:27:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x2so3532102pfn.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Mar 2020 14:27:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=PJoLagdQ+UzLDMrA130yBvJhU7geprBWK0KSlI3JMAs=;
-        b=zlpK91xLR/RBHBb2FyrRyUW7r8w5Q4MqIHCDL+MQkQaM74qbGdjQ1bLv5nSw6o1MYM
-         ylxA98+GGZ8OsD5mrROge3E4p1YMINKAw9UB0hljVrtLAOC2ywjDhzYFIK3A+wlJOXnH
-         glukXKWV6C5GwhLZBuSpimbjjJon7OxaIOIIjtE6ufAc7CbiqbCVVoWt1lkE47XhmYKJ
-         Dfzt6C0kX4nVka+qohqHE06h8qRWWpj2t30C3OUs/rIKoWwkCtU2FHtdj5aCGWsdBIiR
-         Gz/ubCQk/nijo2AtDRbWZ7CWq88qSrZCH6YjQBQly3IODtj9RHUIY4HQxLlPRPNMg4w6
-         usBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=PJoLagdQ+UzLDMrA130yBvJhU7geprBWK0KSlI3JMAs=;
-        b=eHcbGiW1ChDcTzQ3blhLGjoLkx4ZIyaX4253JZlVpnA8FhnYRl5s0z/+lYAhqnBwx3
-         +gd9EaTebgO/nUnmlSk7VMVSy5jMXZMPQFWIxriP9449ih4bnR0BScc1y08aSfM8+IlQ
-         0cZ1gAqUOaGXP6P46KTZf6SPskzwWlQH8YsX1kK2qj/erUlQhFS4oSc9iZ4E6PwDnn1I
-         Gj8QPMx1yGGoODB6wrSUv4njgLtBfRmE+QYYsxh5AS5VHA2P2Dh8a4m0ElyBH8DxClbR
-         mqaRXSg5vpy00SYhqtTW9f+dzQ2o9QCTPuDXV+320NRLg74wcTTiQrRqi9WtHOspcJbQ
-         2Xww==
-X-Gm-Message-State: ANhLgQ0hFk37yZAcWf6Tx7PpM5bIkfulmpOKLKLB3fR8Prs5uSg0rDzC
-        ukM0kDvx4T3hHpxVVGXEzZYVnNUPEpr6KQ==
-X-Google-Smtp-Source: ADFU+vv703IHpFMcX/saRcpg8yFTCgtb0/93afAdMzgrMxtE/RelAv+ei/xytP4xmWES7LZtE7tcUQ==
-X-Received: by 2002:a62:8706:: with SMTP id i6mr10254524pfe.115.1584048471791;
-        Thu, 12 Mar 2020 14:27:51 -0700 (PDT)
-Received: from [192.168.10.160] (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
-        by smtp.gmail.com with ESMTPSA id b2sm14178996pgd.45.2020.03.12.14.27.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Mar 2020 14:27:51 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <B95E9CA5-2E6A-4F8B-9B8F-BC4F4D49CBF3@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_29A8F571-9FB2-49DF-BF9C-D7D04802C64D";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH] Fix missing 'bit' in comment
-Date:   Thu, 12 Mar 2020 15:27:48 -0600
-In-Reply-To: <ed0f14ce-25f8-7ef7-54a6-6b3f9fa4bdfc@redhat.com>
-Cc:     Chucheng Luo <luochucheng@vivo.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, wenhu.wang@vivo.com,
-        trivial@kernel.org
-To:     Hans de Goede <hdegoede@redhat.com>
-References: <20200312074037.25829-1-luochucheng@vivo.com>
- <ed0f14ce-25f8-7ef7-54a6-6b3f9fa4bdfc@redhat.com>
-X-Mailer: Apple Mail (2.3273)
+        Thu, 12 Mar 2020 17:45:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wbFE9701XOV2kvczHnxaQqYLJ5I1RzPfMNLJpCQkayk=; b=e7+woX6qBTESONarQ8RJx2q6sT
+        400aq5zkt5Hmf0gUuqUaGckL0j+RZ/cMiYk7yIItnICEo6R3wXQa2991pZAlSjj+hGqrqZxTmUojp
+        r6CuBdLNW+cn/Dgm5ZeDUkbyWO5yU+II0jz3/JDrR6oeCewH/jP35O18ymR/wJ3d/uPrGVGiT3VJc
+        Qj59X2qGteMT/8/Y/UXcgHTJUhGsDZHqf9+5cr1L1+mNCGHasmPPmH+DoBsCS4prKEfWIjICq3kf7
+        9hlw3qb1CL1GitaTYpo2OGfkxLVgZC6TaO9UHFX2PiGkG6A2ZIOE/6LAdvwIOSf6oA8ZxzpxaqKlL
+        j76zlFrQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCVeG-0004g2-5h; Thu, 12 Mar 2020 21:45:48 +0000
+Date:   Thu, 12 Mar 2020 14:45:48 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 1/8] xarray: Fix premature termination of
+ xas_for_each_marked()
+Message-ID: <20200312214548.GL22433@bombadil.infradead.org>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-2-jack@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204142514.15826-2-jack@suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Jan,
 
---Apple-Mail=_29A8F571-9FB2-49DF-BF9C-D7D04802C64D
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+I fixed this in a different way ... also, I added a test to the test-suite
+so this shouldn't regress.  Thanks for writing the commit message ;-)
 
-On Mar 12, 2020, at 4:40 AM, Hans de Goede <hdegoede@redhat.com> wrote:
->=20
-> Hi,
->=20
-> On 3/12/20 8:40 AM, Chucheng Luo wrote:
->> The missing word may make it hard for other developers to
->> understand it.
->> Signed-off-by: Chucheng Luo <luochucheng@vivo.com>
->=20
-> Thanks for catching this:
->=20
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
+From 7e934cf5ace1dceeb804f7493fa28bb697ed3c52 Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Thu, 12 Mar 2020 17:29:11 -0400
+Subject: [PATCH] xarray: Fix early termination of xas_for_each_marked
 
-Not to nit-pick, but these should properly be written as "32-bit" and =
-"64-bit".
-That can be easily fixed in the patch before upstream submission.
+xas_for_each_marked() is using entry == NULL as a termination condition
+of the iteration. When xas_for_each_marked() is used protected only by
+RCU, this can however race with xas_store(xas, NULL) in the following
+way:
 
-Cheers, Andreas
+TASK1                                   TASK2
+page_cache_delete()         	        find_get_pages_range_tag()
+                                          xas_for_each_marked()
+                                            xas_find_marked()
+                                              off = xas_find_chunk()
 
-> Regards,
->=20
-> Hans
->=20
->=20
->> ---
->>  fs/vboxsf/dir.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
->> index dd147b490982..be4f72625d36 100644
->> --- a/fs/vboxsf/dir.c
->> +++ b/fs/vboxsf/dir.c
->> @@ -134,7 +134,7 @@ static bool vboxsf_dir_emit(struct file *dir, =
-struct dir_context *ctx)
->>  		d_type =3D vboxsf_get_d_type(info->info.attr.mode);
->>    		/*
->> -		 * On 32 bit systems pos is 64 signed, while ino is 32 =
-bit
->> +		 * On 32 bit systems pos is 64 bit signed, while ino is =
-32 bit
->>  		 * unsigned so fake_ino may overflow, check for this.
->>  		 */
->>  		if ((ino_t)(ctx->pos + 1) !=3D (u64)(ctx->pos + 1)) {
->=20
+  xas_store(&xas, NULL)
+    xas_init_marks(&xas);
+    ...
+    rcu_assign_pointer(*slot, NULL);
+                                              entry = xa_entry(off);
 
+And thus xas_for_each_marked() terminates prematurely possibly leading
+to missed entries in the iteration (translating to missing writeback of
+some pages or a similar problem).
 
-Cheers, Andreas
+If we find a NULL entry that has been marked, skip it (unless we're trying
+to allocate an entry).
 
+Reported-by: Jan Kara <jack@suse.cz>
+CC: stable@vger.kernel.org
+Fixes: ef8e5717db01 ("page cache: Convert delete_batch to XArray")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/xarray.h                       |  6 +-
+ lib/xarray.c                                 |  2 +
+ tools/testing/radix-tree/Makefile            |  4 +-
+ tools/testing/radix-tree/iteration_check_2.c | 87 ++++++++++++++++++++
+ tools/testing/radix-tree/main.c              |  1 +
+ tools/testing/radix-tree/test.h              |  1 +
+ 6 files changed, 98 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/radix-tree/iteration_check_2.c
 
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index a491653d8882..14c893433139 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1648,6 +1648,7 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
+ 								xa_mark_t mark)
+ {
+ 	struct xa_node *node = xas->xa_node;
++	void *entry;
+ 	unsigned int offset;
+ 
+ 	if (unlikely(xas_not_node(node) || node->shift))
+@@ -1659,7 +1660,10 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
+ 		return NULL;
+ 	if (offset == XA_CHUNK_SIZE)
+ 		return xas_find_marked(xas, max, mark);
+-	return xa_entry(xas->xa, node, offset);
++	entry = xa_entry(xas->xa, node, offset);
++	if (!entry)
++		return xas_find_marked(xas, max, mark);
++	return entry;
+ }
+ 
+ /*
+diff --git a/lib/xarray.c b/lib/xarray.c
+index f448bcd263ac..e9e641d3c0c3 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1208,6 +1208,8 @@ void *xas_find_marked(struct xa_state *xas, unsigned long max, xa_mark_t mark)
+ 		}
+ 
+ 		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
++		if (!entry && !(xa_track_free(xas->xa) && mark == XA_FREE_MARK))
++			continue;
+ 		if (!xa_is_node(entry))
+ 			return entry;
+ 		xas->xa_node = xa_to_node(entry);
+diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+index 397d6b612502..aa6abfe0749c 100644
+--- a/tools/testing/radix-tree/Makefile
++++ b/tools/testing/radix-tree/Makefile
+@@ -7,8 +7,8 @@ LDLIBS+= -lpthread -lurcu
+ TARGETS = main idr-test multiorder xarray
+ CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o
+ OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
+-	 regression4.o \
+-	 tag_check.o multiorder.o idr-test.o iteration_check.o benchmark.o
++	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
++	 iteration_check_2.o benchmark.o
+ 
+ ifndef SHIFT
+ 	SHIFT=3
+diff --git a/tools/testing/radix-tree/iteration_check_2.c b/tools/testing/radix-tree/iteration_check_2.c
+new file mode 100644
+index 000000000000..aac5c50a3674
+--- /dev/null
++++ b/tools/testing/radix-tree/iteration_check_2.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * iteration_check_2.c: Check that deleting a tagged entry doesn't cause
++ * an RCU walker to finish early.
++ * Copyright (c) 2020 Oracle
++ * Author: Matthew Wilcox <willy@infradead.org>
++ */
++#include <pthread.h>
++#include "test.h"
++
++static volatile bool test_complete;
++
++static void *iterator(void *arg)
++{
++	XA_STATE(xas, arg, 0);
++	void *entry;
++
++	rcu_register_thread();
++
++	while (!test_complete) {
++		xas_set(&xas, 0);
++		rcu_read_lock();
++		xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_0)
++			;
++		rcu_read_unlock();
++		assert(xas.xa_index >= 100);
++	}
++
++	rcu_unregister_thread();
++	return NULL;
++}
++
++static void *throbber(void *arg)
++{
++	struct xarray *xa = arg;
++
++	rcu_register_thread();
++
++	while (!test_complete) {
++		int i;
++
++		for (i = 0; i < 100; i++) {
++			xa_store(xa, i, xa_mk_value(i), GFP_KERNEL);
++			xa_set_mark(xa, i, XA_MARK_0);
++		}
++		for (i = 0; i < 100; i++)
++			xa_erase(xa, i);
++	}
++
++	rcu_unregister_thread();
++	return NULL;
++}
++
++void iteration_test2(unsigned test_duration)
++{
++	pthread_t threads[2];
++	DEFINE_XARRAY(array);
++	int i;
++
++	printv(1, "Running iteration test 2 for %d seconds\n", test_duration);
++
++	test_complete = false;
++
++	xa_store(&array, 100, xa_mk_value(100), GFP_KERNEL);
++	xa_set_mark(&array, 100, XA_MARK_0);
++
++	if (pthread_create(&threads[0], NULL, iterator, &array)) {
++		perror("create iterator thread");
++		exit(1);
++	}
++	if (pthread_create(&threads[1], NULL, throbber, &array)) {
++		perror("create throbber thread");
++		exit(1);
++	}
++
++	sleep(test_duration);
++	test_complete = true;
++
++	for (i = 0; i < 2; i++) {
++		if (pthread_join(threads[i], NULL)) {
++			perror("pthread_join");
++			exit(1);
++		}
++	}
++
++	xa_destroy(&array);
++}
+diff --git a/tools/testing/radix-tree/main.c b/tools/testing/radix-tree/main.c
+index 7a22d6e3732e..f2cbc8e5b97c 100644
+--- a/tools/testing/radix-tree/main.c
++++ b/tools/testing/radix-tree/main.c
+@@ -311,6 +311,7 @@ int main(int argc, char **argv)
+ 	regression4_test();
+ 	iteration_test(0, 10 + 90 * long_run);
+ 	iteration_test(7, 10 + 90 * long_run);
++	iteration_test2(10 + 90 * long_run);
+ 	single_thread_tests(long_run);
+ 
+ 	/* Free any remaining preallocated nodes */
+diff --git a/tools/testing/radix-tree/test.h b/tools/testing/radix-tree/test.h
+index 1ee4b2c0ad10..34dab4d18744 100644
+--- a/tools/testing/radix-tree/test.h
++++ b/tools/testing/radix-tree/test.h
+@@ -34,6 +34,7 @@ void xarray_tests(void);
+ void tag_check(void);
+ void multiorder_checks(void);
+ void iteration_test(unsigned order, unsigned duration);
++void iteration_test2(unsigned duration);
+ void benchmark(void);
+ void idr_checks(void);
+ void ida_tests(void);
+-- 
+2.25.1
 
-
-
-
---Apple-Mail=_29A8F571-9FB2-49DF-BF9C-D7D04802C64D
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl5qqVQACgkQcqXauRfM
-H+B4exAAoFSPfhMNcJf0KQF/oKFpbfC5VMUkwVNyZIoIL9DDLMPs3+18a59VU+3i
-2EF9hxvM5Wx1DQOb6ghYNeHT8VUJj2pOFTGiqOc5EMdFEQ8c7tI7dNGDy/ZG41Ii
-r5NnKlXtYxPxw/zFWpu5O5f4nlRaZmp/BaquCf0qixSXWkZT+z2uD/WMDENvhoNp
-zdUNmq1zo+/Gl2GXGYnhqvk5psxL3VT0F/StupgbwzLh4G0msHuP3kL5fY229//B
-6GVjagT+C2JYSlRzUuNim9By2VbAfLsnem4cPnXjZ2o2t5m4mAUWrgRX5y4REwoh
-fyEqoEGB/vtgXv2etvuAOvi1FrMycUo02ImLAKR2Pk/kTlYYpJCFWb8CotYjZ6Px
-VNcMk80FJUgXROeK+oitdy6ADSRqa0em8lWmyosxYcLCQzfXL+jD8C6YbeP4TNqh
-b2BcobFjXFVQGZD1HEJkJOeF+zYlsJKCoft77dMHUC7sLoOIi8kbEDtVLOOEkvQg
-GmdQyaCLsrkoP8x1Ug3foFZjAn1G2b6pgJpagNLqWsiY2O8LR2mASgNxn9Sd6yY4
-YhtzVMGCfVdNqm0Gdzm9F9/ZaTyQu9XVvCW6xgBBxqlmXVHoGA2GQ1C4rOiwpE99
-J6WwCflT+SzEDCrQv+N/TlSYWij5TTIZ90le/qYdtdwI1Uv4MAk=
-=vApv
------END PGP SIGNATURE-----
-
---Apple-Mail=_29A8F571-9FB2-49DF-BF9C-D7D04802C64D--
