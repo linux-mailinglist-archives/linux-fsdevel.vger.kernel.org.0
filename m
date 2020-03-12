@@ -2,115 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18478183BB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:49:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3E1183BCD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:58:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgCLVtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 17:49:07 -0400
-Received: from hr2.samba.org ([144.76.82.148]:24712 "EHLO hr2.samba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgCLVtH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:49:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-         s=42; h=Message-ID:Cc:To:From:Date;
-        bh=1JcRWJgIjBZEatikoz0G3mL9EJsdG0P/Ykm3OGVRQo4=; b=M0zd3UDimz2yegwwlZBWRu1Sjm
-        Hb2a9sq9I/B2kDBeJsob+VR2XNQaYH9Iy1mlh80tLPM12bcDfMTE7Vl1rQta5McDePT92ZD8iJVx9
-        4tIkUFiaXRuJxqXRY1b3LYV5TT9y0Y51MUhnzpAXCmeCh50oytdBZauYcQ24b2HFNK/RLcTAtOrD5
-        hTBFgTzdVQ0ofrJuWOVAaffympfy8PogEB8b5bMOrBCYsIUxsV32VOqKq22+55Ix0JZtWjbxJNRV1
-        6vDfCbps6fckISnbwkJA83CC45iVr8ot0VEw954sESPpX3S08kajgNhTB7NTflfsu+IYxtRNf86CY
-        b+xx302xd92v1CkKTYCFMBwqmCqn0RvpztruQ3/4/poqm41ia+R5OfQLbgustha/L4tkO0VQG5NXK
-        fyDcx1FGbGK/vnFmBQd79m7VBcS1nIU1N2SRWXJu2fLt8wJuxfBAzUQjf6/twU2w9n5Gnq5D+R541
-        DWEaB6FUBoQZBsoGn8v9YsSo;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
-        (Exim)
-        id 1jCVhO-0001fg-IM; Thu, 12 Mar 2020 21:49:02 +0000
-Date:   Thu, 12 Mar 2020 14:48:54 -0700
-From:   Jeremy Allison <jra@samba.org>
-To:     Stefan Metzmacher <metze@samba.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
-        Volker Lendecke <vl@sernet.de>
-Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
-Message-ID: <20200312214854.GA19247@jeremy-acer>
-Reply-To: Jeremy Allison <jra@samba.org>
-References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
- <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
- <20200310005549.adrn3yf4mbljc5f6@yavin>
- <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
- <580352.1583825105@warthog.procyon.org.uk>
- <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
- <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
- <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
- <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+        id S1726715AbgCLV6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 17:58:33 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42095 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726513AbgCLV6a (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Mar 2020 17:58:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584050309;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bydTNMJNgIMQ2vZ+TFrMdvYY1Bx3pTEvBd4lxqyQhlg=;
+        b=X59KShonXT4S1LCiaN5UGuZMIdskX5j0UNIuzjhDjQf4HjCUJaWSj+2+y9QAxvez9ACp+J
+        qNNnPuhtB+uRDhcDVvdGsSrhmB+qvz8G28rFmwsVNHKSvzv6WOp3Ta1u+3kh+EZm68dRPR
+        r9sJHKwlfJdfQOmfZPvaakuPd6aRTaU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-440-uopu1BQaMEyDh_EmRcZsbg-1; Thu, 12 Mar 2020 17:58:25 -0400
+X-MC-Unique: uopu1BQaMEyDh_EmRcZsbg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1D9F18CA240;
+        Thu, 12 Mar 2020 21:58:22 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 26F0A73874;
+        Thu, 12 Mar 2020 21:58:10 +0000 (UTC)
+Date:   Thu, 12 Mar 2020 17:58:08 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 16/16] audit: add capcontid to set contid
+ outside init_user_ns
+Message-ID: <20200312215808.bkezqotlhewconiy@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com>
+ <5941671b6b6b5de28ab2cc80e72f288cf83291d5.1577736799.git.rgb@redhat.com>
+ <CAHC9VhQYXQp+C0EHwLuW50yUenfH4KF1xKQdS=bn_OzHfnFmmg@mail.gmail.com>
+ <20200205003930.2efpm4tvrisgmj4t@madcap2.tricolour.ca>
+ <CAHC9VhSsfBbfYmqLoR=QBgF5_VwbA8Dqqz97MjqwwJ6Jq6fHwA@mail.gmail.com>
+ <20200206125135.u4dmybkmvxfgui2b@madcap2.tricolour.ca>
+ <CAHC9VhT8RsFtmqD22p_NxJaqoAg+do9mX45Luw9fEkr+nQjvxg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHC9VhT8RsFtmqD22p_NxJaqoAg+do9mX45Luw9fEkr+nQjvxg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
-> Am 12.03.20 um 17:24 schrieb Linus Torvalds:
-> > On Thu, Mar 12, 2020 at 2:08 AM Stefan Metzmacher <metze@samba.org> wrote:
-> >>
-> >> The whole discussion was triggered by the introduction of a completely
-> >> new fsinfo() call:
-> >>
-> >> Would you propose to have 'at_flags' and 'resolve_flags' passed in here?
-> > 
-> > Yes, I think that would be the way to go.
+On 2020-02-13 16:58, Paul Moore wrote:
+> On Thu, Feb 6, 2020 at 7:52 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-02-05 17:56, Paul Moore wrote:
+> > > On Tue, Feb 4, 2020 at 7:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2020-01-22 16:29, Paul Moore wrote:
+> > > > > On Tue, Dec 31, 2019 at 2:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > >
+> > > > > > Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
+> > > > > > process in a non-init user namespace the capability to set audit
+> > > > > > container identifiers.
+> > > > > >
+> > > > > > Provide /proc/$PID/audit_capcontid interface to capcontid.
+> > > > > > Valid values are: 1==enabled, 0==disabled
+> > > > >
+> > > > > It would be good to be more explicit about "enabled" and "disabled" in
+> > > > > the commit description.  For example, which setting allows the target
+> > > > > task to set audit container IDs of it's children processes?
+> > > >
+> > > > Ok...
+> > > >
+> > > > > > Report this action in message type AUDIT_SET_CAPCONTID 1022 with fields
+> > > > > > opid= capcontid= old-capcontid=
+> > > > > >
+> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > > ---
+> > > > > >  fs/proc/base.c             | 55 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > > > >  include/linux/audit.h      | 14 ++++++++++++
+> > > > > >  include/uapi/linux/audit.h |  1 +
+> > > > > >  kernel/audit.c             | 35 +++++++++++++++++++++++++++++
+> > > > > >  4 files changed, 105 insertions(+)
+> > >
+> > > ...
+> > >
+> > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > > > > index 1287f0b63757..1c22dd084ae8 100644
+> > > > > > --- a/kernel/audit.c
+> > > > > > +++ b/kernel/audit.c
+> > > > > > @@ -2698,6 +2698,41 @@ static bool audit_contid_isowner(struct task_struct *tsk)
+> > > > > >         return false;
+> > > > > >  }
+> > > > > >
+> > > > > > +int audit_set_capcontid(struct task_struct *task, u32 enable)
+> > > > > > +{
+> > > > > > +       u32 oldcapcontid;
+> > > > > > +       int rc = 0;
+> > > > > > +       struct audit_buffer *ab;
+> > > > > > +
+> > > > > > +       if (!task->audit)
+> > > > > > +               return -ENOPROTOOPT;
+> > > > > > +       oldcapcontid = audit_get_capcontid(task);
+> > > > > > +       /* if task is not descendant, block */
+> > > > > > +       if (task == current)
+> > > > > > +               rc = -EBADSLT;
+> > > > > > +       else if (!task_is_descendant(current, task))
+> > > > > > +               rc = -EXDEV;
+> > > > >
+> > > > > See my previous comments about error code sanity.
+> > > >
+> > > > I'll go with EXDEV.
+> > > >
+> > > > > > +       else if (current_user_ns() == &init_user_ns) {
+> > > > > > +               if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
+> > > > > > +                       rc = -EPERM;
+> > > > >
+> > > > > I think we just want to use ns_capable() in the context of the current
+> > > > > userns to check CAP_AUDIT_CONTROL, yes?  Something like this ...
+> > > >
+> > > > I thought we had firmly established in previous discussion that
+> > > > CAP_AUDIT_CONTROL in anything other than init_user_ns was completely irrelevant
+> > > > and untrustable.
+> > >
+> > > In the case of a container with multiple users, and multiple
+> > > applications, one being a nested orchestrator, it seems relevant to
+> > > allow that container to control which of it's processes are able to
+> > > exercise CAP_AUDIT_CONTROL.  Granted, we still want to control it
+> > > within the overall host, e.g. the container in question must be
+> > > allowed to run a nested orchestrator, but allowing the container
+> > > itself to provide it's own granularity seems like the right thing to
+> > > do.
+> >
+> > Looking back to discussion on the v6 patch 2/10 (2019-05-30 15:29 Paul
+> > Moore[1], 2019-07-08 14:05 RGB[2]) , it occurs to me that the
+> > ns_capable(CAP_AUDIT_CONTROL) application was dangerous since there was
+> > no parental accountability in storage or reporting.  Now that is in
+> > place, it does seem a bit more reasonable to allow it, but I'm still not
+> > clear on why we would want both mechanisms now.  I don't understand what
+> > the last line in that email meant: "We would probably still want a
+> > ns_capable(CAP_AUDIT_CONTROL) restriction in this case."  Allow
+> > ns_capable(CAP_AUDIT_CONTROL) to govern these actions, or restrict
+> > ns_capable(CAP_AUDIT_CONTROL) from being used to govern these actions?
+> >
+> > If an unprivileged user has been given capcontid to be able run their
+> > own container orchestrator/engine and spawns a user namespace with
+> > CAP_AUDIT_CONTROL, what matters is capcontid, and not CAP_AUDIT_CONTROL.
+> > I could see needing CAP_AUDIT_CONTROL *in addition* to capcontid to give
+> > it finer grained control, but since capcontid would have to be given to
+> > each process explicitly anways, I don't see the point.
+> >
+> > If that unprivileged user had not been given capcontid,
+> > giving itself or one of its descendants CAP_AUDIT_CONTROL should not let
+> > it jump into the game all of a sudden unless the now chained audit
+> > container identifiers are deemed accountable enough.  And then now we
+> > need those hard limits on container depth and network namespace
+> > container membership.
 > 
-> Ok, that's also fine for me:-)
-> 
-> >>> If we need linkat2() and friends, so be it. Do we?
-> >>
-> >> Yes, I'm going to propose something like this, as it would make the life
-> >> much easier for Samba to have the new features available on all path
-> >> based syscalls.
-> > 
-> > Will samba actually use them? I think we've had extensions before that
-> > weren't worth the non-portability pain?
-> 
-> Yes, we're currently moving to the portable *at() calls as a start.
-> And we already make use of Linux only feature for performance reasons
-> in other places. Having the new resolve flags will make it possible to
-> move some of the performance intensive work into non-linux specific
-> modules as fallback.
-> 
-> I hope that we'll use most of this through io_uring in the end,
-> that's the reason Jens added the IORING_REGISTER_PERSONALITY feature
-> used for IORING_OP_OPENAT2.
-> 
-> > But yes, if we have a major package like samba use it, then by all
-> > means let's add linkat2(). How many things are we talking about? We
-> > have a number of system calls that do *not* take flags, but do do
-> > pathname walking. I'm thinking things like "mkdirat()"?)
-> 
-> I haven't looked them up in detail yet.
-> Jeremy can you provide a list?
+> Perhaps I'm not correctly understanding what you are trying to do with
+> this patchset, but my current understanding is that you are trying to
+> use capcontid to control which child audit container IDs (ACIDs) are
+> allowed to manage their own ACIDs.  Further, I believe that the
+> capcontid setting operates at a per-ACID level, meaning there is no
+> provision for the associated container to further restrict that
+> ability, i.e. no access control granularity below the ACID level.  My
+> thinking is that ns_capable(CAP_AUDIT_CONTROL) could be used within an
+> ACID to increase the granularity of the access controls so that only
+> privileged processes running inside the ACID would be able to manage
+> the ACIDs.  Does that make sense?
 
-Fixing the flags argument on fchmodat() to actually *implement*
-AT_SYMLINK_NOFOLLOW would be a good start :-).
+The capcontid is not inherited like the contid (or contobj) in
+audit_alloc(), so it stops at that process that was granted capcontid.
+That process that was granted capcontid can then explicitly further
+grant capcontid to any of its children should it deem necessary.
 
-As for the syscalls that don't have
-flags I'm thinking of the things like:
+Since it is a boolean, it defaults to unset in init_struct_audit which
+isn't relevant anyways since that is in the initial user namespace.
+It isn't set in audit_alloc() and would default to false.
+I can set them explicitly both to false to be certain if that makes
+things clearer and more certain.
 
-getxattr/setxattr/removexattr just off the top of my head.
+I still believe ns_capable() is irrelevant here.
 
-Jeremy.
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
