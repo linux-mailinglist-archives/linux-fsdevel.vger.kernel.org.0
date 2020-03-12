@@ -2,267 +2,486 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC12018354F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 16:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6741835B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 17:02:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbgCLPpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 11:45:55 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34897 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbgCLPpy (ORCPT
+        id S1727773AbgCLQCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 12:02:24 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:55163 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727693AbgCLQCY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:45:54 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k8so4478370oik.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Mar 2020 08:45:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=stapelberg-ch.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fDsYWMR0jqauJc8EeIwuCKXIYa+QJ1rz1Yuuag5P300=;
-        b=peVR3vk14oplklJnEWWpQisuDcIrrkm4U++PX62sRvNHP6Buj12jwMEPT0UNzAwenw
-         Jc7C31Aa9JYaa8n25i4Uvj5EqOVHjKQj+aL7ioOqY26HVlvNymX6cpGUtS+usYemN4p+
-         7D9Kdq7GfSqRF28X7ierk5kpf8fXRtfJuM5WJ3lBU3YknwCYUefPnCRPqIwyPVBdgfOg
-         FbVatIAl3Ev/LIDod5gQjncXVa2YJu2aa72qrqTcOlvn56uOpXs3UqTfIUKyWU+Xj47M
-         7GtNGyOySBgw3NwlCvsCmTx30GcZblCyXjIMRi4jOinYZ+wQGfZgVbzEPgYcMQYfe8Td
-         VtbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fDsYWMR0jqauJc8EeIwuCKXIYa+QJ1rz1Yuuag5P300=;
-        b=Wl2xkE2Q+OnBY7gyUvAyzOSUOrCDpXq8ASXYFry15hzpU69vbgja+vmlc9RYjzK1sI
-         x2z40PW0cNwaBs6FSHETYzTdBMqAJLrflx2XHvnokNTnY6gccJ0dDvBJq14D1xs7Bk7c
-         cjiqhUI2lq/LqV5OCxd4TIQbbEhZLGJZKwnogQchrvZug9FPVjW7JxrhuJjt7LzvD2K1
-         4Zo7icURHBz8Z6KFzV+LN1TO1atLcGjmXQBU8PQe5XipveNUQPAXXMqqlWXRd/E3DIKN
-         JsiH7DgZxvG7GCuOnmruvYwU2gpN03VVnttApfAc/QA+V8wC7SAz6O1ADRTLxsMEXM2E
-         PY6Q==
-X-Gm-Message-State: ANhLgQ3tInCdzjiRW3audHf5UHqPhjJzI18/z3TYcRhD/EKVRhy4MAH2
-        PUzOhdPgKHgO3kUtRy5tn385uqOx2RBzXNF/iFjJ8Q==
-X-Google-Smtp-Source: ADFU+vv1GY9vm4e3SAoIM6ERkhqYefcFqPgIi7Zy8b6put+hApLXBGwMf/vtzE3kFEPh1CagMtTr8r7zbG2ql7LTfzs=
-X-Received: by 2002:aca:c45:: with SMTP id i5mr2887334oiy.111.1584027952521;
- Thu, 12 Mar 2020 08:45:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <CANnVG6kZzN1Ja0EmxG3pVTdMx8Kf8fezGWBtCYUzk888VaFThg@mail.gmail.com>
- <CACQJH27s4HKzPgUkVT+FXWLGqJAAMYEkeKe7cidcesaYdE2Vog@mail.gmail.com>
- <CANnVG6=Ghu5r44mTkr0uXx_ZrrWo2N5C_UEfM59110Zx+HApzw@mail.gmail.com>
- <CAJfpegvzhfO7hg1sb_ttQF=dmBeg80WVkV8srF3VVYHw9ybV0w@mail.gmail.com>
- <CANnVG6kSJJw-+jtjh-ate7CC3CsB2=ugnQpA9ACGFdMex8sftg@mail.gmail.com>
- <CAJfpegtkEU9=3cvy8VNr4SnojErYFOTaCzUZLYvMuQMi050bPQ@mail.gmail.com>
- <20200303130421.GA5186@mtj.thefacebook.com> <CANnVG6=i1VmWF0aN1tJo5+NxTv6ycVOQJnpFiqbD7ZRVR6T4=Q@mail.gmail.com>
- <20200303141311.GA189690@mtj.thefacebook.com> <CANnVG6=9mYACk5tR2xD08r_sGWEeZ0rHZAmJ90U-8h3+iSMvbA@mail.gmail.com>
- <20200303142512.GC189690@mtj.thefacebook.com> <CANnVG6=yf82CcwmdmawmjTP2CskD-WhcvkLnkZs7hs0OG7KcTg@mail.gmail.com>
- <CANnVG6n=_PhhpgLo2ByGeJrrAaNOLond3GQJhobge7Ob2hfJrQ@mail.gmail.com>
- <CAJfpegsWwsmzWb6C61NXKh=TEGsc=TaSSEAsixbBvw_qF4R6YQ@mail.gmail.com> <CANnVG6n=ySfe1gOr=0ituQidp56idGARDKHzP0hv=ERedeMrMA@mail.gmail.com>
-In-Reply-To: <CANnVG6n=ySfe1gOr=0ituQidp56idGARDKHzP0hv=ERedeMrMA@mail.gmail.com>
-From:   Michael Stapelberg <michael+lkml@stapelberg.ch>
-Date:   Thu, 12 Mar 2020 16:45:41 +0100
-Message-ID: <CANnVG6=hU=CUYf+SgR4y5jp5xJPn6LDY2XkR2+Ecn+fYmUGhBA@mail.gmail.com>
-Subject: Re: [fuse-devel] Writing to FUSE via mmap extremely slow (sometimes)
- on some machines?
+        Thu, 12 Mar 2020 12:02:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584028942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3Levu9e5gKEGuGjfYAxBNO+RhloIEDELGqMCTmJZ5K4=;
+        b=JzharAGDPX4P7WPKaFioUm3ihGmXwUFMmrNXDhT8J2CEXxC8svLesFMRA02ZTXh2xw6q4x
+        T4+T2Iv+qisTJ0GP5XR4zic8nAztVb3I8e/cnpyqUSsIS/gZNKbOD6mGPz0YHUJ5gxHzC9
+        9WqrdiXVd6esIulVG1iijx7EyT4cYdI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-NMmabGOgMtyJm4gfGA7NGw-1; Thu, 12 Mar 2020 12:02:18 -0400
+X-MC-Unique: NMmabGOgMtyJm4gfGA7NGw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C5D3D86A070;
+        Thu, 12 Mar 2020 16:02:16 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D379C8F35C;
+        Thu, 12 Mar 2020 16:02:08 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 7025022021D; Thu, 12 Mar 2020 12:02:08 -0400 (EDT)
+Date:   Thu, 12 Mar 2020 12:02:08 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Jack Smith <smith.jack.sidman@gmail.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: multipart/mixed; boundary="0000000000006d26c905a0aa3f34"
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Subject: Re: [PATCH 13/20] fuse, dax: Implement dax read/write operations
+Message-ID: <20200312160208.GB114720@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-14-vgoyal@redhat.com>
+ <CAJfpegtpgE+vnN0hvEVMDyNkYZ0h3_kNgxWCQUb2iuBdy8kEsw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtpgE+vnN0hvEVMDyNkYZ0h3_kNgxWCQUb2iuBdy8kEsw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000006d26c905a0aa3f34
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Find attached a patch which introduces a min_bw and max_bw limit for a
-backing_dev_info. As outlined in the commit description, this can be
-used to work around the issue until we have a better understanding of
-how a real solution would look like.
-
-Could we include this change in Linux? What would be the next step?
-
-Thanks,
-
-On Mon, Mar 9, 2020 at 4:11 PM Michael Stapelberg
-<michael+lkml@stapelberg.ch> wrote:
->
-> Thanks for clarifying. I have modified the mmap test program (see
-> attached) to optionally read in the entire file when the WORKAROUND=3D
-> environment variable is set, thereby preventing the FUSE reads in the
-> write phase. I can now see a batch of reads, followed by a batch of
-> writes.
->
-> What=E2=80=99s interesting: when polling using =E2=80=9Cwhile :; do grep =
-^Bdi
-> /sys/kernel/debug/bdi/0:93/stats; sleep 0.1; done=E2=80=9D and running th=
-e
-> mmap test program, I see:
->
-> BdiDirtied:            3566304 kB
-> BdiWritten:            3563616 kB
-> BdiWriteBandwidth:       13596 kBps
->
-> BdiDirtied:            3566304 kB
-> BdiWritten:            3563616 kB
-> BdiWriteBandwidth:       13596 kBps
->
-> BdiDirtied:            3566528 kB (+224 kB) <-- starting to dirty pages
-> BdiWritten:            3564064 kB (+448 kB) <-- starting to write
-> BdiWriteBandwidth:       10700 kBps <-- only bandwidth update!
->
-> BdiDirtied:            3668224 kB (+ 101696 kB) <-- all pages dirtied
-> BdiWritten:            3565632 kB (+1568 kB)
-> BdiWriteBandwidth:       10700 kBps
->
-> BdiDirtied:            3668224 kB
-> BdiWritten:            3665536 kB (+ 99904 kB) <-- all pages written
-> BdiWriteBandwidth:       10700 kBps
->
-> BdiDirtied:            3668224 kB
-> BdiWritten:            3665536 kB
-> BdiWriteBandwidth:       10700 kBps
->
-> This seems to suggest that the bandwidth measurements only capture the
-> rising slope of the transfer, but not the bulk of the transfer itself,
-> resulting in inaccurate measurements. This effect is worsened when the
-> test program doesn=E2=80=99t pre-read the output file and hence the kerne=
-l
-> gets fewer FUSE write requests out.
->
-> On Mon, Mar 9, 2020 at 3:36 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, Mar 12, 2020 at 10:43:10AM +0100, Miklos Szeredi wrote:
+> On Wed, Mar 4, 2020 at 5:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 > >
-> > On Mon, Mar 9, 2020 at 3:32 PM Michael Stapelberg
-> > <michael+lkml@stapelberg.ch> wrote:
-> > >
-> > > Here=E2=80=99s one more thing I noticed: when polling
-> > > /sys/kernel/debug/bdi/0:93/stats, I see that BdiDirtied and BdiWritte=
-n
-> > > remain at their original values while the kernel sends FUSE read
-> > > requests, and only goes up when the kernel transitions into sending
-> > > FUSE write requests. Notably, the page dirtying throttling happens in
-> > > the read phase, which is most likely why the write bandwidth is
-> > > (correctly) measured as 0.
-> > >
-> > > Do we have any ideas on why the kernel sends FUSE reads at all?
+> > This patch implements basic DAX support. mmap() is not implemented
+> > yet and will come in later patches. This patch looks into implemeting
+> > read/write.
 > >
-> > Memory writes (stores) need the memory page to be up-to-date wrt. the
-> > backing file before proceeding.   This means that if the page hasn't
-> > yet been cached by the kernel, it needs to be read first.
+> > We make use of interval tree to keep track of per inode dax mappings.
 > >
-> > Thanks,
-> > Miklos
+> > Do not use dax for file extending writes, instead just send WRITE message
+> > to daemon (like we do for direct I/O path). This will keep write and
+> > i_size change atomic w.r.t crash.
+> >
+> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
+> > Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
+> > ---
+> >  fs/fuse/file.c            | 597 +++++++++++++++++++++++++++++++++++++-
+> >  fs/fuse/fuse_i.h          |  23 ++
+> >  fs/fuse/inode.c           |   6 +
+> >  include/uapi/linux/fuse.h |   1 +
+> >  4 files changed, 621 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index 9d67b830fb7a..9effdd3dc6d6 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -18,6 +18,12 @@
+> >  #include <linux/swap.h>
+> >  #include <linux/falloc.h>
+> >  #include <linux/uio.h>
+> > +#include <linux/dax.h>
+> > +#include <linux/iomap.h>
+> > +#include <linux/interval_tree_generic.h>
+> > +
+> > +INTERVAL_TREE_DEFINE(struct fuse_dax_mapping, rb, __u64, __subtree_last,
+> > +                     START, LAST, static inline, fuse_dax_interval_tree);
+> 
+> Are you using this because of byte ranges (u64)?   Does it not make
+> more sense to use page offsets, which are unsigned long and so fit
+> nicely into the generic interval tree?
 
---0000000000006d26c905a0aa3f34
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-backing_dev_info-introduce-min_bw-max_bw-limits.patch"
-Content-Disposition: attachment; 
-	filename="0001-backing_dev_info-introduce-min_bw-max_bw-limits.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k7oxbe600>
-X-Attachment-Id: f_k7oxbe600
+I think I should be able to use generic interval tree. I will switch
+to that.
 
-RnJvbSAxMGM1ZmQwNDEyYWI3MWMxNGNjYTdhNjZjMjQwN2JmZTNiYjg2MWFmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNaWNoYWVsIFN0YXBlbGJlcmcgPHN0YXBlbGJlcmdAZ29vZ2xl
-LmNvbT4KRGF0ZTogVHVlLCAxMCBNYXIgMjAyMCAxNTo0ODoyMCArMDEwMApTdWJqZWN0OiBbUEFU
-Q0hdIGJhY2tpbmdfZGV2X2luZm86IGludHJvZHVjZSBtaW5fYncvbWF4X2J3IGxpbWl0cwoKVGhp
-cyBhbGxvd3Mgd29ya2luZyBhcm91bmQgbG9uZy1zdGFuZGluZyBzaWduaWZpY2FudCBwZXJmb3Jt
-YW5jZSBpc3N1ZXMgd2hlbgp1c2luZyBtbWFwIHdpdGggZmlsZXMgb24gRlVTRSBmaWxlIHN5c3Rl
-bXMgc3VjaCBhcyBPYmpGUy4KClRoZSBwYWdlLXdyaXRlYmFjayBjb2RlIHRyaWVzIHRvIG1lYXN1
-cmUgaG93IHF1aWNrIGZpbGUgc3lzdGVtIGJhY2tpbmcgZGV2aWNlcwphcmUgYWJsZSB0byB3cml0
-ZSBkYXRhLgoKVW5mb3J0dW5hdGVseSwgb3VyIHVzYWdlIHBhdHRlcm4gc2VlbXMgdG8gaGl0IGFu
-IHVuZm9ydHVuYXRlIGNvZGUgcGF0aDogdGhlCmtlcm5lbCBvbmx5IGV2ZXIgbWVhc3VyZXMgdGhl
-IChub24tcmVwcmVzZW50YXRpdmUpIHJpc2luZyBzbG9wZSBvZiB0aGUgc3RhcnRpbmcKdHJhbnNm
-ZXIsIGJ1dCB0aGUgdHJhbnNmZXIgaXMgYWxyZWFkeSBvdmVyIGJlZm9yZSBpdCBjb3VsZCBwb3Nz
-aWJseSBtZWFzdXJlIHRoZQpyZXByZXNlbnRhdGl2ZSBzdGVhZHktc3RhdGUuCgpBcyBhIGNvbnNl
-cXVlbmNlLCB0aGUgRlVTRSB3cml0ZSBiYW5kd2lkdGggc2lua3Mgc3RlYWRpbHkgZG93biB0byAw
-ICghKSBhbmQKaGVhdmlseSB0aHJvdHRsZXMgcGFnZSBkaXJ0eWluZyBpbiBwcm9ncmFtcyB0cnlp
-bmcgdG8gd3JpdGUgdG8gRlVTRS4KClRoaXMgcGF0Y2ggYWRkcyBhIGtub2Igd2hpY2ggYWxsb3dz
-IGF2b2lkaW5nIHRoaXMgc2l0dWF0aW9uIGVudGlyZWx5IG9uIGEKcGVyLWZpbGUtc3lzdGVtIGJh
-c2lzIGJ5IHJlc3RyaWN0aW5nIHRoZSBtaW5pbXVtL21heGltdW0gYmFuZHdpZHRoLgoKVGhlcmUg
-YXJlIG5vIG5lZ2F0aXZlIGVmZmVjdHMgZXhwZWN0ZWQgZnJvbSBhcHBseWluZyB0aGlzIHBhdGNo
-LgoKU2VlIGFsc28gdGhlIGRpc2N1c3Npb24gb24gdGhlIExpbnV4IEtlcm5lbCBNYWlsaW5nIExp
-c3Q6CgpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1mc2RldmVsL0NBTm5WRzZuPXlTZmUx
-Z09yPTBpdHVRaWRwNTZpZEdBUkRLSHpQMGh2PUVSZWRlTXJNQUBtYWlsLmdtYWlsLmNvbS8KClRv
-IGluc3BlY3QgdGhlIG1lYXN1cmVkIGJhbmR3aWR0aCwgY2hlY2sgdGhlIEJkaVdyaXRlQmFuZHdp
-ZHRoIGZpZWxkIGluCmUuZy4gL3N5cy9rZXJuZWwvZGVidWcvYmRpLzA6OTMvc3RhdHMuCgpUbyBw
-aW4gdGhlIG1lYXN1cmVkIGJhbmR3aWR0aCB0byBpdHMgZGVmYXVsdCBvZiAxMDAgTUIvcywgdXNl
-OgoKICAgIGVjaG8gMjU2MDAgPiAvc3lzL2NsYXNzL2JkaS8wOjQyL21pbl9idwogICAgZWNobyAy
-NTYwMCA+IC9zeXMvY2xhc3MvYmRpLzA6NDIvbWF4X2J3Ci0tLQogaW5jbHVkZS9saW51eC9iYWNr
-aW5nLWRldi1kZWZzLmggfCAgMiArKwogaW5jbHVkZS9saW51eC9iYWNraW5nLWRldi5oICAgICAg
-fCAgMyArKysKIG1tL2JhY2tpbmctZGV2LmMgICAgICAgICAgICAgICAgIHwgNDAgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysKIG1tL3BhZ2Utd3JpdGViYWNrLmMgICAgICAgICAgICAg
-IHwgMjkgKysrKysrKysrKysrKysrKysrKysrKysKIDQgZmlsZXMgY2hhbmdlZCwgNzQgaW5zZXJ0
-aW9ucygrKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvYmFja2luZy1kZXYtZGVmcy5oIGIv
-aW5jbHVkZS9saW51eC9iYWNraW5nLWRldi1kZWZzLmgKaW5kZXggNGZjODdkZWUwMDVhLi5hMjli
-Y2I4YTc5OWQgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvYmFja2luZy1kZXYtZGVmcy5oCisr
-KyBiL2luY2x1ZGUvbGludXgvYmFja2luZy1kZXYtZGVmcy5oCkBAIC0yMDAsNiArMjAwLDggQEAg
-c3RydWN0IGJhY2tpbmdfZGV2X2luZm8gewogCXVuc2lnbmVkIGludCBjYXBhYmlsaXRpZXM7IC8q
-IERldmljZSBjYXBhYmlsaXRpZXMgKi8KIAl1bnNpZ25lZCBpbnQgbWluX3JhdGlvOwogCXVuc2ln
-bmVkIGludCBtYXhfcmF0aW8sIG1heF9wcm9wX2ZyYWM7CisJdTY0IG1pbl9idzsKKwl1NjQgbWF4
-X2J3OwogCiAJLyoKIAkgKiBTdW0gb2YgYXZnX3dyaXRlX2J3IG9mIHdicyB3aXRoIGRpcnR5IGlu
-b2Rlcy4gID4gMCBpZiB0aGVyZSBhcmUKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvYmFja2lu
-Zy1kZXYuaCBiL2luY2x1ZGUvbGludXgvYmFja2luZy1kZXYuaAppbmRleCBmODgxOTdjMWZmYzIu
-LjQ0OTBiZDAzYWVjMSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9iYWNraW5nLWRldi5oCisr
-KyBiL2luY2x1ZGUvbGludXgvYmFja2luZy1kZXYuaApAQCAtMTExLDYgKzExMSw5IEBAIHN0YXRp
-YyBpbmxpbmUgdW5zaWduZWQgbG9uZyB3Yl9zdGF0X2Vycm9yKHZvaWQpCiBpbnQgYmRpX3NldF9t
-aW5fcmF0aW8oc3RydWN0IGJhY2tpbmdfZGV2X2luZm8gKmJkaSwgdW5zaWduZWQgaW50IG1pbl9y
-YXRpbyk7CiBpbnQgYmRpX3NldF9tYXhfcmF0aW8oc3RydWN0IGJhY2tpbmdfZGV2X2luZm8gKmJk
-aSwgdW5zaWduZWQgaW50IG1heF9yYXRpbyk7CiAKK2ludCBiZGlfc2V0X21pbl9idyhzdHJ1Y3Qg
-YmFja2luZ19kZXZfaW5mbyAqYmRpLCB1NjQgbWluX2J3KTsKK2ludCBiZGlfc2V0X21heF9idyhz
-dHJ1Y3QgYmFja2luZ19kZXZfaW5mbyAqYmRpLCB1NjQgbWF4X2J3KTsKKwogLyoKICAqIEZsYWdz
-IGluIGJhY2tpbmdfZGV2X2luZm86OmNhcGFiaWxpdHkKICAqCmRpZmYgLS1naXQgYS9tbS9iYWNr
-aW5nLWRldi5jIGIvbW0vYmFja2luZy1kZXYuYwppbmRleCA2MmYwNWY2MDVmYjUuLjVjMTBkNDQy
-NTk3NiAxMDA2NDQKLS0tIGEvbW0vYmFja2luZy1kZXYuYworKysgYi9tbS9iYWNraW5nLWRldi5j
-CkBAIC0yMDEsNiArMjAxLDQ0IEBAIHN0YXRpYyBzc2l6ZV90IG1heF9yYXRpb19zdG9yZShzdHJ1
-Y3QgZGV2aWNlICpkZXYsCiB9CiBCRElfU0hPVyhtYXhfcmF0aW8sIGJkaS0+bWF4X3JhdGlvKQog
-CitzdGF0aWMgc3NpemVfdCBtaW5fYndfc3RvcmUoc3RydWN0IGRldmljZSAqZGV2LAorCQlzdHJ1
-Y3QgZGV2aWNlX2F0dHJpYnV0ZSAqYXR0ciwgY29uc3QgY2hhciAqYnVmLCBzaXplX3QgY291bnQp
-Cit7CisJc3RydWN0IGJhY2tpbmdfZGV2X2luZm8gKmJkaSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYp
-OworCXVuc2lnbmVkIGxvbmcgbG9uZyBsaW1pdDsKKwlzc2l6ZV90IHJldDsKKworCXJldCA9IGtz
-dHJ0b3VsbChidWYsIDEwLCAmbGltaXQpOworCWlmIChyZXQgPCAwKQorCQlyZXR1cm4gcmV0Owor
-CisJcmV0ID0gYmRpX3NldF9taW5fYncoYmRpLCBsaW1pdCk7CisJaWYgKCFyZXQpCisJCXJldCA9
-IGNvdW50OworCisJcmV0dXJuIHJldDsKK30KK0JESV9TSE9XKG1pbl9idywgYmRpLT5taW5fYncp
-CisKK3N0YXRpYyBzc2l6ZV90IG1heF9id19zdG9yZShzdHJ1Y3QgZGV2aWNlICpkZXYsCisJCXN0
-cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLCBjb25zdCBjaGFyICpidWYsIHNpemVfdCBjb3Vu
-dCkKK3sKKwlzdHJ1Y3QgYmFja2luZ19kZXZfaW5mbyAqYmRpID0gZGV2X2dldF9kcnZkYXRhKGRl
-dik7CisJdW5zaWduZWQgbG9uZyBsb25nIGxpbWl0OworCXNzaXplX3QgcmV0OworCisJcmV0ID0g
-a3N0cnRvdWxsKGJ1ZiwgMTAsICZsaW1pdCk7CisJaWYgKHJldCA8IDApCisJCXJldHVybiByZXQ7
-CisKKwlyZXQgPSBiZGlfc2V0X21heF9idyhiZGksIGxpbWl0KTsKKwlpZiAoIXJldCkKKwkJcmV0
-ID0gY291bnQ7CisKKwlyZXR1cm4gcmV0OworfQorQkRJX1NIT1cobWF4X2J3LCBiZGktPm1heF9i
-dykKKwogc3RhdGljIHNzaXplX3Qgc3RhYmxlX3BhZ2VzX3JlcXVpcmVkX3Nob3coc3RydWN0IGRl
-dmljZSAqZGV2LAogCQkJCQkgIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLAogCQkJCQkg
-IGNoYXIgKnBhZ2UpCkBAIC0yMTYsNiArMjU0LDggQEAgc3RhdGljIHN0cnVjdCBhdHRyaWJ1dGUg
-KmJkaV9kZXZfYXR0cnNbXSA9IHsKIAkmZGV2X2F0dHJfcmVhZF9haGVhZF9rYi5hdHRyLAogCSZk
-ZXZfYXR0cl9taW5fcmF0aW8uYXR0ciwKIAkmZGV2X2F0dHJfbWF4X3JhdGlvLmF0dHIsCisJJmRl
-dl9hdHRyX21pbl9idy5hdHRyLAorCSZkZXZfYXR0cl9tYXhfYncuYXR0ciwKIAkmZGV2X2F0dHJf
-c3RhYmxlX3BhZ2VzX3JlcXVpcmVkLmF0dHIsCiAJTlVMTCwKIH07CmRpZmYgLS1naXQgYS9tbS9w
-YWdlLXdyaXRlYmFjay5jIGIvbW0vcGFnZS13cml0ZWJhY2suYwppbmRleCAyY2FmNzgwYTQyZTcu
-LmM3YzllZWJjNGM1NiAxMDA2NDQKLS0tIGEvbW0vcGFnZS13cml0ZWJhY2suYworKysgYi9tbS9w
-YWdlLXdyaXRlYmFjay5jCkBAIC03MTMsNiArNzEzLDIyIEBAIGludCBiZGlfc2V0X21heF9yYXRp
-byhzdHJ1Y3QgYmFja2luZ19kZXZfaW5mbyAqYmRpLCB1bnNpZ25lZCBtYXhfcmF0aW8pCiB9CiBF
-WFBPUlRfU1lNQk9MKGJkaV9zZXRfbWF4X3JhdGlvKTsKIAoraW50IGJkaV9zZXRfbWluX2J3KHN0
-cnVjdCBiYWNraW5nX2Rldl9pbmZvICpiZGksIHU2NCBtaW5fYncpCit7CisJc3Bpbl9sb2NrX2Jo
-KCZiZGlfbG9jayk7CisJYmRpLT5taW5fYncgPSBtaW5fYnc7CisJc3Bpbl91bmxvY2tfYmgoJmJk
-aV9sb2NrKTsKKwlyZXR1cm4gMDsKK30KKworaW50IGJkaV9zZXRfbWF4X2J3KHN0cnVjdCBiYWNr
-aW5nX2Rldl9pbmZvICpiZGksIHU2NCBtYXhfYncpCit7CisJc3Bpbl9sb2NrX2JoKCZiZGlfbG9j
-ayk7CisJYmRpLT5tYXhfYncgPSBtYXhfYnc7CisJc3Bpbl91bmxvY2tfYmgoJmJkaV9sb2NrKTsK
-KwlyZXR1cm4gMDsKK30KKwogc3RhdGljIHVuc2lnbmVkIGxvbmcgZGlydHlfZnJlZXJ1bl9jZWls
-aW5nKHVuc2lnbmVkIGxvbmcgdGhyZXNoLAogCQkJCQkgICB1bnNpZ25lZCBsb25nIGJnX3RocmVz
-aCkKIHsKQEAgLTEwODAsNiArMTA5NiwxNiBAQCBzdGF0aWMgdm9pZCB3Yl9wb3NpdGlvbl9yYXRp
-byhzdHJ1Y3QgZGlydHlfdGhyb3R0bGVfY29udHJvbCAqZHRjKQogCWR0Yy0+cG9zX3JhdGlvID0g
-cG9zX3JhdGlvOwogfQogCitzdGF0aWMgdTY0IGNsYW1wX2J3KHN0cnVjdCBiYWNraW5nX2Rldl9p
-bmZvICpiZGksIHU2NCBidykgeworCWlmIChiZGktPm1pbl9idyA+IDAgJiYgYncgPCBiZGktPm1p
-bl9idykgeworCSAgYncgPSBiZGktPm1pbl9idzsKKwl9CisJaWYgKGJkaS0+bWF4X2J3ID4gMCAm
-JiBidyA+IGJkaS0+bWF4X2J3KSB7CisJICBidyA9IGJkaS0+bWF4X2J3OworCX0KKwlyZXR1cm4g
-Ync7Cit9CisKIHN0YXRpYyB2b2lkIHdiX3VwZGF0ZV93cml0ZV9iYW5kd2lkdGgoc3RydWN0IGJk
-aV93cml0ZWJhY2sgKndiLAogCQkJCSAgICAgIHVuc2lnbmVkIGxvbmcgZWxhcHNlZCwKIAkJCQkg
-ICAgICB1bnNpZ25lZCBsb25nIHdyaXR0ZW4pCkBAIC0xMTAzLDEyICsxMTI5LDE1IEBAIHN0YXRp
-YyB2b2lkIHdiX3VwZGF0ZV93cml0ZV9iYW5kd2lkdGgoc3RydWN0IGJkaV93cml0ZWJhY2sgKndi
-LAogCWJ3ICo9IEhaOwogCWlmICh1bmxpa2VseShlbGFwc2VkID4gcGVyaW9kKSkgewogCQlidyA9
-IGRpdjY0X3VsKGJ3LCBlbGFwc2VkKTsKKwkJYncgPSBjbGFtcF9idyh3Yi0+YmRpLCBidyk7CiAJ
-CWF2ZyA9IGJ3OwogCQlnb3RvIG91dDsKIAl9CiAJYncgKz0gKHU2NCl3Yi0+d3JpdGVfYmFuZHdp
-ZHRoICogKHBlcmlvZCAtIGVsYXBzZWQpOwogCWJ3ID4+PSBpbG9nMihwZXJpb2QpOwogCisJYncg
-PSBjbGFtcF9idyh3Yi0+YmRpLCBidyk7CisKIAkvKgogCSAqIG9uZSBtb3JlIGxldmVsIG9mIHNt
-b290aGluZywgZm9yIGZpbHRlcmluZyBvdXQgc3VkZGVuIHNwaWtlcwogCSAqLwotLSAKMi4yNS4x
-Cgo=
---0000000000006d26c905a0aa3f34--
+[..]
+> > +/* offset passed in should be aligned to FUSE_DAX_MEM_RANGE_SZ */
+> > +static int fuse_setup_one_mapping(struct inode *inode, loff_t offset,
+> > +                                 struct fuse_dax_mapping *dmap, bool writable,
+> > +                                 bool upgrade)
+> > +{
+> > +       struct fuse_conn *fc = get_fuse_conn(inode);
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_setupmapping_in inarg;
+> > +       FUSE_ARGS(args);
+> > +       ssize_t err;
+> > +
+> > +       WARN_ON(offset % FUSE_DAX_MEM_RANGE_SZ);
+> > +       WARN_ON(fc->nr_free_ranges < 0);
+> > +
+> > +       /* Ask fuse daemon to setup mapping */
+> > +       memset(&inarg, 0, sizeof(inarg));
+> > +       inarg.foffset = offset;
+> > +       inarg.fh = -1;
+> > +       inarg.moffset = dmap->window_offset;
+> > +       inarg.len = FUSE_DAX_MEM_RANGE_SZ;
+> > +       inarg.flags |= FUSE_SETUPMAPPING_FLAG_READ;
+> > +       if (writable)
+> > +               inarg.flags |= FUSE_SETUPMAPPING_FLAG_WRITE;
+> > +       args.opcode = FUSE_SETUPMAPPING;
+> > +       args.nodeid = fi->nodeid;
+> > +       args.in_numargs = 1;
+> > +       args.in_args[0].size = sizeof(inarg);
+> > +       args.in_args[0].value = &inarg;
+> 
+> args.force = true?
+
+I can do that but I am not sure what exactly does args.force do and
+why do we need it in this case.
+
+First thing it does is that request is allocated with flag __GFP_NOFAIL.
+Second thing it does is that caller is forced to wait for request
+completion and its not an interruptible sleep. 
+
+I am wondering what makes FUSE_SETUPMAPING/FUSE_REMOVEMAPPING requests
+special that we need to set force flag.
+
+> 
+> > +       err = fuse_simple_request(fc, &args);
+> > +       if (err < 0) {
+> > +               printk(KERN_ERR "%s request failed at mem_offset=0x%llx %zd\n",
+> > +                                __func__, dmap->window_offset, err);
+> 
+> Is this level of noisiness really needed?  AFAICS, the error will
+> reach the caller, in which case we don't usually need to print a
+> kernel error.
+
+I will remove it. I think code in general has quite a few printk() and
+pr_debug() we can get rid of. Some of them were helpful for debugging
+problems while code was being developed. But now that code is working,
+we should be able to drop some of them.
+
+[..]
+> > +static int
+> > +fuse_send_removemapping(struct inode *inode,
+> > +                       struct fuse_removemapping_in *inargp,
+> > +                       struct fuse_removemapping_one *remove_one)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_conn *fc = get_fuse_conn(inode);
+> > +       FUSE_ARGS(args);
+> > +
+> > +       args.opcode = FUSE_REMOVEMAPPING;
+> > +       args.nodeid = fi->nodeid;
+> > +       args.in_numargs = 2;
+> > +       args.in_args[0].size = sizeof(*inargp);
+> > +       args.in_args[0].value = inargp;
+> > +       args.in_args[1].size = inargp->count * sizeof(*remove_one);
+> > +       args.in_args[1].value = remove_one;
+> 
+> args.force = true?
+
+FUSE_REMOVEMAPPING is an optional nice to have request. Will it make
+help to set force.
+
+> 
+> > +       return fuse_simple_request(fc, &args);
+> > +}
+> > +
+> > +static int dmap_removemapping_list(struct inode *inode, unsigned num,
+> > +                                  struct list_head *to_remove)
+> > +{
+> > +       struct fuse_removemapping_one *remove_one, *ptr;
+> > +       struct fuse_removemapping_in inarg;
+> > +       struct fuse_dax_mapping *dmap;
+> > +       int ret, i = 0, nr_alloc;
+> > +
+> > +       nr_alloc = min_t(unsigned int, num, FUSE_REMOVEMAPPING_MAX_ENTRY);
+> > +       remove_one = kmalloc_array(nr_alloc, sizeof(*remove_one), GFP_NOFS);
+> > +       if (!remove_one)
+> > +               return -ENOMEM;
+> > +
+> > +       ptr = remove_one;
+> > +       list_for_each_entry(dmap, to_remove, list) {
+> > +               ptr->moffset = dmap->window_offset;
+> > +               ptr->len = dmap->length;
+> > +               ptr++;
+> 
+> Minor nit: ptr = &remove_one[i] at the start of the section would be
+> cleaner IMO.
+
+Will do.
+
+[..]
+> > +static int iomap_begin_setup_new_mapping(struct inode *inode, loff_t pos,
+> > +                                        loff_t length, unsigned flags,
+> > +                                        struct iomap *iomap)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_conn *fc = get_fuse_conn(inode);
+> > +       struct fuse_dax_mapping *dmap, *alloc_dmap = NULL;
+> > +       int ret;
+> > +       bool writable = flags & IOMAP_WRITE;
+> > +
+> > +       alloc_dmap = alloc_dax_mapping(fc);
+> > +       if (!alloc_dmap)
+> > +               return -EBUSY;
+> > +
+> > +       /*
+> > +        * Take write lock so that only one caller can try to setup mapping
+> > +        * and other waits.
+> > +        */
+> > +       down_write(&fi->i_dmap_sem);
+> > +       /*
+> > +        * We dropped lock. Check again if somebody else setup
+> > +        * mapping already.
+> > +        */
+> > +       dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos,
+> > +                                               pos);
+> > +       if (dmap) {
+> > +               fuse_fill_iomap(inode, pos, length, iomap, dmap, flags);
+> > +               dmap_add_to_free_pool(fc, alloc_dmap);
+> > +               up_write(&fi->i_dmap_sem);
+> > +               return 0;
+> > +       }
+> > +
+> > +       /* Setup one mapping */
+> > +       ret = fuse_setup_one_mapping(inode,
+> > +                                    ALIGN_DOWN(pos, FUSE_DAX_MEM_RANGE_SZ),
+> > +                                    alloc_dmap, writable, false);
+> > +       if (ret < 0) {
+> > +               printk("fuse_setup_one_mapping() failed. err=%d"
+> > +                       " pos=0x%llx, writable=%d\n", ret, pos, writable);
+> 
+> More  unnecessary noise?
+
+Will remove.
+
+> 
+> > +               dmap_add_to_free_pool(fc, alloc_dmap);
+> > +               up_write(&fi->i_dmap_sem);
+> > +               return ret;
+> > +       }
+> > +       fuse_fill_iomap(inode, pos, length, iomap, alloc_dmap, flags);
+> > +       up_write(&fi->i_dmap_sem);
+> > +       return 0;
+> > +}
+> > +
+> > +static int iomap_begin_upgrade_mapping(struct inode *inode, loff_t pos,
+> > +                                        loff_t length, unsigned flags,
+> > +                                        struct iomap *iomap)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_dax_mapping *dmap;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * Take exclusive lock so that only one caller can try to setup
+> > +        * mapping and others wait.
+> > +        */
+> > +       down_write(&fi->i_dmap_sem);
+> > +       dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos, pos);
+> > +
+> > +       /* We are holding either inode lock or i_mmap_sem, and that should
+> > +        * ensure that dmap can't reclaimed or truncated and it should still
+> > +        * be there in tree despite the fact we dropped and re-acquired the
+> > +        * lock.
+> > +        */
+> > +       ret = -EIO;
+> > +       if (WARN_ON(!dmap))
+> > +               goto out_err;
+> > +
+> > +       /* Maybe another thread already upgraded mapping while we were not
+> > +        * holding lock.
+> > +        */
+> > +       if (dmap->writable)
+> > +               goto out_fill_iomap;
+> > +
+> > +       ret = fuse_setup_one_mapping(inode,
+> > +                                    ALIGN_DOWN(pos, FUSE_DAX_MEM_RANGE_SZ),
+> > +                                    dmap, true, true);
+> > +       if (ret < 0) {
+> > +               printk("fuse_setup_one_mapping() failed. err=%d pos=0x%llx\n",
+> > +                      ret, pos);
+> 
+> Again.
+
+Will remove. How about converting some of them to pr_debug() instead? It
+can help with debugging if something is not working.
+
+> 
+> > +               goto out_err;
+> > +       }
+> > +
+> > +out_fill_iomap:
+> > +       fuse_fill_iomap(inode, pos, length, iomap, dmap, flags);
+> > +out_err:
+> > +       up_write(&fi->i_dmap_sem);
+> > +       return ret;
+> > +}
+> > +
+> > +/* This is just for DAX and the mapping is ephemeral, do not use it for other
+> > + * purposes since there is no block device with a permanent mapping.
+> > + */
+> > +static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
+> > +                           unsigned flags, struct iomap *iomap,
+> > +                           struct iomap *srcmap)
+> > +{
+> > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > +       struct fuse_conn *fc = get_fuse_conn(inode);
+> > +       struct fuse_dax_mapping *dmap;
+> > +       bool writable = flags & IOMAP_WRITE;
+> > +
+> > +       /* We don't support FIEMAP */
+> > +       BUG_ON(flags & IOMAP_REPORT);
+> > +
+> > +       pr_debug("fuse_iomap_begin() called. pos=0x%llx length=0x%llx\n",
+> > +                       pos, length);
+> > +
+> > +       /*
+> > +        * Writes beyond end of file are not handled using dax path. Instead
+> > +        * a fuse write message is sent to daemon
+> > +        */
+> > +       if (flags & IOMAP_WRITE && pos >= i_size_read(inode))
+> > +               return -EIO;
+> 
+> Okay, this will work fine if the host filesystem is not modified by
+> other entities.
+
+This requires little longer explanation. It took me a while to remember
+what I did.
+
+For file extending writes, we do not want to go through dax path because
+we want written data and file size to be atomic operation w.r.t guest
+crash. So in fuse_dax_write_iter() I detect that this is file extending
+write and call fuse_dax_direct_write() instead to fall back to regular
+fuse message for write and bypass dax.
+
+But if write is partially overwriting and rest is file extending, current
+logic tries to use dax for the portion of page which is being overwritten
+and fall back to fuse write message for the remaining file extending
+write. And that's why after the call to dax_iomap_rw() I check one more
+time if there are some bytes not written and use fuse write to extend
+file.
+
+        /*
+         * If part of the write was file extending, fuse dax path will not
+         * take care of that. Do direct write instead.
+         */
+        if (iov_iter_count(from) && file_extending_write(iocb, from)) {
+                count = fuse_dax_direct_write(iocb, from);
+                if (count < 0)
+                        goto out;
+                ret += count;
+        }
+
+dax_iomap_rw() will do dax operation for the bytes which are with-in
+i_size. Then it will call iomap_apply() again with the portion of
+file doing file extending write and this time iomap_begin() will return
+-EIO. And dax_iomap_rw() will return number of bytes written (and not
+-EIO) to caller. 
+
+        while (iov_iter_count(iter)) {
+                ret = iomap_apply(inode, pos, iov_iter_count(iter), flags, ops,
+                                iter, dax_iomap_actor);
+                if (ret <= 0)
+                        break;
+                pos += ret;
+                done += ret;
+        }
+
+I am beginning to think that this is way more complicated then it needs
+to be. Probably I should detect that if any part of the file is file
+extending, just fall back to using fuse write path.
+
+> What happens if there's a concurrent truncate going on on the host
+> with this write?
+
+For regular fuse write, concurrent truncate is not a problem. But for
+dax read/write/mmap, concurrent truncate is a problem. If another guest
+truncates the file (after this guest has mapped this page), then
+any attempt to access this page hangs that process. KVM is trying to
+fault in a page on host which does not exist anymore. Currently kvm
+does not seem to have the logic to be able to deal with errors in
+async page fault path. And we will have to modify all that so that
+we can somehow propagate errors (SIGBUS) to guest and deliver it
+to process.
+
+So if process did mmap() and tried to access truncated portion of
+file, then it should get SIGBUS. If we are doing read/write then
+we should have the logic to deal with this error (exception table
+magic) and deliver -EIO to user space.
+
+None of that is handled right now and is a future TODO item. So
+for now, this will work well only with single guest and we will
+run into issues if we are sharing directories with another
+guest.
+
+> If the two are not in any way synchronized than
+> either the two following behavior is allowed:
+> 
+>  1) Whole or partial data in write is truncated. (If there are
+> complete pages from the write being truncated, then the writing
+> process will receive SIGBUS.  Does KVM hande that?   I remember that
+> being discussed, but don't remember the conclusion).
+> 
+>  2) Write re-extends file size.
+
+Currently, for file extending writes, if other guest truncates file first
+then fuse write will extend file again. If fuse write finished first,
+then other guest will truncate file and reduce size.
+
+I think we will have problem when only part of the write is extending
+file. In that case part of the file which is being overwritten, we are
+doing dax. And if other guest truncates file first, then kvm will hang.
+
+But that's a problem we have with not just file extending write, but
+any read/write/mmap w.r.t truncate by another guest. We will have to
+fix that before we support virtiofs+dax for shared directory.
+
+> 
+> However EIO is not a good result, so we need to do something with it.
+
+This -EIO is not seen by user. But dax_iomap_rw() does not return it
+instead returns number of bytes which have been written. 
+
+[..]
+> > +static ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > +{
+> > +       struct inode *inode = file_inode(iocb->ki_filp);
+> > +       ssize_t ret, count;
+> > +
+> > +       if (iocb->ki_flags & IOCB_NOWAIT) {
+> > +               if (!inode_trylock(inode))
+> > +                       return -EAGAIN;
+> > +       } else {
+> > +               inode_lock(inode);
+> > +       }
+> > +
+> > +       ret = generic_write_checks(iocb, from);
+> > +       if (ret <= 0)
+> > +               goto out;
+> > +
+> > +       ret = file_remove_privs(iocb->ki_filp);
+> > +       if (ret)
+> > +               goto out;
+> > +       /* TODO file_update_time() but we don't want metadata I/O */
+> > +
+> > +       /* Do not use dax for file extending writes as its an mmap and
+> > +        * trying to write beyong end of existing page will generate
+> > +        * SIGBUS.
+> 
+> Ah, here it is.  So what happens in case of a race?  Does that
+> currently crash KVM?
+
+In case of race, yes, KVM hangs. So no shared directory operation yet
+till we have designed proper error handling in kvm path.
+
+Thanks
+Vivek
+
