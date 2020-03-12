@@ -2,57 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A81B183BE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 23:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68672183BEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 23:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbgCLWFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 18:05:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41076 "EHLO mail.kernel.org"
+        id S1726683AbgCLWG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 18:06:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53628 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbgCLWFR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 18:05:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A673206CD;
-        Thu, 12 Mar 2020 22:05:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584050716;
-        bh=BTpIEKtjB3xS8Vr88vILZ1/PyE+yHgP6lcXkkl1uiTg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hlCHVt9vSpN0nO4WKoQ4CaiSFxd7Cb27vMQY8jGeM8rNWy8Bb9999bcCaochj/gD4
-         FzTgBR79rC4+rMZIU1QDDKzSTa6AJ5118ZkPjhrKz/UJ+0IfLRlT3xH3g9sEh8UM9x
-         mvRtV6WEU7YoOoURFCPmg+iQbVkT94X3HzJ5V5zA=
-Date:   Thu, 12 Mar 2020 23:05:12 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Xu <dxu@dxuuu.xyz>, cgroups@vger.kernel.org,
-        lizefan@huawei.com, hannes@cmpxchg.org, viro@zeniv.linux.org.uk,
-        shakeelb@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v3 0/4] Support user xattrs in cgroupfs
-Message-ID: <20200312220512.GA614185@kroah.com>
-References: <20200312200317.31736-1-dxu@dxuuu.xyz>
- <20200312211735.GA1967398@mtj.thefacebook.com>
+        id S1726514AbgCLWG5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Mar 2020 18:06:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C11B2AC44;
+        Thu, 12 Mar 2020 22:06:54 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Fri, 13 Mar 2020 09:06:46 +1100
+Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        NeilBrown <neilb@suse.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] fs/filesystems.c: downgrade user-reachable WARN_ONCE() to pr_warn_once()
+In-Reply-To: <20200312202552.241885-3-ebiggers@kernel.org>
+References: <20200312202552.241885-1-ebiggers@kernel.org> <20200312202552.241885-3-ebiggers@kernel.org>
+Message-ID: <87imj9teh5.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312211735.GA1967398@mtj.thefacebook.com>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 05:17:35PM -0400, Tejun Heo wrote:
-> Hello,
-> 
-> Daniel, the patchset looks good to me. Thanks a lot for working on
-> this.
-> 
-> Greg, provided that there aren't further objections, how do you wanna
-> route the patches? I'd be happy to take them through cgroup tree but
-> any tree is fine by me.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Sure, feel free to take them through your tree:
+On Thu, Mar 12 2020, Eric Biggers wrote:
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> After request_module(), nothing is stopping the module from being
+> unloaded until someone takes a reference to it via try_get_module().
+>
+> The WARN_ONCE() in get_fs_type() is thus user-reachable, via userspace
+> running 'rmmod' concurrently.
+>
+> Since WARN_ONCE() is for kernel bugs only, not for user-reachable
+> situations, downgrade this warning to pr_warn_once().
+>
+> Cc: stable@vger.kernel.org
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jeff Vander Stoep <jeffv@google.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: NeilBrown <neilb@suse.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/filesystems.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/filesystems.c b/fs/filesystems.c
+> index 77bf5f95362da..90b8d879fbaf3 100644
+> --- a/fs/filesystems.c
+> +++ b/fs/filesystems.c
+> @@ -272,7 +272,9 @@ struct file_system_type *get_fs_type(const char *name)
+>  	fs =3D __get_fs_type(name, len);
+>  	if (!fs && (request_module("fs-%.*s", len, name) =3D=3D 0)) {
+>  		fs =3D __get_fs_type(name, len);
+> -		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n",=
+ len, name);
+> +		if (!fs)
+> +			pr_warn_once("request_module fs-%.*s succeeded, but still no fs?\n",
+> +				     len, name);
+
+I strongly support the replacement of "WARN" by "pr_warn".
+I wonder if we really want the "once" now.  Possibly using rate_limited
+would be justified, but I think that in general we should see a warning
+every time this event happens.
+
+Thanks,
+NeilBrown
+
+
+>  	}
+>=20=20
+>  	if (dot && fs && !(fs->fs_flags & FS_HAS_SUBTYPE)) {
+> --=20
+> 2.25.1
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl5qsnYACgkQOeye3VZi
+gbl3oBAAuV3LZM5xUEigsaeRtvVM9jGCrTQ5m9xsUxqV7SJ+fQfKx2sgHAZL5fD7
+RfCoUBsYaOaeXL6XsSAb/ztSXlPAsADvhZxvNiz1DCdl+fkULVrG1k91iLKgNJuu
+jiByqqs+vZxeHp8BjOMDPts3VimUxKSoVIOX5wui7xC4ZWsYxY3Ca0g0E0VSj54f
+lRCs+80C0mkaQ+VwtHtamSgEFlIkqElqTTmnCVF98LrTI9X1GNSIN0jQz9fVjChS
+n/pyrFnJ8Py9FdbC7gZ2xNJe/01va8uKeCvE7Lqyfp3bHfTFJlNXul60rmoAWnM2
+QSLuMqXHOLh4kdT52FHplr4ejmp6i+0uYzJbIPSMwY/KhWn2Z4b33rCchaxATU7P
+MhfIIhjAOOU+72iL93Xm5DMpHrHQAdsQH/hV4kpizhoqDL5kRS6apYmqJ0HGdfGf
+g7kqx+zrnNrkO2QdqJ2PDXJJCn4pZa6htMEESsdWkhltTPaQQ8c3BgjD5sywEFJP
+lkI5wQBSjzyiZRI6n94WB4PuHJzZLk1fQcRGjt22w+6U0p4dNvtIDo40L7kZK8dk
+uqSyat6aSpriad0xtXc8BTPhfctDRmiNyy5vRPfmac9lim3YQjYFECTUTNd5tTYx
++Vzy+DNAA2tFWlVjV9xlwLVzPS9dMHDbTO41NE4GA0UQb9qXpYg=
+=siGd
+-----END PGP SIGNATURE-----
+--=-=-=--
