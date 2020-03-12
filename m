@@ -2,78 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA80E183338
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 15:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 147D518334A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 15:38:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgCLOes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 10:34:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53358 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbgCLOes (ORCPT
+        id S1727541AbgCLOiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 10:38:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:52972 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbgCLOiF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 10:34:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XjjsJbDLkOShvptxU5Ne7nBEmoit/32pztmYgg0aAjg=; b=Pd1MoWSQWbi78Y4pPu0KzufhEa
-        7Zt3mPjqti/7DDBkb8nEXmSsKHQH6XREEfBpYVRqalmz2jDk8k8s1EBBEmt/SBsI8g3zWV9gqjA7i
-        T4KGOCQcu1cl3AHXSNmCfCNcufyv9a617K5Ylr7prB9mIm1+M/tFWneAwqHScbNM9Jmwlblj5iqv3
-        W9Y6aNPz2J+fdNZIItWN4kJxYcKM/4zb2MXuiSFiIN/k36EfG5CRmuBmsZRCYu/wbClHiqdh5Q9vX
-        PFYSMYiwcijhgiO+t82o8et0GFhgSaGt3twHO0dgZghFX+AMC7XdgovyDdtcx7KO6vRKghZQmNzqP
-        Bdjm7Q8g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCOv7-00055v-W4; Thu, 12 Mar 2020 14:34:45 +0000
-Date:   Thu, 12 Mar 2020 07:34:45 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Linux Filesystem Development List 
-        <linux-fsdevel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] writeback: avoid double-writing the inode on a lazytime
- expiration
-Message-ID: <20200312143445.GA19160@infradead.org>
-References: <20200306004555.GB225345@gmail.com>
- <20200307020043.60118-1-tytso@mit.edu>
- <20200311032009.GC46757@gmail.com>
- <20200311125749.GA7159@mit.edu>
- <20200312000716.GY10737@dread.disaster.area>
+        Thu, 12 Mar 2020 10:38:05 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCOyH-00ABbH-Uc; Thu, 12 Mar 2020 14:38:02 +0000
+Date:   Thu, 12 Mar 2020 14:38:01 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] umh: fix refcount underflow in fork_usermode_blob().
+Message-ID: <20200312143801.GJ23230@ZenIV.linux.org.uk>
+References: <2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200312000716.GY10737@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <2a8775b4-1dd5-9d5c-aa42-9872445e0942@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 11:07:17AM +1100, Dave Chinner wrote:
-> > That's true, but when the timestamps were originally modified,
-> > dirty_inode() will be called with flag == I_DIRTY_TIME, which will
-> > *not* be a no-op; which is to say, XFS will force the timestamps to be
-> > updated on disk when the timestamps are first dirtied, because it
-> > doesn't support I_DIRTY_TIME.
-> 
-> We log the initial timestamp change, and then ignore timestamp
-> updates until the dirty time expires and the inode is set
-> I_DIRTY_SYNC via __mark_inode_dirty_sync(). IOWs, on expiry, we have
-> time stamps that may be 24 hours out of date in memory, and they
-> still need to be flushed to the journal.
-> 
-> However, your change does not mark the inode dirtying on expiry
-> anymore, so...
-> 
-> > So I think we're fine.
-> 
-> ... we're not fine. This breaks XFS and any other filesystem that
-> relies on a I_DIRTY_SYNC notification to handle dirty time expiry
-> correctly.
+On Thu, Mar 12, 2020 at 10:43:00PM +0900, Tetsuo Handa wrote:
+> Before thinking how to fix a bug that tomoyo_realpath_nofollow() from
+> tomoyo_find_next_domain() likely fails with -ENOENT whenever
+> fork_usermode_blob() is used because 449325b52b7a6208 did not take into
+> account that TOMOYO security module needs to calculate symlink's pathname,
+> is this a correct fix for a bug that file_inode(file)->i_writecount != 0
+> and file->f_count < 0 ?
 
-I haven't seen the original mail this replies to, but if we could
-get the lazytime expirty by some other means (e.g. an explicit
-callback), XFS could opt out of all the VFS inode tracking again,
-which would simplify a few things.
+> -	if (!file)
+> +	if (!file) {
+>  		file = do_open_execat(fd, filename, flags);
+> -	retval = PTR_ERR(file);
+> -	if (IS_ERR(file))
+> -		goto out_unmark;
+> +		retval = PTR_ERR(file);
+> +		if (IS_ERR(file))
+> +			goto out_unmark;
+> +	} else {
+> +		retval = deny_write_access(file);
+> +		if (retval)
+> +			goto out_unmark;
+> +		get_file(file);
+> +	}
+
+*UGH*
+
+	Something's certainly fishy with the refcounting there.
+First of all, bprm->file is a counting reference (observe what
+free_bprm() is doing).  So as it is, on success __do_execve_file()
+consumes the reference passed to it in 'file', ditto for
+do_execve_file().  However, it's inconsistent - failure of e.g.
+bprm allocation leaves the reference unconsumed.  Your change
+makes it consistent in that respect, but it means that in normal
+case you are getting refcount higher by 1 than the mainline.
+Does the mainline have an extra fput() *in* *normal* *case*?
+I can easily believe in buggered cleanups on failure, but...
+Has that code ever been tested?
+
+	It _does_ look like that double-fput() is real, but
+I'd like a confirmation before going further - umh is convoluted
+enough for something subtle to be hidden there.  Alexei, what
+the refcounting behaviour was supposed to be?  As in "this
+function consumes the reference passed to it in this argument",
+etc.
