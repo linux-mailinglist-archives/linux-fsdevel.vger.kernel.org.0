@@ -2,264 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E413183B9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18478183BB4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 22:49:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbgCLVps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 17:45:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35420 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbgCLVps (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 17:45:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wbFE9701XOV2kvczHnxaQqYLJ5I1RzPfMNLJpCQkayk=; b=e7+woX6qBTESONarQ8RJx2q6sT
-        400aq5zkt5Hmf0gUuqUaGckL0j+RZ/cMiYk7yIItnICEo6R3wXQa2991pZAlSjj+hGqrqZxTmUojp
-        r6CuBdLNW+cn/Dgm5ZeDUkbyWO5yU+II0jz3/JDrR6oeCewH/jP35O18ymR/wJ3d/uPrGVGiT3VJc
-        Qj59X2qGteMT/8/Y/UXcgHTJUhGsDZHqf9+5cr1L1+mNCGHasmPPmH+DoBsCS4prKEfWIjICq3kf7
-        9hlw3qb1CL1GitaTYpo2OGfkxLVgZC6TaO9UHFX2PiGkG6A2ZIOE/6LAdvwIOSf6oA8ZxzpxaqKlL
-        j76zlFrQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCVeG-0004g2-5h; Thu, 12 Mar 2020 21:45:48 +0000
-Date:   Thu, 12 Mar 2020 14:45:48 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/8] xarray: Fix premature termination of
- xas_for_each_marked()
-Message-ID: <20200312214548.GL22433@bombadil.infradead.org>
-References: <20200204142514.15826-1-jack@suse.cz>
- <20200204142514.15826-2-jack@suse.cz>
+        id S1726534AbgCLVtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 17:49:07 -0400
+Received: from hr2.samba.org ([144.76.82.148]:24712 "EHLO hr2.samba.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgCLVtH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Mar 2020 17:49:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+         s=42; h=Message-ID:Cc:To:From:Date;
+        bh=1JcRWJgIjBZEatikoz0G3mL9EJsdG0P/Ykm3OGVRQo4=; b=M0zd3UDimz2yegwwlZBWRu1Sjm
+        Hb2a9sq9I/B2kDBeJsob+VR2XNQaYH9Iy1mlh80tLPM12bcDfMTE7Vl1rQta5McDePT92ZD8iJVx9
+        4tIkUFiaXRuJxqXRY1b3LYV5TT9y0Y51MUhnzpAXCmeCh50oytdBZauYcQ24b2HFNK/RLcTAtOrD5
+        hTBFgTzdVQ0ofrJuWOVAaffympfy8PogEB8b5bMOrBCYsIUxsV32VOqKq22+55Ix0JZtWjbxJNRV1
+        6vDfCbps6fckISnbwkJA83CC45iVr8ot0VEw954sESPpX3S08kajgNhTB7NTflfsu+IYxtRNf86CY
+        b+xx302xd92v1CkKTYCFMBwqmCqn0RvpztruQ3/4/poqm41ia+R5OfQLbgustha/L4tkO0VQG5NXK
+        fyDcx1FGbGK/vnFmBQd79m7VBcS1nIU1N2SRWXJu2fLt8wJuxfBAzUQjf6/twU2w9n5Gnq5D+R541
+        DWEaB6FUBoQZBsoGn8v9YsSo;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_RSA_CHACHA20_POLY1305:256)
+        (Exim)
+        id 1jCVhO-0001fg-IM; Thu, 12 Mar 2020 21:49:02 +0000
+Date:   Thu, 12 Mar 2020 14:48:54 -0700
+From:   Jeremy Allison <jra@samba.org>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200312214854.GA19247@jeremy-acer>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200204142514.15826-2-jack@suse.cz>
+In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
+> Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > On Thu, Mar 12, 2020 at 2:08 AM Stefan Metzmacher <metze@samba.org> wrote:
+> >>
+> >> The whole discussion was triggered by the introduction of a completely
+> >> new fsinfo() call:
+> >>
+> >> Would you propose to have 'at_flags' and 'resolve_flags' passed in here?
+> > 
+> > Yes, I think that would be the way to go.
+> 
+> Ok, that's also fine for me:-)
+> 
+> >>> If we need linkat2() and friends, so be it. Do we?
+> >>
+> >> Yes, I'm going to propose something like this, as it would make the life
+> >> much easier for Samba to have the new features available on all path
+> >> based syscalls.
+> > 
+> > Will samba actually use them? I think we've had extensions before that
+> > weren't worth the non-portability pain?
+> 
+> Yes, we're currently moving to the portable *at() calls as a start.
+> And we already make use of Linux only feature for performance reasons
+> in other places. Having the new resolve flags will make it possible to
+> move some of the performance intensive work into non-linux specific
+> modules as fallback.
+> 
+> I hope that we'll use most of this through io_uring in the end,
+> that's the reason Jens added the IORING_REGISTER_PERSONALITY feature
+> used for IORING_OP_OPENAT2.
+> 
+> > But yes, if we have a major package like samba use it, then by all
+> > means let's add linkat2(). How many things are we talking about? We
+> > have a number of system calls that do *not* take flags, but do do
+> > pathname walking. I'm thinking things like "mkdirat()"?)
+> 
+> I haven't looked them up in detail yet.
+> Jeremy can you provide a list?
 
-I fixed this in a different way ... also, I added a test to the test-suite
-so this shouldn't regress.  Thanks for writing the commit message ;-)
+Fixing the flags argument on fchmodat() to actually *implement*
+AT_SYMLINK_NOFOLLOW would be a good start :-).
 
-From 7e934cf5ace1dceeb804f7493fa28bb697ed3c52 Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Thu, 12 Mar 2020 17:29:11 -0400
-Subject: [PATCH] xarray: Fix early termination of xas_for_each_marked
+As for the syscalls that don't have
+flags I'm thinking of the things like:
 
-xas_for_each_marked() is using entry == NULL as a termination condition
-of the iteration. When xas_for_each_marked() is used protected only by
-RCU, this can however race with xas_store(xas, NULL) in the following
-way:
+getxattr/setxattr/removexattr just off the top of my head.
 
-TASK1                                   TASK2
-page_cache_delete()         	        find_get_pages_range_tag()
-                                          xas_for_each_marked()
-                                            xas_find_marked()
-                                              off = xas_find_chunk()
-
-  xas_store(&xas, NULL)
-    xas_init_marks(&xas);
-    ...
-    rcu_assign_pointer(*slot, NULL);
-                                              entry = xa_entry(off);
-
-And thus xas_for_each_marked() terminates prematurely possibly leading
-to missed entries in the iteration (translating to missing writeback of
-some pages or a similar problem).
-
-If we find a NULL entry that has been marked, skip it (unless we're trying
-to allocate an entry).
-
-Reported-by: Jan Kara <jack@suse.cz>
-CC: stable@vger.kernel.org
-Fixes: ef8e5717db01 ("page cache: Convert delete_batch to XArray")
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/xarray.h                       |  6 +-
- lib/xarray.c                                 |  2 +
- tools/testing/radix-tree/Makefile            |  4 +-
- tools/testing/radix-tree/iteration_check_2.c | 87 ++++++++++++++++++++
- tools/testing/radix-tree/main.c              |  1 +
- tools/testing/radix-tree/test.h              |  1 +
- 6 files changed, 98 insertions(+), 3 deletions(-)
- create mode 100644 tools/testing/radix-tree/iteration_check_2.c
-
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index a491653d8882..14c893433139 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1648,6 +1648,7 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
- 								xa_mark_t mark)
- {
- 	struct xa_node *node = xas->xa_node;
-+	void *entry;
- 	unsigned int offset;
- 
- 	if (unlikely(xas_not_node(node) || node->shift))
-@@ -1659,7 +1660,10 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
- 		return NULL;
- 	if (offset == XA_CHUNK_SIZE)
- 		return xas_find_marked(xas, max, mark);
--	return xa_entry(xas->xa, node, offset);
-+	entry = xa_entry(xas->xa, node, offset);
-+	if (!entry)
-+		return xas_find_marked(xas, max, mark);
-+	return entry;
- }
- 
- /*
-diff --git a/lib/xarray.c b/lib/xarray.c
-index f448bcd263ac..e9e641d3c0c3 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1208,6 +1208,8 @@ void *xas_find_marked(struct xa_state *xas, unsigned long max, xa_mark_t mark)
- 		}
- 
- 		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
-+		if (!entry && !(xa_track_free(xas->xa) && mark == XA_FREE_MARK))
-+			continue;
- 		if (!xa_is_node(entry))
- 			return entry;
- 		xas->xa_node = xa_to_node(entry);
-diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
-index 397d6b612502..aa6abfe0749c 100644
---- a/tools/testing/radix-tree/Makefile
-+++ b/tools/testing/radix-tree/Makefile
-@@ -7,8 +7,8 @@ LDLIBS+= -lpthread -lurcu
- TARGETS = main idr-test multiorder xarray
- CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o
- OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
--	 regression4.o \
--	 tag_check.o multiorder.o idr-test.o iteration_check.o benchmark.o
-+	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
-+	 iteration_check_2.o benchmark.o
- 
- ifndef SHIFT
- 	SHIFT=3
-diff --git a/tools/testing/radix-tree/iteration_check_2.c b/tools/testing/radix-tree/iteration_check_2.c
-new file mode 100644
-index 000000000000..aac5c50a3674
---- /dev/null
-+++ b/tools/testing/radix-tree/iteration_check_2.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * iteration_check_2.c: Check that deleting a tagged entry doesn't cause
-+ * an RCU walker to finish early.
-+ * Copyright (c) 2020 Oracle
-+ * Author: Matthew Wilcox <willy@infradead.org>
-+ */
-+#include <pthread.h>
-+#include "test.h"
-+
-+static volatile bool test_complete;
-+
-+static void *iterator(void *arg)
-+{
-+	XA_STATE(xas, arg, 0);
-+	void *entry;
-+
-+	rcu_register_thread();
-+
-+	while (!test_complete) {
-+		xas_set(&xas, 0);
-+		rcu_read_lock();
-+		xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_0)
-+			;
-+		rcu_read_unlock();
-+		assert(xas.xa_index >= 100);
-+	}
-+
-+	rcu_unregister_thread();
-+	return NULL;
-+}
-+
-+static void *throbber(void *arg)
-+{
-+	struct xarray *xa = arg;
-+
-+	rcu_register_thread();
-+
-+	while (!test_complete) {
-+		int i;
-+
-+		for (i = 0; i < 100; i++) {
-+			xa_store(xa, i, xa_mk_value(i), GFP_KERNEL);
-+			xa_set_mark(xa, i, XA_MARK_0);
-+		}
-+		for (i = 0; i < 100; i++)
-+			xa_erase(xa, i);
-+	}
-+
-+	rcu_unregister_thread();
-+	return NULL;
-+}
-+
-+void iteration_test2(unsigned test_duration)
-+{
-+	pthread_t threads[2];
-+	DEFINE_XARRAY(array);
-+	int i;
-+
-+	printv(1, "Running iteration test 2 for %d seconds\n", test_duration);
-+
-+	test_complete = false;
-+
-+	xa_store(&array, 100, xa_mk_value(100), GFP_KERNEL);
-+	xa_set_mark(&array, 100, XA_MARK_0);
-+
-+	if (pthread_create(&threads[0], NULL, iterator, &array)) {
-+		perror("create iterator thread");
-+		exit(1);
-+	}
-+	if (pthread_create(&threads[1], NULL, throbber, &array)) {
-+		perror("create throbber thread");
-+		exit(1);
-+	}
-+
-+	sleep(test_duration);
-+	test_complete = true;
-+
-+	for (i = 0; i < 2; i++) {
-+		if (pthread_join(threads[i], NULL)) {
-+			perror("pthread_join");
-+			exit(1);
-+		}
-+	}
-+
-+	xa_destroy(&array);
-+}
-diff --git a/tools/testing/radix-tree/main.c b/tools/testing/radix-tree/main.c
-index 7a22d6e3732e..f2cbc8e5b97c 100644
---- a/tools/testing/radix-tree/main.c
-+++ b/tools/testing/radix-tree/main.c
-@@ -311,6 +311,7 @@ int main(int argc, char **argv)
- 	regression4_test();
- 	iteration_test(0, 10 + 90 * long_run);
- 	iteration_test(7, 10 + 90 * long_run);
-+	iteration_test2(10 + 90 * long_run);
- 	single_thread_tests(long_run);
- 
- 	/* Free any remaining preallocated nodes */
-diff --git a/tools/testing/radix-tree/test.h b/tools/testing/radix-tree/test.h
-index 1ee4b2c0ad10..34dab4d18744 100644
---- a/tools/testing/radix-tree/test.h
-+++ b/tools/testing/radix-tree/test.h
-@@ -34,6 +34,7 @@ void xarray_tests(void);
- void tag_check(void);
- void multiorder_checks(void);
- void iteration_test(unsigned order, unsigned duration);
-+void iteration_test2(unsigned duration);
- void benchmark(void);
- void idr_checks(void);
- void ida_tests(void);
--- 
-2.25.1
-
+Jeremy.
