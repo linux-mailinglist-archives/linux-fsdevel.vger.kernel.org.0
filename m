@@ -2,105 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D333183974
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 20:31:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A408C1839A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Mar 2020 20:38:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbgCLTa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 15:30:56 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:23077 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726718AbgCLTa4 (ORCPT
+        id S1726706AbgCLTiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 15:38:23 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56666 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgCLTiX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 15:30:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584041455;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QvUXhImPqA1Uvu5bgO3XTxZQY9biJKg8Q/V15yAEJs0=;
-        b=iFnHgZgLNOnnjhz+faLqfH40ZucBsLk10iv5qrngFNVm4+t0kY4cqNnO3bMxoX+yKZwrDA
-        Vrfcj2zgSbQzKHaDUQpn37Nw8kP2OpThRYoqOHDUcDKX5No9gy0jYSSy5rHoweuIKbl0mA
-        FyNMt0CEL6hzmd/BwjukKOuBf7vQBck=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-nHBA0sDFNZuri9ndoi6yhw-1; Thu, 12 Mar 2020 15:30:51 -0400
-X-MC-Unique: nHBA0sDFNZuri9ndoi6yhw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A5E021922965;
-        Thu, 12 Mar 2020 19:30:49 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F40419C6A;
-        Thu, 12 Mar 2020 19:30:39 +0000 (UTC)
-Date:   Thu, 12 Mar 2020 15:30:37 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-Message-ID: <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2>
- <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
+        Thu, 12 Mar 2020 15:38:23 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCTeV-00AJDj-Tq; Thu, 12 Mar 2020 19:37:55 +0000
+Date:   Thu, 12 Mar 2020 19:37:55 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Stefan Metzmacher <metze@samba.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Allison <jra@samba.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200312193755.GL23230@ZenIV.linux.org.uk>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-02-13 16:44, Paul Moore wrote:
-> This is a bit of a thread-hijack, and for that I apologize, but
-> another thought crossed my mind while thinking about this issue
-> further ... Once we support multiple auditd instances, including the
-> necessary record routing and duplication/multiple-sends (the host
-> always sees *everything*), we will likely need to find a way to "trim"
-> the audit container ID (ACID) lists we send in the records.  The
-> auditd instance running on the host/initns will always see everything,
-> so it will want the full container ACID list; however an auditd
-> instance running inside a container really should only see the ACIDs
-> of any child containers.
+On Thu, Mar 12, 2020 at 06:11:09PM +0100, Stefan Metzmacher wrote:
 
-Agreed.  This should be easy to check and limit, preventing an auditd
-from seeing any contid that is a parent of its own contid.
+> If that works safely for hardlinks and having another process doing a
+> rename between openat2() and unlinkat(), we could try that.
+> 
+> My initial naive idea was to have one syscall instead of
+> linkat2/renameat3/unlinkat2.
+> 
+> int xlinkat(int src_dfd, const char *src_path,
+>             int dst_dfd, const char *dst_path,
+>             const struct xlinkat_how *how, size_t how_size);
+> 
+> struct xlinkat_how {
+>        __u64 src_at_flags;
+>        __u64 src_resolve_flags;
+>        __u64 dst_at_flags;
+>        __u64 dst_resolve_flags;
+>        __u64 rename_flags;
+>        __s32 src_fd;
+> };
+> 
+> With src_dfd=-1, src_path=NULL, how.src_fd = -1, this would be like
+> linkat().
+> With dst_dfd=-1, dst_path=NULL, it would be like unlinkat().
+> Otherwise a renameat2().
+>
+> If how.src_fd is not -1, it would be checked to be the same path as
+> specified by src_dfd and src_path.
 
-> For example, imagine a system where the host has containers 1 and 2,
-> each running an auditd instance.  Inside container 1 there are
-> containers A and B.  Inside container 2 there are containers Y and Z.
-> If an audit event is generated in container Z, I would expect the
-> host's auditd to see a ACID list of "1,Z" but container 1's auditd
-> should only see an ACID list of "Z".  The auditd running in container
-> 2 should not see the record at all (that will be relatively
-> straightforward).  Does that make sense?  Do we have the record
-> formats properly designed to handle this without too much problem (I'm
-> not entirely sure we do)?
+"Checked" as in...?  And is that the same path or another link to the
+same object, or...?
 
-I completely agree and I believe we have record formats that are able to
-handle this already.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+The idea of dumping all 3 into the same syscall looks wrong - compare
+the effects of link() and rename() on the opened files, for starters,
+and try to come up with documentation for all of that.  Multiplexors
+tend to be very bad, in large part because they have so bloody
+convoluted semantics...
