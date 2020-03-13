@@ -2,140 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB988184759
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 13:59:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27440184861
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 14:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbgCMM7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 08:59:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:54754 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbgCMM7a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 08:59:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1981730E;
-        Fri, 13 Mar 2020 05:59:29 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 905A13F67D;
-        Fri, 13 Mar 2020 05:59:28 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 12:59:27 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 00/11] arm64: Branch Target Identification support
-Message-ID: <20200313125927.GE5528@sirena.org.uk>
-References: <20200227174417.23722-1-broonie@kernel.org>
- <20200306102729.GC2503422@arrakis.emea.arm.com>
- <20200309210505.GM4101@sirena.org.uk>
- <20200310124226.GC4106@sirena.org.uk>
- <20200311162858.GK3216816@arrakis.emea.arm.com>
- <20200311172556.GJ5411@sirena.org.uk>
- <20200312184211.GA3849205@arrakis.emea.arm.com>
+        id S1726682AbgCMNmU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 09:42:20 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33908 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726327AbgCMNmT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Mar 2020 09:42:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584106938;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WmJMCPjLeZOGPd5XvclGChfYUeyS2atWd4pQtWyZc14=;
+        b=c6/vRoLJWoY1aQvLXglZeEfR2yDmlvCw49iGV+Cz4HYZdKcS0B92+wyWPpr2tggbcmKQ3p
+        R3wzDQRO4QCE+wuZ5arOUXXTJ2NzqJpAEwOpwi+pZuQONxBibNqiZPXcS87K1SVle+lLHk
+        kCw7W4d0w5kWeuOyn5CHZWqGFCGc+oc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-408-dxlPnEmCMRqY71uj9jQetw-1; Fri, 13 Mar 2020 09:42:06 -0400
+X-MC-Unique: dxlPnEmCMRqY71uj9jQetw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0C61518A8CAF;
+        Fri, 13 Mar 2020 13:42:04 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A89A4101D480;
+        Fri, 13 Mar 2020 13:41:55 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 3896722021D; Fri, 13 Mar 2020 09:41:55 -0400 (EDT)
+Date:   Fri, 13 Mar 2020 09:41:55 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Peng Tao <tao.peng@linux.alibaba.com>
+Subject: Re: [PATCH 13/20] fuse, dax: Implement dax read/write operations
+Message-ID: <20200313134155.GA156804@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <20200304165845.3081-14-vgoyal@redhat.com>
+ <CAJfpegtpgE+vnN0hvEVMDyNkYZ0h3_kNgxWCQUb2iuBdy8kEsw@mail.gmail.com>
+ <20200312160208.GB114720@redhat.com>
+ <CAJfpegtuCCRfKfctUyQBimAOpnOTvW5zodLAy307Mr_1h0+e7g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5E4XgoOPWr4PD9E"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200312184211.GA3849205@arrakis.emea.arm.com>
-X-Cookie: This page intentionally left blank.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJfpegtuCCRfKfctUyQBimAOpnOTvW5zodLAy307Mr_1h0+e7g@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Mar 13, 2020 at 11:18:15AM +0100, Miklos Szeredi wrote:
 
---u5E4XgoOPWr4PD9E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[..]
+> > > > +/* offset passed in should be aligned to FUSE_DAX_MEM_RANGE_SZ */
+> > > > +static int fuse_setup_one_mapping(struct inode *inode, loff_t offset,
+> > > > +                                 struct fuse_dax_mapping *dmap, bool writable,
+> > > > +                                 bool upgrade)
+> > > > +{
+> > > > +       struct fuse_conn *fc = get_fuse_conn(inode);
+> > > > +       struct fuse_inode *fi = get_fuse_inode(inode);
+> > > > +       struct fuse_setupmapping_in inarg;
+> > > > +       FUSE_ARGS(args);
+> > > > +       ssize_t err;
+> > > > +
+> > > > +       WARN_ON(offset % FUSE_DAX_MEM_RANGE_SZ);
+> > > > +       WARN_ON(fc->nr_free_ranges < 0);
+> > > > +
+> > > > +       /* Ask fuse daemon to setup mapping */
+> > > > +       memset(&inarg, 0, sizeof(inarg));
+> > > > +       inarg.foffset = offset;
+> > > > +       inarg.fh = -1;
+> > > > +       inarg.moffset = dmap->window_offset;
+> > > > +       inarg.len = FUSE_DAX_MEM_RANGE_SZ;
+> > > > +       inarg.flags |= FUSE_SETUPMAPPING_FLAG_READ;
+> > > > +       if (writable)
+> > > > +               inarg.flags |= FUSE_SETUPMAPPING_FLAG_WRITE;
+> > > > +       args.opcode = FUSE_SETUPMAPPING;
+> > > > +       args.nodeid = fi->nodeid;
+> > > > +       args.in_numargs = 1;
+> > > > +       args.in_args[0].size = sizeof(inarg);
+> > > > +       args.in_args[0].value = &inarg;
+> > >
+> > > args.force = true?
+> >
+> > I can do that but I am not sure what exactly does args.force do and
+> > why do we need it in this case.
+> 
+> Hm, it prevents interrupts.  Looking closely, however it will only
+> prevent SIGKILL from immediately interrupting the request, otherwise
+> it will send an INTERRUPT request and the filesystem can ignore that.
+> Might make sense to have a args.nonint flag to prevent the sending of
+> INTERRUPT...
 
-On Thu, Mar 12, 2020 at 06:42:11PM +0000, Catalin Marinas wrote:
-> On Wed, Mar 11, 2020 at 05:25:56PM +0000, Mark Brown wrote:
-> > On Wed, Mar 11, 2020 at 04:28:58PM +0000, Catalin Marinas wrote:
+Hi Miklos,
 
-> > > Can we not change aarch64_insn_is_nop() to actually return true only for
-> > > NOP and ignore everything else in the hint space? We tend to re-use the
+virtiofs does not support interrupt requests yet. Its fiq interrupt
+handler just does not do anything.
 
-> > ignored. This isn't extensive userspace testing though.  Adding
-> > whitelisting of the BTI and PAC hints would definitely be a safer as a
-> > first step though.  I can post either version?
+static void virtio_fs_wake_interrupt_and_unlock(struct fuse_iqueue *fiq)
+__releases(fiq->lock)
+{
+        /*
+         * TODO interrupts.
+         *
+         * Normal fs operations on a local filesystems aren't interruptible.
+         * Exceptions are blocking lock operations; for example fcntl(F_SETLKW)
+         * with shared lock between host and guest.
+         */
+        spin_unlock(&fiq->lock);
+}
 
-> I thought BTI and PAC are already whitelisted in mainline as they fall
-> into the hint space (by whitelisting I mean you can probe them).
+So as of now setting force or not will not make any difference. We will
+still end up waiting for request to finish.
 
-This was in the context of your comment above about modifying
-aarch64_insn_is_nop() - if we do that and nothing else then we'd remove
-the current whitelisting.
+Infact, I think there is no mechanism to set fc->no_interrupt in
+virtio_fs. If I am reading request_wait_answer(), correctly, it will
+see fc->no_interrupt is not set. That means filesystem supports
+interrupt requests and it will do wait_event_interruptible() and
+not even check for FR_FORCE bit. 
 
-> I'm trying to understand how the BTI patches affect the current uprobes
-> support and what is needed. Executing BTI or PCI?SP out of line should
-> be fine as they don't generate a BTI exception (the BRK doesn't either,
-> just the normal debug exception).
+Right now fc->no_interrupt is set in response to INTERRUPT request
+reply. Will it make sense to also be able to set it as part of
+connection negotation protocol and filesystem can tell in the
+beginning itself that it does not support interrupt and virtiofs
+can make use of that.
 
-Right.
+So force flag is only useful if filesystem does not support interrupt
+and in that case we do wait_event_killable() and upon receiving
+SIGKILL, cancel request if it is still in pending queue. For virtiofs,
+we take request out of fiq->pending queue in submission path itself
+and if it can't be dispatched it waits on virtiofs speicfic queue
+with FR_PENDING cleared. That means, setting FR_FORCE for virtiofs
+does not mean anything as caller will end up waiting for
+request to finish anyway.
 
-> I think (it needs checking) that BRK preserves the PSTATE.BTYPE in SPSR.
+IOW, setting FR_FORCE will make sense when we have mechanism to
+detect that request is still queued in virtiofs queues and have
+mechanism to cancel it. We don't have it. In fact, given we are
+a push model, we dispatch request immediately to filesystem,
+until and unless virtqueue is full. So probability of a request
+still in virtiofs queue is low.
 
-Yes, Exception_SoftwareBreakpoint preserves PSTATE.BTYPE.
+So may be we can start setting force at some point of time later
+when we have mechanism to cancel detect and cancel pending requests
+in virtiofs.
 
-> If we probe an instruction in a guarded page and then we single-step it
-> in a non-guarded page, we'll miss a potential BTI fault. Is this an
-> issue?
+> 
+> > First thing it does is that request is allocated with flag __GFP_NOFAIL.
+> > Second thing it does is that caller is forced to wait for request
+> > completion and its not an interruptible sleep.
+> >
+> > I am wondering what makes FUSE_SETUPMAPING/FUSE_REMOVEMAPPING requests
+> > special that we need to set force flag.
+> 
+> Maybe not for SETUPMAPPING (I was confused by the error log).
+> 
+> However if REMOVEMAPPING fails for some reason, than that dax mapping
+> will be leaked for the lifetime of the filesystem.   Or am I
+> misunderstanding it?
 
-Obviously the main thing here is that if we miss faults then that's
-potentially opening something that could be used as part of an exploit
-chain.  I'm not aware of any sensible applications that would generate
-the exceptions in normal operation.
+FUSE_REMVOEMAPPING is not must. If we send another FUSE_SETUPMAPPING, then
+it will create the new mapping and free up resources associated with
+the previous mapping, IIUC.
 
-> If we are to keep the BTI faulting behaviour, we'd need an additional
-> xol page, guarded, and to find a way to report the original probed
-> address of the fault rather than the xol page.
+So at one point of time we were thinking that what's the point of
+sending FUSE_REMOVEMAPPING. It helps a bit with freeing up filesystem
+resources earlier. So if cache size is big, then there will not be
+much reclaim activity going and if we don't send FUSE_REMOVEMAPPING,
+all these filesystem resources will remain busy on host for a long
+time.
 
-Yes, or just accept the inaccurate fault address which isn't good but
-might be the least worst thing if there's issues with reporting the
-original address.
+> 
+> > > > +       ret = fuse_setup_one_mapping(inode,
+> > > > +                                    ALIGN_DOWN(pos, FUSE_DAX_MEM_RANGE_SZ),
+> > > > +                                    dmap, true, true);
+> > > > +       if (ret < 0) {
+> > > > +               printk("fuse_setup_one_mapping() failed. err=%d pos=0x%llx\n",
+> > > > +                      ret, pos);
+> > >
+> > > Again.
+> >
+> > Will remove. How about converting some of them to pr_debug() instead? It
+> > can help with debugging if something is not working.
+> 
+> Okay, and please move it to fuse_setup_one_mapping() where there's
+> already a pr_debug() for the success case.
 
-> So, IIUC, we don't have an issue with the actual BTI or PACI?SP
-> instructions but rather the other instructions that would not fault with
-> the BTI support. While we should try to address this, I think the
-> important bit now is not to break the existing uprobes support when
-> running a binary with BTI enabled.
+Will do.
 
-I think so, and as far as my ability to tell goes the worst consequence
-would be missing exceptions like you say.  That's not great but it's at
-least an extra hoop people have to jump through.
+> 
+>  > > +
+> > > > +       /* Do not use dax for file extending writes as its an mmap and
+> > > > +        * trying to write beyong end of existing page will generate
+> > > > +        * SIGBUS.
+> > >
+> > > Ah, here it is.  So what happens in case of a race?  Does that
+> > > currently crash KVM?
+> >
+> > In case of race, yes, KVM hangs. So no shared directory operation yet
+> > till we have designed proper error handling in kvm path.
+> 
+> I think before this is merged we have to fix the KVM crash; that's not
+> acceptable even if we explicitly say that shared directory is not
+> supported for the time being.
 
---u5E4XgoOPWr4PD9E
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok, I will look into it. I had done some work in the past and realized
+its not trivial to fix kvm error paths. There are no users and propagating
+signals back into qemu instances and finding the right process is going to be
+tricky.
 
------BEGIN PGP SIGNATURE-----
+Given the complexity of that work, I thought that for now we say that
+shared directory is not supported and once basic dax patches get merged,
+focus on kvm work.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5rg64ACgkQJNaLcl1U
-h9DWnQgAhUxlaicd2a+MBwTWiCVEJTRRFVsRGhEykHrb5hzLpkJjryEGiVCRyRQu
-oVmbnqJvqq7rPvgU9m5hjzCRHisdgwfusfAHEeh5wb2Mj4PDLjy5eZqVDiA070Qk
-kTw4qZuayRbkD/k3axQ3/DT8+Etp7R7diCsLNp9VXMuc8E54XYtUv7lEreciqiJR
-MSagKFj37vUFHTJIXAzynd1W+b4QyPA3FGKi1U90CijwuWGRu5HY8XKguW/7jLIp
-5FsUaW+Qz45aPeQF9g5Ka85iNrTKuaj49BpvK4vsM7TjjKJ2Br7k1fmxqceWessd
-5gP9y4bcPEjW+7sf40ALa+SsaPmVTw==
-=g2Tj
------END PGP SIGNATURE-----
+Thanks
+Vivek
 
---u5E4XgoOPWr4PD9E--
