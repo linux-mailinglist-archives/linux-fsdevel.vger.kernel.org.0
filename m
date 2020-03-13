@@ -2,121 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CA97184522
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 11:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D03D918464D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 12:56:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgCMKpU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 06:45:20 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37532 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726420AbgCMKpU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 06:45:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584096318;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zctn6k2f5mixNGrxrLzyiam0TKHGTxDS/k1jN+OYlZ8=;
-        b=gZF2Cv2m8VhflK0wpDOtLc182kXjTeKi1Urdk1c4yhuXq/FYGu4pKPJ6H/tv9n+UZXv1Lq
-        WAZv/J7IPetJsYkxQIZCDLym5TTLMPWaV8xjZ7/XW3HhGGq+ZGRJ14PPBTSQIaHjbIrycK
-        pIbSocl4w4fZwl3bCZQxtc4i4D8WMXk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-487-jtTKzEKeMgunG84EEsDQJw-1; Fri, 13 Mar 2020 06:45:17 -0400
-X-MC-Unique: jtTKzEKeMgunG84EEsDQJw-1
-Received: by mail-wm1-f70.google.com with SMTP id a23so3281097wmm.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 03:45:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zctn6k2f5mixNGrxrLzyiam0TKHGTxDS/k1jN+OYlZ8=;
-        b=H2lbu3ah9zHCv4v6PsoruhgmEJPyGOW/ls6AEegf79Nqy2HS5YFy6mhyBfZDpHFCTz
-         NXEPHiMGgefx/Gi4wFYITlHGE2PGdXXjaB1bM5UCbOavPdARAINboj4hQVS1uaintUFd
-         k5i0iCdFy0JiIO+YXdxHt7Brh41xtGIyqG0bu4biFl6bQgAVW/1CgWnKINw8ezOO6Nme
-         AluK8D/Ni3Ihu513OkvyiFCx65FT9cri0aOHMt97PJ/OKg0taU7Va1WjMKD/O8EWFIiw
-         xg51oRnNyznqNEhRojI+a+L38IW33/yu6DYXQEsGJblpaL8t99Pty0Ti8+FTrJDema0D
-         7PMQ==
-X-Gm-Message-State: ANhLgQ3HsZR9JJP+gSQqFlF56qH/DjAKwjELOjy2Umjmx96YzY+Yth7b
-        mXG01zT4POPgVqfAUTVtNYnwUP1u+kQnfFyIy6MTWZITBiyhV0tPzW+mZzrSSDpYXXfSrGX8jtX
-        g14qbTnOrCa+uRNZ27dZ6xO0NMg==
-X-Received: by 2002:a1c:9a45:: with SMTP id c66mr9834651wme.115.1584096316104;
-        Fri, 13 Mar 2020 03:45:16 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vviKBLP6HiMs9SO8RNyYOgApRUQbugrPMiXiR6xqFNcz8q1Uphz7JwEuPG86DI5+Afewd8XZg==
-X-Received: by 2002:a1c:9a45:: with SMTP id c66mr9834631wme.115.1584096315904;
-        Fri, 13 Mar 2020 03:45:15 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-fc7e-fd47-85c1-1ab3.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:fc7e:fd47:85c1:1ab3])
-        by smtp.gmail.com with ESMTPSA id o10sm5209579wrs.65.2020.03.13.03.45.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2020 03:45:15 -0700 (PDT)
-Subject: Re: [PATCH] fs: Fix missing 'bit' in comment
-To:     Chucheng Luo <luochucheng@vivo.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     wenhu.wang@vivo.com, trivial@kernel.org
-References: <20200313014655.28967-1-luochucheng@vivo.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <dfd44b01-3d90-3923-2971-d8d5bce5db08@redhat.com>
-Date:   Fri, 13 Mar 2020 11:45:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726554AbgCML4B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 07:56:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:53580 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbgCML4B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Mar 2020 07:56:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D30EFEC;
+        Fri, 13 Mar 2020 04:56:01 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 607D83F534;
+        Fri, 13 Mar 2020 04:56:00 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 11:55:58 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v9 02/13] ELF: Add ELF program property parsing support
+Message-ID: <20200313115558.GC5528@sirena.org.uk>
+References: <20200311192608.40095-1-broonie@kernel.org>
+ <20200311192608.40095-3-broonie@kernel.org>
+ <202003121658.39A47CE098@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20200313014655.28967-1-luochucheng@vivo.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
+Content-Disposition: inline
+In-Reply-To: <202003121658.39A47CE098@keescook>
+X-Cookie: This page intentionally left blank.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-On 3/13/20 2:46 AM, Chucheng Luo wrote:
-> The missing word may make it hard for other developers to
-> understand it.
-> 
-> Signed-off-by: Chucheng Luo <luochucheng@vivo.com>
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This new version also looks good to me:
+On Thu, Mar 12, 2020 at 04:59:21PM -0700, Kees Cook wrote:
 
-Acked-by: Hans de Goede <hdegoede@redhat.com>
+> I think my review got lost along the way. Please consider this:
 
-Regards,
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Hans
+Yes, sorry - I've added it locally (and the other two you sent just now).
 
-p.s.
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In the future please mark new versions as such by using e.g.:
+-----BEGIN PGP SIGNATURE-----
 
-git send-email --subject-prefix="PATCH v2" ...
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl5rdM0ACgkQJNaLcl1U
+h9Ct3wf+MPz1HrOXhlGATJUUi/83pv08oTCCzRaHqlsusA4dPg41W77Sgpj37/Yr
+9LGONneWZqrufnFxx7ZEMJpqwJU1ROce8kl59OqNPAvVm25jQSBFMoboDrWHPCXB
+GbTThVC6FmnF/QboOwdYKGH5/PVXLyxlH5widr4tjataNyWfaxVfk9RUmm8zCZHI
+EqNJbvFejd2e6+g32ZxnnqAl8/nWswnuorlm884nKrqdAN69dyJIcDb19NaP9ZDc
+8WJd4HoiMr+vT1a/JnkZCB/LwJU3nBlbOFWm7CNuHntRErsTZ5vZJ9m6ORz9v0oY
+wU2OLaDYGXBG21NDPFxxWbEEBW2zFg==
+=f6yG
+-----END PGP SIGNATURE-----
 
-Actually, it would be good to resend this patch (with my
-Acked-by added to the commit msg) this way because now there
-is no way for the fs maintainers to figure out which one
-of the 2 patches you've send out to apply.
-
-
-
-> ---
->   fs/vboxsf/dir.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/vboxsf/dir.c b/fs/vboxsf/dir.c
-> index dd147b490982..4d569f14a8d8 100644
-> --- a/fs/vboxsf/dir.c
-> +++ b/fs/vboxsf/dir.c
-> @@ -134,7 +134,7 @@ static bool vboxsf_dir_emit(struct file *dir, struct dir_context *ctx)
->   		d_type = vboxsf_get_d_type(info->info.attr.mode);
->   
->   		/*
-> -		 * On 32 bit systems pos is 64 signed, while ino is 32 bit
-> +		 * On 32-bit systems pos is 64-bit signed, while ino is 32-bit
->   		 * unsigned so fake_ino may overflow, check for this.
->   		 */
->   		if ((ino_t)(ctx->pos + 1) != (u64)(ctx->pos + 1)) {
-> 
-
+--gr/z0/N6AeWAPJVB--
