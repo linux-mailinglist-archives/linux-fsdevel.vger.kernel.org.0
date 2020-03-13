@@ -2,104 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B20DF184C81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 407A0184C8F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:33:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgCMQ32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 12:29:28 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36789 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgCMQ3Y (ORCPT
+        id S1726571AbgCMQdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 12:33:14 -0400
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:46679 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgCMQdO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:29:24 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b18so8048250edu.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
+        Fri, 13 Mar 2020 12:33:14 -0400
+Received: by mail-ua1-f51.google.com with SMTP id b2so3744739uas.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 09:33:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
-        b=wNEa9VbCq5ppXpJfo1/v31ZhKG8uPf7PzMenc8z6vmEiPRA9w/pPKyW5PupisZ+2wm
-         /1jR1aTmSmwc3VGYzygElLlxIeYf8iDy+ZYBCCFSAzNIo4Qhqf2EVsQY2xdC+JJray49
-         u01vKpsXb8UXTPq9xL8qVflCmkWMFcPy3ohoVOFO6yr5Wx5vOxDNototKpEKY+8oXZNU
-         ZY3T4uEoba21JC3zCnFHzr6tNBDmVkym5KePwLGcs3xFJU7aw/cie5ZNNSC+vyHPPitf
-         6TxueY9wS4q7IPVNWnMTG7h0eYTj8SBvSH5GSRB+1Qrpcnnc6Wf/I+hp69E09N7FxlEV
-         0bxw==
+        bh=02lwFBCLBcb4bzvU/oIWzhKPfBjQLcn82ZsnxwE2cWA=;
+        b=KE7MohrwsXcWc+ugG2vXw416yi53NBTu1mN+sgRnlmsoSa1m5XWNGRMi05YVqhU+7X
+         fLlKN/XYUPPONpc0UgOJ5NpxrGP7uTml9+QXjkk90pC5iAYsZsCDkAYdPRZY6AyPtRJ1
+         RvFSLK/0nWSHeg/mkshyl7lYQVB4SOVQgBiq62kkTnBsu8eE9cJKkiAXI1MJCFf9sAlu
+         yrw4TPQhbTyKO+feddsbrEcc4w3K8rT2R5CUgE+877QCYp0dqpDTPsJSdM+m2vUIi97V
+         /OHCQpEwnGrmjPNrDBXPy/riC/VO4+w4ZnimIRci6/DaagzFHJIYZ2NB4cwsq4O4lVBS
+         7qhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
-        b=qlI7dfstjDtH2npPSA0EKSAz76xD04IZg2bo5XVFukAqse8sM2q32g7qbli164MKLk
-         3Nmbt6wS2FgHg6Zwz87xs4N/Md4FruKZljqlvuD8XM5lFMqcdv9jA3037pPkn610HpuV
-         TSKOB+ti8e+B6+cpO0sM8/3ZMvex6sPNaAsFpFH+C2rTCbkWH7a8wOM/JnbhFfn5smag
-         S1tgO/FfVfYBV4PMsXAFrD6TKwqS+WekmxU2wTf0x9b97ybaiDGjpRHkqoEsL31R1bef
-         rfur2zJevP87xK2mw5louRNXqiWhjIyf3swmGFRNKnh4pfKkaKJ96UWGKh2v6cJ2a+9H
-         BBPA==
-X-Gm-Message-State: ANhLgQ0jZcqLAjKyxLXIZdGwHqtUgY3eIf6fa69FjCkF97KyrxHdCVSe
-        r3MSSzQHsdhijMoB8J0UEC9Z2ZigUowj+/qBQsNn
-X-Google-Smtp-Source: ADFU+vuL+b7H+tHmfIL9uEWtaqijyChHCYny1ByjHCCYsp9IHY7VBWU/eiFjWL7wPzp8K/OQLrQaC/SDlvMtNAtsA5M=
-X-Received: by 2002:a17:907:105a:: with SMTP id oy26mr3891035ejb.308.1584116962089;
- Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
+        bh=02lwFBCLBcb4bzvU/oIWzhKPfBjQLcn82ZsnxwE2cWA=;
+        b=clVTnWCUdfWobGMJYk6BC5DAbbph5QYk3hHmOX005uelzx8pKTijMte+9jXMwDN95P
+         Q8662Mf/vkqN+jJ5xPP8CTw6iITjjE0g3iY3r/kjgA+jGt3bBVJ/Hj7qvpvGLIPlwQpB
+         acJB8UVsSHZv/2WLWXC4s5LT9g0KCmW5MCdpyeVOYsDW5rgd2J3mEcYM8af3VMZOgaol
+         9Rtj7nXtTTA+ZsmdkTBccCc8TGR65kDBU7P7JUjVqiR3oR7mSVkfmvFDQDoLLu6i1bCz
+         xtEXqLb2HI0UrzeR0yDXTPG5vBM2ilM1/JVT9GrFgRC+KXXIkckTXAT194CMpG+NlELC
+         lETA==
+X-Gm-Message-State: ANhLgQ0W5GykFee4IDwwwuSsVW/9UHdHIu0o217XDrIKvt/q/udX0MKf
+        08Hi3Uw0PC/SexXREXDFJalqo2wwngXtTWYBqR/n05e+5+sLuQ==
+X-Google-Smtp-Source: ADFU+vupr5E63XsCaYXo8W5nb6d5fgOuV1xz0DHCr+5ZkFvki3Op9d+JYWFsGIBTOcaAI/TqU7tX11SdXRCzDMOlHuE=
+X-Received: by 2002:ab0:758b:: with SMTP id q11mr9002341uap.12.1584117191479;
+ Fri, 13 Mar 2020 09:33:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com> <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
-In-Reply-To: <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 13 Mar 2020 12:29:10 -0400
-Message-ID: <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+References: <20200201005639.GG23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200201005639.GG23230@ZenIV.linux.org.uk>
+From:   Mike Marshall <hubcap@omnibond.com>
+Date:   Fri, 13 Mar 2020 12:33:00 -0400
+Message-ID: <CAOg9mSTwD1HxU=autqFDan_dSCaPOMBed-SuzW=kYjGRjKuyXA@mail.gmail.com>
+Subject: Re: [confused] can orangefs ACLs be removed at all?
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        devel@lists.orangefs.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-02-13 16:44, Paul Moore wrote:
-> > This is a bit of a thread-hijack, and for that I apologize, but
-> > another thought crossed my mind while thinking about this issue
-> > further ... Once we support multiple auditd instances, including the
-> > necessary record routing and duplication/multiple-sends (the host
-> > always sees *everything*), we will likely need to find a way to "trim"
-> > the audit container ID (ACID) lists we send in the records.  The
-> > auditd instance running on the host/initns will always see everything,
-> > so it will want the full container ACID list; however an auditd
-> > instance running inside a container really should only see the ACIDs
-> > of any child containers.
->
-> Agreed.  This should be easy to check and limit, preventing an auditd
-> from seeing any contid that is a parent of its own contid.
->
-> > For example, imagine a system where the host has containers 1 and 2,
-> > each running an auditd instance.  Inside container 1 there are
-> > containers A and B.  Inside container 2 there are containers Y and Z.
-> > If an audit event is generated in container Z, I would expect the
-> > host's auditd to see a ACID list of "1,Z" but container 1's auditd
-> > should only see an ACID list of "Z".  The auditd running in container
-> > 2 should not see the record at all (that will be relatively
-> > straightforward).  Does that make sense?  Do we have the record
-> > formats properly designed to handle this without too much problem (I'm
-> > not entirely sure we do)?
->
-> I completely agree and I believe we have record formats that are able to
-> handle this already.
+I've been away from this for a while, but have been working on it
+now for several days... by working on it, I mean I've been reading
+the code back into fs and forward into the userspace part of orangefs,
+and comparing what orangefs does with what ext4 and tmpfs do when I
+set and unset acls...
 
-I'm not convinced we do.  What about the cases where we have a field
-with a list of audit container IDs?  How do we handle that?
+I can observe that these acls are foldable into mode,
+no acls are set, this asdf file is on ext4:
 
--- 
-paul moore
-www.paul-moore.com
+hubcap@vm1 ~]$ ls -l asdf
+-rw-rw----. 1 hubcap hubcap 0 Mar  6 15:34 asdf
+[hubcap@vm1 ~]$ setfacl -m u::rwx asdf
+[hubcap@vm1 ~]$ ls -l asdf
+-rwxrw----. 1 hubcap hubcap 0 Mar  6 15:34 asdf
+[hubcap@vm1 ~]$ setfacl -m g::rwx asdf
+[hubcap@vm1 ~]$ ls -l asdf
+-rwxrwx---. 1 hubcap hubcap 0 Mar  6 15:34 asdf
+[hubcap@vm1 ~]$ setfacl -m o::rwx asdf
+[hubcap@vm1 ~]$ ls -l asdf
+-rwxrwxrwx. 1 hubcap hubcap 0 Mar  6 15:34 asdf
+
+There must be more, perhaps from the perspective of
+root setting the acl, or...? What are some other
+examples of acls that get folded into mode that I
+could test with?
+
+Al>> Moreover, if you change an existing ACL to something
+Al>> that is expressible by pure mode,
+
+Can you suggest an example here, too?
+
+Finally (for today :-) ) what happened here? Orangefs
+reacts differently than ext4... in both cases the acl
+was set, but on ext4 the mode was also
+changed...
+
+hubcap@vm1 ~]$ touch /pvfsmnt/asdf /home/hubcap/asdf
+[hubcap@vm1 ~]$ ls -l /pvfsmnt/asdf /home/hubcap/asdf
+-rw-rw-r--. 1 hubcap hubcap 0 Mar 13 11:50 /home/hubcap/asdf
+-rw-rw-r--. 1 hubcap hubcap 0 Mar 13 11:50 /pvfsmnt/asdf
+
+root@vm1 hubcap]# chown root /home/hubcap/asdf /pvfsmnt/asdf
+[root@vm1 hubcap]# ls -l /home/hubcap/asdf /pvfsmnt/asdf
+-rw-rw-r--. 1 root hubcap 0 Mar 13 11:50 /home/hubcap/asdf
+-rw-rw-r--. 1 root hubcap 0 Mar 13 11:50 /pvfsmnt/asdf
+[root@vm1 hubcap]# setfacl -m u:hubcap:rwx /home/hubcap/asdf /pvfsmnt/asdf
+[root@vm1 hubcap]# ls -l /home/hubcap/asdf /pvfsmnt/asdf
+-rw-rwxr--+ 1 root hubcap 0 Mar 13 11:50 /home/hubcap/asdf
+-rw-rw-r--+ 1 root hubcap 0 Mar 13 11:50 /pvfsmnt/asdf
+
+-Mike
+
+On Fri, Jan 31, 2020 at 7:56 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         Prior to 4bef69000d93 (orangefs: react properly to
+> posix_acl_update_mode's aftermath.) it used to be possible
+> to do orangefs_set_acl(inode, NULL, ACL_TYPE_ACCESS) -
+> it would've removed the corresponding xattr and that would
+> be it.  Now it fails with -EINVAL without having done
+> anything.  How is one supposed to remove ACLs there?
+>
+>         Moreover, if you change an existing ACL to something
+> that is expressible by pure mode, you end up calling
+> __orangefs_setattr(), which will call posix_acl_chmod().
+> And AFAICS that will happen with *old* ACL still cached,
+> so you'll get ACL_MASK/ACL_OTHER updated in the old ACL.
+>
+>         How can that possibly work?  Sure, you want to
+> propagate the updated mode to server - after you've
+> done the actual update (possibly removal) of ACL-encoding
+> xattr there...
