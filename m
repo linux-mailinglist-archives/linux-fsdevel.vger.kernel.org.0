@@ -2,120 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F5C184969
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 15:33:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B20DF184C81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:29:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgCMOdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 10:33:46 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:38802 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbgCMOdq (ORCPT
+        id S1726683AbgCMQ32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 12:29:28 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36789 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbgCMQ3Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:33:46 -0400
-Received: by mail-il1-f195.google.com with SMTP id f5so9082930ilq.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 07:33:45 -0700 (PDT)
+        Fri, 13 Mar 2020 12:29:24 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b18so8048250edu.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JB+4fAurnzbhrSysuhDbKI2ACutNKzpC2UKtT5XNYAQ=;
-        b=dSQ9s5yPyRLaufV9UC3f0z5nniA1KSR93hqY2rKXG1vA+r93LifoqxY4y8nbj4pV4u
-         inydetbvwKPlDMtSmeimLR5bFla9/g2AL9MaCJRu7cfXcy3WqgSu2FwjPp6wow3EZm53
-         zSgrt/heXxli4QVNT4SWd9XCXup5hes4WG1Wr5lBNtS0itZ6IIE11mtMckA8quBkk9Es
-         FrGBj9/QgRpx5hFagxa3H20kX5h0iwDEffdnT0baRlwS1Ywqwht52/UL3GuZwRf5JS4e
-         E+FiB4IsoLUNcbTCmmaLzbtrhkhrx67h2h4DM7yf7QZYG+W5XrT5u/yrKCnAx9nA8+Bb
-         5RJA==
+        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
+        b=wNEa9VbCq5ppXpJfo1/v31ZhKG8uPf7PzMenc8z6vmEiPRA9w/pPKyW5PupisZ+2wm
+         /1jR1aTmSmwc3VGYzygElLlxIeYf8iDy+ZYBCCFSAzNIo4Qhqf2EVsQY2xdC+JJray49
+         u01vKpsXb8UXTPq9xL8qVflCmkWMFcPy3ohoVOFO6yr5Wx5vOxDNototKpEKY+8oXZNU
+         ZY3T4uEoba21JC3zCnFHzr6tNBDmVkym5KePwLGcs3xFJU7aw/cie5ZNNSC+vyHPPitf
+         6TxueY9wS4q7IPVNWnMTG7h0eYTj8SBvSH5GSRB+1Qrpcnnc6Wf/I+hp69E09N7FxlEV
+         0bxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JB+4fAurnzbhrSysuhDbKI2ACutNKzpC2UKtT5XNYAQ=;
-        b=uPMot1c11HhQ8uRtk+EGYOnwcFsYZOLETgJZZqzgLQlqfzkTFwfS9qclMQphhV+6wh
-         JxlT8uGZnLPGhkWRWpnqSGNLmYiHIm80Nq3QmXCvGL7lX0axbdba/i+EufLJDoeXMFo+
-         Z8ipMMvV71JaqImDkgqu6s+r1J/BErLczmGJ038uwfwuy2WnTM/spznzff5SwvG1VNlC
-         XU6SfajcXM4UFjePvwJSTYKBDvY7tk/aqGXjT005QXERCCB7BiXq8fIBy8Q9IQLumUz5
-         th7o8+t07ytipRepL8t+T3pKyilObmRWhNQk23hmRBUxJg1k+GCHKvPG9O2n1W6RNPFG
-         h1Rg==
-X-Gm-Message-State: ANhLgQ0ilwK3bfugT0iDcIgjdFKTLNVJ/iWIx6JJ7dPZnwTT3wcnNa4f
-        pCLhDaHUF0Gjy4tZjf6P5ornqIjpUAlouiMvUtI=
-X-Google-Smtp-Source: ADFU+vunRI7dIJFbF2gCBY9lexysIhxcF0UoBCWw/HlUehdfK1AH+ypOkNB1lE79BIpbLW9ChQ72U7FSCoI2hQOh91s=
-X-Received: by 2002:a92:60b:: with SMTP id x11mr2047891ilg.9.1584110025220;
- Fri, 13 Mar 2020 07:33:45 -0700 (PDT)
+        bh=KQ+pObvU67uvaK3l1r4Ceb5YYAtUXZc7zlplXO9TGzk=;
+        b=qlI7dfstjDtH2npPSA0EKSAz76xD04IZg2bo5XVFukAqse8sM2q32g7qbli164MKLk
+         3Nmbt6wS2FgHg6Zwz87xs4N/Md4FruKZljqlvuD8XM5lFMqcdv9jA3037pPkn610HpuV
+         TSKOB+ti8e+B6+cpO0sM8/3ZMvex6sPNaAsFpFH+C2rTCbkWH7a8wOM/JnbhFfn5smag
+         S1tgO/FfVfYBV4PMsXAFrD6TKwqS+WekmxU2wTf0x9b97ybaiDGjpRHkqoEsL31R1bef
+         rfur2zJevP87xK2mw5louRNXqiWhjIyf3swmGFRNKnh4pfKkaKJ96UWGKh2v6cJ2a+9H
+         BBPA==
+X-Gm-Message-State: ANhLgQ0jZcqLAjKyxLXIZdGwHqtUgY3eIf6fa69FjCkF97KyrxHdCVSe
+        r3MSSzQHsdhijMoB8J0UEC9Z2ZigUowj+/qBQsNn
+X-Google-Smtp-Source: ADFU+vuL+b7H+tHmfIL9uEWtaqijyChHCYny1ByjHCCYsp9IHY7VBWU/eiFjWL7wPzp8K/OQLrQaC/SDlvMtNAtsA5M=
+X-Received: by 2002:a17:907:105a:: with SMTP id oy26mr3891035ejb.308.1584116962089;
+ Fri, 13 Mar 2020 09:29:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200126220800.32397-1-amir73il@gmail.com> <20200206214518.GB23230@ZenIV.linux.org.uk>
- <CAOQ4uxiTfS_QZN=vrFed=KSFg+CcSqo1ZRqS8_Mx_uvPk3NTPg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxiTfS_QZN=vrFed=KSFg+CcSqo1ZRqS8_Mx_uvPk3NTPg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 13 Mar 2020 16:33:34 +0200
-Message-ID: <CAOQ4uxjjZZqrfEVtg+Sx-pGTXY30KeJZuR1Cv9OTL_b_fC4=Pw@mail.gmail.com>
-Subject: Re: [PATCH] exportfs: fix handling of rename race in reconnect_one()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "J . Bruce Fields" <bfields@redhat.com>
+References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
+ <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com> <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
+In-Reply-To: <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 13 Mar 2020 12:29:10 -0400
+Message-ID: <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Feb 7, 2020 at 8:26 AM Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-02-13 16:44, Paul Moore wrote:
+> > This is a bit of a thread-hijack, and for that I apologize, but
+> > another thought crossed my mind while thinking about this issue
+> > further ... Once we support multiple auditd instances, including the
+> > necessary record routing and duplication/multiple-sends (the host
+> > always sees *everything*), we will likely need to find a way to "trim"
+> > the audit container ID (ACID) lists we send in the records.  The
+> > auditd instance running on the host/initns will always see everything,
+> > so it will want the full container ACID list; however an auditd
+> > instance running inside a container really should only see the ACIDs
+> > of any child containers.
 >
-> On Thu, Feb 6, 2020 at 11:45 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Mon, Jan 27, 2020 at 12:08:00AM +0200, Amir Goldstein wrote:
-> > > If a disconnected dentry gets looked up and renamed between the
-> > > call to exportfs_get_name() and lookup_one_len_unlocked(), and if also
-> > > lookup_one_len_unlocked() returns ERR_PTR(-ENOENT), maybe because old
-> > > parent was deleted, we return an error, although dentry may be connected.
-> > >
-> > > Commit 909e22e05353 ("exportfs: fix 'passing zero to ERR_PTR()'
-> > > warning") changes this behavior from always returning success,
-> > > regardless if dentry was reconnected by somoe other task, to always
-> > > returning a failure.
-> > >
-> > > Change the lookup error handling to match that of exportfs_get_name()
-> > > error handling and return success after getting -ENOENT and verifying
-> > > that some other task has connected the dentry for us.
-> >
-> > It's not that simple,
+> Agreed.  This should be easy to check and limit, preventing an auditd
+> from seeing any contid that is a parent of its own contid.
+>
+> > For example, imagine a system where the host has containers 1 and 2,
+> > each running an auditd instance.  Inside container 1 there are
+> > containers A and B.  Inside container 2 there are containers Y and Z.
+> > If an audit event is generated in container Z, I would expect the
+> > host's auditd to see a ACID list of "1,Z" but container 1's auditd
+> > should only see an ACID list of "Z".  The auditd running in container
+> > 2 should not see the record at all (that will be relatively
+> > straightforward).  Does that make sense?  Do we have the record
+> > formats properly designed to handle this without too much problem (I'm
+> > not entirely sure we do)?
+>
+> I completely agree and I believe we have record formats that are able to
+> handle this already.
 
-Al,
+I'm not convinced we do.  What about the cases where we have a field
+with a list of audit container IDs?  How do we handle that?
 
-Ping.
-Are you sure it is not that simple for all practical cases?
-Please take a closer look.
-
-My change attempts to handle a real rename race similar to how
-it was handled before the "Fixes" commit.
-This is Acked by Bruce and Christoph.
-
-Please see my arguments below.
-
-Thanks,
-Amir.
-
-> unfortunately.  For one thing, lookup_one_len_unlocked()
-> > will normally return a negative dentry, not ERR_PTR(-ENOENT).
->
-> Which is why this fix is mostly relevant to removed directories.
-> negative dentry case should be handled correctly by bellow:
->
->         if (tmp != dentry) {
->
->
-> > For another,
-> > it *can* fail for any number of other reasons (-ENOMEM, for example), without
-> > anyone having ever looked it up.
->
-> Yes, but why should we care to NOT return an error in case of ENOMEM.
-> The question is are there other errors that we can say "we can let this slide"
-> as long as the dentry is connected?
->
-> I certainly don't mind going to out_reconnected for any error and that includes
-> the error from exportfs_get_name(). My patch checks only the rename race
-> case because this is what this function has done so far and this is what the
-> big comment in out_reconnect is about.
->
-> Thanks,
-> Amir.
+-- 
+paul moore
+www.paul-moore.com
