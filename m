@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E7A185305
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 00:59:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD8F2185302
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 00:59:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbgCMX6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 19:58:21 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:49982 "EHLO
+        id S1727869AbgCMX6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 19:58:15 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49986 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727689AbgCMXx7 (ORCPT
+        with ESMTP id S1727700AbgCMXx7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 Mar 2020 19:53:59 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCu7q-00B6Z6-9z; Fri, 13 Mar 2020 23:53:58 +0000
+        id 1jCu7q-00B6ZC-Fu; Fri, 13 Mar 2020 23:53:58 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v4 10/69] handle_mounts(): pass dentry in, turn path into a pure out argument
-Date:   Fri, 13 Mar 2020 23:52:58 +0000
-Message-Id: <20200313235357.2646756-10-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v4 11/69] lookup_fast(): consolidate the RCU success case
+Date:   Fri, 13 Mar 2020 23:52:59 +0000
+Message-Id: <20200313235357.2646756-11-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
 References: <20200313235303.GP23230@ZenIV.linux.org.uk>
@@ -34,114 +34,65 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-All callers are equivalent to
-	path->dentry = dentry;
-	path->mnt = nd->path.mnt;
-	err = handle_mounts(path, ...)
-Pass dentry as an explicit argument, fill *path in handle_mounts()
-itself.
+1) in case of __follow_mount_rcu() failure, lookup_fast() proceeds
+to call unlazy_child() and, should it succeed, handle_mounts().
+Note that we have status > 0 (or we wouldn't be calling
+__follow_mount_rcu() at all), so all stuff conditional upon
+non-positive status won't be even touched.
+
+Consolidate just that sequence after the call of __follow_mount_rcu().
+
+2) calling d_is_negative() and keeping its result is pointless -
+we either don't get past checking ->d_seq (and don't use the results of
+d_is_negative() at all), or we are guaranteed that ->d_inode and
+type bits of ->d_flags had been consistent at the time of d_is_negative()
+call.  IOW, we could only get to the use of its result if it's
+equal to !inode.  The same ->d_seq check guarantees that after that point
+this CPU won't observe ->d_flags values older than ->d_inode update.
+So 'negative' variable is completely pointless these days.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+ fs/namei.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 79029a1048be..a613fa52a174 100644
+index a613fa52a174..494f4959e790 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -1385,11 +1385,15 @@ static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
- 		!(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
- }
- 
--static inline int handle_mounts(struct path *path, struct nameidata *nd,
--			  struct inode **inode, unsigned int *seqp)
-+static inline int handle_mounts(struct nameidata *nd, struct dentry *dentry,
-+			  struct path *path, struct inode **inode,
-+			  unsigned int *seqp)
- {
--	int ret = follow_managed(path, nd);
-+	int ret;
- 
-+	path->mnt = nd->path.mnt;
-+	path->dentry = dentry;
-+	ret = follow_managed(path, nd);
- 	if (likely(ret >= 0)) {
- 		*inode = d_backing_inode(path->dentry);
- 		*seqp = 0; /* out of RCU mode, so the value doesn't matter */
-@@ -1685,10 +1689,7 @@ static int lookup_fast(struct nameidata *nd,
- 		dput(dentry);
- 		return status;
- 	}
--
--	path->mnt = mnt;
--	path->dentry = dentry;
--	return handle_mounts(path, nd, inode, seqp);
-+	return handle_mounts(nd, dentry, path, inode, seqp);
- }
- 
- /* Fast lookup failed, do it the slow way */
-@@ -1859,6 +1860,7 @@ static inline int step_into(struct nameidata *nd, struct path *path,
- static int walk_component(struct nameidata *nd, int flags)
- {
- 	struct path path;
-+	struct dentry *dentry;
- 	struct inode *inode;
- 	unsigned seq;
- 	int err;
-@@ -1877,13 +1879,11 @@ static int walk_component(struct nameidata *nd, int flags)
- 	if (unlikely(err <= 0)) {
- 		if (err < 0)
- 			return err;
--		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
--					  nd->flags);
--		if (IS_ERR(path.dentry))
--			return PTR_ERR(path.dentry);
-+		dentry = lookup_slow(&nd->last, nd->path.dentry, nd->flags);
-+		if (IS_ERR(dentry))
-+			return PTR_ERR(dentry);
- 
--		path.mnt = nd->path.mnt;
--		err = handle_mounts(&path, nd, &inode, &seq);
-+		err = handle_mounts(nd, dentry, &path, &inode, &seq);
- 		if (unlikely(err < 0))
- 			return err;
- 	}
-@@ -2355,7 +2355,7 @@ static inline int lookup_last(struct nameidata *nd)
- 
- static int handle_lookup_down(struct nameidata *nd)
- {
--	struct path path = nd->path;
-+	struct path path;
- 	struct inode *inode = nd->inode;
- 	unsigned seq = nd->seq;
- 	int err;
-@@ -2366,11 +2366,12 @@ static int handle_lookup_down(struct nameidata *nd)
- 		 * at the very beginning of walk, so we lose nothing
- 		 * if we simply redo everything in non-RCU mode
+@@ -1631,7 +1631,6 @@ static int lookup_fast(struct nameidata *nd,
+ 	 */
+ 	if (nd->flags & LOOKUP_RCU) {
+ 		unsigned seq;
+-		bool negative;
+ 		dentry = __d_lookup_rcu(parent, &nd->last, &seq);
+ 		if (unlikely(!dentry)) {
+ 			if (unlazy_walk(nd))
+@@ -1644,7 +1643,6 @@ static int lookup_fast(struct nameidata *nd,
+ 		 * the dentry name information from lookup.
  		 */
-+		path = nd->path;
- 		if (unlikely(!__follow_mount_rcu(nd, &path, &inode, &seq)))
+ 		*inode = d_backing_inode(dentry);
+-		negative = d_is_negative(dentry);
+ 		if (unlikely(read_seqcount_retry(&dentry->d_seq, seq)))
  			return -ECHILD;
- 	} else {
--		dget(path.dentry);
--		err = handle_mounts(&path, nd, &inode, &seq);
-+		dget(nd->path.dentry);
-+		err = handle_mounts(nd, nd->path.dentry, &path, &inode, &seq);
- 		if (unlikely(err < 0))
- 			return err;
- 	}
-@@ -3393,9 +3394,7 @@ static int do_last(struct nameidata *nd,
- 		got_write = false;
- 	}
  
--	path.mnt = nd->path.mnt;
--	path.dentry = dentry;
--	error = handle_mounts(&path, nd, &inode, &seq);
-+	error = handle_mounts(nd, dentry, &path, &inode, &seq);
- 	if (unlikely(error < 0))
- 		return error;
- finish_lookup:
+@@ -1665,12 +1663,15 @@ static int lookup_fast(struct nameidata *nd,
+ 			 * Note: do negative dentry check after revalidation in
+ 			 * case that drops it.
+ 			 */
+-			if (unlikely(negative))
++			if (unlikely(!inode))
+ 				return -ENOENT;
+ 			path->mnt = mnt;
+ 			path->dentry = dentry;
+ 			if (likely(__follow_mount_rcu(nd, path, inode, seqp)))
+ 				return 1;
++			if (unlazy_child(nd, dentry, seq))
++				return -ECHILD;
++			return handle_mounts(nd, dentry, path, inode, seqp);
+ 		}
+ 		if (unlazy_child(nd, dentry, seq))
+ 			return -ECHILD;
 -- 
 2.11.0
 
