@@ -2,214 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 066FE183E43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 02:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 069B3183E49
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 02:07:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgCMBGA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Mar 2020 21:06:00 -0400
-Received: from mail-oln040092069038.outbound.protection.outlook.com ([40.92.69.38]:5858
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbgCMBF7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:05:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MZe89OJapHEAdTeGcxfMtXNwX/nuYBvq6prjL+Zli0Wwx0qyS7HHNhqUuOLzGi4SVFVg2bK9Ibh+uCJjpT6kJrpnwGKvkxl7bRMJ1RYXngumth6mjMAT5wUBfegjbB3vmMcxWQECNdq066hyFUyLLMnkUxyeCsdoy1gpBLODB+kuzcJP8nPx75jWHUrYTVbTWWSE5UieiwHXC3OY/SBPg1rbxS5ZBh/hg1fpixIkEYxAzuEv0fDyWElF1Q8LEdAX5TFy14y5drhc9H6wuiX2gfE/7muMZR2a7EOV8FNFyvIzYBVQv0ytLG/Shlw2ock2F+4/wD8ZKYn9moeSL5aSAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fL/W3fjGvnqMxzdhSAlvMb6Z0AxNsQkzH7VDK/qG6mk=;
- b=eM4a7qlXA0VR8WLGuXPwQhOwyaTtLdhrA5kb9bevpPHttCyskgKm1JcbDiNqKQ2kIYbJblORR48k1HNBbr0afgJCv7kMpOdmjFpmmXTMKnMhBrSEEb9kyFw69/PAz0lmKzXMVPqUk6M0CUg2aS/6utT/B1rgtFmeO+N4nxdRbHA2QufUdpLPphym/LpjpdWwOcLpPK8+1BgfLvk19O8Ba3EBylbaIkhlPEjM7nos2oVa7LTyr7yprh/ttLT+7IvWN7u5nxliFX+2H3v1bj17KlW0ahUQa4VdOtVAe3Dc0RMFlKUykHYjbz1vWy+Rl5+VtYSLtKdkMt1bqgEja7F28w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from HE1EUR02FT012.eop-EUR02.prod.protection.outlook.com
- (2a01:111:e400:7e1d::36) by
- HE1EUR02HT193.eop-EUR02.prod.protection.outlook.com (2a01:111:e400:7e1d::228)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Fri, 13 Mar
- 2020 01:05:53 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.10.59) by
- HE1EUR02FT012.mail.protection.outlook.com (10.152.10.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.13 via Frontend Transport; Fri, 13 Mar 2020 01:05:53 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:4AF6DC29AC1F232A67D6F997BF52BC4D60B511DC2EAB02B9553BF4FA2ED0C233;UpperCasedChecksum:3A8574BE8248C5135B1F2644B429421251666B497C3C30C74842EF48D5775A6C;SizeAsReceived:10368;Count:50
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 01:05:53 +0000
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
- cred_guard_mutex
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        id S1726922AbgCMBHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Mar 2020 21:07:30 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41680 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbgCMBHa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:07:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id z65so4161942pfz.8;
+        Thu, 12 Mar 2020 18:07:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=p1y55cnlFR5XIWnQzxqAJ77CuRfysEOntt316s397dE=;
+        b=tYPjoAxWpUvTByRIrpV3+ZBaSj85zKl6daSyvjUdTpth+1b76YQDPF7yONc6kXab3Q
+         oHoW1kqGQ/rYv0YacjJsHsS1ORNLiiNqvGW036ICnNjaabIN6mpOOo3iWKcb34P8oOoD
+         2tGG6f8MJkXfhZfVF3idh0poGismbfjUUuZp/B+2BFaloClGViDLrBhmY+jlQ/fakCWC
+         DmmIu3gxOul7mfDf9Uofx5nOK63/mpm0Pr1V9pJHq1cF/GQuVOj/xVm0bIb74Dhn0TVv
+         ZWC+OLDom9sEB8XS0aW725ZG2y2LHhlhwOsffGUe/rvWTySJawenZLVT8x5LvRMvKxTl
+         KCiA==
+X-Gm-Message-State: ANhLgQ05iBA7luvBTCN9IzvzuU502NmvcFe/QufT/Yg8H23VVyp1r5z/
+        NQ/PkjSDMhzLatGbdbGttY8=
+X-Google-Smtp-Source: ADFU+vu+tQSISN41gD4tRdARFAEGoS3/lePcq8JnLRSye7+UdmfV6TEHHOWfLLbEW3/et9gxyN/r+Q==
+X-Received: by 2002:a63:b21b:: with SMTP id x27mr10599525pge.310.1584061649053;
+        Thu, 12 Mar 2020 18:07:29 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id v133sm45358821pfc.68.2020.03.12.18.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Mar 2020 18:07:27 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 240364028E; Fri, 13 Mar 2020 01:07:27 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 01:07:27 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <20200303085802.eqn6jbhwxtmz4j2x@wittgenstein>
- <AM6PR03MB5170285B336790D3450E2644E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87v9nlii0b.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170609D44967E044FD1BE40E4E40@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87a74xi4kz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
- <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
- <87d09hn4kt.fsf@x220.int.ebiederm.org>
- <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
- <87lfo5lju6.fsf@x220.int.ebiederm.org>
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Message-ID: <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Fri, 13 Mar 2020 02:05:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <87lfo5lju6.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0026.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1c::13) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <d457086c-60c2-3b4d-977b-4c01117d0b6f@hotmail.de>
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>
+Subject: Re: [PATCH v2 3/4] docs: admin-guide: document the kernel.modprobe
+ sysctl
+Message-ID: <20200313010727.GT11244@42.do-not-panic.com>
+References: <20200312202552.241885-1-ebiggers@kernel.org>
+ <20200312202552.241885-4-ebiggers@kernel.org>
+ <87lfo5telq.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0026.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.16 via Frontend Transport; Fri, 13 Mar 2020 01:05:50 +0000
-X-Microsoft-Original-Message-ID: <d457086c-60c2-3b4d-977b-4c01117d0b6f@hotmail.de>
-X-TMN:  [ZvoFOvwG9QrKgn2xdjMtVFT3WymZoeXK]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 50
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: fc42852e-3fd7-4c54-6b01-08d7c6eaacdd
-X-MS-TrafficTypeDiagnostic: HE1EUR02HT193:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qXuFWBkLnHBhakKb3mJ2bGdWggGeJ4DMkmNmo6dIGuGhIE+hoI5tViLJ26fzQ/VFD5Dv3MQNVyzriUPRsJzmGtvTxUu0q1QrVe+OP/ITj1cWCE/ytu/KmJAcVUSTVR1Ej8qlfQe8OpeMz1gGLApE1EtjfsqvDyP9flQbSTtqaTyixC9D+9zqgct2gD4HGFCX
-X-MS-Exchange-AntiSpam-MessageData: JqX7lRkO1cip5geuEcxVqwUEWhesCLvZBAZLmkrmdRQ12lh3lUuVyrZSLjhnT787yvE5oWbKi+o8jom7WbeYyeJcG7ASfu5+K9mI5kSGeUYcwTbJ4FKbgLWHMup0+69oOk1jHCCGHHl/kmj0lbdNLQ==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc42852e-3fd7-4c54-6b01-08d7c6eaacdd
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 01:05:52.7579
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT193
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YD3LsXFS42OYHhNZ"
+Content-Disposition: inline
+In-Reply-To: <87lfo5telq.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/12/20 3:38 PM, Eric W. Biederman wrote:
-> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
-> 
->> On 12.03.2020 15:24, Eric W. Biederman wrote:
->>>
->>> I actually need to switch the lock ordering here, and I haven't yet
->>> because my son was sick yesterday.
 
-All the best wishes to you and your son.  I hope he will get well soon.
+--YD3LsXFS42OYHhNZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And sorry for not missing the issue in the review.  The reason turns
-out that bprm_mm_init is called after prepare_bprm_creds, but there
-are error pathes between those where free_bprm is called up with
-cred != NULL and mm == NULL, but the mutex not locked.
+On Fri, Mar 13, 2020 at 09:04:01AM +1100, NeilBrown wrote:
+> On Thu, Mar 12 2020, Eric Biggers wrote:
+>=20
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > Document the kernel.modprobe sysctl in the same place that all the other
+> > kernel.* sysctls are documented.  Make sure to mention how to use this
+> > sysctl to completely disable module autoloading, and how this sysctl
+> > relates to CONFIG_STATIC_USERMODEHELPER.
+> >
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Jeff Vander Stoep <jeffv@google.com>
+> > Cc: Jessica Yu <jeyu@kernel.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Luis Chamberlain <mcgrof@kernel.org>
+> > Cc: NeilBrown <neilb@suse.com>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  Documentation/admin-guide/sysctl/kernel.rst | 25 ++++++++++++++++++++-
+> >  1 file changed, 24 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentatio=
+n/admin-guide/sysctl/kernel.rst
+> > index def074807cee9..454f3402ed321 100644
+> > --- a/Documentation/admin-guide/sysctl/kernel.rst
+> > +++ b/Documentation/admin-guide/sysctl/kernel.rst
+> > @@ -49,7 +49,7 @@ show up in /proc/sys/kernel:
+> >  - kexec_load_disabled
+> >  - kptr_restrict
+> >  - l2cr                        [ PPC only ]
+> > -- modprobe                    =3D=3D> Documentation/debugging-modules.=
+txt
+> > +- modprobe
+> >  - modules_disabled
+> >  - msg_next_id		      [ sysv ipc ]
+> >  - msgmax
+> > @@ -444,6 +444,29 @@ l2cr: (PPC only)
+> >  This flag controls the L2 cache of G3 processor boards. If
+> >  0, the cache is disabled. Enabled if nonzero.
+> > =20
+> > +modprobe:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The path to the usermode helper for autoloading kernel modules, by
+> > +default "/sbin/modprobe".  This binary is executed when the kernel
+> > +requests a module.  For example, if userspace passes an unknown
+> > +filesystem type "foo" to mount(), then the kernel will automatically
+> > +request the module "fs-foo.ko" by executing this usermode helper.
+>=20
+> I don't think it is right to add the ".ko" there.  The string "fs-foo"
+> is what is passed to the named executable, and it make well end up
+> loading "bar.ko", depending what aliases are set up.
+> I would probably write  '... request the module named 'fs-foo" by executi=
+ng..'
 
-I figured out a possible fix for the problem that was pointed out:
+And that is just because filesystems, in this case a mount call, will
+use the fs- prefix for aliases. This is tribal knowledge in the context
+above, and so someone not familiar with this won't easily grasp this.
+
+Is there an easier autoloading example other than filesystems we can use th=
+at
+doesn't require you to explain the aliasing thing?
+
+What is module autoloading? Where is this documented ? If that
+can be slightly clarified this would be even easier to understand as
+well.
+
+  Luis
+
+> (The "name" for a module can come from the file that stores it, and
+> alias inside it, or configuration in modprobe.d).
+>=20
+> Thanks,
+> NeilBrown
+>=20
+>=20
+> > +This usermode helper should insert the needed module into the kernel.
+> > +
+> > +This sysctl only affects module autoloading.  It has no effect on the
+> > +ability to explicitly insert modules.
+> > +
+> > +If this sysctl is set to the empty string, then module autoloading is
+> > +completely disabled.  The kernel will not try to execute a usermode
+> > +helper at all, nor will it call the kernel_module_request LSM hook.
+> > +
+> > +If CONFIG_STATIC_USERMODEHELPER=3Dy is set in the kernel configuration,
+> > +then the configured static usermode helper overrides this sysctl,
+> > +except that the empty string is still accepted to completely disable
+> > +module autoloading as described above.
+> > +
+> > +Also see Documentation/debugging-modules.txt.
+> > =20
+> >  modules_disabled:
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --=20
+> > 2.25.1
 
 
-From ceb6f65b52b3a7f0280f4f20509a1564a439edf6 Mon Sep 17 00:00:00 2001
-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Date: Wed, 11 Mar 2020 15:31:07 +0100
-Subject: [PATCH] Fix issues with exec_update_mutex
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
----
- fs/exec.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+--YD3LsXFS42OYHhNZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/fs/exec.c b/fs/exec.c
-index ffeebb1..cde4937 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1021,8 +1021,14 @@ static int exec_mmap(struct mm_struct *mm)
- 	old_mm = current->mm;
- 	exec_mm_release(tsk, old_mm);
- 
--	if (old_mm) {
-+	if (old_mm)
- 		sync_mm_rss(old_mm);
-+
-+	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
-+	if (ret)
-+		return ret;
-+
-+	if (old_mm) {
- 		/*
- 		 * Make sure that if there is a core dump in progress
- 		 * for the old mm, we get out and die instead of going
-@@ -1032,14 +1038,11 @@ static int exec_mmap(struct mm_struct *mm)
- 		down_read(&old_mm->mmap_sem);
- 		if (unlikely(old_mm->core_state)) {
- 			up_read(&old_mm->mmap_sem);
-+			mutex_unlock(&tsk->signal->exec_update_mutex);
- 			return -EINTR;
- 		}
- 	}
- 
--	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
--	if (ret)
--		return ret;
--
- 	task_lock(tsk);
- 	active_mm = tsk->active_mm;
- 	membarrier_exec_mmap(mm);
-@@ -1444,8 +1447,6 @@ static void free_bprm(struct linux_binprm *bprm)
- {
- 	free_arg_pages(bprm);
- 	if (bprm->cred) {
--		if (!bprm->mm)
--			mutex_unlock(&current->signal->exec_update_mutex);
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
-@@ -1846,6 +1847,8 @@ static int __do_execve_file(int fd, struct filename *filename,
- 	would_dump(bprm, bprm->file);
- 
- 	retval = exec_binprm(bprm);
-+	if (bprm->cred && !bprm->mm)
-+		mutex_unlock(&current->signal->exec_update_mutex);
- 	if (retval < 0)
- 		goto out;
- 
--- 
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEENnNq2KuOejlQLZofziMdCjCSiKcFAl5q3M4ACgkQziMdCjCS
+iKdvtA//fmhoJkZ3Et5nHDbpWXGMr6uHdxlQqkt7Ai7fvX/IDYHHqDhdKadWyftD
+jXEgyOIxfuicMFFY3cjRQL4wqpG7fTnY8ZLLLSZHd26fFqLMQxgQRPVJsW4WLeR/
+G2yhcnzcnlLsRVczxUP7vZRwTpTCZHxH2W/SiyXIb8LRp1obEwYUlklc8L9+IX68
+h7z/0f8KEJJTO8DEWCD2wKOBi9LkSmI1m4pMLalJ9AOTvyWDSxQWFQpj+kvcC6yG
+WjTdkTiIlGIrFUcg9fNN5HumbFo8LU4+121p3jA3BtdBRG+sS0s6sZTN0BpHZdGe
+tjhuq44cq6xgMsxZb5mfwSnmHptGgmCqda1wzmgNTdc9WUDNNHHlehjdXhyqVIYZ
+wl1NgMDggZ2iqq1p+B2iw5eON9h4e1Nkx46ZGB0D9maqMXby7vV3SduZick8M5pK
+IQYYNeILufSCqz2d8HMFE+PCUk0jwGObzxxcwLE6seK4G+5+syptX4NDVbw/KTtf
+HxYw+F2B1CRjZrUxnqtTOqxyd0eRTArWeoWI6VWiYupMvwsTw1m88GPR6Tv/j9fz
+cAgvzZ7xv5dlOchWH8XXhfpz2ON8DZT/9puhoNMcoWXMdT+R7VSXl6c8OG6HMJ7k
+qpH4P9khGasEjyi7XWJe/B6RVJRTE9y8jcB6cmMvWHIGLOOKM+k=
+=Kxfs
+-----END PGP SIGNATURE-----
+
+--YD3LsXFS42OYHhNZ--
