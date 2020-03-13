@@ -2,93 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F5A184CE7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:49:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A91184D81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 18:23:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbgCMQtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 12:49:32 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40676 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbgCMQtb (ORCPT
+        id S1726543AbgCMRXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 13:23:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38706 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbgCMRXp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:49:31 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a24so12693271edy.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 09:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YGG5XY3Ewg2kr6ydPgEVpPEQe8Bu0vVCZeuUuZTd/eQ=;
-        b=WoJn/P9W8ionIJ6xiBiPAmxmGbbYK44xv4IrICoWubAgYlhtkhxUJmVCijstH/13K8
-         e8sfsXfNGVfsBKnRV0SJuy8a8BZyemhuV3VRdHRn2DarGPfrMqFVOH/OuDqiVr4hokOl
-         UhOrjDnrSoggcD90vmrkTdZGj88Cdu4MhRmnyJ0V4shQjxGwADiObeG6nDXMrC2tX1Sf
-         Zx5guOou8iWTPF16pL8NUnjXXzxYS+GbneCIQZyfvTaduvQymLt4+IWsFLUbJONa/YD2
-         kXa9vk9xzfHNLaAh621qmRaQsnpJdixash8QTk6Mp+WMhkhfOstdpA5Hj+YyS0gM+Gnv
-         FnoA==
+        Fri, 13 Mar 2020 13:23:45 -0400
+Received: from mail-wr1-f69.google.com ([209.85.221.69])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <gpiccoli@canonical.com>)
+        id 1jCo2C-0000Nu-9q
+        for linux-fsdevel@vger.kernel.org; Fri, 13 Mar 2020 17:23:44 +0000
+Received: by mail-wr1-f69.google.com with SMTP id h14so3922288wrv.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 10:23:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YGG5XY3Ewg2kr6ydPgEVpPEQe8Bu0vVCZeuUuZTd/eQ=;
-        b=a/HEQQswOIwFMk5LkTJmvLdu7X17ZQZld2szoulKKJ5fynYsH3/Yj9SVniodzVUNDX
-         k8gpR/CiiM7E1pbFdq5NGCikeOGuOGhsFgQUw94HhBZsRqMKDzmAnJGK6y0oyo6qLZ1G
-         SN9ovrYZFYhe4TqHc2FWIHTwcMnLj0CrdDgFZrCU9aBa0jxbu9g7drN3XuxDvUeJyQWj
-         EqmnIXnDcPBT3VPrJitEmF8pzhhuJiRPEyhM/snZJA160jd7hMRTp5tnWrwuhdueo/GQ
-         5pD/Aemid1s3rKt/U/FIBvkiTbNwCdL10g1sJ306p2cVl/QqQ3Z0lyLPHCGwSlimPlh1
-         s29Q==
-X-Gm-Message-State: ANhLgQ2r1TMrvt/FobLZGONQUR1AXL76rpFutWKQflo3kaQHwXgSUL5/
-        xE3cmKIsf6L+D9i8ilG9MsEmpw/TNAQXd37vJnrzfWw=
-X-Google-Smtp-Source: ADFU+vv+9NsRZqnIPliXMbq5GOtlCub1wdzEkmolWWP97LJYncHkT1zJ8K+tAtQcCN/BN4QsA0IqfHmFy6PXx2taKa0=
-X-Received: by 2002:aa7:dd01:: with SMTP id i1mr14078117edv.164.1584118169827;
- Fri, 13 Mar 2020 09:49:29 -0700 (PDT)
+        h=x-gm-message-state:subject:cc:references:to:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=RkXpnuziHgLrnkR5X2klNJNHeJcp3TgPwryfqx5WOp0=;
+        b=nvgt+DVvK7weKZ8UrYU00NmF5dnBzUNlQLYUYSsO1LOlx7fw7EhX9UZhtv/KkkMhes
+         A8gMQubywQ0e5CoL4VJrVUv2M2L/d9h5ztjkyPaoICuqFxjk+jyn2H9PuVY5kgkevg/M
+         /uTGa/lOZ2EUeJw7QFgof66+Nnc/I+Jv2bCkUPFnJJ3tCDvTHy/HLqEsfWOvtIN+g0XJ
+         ctZ5/Am9sUc6VLXILK2rZA56vMKtHAC7jhUvU8VRGH9f3qgsbYVUu5BB3cdCDFEJOjrk
+         7NZiiPgvrMmqdvMf4/TmLgVYp6qHi4EEQBZanGmkhVgrUopPLGcP4h1CXoSP5H108PZY
+         q0NQ==
+X-Gm-Message-State: ANhLgQ0M8kWT24MNk/a1UGC7CJa0Fj0+/lhE7A77J0QnxpHZ6MJDfdeV
+        86+ENluwKuIoyECv4feoULDMZFiNEW/t0XkGO4v+iVrl7gN7VEJ5R67T8aRrVs0I5bDbDUWm31b
+        kapM1EtrqCqijEXlcixuuxhQmBNTb19m6eXKsB2oxDdo=
+X-Received: by 2002:adf:ab54:: with SMTP id r20mr3358534wrc.197.1584120224049;
+        Fri, 13 Mar 2020 10:23:44 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vuPmdgJsJ31KcEO/jHEkWAnrvUInFIgglCacgBPaBPNrBuMoFcCCHSV+As+ieKRNUQTdmdHLQ==
+X-Received: by 2002:adf:ab54:: with SMTP id r20mr3358512wrc.197.1584120223802;
+        Fri, 13 Mar 2020 10:23:43 -0700 (PDT)
+Received: from [192.168.1.75] (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
+        by smtp.gmail.com with ESMTPSA id c2sm17890613wma.39.2020.03.13.10.23.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Mar 2020 10:23:42 -0700 (PDT)
+Subject: Re: [PATCH] kernel/hung_task.c: Introduce sysctl to print all traces
+ when a hung task is detected
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, mcgrof@kernel.org, yzaikin@google.com,
+        tglx@linutronix.de, kernel@gpiccoli.net
+References: <20200310155650.17968-1-gpiccoli@canonical.com>
+To:     keescook@chromium.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
+ mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
+ Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
+ 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
+ irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
+ 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
+ AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
+ AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
+ 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
+ 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
+ q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
+ iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
+ LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
+ aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
+ pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
+ kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
+ nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
+ bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
+ BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
+ 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
+ egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
+ Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
+ kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
+ X18zwLgdiQ==
+Message-ID: <ef3b3e9a-9d58-60ec-d638-88ad57d29aec@canonical.com>
+Date:   Fri, 13 Mar 2020 14:23:37 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca>
- <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com> <2588582.z15pWOfGEt@x2>
-In-Reply-To: <2588582.z15pWOfGEt@x2>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 13 Mar 2020 12:49:18 -0400
-Message-ID: <CAHC9VhQ7hFc8EqrEojmjQriWtKkqjPyzWrnrc_eVKjcYhhV8QQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200310155650.17968-1-gpiccoli@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 12:45 PM Steve Grubb <sgrubb@redhat.com> wrote:
-> On Friday, March 13, 2020 12:42:15 PM EDT Paul Moore wrote:
-> > > I think more and more, that more complete isolation is being done,
-> > > taking advantage of each type of namespace as they become available, but
-> > > I know a nuber of them didn't find it important yet to use IPC, PID or
-> > > user namespaces which would be the only namespaces I can think of that
-> > > would provide that isolation.
-> > >
-> > > It isn't entirely clear to me which side you fall on this issue, Paul.
-> >
-> > That's mostly because I was hoping for some clarification in the
-> > discussion, especially the relevant certification requirements, but it
-> > looks like there is still plenty of room for interpretation there (as
-> > usual).  I'd much rather us arrive at decisions based on requirements
-> > and not gut feelings, which is where I think we are at right now.
->
-> Certification rquirements are that we need the identity of anyone attempting
-> to modify the audit configuration including shutting it down.
+Kees / Testsuo, are you OK with this patch once I resend with the
+suggestions you gave me?
 
-Yep, got it.  Unfortunately that doesn't really help with what we are
-talking about.  Although preventing the reuse of the ACID before the
-SIGNAL2 record does help preserve the sanity of the audit stream which
-I believe to be very important, regardless.
+Is there anybody else I should loop in the patch that should take a
+look? Never sent sysctl stuff before, sorry if I forgot somebody heheh
 
--- 
-paul moore
-www.paul-moore.com
+Thanks,
+
+
+Guilherme
