@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05A61852CF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 00:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F075918529F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 00:56:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbgCMX4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 19:56:36 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50086 "EHLO
+        id S1727681AbgCMXyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 19:54:03 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50090 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbgCMXyD (ORCPT
+        with ESMTP id S1727771AbgCMXyD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 Mar 2020 19:54:03 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCu7t-00B6bj-Q6; Fri, 13 Mar 2020 23:54:01 +0000
+        id 1jCu7t-00B6bp-UT; Fri, 13 Mar 2020 23:54:01 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v4 36/69] do_last(): don't bother with keeping got_write in FMODE_OPENED case
-Date:   Fri, 13 Mar 2020 23:53:24 +0000
-Message-Id: <20200313235357.2646756-36-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH v4 37/69] do_last(): rejoing the common path earlier in FMODE_{OPENED,CREATED} case
+Date:   Fri, 13 Mar 2020 23:53:25 +0000
+Message-Id: <20200313235357.2646756-37-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
 References: <20200313235303.GP23230@ZenIV.linux.org.uk>
@@ -34,91 +34,59 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-it's easier to drop it right after lookup_open() and regain if
-needed (i.e. if we will need to truncate).  On the non-FMODE_OPENED
-path we do that anyway.  In case of FMODE_CREATED we won't be
-needing it.  And it's easier to prove correctness that way,
-especially since the initial failure to get write access is not
-always fatal; proving that we'll never end up truncating in that
-case is rather convoluted.
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 31 +++++++++++--------------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+ fs/namei.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
 diff --git a/fs/namei.c b/fs/namei.c
-index 2f8a5d3be784..2eef41f505db 100644
+index 2eef41f505db..c85fdfd6b33d 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3191,11 +3191,14 @@ static const char *do_last(struct nameidata *nd,
- 	else
- 		inode_unlock_shared(dir->d_inode);
+@@ -3200,13 +3200,6 @@ static const char *do_last(struct nameidata *nd,
+ 		return ERR_CAST(dentry);
  
--	if (IS_ERR(dentry)) {
--		error = PTR_ERR(dentry);
--		goto out;
-+	if (got_write) {
-+		mnt_drop_write(nd->path.mnt);
-+		got_write = false;
- 	}
- 
-+	if (IS_ERR(dentry))
-+		return ERR_CAST(dentry);
-+
  	if (file->f_mode & FMODE_OPENED) {
- 		if (file->f_mode & FMODE_CREATED) {
- 			open_flag &= ~O_TRUNC;
-@@ -3220,16 +3223,6 @@ static const char *do_last(struct nameidata *nd,
- 		goto finish_open_created;
- 	}
- 
--	/*
--	 * If atomic_open() acquired write access it is dropped now due to
--	 * possible mount and symlink following (this might be optimized away if
--	 * necessary...)
--	 */
--	if (got_write) {
--		mnt_drop_write(nd->path.mnt);
--		got_write = false;
--	}
+-		if (file->f_mode & FMODE_CREATED) {
+-			open_flag &= ~O_TRUNC;
+-			will_truncate = false;
+-			acc_mode = 0;
+-		} else if (!S_ISREG(file_inode(file)->i_mode))
+-			will_truncate = false;
 -
- finish_lookup:
- 	if (nd->depth)
- 		put_link(nd);
-@@ -3250,27 +3243,25 @@ static const char *do_last(struct nameidata *nd,
- 		return ERR_PTR(error);
- 	audit_inode(nd->name, nd->path.dentry, 0);
- 	if (open_flag & O_CREAT) {
--		error = -EISDIR;
- 		if (d_is_dir(nd->path.dentry))
--			goto out;
-+			return ERR_PTR(-EISDIR);
- 		error = may_create_in_sticky(dir_mode, dir_uid,
- 					     d_backing_inode(nd->path.dentry));
- 		if (unlikely(error))
--			goto out;
-+			return ERR_PTR(error);
+ 		audit_inode(nd->name, file->f_path.dentry, 0);
+ 		dput(nd->path.dentry);
+ 		nd->path.dentry = dentry;
+@@ -3214,10 +3207,6 @@ static const char *do_last(struct nameidata *nd,
  	}
--	error = -ENOTDIR;
- 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
--		goto out;
-+		return ERR_PTR(-ENOTDIR);
- 	if (!d_is_reg(nd->path.dentry))
- 		will_truncate = false;
  
-+finish_open_created:
+ 	if (file->f_mode & FMODE_CREATED) {
+-		/* Don't check for write permission, don't truncate */
+-		open_flag &= ~O_TRUNC;
+-		will_truncate = false;
+-		acc_mode = 0;
+ 		dput(nd->path.dentry);
+ 		nd->path.dentry = dentry;
+ 		goto finish_open_created;
+@@ -3252,10 +3241,16 @@ static const char *do_last(struct nameidata *nd,
+ 	}
+ 	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
+ 		return ERR_PTR(-ENOTDIR);
+-	if (!d_is_reg(nd->path.dentry))
+-		will_truncate = false;
+ 
+ finish_open_created:
++	if (file->f_mode & FMODE_CREATED) {
++		/* Don't check for write permission, don't truncate */
++		open_flag &= ~O_TRUNC;
++		will_truncate = false;
++		acc_mode = 0;
++	} else if (!d_is_reg(nd->path.dentry)) {
++		will_truncate = false;
++	}
  	if (will_truncate) {
  		error = mnt_want_write(nd->path.mnt);
  		if (error)
--			goto out;
-+			return ERR_PTR(error);
- 		got_write = true;
- 	}
--finish_open_created:
- 	error = may_open(&nd->path, acc_mode, open_flag);
- 	if (error)
- 		goto out;
 -- 
 2.11.0
 
