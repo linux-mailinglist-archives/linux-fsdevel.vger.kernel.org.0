@@ -2,121 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 749CA184CC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:45:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14020184CC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 17:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgCMQpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 12:45:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbgCMQpN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 12:45:13 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726875AbgCMQpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 12:45:49 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:36159 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726446AbgCMQpt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Mar 2020 12:45:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584117948;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2NGcze98cXWYCmagpEsgCSEsYGqJZVyFshEV55Z7Gjs=;
+        b=XcDu4u3kepWmiOLSEpbzHbnaYcI9eB1At0FVgm6211A3oW0J0HJOEVYYrKU596gaWnaDvm
+        PguZovZCDRl+e9iC1tfSyrjTqZwDT0/XcsPwvO/AoFZwGkwbunne7YhKq43yBZH/CBy8b4
+        fp3nYI+QWGuEjVfAd4g7+EiX76OOL14=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-86-CzQAHedQM_2jEHV0CsdCFg-1; Fri, 13 Mar 2020 12:45:42 -0400
+X-MC-Unique: CzQAHedQM_2jEHV0CsdCFg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E417206B7;
-        Fri, 13 Mar 2020 16:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584117912;
-        bh=iReSY+24ueS64kGBy36vL699AiMCqIkaTCSFFo4yjGc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N7S6f0dlj24oHnWSyy96NOGY332HJkDpPMPQVjz7dA1FgHYawryEggZjh9HhGxk8K
-         mSg2ooRs57qoo3P0UPJy6m6sxI4JMUh3J1lDXIXdMnamUfBIEUBX/domrX3S/zVJt1
-         /nRdiYltzgT3zT4AsU4xGgp7z41TZ/ThSe7lEWvI=
-Date:   Fri, 13 Mar 2020 09:45:11 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Cc:     glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
-Message-ID: <20200313164511.GB907@sol.localdomain>
-References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
- <20200308023849.988264-1-ebiggers@kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 61380101FC68;
+        Fri, 13 Mar 2020 16:45:40 +0000 (UTC)
+Received: from x2.localnet (ovpn-117-60.phx2.redhat.com [10.3.117.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D1C565C1BB;
+        Fri, 13 Mar 2020 16:45:30 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Richard Guy Briggs <rgb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling the audit daemon
+Date:   Fri, 13 Mar 2020 12:45:29 -0400
+Message-ID: <2588582.z15pWOfGEt@x2>
+Organization: Red Hat
+In-Reply-To: <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
+References: <cover.1577736799.git.rgb@redhat.com> <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca> <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200308023849.988264-1-ebiggers@kernel.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Friday, March 13, 2020 12:42:15 PM EDT Paul Moore wrote:
+> > I think more and more, that more complete isolation is being done,
+> > taking advantage of each type of namespace as they become available, but
+> > I know a nuber of them didn't find it important yet to use IPC, PID or
+> > user namespaces which would be the only namespaces I can think of that
+> > would provide that isolation.
+> > 
+> > It isn't entirely clear to me which side you fall on this issue, Paul.
 > 
-> Reading from a debugfs file at a nonzero position, without first reading
-> at position 0, leaks uninitialized memory to userspace.
-> 
-> It's a bit tricky to do this, since lseek() and pread() aren't allowed
-> on these files, and write() doesn't update the position on them.  But
-> writing to them with splice() *does* update the position:
-> 
-> 	#define _GNU_SOURCE 1
-> 	#include <fcntl.h>
-> 	#include <stdio.h>
-> 	#include <unistd.h>
-> 	int main()
-> 	{
-> 		int pipes[2], fd, n, i;
-> 		char buf[32];
-> 
-> 		pipe(pipes);
-> 		write(pipes[1], "0", 1);
-> 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
-> 		splice(pipes[0], NULL, fd, NULL, 1, 0);
-> 		n = read(fd, buf, sizeof(buf));
-> 		for (i = 0; i < n; i++)
-> 			printf("%02x", buf[i]);
-> 		printf("\n");
-> 	}
-> 
-> Output:
-> 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
-> 
-> Fix the infoleak by making simple_attr_read() always fill
-> simple_attr::get_buf if it hasn't been filled yet.
-> 
-> Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
-> Reported-by: Alexander Potapenko <glider@google.com>
-> Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/libfs.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index c686bd9caac6..3759fbacf522 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
->  {
->  	struct simple_attr *attr;
->  
-> -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
-> +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
->  	if (!attr)
->  		return -ENOMEM;
->  
-> @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
->  	if (ret)
->  		return ret;
->  
-> -	if (*ppos) {		/* continued read */
-> +	if (*ppos && attr->get_buf[0]) {
-> +		/* continued read */
->  		size = strlen(attr->get_buf);
-> -	} else {		/* first read */
-> +	} else {
-> +		/* first read */
->  		u64 val;
->  		ret = attr->get(attr->data, &val);
->  		if (ret)
-> -- 
-> 2.25.1
+> That's mostly because I was hoping for some clarification in the
+> discussion, especially the relevant certification requirements, but it
+> looks like there is still plenty of room for interpretation there (as
+> usual).  I'd much rather us arrive at decisions based on requirements
+> and not gut feelings, which is where I think we are at right now.
 
-Any comments on this?  Al, seems this is something you should pick up?
+Certification rquirements are that we need the identity of anyone attempting 
+to modify the audit configuration including shutting it down.
 
-- Eric
+-Steve
+
+
