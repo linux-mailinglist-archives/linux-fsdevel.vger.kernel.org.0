@@ -2,141 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65DD2184F19
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 19:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74342184F27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 20:05:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbgCMS7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 14:59:24 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38855 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726446AbgCMS7Y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:59:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584125963;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8o++RDtPi06edCq2V+yf5BrhzW8DgwWaCOa0CXjSS/g=;
-        b=HBPibadc/4XSbbFNgztPwKWxvnDeFzVwyV8QJKGjY4PI4kVO0Kv/kNCmW6fWC0vknv/8Ii
-        8HKO13hPCAkWwAvpcPYd6gByh4ZEYIImxmSxErmLV240BG/WoQlW3JMuolsxbGBnCdFr2k
-        Ec0xU4l05bn5zVVllb+Tx/DTiwJ5dwE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-292-XcPF1FLCMJWyZY5LCgmxEQ-1; Fri, 13 Mar 2020 14:59:18 -0400
-X-MC-Unique: XcPF1FLCMJWyZY5LCgmxEQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726534AbgCMTFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 15:05:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726297AbgCMTFb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Mar 2020 15:05:31 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 31D29102CE17;
-        Fri, 13 Mar 2020 18:59:16 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8FA3B8FC06;
-        Fri, 13 Mar 2020 18:59:03 +0000 (UTC)
-Date:   Fri, 13 Mar 2020 14:59:00 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-Message-ID: <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca>
-References: <cover.1577736799.git.rgb@redhat.com>
- <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2>
- <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
- <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
- <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id ABF63206B7;
+        Fri, 13 Mar 2020 19:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584126331;
+        bh=vuYul+KNbe7S1RciqI4G1/q/1GISg3EqPissVTD72I8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VQ4CPUlWY3TDyXZr15FC+AB9KXttXeaQJdd7wPkBgHIQWZowL5sV2bVRW+YbNbfDZ
+         yZZO2HFj0Y7K17wa0EzDEiGqgXcmfR8YNueYpshapexkG57KFbM3gCynW8hSzETi91
+         Sq1nSNEROeqnhMJFhCwWOEco8Gc3mD9JzXzkI5TY=
+Date:   Fri, 13 Mar 2020 12:05:29 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     NeilBrown <neilb@suse.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>
+Subject: Re: [PATCH v2 3/4] docs: admin-guide: document the kernel.modprobe
+ sysctl
+Message-ID: <20200313190529.GB55327@gmail.com>
+References: <20200312202552.241885-1-ebiggers@kernel.org>
+ <20200312202552.241885-4-ebiggers@kernel.org>
+ <87lfo5telq.fsf@notabene.neil.brown.name>
+ <20200313010727.GT11244@42.do-not-panic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20200313010727.GT11244@42.do-not-panic.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-03-13 12:29, Paul Moore wrote:
-> On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2020-02-13 16:44, Paul Moore wrote:
-> > > This is a bit of a thread-hijack, and for that I apologize, but
-> > > another thought crossed my mind while thinking about this issue
-> > > further ... Once we support multiple auditd instances, including the
-> > > necessary record routing and duplication/multiple-sends (the host
-> > > always sees *everything*), we will likely need to find a way to "trim"
-> > > the audit container ID (ACID) lists we send in the records.  The
-> > > auditd instance running on the host/initns will always see everything,
-> > > so it will want the full container ACID list; however an auditd
-> > > instance running inside a container really should only see the ACIDs
-> > > of any child containers.
-> >
-> > Agreed.  This should be easy to check and limit, preventing an auditd
-> > from seeing any contid that is a parent of its own contid.
-> >
-> > > For example, imagine a system where the host has containers 1 and 2,
-> > > each running an auditd instance.  Inside container 1 there are
-> > > containers A and B.  Inside container 2 there are containers Y and Z.
-> > > If an audit event is generated in container Z, I would expect the
-> > > host's auditd to see a ACID list of "1,Z" but container 1's auditd
-> > > should only see an ACID list of "Z".  The auditd running in container
-> > > 2 should not see the record at all (that will be relatively
-> > > straightforward).  Does that make sense?  Do we have the record
-> > > formats properly designed to handle this without too much problem (I'm
-> > > not entirely sure we do)?
-> >
-> > I completely agree and I believe we have record formats that are able to
-> > handle this already.
+On Fri, Mar 13, 2020 at 01:07:27AM +0000, Luis Chamberlain wrote:
+> > > +modprobe:
+> > > +=========
+> > > +
+> > > +The path to the usermode helper for autoloading kernel modules, by
+> > > +default "/sbin/modprobe".  This binary is executed when the kernel
+> > > +requests a module.  For example, if userspace passes an unknown
+> > > +filesystem type "foo" to mount(), then the kernel will automatically
+> > > +request the module "fs-foo.ko" by executing this usermode helper.
+> > 
+> > I don't think it is right to add the ".ko" there.  The string "fs-foo"
+> > is what is passed to the named executable, and it make well end up
+> > loading "bar.ko", depending what aliases are set up.
+> > I would probably write  '... request the module named 'fs-foo" by executing..'
 > 
-> I'm not convinced we do.  What about the cases where we have a field
-> with a list of audit container IDs?  How do we handle that?
+> And that is just because filesystems, in this case a mount call, will
+> use the fs- prefix for aliases. This is tribal knowledge in the context
+> above, and so someone not familiar with this won't easily grasp this.
+> 
+> Is there an easier autoloading example other than filesystems we can use that
+> doesn't require you to explain the aliasing thing?
+> 
+> What is module autoloading? Where is this documented ? If that
+> can be slightly clarified this would be even easier to understand as
+> well.
+> 
 
-I don't understand the problem.  (I think you crossed your 1/2 vs
-A/B/Y/Z in your example.)  Clarifying the example above, if as you
-suggest an event happens in container Z, the hosts's auditd would report
-	Z,^2
-and the auditd in container 2 would report
-	Z,^2
-but if there were another auditd running in container Z it would report
-	Z
-while the auditd in container 1 or A/B would see nothing.
+I think we're getting too down into the weeds here.  The purpose of this patch
+is just to document the modprobe sysctl, not to to give a full explanation of
+how module autoloading works including modaliases and everything.  And this
+sysctl isn't needed to enable module autoloading; it's enabled by default.
+Most users already use module autoloading without ever touching this sysctl.
 
-The format I had proposed already handles that:
-contid^contid,contid^contid but you'd like to see it changed to
-contid,^contid,contid,^contid and both formats handle it though I find
-the former much easier to read.  For the example above we'd have:
-	A,^1
-	B,^1
-	Y,^2
-	Z,^2
-and for a shared network namespace potentially:
-	A,^1,B,^1,Y,^2,Z,^2
-and if there were an event reported by an auditd in container Z it would
-report only:
-	Z
+Let's just write instead:
 
-Now, I could see an argument for restricting the visibility of the
-contid to the container containing an auditd so that an auditd cannot
-see its own contid, but that wasn't my design intent.  This can still be
-addressed after the initial code is committed without breaking the API.
+	For example, if userspace passes an unknown filesystem type to mount(),
+	then the kernel will automatically request the corresponding filesystem
+	module by executing this usermode helper.  This usermode helper should
+	insert the needed module into the kernel.
 
-> paul moore
+If someone wants to write a new documentation file that fully explains kernel
+modules (I don't see any yet), they should should certainly do so.  It's more
+than I set out to do, though.  IMO, just documenting this sysctl is already a
+nice improvement by itself.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+- Eric
