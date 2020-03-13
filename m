@@ -2,103 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A91184D81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 18:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A4D184EA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 19:33:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbgCMRXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 13:23:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38706 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgCMRXp (ORCPT
+        id S1726691AbgCMSdv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45386 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbgCMSdv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 13:23:45 -0400
-Received: from mail-wr1-f69.google.com ([209.85.221.69])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jCo2C-0000Nu-9q
-        for linux-fsdevel@vger.kernel.org; Fri, 13 Mar 2020 17:23:44 +0000
-Received: by mail-wr1-f69.google.com with SMTP id h14so3922288wrv.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 10:23:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:to:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=RkXpnuziHgLrnkR5X2klNJNHeJcp3TgPwryfqx5WOp0=;
-        b=nvgt+DVvK7weKZ8UrYU00NmF5dnBzUNlQLYUYSsO1LOlx7fw7EhX9UZhtv/KkkMhes
-         A8gMQubywQ0e5CoL4VJrVUv2M2L/d9h5ztjkyPaoICuqFxjk+jyn2H9PuVY5kgkevg/M
-         /uTGa/lOZ2EUeJw7QFgof66+Nnc/I+Jv2bCkUPFnJJ3tCDvTHy/HLqEsfWOvtIN+g0XJ
-         ctZ5/Am9sUc6VLXILK2rZA56vMKtHAC7jhUvU8VRGH9f3qgsbYVUu5BB3cdCDFEJOjrk
-         7NZiiPgvrMmqdvMf4/TmLgVYp6qHi4EEQBZanGmkhVgrUopPLGcP4h1CXoSP5H108PZY
-         q0NQ==
-X-Gm-Message-State: ANhLgQ0M8kWT24MNk/a1UGC7CJa0Fj0+/lhE7A77J0QnxpHZ6MJDfdeV
-        86+ENluwKuIoyECv4feoULDMZFiNEW/t0XkGO4v+iVrl7gN7VEJ5R67T8aRrVs0I5bDbDUWm31b
-        kapM1EtrqCqijEXlcixuuxhQmBNTb19m6eXKsB2oxDdo=
-X-Received: by 2002:adf:ab54:: with SMTP id r20mr3358534wrc.197.1584120224049;
-        Fri, 13 Mar 2020 10:23:44 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vuPmdgJsJ31KcEO/jHEkWAnrvUInFIgglCacgBPaBPNrBuMoFcCCHSV+As+ieKRNUQTdmdHLQ==
-X-Received: by 2002:adf:ab54:: with SMTP id r20mr3358512wrc.197.1584120223802;
-        Fri, 13 Mar 2020 10:23:43 -0700 (PDT)
-Received: from [192.168.1.75] (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
-        by smtp.gmail.com with ESMTPSA id c2sm17890613wma.39.2020.03.13.10.23.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Mar 2020 10:23:42 -0700 (PDT)
-Subject: Re: [PATCH] kernel/hung_task.c: Introduce sysctl to print all traces
- when a hung task is detected
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, mcgrof@kernel.org, yzaikin@google.com,
-        tglx@linutronix.de, kernel@gpiccoli.net
-References: <20200310155650.17968-1-gpiccoli@canonical.com>
-To:     keescook@chromium.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <ef3b3e9a-9d58-60ec-d638-88ad57d29aec@canonical.com>
-Date:   Fri, 13 Mar 2020 14:23:37 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 13 Mar 2020 14:33:51 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCp36-00AyVa-Sz; Fri, 13 Mar 2020 18:28:45 +0000
+Date:   Fri, 13 Mar 2020 18:28:44 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, jlayton@redhat.com,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeremy Allison <jra@samba.org>,
+        Ralph =?iso-8859-1?Q?B=F6hme?= <slow@samba.org>,
+        Volker Lendecke <vl@sernet.de>
+Subject: Re: [PATCH 01/14] VFS: Add additional RESOLVE_* flags [ver #18]
+Message-ID: <20200313182844.GO23230@ZenIV.linux.org.uk>
+References: <158376244589.344135.12925590041630631412.stgit@warthog.procyon.org.uk>
+ <158376245699.344135.7522994074747336376.stgit@warthog.procyon.org.uk>
+ <20200310005549.adrn3yf4mbljc5f6@yavin>
+ <CAHk-=wiEBNFJ0_riJnpuUXTO7+_HByVo-R3pGoB_84qv3LzHxA@mail.gmail.com>
+ <580352.1583825105@warthog.procyon.org.uk>
+ <CAHk-=wiaL6zznNtCHKg6+MJuCqDxO=yVfms3qR9A0czjKuSSiA@mail.gmail.com>
+ <3d209e29-e73d-23a6-5c6f-0267b1e669b6@samba.org>
+ <CAHk-=wgu3Wo_xcjXnwski7JZTwQFaMmKD0hoTZ=hqQv3-YojSg@mail.gmail.com>
+ <8d24e9f6-8e90-96bb-6e98-035127af0327@samba.org>
+ <20200313095901.tdv4vl7envypgqfz@yavin>
 MIME-Version: 1.0
-In-Reply-To: <20200310155650.17968-1-gpiccoli@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313095901.tdv4vl7envypgqfz@yavin>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kees / Testsuo, are you OK with this patch once I resend with the
-suggestions you gave me?
+On Fri, Mar 13, 2020 at 08:59:01PM +1100, Aleksa Sarai wrote:
+> On 2020-03-12, Stefan Metzmacher <metze@samba.org> wrote:
+> > Am 12.03.20 um 17:24 schrieb Linus Torvalds:
+> > > But yes, if we have a major package like samba use it, then by all
+> > > means let's add linkat2(). How many things are we talking about? We
+> > > have a number of system calls that do *not* take flags, but do do
+> > > pathname walking. I'm thinking things like "mkdirat()"?)
+> > 
+> > I haven't looked them up in detail yet.
+> > Jeremy can you provide a list?
+> > 
+> > Do you think we could route some of them like mkdirat() and mknodat()
+> > via openat2() instead of creating new syscalls?
+> 
+> I have heard some folks asking for a way to create a directory and get a
+> handle to it atomically -- so arguably this is something that could be
+> inside openat2()'s feature set (O_MKDIR?). But I'm not sure how popular
+> of an idea this is.
 
-Is there anybody else I should loop in the patch that should take a
-look? Never sent sysctl stuff before, sorry if I forgot somebody heheh
+For fuck sake, *NO*!
 
-Thanks,
+We don't need any more multiplexors from hell.  mkdir() and open() have
+deeply different interpretation of pathnames (and anyone who asks for
+e.g. traversals of dangling symlinks on mkdir() is insane).  Don't try to
+mix those; even O_TMPFILE had been a mistake.
 
+Folks, we'd paid very dearly for the atomic_open() merge.  We are _still_
+paying for it - and keep finding bugs induced by the convoluted horrors
+in that thing (see yesterday pull from vfs.git#fixes for the latest crop).
+I hope to get into more or less sane shape (part - this cycle, with
+followups in the next one), but the last thing we need is more complexity
+in the area.
 
-Guilherme
+Keep the semantics simple and regular; corner cases _suck_.  "Infinitely
+extensible (without review)" is no virtue.  And having nowhere to hide
+very special flags for very special kludges is a bloody good thing.
+
+Every fucking time we had a multiplexed syscall, it had been a massive
+source of trouble.  IF it has a uniform semantics - fine; we don't need
+arseloads of read_this(2)/read_that(2).  But when you need pages upon
+pages to describe the subtle differences in the interpretation of
+its arguments, you have already lost.  It will be full of corner
+cases, they will get zero testing and they will rot.  Inevitably.  All
+the faster for the lack of people who would be able to keep all of that
+in head.
+
+We do have a mechanism for multiplexing; on amd64 it lives in do_syscall_64().
+We really don't need openat2() turning into another one.  Syscall table
+slots are not in a short supply, and the level of review one gets from
+"new syscall added" is higher than from "make fubar(2) recognize a new
+member in options->union_full_of_crap if it has RESOLVE_TO_WANK_WITH_RIGHT_HAND
+set in options->flags, affecting its behaviour in some odd ways".
+Which is a good thing, damnit.
