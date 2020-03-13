@@ -2,103 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30244184EE7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 19:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65DD2184F19
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Mar 2020 19:59:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbgCMSrh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 14:47:37 -0400
-Received: from mail-qt1-f181.google.com ([209.85.160.181]:42191 "EHLO
-        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgCMSrg (ORCPT
+        id S1727195AbgCMS7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 14:59:24 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38855 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726446AbgCMS7Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 14:47:36 -0400
-Received: by mail-qt1-f181.google.com with SMTP id g16so8408991qtp.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 11:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=mj7rGF7ON3Eo/FvVmngslw/F8fURXQu1EMn3nTTBUPQ=;
-        b=Mw+VFPC1w0UbdRMWSYVpgl8XZWcn/xyU7HjgZBjymT1LdxHLk54OdU9J7RryeWrV6G
-         pmCAsvxCw6XBIrR2Z5DSa9CfEeJcGKuh/zQ62J5GrmsM23BnS/TkQOWWIGVCT/cPUhnP
-         mm/zvQEUeE+q3yK42lamLdvqmphm2Ot6wWUJv1CQBEctQWHl5XrvfaJBRTO78Y/uEQWX
-         1l7qCdw3dlmrC8UvDgfJkqLAkCDAm4l7/mSIUZHe+CJjQxziWFJmZIyA+x8UAD/HVCqX
-         kJqpDXv5yS7j0ShkpKY8fpwCpz07OokC7FALZ+xhU7HVgk00IIS+O4y9al6ahGYBMuiP
-         ykgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=mj7rGF7ON3Eo/FvVmngslw/F8fURXQu1EMn3nTTBUPQ=;
-        b=AR7+pZd6UDOplrwsCRma0/7PBEsvM/aO4lmMjEw/DRNVIZO9C3QgOeOg+WrVt1i9Nd
-         oh2/SK9EJqLADl0Wa04wi8MBWKtyBf1vQIAeyFwkqRW0/mZLbrxrZa0+6DlKAbrRQfsn
-         pH0rq+3VA+CInFedqVokVy5MFfiCx383u2vIr9murQwu/Cy/Q0ryqeTEkwPIezIenSjC
-         hkTJPky319XcaRoZK1GjxlV6ILkUiP+BMEpviZqQFqikmxDU/yb6lYejFClsvR/uVCEi
-         v7gzF42MBygEUHj2ZWhovFd7oxKcKhy0u4l/2CiZ9k7+5Mj/qAuhRL0PECGr7RWo6aTp
-         G7Mw==
-X-Gm-Message-State: ANhLgQ2LD4XAWrxb0IMwgP1r9GrbnB3PorB4LaFOoJIjXA+MJ6efZIWr
-        6sNWlt6BpfqNAtCOet7b4myWXQ==
-X-Google-Smtp-Source: ADFU+vt5NDaayPMUHsXSY8k4ZwE0SyPb1aBxsDRcUQaLRF+uXaXF3f1cbfLoYMcPhiB48Es6cJN9Mg==
-X-Received: by 2002:aed:2202:: with SMTP id n2mr14466967qtc.4.1584125254322;
-        Fri, 13 Mar 2020 11:47:34 -0700 (PDT)
-Received: from [192.168.1.106] ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id w1sm14917915qkc.117.2020.03.13.11.47.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2020 11:47:33 -0700 (PDT)
-To:     lsf-pc <lsf-pc@lists.linuxfoundation.org>
-Cc:     Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-nvme@vger.kernel.org" <linux-nvme@vger.kernel.org>
-From:   Josef Bacik <josef@toxicpanda.com>
-Subject: LSF/MM/BPF 2020: Postponement announcement
-Message-ID: <e4f390c7-3b25-67c8-5d6d-d7e87ba1c072@toxicpanda.com>
-Date:   Fri, 13 Mar 2020 14:47:32 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        Fri, 13 Mar 2020 14:59:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584125963;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8o++RDtPi06edCq2V+yf5BrhzW8DgwWaCOa0CXjSS/g=;
+        b=HBPibadc/4XSbbFNgztPwKWxvnDeFzVwyV8QJKGjY4PI4kVO0Kv/kNCmW6fWC0vknv/8Ii
+        8HKO13hPCAkWwAvpcPYd6gByh4ZEYIImxmSxErmLV240BG/WoQlW3JMuolsxbGBnCdFr2k
+        Ec0xU4l05bn5zVVllb+Tx/DTiwJ5dwE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-292-XcPF1FLCMJWyZY5LCgmxEQ-1; Fri, 13 Mar 2020 14:59:18 -0400
+X-MC-Unique: XcPF1FLCMJWyZY5LCgmxEQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 31D29102CE17;
+        Fri, 13 Mar 2020 18:59:16 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8FA3B8FC06;
+        Fri, 13 Mar 2020 18:59:03 +0000 (UTC)
+Date:   Fri, 13 Mar 2020 14:59:00 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+Message-ID: <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com>
+ <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
+ <3142237.YMNxv0uec1@x2>
+ <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
+ <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca>
+ <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 2020-03-13 12:29, Paul Moore wrote:
+> On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-02-13 16:44, Paul Moore wrote:
+> > > This is a bit of a thread-hijack, and for that I apologize, but
+> > > another thought crossed my mind while thinking about this issue
+> > > further ... Once we support multiple auditd instances, including the
+> > > necessary record routing and duplication/multiple-sends (the host
+> > > always sees *everything*), we will likely need to find a way to "trim"
+> > > the audit container ID (ACID) lists we send in the records.  The
+> > > auditd instance running on the host/initns will always see everything,
+> > > so it will want the full container ACID list; however an auditd
+> > > instance running inside a container really should only see the ACIDs
+> > > of any child containers.
+> >
+> > Agreed.  This should be easy to check and limit, preventing an auditd
+> > from seeing any contid that is a parent of its own contid.
+> >
+> > > For example, imagine a system where the host has containers 1 and 2,
+> > > each running an auditd instance.  Inside container 1 there are
+> > > containers A and B.  Inside container 2 there are containers Y and Z.
+> > > If an audit event is generated in container Z, I would expect the
+> > > host's auditd to see a ACID list of "1,Z" but container 1's auditd
+> > > should only see an ACID list of "Z".  The auditd running in container
+> > > 2 should not see the record at all (that will be relatively
+> > > straightforward).  Does that make sense?  Do we have the record
+> > > formats properly designed to handle this without too much problem (I'm
+> > > not entirely sure we do)?
+> >
+> > I completely agree and I believe we have record formats that are able to
+> > handle this already.
+> 
+> I'm not convinced we do.  What about the cases where we have a field
+> with a list of audit container IDs?  How do we handle that?
 
-Unfortunately given the escalating nature of the response to COVID-19 we are
-making the decision to change the original LSF/MM/BPF dates in April 2020.  We
-currently do not have concrete plans about how we will reschedule, the Linux
-Foundation is working very hard at getting us alternative dates as we speak.
-Once the new plans are concretely made we will notify everyone again with the
-new plans.
+I don't understand the problem.  (I think you crossed your 1/2 vs
+A/B/Y/Z in your example.)  Clarifying the example above, if as you
+suggest an event happens in container Z, the hosts's auditd would report
+	Z,^2
+and the auditd in container 2 would report
+	Z,^2
+but if there were another auditd running in container Z it would report
+	Z
+while the auditd in container 1 or A/B would see nothing.
 
-The tentative plan is to keep the attendees as they are if we reschedule within
-2020.  This includes anybody that declined for travel related concerns.  We will
-re-send all invitations again to the original invitees so it's clear that you
-have been invited.
+The format I had proposed already handles that:
+contid^contid,contid^contid but you'd like to see it changed to
+contid,^contid,contid,^contid and both formats handle it though I find
+the former much easier to read.  For the example above we'd have:
+	A,^1
+	B,^1
+	Y,^2
+	Z,^2
+and for a shared network namespace potentially:
+	A,^1,B,^1,Y,^2,Z,^2
+and if there were an event reported by an auditd in container Z it would
+report only:
+	Z
 
-If we have to reschedule into 2021 then we will redo the CFP once we are closer
-to the actual date again and redo all of the invites and topics so we're as up
-to date as possible with the current state of the community.
+Now, I could see an argument for restricting the visibility of the
+contid to the container containing an auditd so that an auditd cannot
+see its own contid, but that wasn't my design intent.  This can still be
+addressed after the initial code is committed without breaking the API.
 
-We will keep the current program committee and I will continue to chair until we
-have the next LSF/MM/BPF.
+> paul moore
 
-Thank you on behalf of the program committee:
+- RGB
 
-         Josef Bacik (Filesystems)
-         Amir Goldstein (Filesystems)
-         Martin K. Petersen (Storage)
-         Omar Sandoval (Storage)
-         Michal Hocko (MM)
-         Dan Williams (MM)
-         Alexei Starovoitov (BPF)
-         Daniel Borkmann (BPF)
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
