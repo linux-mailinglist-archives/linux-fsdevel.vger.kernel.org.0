@@ -2,133 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1161D185296
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 00:55:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BBD185346
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 01:26:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbgCMXyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 19:54:45 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:50218 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbgCMXyI (ORCPT
+        id S1727696AbgCNA0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 20:26:05 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39218 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbgCNA0F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 19:54:08 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCu7y-00B6f9-Qe; Fri, 13 Mar 2020 23:54:06 +0000
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC][PATCH v4 69/69] lookup_open(): don't bother with fallbacks to lookup+create
-Date:   Fri, 13 Mar 2020 23:53:57 +0000
-Message-Id: <20200313235357.2646756-69-viro@ZenIV.linux.org.uk>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
-References: <20200313235303.GP23230@ZenIV.linux.org.uk>
- <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
+        Fri, 13 Mar 2020 20:26:05 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f10so12499552ljn.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:26:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MSh28SDxVzmezso0eCx9OLP79cE1ODkRapdHxbtQ29k=;
+        b=BNv0AIG2vvEkCJhWjYAFISduPkxT8Ox6Ts9OSN0YQy6/mTiU5c1VgmXW9TIdC5BBr0
+         KYAilKkOKlN+NxaDs6MkVZ5h/TBABtDs3eTS4Nt7RYDT2QWUsCchxU4pciiLd08QlnBa
+         KZT/V9/rFMliX2+Xv/SYsgO+HqZN1TDNaV7gs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MSh28SDxVzmezso0eCx9OLP79cE1ODkRapdHxbtQ29k=;
+        b=O4bgh3+MXusSxyF2ZFx4OMw/Rx1V2fZnX096v3BGiMw08d6YXBjiXP48wjqxe1x0of
+         4CG0vfHL94+lU+uSMui4NL9MdCrO1lm392tc/9a+5RJObsowGjhLtUDKqzJK2S6HzYhY
+         J2DFGfKyjy2x+CpN7cbgnIJDbuKSReO6UUDvf/IbqZun+/ykp6lGv2n+sA+NlICWdaz+
+         alcyPGMzz+Skjs1sqLoOO1cLwrcaYghSE67y8mZXCqrYFcg9KNfa4pKTmETM2NTogupq
+         2Xovyw1BRyxG7GlK+c48QR9AHl/6W+VOfW3HR3hcMBnhWovz1FjGPxvvwLhU3fHBOsvV
+         ivxg==
+X-Gm-Message-State: ANhLgQ1zhjDnJ+iOHSBJdenv6je5KIqkXlgAOo46d617YEscqaHAIMXf
+        p4va5QouNWCM9ZyZbq2E5BobsaEVokA=
+X-Google-Smtp-Source: ADFU+vtXzoajAfKJjAr/0m0xqdhtIJYisWYEsyWKEqRb0zPOTrfu/PDn58j3xty3EEeWWTb1vhHrHA==
+X-Received: by 2002:a2e:b4b1:: with SMTP id q17mr8900712ljm.22.1584145563729;
+        Fri, 13 Mar 2020 17:26:03 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id p133sm14297456lfa.82.2020.03.13.17.26.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id r9so3812962lff.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
+X-Received: by 2002:ac2:5986:: with SMTP id w6mr9900471lfn.30.1584145562223;
+ Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200313235303.GP23230@ZenIV.linux.org.uk> <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
+ <20200313235357.2646756-11-viro@ZenIV.linux.org.uk>
+In-Reply-To: <20200313235357.2646756-11-viro@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 13 Mar 2020 17:25:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgnpnUy7OiiDbE+Bd=x-K6YyRV_1mvsoP-fhTC2=ez=+A@mail.gmail.com>
+Message-ID: <CAHk-=wgnpnUy7OiiDbE+Bd=x-K6YyRV_1mvsoP-fhTC2=ez=+A@mail.gmail.com>
+Subject: Re: [RFC][PATCH v4 11/69] lookup_fast(): consolidate the RCU success case
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Fri, Mar 13, 2020 at 4:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> -                       if (unlikely(negative))
+> +                       if (unlikely(!inode))
+>                                 return -ENOENT;
 
-We fall back to lookup+create (instead of atomic_open) in several cases:
-	1) we don't have write access to filesystem and O_TRUNC is
-present in the flags.  It's not something we want ->atomic_open() to
-see - it just might go ahead and truncate the file.  However, we can
-pass it the flags sans O_TRUNC - eventually do_open() will call
-handle_truncate() anyway.
-	2) we have O_CREAT | O_EXCL and we can't write to parent.
-That's going to be an error, of course, but we want to know _which_
-error should that be - might be EEXIST (if file exists), might be
-EACCES or EROFS.  Simply stripping O_CREAT (and checking if we see
-ENOENT) would suffice, if not for O_EXCL.  However, we used to have
-->atomic_open() fully responsible for rejecting O_CREAT | O_EXCL
-on existing file and just stripping O_CREAT would've disarmed
-those checks.  With nothing downstream to catch the problem -
-FMODE_OPENED used to be "don't bother with EEXIST checks,
-->atomic_open() has done those".  Now EEXIST checks downstream
-are skipped only if FMODE_CREATED is set - FMODE_OPENED alone
-is not enough.  That has eliminated the need to fall back onto
-lookup+create path in this case.
-	3) O_WRONLY or O_RDWR when we have no write access to
-filesystem, with nothing else objectionable.  Fallback is
-(and had always been) pointless.
+Isn't that buggy?
 
-IOW, we don't really need that fallback; all we need in such
-cases is to trim O_TRUNC and O_CREAT properly.
+Despite the name, 'inode' isn't an inode pointer. It's a pointer to
+the return location.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namei.c | 34 +++++++++-------------------------
- 1 file changed, 9 insertions(+), 25 deletions(-)
+I think the test should be
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 36b15f5b09bd..f4ac81b60a95 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2938,9 +2938,6 @@ static struct dentry *atomic_open(struct nameidata *nd, struct dentry *dentry,
- 	struct inode *dir =  nd->path.dentry->d_inode;
- 	int error;
- 
--	if (!(~open_flag & (O_EXCL | O_CREAT)))	/* both O_EXCL and O_CREAT */
--		open_flag &= ~O_TRUNC;
--
- 	if (nd->flags & LOOKUP_DIRECTORY)
- 		open_flag |= O_DIRECTORY;
- 
-@@ -3037,32 +3034,20 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 	 * Another problem is returing the "right" error value (e.g. for an
- 	 * O_EXCL open we want to return EEXIST not EROFS).
- 	 */
-+	if (unlikely(!got_write))
-+		open_flag &= ~O_TRUNC;
- 	if (open_flag & O_CREAT) {
-+		if (open_flag & O_EXCL)
-+			open_flag &= ~O_TRUNC;
- 		if (!IS_POSIXACL(dir->d_inode))
- 			mode &= ~current_umask();
--		if (unlikely(!got_write)) {
--			create_error = -EROFS;
--			open_flag &= ~O_CREAT;
--			if (open_flag & (O_EXCL | O_TRUNC))
--				goto no_open;
--			/* No side effects, safe to clear O_CREAT */
--		} else {
-+		if (likely(got_write))
- 			create_error = may_o_create(&nd->path, dentry, mode);
--			if (create_error) {
--				open_flag &= ~O_CREAT;
--				if (open_flag & O_EXCL)
--					goto no_open;
--			}
--		}
--	} else if ((open_flag & (O_TRUNC|O_WRONLY|O_RDWR)) &&
--		   unlikely(!got_write)) {
--		/*
--		 * No O_CREATE -> atomicity not a requirement -> fall
--		 * back to lookup + open
--		 */
--		goto no_open;
-+		else
-+			create_error = -EROFS;
- 	}
--
-+	if (create_error)
-+		open_flag &= ~O_CREAT;
- 	if (dir_inode->i_op->atomic_open) {
- 		dentry = atomic_open(nd, dentry, file, open_flag, mode);
- 		if (unlikely(create_error) && dentry == ERR_PTR(-ENOENT))
-@@ -3070,7 +3055,6 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
- 		return dentry;
- 	}
- 
--no_open:
- 	if (d_in_lookup(dentry)) {
- 		struct dentry *res = dir_inode->i_op->lookup(dir_inode, dentry,
- 							     nd->flags);
--- 
-2.11.0
+        if (unlikely(!*inode))
+                return -ENOENT;
 
+and I also suspect that the argument name should be fixed (maybe
+"inodepp", maybe something better).
+
+Because the "inode" pointer itself always exists. The callers will
+have something like
+
+        struct inode *inode;
+
+and then pass in "&inode" to the function.
+
+And it's possible that I'm talking complete garbage.
+
+               Linus
