@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75EA81858DE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:24:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFCC1858F2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbgCOCYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Mar 2020 22:24:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39070 "EHLO mail.kernel.org"
+        id S1727889AbgCOCZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Mar 2020 22:25:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727911AbgCOCYN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1727915AbgCOCYN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 14 Mar 2020 22:24:13 -0400
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E74A208E4;
-        Sat, 14 Mar 2020 21:36:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 145F7208D6;
+        Sat, 14 Mar 2020 21:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584221808;
-        bh=pyfoelTFUrUS8nqrG9mSLUHYjidpQeeIpDUHP53gjl8=;
+        s=default; t=1584221809;
+        bh=xmE3yElXSaLPkHmEr4QxRVGER8+rZ3BdqvEa3ZNkdF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aA9JmKx1AmQXReCs2UQdldQBufumaqmJDrCrYtVKn6syEOSmoATH6+XhoxpvcRmXJ
-         0oz3ax0QyyKCptQro3j57gRu6VCvZHsOksbiwy4EP7j0ffqm8Up+Ixtjgw39Ijh0Fu
-         AdDY9p+FDl2sWJEk82BqZUEicW1PvaGdrplaqKHQ=
+        b=p0MEecr+36WP4z93qOCDFo9M69v6/l1BsgQinH+aiEM4rai3GplQEwS8cb+UrHWBk
+         LsqY7T7PRhGCBhj3hbkypJk1PTzpzF4Qmy5BvyYEmoTgqmtQyg6GZA8AffyAVDPuGa
+         JWdTj9Kjh3KSqiPNO/9FY/K6EfErk3WztFDe5IIY=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         NeilBrown <neilb@suse.com>
-Subject: [PATCH v3 3/5] docs: admin-guide: document the kernel.modprobe sysctl
-Date:   Sat, 14 Mar 2020 14:34:24 -0700
-Message-Id: <20200314213426.134866-4-ebiggers@kernel.org>
+Subject: [PATCH v3 4/5] selftests: kmod: fix handling test numbers above 9
+Date:   Sat, 14 Mar 2020 14:34:25 -0700
+Message-Id: <20200314213426.134866-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200314213426.134866-1-ebiggers@kernel.org>
 References: <20200314213426.134866-1-ebiggers@kernel.org>
@@ -48,67 +48,55 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Document the kernel.modprobe sysctl in the same place that all the other
-kernel.* sysctls are documented.  Make sure to mention how to use this
-sysctl to completely disable module autoloading, and how this sysctl
-relates to CONFIG_STATIC_USERMODEHELPER.
+get_test_count() and get_test_enabled() were broken for test numbers
+above 9 due to awk interpreting a field specification like '$0010' as
+octal rather than decimal.  Fix it by stripping the leading zeroes.
 
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jeff Vander Stoep <jeffv@google.com>
 Cc: Jessica Yu <jeyu@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
 Cc: NeilBrown <neilb@suse.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/admin-guide/sysctl/kernel.rst | 25 ++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kmod/kmod.sh | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index def074807cee9..e3c15660ee5d9 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -49,7 +49,7 @@ show up in /proc/sys/kernel:
- - kexec_load_disabled
- - kptr_restrict
- - l2cr                        [ PPC only ]
--- modprobe                    ==> Documentation/debugging-modules.txt
-+- modprobe
- - modules_disabled
- - msg_next_id		      [ sysv ipc ]
- - msgmax
-@@ -444,6 +444,29 @@ l2cr: (PPC only)
- This flag controls the L2 cache of G3 processor boards. If
- 0, the cache is disabled. Enabled if nonzero.
+diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
+index 8b944cf042f6c..315a43111e046 100755
+--- a/tools/testing/selftests/kmod/kmod.sh
++++ b/tools/testing/selftests/kmod/kmod.sh
+@@ -505,18 +505,23 @@ function test_num()
+ 	fi
+ }
  
-+modprobe:
-+=========
+-function get_test_count()
++function get_test_data()
+ {
+ 	test_num $1
+-	TEST_DATA=$(echo $ALL_TESTS | awk '{print $'$1'}')
++	local field_num=$(echo $1 | sed 's/^0*//')
++	echo $ALL_TESTS | awk '{print $'$field_num'}'
++}
 +
-+The path to the usermode helper for autoloading kernel modules, by
-+default "/sbin/modprobe".  This binary is executed when the kernel
-+requests a module.  For example, if userspace passes an unknown
-+filesystem type to mount(), then the kernel will automatically request
-+the corresponding filesystem module by executing this usermode helper.
-+This usermode helper should insert the needed module into the kernel.
-+
-+This sysctl only affects module autoloading.  It has no effect on the
-+ability to explicitly insert modules.
-+
-+If this sysctl is set to the empty string, then module autoloading is
-+completely disabled.  The kernel will not try to execute a usermode
-+helper at all, nor will it call the kernel_module_request LSM hook.
-+
-+If CONFIG_STATIC_USERMODEHELPER=y is set in the kernel configuration,
-+then the configured static usermode helper overrides this sysctl,
-+except that the empty string is still accepted to completely disable
-+module autoloading as described above.
-+
-+Also see Documentation/debugging-modules.txt.
++function get_test_count()
++{
++	TEST_DATA=$(get_test_data $1)
+ 	LAST_TWO=${TEST_DATA#*:*}
+ 	echo ${LAST_TWO%:*}
+ }
  
- modules_disabled:
- =================
+ function get_test_enabled()
+ {
+-	test_num $1
+-	TEST_DATA=$(echo $ALL_TESTS | awk '{print $'$1'}')
++	TEST_DATA=$(get_test_data $1)
+ 	echo ${TEST_DATA#*:*:}
+ }
+ 
 -- 
 2.25.1
 
