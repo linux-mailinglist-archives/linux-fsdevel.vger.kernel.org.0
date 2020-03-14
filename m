@@ -2,85 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6867F185402
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 03:27:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90BFC18540A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 03:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbgCNC1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 22:27:18 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52452 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbgCNC1S (ORCPT
+        id S1726610AbgCNCn3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 22:43:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43578 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbgCNCn2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 22:27:18 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jCwW4-00BARd-OM; Sat, 14 Mar 2020 02:27:08 +0000
-Date:   Sat, 14 Mar 2020 02:27:08 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v4)
-Message-ID: <20200314022708.GS23230@ZenIV.linux.org.uk>
-References: <20200223011154.GY23230@ZenIV.linux.org.uk>
- <20200301215125.GA873525@ZenIV.linux.org.uk>
- <20200313235303.GP23230@ZenIV.linux.org.uk>
- <CAHk-=whainTcvgF01vsSmN+y7s7U1qMA-QbM5qFQ3s4xQHwaJw@mail.gmail.com>
+        Fri, 13 Mar 2020 22:43:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c144so6401360pfb.10;
+        Fri, 13 Mar 2020 19:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=gTv57bmUMayhCzk1O5/3xfBPFk4Ei/L2Uv/w0qE0Uv0=;
+        b=ly0MizdiHMFMcicd+GU7QtHM+8WzWpkV44Hh1TPHgoTYKre3lIteHxI+yfpTc4IfDO
+         Q79BIqjwGKKYV2U/x/Q0zMTj0z9Mwxd7ZDhfUox6MU2b7qyDUQsgTMeVwoQHD4PxPpi/
+         dFoMfwlJibJQE+lqeuTgQN4hti/Kf+eeL3abrBrKCPaebccbIGQ2HGqfNFpMoYvkjJJJ
+         MYXH+MDVrxTTOmfcgrIRSyFIV/nm9nD911k1jQX51CWlNeGmhIol4O42qCtA6oe8ZCxs
+         dbEbXgeNpU3svP3K8vWceBRk41dMDyglZtlUMLQ/8kNUbylEOLd+F1s+XzHEyChALtle
+         VchQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gTv57bmUMayhCzk1O5/3xfBPFk4Ei/L2Uv/w0qE0Uv0=;
+        b=CIbxZ1WaM2z03DQ4OMzP6LTKs6bKvBlY5/4J9FqHJnu0Da0fFxCf1L9A2AM++kWwGB
+         TivjQWPjLBbIJwGmiZOWp6gUT8MYa1lkYwMeURcCz10qN8HdXshKRJAZQnlC7BqCdTWI
+         RAr5QyVcJqED+PLfqc5CfZSHhu6FLqo/EJFvMptQM7YuElvK4mwLysdwb/vtp9b8aL2Z
+         QFcfqIHrPlnJKvvhQtKjmdFeXRFCjvKUje+sFD2BUKdUUrVk2rLxwmjmZIJKuOQRVXw8
+         4z/xjnQIg5KuflQEqQ4GQkmfCiSN1EY9OopKRaIGwpLwXuVDlylY+VCZSvjS2C+PcAqe
+         O1jA==
+X-Gm-Message-State: ANhLgQ1Zo54a3VtPxEJs9XP3xst1dS3Z5VXGeW9CMXMcYUtmKN6eTmyZ
+        KgdyI36RrOX0Bglal2/0ow0=
+X-Google-Smtp-Source: ADFU+vvOwDoGiIm44wVUxc27PMRID193NOa35a03TjsbfiGuiRz7u+J3vD+Y8CcNtvCEvxL7rQBNZQ==
+X-Received: by 2002:aa7:9a95:: with SMTP id w21mr2061733pfi.57.1584153805842;
+        Fri, 13 Mar 2020 19:43:25 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:1661])
+        by smtp.gmail.com with ESMTPSA id w9sm6137719pfd.94.2020.03.13.19.43.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Mar 2020 19:43:25 -0700 (PDT)
+Date:   Fri, 13 Mar 2020 19:43:22 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org, kernel-team@fb.com,
+        ast@kernel.org, daniel@iogearbox.net, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, peterz@infradead.org,
+        bristot@redhat.com, mingo@kernel.org
+Subject: Re: [RFC bpf-next 0/2] sharing bpf runtime stats with /dev/bpf_stats
+Message-ID: <20200314024322.vymr6qkxsf6nzpum@ast-mbp.dhcp.thefacebook.com>
+References: <20200314003518.3114452-1-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whainTcvgF01vsSmN+y7s7U1qMA-QbM5qFQ3s4xQHwaJw@mail.gmail.com>
+In-Reply-To: <20200314003518.3114452-1-songliubraving@fb.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 05:50:51PM -0700, Linus Torvalds wrote:
-> On Fri, Mar 13, 2020 at 4:53 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> >         Review and testing would be _very_ welcome;
+On Fri, Mar 13, 2020 at 05:35:16PM -0700, Song Liu wrote:
+> Motivation (copied from 2/2):
 > 
-> I didn't notice anythign else than the few things I sent out to
-> individual patches.
+> ======================= 8< =======================
+> Currently, sysctl kernel.bpf_stats_enabled controls BPF runtime stats.
+> Typical userspace tools use kernel.bpf_stats_enabled as follows:
 > 
-> But I have to say, 69 patches is too long of a series to review. I
-> think you could send them out as multiple series (you describe them
-> that way anyway - parts 1-7) with a day in between.
-
-A week of fun?  OK...
-
-> Because my eyes were starting to glaze over about halfway in the series.
+>   1. Enable kernel.bpf_stats_enabled;
+>   2. Check program run_time_ns;
+>   3. Sleep for the monitoring period;
+>   4. Check program run_time_ns again, calculate the difference;
+>   5. Disable kernel.bpf_stats_enabled.
 > 
-> But don't do it for this version. If you do a #5. But it would be good
-> to be in -next regardless of whether you do a #5 or not.
+> The problem with this approach is that only one userspace tool can toggle
+> this sysctl. If multiple tools toggle the sysctl at the same time, the
+> measurement may be inaccurate.
+> 
+> To fix this problem while keep backward compatibility, introduce
+> /dev/bpf_stats. sysctl kernel.bpf_stats_enabled will only change the
+> lowest bit of the static key. /dev/bpf_stats, on the other hand, adds 2
+> to the static key for each open fd. The runtime stats is enabled when
+> kernel.bpf_stats_enabled == 1 or there is open fd to /dev/bpf_stats.
+> 
+> With /dev/bpf_stats, user space tool would have the following flow:
+> 
+>   1. Open a fd to /dev/bpf_stats;
+>   2. Check program run_time_ns;
+>   3. Sleep for the monitoring period;
+>   4. Check program run_time_ns again, calculate the difference;
+>   5. Close the fd.
+> ======================= 8< =======================
+> 
+> 1/2 adds a few new API to jump_label.
+> 2/2 adds the /dev/bpf_stats and adjust kernel.bpf_stats_enabled handler.
+> 
+> Please share your comments.
 
-FWIW, I've dealt with bisect hazards and I'll probably reorder #56 after
-#57/#58, to get the stuff that deals with stack allocation (#56, #59..61)
-together, without "reduce the exposure to weird struct path instances"
-(57 and 58) mixed in the middle of that.
+Conceptually makes sense to me. Few comments:
+1. I don't understand why +2 logic is necessary.
+Just do +1 for every FD and change proc_do_static_key() from doing
+explicit enable/disable to do +1/-1 as well on transition from 0->1 and 1->0.
+The handler would need to check that 1->1 and 0->0 is a nop.
 
-As for the rest...  I'm not sure that choose_mountpoint{,_rcu}()
-is inserted into the right place in text - might be better next to
-follow_up().  There's also a couple of pick_link() pieces worth separate
-helpers, but I'd rather leave that for the next cycle - the series is
-bloody long as it is.
+2. /dev is kinda awkward. May be introduce a new bpf command that returns fd?
 
-I'm not going to throw the immediate prereqs for ->atomic_open() calling
-conventions change into that pile - they don't harm anything, but they
-are unmotivated without the next step (method signature change) and it's
-really too late in the cycle for that.  That's going to be a separate
-series, probably for the next cycle.  Changes to instances are not
-huge; ceph is the worst by far and that's only +27/-22 lines.  So I don't
-think there will be a lot of conflicts to cope with in the next cycle,
-especially since ceph side of things looks like we want to do some
-refactoring first, with much smaller changeover on top of that.  That
-refactoring itself won't have prereqs at all, so that can be dealt with
-sanely and that'll soak most of the potential conflicts in.
-
-There are other potential refactorings/cleanups, but that's definitely
-not for this cycle.  So... short of regressions found in that series
-that's probably close to what I'll have for the coming window in
-this branch.  If I see something else in there that can be usefully
-cleaned up, I'll keep it for after -rc1...
-
-Next: context switch to uaccess series and getting that patchbomb ready.
-Oh, well...
+3. Instead of 1 and 2 tweak sysctl to do ++/-- unconditionally?
+ Like repeated sysctl kernel.bpf_stats_enabled=1 will keep incrementing it
+ and would need equal amount of sysctl kernel.bpf_stats_enabled=0 to get
+ it back to zero where it will stay zero even if users keep spamming
+ sysctl kernel.bpf_stats_enabled=0.
+ This way current services that use sysctl will keep working as-is.
+ Multiple services that currently collide on sysctl will magically start
+ working without any changes to them. It is still backwards compatible.
