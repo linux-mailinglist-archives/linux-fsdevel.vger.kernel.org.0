@@ -2,70 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760C71858C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:23:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C12FB1858E1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:24:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgCOCX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Mar 2020 22:23:28 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45544 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbgCOCX2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:23:28 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z8so7809128qto.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Mar 2020 19:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=rySLrb6e8pdxDloLytBEUWmIP8HvBNLPxIuJLcg1j9c=;
-        b=h9YhYCfhuvcoOK9JuTSnuiXg2cILoy3ExIWXtsaJYq8huKBTSezqcgybwNUJnF31OD
-         8M4XkdAA+wF3Kc0hz30O/kK9eMooTs7yoqdIBJNfvWQnNRWRGMPcYzXrJl2zdeF1j7va
-         J8XdxMT0KmL8llAYJuvJtfAv+moo5flCUCJCh/tlglJ+fFmIUPVbZ1fac7bCjKhbkCn+
-         rZJerUAJLBThHl7kvNkOSCFj/J2Gim7L2OHs8nEEBbbGF0yG+oMEoxI1m7Q6XmwEaoXK
-         TKHu+SSgJteucaBn++J1ylejcFocesa/O0LZlk7VxDKA6TPZDYhdjLA4ADjt7vhRjRdb
-         KZMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=rySLrb6e8pdxDloLytBEUWmIP8HvBNLPxIuJLcg1j9c=;
-        b=V674hvzdKCdbvQlDzzwSDOFxQdpA95VQ5zxDU7hP0xeTpmD+edRloUuEPzBZzQvxGT
-         jpCeyK2M1+yX/W7HCCMk6Wg5jz+5Im8jb/AzDHNxJqFKj2NPSKgXFUNPSWPiXjkbp2H4
-         a5iEz2SXoL8dfyDpiRgGA5j3OiDM0cKl/NlPwIdkJ4iXpV8Ij4LfGYbPBHBMJHNfRS2k
-         cG99yK4jPPJ9M86SqS1Jwj0YgA3DaFKtK5cPpakd+jAYSxdmNU626v8YINqz1lMm7ehj
-         0tOk8dcMkW49/qiF9EIcwOecQF4VjqY92BUqefNBQbkEOpjksQBramkb2U94NMGLeaQ7
-         5Mug==
-X-Gm-Message-State: ANhLgQ3os4wQ8kbuAmkiUPMZ5DuV/637Oqz5m+YyJHMbkNK++Tzv8tWm
-        m/oI8L61jK6/kPjmEduFIcJsd+Vc9IUTLlwfG9mPsLof
-X-Google-Smtp-Source: ADFU+vsJ8OZ/Dhr0DwwgkL8CDPySYZHLYuNtMBF50V178xoCgQ3+Wbsy6eqrOFGI1hDMkk7GA6AGM8FMlDHfqPtuVxs=
-X-Received: by 2002:a02:3f4c:: with SMTP id c12mr12249418jaf.115.1584206617074;
- Sat, 14 Mar 2020 10:23:37 -0700 (PDT)
+        id S1728036AbgCOCYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Mar 2020 22:24:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727946AbgCOCYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:24:14 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38CC1207BC;
+        Sat, 14 Mar 2020 21:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584221807;
+        bh=60nbem/GmL/SUs8mZbdKlCVVcvFz4J/mVsG+CUpqtqw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TVfzwx5wGzNDXZmVFW2Cinfzx7abf6RhRsO9DAr9vVHuFRN+U+/h/UFYha86eGb0v
+         seqEwqcZK8WDOMcDt4e2NsZfPnPBYkXIvX0m/Awvoun/hnLHa1x6ba1FVA393CNSnD
+         EEVMItDFS5h9sgvMKori0VyPy99z3XX0RAHLVC9g=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        NeilBrown <neilb@suse.com>
+Subject: [PATCH v3 0/5] module autoloading fixes and cleanups
+Date:   Sat, 14 Mar 2020 14:34:21 -0700
+Message-Id: <20200314213426.134866-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a02:63c1:0:0:0:0:0 with HTTP; Sat, 14 Mar 2020 10:23:36
- -0700 (PDT)
-From:   Omar Ousman <omarousman25@gmail.com>
-Date:   Sat, 14 Mar 2020 18:23:36 +0100
-X-Google-Sender-Auth: e3Esaw6NMf2t59gU8aF8hbfxq5E
-Message-ID: <CAOdk3H=BWVFSbBHnPp89pkv5eyhE_YLWx_uztwjom2+untGdDQ@mail.gmail.com>
-Subject: You received my last mail,,,,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am Mr.Omar Ousman, a regional managing director (CORIS BANK
-INTERNATIONAL) Ouagadougou Burkina Faso, in my department we have
-US$9,500.0000 million united state dollars, to transfer into your
-account as a dormant fund.If you are interested to use this fund to
-help the orphans around the world contact and send me your personal
-information for more details to my email omarousman25@gmail.com
+This series fixes a bug where request_module() was reporting success to
+kernel code when module autoloading had been completely disabled via
+'echo > /proc/sys/kernel/modprobe'.
 
-Your full names..........
-Your country of origin..........
-Your occupation..........
-Your Age..........
-Your Mobile Number..........
+It also addresses the issues raised on the original thread
+(https://lkml.kernel.org/lkml/20200310223731.126894-1-ebiggers@kernel.org/T/#u)
+by documenting the modprobe sysctl, adding a self-test for the empty
+path case, and downgrading a user-reachable WARN_ONCE().
 
-Best Regards,
+Changed since v2:
+  - Adjusted the new documentation to avoid implicitly bringing up
+    module aliases, which are a more complex topic.
+  - Split the selftest patch into two patches, one to fix the test
+    numbering bug and one to add the new tests.
+
+Changed since v1:
+  - Added patches to address the other issues raised on the thread.
+
+Eric Biggers (5):
+  kmod: make request_module() return an error when autoloading is
+    disabled
+  fs/filesystems.c: downgrade user-reachable WARN_ONCE() to
+    pr_warn_once()
+  docs: admin-guide: document the kernel.modprobe sysctl
+  selftests: kmod: fix handling test numbers above 9
+  selftests: kmod: test disabling module autoloading
+
+ Documentation/admin-guide/sysctl/kernel.rst | 25 +++++++++++-
+ fs/filesystems.c                            |  4 +-
+ kernel/kmod.c                               |  4 +-
+ tools/testing/selftests/kmod/kmod.sh        | 43 +++++++++++++++++++--
+ 4 files changed, 68 insertions(+), 8 deletions(-)
+
+-- 
+2.25.1
+
