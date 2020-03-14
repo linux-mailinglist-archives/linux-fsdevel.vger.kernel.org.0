@@ -2,144 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF671858E5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:24:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA981858B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 03:20:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbgCOCYs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Mar 2020 22:24:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727931AbgCOCYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:24:14 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F77020871;
-        Sat, 14 Mar 2020 21:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584221809;
-        bh=ZxxGTjlO7NBT1wg1m3B0rlTJ0Dra1Fpr72IGr/O4DX8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n4wuNEKXZchKmweKLq4FIo5pf18vP9fJuZTj9v/SsvJ4wuMgkvrbAqR8RTcRjPixQ
-         jgNp3xa9zNt7U6vzd427av9gdPoiGeXDiqRo382SQceiCTHBID/UYSCIDFkQ1LoM47
-         GMNTwd4u/JpGTzgxBV67nejuG5Ykzy2BQifLvU5k=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: [PATCH v3 5/5] selftests: kmod: test disabling module autoloading
-Date:   Sat, 14 Mar 2020 14:34:26 -0700
-Message-Id: <20200314213426.134866-6-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200314213426.134866-1-ebiggers@kernel.org>
-References: <20200314213426.134866-1-ebiggers@kernel.org>
+        id S1727570AbgCOCUh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Mar 2020 22:20:37 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37004 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbgCOCUg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 14 Mar 2020 22:20:36 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 6so16921840wre.4;
+        Sat, 14 Mar 2020 19:20:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PE24DoRnfKFZy52Nrv5UE52xwHWVoBxgf+ra2gpiIaw=;
+        b=p8SRUlzvPABfmrEr4KF0tjpIdEQ+11vdcstDy0RA+Am3AirRl+HEt1jqh4Qcr4iHvQ
+         oygo9HYIk+GCPliR5UuSc1kRj+AccKbVoW/u83m0p/mlnrdmpIveGvWIkluaNKOJBbnM
+         BGV2B29W6/77StVMqHPo6koRSsZT2dtg8NJhjLJdJGtibJ/gqZXZYC2J1R2Wvey4Mj9V
+         e2TzCKmGaw+ffg4CT+UA2ulDCCy98mSVHHpAYTD+vwQA79/T0CVO+K7ZIFnStSuSybsh
+         6Onr/AYUx+739YiXcL23Svm05XVaF4dixrCzykKZmp+wY0ezy5RWPqT2zbkYbi9vjgLE
+         O13A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PE24DoRnfKFZy52Nrv5UE52xwHWVoBxgf+ra2gpiIaw=;
+        b=W8fhA6cJgVc5pwV+AviufF5lu4VSH9WDQNExeOjCIMUmCyQjDOU3i7fYreinJQJM9h
+         sRrpIlO6XEQD4Ii3MU5DkI6eLRr34MBAHnrMxz/e/U6QtYx+A3/OmX7Tk2mecUuzcDgS
+         O9Sj3SzhHvoVlVuoU6fV+GkhhNBKrFAWB/Q3Whga7WdfaIoYw0/KheE69Ki+uV8b2OrI
+         3JGuvblfRD9hh0/LuexHH6lszU2YoGzveFGB1RfFzMxRn397mUzovtA3CMlOaz65vC+O
+         9ttUU3K/oxALoRVJucaid5yaS3gg8vQoUcIDwyNf9FFxfwYgNp09SXMtn6wWUOQymvCr
+         RweA==
+X-Gm-Message-State: ANhLgQ12hqLItPMLm+coM1P3pw8l2j3DvetGRrgB5eXmlRNzvg5uzseh
+        jiopKTMJWxadl3XZxJjRovgICzbGV2c=
+X-Google-Smtp-Source: ADFU+vuncf2glww4dZrO79kzBlarasrCAqQD6mQQhjf/qj63KdOmFMMtFHPRYj3tZtd1TwszZWC2Hw==
+X-Received: by 2002:a05:6000:1008:: with SMTP id a8mr20082853wrx.8.1584221703177;
+        Sat, 14 Mar 2020 14:35:03 -0700 (PDT)
+Received: from debian (host-84-13-17-86.opaltelecom.net. [84.13.17.86])
+        by smtp.gmail.com with ESMTPSA id f9sm6660355wro.47.2020.03.14.14.35.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 14 Mar 2020 14:35:02 -0700 (PDT)
+Date:   Sat, 14 Mar 2020 21:35:00 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Paul Wise <pabs3@bonedaddy.net>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Matthew Ruffell <matthew.ruffell@canonical.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Jakub Wilk <jwilk@jwilk.net>
+Subject: Re: [PATCH 0/1] coredump: Fix null pointer dereference when
+ kernel.core_pattern is "|"
+Message-ID: <20200314213500.s7y4wyok2lfc4w6f@debian>
+References: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+ <645fcbdfdd1321ff3e0afaafe7eccfd034e57748.camel@bonedaddy.net>
+ <87a47997-3cde-bc86-423b-6154849183e9@canonical.com>
+ <fa636317af3a38badff322ca11e437701154b1be.camel@bonedaddy.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa636317af3a38badff322ca11e437701154b1be.camel@bonedaddy.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hi Paul,
 
-Test that request_module() fails with -ENOENT when
-/proc/sys/kernel/modprobe contains (a) a nonexistent path, and (b) an
-empty path.
+On Sat, Mar 14, 2020 at 08:28:10AM +0800, Paul Wise wrote:
+> On Tue, 2020-03-10 at 11:34 +1300, Matthew Ruffell wrote:
+> 
+> > Can I please get some feedback on this patch? Would be good to clear
+> > up the null pointer dereference.
 
-Case (b) is a regression test for the patch "kmod: make request_module()
-return an error when autoloading is disabled".
+I could reproduce the problem very easily, though the core_pattern is
+not supposed to be used that way. Only "|" is invalid core_pattern. But
+in anycase I think the kernel should have a check for this invalid
+usecase.
 
-Tested with 'kmod.sh -t 0010 && kmod.sh -t 0011', and also simply with
-'kmod.sh' to run all kmod tests.
+> 
+> I had a thought about it, instead of using strlen, what about checking
+> that the first item in the array is NUL or not? In the normal case this
+> should be faster than strlen.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: NeilBrown <neilb@suse.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- tools/testing/selftests/kmod/kmod.sh | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Why are you checking the corename in do_coredump() after it has done
+almost everything? It can be very easily checked in format_corename().
+Something like the following:
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index 315a43111e046..3702dbcc90a77 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -61,6 +61,8 @@ ALL_TESTS="$ALL_TESTS 0006:10:1"
- ALL_TESTS="$ALL_TESTS 0007:5:1"
- ALL_TESTS="$ALL_TESTS 0008:150:1"
- ALL_TESTS="$ALL_TESTS 0009:150:1"
-+ALL_TESTS="$ALL_TESTS 0010:1:1"
-+ALL_TESTS="$ALL_TESTS 0011:1:1"
+diff --git a/fs/coredump.c b/fs/coredump.c
+index b1ea7dfbd149..d25bad2ed061 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -211,6 +211,8 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+ 			return -ENOMEM;
+ 		(*argv)[(*argc)++] = 0;
+ 		++pat_ptr;
++		if (!(*pat_ptr))
++			return -ENOMEM;
+ 	}
  
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
-@@ -149,6 +151,7 @@ function load_req_mod()
- 
- test_finish()
- {
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
- 	echo "Test completed"
- }
- 
-@@ -443,6 +446,30 @@ kmod_test_0009()
- 	config_expect_result ${FUNCNAME[0]} SUCCESS
- }
- 
-+kmod_test_0010()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	echo "/KMOD_TEST_NONEXISTENT" > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
-+kmod_test_0011()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	# This causes the kernel to not even try executing modprobe.  The error
-+	# code is still -ENOENT like when modprobe doesn't exist, so we can't
-+	# easily test for the exact difference.  But this still is a useful test
-+	# since there was a bug where request_module() returned 0 in this case.
-+	echo > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -460,6 +487,8 @@ list_tests()
- 	echo "0007 x $(get_test_count 0007) - multithreaded tests with default setup test request_module() and get_fs_type()"
- 	echo "0008 x $(get_test_count 0008) - multithreaded - push kmod_concurrent over max_modprobes for request_module()"
- 	echo "0009 x $(get_test_count 0009) - multithreaded - push kmod_concurrent over max_modprobes for get_fs_type()"
-+	echo "0010 x $(get_test_count 0010) - test nonexistent modprobe path"
-+	echo "0011 x $(get_test_count 0011) - test completely disabling module autoloading"
- }
- 
- usage()
-@@ -616,6 +645,7 @@ test_reqs
- allow_user_defaults
- load_req_mod
- 
-+MODPROBE=$(</proc/sys/kernel/modprobe)
- trap "test_finish" EXIT
- 
- parse_args $@
--- 
-2.25.1
+ 	/* Repeat as long as we have more pattern to process and more output
+
+
+--
+Regards
+Sudip
 
