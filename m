@@ -2,95 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BBD185346
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 01:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00EBE18534C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 01:28:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgCNA0F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 20:26:05 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39218 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbgCNA0F (ORCPT
+        id S1727687AbgCNA2S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 20:28:18 -0400
+Received: from smtp.bonedaddy.net ([45.33.94.42]:51950 "EHLO
+        smtp.bonedaddy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgCNA2S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 20:26:05 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f10so12499552ljn.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MSh28SDxVzmezso0eCx9OLP79cE1ODkRapdHxbtQ29k=;
-        b=BNv0AIG2vvEkCJhWjYAFISduPkxT8Ox6Ts9OSN0YQy6/mTiU5c1VgmXW9TIdC5BBr0
-         KYAilKkOKlN+NxaDs6MkVZ5h/TBABtDs3eTS4Nt7RYDT2QWUsCchxU4pciiLd08QlnBa
-         KZT/V9/rFMliX2+Xv/SYsgO+HqZN1TDNaV7gs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MSh28SDxVzmezso0eCx9OLP79cE1ODkRapdHxbtQ29k=;
-        b=O4bgh3+MXusSxyF2ZFx4OMw/Rx1V2fZnX096v3BGiMw08d6YXBjiXP48wjqxe1x0of
-         4CG0vfHL94+lU+uSMui4NL9MdCrO1lm392tc/9a+5RJObsowGjhLtUDKqzJK2S6HzYhY
-         J2DFGfKyjy2x+CpN7cbgnIJDbuKSReO6UUDvf/IbqZun+/ykp6lGv2n+sA+NlICWdaz+
-         alcyPGMzz+Skjs1sqLoOO1cLwrcaYghSE67y8mZXCqrYFcg9KNfa4pKTmETM2NTogupq
-         2Xovyw1BRyxG7GlK+c48QR9AHl/6W+VOfW3HR3hcMBnhWovz1FjGPxvvwLhU3fHBOsvV
-         ivxg==
-X-Gm-Message-State: ANhLgQ1zhjDnJ+iOHSBJdenv6je5KIqkXlgAOo46d617YEscqaHAIMXf
-        p4va5QouNWCM9ZyZbq2E5BobsaEVokA=
-X-Google-Smtp-Source: ADFU+vtXzoajAfKJjAr/0m0xqdhtIJYisWYEsyWKEqRb0zPOTrfu/PDn58j3xty3EEeWWTb1vhHrHA==
-X-Received: by 2002:a2e:b4b1:: with SMTP id q17mr8900712ljm.22.1584145563729;
-        Fri, 13 Mar 2020 17:26:03 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id p133sm14297456lfa.82.2020.03.13.17.26.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id r9so3812962lff.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
-X-Received: by 2002:ac2:5986:: with SMTP id w6mr9900471lfn.30.1584145562223;
- Fri, 13 Mar 2020 17:26:02 -0700 (PDT)
+        Fri, 13 Mar 2020 20:28:18 -0400
+Received: from chianamo (n58-108-121-150.per1.wa.optusnet.com.au [58.108.121.150])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: pabs3@bonedaddy.net)
+        by smtp.bonedaddy.net (Postfix) with ESMTPSA id 11C5D180041;
+        Fri, 13 Mar 2020 20:28:39 -0400 (EDT)
+Authentication-Results: smtp.bonedaddy.net; dmarc=fail (p=none dis=none) header.from=bonedaddy.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bonedaddy.net;
+        s=mail; t=1584145722;
+        bh=Van/qq/UEi1MHg1iu9xFROdDFHfNv7eGJfIR+wXt32A=;
+        h=Subject:From:To:Cc:In-Reply-To:References:Date;
+        b=V9jN3B8TfFigALFcgqQcr/mNNnZBcMT3WtDwqXBdtMRQMdP79czio7WwEWJUut6DM
+         UGEqXYJigPO6abienhmS9UdDmXcVXKnI7GZ3fQ6ZT7b6p029cKNXZE+HiI6hNqj1RI
+         fKSynT0kpD+h71HAJqdvCbuLsNGihJ4SIAisj5fxmydy62jCRrPHDsX7n1RnRuZyTB
+         04ZcUXPmnnrnI4x8z5vtp1RDGCcFB+q3aKR5YqR7pBRCzUXz2ft9ESU0drPzAlbbDz
+         nl8qguR3UnJlW2o1aMKlqVDBJVazQAOrK0H0tzdBhA11PCFpY4GumKD2yAvV0CtlWb
+         /FW4tdazjtdOA==
+Message-ID: <fa636317af3a38badff322ca11e437701154b1be.camel@bonedaddy.net>
+Subject: Re: [PATCH 0/1] coredump: Fix null pointer dereference when
+ kernel.core_pattern is "|"
+From:   Paul Wise <pabs3@bonedaddy.net>
+To:     Matthew Ruffell <matthew.ruffell@canonical.com>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Neil Horman <nhorman@tuxdriver.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jakub Wilk <jwilk@jwilk.net>
+In-Reply-To: <87a47997-3cde-bc86-423b-6154849183e9@canonical.com>
+References: <20200220051015.14971-1-matthew.ruffell@canonical.com>
+         <645fcbdfdd1321ff3e0afaafe7eccfd034e57748.camel@bonedaddy.net>
+         <87a47997-3cde-bc86-423b-6154849183e9@canonical.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-wjM/VlUgqSfA/5jsqClr"
+Date:   Sat, 14 Mar 2020 08:28:10 +0800
 MIME-Version: 1.0
-References: <20200313235303.GP23230@ZenIV.linux.org.uk> <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
- <20200313235357.2646756-11-viro@ZenIV.linux.org.uk>
-In-Reply-To: <20200313235357.2646756-11-viro@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 13 Mar 2020 17:25:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgnpnUy7OiiDbE+Bd=x-K6YyRV_1mvsoP-fhTC2=ez=+A@mail.gmail.com>
-Message-ID: <CAHk-=wgnpnUy7OiiDbE+Bd=x-K6YyRV_1mvsoP-fhTC2=ez=+A@mail.gmail.com>
-Subject: Re: [RFC][PATCH v4 11/69] lookup_fast(): consolidate the RCU success case
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-4 
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 4:55 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> -                       if (unlikely(negative))
-> +                       if (unlikely(!inode))
->                                 return -ENOENT;
 
-Isn't that buggy?
+--=-wjM/VlUgqSfA/5jsqClr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Despite the name, 'inode' isn't an inode pointer. It's a pointer to
-the return location.
+On Tue, 2020-03-10 at 11:34 +1300, Matthew Ruffell wrote:
 
-I think the test should be
+> Can I please get some feedback on this patch? Would be good to clear
+> up the null pointer dereference.
 
-        if (unlikely(!*inode))
-                return -ENOENT;
+I had a thought about it, instead of using strlen, what about checking
+that the first item in the array is NUL or not? In the normal case this
+should be faster than strlen.
 
-and I also suspect that the argument name should be fixed (maybe
-"inodepp", maybe something better).
+--=20
+bye,
+pabs
 
-Because the "inode" pointer itself always exists. The callers will
-have something like
+https://bonedaddy.net/pabs3/
 
-        struct inode *inode;
+--=-wjM/VlUgqSfA/5jsqClr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-and then pass in "&inode" to the function.
+-----BEGIN PGP SIGNATURE-----
 
-And it's possible that I'm talking complete garbage.
+iQIzBAABCgAdFiEEYQsotVz8/kXqG1Y7MRa6Xp/6aaMFAl5sJRcACgkQMRa6Xp/6
+aaOUCQ/9HWhAyOFpANVuKcuFZJ8krfZikVbHQzgXUc3lFnW+vWPuHfBlPtk0tsNR
+L8zxu1mmjaD87+bp6HWGi2diWJokQLf0EnfY3qhOF3q9GC7Dp5wgMznt7/oxbNCU
+PubopAaER5HYpgTdJrsQNskeKNxKUpynnyR3y7nJpbbslxFXUnNM2VlDYa/YIUN2
+Zz8CVPzqZnMwlU9PquwZYqutX+h2P++yv+67U0dlTDxmr+L/QAhuKF33szHEYa2L
+3HSoVj+Uu0CsIfkq6xijztcnWkrbotsBugEtHO/3P/2LMoj7zDAWD80RG0YZ/Pzd
+uP3fS88gmTSynr5CKrcdhdCSh2v8FnidwhFX2VWurvb2eSWqnx5l6nW1KqIvYCTd
+TnscH9UZXPk9l84UTRMIxiKKTJVfqeZT1+1mlT4KFHSiOQ2jECvUiO2jKHr/3A1a
+kiNEVzGAY68G7c3uwTVOe77NEp32O02Nw3VY0e/F4l6GGvRP+/GaZNiCbhs36UTs
+wxMzv+cu0g9BigoiEh8RlgG7+OxUDqPl1f1RefOPRcz102ZX0r3n7yAR7zI26Qv4
+cz0NG1nQtfVrMFy7bnB+s1Vvt8K/qlMljK2eto9Op9mFC4q7ehjTY+3qlZS+uDj5
+CyWWwjuQD77Oh9zPviEIpZQ8cPweBlBeu5UDZvLiG0+/Qc8W34w=
+=J9Qs
+-----END PGP SIGNATURE-----
 
-               Linus
+--=-wjM/VlUgqSfA/5jsqClr--
+
