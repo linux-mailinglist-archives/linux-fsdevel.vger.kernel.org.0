@@ -2,83 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C07218536E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 01:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 293AE18539B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Mar 2020 02:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbgCNAvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Mar 2020 20:51:11 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44800 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbgCNAvL (ORCPT
+        id S1727618AbgCNBAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Mar 2020 21:00:55 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51198 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbgCNBAz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Mar 2020 20:51:11 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a10so12498377ljp.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N5w4U+mOCcTiVuYDq+MXzMGJDsYiXTEA/liBKIfgsNo=;
-        b=CuZ6m+O8ocHYyKfETYioICJSPSG6jO2l5sVNRexToIRXGGlWfI0a1s0ftc+276o4kL
-         +uJLTjdL3K3G1tQ4MaaU3TpK73x5dELWgmEQvjyRbEV+XaVWnseYbRydLcyLf9Ta4Gzj
-         hdHX62pz+h52pKbzWGSD8FI7QHQkc8een7N4U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N5w4U+mOCcTiVuYDq+MXzMGJDsYiXTEA/liBKIfgsNo=;
-        b=PLnFKlqz3x6qDjlYpn0w++sPKLrjVxJLPGRayY+ZfCzvbuIx6XLSY+jxlnCJSpFwgt
-         nUSjKNfnDhadwPhE0sdAjiA4OFIOKZ5+JThOIGTo5QIoyNw9GXr+La5uI4A7/w/qEhPn
-         j8hcslL7oYaBcHQSc3CyofUs4guwCqXm4eGKH1ZOtR2MtgEFlSNUxbLlA257YzVzajg/
-         N3ToT5ZY8GAhtluFgYLnVmQd4GoVPD1kljRVbhOYeWy6enVwekrAEdKR1cotVeQWsXIw
-         jt+pwAI2CwX/4+K9lIfK0xP1p5rhg7mdzKjPvTvM3RV1TexQju70XdFqCsk1Ks6BwHwr
-         Ux+Q==
-X-Gm-Message-State: ANhLgQ3vmDW6H8x0QdD5/q8vMRhhH4H0KJQvdmMwibGp8KJ7llMoZOZE
-        aBuMfCWjcuYvY5nU7VEkX1GjJR7d2W0=
-X-Google-Smtp-Source: ADFU+vsrOnhS6Hmr213vGBFR7TyuA55AxhHHGkgmT7Op7FuZwNgZS4i4ajZB/Emsr5Gp2Fra4jJ0+A==
-X-Received: by 2002:a2e:870b:: with SMTP id m11mr9594220lji.273.1584147068308;
-        Fri, 13 Mar 2020 17:51:08 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id f9sm10249482ljo.73.2020.03.13.17.51.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Mar 2020 17:51:07 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id q19so12488818ljp.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Mar 2020 17:51:07 -0700 (PDT)
-X-Received: by 2002:a05:651c:555:: with SMTP id q21mr9713597ljp.241.1584147066920;
- Fri, 13 Mar 2020 17:51:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200223011154.GY23230@ZenIV.linux.org.uk> <20200301215125.GA873525@ZenIV.linux.org.uk>
- <20200313235303.GP23230@ZenIV.linux.org.uk>
-In-Reply-To: <20200313235303.GP23230@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 13 Mar 2020 17:50:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whainTcvgF01vsSmN+y7s7U1qMA-QbM5qFQ3s4xQHwaJw@mail.gmail.com>
-Message-ID: <CAHk-=whainTcvgF01vsSmN+y7s7U1qMA-QbM5qFQ3s4xQHwaJw@mail.gmail.com>
-Subject: Re: [RFC][PATCHSET] sanitized pathwalk machinery (v4)
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        Fri, 13 Mar 2020 21:00:55 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jCvAV-00B8Rf-AJ; Sat, 14 Mar 2020 01:00:47 +0000
+Date:   Sat, 14 Mar 2020 01:00:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC][PATCH v4 12/69] teach handle_mounts() to handle RCU mode
+Message-ID: <20200314010047.GQ23230@ZenIV.linux.org.uk>
+References: <20200313235303.GP23230@ZenIV.linux.org.uk>
+ <20200313235357.2646756-1-viro@ZenIV.linux.org.uk>
+ <20200313235357.2646756-12-viro@ZenIV.linux.org.uk>
+ <CAHk-=whGqaTtjP-0PkWrTsbbwPihazCx1oeSsLTSB6itZzbZiA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whGqaTtjP-0PkWrTsbbwPihazCx1oeSsLTSB6itZzbZiA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 4:53 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         Review and testing would be _very_ welcome;
+On Fri, Mar 13, 2020 at 05:28:12PM -0700, Linus Torvalds wrote:
+> Oh, and here you accidentally fix the problem I pointed out about
+> patch 11, as you move the code:
+> 
+> On Fri, Mar 13, 2020 at 4:54 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > +               if (unlikely(!*inode))
+> > +                       return -ENOENT;
+> 
+> Correct test added.
+> 
+> > -                       if (unlikely(!inode))
+> > -                               return -ENOENT;
+> 
+> Incorrect test removed.
+> 
+> And again, maybe I'm misreading the patch. But it does look like it's
+> wrong in the middle of the series, which would make bisection if
+> there's some related bug "interesting".
 
-I didn't notice anythign else than the few things I sent out to
-individual patches.
-
-But I have to say, 69 patches is too long of a series to review. I
-think you could send them out as multiple series (you describe them
-that way anyway - parts 1-7) with a day in between.
-
-Because my eyes were starting to glaze over about halfway in the series.
-
-But don't do it for this version. If you do a #5. But it would be good
-to be in -next regardless of whether you do a #5 or not.
-
-                 Linus
+Bisect hazard on botched reordering, actually.  Fixed (IOW, that should've
+been if (!*inode) already in #11).
