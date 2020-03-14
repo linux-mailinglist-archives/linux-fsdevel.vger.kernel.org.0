@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE681856EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 02:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B10318573C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 02:34:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbgCOBaE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Mar 2020 21:30:04 -0400
-Received: from mail-oln040092065028.outbound.protection.outlook.com ([40.92.65.28]:1938
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1726866AbgCOBeB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Mar 2020 21:34:01 -0400
+Received: from mail-oln040092075105.outbound.protection.outlook.com ([40.92.75.105]:4992
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727050AbgCOBaD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Mar 2020 21:30:03 -0400
+        id S1726705AbgCOBeA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 14 Mar 2020 21:34:00 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S8wzEONNYj+i5nqJILtLMFdIgk2xsR5diUdyl0j/llF+I8oV2ahSZI0Ueuw8cnjjJ9oUqXlmS8OvVgmRlbZ6wMpgbS+ZwMDIYPMQzCs7EIQQ58h6usm+QAN3X8erFZu81gduBNuPgeW9PRbgWI49On8egQGEHzoQU3l0cys5mcK23PlyJu7MCIPROsIqt/6hJa5MS0Lk3scfexokk9A60cbKlogNOJdBoUgdcXDmLuFLKV8UpCdQ0NP7XKwS9hUf0aDPKxKySiX7q40UjK8M6yLmB8t6oOAch6/l/hTqOoMD21pCAUk0IgUaPVO1SnvMlqEIJU5OInnBqtEQDa0LQQ==
+ b=Q+4M/xmhc023myQhgFcVgK9e5m3S/6YcivxKKHqF971tzl/d1IjZZB6vajrlVR/3ANsXohcq2I3kanwvWJVPYB1OMD17aiHgPffPk8jPA6GudjlDD/CZQw6OQ8esLf8XkVFYgDiHb5ZjY6AyjI/X+bvzCh3z11qv2hTNgCvkn4ilKAVDaT1sKHvfsMBWuzKcQglMwBM1LxBdCsX2wSsfVJxqlFr2teyVN4sqbUaUPYWZDKELgxjHGsgZ/NDY238EBm1+xpYCkwLlOQmWP0bOkPg3aJxjwkoKy5glZZ0ZmUbbeQ6h1Yb04pHbkgukZvqeHh8zDIBnL9GvUT9fHCO05A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aQWV7K6+3M3gN5MtM5XTBxzVRYuEhMrr29I0KpA+cQc=;
- b=GX1zI0RnAivSA2w3pwN3+tIkKo2SwuA7tOeOPZ5ZarY9ekuJTXAq6xv/mskC7viH2i1UOPYzqHPb7+sJR3mzRWeVy+znETIfNLhPwNtXYUUCI1jvw81iN8EqXYuAjHxYvocpFeSll+fYhIo7gX8fFryvCwKdBYjmBfYSFYKC86L/PSO4/G+LXLGYejVgnF/HSpGebT9dlkWZCro6ulCqtyU0CHo/xuRV/ipVfcKDLv1npqG2K+ZfQ0Y71czXohElk2rmsQojqK/UafDxk+qLvD8gD0Ieto32//xs4xPHp+aoX3AUxibloTXbB9Coyr3g53uSLtICAk5DE7RoDN4hNw==
+ bh=0t14d3vmYMBeBtGI1RMkCE1K2Eye6ORicjQh/aQM3N0=;
+ b=BKZPqoHj7tWWah96/MVM93xT7Z2ea/UZClZxfhlGbQf9Fxelf7J/qZOX2YZF27oJEHoZal+44UdFdPnj2X3Fw5/YHewtX7CHqw/vn9E7k5krb6esB8RgS+G5qPdsK8E3lCX72PcrEi4zCyeYnH2DXpADDerExXKRD0K7nWi9xqmT3+eaFpqz9Lzm+GVwANhZhCcWURUHNhmzBsXqqg1glXPJ2A/bwhUbTWpovmjr1sVgvc+ErKCV5nR62H5yAn1kD5PiqWRrAFCW1KbNCmdTJgXfVvNrfSYsEU1d4BjfIQ/91Vc4s5JY+z3bir2r//z5h3KRbH5NkBBZB5vpoyMoRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
  dkim=pass header.d=hotmail.de; arc=none
-Received: from HE1EUR01FT018.eop-EUR01.prod.protection.outlook.com
- (2a01:111:e400:7e18::36) by
- HE1EUR01HT229.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e18::471)
+Received: from DB3EUR04FT009.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0c::38) by
+ DB3EUR04HT180.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0c::107)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14; Sat, 14 Mar
- 2020 09:13:02 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.0.51) by
- HE1EUR01FT018.mail.protection.outlook.com (10.152.0.175) with Microsoft SMTP
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Sat, 14 Mar
+ 2020 09:57:13 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.24.54) by
+ DB3EUR04FT009.mail.protection.outlook.com (10.152.24.230) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14 via Frontend Transport; Sat, 14 Mar 2020 09:13:02 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:9874A653B683B2AE6740553C9DB31FD712F44B3CFF756D21E387F885308AEACA;UpperCasedChecksum:B3C560AACEDBF426AB4419F5DD0A0DE9D70C901630FD74FF017195B54C0223B2;SizeAsReceived:10353;Count:50
+ 15.20.2814.13 via Frontend Transport; Sat, 14 Mar 2020 09:57:13 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:FF41864A883BD405ABA604C0AF65CA0A23BDC59744F8CBC7816B6A046E5E1DF5;UpperCasedChecksum:74E380B2237A95D772639194018BAF266B3CFDC8E72DFFDA53E86DBC29C52239;SizeAsReceived:10362;Count:50
 Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
  ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
  ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2814.018; Sat, 14 Mar 2020
- 09:13:02 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Subject: [PATCH 1/2] exec: Fix dead-lock in de_thread with ptrace_attach
+ 09:57:13 +0000
+Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
+ cred_guard_mutex
 To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
@@ -89,399 +89,127 @@ References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.
  <87lfo5lju6.fsf@x220.int.ebiederm.org>
  <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
  <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
-Message-ID: <AM6PR03MB517026B0029290DD1CBDB7C9E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Sat, 14 Mar 2020 10:12:59 +0100
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <AM6PR03MB5170CF763987C24F22B38838E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Sat, 14 Mar 2020 10:57:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 In-Reply-To: <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0015.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::25) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <d34886d6-0436-839e-ac81-fa2db3a3e051@hotmail.de>
+X-ClientProxiedBy: FRYP281CA0005.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::15)
+ To AM6PR03MB5170.eurprd03.prod.outlook.com (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <acae6b84-112c-b4b0-5f8d-8041225b6bbb@hotmail.de>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0015.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13 via Frontend Transport; Sat, 14 Mar 2020 09:13:00 +0000
-X-Microsoft-Original-Message-ID: <d34886d6-0436-839e-ac81-fa2db3a3e051@hotmail.de>
-X-TMN:  [JV5Rp9V8izNxMMC4Xu4j7QTWfk9lx0hD]
+Received: from [192.168.1.101] (92.77.140.102) by FRYP281CA0005.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::15) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18 via Frontend Transport; Sat, 14 Mar 2020 09:57:05 +0000
+X-Microsoft-Original-Message-ID: <acae6b84-112c-b4b0-5f8d-8041225b6bbb@hotmail.de>
+X-TMN:  [dJMluiESOM82Wyv2Ut3LbvVwuH1v2vrc]
 X-MS-PublicTrafficType: Email
 X-IncomingHeaderCount: 50
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: b89af16d-a0a9-4ef3-e317-08d7c7f7e598
-X-MS-TrafficTypeDiagnostic: HE1EUR01HT229:
+X-MS-Office365-Filtering-Correlation-Id: 02c07a97-1088-47f3-bd76-08d7c7fe1193
+X-MS-TrafficTypeDiagnostic: DB3EUR04HT180:
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YZ5EDCtWGGspf2dUHOBsy8Uxo0I+LTFzMQ+CCFsNGh4TkWybo2phWOrg1Vs4yi7VbPPIOf89HVekrMI6r5DFnqAbmjViQnXyi8maz2FPB0KAw1w8aJjQ7SJn1mZ0FgZM6/bVCEmc4meGDZ67PvxIW4/i72bT6ew2VwFF8bAXEAZ9rr+WVFMsQNj2kQsGo8+W
-X-MS-Exchange-AntiSpam-MessageData: 3Mlawo9jDqkiQ24bBGf88oK04cHc1ZXx4wadlzrdt+7yY+F+5dDUde7RLmsuG1QXQVNjPwIInujEi9HjtOhVld+bHznSlKaDPY3wqR/z3Owm4q/tLQRy/BEMfLIm1BiZYnLqDWmSY9HNEwQlUW2lrA==
+X-Microsoft-Antispam-Message-Info: lCPnaL6f8n7O6hBYVhT/p8DbBrrs3yAla2HphQ0DWv4UnlsONnH3y4qrDhgVjbfIP61KEMn6qPdm5wLqMcwc7g5dWAPVWrRlpUhvHhzCTVc59RvzA7ehUWJlNExknLoyQX0Lg45fwftHjLUB8wtUQykZC2WFAr8rihe5xEBVIPYBNNxnuvXfQjYHuYaOZvn3Yu6oTDqGIc+OBGwWRq8nvxHtvtHg/JpYQOcMszIOb+Q=
+X-MS-Exchange-AntiSpam-MessageData: Wn3kgHSfZD8gnOmY8gYrzpN0s5mmImPooFZkCxnxl4y4Q3tUDTiMYIbiScCXplHL1redMUXp3MipSNj/W/GIh5twJNCCHOTvw10F8CAGdI7WCBNRhTexlGloGxXNpBiNJUlprsOSBaCOKXD38YyrHg==
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b89af16d-a0a9-4ef3-e317-08d7c7f7e598
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2020 09:13:02.2953
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02c07a97-1088-47f3-bd76-08d7c7fe1193
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2020 09:57:13.0178
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT229
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3EUR04HT180
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This removes the last users of cred_guard_mutex
-and replaces it with a new mutex exec_guard_mutex,
-and a boolean unsafe_execve_in_progress.
+On 3/13/20 10:13 AM, Kirill Tkhai wrote:
+> 
+> Despite this should fix the problem, this looks like a broken puzzle.
+> 
+> We can't use bprm->cred as an identifier whether the mutex was locked or not.
+> We can check for bprm->cred in regard to cred_guard_mutex, because of there is
+> strong rule: "cred_guard_mutex is becomes locked together with bprm->cred assignment
+> (see prepare_bprm_creds()), and it becomes unlocked together with bprm->cred zeroing".
+> Take attention on modularity of all this: there is no dependencies between anything else.
+> 
+> In regard to newly introduced exec_update_mutex, your fix and source patch way look like
+> an obfuscation. The mutex becomes deadly glued to unrelated bprm->cred and bprm->mm,
+> and this introduces the problems in the future modifications and support of all involved
+> entities. If someone wants to move some functions in relation to each other, there will
+> be a pain, and this person will have to go again the same dependencies and bug way,
+> Eric stepped on in the original patch.
+> 
 
-This addresses the case when at least one of the
-sibling threads is traced, and therefore the trace
-process may dead-lock in ptrace_attach, but de_thread
-will need to wait for the tracer to continue execution.
+Okay, yes, valid points you make, thanks.
+I just wanted to understand what was exactly wrong with this patch,
+since the failure mode looked a lot like it was failing because of
+something clobbering the data unexpectedly.
 
-The solution is to detect this situation and make
-ptrace_attach and similar functions return -EAGAIN,
-but only in a situation where a dead-lock is imminent.
 
-This means this is an API change, but only when the
-process is traced while execve happens in a
-multi-threaded application.
+So I have posted a few updated patch for the failed one here:
 
-See tools/testing/selftests/ptrace/vmaccess.c
-for a test case that gets fixed by this change.
+[PATCH v3 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
+[PATCH] pidfd: Use new infrastructure to fix deadlocks in execve
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
----
- fs/exec.c                    | 44 +++++++++++++++++++++++++++++++++++---------
- fs/proc/base.c               | 13 ++++++++-----
- include/linux/sched/signal.h | 14 +++++++++-----
- init/init_task.c             |  2 +-
- kernel/cred.c                |  2 +-
- kernel/fork.c                |  2 +-
- kernel/ptrace.c              | 20 +++++++++++++++++---
- kernel/seccomp.c             | 15 +++++++++------
- 8 files changed, 81 insertions(+), 31 deletions(-)
+which replaces these:
+[PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
+https://lore.kernel.org/lkml/87zhcq4jdj.fsf_-_@x220.int.ebiederm.org/
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 11974a1..6b78518 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1073,14 +1073,26 @@ static int de_thread(struct task_struct *tsk)
- 	struct signal_struct *sig = tsk->signal;
- 	struct sighand_struct *oldsighand = tsk->sighand;
- 	spinlock_t *lock = &oldsighand->siglock;
-+	struct task_struct *t = tsk;
- 
- 	if (thread_group_empty(tsk))
- 		goto no_thread_group;
- 
-+	spin_lock_irq(lock);
-+	while_each_thread(tsk, t) {
-+		if (unlikely(t->ptrace))
-+			sig->unsafe_execve_in_progress = true;
-+	}
-+
-+	if (unlikely(sig->unsafe_execve_in_progress)) {
-+		spin_unlock_irq(lock);
-+		mutex_unlock(&sig->exec_guard_mutex);
-+		spin_lock_irq(lock);
-+	}
-+
- 	/*
- 	 * Kill all other threads in the thread group.
- 	 */
--	spin_lock_irq(lock);
- 	if (signal_group_exit(sig)) {
- 		/*
- 		 * Another group action in progress, just
-@@ -1424,22 +1436,30 @@ void finalize_exec(struct linux_binprm *bprm)
- EXPORT_SYMBOL(finalize_exec);
- 
- /*
-- * Prepare credentials and lock ->cred_guard_mutex.
-+ * Prepare credentials and lock ->exec_guard_mutex.
-  * install_exec_creds() commits the new creds and drops the lock.
-  * Or, if exec fails before, free_bprm() should release ->cred and
-  * and unlock.
-  */
- static int prepare_bprm_creds(struct linux_binprm *bprm)
- {
--	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&current->signal->exec_guard_mutex))
- 		return -ERESTARTNOINTR;
- 
-+	ret = -EAGAIN;
-+	if (unlikely(current->signal->unsafe_execve_in_progress))
-+		goto out;
-+
- 	bprm->cred = prepare_exec_creds();
- 	if (likely(bprm->cred))
- 		return 0;
- 
--	mutex_unlock(&current->signal->cred_guard_mutex);
--	return -ENOMEM;
-+	ret = -ENOMEM;
-+out:
-+	mutex_unlock(&current->signal->exec_guard_mutex);
-+	return ret;
- }
- 
- static void free_bprm(struct linux_binprm *bprm)
-@@ -1448,7 +1468,10 @@ static void free_bprm(struct linux_binprm *bprm)
- 	if (bprm->cred) {
- 		if (bprm->called_exec_mmap)
- 			mutex_unlock(&current->signal->exec_update_mutex);
--		mutex_unlock(&current->signal->cred_guard_mutex);
-+		if (unlikely(current->signal->unsafe_execve_in_progress))
-+			mutex_lock(&current->signal->exec_guard_mutex);
-+		current->signal->unsafe_execve_in_progress = false;
-+		mutex_unlock(&current->signal->exec_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
- 	if (bprm->file) {
-@@ -1492,19 +1515,22 @@ void install_exec_creds(struct linux_binprm *bprm)
- 	if (get_dumpable(current->mm) != SUID_DUMP_USER)
- 		perf_event_exit_task(current);
- 	/*
--	 * cred_guard_mutex must be held at least to this point to prevent
-+	 * exec_guard_mutex must be held at least to this point to prevent
- 	 * ptrace_attach() from altering our determination of the task's
- 	 * credentials; any time after this it may be unlocked.
- 	 */
- 	security_bprm_committed_creds(bprm);
- 	mutex_unlock(&current->signal->exec_update_mutex);
--	mutex_unlock(&current->signal->cred_guard_mutex);
-+	if (unlikely(current->signal->unsafe_execve_in_progress))
-+		mutex_lock(&current->signal->exec_guard_mutex);
-+	current->signal->unsafe_execve_in_progress = false;
-+	mutex_unlock(&current->signal->exec_guard_mutex);
- }
- EXPORT_SYMBOL(install_exec_creds);
- 
- /*
-  * determine how safe it is to execute the proposed program
-- * - the caller must hold ->cred_guard_mutex to protect against
-+ * - the caller must hold ->exec_guard_mutex to protect against
-  *   PTRACE_ATTACH or seccomp thread-sync
-  */
- static void check_unsafe_exec(struct linux_binprm *bprm)
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 6b13fc4..a428536 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2680,14 +2680,17 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	}
- 
- 	/* Guard against adverse ptrace interaction */
--	rv = mutex_lock_interruptible(&current->signal->cred_guard_mutex);
-+	rv = mutex_lock_interruptible(&current->signal->exec_guard_mutex);
- 	if (rv < 0)
- 		goto out_free;
- 
--	rv = security_setprocattr(PROC_I(inode)->op.lsm,
--				  file->f_path.dentry->d_name.name, page,
--				  count);
--	mutex_unlock(&current->signal->cred_guard_mutex);
-+	if (unlikely(current->signal->unsafe_execve_in_progress))
-+		rv = -EAGAIN;
-+	else
-+		rv = security_setprocattr(PROC_I(inode)->op.lsm,
-+					  file->f_path.dentry->d_name.name,
-+					  page, count);
-+	mutex_unlock(&current->signal->exec_guard_mutex);
- out_free:
- 	kfree(page);
- out:
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index a29df79..e83cef2 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -212,6 +212,13 @@ struct signal_struct {
- #endif
- 
- 	/*
-+	 * Set while execve is executing but is *not* holding
-+	 * exec_guard_mutex to avoid possible dead-locks.
-+	 * Only valid when exec_guard_mutex is held.
-+	 */
-+	bool unsafe_execve_in_progress;
-+
-+	/*
- 	 * Thread is the potential origin of an oom condition; kill first on
- 	 * oom
- 	 */
-@@ -222,11 +229,8 @@ struct signal_struct {
- 	struct mm_struct *oom_mm;	/* recorded mm when the thread group got
- 					 * killed by the oom killer */
- 
--	struct mutex cred_guard_mutex;	/* guard against foreign influences on
--					 * credential calculations
--					 * (notably. ptrace)
--					 * Deprecated do not use in new code.
--					 * Use exec_update_mutex instead.
-+	struct mutex exec_guard_mutex;	/* Held while execve runs, except when
-+					 * a sibling thread is being traced.
- 					 */
- 	struct mutex exec_update_mutex;	/* Held while task_struct is being
- 					 * updated during exec, and may have
-diff --git a/init/init_task.c b/init/init_task.c
-index bd403ed..6f96327 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -25,7 +25,7 @@
- 	},
- 	.multiprocess	= HLIST_HEAD_INIT,
- 	.rlim		= INIT_RLIMITS,
--	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
-+	.exec_guard_mutex = __MUTEX_INITIALIZER(init_signals.exec_guard_mutex),
- 	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
- #ifdef CONFIG_POSIX_TIMERS
- 	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
-diff --git a/kernel/cred.c b/kernel/cred.c
-index 71a7926..341ca59 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -295,7 +295,7 @@ struct cred *prepare_creds(void)
- 
- /*
-  * Prepare credentials for current to perform an execve()
-- * - The caller must hold ->cred_guard_mutex
-+ * - The caller must hold ->exec_guard_mutex
-  */
- struct cred *prepare_exec_creds(void)
- {
-diff --git a/kernel/fork.c b/kernel/fork.c
-index e23ccac..98012f7 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1593,7 +1593,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
- 	sig->oom_score_adj = current->signal->oom_score_adj;
- 	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
- 
--	mutex_init(&sig->cred_guard_mutex);
-+	mutex_init(&sig->exec_guard_mutex);
- 	mutex_init(&sig->exec_update_mutex);
- 
- 	return 0;
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 43d6179..221759e 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -392,9 +392,13 @@ static int ptrace_attach(struct task_struct *task, long request,
- 	 * under ptrace.
- 	 */
- 	retval = -ERESTARTNOINTR;
--	if (mutex_lock_interruptible(&task->signal->cred_guard_mutex))
-+	if (mutex_lock_interruptible(&task->signal->exec_guard_mutex))
- 		goto out;
- 
-+	retval = -EAGAIN;
-+	if (unlikely(task->signal->unsafe_execve_in_progress))
-+		goto unlock_creds;
-+
- 	task_lock(task);
- 	retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
- 	task_unlock(task);
-@@ -447,7 +451,7 @@ static int ptrace_attach(struct task_struct *task, long request,
- unlock_tasklist:
- 	write_unlock_irq(&tasklist_lock);
- unlock_creds:
--	mutex_unlock(&task->signal->cred_guard_mutex);
-+	mutex_unlock(&task->signal->exec_guard_mutex);
- out:
- 	if (!retval) {
- 		/*
-@@ -472,10 +476,18 @@ static int ptrace_attach(struct task_struct *task, long request,
-  */
- static int ptrace_traceme(void)
- {
--	int ret = -EPERM;
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&current->signal->exec_guard_mutex))
-+		return -ERESTARTNOINTR;
-+
-+	ret = -EAGAIN;
-+	if (unlikely(current->signal->unsafe_execve_in_progress))
-+		goto unlock_creds;
- 
- 	write_lock_irq(&tasklist_lock);
- 	/* Are we already being traced? */
-+	ret = -EPERM;
- 	if (!current->ptrace) {
- 		ret = security_ptrace_traceme(current->parent);
- 		/*
-@@ -490,6 +502,8 @@ static int ptrace_traceme(void)
- 	}
- 	write_unlock_irq(&tasklist_lock);
- 
-+unlock_creds:
-+	mutex_unlock(&current->signal->exec_guard_mutex);
- 	return ret;
- }
- 
-diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index b6ea3dc..acd6960 100644
---- a/kernel/seccomp.c
-+++ b/kernel/seccomp.c
-@@ -329,7 +329,7 @@ static int is_ancestor(struct seccomp_filter *parent,
- /**
-  * seccomp_can_sync_threads: checks if all threads can be synchronized
-  *
-- * Expects sighand and cred_guard_mutex locks to be held.
-+ * Expects sighand and exec_guard_mutex locks to be held.
-  *
-  * Returns 0 on success, -ve on error, or the pid of a thread which was
-  * either not in the correct seccomp mode or did not have an ancestral
-@@ -339,9 +339,12 @@ static inline pid_t seccomp_can_sync_threads(void)
- {
- 	struct task_struct *thread, *caller;
- 
--	BUG_ON(!mutex_is_locked(&current->signal->cred_guard_mutex));
-+	BUG_ON(!mutex_is_locked(&current->signal->exec_guard_mutex));
- 	assert_spin_locked(&current->sighand->siglock);
- 
-+	if (unlikely(current->signal->unsafe_execve_in_progress))
-+		return -EAGAIN;
-+
- 	/* Validate all threads being eligible for synchronization. */
- 	caller = current;
- 	for_each_thread(caller, thread) {
-@@ -371,7 +374,7 @@ static inline pid_t seccomp_can_sync_threads(void)
- /**
-  * seccomp_sync_threads: sets all threads to use current's filter
-  *
-- * Expects sighand and cred_guard_mutex locks to be held, and for
-+ * Expects sighand and exec_guard_mutex locks to be held, and for
-  * seccomp_can_sync_threads() to have returned success already
-  * without dropping the locks.
-  *
-@@ -380,7 +383,7 @@ static inline void seccomp_sync_threads(unsigned long flags)
- {
- 	struct task_struct *thread, *caller;
- 
--	BUG_ON(!mutex_is_locked(&current->signal->cred_guard_mutex));
-+	BUG_ON(!mutex_is_locked(&current->signal->exec_guard_mutex));
- 	assert_spin_locked(&current->sighand->siglock);
- 
- 	/* Synchronize all threads. */
-@@ -1319,7 +1322,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
- 	 * while another thread is in the middle of calling exec.
- 	 */
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC &&
--	    mutex_lock_killable(&current->signal->cred_guard_mutex))
-+	    mutex_lock_killable(&current->signal->exec_guard_mutex))
- 		goto out_put_fd;
- 
- 	spin_lock_irq(&current->sighand->siglock);
-@@ -1337,7 +1340,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
- out:
- 	spin_unlock_irq(&current->sighand->siglock);
- 	if (flags & SECCOMP_FILTER_FLAG_TSYNC)
--		mutex_unlock(&current->signal->cred_guard_mutex);
-+		mutex_unlock(&current->signal->exec_guard_mutex);
- out_put_fd:
- 	if (flags & SECCOMP_FILTER_FLAG_NEW_LISTENER) {
- 		if (ret) {
--- 
-1.9.1
+[PATCH] pidfd: Stop taking cred_guard_mutex 
+https://lore.kernel.org/lkml/87wo7svy96.fsf_-_@x220.int.ebiederm.org/
+
+
+and a new patch series to fix deadlock in ptrace_attach and update doc:
+[PATCH 0/2] exec: Fix dead-lock in de_thread with ptrace_attach
+[PATCH 1/2] exec: Fix dead-lock in de_thread with ptrace_attach
+[PATCH 2/2] doc: Update documentation of ->exec_*_mutex
+
+
+Other patches needed, still valid:
+
+[PATCH v2 1/5] exec: Only compute current once in flush_old_exec
+https://lore.kernel.org/lkml/87pndm5y3l.fsf_-_@x220.int.ebiederm.org/
+
+[PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and call it separately
+https://lore.kernel.org/lkml/87k13u5y26.fsf_-_@x220.int.ebiederm.org/
+
+[PATCH v2 4/5] exec: Move exec_mmap right after de_thread in flush_old_exec
+https://lore.kernel.org/lkml/875zfe5xzb.fsf_-_@x220.int.ebiederm.org/
+
+[PATCH 1/4] exec: Fix a deadlock in ptrace
+https://lore.kernel.org/lkml/AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 2/4] selftests/ptrace: add test cases for dead-locks
+https://lore.kernel.org/lkml/AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 3/4] mm: docs: Fix a comment in process_vm_rw_core
+https://lore.kernel.org/lkml/AM6PR03MB5170ED6D4D216EEEEF400136E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 4/4] kernel: doc: remove outdated comment cred.c
+https://lore.kernel.org/lkml/AM6PR03MB517039DB07AB641C194FEA57E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 1/4] kernel/kcmp.c: Use new infrastructure to fix deadlocks in execve
+https://lore.kernel.org/lkml/AM6PR03MB517057A2269C3A4FB287B76EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 2/4] proc: Use new infrastructure to fix deadlocks in execve
+https://lore.kernel.org/lkml/AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 3/4] proc: io_accounting: Use new infrastructure to fix deadlocks in execve
+https://lore.kernel.org/lkml/AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+[PATCH 4/4] perf: Use new infrastructure to fix deadlocks in execve
+https://lore.kernel.org/lkml/AM6PR03MB517035DEEDB9C8699CB6B34EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
+
+
+I think most of the existing patches are already approved, but if
+there are still change requests, please let me know.
+
+
+Thanks
+Bernd.
