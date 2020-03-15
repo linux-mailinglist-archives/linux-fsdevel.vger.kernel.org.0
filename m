@@ -2,76 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 755E1185EA4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 18:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5166B185EB0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 18:18:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbgCORQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 13:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728947AbgCORQy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 13:16:54 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC567206E9;
-        Sun, 15 Mar 2020 17:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584292614;
-        bh=+lmpvdxUBRgyrzSD7k7JSLFEM42g3oWA97s0+PhrLF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fz8xheLuuQR+wB/DfIa8fMDHBJ96eTBl6qoUQEPumGFkmN+p2eeRitOsIvPQcwEWX
-         sRdvJhFc0FfCr/6CNrztD5Ta/DRrUiu5/aYHe+U70wAB9I8f7fFCSoPsWq5PyGQl0F
-         bbS551kFvD0b5ZrLw8+8RdX4rlEDR7PjNypkYRrs=
-Date:   Sun, 15 Mar 2020 10:16:52 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v8 10/11] f2fs: add inline encryption support
-Message-ID: <20200315171652.GA1055@sol.localdomain>
-References: <20200312080253.3667-1-satyat@google.com>
- <20200312080253.3667-11-satyat@google.com>
+        id S1728982AbgCORSr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 13:18:47 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50342 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728887AbgCORSr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Mar 2020 13:18:47 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a5so15137026wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Mar 2020 10:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=uV8chY4Biaq2olTIOJyy4iiFi27MH72hbX5d0FEE70c=;
+        b=j1gJSEgiANGyxYCpa0mqbZl6UpJDGcs2gEF8QThA4UHpQeuGU2kUegAA8TCwp62hoX
+         HG6Z96m5uzdrjtFMxzelNXy7wlJA7UcbQ/bsY/0uxmlYgHkVXDyNGa6L3xgHfr4TlyR/
+         KgQ2Ad7c5ZxPsZLqJ7xWsk16myPw3CRjINO+skoLthMZ7Tg3pFZld5ofFkJQBOrZBLjq
+         IxrXFG2rwlKya6/qNOT7Ts/7A8bNtOEZLGI+D+tWMxC3LgxRG9TGN5h1ykWR/xXvw00y
+         vp3m13ylU80GgL5j9MnLqHWbGeeqghjin6W1oL/p9PxVrt2kVPAA5VQmaXET+rKJ4aKT
+         HwJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=uV8chY4Biaq2olTIOJyy4iiFi27MH72hbX5d0FEE70c=;
+        b=Yttht7wJu2x0HtcJVrVJtlQHAIO0IOFMeGSXVA9fzs/RSXwpM3gXEYjxqnniJ43tmH
+         VFeLcSNB2dSGiRPvWA8jmSw0rLzFHiDbc5PPUOMblqc2GvTUt9o5cPGuUQFyZrIxkgXR
+         /wTfjJqpwXQdRTOv6NlFwyKTKYqNTYKaHgqSUyHMV7220F66+qIcQSb2EEbjN2cZG+uy
+         u9KBFCn57iSQPVJ2zL2TOXjqL/QV0GK3lBL0WVQ8vN5OO+tApIb5rebwfuRjol6/+m7z
+         XgUkYf/yFiXnRigYIYIM0Faf25Z9Tsgt/4JIQwIZRr+KBnXoWimvL8+fUsGG6uIhv5G4
+         /LdA==
+X-Gm-Message-State: ANhLgQ3olx9ljWNvW0oxTqYNGlR90zmezUQt1P4Wp3I3PNjV5t+vnpy8
+        qDjA2k1+9jYOC1d1e5i+xxsstz3NA/rGycSSKzQ=
+X-Google-Smtp-Source: ADFU+vt1WgMA+rufHZ0y1SgEWhN/Es+yGv2nnGl2oloyIhWDHo2oEDacAOup2hyDOr6JxwWMXczd5ACXljUUiu9NIVU=
+X-Received: by 2002:a05:600c:21d2:: with SMTP id x18mr22360785wmj.75.1584292725019;
+ Sun, 15 Mar 2020 10:18:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312080253.3667-11-satyat@google.com>
+Reply-To: mrshenritapieres1@gmail.com
+Received: by 2002:a5d:4aca:0:0:0:0:0 with HTTP; Sun, 15 Mar 2020 10:18:44
+ -0700 (PDT)
+From:   Henrita Pieres <piereshenrita61@gmail.com>
+Date:   Sun, 15 Mar 2020 10:18:44 -0700
+X-Google-Sender-Auth: rTO7rQRkLUW0TWOPG3rL2ccsb40
+Message-ID: <CAOVptZbe2XiVhKv8g1tFZL_0+O2AaT3bcrp8MczrpHDeER672g@mail.gmail.com>
+Subject: Dearest One,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 01:02:52AM -0700, Satya Tangirala wrote:
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 5355be6b6755..75817f0dc6f8 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -139,6 +139,9 @@ struct f2fs_mount_info {
->  	int alloc_mode;			/* segment allocation policy */
->  	int fsync_mode;			/* fsync policy */
->  	bool test_dummy_encryption;	/* test dummy encryption */
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	bool inlinecrypt;		/* inline encryption enabled */
-> +#endif
->  	block_t unusable_cap;		/* Amount of space allowed to be
->  					 * unusable when disabling checkpoint
->  					 */
+Hello.
+I am Mrs. Henrita Pieres 64 years old located in France. Let me trust
+and believe you can handle this project...I have been diagnosed with
+Esophageal cancer. i want to invest in humanitarian & Charity in your
+country with sum of $4.5 Million, Reply me for more details
 
-This bool is unused now.
+Hope to hear from you soon.
 
-> @@ -1568,6 +1577,9 @@ static void default_options(struct f2fs_sb_info *sbi)
->  	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
->  	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
->  	F2FS_OPTION(sbi).test_dummy_encryption = false;
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	sbi->sb->s_flags &= ~SB_INLINECRYPT;
-> +#endif
-
-This really should be CONFIG_FS_ENCRYPTION_INLINE_CRYPT, but actually there's no
-need for the #ifdef at all.  Just clear the flag unconditionally.
-
-- Eric
+Yours Faithfully,
+Mrs. Henrita Pieres
