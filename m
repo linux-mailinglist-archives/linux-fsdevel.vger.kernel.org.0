@@ -2,125 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C5F185BD9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 11:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B97D185C37
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 12:44:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbgCOKM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 06:12:26 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36318 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728209AbgCOKMZ (ORCPT
+        id S1728404AbgCOLou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 07:44:50 -0400
+Received: from m17617.mail.qiye.163.com ([59.111.176.17]:31580 "EHLO
+        m17617.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728399AbgCOLot (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 06:12:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584267144;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8fYeknRcTWmnQg8ZYRz0ZJkyEQG95MNGzU7Kd6SLL+M=;
-        b=KGiYoRT5/pHTLCbsXHXyfUGwxRTA05LKHRjQn8elcem/8l8E1ZlqCjCul7ZyD6/ILYJZiM
-        IHak6IkjZZppYKHNj6MvnphMorjHoiv5bXn0qxGl/f5h/qs8c5F3RC2eNpLoYWC69JBSqx
-        snyxBOBc7a1BvUr1Prkk34/EqGw6dzs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-4-ojHza0DOPKSAkDn91LjYXg-1; Sun, 15 Mar 2020 06:12:21 -0400
-X-MC-Unique: ojHza0DOPKSAkDn91LjYXg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6A3A91005512;
-        Sun, 15 Mar 2020 10:12:18 +0000 (UTC)
-Received: from localhost (ovpn-116-26.ams2.redhat.com [10.36.116.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1792A5C1B2;
-        Sun, 15 Mar 2020 10:12:16 +0000 (UTC)
-Date:   Sun, 15 Mar 2020 10:12:15 +0000
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Wang Wenhu <wenhu.wang@vivo.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>,
+        Sun, 15 Mar 2020 07:44:49 -0400
+Received: from ubuntu.localdomain (unknown [58.251.74.226])
+        by m17617.mail.qiye.163.com (Hmail) with ESMTPA id 4BF8D26159E;
+        Sun, 15 Mar 2020 19:44:32 +0800 (CST)
+From:   Wang Wenhu <wenhu.wang@vivo.com>
+To:     Jonathan Corbet <corbet@lwn.net>, Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Harry Wei <harryxiyou@gmail.com>,
         Alex Shi <alex.shi@linux.alibaba.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jaskaran Singh <jaskaransingh7654321@gmail.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Eric Biggers <ebiggers@google.com>, linux-doc@vger.kernel.org,
+        Wang Wenhu <wenhu.wang@vivo.com>,
+        "Tobin C. Harding" <tobin@kernel.org>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, kernel@vivo.com
-Subject: Re: [PATCH 0/2] doc: zh_CN: facilitate translation for filesystems
-Message-ID: <20200315101215.GA325031@stefanha-x1.localdomain>
-References: <20200315092810.87008-1-wenhu.wang@vivo.com>
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel@vivo.com
+Subject: [PATCH v2,2/2] doc: zh_CN: add translation for virtiofs
+Date:   Sun, 15 Mar 2020 04:43:28 -0700
+Message-Id: <20200315114339.88384-1-wenhu.wang@vivo.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200315092810.87008-3-wenhu.wang@vivo.com>
+References: <20200315092810.87008-3-wenhu.wang@vivo.com>
 MIME-Version: 1.0
-In-Reply-To: <20200315092810.87008-1-wenhu.wang@vivo.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVNSktLS0tKSEhOSk9PWVdZKFlBSE
+        83V1ktWUFJV1kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NDI6Phw4ITgzMDcPFR5DHUI6
+        HykwCzhVSlVKTkNPSUxJTUxCS0lCVTMWGhIXVQweFRMOVQwaFRw7DRINFFUYFBZFWVdZEgtZQVlO
+        Q1VJTkpVTE9VSUlNWVdZCAFZQU1NQkw3Bg++
+X-HM-Tid: 0a70de0288639375kuws4bf8d26159e
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Mar 15, 2020 at 02:27:58AM -0700, Wang Wenhu wrote:
-> This patch series set up the basic facility for the translation work
-> of the docs residing on filesystems into Chinese, indexing the filesystem=
-s
-> directory and adding one indexed translation into it. The virtiofs.rst
-> added is not only a translation itself but also an simple example that
-> future developers would take.
->=20
-> The detailed diff info also shows the basic essential markups of
-> the toctree and reStructuredText, at least for the most simple occasions.
-> More translations of filesystems are on their way, and futher,
-> of more subsystems.
->=20
-> ---
-> Wang Wenhu (2):
->   doc: zh_CN: index files in filesystems subdirectory
->   doc: zh_CN: add translation for virtiofs
->=20
->  Documentation/filesystems/index.rst           |  2 +
->  Documentation/filesystems/virtiofs.rst        |  2 +
->  .../translations/zh_CN/filesystems/index.rst  | 29 +++++++++
->  .../zh_CN/filesystems/virtiofs.rst            | 62 +++++++++++++++++++
->  Documentation/translations/zh_CN/index.rst    |  1 +
->  5 files changed, 96 insertions(+)
->  create mode 100644 Documentation/translations/zh_CN/filesystems/index.rs=
-t
->  create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs=
-.rst
->=20
-> --=20
-> 2.17.1
->=20
-
-I am not a Chinese speaker but thank you for translation the
-documentation!
+Translate virtiofs.rst in Documentation/filesystems/ into Chinese.
 
 Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
+---
+v2:
+ - add a blank line in the end of index.rst to index virtiofs.rst
+ - Asked-by Stefan Hajnoczi
+  - Link:https://lore.kernel.org/linux-doc/20200315101215.GA325031@stefanha-x1.localdomain/1-a.txt
 
---SLDf9lqlvOQaIe6s
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+ Documentation/filesystems/virtiofs.rst        |  2 +
+ .../translations/zh_CN/filesystems/index.rst  |  3 +
+ .../zh_CN/filesystems/virtiofs.rst            | 62 +++++++++++++++++++
+ 3 files changed, 67 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs.rst
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl5t/38ACgkQnKSrs4Gr
-c8i7pggAxFGK9yalFhtI40r+K7LMZVxPGH3zc20Ho6hCuGGbk0pnrVxuDOyAsgTo
-w809N9Ypju11BY4lh8vzpA8wmi+mrjCI1I+/Md87gv+vIuur17n6v895rHas9rkh
-VN6uRiHTxQR/zaDSaUM3yrR/KDCqHqe26T77B8//ope+JTqpWRNrhNccDtz5x/Kt
-BVWkyKGmHwKK2LZm3OkHHYXhZx519RS6gBrxbzSySnBbwPbBWcY75et0o8c3FSJP
-qh/pJ8keEtMEKVj/EGTZ2B9MN5d4nSi1yhxVizGHWkeDJ/yg6/l2kMKQ7MzAxPIP
-iM5LDusm9auID4W1sU3363No0ZF+4Q==
-=Sx9O
------END PGP SIGNATURE-----
-
---SLDf9lqlvOQaIe6s--
+diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/filesystems/virtiofs.rst
+index 4f338e3cb3f7..7c4301d962f8 100644
+--- a/Documentation/filesystems/virtiofs.rst
++++ b/Documentation/filesystems/virtiofs.rst
+@@ -1,3 +1,5 @@
++.. _virtiofs_index:
++
+ .. SPDX-License-Identifier: GPL-2.0
+ 
+ ===================================================
+diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
+index a47dd86d6196..69f38df8c4bd 100644
+--- a/Documentation/translations/zh_CN/filesystems/index.rst
++++ b/Documentation/translations/zh_CN/filesystems/index.rst
+@@ -25,3 +25,6 @@ Linux Kernel中的文件系统
+ 
+ .. toctree::
+    :maxdepth: 2
++
++   virtiofs
++
+diff --git a/Documentation/translations/zh_CN/filesystems/virtiofs.rst b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
+new file mode 100644
+index 000000000000..2a36cd417f8b
+--- /dev/null
++++ b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
+@@ -0,0 +1,62 @@
++.. raw:: latex
++
++	\renewcommand\thesection*
++	\renewcommand\thesubsection*
++
++.. include:: ../disclaimer-zh_CN.rst
++
++:Original: :ref:`Documentation/filesystems/virtiofs.rst <virtiofs_index>`
++
++译者
++::
++
++	中文版维护者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
++	中文版翻译者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
++	中文版校译者:  王文虎 Wang Wenhu <wenhu.wang@vivo.com>
++
++.. SPDX-License-Identifier: GPL-2.0
++
++===========================================
++virtiofs: virtio-fs 主机<->客机共享文件系统
++===========================================
++
++- Copyright (C) 2019 Red Hat, Inc. （译者注：英文版版权信息）
++
++介绍
++====
++Linux的virtiofs文件系统实现了一个半虚拟化VIRTIO类型“virtio-fs”设备的驱动，通过该\
++类型设备实现客机<->主机文件系统共享。它允许客机挂载一个已经导出到主机的目录。
++
++客机通常需要访问主机或者远程系统上的文件。使用场景包括：在新客机安装时让文件对其\
++可见；从主机上的根文件系统启动；对无状态或临时客机提供持久存储和在客机之间共享目录。
++
++尽管在某些任务可能通过使用已有的网络文件系统完成，但是却需要非常难以自动化的配置\
++步骤，且将存储网络暴露给客机。而virtio-fs设备通过提供不经过网络的文件系统访问文件\
++的设计方式解决了这些问题。
++
++另外，virto-fs设备发挥了主客机共存的优点提高了性能，并且提供了网络文件系统所不具备
++的一些语义功能。
++
++用法
++====
++以``myfs``标签将文件系统挂载到``/mnt``:
++
++.. code-block:: sh
++
++  guest# mount -t virtiofs myfs /mnt
++
++请查阅 https://virtio-fs.gitlab.io/ 了解配置QEMU和virtiofsd守护程序的详细信息。
++
++内幕
++====
++由于virtio-fs设备将FUSE协议用于文件系统请求，因此Linux的virtiofs文件系统与FUSE文\
++件系统客户端紧密集成在一起。客机充当FUSE客户端而主机充当FUSE服务器，内核与用户空\
++间之间的/dev/fuse接口由virtio-fs设备接口代替。
++
++FUSE请求被置于虚拟队列中由主机处理。主机填充缓冲区中的响应部分，而客机处理请求的完成部分。
++
++将/dev/fuse映射到虚拟队列需要解决/dev/fuse和虚拟队列之间语义上的差异。每次读取\
++/dev/fuse设备时，FUSE客户端都可以选择要传输的请求，从而可以使某些请求优先于其他\
++请求。虚拟队列有其队列语义，无法更改已入队请求的顺序。在虚拟队列已满的情况下尤
++其关键，因为此时不可能加入高优先级的请求。为了解决此差异，virtio-fs设备采用“hiprio”\
++（高优先级）虚拟队列，专门用于有别于普通请求的高优先级请求。
+-- 
+2.17.1
 
