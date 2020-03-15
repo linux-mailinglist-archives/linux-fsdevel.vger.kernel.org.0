@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3151E185B17
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 08:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AED21185B18
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 08:53:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbgCOHxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 03:53:02 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33851 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727134AbgCOHxB (ORCPT
+        id S1727640AbgCOHxF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 03:53:05 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39698 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbgCOHxF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 03:53:01 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 23so8006846pfj.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Mar 2020 00:53:01 -0700 (PDT)
+        Sun, 15 Mar 2020 03:53:05 -0400
+Received: by mail-pg1-f196.google.com with SMTP id b22so1723524pgb.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Mar 2020 00:53:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GR+4RQ/CtYjBoLtm6xDE+j3oEJzKJmkJkF8JHfLM9+I=;
-        b=AnNSrJxr3L6owNh+RpUvCyIVb9IkGboEQh51GvFU7aHaxGPwVdI06d7i4AW+6kjc10
-         CU9osRaYVfKKmQfSZl9vTifThOPbfhRjv+0Pe+t8+JYZWl6GoiaNb/fWM8qICrYBHyIF
-         th9YAM0yFugK7p+txE2AbIIzs3wBnjfA9zEFp62SU3R1kSZ4chkUlsmRjlJzUGr4x8nn
-         PQAVcywhC699mjASDGfGlFP1itIQbJxS20v79/vv5ag89WofOWxvGSU6tw5YN8LOtQKN
-         sTe9umHJ3jbWrxZH7ys2gumvWAqJrmpm1RmsKCo34cDQdMzHGk3WF66SBZ9wP1lQdzyw
-         loRg==
+        bh=r9vLV6Qq04cRRMSwOI+dLFQIqvFaYX0FB1SLrcgz+pc=;
+        b=a6HzSxBnbEYIPl5ofeVIDVAmAl+juJ9bvXsP5A1bAOFzTp023UsfLTUEyd747zvH7M
+         Mq/BT0PkcYddsr0awLrIqFwyHHjsTbD2+3U0FMGxiGEbVYcYhMNlMa89+NYeBVMbme9F
+         gs74dco12foKmtPt0XDqi1CgoUSyOhr7KS+eTqx5m4yLI2RBG5p9ATVBG8d2Rk8cyKqU
+         FFhA9v529m90kT6vYBRtUzYVK1nNsPAhgnuRJpLAP+vpmu5ysZXZp8FYLfluJIlJV/uP
+         nxzBSCsRMZEF52iDxuMqQN/M9wfI0ScGzNeV/7jzYi/rtvoi/lXHV2tQaUKwp9qm1anD
+         7yOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GR+4RQ/CtYjBoLtm6xDE+j3oEJzKJmkJkF8JHfLM9+I=;
-        b=Ih72sSf4isXi1Nee8aPISj7XncEib7sANgr3QPWK4oytWYIc5wbfNez//WpVUYhy6v
-         ozyTSkeOiedBKu5pxldM0i64kqEdq2uavoVlErVviYzkn/orQ+2Eu8qVHbF2xGdbu6Df
-         6pTAdG1kPcLSa7gQqbFmlTzOy024A9ms8KLWWnxGoxDtZH9E50a6fUy9z+4qyAaN0aCW
-         ic6i6F30vrDktqory1n2Gqmrn1nwidBGpH9L5GyxbTBm1tyAGaHGwB+1zSQNsgd8/QW8
-         NAB+JDle5uJXe9IokkLkW2UenIuRPzNnoyFDJJtGr/kv93g/7ZSwvolXWn1T95i48+YH
-         TsGA==
-X-Gm-Message-State: ANhLgQ1vOeWssn2XHhJz5j7JqVK2GxiYIENPbZMVrxj+jL21OfIIxtyk
-        xnUZb5PsU0CsA+rPT8mo0Lc=
-X-Google-Smtp-Source: ADFU+vtDK7Ak+zn2clzqTJRjeDSuOpfNuPgnLW/K67KXpqO+HpI+acgrjbUDJ/GsyeXLxy2Xy2P8dw==
-X-Received: by 2002:a62:be04:: with SMTP id l4mr22649023pff.234.1584258780484;
-        Sun, 15 Mar 2020 00:53:00 -0700 (PDT)
+        bh=r9vLV6Qq04cRRMSwOI+dLFQIqvFaYX0FB1SLrcgz+pc=;
+        b=GPP8v+AGPHrdESx4f2P2+wOPfBVDFjgIwiv8/ODiJcXYIv5+ZSOk2xpTKlKliHoQce
+         7eL9yLy+tMWMV8h/FwcfFzQ7XRk7/u7EUmRvX976C9lBZ1BM6t94mz/m7mb/babQn+Rt
+         IJYH3NFadpc0FP4LgvSlD9ACHSf7QoKmlqp1wq0HzqtF0C6HJDd2lA5g/lcbIR4TQcjU
+         iVSs6KDGY2arkoy+3iyenD7PpYDXX8srfFWegt4Cb/ga0IHIfw157i+yIHh+ODVe1BtC
+         aGc6eAFUdXBeDCcIZYD1izz4+Dk67KzBq2QkKQ0VsCN+3P57pJn6h/PUErjL1dirOZxM
+         2Erw==
+X-Gm-Message-State: ANhLgQ3bImD96XdCEgJ2+G4F6F7AqJ8/vsFImfjR2op+o9qFHXNL9W01
+        34EACogHssr5A5yAt1iZLWE=
+X-Google-Smtp-Source: ADFU+vuv2Fvoe3wxjcT4absfB1RnH6gkjP/X1kgSOnsg6owh1BfecuBWq3uSBVuRh4psUGbwZ9ECVQ==
+X-Received: by 2002:a63:cd12:: with SMTP id i18mr9138743pgg.98.1584258783452;
+        Sun, 15 Mar 2020 00:53:03 -0700 (PDT)
 Received: from master.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id w11sm62592984pfn.4.2020.03.15.00.52.57
+        by smtp.gmail.com with ESMTPSA id w11sm62592984pfn.4.2020.03.15.00.53.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Mar 2020 00:52:59 -0700 (PDT)
+        Sun, 15 Mar 2020 00:53:02 -0700 (PDT)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     dchinner@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org,
         vdavydov.dev@gmail.com, guro@fb.com, akpm@linux-foundation.org,
         viro@zeniv.linux.org.uk
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v5 1/3] mm, list_lru: make memcg visible to lru walker isolation function
-Date:   Sun, 15 Mar 2020 05:53:40 -0400
-Message-Id: <20200315095342.10178-2-laoar.shao@gmail.com>
+Subject: [PATCH v5 2/3] mm, shrinker: make memcg low reclaim visible to lru walker isolation function
+Date:   Sun, 15 Mar 2020 05:53:41 -0400
+Message-Id: <20200315095342.10178-3-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20200315095342.10178-1-laoar.shao@gmail.com>
 References: <20200315095342.10178-1-laoar.shao@gmail.com>
@@ -61,181 +61,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The lru walker isolation function may use this memcg to do something, e.g.
-the inode isolatation function will use the memcg to do inode protection in
-followup patch. So make memcg visible to the lru walker isolation function.
-
-Something should be emphasized in this patch is it replaces
-for_each_memcg_cache_index() with for_each_mem_cgroup() in
-list_lru_walk_node(). Because there's a gap between these two MACROs that
-for_each_mem_cgroup() depends on CONFIG_MEMCG while the other one depends
-on CONFIG_MEMCG_KMEM. But as list_lru_memcg_aware() returns false if
-CONFIG_MEMCG_KMEM is not configured, it is safe to this replacement.
-Another difference between for_each_memcg_cache_index() and
-for_each_mem_cgroup() is that for_each_memcg_cache_index() excludes the
-root_mem_cgroup because its kmemcg_id is -1, while for_each_mem_cgroup()
-includes the root_mem_cgroup. So we need to skip the root_mem_cgroup
-explicitly in the for loop.
+A new member memcg_low_reclaim is introduced in shrink_control struct,
+which is derived from scan_control struct, in order to tell the shrinker
+whether the reclaim session is under memcg low reclaim or not.
+The followup patch will use this new member.
 
 Cc: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 ---
- include/linux/memcontrol.h | 21 +++++++++++++++++
- mm/list_lru.c              | 47 +++++++++++++++++++++++---------------
- mm/memcontrol.c            | 15 ------------
- 3 files changed, 49 insertions(+), 34 deletions(-)
+ include/linux/shrinker.h |  3 +++
+ mm/vmscan.c              | 27 ++++++++++++++++-----------
+ 2 files changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index a7a0a1a5c8d5..a624c423e60b 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -445,6 +445,21 @@ void mem_cgroup_iter_break(struct mem_cgroup *, struct mem_cgroup *);
- int mem_cgroup_scan_tasks(struct mem_cgroup *,
- 			  int (*)(struct task_struct *, void *), void *);
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 0f80123650e2..dc42ae57e8dc 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -31,6 +31,9 @@ struct shrink_control {
  
-+/*
-+ * Iteration constructs for visiting all cgroups (under a tree).  If
-+ * loops are exited prematurely (break), mem_cgroup_iter_break() must
-+ * be used for reference counting.
-+ */
-+#define for_each_mem_cgroup_tree(iter, root)		\
-+	for (iter = mem_cgroup_iter(root, NULL, NULL);	\
-+	     iter != NULL;				\
-+	     iter = mem_cgroup_iter(root, iter, NULL))
+ 	/* current memcg being shrunk (for memcg aware shrinkers) */
+ 	struct mem_cgroup *memcg;
 +
-+#define for_each_mem_cgroup(iter)			\
-+	for (iter = mem_cgroup_iter(NULL, NULL, NULL);	\
-+	     iter != NULL;				\
-+	     iter = mem_cgroup_iter(NULL, iter, NULL))
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
++	/* derived from struct scan_control */
++	bool memcg_low_reclaim;
+ };
+ 
+ #define SHRINK_STOP (~0UL)
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 876370565455..385750840979 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -625,10 +625,9 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+ 
+ /**
+  * shrink_slab - shrink slab caches
+- * @gfp_mask: allocation context
+- * @nid: node whose slab caches to target
+  * @memcg: memory cgroup whose slab caches to target
+- * @priority: the reclaim priority
++ * @sc: scan_control struct for this reclaim session
++ * @nid: node whose slab caches to target
+  *
+  * Call the shrink functions to age shrinkable caches.
+  *
+@@ -638,15 +637,18 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
+  * @memcg specifies the memory cgroup to target. Unaware shrinkers
+  * are called only if it is the root cgroup.
+  *
+- * @priority is sc->priority, we take the number of objects and >> by priority
+- * in order to get the scan target.
++ * @sc is the scan_control struct, we take the number of objects
++ * and >> by sc->priority in order to get the scan target.
+  *
+  * Returns the number of reclaimed slab objects.
+  */
+-static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+-				 struct mem_cgroup *memcg,
+-				 int priority)
++static unsigned long shrink_slab(struct mem_cgroup *memcg,
++				 struct scan_control *sc,
++				 int nid)
  {
- 	if (mem_cgroup_disabled())
-@@ -945,6 +960,12 @@ static inline int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
- 	return 0;
++	bool memcg_low_reclaim = sc->memcg_low_reclaim;
++	gfp_t gfp_mask = sc->gfp_mask;
++	int priority = sc->priority;
+ 	unsigned long ret, freed = 0;
+ 	struct shrinker *shrinker;
+ 
+@@ -668,6 +670,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ 			.gfp_mask = gfp_mask,
+ 			.nid = nid,
+ 			.memcg = memcg,
++			.memcg_low_reclaim = memcg_low_reclaim,
+ 		};
+ 
+ 		ret = do_shrink_slab(&sc, shrinker, priority);
+@@ -694,6 +697,9 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+ void drop_slab_node(int nid)
+ {
+ 	unsigned long freed;
++	struct scan_control sc = {
++		.gfp_mask = GFP_KERNEL,
++	};
+ 
+ 	do {
+ 		struct mem_cgroup *memcg = NULL;
+@@ -701,7 +707,7 @@ void drop_slab_node(int nid)
+ 		freed = 0;
+ 		memcg = mem_cgroup_iter(NULL, NULL, NULL);
+ 		do {
+-			freed += shrink_slab(GFP_KERNEL, nid, memcg, 0);
++			freed += shrink_slab(memcg, &sc, nid);
+ 		} while ((memcg = mem_cgroup_iter(NULL, memcg, NULL)) != NULL);
+ 	} while (freed > 10);
  }
+@@ -2673,8 +2679,7 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
  
-+#define for_each_mem_cgroup_tree(iter)		\
-+	for (iter = NULL; iter; )
-+
-+#define for_each_mem_cgroup(iter)		\
-+	for (iter = NULL; iter; )
-+
- static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
- {
- 	return 0;
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 0f1f6b06b7f3..6daa8c64d13d 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -207,11 +207,11 @@ unsigned long list_lru_count_node(struct list_lru *lru, int nid)
- EXPORT_SYMBOL_GPL(list_lru_count_node);
+ 		shrink_lruvec(lruvec, sc);
  
- static unsigned long
--__list_lru_walk_one(struct list_lru_node *nlru, int memcg_idx,
-+__list_lru_walk_one(struct list_lru_node *nlru, struct mem_cgroup *memcg,
- 		    list_lru_walk_cb isolate, void *cb_arg,
- 		    unsigned long *nr_to_walk)
- {
--
-+	int memcg_idx = memcg_cache_id(memcg);
- 	struct list_lru_one *l;
- 	struct list_head *item, *n;
- 	unsigned long isolated = 0;
-@@ -273,7 +273,7 @@ list_lru_walk_one(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- 	unsigned long ret;
+-		shrink_slab(sc->gfp_mask, pgdat->node_id, memcg,
+-			    sc->priority);
++		shrink_slab(memcg, sc, pgdat->node_id);
  
- 	spin_lock(&nlru->lock);
--	ret = __list_lru_walk_one(nlru, memcg_cache_id(memcg), isolate, cb_arg,
-+	ret = __list_lru_walk_one(nlru, memcg, isolate, cb_arg,
- 				  nr_to_walk);
- 	spin_unlock(&nlru->lock);
- 	return ret;
-@@ -289,7 +289,7 @@ list_lru_walk_one_irq(struct list_lru *lru, int nid, struct mem_cgroup *memcg,
- 	unsigned long ret;
- 
- 	spin_lock_irq(&nlru->lock);
--	ret = __list_lru_walk_one(nlru, memcg_cache_id(memcg), isolate, cb_arg,
-+	ret = __list_lru_walk_one(nlru, memcg, isolate, cb_arg,
- 				  nr_to_walk);
- 	spin_unlock_irq(&nlru->lock);
- 	return ret;
-@@ -299,25 +299,34 @@ unsigned long list_lru_walk_node(struct list_lru *lru, int nid,
- 				 list_lru_walk_cb isolate, void *cb_arg,
- 				 unsigned long *nr_to_walk)
- {
--	long isolated = 0;
--	int memcg_idx;
-+	struct list_lru_node *nlru;
-+	struct mem_cgroup *memcg;
-+	long isolated;
- 
--	isolated += list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
--				      nr_to_walk);
--	if (*nr_to_walk > 0 && list_lru_memcg_aware(lru)) {
--		for_each_memcg_cache_index(memcg_idx) {
--			struct list_lru_node *nlru = &lru->node[nid];
-+	/* iterate the global lru first */
-+	isolated = list_lru_walk_one(lru, nid, NULL, isolate, cb_arg,
-+				     nr_to_walk);
- 
--			spin_lock(&nlru->lock);
--			isolated += __list_lru_walk_one(nlru, memcg_idx,
--							isolate, cb_arg,
--							nr_to_walk);
--			spin_unlock(&nlru->lock);
-+	if (!list_lru_memcg_aware(lru))
-+		goto out;
- 
--			if (*nr_to_walk <= 0)
--				break;
--		}
-+	nlru = &lru->node[nid];
-+	for_each_mem_cgroup(memcg) {
-+		/* already scanned the root memcg above */
-+		if (mem_cgroup_is_root(memcg))
-+			continue;
-+
-+		if (*nr_to_walk <= 0)
-+			break;
-+
-+		spin_lock(&nlru->lock);
-+		isolated += __list_lru_walk_one(nlru, memcg,
-+						isolate, cb_arg,
-+						nr_to_walk);
-+		spin_unlock(&nlru->lock);
- 	}
-+
-+out:
- 	return isolated;
- }
- EXPORT_SYMBOL_GPL(list_lru_walk_node);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d09776cd6e10..688d51dbb731 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -222,21 +222,6 @@ enum res_type {
- /* Used for OOM nofiier */
- #define OOM_CONTROL		(0)
- 
--/*
-- * Iteration constructs for visiting all cgroups (under a tree).  If
-- * loops are exited prematurely (break), mem_cgroup_iter_break() must
-- * be used for reference counting.
-- */
--#define for_each_mem_cgroup_tree(iter, root)		\
--	for (iter = mem_cgroup_iter(root, NULL, NULL);	\
--	     iter != NULL;				\
--	     iter = mem_cgroup_iter(root, iter, NULL))
--
--#define for_each_mem_cgroup(iter)			\
--	for (iter = mem_cgroup_iter(NULL, NULL, NULL);	\
--	     iter != NULL;				\
--	     iter = mem_cgroup_iter(NULL, iter, NULL))
--
- static inline bool should_force_charge(void)
- {
- 	return tsk_is_oom_victim(current) || fatal_signal_pending(current) ||
+ 		/* Record the group's reclaim efficiency */
+ 		vmpressure(sc->gfp_mask, memcg, false,
 -- 
 2.18.1
 
