@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60264185E0C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 16:26:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34192185E1A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 16:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbgCOPZ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 11:25:57 -0400
-Received: from monster.unsafe.ru ([5.9.28.80]:34230 "EHLO mail.unsafe.ru"
+        id S1728944AbgCOP0C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 11:26:02 -0400
+Received: from monster.unsafe.ru ([5.9.28.80]:34308 "EHLO mail.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728833AbgCOPZ5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 11:25:57 -0400
+        id S1728861AbgCOPZ7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Mar 2020 11:25:59 -0400
 Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id ED855C61B2B;
-        Sun, 15 Mar 2020 15:25:53 +0000 (UTC)
+        by mail.unsafe.ru (Postfix) with ESMTPSA id AEC27C61B2E;
+        Sun, 15 Mar 2020 15:25:54 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -40,9 +40,9 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v9 4/8] proc: instantiate only pids that we can ptrace on 'hidepid=4' mount option
-Date:   Sun, 15 Mar 2020 16:25:19 +0100
-Message-Id: <c3474aaf51d6633160a8e3f966c27984982d5476.1584285253.git.gladkov.alexey@gmail.com>
+Subject: [PATCH v9 5/8] proc: add option to mount only a pids subset
+Date:   Sun, 15 Mar 2020 16:25:20 +0100
+Message-Id: <6934d9d8f1613b4cb2ce6eef92e84f72780d78ce.1584285253.git.gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1584285253.git.gladkov.alexey@gmail.com>
 References: <cover.1584285253.git.gladkov.alexey@gmail.com>
@@ -53,98 +53,173 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If "hidepid=4" mount option is set then do not instantiate pids that
-we can not ptrace. "hidepid=4" means that procfs should only contain
-pids that the caller can ptrace.
+This allows to hide all files and directories in the procfs that are not
+related to tasks.
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/base.c          | 15 +++++++++++++++
- fs/proc/root.c          | 13 ++++++++++---
- include/linux/proc_fs.h |  1 +
- 3 files changed, 26 insertions(+), 3 deletions(-)
+ fs/proc/generic.c       |  9 +++++++++
+ fs/proc/inode.c         |  6 ++++++
+ fs/proc/root.c          | 33 +++++++++++++++++++++++++++++++++
+ include/linux/proc_fs.h |  7 +++++++
+ 4 files changed, 55 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 984b97bb634b..a836979e42fe 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -701,6 +701,14 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
- 				 struct task_struct *task,
- 				 int hide_pid_min)
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 3faed94e4b65..ee5b6482009c 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -269,6 +269,11 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+ struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
+ 		unsigned int flags)
  {
-+	/*
-+	 * If 'hidpid' mount option is set force a ptrace check,
-+	 * we indicate that we are using a filesystem syscall
-+	 * by passing PTRACE_MODE_READ_FSCREDS
-+	 */
-+	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
-+		return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
++	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
 +
- 	if (fs_info->hide_pid < hide_pid_min)
- 		return true;
- 	if (in_group_p(fs_info->pid_gid))
-@@ -3319,7 +3327,14 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
- 	if (!task)
- 		goto out;
++	if (fs_info->pidonly == PROC_PIDONLY_ON)
++		return ERR_PTR(-ENOENT);
++
+ 	return proc_lookup_de(dir, dentry, PDE(dir));
+ }
  
-+	/* Limit procfs to only ptraceable tasks */
-+	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE) {
-+		if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
-+			goto out_put_task;
-+	}
+@@ -325,6 +330,10 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
+ int proc_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct inode *inode = file_inode(file);
++	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
 +
- 	result = proc_pid_instantiate(dentry, task, NULL);
-+out_put_task:
- 	put_task_struct(task);
- out:
- 	return result;
++	if (fs_info->pidonly == PROC_PIDONLY_ON)
++		return 1;
+ 
+ 	return proc_readdir_de(file, ctx, PDE(inode));
+ }
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 91fe4896fa85..c1dbcf2b96db 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -173,6 +173,8 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
+ 	if (fs_info->hide_pid != HIDEPID_OFF)
+ 		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
++	if (fs_info->pidonly != PROC_PIDONLY_OFF)
++		seq_printf(seq, ",subset=pidfs");
+ 
+ 	return 0;
+ }
+@@ -393,12 +395,16 @@ proc_reg_get_unmapped_area(struct file *file, unsigned long orig_addr,
+ 
+ static int proc_reg_open(struct inode *inode, struct file *file)
+ {
++	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
+ 	struct proc_dir_entry *pde = PDE(inode);
+ 	int rv = 0;
+ 	typeof_member(struct proc_ops, proc_open) open;
+ 	typeof_member(struct proc_ops, proc_release) release;
+ 	struct pde_opener *pdeo;
+ 
++	if (fs_info->pidonly == PROC_PIDONLY_ON)
++		return -ENOENT;
++
+ 	/*
+ 	 * Ensure that
+ 	 * 1) PDE's ->release hook will be called no matter what
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 616e8976185c..62eae22403d2 100644
+index 62eae22403d2..07c309529628 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -47,6 +47,14 @@ static const struct fs_parameter_spec proc_fs_parameters[] = {
+@@ -34,16 +34,19 @@ struct proc_fs_context {
+ 	unsigned int		mask;
+ 	int			hidepid;
+ 	int			gid;
++	int			pidonly;
+ };
+ 
+ enum proc_param {
+ 	Opt_gid,
+ 	Opt_hidepid,
++	Opt_subset,
+ };
+ 
+ static const struct fs_parameter_spec proc_fs_parameters[] = {
+ 	fsparam_u32("gid",	Opt_gid),
+ 	fsparam_u32("hidepid",	Opt_hidepid),
++	fsparam_string("subset",	Opt_subset),
  	{}
  };
  
-+static inline int valid_hidepid(unsigned int value)
+@@ -55,6 +58,29 @@ static inline int valid_hidepid(unsigned int value)
+ 		value == HIDEPID_NOT_PTRACEABLE);
+ }
+ 
++static int proc_parse_subset_param(struct fs_context *fc, char *value)
 +{
-+	return (value == HIDEPID_OFF ||
-+		value == HIDEPID_NO_ACCESS ||
-+		value == HIDEPID_INVISIBLE ||
-+		value == HIDEPID_NOT_PTRACEABLE);
++	struct proc_fs_context *ctx = fc->fs_private;
++
++	while (value) {
++		char *ptr = strchr(value, ',');
++
++		if (ptr != NULL)
++			*ptr++ = '\0';
++
++		if (*value != '\0') {
++			if (!strcmp(value, "pidfs")) {
++				ctx->pidonly = PROC_PIDONLY_ON;
++			} else {
++				return invalf(fc, "proc: unsupported subset option - %s\n", value);
++			}
++		}
++		value = ptr;
++	}
++
++	return 0;
 +}
 +
  static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
  {
  	struct proc_fs_context *ctx = fc->fs_private;
-@@ -63,10 +71,9 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		break;
- 
- 	case Opt_hidepid:
-+		if (!valid_hidepid(result.uint_32))
-+			return invalf(fc, "proc: unknown value of hidepid.\n");
+@@ -76,6 +102,11 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
  		ctx->hidepid = result.uint_32;
--		if (ctx->hidepid < HIDEPID_OFF ||
--		    ctx->hidepid > HIDEPID_INVISIBLE)
--			return invalfc(fc, "hidepid value must be between 0 and 2.\n");
  		break;
  
++	case Opt_subset:
++		if (proc_parse_subset_param(fc, param->string) < 0)
++			return -EINVAL;
++		break;
++
  	default:
+ 		return -EINVAL;
+ 	}
+@@ -95,6 +126,8 @@ static void proc_apply_options(struct super_block *s,
+ 		ctx->fs_info->pid_gid = make_kgid(user_ns, ctx->gid);
+ 	if (ctx->mask & (1 << Opt_hidepid))
+ 		ctx->fs_info->hide_pid = ctx->hidepid;
++	if (ctx->mask & (1 << Opt_subset))
++		ctx->fs_info->pidonly = ctx->pidonly;
+ }
+ 
+ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
 diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 7d852dbca253..21d19353fdc7 100644
+index 21d19353fdc7..afd38cae2339 100644
 --- a/include/linux/proc_fs.h
 +++ b/include/linux/proc_fs.h
-@@ -32,6 +32,7 @@ enum {
- 	HIDEPID_OFF	  = 0,
- 	HIDEPID_NO_ACCESS = 1,
- 	HIDEPID_INVISIBLE = 2,
-+	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
+@@ -35,12 +35,19 @@ enum {
+ 	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
  };
  
++/* definitions for proc mount option pidonly */
++enum {
++	PROC_PIDONLY_OFF = 0,
++	PROC_PIDONLY_ON  = 1,
++};
++
  struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+ 	struct dentry *proc_self;        /* For /proc/self */
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self */
+ 	kgid_t pid_gid;
+ 	int hide_pid;
++	int pidonly;
+ };
+ 
+ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 -- 
 2.25.1
 
