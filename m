@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 857AE185E70
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 17:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 755E1185EA4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 18:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbgCOQTE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 12:19:04 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:50929 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbgCOQTE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 12:19:04 -0400
-Received: by mail-io1-f70.google.com with SMTP id d16so10045647iop.17
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Mar 2020 09:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=aBVpr2lszHHXRhoIRtyr/UgZ7zigQ1Re4Bzqf5rEmB8=;
-        b=KGx3ZHdGjFr3zFZLkktLuE/urARQsXgkkJLlxIf8Fu5vF4CVqOw4TxEQVHgZajKco0
-         EEhlFyjvEk7GOrspQwBC1XMqeWi5HukBI4LBp8kvbWGJVN0VPVOgGqa/j0FhCrlIoRQq
-         COPlfXieAg8YTLlxMErdFbLeS5nHSv8U50rDFjqNI8mVMkN7LphVa3zJXNQDk/Sy7YuA
-         H4AIySFbCenkt1jqY+4kEFYo8VkydXmraGzy1jg7EA9heFmx52+OuFxx3zqOU/PTRb6o
-         9XkkffLlgOyCvDfbVnhsq450QnTVfJhB4kXGOxM2AH9Wo+FlwK1XCcZyFNC5LDIMiixC
-         YFAQ==
-X-Gm-Message-State: ANhLgQ2i6IqQk7v40QNPYoiL3jT/AKDMn62eJT2+XGM/OYWyfuXlwfVr
-        nlRNXbmwuTk5WYeGIPF+rZNY6l9R65Uu/fQPQ9aD7fWSKISV
-X-Google-Smtp-Source: ADFU+vvEpKjTJKXQNX4cXiEk/M0vqZw0uACkxtFRoJsmPwDzy61qIqim7f8/xuwV9rHXdGAII/j6tBy3274dpYif2g5SMTDAgQSk
+        id S1728959AbgCORQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 13:16:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728947AbgCORQy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Mar 2020 13:16:54 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC567206E9;
+        Sun, 15 Mar 2020 17:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584292614;
+        bh=+lmpvdxUBRgyrzSD7k7JSLFEM42g3oWA97s0+PhrLF8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fz8xheLuuQR+wB/DfIa8fMDHBJ96eTBl6qoUQEPumGFkmN+p2eeRitOsIvPQcwEWX
+         sRdvJhFc0FfCr/6CNrztD5Ta/DRrUiu5/aYHe+U70wAB9I8f7fFCSoPsWq5PyGQl0F
+         bbS551kFvD0b5ZrLw8+8RdX4rlEDR7PjNypkYRrs=
+Date:   Sun, 15 Mar 2020 10:16:52 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v8 10/11] f2fs: add inline encryption support
+Message-ID: <20200315171652.GA1055@sol.localdomain>
+References: <20200312080253.3667-1-satyat@google.com>
+ <20200312080253.3667-11-satyat@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:3b11:: with SMTP id i17mr18499810ila.161.1584289143334;
- Sun, 15 Mar 2020 09:19:03 -0700 (PDT)
-Date:   Sun, 15 Mar 2020 09:19:03 -0700
-In-Reply-To: <000000000000fb27f1059aa202ea@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c33d905a0e70f63@google.com>
-Subject: Re: possible deadlock in pipe_lock (3)
-From:   syzbot <syzbot+217d60b447573313b211@syzkaller.appspotmail.com>
-To:     jencce.kernel@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, mszeredi@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312080253.3667-11-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this bug was fixed by commit:
+On Thu, Mar 12, 2020 at 01:02:52AM -0700, Satya Tangirala wrote:
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 5355be6b6755..75817f0dc6f8 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -139,6 +139,9 @@ struct f2fs_mount_info {
+>  	int alloc_mode;			/* segment allocation policy */
+>  	int fsync_mode;			/* fsync policy */
+>  	bool test_dummy_encryption;	/* test dummy encryption */
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	bool inlinecrypt;		/* inline encryption enabled */
+> +#endif
+>  	block_t unusable_cap;		/* Amount of space allowed to be
+>  					 * unusable when disabling checkpoint
+>  					 */
 
-commit 1a980b8cbf0059a5308eea61522f232fd03002e2
-Author: Murphy Zhou <jencce.kernel@gmail.com>
-Date:   Fri Jan 17 12:49:29 2020 +0000
+This bool is unused now.
 
-    ovl: add splice file read write helper
+> @@ -1568,6 +1577,9 @@ static void default_options(struct f2fs_sb_info *sbi)
+>  	F2FS_OPTION(sbi).alloc_mode = ALLOC_MODE_DEFAULT;
+>  	F2FS_OPTION(sbi).fsync_mode = FSYNC_MODE_POSIX;
+>  	F2FS_OPTION(sbi).test_dummy_encryption = false;
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	sbi->sb->s_flags &= ~SB_INLINECRYPT;
+> +#endif
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12dd7dc3e00000
-start commit:   46cf053e Linux 5.5-rc3
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-dashboard link: https://syzkaller.appspot.com/bug?extid=217d60b447573313b211
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116496c1e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10104649e00000
+This really should be CONFIG_FS_ENCRYPTION_INLINE_CRYPT, but actually there's no
+need for the #ifdef at all.  Just clear the flag unconditionally.
 
-If the result looks correct, please mark the bug fixed by replying with:
-
-#syz fix: ovl: add splice file read write helper
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+- Eric
