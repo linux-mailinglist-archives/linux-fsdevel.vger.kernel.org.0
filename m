@@ -2,71 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D323E186A2E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 12:38:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7DA5186BB2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 14:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbgCPLhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Mar 2020 07:37:50 -0400
-Received: from verein.lst.de ([213.95.11.211]:53902 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbgCPLhu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Mar 2020 07:37:50 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id A9E1C68CEC; Mon, 16 Mar 2020 12:37:46 +0100 (CET)
-Date:   Mon, 16 Mar 2020 12:37:46 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     Christoph Hellwig <hch@lst.de>, jack@suse.cz,
-        Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
-        bvanassche@acm.org, keith.busch@intel.com, tglx@linutronix.de,
-        mwilck@suse.com, yuyufen@huawei.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: disk revalidation updates and OOM
-Message-ID: <20200316113746.GA15930@lst.de>
-References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com> <20200310074018.GB26381@lst.de> <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com> <20200310162647.GA6361@lst.de> <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com> <20200311155458.GA24376@lst.de> <18bbb6cd-578e-5ead-f2cd-a8a01db17e29@windriver.com>
+        id S1731156AbgCPNC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Mar 2020 09:02:56 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56102 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730974AbgCPNCz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Mar 2020 09:02:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584363774;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LLQsyKzFI2FWMsfb3WnnDbhofXGcpSrAYcxTSH7lcYc=;
+        b=UZdHOmHtUvglgyKP51IdS9C12kT7WIu2m6D/+0+6Lzorux6sFW9wIzaLn+7wT1BAzVgDUj
+        JWcJ2b4aa7k5lTXIfQgg84R+6tviWu9XnGLTw/cQHb/bDX2nNbKPTv1lO46KfkxtrMczce
+        B2FAgq4x3rSPRcBvZpShB4RO7Vf8pmw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-472-qiNL0Hy_PamcS1YiC1ZLyw-1; Mon, 16 Mar 2020 09:02:44 -0400
+X-MC-Unique: qiNL0Hy_PamcS1YiC1ZLyw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 722D81005516;
+        Mon, 16 Mar 2020 13:02:43 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-121-211.rdu2.redhat.com [10.10.121.211])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC04C92D0C;
+        Mon, 16 Mar 2020 13:02:34 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 1FFCA2234E4; Mon, 16 Mar 2020 09:02:34 -0400 (EDT)
+Date:   Mon, 16 Mar 2020 09:02:34 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Patrick Ohly <patrick.ohly@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
+Subject: Re: [PATCH 00/20] virtiofs: Add DAX support
+Message-ID: <20200316130234.GA4013@redhat.com>
+References: <20200304165845.3081-1-vgoyal@redhat.com>
+ <yrjh1rpzggg4.fsf@pohly-mobl1.fritz.box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18bbb6cd-578e-5ead-f2cd-a8a01db17e29@windriver.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <yrjh1rpzggg4.fsf@pohly-mobl1.fritz.box>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 07:01:09PM +0800, He Zhe wrote:
-> > Do 142fe8f and 979c690d work with the build fix applied? (f0b870d
-> > shouldn't be interesting for this case).
+On Wed, Mar 11, 2020 at 02:38:03PM +0100, Patrick Ohly wrote:
+> Vivek Goyal <vgoyal@redhat.com> writes:
+> > This patch series adds DAX support to virtiofs filesystem. This allows
+> > bypassing guest page cache and allows mapping host page cache directly
+> > in guest address space.
+> >
+> > When a page of file is needed, guest sends a request to map that page
+> > (in host page cache) in qemu address space. Inside guest this is
+> > a physical memory range controlled by virtiofs device. And guest
+> > directly maps this physical address range using DAX and hence gets
+> > access to file data on host.
+> >
+> > This can speed up things considerably in many situations. Also this
+> > can result in substantial memory savings as file data does not have
+> > to be copied in guest and it is directly accessed from host page
+> > cache.
 > 
-> Sorry for slow reply.
+> As a potential user of this, let me make sure I understand the expected
+> outcome: is the goal to let virtiofs use DAX (for increased performance,
+> etc.) or also let applications that use virtiofs use DAX?
 > 
-> With my build fix applied, the issue is triggered since 142fe8f.
-> And I can see the endless loop of invalidate and revalidate...
+> You are mentioning using the host's page cache, so it's probably the
+> former and MAP_SYNC on virtiofs will continue to be rejected, right?
 
-Thanks.  Can you test the patch below that restores the previous
-rather odd behavior of not clearing the capacity to 0 if partition
-scanning is not enabled?
+Hi Patrick,
 
+You are right. Its the former. That is we want virtiofs to be able to
+make use of DAX to bypass guest page cache. But there is no persistent
+memory so no persistent memory programming semantics available to user
+space. For that I guess we have virtio-pmem.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 69bf2fb6f7cd..daac27f4b821 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1520,10 +1520,13 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
- 	if (ret)
- 		return ret;
- 
--	if (invalidate)
--		set_capacity(disk, 0);
--	else if (disk->fops->revalidate_disk)
--		disk->fops->revalidate_disk(disk);
-+	if (invalidate) {
-+		if (disk_part_scan_enabled(disk))
-+			set_capacity(disk, 0);
-+	} else {
-+		if (disk->fops->revalidate_disk)
-+			disk->fops->revalidate_disk(disk);
-+	}
- 
- 	check_disk_size_change(disk, bdev, !invalidate);
- 
+We expect users will issue fsync/msync like a regular filesystem to
+make changes persistent. So in that aspect, rejecting MAP_SYNC
+makes sense. I will test and see if current code is rejecting MAP_SYNC
+or not.
+
+Thanks
+Vivek
+
