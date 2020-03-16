@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF253187083
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 17:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2412F187078
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 17:51:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732302AbgCPQvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Mar 2020 12:51:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:52292 "EHLO foss.arm.com"
+        id S1732278AbgCPQvX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Mar 2020 12:51:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:52324 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732259AbgCPQvV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:51:21 -0400
+        id S1732273AbgCPQvX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:51:23 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C135B101E;
-        Mon, 16 Mar 2020 09:51:20 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D0FA7106F;
+        Mon, 16 Mar 2020 09:51:22 -0700 (PDT)
 Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20CE53F67D;
-        Mon, 16 Mar 2020 09:51:20 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 559D33F67D;
+        Mon, 16 Mar 2020 09:51:22 -0700 (PDT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>
@@ -40,11 +40,10 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Sudakshina Das <sudi.das@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>,
         Mark Brown <broonie@kernel.org>
-Subject: [PATCH v10 10/13] KVM: arm64: BTI: Reset BTYPE when skipping emulated instructions
-Date:   Mon, 16 Mar 2020 16:50:52 +0000
-Message-Id: <20200316165055.31179-11-broonie@kernel.org>
+Subject: [PATCH v10 11/13] arm64: mm: Display guarded pages in ptdump
+Date:   Mon, 16 Mar 2020 16:50:53 +0000
+Message-Id: <20200316165055.31179-12-broonie@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200316165055.31179-1-broonie@kernel.org>
 References: <20200316165055.31179-1-broonie@kernel.org>
@@ -55,41 +54,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Martin <Dave.Martin@arm.com>
+v8.5-BTI introduces the GP field in stage 1 translation tables which
+indicates that blocks and pages with it set are guarded pages for which
+branch target identification checks should be performed. Decode this
+when dumping the page tables to aid debugging.
 
-Since normal execution of any non-branch instruction resets the
-PSTATE BTYPE field to 0, so do the same thing when emulating a
-trapped instruction.
-
-Branches don't trap directly, so we should never need to assign a
-non-zero value to BTYPE here.
-
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/arm64/include/asm/kvm_emulate.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/mm/dump.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-index 688c63412cc2..dee51c1dcb93 100644
---- a/arch/arm64/include/asm/kvm_emulate.h
-+++ b/arch/arm64/include/asm/kvm_emulate.h
-@@ -506,10 +506,12 @@ static inline unsigned long vcpu_data_host_to_guest(struct kvm_vcpu *vcpu,
- 
- static inline void kvm_skip_instr(struct kvm_vcpu *vcpu, bool is_wide_instr)
- {
--	if (vcpu_mode_is_32bit(vcpu))
-+	if (vcpu_mode_is_32bit(vcpu)) {
- 		kvm_skip_instr32(vcpu, is_wide_instr);
--	else
-+	} else {
- 		*vcpu_pc(vcpu) += 4;
-+		*vcpu_cpsr(vcpu) &= ~PSR_BTYPE_MASK;
-+	}
- 
- 	/* advance the singlestep state machine */
- 	*vcpu_cpsr(vcpu) &= ~DBG_SPSR_SS;
+diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
+index 860c00ec8bd3..78163b7a7dde 100644
+--- a/arch/arm64/mm/dump.c
++++ b/arch/arm64/mm/dump.c
+@@ -145,6 +145,11 @@ static const struct prot_bits pte_bits[] = {
+ 		.val	= PTE_UXN,
+ 		.set	= "UXN",
+ 		.clear	= "   ",
++	}, {
++		.mask	= PTE_GP,
++		.val	= PTE_GP,
++		.set	= "GP",
++		.clear	= "  ",
+ 	}, {
+ 		.mask	= PTE_ATTRINDX_MASK,
+ 		.val	= PTE_ATTRINDX(MT_DEVICE_nGnRnE),
 -- 
 2.20.1
 
