@@ -2,133 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A458E186CC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 15:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E482218706A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 17:51:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbgCPOBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Mar 2020 10:01:43 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37366 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729487AbgCPOBn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Mar 2020 10:01:43 -0400
-Received: from mail-qt1-f197.google.com ([209.85.160.197])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <gpiccoli@canonical.com>)
-        id 1jDqJJ-0003Ke-0s
-        for linux-fsdevel@vger.kernel.org; Mon, 16 Mar 2020 14:01:41 +0000
-Received: by mail-qt1-f197.google.com with SMTP id j35so17089363qte.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Mar 2020 07:01:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ls0qQ2FGNgDvZWRTpY07HTV7A5C1zgaL8CBC4ySrAQw=;
-        b=dRtE1qWGKlrA+oBRDw65rtYMPUi1Yq1Y2Zrldr1zTJMuIzNyFZvr0VbY/+I+/PBgvo
-         gt6WhccyEpw7JP34Li+OkZdeB688hsYjh7z8u/YWiRHmj05sKWWLZMaoHe65rL/677kG
-         RniaQbfyMcfRdNfFEsWPQ42XyGwFt4XVF2SHdctHbRoTaK4veswAbIAWZWupLpT2L/Z9
-         469iLoTpz/R7pKiIRILZIqnEDyVcyFBK57AfzYLJbK6+TzgppqABC665Cc7yF+TO+PTr
-         IS9Q1Tk3Gf2f75k1G1QjrVmvKkBGR75JASuHPkADyS+RVyMPzoZfJz/pVHNrmNSljayo
-         HW/g==
-X-Gm-Message-State: ANhLgQ0vz851O6As8xCfpriRG09axyS7YkT/9vqCvwvxaNzwlA+MCZtO
-        fMBl7vN7ESErGQ3R1rw8POMLtuNTf+64rb/yj1Cu188OOC0w+WHFtPb1DNPbBNLilwXxY8ez8xj
-        BrViwK300qszwWSVJK5XmKn+oPxo5pVLJqIAI1jhvyko=
-X-Received: by 2002:ac8:1111:: with SMTP id c17mr117029qtj.253.1584367300020;
-        Mon, 16 Mar 2020 07:01:40 -0700 (PDT)
-X-Google-Smtp-Source: ADFU+vu0d8Jvr+dHBpCDoXy3rrdInV4r0mPhJVop5HUsqAwYQJYxYtMmITQv+vnidzPqqhpY1s6+gw==
-X-Received: by 2002:ac8:1111:: with SMTP id c17mr116970qtj.253.1584367299496;
-        Mon, 16 Mar 2020 07:01:39 -0700 (PDT)
-Received: from [192.168.1.75] (189-47-87-73.dsl.telesp.net.br. [189.47.87.73])
-        by smtp.gmail.com with ESMTPSA id f203sm4830714qke.100.2020.03.16.07.01.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Mar 2020 07:01:37 -0700 (PDT)
-Subject: Re: [PATCH] kernel/hung_task.c: Introduce sysctl to print all traces
- when a hung task is detected
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, mcgrof@kernel.org, yzaikin@google.com,
-        tglx@linutronix.de, kernel@gpiccoli.net
-References: <20200310155650.17968-1-gpiccoli@canonical.com>
- <ef3b3e9a-9d58-60ec-d638-88ad57d29aec@canonical.com>
- <202003132011.8143A71FE@keescook>
- <c4b05b32-216a-e130-259f-0d9506ff9244@i-love.sakura.ne.jp>
-From:   "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gpiccoli@canonical.com; prefer-encrypt=mutual; keydata=
- mQENBFpVBxcBCADPNKmu2iNKLepiv8+Ssx7+fVR8lrL7cvakMNFPXsXk+f0Bgq9NazNKWJIn
- Qxpa1iEWTZcLS8ikjatHMECJJqWlt2YcjU5MGbH1mZh+bT3RxrJRhxONz5e5YILyNp7jX+Vh
- 30rhj3J0vdrlIhPS8/bAt5tvTb3ceWEic9mWZMsosPavsKVcLIO6iZFlzXVu2WJ9cov8eQM/
- irIgzvmFEcRyiQ4K+XUhuA0ccGwgvoJv4/GWVPJFHfMX9+dat0Ev8HQEbN/mko/bUS4Wprdv
- 7HR5tP9efSLucnsVzay0O6niZ61e5c97oUa9bdqHyApkCnGgKCpg7OZqLMM9Y3EcdMIJABEB
- AAG0LUd1aWxoZXJtZSBHLiBQaWNjb2xpIDxncGljY29saUBjYW5vbmljYWwuY29tPokBNwQT
- AQgAIQUCWmClvQIbAwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDOR5EF9K/7Gza3B/9d
- 5yczvEwvlh6ksYq+juyuElLvNwMFuyMPsvMfP38UslU8S3lf+ETukN1S8XVdeq9yscwtsRW/
- 4YoUwHinJGRovqy8gFlm3SAtjfdqysgJqUJwBmOtcsHkmvFXJmPPGVoH9rMCUr9s6VDPox8f
- q2W5M7XE9YpsfchS/0fMn+DenhQpV3W6pbLtuDvH/81GKrhxO8whSEkByZbbc+mqRhUSTdN3
- iMpRL0sULKPVYbVMbQEAnfJJ1LDkPqlTikAgt3peP7AaSpGs1e3pFzSEEW1VD2jIUmmDku0D
- LmTHRl4t9KpbU/H2/OPZkrm7809QovJGRAxjLLPcYOAP7DUeltveuQENBFpVBxcBCADbxD6J
- aNw/KgiSsbx5Sv8nNqO1ObTjhDR1wJw+02Bar9DGuFvx5/qs3ArSZkl8qX0X9Vhptk8rYnkn
- pfcrtPBYLoux8zmrGPA5vRgK2ItvSc0WN31YR/6nqnMfeC4CumFa/yLl26uzHJa5RYYQ47jg
- kZPehpc7IqEQ5IKy6cCKjgAkuvM1rDP1kWQ9noVhTUFr2SYVTT/WBHqUWorjhu57/OREo+Tl
- nxI1KrnmW0DbF52tYoHLt85dK10HQrV35OEFXuz0QPSNrYJT0CZHpUprkUxrupDgkM+2F5LI
- bIcaIQ4uDMWRyHpDbczQtmTke0x41AeIND3GUc+PQ4hWGp9XABEBAAGJAR8EGAEIAAkFAlpV
- BxcCGwwACgkQzkeRBfSv+xv1wwgAj39/45O3eHN5pK0XMyiRF4ihH9p1+8JVfBoSQw7AJ6oU
- 1Hoa+sZnlag/l2GTjC8dfEGNoZd3aRxqfkTrpu2TcfT6jIAsxGjnu+fUCoRNZzmjvRziw3T8
- egSPz+GbNXrTXB8g/nc9mqHPPprOiVHDSK8aGoBqkQAPZDjUtRwVx112wtaQwArT2+bDbb/Y
- Yh6gTrYoRYHo6FuQl5YsHop/fmTahpTx11IMjuh6IJQ+lvdpdfYJ6hmAZ9kiVszDF6pGFVkY
- kHWtnE2Aa5qkxnA2HoFpqFifNWn5TyvJFpyqwVhVI8XYtXyVHub/WbXLWQwSJA4OHmqU8gDl
- X18zwLgdiQ==
-Message-ID: <627a34c6-6ccd-d6c9-ae91-fd7cb4087e96@canonical.com>
-Date:   Mon, 16 Mar 2020 11:01:34 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1731756AbgCPQvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Mar 2020 12:51:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:52022 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731414AbgCPQu7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Mar 2020 12:50:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3AF21FB;
+        Mon, 16 Mar 2020 09:50:58 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 66E533F67D;
+        Mon, 16 Mar 2020 09:50:58 -0700 (PDT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Paul Elliott <paul.elliott@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        "H . J . Lu " <hjl.tools@gmail.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        =?UTF-8?q?Kristina=20Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v10 00/13] arm64: Branch Target Identification support
+Date:   Mon, 16 Mar 2020 16:50:42 +0000
+Message-Id: <20200316165055.31179-1-broonie@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <c4b05b32-216a-e130-259f-0d9506ff9244@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patch series implements support for ARMv8.5-A Branch Target
+Identification (BTI), which is a control flow integrity protection
+feature introduced as part of the ARMv8.5-A extensions.
+
+Changes:
+
+v10:
+ - Fix build for !COMPAT configurations.
+v9:
+ - Move Kconfig addition to final patch in series.
+ - Add patch from Daniel Kiss adding BTI information to smaps, this has
+   a trivial conflict with a .rst conversion in -next.
+v8:
+ - Remove a redundant IS_ENABLED(CONFIG_ARM64_BTI) check.
+v7:
+ - Rebase onto v5.6-rc3.
+ - Move comment about keeping NT_GNU_PROPERTY_TYPE_0 internal into first
+   patch.
+ - Add an explicit check for system_supports_bti() when parsing BTI ELF
+   property for improved robustness.
+v6:
+ - Rebase onto v5.6-rc1.
+ - Fix typos s/BYTPE/BTYPE/ in commit log for "arm64: BTI: Decode BYTPE
+   bits when printing PSTATE".
+v5:
+ - Changed a bunch of -EIO to -ENOEXEC in the ELF parsing code.
+ - Move PSR_BTYPE defines to UAPI.
+ - Use compat_user_mode() rather than open coding.
+ - Fix a typo s/BYTPE/BTYPE/ in syscall.c
+v4:
+ - Dropped patch fixing existing documentation as it has already been merged.
+ - Convert WARN_ON() to WARN_ON_ONCE() in "ELF: Add ELF program property
+   parsing support".
+ - Added display of guarded pages to ptdump.
+ - Updated for conversion of exception handling from assembler to C.
+
+Notes:
+
+ * GCC 9 can compile backwards-compatible BTI-enabled code with
+   -mbranch-protection=bti or -mbranch-protection=standard.
+
+ * Binutils 2.33 and later support the new ELF note.
+
+   Creation of a BTI-enabled binary requires _everything_ linked in to
+   be BTI-enabled.  For now ld --force-bti can be used to override this,
+   but some things may break until the required C library support is in
+   place.
+
+   There is no straightforward way to mark a .s file as BTI-enabled:
+   scraping the output from gcc -S works as a quick hack for now.
+
+   readelf -n can be used to examing the program properties in an ELF
+   file.
+
+ * Runtime mmap() and mprotect() can be used to enable BTI on a
+   page-by-page basis using the new PROT_BTI, but the code in the
+   affected pages still needs to be written or compiled to contain the
+   appropriate BTI landing pads.
+
+Daniel Kiss (1):
+  mm: smaps: Report arm64 guarded pages in smaps
+
+Dave Martin (11):
+  ELF: UAPI and Kconfig additions for ELF program properties
+  ELF: Add ELF program property parsing support
+  arm64: Basic Branch Target Identification support
+  elf: Allow arch to tweak initial mmap prot flags
+  arm64: elf: Enable BTI at exec based on ELF program properties
+  arm64: BTI: Decode BYTPE bits when printing PSTATE
+  arm64: unify native/compat instruction skipping
+  arm64: traps: Shuffle code to eliminate forward declarations
+  arm64: BTI: Reset BTYPE when skipping emulated instructions
+  KVM: arm64: BTI: Reset BTYPE when skipping emulated instructions
+  arm64: BTI: Add Kconfig entry for userspace BTI
+
+Mark Brown (1):
+  arm64: mm: Display guarded pages in ptdump
+
+ Documentation/arm64/cpu-feature-registers.rst |   2 +
+ Documentation/arm64/elf_hwcaps.rst            |   5 +
+ Documentation/filesystems/proc.txt            |   1 +
+ arch/arm64/Kconfig                            |  25 +++
+ arch/arm64/include/asm/cpucaps.h              |   3 +-
+ arch/arm64/include/asm/cpufeature.h           |   6 +
+ arch/arm64/include/asm/elf.h                  |  50 ++++++
+ arch/arm64/include/asm/esr.h                  |   2 +-
+ arch/arm64/include/asm/exception.h            |   1 +
+ arch/arm64/include/asm/hwcap.h                |   1 +
+ arch/arm64/include/asm/kvm_emulate.h          |   6 +-
+ arch/arm64/include/asm/mman.h                 |  37 +++++
+ arch/arm64/include/asm/pgtable-hwdef.h        |   1 +
+ arch/arm64/include/asm/pgtable.h              |   2 +-
+ arch/arm64/include/asm/ptrace.h               |   1 +
+ arch/arm64/include/asm/sysreg.h               |   4 +
+ arch/arm64/include/uapi/asm/hwcap.h           |   1 +
+ arch/arm64/include/uapi/asm/mman.h            |   9 ++
+ arch/arm64/include/uapi/asm/ptrace.h          |   9 ++
+ arch/arm64/kernel/cpufeature.c                |  33 ++++
+ arch/arm64/kernel/cpuinfo.c                   |   1 +
+ arch/arm64/kernel/entry-common.c              |  11 ++
+ arch/arm64/kernel/process.c                   |  36 ++++-
+ arch/arm64/kernel/ptrace.c                    |   2 +-
+ arch/arm64/kernel/signal.c                    |  16 ++
+ arch/arm64/kernel/syscall.c                   |  18 +++
+ arch/arm64/kernel/traps.c                     | 131 ++++++++--------
+ arch/arm64/mm/dump.c                          |   5 +
+ fs/Kconfig.binfmt                             |   6 +
+ fs/binfmt_elf.c                               | 145 +++++++++++++++++-
+ fs/compat_binfmt_elf.c                        |   4 +
+ fs/proc/task_mmu.c                            |   3 +
+ include/linux/elf.h                           |  43 ++++++
+ include/linux/mm.h                            |   3 +
+ include/uapi/linux/elf.h                      |  11 ++
+ 35 files changed, 560 insertions(+), 74 deletions(-)
+ create mode 100644 arch/arm64/include/asm/mman.h
+ create mode 100644 arch/arm64/include/uapi/asm/mman.h
 
 
-On 14/03/2020 01:27, Tetsuo Handa wrote:
-> On 2020/03/14 12:12, Kees Cook wrote:
->> On Fri, Mar 13, 2020 at 02:23:37PM -0300, Guilherme G. Piccoli wrote:
->>> Kees / Testsuo, are you OK with this patch once I resend with the
->>> suggestions you gave me?
->>
->> I think so, yes. Send a v2 (to akpm with us in CC).
->>
->>> Is there anybody else I should loop in the patch that should take a
->>> look? Never sent sysctl stuff before, sorry if I forgot somebody heheh
->>
->> akpm usually takes these kinds of things.
->>
-> 
-> Well, maybe sysctl_hung_task_all_cpu_backtrace = 1 by default is better for
-> compatibility? Please CC or BCC kernel-testing people so that they can add
-> hung_task_all_cpu_backtrace=1 kernel command line parameter to their testing
-> environments if sysctl_hung_task_all_cpu_backtrace = 0 by default.
-> 
+base-commit: f8788d86ab28f61f7b46eb6be375f8a726783636
+-- 
+2.20.1
 
-Thanks a lot Kees and Tetsuo, I'll implement the suggestions and loop
-the kernel-testing  and akpm in V2.
-
-About being default, I personally think it's better / more reasonable to
-have this parameter defaults to 0, to keep consistency with all other
-*_all_cpu_backtrace parameters. Right now kernel shows the backtraces
-only when hung_task_panic is set, so the idea of this patch is to
-decouple the toggles and allow the user to decide about this policy.
-
-Nevertheless, if people consider that would be good to have it as
-enabled by default, I can change it in a potential V3.
-Cheers,
-
-
-Guilherme
