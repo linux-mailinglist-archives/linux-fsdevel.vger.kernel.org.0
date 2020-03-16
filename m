@@ -2,222 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93108186948
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 11:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B17521869A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 12:01:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbgCPKkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Mar 2020 06:40:45 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53641 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730497AbgCPKko (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:40:44 -0400
-Received: by mail-pj1-f65.google.com with SMTP id l36so8095659pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Mar 2020 03:40:44 -0700 (PDT)
+        id S1730737AbgCPLBX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Mar 2020 07:01:23 -0400
+Received: from mail-dm6nam10on2083.outbound.protection.outlook.com ([40.107.93.83]:29376
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730529AbgCPLBX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Mar 2020 07:01:23 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Yic8bWbd6r4KWu6mcklpARP26qccSQV6C9qM2R+GTsYSqU5s5L5fUm0D135dxu7fqPlD/kcELrahms+zN+lk8iycDSruAnaSMWZdpjDMopYakOLunoqToX/Sy5afJO46CELcIQkSNAQM/74PbcJvdgxVPApvfBQfjViaIeMOlcFniOuvE66B7qcg7Jm0Qg+ppGJG038JeiUM0HHzXN/fTGn78hUkt4jD3NMICFHd9fpLypuVDb7G1nOmnvW5IdR3m6Zqdgj57mscA4VjS3DDwhnTnfWUhEqSqrSerShKzBkTfOURxyxplGMn6vrR4RiMzT/gr8HMW2iqTamRPvC9aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mSGvJbXM33xPSnnkeaBqQ1Ol9q4oCZWy3ZPh3UQmYF0=;
+ b=Fy6iQ0OhdjQYFV+0F1Sawqjah7tq4iRgcEjuLzJeUrGFMqcKaBCJWSkzGr8nQ6stfavLAUTpahzYi7yfwMM7heGygWyjdQe4nSZSF5dEAkRymzLadYgtZwjnw2PeJHPxtd0tLPRqz9oNUvaeb+rmZgYuPjsQawzZc9p37YKzEmOev20ftrFjYbXY+lDvq16DHjSQ3s2eSwWk/Kpf1iKsK0AzhzSHbcRUUS4w3xx+vJwnJHDcRo4yZ1jitm6b/6MZhea3U/Jo91BaxqB97CH6sj9gCKiBCd2Nm7iE2Rn4Z5AQb5BTuKUD3An5rn26LrUN6eATENYD8x615ibn722/Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=L3eSlYEGbu4PoC6YG4Y6sJy5VuyO654A9z9jaMwfoII=;
-        b=U7jolHM3bRjcBPeF4kiQ8Qv4bCZPDeiyy2doENtGgy5ldWAt2Sh715JT8EcVxaAbHk
-         et0mFXOJ2tTKBs9DA6+eX0rnjUvNcytq5XOJxDzfpDs1TGdXTAwT87twSqg0ZptuTxcY
-         2cpCxGFrCjs+LNtDQbR/hNxqUHd+65sSNGd5lxS5BKsyoph7cuPrMAKjah2SF9XHT88l
-         qBUmIW/YwEathMLVvk6vSbBBx9EQQNz+a96dZ+uHp4x0amLEe17H3KyBvgtg/ul28uIz
-         Pu7RdNIGr3G8rdCBi870VZCeY+EShDhB8PvNOhbnXEmJeX5m1D9rXkDoBr+ygl0DPCiy
-         LzGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=L3eSlYEGbu4PoC6YG4Y6sJy5VuyO654A9z9jaMwfoII=;
-        b=MI7ZEat4Z0hGqg0zCC//CtAszOG23Eo569xoHeGAPkAfC+eVEa4PBYjP/tj30nW9Ih
-         a3lIHfL9N7agKYTBY3eORs4L5B+qrNwkc5rHf6sA1epxuBJLhIgnmN+l1TVgBayw+ANS
-         /e/9eeO5LQJE8l0VwyJZpP8+/2+8dqAlj+cF1l87oCjh9yoPaIuwgI3TOljnb7BpW946
-         Wu3w3MbpTFqEbQvXU7ceBWUICOxcfs4egXgPxZ8a7ejg4WglAmtQcPhmdLoXQT+SwigF
-         fhDIYEPkHUY8hlReY6FbGI59yoAfJZVJvA7A/zB9JCheAnBbViD5uwdKsJS6cZHPGqIn
-         mGVw==
-X-Gm-Message-State: ANhLgQ1aCRasNTr3Z7njuP4ZSZPkDGT9A9oajvrBqAZ39dtL13zLx3Fb
-        CNnqcVWT6l6fWHbS6RPmxio=
-X-Google-Smtp-Source: ADFU+vsFPfI9KgXUp4a42DVqAeDWUuRxQKl66czJZMnK/JrjUBixHW1pReSK4/A+y/ljHFP6Sj9lnQ==
-X-Received: by 2002:a17:902:8498:: with SMTP id c24mr25960172plo.233.1584355244072;
-        Mon, 16 Mar 2020 03:40:44 -0700 (PDT)
-Received: from dev.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id h2sm19834276pjc.7.2020.03.16.03.40.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Mar 2020 03:40:43 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     dchinner@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, guro@fb.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, willy@infradead.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v6 3/3] inode: protect page cache from freeing inode
-Date:   Mon, 16 Mar 2020 06:39:58 -0400
-Message-Id: <1584355198-10137-4-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1584355198-10137-1-git-send-email-laoar.shao@gmail.com>
-References: <1584355198-10137-1-git-send-email-laoar.shao@gmail.com>
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mSGvJbXM33xPSnnkeaBqQ1Ol9q4oCZWy3ZPh3UQmYF0=;
+ b=hLFzca+6/IhVV15WDSwQgzE7WtwjHohomWxAiedOcPGXvZOgdLuuI4WkzioubVxodD4G+IlbNaKcaFHF4rOnkR3rdsHheAtLDvNGS3VeyexhMe79UW6GdhLT4stAXZhWMvTj/la3Wvd3iVSkaO+AbbIUWzFnXz1JT1JSWAVZ98Q=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Zhe.He@windriver.com; 
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
+ by SN6PR11MB3504.namprd11.prod.outlook.com (2603:10b6:805:d0::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2793.11; Mon, 16 Mar
+ 2020 11:01:19 +0000
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2814.021; Mon, 16 Mar 2020
+ 11:01:19 +0000
+Subject: Re: disk revalidation updates and OOM
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     jack@suse.cz, Jens Axboe <axboe@kernel.dk>,
+        viro@zeniv.linux.org.uk, bvanassche@acm.org, keith.busch@intel.com,
+        tglx@linutronix.de, mwilck@suse.com, yuyufen@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
+ <20200310074018.GB26381@lst.de>
+ <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com>
+ <20200310162647.GA6361@lst.de>
+ <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
+ <20200311155458.GA24376@lst.de>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <18bbb6cd-578e-5ead-f2cd-a8a01db17e29@windriver.com>
+Date:   Mon, 16 Mar 2020 19:01:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+In-Reply-To: <20200311155458.GA24376@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: HK2PR02CA0146.apcprd02.prod.outlook.com
+ (2603:1096:202:16::30) To SN6PR11MB3360.namprd11.prod.outlook.com
+ (2603:10b6:805:c8::30)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [128.224.162.175] (60.247.85.82) by HK2PR02CA0146.apcprd02.prod.outlook.com (2603:1096:202:16::30) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.14 via Frontend Transport; Mon, 16 Mar 2020 11:01:15 +0000
+X-Originating-IP: [60.247.85.82]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d904ece3-2459-439c-ba3c-08d7c9995b3f
+X-MS-TrafficTypeDiagnostic: SN6PR11MB3504:
+X-Microsoft-Antispam-PRVS: <SN6PR11MB350484B8EEDE2CB87907CA4E8FF90@SN6PR11MB3504.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 03449D5DD1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(366004)(39850400004)(396003)(199004)(31686004)(4326008)(36756003)(6666004)(7416002)(478600001)(186003)(5660300002)(16526019)(2906002)(6486002)(16576012)(316002)(8676002)(26005)(81166006)(6706004)(81156014)(53546011)(2616005)(66946007)(66476007)(66556008)(86362001)(8936002)(31696002)(52116002)(6916009)(956004)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB3504;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: windriver.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: eBmOEcDepPr3tU3FnqpbpCAyXpOHgr9r0W8J5Qo6vc3+ycCbdCKsVV8Nxc9P34BhwnngYM6Tfoe8wIhbxRvrMp7BKScnBh7zaMFwRSZTqk4TP0WH7V5JJprJ+N9/xYyQfUGL3BfEQpEW8mEHPhKeAslctifdzBy+rOiG+zxS69lJHougzyWCDGF/hi9JpazMX58h4KC5PiwpY+AW4Fo64kjvPXYpIT+EWFNKAYJFgN6ZsXoJoQIPrVYFJnPKXXH0kGOkDNLzIaKGn1+MCZCV4wWh2B9ai1CEx/+6l4D1Elak1dsZngfIUWhp0l1Zpm6LWs5Djq3/I6d4BXdWSXRI5g1UI5HuMr9wQ1U4YJU/CC11WfiLT8OO3VGqyijzmZ4oIZyvhSG0UXbGY8k9DKNN2G5PcVRRWsjX0oUbA37vWzEcVXoCrbcVbY2qCNjismuC7Hy2XBaT4T8PEtNlcmq1Ljp3W5Ld6IiOgOpMl+0vvIwqv2EBRRC5BietA0/E2g3kVoHwI+uFGNcX4ViX/wumsjsgIVRaI+LRl3OjIf6uDoI=
+X-MS-Exchange-AntiSpam-MessageData: AD3zQnz9QSrZUDzL+8Oyc5goDOgeP6J1GlSdpWeC4fCDldtM8kiLEvTmBckJ4qQ6D08qy7FOYpsrZOmisjxqXEvGB+NXnDut8jCD8kybYVJx0wdy5MTnwdW0fed9ZTDgHJBKFN5g6FDkoX1N5lU+fA==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d904ece3-2459-439c-ba3c-08d7c9995b3f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 11:01:19.7195
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UvXwwcoyfs8EhRtIMSvg4teBwbDSXqfbNFnTaA2B8pZaJhomavJzqIEWtcZZ6OdcRqxp8dUp4osq8rN+kGVkig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB3504
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On my server there're some running MEMCGs protected by memory.{min, low},
-but I found the usage of these MEMCGs abruptly became very small, which
-were far less than the protect limit. It confused me and finally I
-found that was because of inode stealing.
-Once an inode is freed, all its belonging page caches will be dropped as
-well, no matter how may page caches it has. So if we intend to protect the
-page caches in a memcg, we must protect their host (the inode) first.
-Otherwise the memcg protection can be easily bypassed with freeing inode,
-especially if there're big files in this memcg.
 
-Supposes we have a memcg, and the stat of this memcg is,
-        memory.current = 1024M
-        memory.min = 512M
-And in this memcg there's a inode with 800M page caches.
-Once this memcg is scanned by kswapd or other regular reclaimers,
-    kswapd <<<< It can be either of the regular reclaimers.
-        shrink_node_memcgs
-            switch (mem_cgroup_protected()) <<<< Not protected
-                case MEMCG_PROT_NONE:  <<<< Will scan this memcg
-                        beak;
-            shrink_lruvec() <<<< Reclaim the page caches
-            shrink_slab()   <<<< It may free this inode and drop all its
-                                 page caches(800M).
-So we must protect the inode first if we want to protect page caches.
-Note that this inode may be a cold inode (in the tail of list lru), because
-memcg protection protects all slabs and page cache pages whatever they are
-cold or hot. IOW, this is a memcg-protection-specific issue.
 
-The inherent mismatch between memcg and inode is a trouble. One inode can
-be shared by different MEMCGs, but it is a very rare case. If an inode is
-shared, its belonging page caches may be charged to different MEMCGs.
-Currently there's no perfect solution to fix this kind of issue, but the
-inode majority-writer ownership switching can help it more or less.
+On 3/11/20 11:54 PM, Christoph Hellwig wrote:
+> On Wed, Mar 11, 2020 at 12:03:43PM +0800, He Zhe wrote:
+>>>> 979c690d block: move clearing bd_invalidated into check_disk_size_change
+>>>> f0b870d block: remove (__)blkdev_reread_part as an exported API
+>>>> 142fe8f block: fix bdev_disk_changed for non-partitioned devices
+>>>> a1548b6 block: move rescan_partitions to fs/block_dev.c
+>>> Just to make sure we are on the same page:  if you revert all four it
+>>> works, if you rever all but
+>>>
+>>> a1548b6 block: move rescan_partitions to fs/block_dev.c
+>>>
+>>> it doesn't?
+>> After reverting 142fe8f, rescan_partitions would be called in block/ioctl.c
+>> and cause a build failure. So I need to also revert a1548b6 to provide
+>> rescan_partitions.
+>>
+>> OR if I manually add the following diff instead of reverting a1548b6, then yes,
+>> it works too.
+> Ok, so 142fe8f is good except for the build failure.
+>
+> Do 142fe8f and 979c690d work with the build fix applied? (f0b870d
+> shouldn't be interesting for this case).
 
-Cc: Dave Chinner <dchinner@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- fs/inode.c | 75 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 3 deletions(-)
+Sorry for slow reply.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 93d9252..f5a9537 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -55,6 +55,12 @@
-  *   inode_hash_lock
-  */
- 
-+struct inode_isolate_control {
-+	struct list_head *freeable;
-+	struct mem_cgroup *memcg;	/* derived from shrink_control */
-+	bool memcg_low_reclaim;		/* derived from scan_control */
-+};
-+
- static unsigned int i_hash_mask __read_mostly;
- static unsigned int i_hash_shift __read_mostly;
- static struct hlist_head *inode_hashtable __read_mostly;
-@@ -715,6 +721,58 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- 	return busy;
- }
- 
-+#ifdef CONFIG_MEMCG_KMEM
-+/*
-+ * Once an inode is freed, all its belonging page caches will be dropped as
-+ * well, even if there're lots of page caches. So if we intend to protect
-+ * page caches in a memcg, we must protect their host(the inode) first.
-+ * Otherwise the memcg protection can be easily bypassed with freeing inode,
-+ * especially if there're big files in this memcg.
-+ * Note that it may happen that the page caches are already charged to the
-+ * memcg, but the inode hasn't been added to this memcg yet. In this case,
-+ * this inode is not protected.
-+ * The inherent mismatch between memcg and inode is a trouble. One inode
-+ * can be shared by different MEMCGs, but it is a very rare case. If
-+ * an inode is shared, its belonging page caches may be charged to
-+ * different MEMCGs. Currently there's no perfect solution to fix this
-+ * kind of issue, but the inode majority-writer ownership switching can
-+ * help it more or less.
-+ */
-+static bool memcg_can_reclaim_inode(struct inode *inode,
-+				    struct inode_isolate_control *iic)
-+{
-+	unsigned long protection;
-+	struct mem_cgroup *memcg;
-+	bool reclaimable = true;
-+
-+	if (!inode->i_data.nrpages)
-+		goto out;
-+
-+	/* Excludes freeing inode via drop_caches */
-+	if (!current->reclaim_state)
-+		goto out;
-+
-+	memcg = iic->memcg;
-+	if (!memcg || memcg == root_mem_cgroup)
-+		goto out;
-+
-+	protection = mem_cgroup_protection(memcg, iic->memcg_low_reclaim);
-+	if (!protection)
-+		goto out;
-+
-+	reclaimable = false;
-+
-+out:
-+	return reclaimable;
-+}
-+#else /* CONFIG_MEMCG_KMEM */
-+static bool memcg_can_reclaim_inode(struct inode *inode,
-+				    struct inode_isolate_control *iic)
-+{
-+	return true;
-+}
-+#endif /* CONFIG_MEMCG_KMEM */
-+
- /*
-  * Isolate the inode from the LRU in preparation for freeing it.
-  *
-@@ -733,8 +791,9 @@ int invalidate_inodes(struct super_block *sb, bool kill_dirty)
- static enum lru_status inode_lru_isolate(struct list_head *item,
- 		struct list_lru_one *lru, spinlock_t *lru_lock, void *arg)
- {
--	struct list_head *freeable = arg;
--	struct inode	*inode = container_of(item, struct inode, i_lru);
-+	struct inode_isolate_control *iic = arg;
-+	struct list_head *freeable = iic->freeable;
-+	struct inode *inode = container_of(item, struct inode, i_lru);
- 
- 	/*
- 	 * we are inverting the lru lock/inode->i_lock here, so use a trylock.
-@@ -743,6 +802,11 @@ static enum lru_status inode_lru_isolate(struct list_head *item,
- 	if (!spin_trylock(&inode->i_lock))
- 		return LRU_SKIP;
- 
-+	if (!memcg_can_reclaim_inode(inode, iic)) {
-+		spin_unlock(&inode->i_lock);
-+		return LRU_ROTATE;
-+	}
-+
- 	/*
- 	 * Referenced or dirty inodes are still in use. Give them another pass
- 	 * through the LRU as we canot reclaim them now.
-@@ -800,9 +864,14 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
- {
- 	LIST_HEAD(freeable);
- 	long freed;
-+	struct inode_isolate_control iic = {
-+		.freeable = &freeable,
-+		.memcg = sc->memcg,
-+		.memcg_low_reclaim = sc->memcg_low_reclaim,
-+	};
- 
- 	freed = list_lru_shrink_walk(&sb->s_inode_lru, sc,
--				     inode_lru_isolate, &freeable);
-+				     inode_lru_isolate, &iic);
- 	dispose_list(&freeable);
- 	return freed;
- }
--- 
-1.8.3.1
+With my build fix applied, the issue is triggered since 142fe8f.
+And I can see the endless loop of invalidate and revalidate...
 
+Zhe
