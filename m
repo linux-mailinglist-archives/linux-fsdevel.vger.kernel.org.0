@@ -2,120 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816D4185FB9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Mar 2020 21:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87CEE18616B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 02:49:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbgCOUQW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Mar 2020 16:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbgCOUQV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Mar 2020 16:16:21 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4834A205C9;
-        Sun, 15 Mar 2020 20:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584303380;
-        bh=5VqbqRCMOuCKrwhIgRoKM6xoalmVSXXR/W2soqbZ1L0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EcUzhGIuXaHU9vfOPWYtMg5tNxsoTitGkBlfvXySVUWt6Iu1NQNDAB8LCd1+0Nvyt
-         4XcWpBlIK/3A1T+NUUSkZwIzsU4SL3OLRuehrOjZp/6w9mEHq4mVL63J3TZCxfZEB0
-         4hZ1adM0h2K2JuNo4FFTY29yf4DUchHuTWpNOS4I=
-Date:   Sun, 15 Mar 2020 13:16:18 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
-        Kuohong Wang <kuohong.wang@mediatek.com>,
-        Kim Boojin <boojin.kim@samsung.com>
-Subject: Re: [PATCH v8 03/11] block: Make blk-integrity preclude hardware
- inline encryption
-Message-ID: <20200315201618.GH1055@sol.localdomain>
-References: <20200312080253.3667-1-satyat@google.com>
- <20200312080253.3667-4-satyat@google.com>
+        id S1729391AbgCPBt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Mar 2020 21:49:27 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43933 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729356AbgCPBt1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Mar 2020 21:49:27 -0400
+Received: by mail-io1-f65.google.com with SMTP id n21so15478312ioo.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Mar 2020 18:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yoq2dm2wMdYmvERBny9tE6W3gD6b5KdDrVUkIqFMrbk=;
+        b=Anh/jF7OcNxqH4rjeyCa4ugaeVhHAk1PRwDAFHIDH87cC7icS4Rn5glt3z4HIV7z1p
+         sopw9Y9rvRapYILcvn8hq/10UEfcMqBryRSpfYlpRwKl2WaSvvB2/uElI2xkI5pklANR
+         KFtkr62yG/Pm7zOFMa0cWMV9YhkdzVGD/BNA7KZFVzRX0+A0S61FsmYb1BAjqxQY5FqJ
+         wycmJ4pqctxLUNeHwwHCdRsuDT9ZpQyzW0nSDmiTfkSpZ8/WlUj1KftmaRDF7gVuLrad
+         3RgeWTHHR2xqbhdOKuwWmkmVtQr0hBKAqoiSS1+2G3Bdbg55Oz5MCHBVUct+L600MgkL
+         CSYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yoq2dm2wMdYmvERBny9tE6W3gD6b5KdDrVUkIqFMrbk=;
+        b=CJg9K4c4WtBfn0xIxnrhjLIoL8hqj2PTIpHgww9wtPUqhDyQJNWiiJEiPRnaZ4FKXg
+         LkoyLVl8MH8CSS0a5ZA8QiZc94B+7NClQCILtf2joQF0N4awmmGBafTUr4WJTwOsDbV4
+         qe/fI/wI/nNIGQjiW2c5QiYSdw04f1ObZCaFM/BfCkrbcZNMp4K7JJMJzkf9mRtgex+u
+         tc5z+L4fey4CF/qoo4XbeueKdgU6ZQKNGrBQnqG7uVkgRmd95lWNY417iEMSnFe3FwfF
+         dRmg6JGBxFIcxkQgWUIDfBiND+247sODjIkXlZkEl6qfo/dX1ZeuwuU9AVeK6ssjJvaP
+         cc9A==
+X-Gm-Message-State: ANhLgQ2CxGbrf1jeBy29Lir4n9WSrDT7sdBU4ixS13V9n5GUUnp8mMcL
+        70PNhSxA/sblaOPZQkYjD61bNQatMC8i2uTG9pA=
+X-Google-Smtp-Source: ADFU+vu4geqTV/LsCUJBg68QI3uBOWcuDWuhDYh1Th68uei++Exp9g0SEYeh9cAewcwPcjtzLCXmrGEP8H9Vv5FZWjI=
+X-Received: by 2002:a02:c7cd:: with SMTP id s13mr8356495jao.81.1584323366115;
+ Sun, 15 Mar 2020 18:49:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200312080253.3667-4-satyat@google.com>
+References: <20200315095342.10178-1-laoar.shao@gmail.com> <20200315095342.10178-2-laoar.shao@gmail.com>
+ <20200315160332.GW22433@bombadil.infradead.org>
+In-Reply-To: <20200315160332.GW22433@bombadil.infradead.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 16 Mar 2020 09:48:50 +0800
+Message-ID: <CALOAHbBEt1wBe8hTk8c=WA0ZeDinH2bVZZtCwvv=qFG-8i6p1g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] mm, list_lru: make memcg visible to lru walker
+ isolation function
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <dchinner@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 12, 2020 at 01:02:45AM -0700, Satya Tangirala wrote:
-> diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-> index ff1070edbb40..793ba23e8688 100644
-> --- a/block/blk-integrity.c
-> +++ b/block/blk-integrity.c
-> @@ -409,6 +409,13 @@ void blk_integrity_register(struct gendisk *disk, struct blk_integrity *template
->  	bi->tag_size = template->tag_size;
->  
->  	disk->queue->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
-> +
-> +#ifdef BLK_INLINE_ENCRYPTION
-> +	if (disk->queue->ksm) {
-> +		pr_warn("blk-integrity: Integrity and hardware inline encryption are not supported together. Unregistering keyslot manager from request queue, to disable hardware inline encryption.");
-> +		blk_ksm_unregister(disk->queue);
-> +	}
-> +#endif
->  }
->  EXPORT_SYMBOL(blk_integrity_register);
+On Mon, Mar 16, 2020 at 12:03 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sun, Mar 15, 2020 at 05:53:40AM -0400, Yafang Shao wrote:
+> > +#define for_each_mem_cgroup_tree(iter, root)         \
+> > +     for (iter = mem_cgroup_iter(root, NULL, NULL);  \
+> > +          iter != NULL;                              \
+> > +          iter = mem_cgroup_iter(root, iter, NULL))
+> [...]
+> > +#define for_each_mem_cgroup_tree(iter)               \
+> > +     for (iter = NULL; iter; )
+> > +
+>
+> That's not the same signature ...
 
-This ifdef is wrong, it should be CONFIG_BLK_INLINE_ENCRYPTION.
+for_each_mem_cgroup_tree() isn't used when CONFIG_MEMCG is not set, so
+should remove it.
 
-Also the log message is missing a trailing newline.
+Thanks for pointing it out!
 
->  
-> diff --git a/block/keyslot-manager.c b/block/keyslot-manager.c
-> index 38df0652df80..a7970e18a122 100644
-> --- a/block/keyslot-manager.c
-> +++ b/block/keyslot-manager.c
-> @@ -25,6 +25,9 @@
->   * Upper layers will call blk_ksm_get_slot_for_key() to program a
->   * key into some slot in the inline encryption hardware.
->   */
-> +
-> +#define pr_fmt(fmt) "blk_ksm: " fmt
-
-People aren't going to know what "blk_ksm" means in the logs.
-I think just use "blk-crypto" instead.
-
-> +
->  #include <crypto/algapi.h>
->  #include <linux/keyslot-manager.h>
->  #include <linux/atomic.h>
-> @@ -375,3 +378,20 @@ void blk_ksm_destroy(struct keyslot_manager *ksm)
->  	memzero_explicit(ksm, sizeof(*ksm));
->  }
->  EXPORT_SYMBOL_GPL(blk_ksm_destroy);
-> +
-> +bool blk_ksm_register(struct keyslot_manager *ksm, struct request_queue *q)
-> +{
-> +	if (blk_integrity_queue_supports_integrity(q)) {
-> +		pr_warn("Integrity and hardware inline encryption are not supported together. Won't register keyslot manager with request queue.");
-> +		return false;
-> +	}
-> +	q->ksm = ksm;
-> +	return true;
-> +}
-> +EXPORT_SYMBOL_GPL(blk_ksm_register);
-
-
-People reading the logs won't know what a keyslot manager is and why they should
-care that one wasn't registered.  It would be better to say that hardware inline
-encryption is being disabled.
-
-Ideally the device name would be included in the message too.
-
-> +
-> +void blk_ksm_unregister(struct request_queue *q)
-> +{
-> +	q->ksm = NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(blk_ksm_unregister);
-
-blk_ksm_unregister() doesn't need to be exported.
+-- 
+Yafang Shao
+DiDi
