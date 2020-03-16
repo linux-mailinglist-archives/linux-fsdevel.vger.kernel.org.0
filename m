@@ -2,156 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF49D1865D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 08:45:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 827C31867A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Mar 2020 10:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbgCPHpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Mar 2020 03:45:10 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:60390 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729582AbgCPHpK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Mar 2020 03:45:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0Tsj-C4w_1584344695;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Tsj-C4w_1584344695)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 16 Mar 2020 15:44:56 +0800
-Subject: Re: [PATCH v2,2/2] doc: zh_CN: add translation for virtiofs
-To:     Wang Wenhu <wenhu.wang@vivo.com>, Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Harry Wei <harryxiyou@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biggers <ebiggers@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel@vivo.com
-References: <20200315092810.87008-1-wenhu.wang@vivo.com>
- <20200315155258.91725-1-wenhu.wang@vivo.com>
- <20200315155258.91725-2-wenhu.wang@vivo.com>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <5116273f-c88e-543f-7f91-a45ae2d3d505@linux.alibaba.com>
-Date:   Mon, 16 Mar 2020 15:44:55 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.5.0
+        id S1730119AbgCPJQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Mar 2020 05:16:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54722 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730025AbgCPJQm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Mar 2020 05:16:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DA0D6AC69;
+        Mon, 16 Mar 2020 09:16:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 83CDC1E10DA; Mon, 16 Mar 2020 10:16:33 +0100 (CET)
+Date:   Mon, 16 Mar 2020 10:16:33 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/8] xarray: Fix premature termination of
+ xas_for_each_marked()
+Message-ID: <20200316091633.GA12783@quack2.suse.cz>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-2-jack@suse.cz>
+ <20200312214548.GL22433@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200315155258.91725-2-wenhu.wang@vivo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312214548.GL22433@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reviewed-by: Alex Shi <alex.shi@linux.alibaba.com>
+On Thu 12-03-20 14:45:48, Matthew Wilcox wrote:
+> Hi Jan,
+> 
+> I fixed this in a different way ... also, I added a test to the test-suite
+> so this shouldn't regress.  Thanks for writing the commit message ;-)
+> 
+> From 7e934cf5ace1dceeb804f7493fa28bb697ed3c52 Mon Sep 17 00:00:00 2001
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Date: Thu, 12 Mar 2020 17:29:11 -0400
+> Subject: [PATCH] xarray: Fix early termination of xas_for_each_marked
+> 
+> xas_for_each_marked() is using entry == NULL as a termination condition
+> of the iteration. When xas_for_each_marked() is used protected only by
+> RCU, this can however race with xas_store(xas, NULL) in the following
+> way:
+> 
+> TASK1                                   TASK2
+> page_cache_delete()         	        find_get_pages_range_tag()
+>                                           xas_for_each_marked()
+>                                             xas_find_marked()
+>                                               off = xas_find_chunk()
+> 
+>   xas_store(&xas, NULL)
+>     xas_init_marks(&xas);
+>     ...
+>     rcu_assign_pointer(*slot, NULL);
+>                                               entry = xa_entry(off);
+> 
+> And thus xas_for_each_marked() terminates prematurely possibly leading
+> to missed entries in the iteration (translating to missing writeback of
+> some pages or a similar problem).
+> 
+> If we find a NULL entry that has been marked, skip it (unless we're trying
+> to allocate an entry).
+> 
+> Reported-by: Jan Kara <jack@suse.cz>
+> CC: stable@vger.kernel.org
+> Fixes: ef8e5717db01 ("page cache: Convert delete_batch to XArray")
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-在 2020/3/15 下午11:52, Wang Wenhu 写道:
-> Translate virtiofs.rst in Documentation/filesystems/ into Chinese.
-> 
-> Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Wang Wenhu <wenhu.wang@vivo.com>
+The patch looks good to me. Thanks for looking into this. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+
 > ---
-> Changelog v2:
->  - add a blank line in the end of index.rst to index virtiofs.rst
->  - Asked-by Stefan Hajnoczi
->  - added SPDX header and Copyright info
-> ---
->  Documentation/filesystems/virtiofs.rst        |  2 +
->  .../translations/zh_CN/filesystems/index.rst  |  2 +
->  .../zh_CN/filesystems/virtiofs.rst            | 61 +++++++++++++++++++
->  3 files changed, 65 insertions(+)
->  create mode 100644 Documentation/translations/zh_CN/filesystems/virtiofs.rst
+>  include/linux/xarray.h                       |  6 +-
+>  lib/xarray.c                                 |  2 +
+>  tools/testing/radix-tree/Makefile            |  4 +-
+>  tools/testing/radix-tree/iteration_check_2.c | 87 ++++++++++++++++++++
+>  tools/testing/radix-tree/main.c              |  1 +
+>  tools/testing/radix-tree/test.h              |  1 +
+>  6 files changed, 98 insertions(+), 3 deletions(-)
+>  create mode 100644 tools/testing/radix-tree/iteration_check_2.c
 > 
-> diff --git a/Documentation/filesystems/virtiofs.rst b/Documentation/filesystems/virtiofs.rst
-> index 4f338e3cb3f7..7c4301d962f8 100644
-> --- a/Documentation/filesystems/virtiofs.rst
-> +++ b/Documentation/filesystems/virtiofs.rst
-> @@ -1,3 +1,5 @@
-> +.. _virtiofs_index:
-> +
->  .. SPDX-License-Identifier: GPL-2.0
+> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> index a491653d8882..14c893433139 100644
+> --- a/include/linux/xarray.h
+> +++ b/include/linux/xarray.h
+> @@ -1648,6 +1648,7 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
+>  								xa_mark_t mark)
+>  {
+>  	struct xa_node *node = xas->xa_node;
+> +	void *entry;
+>  	unsigned int offset;
 >  
->  ===================================================
-> diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-> index 0a2cabfeaf7b..fd3700a4db6d 100644
-> --- a/Documentation/translations/zh_CN/filesystems/index.rst
-> +++ b/Documentation/translations/zh_CN/filesystems/index.rst
-> @@ -27,3 +27,5 @@ Linux Kernel中的文件系统
->  .. toctree::
->     :maxdepth: 2
+>  	if (unlikely(xas_not_node(node) || node->shift))
+> @@ -1659,7 +1660,10 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
+>  		return NULL;
+>  	if (offset == XA_CHUNK_SIZE)
+>  		return xas_find_marked(xas, max, mark);
+> -	return xa_entry(xas->xa, node, offset);
+> +	entry = xa_entry(xas->xa, node, offset);
+> +	if (!entry)
+> +		return xas_find_marked(xas, max, mark);
+> +	return entry;
+>  }
 >  
-> +   virtiofs
-> +
-> diff --git a/Documentation/translations/zh_CN/filesystems/virtiofs.rst b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
+>  /*
+> diff --git a/lib/xarray.c b/lib/xarray.c
+> index f448bcd263ac..e9e641d3c0c3 100644
+> --- a/lib/xarray.c
+> +++ b/lib/xarray.c
+> @@ -1208,6 +1208,8 @@ void *xas_find_marked(struct xa_state *xas, unsigned long max, xa_mark_t mark)
+>  		}
+>  
+>  		entry = xa_entry(xas->xa, xas->xa_node, xas->xa_offset);
+> +		if (!entry && !(xa_track_free(xas->xa) && mark == XA_FREE_MARK))
+> +			continue;
+>  		if (!xa_is_node(entry))
+>  			return entry;
+>  		xas->xa_node = xa_to_node(entry);
+> diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+> index 397d6b612502..aa6abfe0749c 100644
+> --- a/tools/testing/radix-tree/Makefile
+> +++ b/tools/testing/radix-tree/Makefile
+> @@ -7,8 +7,8 @@ LDLIBS+= -lpthread -lurcu
+>  TARGETS = main idr-test multiorder xarray
+>  CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o
+>  OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
+> -	 regression4.o \
+> -	 tag_check.o multiorder.o idr-test.o iteration_check.o benchmark.o
+> +	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
+> +	 iteration_check_2.o benchmark.o
+>  
+>  ifndef SHIFT
+>  	SHIFT=3
+> diff --git a/tools/testing/radix-tree/iteration_check_2.c b/tools/testing/radix-tree/iteration_check_2.c
 > new file mode 100644
-> index 000000000000..cd836a9b2ac4
+> index 000000000000..aac5c50a3674
 > --- /dev/null
-> +++ b/Documentation/translations/zh_CN/filesystems/virtiofs.rst
-> @@ -0,0 +1,61 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. raw:: latex
+> +++ b/tools/testing/radix-tree/iteration_check_2.c
+> @@ -0,0 +1,87 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * iteration_check_2.c: Check that deleting a tagged entry doesn't cause
+> + * an RCU walker to finish early.
+> + * Copyright (c) 2020 Oracle
+> + * Author: Matthew Wilcox <willy@infradead.org>
+> + */
+> +#include <pthread.h>
+> +#include "test.h"
 > +
-> +	\renewcommand\thesection*
-> +	\renewcommand\thesubsection*
+> +static volatile bool test_complete;
 > +
-> +.. include:: ../disclaimer-zh_CN.rst
+> +static void *iterator(void *arg)
+> +{
+> +	XA_STATE(xas, arg, 0);
+> +	void *entry;
 > +
-> +:Original: :ref:`Documentation/filesystems/virtiofs.rst <virtiofs_index>`
+> +	rcu_register_thread();
 > +
-> +译者
-> +::
+> +	while (!test_complete) {
+> +		xas_set(&xas, 0);
+> +		rcu_read_lock();
+> +		xas_for_each_marked(&xas, entry, ULONG_MAX, XA_MARK_0)
+> +			;
+> +		rcu_read_unlock();
+> +		assert(xas.xa_index >= 100);
+> +	}
 > +
-> +	中文版维护者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
-> +	中文版翻译者： 王文虎 Wang Wenhu <wenhu.wang@vivo.com>
-> +	中文版校译者:  王文虎 Wang Wenhu <wenhu.wang@vivo.com>
+> +	rcu_unregister_thread();
+> +	return NULL;
+> +}
 > +
-> +===========================================
-> +virtiofs: virtio-fs 主机<->客机共享文件系统
-> +===========================================
+> +static void *throbber(void *arg)
+> +{
+> +	struct xarray *xa = arg;
 > +
-> +- Copyright (C) 2020 Vivo Communication Technology Co. Ltd.
+> +	rcu_register_thread();
 > +
-> +介绍
-> +====
-> +Linux的virtiofs文件系统实现了一个半虚拟化VIRTIO类型“virtio-fs”设备的驱动，通过该\
-> +类型设备实现客机<->主机文件系统共享。它允许客机挂载一个已经导出到主机的目录。
+> +	while (!test_complete) {
+> +		int i;
 > +
-> +客机通常需要访问主机或者远程系统上的文件。使用场景包括：在新客机安装时让文件对其\
-> +可见；从主机上的根文件系统启动；对无状态或临时客机提供持久存储和在客机之间共享目录。
+> +		for (i = 0; i < 100; i++) {
+> +			xa_store(xa, i, xa_mk_value(i), GFP_KERNEL);
+> +			xa_set_mark(xa, i, XA_MARK_0);
+> +		}
+> +		for (i = 0; i < 100; i++)
+> +			xa_erase(xa, i);
+> +	}
 > +
-> +尽管在某些任务可能通过使用已有的网络文件系统完成，但是却需要非常难以自动化的配置\
-> +步骤，且将存储网络暴露给客机。而virtio-fs设备通过提供不经过网络的文件系统访问文件\
-> +的设计方式解决了这些问题。
+> +	rcu_unregister_thread();
+> +	return NULL;
+> +}
 > +
-> +另外，virto-fs设备发挥了主客机共存的优点提高了性能，并且提供了网络文件系统所不具备
-> +的一些语义功能。
+> +void iteration_test2(unsigned test_duration)
+> +{
+> +	pthread_t threads[2];
+> +	DEFINE_XARRAY(array);
+> +	int i;
 > +
-> +用法
-> +====
-> +以``myfs``标签将文件系统挂载到``/mnt``:
+> +	printv(1, "Running iteration test 2 for %d seconds\n", test_duration);
 > +
-> +.. code-block:: sh
+> +	test_complete = false;
 > +
-> +  guest# mount -t virtiofs myfs /mnt
+> +	xa_store(&array, 100, xa_mk_value(100), GFP_KERNEL);
+> +	xa_set_mark(&array, 100, XA_MARK_0);
 > +
-> +请查阅 https://virtio-fs.gitlab.io/ 了解配置QEMU和virtiofsd守护程序的详细信息。
+> +	if (pthread_create(&threads[0], NULL, iterator, &array)) {
+> +		perror("create iterator thread");
+> +		exit(1);
+> +	}
+> +	if (pthread_create(&threads[1], NULL, throbber, &array)) {
+> +		perror("create throbber thread");
+> +		exit(1);
+> +	}
 > +
-> +内幕
-> +====
-> +由于virtio-fs设备将FUSE协议用于文件系统请求，因此Linux的virtiofs文件系统与FUSE文\
-> +件系统客户端紧密集成在一起。客机充当FUSE客户端而主机充当FUSE服务器，内核与用户空\
-> +间之间的/dev/fuse接口由virtio-fs设备接口代替。
+> +	sleep(test_duration);
+> +	test_complete = true;
 > +
-> +FUSE请求被置于虚拟队列中由主机处理。主机填充缓冲区中的响应部分，而客机处理请求的完成部分。
+> +	for (i = 0; i < 2; i++) {
+> +		if (pthread_join(threads[i], NULL)) {
+> +			perror("pthread_join");
+> +			exit(1);
+> +		}
+> +	}
 > +
-> +将/dev/fuse映射到虚拟队列需要解决/dev/fuse和虚拟队列之间语义上的差异。每次读取\
-> +/dev/fuse设备时，FUSE客户端都可以选择要传输的请求，从而可以使某些请求优先于其他\
-> +请求。虚拟队列有其队列语义，无法更改已入队请求的顺序。在虚拟队列已满的情况下尤
-> +其关键，因为此时不可能加入高优先级的请求。为了解决此差异，virtio-fs设备采用“hiprio”\
-> +（高优先级）虚拟队列，专门用于有别于普通请求的高优先级请求。
+> +	xa_destroy(&array);
+> +}
+> diff --git a/tools/testing/radix-tree/main.c b/tools/testing/radix-tree/main.c
+> index 7a22d6e3732e..f2cbc8e5b97c 100644
+> --- a/tools/testing/radix-tree/main.c
+> +++ b/tools/testing/radix-tree/main.c
+> @@ -311,6 +311,7 @@ int main(int argc, char **argv)
+>  	regression4_test();
+>  	iteration_test(0, 10 + 90 * long_run);
+>  	iteration_test(7, 10 + 90 * long_run);
+> +	iteration_test2(10 + 90 * long_run);
+>  	single_thread_tests(long_run);
+>  
+>  	/* Free any remaining preallocated nodes */
+> diff --git a/tools/testing/radix-tree/test.h b/tools/testing/radix-tree/test.h
+> index 1ee4b2c0ad10..34dab4d18744 100644
+> --- a/tools/testing/radix-tree/test.h
+> +++ b/tools/testing/radix-tree/test.h
+> @@ -34,6 +34,7 @@ void xarray_tests(void);
+>  void tag_check(void);
+>  void multiorder_checks(void);
+>  void iteration_test(unsigned order, unsigned duration);
+> +void iteration_test2(unsigned duration);
+>  void benchmark(void);
+>  void idr_checks(void);
+>  void ida_tests(void);
+> -- 
+> 2.25.1
 > 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
