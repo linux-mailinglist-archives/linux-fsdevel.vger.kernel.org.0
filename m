@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EC418764C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 00:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9EB18764B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 00:39:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732936AbgCPXiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1732954AbgCPXiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 16 Mar 2020 19:38:51 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46527 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732873AbgCPXiv (ORCPT
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33498 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732932AbgCPXiv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 16 Mar 2020 19:38:51 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w16so6996580wrv.13;
-        Mon, 16 Mar 2020 16:38:49 -0700 (PDT)
+Received: by mail-wr1-f67.google.com with SMTP id a25so23423350wrd.0;
+        Mon, 16 Mar 2020 16:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yXTTrsWcQVqx3rmui/RNjZ9XiC0WGWd6yJp/fFg7kAQ=;
-        b=XdCgpzmc7GRx1jmSmH993jW/2VnF4RED7od9tiUjv7ulQ9BKGcNAjla8KDIVG9wEUK
-         YBDR6jszETj2YOyCk3IsEHnMWVIdyNE+/FBoL2uWbPaT+WoUtg17lCdBtl8JeZFnh88f
-         las07iGsqb7SuRo3kJ3+enTStF7sR7AR5jBq4Dt3nUc5MdZgU7QpS2tYrHT1f5P9zOdg
-         f8asAng+zWkSLT/IONO1G09vA7hOlXjAs8tmpBVGg4ocfMpLad/YdFKZZ0S4kk5rNDUn
-         2ObGT/YCFAFsfjZFiRnJSVrM/z3aoercr06QYHjV0ryUjSwNdu8E1DZSCjTxHgVHLKOn
-         0thg==
+        bh=s7MT1W4c0iLCPP6WJDplp79IQPzcsZf4PRM5SEuNrW4=;
+        b=VUq7JVDvVVdvjOIFNpX/FRhbAtLHjXOHzOAYtH7CclKhk0PX6gE4NDOyrwdczDR96g
+         XBPqQ/qmho70NGmAt9wpd6HIIdYruSDqmfTcv+XYRf8TsIf11fRiVVTov167IXkwKSG/
+         5fXFkJBcWLHCl3GlZo+kQBBocGEPbOHnPn9aYTwd3s5kWipZO/L87zu4QF4bfZYf9IWj
+         75EsJ6F59P1m+IuIInW1wB6e3nmPioqZhPlofGL40Pd5O0D8r8CWdFqvsp3siggp+ERv
+         o15mdaMOUxbchwp0XZUWf/9S/RJB0Vsujsa8nsFCi1jU9/mSuX0DlhwTb6S7WAnT/fuM
+         +DlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yXTTrsWcQVqx3rmui/RNjZ9XiC0WGWd6yJp/fFg7kAQ=;
-        b=D67MavO4OzTBLlekX8q43MUaopZt22Vorm9BOgZQcpCeoHIRhNZQynw3ts+GpOONV7
-         EIu268JApzpO++XGT1+nT6Dbk6S24lVmSgJqzxtLYM04Hxu2DyaopV9Cb9fjnt5dh+TR
-         abZT8oyBMwv22GWDsYSUuIHljmtIrNTAL7sRXioUFnhMNXMTdQnWrUeM0wBr/NqRmeFo
-         4cR6bcvxNwvvRD3N0OBQYarMAq8JsfNNQ6aMl5E1uYtptONjLc9+xql6s2GzD+5bUrOZ
-         77pM6fE/F0963nA52cvOaEPoAxvbWsWAUHE3qRlC/tevPi75zDf2Cik3x8/knJuXFO0t
-         27uQ==
-X-Gm-Message-State: ANhLgQ1O31SU++9vzjsB+h8Go3zFVhw4t54LJsm7ja9tv9nmOIOoQKV2
-        uMjiwHqJXgGsnuQMb2Sf+A==
-X-Google-Smtp-Source: ADFU+vtJQwqUb3Sg3gxPN/EEhyFnx3mQTKRU/lB5Q92YGroSWkdI3nvlPMsWSmpJ7WE0DTJwbr4sVQ==
-X-Received: by 2002:a5d:6ac3:: with SMTP id u3mr1913581wrw.358.1584401929075;
-        Mon, 16 Mar 2020 16:38:49 -0700 (PDT)
+        bh=s7MT1W4c0iLCPP6WJDplp79IQPzcsZf4PRM5SEuNrW4=;
+        b=euaJM4hRGZAL13PAJLmEZa1AqP2Ej/RObBvgIiRFNJyUwdexXgPzv6Gc3b918TIXeT
+         B7UH5ZJWkpOu0waDtycW0rbMDy7x7zzr5BPeevufUay60jmdyvZ4yTu/N8s7homURNxR
+         mnYLdt9jmIfJweC8Bi4zAju+tZadDGMKHCjcqTRJ/dpx1h64sZsYh3anc69WKzTLcFfA
+         /F4TfgsZwxtDkbZEhvzSbtpOvn2/Mzjd9+Z6GhIyfAlHA0pRWEBqdf8SvbpvrRw8LIN+
+         muCuTNi655sHzfrEUwXROS8MviBKCZilE17ZCx1qC7Oja+lSTihhtZm5s2e2k+alV/lk
+         KJpg==
+X-Gm-Message-State: ANhLgQ3nitSqvEWxNj2Ix1VnGDSb4G5mLFpuhkKMEZ90QOaTs5O1dfgK
+        87DY541/fCr+mkqXNZnaKH2Wnx98YA==
+X-Google-Smtp-Source: ADFU+vs8yceWIx6H0vj2f2I+P9/G6KQwzFtNlEfkONE+N15XxTsAk5Y2edcwjSd0PYP0tBCmiGhJ7A==
+X-Received: by 2002:a5d:4ad1:: with SMTP id y17mr1744026wrs.119.1584401930067;
+        Mon, 16 Mar 2020 16:38:50 -0700 (PDT)
 Received: from localhost.localdomain (host-92-23-82-35.as13285.net. [92.23.82.35])
-        by smtp.googlemail.com with ESMTPSA id i9sm1510495wmd.37.2020.03.16.16.38.48
+        by smtp.googlemail.com with ESMTPSA id i9sm1510495wmd.37.2020.03.16.16.38.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2020 16:38:48 -0700 (PDT)
+        Mon, 16 Mar 2020 16:38:49 -0700 (PDT)
 From:   Jules Irenge <jbi.octave@gmail.com>
 To:     boqun.feng@gmail.com
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 2/6] namei: Add missing annotation for unlazy_child()
-Date:   Mon, 16 Mar 2020 23:38:00 +0000
-Message-Id: <20200316233804.96657-3-jbi.octave@gmail.com>
+Subject: [PATCH 3/6] fs: Add missing annotation for __wait_on_freeing_inode()
+Date:   Mon, 16 Mar 2020 23:38:01 +0000
+Message-Id: <20200316233804.96657-4-jbi.octave@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200316233804.96657-1-jbi.octave@gmail.com>
 References: <0/6>
@@ -63,31 +63,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sparse reports a warning at unlazy_child()
+Sparse reports a warning at __wait_on_freeing_inode()
 
-warning: context imbalance in unlazy_child() - unexpected unlock
+warning: context imbalance in __wait_on_freeing_inode() - unexpected unlock
 
-The root cause is the missing annotation at unlazy_walk()
+The root cause is the missing annotations at __wait_on_freeing_inode()
 
-Add the missing __releases(RCU) annotation
+Add the missing __releases(&inode->i_lock)
+	and __must_hold(&inode_hash_lock) annotations
 
 Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 ---
- fs/namei.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index d80e1ac8c211..9af3e8e438a1 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -717,6 +717,7 @@ static int unlazy_walk(struct nameidata *nd)
-  * terminate_walk().
+diff --git a/fs/inode.c b/fs/inode.c
+index 7d57068b6b7a..3b06c5c59883 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1955,6 +1955,8 @@ EXPORT_SYMBOL(inode_needs_sync);
+  * will DTRT.
   */
- static int unlazy_child(struct nameidata *nd, struct dentry *dentry, unsigned seq)
-+	__releases(RCU)
+ static void __wait_on_freeing_inode(struct inode *inode)
++	__releases(&inode->i_lock)
++	__must_hold(&inode_hash_lock)
  {
- 	BUG_ON(!(nd->flags & LOOKUP_RCU));
- 
+ 	wait_queue_head_t *wq;
+ 	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_NEW);
 -- 
 2.24.1
 
