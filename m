@@ -2,58 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2AE188E13
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 20:32:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76A7E188E10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 20:32:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgCQTcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 15:32:21 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54457 "EHLO
+        id S1726744AbgCQTcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 15:32:23 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54462 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbgCQTcV (ORCPT
+        with ESMTP id S1726452AbgCQTcW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 15:32:21 -0400
-Received: by mail-wm1-f67.google.com with SMTP id n8so556695wmc.4;
-        Tue, 17 Mar 2020 12:32:20 -0700 (PDT)
+        Tue, 17 Mar 2020 15:32:22 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n8so556805wmc.4;
+        Tue, 17 Mar 2020 12:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2XX4av8BnQU6e6Q+23VgYpg7tfVGDDTS18cCb+m0Cnw=;
-        b=jiIM9lHYCWJsyJYYKw/eUmEOJiRPiA3aEmTJcqBRnVL+QGoUGWKGHCYVtY2pMOxQ1v
-         ryheDWKm6/z2USIYYGlELv4mvdDJkHFlnCnjC/p4iKXAYQ6k7v2aEWIYZYOVC8VbKhLb
-         Gr1XGJPP++W2VBkjrD3eUY7MlvJwjN+1nmdqRjNjvNbNndbbNZnsyJ6B4rn5cvYgENwA
-         v/nG1570bie4b7+DnRuxZ21Q+crpwji1z2X4pabkuxHj6/iP2opx6ttDkHZ8+7DvHrng
-         H0Lh1ph5fxe3rP3KOva9w55LRvG8poF5FjXWOruFvIue2p+fKxb1B8+T6P8MpsCpqQT+
-         CkNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ricf2BdJdyy+MI+5dglcQZRK8QJ6f3OrAioatix4nI4=;
+        b=MQBGgdIc2wwxwDHci9iOL34Nke69ZJWu8B5sq+F9EWNu+mUpHYe4fvuKEh2ot156GK
+         eCjON/Up/2p+w0n4RGRP3z9ikGAlV8KaG9gHqmJpaDdjlxXVdrmeb+FZXzIEkRi414ce
+         VQ4sPfa0xH+7InypWkujQLexO4/y1DQDSgIxkFPNlnbW0TJyKX68Ct4lXjmB0DJdTMjK
+         nEGuyrGC9Q8RMouLezhkCkCX/TsO4iNpPCfIL232DB2WcaIThuB4NojUtcDGP+P37F7D
+         A4sHfCeu9Gb3ZaorFoggJVCReOwg/3Y7pDPSTVJvitreABMr3HxK7b5cou67f5jDEj8y
+         I6gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2XX4av8BnQU6e6Q+23VgYpg7tfVGDDTS18cCb+m0Cnw=;
-        b=pDXOoRO6x7dcRxXl4N0mvsFBNbgEHbbOIbAzJLVmVg3hFV0cVx5ry0vIvRZtLJcFrw
-         sn5poiVGP7OYohpfUwxu87oI3jdTKd07EBauCVmNAh0PtXtI7l+0K4p364VsQoSGoGCN
-         HSXNe2NjG60sVan2MamgHmQQpKjDPD2CfZBgTP8Zl/6vZXSIV6KDq6lZ9/d1NVox+aoR
-         nhi2wGiSHRh5MKAeRWpxNujyRAmnL2jPMqEJ7gq0y9TKhEyFlWQDe43HLBAjAyj1yNR9
-         QChPfb8adGxvKI8heibaIV0+ay8A06MxaQG4wF8F2Jdmna+F4hzl0t6m0utCp8wlLlrf
-         IewA==
-X-Gm-Message-State: ANhLgQ0vy9Gf8yz4myoqVQjGgAxYMb69dIsrSkkU48qwF9V1pwe1EA1h
-        N+EzjCWetcKMRHohY7E7jQ==
-X-Google-Smtp-Source: ADFU+vscvNdlS7W3wTEb5lVjwADvZtMOhQtwRZBnBmvJ9Jb1GYuGAULitlstbaS8mZ8IrVbyxspSgA==
-X-Received: by 2002:a7b:c189:: with SMTP id y9mr545264wmi.47.1584473539381;
-        Tue, 17 Mar 2020 12:32:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ricf2BdJdyy+MI+5dglcQZRK8QJ6f3OrAioatix4nI4=;
+        b=U3bfkWoywxZYQ4N5X1KxtLZqlYDD8vGn5WGBCCjOnerbVezdCG3cHOiyMya3Elu08x
+         X6BSp+hi9FmcKJZz/OVJz0eJ5qb61fN9/R9/JcrR1pH1w8cws6xFA8kal5ow/8GS9QVt
+         wu04mvTO9UHfnVQUQvavYTeWCrEA+/F3C27liKugFMy4iSuOjxqGAu3c7/3YQOlMXe5S
+         PLNaa0fQfQ6/rkvTDKY03+/LRS4slaxWmO04HRAdNBkZQFpHMHjg0FFyonQZtdaaAbEz
+         RBP3Ecw5UcPRhlRms3sCcV1o7TAncXZdp5y9KRNRWDnVn/hF6LHncYn2lLN1bPOlA0Wh
+         qOkw==
+X-Gm-Message-State: ANhLgQ1+RoMnlZAhTh/9U+4dgSqzt2vpWmJFCDb9sGo7NtZZs+R9Qa6e
+        Mgr4QnCiXP3kYdwAWDd8YA==
+X-Google-Smtp-Source: ADFU+vvxZVQupZ78DRnmyyAffSMYsm5xmCWlr5bozfSNvDevSrGn3UYQDd5MKjqTqrexbeXypIArbQ==
+X-Received: by 2002:a7b:c341:: with SMTP id l1mr557574wmj.146.1584473541281;
+        Tue, 17 Mar 2020 12:32:21 -0700 (PDT)
 Received: from avx2.telecom.by ([46.53.254.169])
-        by smtp.gmail.com with ESMTPSA id t1sm5946323wrq.36.2020.03.17.12.32.17
+        by smtp.gmail.com with ESMTPSA id t1sm5946323wrq.36.2020.03.17.12.32.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2020 12:32:18 -0700 (PDT)
+        Tue, 17 Mar 2020 12:32:20 -0700 (PDT)
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     willy@infradead.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
         adobriyan@gmail.com
-Subject: [PATCH 1/5] proc: inline vma_stop into m_stop
-Date:   Tue, 17 Mar 2020 22:31:57 +0300
-Message-Id: <20200317193201.9924-1-adobriyan@gmail.com>
+Subject: [PATCH 2/5] proc: remove m_cache_vma
+Date:   Tue, 17 Mar 2020 22:31:58 +0300
+Message-Id: <20200317193201.9924-2-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200317193201.9924-1-adobriyan@gmail.com>
+References: <20200317193201.9924-1-adobriyan@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -63,92 +65,109 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Instead of calling vma_stop() from m_start() and m_next(), do its work
-in m_stop().
+Instead of setting m->version in the show method, set it in m_next(),
+where it should be.  Also remove the fallback code for failing to find
+a vma, or version being zero.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- fs/proc/task_mmu.c | 34 +++++++++++++++-------------------
- 1 file changed, 15 insertions(+), 19 deletions(-)
+ fs/proc/task_mmu.c | 38 ++++++--------------------------------
+ 1 file changed, 6 insertions(+), 32 deletions(-)
 
 diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 9442631fd4af..41f63df4789d 100644
+index 41f63df4789d..ff40d5d79f24 100644
 --- a/fs/proc/task_mmu.c
 +++ b/fs/proc/task_mmu.c
-@@ -123,15 +123,6 @@ static void release_task_mempolicy(struct proc_maps_private *priv)
+@@ -131,21 +131,14 @@ m_next_vma(struct proc_maps_private *priv, struct vm_area_struct *vma)
+ 	return vma->vm_next ?: priv->tail_vma;
  }
- #endif
  
--static void vma_stop(struct proc_maps_private *priv)
+-static void m_cache_vma(struct seq_file *m, struct vm_area_struct *vma)
 -{
--	struct mm_struct *mm = priv->mm;
--
--	release_task_mempolicy(priv);
--	up_read(&mm->mmap_sem);
--	mmput(mm);
+-	if (m->count < m->size)	/* vma is copied successfully */
+-		m->version = m_next_vma(m->private, vma) ? vma->vm_end : -1UL;
 -}
 -
- static struct vm_area_struct *
- m_next_vma(struct proc_maps_private *priv, struct vm_area_struct *vma)
+ static void *m_start(struct seq_file *m, loff_t *ppos)
  {
-@@ -163,11 +154,16 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 		return ERR_PTR(-ESRCH);
+ 	struct proc_maps_private *priv = m->private;
+ 	unsigned long last_addr = m->version;
+ 	struct mm_struct *mm;
+ 	struct vm_area_struct *vma;
+-	unsigned int pos = *ppos;
  
- 	mm = priv->mm;
--	if (!mm || !mmget_not_zero(mm))
-+	if (!mm || !mmget_not_zero(mm)) {
-+		put_task_struct(priv->task);
-+		priv->task = NULL;
+-	/* See m_cache_vma(). Zero at the start or after lseek. */
++	/* See m_next(). Zero at the start or after lseek. */
+ 	if (last_addr == -1UL)
  		return NULL;
-+	}
  
- 	if (down_read_killable(&mm->mmap_sem)) {
- 		mmput(mm);
-+		put_task_struct(priv->task);
-+		priv->task = NULL;
- 		return ERR_PTR(-EINTR);
- 	}
+@@ -170,28 +163,11 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
+ 	hold_task_mempolicy(priv);
+ 	priv->tail_vma = get_gate_vma(mm);
  
-@@ -195,7 +191,6 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 	if (pos == mm->map_count && priv->tail_vma)
- 		return priv->tail_vma;
+-	if (last_addr) {
+-		vma = find_vma(mm, last_addr - 1);
+-		if (vma && vma->vm_start <= last_addr)
+-			vma = m_next_vma(priv, vma);
+-		if (vma)
+-			return vma;
+-	}
+-
+-	m->version = 0;
+-	if (pos < mm->map_count) {
+-		for (vma = mm->mmap; pos; pos--) {
+-			m->version = vma->vm_start;
+-			vma = vma->vm_next;
+-		}
++	vma = find_vma(mm, last_addr);
++	if (vma)
+ 		return vma;
+-	}
+-
+-	/* we do not bother to update m->version in this case */
+-	if (pos == mm->map_count && priv->tail_vma)
+-		return priv->tail_vma;
  
--	vma_stop(priv);
- 	return NULL;
+-	return NULL;
++	return priv->tail_vma;
  }
  
-@@ -206,21 +201,22 @@ static void *m_next(struct seq_file *m, void *v, loff_t *pos)
+ static void *m_next(struct seq_file *m, void *v, loff_t *pos)
+@@ -201,6 +177,8 @@ static void *m_next(struct seq_file *m, void *v, loff_t *pos)
  
  	(*pos)++;
  	next = m_next_vma(priv, v);
--	if (!next)
--		vma_stop(priv);
++	m->version = next ? next->vm_start : -1UL;
++
  	return next;
  }
  
- static void m_stop(struct seq_file *m, void *v)
+@@ -359,7 +337,6 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ static int show_map(struct seq_file *m, void *v)
  {
- 	struct proc_maps_private *priv = m->private;
-+	struct mm_struct *mm = priv->mm;
- 
--	if (!IS_ERR_OR_NULL(v))
--		vma_stop(priv);
--	if (priv->task) {
--		put_task_struct(priv->task);
--		priv->task = NULL;
--	}
-+	if (!priv->task)
-+		return;
-+
-+	release_task_mempolicy(priv);
-+	up_read(&mm->mmap_sem);
-+	mmput(mm);
-+	put_task_struct(priv->task);
-+	priv->task = NULL;
+ 	show_map_vma(m, v);
+-	m_cache_vma(m, v);
+ 	return 0;
  }
  
- static int proc_maps_open(struct inode *inode, struct file *file,
+@@ -843,8 +820,6 @@ static int show_smap(struct seq_file *m, void *v)
+ 		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+ 	show_smap_vma_flags(m, vma);
+ 
+-	m_cache_vma(m, vma);
+-
+ 	return 0;
+ }
+ 
+@@ -1883,7 +1858,6 @@ static int show_numa_map(struct seq_file *m, void *v)
+ 	seq_printf(m, " kernelpagesize_kB=%lu", vma_kernel_pagesize(vma) >> 10);
+ out:
+ 	seq_putc(m, '\n');
+-	m_cache_vma(m, vma);
+ 	return 0;
+ }
+ 
 -- 
 2.25.0
 
