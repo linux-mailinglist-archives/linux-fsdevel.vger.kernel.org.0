@@ -2,187 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D13FE187BA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 09:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C131881AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 12:20:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgCQI6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 04:58:10 -0400
-Received: from relay.sw.ru ([185.231.240.75]:60316 "EHLO relay.sw.ru"
+        id S1728798AbgCQLR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 07:17:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45322 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbgCQI6K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 04:58:10 -0400
-Received: from [192.168.15.225]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1jE832-0003KS-Rn; Tue, 17 Mar 2020 11:58:05 +0300
-Subject: Re: [PATCH v2 5/5] exec: Add a exec_update_mutex to replace
- cred_guard_mutex
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51705AA3009B4986BB6EF92FE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87r1y8dqqz.fsf@x220.int.ebiederm.org>
- <AM6PR03MB517053AED7DC89F7C0704B7DE4E50@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
- <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
- <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
- <f37a5d68-9674-533f-ee9c-a49174605710@virtuozzo.com>
- <87d09hn4kt.fsf@x220.int.ebiederm.org>
- <dbce35c7-c060-cfd8-bde1-98fd9a0747a9@virtuozzo.com>
- <87lfo5lju6.fsf@x220.int.ebiederm.org>
- <AM6PR03MB5170E9E71B9F84330B098BADE4FA0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <6002ac56-025a-d50f-e89d-1bf42a072323@virtuozzo.com>
- <AM6PR03MB5170CF763987C24F22B38838E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB5170813CDCAA105535F84C93E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <68528401-58ff-c335-a752-00ebaa433e02@virtuozzo.com>
-Date:   Tue, 17 Mar 2020 11:58:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728747AbgCQLRz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Mar 2020 07:17:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 5669BACAE;
+        Tue, 17 Mar 2020 11:17:53 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9E26B1E121E; Tue, 17 Mar 2020 12:17:52 +0100 (CET)
+Date:   Tue, 17 Mar 2020 12:17:52 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
+        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org,
+        Harish Sriram <harish@linux.ibm.com>
+Subject: Re: [PATCH] ext4: Check for non-zero journal inum in
+ ext4_calculate_overhead
+Message-ID: <20200317111752.GF22684@quack2.suse.cz>
+References: <20200316093038.25485-1-riteshh@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <AM6PR03MB5170813CDCAA105535F84C93E4FB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200316093038.25485-1-riteshh@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14.03.2020 13:02, Bernd Edlinger wrote:
-> On 3/14/20 10:57 AM, Bernd Edlinger wrote:
->> On 3/13/20 10:13 AM, Kirill Tkhai wrote:
->>>
->>> Despite this should fix the problem, this looks like a broken puzzle.
->>>
->>> We can't use bprm->cred as an identifier whether the mutex was locked or not.
->>> We can check for bprm->cred in regard to cred_guard_mutex, because of there is
->>> strong rule: "cred_guard_mutex is becomes locked together with bprm->cred assignment
->>> (see prepare_bprm_creds()), and it becomes unlocked together with bprm->cred zeroing".
->>> Take attention on modularity of all this: there is no dependencies between anything else.
->>>
->>> In regard to newly introduced exec_update_mutex, your fix and source patch way look like
->>> an obfuscation. The mutex becomes deadly glued to unrelated bprm->cred and bprm->mm,
->>> and this introduces the problems in the future modifications and support of all involved
->>> entities. If someone wants to move some functions in relation to each other, there will
->>> be a pain, and this person will have to go again the same dependencies and bug way,
->>> Eric stepped on in the original patch.
->>>
->>
->> Okay, yes, valid points you make, thanks.
->> I just wanted to understand what was exactly wrong with this patch,
->> since the failure mode looked a lot like it was failing because of
->> something clobbering the data unexpectedly.
->>
->>
->> So I have posted a few updated patch for the failed one here:
->>
->> [PATCH v3 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
->> [PATCH] pidfd: Use new infrastructure to fix deadlocks in execve
->>
->> which replaces these:
->> [PATCH v2 5/5] exec: Add a exec_update_mutex to replace cred_guard_mutex
->> https://lore.kernel.org/lkml/87zhcq4jdj.fsf_-_@x220.int.ebiederm.org/
->>
->> [PATCH] pidfd: Stop taking cred_guard_mutex 
->> https://lore.kernel.org/lkml/87wo7svy96.fsf_-_@x220.int.ebiederm.org/
->>
->>
->> and a new patch series to fix deadlock in ptrace_attach and update doc:
->> [PATCH 0/2] exec: Fix dead-lock in de_thread with ptrace_attach
->> [PATCH 1/2] exec: Fix dead-lock in de_thread with ptrace_attach
->> [PATCH 2/2] doc: Update documentation of ->exec_*_mutex
->>
->>
->> Other patches needed, still valid:
->>
->> [PATCH v2 1/5] exec: Only compute current once in flush_old_exec
->> https://lore.kernel.org/lkml/87pndm5y3l.fsf_-_@x220.int.ebiederm.org/
->>
->> [PATCH v2 2/5] exec: Factor unshare_sighand out of de_thread and call it separately
->> https://lore.kernel.org/lkml/87k13u5y26.fsf_-_@x220.int.ebiederm.org/
->>
+On Mon 16-03-20 15:00:38, Ritesh Harjani wrote:
+> While calculating overhead for internal journal, also check
+> that j_inum shouldn't be 0. Otherwise we get below error with
+> xfstests generic/050 with external journal (XXX_LOGDEV config) enabled.
 > 
-> Ah, sorry, forgot this one:
-> [PATCH v2 3/5] exec: Move cleanup of posix timers on exec out of de_thread
-> https://lore.kernel.org/lkml/87eeu25y14.fsf_-_@x220.int.ebiederm.org/
+> It could be simply reproduced with loop device with an external journal
+> and marking blockdev as RO before mounting.
 > 
->> [PATCH v2 4/5] exec: Move exec_mmap right after de_thread in flush_old_exec
->> https://lore.kernel.org/lkml/875zfe5xzb.fsf_-_@x220.int.ebiederm.org/
+> [ 3337.146838] EXT4-fs error (device pmem1p2): ext4_get_journal_inode:4634: comm mount: inode #0: comm mount: iget: illegal inode #
+> ------------[ cut here ]------------
+> generic_make_request: Trying to write to read-only block-device pmem1p2 (partno 2)
+> WARNING: CPU: 107 PID: 115347 at block/blk-core.c:788 generic_make_request_checks+0x6b4/0x7d0
+> CPU: 107 PID: 115347 Comm: mount Tainted: G             L   --------- -t - 4.18.0-167.el8.ppc64le #1
+> NIP:  c0000000006f6d44 LR: c0000000006f6d40 CTR: 0000000030041dd4
+> <...>
+> NIP [c0000000006f6d44] generic_make_request_checks+0x6b4/0x7d0
+> LR [c0000000006f6d40] generic_make_request_checks+0x6b0/0x7d0
+> <...>
+> Call Trace:
+> generic_make_request_checks+0x6b0/0x7d0 (unreliable)
+> generic_make_request+0x3c/0x420
+> submit_bio+0xd8/0x200
+> submit_bh_wbc+0x1e8/0x250
+> __sync_dirty_buffer+0xd0/0x210
+> ext4_commit_super+0x310/0x420 [ext4]
+> __ext4_error+0xa4/0x1e0 [ext4]
+> __ext4_iget+0x388/0xe10 [ext4]
+> ext4_get_journal_inode+0x40/0x150 [ext4]
+> ext4_calculate_overhead+0x5a8/0x610 [ext4]
+> ext4_fill_super+0x3188/0x3260 [ext4]
+> mount_bdev+0x778/0x8f0
+> ext4_mount+0x28/0x50 [ext4]
+> mount_fs+0x74/0x230
+> vfs_kern_mount.part.6+0x6c/0x250
+> do_mount+0x2fc/0x1280
+> sys_mount+0x158/0x180
+> system_call+0x5c/0x70
+> EXT4-fs (pmem1p2): no journal found
+> EXT4-fs (pmem1p2): can't get journal size
+> EXT4-fs (pmem1p2): mounted filesystem without journal. Opts: dax,norecovery
+> 
+> Reported-by: Harish Sriram <harish@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-1-4/5 look OK for me. You may add my
+The patch looks good to me. You can add:
 
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
->> [PATCH 1/4] exec: Fix a deadlock in ptrace
->> https://lore.kernel.org/lkml/AM6PR03MB517033EAD25BED15CC84E17DE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 2/4] selftests/ptrace: add test cases for dead-locks
->> https://lore.kernel.org/lkml/AM6PR03MB51703199741A2C27A78980FFE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 3/4] mm: docs: Fix a comment in process_vm_rw_core
->> https://lore.kernel.org/lkml/AM6PR03MB5170ED6D4D216EEEEF400136E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 4/4] kernel: doc: remove outdated comment cred.c
->> https://lore.kernel.org/lkml/AM6PR03MB517039DB07AB641C194FEA57E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 1/4] kernel/kcmp.c: Use new infrastructure to fix deadlocks in execve
->> https://lore.kernel.org/lkml/AM6PR03MB517057A2269C3A4FB287B76EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 2/4] proc: Use new infrastructure to fix deadlocks in execve
->> https://lore.kernel.org/lkml/AM6PR03MB51705D211EC8E7EA270627B1E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 3/4] proc: io_accounting: Use new infrastructure to fix deadlocks in execve
->> https://lore.kernel.org/lkml/AM6PR03MB5170BD2476E35068E182EFA4E4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->> [PATCH 4/4] perf: Use new infrastructure to fix deadlocks in execve
->> https://lore.kernel.org/lkml/AM6PR03MB517035DEEDB9C8699CB6B34EE4FF0@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>
->>
->> I think most of the existing patches are already approved, but if
->> there are still change requests, please let me know.
->>
->>
->> Thanks
->> Bernd.
->>
-> 
-> Hope it is correct now.
-> I haven't seen the new patches on the kernel archives yet,
-> so I cannot add URLs for them.
-> 
-> Bernd.
-> 
+								Honza
 
+> ---
+>  fs/ext4/super.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index de5398c07161..5dc65b7583cb 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -3609,7 +3609,8 @@ int ext4_calculate_overhead(struct super_block *sb)
+>  	 */
+>  	if (sbi->s_journal && !sbi->journal_bdev)
+>  		overhead += EXT4_NUM_B2C(sbi, sbi->s_journal->j_maxlen);
+> -	else if (ext4_has_feature_journal(sb) && !sbi->s_journal) {
+> +	else if (ext4_has_feature_journal(sb) && !sbi->s_journal && j_inum) {
+> +		/* j_inum for internal journal is non-zero */
+>  		j_inode = ext4_get_journal_inode(sb, j_inum);
+>  		if (j_inode) {
+>  			j_blocks = j_inode->i_size >> sb->s_blocksize_bits;
+> -- 
+> 2.21.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
