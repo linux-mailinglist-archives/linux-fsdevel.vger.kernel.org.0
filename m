@@ -2,207 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCA4188B38
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 17:54:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 666A4188C7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 18:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgCQQyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 12:54:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60595 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbgCQQyP (ORCPT
+        id S1726278AbgCQRuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 13:50:15 -0400
+Received: from smtp-190d.mail.infomaniak.ch ([185.125.25.13]:35011 "EHLO
+        smtp-190d.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726148AbgCQRuO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 12:54:15 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1jEFTl-0008ET-Qo; Tue, 17 Mar 2020 16:54:09 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH][V2] ACPI: sysfs: copy ACPI data using io memory copying
-Date:   Tue, 17 Mar 2020 16:54:09 +0000
-Message-Id: <20200317165409.469013-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 17 Mar 2020 13:50:14 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 564B9100470DA;
+        Tue, 17 Mar 2020 18:50:10 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48hgg42QGMzlt0RM;
+        Tue, 17 Mar 2020 18:50:08 +0100 (CET)
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20200224160215.4136-1-mic@digikod.net>
+ <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+ <873d7419-bdd9-8a52-0a9b-dddbe31df4f9@digikod.net>
+ <CAG48ez0=0W5Ok-8nASqZrZ28JboXRRi3gDxV5u6mdcOtzwuRVA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <688dda0f-0907-34eb-c19e-3e9e5f613a74@digikod.net>
+Date:   Tue, 17 Mar 2020 18:50:07 +0100
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <CAG48ez0=0W5Ok-8nASqZrZ28JboXRRi3gDxV5u6mdcOtzwuRVA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Reading ACPI data on ARM64 at a non-aligned offset from
-/sys/firmware/acpi/tables/data/BERT will cause a splat because
-the data is I/O memory mapped and being read with just a memcpy.
-Fix this by introducing an I/O variant of memory_read_from_buffer
-and using I/O memory mapped copies instead.
+On 17/03/2020 17:19, Jann Horn wrote:
+> On Thu, Mar 12, 2020 at 12:38 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 10/03/2020 00:44, Jann Horn wrote:
+>>> On Mon, Feb 24, 2020 at 5:03 PM Mickaël Salaün <mic@digikod.net> wrote:
 
-Fixes the following splat:
+[...]
 
-[  439.789355] Unable to handle kernel paging request at virtual address ffff800041ac0007
-[  439.797275] Mem abort info:
-[  439.800078]   ESR = 0x96000021
-[  439.803131]   EC = 0x25: DABT (current EL), IL = 32 bits
-[  439.808437]   SET = 0, FnV = 0
-[  439.811486]   EA = 0, S1PTW = 0
-[  439.814621] Data abort info:
-[  439.817489]   ISV = 0, ISS = 0x00000021
-[  439.821319]   CM = 0, WnR = 0
-[  439.824282] swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000000817fc000
-[  439.830979] [ffff800041ac0007] pgd=000000bffcfff003, pud=0000009f27cee003, pmd=000000bf4b993003, pte=0068000080280703
-[  439.841584] Internal error: Oops: 96000021 [#1] SMP
-[  439.846449] Modules linked in: nls_iso8859_1 dm_multipath scsi_dh_rdac scsi_dh_emc scsi_dh_alua ipmi_ssif input_leds joydev ipmi_devintf ipmi_msghandler thunderx2_pmu sch_fq_codel ip_tables x_tables autofs4 btrfs zstd_compress raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx xor xor_neon raid6_pq libcrc32c raid1 raid0 multipath linear i2c_smbus ast i2c_algo_bit crct10dif_ce drm_vram_helper uas ttm ghash_ce drm_kms_helper sha2_ce syscopyarea sha256_arm64 qede sysfillrect mpt3sas sha1_ce sysimgblt fb_sys_fops raid_class qed drm scsi_transport_sas usb_storage ahci crc8 gpio_xlp i2c_xlp9xx hid_generic usbhid hid aes_neon_bs aes_neon_blk aes_ce_blk crypto_simd cryptd aes_ce_cipher
-[  439.908474] CPU: 2 PID: 3926 Comm: a.out Not tainted 5.4.0-14-generic #17-Ubuntu
-[  439.915855] Hardware name: To be filled by O.E.M. Saber/Saber, BIOS 0ACKL027 07/01/2019
-[  439.923844] pstate: 80400009 (Nzcv daif +PAN -UAO)
-[  439.928625] pc : __memcpy+0x90/0x180
-[  439.932192] lr : memory_read_from_buffer+0x64/0x88
-[  439.936968] sp : ffff8000350dbc70
-[  439.940270] x29: ffff8000350dbc70 x28: ffff009e9c444b00
-[  439.945568] x27: 0000000000000000 x26: 0000000000000000
-[  439.950866] x25: 0000000056000000 x24: ffff800041ac0000
-[  439.956164] x23: ffff009ea163f980 x22: 0000000000000007
-[  439.961462] x21: ffff8000350dbce8 x20: 000000000000000e
-[  439.966760] x19: 0000000000000007 x18: ffff8000112f64a8
-[  439.972058] x17: 0000000000000000 x16: 0000000000000000
-[  439.977355] x15: 0000000080280000 x14: ffff800041aed000
-[  439.982653] x13: ffff009ee9fa2840 x12: ffff800041ad1000
-[  439.987951] x11: ffff8000115e1360 x10: ffff8000115e1360
-[  439.993248] x9 : 0000000000010000 x8 : ffff800011ad2658
-[  439.998546] x7 : ffff800041ac0000 x6 : ffff009ea163f980
-[  440.003844] x5 : 0140000000000000 x4 : 0000000000010000
-[  440.009141] x3 : ffff800041ac0000 x2 : 0000000000000007
-[  440.014439] x1 : ffff800041ac0007 x0 : ffff009ea163f980
-[  440.019737] Call trace:
-[  440.022173]  __memcpy+0x90/0x180
-[  440.025392]  acpi_data_show+0x54/0x80
-[  440.029044]  sysfs_kf_bin_read+0x6c/0xa8
-[  440.032954]  kernfs_file_direct_read+0x90/0x2d0
-[  440.037470]  kernfs_fop_read+0x68/0x78
-[  440.041210]  __vfs_read+0x48/0x90
-[  440.044511]  vfs_read+0xd0/0x1a0
-[  440.047726]  ksys_read+0x78/0x100
-[  440.051028]  __arm64_sys_read+0x24/0x30
-[  440.054852]  el0_svc_common.constprop.0+0xdc/0x1d8
-[  440.059629]  el0_svc_handler+0x34/0xa0
-[  440.063366]  el0_svc+0x10/0x14
-[  440.066411] Code: 36180062 f8408423 f80084c3 36100062 (b8404423)
-[  440.072492] ---[ end trace 45fb374e8d2d800e ]---
+>>> Aside from those things, there is also a major correctness issue where
+>>> I'm not sure how to solve it properly:
+>>>
+>>> Let's say a process installs a filter on itself like this:
+>>>
+>>> struct landlock_attr_ruleset ruleset = { .handled_access_fs =
+>>> ACCESS_FS_ROUGHLY_WRITE};
+>>> int ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
+>>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+>>> struct landlock_attr_path_beneath path_beneath = {
+>>>   .ruleset_fd = ruleset_fd,
+>>>   .allowed_access = ACCESS_FS_ROUGHLY_WRITE,
+>>>   .parent_fd = open("/tmp/foobar", O_PATH),
+>>> };
+>>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+>>> sizeof(path_beneath), &path_beneath);
+>>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+>>> struct landlock_attr_enforce attr_enforce = { .ruleset_fd = ruleset_fd };
+>>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+>>> sizeof(attr_enforce), &attr_enforce);
+>>>
+>>> At this point, the process is not supposed to be able to write to
+>>> anything outside /tmp/foobar, right? But what happens if the process
+>>> does the following next?
+>>>
+>>> struct landlock_attr_ruleset ruleset = { .handled_access_fs =
+>>> ACCESS_FS_ROUGHLY_WRITE};
+>>> int ruleset_fd = landlock(LANDLOCK_CMD_CREATE_RULESET,
+>>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+>>> struct landlock_attr_path_beneath path_beneath = {
+>>>   .ruleset_fd = ruleset_fd,
+>>>   .allowed_access = ACCESS_FS_ROUGHLY_WRITE,
+>>>   .parent_fd = open("/", O_PATH),
+>>> };
+>>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+>>> sizeof(path_beneath), &path_beneath);
+>>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+>>> struct landlock_attr_enforce attr_enforce = { .ruleset_fd = ruleset_fd };
+>>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET,
+>>> sizeof(attr_enforce), &attr_enforce);
+>>>
+>>> As far as I can tell from looking at the source, after this, you will
+>>> have write access to the entire filesystem again. I think the idea is
+>>> that LANDLOCK_CMD_ENFORCE_RULESET should only let you drop privileges,
+>>> not increase them, right?
+>>
+>> There is an additionnal check in syscall.c:get_path_from_fd(): it is
+>> forbidden to add a rule with a path which is not accessible (according
+>> to LANDLOCK_ACCESS_FS_OPEN) thanks to a call to security_file_open(),
+>> but this is definitely not perfect.
+> 
+> Ah, I missed that.
+> 
+>>> I think the easy way to fix this would be to add a bitmask to each
+>>> rule that says from which ruleset it originally comes, and then let
+>>> check_access_path() collect these bitmasks from each rule with OR, and
+>>> check at the end whether the resulting bitmask is full - if not, at
+>>> least one of the rulesets did not permit the access, and it should be
+>>> denied.
+>>>
+>>> But maybe it would make more sense to change how the API works
+>>> instead, and get rid of the concept of "merging" two rulesets
+>>> together? Instead, we could make the API work like this:
+>>>
+>>>  - LANDLOCK_CMD_CREATE_RULESET gives you a file descriptor whose
+>>> ->private_data contains a pointer to the old ruleset of the process,
+>>> as well as a pointer to a new empty ruleset.
+>>>  - LANDLOCK_CMD_ADD_RULE fails if the specified rule would not be
+>>> permitted by the old ruleset, then adds the rule to the new ruleset
+>>>  - LANDLOCK_CMD_ENFORCE_RULESET fails if the old ruleset pointer in
+>>> ->private_data doesn't match the current ruleset of the process, then
+>>> replaces the old ruleset with the new ruleset.
+>>>
+>>> With this, the new ruleset is guaranteed to be a subset of the old
+>>> ruleset because each of the new ruleset's rules is permitted by the
+>>> old ruleset. (Unless the directory hierarchy rotates, but in that case
+>>> the inaccuracy isn't much worse than what would've been possible
+>>> through RCU path walk anyway AFAIK.)
+>>>
+>>> What do you think?
+>>>
+>>
+>> I would prefer to add the same checks you described at first (with
+>> check_access_path), but only when creating a new ruleset with
+>> merge_ruleset() (which should probably be renamed). This enables not to
+>> rely on a parent ruleset/domain until the enforcement, which is the case
+>> anyway.
+>> Unfortunately this doesn't work for some cases with bind mounts. Because
+>> check_access_path() goes through one path, another (bind mounted) path
+>> could be illegitimately allowed.
+> 
+> Hmm... I'm not sure what you mean. At the moment, landlock doesn't
+> allow any sandboxed process to change the mount hierarchy, right? Can
+> you give an example where this would go wrong?
 
-A simple reproducer is as follows:
+Indeed, a Landlocked process must no be able to change its mount
+namespace layout. However, bind mounts may already exist.
+Let's say a process sandbox itself to only access /a in a read-write
+way. Then, this process (or one of its children) add a new restriction
+on /a/b to only be able to read this hierarchy. The check at insertion
+time would allow this because this access right is a subset of the
+access right allowed with the parent directory. However, If /a/b is bind
+mounted somewhere else, let's say in /private/b, then the second
+enforcement just gave new access rights to this hierarchy too. This is
+why it seems risky to rely on a check about the legitimacy of a new
+access right when adding it to a ruleset or when enforcing it.
 
-int main(void)
-{
-        int fd;
-        char buffer[7];
-        ssize_t n;
 
-        fd = open("/sys/firmware/acpi/tables/data/BERT", O_RDONLY);
-        if (fd < 0) {
-                perror("open failed");
-                return -1;
-        }
-        do {
-                n = read(fd, buffer, sizeof(buffer));
-        } while (n > 0);
-
-        return 0;
-}
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
-V2: Add missing #include <linux/io.h> without which we get
-    a build failure when building with allnoconfig 
----
- drivers/acpi/sysfs.c   |  2 +-
- fs/libfs.c             | 34 ++++++++++++++++++++++++++++++++++
- include/linux/string.h |  2 ++
- 3 files changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
-index c60d2c6..fb9e216 100644
---- a/drivers/acpi/sysfs.c
-+++ b/drivers/acpi/sysfs.c
-@@ -446,7 +446,7 @@ static ssize_t acpi_data_show(struct file *filp, struct kobject *kobj,
- 	base = acpi_os_map_memory(data_attr->addr, data_attr->attr.size);
- 	if (!base)
- 		return -ENOMEM;
--	rc = memory_read_from_buffer(buf, count, &offset, base,
-+	rc = memory_read_from_io_buffer(buf, count, &offset, base,
- 				     data_attr->attr.size);
- 	acpi_os_unmap_memory(base, data_attr->attr.size);
- 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c686bd9..1a49da1 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -20,6 +20,7 @@
- #include <linux/fs_context.h>
- #include <linux/pseudo_fs.h>
- #include <linux/fsnotify.h>
-+#include <linux/io.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -800,6 +801,39 @@ ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
- }
- EXPORT_SYMBOL(memory_read_from_buffer);
- 
-+/**
-+ * memory_read_from_io_buffer - copy data from a io memory mapped buffer
-+ * @to: the kernel space buffer to read to
-+ * @count: the maximum number of bytes to read
-+ * @ppos: the current position in the buffer
-+ * @from: the buffer to read from
-+ * @available: the size of the buffer
-+ *
-+ * The memory_read_from_buffer() function reads up to @count bytes from the
-+ * io memory mappy buffer @from at offset @ppos into the kernel space address
-+ * starting at @to.
-+ *
-+ * On success, the number of bytes read is returned and the offset @ppos is
-+ * advanced by this number, or negative value is returned on error.
-+ **/
-+ssize_t memory_read_from_io_buffer(void *to, size_t count, loff_t *ppos,
-+				   const void *from, size_t available)
-+{
-+	loff_t pos = *ppos;
-+
-+	if (pos < 0)
-+		return -EINVAL;
-+	if (pos >= available)
-+		return 0;
-+	if (count > available - pos)
-+		count = available - pos;
-+	memcpy_fromio(to, from + pos, count);
-+	*ppos = pos + count;
-+
-+	return count;
-+}
-+EXPORT_SYMBOL(memory_read_from_io_buffer);
-+
- /*
-  * Transaction based IO.
-  * The file expects a single write which triggers the transaction, and then
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 6dfbb2e..0c6ec2a 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -216,6 +216,8 @@ int bprintf(u32 *bin_buf, size_t size, const char *fmt, ...) __printf(3, 4);
- 
- extern ssize_t memory_read_from_buffer(void *to, size_t count, loff_t *ppos,
- 				       const void *from, size_t available);
-+extern ssize_t memory_read_from_io_buffer(void *to, size_t count, loff_t *ppos,
-+					  const void *from, size_t available);
- 
- int ptr_to_hashval(const void *ptr, unsigned long *hashval_out);
- 
--- 
-2.7.4
-
+> 
+>> That makes the problem a bit more complicated. A solution may be to keep
+>> track of the hierarchy of each rule (e.g. with a layer/depth number),
+>> and only allow an access request if at least a rule of each layer allow
+>> this access. In this case we also need to correctly handle the case when
+>> rules from different layers are tied to the same object.
+> 
