@@ -2,134 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E85B1891E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 00:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4B2189245
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 00:44:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgCQXUJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 19:20:09 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:20940 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgCQXUJ (ORCPT
+        id S1727069AbgCQXoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 19:44:21 -0400
+Received: from smtprelay0254.hostedemail.com ([216.40.44.254]:59092 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726721AbgCQXoV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 19:20:09 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200317232006epoutp04d597cf5a5d3d68c95fb689bfbf634366~9OrgwRND-1761817618epoutp045
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Mar 2020 23:20:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200317232006epoutp04d597cf5a5d3d68c95fb689bfbf634366~9OrgwRND-1761817618epoutp045
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1584487206;
-        bh=GhpuUBz1rA8cj0VwatvWYGkiGG6WTdtX3q8CwoVYcoc=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=hK7Tj8URf1EXMLcBXPCOOEYuZDpKdVn7JhyucC/QzDLLejdR6lsHBuUzDiRCF7Hff
-         8JEbhComjSsPP1e/1qBCrUxixBcgajOQrtiWOHUTLiARyqvJ+6UlNqXuaMOb0neWIF
-         RibQMAZ00E/5frULe/5PGBxycHFw9ss3OSqvF1d0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200317232006epcas1p4becb6a6bf10457fd8a5e05a212759ab7~9OrgQvheo1640216402epcas1p4J;
-        Tue, 17 Mar 2020 23:20:06 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.159]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 48hpzn0ss2zMqYkg; Tue, 17 Mar
-        2020 23:20:05 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0F.88.04140.52B517E5; Wed, 18 Mar 2020 08:20:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200317232004epcas1p3713b7807eb7db36f16c6263d83ee9b51~9OrevZUtQ1457714577epcas1p3G;
-        Tue, 17 Mar 2020 23:20:04 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200317232004epsmtrp2b7edd941986d0ad76239cd6ccba74d00~9OreuwDEJ0539405394epsmtrp2M;
-        Tue, 17 Mar 2020 23:20:04 +0000 (GMT)
-X-AuditID: b6c32a36-fa3ff7000000102c-ae-5e715b258cbf
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FF.4E.04158.42B517E5; Wed, 18 Mar 2020 08:20:04 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200317232004epsmtip25593eb00c3f3ab747851e47fb82471c8~9OremXeVr0203002030epsmtip2H;
-        Tue, 17 Mar 2020 23:20:04 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     =?UTF-8?Q?'Pali_Roh=C3=A1r'?= <pali@kernel.org>,
-        "'Alexander Viro'" <viro@zeniv.linux.org.uk>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>
-In-Reply-To: <20200317222555.29974-1-pali@kernel.org>
-Subject: RE: [PATCH 0/4] Fixes for exfat driver
-Date:   Wed, 18 Mar 2020 08:20:04 +0900
-Message-ID: <000101d5fcb2$96ec6270$c4c52750$@samsung.com>
+        Tue, 17 Mar 2020 19:44:21 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 1A290180A631E;
+        Tue, 17 Mar 2020 23:44:20 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:2:41:355:371:372:379:800:960:966:968:973:988:989:1260:1277:1311:1313:1314:1345:1437:1515:1516:1518:1535:1593:1594:1605:1730:1747:1777:1792:2196:2198:2199:2200:2393:2559:2562:2828:2901:3138:3139:3140:3141:3142:3866:3867:3868:3870:3871:4049:4118:4250:4321:4385:5007:6119:8603:10004:10226:10848:11026:11473:11657:11658:11914:12043:12296:12297:12438:12555:12679:12760:12986:13439:14096:14097:14394:14659:21080:21433:21451:21627:21810:21987:21990:30054:30069:30070,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: silk39_5fef4fb1a8f52
+X-Filterd-Recvd-Size: 7129
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 17 Mar 2020 23:44:19 +0000 (UTC)
+Message-ID: <12f7e30cabca4cb16989a65ab0fb69f8457d53b2.camel@perches.com>
+Subject: [PATCH] exfat: Remove unnecessary newlines from logging
+From:   Joe Perches <joe@perches.com>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 17 Mar 2020 16:42:30 -0700
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQFfV5+WSZBMDydYf2i5chUPdrlJhwHCHd20qSyhhOA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmvq5qdGGcwYnJbBZ79p5ksbi8aw6b
-        xYI9p9kstvw7wmpx/u9xVgdWj02rOtk8+rasYvT4vEnOY9OTt0wBLFE5NhmpiSmpRQqpecn5
-        KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAe5UUyhJzSoFCAYnFxUr6djZF
-        +aUlqQoZ+cUltkqpBSk5BYYGBXrFibnFpXnpesn5uVaGBgZGpkCVCTkZkx+fYi74w1lx4IJ+
-        A2MvZxcjJ4eEgInEnhW9LF2MXBxCAjsYJSYs+A/lfGKU+Lb1OzuE841RouNfMytMy5oLy1gh
-        EnsZJa79mg3V8pJR4sLO30wgVWwCuhL//uxnA7FFBJIlDlydAGYzCxRIrN17BmwSp4CpxIeX
-        68HiwgL6EuuPd4L1sgioSkw63AYW5xWwlGjcOZ8ZwhaUODnzCQvEHG2JZQtfM0NcpCDx8+ky
-        VohdVhJ/fi+EqhGRmN3ZBlVzmU1i9Q+op10kVq1tYISwhSVeHd/CDmFLSXx+txdoLweQXS3x
-        cT9UawejxIvvthC2scTN9RtYQUqYBTQl1u/ShwgrSuz8PZcRYiufxLuvPawQU3glOtqEIEpU
-        JfouHWaCsKUluto/sE9gVJqF5K9ZSP6aheT+WQjLFjCyrGIUSy0ozk1PLTYsMEKO6k2M4BSp
-        ZbaDcdE5n0OMAhyMSjy8HBsK4oRYE8uKK3MPMUpwMCuJ8C4uzI8T4k1JrKxKLcqPLyrNSS0+
-        xGgKDPaJzFKiyfnA9J1XEm9oamRsbGxhYmZuZmqsJM479XpOnJBAemJJanZqakFqEUwfEwen
-        VANjPOPskAvtvwUP3FF/ESosvmF1lcWBBbbGZt6vIm5wMfo0/nRbXq995eYc4z8X+06uW8Cz
-        dJ1QyWedRzs0zMQFs+ydL8TZPP9ucrZJ91zPviurCieefy3sH/IuPPeqXtXR0E0m5R/Vj6Yv
-        KMtO0N5+9zpbRGKS5iT+WQ3nWiWP3/7By2a8qfKDEktxRqKhFnNRcSIAJdNl2KcDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJXlclujDOoPWrlMWevSdZLC7vmsNm
-        sWDPaTaLLf+OsFqc/3uc1YHVY9OqTjaPvi2rGD0+b5Lz2PTkLVMASxSXTUpqTmZZapG+XQJX
-        RveJNqaCV+wVZ++9Y2xgnMHWxcjJISFgIrHmwjLWLkYuDiGB3YwSl371sUAkpCWOnTjD3MXI
-        AWQLSxw+XAxR85xR4vb09awgNWwCuhL//uwHGyQikCxxbPJ7ZhCbWaBI4n7veXaIhjZGiZ3L
-        /jKBJDgFTCU+vFwP1iAsoC+x/ngnWJxFQFVi0uE2sDivgKVE4875zBC2oMTJmU9YIIZqS/Q+
-        bGWEsZctfM0McaiCxM+ny1ghjrCS+PN7IVS9iMTszjbmCYzCs5CMmoVk1Cwko2YhaVnAyLKK
-        UTK1oDg3PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM4YrS0djCeOBF/iFGAg1GJhzdhU0GcEGti
-        WXFl7iFGCQ5mJRHexYX5cUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOPRQoJpCeWpGanphak
-        FsFkmTg4pRoYnT90PpaV2tyUvyH52y3x5wZz5zu3sp55++zVzptn+49fsA02Os0wQ3/GqgZZ
-        vtV2/z/bbN/azvDvgEMWt1AZu1/ne5cHO/hCG+omG8y7/11N/fu3y7uumHE8C3whWVMiPL3c
-        /M2N1pnzp76O8rm1ou37cq0TW1nMtTLO9KsKpL+23Hu9YLHXcyWW4oxEQy3mouJEAPceOuyU
-        AgAA
-X-CMS-MailID: 20200317232004epcas1p3713b7807eb7db36f16c6263d83ee9b51
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200317222604epcas1p1559308b0199c5320a9c77f5ad9f033a2
-References: <CGME20200317222604epcas1p1559308b0199c5320a9c77f5ad9f033a2@epcas1p1.samsung.com>
-        <20200317222555.29974-1-pali@kernel.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> This patch series contains small fixes for exfat driver. It removes
-> conversion from UTF-16 to UTF-16 at two places where it is not needed and
-> fixes discard support.
-Looks good to me.
-Acked-by: Namjae Jeon <namjae.jeon=40samsung.com>
+None of these message formats should end in a newline as
+exfat_msg and its callers already appends messages with one.
 
-Hi Al,
+Miscellanea:
 
-Could you please push these patches into your =23for-next ?
-Thanks=21
+o Remove unnecessary trailing periods from formats.
 
->=20
-> Patches are also in my exfat branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/pali/linux.git/log/?h=3De=
-xfa
-> t
->=20
-> Pali Roh=C3=A1r=20(4):=0D=0A>=20=20=20exfat:=20Simplify=20exfat_utf8_d_ha=
-sh()=20for=20code=20points=20above=20U+FFFF=0D=0A>=20=20=20exfat:=20Simplif=
-y=20exfat_utf8_d_cmp()=20for=20code=20points=20above=20U+FFFF=0D=0A>=20=20=
-=20exfat:=20Remove=20unused=20functions=20exfat_high_surrogate()=20and=0D=
-=0A>=20=20=20=20=20exfat_low_surrogate()=0D=0A>=20=20=20exfat:=20Fix=20disc=
-ard=20support=0D=0A>=20=0D=0A>=20=20fs/exfat/exfat_fs.h=20=7C=20=202=20--=
-=0D=0A>=20=20fs/exfat/namei.c=20=20=20=20=7C=2019=20++++---------------=0D=
-=0A>=20=20fs/exfat/nls.c=20=20=20=20=20=20=7C=2013=20-------------=0D=0A>=
-=20=20fs/exfat/super.c=20=20=20=20=7C=20=205=20+++--=0D=0A>=20=204=20files=
-=20changed,=207=20insertions(+),=2032=20deletions(-)=0D=0A>=20=0D=0A>=20--=
-=0D=0A>=202.20.1=0D=0A=0D=0A=0D=0A
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ fs/exfat/dir.c    | 4 ++--
+ fs/exfat/fatent.c | 8 ++++----
+ fs/exfat/file.c   | 2 +-
+ fs/exfat/inode.c  | 6 +++---
+ fs/exfat/misc.c   | 2 +-
+ fs/exfat/nls.c    | 4 ++--
+ fs/exfat/super.c  | 4 ++--
+ 7 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 4b91af..a213520 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -750,7 +750,7 @@ struct exfat_dentry *exfat_get_dentry(struct super_block *sb,
+ 	sector_t sec;
+ 
+ 	if (p_dir->dir == DIR_DELETED) {
+-		exfat_msg(sb, KERN_ERR, "abnormal access to deleted dentry\n");
++		exfat_msg(sb, KERN_ERR, "abnormal access to deleted dentry");
+ 		return NULL;
+ 	}
+ 
+@@ -853,7 +853,7 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+ 	struct buffer_head *bh;
+ 
+ 	if (p_dir->dir == DIR_DELETED) {
+-		exfat_msg(sb, KERN_ERR, "access to deleted dentry\n");
++		exfat_msg(sb, KERN_ERR, "access to deleted dentry");
+ 		return NULL;
+ 	}
+ 
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index a855b17..dcf840 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -305,7 +305,7 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
+ 	return 0;
+ 
+ release_bhs:
+-	exfat_msg(sb, KERN_ERR, "failed zeroed sect %llu\n",
++	exfat_msg(sb, KERN_ERR, "failed zeroed sect %llu",
+ 		(unsigned long long)blknr);
+ 	for (i = 0; i < n; i++)
+ 		bforget(bhs[i]);
+@@ -325,7 +325,7 @@ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+ 
+ 	if (unlikely(total_cnt < sbi->used_clusters)) {
+ 		exfat_fs_error_ratelimit(sb,
+-			"%s: invalid used clusters(t:%u,u:%u)\n",
++			"%s: invalid used clusters(t:%u,u:%u)",
+ 			__func__, total_cnt, sbi->used_clusters);
+ 		return -EIO;
+ 	}
+@@ -338,7 +338,7 @@ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+ 	if (hint_clu == EXFAT_EOF_CLUSTER) {
+ 		if (sbi->clu_srch_ptr < EXFAT_FIRST_CLUSTER) {
+ 			exfat_msg(sb, KERN_ERR,
+-				"sbi->clu_srch_ptr is invalid (%u)\n",
++				"sbi->clu_srch_ptr is invalid (%u)",
+ 				sbi->clu_srch_ptr);
+ 			sbi->clu_srch_ptr = EXFAT_FIRST_CLUSTER;
+ 		}
+@@ -350,7 +350,7 @@ int exfat_alloc_cluster(struct inode *inode, unsigned int num_alloc,
+ 
+ 	/* check cluster validation */
+ 	if (hint_clu < EXFAT_FIRST_CLUSTER && hint_clu >= sbi->num_clusters) {
+-		exfat_msg(sb, KERN_ERR, "hint_cluster is invalid (%u)\n",
++		exfat_msg(sb, KERN_ERR, "hint_cluster is invalid (%u)",
+ 			hint_clu);
+ 		hint_clu = EXFAT_FIRST_CLUSTER;
+ 		if (p_chain->flags == ALLOC_NO_FAT_CHAIN) {
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 483f68..146024 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -235,7 +235,7 @@ void exfat_truncate(struct inode *inode, loff_t size)
+ 		/*
+ 		 * Empty start_clu != ~0 (not allocated)
+ 		 */
+-		exfat_fs_error(sb, "tried to truncate zeroed cluster.");
++		exfat_fs_error(sb, "tried to truncate zeroed cluster");
+ 		goto write_size;
+ 	}
+ 
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 068874..a84819 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -181,7 +181,7 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 		/* allocate a cluster */
+ 		if (num_to_be_allocated < 1) {
+ 			/* Broken FAT (i_sze > allocated FAT) */
+-			exfat_fs_error(sb, "broken FAT chain.");
++			exfat_fs_error(sb, "broken FAT chain");
+ 			return -EIO;
+ 		}
+ 
+@@ -351,7 +351,7 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
+ 		err = exfat_map_new_buffer(ei, bh_result, pos);
+ 		if (err) {
+ 			exfat_fs_error(sb,
+-					"requested for bmap out of range(pos : (%llu) > i_size_aligned(%llu)\n",
++					"requested for bmap out of range(pos : (%llu) > i_size_aligned(%llu)",
+ 					pos, ei->i_size_aligned);
+ 			goto unlock_ret;
+ 		}
+@@ -428,7 +428,7 @@ static int exfat_write_end(struct file *file, struct address_space *mapping,
+ 
+ 	if (EXFAT_I(inode)->i_size_aligned < i_size_read(inode)) {
+ 		exfat_fs_error(inode->i_sb,
+-			"invalid size(size(%llu) > aligned(%llu)\n",
++			"invalid size(size(%llu) > aligned(%llu)",
+ 			i_size_read(inode), EXFAT_I(inode)->i_size_aligned);
+ 		return -EIO;
+ 	}
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index 14a330..d480b5a 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -32,7 +32,7 @@ void __exfat_fs_error(struct super_block *sb, int report, const char *fmt, ...)
+ 		va_start(args, fmt);
+ 		vaf.fmt = fmt;
+ 		vaf.va = &args;
+-		exfat_msg(sb, KERN_ERR, "error, %pV\n", &vaf);
++		exfat_msg(sb, KERN_ERR, "error, %pV", &vaf);
+ 		va_end(args);
+ 	}
+ 
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 6d1c3a..9e07e1 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -688,7 +688,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
+ 		bh = sb_bread(sb, sector);
+ 		if (!bh) {
+ 			exfat_msg(sb, KERN_ERR,
+-				"failed to read sector(0x%llx)\n",
++				"failed to read sector(0x%llx)",
+ 				(unsigned long long)sector);
+ 			ret = -EIO;
+ 			goto free_table;
+@@ -723,7 +723,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
+ 		return 0;
+ 
+ 	exfat_msg(sb, KERN_ERR,
+-			"failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)\n",
++			"failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)",
+ 			index, checksum, utbl_checksum);
+ 	ret = -EINVAL;
+ free_table:
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 16ed202e..3e3c606 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -573,7 +573,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	root_inode = new_inode(sb);
+ 	if (!root_inode) {
+-		exfat_msg(sb, KERN_ERR, "failed to allocate root inode.");
++		exfat_msg(sb, KERN_ERR, "failed to allocate root inode");
+ 		err = -ENOMEM;
+ 		goto free_table;
+ 	}
+@@ -582,7 +582,7 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode_set_iversion(root_inode, 1);
+ 	err = exfat_read_root(root_inode);
+ 	if (err) {
+-		exfat_msg(sb, KERN_ERR, "failed to initialize root inode.");
++		exfat_msg(sb, KERN_ERR, "failed to initialize root inode");
+ 		goto put_inode;
+ 	}
+ 
+
