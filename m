@@ -2,48 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CB9188869
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 15:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C18B81888BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 16:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgCQO5r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 10:57:47 -0400
-Received: from verein.lst.de ([213.95.11.211]:60355 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbgCQO5r (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 10:57:47 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 83CB168C65; Tue, 17 Mar 2020 15:57:44 +0100 (CET)
-Date:   Tue, 17 Mar 2020 15:57:44 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fs: move the posix_acl_fix_xattr_{to_from}_user out of
- xattr code
-Message-ID: <20200317145744.GA15941@lst.de>
-References: <20200221173722.538788-1-hch@lst.de> <CAHc6FU5RM5c0dopuJmCEJmPkwM6TUy60xnSWRpH2qHdX09B1pw@mail.gmail.com>
+        id S1726329AbgCQPMP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 11:12:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44216 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbgCQPMP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Mar 2020 11:12:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pbLHB9V9NtrdlKy9LTVkFQnPf56Ydm4tI2ppPZSZNps=; b=JGbggYpACVXwkcRv8YuvmvHqoh
+        y5eFeNBYa6g94ApVUyxyK/sE9DiqYjC45GjIAdSItbRLRasxKVptDYaysBrtbAhAuihaeEAhXBo9m
+        LcIiQPMA54oLyAzkC3jQf9V/5CDFflNwmkMX9O5dUZHv6kmQr4A/3rUIe1ryA2vgzcSm3BnbcdOeT
+        dzl01/yTzexypl6U1WoCpaOhuMCNvZygAQG2Kalw6cyoOgRiqC9EmiV2z2uUmOQM2dk2ZzbajADeP
+        nROhJP2WDbmJwzevTdO7RNpoDlNT54Rc//2GeSQcyhmeoDcOGFut/5IWpX+OTpJUZWOrDyt7mhxuE
+        OPae1xAw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEDt8-0001yB-Mk; Tue, 17 Mar 2020 15:12:14 +0000
+Date:   Tue, 17 Mar 2020 08:12:14 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/8] xarray: Explicitely set XA_FREE_MARK in
+ __xa_cmpxchg()
+Message-ID: <20200317151214.GB22433@bombadil.infradead.org>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-4-jack@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU5RM5c0dopuJmCEJmPkwM6TUy60xnSWRpH2qHdX09B1pw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200204142514.15826-4-jack@suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 03, 2020 at 02:42:50PM +0100, Andreas Gruenbacher wrote:
-> Miklos,
-> 
-> On Fri, Feb 21, 2020 at 7:01 PM Christoph Hellwig <hch@lst.de> wrote:
-> > There is no excuse to ever perform actions related to a specific handler
-> > directly from the generic xattr code as we have handler that understand
-> > the specific data in given attrs.  As a nice sideeffect this removes
-> > tons of pointless boilerplate code.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> can you please review this change from an overlayfs point of view?
+On Tue, Feb 04, 2020 at 03:25:09PM +0100, Jan Kara wrote:
+> __xa_cmpxchg() relies on xas_store() to set XA_FREE_MARK when storing
+> NULL into xarray that has free tracking enabled. Make the setting of
+> XA_FREE_MARK explicit similarly as its clearing currently it.
 
-ping?
+>  		if (curr == old) {
+>  			xas_store(&xas, entry);
+> -			if (xa_track_free(xa) && entry && !curr)
+> -				xas_clear_mark(&xas, XA_FREE_MARK);
+> +			if (xa_track_free(xa)) {
+> +				if (entry && !curr)
+> +					xas_clear_mark(&xas, XA_FREE_MARK);
+> +				else if (!entry && curr)
+> +					xas_set_mark(&xas, XA_FREE_MARK);
+> +			}
+
+This isn't right because the entry might have a different mark set on it
+that would have been cleared before, but now won't be.  I should add
+a test case for that ...
