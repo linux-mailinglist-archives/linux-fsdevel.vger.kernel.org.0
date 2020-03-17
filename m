@@ -2,95 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1373188906
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 16:19:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A17818892C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Mar 2020 16:28:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgCQPTy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Mar 2020 11:19:54 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51928 "EHLO
+        id S1726607AbgCQP2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Mar 2020 11:28:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52336 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgCQPTy (ORCPT
+        with ESMTP id S1726019AbgCQP2u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Mar 2020 11:19:54 -0400
+        Tue, 17 Mar 2020 11:28:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=qF4Ay2037uPUSUMB4CI/jcU6NhGJJiHt+Bh9H6iNIEs=; b=MVUspZwlEA2YIkbP42nw6NcJtL
-        26u0hkT7viWbxDgKHBjz41sks91K1gul9ypz4w0B20aTAHORhl9XVsvAuf+pAb01suGNactdhSBHe
-        ITMWVfilrqglvQt3wOV0M70pfnTerGp3tlZMFmXpojwCZQbn5B6dU7f72QNYpZjvnY5bQnkYECs2p
-        EU8ABg0rEmHCsY8XWA8ysZ2AVV72IZlwHjCDtqy1v2Pu4q8d7rEJpj0V1vCaGtOVQaRwx0NsC7+lS
-        IATRml1c/6c83oFSKn2ud0hHYZBdLW+z/b012PQOMO9M7j0VP6OjjZVdJ/+wyJl21XZ4EnbSHUN9y
-        50tlfEFg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEE0T-0004y7-Ef; Tue, 17 Mar 2020 15:19:49 +0000
-Subject: Re: [PATCH] ext2: fix debug reference to ext2_xattr_cache
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xJA9FFPfJkuq8fVzTKccTbceOpg3uJs1/00mKyQZnEc=; b=nNS0iOdmgHP2ZIGEAO0g8u8fHS
+        TDvQDiQcFH1hBkh3Q5nsFQz5yj7wNCL9cCORyBIyR7V7GMpP/q/ZoUKULALuLr2IdVltjzsEIP4xU
+        ZxpJAxHApbow3TTrO+kd7z8z5XjPJvXMEpQnHDINerFDHBgzwxx833CnsYL6lxI3noSayyLLf8qoR
+        e4jvJjgerruwRQffudZlNvBPEa8TKXAtVTahVkqvpnOgladbVay0AMUHK92QgVxKvK4RBmQ5/1d1R
+        +yWUabB4oYjjbTWqpMJSPZIicNbXxCNRb7EXNJSzuMNn4VGo1WST+AhzHDaLRUUWT0AbzpC+lzkCj
+        r6J22hMQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEE9C-0008Sr-5E; Tue, 17 Mar 2020 15:28:50 +0000
+Date:   Tue, 17 Mar 2020 08:28:50 -0700
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Jan Kara <jack@suse.cz>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <88b8bde4-8c7a-6b44-9478-3ce13ecfab3a@infradead.org>
- <20200317114712.GH22684@quack2.suse.cz>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9b4e1fa7-b4f8-b2a9-8269-04daeb3dfaaa@infradead.org>
-Date:   Tue, 17 Mar 2020 08:19:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 2/8] xarray: Provide xas_erase() helper
+Message-ID: <20200317152850.GC22433@bombadil.infradead.org>
+References: <20200204142514.15826-1-jack@suse.cz>
+ <20200204142514.15826-3-jack@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20200317114712.GH22684@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200204142514.15826-3-jack@suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/17/20 4:47 AM, Jan Kara wrote:
-> On Fri 13-03-20 20:42:05, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix a debug-only build error in ext2/xattr.c:
->>
->> When building without extra debugging, (and with another patch that uses
->> no_printk() instead of <empty> for the ext2-xattr debug-print macros,
->> this build error happens:
->>
->> ../fs/ext2/xattr.c: In function ‘ext2_xattr_cache_insert’:
->> ../fs/ext2/xattr.c:869:18: error: ‘ext2_xattr_cache’ undeclared (first use in this function); did you mean ‘ext2_xattr_list’?
->>      atomic_read(&ext2_xattr_cache->c_entry_count));
->>
->> Fix by moving struct mb_cache from fs/mbcache.c to <linux/mbcache.h>,
->> and then using the correct struct name in the debug-print macro.
->>
->> This wasn't converted when ext2 xattr cache was changed to use mbcache.
->>
->> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Jan Kara <jack@suse.com>
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: linux-ext4@vger.kernel.org
->> Cc: linux-fsdevel@vger.kernel.org
-> 
-> Thanks for the patch! I don't think exporting 'struct mb_cache' just for
-> this is reasonable. I've committed a patch which just removes the entry
-> count from the debug message (attached).
-> 
+On Tue, Feb 04, 2020 at 03:25:08PM +0100, Jan Kara wrote:
+> +void *xas_erase(struct xa_state *xas)
+> +{
+> +	void *entry;
+> +
+> +	entry = xas_store(xas, NULL);
+> +	xas_init_marks(xas);
+> +
+> +	return entry;
+> +}
+> +EXPORT_SYMBOL(xas_erase);
 
-Sure, that's good.  I have a patch like that one on my system also. :)
+I didn't have a test case to show this, but ...
 
-> 
->> ---
->> This is ancient, from the beginning of git history.
->>
->> Or just kill of that print of c_entry_count...
->>
->>  fs/ext2/xattr.c         |    2 +-
->>  fs/mbcache.c            |   34 ----------------------------------
->>  include/linux/mbcache.h |   35 ++++++++++++++++++++++++++++++++++-
->>  3 files changed, 35 insertions(+), 36 deletions(-)
++static noinline void check_multi_store_4(struct xarray *xa)
++{
++       XA_BUG_ON(xa, xa_marked(xa, XA_MARK_0));
++       XA_BUG_ON(xa, !xa_empty(xa));
++
++       xa_store_index(xa, 0, GFP_KERNEL);
++       xa_store_index(xa, 2, GFP_KERNEL);
++       xa_set_mark(xa, 0, XA_MARK_0);
++       xa_set_mark(xa, 2, XA_MARK_0);
++
++       xa_store_order(xa, 0, 2, NULL, GFP_KERNEL);
++       XA_BUG_ON(xa, xa_marked(xa, XA_MARK_0));
++       xa_destroy(xa);
++}
 
--- 
-~Randy
+shows a problem.  Because we delete all the entries in the tree,
+xas_delete_node() sets the xas->xa_node to XAS_BOUNDS.  This fixes it:
 
+@@ -492,7 +492,6 @@ static void xas_delete_node(struct xa_state *xas)
+ 
+                if (!parent) {
+                        xas->xa->xa_head = NULL;
+-                       xas->xa_node = XAS_BOUNDS;
+                        return;
+                }
+ 
+(it leaves xas->xa_node set to NULL, which makes the above work correctly
+because NULL is used to mean the one element at index 0 of the array)
+
+Now I'm wondering if it's going to break anything, though.  The test suite
+runs successfully, but it can't be exhaustive.
