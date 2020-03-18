@@ -2,272 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 750BD18A655
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 22:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BC218A576
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 22:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbgCRUyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 16:54:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727610AbgCRUyO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:54:14 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1A9421841;
-        Wed, 18 Mar 2020 20:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584564853;
-        bh=rzO4Wfq1pgO3m0SkYQiQbx9f4kvzwkiAV1A9ruyWszE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bGdRJx7gNI7Y34GesYO9lFvaMsM2nHSbpOjfEIb7z4R3M+qXnkbfdY6BgAH3uqfWW
-         SwtNtUYfaVeO4qGky8zn6axy5SBagZ+KpBDcCOUw/Ts2BGA7BfJTuoQvnrRfVWPxwx
-         MHANFUscBVc2U/Mtj7qgpUgzilmeQ4Zlh728MA2g=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 30/73] futex: Fix inode life-time issue
-Date:   Wed, 18 Mar 2020 16:52:54 -0400
-Message-Id: <20200318205337.16279-30-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200318205337.16279-1-sashal@kernel.org>
-References: <20200318205337.16279-1-sashal@kernel.org>
+        id S1728918AbgCRVBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 17:01:39 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40714 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728550AbgCRVBj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 17:01:39 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a24so32676724edy.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
+        b=m+CruKFqyeFiSzmQCZqiAjkeem718D1Unt4LZxrLyM48zoGD0gDaVn0NlVfCexVTzu
+         wihdula0cgpJNes9gbbbPZGOCr8gmzgfMR1DP2niKlc4/Xbz1RjMvIcZK3QeYS4MTBzR
+         VGVmqZmbPsEQ42JahCXbnk6yopm5byhYxfuE4bMF2/oEIwfi0TIGwhWzo+tUFEv5Mobg
+         xAZqhXW9ZYNPl8K7ISeE3z29hhnh0uDlXFQhZXWxMxod1HlKG5GyxdS8a7Q7I9YuWv4C
+         hEdfpxYwsjziy7uL5etvx6svflsV0+OWDJH1g09o69UnURs0B4B8khAkiIXSB+T2BP9R
+         8WWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
+        b=fMYZ61/Atk1hYN76/EA2AqGBDsd5OvpmUwm9ulSFBnxYHjl5cciQ933TDVGUbqjRTE
+         dHfHsdPmiWS35YdRb/euL7KIuaGiY2BhshS/QiVYsrhcmOZVPAKaUHlCjMQAC8/h9h1M
+         8cT0CGTHfdrlGKC3Y4FrvpjX2VEuQ1E68Gm5V/fH+5lDu5Mhc6dZRDbVTpuwR9qNKxfB
+         bMlowimlBWvKixpplyacy+EASh0Ewq4drA4AbnQDBBGjm4vt5uEKWYin6tP+lkJq3i8V
+         vXhxxwD+kwqR4HAL1uUEwVSNBHCCMEeTXshoeFseaWToor8fk4GLKd8BW0wiLWM652lt
+         L+WA==
+X-Gm-Message-State: ANhLgQ3wr/SBF8/P+V3BOj+U35d9Jt4novJQlmJDZ7JxvJ6Un7YXwj3G
+        6Egz+IxMljdzZfHMbqsuG7uFUq4bInGiYnK/sr9R
+X-Google-Smtp-Source: ADFU+vtjoB1L41gbvG3IfZm3ksBmDTvbqLdnYvpmD27Ya9UPhKm77W68IFm4/AxRz3i7hA2sUofnKwQPP6SAVhHtg78=
+X-Received: by 2002:a05:6402:8c3:: with SMTP id d3mr5966134edz.31.1584565297053;
+ Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
+ <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
+ <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca> <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
+ <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+In-Reply-To: <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Mar 2020 17:01:26 -0400
+Message-ID: <CAHC9VhQKOpVWxDg-tWuCWV22QRu8P_NpFKme==0Ot1RQKa_DWA@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+On Fri, Mar 13, 2020 at 3:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-13 12:42, Paul Moore wrote:
 
-[ Upstream commit 8019ad13ef7f64be44d4f892af9c840179009254 ]
+...
 
-As reported by Jann, ihold() does not in fact guarantee inode
-persistence. And instead of making it so, replace the usage of inode
-pointers with a per boot, machine wide, unique inode identifier.
+> > The thread has had a lot of starts/stops, so I may be repeating a
+> > previous suggestion, but one idea would be to still emit a "death
+> > record" when the final task in the audit container ID does die, but
+> > block the particular audit container ID from reuse until it the
+> > SIGNAL2 info has been reported.  This gives us the timely ACID death
+> > notification while still preventing confusion and ambiguity caused by
+> > potentially reusing the ACID before the SIGNAL2 record has been sent;
+> > there is a small nit about the ACID being present in the SIGNAL2
+> > *after* its death, but I think that can be easily explained and
+> > understood by admins.
+>
+> Thinking quickly about possible technical solutions to this, maybe it
+> makes sense to have two counters on a contobj so that we know when the
+> last process in that container exits and can issue the death
+> certificate, but we still block reuse of it until all further references
+> to it have been resolved.  This will likely also make it possible to
+> report the full contid chain in SIGNAL2 records.  This will eliminate
+> some of the issues we are discussing with regards to passing a contobj
+> vs a contid to the audit_log_contid function, but won't eliminate them
+> all because there are still some contids that won't have an object
+> associated with them to make it impossible to look them up in the
+> contobj lists.
 
-This sequence number is global, but shared (file backed) futexes are
-rare enough that this should not become a performance issue.
+I'm not sure you need a full second counter, I imagine a simple flag
+would be okay.  I think you just something to indicate that this ACID
+object is marked as "dead" but it still being held for sanity reasons
+and should not be reused.
 
-Reported-by: Jann Horn <jannh@google.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/inode.c            |  1 +
- include/linux/fs.h    |  1 +
- include/linux/futex.h | 17 +++++----
- kernel/futex.c        | 89 ++++++++++++++++++++++++++-----------------
- 4 files changed, 65 insertions(+), 43 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 96d62d97694ef..c5267a4db0f5e 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -137,6 +137,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	inode->i_sb = sb;
- 	inode->i_blkbits = sb->s_blocksize_bits;
- 	inode->i_flags = 0;
-+	atomic64_set(&inode->i_sequence, 0);
- 	atomic_set(&inode->i_count, 1);
- 	inode->i_op = &empty_iops;
- 	inode->i_fop = &no_open_fops;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0b4d8fc79e0f3..06668379109e3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -698,6 +698,7 @@ struct inode {
- 		struct rcu_head		i_rcu;
- 	};
- 	atomic64_t		i_version;
-+	atomic64_t		i_sequence; /* see futex */
- 	atomic_t		i_count;
- 	atomic_t		i_dio_count;
- 	atomic_t		i_writecount;
-diff --git a/include/linux/futex.h b/include/linux/futex.h
-index 5cc3fed27d4c2..b70df27d7e85c 100644
---- a/include/linux/futex.h
-+++ b/include/linux/futex.h
-@@ -31,23 +31,26 @@ struct task_struct;
- 
- union futex_key {
- 	struct {
-+		u64 i_seq;
- 		unsigned long pgoff;
--		struct inode *inode;
--		int offset;
-+		unsigned int offset;
- 	} shared;
- 	struct {
-+		union {
-+			struct mm_struct *mm;
-+			u64 __tmp;
-+		};
- 		unsigned long address;
--		struct mm_struct *mm;
--		int offset;
-+		unsigned int offset;
- 	} private;
- 	struct {
-+		u64 ptr;
- 		unsigned long word;
--		void *ptr;
--		int offset;
-+		unsigned int offset;
- 	} both;
- };
- 
--#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = NULL } }
-+#define FUTEX_KEY_INIT (union futex_key) { .both = { .ptr = 0ULL } }
- 
- #ifdef CONFIG_FUTEX
- enum {
-diff --git a/kernel/futex.c b/kernel/futex.c
-index afbf928d6a6b0..07ab324885ac0 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -429,7 +429,7 @@ static void get_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		ihold(key->shared.inode); /* implies smp_mb(); (B) */
-+		smp_mb();		/* explicit smp_mb(); (B) */
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		futex_get_mm(key); /* implies smp_mb(); (B) */
-@@ -463,7 +463,6 @@ static void drop_futex_key_refs(union futex_key *key)
- 
- 	switch (key->both.offset & (FUT_OFF_INODE|FUT_OFF_MMSHARED)) {
- 	case FUT_OFF_INODE:
--		iput(key->shared.inode);
- 		break;
- 	case FUT_OFF_MMSHARED:
- 		mmdrop(key->private.mm);
-@@ -505,6 +504,46 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
- 	return timeout;
- }
- 
-+/*
-+ * Generate a machine wide unique identifier for this inode.
-+ *
-+ * This relies on u64 not wrapping in the life-time of the machine; which with
-+ * 1ns resolution means almost 585 years.
-+ *
-+ * This further relies on the fact that a well formed program will not unmap
-+ * the file while it has a (shared) futex waiting on it. This mapping will have
-+ * a file reference which pins the mount and inode.
-+ *
-+ * If for some reason an inode gets evicted and read back in again, it will get
-+ * a new sequence number and will _NOT_ match, even though it is the exact same
-+ * file.
-+ *
-+ * It is important that match_futex() will never have a false-positive, esp.
-+ * for PI futexes that can mess up the state. The above argues that false-negatives
-+ * are only possible for malformed programs.
-+ */
-+static u64 get_inode_sequence_number(struct inode *inode)
-+{
-+	static atomic64_t i_seq;
-+	u64 old;
-+
-+	/* Does the inode already have a sequence number? */
-+	old = atomic64_read(&inode->i_sequence);
-+	if (likely(old))
-+		return old;
-+
-+	for (;;) {
-+		u64 new = atomic64_add_return(1, &i_seq);
-+		if (WARN_ON_ONCE(!new))
-+			continue;
-+
-+		old = atomic64_cmpxchg_relaxed(&inode->i_sequence, 0, new);
-+		if (old)
-+			return old;
-+		return new;
-+	}
-+}
-+
- /**
-  * get_futex_key() - Get parameters which are the keys for a futex
-  * @uaddr:	virtual address of the futex
-@@ -517,9 +556,15 @@ futex_setup_timer(ktime_t *time, struct hrtimer_sleeper *timeout,
-  *
-  * The key words are stored in @key on success.
-  *
-- * For shared mappings, it's (page->index, file_inode(vma->vm_file),
-- * offset_within_page).  For private mappings, it's (uaddr, current->mm).
-- * We can usually work out the index without swapping in the page.
-+ * For shared mappings (when @fshared), the key is:
-+ *   ( inode->i_sequence, page->index, offset_within_page )
-+ * [ also see get_inode_sequence_number() ]
-+ *
-+ * For private mappings (or when !@fshared), the key is:
-+ *   ( current->mm, address, 0 )
-+ *
-+ * This allows (cross process, where applicable) identification of the futex
-+ * without keeping the page pinned for the duration of the FUTEX_WAIT.
-  *
-  * lock_page() might sleep, the caller should not hold a spinlock.
-  */
-@@ -659,8 +704,6 @@ get_futex_key(u32 __user *uaddr, int fshared, union futex_key *key, enum futex_a
- 		key->private.mm = mm;
- 		key->private.address = address;
- 
--		get_futex_key_refs(key); /* implies smp_mb(); (B) */
--
- 	} else {
- 		struct inode *inode;
- 
-@@ -692,40 +735,14 @@ get_futex_key(u32 __user *uaddr, int fshared, union futex_key *key, enum futex_a
- 			goto again;
- 		}
- 
--		/*
--		 * Take a reference unless it is about to be freed. Previously
--		 * this reference was taken by ihold under the page lock
--		 * pinning the inode in place so i_lock was unnecessary. The
--		 * only way for this check to fail is if the inode was
--		 * truncated in parallel which is almost certainly an
--		 * application bug. In such a case, just retry.
--		 *
--		 * We are not calling into get_futex_key_refs() in file-backed
--		 * cases, therefore a successful atomic_inc return below will
--		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
--		 */
--		if (!atomic_inc_not_zero(&inode->i_count)) {
--			rcu_read_unlock();
--			put_page(page);
--
--			goto again;
--		}
--
--		/* Should be impossible but lets be paranoid for now */
--		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
--			err = -EFAULT;
--			rcu_read_unlock();
--			iput(inode);
--
--			goto out;
--		}
--
- 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
--		key->shared.inode = inode;
-+		key->shared.i_seq = get_inode_sequence_number(inode);
- 		key->shared.pgoff = basepage_index(tail);
- 		rcu_read_unlock();
- 	}
- 
-+	get_futex_key_refs(key); /* implies smp_mb(); (B) */
-+
- out:
- 	put_page(page);
- 	return err;
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
