@@ -2,126 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F21918A516
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 21:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4614718A500
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 21:58:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgCRU6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 16:58:55 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37036 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbgCRU47 (ORCPT
+        id S1728375AbgCRU6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 16:58:12 -0400
+Received: from www62.your-server.de ([213.133.104.62]:44520 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbgCRU6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 16:56:59 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b23so32649714edx.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 13:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g4AW1divsHMPr3pCP4CdP4Cl7K8Ooaeq6pBA6GUaETQ=;
-        b=vKUVcXTVLCHqGtHDPpcfyVqC7Iyjswe5s6J8QA9fOEK3HpHui7X1QKcUp6EbQ9CrJA
-         C05DjEwPknqFMwyMxVdqOASL4j0b74tzhGVN0rVlDcTqP9r+6muRk44tUHGBiJX0FH3l
-         0kSJ6xSo1oAI9qxQ9gvTZog0w8m3+yD8qjRaTynTXcNhuDoADAvpXa2+efq0e6D5YD6n
-         3CHbsifYNfb0CcekkOIbFkd9XH2x71AkNHltG81Un5wU3LND7OYeks7yEgdlSRFl1uJ5
-         VwR+O1FlMTPjN3UY4K4PQO/XHK+MSLNlCxZ0KmE3m5D5D1kIPJi19WSDxOhR1iInmt9f
-         77jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g4AW1divsHMPr3pCP4CdP4Cl7K8Ooaeq6pBA6GUaETQ=;
-        b=lk3EzymWABB18jWG+6z7hT/tdsK23Od8TB78O+HcwJ3eUcChjhRvRedodJem6T393f
-         A7UJdUJUc78YX8ywGOi4kDYTV6HnLTYw6b7vBGXY1aLi4vre8fbziMydvOePCm4MDpaV
-         P7lQENKw1GnWa1jw+re3rcMGKrh6+W2XtZlJVLCg1f5WdB8Ybp/9dR+oZeGSxNsDu/QM
-         PyVLvb4ZkkTUvg5uqnHjlxBnMactu32NjO7W3TTDYqvxt/vuD21+8cOEq4nMhOu0C0iB
-         yWBTjSHTEwUvNgUW8SezYi5w6skkJPciykM/Jzr9USkWTkHDaNbLhectsT5MO42PdJvL
-         L82w==
-X-Gm-Message-State: ANhLgQ2WlRZVaxs4eCJgUlTPNgHpEht4X0BFfNYYp/fMzFpdKYCW9W2p
-        yDZXbQ01qb8HqTyW10ZcizJlsgq7/2vIQGF4JNus
-X-Google-Smtp-Source: ADFU+vufKN/Y6D0NZVHBfHqWGsUn/HVoc7DCLKs6yGElrUkdM/dJMEcsEF5RKrrMdJTSmw7tnsN+cSFDtag+WxqrPu4=
-X-Received: by 2002:a17:906:7b8d:: with SMTP id s13mr120333ejo.77.1584565017755;
- Wed, 18 Mar 2020 13:56:57 -0700 (PDT)
+        Wed, 18 Mar 2020 16:58:11 -0400
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1jEflQ-00077f-Lh; Wed, 18 Mar 2020 21:58:08 +0100
+Received: from [85.7.42.192] (helo=pc-9.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1jEflQ-0007WN-Ax; Wed, 18 Mar 2020 21:58:08 +0100
+Subject: Re: [PATCH v2 bpf-next] bpf: sharing bpf runtime stats with
+ /dev/bpf_stats
+To:     Song Liu <songliubraving@fb.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yzaikin@google.com" <yzaikin@google.com>
+References: <20200316203329.2747779-1-songliubraving@fb.com>
+ <eb31bed3-3be4-501e-4340-bd558b31ead2@iogearbox.net>
+ <920839AF-AC7A-4CD3-975F-111C3C6F75B9@fb.com>
+ <a69245f8-c70f-857c-b109-556d1bc267f7@iogearbox.net>
+ <C126A009-516F-451A-9A83-31BC8F67AA11@fb.com>
+ <53f8973f-4b3e-08fe-2363-2300027c8f9d@iogearbox.net>
+ <C624907B-22DB-4505-9C9E-1F8A96013AC7@fb.com>
+ <6D317BBF-093E-41DC-9838-D685C39F6DAB@fb.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ba62e0be-6de6-036c-a836-178c1a9c079a@iogearbox.net>
+Date:   Wed, 18 Mar 2020 21:58:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
- <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca> <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
- <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca>
-In-Reply-To: <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 18 Mar 2020 16:56:46 -0400
-Message-ID: <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6D317BBF-093E-41DC-9838-D685C39F6DAB@fb.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.2/25755/Wed Mar 18 14:14:00 2020)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 2:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-13 12:29, Paul Moore wrote:
-> > On Thu, Mar 12, 2020 at 3:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-02-13 16:44, Paul Moore wrote:
-> > > > This is a bit of a thread-hijack, and for that I apologize, but
-> > > > another thought crossed my mind while thinking about this issue
-> > > > further ... Once we support multiple auditd instances, including the
-> > > > necessary record routing and duplication/multiple-sends (the host
-> > > > always sees *everything*), we will likely need to find a way to "trim"
-> > > > the audit container ID (ACID) lists we send in the records.  The
-> > > > auditd instance running on the host/initns will always see everything,
-> > > > so it will want the full container ACID list; however an auditd
-> > > > instance running inside a container really should only see the ACIDs
-> > > > of any child containers.
-> > >
-> > > Agreed.  This should be easy to check and limit, preventing an auditd
-> > > from seeing any contid that is a parent of its own contid.
-> > >
-> > > > For example, imagine a system where the host has containers 1 and 2,
-> > > > each running an auditd instance.  Inside container 1 there are
-> > > > containers A and B.  Inside container 2 there are containers Y and Z.
-> > > > If an audit event is generated in container Z, I would expect the
-> > > > host's auditd to see a ACID list of "1,Z" but container 1's auditd
-> > > > should only see an ACID list of "Z".  The auditd running in container
-> > > > 2 should not see the record at all (that will be relatively
-> > > > straightforward).  Does that make sense?  Do we have the record
-> > > > formats properly designed to handle this without too much problem (I'm
-> > > > not entirely sure we do)?
-> > >
-> > > I completely agree and I believe we have record formats that are able to
-> > > handle this already.
-> >
-> > I'm not convinced we do.  What about the cases where we have a field
-> > with a list of audit container IDs?  How do we handle that?
->
-> I don't understand the problem.  (I think you crossed your 1/2 vs
-> A/B/Y/Z in your example.) ...
+On 3/18/20 7:33 AM, Song Liu wrote:
+>> On Mar 17, 2020, at 4:08 PM, Song Liu <songliubraving@fb.com> wrote:
+>>> On Mar 17, 2020, at 2:47 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>>>>
+>>>>> Hm, true as well. Wouldn't long-term extending "bpftool prog profile" fentry/fexit
+>>>>> programs supersede this old bpf_stats infrastructure? Iow, can't we implement the
+>>>>> same (or even more elaborate stats aggregation) in BPF via fentry/fexit and then
+>>>>> potentially deprecate bpf_stats counters?
+>>>> I think run_time_ns has its own value as a simple monitoring framework. We can
+>>>> use it in tools like top (and variations). It will be easier for these tools to
+>>>> adopt run_time_ns than using fentry/fexit.
+>>>
+>>> Agree that this is easier; I presume there is no such official integration today
+>>> in tools like top, right, or is there anything planned?
+>>
+>> Yes, we do want more supports in different tools to increase the visibility.
+>> Here is the effort for atop: https://github.com/Atoptool/atop/pull/88 .
+>>
+>> I wasn't pushing push hard on this one mostly because the sysctl interface requires
+>> a user space "owner".
+>>
+>>>> On the other hand, in long term, we may include a few fentry/fexit based programs
+>>>> in the kernel binary (or the rpm), so that these tools can use them easily. At
+>>>> that time, we can fully deprecate run_time_ns. Maybe this is not too far away?
+>>>
+>>> Did you check how feasible it is to have something like `bpftool prog profile top`
+>>> which then enables fentry/fexit for /all/ existing BPF programs in the system? It
+>>> could then sort the sample interval by run_cnt, cycles, cache misses, aggregated
+>>> runtime, etc in a top-like output. Wdyt?
+>>
+>> I wonder whether we can achieve this with one bpf prog (or a trampoline) that covers
+>> all BPF programs, like a trampoline inside __BPF_PROG_RUN()?
+>>
+>> For long term direction, I think we could compare two different approaches: add new
+>> tools (like bpftool prog profile top) vs. add BPF support to existing tools. The
+>> first approach is easier. The latter approach would show BPF information to users
+>> who are not expecting BPF programs in the systems. For many sysadmins, seeing BPF
+>> programs in top/ps, and controlling them via kill is more natural than learning
+>> bpftool. What's your thought on this?
+> 
+> More thoughts on this.
+> 
+> If we have a special trampoline that attach to all BPF programs at once, we really
+> don't need the run_time_ns stats anymore. Eventually, tools that monitor BPF
+> programs will depend on libbpf, so using fentry/fexit to monitor BPF programs doesn't
+> introduce extra dependency. I guess we also need a way to include BPF program in
+> libbpf.
+> 
+> To summarize this plan, we need:
+> 
+> 1) A global trampoline that attaches to all BPF programs at once;
 
-It looks like I did, sorry about that.
+Overall sounds good, I think the `at once` part might be tricky, at least it would
+need to patch one prog after another, each prog also needs to store its own metrics
+somewhere for later collection. The start-to-sample could be a shared global var (aka
+shared map between all the programs) which would flip the switch though.
 
-> ... Clarifying the example above, if as you
-> suggest an event happens in container Z, the hosts's auditd would report
->         Z,^2
-> and the auditd in container 2 would report
->         Z,^2
-> but if there were another auditd running in container Z it would report
->         Z
-> while the auditd in container 1 or A/B would see nothing.
+> 2) Embed fentry/fexit program in libbpf, which will be used by tools for monitoring;
+> 3) BPF helpers to read time, which replaces current run_time_ns.
+> 
+> Does this look reasonable?
+> 
+> Thanks,
+> Song
+> 
 
-Yes.  My concern is how do we handle this to minimize duplicating and
-rewriting the records?  It isn't so much about the format, although
-the format is a side effect.
-
--- 
-paul moore
-www.paul-moore.com
