@@ -2,94 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBED41897A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 10:13:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CB31897DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 10:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCRJNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 05:13:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39434 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbgCRJNX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:13:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id CCA8DAD6F;
-        Wed, 18 Mar 2020 09:13:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2E5E61E1159; Wed, 18 Mar 2020 10:13:18 +0100 (CET)
-Date:   Wed, 18 Mar 2020 10:13:18 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
-        adilger.kernel@dilger.ca, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Unregister sysfs path before destroying jbd2
- journal
-Message-ID: <20200318091318.GJ22684@quack2.suse.cz>
-References: <20200318061301.4320-1-riteshh@linux.ibm.com>
+        id S1727479AbgCRJXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 05:23:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38320 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbgCRJXS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 05:23:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=z47gR8NIC6patRmRmrCLnrKmVt+9xKkztcdCxbqOI5o=; b=mATEGjhYHxAWwmF5BjJF0Zrp4W
+        G+6mPXlqkH0TP+CXQ5Sv8MJWnMWp1UIrAQWQzJgtG6TLyWSUsUHc2yrCT+H0DceS6RQ2OSaF1fGDI
+        1XU7PoLIqas8Z0QmjftzIXkjqEImcDJWSktGQwQbb07JTYrkcpjgcq0WrK2erCPkqjU2AvtqY8l08
+        eVxfwl0432yDEmSLUYi8yhYBXlk2wyBTgKLSZc+c+RUFzUnlXYXSJxxsptnwUYCPjyK3oyrw9ThJm
+        mjVjjL0Jlm00KcJ3hjKRmE7oh+AbV5hJoX33kYrmY2+iKwXBDJiLBufkerYvPww1+I1l0B/7CgW1R
+        BJfwqMUA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEUuq-0002p1-FG; Wed, 18 Mar 2020 09:23:08 +0000
+Date:   Wed, 18 Mar 2020 02:23:08 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     yangerkun <yangerkun@huawei.com>
+Cc:     hch@infradead.org, darrick.wong@oracle.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: fix comments in iomap_dio_rw
+Message-ID: <20200318092308.GA10672@infradead.org>
+References: <20200318095022.5613-1-yangerkun@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200318061301.4320-1-riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200318095022.5613-1-yangerkun@huawei.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 18-03-20 11:43:01, Ritesh Harjani wrote:
-> Call ext4_unregister_sysfs(), before destroying jbd2 journal,
-> since below might cause, NULL pointer dereference issue.
-> This got reported with LTP tests.
+On Wed, Mar 18, 2020 at 05:50:22PM +0800, yangerkun wrote:
+> Double 'three' exists in the comments of iomap_dio_rw.
 > 
-> ext4_put_super() 		cat /sys/fs/ext4/loop2/journal_task
-> 	| 				ext4_attr_show();
-> ext4_jbd2_journal_destroy();  			|
->     	|				 journal_task_show()
-> 	| 					|
-> 	| 				task_pid_vnr(NULL);
-> sbi->s_journal = NULL;
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> Signed-off-by: yangerkun <yangerkun@huawei.com>
 
-Yeah, makes sence. Thanks for the patch! You can add:
+Looks good:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/super.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 5dc65b7583cb..27ab130a40d1 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -1024,6 +1024,13 @@ static void ext4_put_super(struct super_block *sb)
->  
->  	destroy_workqueue(sbi->rsv_conversion_wq);
->  
-> +	/*
-> +	 * Unregister sysfs before destroying jbd2 journal.
-> +	 * Since we could still access attr_journal_task attribute via sysfs
-> +	 * path which could have sbi->s_journal->j_task as NULL
-> +	 */
-> +	ext4_unregister_sysfs(sb);
-> +
->  	if (sbi->s_journal) {
->  		aborted = is_journal_aborted(sbi->s_journal);
->  		err = jbd2_journal_destroy(sbi->s_journal);
-> @@ -1034,7 +1041,6 @@ static void ext4_put_super(struct super_block *sb)
->  		}
->  	}
->  
-> -	ext4_unregister_sysfs(sb);
->  	ext4_es_unregister_shrinker(sbi);
->  	del_timer_sync(&sbi->s_err_report);
->  	ext4_release_system_zone(sb);
-> -- 
-> 2.21.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Christoph Hellwig <hch@lst.de>
