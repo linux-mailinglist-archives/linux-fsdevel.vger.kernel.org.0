@@ -2,110 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9321318A023
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 17:03:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0002118A02E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 17:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgCRQDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 12:03:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgCRQDW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:03:22 -0400
-Received: from linux-8ccs (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 383192076C;
-        Wed, 18 Mar 2020 16:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584547401;
-        bh=8+bhNeSa7Nigx9lS/u8FMlPTHye2zcWuNkajfPvjVP0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Izl6b0ua1+tYjXnLnem1GifC/wnoWuzCPXbuSvOV+fm4FovYEdx2fZwZeuoazXHf4
-         KKqkDz2I/toW12IdmVG+tsC/k++kMxwuB22RWbqkIb8l6JogE9XAeBR84cnYgojkIz
-         NXSxU3AXxtELDbwGdexG+SICwJ2InYehXnsNies4=
-Date:   Wed, 18 Mar 2020 17:03:16 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] kmod: make request_module() return an error when
- autoloading is disabled
-Message-ID: <20200318160316.GC4144@linux-8ccs>
-References: <20200314213426.134866-1-ebiggers@kernel.org>
- <20200314213426.134866-2-ebiggers@kernel.org>
+        id S1727178AbgCRQGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 12:06:06 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:41579 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbgCRQGD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 12:06:03 -0400
+Received: by mail-il1-f195.google.com with SMTP id l14so24135131ilj.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
+        b=PmkHFgajk2/8VWOHdYUg8VCj1tVopeX6fqfrGgYm0sPb35e5EoxUjxowANbaw3zCwS
+         wqDhItzeSSD2F4OzNelMLAyDUKSqRDkOzITlg+Hge+tWY5LhXczVM8GuM5pTiPEM5aFa
+         ut6OlQnzTW2CXrIbgEnOI63xRs4UIkIGUhynA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
+        b=Ak8SkzHiWej4QsQnyg7AUeQ2eWxFgF9y2OK0eXONjZd9GCBHT2NqqF8rFHv42eYo14
+         xZ+GOCd/9y93WAGF13YJL94KvqPDTNeaWPGyBR8A3JBZfqubKqCJKOvWp+Sv9cItzJ/Z
+         i9yb4bVwM+HCk5pdQCoZlOTba0ayZjViThnwWnsAPYaXGQnPfJ2xb0KGfN4MoLGJvOzx
+         pIBlmoYQhIw1jQfuUU8dx8UV0YpVkMTznjELHLCTA8CaYI0f88CZoqqOHoFKvg/EIs9M
+         G+H99YuCDuLS07Zd2syodzSPLmcM66+5/uyt55WLzXUJdr2JuqJk3tZl265KjfzK2QX1
+         BJLA==
+X-Gm-Message-State: ANhLgQ2TltX1TfBeSN+doUxuG9Zsy2nrKaR33VMPd8DVDLxzFxOTFVRl
+        QLT5MxNHDxuJi8hlpbYEK+U1k1tvELqYuNH4PEUvqg==
+X-Google-Smtp-Source: ADFU+vseuj9ZXYFeMbS3X+5vGmRRSiZoxImF5rzfLQFjQscZDtBKPWLdRkROYV3TZYIAEV5wBxQF2hmZ0LlipmXRNY0=
+X-Received: by 2002:a92:5d52:: with SMTP id r79mr4664957ilb.212.1584547562099;
+ Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200314213426.134866-2-ebiggers@kernel.org>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+In-Reply-To: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 18 Mar 2020 17:05:50 +0100
+Message-ID: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+++ Eric Biggers [14/03/20 14:34 -0700]:
->From: Eric Biggers <ebiggers@google.com>
->
->It's long been possible to disable kernel module autoloading completely
->(while still allowing manual module insertion) by setting
->/proc/sys/kernel/modprobe to the empty string.  This can be preferable
->to setting it to a nonexistent file since it avoids the overhead of an
->attempted execve(), avoids potential deadlocks, and avoids the call to
->security_kernel_module_request() and thus on SELinux-based systems
->eliminates the need to write SELinux rules to dontaudit module_request.
->
->However, when module autoloading is disabled in this way,
->request_module() returns 0.  This is broken because callers expect 0 to
->mean that the module was successfully loaded.
->
->Apparently this was never noticed because this method of disabling
->module autoloading isn't used much, and also most callers don't use the
->return value of request_module() since it's always necessary to check
->whether the module registered its functionality or not anyway.  But
->improperly returning 0 can indeed confuse a few callers, for example
->get_fs_type() in fs/filesystems.c where it causes a WARNING to be hit:
->
->	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
->		fs = __get_fs_type(name, len);
->		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
->	}
->
->This is easily reproduced with:
->
->	echo > /proc/sys/kernel/modprobe
->	mount -t NONEXISTENT none /
->
->It causes:
->
->	request_module fs-NONEXISTENT succeeded, but still no fs?
->	WARNING: CPU: 1 PID: 1106 at fs/filesystems.c:275 get_fs_type+0xd6/0xf0
->	[...]
->
->This should actually use pr_warn_once() rather than WARN_ONCE(), since
->it's also user-reachable if userspace immediately unloads the module.
->Regardless, request_module() should correctly return an error when it
->fails.  So let's make it return -ENOENT, which matches the error when
->the modprobe binary doesn't exist.
->
->I've also sent patches to document and test this case.
->
->Acked-by: Luis Chamberlain <mcgrof@kernel.org>
->Cc: stable@vger.kernel.org
->Cc: Alexei Starovoitov <ast@kernel.org>
->Cc: Andrew Morton <akpm@linux-foundation.org>
->Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->Cc: Jeff Vander Stoep <jeffv@google.com>
->Cc: Jessica Yu <jeyu@kernel.org>
->Cc: Kees Cook <keescook@chromium.org>
->Cc: NeilBrown <neilb@suse.com>
->Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com> wrote:
 
-Reviewed-by: Jessica Yu <jeyu@kernel.org>
+> ============================
+> WHY NOT USE PROCFS OR SYSFS?
+> ============================
+>
+> Why is it better to go with a new system call rather than adding more magic
+> stuff to /proc or /sysfs for each superblock object and each mount object?
+>
+>  (1) It can be targetted.  It makes it easy to query directly by path.
+>      procfs and sysfs cannot do this easily.
+>
+>  (2) It's more efficient as we can return specific binary data rather than
+>      making huge text dumps.  Granted, sysfs and procfs could present the
+>      same data, though as lots of little files which have to be
+>      individually opened, read, closed and parsed.
 
+Asked this a number of times, but you haven't answered yet:  what
+application would require such a high efficiency?
+
+Nobody's suggesting we move stat(2) to proc interfaces, and AFAIK
+nobody suggested we move /proc/PID/* to a binary syscall interface.
+Each one has its place, and I strongly feel that mount info belongs in
+the latter category.    Feel free to prove the opposite.
+
+>  (3) We wouldn't have the overhead of open and close (even adding a
+>      self-contained readfile() syscall has to do that internally
+
+Busted: add f_op->readfile() and be done with all that.   For example
+DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
+
+We could optimize existing proc, sys, etc. interfaces, but it's not
+been an issue, apparently.
+
+>
+>  (4) Opening a file in procfs or sysfs has a pathwalk overhead for each
+>      file accessed.  We can use an integer attribute ID instead (yes, this
+>      is similar to ioctl) - but could also use a string ID if that is
+>      preferred.
+>
+>  (5) Can easily query cross-namespace if, say, a container manager process
+>      is given an fs_context that hasn't yet been mounted into a namespace -
+>      or hasn't even been fully created yet.
+
+Works with my patch.
+
+>  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each time a
+>      mount happens or is removed - and since systemd makes much use of
+>      mount namespaces and mount propagation, this will create a lot of
+>      nodes.
+
+Not true.
+
+> The argument for doing this through procfs/sysfs/somemagicfs is that
+> someone using a shell can just query the magic files using ordinary text
+> tools, such as cat - and that has merit - but it doesn't solve the
+> query-by-pathname problem.
+>
+> The suggested way around the query-by-pathname problem is to open the
+> target file O_PATH and then look in a magic directory under procfs
+> corresponding to the fd number to see a set of attribute files[*] laid out.
+> Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
+
+Bash doesn't have fsinfo(2) either, so that's not really a good argument.
+
+Implementing a utility to show mount attribute(s) by path is trivial
+for the file based interface, while it would need to be updated for
+each extension of fsinfo(2).   Same goes for libc, language bindings,
+etc.
+
+Thanks,
+Miklos
