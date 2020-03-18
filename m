@@ -2,113 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD4D189D1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 14:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9EA3189DB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 15:18:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgCRNg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 09:36:57 -0400
-Received: from mail-il1-f177.google.com ([209.85.166.177]:35565 "EHLO
-        mail-il1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbgCRNg5 (ORCPT
+        id S1726979AbgCROSC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 10:18:02 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:40296 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726832AbgCROSC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 09:36:57 -0400
-Received: by mail-il1-f177.google.com with SMTP id v6so12454945ilq.2;
-        Wed, 18 Mar 2020 06:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QOa1wjQr90ahh8o3G0Q0d26hwJPvvcel6LlNVGh6TME=;
-        b=Jww7hBgQbvYQdK3vSQORjjpmOQ4mf8FX6Y1Gucj+mc36olb3q5cGyrWrC79lHFWbG4
-         Qhsl0jFhdcoNjE7GyR5R9fJZtsytDDQW5PDVPQWSp4k/Dmvcnv3HYEffjw+rrdEemUnt
-         pt45SyPfi8aAnn9lJjxUWFNXHDsC6dWpLu+5dDDsbaNu9p7fBTglZujuuVpSihDT8ncp
-         /5T7tADvIzqVhG9tfHxocta8JTvKp9tNrCWR+BuTXE6DI4jW3LqQQos4wNKHnLHDQMOk
-         9uiAo6LOOyMctKoyX+iqCLggzBFbaDQgUzRTblzDHXFHfBRWbPRfhavGZS0z7eIAqseK
-         MkJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QOa1wjQr90ahh8o3G0Q0d26hwJPvvcel6LlNVGh6TME=;
-        b=KZUZHE3SkCutA3lvxyxbe5KkpvLpJeQdhnxB6Z0PG2vJqhGYr3yIDd4AysLVRYe3Fd
-         Cb6SrGzHtaH4FkWI8E+Gs8/pSRNrrxDJVUhZcJGqz04m3fX85jnjzCk8s4DMEGMG6Beu
-         xN1pYxjdhNONWpfh0EY23yjZmn7rA0zS86IT5Nka2bl9bcPn8pD0mrNqCIrWTC+t8cM7
-         E7Wyjblkn5lQeL/hwj4PT+n6XaHL3RTCTPTvWljtH1GiK2EQyYLk5ADIa0e9LhCsJlNe
-         TyERkm2W8St5+CnlXZKiaWxi1mPpPqCtcUh0pd9IRa3YgonvgSWPyZjHQ1F9mPSAZJxH
-         MdRg==
-X-Gm-Message-State: ANhLgQ2/Jy7iU54avfET+NsgeqPr4M3DyzuvV8joWSnbq/DRRylNao+x
-        WtcoprnMjO9MNnGcPjY6Zgr8t0tTYmXImwB0Ex8=
-X-Google-Smtp-Source: ADFU+vuSm/R9YPj8QRZNx1Vx4lqoj5FR3PJp2aZFIxvLESq6TfsNiHARXSiUvP29xgOIjdBwfwMB5bRWCbD133ZsBq0=
-X-Received: by 2002:a92:5b51:: with SMTP id p78mr3955852ilb.250.1584538616142;
- Wed, 18 Mar 2020 06:36:56 -0700 (PDT)
+        Wed, 18 Mar 2020 10:18:02 -0400
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id 7C5D72E160B;
+        Wed, 18 Mar 2020 17:17:58 +0300 (MSK)
+Received: from myt5-70c90f7d6d7d.qloud-c.yandex.net (myt5-70c90f7d6d7d.qloud-c.yandex.net [2a02:6b8:c12:3e2c:0:640:70c9:f7d])
+        by mxbackcorp1j.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id CaVSFTWyfA-HtYCaN8Y;
+        Wed, 18 Mar 2020 17:17:58 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1584541078; bh=fdQkn6uxD4cq3OcGYQ5wY/u9bHIKTLesrnrE/I7Gvn4=;
+        h=Message-ID:Date:To:From:Subject:Cc;
+        b=wwAIv/a29T8GFEPCSwPd6bQ8FPsD0RBSNSxihbdfon1FjMF8s9nNbdupafjpoTf0r
+         5rwWkTYtx0xTWV007HsCtgBzV59L153LooMNE820yJhoRPtNNTTm5lsxyHEXGeoAwz
+         uuIaPih24MSPAnTqSkoeN7uJ/4YKg8r8lUF0Ft8E=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from unknown (unknown [2a02:6b8:b080:6709::1:1])
+        by myt5-70c90f7d6d7d.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id zgfxdoFQrA-Htb8H5Yb;
+        Wed, 18 Mar 2020 17:17:55 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] fs/namespace: handle mount(MS_BIND|MS_REMOUNT) without
+ locking sb->s_umount
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Date:   Wed, 18 Mar 2020 17:17:55 +0300
+Message-ID: <158454107541.4470.14819321770893756073.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20200131115004.17410-1-mszeredi@redhat.com> <20200131115004.17410-5-mszeredi@redhat.com>
- <20200204145951.GC11631@redhat.com> <CAJfpegtq4A-m9vOPwUftiotC_Xv6w-dnhCi9=E0t-b1ZPJXPGw@mail.gmail.com>
- <CAOQ4uxj_pVp9-EN2Gmq9j6G3xozzpK_zQiRO-brx6PZ9VpgD0Q@mail.gmail.com>
- <CAOQ4uxjFYO28r+0pY+pKxK-dDJcQF2nf2EivnOUBgrgkYTFjPQ@mail.gmail.com>
- <CAOQ4uxhZ8a2ObfB9sUtrc=95mM70qurLtXkaNyHOXYxGEKvxFw@mail.gmail.com>
- <CAOQ4uxhkd5FkN5ynpQxQ0m1MR9MgzTBbvzjkoHfSRA2umb-JTA@mail.gmail.com>
- <20200316175453.GB4013@redhat.com> <CAOQ4uxgfTJwE2O1GGt-TY+6ijjKE13+ATTarijFGLiM69jk8HA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgfTJwE2O1GGt-TY+6ijjKE13+ATTarijFGLiM69jk8HA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 18 Mar 2020 15:36:44 +0200
-Message-ID: <CAOQ4uxhWLjsxy21MMKUOvMsWmWTWhKP0hwLQoD99xVcWbbmFmA@mail.gmail.com>
-Subject: Re: unionmount testsuite with upper virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > I also wanted to run either overlay xfstests or unionmount-testsuite. But
-> > none of these seem to give me enough flexibility where I can specify
-> > that overlayfs needs to be mounted on top of virtiofs.
-> >
-> > I feel that atleast for unionmount-testsuite, there should be an
-> > option where we can simply give a target directory and tests run
-> > on that directory and user mounts that directory as needed.
-> >
->
-> Need to see how patches look.
-> Don't want too much configuration complexity, but I agree that some
-> flexibly is needed.
-> Maybe the provided target directory should be the upper/work basedir?
->
+Writeback grabs sb->s_umount for read during I/O. This blocks bind-remount
+for a long time. Bind-remount actually does not need sb->s_umount locked
+for read or write because it does not alter superblock, only mnt_flags.
+All mnt_flags are serialized by global mount_lock.
 
-Vivek,
+This patch moves locking into callers to handle remount atomically.
+Also grab namespace_sem to synchronize with /proc/mounts and mountinfo.
+Function do_change_type() uses the same locking combination.
 
-I was going to see what's the best way to add the needed flexibility,
-but then I realized I had already implemented this undocumented
-feature.
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ fs/namespace.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-I have been using this to test overlay over XFS as documented here:
-https://github.com/amir73il/overlayfs/wiki/Overlayfs-testing#Setup_overlayfs_mount_over_XFS_with_reflink_support
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 85b5f7bea82e..c6c03be5cc4e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -459,11 +459,11 @@ void mnt_drop_write_file(struct file *file)
+ }
+ EXPORT_SYMBOL(mnt_drop_write_file);
+ 
++/* mount_lock must be held */
+ static int mnt_make_readonly(struct mount *mnt)
+ {
+ 	int ret = 0;
+ 
+-	lock_mount_hash();
+ 	mnt->mnt.mnt_flags |= MNT_WRITE_HOLD;
+ 	/*
+ 	 * After storing MNT_WRITE_HOLD, we'll read the counters. This store
+@@ -497,15 +497,14 @@ static int mnt_make_readonly(struct mount *mnt)
+ 	 */
+ 	smp_wmb();
+ 	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
+-	unlock_mount_hash();
++
+ 	return ret;
+ }
+ 
++/* mount_lock must be held */
+ static int __mnt_unmake_readonly(struct mount *mnt)
+ {
+-	lock_mount_hash();
+ 	mnt->mnt.mnt_flags &= ~MNT_READONLY;
+-	unlock_mount_hash();
+ 	return 0;
+ }
+ 
+@@ -2440,6 +2439,7 @@ static bool can_change_locked_flags(struct mount *mnt, unsigned int mnt_flags)
+ 	return true;
+ }
+ 
++/* mount_lock must be held */
+ static int change_mount_ro_state(struct mount *mnt, unsigned int mnt_flags)
+ {
+ 	bool readonly_request = (mnt_flags & MNT_READONLY);
+@@ -2454,16 +2454,14 @@ static int change_mount_ro_state(struct mount *mnt, unsigned int mnt_flags)
+ }
+ 
+ /*
+- * Update the user-settable attributes on a mount.  The caller must hold
+- * sb->s_umount for writing.
++ * Update the user-settable attributes on a mount.
++ * mount_lock must be held.
+  */
+ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ {
+-	lock_mount_hash();
+ 	mnt_flags |= mnt->mnt.mnt_flags & ~MNT_USER_SETTABLE_MASK;
+ 	mnt->mnt.mnt_flags = mnt_flags;
+ 	touch_mnt_namespace(mnt->mnt_ns);
+-	unlock_mount_hash();
+ }
+ 
+ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *mnt)
+@@ -2495,7 +2493,6 @@ static void mnt_warn_timestamp_expiry(struct path *mountpoint, struct vfsmount *
+  */
+ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ {
+-	struct super_block *sb = path->mnt->mnt_sb;
+ 	struct mount *mnt = real_mount(path->mnt);
+ 	int ret;
+ 
+@@ -2508,11 +2505,13 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 	if (!can_change_locked_flags(mnt, mnt_flags))
+ 		return -EPERM;
+ 
+-	down_write(&sb->s_umount);
++	namespace_lock();
++	lock_mount_hash();
+ 	ret = change_mount_ro_state(mnt, mnt_flags);
+ 	if (ret == 0)
+ 		set_mount_attributes(mnt, mnt_flags);
+-	up_write(&sb->s_umount);
++	unlock_mount_hash();
++	namespace_unlock();
+ 
+ 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+ 
+@@ -2551,8 +2550,11 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 		err = -EPERM;
+ 		if (ns_capable(sb->s_user_ns, CAP_SYS_ADMIN)) {
+ 			err = reconfigure_super(fc);
+-			if (!err)
++			if (!err) {
++				lock_mount_hash();
+ 				set_mount_attributes(mnt, mnt_flags);
++				unlock_mount_hash();
++			}
+ 		}
+ 		up_write(&sb->s_umount);
+ 	}
 
-That's an example of how to configure a custom /base mount for
---samefs to be xfs.
-Similar hidden feature exists for configuring a custom /lower and
-/upper mounts via fstab, but I don't think I ever tested those, so not
-sure if they work as expected. unionmount testsuite will first try to
-mount the entry from fstab and fallback to mounting tmpfs.
-
-I admit this a lousy configuration method, but we could make it
-official using env vars or something. I also never liked the fact
-that unionmount testsuite hard codes the /lower /upper /mnt paths.
-
-The reason we 'need' the instructions how to mount the fs as opposed
-to an already mounted dir is that unmounting the underlying fs exposes
-dentry/inode reference leaks by overlayfs.
-But it is nice to have and xfstests has support for configuring an already
-mounted overlayfs for the generic tests.
-
-So if you think that you cannot use the existing hack and that pointing
-to an already mounted /upper or mounted overlay is needed, I suggest
-that you experiment with patches to make that change.
-
-Thanks,
-Amir.
