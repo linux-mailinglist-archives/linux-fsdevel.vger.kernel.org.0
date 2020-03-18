@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19BC218A576
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 22:01:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C959718A682
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 22:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbgCRVBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 17:01:39 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40714 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728550AbgCRVBj (ORCPT
+        id S1728033AbgCRVIq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 17:08:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41828 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbgCRVIo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 17:01:39 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a24so32676724edy.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
+        Wed, 18 Mar 2020 17:08:44 -0400
+Received: by mail-ed1-f66.google.com with SMTP id v6so17538082edw.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 14:08:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
-        b=m+CruKFqyeFiSzmQCZqiAjkeem718D1Unt4LZxrLyM48zoGD0gDaVn0NlVfCexVTzu
-         wihdula0cgpJNes9gbbbPZGOCr8gmzgfMR1DP2niKlc4/Xbz1RjMvIcZK3QeYS4MTBzR
-         VGVmqZmbPsEQ42JahCXbnk6yopm5byhYxfuE4bMF2/oEIwfi0TIGwhWzo+tUFEv5Mobg
-         xAZqhXW9ZYNPl8K7ISeE3z29hhnh0uDlXFQhZXWxMxod1HlKG5GyxdS8a7Q7I9YuWv4C
-         hEdfpxYwsjziy7uL5etvx6svflsV0+OWDJH1g09o69UnURs0B4B8khAkiIXSB+T2BP9R
-         8WWg==
+        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
+        b=KblwfDmtszqt/poiiBnkGj80+eqtrRyKNLWAFKJyI2lM8X5PpTIHIUIc65zJhoEnEF
+         WjcKc+bfilJdpRhIjI1m71RTPdnfUYwaMNgrlZfogSYuI3TKBJzAzVhAyAtHoPrdVKGp
+         DLDa+hQ2FiF/ZRAW6YOkmNlRuau5tixJsAn5jRDu0LNFpGvf4mGlYW9x2j+4ybOULNy7
+         eW1S/z/G2JKD/YF0c0IywP5jL7tjCmAMSfYHwjw2Mgd+8lo0HY2apy//ZlP3q1BuFweg
+         kxv1DBMAmhdBV9qGqhU7t4qHJxKuYe+4PrnuMPBj6LktzBpmvLYwxL6iqDAV7QAmJ5iL
+         I9pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=h1JVSDR71Ka3PM04u0ramfobv1CKoUTWgjm5qfW2CV8=;
-        b=fMYZ61/Atk1hYN76/EA2AqGBDsd5OvpmUwm9ulSFBnxYHjl5cciQ933TDVGUbqjRTE
-         dHfHsdPmiWS35YdRb/euL7KIuaGiY2BhshS/QiVYsrhcmOZVPAKaUHlCjMQAC8/h9h1M
-         8cT0CGTHfdrlGKC3Y4FrvpjX2VEuQ1E68Gm5V/fH+5lDu5Mhc6dZRDbVTpuwR9qNKxfB
-         bMlowimlBWvKixpplyacy+EASh0Ewq4drA4AbnQDBBGjm4vt5uEKWYin6tP+lkJq3i8V
-         vXhxxwD+kwqR4HAL1uUEwVSNBHCCMEeTXshoeFseaWToor8fk4GLKd8BW0wiLWM652lt
-         L+WA==
-X-Gm-Message-State: ANhLgQ3wr/SBF8/P+V3BOj+U35d9Jt4novJQlmJDZ7JxvJ6Un7YXwj3G
-        6Egz+IxMljdzZfHMbqsuG7uFUq4bInGiYnK/sr9R
-X-Google-Smtp-Source: ADFU+vtjoB1L41gbvG3IfZm3ksBmDTvbqLdnYvpmD27Ya9UPhKm77W68IFm4/AxRz3i7hA2sUofnKwQPP6SAVhHtg78=
-X-Received: by 2002:a05:6402:8c3:: with SMTP id d3mr5966134edz.31.1584565297053;
- Wed, 18 Mar 2020 14:01:37 -0700 (PDT)
+        bh=WatAKLuqZtZlRLQCbRzYpTXRz9maWKDE4hUEG0f7NDw=;
+        b=oYo1OMcOFODe2uZTuTsuGqBaNa0EfB4no9Znz41DBTo6dUPo8z1aX98hHbqhKvlIH3
+         ibAROtK8geY8WCQEGCWQhKVsIirKC5QH4gBArB88UqjQbLji27t8BZmN5T8jBlfx6q+E
+         0b4A34a0nbXgLMx1z5TPg5y+QOrZs2gWLFoR2cMXDq8o0FP0wJi4sxx7TDEBCSLEZVqd
+         4pi/XWtdj3s2UAIbBDqIUPq0lTgO1O4AJ0H8gUrHLw3eVatXGCD4NgJOa34nUOW34PLr
+         wkpjZofFw1Jh8ANobmLemKV1jyBLzBr5/w9wctOWh3zF9pyHJ64uWs4NPM+rJiaipCSV
+         6RUQ==
+X-Gm-Message-State: ANhLgQ0tk1BccWV0mNTroRr6skG6D/fJKX6poxc7AaXWpKBQpp1V3moW
+        Swf9qw3BjKi9JC3Pt9oqKyvm64fg6pSpsfcLB59W
+X-Google-Smtp-Source: ADFU+vvbYGHqEIZHFDpAJYIn0BKyhX1aU7rGbDTvr2tbcPYmEgbd2Lwck7tUApGNIqLuzMQYQdyQBqa6eqOf1oPvVLM=
+X-Received: by 2002:aa7:d051:: with SMTP id n17mr5727973edo.196.1584565722903;
+ Wed, 18 Mar 2020 14:08:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1577736799.git.rgb@redhat.com> <20200204231454.oxa7pyvuxbj466fj@madcap2.tricolour.ca>
- <CAHC9VhQquokw+7UOU=G0SsD35UdgmfysVKCGCE87JVaoTkbisg@mail.gmail.com>
- <3142237.YMNxv0uec1@x2> <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
- <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca> <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
- <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
-In-Reply-To: <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+References: <cover.1577736799.git.rgb@redhat.com> <6452955c1e038227a5cd169f689f3fd3db27513f.1577736799.git.rgb@redhat.com>
+ <CAHC9VhRkH=YEjAY6dJJHSp934grHnf=O4RiqLu3U8DzdVQOZkg@mail.gmail.com>
+ <20200130192753.n7jjrshbhrczjzoe@madcap2.tricolour.ca> <CAHC9VhSVN3mNb5enhLR1hY+ekiAyiYWbehrwd_zN7kz13dF=1w@mail.gmail.com>
+ <20200205235056.e5365xtgz7rbese2@madcap2.tricolour.ca> <CAHC9VhTM6MDHLcBfwJ_9DCroG0VA-meO770ihjn1sVy6=0JrHw@mail.gmail.com>
+ <20200312205147.plxs4czjeuu4davj@madcap2.tricolour.ca> <CAHC9VhTqWdXMsbSbsWJzRRvVbSaaFBmnFFsVutM7XSx5NT_FJA@mail.gmail.com>
+ <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
+In-Reply-To: <20200314224203.ncyx3rgwwe6zet4e@madcap2.tricolour.ca>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 18 Mar 2020 17:01:26 -0400
-Message-ID: <CAHC9VhQKOpVWxDg-tWuCWV22QRu8P_NpFKme==0Ot1RQKa_DWA@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
+Date:   Wed, 18 Mar 2020 17:08:31 -0400
+Message-ID: <CAHC9VhTy2ou-vadeMjgTaw-T9mW+nBjbqapA7RSW3EFNJ44JLw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 13/16] audit: track container nesting
 To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
         containers@lists.linux-foundation.org,
         LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
         simo@redhat.com, netdev@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
@@ -68,38 +68,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 3:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-13 12:42, Paul Moore wrote:
+On Sat, Mar 14, 2020 at 6:42 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-13 12:47, Paul Moore wrote:
 
 ...
 
-> > The thread has had a lot of starts/stops, so I may be repeating a
-> > previous suggestion, but one idea would be to still emit a "death
-> > record" when the final task in the audit container ID does die, but
-> > block the particular audit container ID from reuse until it the
-> > SIGNAL2 info has been reported.  This gives us the timely ACID death
-> > notification while still preventing confusion and ambiguity caused by
-> > potentially reusing the ACID before the SIGNAL2 record has been sent;
-> > there is a small nit about the ACID being present in the SIGNAL2
-> > *after* its death, but I think that can be easily explained and
-> > understood by admins.
+> > It has been a while since I last looked at the patchset, but my
+> > concern over the prefered use of the ACID number vs the ACID object is
+> > that the number offers no reuse protection where the object does.  I
+> > really would like us to use the object everywhere it is possible.
 >
-> Thinking quickly about possible technical solutions to this, maybe it
-> makes sense to have two counters on a contobj so that we know when the
-> last process in that container exits and can issue the death
-> certificate, but we still block reuse of it until all further references
-> to it have been resolved.  This will likely also make it possible to
-> report the full contid chain in SIGNAL2 records.  This will eliminate
-> some of the issues we are discussing with regards to passing a contobj
-> vs a contid to the audit_log_contid function, but won't eliminate them
-> all because there are still some contids that won't have an object
-> associated with them to make it impossible to look them up in the
-> contobj lists.
+> Ok, so I take it from this that I go ahead with the dual format since
+> the wrapper funciton to convert from object to ID strips away object
+> information negating any benefit of favouring the object pointer.  I'll
+> look at the remaining calls that use a contid (rather than contobj) and
+> convert all that I can over to storing an object using the dual counters
+> that track process exits versus signal2 and trace references.
 
-I'm not sure you need a full second counter, I imagine a simple flag
-would be okay.  I think you just something to indicate that this ACID
-object is marked as "dead" but it still being held for sanity reasons
-and should not be reused.
+Well, as I said in the other thread, I'm not sure we need a full two
+counters; I think one counter and a simple flag should suffice.
+Otherwise that sounds good for the next iteration.
 
 -- 
 paul moore
