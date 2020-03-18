@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 158A9189FE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 16:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9321318A023
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 17:03:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbgCRPnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 11:43:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52132 "EHLO mail.kernel.org"
+        id S1727052AbgCRQDX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 12:03:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbgCRPnV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 11:43:21 -0400
+        id S1726961AbgCRQDW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 12:03:22 -0400
 Received: from linux-8ccs (p5B2812F9.dip0.t-ipconnect.de [91.40.18.249])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E68020767;
-        Wed, 18 Mar 2020 15:43:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 383192076C;
+        Wed, 18 Mar 2020 16:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584546200;
-        bh=iwK9ZIuWxFVtXKqXUS7isMl/puS748Mh/G1D0GM208U=;
+        s=default; t=1584547401;
+        bh=8+bhNeSa7Nigx9lS/u8FMlPTHye2zcWuNkajfPvjVP0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ATXEubSqnLJ5zf8IFuO1isXZFmKsEpiFUZfSxQ5nQoKKboxQYN7cIcfVdhvfgIw6P
-         +MJE06SKNCMx/NQle3Vfy7CgPW7giKLPCClA5P+/St5G8r4OiLVdJHxMoGijU7GMH9
-         VtxYe0MeSI37shj0sqFXTGe9c+HA2NbWkeHWet5Y=
-Date:   Wed, 18 Mar 2020 16:43:15 +0100
+        b=Izl6b0ua1+tYjXnLnem1GifC/wnoWuzCPXbuSvOV+fm4FovYEdx2fZwZeuoazXHf4
+         KKqkDz2I/toW12IdmVG+tsC/k++kMxwuB22RWbqkIb8l6JogE9XAeBR84cnYgojkIz
+         NXSxU3AXxtELDbwGdexG+SICwJ2InYehXnsNies4=
+Date:   Wed, 18 Mar 2020 17:03:16 +0100
 From:   Jessica Yu <jeyu@kernel.org>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -34,15 +34,15 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         NeilBrown <neilb@suse.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] fs/filesystems.c: downgrade user-reachable
- WARN_ONCE() to pr_warn_once()
-Message-ID: <20200318154315.GB4144@linux-8ccs>
+Subject: Re: [PATCH v3 1/5] kmod: make request_module() return an error when
+ autoloading is disabled
+Message-ID: <20200318160316.GC4144@linux-8ccs>
 References: <20200314213426.134866-1-ebiggers@kernel.org>
- <20200314213426.134866-3-ebiggers@kernel.org>
+ <20200314213426.134866-2-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200314213426.134866-3-ebiggers@kernel.org>
+In-Reply-To: <20200314213426.134866-2-ebiggers@kernel.org>
 X-OS:   Linux linux-8ccs 4.12.14-lp150.12.61-default x86_64
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -53,14 +53,48 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 +++ Eric Biggers [14/03/20 14:34 -0700]:
 >From: Eric Biggers <ebiggers@google.com>
 >
->After request_module(), nothing is stopping the module from being
->unloaded until someone takes a reference to it via try_get_module().
+>It's long been possible to disable kernel module autoloading completely
+>(while still allowing manual module insertion) by setting
+>/proc/sys/kernel/modprobe to the empty string.  This can be preferable
+>to setting it to a nonexistent file since it avoids the overhead of an
+>attempted execve(), avoids potential deadlocks, and avoids the call to
+>security_kernel_module_request() and thus on SELinux-based systems
+>eliminates the need to write SELinux rules to dontaudit module_request.
 >
->The WARN_ONCE() in get_fs_type() is thus user-reachable, via userspace
->running 'rmmod' concurrently.
+>However, when module autoloading is disabled in this way,
+>request_module() returns 0.  This is broken because callers expect 0 to
+>mean that the module was successfully loaded.
 >
->Since WARN_ONCE() is for kernel bugs only, not for user-reachable
->situations, downgrade this warning to pr_warn_once().
+>Apparently this was never noticed because this method of disabling
+>module autoloading isn't used much, and also most callers don't use the
+>return value of request_module() since it's always necessary to check
+>whether the module registered its functionality or not anyway.  But
+>improperly returning 0 can indeed confuse a few callers, for example
+>get_fs_type() in fs/filesystems.c where it causes a WARNING to be hit:
+>
+>	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+>		fs = __get_fs_type(name, len);
+>		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
+>	}
+>
+>This is easily reproduced with:
+>
+>	echo > /proc/sys/kernel/modprobe
+>	mount -t NONEXISTENT none /
+>
+>It causes:
+>
+>	request_module fs-NONEXISTENT succeeded, but still no fs?
+>	WARNING: CPU: 1 PID: 1106 at fs/filesystems.c:275 get_fs_type+0xd6/0xf0
+>	[...]
+>
+>This should actually use pr_warn_once() rather than WARN_ONCE(), since
+>it's also user-reachable if userspace immediately unloads the module.
+>Regardless, request_module() should correctly return an error when it
+>fails.  So let's make it return -ENOENT, which matches the error when
+>the modprobe binary doesn't exist.
+>
+>I've also sent patches to document and test this case.
 >
 >Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 >Cc: stable@vger.kernel.org
@@ -72,26 +106,6 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 >Cc: Kees Cook <keescook@chromium.org>
 >Cc: NeilBrown <neilb@suse.com>
 >Signed-off-by: Eric Biggers <ebiggers@google.com>
->---
-> fs/filesystems.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
->
->diff --git a/fs/filesystems.c b/fs/filesystems.c
->index 77bf5f95362da..90b8d879fbaf3 100644
->--- a/fs/filesystems.c
->+++ b/fs/filesystems.c
->@@ -272,7 +272,9 @@ struct file_system_type *get_fs_type(const char *name)
-> 	fs = __get_fs_type(name, len);
-> 	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
-> 		fs = __get_fs_type(name, len);
->-		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
->+		if (!fs)
->+			pr_warn_once("request_module fs-%.*s succeeded, but still no fs?\n",
->+				     len, name);
-
-Hm, what was the rationale for warning only once again? It might be useful
-for debugging issues to see each instance of request_module() failure
-(and with which fs). However, I don't have a concrete use case to
-support this argument, so:
 
 Reviewed-by: Jessica Yu <jeyu@kernel.org>
+
