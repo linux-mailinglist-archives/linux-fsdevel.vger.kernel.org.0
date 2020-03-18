@@ -2,144 +2,362 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4902518A8EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 00:06:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F00718A944
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 00:34:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbgCRXGR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 19:06:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbgCRXGQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 19:06:16 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABD6A208E4;
-        Wed, 18 Mar 2020 23:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584572776;
-        bh=ZxxGTjlO7NBT1wg1m3B0rlTJ0Dra1Fpr72IGr/O4DX8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IptXYSXW18xO1/N37NADiTKS5f81MTpgGfRNJSjZwCjf2z/kWyq9eHr1/4qK8nu+6
-         fInDML/N9dD7KW8P17M7Uqkio2B8dZbr8o9Gb9Cm340wt7ExyFXGPzKbCvAt479YiP
-         ZCekIzzPe2HTmAOrEpudt+Ma97Y8D54siaMfF5yk=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: [PATCH v4 5/5] selftests: kmod: test disabling module autoloading
-Date:   Wed, 18 Mar 2020 16:05:15 -0700
-Message-Id: <20200318230515.171692-6-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200318230515.171692-1-ebiggers@kernel.org>
-References: <20200318230515.171692-1-ebiggers@kernel.org>
+        id S1727262AbgCRXeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 19:34:12 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38238 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgCRXeM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 19:34:12 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k21so747268oij.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 16:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6IKlL+I/c+Hjy4y3Xx8YKRHHyf6Y2ndtzTeKefGZ0X0=;
+        b=DrrXM1TfGXM7JpdPjJELh2Jet/0olmv7sgsJVcrfO7NNAm/C/uyNtme7E3RQnm7e+i
+         2YJureu5k61DYblkRP+iPdXjAj6EmoxPiSARalPXqDlODHBYpQUrTo+7+LWZQEaGtq4z
+         PWxPkuzUsv3k04l7Z0iBS0WqR/llQh3FVVrQOOulX84B2lD338s2/H/o5WrE5DPjv/Ky
+         ROl0qCPSz4ymdkxl27Z6MsJBAKiP17fV4389dy1Dn5iuD3LMNBb4AGc09RyXd4B7XEHE
+         ySE3qNl/9EKEnQS5sd1SsSKs/oXsgIHSjA6vuGQmMLZGV+j7AlmeM0VBLcPchf3vk+8Q
+         fJag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6IKlL+I/c+Hjy4y3Xx8YKRHHyf6Y2ndtzTeKefGZ0X0=;
+        b=IYHWhmjFlfLivWr/nw4Pi7qTBmAECBQNYRASS3Nk8ANTwINz5/DIORHVOqav106/pv
+         h/ahz6TQp3folEsxbiOqix2LJLyHn9GDPPXoEoI8z7Ge41rTbqopAyPVc+VayqoF4jWY
+         rgmJ/f1nK391MvyoJxPuGlR0GOku3x8CQGn+yZqJT3BlxlpwKg3jpNEh0G3eY/ABSoRB
+         G5843nKtcP9jSJR73UAhJYpdjwDTN+53GxAV8Gkn5UxE/DTADXz492f3FNknPGvW6vMu
+         R3ab7ULVfug+/1p2hyQRv++I/nWqHDouQPKDEPPNBswvl1jzQREXQOjnneNfISk1rZex
+         HaTA==
+X-Gm-Message-State: ANhLgQ1jToHkD8QdWajMgHXXAVRJC9Dn2dgibKwhiYhNBtJ5TjP30dCR
+        GNBAcc8pwi47tPlr1aG9I2lLsV9KqEi5+PUNZRhMng==
+X-Google-Smtp-Source: ADFU+vv8F3Y9wGStW1nBrbFs3yrWKsAXE0IC+0piatRYJ3uczWe5YH3FoAj96UZ0SHVWroel259FmrrZ8VibD0XoKz8=
+X-Received: by 2002:aca:5e88:: with SMTP id s130mr335083oib.47.1584574450560;
+ Wed, 18 Mar 2020 16:34:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200224160215.4136-1-mic@digikod.net> <CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com>
+ <873d7419-bdd9-8a52-0a9b-dddbe31df4f9@digikod.net> <CAG48ez0=0W5Ok-8nASqZrZ28JboXRRi3gDxV5u6mdcOtzwuRVA@mail.gmail.com>
+ <688dda0f-0907-34eb-c19e-3e9e5f613a74@digikod.net> <CAG48ez16yT+zbK1WPxr2TnxrifW5c2DnpFLbWRRLUT_WpuFNmw@mail.gmail.com>
+ <e8530226-f295-a897-1132-7e6970dad49f@digikod.net>
+In-Reply-To: <e8530226-f295-a897-1132-7e6970dad49f@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 19 Mar 2020 00:33:44 +0100
+Message-ID: <CAG48ez1K-7Lq2Ep_p9fOvXQ-fwj_8dA1CFd5SVDbT4ccqejDzA@mail.gmail.com>
+Subject: Re: [RFC PATCH v14 00/10] Landlock LSM
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Wed, Mar 18, 2020 at 1:06 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> On 17/03/2020 20:45, Jann Horn wrote:
+> > On Tue, Mar 17, 2020 at 6:50 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+> >> On 17/03/2020 17:19, Jann Horn wrote:
+> >>> On Thu, Mar 12, 2020 at 12:38 AM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> >>>> On 10/03/2020 00:44, Jann Horn wrote:
+> >>>>> On Mon, Feb 24, 2020 at 5:03 PM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> >>
+> >> [...]
+> >>
+> >>>>> Aside from those things, there is also a major correctness issue wh=
+ere
+> >>>>> I'm not sure how to solve it properly:
+> >>>>>
+> >>>>> Let's say a process installs a filter on itself like this:
+> >>>>>
+> >>>>> struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
+> >>>>> ACCESS_FS_ROUGHLY_WRITE};
+> >>>>> int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
+> >>>>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> >>>>> struct landlock_attr_path_beneath path_beneath =3D {
+> >>>>>   .ruleset_fd =3D ruleset_fd,
+> >>>>>   .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
+> >>>>>   .parent_fd =3D open("/tmp/foobar", O_PATH),
+> >>>>> };
+> >>>>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> >>>>> sizeof(path_beneath), &path_beneath);
+> >>>>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> >>>>> struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D rul=
+eset_fd };
+> >>>>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET=
+,
+> >>>>> sizeof(attr_enforce), &attr_enforce);
+> >>>>>
+> >>>>> At this point, the process is not supposed to be able to write to
+> >>>>> anything outside /tmp/foobar, right? But what happens if the proces=
+s
+> >>>>> does the following next?
+> >>>>>
+> >>>>> struct landlock_attr_ruleset ruleset =3D { .handled_access_fs =3D
+> >>>>> ACCESS_FS_ROUGHLY_WRITE};
+> >>>>> int ruleset_fd =3D landlock(LANDLOCK_CMD_CREATE_RULESET,
+> >>>>> LANDLOCK_OPT_CREATE_RULESET, sizeof(ruleset), &ruleset);
+> >>>>> struct landlock_attr_path_beneath path_beneath =3D {
+> >>>>>   .ruleset_fd =3D ruleset_fd,
+> >>>>>   .allowed_access =3D ACCESS_FS_ROUGHLY_WRITE,
+> >>>>>   .parent_fd =3D open("/", O_PATH),
+> >>>>> };
+> >>>>> landlock(LANDLOCK_CMD_ADD_RULE, LANDLOCK_OPT_ADD_RULE_PATH_BENEATH,
+> >>>>> sizeof(path_beneath), &path_beneath);
+> >>>>> prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+> >>>>> struct landlock_attr_enforce attr_enforce =3D { .ruleset_fd =3D rul=
+eset_fd };
+> >>>>> landlock(LANDLOCK_CMD_ENFORCE_RULESET, LANDLOCK_OPT_ENFORCE_RULESET=
+,
+> >>>>> sizeof(attr_enforce), &attr_enforce);
+> >>>>>
+> >>>>> As far as I can tell from looking at the source, after this, you wi=
+ll
+> >>>>> have write access to the entire filesystem again. I think the idea =
+is
+> >>>>> that LANDLOCK_CMD_ENFORCE_RULESET should only let you drop privileg=
+es,
+> >>>>> not increase them, right?
+> >>>>
+> >>>> There is an additionnal check in syscall.c:get_path_from_fd(): it is
+> >>>> forbidden to add a rule with a path which is not accessible (accordi=
+ng
+> >>>> to LANDLOCK_ACCESS_FS_OPEN) thanks to a call to security_file_open()=
+,
+> >>>> but this is definitely not perfect.
+> >>>
+> >>> Ah, I missed that.
+> >>>
+> >>>>> I think the easy way to fix this would be to add a bitmask to each
+> >>>>> rule that says from which ruleset it originally comes, and then let
+> >>>>> check_access_path() collect these bitmasks from each rule with OR, =
+and
+> >>>>> check at the end whether the resulting bitmask is full - if not, at
+> >>>>> least one of the rulesets did not permit the access, and it should =
+be
+> >>>>> denied.
+> >>>>>
+> >>>>> But maybe it would make more sense to change how the API works
+> >>>>> instead, and get rid of the concept of "merging" two rulesets
+> >>>>> together? Instead, we could make the API work like this:
+> >>>>>
+> >>>>>  - LANDLOCK_CMD_CREATE_RULESET gives you a file descriptor whose
+> >>>>> ->private_data contains a pointer to the old ruleset of the process=
+,
+> >>>>> as well as a pointer to a new empty ruleset.
+> >>>>>  - LANDLOCK_CMD_ADD_RULE fails if the specified rule would not be
+> >>>>> permitted by the old ruleset, then adds the rule to the new ruleset
+> >>>>>  - LANDLOCK_CMD_ENFORCE_RULESET fails if the old ruleset pointer in
+> >>>>> ->private_data doesn't match the current ruleset of the process, th=
+en
+> >>>>> replaces the old ruleset with the new ruleset.
+> >>>>>
+> >>>>> With this, the new ruleset is guaranteed to be a subset of the old
+> >>>>> ruleset because each of the new ruleset's rules is permitted by the
+> >>>>> old ruleset. (Unless the directory hierarchy rotates, but in that c=
+ase
+> >>>>> the inaccuracy isn't much worse than what would've been possible
+> >>>>> through RCU path walk anyway AFAIK.)
+> >>>>>
+> >>>>> What do you think?
+> >>>>>
+> >>>>
+> >>>> I would prefer to add the same checks you described at first (with
+> >>>> check_access_path), but only when creating a new ruleset with
+> >>>> merge_ruleset() (which should probably be renamed). This enables not=
+ to
+> >>>> rely on a parent ruleset/domain until the enforcement, which is the =
+case
+> >>>> anyway.
+> >>>> Unfortunately this doesn't work for some cases with bind mounts. Bec=
+ause
+> >>>> check_access_path() goes through one path, another (bind mounted) pa=
+th
+> >>>> could be illegitimately allowed.
+> >>>
+> >>> Hmm... I'm not sure what you mean. At the moment, landlock doesn't
+> >>> allow any sandboxed process to change the mount hierarchy, right? Can
+> >>> you give an example where this would go wrong?
+> >>
+> >> Indeed, a Landlocked process must no be able to change its mount
+> >> namespace layout. However, bind mounts may already exist.
+> >> Let's say a process sandbox itself to only access /a in a read-write
+> >> way.
+> >
+> > So, first policy:
+> >
+> > /a RW
+> >
+> >> Then, this process (or one of its children) add a new restriction
+> >> on /a/b to only be able to read this hierarchy.
+> >
+> > You mean with the second policy looking like this?
+>
+> Right.
+>
+> >
+> > /a RW
+> > /a/b R
+> >
+> > Then the resulting policy would be:
+> >
+> > /a RW policy_bitmask=3D0x00000003 (bits 0 and 1 set)
+> > /a/b R policy_bitmask=3D0x00000002 (bit 1 set)
+> > required_bits=3D0x00000003 (bits 0 and 1 set)
+> >
+> >> The check at insertion
+> >> time would allow this because this access right is a subset of the
+> >> access right allowed with the parent directory. However, If /a/b is bi=
+nd
+> >> mounted somewhere else, let's say in /private/b, then the second
+> >> enforcement just gave new access rights to this hierarchy too.
+> >
+> > But with the solution I proposed, landlock's path walk would see
+> > something like this when accessing a file at /private/b/foo:
+> > /private/b/foo <no rules>
+> >   policies seen until now: 0x00000000
+> > /private/b <access: R, policy_bitmask=3D0x00000002>
+> >   policies seen until now: 0x00000002
+> > /private <no rules>
+> >   policies seen until now: 0x00000002
+> > / <no rules>
+> >   policies seen until now: 0x00000002
+> >
+> > It wouldn't encounter any rule from the first policy, so the OR of the
+> > seen policy bitmasks would be 0x00000002, which is not the required
+> > value 0x00000003, and so the access would be denied.
+> As I understand your proposition, we need to build the required_bits
+> when adding a rule or enforcing/merging a ruleset with a domain. The
+> issue is that a rule only refers to a struct inode, not a struct path.
+> For your proposition to work, we would need to walk through the file
+> path when adding a rule to a ruleset, which means that we need to depend
+> of the current view of the process (i.e. its mount namespace), and its
+> Landlock domain.
 
-Test that request_module() fails with -ENOENT when
-/proc/sys/kernel/modprobe contains (a) a nonexistent path, and (b) an
-empty path.
+I don't see why that is necessary. Why would we have to walk the file
+path when adding a rule?
 
-Case (b) is a regression test for the patch "kmod: make request_module()
-return an error when autoloading is disabled".
+> If the required_bits field is set when the ruleset is
+> merged with the domain, it is not possible anymore to walk through the
+> corresponding initial file path, which makes the enforcement step too
+> late to check for such consistency. The important point is that a
+> ruleset/domain doesn't have a notion of file hierarchy, a ruleset is
+> only a set of tagged inodes.
+>
+> I'm not sure I got your proposition right, though. When and how would
+> you generate the required_bits?
 
-Tested with 'kmod.sh -t 0010 && kmod.sh -t 0011', and also simply with
-'kmod.sh' to run all kmod tests.
+Using your terminology:
+A domain is a collection of N layers, which are assigned indices 0..N-1.
+For each possible access type, a domain has a bitmask containing N
+bits that stores which layers control that access type. (Basically a
+per-layer version of fs_access_mask.)
+To validate an access, you start by ORing together the bitmasks for
+the requested access types; that gives you the required_bits mask,
+which lists all layers that want to control the access.
+Then you set seen_policy_bits=3D0, then do the
+check_access_path_continue() loop while keeping track of which layers
+you've seen with "seen_policy_bits |=3D access->contributing_policies",
+or something like that.
+And in the end, you check that seen_policy_bits is a superset of
+required_bits - something like `(~seen_policy_bits) & required_bits =3D=3D
+0`.
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: NeilBrown <neilb@suse.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- tools/testing/selftests/kmod/kmod.sh | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+AFAICS to create a new domain from a bunch of layers, you wouldn't
+have to do any path walking.
 
-diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
-index 315a43111e046..3702dbcc90a77 100755
---- a/tools/testing/selftests/kmod/kmod.sh
-+++ b/tools/testing/selftests/kmod/kmod.sh
-@@ -61,6 +61,8 @@ ALL_TESTS="$ALL_TESTS 0006:10:1"
- ALL_TESTS="$ALL_TESTS 0007:5:1"
- ALL_TESTS="$ALL_TESTS 0008:150:1"
- ALL_TESTS="$ALL_TESTS 0009:150:1"
-+ALL_TESTS="$ALL_TESTS 0010:1:1"
-+ALL_TESTS="$ALL_TESTS 0011:1:1"
- 
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
-@@ -149,6 +151,7 @@ function load_req_mod()
- 
- test_finish()
- {
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
- 	echo "Test completed"
- }
- 
-@@ -443,6 +446,30 @@ kmod_test_0009()
- 	config_expect_result ${FUNCNAME[0]} SUCCESS
- }
- 
-+kmod_test_0010()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	echo "/KMOD_TEST_NONEXISTENT" > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
-+kmod_test_0011()
-+{
-+	kmod_defaults_driver
-+	config_num_threads 1
-+	# This causes the kernel to not even try executing modprobe.  The error
-+	# code is still -ENOENT like when modprobe doesn't exist, so we can't
-+	# easily test for the exact difference.  But this still is a useful test
-+	# since there was a bug where request_module() returned 0 in this case.
-+	echo > /proc/sys/kernel/modprobe
-+	config_trigger ${FUNCNAME[0]}
-+	config_expect_result ${FUNCNAME[0]} -ENOENT
-+	echo "$MODPROBE" > /proc/sys/kernel/modprobe
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -460,6 +487,8 @@ list_tests()
- 	echo "0007 x $(get_test_count 0007) - multithreaded tests with default setup test request_module() and get_fs_type()"
- 	echo "0008 x $(get_test_count 0008) - multithreaded - push kmod_concurrent over max_modprobes for request_module()"
- 	echo "0009 x $(get_test_count 0009) - multithreaded - push kmod_concurrent over max_modprobes for get_fs_type()"
-+	echo "0010 x $(get_test_count 0010) - test nonexistent modprobe path"
-+	echo "0011 x $(get_test_count 0011) - test completely disabling module autoloading"
- }
- 
- usage()
-@@ -616,6 +645,7 @@ test_reqs
- allow_user_defaults
- load_req_mod
- 
-+MODPROBE=$(</proc/sys/kernel/modprobe)
- trap "test_finish" EXIT
- 
- parse_args $@
--- 
-2.25.1
+> Here is my updated proposition: add a layer level and a depth to each
+> rule (once enforced/merged with a domain), and a top layer level for a
+> domain. When enforcing a ruleset (i.e. merging a ruleset into the
+> current domain), the layer level of a new rule would be the incremented
+> top layer level.
+> If there is no rule (from this domain) tied to the same
+> inode, then the depth of the new rule is 1. However, if there is already
+> a rule tied to the same inode and if this rule's layer level is the
+> previous top layer level, then the depth and the layer level are both
+> incremented and the rule is updated with the new access rights (boolean
+> AND).
+>
+> The policy looks like this:
+> domain top_layer=3D2
+> /a RW policy_bitmask=3D0x00000003 layer=3D1 depth=3D1
+> /a/b R policy_bitmask=3D0x00000002 layer=3D2 depth=3D1
+>
+> The path walk access check walks through all inodes and start with a
+> layer counter equal to the top layer of the current domain. For each
+> encountered inode tied to a rule, the access rights are checked and a
+> new check ensures that the layer of the matching rule is the same as the
+> counter (this may be a merged ruleset containing rules pertaining to the
+> same hierarchy, which is fine) or equal to the decremented counter (i.e.
+> the path walk just reached the underlying layer). If the path walk
+> encounter a rule with a layer strictly less than the counter minus one,
+> there is a whole in the layers which means that the ruleset
+> hierarchy/subset does not match, and the access must be denied.
+>
+> When accessing a file at /private/b/foo for a read access:
+> /private/b/foo <no rules>
+>   allowed_access=3Dunknown layer_counter=3D2
+> /private/b <access: R, policy_bitmask=3D0x00000002, layer=3D2, depth=3D1>
+>   allowed_access=3Dallowed layer_counter=3D2
+> /private <no rules>
+>   allowed_access=3Dallowed layer_counter=3D2
+> / <no rules>
+>   allowed_access=3Dallowed layer_counter=3D2
+>
+> Because the layer_counter didn't reach 1, the access request is then deni=
+ed.
+>
+> This proposition enables not to rely on a parent ruleset at first, only
+> when enforcing/merging a ruleset with a domain. This also solves the
+> issue with multiple inherited/nested rules on the same inode (in which
+> case the depth just grows). Moreover, this enables to safely stop the
+> path walk as soon as we reach the layer 1.
 
+(FWIW, you could do the same optimization with the seen_policy_bits approac=
+h.)
+
+I guess the difference between your proposal and mine is that in my
+proposal, the following would work, in effect permitting W access to
+/foo/bar/baz (and nothing else)?
+
+first ruleset:
+  /foo W
+second ruleset:
+  /foo/bar/baz W
+third ruleset:
+  /foo/bar W
+
+whereas in your proposal, IIUC it wouldn't be valid for a new ruleset
+to whitelist a superset of what was whitelisted in a previous ruleset?
