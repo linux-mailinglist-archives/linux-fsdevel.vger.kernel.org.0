@@ -2,143 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0002118A02E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 17:06:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D77C18A0BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 17:39:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbgCRQGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 12:06:06 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:41579 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbgCRQGD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 12:06:03 -0400
-Received: by mail-il1-f195.google.com with SMTP id l14so24135131ilj.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
-        b=PmkHFgajk2/8VWOHdYUg8VCj1tVopeX6fqfrGgYm0sPb35e5EoxUjxowANbaw3zCwS
-         wqDhItzeSSD2F4OzNelMLAyDUKSqRDkOzITlg+Hge+tWY5LhXczVM8GuM5pTiPEM5aFa
-         ut6OlQnzTW2CXrIbgEnOI63xRs4UIkIGUhynA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q+E6phefA0/UCxZU68Ee5CkdpY/LreXqfKusKthyp5I=;
-        b=Ak8SkzHiWej4QsQnyg7AUeQ2eWxFgF9y2OK0eXONjZd9GCBHT2NqqF8rFHv42eYo14
-         xZ+GOCd/9y93WAGF13YJL94KvqPDTNeaWPGyBR8A3JBZfqubKqCJKOvWp+Sv9cItzJ/Z
-         i9yb4bVwM+HCk5pdQCoZlOTba0ayZjViThnwWnsAPYaXGQnPfJ2xb0KGfN4MoLGJvOzx
-         pIBlmoYQhIw1jQfuUU8dx8UV0YpVkMTznjELHLCTA8CaYI0f88CZoqqOHoFKvg/EIs9M
-         G+H99YuCDuLS07Zd2syodzSPLmcM66+5/uyt55WLzXUJdr2JuqJk3tZl265KjfzK2QX1
-         BJLA==
-X-Gm-Message-State: ANhLgQ2TltX1TfBeSN+doUxuG9Zsy2nrKaR33VMPd8DVDLxzFxOTFVRl
-        QLT5MxNHDxuJi8hlpbYEK+U1k1tvELqYuNH4PEUvqg==
-X-Google-Smtp-Source: ADFU+vseuj9ZXYFeMbS3X+5vGmRRSiZoxImF5rzfLQFjQscZDtBKPWLdRkROYV3TZYIAEV5wBxQF2hmZ0LlipmXRNY0=
-X-Received: by 2002:a92:5d52:: with SMTP id r79mr4664957ilb.212.1584547562099;
- Wed, 18 Mar 2020 09:06:02 -0700 (PDT)
+        id S1727238AbgCRQjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 12:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727065AbgCRQjn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 12:39:43 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21FB420752;
+        Wed, 18 Mar 2020 16:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584549582;
+        bh=s7WMtHtSTQ/I40uZ0Ao4FX1zsUCtsqMIlS7BJUgnrA4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1XIxQCe2V1xPHNA+48U2QVBvhUcatTUYkKBIqnkevbdWIstMkS8YNMwMCG9JpXsln
+         TGgtf3cTfrr90X+yPorLc2e+1cvcAFLM3jD+fuE80UYN9NNrDJH/JDCKlF79AhAd10
+         6cP8jP0h4PhFG+VovC391qQjtj0gTBEcOpelPSDg=
+Date:   Wed, 18 Mar 2020 09:39:40 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
+Message-ID: <20200318163940.GB2334@sol.localdomain>
+References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
+ <20200308023849.988264-1-ebiggers@kernel.org>
+ <20200313164511.GB907@sol.localdomain>
 MIME-Version: 1.0
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-In-Reply-To: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 18 Mar 2020 17:05:50 +0100
-Message-ID: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200313164511.GB907@sol.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 4:08 PM David Howells <dhowells@redhat.com> wrote:
+On Fri, Mar 13, 2020 at 09:45:11AM -0700, Eric Biggers wrote:
+> On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Reading from a debugfs file at a nonzero position, without first reading
+> > at position 0, leaks uninitialized memory to userspace.
+> > 
+> > It's a bit tricky to do this, since lseek() and pread() aren't allowed
+> > on these files, and write() doesn't update the position on them.  But
+> > writing to them with splice() *does* update the position:
+> > 
+> > 	#define _GNU_SOURCE 1
+> > 	#include <fcntl.h>
+> > 	#include <stdio.h>
+> > 	#include <unistd.h>
+> > 	int main()
+> > 	{
+> > 		int pipes[2], fd, n, i;
+> > 		char buf[32];
+> > 
+> > 		pipe(pipes);
+> > 		write(pipes[1], "0", 1);
+> > 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
+> > 		splice(pipes[0], NULL, fd, NULL, 1, 0);
+> > 		n = read(fd, buf, sizeof(buf));
+> > 		for (i = 0; i < n; i++)
+> > 			printf("%02x", buf[i]);
+> > 		printf("\n");
+> > 	}
+> > 
+> > Output:
+> > 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
+> > 
+> > Fix the infoleak by making simple_attr_read() always fill
+> > simple_attr::get_buf if it hasn't been filled yet.
+> > 
+> > Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
+> > Reported-by: Alexander Potapenko <glider@google.com>
+> > Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  fs/libfs.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/libfs.c b/fs/libfs.c
+> > index c686bd9caac6..3759fbacf522 100644
+> > --- a/fs/libfs.c
+> > +++ b/fs/libfs.c
+> > @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
+> >  {
+> >  	struct simple_attr *attr;
+> >  
+> > -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
+> > +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
+> >  	if (!attr)
+> >  		return -ENOMEM;
+> >  
+> > @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	if (*ppos) {		/* continued read */
+> > +	if (*ppos && attr->get_buf[0]) {
+> > +		/* continued read */
+> >  		size = strlen(attr->get_buf);
+> > -	} else {		/* first read */
+> > +	} else {
+> > +		/* first read */
+> >  		u64 val;
+> >  		ret = attr->get(attr->data, &val);
+> >  		if (ret)
+> > -- 
+> > 2.25.1
+> 
+> Any comments on this?  Al, seems this is something you should pick up?
+> 
+> - Eric
 
-> ============================
-> WHY NOT USE PROCFS OR SYSFS?
-> ============================
->
-> Why is it better to go with a new system call rather than adding more magic
-> stuff to /proc or /sysfs for each superblock object and each mount object?
->
->  (1) It can be targetted.  It makes it easy to query directly by path.
->      procfs and sysfs cannot do this easily.
->
->  (2) It's more efficient as we can return specific binary data rather than
->      making huge text dumps.  Granted, sysfs and procfs could present the
->      same data, though as lots of little files which have to be
->      individually opened, read, closed and parsed.
-
-Asked this a number of times, but you haven't answered yet:  what
-application would require such a high efficiency?
-
-Nobody's suggesting we move stat(2) to proc interfaces, and AFAIK
-nobody suggested we move /proc/PID/* to a binary syscall interface.
-Each one has its place, and I strongly feel that mount info belongs in
-the latter category.    Feel free to prove the opposite.
-
->  (3) We wouldn't have the overhead of open and close (even adding a
->      self-contained readfile() syscall has to do that internally
-
-Busted: add f_op->readfile() and be done with all that.   For example
-DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
-
-We could optimize existing proc, sys, etc. interfaces, but it's not
-been an issue, apparently.
-
->
->  (4) Opening a file in procfs or sysfs has a pathwalk overhead for each
->      file accessed.  We can use an integer attribute ID instead (yes, this
->      is similar to ioctl) - but could also use a string ID if that is
->      preferred.
->
->  (5) Can easily query cross-namespace if, say, a container manager process
->      is given an fs_context that hasn't yet been mounted into a namespace -
->      or hasn't even been fully created yet.
-
-Works with my patch.
-
->  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each time a
->      mount happens or is removed - and since systemd makes much use of
->      mount namespaces and mount propagation, this will create a lot of
->      nodes.
-
-Not true.
-
-> The argument for doing this through procfs/sysfs/somemagicfs is that
-> someone using a shell can just query the magic files using ordinary text
-> tools, such as cat - and that has merit - but it doesn't solve the
-> query-by-pathname problem.
->
-> The suggested way around the query-by-pathname problem is to open the
-> target file O_PATH and then look in a magic directory under procfs
-> corresponding to the fd number to see a set of attribute files[*] laid out.
-> Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
-
-Bash doesn't have fsinfo(2) either, so that's not really a good argument.
-
-Implementing a utility to show mount attribute(s) by path is trivial
-for the file based interface, while it would need to be updated for
-each extension of fsinfo(2).   Same goes for libc, language bindings,
-etc.
-
-Thanks,
-Miklos
+Ping.
