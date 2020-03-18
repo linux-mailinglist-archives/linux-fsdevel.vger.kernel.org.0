@@ -2,125 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F0A1895E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 07:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D79A41895DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 07:33:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbgCRGd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 02:33:59 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59930 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726478AbgCRGd7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 02:33:59 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02I6XffF016248;
-        Tue, 17 Mar 2020 23:33:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=qiiDp/bzTvDUpoOTjUkxn3yacAINlD8bPtsVsdGpv7c=;
- b=Ns27WQJ9vn4kQUtB3UaaGaJ0oDpuAHff++HNRqyf6TBye8HkhsESBfEo54dx+dfKH9MG
- JXiKhIuD4w36OsUTFuuinU5l4TLsdS/HfUVD2yN+U/TsYVxrFuREeRDdF+P9h08kA1ah
- xemLFm9GlDiTLy19hlwLFBu7kOjit0KMyIU= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2yu9avh2xf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 17 Mar 2020 23:33:41 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Tue, 17 Mar 2020 23:33:28 -0700
+        id S1727068AbgCRGdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 02:33:43 -0400
+Received: from mail-eopbgr700059.outbound.protection.outlook.com ([40.107.70.59]:38177
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726478AbgCRGdm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 02:33:42 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SmqKiaWBXgG+NaUK3JUtecntpoPn3R2Ed9fiGMZmDPsiB+ca9r5COuq1J50FXfvqYM0zdB8UHoOc/+Tkj6nliEQx8S9VLPJAhoAfPxzIbQPwoND4+Bd3jvlsEPBjQIROhZ2mDoi4g3tGJu320J6pIvhuguuavOOoiLi2DMsdZlm+kXJlz8iEKk248lmvECkz+29agULa8BkAwMY5pS9th3fq+sKa45ZtG6BsmkqFD8Hz/kwts5eQ7G0Ure0CTc560mCVfMrKWAzF1sQlvjA9vcTd6Gv37A+ucLY7PFGq0al2wX2CPChmJWFz5EvcbAWa8ZE7AL/QddM5KHoVwAYtPQ==
+ b=n50VMFgH3Shz4NGwGVgjz5PmJT74gvBFe/ry47YxC7DHUx7Ibd5ZBa6901TlbQJe+YXcv+cQ1KdAXEw7tO8klzPOHEwyBTvlfRbvAJY24AkNWmjYbwd0eyMsqrj98dLCsKrI8AKIG+5mCIrWDUwwGZxjs9sB51Uu5EbhkZa9KpuGVXDrZLFQ6PBTrzjSVT47r8butixDIXV0E/Is5wrlg9/iI7BA3J90M1UCH6bgnSnX7SN1KNlYDrxNQQzI2/q2eaF87FbZfcc8+cQ7py427o73lCATNXty2kxLPczAQVh/mFSTDMcpCDTD32GaDFzrc4tdl/mywF6nLhRrIumXQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qiiDp/bzTvDUpoOTjUkxn3yacAINlD8bPtsVsdGpv7c=;
- b=ldPivjkum4FRxNNYBVPOfMjtGSJfocNMA6yPeHaK7QdK5I19Wv9Z92jN24IFNP77cbR2NvJAJT9v19ivlI5woxxLl55tCN0Okx/T60ypcRhvGmjuXPav2lWTwAk64XISNJ76zCS4K6mXKW4Tp+dfAKinwW/69PgCKtvD4QWD82kRFWDMpr6H/16TgEW/79yYJbEQ5Uxge55dj8GP2IQqzY5m/A4SXfxyukLzT4jF3njqEBTucAXWXJ3vMv3N1ZGBsTYbpAucwsTUJeFpKH8BnCl0Pn/Rpy13P+vWKLIFlbf8RPCX9IaDgSzy85YGluba3tR38INeXGWOv3qx7grSLQ==
+ bh=w04c/3tOf92t6L/TOjaruS/dXSLXiKGPYNLFYSrBw3U=;
+ b=B29csWoq1Kb4OJMuSVXIfuFMEJVM4PdpF+HWVQgab6dVxIQsEnZX/rwz2i3h2xC0fAdLH4NqpsLHN8WpgAY9hlQ3ItixuISM/DOsdPSON+MFInI+w6Qp58EdgpvrQMGhkJZZcvi9u7ttKbiUnf9eFanB+/CXW0U6dIgrgoXltJbTg06z/MOpNTuaRqj52vXRLmckb295Dp12ErUmBDnV7jcX/1VDBJbMro/k4oLmryL92SO+eFiIvM/QbjU/E2mAwLi9eF7BE04aIkE31tIGkS1l34cHzFDerf7b/aMDPuuGXFnKS9OTmYsuWZF/Oe7qRRRvYfVx7Dw6FGkSMu3uhA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=windriversystems.onmicrosoft.com;
+ s=selector2-windriversystems-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qiiDp/bzTvDUpoOTjUkxn3yacAINlD8bPtsVsdGpv7c=;
- b=LUIxQ8I2LdNpT+mZDmxoDUv5XIKpZfCbuSk84uHdarrNwNUTXSW9xCeUeod55sgrSm1d7nxLHXnbDS1BTyS0PT4AzK5BluyrT0ORBU8UWd6pXHWJIKPSUC9mkjPW7cz76OeCulGzfVjLtv0GLFDou4BAqifKWKFdteyBm5Vpum0=
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com (2603:10b6:303:49::11)
- by MW3PR15MB3866.namprd15.prod.outlook.com (2603:10b6:303:50::18) with
+ bh=w04c/3tOf92t6L/TOjaruS/dXSLXiKGPYNLFYSrBw3U=;
+ b=iJfnktd49EocqPOJTDbtaMifxAIFmDslq/Nd1b1DHeNPwTNOPHSpFR50jhZhySxvpwLwxWvCKgMsXI3CTe3gOjAugeYTY7GsSuLWdLAMAj/hcwj3kkmWEYLrFpcg0S61iszaY965mnU/yXcCu9BN3y9rw9xwLXVizJf1Ipi5KXs=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Zhe.He@windriver.com; 
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com (2603:10b6:805:c8::30)
+ by SN6PR11MB2767.namprd11.prod.outlook.com (2603:10b6:805:5a::26) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.18; Wed, 18 Mar
- 2020 06:33:26 +0000
-Received: from MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5]) by MW3PR15MB3882.namprd15.prod.outlook.com
- ([fe80::c570:6c46:cc47:5ca5%5]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
- 06:33:26 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Daniel Borkmann <daniel@iogearbox.net>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>
-Subject: Re: [PATCH v2 bpf-next] bpf: sharing bpf runtime stats with
- /dev/bpf_stats
-Thread-Topic: [PATCH v2 bpf-next] bpf: sharing bpf runtime stats with
- /dev/bpf_stats
-Thread-Index: AQHV+9Iy3gdyr8P9PUGp5sv3FGMYHqhNLWaAgAAGw4CAAAJXAIAAAvkAgAAaDwCAABahAIAAfHOA
-Date:   Wed, 18 Mar 2020 06:33:26 +0000
-Message-ID: <6D317BBF-093E-41DC-9838-D685C39F6DAB@fb.com>
-References: <20200316203329.2747779-1-songliubraving@fb.com>
- <eb31bed3-3be4-501e-4340-bd558b31ead2@iogearbox.net>
- <920839AF-AC7A-4CD3-975F-111C3C6F75B9@fb.com>
- <a69245f8-c70f-857c-b109-556d1bc267f7@iogearbox.net>
- <C126A009-516F-451A-9A83-31BC8F67AA11@fb.com>
- <53f8973f-4b3e-08fe-2363-2300027c8f9d@iogearbox.net>
- <C624907B-22DB-4505-9C9E-1F8A96013AC7@fb.com>
-In-Reply-To: <C624907B-22DB-4505-9C9E-1F8A96013AC7@fb.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.22; Wed, 18 Mar
+ 2020 06:33:39 +0000
+Received: from SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::d852:181d:278b:ba9d]) by SN6PR11MB3360.namprd11.prod.outlook.com
+ ([fe80::d852:181d:278b:ba9d%5]) with mapi id 15.20.2814.021; Wed, 18 Mar 2020
+ 06:33:39 +0000
+Subject: Re: disk revalidation updates and OOM
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     jack@suse.cz, Jens Axboe <axboe@kernel.dk>,
+        viro@zeniv.linux.org.uk, bvanassche@acm.org, keith.busch@intel.com,
+        tglx@linutronix.de, mwilck@suse.com, yuyufen@huawei.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <93b395e6-5c3f-0157-9572-af0f9094dbd7@windriver.com>
+ <20200310074018.GB26381@lst.de>
+ <75865e17-48f8-a63a-3a29-f995115ffcfc@windriver.com>
+ <20200310162647.GA6361@lst.de>
+ <f48683d9-7854-ba5f-da3a-7ef987a539b8@windriver.com>
+ <20200311155458.GA24376@lst.de>
+ <18bbb6cd-578e-5ead-f2cd-a8a01db17e29@windriver.com>
+ <20200316113746.GA15930@lst.de>
+ <4215351e-89ac-4969-1d52-e2ff5c064d7d@windriver.com>
+ <20200317124244.GA12316@lst.de>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <d6feccb0-6dfc-22e6-1e3d-e6bd8562e5eb@windriver.com>
+Date:   Wed, 18 Mar 2020 14:33:28 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+In-Reply-To: <20200317124244.GA12316@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3608.60.0.2.5)
-x-originating-ip: [2620:10d:c090:400::5:424]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 71939cc6-a8f0-4f5c-35ef-08d7cb0643c2
-x-ms-traffictypediagnostic: MW3PR15MB3866:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MW3PR15MB3866CC18154ECFB2F219F1F7B3F70@MW3PR15MB3866.namprd15.prod.outlook.com>
-x-fb-source: Internal
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 03468CBA43
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(199004)(8676002)(498600001)(966005)(81166006)(81156014)(6506007)(4326008)(8936002)(53546011)(54906003)(33656002)(6916009)(36756003)(6486002)(6512007)(5660300002)(2616005)(2906002)(76116006)(71200400001)(186003)(66556008)(66446008)(66946007)(64756008)(66476007)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW3PR15MB3866;H:MW3PR15MB3882.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 7a/U4LbeakrYquNOA0X8zIuSIFZgze2OGwp2oEs04sD3cgxd773oNK6DgcUfeyZn06hh0MaG+52/uhL2/3+1RODJtc3aOLzhGQnYp/4BWKfujVxU4HCj7S39wjtIeYhcufjlYLTm/YiCJPHxfc3LL4nTHi/ltusfRmMbWiZMzIFY7++ZNKGPEtjPwXI+dmNLUXgzyCHNJ3MQRKyASQj2Ppl3Y1ukMF2nh6jBCSkI9aYKQv+/tyKvz6mfO0M52THhldAdyyLc61R2KLchdAeF6AOqaC4TU6AY0sF852faf7ZgQ5qBg9jjb2gaSSGabc1Wf3mJ5xdJvuf5jvfiVKlLevado0Jj0PUuirVq7OZ3jspjGR/jsXSr5Q0vDJVlwTHrWm5n//7n/4Ev3kt3i0vslfQvv0X2Rt2SoIgBlYcBePdLFViuwhtPPGDkh8kFzNrfoJeSxR6nCsyKV9QKo1OWFC1sJS59QAB/QlDuE9PVtY62T9C/tpx6jbVPBD9hc2jqJWesmuEknNVSYa5UHbyJJg==
-x-ms-exchange-antispam-messagedata: DSyoYS44zqogubJ6r6l6lgXwoVO/EzED4SNNo+rv+csyGBZdpUpCecw5fffMMTDHt2EgDjOyzq3BdlvHaKQsngCo9A7sqfHXeIndHZsFaEMU/ImfWDOPdGxKQWWdm492TooE9Fw5Ukd34oxSFWZWvva6IU+mk490WQ+e9Zb1wPw9gakuWx3P3dghfA0l7wOi
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <169B6318EDFAB14AA6AD6E8F7B9A6F9D@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: HK0PR01CA0054.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::18) To SN6PR11MB3360.namprd11.prod.outlook.com
+ (2603:10b6:805:c8::30)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71939cc6-a8f0-4f5c-35ef-08d7cb0643c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2020 06:33:26.2023
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [128.224.162.175] (60.247.85.82) by HK0PR01CA0054.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.17 via Frontend Transport; Wed, 18 Mar 2020 06:33:34 +0000
+X-Originating-IP: [60.247.85.82]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d287d5d0-378f-4ac3-25eb-08d7cb064b1b
+X-MS-TrafficTypeDiagnostic: SN6PR11MB2767:
+X-Microsoft-Antispam-PRVS: <SN6PR11MB27676458180C82F69CCF7DC58FF70@SN6PR11MB2767.namprd11.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 03468CBA43
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(366004)(346002)(39850400004)(199004)(2906002)(53546011)(86362001)(6486002)(26005)(36756003)(52116002)(16526019)(186003)(31686004)(15650500001)(66946007)(956004)(5660300002)(4326008)(2616005)(7416002)(478600001)(6666004)(6706004)(31696002)(316002)(66476007)(8936002)(81166006)(8676002)(81156014)(6916009)(66556008)(16576012)(78286006);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR11MB2767;H:SN6PR11MB3360.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: windriver.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U9ZWk9Oe4J6rJM6s389qmsBSes4VvvR1/oXKGiMWMpdgjaFbqj1ja4yCWPRQ8l+0T3q46PUqtsDCy0V7AB76vlb9lrikmtZgDjFGT0kGYs3olNXwuiKhYNsjJl8QSk0daXqfL3BmbcYhz7D7tLTy22d3z08Pzu+qrc087SHpfRVg6Vb/syMyY1ktcnpILp1Zt4MJtphiaUwHaIvDIlX6MjpSiM4mChCSn+Ns2RbZkme10XDmEpgapmAO5juvuIMcl/4l/kuqT+44FJmEClWyl1DVEvtgw8YVpYN0ofJiUNF2Zvzwj+7aIx6BUdzhB82jFyd+0OOZGhpQwTlTAedyoq3jYmsb5PrTYDMKJiu+LxvwmpG0lmsLPitj119aMxNksZADiQpQan2fkhlJEAGSBvWPzetYT0M0HHDwbds7pDHjTEk3jABPMlt7OrVPw090MfZBNwwZyfcTxeeIHM9rHFe6KckBkPcdRl0zjUdlyFFi4Q8Q7g7Dv1YFuh+MdtEE+d2CVK8P9hNBnwkHxzLRFO9RsF7m0i5WIrWdJHKTs1o=
+X-MS-Exchange-AntiSpam-MessageData: HaRE2citDk1aMpQdHE851HvOIoOH+W+N2HIds2maVmLtPakIqrWKAnKK2YIuIsLWIsf3eLbjf4u2W1Ozvgj+pqON1Obw6NJqhrXM5pMDg/7c+A7IdxIAwPgmNc31ilC25U1utcqR8aEUHtvR3UX3pQ==
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d287d5d0-378f-4ac3-25eb-08d7cb064b1b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2020 06:33:39.0884
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rU3ZjXGIiZP/dZLmiDbi3X1637bq8yUmosLedHUUNt1EZD1hFLyPYeB8iqYW6Pqun5r08lF6k7KuUBPRbkhIEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR15MB3866
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
- definitions=2020-03-18_02:2020-03-17,2020-03-18 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 malwarescore=0 clxscore=1015 adultscore=0
- suspectscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=801 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003180032
-X-FB-Internal: deliver
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7kKNQvi7MvbkweSNlmyL+PeZhQ298kaxF9k9AeW19+Aa3ZzL5S3AXHbrYDTSVhfmVqJpGp4KD2Xt/FnkYXLs9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2767
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -128,91 +101,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-> On Mar 17, 2020, at 4:08 PM, Song Liu <songliubraving@fb.com> wrote:
->=20
->=20
->=20
->> On Mar 17, 2020, at 2:47 PM, Daniel Borkmann <daniel@iogearbox.net> wrot=
-e:
->>>>=20
->>>> Hm, true as well. Wouldn't long-term extending "bpftool prog profile" =
-fentry/fexit
->>>> programs supersede this old bpf_stats infrastructure? Iow, can't we im=
-plement the
->>>> same (or even more elaborate stats aggregation) in BPF via fentry/fexi=
-t and then
->>>> potentially deprecate bpf_stats counters?
->>> I think run_time_ns has its own value as a simple monitoring framework.=
- We can
->>> use it in tools like top (and variations). It will be easier for these =
-tools to
->>> adopt run_time_ns than using fentry/fexit.
->>=20
->> Agree that this is easier; I presume there is no such official integrati=
-on today
->> in tools like top, right, or is there anything planned?
->=20
-> Yes, we do want more supports in different tools to increase the visibili=
-ty.=20
-> Here is the effort for atop: https://github.com/Atoptool/atop/pull/88 .
->=20
-> I wasn't pushing push hard on this one mostly because the sysctl interfac=
-e requires=20
-> a user space "owner".=20
->=20
->>=20
->>> On the other hand, in long term, we may include a few fentry/fexit base=
-d programs
->>> in the kernel binary (or the rpm), so that these tools can use them eas=
-ily. At
->>> that time, we can fully deprecate run_time_ns. Maybe this is not too fa=
-r away?
->>=20
->> Did you check how feasible it is to have something like `bpftool prog pr=
-ofile top`
->> which then enables fentry/fexit for /all/ existing BPF programs in the s=
-ystem? It
->> could then sort the sample interval by run_cnt, cycles, cache misses, ag=
-gregated
->> runtime, etc in a top-like output. Wdyt?
->=20
-> I wonder whether we can achieve this with one bpf prog (or a trampoline) =
-that covers
-> all BPF programs, like a trampoline inside __BPF_PROG_RUN()?=20
->=20
-> For long term direction, I think we could compare two different approache=
-s: add new=20
-> tools (like bpftool prog profile top) vs. add BPF support to existing too=
-ls. The=20
-> first approach is easier. The latter approach would show BPF information =
-to users
-> who are not expecting BPF programs in the systems. For many sysadmins, se=
-eing BPF
-> programs in top/ps, and controlling them via kill is more natural than le=
-arning
-> bpftool. What's your thought on this?=20
+On 3/17/20 8:42 PM, Christoph Hellwig wrote:
+> On Tue, Mar 17, 2020 at 04:50:11PM +0800, He Zhe wrote:
+>>>> With my build fix applied, the issue is triggered since 142fe8f.
+>>>> And I can see the endless loop of invalidate and revalidate...
+>>> Thanks.  Can you test the patch below that restores the previous
+>>> rather odd behavior of not clearing the capacity to 0 if partition
+>>> scanning is not enabled?
+>> This fixes the issue. I also validated it on v5.6-rc6.
+> Can you check this slight variant that only skips the capacity
+> change for removable devices given that IIRC you reported the problem
+> with a legacy ide-cd device?
 
-More thoughts on this.=20
+Tested. This also works.
 
-If we have a special trampoline that attach to all BPF programs at once, we=
- really=20
-don't need the run_time_ns stats anymore. Eventually, tools that monitor BP=
-F=20
-programs will depend on libbpf, so using fentry/fexit to monitor BPF progra=
-ms doesn't
-introduce extra dependency. I guess we also need a way to include BPF progr=
-am in=20
-libbpf.=20
+Zhe
 
-To summarize this plan, we need:
-
-1) A global trampoline that attaches to all BPF programs at once;
-2) Embed fentry/fexit program in libbpf, which will be used by tools for mo=
-nitoring;
-3) BPF helpers to read time, which replaces current run_time_ns.=20
-
-Does this look reasonable?
-
-Thanks,
-Song=20
+>
+>
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 69bf2fb6f7cd..3212ac85d493 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1520,10 +1520,14 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (invalidate)
+> -		set_capacity(disk, 0);
+> -	else if (disk->fops->revalidate_disk)
+> -		disk->fops->revalidate_disk(disk);
+> +	if (invalidate) {
+> +		if (!(disk->flags & GENHD_FL_REMOVABLE) ||
+> +		    disk_part_scan_enabled(disk))
+> +			set_capacity(disk, 0);
+> +	} else {
+> +		if (disk->fops->revalidate_disk)
+> +			disk->fops->revalidate_disk(disk);
+> +	}
+>  
+>  	check_disk_size_change(disk, bdev, !invalidate);
+>  
 
