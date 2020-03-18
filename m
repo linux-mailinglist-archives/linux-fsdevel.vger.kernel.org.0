@@ -2,170 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AED7818A82F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 23:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9853F18A8A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Mar 2020 23:54:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgCRW35 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Mar 2020 18:29:57 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:51487 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727154AbgCRW34 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Mar 2020 18:29:56 -0400
-Received: by mail-pj1-f68.google.com with SMTP id hg10so69043pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Mar 2020 15:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DZz1wswZhNQLIl0+JBgP3SsqWuba02REf62jhG9S3ZI=;
-        b=Kku5KUClqyuaPhatO7sm88N4uvJ68/0OFkYJ9qsIHPBfUFHj4PRSzn0UUwX/SjJU9p
-         wXtu9h2DMmGO1yFrIL8DnA+dXiTDKgagqCZznXWzrCVkiHKXDeUBX97JCnQr/fUwcTm0
-         yXbVLYNc9Az/fkIeHKLfrYj4j2or4f2WXbd7Wwtkx5FOiyJ9CvYQfjPv5fwBPdJ/VtUN
-         CI2MwMGqO7KeCJ/Aio99qHV9t9+PZuKg4HLGZV0wEteWOkddHRiXyBgWN2FPMEGxB8DM
-         VxKHNbGtgwnGlKF/UZENR9ngDJRQbI0U7FFOweyEspXd3Gfs1ArM+FA5be93h6mIBKi6
-         w7XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DZz1wswZhNQLIl0+JBgP3SsqWuba02REf62jhG9S3ZI=;
-        b=P4cyP+vr1XSuPSLvhmBlylKzamLOoYPusxYgAO/U3IMGTjZeXudEDfk0GNrWNFv/TD
-         TRF3ipcuHQf+gfWB6MKgysrRRDjxY3b096d46nmOOMGFSTqTTswL7mwQkp2H5H7m/jJ2
-         p/O04lEeZlFHcstEJ2+cAki8+fFJpGotmctxl9FAJ2LH3txKS6n9WAOxBgVDqMjx9aIC
-         PdJqOPxc6MswSaDTInktVdqi1q5v5ANmKu3dRrTNmePwCN9u4C5UgTVVZhE9UxhZer0r
-         LjvO1oUNXHz1QY2dh/8kgzn6F/MsJ9gIvMMO7rJAxeunfe04pHfeDbjNzqvFIBWLfYbv
-         qi8A==
-X-Gm-Message-State: ANhLgQ1s5HBKfsEV3/Lh01UoWZq6MqjS3VbKAidW8XBxeVuN4vTHP7Zq
-        o8G2Fe6PYD5S2Ji2JDPS2XKapA==
-X-Google-Smtp-Source: ADFU+vtlXyEadaWQM3lrXsl2cWkWaOIIV8ypmJy1U2crVXb+REthiCnFJWD8JnoPHi9b2fDGnzAFHQ==
-X-Received: by 2002:a17:902:8a88:: with SMTP id p8mr489182plo.56.1584570594534;
-        Wed, 18 Mar 2020 15:29:54 -0700 (PDT)
-Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
-        by smtp.gmail.com with ESMTPSA id k4sm73764pfh.0.2020.03.18.15.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 15:29:54 -0700 (PDT)
-Date:   Wed, 18 Mar 2020 15:29:53 -0700
-From:   Stanislav Fomichev <sdf@fomichev.me>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "yzaikin@google.com" <yzaikin@google.com>
-Subject: Re: [PATCH v2 bpf-next] bpf: sharing bpf runtime stats with
- /dev/bpf_stats
-Message-ID: <20200318222953.GA2507308@mini-arch.hsd1.ca.comcast.net>
-References: <20200316203329.2747779-1-songliubraving@fb.com>
- <eb31bed3-3be4-501e-4340-bd558b31ead2@iogearbox.net>
- <920839AF-AC7A-4CD3-975F-111C3C6F75B9@fb.com>
- <a69245f8-c70f-857c-b109-556d1bc267f7@iogearbox.net>
- <C126A009-516F-451A-9A83-31BC8F67AA11@fb.com>
- <53f8973f-4b3e-08fe-2363-2300027c8f9d@iogearbox.net>
- <C624907B-22DB-4505-9C9E-1F8A96013AC7@fb.com>
- <6D317BBF-093E-41DC-9838-D685C39F6DAB@fb.com>
- <ba62e0be-6de6-036c-a836-178c1a9c079a@iogearbox.net>
- <3E03D914-36FA-4956-AF14-CAFD784D013A@fb.com>
+        id S1726801AbgCRWyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Mar 2020 18:54:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbgCRWyS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Mar 2020 18:54:18 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A95820767;
+        Wed, 18 Mar 2020 22:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584572057;
+        bh=2npaGP9myWXWoLNaPv4jAYfc7RYFPXKtndA7b70voqE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bDYdMKyb9v7DCaGd0DcQ6ZvuzY0GEVpi+j5YTgMAp7NVLBpuQFxeoCxaRTmOAAhzi
+         4szIBzFegXbg9z3kHpzfTk0zNp2aw0G86W7Z4vGsWd6Tw9cHTdqpHzIbkKcItLqKlE
+         jnE1dzcQni33XlgHrhOtYe03Cuib3Q6eJyC0sbk8=
+Date:   Wed, 18 Mar 2020 15:54:15 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        NeilBrown <neilb@suse.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] fs/filesystems.c: downgrade user-reachable
+ WARN_ONCE() to pr_warn_once()
+Message-ID: <20200318225415.GD2334@sol.localdomain>
+References: <20200314213426.134866-1-ebiggers@kernel.org>
+ <20200314213426.134866-3-ebiggers@kernel.org>
+ <20200318154315.GB4144@linux-8ccs>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3E03D914-36FA-4956-AF14-CAFD784D013A@fb.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200318154315.GB4144@linux-8ccs>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03/18, Song Liu wrote:
-> 
-> 
-> > On Mar 18, 2020, at 1:58 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
+On Wed, Mar 18, 2020 at 04:43:15PM +0100, Jessica Yu wrote:
+> +++ Eric Biggers [14/03/20 14:34 -0700]:
+> > From: Eric Biggers <ebiggers@google.com>
 > > 
-> > On 3/18/20 7:33 AM, Song Liu wrote:
-> >>> On Mar 17, 2020, at 4:08 PM, Song Liu <songliubraving@fb.com> wrote:
-> >>>> On Mar 17, 2020, at 2:47 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
-> >>>>>> 
-> >>>>>> Hm, true as well. Wouldn't long-term extending "bpftool prog profile" fentry/fexit
-> >>>>>> programs supersede this old bpf_stats infrastructure? Iow, can't we implement the
-> >>>>>> same (or even more elaborate stats aggregation) in BPF via fentry/fexit and then
-> >>>>>> potentially deprecate bpf_stats counters?
-> >>>>> I think run_time_ns has its own value as a simple monitoring framework. We can
-> >>>>> use it in tools like top (and variations). It will be easier for these tools to
-> >>>>> adopt run_time_ns than using fentry/fexit.
-> >>>> 
-> >>>> Agree that this is easier; I presume there is no such official integration today
-> >>>> in tools like top, right, or is there anything planned?
-> >>> 
-> >>> Yes, we do want more supports in different tools to increase the visibility.
-> >>> Here is the effort for atop: https://github.com/Atoptool/atop/pull/88 .
-> >>> 
-> >>> I wasn't pushing push hard on this one mostly because the sysctl interface requires
-> >>> a user space "owner".
-> >>> 
-> >>>>> On the other hand, in long term, we may include a few fentry/fexit based programs
-> >>>>> in the kernel binary (or the rpm), so that these tools can use them easily. At
-> >>>>> that time, we can fully deprecate run_time_ns. Maybe this is not too far away?
-> >>>> 
-> >>>> Did you check how feasible it is to have something like `bpftool prog profile top`
-> >>>> which then enables fentry/fexit for /all/ existing BPF programs in the system? It
-> >>>> could then sort the sample interval by run_cnt, cycles, cache misses, aggregated
-> >>>> runtime, etc in a top-like output. Wdyt?
-> >>> 
-> >>> I wonder whether we can achieve this with one bpf prog (or a trampoline) that covers
-> >>> all BPF programs, like a trampoline inside __BPF_PROG_RUN()?
-> >>> 
-> >>> For long term direction, I think we could compare two different approaches: add new
-> >>> tools (like bpftool prog profile top) vs. add BPF support to existing tools. The
-> >>> first approach is easier. The latter approach would show BPF information to users
-> >>> who are not expecting BPF programs in the systems. For many sysadmins, seeing BPF
-> >>> programs in top/ps, and controlling them via kill is more natural than learning
-> >>> bpftool. What's your thought on this?
-> >> More thoughts on this.
-> >> If we have a special trampoline that attach to all BPF programs at once, we really
-> >> don't need the run_time_ns stats anymore. Eventually, tools that monitor BPF
-> >> programs will depend on libbpf, so using fentry/fexit to monitor BPF programs doesn't
-> >> introduce extra dependency. I guess we also need a way to include BPF program in
-> >> libbpf.
-> >> To summarize this plan, we need:
-> >> 1) A global trampoline that attaches to all BPF programs at once;
+> > After request_module(), nothing is stopping the module from being
+> > unloaded until someone takes a reference to it via try_get_module().
 > > 
-> > Overall sounds good, I think the `at once` part might be tricky, at least it would
-> > need to patch one prog after another, each prog also needs to store its own metrics
-> > somewhere for later collection. The start-to-sample could be a shared global var (aka
-> > shared map between all the programs) which would flip the switch though.
+> > The WARN_ONCE() in get_fs_type() is thus user-reachable, via userspace
+> > running 'rmmod' concurrently.
+> > 
+> > Since WARN_ONCE() is for kernel bugs only, not for user-reachable
+> > situations, downgrade this warning to pr_warn_once().
+> > 
+> > Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Cc: stable@vger.kernel.org
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Jeff Vander Stoep <jeffv@google.com>
+> > Cc: Jessica Yu <jeyu@kernel.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: NeilBrown <neilb@suse.com>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> > fs/filesystems.c | 4 +++-
+> > 1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/filesystems.c b/fs/filesystems.c
+> > index 77bf5f95362da..90b8d879fbaf3 100644
+> > --- a/fs/filesystems.c
+> > +++ b/fs/filesystems.c
+> > @@ -272,7 +272,9 @@ struct file_system_type *get_fs_type(const char *name)
+> > 	fs = __get_fs_type(name, len);
+> > 	if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+> > 		fs = __get_fs_type(name, len);
+> > -		WARN_ONCE(!fs, "request_module fs-%.*s succeeded, but still no fs?\n", len, name);
+> > +		if (!fs)
+> > +			pr_warn_once("request_module fs-%.*s succeeded, but still no fs?\n",
+> > +				     len, name);
 > 
-> I was thinking about adding bpf_global_trampoline and use it in __BPF_PROG_RUN. 
-> Something like:
+> Hm, what was the rationale for warning only once again? It might be useful
+> for debugging issues to see each instance of request_module() failure
+> (and with which fs). However, I don't have a concrete use case to
+> support this argument, so:
 > 
-> diff --git i/include/linux/filter.h w/include/linux/filter.h
-> index 9b5aa5c483cc..ac9497d1fa7b 100644
-> --- i/include/linux/filter.h
-> +++ w/include/linux/filter.h
-> @@ -559,9 +559,14 @@ struct sk_filter {
-> 
->  DECLARE_STATIC_KEY_FALSE(bpf_stats_enabled_key);
-> 
-> +extern struct bpf_trampoline *bpf_global_trampoline;
-> +DECLARE_STATIC_KEY_FALSE(bpf_global_tr_active);
-> +
->  #define __BPF_PROG_RUN(prog, ctx, dfunc)       ({                      \
->         u32 ret;                                                        \
->         cant_migrate();                                                 \
-> +       if (static_branch_unlikely(&bpf_global_tr_active))              \
-> +               run_the_trampoline();                                   \
->         if (static_branch_unlikely(&bpf_stats_enabled_key)) {           \
->                 struct bpf_prog_stats *stats;                           \
->                 u64 start = sched_clock();                              \
-> 
-> 
-> I am not 100% sure this is OK. 
-> 
-> I am also not sure whether this is an overkill. Do we really want more complex
-> metric for all BPF programs? Or run_time_ns is enough? 
-I was thinking about exporting a real distribution of the prog runtimes
-instead of doing an average. It would be interesting to see
-50%/95%/99%/max stats.
+> Reviewed-by: Jessica Yu <jeyu@kernel.org>
+
+This was discussed on v2, see
+https://lkml.kernel.org/lkml/20200313010053.GS11244@42.do-not-panic.com/.
+If the warning triggers, then it indicates a broken modprobe program.
+Printing the warning multiple times wouldn't really add any new information.
+
+And in any case, it's printed once both before and after this patch.
+
+- Eric
