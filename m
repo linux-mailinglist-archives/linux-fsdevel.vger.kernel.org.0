@@ -2,56 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C2018B2CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 12:57:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADEF18B33B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 13:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbgCSL5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 07:57:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37120 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbgCSL5B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 07:57:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=zSKNJpg3bSHQZrR6eSGgkELs7AnAMsGUFTR84vG8N+Q=; b=taEbISgvSjSBP5vFWW8bUzGpnP
-        MKArSkuRIrMUVzeknqF5IG82BQ0rRpdBkhyPwGJUstzncqnKATxyqnIPY7+1YlPamettzIY62SIOe
-        NjePxFuSuYvIN1CyExl08KgCgVOKlBp6PwGzsLBofMZTKcaPyXK6XFyVMrgf7MonLR3osphoWenlX
-        sundTKrs1nNxBZQfX9U36K6/ARMpgehcUsyKFiio1oi1/7QqJNa7OAtqjBW7hTx52h5XWExEECCbA
-        ybmTAPaH80ciWSV+Cg1RcHvxXwu291GiNoqQjE6jJmuU2a2XkiCwZXJKbC6saBE1jZ5T2EQuOpNT9
-        kqks7pWQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jEtnJ-0000ue-IU; Thu, 19 Mar 2020 11:57:01 +0000
-Date:   Thu, 19 Mar 2020 04:57:01 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v8 00/25] Change readahead API
-Message-ID: <20200319115701.GJ22433@bombadil.infradead.org>
-References: <20200225214838.30017-1-willy@infradead.org>
- <20200319102038.GE3590@infradead.org>
+        id S1727031AbgCSMTn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 08:19:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33866 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbgCSMTn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Mar 2020 08:19:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 639ABAFDC;
+        Thu, 19 Mar 2020 12:19:40 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v11 0/8] Disable compat cruft on ppc64le v11
+Date:   Thu, 19 Mar 2020 13:19:28 +0100
+Message-Id: <cover.1584620202.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200225173541.1549955-1-npiggin@gmail.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200319102038.GE3590@infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 03:20:38AM -0700, Christoph Hellwig wrote:
-> Any plans to resend this with the little nitpicks fixed?  I'd love to
-> get this series into 5.7..
+Less code means less bugs so add a knob to skip the compat stuff.
 
-The only nitpick I see left is the commit comment in the btrfs patch,
-and a note from Dave Sterba that he intends to review it.  I can collect
-up the additional Reviewed-by tags and repost the series.
+Changes in v2: saner CONFIG_COMPAT ifdefs
+Changes in v3:
+ - change llseek to 32bit instead of builing it unconditionally in fs
+ - clanup the makefile conditionals
+ - remove some ifdefs or convert to IS_DEFINED where possible
+Changes in v4:
+ - cleanup is_32bit_task and current_is_64bit
+ - more makefile cleanup
+Changes in v5:
+ - more current_is_64bit cleanup
+ - split off callchain.c 32bit and 64bit parts
+Changes in v6:
+ - cleanup makefile after split
+ - consolidate read_user_stack_32
+ - fix some checkpatch warnings
+Changes in v7:
+ - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+ - remove leftover hunk
+ - add review tags
+Changes in v8:
+ - consolidate valid_user_sp to fix it in the split callchain.c
+ - fix build errors/warnings with PPC64 !COMPAT and PPC32
+Changes in v9:
+ - remove current_is_64bit()
+Chanegs in v10:
+ - rebase, sent together with the syscall cleanup
+Changes in v11:
+ - rebase
+ - add MAINTAINERS pattern for ppc perf
 
-I'm assuming it'll go through Andrew's tree?
+Michal Suchanek (8):
+  powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+  powerpc: move common register copy functions from signal_32.c to
+    signal.c
+  powerpc/perf: consolidate read_user_stack_32
+  powerpc/perf: consolidate valid_user_sp
+  powerpc/64: make buildable without CONFIG_COMPAT
+  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
+    default.
+  powerpc/perf: split callchain.c by bitness
+  MAINTAINERS: perf: Add pattern that matches ppc perf to the perf
+    entry.
+
+ MAINTAINERS                            |   2 +
+ arch/powerpc/Kconfig                   |   5 +-
+ arch/powerpc/include/asm/thread_info.h |   4 +-
+ arch/powerpc/include/asm/unistd.h      |   1 +
+ arch/powerpc/kernel/Makefile           |   6 +-
+ arch/powerpc/kernel/entry_64.S         |   2 +
+ arch/powerpc/kernel/signal.c           | 144 +++++++++-
+ arch/powerpc/kernel/signal_32.c        | 140 ----------
+ arch/powerpc/kernel/syscall_64.c       |   6 +-
+ arch/powerpc/kernel/vdso.c             |   3 +-
+ arch/powerpc/perf/Makefile             |   5 +-
+ arch/powerpc/perf/callchain.c          | 356 +------------------------
+ arch/powerpc/perf/callchain.h          |  20 ++
+ arch/powerpc/perf/callchain_32.c       | 196 ++++++++++++++
+ arch/powerpc/perf/callchain_64.c       | 174 ++++++++++++
+ fs/read_write.c                        |   3 +-
+ 16 files changed, 556 insertions(+), 511 deletions(-)
+ create mode 100644 arch/powerpc/perf/callchain.h
+ create mode 100644 arch/powerpc/perf/callchain_32.c
+ create mode 100644 arch/powerpc/perf/callchain_64.c
+
+-- 
+2.23.0
+
