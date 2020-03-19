@@ -2,132 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D15D18BAB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 16:13:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 306A818BAD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 16:18:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbgCSPNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 11:13:25 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44488 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727102AbgCSPNX (ORCPT
+        id S1727447AbgCSPSp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 11:18:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40124 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbgCSPSp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:13:23 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y2so1912593lfe.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Mar 2020 08:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/uotPJyrFZ0V5dJBIBxpoXcAAW/RZupCPGuZpTwdN+s=;
-        b=IObK/vTbu2r1EwtJUxcOkt/weNgwAIs+CHTDvFgznXHZYVnCuvygzfOBa4JLbHT97b
-         W9XtSA7rUSeyqs4nYmn9mTKNKjGB079S+l2sxY3DvKZFnHs93Sb1SYARR39KY1nD5L26
-         /tKgb1jIfCLitehDbmJwfWQipefcZm7L02maSR1IKYDj3oB3T83NhKnIgOSh9+KEIgNl
-         TKDSLoErLO8Nl1dNdDkofdlbfXby0LIXIuFEbQ7kA4LH+4gbAwq0FBa7ki43wI29SXcr
-         z5XGe0X6erHAQQGBtOyfxylFoG3kI/gx/XwBTVRsH+cX4Pz5xNURnZMmaTjSAEji452K
-         LLvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/uotPJyrFZ0V5dJBIBxpoXcAAW/RZupCPGuZpTwdN+s=;
-        b=ofPTDHU6r3E3h+h5+mPwjbuvV+3BdrxRxWmnTrhLFmDiVrRvuqD1DexEmDc4NlUicn
-         x+imOJ7gMfC1x8hWh/AS995QpFyJterCt8Gn1L4rkppTGdNKBG+YIt2g9FOX0xlBhztC
-         VW6E2jjmwzKH3qHss+3Xc4YouBdsWATZ40niMvT37p4qC6CdqWb2YlTWAXV8n56WVahF
-         FU64+gITCH+ldhYuGp7DmI67GjOEFQEuY/v49+hGcEot/TRt2uezrX3jDIH39wHxYmFy
-         jpyH/fajycmSnP9YQotO/ZzuDsEWnslVKH0YjYaU/3CRHtzNQz8Vtp/My+UVXwSjirjq
-         FGJg==
-X-Gm-Message-State: ANhLgQ1UiojEwOH2FFf2gpNBy/1kOjJsI7mi4AiSip08QDIsg68MYMHK
-        a5/VgN1vl8PljBpbZvZmWqIPg2hecVZxQ3+UM1y4kw==
-X-Google-Smtp-Source: ADFU+vu1xSj2mSTjDUg4SXO/2v8/tid2EhIWeZkU86OKVTq9D1e8crqiiKiOF6X8KpVKbvzB2tB2QO5h9YFRavOMQH4=
-X-Received: by 2002:ac2:4552:: with SMTP id j18mr2475295lfm.89.1584630800987;
- Thu, 19 Mar 2020 08:13:20 -0700 (PDT)
+        Thu, 19 Mar 2020 11:18:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JFDuj6140199;
+        Thu, 19 Mar 2020 15:18:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Hiy+utP9d1bGIA/9uHuNYMtZDU067rvuRxj3mpxtgA4=;
+ b=KGM6txfF3YYJNZgdts0t7DrZAi5CMnKJmAoCxzzpTJYKWNa0NQ5jp8OHyF8plvBYPSY9
+ +WX6CItM8u8vEoJIN9ZCJRh5Q1ruPKKMSm/CUkLvAriH8u/IKJQDOWyiTks6zUDzg6mm
+ ptJHeWzoYEXZuri8jtcnrCep7YI9qYg0M9QMbhdqHS7Je3e+drTHkhZCl4CBe3wztUU+
+ qaVNb+bbTj5AVmfvlxMqlg8PlZL3knYdQ1o7nVcWaUHbbKX52CrT66cQVtdJYNHx6r4n
+ MCCqVf62j9xGU9IezWfhRWoXVAwsRYHuwKsC6WI1N4ZM+94GMbxhV8cCouzqwHBeyQk/ BQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2yub278sgp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Mar 2020 15:18:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02JFCc10047152;
+        Thu, 19 Mar 2020 15:18:22 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2ys8rmchj1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Mar 2020 15:18:21 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02JFIKXs022971;
+        Thu, 19 Mar 2020 15:18:20 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Mar 2020 08:18:20 -0700
+Date:   Thu, 19 Mar 2020 08:18:19 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] iomap: Submit BIOs at the end of each extent
+Message-ID: <20200319151819.GA1581085@magnolia>
+References: <20200319150720.24622-1-willy@infradead.org>
 MIME-Version: 1.0
-References: <20200317113153.7945-1-linus.walleij@linaro.org> <CAFEAcA9mXE+gPnvM6HZ-w0+BhbpeuH=osFH-9NUzCLv=w-c7HQ@mail.gmail.com>
-In-Reply-To: <CAFEAcA9mXE+gPnvM6HZ-w0+BhbpeuH=osFH-9NUzCLv=w-c7HQ@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 Mar 2020 16:13:09 +0100
-Message-ID: <CACRpkdZtLNUwiZEMiJEoB0ojOBckyGcZeyFkR6MC69qv-ry9EA@mail.gmail.com>
-Subject: Re: [PATCH] ext4: Give 32bit personalities 32bit hashes
-To:     Peter Maydell <peter.maydell@linaro.org>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319150720.24622-1-willy@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003190068
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9564 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 impostorscore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003190068
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 12:58 PM Peter Maydell <peter.maydell@linaro.org> wrote:
-> On Tue, 17 Mar 2020 at 11:31, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > It was brought to my attention that this bug from 2018 was
-> > still unresolved: 32 bit emulators like QEMU were given
-> > 64 bit hashes when running 32 bit emulation on 64 bit systems.
-> >
-> > The personality(2) system call supports to let processes
-> > indicate that they are 32 bit Linux to the kernel. This
-> > was suggested by Teo in the original thread, so I just wired
-> > it up and it solves the problem.
->
-> Thanks for having a look at this. I'm not sure this is what
-> QEMU needs, though. When QEMU runs, it is not a 32-bit
-> process, it's a 64-bit process. Some of the syscalls
-> it makes are on behalf of the guest and would need 32-bit
-> semantics (including this one of wanting 32-bit hash sizes
-> in directory reads). But some syscalls it makes for itself
-> (either directly, or via libraries it's linked against
-> including glibc and glib) -- those would still want the
-> usual 64-bit semantics, I would have thought.
+On Thu, Mar 19, 2020 at 08:07:20AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> By definition, an extent covers a range of consecutive blocks, so
+> it would be quite rare to be able to just add pages to the BIO from
+> a previous range.  The only case we can think of is a mapped extent
+> followed by a hole extent, followed by another mapped extent which has
+> been allocated immediately after the first extent.  We believe this to
 
-The "personality" thing is a largely unused facility that
-a process can use to say it has this generic behaviour.
-In this case we say we have the PER_LINUX32 personality
-so it will make the process evoke 32bit behaviours inside
-the kernel when dealing with this process.
+Well... userspace can induce that with fallocate(INSERT_RANGE). :)
 
-Which I (loosely) appreciate that we want to achieve.
+> be an unlikely layout for a filesystem to choose and, since the queue
+> is plugged, those two BIOs would be merged by the block layer.
+> 
+> The reason we care is that ext2/ext4 choose to lay out blocks 0-11
+> consecutively, followed by the indirect block, and we want to merge those
+> two BIOs.  If we don't submit the data BIO before asking the filesystem
+> for the next extent, then the indirect BIO will be submitted first,
+> and waited for, leading to inefficient I/O patterns.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/iomap/buffered-io.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 83438b3257de..8d26920ddf00 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -388,6 +388,11 @@ iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
+>  				ctx, iomap, srcmap);
+>  	}
+>  
+> +	if (ctx->bio) {
+> +		submit_bio(ctx->bio);
+> +		ctx->bio = NULL;
+> +	}
 
-> > Programs that need the 32 bit hash only need to issue the
-> > personality(PER_LINUX32) call and things start working.
->
-> What in particular does this personality setting affect?
-> My copy of the personality(2) manpage just says:
->
->        PER_LINUX32 (since Linux 2.2)
->               [To be documented.]
->
-> which isn't very informative.
+Makes sense, but could we have a quick comment here to capture why we're
+submitting the bio here?
 
-It's not a POSIX thing (not part of the Single Unix Specification)
-so as with most Linux things it has some fuzzy semantics
-defined by the community...
+/*
+ * Submit the bio now so that we neither combine IO requests for
+ * non-adjacent ranges nor interleave data and metadata requests.
+ */
 
-I usually just go to the source.
+--D
 
-If you grep the kernel what turns up is a bunch of
-architecture-specific behaviors on arm64, ia64, mips, parisc,
-powerpc, s390, sparc. They are very minor.
-
-On x86_64 the semantic effect is
-none so this would work for any kind of 32bit userspace
-on x86_64. It would be the first time this flag has any
-effect at all on x86_64, but arguably a useful one.
-
-I would not be surprised if running say i586 on x86_64
-has the same problem, just that noone has reported
-it yet. But what do I know. If they have the same problem
-they can use the same solution. Hm QEMU supports
-emulating i586 or even i386 ... maybe you could test?
-Or tell me how to test? We might be solving a bigger
-issue here.
-
-Yours,
-Linus Walleij
+> +
+>  	return done;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
