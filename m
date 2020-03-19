@@ -2,74 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AB2218BEBE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 18:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8639218C010
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 20:06:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbgCSRt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 13:49:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbgCSRt6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:49:58 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEAF320754;
-        Thu, 19 Mar 2020 17:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584640198;
-        bh=q270uO9rTu9c4Si3zJtl3gemlVNKHIaUhROgwEp7OBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RjAeE0xh2CCBZepqFsBambYtHD23HJxQcmO5QvWPIVvcL9Hj3zrL/gqQXSIPdsLQV
-         wf18INyaAJRrwz4uM3izP8cWDD0FPXAt7Ws1mnPcPaCgqIXnwR72MZo90M6T8GsYbY
-         gv602IpzAB8trxpqGo8X3iDp5eociKy8nLMp6X0s=
-Date:   Thu, 19 Mar 2020 10:49:56 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 0/4] fscrypt: add ioctl to get file's encryption nonce
-Message-ID: <20200319174956.GA86395@gmail.com>
-References: <20200314205052.93294-1-ebiggers@kernel.org>
+        id S1726998AbgCSTGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 15:06:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57440 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgCSTGr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Mar 2020 15:06:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BfiVRtqXS3lVX9f3SkIik53RafXTtrCXM3yRWcRJeUs=; b=qrzHsJbrcipuIQnvRPoaCxmRmD
+        +cSvtqqkkzZANB3UyhAxXL+L3FVI7twHI/G8u0tdkNlwZuwZWMPaZsVtaH5TjZfa8A9cSzAOSFNcL
+        WDH+1SvTivlafZGpVcKsPnF7rKijRVxxK4X9wgXL7eXNt1wNJIJUUGtZ7Uw6jZGGFyww0l34+108U
+        HFB3BgtquppUFJFKYEWK3OKQH40EoljqjPX66M+SlAJcjqJpQQMxs9itpDBJRrmwB+R053zg6vKm9
+        gW6gfxZ8kkBOqFyQuE1EgTcKJ27vm+1M7tVqXXRvbS3SNfqysjXGeF93zsqMTH/NreIEDgO6Ee0g5
+        OJ6gW2Vg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jF0VD-00027W-29; Thu, 19 Mar 2020 19:06:47 +0000
+Date:   Thu, 19 Mar 2020 12:06:46 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] iomap: Submit BIOs at the end of each extent
+Message-ID: <20200319190646.GM22433@bombadil.infradead.org>
+References: <20200319150720.24622-1-willy@infradead.org>
+ <20200319151819.GA1581085@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200314205052.93294-1-ebiggers@kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20200319151819.GA1581085@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 14, 2020 at 01:50:48PM -0700, Eric Biggers wrote:
-> This patchset adds an ioctl FS_IOC_GET_ENCRYPTION_NONCE which retrieves
-> the nonce from an encrypted file or directory.
+On Thu, Mar 19, 2020 at 08:18:19AM -0700, Darrick J. Wong wrote:
+> On Thu, Mar 19, 2020 at 08:07:20AM -0700, Matthew Wilcox wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > By definition, an extent covers a range of consecutive blocks, so
+> > it would be quite rare to be able to just add pages to the BIO from
+> > a previous range.  The only case we can think of is a mapped extent
+> > followed by a hole extent, followed by another mapped extent which has
+> > been allocated immediately after the first extent.  We believe this to
 > 
-> This is useful for automated ciphertext verification testing.
-> 
-> See patch #1 for more details.
-> 
-> Eric Biggers (4):
->   fscrypt: add FS_IOC_GET_ENCRYPTION_NONCE ioctl
->   ext4: wire up FS_IOC_GET_ENCRYPTION_NONCE
->   f2fs: wire up FS_IOC_GET_ENCRYPTION_NONCE
->   ubifs: wire up FS_IOC_GET_ENCRYPTION_NONCE
-> 
->  Documentation/filesystems/fscrypt.rst | 11 +++++++++++
->  fs/crypto/fscrypt_private.h           | 20 ++++++++++++++++++++
->  fs/crypto/keysetup.c                  | 16 ++--------------
->  fs/crypto/policy.c                    | 21 ++++++++++++++++++++-
->  fs/ext4/ioctl.c                       |  6 ++++++
->  fs/f2fs/file.c                        | 11 +++++++++++
->  fs/ubifs/ioctl.c                      |  4 ++++
->  include/linux/fscrypt.h               |  6 ++++++
->  include/uapi/linux/fscrypt.h          |  1 +
->  9 files changed, 81 insertions(+), 15 deletions(-)
-> 
-> 
-> base-commit: 98d54f81e36ba3bf92172791eba5ca5bd813989b
+> Well... userspace can induce that with fallocate(INSERT_RANGE). :)
 
-Any comments on this?
+It's not impossible, of course ... just unlikely.  Nobody actually uses
+INSERT_RANGE anyway.
 
-- Eric
+> > be an unlikely layout for a filesystem to choose and, since the queue
+> > is plugged, those two BIOs would be merged by the block layer.
+> > 
+> > The reason we care is that ext2/ext4 choose to lay out blocks 0-11
+> > consecutively, followed by the indirect block, and we want to merge those
+> > two BIOs.  If we don't submit the data BIO before asking the filesystem
+> > for the next extent, then the indirect BIO will be submitted first,
+> > and waited for, leading to inefficient I/O patterns.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >  fs/iomap/buffered-io.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index 83438b3257de..8d26920ddf00 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -388,6 +388,11 @@ iomap_readahead_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  				ctx, iomap, srcmap);
+> >  	}
+> >  
+> > +	if (ctx->bio) {
+> > +		submit_bio(ctx->bio);
+> > +		ctx->bio = NULL;
+> > +	}
+> 
+> Makes sense, but could we have a quick comment here to capture why we're
+> submitting the bio here?
+> 
+> /*
+>  * Submit the bio now so that we neither combine IO requests for
+>  * non-adjacent ranges nor interleave data and metadata requests.
+>  */
+
+How about:
+
+         * Submitting the bio here leads to better I/O patterns for
+         * filesystems which need to do metadata reads to find the
+         * next range.
+
+I also realised we can add:
+
+@@ -454,8 +459,6 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+        }
+        ret = 0;
+ done:
+-       if (ctx.bio)
+-               submit_bio(ctx.bio);
+        if (ctx.cur_page) {
+                if (!ctx.cur_page_in_bio)
+                        unlock_page(ctx.cur_page);
+
+since we always subit the bio in readpages_actor.
