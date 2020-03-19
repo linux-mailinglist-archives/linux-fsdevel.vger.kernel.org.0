@@ -2,201 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B7518B19F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 11:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B23018B1E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 12:01:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbgCSKht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 06:37:49 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([216.205.24.74]:59953 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727009AbgCSKht (ORCPT
+        id S1727002AbgCSLBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 07:01:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44958 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgCSLBj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 06:37:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1584614267;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CiofkCH/sv7+7rpU6YsJXFWeq/w+9dcTqMLo0EbVExc=;
-        b=CK6NauoXI0Z63pckSz1EJg+hyCd+MygVolTHycTgOZr35DfTpEoCbe8AGdOOrgW6BAw9CK
-        h3qfyyWJcHeT23ccKfmGyCAUSJYSSY6cci5KgryR4fpDcIKlgx+EcDRYwhB2QewLVzBe0V
-        se9+mHy+sPggjiyAje65N7HtEB3cMes=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-285-cUdAiS5ZN1Sq4KuQlxE-7w-1; Thu, 19 Mar 2020 06:37:44 -0400
-X-MC-Unique: cUdAiS5ZN1Sq4KuQlxE-7w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BBCD5107ACC4;
-        Thu, 19 Mar 2020 10:37:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-126.rdu2.redhat.com [10.10.113.126])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C3A2117B91;
-        Thu, 19 Mar 2020 10:37:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-References: <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com> <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Ian Kent <raven@themaw.net>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+        Thu, 19 Mar 2020 07:01:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+vl1LPoxkxHOU07W4GJvGU25FEPxKQgvle0+E353mqE=; b=uB9WB4ppC1GoT/zWSO4kHWQgqn
+        YEUMLeqg4KslKZWQmzvuxToWpdzkInoQ6yirSVGLEzZWN+M49KYCqhQL1Kp0IO7qy8wXnrOv3x2aO
+        W5D2/C6QV2R2hwbcqQSbe4YYjO+POTtpgdUFtQJSuA2tp3egSU0flbEt9754bcOhT2aqNszvXB0od
+        0+QAE9ZkFUa8gPY94HJMWAQlEQGtIfutJ+QDTm+6CjBOF8Je23JCGh8n3eOneufR5e0CN4hxZ18r8
+        LBvvqDmI6PGwo4zu5Al12gwJ1sq+GzNaODmkYU5KRKsLc3UYVVWEN6IHokPY+Xlg3+X+ajSHl6+su
+        i3opea0g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jEsvi-00047Y-O6; Thu, 19 Mar 2020 11:01:38 +0000
+Date:   Thu, 19 Mar 2020 04:01:38 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Satya Tangirala <satyat@google.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>
+Subject: Re: [PATCH v8 02/11] block: Inline encryption support for blk-mq
+Message-ID: <20200319110138.GA20097@infradead.org>
+References: <20200312080253.3667-1-satyat@google.com>
+ <20200312080253.3667-3-satyat@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3085879.1584614257.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 19 Mar 2020 10:37:37 +0000
-Message-ID: <3085880.1584614257@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312080253.3667-3-satyat@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, Mar 12, 2020 at 01:02:44AM -0700, Satya Tangirala wrote:
+> +	if (bio_has_crypt_ctx(bio))
+> +		bio_crypt_clone(b, bio, gfp_mask);
 
-> >  (2) It's more efficient as we can return specific binary data rather =
-than
-> >      making huge text dumps.  Granted, sysfs and procfs could present =
-the
-> >      same data, though as lots of little files which have to be
-> >      individually opened, read, closed and parsed.
-> =
+FYI, what I had tried to suggest when moving the the bio_has_crypt_ctx
+checks out was not to open code them, but to have inline functions.
 
-> Asked this a number of times, but you haven't answered yet:  what
-> application would require such a high efficiency?
+E.g. your current bio_crypt_clone becomes __bio_crypt_clone,
 
-Low efficiency means more time doing this when that time could be spent do=
-ing
-other things - or even putting the CPU in a powersaving state.  Using an
-open/read/close render-to-text-and-parse interface *will* be slower and le=
-ss
-efficient as there are more things you have to do to use it.
+and then a wrapper is added ala:
 
-Then consider doing a walk over all the mounts in the case where there are
-10000 of them - we have issues with /proc/mounts for such.  fsinfo() will =
-end
-up doing a lot less work.
+static inline void bio_crypt_clone(struct bio *dst, struct bio *src,
+		gfp_t gfp_mask)
+{
+	if (bio_has_crypt_ctx(bio))
+		__bio_crypt_clone(dst, src, gfp_mask);
+}
 
-> I strongly feel that mount info belongs in the latter category
+Which also means in all the headers you can now declare everything
+unconditional as long as bio_has_crypt_ctx is stubbed out for the case
+where blk crypto is disabled.
 
-I feel strongly that a lot of stuff done through /proc or /sys shouldn't b=
-e.
+>  	if (bio_integrity(bio)) {
+>  		int ret;
+>  
+>  		ret = bio_integrity_clone(b, bio, gfp_mask);
+> -
+>  		if (ret < 0) {
+>  			bio_put(b);
+>  			return NULL;
 
-Yes, it's nice that you can explore it with cat and poke it with echo, but=
- it
-has a number of problems: security, atomiticity, efficiency and providing =
-an
-round-the-back way to pin stuff if not done right.
+Spurious whitespace change.
 
-> >  (3) We wouldn't have the overhead of open and close (even adding a
-> >      self-contained readfile() syscall has to do that internally
-> =
+>  free_and_out:
+> @@ -1813,5 +1830,7 @@ int __init blk_dev_init(void)
+>  	blk_debugfs_root = debugfs_create_dir("block", NULL);
+>  #endif
+>  
+> +	bio_crypt_ctx_init();
+> +
 
-> Busted: add f_op->readfile() and be done with all that.   For example
-> DEFINE_SHOW_ATTRIBUTE() could be trivially moved to that interface.
+Is there any good reason to explicitly call bio_crypt_ctx_init vs just
+making it a local subsys_initcall?
 
-Look at your example.  "f_op->".  That's "file->f_op->" I presume.
+> +bool bio_crypt_dun_is_contiguous(const struct bio_crypt_ctx *bc,
+> +				 unsigned int bytes,
+> +				 u64 next_dun[BLK_CRYPTO_DUN_ARRAY_SIZE])
+> +{
+> +	int i = 0;
+> +	unsigned int inc = bytes >> bc->bc_key->data_unit_size_bits;
+> +
+> +	while (i < BLK_CRYPTO_DUN_ARRAY_SIZE) {
+> +		if (bc->bc_dun[i] + inc != next_dun[i])
+> +			return false;
+> +		inc = ((bc->bc_dun[i] + inc)  < inc);
 
-You would have to make it "i_op->" to avoid the open and the close - and f=
-or
-things like procfs and sysfs, that's probably entirely reasonable - but be=
-ar
-in mind that you still have to apply all the LSM file security controls, j=
-ust
-in case the backing filesystem is, say, ext4 rather than procfs.
+Besides the bracing and double whitespace issue this code looks weird
+to me.
 
-> We could optimize existing proc, sys, etc. interfaces, but it's not
-> been an issue, apparently.
+So inc starts out as the number of bytes shifted to the dun size.
 
-You can't get rid of or change many of the existing interfaces.  A lot of =
-them
-are effectively indirect system calls and are, as such, part of the fixed
-UAPI.  You'd have to add a parallel optimised set.
+We then check if it matches the next dun for every entry in the
+array.
 
-> >  (6) Don't have to create/delete a bunch of sysfs/procfs nodes each ti=
-me a
-> >      mount happens or is removed - and since systemd makes much use of
-> >      mount namespaces and mount propagation, this will create a lot of
-> >      nodes.
-> =
+But then inc is turned into a bollean for the next iteration.  At that
+point I'm a little lost, can you add comments or make the code more
+explicit?
 
-> Not true.
+> +	blk_crypto_rq_set_defaults(rq);
+> +
+> +	err = blk_ksm_get_slot_for_key(rq->q->ksm,
+> +				       bio->bi_crypt_context->bc_key,
+> +				       &rq->crypt_keyslot);
+> +	if (err != BLK_STS_OK)
+> +		pr_warn_once("Failed to acquire keyslot for %s (err=%d).\n",
+> +			     bio->bi_disk->disk_name, err);
+> +	return err;
 
-This may not be true if you roll your own special filesystem.  It *is* tru=
-e if
-you do it in procfs or sysfs.  The files don't exist if you don't create n=
-odes
-or attribute tables for them.
+Is this error really that important?  If someone prints an error here
+I'd expect the low-level driver to do that, as that is the only place
+knowing what kind of error we could have here.
 
-> > The argument for doing this through procfs/sysfs/somemagicfs is that
-> > someone using a shell can just query the magic files using ordinary te=
-xt
-> > tools, such as cat - and that has merit - but it doesn't solve the
-> > query-by-pathname problem.
-> >
-> > The suggested way around the query-by-pathname problem is to open the
-> > target file O_PATH and then look in a magic directory under procfs
-> > corresponding to the fd number to see a set of attribute files[*] laid=
- out.
-> > Bash, however, can't open by O_PATH or O_NOFOLLOW as things stand...
-> =
+> +int blk_crypto_bio_prep(struct bio **bio_ptr)
+> +{
+> +	struct bio *bio = *bio_ptr;
+> +
+> +	/*
+> +	 * If bio has no data, just pretend it didn't have an encryption
+> +	 * context.
+> +	 */
+> +	if (!bio_has_data(bio)) {
+> +		bio_crypt_free_ctx(bio);
+> +		return 0;
+> +	}
 
-> Bash doesn't have fsinfo(2) either, so that's not really a good argument=
-.
+Shouldn't a submitted bio without data but with a crypt context be a
+hard error?
 
-I never claimed that fsinfo() could be accessed directly from the shell.  =
-For
-you proposal, you claimed "immediately usable from all programming languag=
-es,
-including scripts".
+> +	bio_crypt_check_alignment(bio);
+> +	if (bio->bi_status != BLK_STS_OK)
+> +		goto fail;
 
-> Implementing a utility to show mount attribute(s) by path is trivial
-> for the file based interface, while it would need to be updated for
-> each extension of fsinfo(2).   Same goes for libc, language bindings,
-> etc.
+Weird calling convention.  Why doesn't bio_crypt_check_alignment
+return a bool, and then this becomes the much more obvious:
 
-That's not precisely true.  If you aren't using an extension to an fsinfo(=
-)
-attribute, you wouldn't need to change anything[*].
+	if (!bio_crypt_check_alignment(bio)) {
+		bio->bi_status = BLK_STS_IOERR;
+		goto fail;
+	}
 
-If you want to use an extension - *even* through a file based interface - =
-you
-*would* have to change your code and your parser.
+> +	/*
+> +	 * Success if device supports the encryption context, and blk-integrity
+> +	 * isn't supported by device/is turned off.
+> +	 */
+> +	if (!blk_ksm_crypto_key_supported(bio->bi_disk->queue->ksm,
+> +					  bio->bi_crypt_context->bc_key)) {
+> +		bio->bi_status = BLK_STS_NOTSUPP;
+> +		goto fail;
+> +	}
+> +
+> +	return 0;
+> +fail:
+> +	bio_endio(*bio_ptr);
+> +	return -EIO;
 
-And, no, extending an fsinfo() attribute would not require any changes to =
-libc
-unless libc is using that attribute[*] and wants to access the extension.
+Weird calling convention again.  If the actual error is in the bio,
+this should just be a bool.
 
-[*] I assume that in C/C++ at least, you'd use linux/fsinfo.h rather than =
-some
-    libc version.
+> +void blk_crypto_rq_prep_clone(struct request *dst, struct request *src)
+> +{
+> +	dst->crypt_ctx = src->crypt_ctx;
+> +}
 
-[*] statfs() could be emulated this way, but I'm not sure what else libc
-    specifically is going to look at.  This is more aimed at libmount amon=
-gst
-    other things.
+This seems reasonable to inline in the header..
 
-David
+> +	blk_status_t err;
+>  
+>  	blk_queue_bounce(q, &bio);
+>  	__blk_queue_split(q, &bio, &nr_segs);
+> @@ -2002,6 +2007,16 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+>  
+>  	cookie = request_to_qc_t(data.hctx, rq);
+>  
+> +	if (bio_has_crypt_ctx(bio)) {
+> +		err = blk_crypto_init_request(rq, bio);
+> +		if (err != BLK_STS_OK) {
 
+The err declaration can go into this scope.  I'd also rather call it
+ret as err is usually used for errno codes.
+
+Also blk_crypto_init_request doesn't really need the bio, but just the
+key.  So I'd rather pass the key to avoid confusion what this function
+might do with the bio.
+
+> +			bio->bi_status = err;
+> +			bio_endio(bio);
+> +			blk_mq_end_request(rq, err);
+> +			return BLK_QC_T_NONE;
+
+Shoudn't the blk_mq_end_request just be a blk_mq_free_request here?
+
+> +#ifdef CONFIG_BLOCK
+> +
+> +#include <linux/blk_types.h>
+> +#include <linux/blkdev.h>
+> +
+> +struct request;
+> +struct request_queue;
+> +
+> +#ifdef CONFIG_BLK_INLINE_ENCRYPTION
+
+Does the #ifdef CONFIG_BLOCK buy us anything?
