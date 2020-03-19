@@ -2,22 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2614618AD35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 08:14:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7F8118AD41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 08:19:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgCSHN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 03:13:57 -0400
-Received: from relay.sw.ru ([185.231.240.75]:35704 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727011AbgCSHN5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 03:13:57 -0400
-Received: from [192.168.15.165]
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1jEpMm-00041N-14; Thu, 19 Mar 2020 10:13:20 +0300
+        id S1727188AbgCSHTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 03:19:31 -0400
+Received: from mail-oln040092075049.outbound.protection.outlook.com ([40.92.75.49]:2786
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725767AbgCSHTa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Mar 2020 03:19:30 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mrUPWrUqOaKWAf1aMquFWlh4Oy1/f/HAOKhSlD6Lq7bfYuyHysoA+YgnYq7Tig7teDFyTX0FYGrpM1WYW6k2B5RbRd7LgR7rGzMpGL+HWtwOhFAlLolluq/4qRWH8uSBTVO9tObA5433/I46ZARG8P0T/H3ujw5AqC/5pp24sITW4VaZMadUMjmT74O3B6LDzPADDqKTnPD0RRY1LhVWLq9M6ZFy+x8KltzZPmLxEAbRQFI0azbnGkXg8kjjTDtwxV924ubNMyAQODVOwNLkXxCIFchEqXhCSihTSMTfhFwhfZwdvna9EfBIbB1zMkXt/uyLDKJy+5oMLneZtUTp2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vxIBA0eTTJmtvzqWujapOEKtGUqHaJJ9YhL5aqFDIao=;
+ b=JW99FeZsWUIITD8fpMR3hGfOMBcqQrH7wYWyz0Fga13fF43wnK+J2vMKuFm6ns93H/AZwamPUZf8a1YqxzaKbMzsRKe2EQoVFLz0dwtihP9NAL7uPbvBmvcDHgKQGrXzLivWI1+9GGcQPCM/Bu96k/qunjdNmd8I7AUw7AE83zf50jfKCUtTj/KcnlXKDQBft9ZW9YcGqScztgHYmPgIQiiEk7HdXlbjxLnC9u1VlvEEG3a/CVHU/9CFMzhNndnf2G7Y5BMd28HTpWjcnL4DIPTmqZi+DXoRuieAZRoTFvGIAKzOjy7Qc51E6yKRkjHXV6HHnVEiL0ThfNxCPJUcbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from HE1EUR04FT040.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0d::39) by
+ HE1EUR04HT022.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0d::180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Thu, 19 Mar
+ 2020 07:19:25 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.26.56) by
+ HE1EUR04FT040.mail.protection.outlook.com (10.152.26.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13 via Frontend Transport; Thu, 19 Mar 2020 07:19:25 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:B5C2B2B81A31B114FA65B0D3F3DB93E518946F7458CE334BF9BEEB6C89AFCEC9;UpperCasedChecksum:D4F0E88236249F7EB1A0DF7531DD5D2B4DADEA94CB0CF94780BC0E257E4A6F30;SizeAsReceived:10330;Count:50
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Thu, 19 Mar 2020
+ 07:19:25 +0000
 Subject: Re: [PATCH v3 5/5] exec: Add a exec_update_mutex to replace
  cred_guard_mutex
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         Kees Cook <keescook@chromium.org>,
@@ -51,7 +73,6 @@ Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
 References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.outlook.com>
- <AM6PR03MB51703B44170EAB4626C9B2CAE4E20@AM6PR03MB5170.eurprd03.prod.outlook.com>
  <87tv32cxmf.fsf_-_@x220.int.ebiederm.org>
  <87v9ne5y4y.fsf_-_@x220.int.ebiederm.org>
  <87zhcq4jdj.fsf_-_@x220.int.ebiederm.org>
@@ -66,248 +87,71 @@ References: <AM6PR03MB5170EB4427BF5C67EE98FF09E4E60@AM6PR03MB5170.eurprd03.prod.
  <AM6PR03MB51705D8A5631B53844CE447CE4F60@AM6PR03MB5170.eurprd03.prod.outlook.com>
  <13c4d333-9c33-8036-3142-dac22c392c60@virtuozzo.com>
  <AM6PR03MB5170110A5D332DD0C1AC929FE4F70@AM6PR03MB5170.eurprd03.prod.outlook.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <f7c1508a-a456-6ae4-a81e-8e8aa41d8d39@virtuozzo.com>
-Date:   Thu, 19 Mar 2020 10:13:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <AM6PR03MB5170110A5D332DD0C1AC929FE4F70@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <f7c1508a-a456-6ae4-a81e-8e8aa41d8d39@virtuozzo.com>
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <AM6PR03MB5170F50FD049FA7B365924F7E4F40@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Thu, 19 Mar 2020 08:19:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <f7c1508a-a456-6ae4-a81e-8e8aa41d8d39@virtuozzo.com>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0015.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a::25) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <5e38267c-cb7f-8049-26b8-3a0a155ca51a@hotmail.de>
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by FR2P281CA0015.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:a::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.19 via Frontend Transport; Thu, 19 Mar 2020 07:19:24 +0000
+X-Microsoft-Original-Message-ID: <5e38267c-cb7f-8049-26b8-3a0a155ca51a@hotmail.de>
+X-TMN:  [m8LpYdCrZRxzdlzBeoQ2jXshgvDIn49Y]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 50
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: 6f08d5e8-2023-42ff-f29b-08d7cbd5da79
+X-MS-TrafficTypeDiagnostic: HE1EUR04HT022:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /X3jasuoM4he5VZ9efsssHDT2JLhi+bxnFrvMzKBipdJq7PD6e1D3/bieeI+FRYDf1zu8JdLQmLUzGDcaXiDwKTRfzWDlY4HKjKE1ClgnhUj/k1I4A0xVwI9yQP0cDl3+OODdh/HupnOxdzAZ6UwpbpvWEJxgTkH/ntX1CCGMo+usNsJbOlaazkqIIBvXCVq
+X-MS-Exchange-AntiSpam-MessageData: oK1Nj1SgfWb6a6HS+SOIRMvtP8Dk22KU8zlA/X9NBlFcG2WdV9gjSZSZq4/B5BXm38PHa2SVMw3oR2Ff4pKPD3eBa2RPrJmDDXxkgrdHqhsUh7iJDtEjjA2UjoJY/rG0uZBmz3FKFDndoIrTvEzKSQ==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f08d5e8-2023-42ff-f29b-08d7cbd5da79
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2020 07:19:25.4399
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR04HT022
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.03.2020 23:06, Bernd Edlinger wrote:
-> On 3/18/20 1:22 PM, Kirill Tkhai wrote:
->> On 18.03.2020 00:53, Bernd Edlinger wrote:
->>> On 3/17/20 9:56 AM, Kirill Tkhai wrote:
->>>> On 14.03.2020 12:11, Bernd Edlinger wrote:
->>>>> The cred_guard_mutex is problematic.  The cred_guard_mutex is held
->>>>> over the userspace accesses as the arguments from userspace are read.
->>>>> The cred_guard_mutex is held of PTRACE_EVENT_EXIT as the the other
->>>>> threads are killed.  The cred_guard_mutex is held over
->>>>> "put_user(0, tsk->clear_child_tid)" in exit_mm().
->>>>>
->>>>> Any of those can result in deadlock, as the cred_guard_mutex is held
->>>>> over a possible indefinite userspace waits for userspace.
->>>>>
->>>>> Add exec_update_mutex that is only held over exec updating process
->>>>> with the new contents of exec, so that code that needs not to be
->>>>> confused by exec changing the mm and the cred in ways that can not
->>>>> happen during ordinary execution of a process.
->>>>>
->>>>> The plan is to switch the users of cred_guard_mutex to
->>>>> exec_udpate_mutex one by one.  This lets us move forward while still
->>>>> being careful and not introducing any regressions.
->>>>>
->>>>> Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
->>>>> Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
->>>>> Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
->>>>> Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
->>>>> Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
->>>>> Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
->>>>> Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
->>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->>>>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
->>>>> ---
->>>>>  fs/exec.c                    | 17 ++++++++++++++---
->>>>>  include/linux/binfmts.h      |  8 +++++++-
->>>>>  include/linux/sched/signal.h |  9 ++++++++-
->>>>>  init/init_task.c             |  1 +
->>>>>  kernel/fork.c                |  1 +
->>>>>  5 files changed, 31 insertions(+), 5 deletions(-)
->>>>>
->>>>> v3: this update fixes lock-order and adds an explicit data member in linux_binprm
->>>>>
->>>>> diff --git a/fs/exec.c b/fs/exec.c
->>>>> index d820a72..11974a1 100644
->>>>> --- a/fs/exec.c
->>>>> +++ b/fs/exec.c
->>>>> @@ -1014,12 +1014,17 @@ static int exec_mmap(struct mm_struct *mm)
->>>>>  {
->>>>>  	struct task_struct *tsk;
->>>>>  	struct mm_struct *old_mm, *active_mm;
->>>>> +	int ret;
->>>>>  
->>>>>  	/* Notify parent that we're no longer interested in the old VM */
->>>>>  	tsk = current;
->>>>>  	old_mm = current->mm;
->>>>>  	exec_mm_release(tsk, old_mm);
->>>>>  
->>>>> +	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
->>>>> +	if (ret)
->>>>> +		return ret;
->>>>> +
->>>>>  	if (old_mm) {
->>>>>  		sync_mm_rss(old_mm);
->>>>>  		/*
->>>>> @@ -1031,9 +1036,11 @@ static int exec_mmap(struct mm_struct *mm)
->>>>>  		down_read(&old_mm->mmap_sem);
->>>>>  		if (unlikely(old_mm->core_state)) {
->>>>>  			up_read(&old_mm->mmap_sem);
->>>>> +			mutex_unlock(&tsk->signal->exec_update_mutex);
->>>>>  			return -EINTR;
->>>>>  		}
->>>>>  	}
->>>>> +
->>>>>  	task_lock(tsk);
->>>>>  	active_mm = tsk->active_mm;
->>>>>  	membarrier_exec_mmap(mm);
->>>>> @@ -1288,11 +1295,12 @@ int flush_old_exec(struct linux_binprm * bprm)
->>>>>  		goto out;
->>>>>  
->>>>>  	/*
->>>>> -	 * After clearing bprm->mm (to mark that current is using the
->>>>> -	 * prepared mm now), we have nothing left of the original
->>>>> +	 * After setting bprm->called_exec_mmap (to mark that current is
->>>>> +	 * using the prepared mm now), we have nothing left of the original
->>>>>  	 * process. If anything from here on returns an error, the check
->>>>>  	 * in search_binary_handler() will SEGV current.
->>>>>  	 */
->>>>> +	bprm->called_exec_mmap = 1;
->>>>
->>>> The two below is non-breaking pair:
->>>>
->>>> exec_mmap(bprm->mm);
->>>> bprm->called_exec_mmap = 1;
->>>>
->>>> Why not move this into exec_mmap(), so nobody definitely inserts something
->>>> between them?
->>>>
->>>
->>> Hmm, could be done, but then I would probably need a different name than
->>> "called_exec_mmap".
->>>
->>> How about adding a nice function comment to exec_mmap that calls out the
->>> changed behaviour that the exec_update_mutex is taken unless the function
->>> fails?
->>
->> Not sure, I understand correct.
->>
->> Could you post this like a small patch hunk (on top of anything you want)?
->>
-> 
-> I was thinking of something like that:
-> 
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1010,6 +1010,11 @@ ssize_t read_code(struct file *file, unsigned long addr, 
->  }
->  EXPORT_SYMBOL(read_code);
->  
-> +/*
-> + * Maps the mm_struct mm into the current task struct.
-> + * On success, this function returns with the mutex
-> + * exec_update_mutex locked.
-> + */
 
-Looks OK for me.
 
->  static int exec_mmap(struct mm_struct *mm)
->  {
->         struct task_struct *tsk;
-> 
-> 
->>> Bernd.
->>>
->>>
->>>>>  	bprm->mm = NULL;
->>>>>  
->>>>>  #ifdef CONFIG_POSIX_TIMERS
->>>>> @@ -1438,6 +1446,8 @@ static void free_bprm(struct linux_binprm *bprm)
->>>>>  {
->>>>>  	free_arg_pages(bprm);
->>>>>  	if (bprm->cred) {
->>>>> +		if (bprm->called_exec_mmap)
->>>>> +			mutex_unlock(&current->signal->exec_update_mutex);
->>>>>  		mutex_unlock(&current->signal->cred_guard_mutex);
->>>>>  		abort_creds(bprm->cred);
->>>>>  	}
->>>>> @@ -1487,6 +1497,7 @@ void install_exec_creds(struct linux_binprm *bprm)
->>>>>  	 * credentials; any time after this it may be unlocked.
->>>>>  	 */
->>>>>  	security_bprm_committed_creds(bprm);
->>>>> +	mutex_unlock(&current->signal->exec_update_mutex);
->>>>>  	mutex_unlock(&current->signal->cred_guard_mutex);
->>>>>  }
->>>>>  EXPORT_SYMBOL(install_exec_creds);
->>>>> @@ -1678,7 +1689,7 @@ int search_binary_handler(struct linux_binprm *bprm)
->>>>>  
->>>>>  		read_lock(&binfmt_lock);
->>>>>  		put_binfmt(fmt);
->>>>> -		if (retval < 0 && !bprm->mm) {
->>>>> +		if (retval < 0 && bprm->called_exec_mmap) {
->>>>>  			/* we got to flush_old_exec() and failed after it */
->>>>>  			read_unlock(&binfmt_lock);
->>>>>  			force_sigsegv(SIGSEGV);
->>>>> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
->>>>> index b40fc63..a345d9f 100644
->>>>> --- a/include/linux/binfmts.h
->>>>> +++ b/include/linux/binfmts.h
->>>>> @@ -44,7 +44,13 @@ struct linux_binprm {
->>>>>  		 * exec has happened. Used to sanitize execution environment
->>>>>  		 * and to set AT_SECURE auxv for glibc.
->>>>>  		 */
->>>>> -		secureexec:1;
->>>>> +		secureexec:1,
->>>>> +		/*
->>>>> +		 * Set by flush_old_exec, when exec_mmap has been called.
->>>>> +		 * This is past the point of no return, when the
->>>>> +		 * exec_update_mutex has been taken.
->>>>> +		 */
->>>>> +		called_exec_mmap:1;
->>>>>  #ifdef __alpha__
->>>>>  	unsigned int taso:1;
->>>>>  #endif
->>>>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
->>>>> index 8805025..a29df79 100644
->>>>> --- a/include/linux/sched/signal.h
->>>>> +++ b/include/linux/sched/signal.h
->>>>> @@ -224,7 +224,14 @@ struct signal_struct {
->>>>>  
->>>>>  	struct mutex cred_guard_mutex;	/* guard against foreign influences on
->>>>>  					 * credential calculations
->>>>> -					 * (notably. ptrace) */
->>>>> +					 * (notably. ptrace)
->>>>> +					 * Deprecated do not use in new code.
->>>>> +					 * Use exec_update_mutex instead.
->>>>> +					 */
->>>>> +	struct mutex exec_update_mutex;	/* Held while task_struct is being
->>>>> +					 * updated during exec, and may have
->>>>> +					 * inconsistent permissions.
->>>>> +					 */
->>>>>  } __randomize_layout;
->>>>>  
->>>>>  /*
->>>>> diff --git a/init/init_task.c b/init/init_task.c
->>>>> index 9e5cbe5..bd403ed 100644
->>>>> --- a/init/init_task.c
->>>>> +++ b/init/init_task.c
->>>>> @@ -26,6 +26,7 @@
->>>>>  	.multiprocess	= HLIST_HEAD_INIT,
->>>>>  	.rlim		= INIT_RLIMITS,
->>>>>  	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
->>>>> +	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
->>>>>  #ifdef CONFIG_POSIX_TIMERS
->>>>>  	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
->>>>>  	.cputimer	= {
->>>>> diff --git a/kernel/fork.c b/kernel/fork.c
->>>>> index 8642530..036b692 100644
->>>>> --- a/kernel/fork.c
->>>>> +++ b/kernel/fork.c
->>>>> @@ -1594,6 +1594,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
->>>>>  	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
->>>>>  
->>>>>  	mutex_init(&sig->cred_guard_mutex);
->>>>> +	mutex_init(&sig->exec_update_mutex);
->>>>>  
->>>>>  	return 0;
->>>>>  }
->>>>>
->>>>
+On 3/19/20 8:13 AM, Kirill Tkhai wrote:
+> On 18.03.2020 23:06, Bernd Edlinger wrote:
 >>
+>> I was thinking of something like that:
+>>
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1010,6 +1010,11 @@ ssize_t read_code(struct file *file, unsigned long addr, 
+>>  }
+>>  EXPORT_SYMBOL(read_code);
+>>  
+>> +/*
+>> + * Maps the mm_struct mm into the current task struct.
+>> + * On success, this function returns with the mutex
+>> + * exec_update_mutex locked.
+>> + */
+> 
+> Looks OK for me.
+> 
 
+Cool, yeah, then I will post an updated patch in a moment.
+
+
+Thanks
+Bernd.
