@@ -2,87 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7E218B836
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 14:40:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2C518B874
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 15:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbgCSNkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 09:40:51 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34072 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbgCSNkv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 09:40:51 -0400
-Received: by mail-io1-f68.google.com with SMTP id h131so2294933iof.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Mar 2020 06:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6tZoDH+S4pKybL9z+J1imqJhHGx0DnzzHHYGZCA73Xs=;
-        b=QP+O14xpd6ei/T2pkgz5vVkXlj/jRjAvdjUW/8xUI4N8VGhP5wpGHeeP5MwiwxzkGi
-         mRjfSClkGcoVUJF2YLSo32u8zvPuURllUemVTBkZhSYACW97+Tp/oeBzyBEVSNZIQxEk
-         Le8zreeIFUQUpIhPO+Jz6+zBV08cur/E77Moc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6tZoDH+S4pKybL9z+J1imqJhHGx0DnzzHHYGZCA73Xs=;
-        b=nSqhNcsMWku5/gjw+zi5pOohgvw3HToej65t9NbAyNbiBFuIIrMnsIYxiMSMAR3Vdv
-         ujRW12THS1YUlxTmx0yCL3Qfx1UigmP7xJLIJLoSwEaFl3g7+qex8NyOn5/N5SATz1Xb
-         EuhBXpIQGaiog1ouL2bzqqp9fZsGPrSGaqys86FEQDZgCKEHU27v28M8hBzYau1yHLeZ
-         CkSDYS8BPuefAOiJUR2UudxX30GSuUv8QChEmJZJ+bDdV0RWv1AnSimmEUKZ67DH/Bd6
-         NUShZK0Yr7Df230R3f1X/wtgY2uFK4idI1Bd2Bu0Ii7mY9K6XDlPDZGj+SKxZtB0tKrB
-         1UHw==
-X-Gm-Message-State: ANhLgQ27xx2H0i2b//s8Zbg6TEvS6MDJcDT7cqNqPukIKYPi5HAZ5wlW
-        Mqyiqh5heJ+Su736Y7RwIpHWlFBzZ1pP0FmCc0jHZpmofx0=
-X-Google-Smtp-Source: ADFU+vsYK+ujNjOhdrmLIqruoqgzpPNdidGY+hbZASVW/wCIpOni99oahetVvaA8Rroxlg2kUuMF2C/jvj6c3ZfrauA=
-X-Received: by 2002:a05:6638:1241:: with SMTP id o1mr3043799jas.11.1584625249293;
- Thu, 19 Mar 2020 06:40:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200221173722.538788-1-hch@lst.de> <CAHc6FU5RM5c0dopuJmCEJmPkwM6TUy60xnSWRpH2qHdX09B1pw@mail.gmail.com>
- <20200317145744.GA15941@lst.de>
-In-Reply-To: <20200317145744.GA15941@lst.de>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 19 Mar 2020 14:40:38 +0100
-Message-ID: <CAJfpeguvn5QQp00Xkz2u-8_PKPK++1wsmGF++mtLREgRVgraVg@mail.gmail.com>
-Subject: Re: [PATCH] fs: move the posix_acl_fix_xattr_{to_from}_user out of
- xattr code
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        id S1727413AbgCSOAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 10:00:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35526 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726892AbgCSOAO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Mar 2020 10:00:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 31271AD48;
+        Thu, 19 Mar 2020 14:00:11 +0000 (UTC)
+Date:   Thu, 19 Mar 2020 15:00:08 +0100
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v11 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+Message-ID: <20200319140008.GI25468@kitsune.suse.cz>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584620202.git.msuchanek@suse.de>
+ <5cd926191175c4a4a85dc2246adc84bcfac21b1a.1584620202.git.msuchanek@suse.de>
+ <CAHp75VegYhz-hwSUNHbGFB3yiatAWWytwB7Vctf=mCLyCJEy3Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VegYhz-hwSUNHbGFB3yiatAWWytwB7Vctf=mCLyCJEy3Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 17, 2020 at 3:57 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Tue, Mar 03, 2020 at 02:42:50PM +0100, Andreas Gruenbacher wrote:
-> > Miklos,
+On Thu, Mar 19, 2020 at 03:37:03PM +0200, Andy Shevchenko wrote:
+> On Thu, Mar 19, 2020 at 2:21 PM Michal Suchanek <msuchanek@suse.de> wrote:
 > >
-> > On Fri, Feb 21, 2020 at 7:01 PM Christoph Hellwig <hch@lst.de> wrote:
-> > > There is no excuse to ever perform actions related to a specific handler
-> > > directly from the generic xattr code as we have handler that understand
-> > > the specific data in given attrs.  As a nice sideeffect this removes
-> > > tons of pointless boilerplate code.
-> > >
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> > v10: new patch
+> > ---
+> >  MAINTAINERS | 2 ++
+> >  1 file changed, 2 insertions(+)
 > >
-> > can you please review this change from an overlayfs point of view?
->
-> ping?
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index bc8dbe4fe4c9..329bf4a31412 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13088,6 +13088,8 @@ F:      arch/*/kernel/*/perf_event*.c
+> >  F:     arch/*/kernel/*/*/perf_event*.c
+> >  F:     arch/*/include/asm/perf_event.h
+> >  F:     arch/*/kernel/perf_callchain.c
+> > +F:     arch/*/perf/*
+> > +F:     arch/*/perf/*/*
+> >  F:     arch/*/events/*
+> >  F:     arch/*/events/*/*
+> >  F:     tools/perf/
+> 
+> Had you run parse-maintainers.pl?
+Did not know it exists. The output is:
 
-To me it looks like these need fixup:
+scripts/parse-maintainers.pl 
+Odd non-pattern line '
+Documentation/devicetree/bindings/media/ti,cal.yaml
+' for 'TI VPE/CAL DRIVERS' at scripts/parse-maintainers.pl line 147,
+<$file> line 16756.
 
-fs/overlayfs/dir.c:
--    err = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
-+    err = posix_acl_to_xattr(current_user_ns(), acl, buffer, size);
+Thanks
 
-fs/overlayfs/super.c:
--        acl = posix_acl_from_xattr(&init_user_ns, value, size);
-+        acl = posix_acl_from_xattr(current_user_ns(), value, size);
-
-Thanks,
-Miklos
+Michal
