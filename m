@@ -2,109 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BDE418BA86
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 16:08:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A688D18BA9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 16:10:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgCSPIM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 11:08:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56254 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbgCSPIM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 11:08:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1085CACC2;
-        Thu, 19 Mar 2020 15:08:10 +0000 (UTC)
-Date:   Thu, 19 Mar 2020 10:08:05 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     riteshh@linux.ibm.com, linux-ext4@vger.kernel.org,
-        hch@infradead.org, darrick.wong@oracle.com, willy@infradead.org
-Subject: [PATCH v2] iomap: return partial I/O count on error in
- iomap_dio_bio_actor
-Message-ID: <20200319150805.uaggnfue5xgaougx@fiona>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+        id S1727183AbgCSPKf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 11:10:35 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45205 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbgCSPKf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Mar 2020 11:10:35 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i9so3428852wrx.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Mar 2020 08:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=62pvwm/NTSOsd9i4sIHjNJzm54Ca860VuTVr59mMemI=;
+        b=vNdlKnfYp7kTlZtaBpoBcXuxy6p+wMmtFQ2tsLsPru8VIeLem4/5RUD7tvgqQgIiEK
+         xdkx9+AbZ/d5pyDepUtHfMFue8bE7xYdSWgYaxFhvPAoRBZO3Qqa1DCPX3UfoXwoWrFK
+         e8eT1zVIVTOnSQ7XCtEoHIsksVolroUDTHbGmCl1hHP3rJN/SFZ56n77q2sYdbtSBeSY
+         oCK5f7I5RvQNaK1AN+eZRrakgN8mooe148qdJaHdFAiSDHAUol5ZhIniD2cjpxZN/vR5
+         L7a9a3asdM9CMksZgJZBZzt6tHwIEYf7VprOp8A9S5FvALNWJUESILi4EKwNibfWVqeV
+         gz2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=62pvwm/NTSOsd9i4sIHjNJzm54Ca860VuTVr59mMemI=;
+        b=CTlwLsgI/G5SP8EHEzyCA33AkqGIC1YT57CND33aplGewFjeP3IpZX91F1AQ44FPbU
+         hPkc1daaigmZn3p915jwy7Is3qdHv0rKaMJ1I3G4h4jgAgGIw38bwoJu5Z+9C4h1cX6x
+         TMqZpgMo1FJ7Wyx1AYKctXQI82ZsjLW5Ty+C7bIufih1brokzI0nJdG6T+KiU9SLxTyn
+         8TL99s9bAi4p5to15k9ZW8eiyGBemo290XkrknXRgr04QPHkh0GR3RqAHl3T89Vqje1D
+         2aRe5XN8imDIT1yupnuBQbkNo/cK35aYtXKX04GZp6u1ajf/QVzHDBv8N8j+mWgNO6Ju
+         4SYg==
+X-Gm-Message-State: ANhLgQ3TCYqsqIgCc/DghEga2PfAjlftY3vE9O/jKCIrRDW3XyY62l+/
+        UdPOQxKkzbZTujc0s/4ghq3wKZAP
+X-Google-Smtp-Source: ADFU+vtiZif/5I0eRfGr/vTVBaWbdwcbXhBjWSuhobwDujaim4puVRBCOHuwxrWk/89JZ5H7jIJ0eQ==
+X-Received: by 2002:adf:b31d:: with SMTP id j29mr3143086wrd.218.1584630633798;
+        Thu, 19 Mar 2020 08:10:33 -0700 (PDT)
+Received: from localhost.localdomain ([141.226.9.174])
+        by smtp.gmail.com with ESMTPSA id t193sm3716959wmt.14.2020.03.19.08.10.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 08:10:31 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 00/14] fanotify directory modify event
+Date:   Thu, 19 Mar 2020 17:10:08 +0200
+Message-Id: <20200319151022.31456-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, I/Os that complete with an error indicate this by passing
-written == 0 to the iomap_end function.  However, btrfs needs to know how
-many bytes were written for its own accounting.  Change the convention
-to pass the number of bytes which were actually written, and change the
-only user (ext4) to check for a short write instead of a zero length
-write.
+Jan,
 
-For filesystems that do not define ->iomap_end(), check for
-dio->error again after the iomap_apply() call to diagnose the error.
+This v3 posting is a trimmed down version of v2 name info patches [1].
+It includes the prep/fix patches and the patches to add support for
+the new FAN_DIR_MODIFY event, but leaves out the FAN_REPORT_NAME
+patches. I will re-post those as a later time.
 
-Changes since v1:
- - Considerate of iov_iter rollback functions
- - Double check errors for filesystems not implementing iomap_end()
+The v3 patches are available on my github branch fanotify_dir_modify [2].
+Same branch names for LTP tests [3], man page draft [6] and a demo [7].
+The fanotify_name branches in those github trees include the additional
+FAN_REPORT_NAME related changes.
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Main changes since v2:
+- Split fanotify_path_event fanotify_fid_event and fanotify_name_event
+- Drop the FAN_REPORT_NAME patches
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fa0ff78..d52c70f 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3475,7 +3475,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
- 	 * the I/O. Any blocks that may have been allocated in preparation for
- 	 * the direct I/O will be reused during buffered I/O.
- 	 */
--	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-+	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written < length)
- 		return -ENOTBLK;
- 
- 	return 0;
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 41c1e7c..b5f4d4a 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -264,7 +264,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		size_t n;
- 		if (dio->error) {
- 			iov_iter_revert(dio->submit.iter, copied);
--			copied = ret = 0;
-+			ret = dio->error;
- 			goto out;
- 		}
- 
-@@ -325,8 +325,17 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 			iomap_dio_zero(dio, iomap, pos, fs_block_size - pad);
- 	}
- out:
--	/* Undo iter limitation to current extent */
--	iov_iter_reexpand(dio->submit.iter, orig_count - copied);
-+	/*
-+	 * Undo iter limitation to current extent
-+	 * If there is an error, undo the entire extent. However, return the
-+	 * bytes copied so far for filesystems such as btrfs to account for
-+	 * submitted I/O.
-+	 */
-+	if (ret < 0)
-+		iov_iter_reexpand(dio->submit.iter, orig_count);
-+	else
-+		iov_iter_reexpand(dio->submit.iter, orig_count - copied);
-+
- 	if (copied)
- 		return copied;
- 	return ret;
-@@ -499,6 +508,10 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	do {
- 		ret = iomap_apply(inode, pos, count, flags, ops, dio,
- 				iomap_dio_actor);
-+
-+		if (ret >= 0 && dio->error)
-+			ret = dio->error;
-+
- 		if (ret <= 0) {
- 			/* magic error code to fall back to buffered I/O */
- 			if (ret == -ENOTBLK) {
+[1] https://lore.kernel.org/linux-fsdevel/20200217131455.31107-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/linux/commits/fanotify_dir_modify
+[3] https://github.com/amir73il/ltp/commits/fanotify_dir_modify
+[4] https://github.com/amir73il/man-pages/commits/fanotify_dir_modify
+[5] https://github.com/amir73il/inotify-tools/commits/fanotify_dir_modify
+
+Amir Goldstein (14):
+  fsnotify: tidy up FS_ and FAN_ constants
+  fsnotify: factor helpers fsnotify_dentry() and fsnotify_file()
+  fsnotify: funnel all dirent events through fsnotify_name()
+  fsnotify: use helpers to access data by data_type
+  fsnotify: simplify arguments passing to fsnotify_parent()
+  fsnotify: pass dentry instead of inode for events possible on child
+  fsnotify: replace inode pointer with an object id
+  fanotify: merge duplicate events on parent and child
+  fanotify: fix merging marks masks with FAN_ONDIR
+  fanotify: divorce fanotify_path_event and fanotify_fid_event
+  fanotify: send FAN_DIR_MODIFY event flavor with dir inode and name
+  fanotify: prepare to report both parent and child fid's
+  fanotify: record name info for FAN_DIR_MODIFY event
+  fanotify: report name info for FAN_DIR_MODIFY event
+
+ fs/notify/fanotify/fanotify.c        | 304 ++++++++++++++++++++-------
+ fs/notify/fanotify/fanotify.h        | 172 +++++++++------
+ fs/notify/fanotify/fanotify_user.c   | 171 ++++++++++-----
+ fs/notify/fsnotify.c                 |  22 +-
+ fs/notify/inotify/inotify_fsnotify.c |  12 +-
+ fs/notify/inotify/inotify_user.c     |   2 +-
+ include/linux/fanotify.h             |   3 +-
+ include/linux/fsnotify.h             | 138 +++++-------
+ include/linux/fsnotify_backend.h     |  87 ++++++--
+ include/uapi/linux/fanotify.h        |   6 +-
+ kernel/audit_fsnotify.c              |  13 +-
+ kernel/audit_watch.c                 |  16 +-
+ 12 files changed, 610 insertions(+), 336 deletions(-)
 
 -- 
-Goldwyn
+2.17.1
+
