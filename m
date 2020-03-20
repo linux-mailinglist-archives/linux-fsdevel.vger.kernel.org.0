@@ -2,127 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF90118C2F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Mar 2020 23:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3C718C572
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 03:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbgCSWXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Mar 2020 18:23:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33537 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727432AbgCSWXt (ORCPT
+        id S1726738AbgCTCrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Mar 2020 22:47:05 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49369 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725884AbgCTCrE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Mar 2020 18:23:49 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z10so3505966ljn.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Mar 2020 15:23:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WJ6MzhtWalH0hDBYxWzZFJvnUo/A0DOitGKj0UfdYo8=;
-        b=XBqh7pWnTmUlqQohZOg/HeJr0gQHAIeXOwQCGzJ5OwLz0JntySiWzUQk/bbyBsqGm9
-         AOagPLaBdiW1PMwWYNG62+YPygcjxUIjKZCSAWI7Y+gXGQmEpDRx5s4L6A86L4QjzPhm
-         g1WliO6jBKgCaK0bZjyFPxJo1T1kZceLM4t/lRH12iiIppbgjzQ3iyFeIrW4qK58Nko5
-         lbNS0FS7GU3iUIH68IUAikInyw3mSaCNwFQaUwVoTXF/SPEBXD79mERRqpVxClHgzlbO
-         LuBZhWaZGVlUhSTRyD/NNbgZlWYzqDYTxbQym6CawlmhMV6GI3Nb15UmNwRMlI/s0Tib
-         EF6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WJ6MzhtWalH0hDBYxWzZFJvnUo/A0DOitGKj0UfdYo8=;
-        b=kwTmZ61bf5sYTAp8x0U4l641opPdnCCP29flYGKmkP78TiTcbfTPzBTdJciLCnjtdh
-         Mv8LwmxzL7eCaXcpu8suBRvt8HdA46+bIKLncRi7XQYJMyl7gsFahBg6kBL33wDaOSwf
-         3LdHVvidV3o1BKoIe+NTIPhbLlTN2+v3ZTWLOzUDcipL/t9CAFTqRRDbsYicXQwwM+Yy
-         z7iRQtFM9K/WwyQCdL0MG3ZEzT8v1JVs4jP93ufGQRK3bEUcpqBvEvytmVWfs9W8bUkP
-         y5ihHXBe7v8ZTAKk7b7ZQAvFFCxnX981Nn7W8K8LAtLx57SxZDDEyAgeZGjE5ZGDCCWL
-         FoMA==
-X-Gm-Message-State: ANhLgQ2r4m7qWg4UAC/lWfl/Y6NiJrUSLAb8MxmAHBWIMR0qNT6r3oOb
-        HB7BkC0fU42zD0UsZKRXxan4MZubtvqw7k4eLUlRPQ==
-X-Google-Smtp-Source: ADFU+vsNGI4DJxjB5f7C7tgGloRNRzSoDi/T/uXs4OR8cIg4QaTNXgqQeL/rC2Yz+GqKJZUSlth8pWewRRKx9U7JH3M=
-X-Received: by 2002:a05:651c:1026:: with SMTP id w6mr3408670ljm.168.1584656625715;
- Thu, 19 Mar 2020 15:23:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200317113153.7945-1-linus.walleij@linaro.org>
- <CAFEAcA9mXE+gPnvM6HZ-w0+BhbpeuH=osFH-9NUzCLv=w-c7HQ@mail.gmail.com>
- <CACRpkdZtLNUwiZEMiJEoB0ojOBckyGcZeyFkR6MC69qv-ry9EA@mail.gmail.com> <CAFEAcA-gdwi=KSW6LqVdEJWSo9VEL5abYQs9LoHd4mKE_-h=Aw@mail.gmail.com>
-In-Reply-To: <CAFEAcA-gdwi=KSW6LqVdEJWSo9VEL5abYQs9LoHd4mKE_-h=Aw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 Mar 2020 23:23:33 +0100
-Message-ID: <CACRpkdYuZgZUznVxt1AHCSJa_GAXy8N0SduE5OrjDnE1s_L7Zg@mail.gmail.com>
-Subject: Re: [PATCH] ext4: Give 32bit personalities 32bit hashes
-To:     Peter Maydell <peter.maydell@linaro.org>
-Cc:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Thu, 19 Mar 2020 22:47:04 -0400
+Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02K2kepw014400
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Mar 2020 22:46:40 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id CDE30420EBA; Thu, 19 Mar 2020 22:46:39 -0400 (EDT)
+Date:   Thu, 19 Mar 2020 22:46:39 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Linux Filesystem Development List 
+        <linux-fsdevel@vger.kernel.org>,
         Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] writeback: avoid double-writing the inode on a lazytime
+ expiration
+Message-ID: <20200320024639.GH1067245@mit.edu>
+References: <20200306004555.GB225345@gmail.com>
+ <20200307020043.60118-1-tytso@mit.edu>
+ <20200311032009.GC46757@gmail.com>
+ <20200311125749.GA7159@mit.edu>
+ <20200312000716.GY10737@dread.disaster.area>
+ <20200312143445.GA19160@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200312143445.GA19160@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 4:25 PM Peter Maydell <peter.maydell@linaro.org> wrote:
-> On Thu, 19 Mar 2020 at 15:13, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Tue, Mar 17, 2020 at 12:58 PM Peter Maydell <peter.maydell@linaro.org> wrote:
-> > > What in particular does this personality setting affect?
-> > > My copy of the personality(2) manpage just says:
-> > >
-> > >        PER_LINUX32 (since Linux 2.2)
-> > >               [To be documented.]
-> > >
-> > > which isn't very informative.
-> >
-> > It's not a POSIX thing (not part of the Single Unix Specification)
-> > so as with most Linux things it has some fuzzy semantics
-> > defined by the community...
-> >
-> > I usually just go to the source.
->
-> If we're going to decide that this is the way to say
-> "give me 32-bit semantics" we need to actually document
-> that and define in at least broad terms what we mean
-> by it, so that when new things are added that might or
-> might not check against the setting there is a reference
-> defining whether they should or not, and so that
-> userspace knows what it's opting into by setting the flag.
-> The kernel loves undocumented APIs but userspace
-> consumers of them are not so enamoured :-)
+On Thu, Mar 12, 2020 at 07:34:45AM -0700, Christoph Hellwig wrote:
+> I haven't seen the original mail this replies to, but if we could
+> get the lazytime expirty by some other means (e.g. an explicit
+> callback), XFS could opt out of all the VFS inode tracking again,
+> which would simplify a few things.
 
-OK I guess we can at least take this opportunity to add
-some kerneldoc to the include file.
+Part of my thinking of calling 
 
-> As a concrete example, should "give me 32-bit semantics
-> via PER_LINUX32" mean "mmap should always return addresses
-> within 4GB" ? That would seem like it would make sense --
+       inode->i_sb->s_op->dirty_inode(inode, I_DIRTY_TIME_EXPIRED);
 
-Incidentally that thing in particular has its own personality
-flag (personalities are additive, it's a bit schizophrenic)
-so PER_LINUX_32BIT is defined as:
-PER_LINUX_32BIT =       0x0000 | ADDR_LIMIT_32BIT,
-and that is specifically for limiting the address space to
-32bit.
+So that it would be an explicit callback to XFS.  So why don't I break
+this as two patches --- one which uses I_DIRTY_SYNC, as before, and a
+second one which changes calls dirty_inode() with
+I_DIRTY_TIME_EXPIRED, and with a change to XFS so that it recognizes
+I_DIRTY_TIME_EXPIRED as if it were I_DIRTY_SYNC.  If this would then
+allow XFS to simplify how it handles VFS tracking, you could do that
+in a separate patch.
 
-There is also PER_LINUX32_3GB for a 3GB lowmem
-limit.
+Does that work?  I'll send out the two patches, and if you can
+review/ack the second patch, that would be great.
 
-Since the personality is kind of additive, if
-we want a flag *specifically* for indicating that we want
-32bit hashes from the file system, there are bits left so we
-can provide that.
-
-Is this what we want to do? I just think we shouldn't
-decide on that lightly as we will be using up personality
-bug bits, but sometimes you have to use them.
-
-PER_LINUX32 as it stands means 32bit personality
-but very specifically does not include memory range
-limitations since that has its own flags.
-
-Yours,
-Linus Walleij
+	       	      	     	  	- Ted
