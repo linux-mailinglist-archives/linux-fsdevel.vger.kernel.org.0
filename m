@@ -2,127 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1626618D4CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 17:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605D618D51E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 17:58:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbgCTQre (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 12:47:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28764 "EHLO mga06.intel.com"
+        id S1727278AbgCTQ6b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Mar 2020 12:58:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727120AbgCTQrd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 12:47:33 -0400
-IronPort-SDR: ZWRGXKXsQffAObSEaTMCNH69ltvHGDQqkRDFzSHIKnfKPAjr5L9oo6pHAT7FIfxLix7M1KzPu8
- dPV/1EDgLaFg==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 09:47:19 -0700
-IronPort-SDR: dh18lLVo7SI0bBVLPd2Cy19KovYFRENeBeSupTfr4AIdadWB9ym3f9KLJ4NiA2Y4dyMWqRbDKu
- uxX8AfF9TK1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,285,1580803200"; 
-   d="scan'208";a="234560765"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 20 Mar 2020 09:47:11 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jFKnf-00BVrf-RA; Fri, 20 Mar 2020 18:47:11 +0200
-Date:   Fri, 20 Mar 2020 18:47:11 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-Cc:     Joe Perches <joe@perches.com>, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
- perf to the perf entry.
-Message-ID: <20200320164711.GH1922688@smile.fi.intel.com>
-References: <20200225173541.1549955-1-npiggin@gmail.com>
- <cover.1584699455.git.msuchanek@suse.de>
- <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
- <20200320103350.GV1922688@smile.fi.intel.com>
- <20200320112338.GP25468@kitsune.suse.cz>
- <20200320124251.GW1922688@smile.fi.intel.com>
- <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
- <20200320163157.GF1922688@smile.fi.intel.com>
- <20200320164204.GV25468@kitsune.suse.cz>
+        id S1727101AbgCTQ6b (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Mar 2020 12:58:31 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6434C20753;
+        Fri, 20 Mar 2020 16:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584723510;
+        bh=AxLDPN4LwuxzW4xjwlSgsVf6rtc0JFVKxbo5//wmPgc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cRbat8REA7EmmJnmLCrWxRoNW5LgyCKm+4EsNDf5E4lY0nLcYrSE6Jyr+LkCnKmyi
+         n3W2x46nv8ZHmzqeZMc86Mj56kXxAhIEwG1PHXCTucYL5iivPYgJLLRVtDE0DPEV3X
+         iA5d4+HsRZ/BNe0ydHe/SfLeiRxRKGyEVqIcRkok=
+Date:   Fri, 20 Mar 2020 09:58:28 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-xfs@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v9 12/25] mm: Move end_index check out of readahead loop
+Message-ID: <20200320165828.GB851@sol.localdomain>
+References: <20200320142231.2402-1-willy@infradead.org>
+ <20200320142231.2402-13-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200320164204.GV25468@kitsune.suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200320142231.2402-13-willy@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 05:42:04PM +0100, Michal Suchánek wrote:
-> On Fri, Mar 20, 2020 at 06:31:57PM +0200, Andy Shevchenko wrote:
-> > On Fri, Mar 20, 2020 at 07:42:03AM -0700, Joe Perches wrote:
-> > > On Fri, 2020-03-20 at 14:42 +0200, Andy Shevchenko wrote:
-> > > > On Fri, Mar 20, 2020 at 12:23:38PM +0100, Michal Suchánek wrote:
-> > > > > On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
-> > > > > > On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
-> > > > > > > While at it also simplify the existing perf patterns.
-> > > > > > And still missed fixes from parse-maintainers.pl.
-> > > > > 
-> > > > > Oh, that script UX is truly ingenious.
-> > > > 
-> > > > You have at least two options, their combinations, etc:
-> > > >  - complain to the author :-)
-> > > >  - send a patch :-)
-> > > 
-> > > Recently:
-> > > 
-> > > https://lore.kernel.org/lkml/4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com/
-> > 
-> > But why?
-> > 
-> > Shouldn't we rather run MAINTAINERS clean up once and require people to use
-> > parse-maintainers.pl for good?
+On Fri, Mar 20, 2020 at 07:22:18AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> That cleanup did not happen yet, and I am not volunteering for one.
-> The difference between MAINTAINERS and MAINTAINERS.new is:
+> By reducing nr_to_read, we can eliminate this check from inside the loop.
 > 
->  MAINTAINERS | 5510 +++++++++++++++++++++++++++++------------------------------
->  1 file changed, 2755 insertions(+), 2755 deletions(-)
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> ---
+>  mm/readahead.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index d01531ef9f3c..a37b68f66233 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -167,8 +167,6 @@ void __do_page_cache_readahead(struct address_space *mapping,
+>  		unsigned long lookahead_size)
+>  {
+>  	struct inode *inode = mapping->host;
+> -	struct page *page;
+> -	unsigned long end_index;	/* The last page we want to read */
+>  	LIST_HEAD(page_pool);
+>  	loff_t isize = i_size_read(inode);
+>  	gfp_t gfp_mask = readahead_gfp_mask(mapping);
+> @@ -178,22 +176,29 @@ void __do_page_cache_readahead(struct address_space *mapping,
+>  		._index = index,
+>  	};
+>  	unsigned long i;
+> +	pgoff_t end_index;	/* The last page we want to read */
+>  
+>  	if (isize == 0)
+>  		return;
+>  
+> -	end_index = ((isize - 1) >> PAGE_SHIFT);
+> +	end_index = (isize - 1) >> PAGE_SHIFT;
+> +	if (index > end_index)
+> +		return;
+> +	/* Avoid wrapping to the beginning of the file */
+> +	if (index + nr_to_read < index)
+> +		nr_to_read = ULONG_MAX - index + 1;
+> +	/* Don't read past the page containing the last byte of the file */
+> +	if (index + nr_to_read >= end_index)
+> +		nr_to_read = end_index - index + 1;
 
-Yes, it was basically reply to Joe.
+There seem to be a couple off-by-one errors here.  Shouldn't it be:
 
--- 
-With Best Regards,
-Andy Shevchenko
+	/* Avoid wrapping to the beginning of the file */
+	if (index + nr_to_read < index)
+		nr_to_read = ULONG_MAX - index;
+	/* Don't read past the page containing the last byte of the file */
+	if (index + nr_to_read > end_index)
+		nr_to_read = end_index - index + 1;
 
+I.e., 'ULONG_MAX - index' rather than 'ULONG_MAX - index + 1', so that
+'index + nr_to_read' is then ULONG_MAX rather than overflowed to 0.
 
+Then 'index + nr_to_read > end_index' rather 'index + nr_to_read >= end_index',
+since otherwise nr_to_read can be increased by 1 rather than decreased or stay
+the same as expected.
+
+- Eric
