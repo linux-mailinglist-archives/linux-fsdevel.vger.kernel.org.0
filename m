@@ -2,141 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DDC618CBAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 11:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAA7118CCB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 12:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbgCTKd6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 06:33:58 -0400
-Received: from mga03.intel.com ([134.134.136.65]:1057 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726791AbgCTKd6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 06:33:58 -0400
-IronPort-SDR: tsiJb2PXNe6dG/YOdJo0BY4Xw+EBdz0Eqf3MAUdZD7Kx/etQnH71yUWNjH8n7RknkHKnxj4XqV
- z/8plm6znvoQ==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Mar 2020 03:33:57 -0700
-IronPort-SDR: dvyOOwpm3ck0vNEcjFg0Ln9rtXpCUZTdZcp6iT/sMJoJaRldBYM8OWYnTUButP6k1/hcmEEsxM
- R4UhrSvV447g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,284,1580803200"; 
-   d="scan'208";a="446612540"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Mar 2020 03:33:50 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jFEyM-00BKoR-Uc; Fri, 20 Mar 2020 12:33:50 +0200
-Date:   Fri, 20 Mar 2020 12:33:50 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Michal Suchanek <msuchanek@suse.de>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
- perf to the perf entry.
-Message-ID: <20200320103350.GV1922688@smile.fi.intel.com>
-References: <20200225173541.1549955-1-npiggin@gmail.com>
- <cover.1584699455.git.msuchanek@suse.de>
- <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
+        id S1726955AbgCTLV6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Mar 2020 07:21:58 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36809 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbgCTLV6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Mar 2020 07:21:58 -0400
+Received: by mail-oi1-f196.google.com with SMTP id k18so6106973oib.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Mar 2020 04:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=6w+aFSJ+2vZ3lBtg9xVXLOFVqSNoMPd625E7FNYobb8=;
+        b=gXr8iqrFPWrUhIliERP+Rlw7D9XFBjLMvK5JfWrCwC1wCwV70lx2adPhEP+5LqtKBG
+         O7JxXe77iNTDDKteRIXyf/+5d6XSEUrRv+eG+L2zubgUkC+eWkybCOuucPHhc0ShVd1L
+         7mmc4fyfvf0Od1Bi4HewoE3FoNz+THwrf6rX53/BkajGTcaqNUtHUSKj+8dpdvKadb4o
+         I6t5k90iaDwdED7mSjm4SxMxu1mD1nZuxQ9ZeNQ+a6TGw/3h7X0TvsVG77lyIB9Bk3MP
+         RcyvjUdW1zADACdtH+UIpYKPK/PGfBGesTi7w5wMvW1LxvX8cJVM9F6GMvVusKZ+9xMh
+         9qFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=6w+aFSJ+2vZ3lBtg9xVXLOFVqSNoMPd625E7FNYobb8=;
+        b=WyldO6CAJNcejIM34B/eApkViCpZVpSo0bnNLqDRW/3buvQH3Lzak7oa3bMwUxDJ8k
+         W2CoZAjtIE8tLHcwjcyjuNfvoh0dD7/PPhBV36BPVI1rhCvNQwv1647CG41dvkt/EAh3
+         OA3nCn/o0CXS4eFkuHI/ilyt4mlbHCi+OuCT+jMnUqNktCi8RIIuuPQcwWqO260fbb/y
+         jG6j0yh1UKhVK7Du+1gkpeS06ZhWTdep7tvYHv7P4CLmRQK77ZhUD8bM+U4zkZW5MgFH
+         FTfJKLWcWwqFp1+qSpQ5Q/vgBtAzKIlDSZkc57IihUdnzvywOjUJxdW13hChaWgGejBC
+         3vfw==
+X-Gm-Message-State: ANhLgQ3s1DGvLHpHUKUv4iMSYHZn6dkOkB49IlRwXI4nuYEdmmJx2tIT
+        nN05vh1+Giv6uw6AnnUYWXMxOZHHv3fjPsamKMI=
+X-Google-Smtp-Source: ADFU+vsEhnx2OvxntOwweiY4ejI8hgMnvqEI1mkGNtS4be2GVSqcT+fJU/MBEybdWCiYRkYwkzCyurhmJwBn7Zr4Sgs=
+X-Received: by 2002:aca:210c:: with SMTP id 12mr5681362oiz.0.1584703317715;
+ Fri, 20 Mar 2020 04:21:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Received: by 2002:a05:6838:40c6:0:0:0:0 with HTTP; Fri, 20 Mar 2020 04:21:57
+ -0700 (PDT)
+From:   ECOWAS COMMITEE <ecowasmonitoringcommitteeabj@gmail.com>
+Date:   Fri, 20 Mar 2020 11:21:57 +0000
+Message-ID: <CAHHubrYVO=2YdPqKZhJ+2V5OGE9v-76hg5HAnvmVr7enpkq_MA@mail.gmail.com>
+Subject: HAPPY SURVIVAL OF CORONAVIRUS
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
-> While at it also simplify the existing perf patterns.
-> 
+Dear Sir/Madam
 
-And still missed fixes from parse-maintainers.pl.
+HAPPY SURVIVAL OF CORONAVIRUS
 
-I see it like below in the linux-next (after the script)
+We the West African Monitoring Committee of the West African Economic
+Community(ECOWAS)are contacting you for a business transaction which
+we feel will be of great interest to you.
 
-PERFORMANCE EVENTS SUBSYSTEM
-M:      Peter Zijlstra <peterz@infradead.org>
-M:      Ingo Molnar <mingo@redhat.com>
-M:      Arnaldo Carvalho de Melo <acme@kernel.org>
-R:      Mark Rutland <mark.rutland@arm.com>
-R:      Alexander Shishkin <alexander.shishkin@linux.intel.com>
-R:      Jiri Olsa <jolsa@redhat.com>
-R:      Namhyung Kim <namhyung@kernel.org>
-L:      linux-kernel@vger.kernel.org
-S:      Supported
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-F:      arch/*/events/*
-F:      arch/*/events/*/*
-F:      arch/*/include/asm/perf_event.h
-F:      arch/*/kernel/*/*/perf_event*.c
-F:      arch/*/kernel/*/perf_event*.c
-F:      arch/*/kernel/perf_callchain.c
-F:      arch/*/kernel/perf_event*.c
-F:      include/linux/perf_event.h
-F:      include/uapi/linux/perf_event.h
-F:      kernel/events/*
-F:      tools/perf/
+Our duty is to see to the coming in and out of funds into this sub
+region.There is a fund which we confiscated worth of $12.5 million
+dollars.We will like you to receive this fund on your name in your
+account and as well helping us in the investment.
 
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13080,7 +13080,7 @@ R:	Namhyung Kim <namhyung@kernel.org>
->  L:	linux-kernel@vger.kernel.org
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
->  S:	Supported
-> -F:	kernel/events/*
-> +F:	kernel/events/
->  F:	include/linux/perf_event.h
->  F:	include/uapi/linux/perf_event.h
->  F:	arch/*/kernel/perf_event*.c
-> @@ -13088,8 +13088,8 @@ F:	arch/*/kernel/*/perf_event*.c
->  F:	arch/*/kernel/*/*/perf_event*.c
->  F:	arch/*/include/asm/perf_event.h
->  F:	arch/*/kernel/perf_callchain.c
-> -F:	arch/*/events/*
-> -F:	arch/*/events/*/*
-> +F:	arch/*/events/
-> +F:	arch/*/perf/
->  F:	tools/perf/
->  
->  PERFORMANCE EVENTS SUBSYSTEM ARM64 PMU EVENTS
+You are advised to contact us as soon as you get this message for
+details of the transaction if you find it interesting.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Best Regards,
 
+Mr John Aka
 
+Chairman
+ECOWAS
+West African Monitoring Committee
+Tel 00225 6716 6756
+Abidjan Cote D'Ivoire
