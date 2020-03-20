@@ -2,102 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 272FB18D7EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 19:52:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D994318D8F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 21:24:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbgCTSwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 14:52:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727210AbgCTSwk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 14:52:40 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A87620775;
-        Fri, 20 Mar 2020 18:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584730359;
-        bh=3gbE+VlmfoN5OPIi14o+iI+EIYlVydyt9rn3Y0AvnsY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DRP5T0p/QJ3Eo+pOi6lUoz/NYAigZgi8TtvZjTzfHQ8g8KelV4xmxmhMYNwPEnhOr
-         jaoWnNJhMTgDQ5E65odJ0yXJp9dcxGm+62eg5najbweP0lRbI54UDJTXPJXqLKn/F1
-         CPgqcXc4KjgX4h9bEPayy9PiHh2SFNg2cqPbd3s0=
-Date:   Fri, 20 Mar 2020 11:52:38 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v9 23/25] f2fs: Pass the inode to f2fs_mpage_readpages
-Message-ID: <20200320185238.GJ851@sol.localdomain>
-References: <20200320142231.2402-1-willy@infradead.org>
- <20200320142231.2402-24-willy@infradead.org>
+        id S1726912AbgCTUYO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Mar 2020 16:24:14 -0400
+Received: from mail-oln040092073016.outbound.protection.outlook.com ([40.92.73.16]:14830
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726666AbgCTUYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Mar 2020 16:24:14 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DB+SzLgw5fb9DlMUuCkR9KshgOxf42Gecy2nvOt2JTMPyjxoSnccuRiKw9N/SVnWBB/hvADbqXslaKfPu2L8FDsBaC2BfFoqiEAbyx8tI2ErStnjs0DY9Ny55/uA4EmkOtuvuaTR2EaEOxIfUcNOASmo3IbGU0+GlTuCByk6GOGk11vmmLpDGjdhPdKmmen7VcpXNGKKkmIEM4XyScd2CZ44C/bk55VzewvfsqttdFxbmaJRZvP95haa71gN3Jer4LKfSQC2Yi+6Ui2i0wENPFecg1aMaFDqWP3dOOxoRa7z1jvYMQzzTHgyaNHD/PPUszLRth9INvMRuVuM01FXrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wnzrjsR1MXLEfp6VYylXz8lJomJ1GTiPhRkhVOp2Jno=;
+ b=ZalEUzDOZ/npxYTykyNjG3l8jwlHX6GquY9aXLNAtlVL25zZRyTLtgMOzxhshdP17zWCsKvMVJGXqCt3cFbOCUDNYi+LJhAltHW9KW2Fa59Un6J38EK/4XAErulT/7y1330JIfjiJmNeu2Q6V5XGdRuDZ6Yvj7ISNftv+8e+nYe2UBcaOaxJACdgRqZ5QEC/my5ZV+ZMmS5yNlD/GAu3/q9I4VjYq+VEuS30SMwpWh3u7KTbxYicruEGTxnubRzXArk/gjY7g8VoUA9HY1lqpqxf/5l/aMzWdn9Q2UC25hAvpILSH+UUIYk3c/cV/zHrAXyl7lA7q5I8WlILvYs9kA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from DB3EUR04FT027.eop-eur04.prod.protection.outlook.com
+ (2a01:111:e400:7e0c::34) by
+ DB3EUR04HT231.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0c::208)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Fri, 20 Mar
+ 2020 20:24:08 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.24.52) by
+ DB3EUR04FT027.mail.protection.outlook.com (10.152.24.122) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13 via Frontend Transport; Fri, 20 Mar 2020 20:24:08 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:AEE64B1550B431206270635F9D8A99774518771E6545A912F7D017D5C57AC256;UpperCasedChecksum:39FFD2F0D261FA8D423CE5CB0EBC04B6973AC5A609322673B09495AF68875B6A;SizeAsReceived:9280;Count:47
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
+ 20:24:07 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Subject: [PATCH v6 00/16] Infrastructure to allow fixing exec deadlocks
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Message-ID: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Fri, 20 Mar 2020 21:24:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0009.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::19) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <0c6e2f5d-4e5c-db65-782e-0f47e07a9ced@hotmail.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320142231.2402-24-willy@infradead.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0009.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.19 via Frontend Transport; Fri, 20 Mar 2020 20:24:05 +0000
+X-Microsoft-Original-Message-ID: <0c6e2f5d-4e5c-db65-782e-0f47e07a9ced@hotmail.de>
+X-TMN:  [J1V25By95N2xhKpxjpMoIW+RBDPTCscq]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 47
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: df6b3e20-eaaa-4365-478a-08d7cd0ca42f
+X-MS-TrafficTypeDiagnostic: DB3EUR04HT231:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: nYSeCGFPYSn+2eWASvmdey0sKtb1geuGHM2M+1N6b3cj5+RU2stF3ICfdrQ6wsftMYqa5ZMAcBXJ/yjB3cKZQjFvllM5WRNHq2fJmDKy9qFMAF6Y0mI3ixe5xFAdpg0eZQGqsE0l9OnXrmmh1fidZrPLCvPklHZMQkS23OysnaZO71COsSejZ9A9ZlBKPnsqAEnGLQkoRYDEe+aqe6tzJeDq/X77xmflrVX5YlyVcbM=
+X-MS-Exchange-AntiSpam-MessageData: Quk3kAnSpHqQSnlEPNhZqLyGraCYXIlLyt2nhzqRWoLnS3EXQpfX6rwhKcdQW3o/OUsPfFD1/mOkTu6HpQ/Xyesnvxn4wpX6ejv1e29K1ybsqCRaTEBRhOd9pm7UWUIckwgaTtp3A6eGp2usm0cPnQ==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df6b3e20-eaaa-4365-478a-08d7cd0ca42f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 20:24:07.7116
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3EUR04HT231
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 07:22:29AM -0700, Matthew Wilcox wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This function now only uses the mapping argument to look up the inode,
-> and both callers already have the inode, so just pass the inode instead
-> of the mapping.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> ---
->  fs/f2fs/data.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 237dff36fe73..c8b042979fc4 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2159,12 +2159,11 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->   * use ->readpage() or do the necessary surgery to decouple ->readpages()
->   * from read-ahead.
->   */
-> -static int f2fs_mpage_readpages(struct address_space *mapping,
-> +static int f2fs_mpage_readpages(struct inode *inode,
->  		struct readahead_control *rac, struct page *page)
->  {
->  	struct bio *bio = NULL;
->  	sector_t last_block_in_bio = 0;
-> -	struct inode *inode = mapping->host;
->  	struct f2fs_map_blocks map;
->  #ifdef CONFIG_F2FS_FS_COMPRESSION
->  	struct compress_ctx cc = {
-> @@ -2276,7 +2275,7 @@ static int f2fs_read_data_page(struct file *file, struct page *page)
->  	if (f2fs_has_inline_data(inode))
->  		ret = f2fs_read_inline_data(inode, page);
->  	if (ret == -EAGAIN)
-> -		ret = f2fs_mpage_readpages(page_file_mapping(page), NULL, page);
-> +		ret = f2fs_mpage_readpages(inode, NULL, page);
->  	return ret;
->  }
->  
-> @@ -2293,7 +2292,7 @@ static void f2fs_readahead(struct readahead_control *rac)
->  	if (f2fs_has_inline_data(inode))
->  		return;
->  
-> -	f2fs_mpage_readpages(rac->mapping, rac, NULL);
-> +	f2fs_mpage_readpages(inode, rac, NULL);
->  }
->  
->  int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
-> -- 
+This is an infrastructure change that makes way for fixing this issue.
+Each patch was already posted previously so this is just a cleanup of
+the original mailing list thread(s) which got out of control by now.
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
+Everything started here:
+https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
 
-- Eric
+I added reviewed-by tags from the mailing list threads, except when
+withdrawn.
+
+It took a lot longer than expected to collect everything from the
+mailinglist threads, since several commit messages have been infected
+with typos, and they got fixed without a new patch version.
+
+- Correct the point of no return.
+- Add two new mutexes to replace cred_guard_mutex.
+- Fix each use of cred_guard_mutex.
+- Update documentation.
+- Add a test case.
+
+Bernd Edlinger (11):
+  exec: Fix a deadlock in strace
+  selftests/ptrace: add test cases for dead-locks
+  mm: docs: Fix a comment in process_vm_rw_core
+  kernel: doc: remove outdated comment cred.c
+  kernel/kcmp.c: Use new infrastructure to fix deadlocks in execve
+  proc: Use new infrastructure to fix deadlocks in execve
+  proc: io_accounting: Use new infrastructure to fix deadlocks in execve
+  perf: Use new infrastructure to fix deadlocks in execve
+  pidfd: Use new infrastructure to fix deadlocks in execve
+  exec: Fix dead-lock in de_thread with ptrace_attach
+  doc: Update documentation of ->exec_*_mutex
+
+Eric W. Biederman (5):
+  exec: Only compute current once in flush_old_exec
+  exec: Factor unshare_sighand out of de_thread and call it separately
+  exec: Move cleanup of posix timers on exec out of de_thread
+  exec: Move exec_mmap right after de_thread in flush_old_exec
+  exec: Add exec_update_mutex to replace cred_guard_mutex
+
+ Documentation/security/credentials.rst    |  29 +++++--
+ fs/exec.c                                 | 122 ++++++++++++++++++++++--------
+ fs/proc/base.c                            |  23 +++---
+ include/linux/binfmts.h                   |   8 +-
+ include/linux/sched/signal.h              |  17 ++++-
+ init/init_task.c                          |   3 +-
+ kernel/cred.c                             |   4 +-
+ kernel/events/core.c                      |  12 +--
+ kernel/fork.c                             |   7 +-
+ kernel/kcmp.c                             |   8 +-
+ kernel/pid.c                              |   4 +-
+ kernel/ptrace.c                           |  20 ++++-
+ kernel/seccomp.c                          |  15 ++--
+ mm/process_vm_access.c                    |   2 +-
+ tools/testing/selftests/ptrace/Makefile   |   4 +-
+ tools/testing/selftests/ptrace/vmaccess.c |  86 +++++++++++++++++++++
+ 16 files changed, 278 insertions(+), 86 deletions(-)
+ create mode 100644 tools/testing/selftests/ptrace/vmaccess.c
+
+-- 
+1.9.1
