@@ -2,108 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9678218D2D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 16:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E597018D305
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 16:35:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCTPZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 11:25:08 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:62864 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbgCTPZI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 11:25:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1584717908; x=1616253908;
-  h=from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
-  b=QKHYuIkYYUZGtd+91cTk609uosNUP/Xeoce/M0a6Ew94MUgh42pCWg6P
-   UiN4mb3IsB2rvfxoppFlLDWmaAI6woDjXvS3mHwpuzeX2HQVa+hpupQ8T
-   lyfxRKiZxb9c5BNrjWMtpIQ3H6B2x9Z6WPbSn+rVNijxLF+xhbK66ozgZ
-   4uYA8lnLRikm0DScakv9lR1T7T3wSOzwSKrKihI+Y/PdUckECV6plrZ+W
-   zYBAy1lWXNzcJa829UPDp1AlXwOBD9jR97wBFKGY/SXKQJm+mhp039ufS
-   5RgOwvnSsuPk6/pSBNmyLd15d7iaZOJtxzpTqdSGyIbWrV7wruxZooxOq
-   w==;
-IronPort-SDR: DM6t/+s4AkAu/VfqRlSWAPl81Cs6VvlFzctR9hR/W//ZLpDQxCcg+xqF4rUOD+hVfchWUYD4I7
- chFy6LJAIoU8zLgbqaeUe+0kZg00URKiToZ+aXJ6F2wu6mYrVJbWSaf5SvDWVHyFcVGXPAbX+F
- FJzwMrm2f5yoV0mimJZlZfkLbdOgzMVLSTNak4WHXaBVMAmhVSzfogC8Hc9fgXpDDH35F/++xD
- 2Fbp1A+BgVZV8iuo3OP3IXW8ESqru3w1FQ7WAevBajcsvVETNru99bEs3zZ/LFNnQaciEcnUfp
- /Xw=
-X-IronPort-AV: E=Sophos;i="5.72,285,1580745600"; 
-   d="scan'208";a="133517830"
-Received: from mail-co1nam11lp2173.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.173])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Mar 2020 23:25:08 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d+OKQ3KUe9O2EatA2n8nMlTxvpFE7jtz0HO7zVg8DzlI9qgh0HT1JTUXHaOHeeAfTCv/8ftDqvU5teFgOrURIYQKnr+ghUsqMMYJ0YWcl1a04pvwJgpmTydQfyY3GaE6HmDFQPfyJ9EYbxs+dVaFl55jRB+lhhsGPgI3oiaX2IRN+p594fFj0lv2hXds1huIMhMKTS4YzjeZO26Hkgq+oVWDarf5U4zF49ud+u2bKQoiIbcljrtc723SAgtAOpBlBeQib72P9CZayU/lBK3aEJjdmQV8ls/lwGC5XIPW0yQtejFGnsNcXeKTs3ads7/x7KeLlcOcA8JBZCa4+Gv5Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=CvWgETUTMT0C6qrebKOp4i8dG3qzbSbOun53N9GeN9hba4jFiVuvG4K/J3S3B0MBfYTIbzAsLKgJUb2BvSNgvA1D5P4WKE7MPIyavoobtcxGAXz3697di8bYJvciX1PIx7pSdXYogHeA5LMXHXZ/mSW5HG8KEVqGuiaDpmwTIfgctTWskzk8/A9lc3PxZ94u7EjHIEWk524Vx31RIMGw+XWiuUovMcmP3V7JYWfq82/nDKB+u3hU8rllvFGHXzsxPmOxwgLtYsc2HA2n+q+24+fHEyzEdu/iInjrgk1c+k8CNX29X2UxUq8q2kwnJfm0YAgYqOCKuGdV4Op9fzFPDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
- b=snpUTRQZellhJCZcJck1uja5pIINkIUXbdozN3ZGm3XB+rtfwnXjVVJ9IsA5qnnynPt0eEhk3SGXWcrxIQsyiukGvepbTck3zQsfdOCkku3Qt8Q8vn4N+EfIx9V2HI84BeKg4xM8EyaVIrS2UZwzhJBJDjmbXPufenOqF5Ll5/g=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3535.namprd04.prod.outlook.com
- (2603:10b6:803:4e::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Fri, 20 Mar
- 2020 15:25:05 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
- 15:25:05 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] zonfs: Fix handling of read-only zones
-Thread-Topic: [PATCH] zonfs: Fix handling of read-only zones
-Thread-Index: AQHV/rYMKMw/h8+sR0e4aVlmCHUv+w==
-Date:   Fri, 20 Mar 2020 15:25:05 +0000
-Message-ID: <SN4PR0401MB359857E013B72AF93E26B17D9BF50@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200320124948.2212917-1-damien.lemoal@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b0b5c879-6f64-4295-f63d-08d7cce2de10
-x-ms-traffictypediagnostic: SN4PR0401MB3535:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB3535D6D729B7E6C65DFC9C369BF50@SN4PR0401MB3535.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1728;
-x-forefront-prvs: 03484C0ABF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(136003)(376002)(346002)(39860400002)(199004)(66446008)(66946007)(64756008)(76116006)(66556008)(66476007)(4270600006)(316002)(558084003)(91956017)(5660300002)(19618925003)(86362001)(52536014)(33656002)(110136005)(55016002)(186003)(2906002)(71200400001)(26005)(8676002)(81156014)(8936002)(81166006)(7696005)(478600001)(9686003)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3535;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5xgT75sIBMQ5RRhegVo0E1bm03gcNVB1YLw6gjUDz10xqqOHv+bm7smHbAiW5dY1ozSkEHElcjRX3HaUXVLJewMObCYa09BO5d4zEFvv58yBZB0akZIGZRKcaDt6IJk6fUsBq9rqzJJM9HyMsZ/wmIjoEcrfdIM35skoXWz0YUNGI1z8xjyozaE+NO6roC5d/rjQT+0zfJ5wl+oqcqriAWWF9XVnee7Cysi0bQdIbad3Jh4mUiLwG2482FtaihI855QNjo3mDEiUbpnlXOEQeaik3HxskFfZVpWArf0DJqfhAu0er1C49nmETdjBg5zgKXagqyteMuhE9jFMAdPgvxQIHvXuNWv1O3fIcy7DLdBnLGi3efFkEwcxvPS4qnH7K7eT/PCkgADOJUk03zpt3ui5LbpSiWwGpVuKHv065YNAd8xDtI6F8e78mF5Jn++o
-x-ms-exchange-antispam-messagedata: 4nL03Gs0dvlF0BSQfMHPxpMFuQuIa/c64jmWsUXqY+bj/+Gs9fRlfAudH41DzdBcGgXbwLqDGh9/Mec7eF5fRShi9airecyIWPQcBy0a5EBa8wZM6dG4F9eNR/okcowAVNes73y4X+INyka4wpHaTQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727302AbgCTPfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Mar 2020 11:35:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34710 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbgCTPfd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Mar 2020 11:35:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D2A7DACB5;
+        Fri, 20 Mar 2020 15:35:31 +0000 (UTC)
+Date:   Fri, 20 Mar 2020 10:35:28 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+        riteshh@linux.ibm.com, linux-ext4@vger.kernel.org,
+        darrick.wong@oracle.com, willy@infradead.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2] iomap: return partial I/O count on error in
+ iomap_dio_bio_actor
+Message-ID: <20200320153528.theulg3fuzmdjhgl@fiona>
+References: <20200319150805.uaggnfue5xgaougx@fiona>
+ <20200320140538.GA27895@infradead.org>
+ <02209ec3-62b4-595f-b84e-2cd8838ac41b@toxicpanda.com>
+ <20200320143500.GA16143@infradead.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b0b5c879-6f64-4295-f63d-08d7cce2de10
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2020 15:25:05.5054
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BUHFwZiAVG9OhUbe/kb3IlJsPKNnSFX14U2dVcYnYlOreauWKcFk11lFU8rOFLNCnxjPPiL+NG2rYlpmVMu0P0EhUr4keQCW19l723Xxjfs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3535
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320143500.GA16143@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,=0A=
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+On  7:35 20/03, Christoph Hellwig wrote:
+> On Fri, Mar 20, 2020 at 10:23:43AM -0400, Josef Bacik wrote:
+> > I'm not sure what you're looking at specifically wrt error handling, but I
+> > can explain __endio_write_update_ordered.
+> > 
+> > Btrfs has ordered extents to keep track of an extent that currently has IO
+> > being done on it.  Generally that IO takes multiple bio's, so we keep track
+> > of the outstanding size of the IO being done, and each bio completes and
+> > thus removes its size from the pending size.  If any one of those bios has
+> > an error we need to make sure we discard the whole ordered extent, as part
+> > of it won't be valid. Just a cursory look at the current code I assume
+> > that's what's confusing you, we call this when we have an error in the
+> > O_DIRECT code.  This is just so we get the proper cleanup for the ordered
+> > extent.  People will wait on the ordered extent to be completed, so if we've
+> > started an ordered extent and aren't able to complete the range we need to
+> > do __endio_write_update_ordered() so that the ordered extent is finished and
+> > we wakeup any waiters.
+> > 
+> > Does this help?  If I need to I can context switch into whatever you're
+> > looking at, but I'm going to avoid looking and hope I can just shout useful
+> > information in your direction ;).  Thanks,
+> 
+> Yes, this helps a lot.  This is about the patches from Goldwyn to
+> convert btrfs to use the iomap direct I/O code.  And in that series
+> he currently calls __endio_write_update_ordered from the ->iomap_end
+> method, which for direct I/O is called after all bios are submitted
+> to complete ordered extents for a range after an I/O error, that
+> is one that no I/O has been submitted to, and the accounting for that
+> is a little complicated..
+
+I think you meant "some" instead of "no".
+
+Yes, keeping the information in iomap->private and setting in
+btrfs_submit_direct() would be better. I will modify the code and
+re-test. Thanks!
+
+-- 
+Goldwyn
