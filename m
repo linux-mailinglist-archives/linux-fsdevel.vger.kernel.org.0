@@ -2,183 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5427B18D943
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 21:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B83018DA79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Mar 2020 22:38:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbgCTU2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 16:28:08 -0400
-Received: from mail-oln040092073048.outbound.protection.outlook.com ([40.92.73.48]:23601
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726789AbgCTU2I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 16:28:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AUUgqrUUln88ANUUUvQGjSLKyi3ilYuiVQadFqA8+HfvSvJ47uj+y1nVIVzdbbAYps9XyPYlJRM52aWVOSayeT8++JL9ZCNgBZz3evUL7PaxEXHjyFvNuE1/ALytWrLoM8JF1SRP7XnwutKJUuPmhT7ckxzhVFFVJjb+l0fF4m/zjefk/QiC5+1pAORVj5gjm81eHEeqiIMT3d8WFcNVwc9MWtGXONdBJVPXchFpcHWaJ6cX89UWXnXgfQqY4jv/Vzq+kJu10naLYiLkVYJ9wDfd9hFucqGHldirJ9FWtbHx4K9T1tNlkQz3BCqKfxCTsYVzhWPNPlNwpXb9hN9aMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jgWquvn4baBcCId3qPbr+AXMrBMu4KzW2n3DRociUBo=;
- b=Gc3nr7sp3h74Bp++N51bGw1ojo6G6nLueEqS5t2KELu5lUoU1NUlswAB33+hxls5DdvhJegC3TKJW0qEoUBc/SkmSxzlOKOMbOQJ1FsOYyn4WJyyDZ5/OxAPkep4etsNanaCDkzT1npNzMsPilvO2qV021+ERh8Oq3R898mou3r56IJMFc5sPkHuTiCNJgzeznN+gKFRU8e8unAdRy0tZM8/78cq6RlLKS8AxbokLih9iglvI9nv4kHrxyae8PAQeOdEuJ40QMvxNW5Yjky1gzc9B1aeBsiX9cyrwp5QU6XmVVJYeCf2e/0kZAEpww2DfvchlNf/mwL1KW6AmD+SJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
- dkim=pass header.d=hotmail.de; arc=none
-Received: from DB3EUR04FT027.eop-eur04.prod.protection.outlook.com
- (2a01:111:e400:7e0c::35) by
- DB3EUR04HT129.eop-eur04.prod.protection.outlook.com (2a01:111:e400:7e0c::353)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Fri, 20 Mar
- 2020 20:27:59 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.24.52) by
- DB3EUR04FT027.mail.protection.outlook.com (10.152.24.122) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.13 via Frontend Transport; Fri, 20 Mar 2020 20:27:59 +0000
-X-IncomingTopHeaderMarker: OriginalChecksum:9943DE238CC11ED958DD6EEB5E7E8B906A6522A3361406D1EB2F3C563FA13DEA;UpperCasedChecksum:A3B114356DFA34BBCB4A71FF2EDB5046E6CEE548119F42A96ECB5D625D7A415B;SizeAsReceived:9419;Count:49
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Fri, 20 Mar 2020
- 20:27:59 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-Subject: [PATCH v6 13/16] perf: Use new infrastructure to fix deadlocks in
- execve
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrei Vagin <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christian Kellner <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-References: <077b63b7-6f5e-aa8e-bf96-a586b481cc46@hotmail.de>
-Message-ID: <AM6PR03MB51704A188C3A1FA02B76B9EFE4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
-Date:   Fri, 20 Mar 2020 21:27:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-In-Reply-To: <077b63b7-6f5e-aa8e-bf96-a586b481cc46@hotmail.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0024.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1c::11) To AM6PR03MB5170.eurprd03.prod.outlook.com
- (2603:10a6:20b:ca::23)
-X-Microsoft-Original-Message-ID: <814716c8-e55c-9725-2957-6233adca1eab@hotmail.de>
+        id S1726851AbgCTViZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Mar 2020 17:38:25 -0400
+Received: from smtprelay0156.hostedemail.com ([216.40.44.156]:37506 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726666AbgCTViZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Mar 2020 17:38:25 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id CC5FF181D341E;
+        Fri, 20 Mar 2020 21:38:23 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:967:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2560:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3865:3866:3867:3868:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6120:7875:7901:7903:9025:10004:10400:10848:11232:11658:11914:12043:12050:12297:12438:12663:12740:12895:13069:13255:13311:13357:13439:13894:14096:14097:14181:14659:14721:21080:21212:21627:21811:21987:30054:30062:30083:30089:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: range27_2c0c3d609a007
+X-Filterd-Recvd-Size: 2461
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 20 Mar 2020 21:38:22 +0000 (UTC)
+Message-ID: <4512dfe1ea1e445a7ce71829d24de97c7fd30266.camel@perches.com>
+Subject: Re: [PATCH v12 8/8] MAINTAINERS: perf: Add pattern that matches ppc
+ perf to the perf entry.
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michal =?ISO-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Fri, 20 Mar 2020 14:36:35 -0700
+In-Reply-To: <20200320163157.GF1922688@smile.fi.intel.com>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+         <cover.1584699455.git.msuchanek@suse.de>
+         <4b150d01c60bd37705789200d9adee9f1c9b50ce.1584699455.git.msuchanek@suse.de>
+         <20200320103350.GV1922688@smile.fi.intel.com>
+         <20200320112338.GP25468@kitsune.suse.cz>
+         <20200320124251.GW1922688@smile.fi.intel.com>
+         <b96c9dd4dba4afca5288a551158659bf545d29fb.camel@perches.com>
+         <20200320163157.GF1922688@smile.fi.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [192.168.1.101] (92.77.140.102) by ZR0P278CA0024.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.15 via Frontend Transport; Fri, 20 Mar 2020 20:27:57 +0000
-X-Microsoft-Original-Message-ID: <814716c8-e55c-9725-2957-6233adca1eab@hotmail.de>
-X-TMN:  [erAy8lrHvTvSUeU+Q+W2v+4jwpYq8xaU]
-X-MS-PublicTrafficType: Email
-X-IncomingHeaderCount: 49
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-Correlation-Id: a06f7948-4214-4332-cbde-08d7cd0d2e85
-X-MS-TrafficTypeDiagnostic: DB3EUR04HT129:
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gQ20l1tI9GTq+kNbvMlQVoBkFeGlytRVV+oZp8CB0QZQACjVZFSvH+3g3mka7gEOT6TdZFK/J3R2QCB3m6//CjDIZkLKr7BB3PCXnaObqlyc8Z+wge8yZaZahLRiuksYyEMh+Z401lZSWxXrEuhPEqAuQJ6HOqTBq7R3o7eexfkviLnokl4b6hXHYMHzOMWu
-X-MS-Exchange-AntiSpam-MessageData: 6hMcdthMTm/IPGHQQOra08JI3+jOxRlYbt1VvvXOwBIkQZiXW5SdmMOn8Ec8pkFWRMiPXvuRHua1xovypkEOdj/hXukfQKQHeqjZIqfAjH35XEnbeLhhmGWRMfTfIlBeNo0uHEpyztcYXszNwgibbg==
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a06f7948-4214-4332-cbde-08d7cd0d2e85
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2020 20:27:59.8411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3EUR04HT129
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This changes perf_event_set_clock to use the new exec_update_mutex
-instead of cred_guard_mutex.
+(removed a bunch of cc's)
 
-This should be safe, as the credentials are only used for reading.
+On Fri, 2020-03-20 at 18:31 +0200, Andy Shevchenko wrote:
+> On Fri, Mar 20, 2020 at 07:42:03AM -0700, Joe Perches wrote:
+> > On Fri, 2020-03-20 at 14:42 +0200, Andy Shevchenko wrote:
+> > > On Fri, Mar 20, 2020 at 12:23:38PM +0100, Michal Suchánek wrote:
+> > > > On Fri, Mar 20, 2020 at 12:33:50PM +0200, Andy Shevchenko wrote:
+> > > > > On Fri, Mar 20, 2020 at 11:20:19AM +0100, Michal Suchanek wrote:
+> > > > > > While at it also simplify the existing perf patterns.
+> > > > > And still missed fixes from parse-maintainers.pl.
+> > > > 
+> > > > Oh, that script UX is truly ingenious.
+> > > 
+> > > You have at least two options, their combinations, etc:
+> > >  - complain to the author :-)
+> > >  - send a patch :-)
+> > 
+> > Recently:
+> > 
+> > https://lore.kernel.org/lkml/4d5291fa3fb4962b1fa55e8fd9ef421ef0c1b1e5.camel@perches.com/
+> 
+> But why?
+> 
+> Shouldn't we rather run MAINTAINERS clean up once and require people to use
+> parse-maintainers.pl for good?
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
----
- kernel/events/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+That can basically only be done by Linus just before he releases
+an RC1.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e453589..71cba8c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1249,7 +1249,7 @@ static void put_ctx(struct perf_event_context *ctx)
-  * function.
-  *
-  * Lock order:
-- *    cred_guard_mutex
-+ *    exec_update_mutex
-  *	task_struct::perf_event_mutex
-  *	  perf_event_context::mutex
-  *	    perf_event::child_mutex;
-@@ -11263,14 +11263,14 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 	}
- 
- 	if (task) {
--		err = mutex_lock_interruptible(&task->signal->cred_guard_mutex);
-+		err = mutex_lock_interruptible(&task->signal->exec_update_mutex);
- 		if (err)
- 			goto err_task;
- 
- 		/*
- 		 * Reuse ptrace permission checks for now.
- 		 *
--		 * We must hold cred_guard_mutex across this and any potential
-+		 * We must hold exec_update_mutex across this and any potential
- 		 * perf_install_in_context() call for this new event to
- 		 * serialize against exec() altering our credentials (and the
- 		 * perf_event_exit_task() that could imply).
-@@ -11559,7 +11559,7 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 	mutex_unlock(&ctx->mutex);
- 
- 	if (task) {
--		mutex_unlock(&task->signal->cred_guard_mutex);
-+		mutex_unlock(&task->signal->exec_update_mutex);
- 		put_task_struct(task);
- 	}
- 
-@@ -11595,7 +11595,7 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 		free_event(event);
- err_cred:
- 	if (task)
--		mutex_unlock(&task->signal->cred_guard_mutex);
-+		mutex_unlock(&task->signal->exec_update_mutex);
- err_task:
- 	if (task)
- 		put_task_struct(task);
-@@ -11900,7 +11900,7 @@ static void perf_event_exit_task_context(struct task_struct *child, int ctxn)
- /*
-  * When a child task exits, feed back event values to parent events.
-  *
-- * Can be called with cred_guard_mutex held when called from
-+ * Can be called with exec_update_mutex held when called from
-  * install_exec_creds().
-  */
- void perf_event_exit_task(struct task_struct *child)
--- 
-1.9.1
+I am for it.  One day...
+
+
