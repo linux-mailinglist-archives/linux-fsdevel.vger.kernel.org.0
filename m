@@ -2,198 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE5318E197
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 14:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3963C18E1C9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 15:20:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgCUNjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Mar 2020 09:39:48 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:57497 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726592AbgCUNjs (ORCPT
+        id S1727197AbgCUOUg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Mar 2020 10:20:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58404 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbgCUOUg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Mar 2020 09:39:48 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 0F7054F5;
-        Sat, 21 Mar 2020 09:39:46 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sat, 21 Mar 2020 09:39:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=fm2; bh=JNxABtUDKau7j2x+5bJNK4DzsK
-        yhR0OlFW6pmzpm3l0=; b=ZmU9uD/V2RWGZKMpJTLqVxhDnzRtIwN+Otrg4mRUOU
-        tgnn85meppuRQ5Il3UUQ7a2DjxLS+ld4VAAnxQRLKr38vrYcJaeKi0L6Mqx07HdO
-        32Wnc+8/dIP+pXy9+0AevJyqs5MRB3hXYj0bFaHEsgfjbqSNgggnzL16NwE0/Zav
-        sVMNWY4GcFrAYjVvnc9SqKpK688jVx94Mn8uzis+896ivLVyBRBgNzNGd7idquAd
-        JEEHRLvaWDsxegOi32izYYgo1fFluAQMBjebQA1jQTKV/uVo3rW1eKZLbjFTcts1
-        XjK/4XUGAJ6lO+H5tTd4sc4po+V0ENaUhdeHYarOeu7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=JNxABt
-        UDKau7j2x+5bJNK4DzsKyhR0OlFW6pmzpm3l0=; b=xlNeHAmNCXMrvPb1lPR5HZ
-        A/wPOXKSGh3pr6A0nyGYj3ZGCqaj3Q7XEwR3cMUOuggrMNUFxYGlDopITO2Z9epk
-        cV79AQPfXQY/WokWPhH4UdCVnCJFhO20Sc4CSr9o8e6X5154xKLpGaD36A2tY1ua
-        0oDbeWko2pJ7CujS+DxLrOuO35FeHCZzeQl0L5AHfNUHaflAAWSdT8+zQXZV270I
-        vORrtnTrifkpm+ugEZMO6UyoQAYSnV5IQXpojiivkBeu+V5Swu0YNYelvyaLkHOf
-        7b7HMPSvtATw5XgKXJJpYC4Sm1fXw43fPQPJawF0QUV/seoLjAbvO8wKOJTZxo5A
-        ==
-X-ME-Sender: <xms:Ihl2Xt6SZxR-DdRGHW5gjALq-6TRVWyMLbg9lnsxSzNhTRZOeF5R1A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudegfedgheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkfgggtgfgsehtqhdttd
-    dtreejnecuhfhrohhmpefpihhkohhlrghushcutfgrthhhuceopfhikhholhgruhhssehr
-    rghthhdrohhrgheqnecukfhppedukeehrdefrdelgedrudelgeenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpefpihhkohhlrghushesrhgrthhh
-    rdhorhhg
-X-ME-Proxy: <xmx:Ihl2Xsxkowl0bwcJsp8SWLabJN79VlBma3qvNA7g_5vzx7T47IMFTw>
-    <xmx:Ihl2XpFv8cVxcqdWfC0-Y2Hwgcap81O1mHbphhHdq5XTTp2YESFmDg>
-    <xmx:Ihl2XkoPHl2uBvp5o6tJPc3u0w6fIezwyE-H7uGKY791hYfwL1eXtA>
-    <xmx:Ihl2XpZC4oocUVrck1Zu4kPbqJbfjMY8s6DpPK4Wwb7xtMfRmDQifw>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 391E93280063;
-        Sat, 21 Mar 2020 09:39:46 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 8AF9727;
-        Sat, 21 Mar 2020 13:39:45 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id EC5F4E0057; Sat, 21 Mar 2020 13:39:37 +0000 (GMT)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Subject: [fuse] Why is readahead=0 limiting read size?
-Mail-Copies-To: never
-Mail-Followup-To: linux-fsdevel@vger.kernel.org, fuse-devel
-        <fuse-devel@lists.sourceforge.net>
-Date:   Sat, 21 Mar 2020 13:39:37 +0000
-Message-ID: <87r1xlesiu.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 21 Mar 2020 10:20:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+Sr4hdl2JYGj/qj46uquqGH8GuBPuP6vt0K3Ty938fs=; b=SmKk9i9rzrb7u4HwKMgPSyIKMi
+        CQ3N9cI0GgUoP1TAxCpeNryOYhMXnrYKpYLlyd1X0dHDRllOHP42VbfYue7Q8MVn0mzJTT3yOk2I1
+        9PKe4wpKnYRpRsRfdnvHgPJEInmQkz3iGXr/NzWDKr0tTcQkUeclPSs4Gsk45ODV/8xEbd+BUaxh0
+        ZJednkPCMvmuDmM5E6/uKaZze1v+8crxrdefpvsIOaulyR0CKpg7/pnUQY7yj4Au8POsrpyrcHW6M
+        LAMJ3zgCz61K1puuI7TemZ7DGuPVa0OnKxnf7pVDXuSCZkGgNtxRIF3Ii0UyvlM7I1zI9RygisWDd
+        F92bxvuA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jFezK-0000eV-Kw; Sat, 21 Mar 2020 14:20:34 +0000
+Date:   Sat, 21 Mar 2020 07:20:34 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] iomap: Submit the BIO at the end of each extent
+Message-ID: <20200321142034.GE4971@bombadil.infradead.org>
+References: <20200320144014.3276-1-willy@infradead.org>
+ <20200320214654.GC6812@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320214654.GC6812@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Mar 20, 2020 at 02:46:54PM -0700, Darrick J. Wong wrote:
+> Hmm, I just received the following stack trace while running generic/418
+> on a v5 filesystem with 1k blocks:
 
-When issuing a 16 kB read request from userspace and the default FUSE
-readahead settings, data is read in batches of 32k:
+I can't persuade this to reproduce on my setup.
 
-$ example/passthrough_ll -d mnt
-FUSE library version: 3.9.1
-unique: 1, opcode: INIT (26), nodeid: 0, insize: 56, pid: 0
-INIT: 7.27
-flags=3D0x003ffffb
-max_readahead=3D0x00020000
-   INIT: 7.31
-   flags=3D0x0000f439
-   max_readahead=3D0x00020000
-   max_write=3D0x00020000
-   max_background=3D0
-   congestion_threshold=3D0
-   time_gran=3D1
-   unique: 1, success, outsize: 80
-unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 44, pid: 20822
-lo_lookup(parent=3D1, name=3Dbin)
-  1/bin -> 140290677541808
-   unique: 2, success, outsize: 144
-unique: 3, opcode: LOOKUP (1), nodeid: 140290677541808, insize: 45, pid: 20=
-822
-lo_lookup(parent=3D140290677541808, name=3Dbash)
-  140290677541808/bash -> 140290677542048
-   unique: 3, success, outsize: 144
-unique: 4, opcode: OPEN (14), nodeid: 140290677542048, insize: 48, pid: 208=
-22
-lo_open(ino=3D140290677542048, flags=3D32768)
-   unique: 4, success, outsize: 32
-unique: 5, opcode: FLUSH (25), nodeid: 140290677542048, insize: 64, pid: 20=
-822
-   unique: 5, success, outsize: 16
-unique: 6, opcode: READ (15), nodeid: 140290677542048, insize: 80, pid: 208=
-22
-lo_read(ino=3D140290677542048, size=3D32768, off=3D0)
-   unique: 6, success, outsize: 32784
-unique: 7, opcode: FLUSH (25), nodeid: 140290677542048, insize: 64, pid: 20=
-822
-   unique: 7, success, outsize: 16
-unique: 8, opcode: RELEASE (18), nodeid: 140290677542048, insize: 64, pid: 0
-   unique: 8, success, outsize: 16
+> FSTYP         -- xfs (debug)
+> PLATFORM      -- Linux/x86_64 alder-mtr01 5.6.0-rc4-djw #rc4 SMP PREEMPT Fri Mar 13 14:48:13 PDT 2020
+> MKFS_OPTIONS  -- -f -m reflink=1,rmapbt=1 -i sparse=1, -b size=1024, /dev/sdd
+> MOUNT_OPTIONS -- -o usrquota,grpquota,prjquota, /dev/sdd /opt
+> 
+> (Note that it seems to do this even with MKFS_OPTIONS='-m crc=0' and
+> empty MOUNT_OPTIONS.)
 
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 bobo-kvm 5.6.0-rc4-00001-g907dfd1bfc6d #2 SMP Fri Mar 20 18:30:53 EDT 2020
+MKFS_OPTIONS  -- -f -m reflink=1,rmapbt=1 -i sparse=1, -b size=1024 /dev/sdc
+MOUNT_OPTIONS -- /dev/sdc /mnt/scratch
 
-However, when disabling readahead, the read size decreases to 4k:
+> [   33.656942] run fstests generic/418 at 2020-03-20 14:42:29
+> [   36.332268] BUG: kernel NULL pointer dereference, address: 0000000000000060
+> [   36.334254] #PF: supervisor read access in kernel mode
+> [   36.334849] #PF: error_code(0x0000) - not-present page
+> [   36.335461] PGD 0 P4D 0 
+> [   36.335779] Oops: 0000 [#1] PREEMPT SMP
+> [   36.336246] CPU: 2 PID: 5144 Comm: dio-invalidate- Not tainted 5.6.0-rc4-djw #rc4
+> [   36.337078] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1ubuntu1 04/01/2014
+> [   36.338069] RIP: 0010:iomap_readpage_actor+0x2ea/0x3c0
+> [   36.338671] Code: 43 10 8b 54 24 24 48 c7 40 38 80 bc 2f 81 48 8b 7b 10 e9 00 ff ff ff 31 c0 48 85 ed 0f 85 c9 fe ff ff 49 8b 46 18 48 8b 2c 24 <8b> 48 60 48 81 c5 ff 0f 00 00 48 c1 ed 0c 81 e1 c0 0c 00 00 e9 12
+> [   36.340705] RSP: 0018:ffffc90004ebb968 EFLAGS: 00010246
+> [   36.341309] RAX: 0000000000000000 RBX: ffffc90004ebbb30 RCX: 000000000000000a
+> [   36.342105] RDX: 0000000000000400 RSI: 0000000000000003 RDI: 0000000000000000
+> [   36.342909] RBP: 0000000000000400 R08: ffffc90004ebb988 R09: ffffc90004ebb98c
+> [   36.343710] R10: 0000000000001000 R11: 0000000000000400 R12: ffffc90004ebba50
+> [   36.344505] R13: 0000000000000086 R14: ffffea0001cd2400 R15: 0000000000000c00
+> [   36.345246] FS:  00007f892894c740(0000) GS:ffff88807e000000(0000) knlGS:0000000000000000
+> [   36.346087] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   36.346696] CR2: 0000000000000060 CR3: 0000000078753005 CR4: 00000000001606a0
+> [   36.347445] Call Trace:
+> [   36.347734]  iomap_readpages_actor+0x1e3/0x250
+> [   36.348699]  iomap_apply+0x12c/0x4e3
+> [   36.349097]  ? iomap_readpage_actor+0x3c0/0x3c0
+> [   36.349593]  ? prep_new_page+0x3f/0x100
+> [   36.350022]  ? iomap_readpage_actor+0x3c0/0x3c0
+> [   36.350519]  iomap_readpages+0xc7/0x2b0
+> [   36.350938]  ? iomap_readpage_actor+0x3c0/0x3c0
+> [   36.351438]  read_pages+0x6e/0x1a0
+> [   36.351824]  __do_page_cache_readahead+0x1c3/0x1e0
+> [   36.352343]  ondemand_readahead+0x210/0x4b0
+> [   36.352797]  generic_file_read_iter+0x871/0xcd0
+> [   36.353365]  ? xfs_file_buffered_aio_read+0x54/0x170 [xfs]
+> [   36.353982]  xfs_file_buffered_aio_read+0x5f/0x170 [xfs]
+> [   36.354591]  xfs_file_read_iter+0xea/0x2a0 [xfs]
+> [   36.355139]  ? xfs_file_write_iter+0xf2/0x1d0 [xfs]
+> [   36.355668]  new_sync_read+0x12d/0x1d0
+> [   36.356085]  vfs_read+0xa6/0x180
+> [   36.356454]  ksys_pread64+0x64/0xa0
+> [   36.356841]  do_syscall_64+0x50/0x1a0
+> [   36.357252]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   36.357792] RIP: 0033:0x7f8928524f64
+> [   36.358189] Code: 15 61 80 20 00 f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 8b 05 aa c4 20 00 49 89 ca 85 c0 75 13 b8 11 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 5c f3 c3 66 90 41 55 41 54 49 89 cd 55 53 49
+> [   36.360053] RSP: 002b:00007fffc7893b18 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+> [   36.360841] RAX: ffffffffffffffda RBX: 0000000000000400 RCX: 00007f8928524f64
+> [   36.361594] RDX: 0000000000000400 RSI: 00005593e3c23000 RDI: 0000000000000003
+> [   36.362344] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000001
+> [   36.363075] R10: 0000000000000000 R11: 0000000000000246 R12: 00005593e3c23000
+> [   36.363817] R13: 0000000000000000 R14: 00005593e3c25000 R15: 0000000000000400
+> [   36.364569] Modules linked in: xfs libcrc32c ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 ip_set_hash_ip ip_set_hash_net xt_tcpudp xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables nfsv4 af_packet
+> [   36.366966] Dumping ftrace buffer:
+> [   36.367351]    (ftrace buffer empty)
+> [   36.367742] CR2: 0000000000000060
+> [   36.369050] ---[ end trace d599586d1259866c ]---
+> [   36.369884] RIP: 0010:iomap_readpage_actor+0x2ea/0x3c0
+> [   36.370694] Code: 43 10 8b 54 24 24 48 c7 40 38 80 bc 2f 81 48 8b 7b 10 e9 00 ff ff ff 31 c0 48 85 ed 0f 85 c9 fe ff ff 49 8b 46 18 48 8b 2c 24 <8b> 48 60 48 81 c5 ff 0f 00 00 48 c1 ed 0c 81 e1 c0 0c 00 00 e9 12
+> [   36.373022] RSP: 0018:ffffc90004ebb968 EFLAGS: 00010246
+> [   36.373615] RAX: 0000000000000000 RBX: ffffc90004ebbb30 RCX: 000000000000000a
+> [   36.374362] RDX: 0000000000000400 RSI: 0000000000000003 RDI: 0000000000000000
+> [   36.375100] RBP: 0000000000000400 R08: ffffc90004ebb988 R09: ffffc90004ebb98c
+> [   36.375833] R10: 0000000000001000 R11: 0000000000000400 R12: ffffc90004ebba50
+> [   36.376577] R13: 0000000000000086 R14: ffffea0001cd2400 R15: 0000000000000c00
+> [   36.377322] FS:  00007f892894c740(0000) GS:ffff88807e000000(0000) knlGS:0000000000000000
+> [   36.378190] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   36.378795] CR2: 0000000000000060 CR3: 0000000078753005 CR4: 00000000001606a0
 
+This doesn't entirely match your backtrace, but this looks wrong:
 
-$ example/passthrough_ll -d mnt
-FUSE library version: 3.9.1
-unique: 1, opcode: INIT (26), nodeid: 0, insize: 56, pid: 0
-INIT: 7.27
-flags=3D0x003ffffb
-max_readahead=3D0x00020000
-   INIT: 7.31
-   flags=3D0x0000f439
-   max_readahead=3D0x00000000
-   max_write=3D0x00020000
-   max_background=3D0
-   congestion_threshold=3D0
-   time_gran=3D1
-   unique: 1, success, outsize: 80
-unique: 2, opcode: LOOKUP (1), nodeid: 1, insize: 44, pid: 20911
-lo_lookup(parent=3D1, name=3Dbin)
-  1/bin -> 140509922200528
-   unique: 2, success, outsize: 144
-unique: 3, opcode: LOOKUP (1), nodeid: 140509922200528, insize: 45, pid: 20=
-911
-lo_lookup(parent=3D140509922200528, name=3Dbash)
-  140509922200528/bash -> 140510056418784
-   unique: 3, success, outsize: 144
-unique: 4, opcode: OPEN (14), nodeid: 140510056418784, insize: 48, pid: 209=
-11
-lo_open(ino=3D140510056418784, flags=3D32768)
-   unique: 4, success, outsize: 32
-unique: 5, opcode: FLUSH (25), nodeid: 140510056418784, insize: 64, pid: 20=
-911
-   unique: 5, success, outsize: 16
-unique: 6, opcode: READ (15), nodeid: 140510056418784, insize: 80, pid: 209=
-11
-lo_read(ino=3D140510056418784, size=3D4096, off=3D0)
-   unique: 6, success, outsize: 4112
-unique: 7, opcode: READ (15), nodeid: 140510056418784, insize: 80, pid: 209=
-11
-lo_read(ino=3D140510056418784, size=3D4096, off=3D4096)
-   unique: 7, success, outsize: 4112
-unique: 8, opcode: READ (15), nodeid: 140510056418784, insize: 80, pid: 209=
-11
-lo_read(ino=3D140510056418784, size=3D4096, off=3D8192)
-   unique: 8, success, outsize: 4112
-unique: 9, opcode: READ (15), nodeid: 140510056418784, insize: 80, pid: 209=
-11
-lo_read(ino=3D140510056418784, size=3D4096, off=3D12288)
-   unique: 9, success, outsize: 4112
-unique: 10, opcode: FLUSH (25), nodeid: 140510056418784, insize: 64, pid: 2=
-0911
-   unique: 10, success, outsize: 16
-unique: 11, opcode: RELEASE (18), nodeid: 140510056418784, insize: 64, pid:=
- 0
-   unique: 11, success, outsize: 16
+                if (ctx->is_readahead) /* same as readahead_gfp_mask */
+                        gfp |= __GFP_NORETRY | __GFP_NOWARN;
+                ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
+                ctx->bio->bi_opf = REQ_OP_READ;
 
+If we're specifying NORETRY, then we have to handle bio_alloc() failure
+here, right?  I say it doesn't entirely match because you've got a read
+from an offset of 0x60, and every access here is a write.
 
-
-Is that intentional? If so, why?
-
-Is there any way to get larger read requests without also enabling
-readahead?
-
-(I am generating the userspace request with
-
-$ dd if=3D<mountpoint>/bin/bash of=3D/dev/null bs=3D16k count=3D1)
-
-
-Best,
--Nikolaus
-
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
