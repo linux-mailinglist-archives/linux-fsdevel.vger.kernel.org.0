@@ -2,188 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8A218DDB6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 03:47:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C4718DE39
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 06:50:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbgCUCrL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Mar 2020 22:47:11 -0400
-Received: from mail-am6eur05olkn2059.outbound.protection.outlook.com ([40.92.91.59]:37472
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726840AbgCUCrK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Mar 2020 22:47:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dNTjLty013s8Td+o6PdoUKlWu8Y33c2a0O6Rlc2GxuLtf9xX3tlfinv5UtzENmJ+ik60a9TNWhBnfx4ZCsmUGlFql5gB5BmyCeqE7tHPIE8maHGpbhNtSdTUx1Czozdnk+9KKjmQwB+VRP5E/NpDiivRUJpzmQ2erD5TDfGf71tUVq3VeUez8izBFlOZFeHnmcnoWOKrUEIUsgQOFd8SXL2p9PThLxTXxLqAqGog23ayLXQewffKB+PhRVGsdzC1h9+SbEXwGMcLQy5FWgG8/5J38oJuAat4j9s2tnJOSKMLMngFX4JRwWkxzmE/bmyA8WXO4aBh7jBbOXCYnAdGLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fMxz+RuV9RQMUxgG0UAnwQ7e+XVLgekPkpYVpUFheXA=;
- b=BTUOB/kDKAuGJgnIGBVF/H88+AgdugmdNO2fjW3R997zrCNyqocoDrhU8b7nn2e0lCEYU7stApDojpPJuIhyl46CXOQ7IovrS5EI1wuti+M+DTbdHo7I+PT/IyUVtEqPM7Pt5oNUDVwDY46cyLJq3y/PoSD1agVJ8YVN2j0kG53oTX5vb5iZc9bnCa/anTu6TeMOwmowrBPBJ7cE2805jMxZKX1UfHV4FM4mTv2HXa57KFxuEu3fmUF5+V9Iu/h7Oc0eoXyY55YtT3gKxMLP6+mK1wYi/jk1avjf47R099dVeCTRo1bPv0KwmFCV/RzAFi0ikX9DrTfBuGK/IW7L3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from VI1EUR05FT062.eop-eur05.prod.protection.outlook.com
- (2a01:111:e400:fc12::33) by
- VI1EUR05HT022.eop-eur05.prod.protection.outlook.com (2a01:111:e400:fc12::77)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2814.13; Sat, 21 Mar
- 2020 02:47:04 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.233.242.53) by
- VI1EUR05FT062.mail.protection.outlook.com (10.233.243.189) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.13 via Frontend Transport; Sat, 21 Mar 2020 02:47:04 +0000
-Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd]) by AM6PR03MB5170.eurprd03.prod.outlook.com
- ([fe80::1956:d274:cab3:b4dd%6]) with mapi id 15.20.2835.017; Sat, 21 Mar 2020
- 02:47:04 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Kees Cook <keescook@chromium.org>,
-        "jannh@google.com" <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "avagin@gmail.com" <avagin@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "duyuyang@gmail.com" <duyuyang@gmail.com>,
-        David Hildenbrand <david@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "christian@kellner.me" <christian@kellner.me>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Subject: [PATCH v6 16/16] doc: Update documentation of ->exec_*_mutex
-Thread-Topic: [PATCH v6 16/16] doc: Update documentation of ->exec_*_mutex
-Thread-Index: AQHV/vVmRRuSYR3ND0imHjEGSGoE8w==
-Date:   Sat, 21 Mar 2020 02:47:04 +0000
-Message-ID: <3ce46b88-7ed3-2f21-c0ed-8f6055d38ebb@hotmail.de>
-References: <077b63b7-6f5e-aa8e-bf96-a586b481cc46@hotmail.de>
-In-Reply-To: <077b63b7-6f5e-aa8e-bf96-a586b481cc46@hotmail.de>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-imapappendstamp: AM6PR03MB5170.eurprd03.prod.outlook.com
- (15.20.2835.016)
-x-incomingtopheadermarker: OriginalChecksum:D59A7125C1ECEE8EC38414552399C105A4F8B87DB3BC2846933447E6B527A079;UpperCasedChecksum:E01611456461A8E7B89DB78136D189B18EE3BAEFD2C60D65FA6942FBE887FA2F;SizeAsReceived:8475;Count:46
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [FSjQ7o0dBOcWLZIQbDVvCPMI4Lsxt0vu]
-x-ms-publictraffictype: Email
-x-incomingheadercount: 46
-x-eopattributedmessage: 0
-x-ms-office365-filtering-correlation-id: 366a69d2-1471-4b70-ba6d-08d7cd4223d8
-x-ms-traffictypediagnostic: VI1EUR05HT022:
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Q34OtT4FVmQK6n7e6GU4FNGkL06IEggWsiG7zRTqKZmX/Baf/5sXo3UPD5hyeKYXdHGV/Pmmfs7u1R/VyKmieckq5Jwgh2brCqmxWvamD7/EcAi9A3HZKbXGO9YKZME83zIji5FZufAEneTII4UvSeqTA7Zio4Fkz06ZDyJl9OG69/MN1kTy07pZrxLj/TLT
-x-ms-exchange-antispam-messagedata: mDB3dAqm/a2K6L0KmfdLOaVkB8BPHaNYy4wU0us/yCkizMj3ebSqd7DXb2TCopp+zepvraJQwCtJonNOQIuJjry/qaA105bGyLTKYZqN/4Ak/p2mh0WXx6solgw5jaRgooiijgaH4nXgmqGnTu/U8g==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <4175CD035CA92C46A2291553CAB5F9B9@sct-15-20-2387-20-msonline-outlook-45755.templateTenant>
-Content-Transfer-Encoding: 8BIT
+        id S1727893AbgCUFuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Mar 2020 01:50:14 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:38043 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbgCUFuN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 21 Mar 2020 01:50:13 -0400
+Received: by mail-io1-f70.google.com with SMTP id x20so5920873iox.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Mar 2020 22:50:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Ro/B9jenTZO+tdDGyTIWCstmRnpqPpcDs+7mvrNB3nY=;
+        b=IhOgRNQsxKCnReOJoB///5/riOnTPRsBkO8dbnNUcDKnHey9fvEslQyWsfgBR6s6cT
+         /8A8+oml22GCSgc/6olGyVZJZ7XKhpczIW+7bSqBJ4BWpFnA5RScoHijHIE9UXiYKql+
+         cC6cQLniEMgTjt0i0ZZMI/aZl+K//dFG9eV0GhOmWoTSVZzP5OOZb8aJoiQDc6iXkpPV
+         4owZ2OBVel2UwxwaaQGSjkg7AWxtGEl9UbvqlJlctRe6wyQKTJM/4N36aiJkTt5SA8Hd
+         VErTcN0rBDVtiaH+qvqYh6jzYezhS+y4FAoVftBwI+VuwGWrVyYriTmemKwhctOYy8iq
+         cHbg==
+X-Gm-Message-State: ANhLgQ39ycZgadn8wpxNukZZ4y56i9nHI5twyB3hxIAty3OeExornT8Q
+        XRK9CDN9RH9p+gF8bikNt1zhztOV0YF8IapZWiHu+aqeC2b4
+X-Google-Smtp-Source: ADFU+vuLFUrKMFhhz0YD9MWpxOqaiweOznxlVJRJ09oE1bGKoGNbIeFDq0OV7pNU426bT0/FcqjdiecKf+U6IThLJwjvV/oVq75E
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 366a69d2-1471-4b70-ba6d-08d7cd4223d8
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2020 02:47:04.8066
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1EUR05HT022
+X-Received: by 2002:a92:5ccd:: with SMTP id d74mr11187208ilg.59.1584769812467;
+ Fri, 20 Mar 2020 22:50:12 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 22:50:12 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b9175f05a156f991@google.com>
+Subject: INFO: task hung in io_queue_file_removal
+From:   syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This brings the outdated Documentation/security/credentials.rst
-back in line with the current implementation, and describes the
-purpose of current->signal->exec_update_mutex,
-current->signal->exec_guard_mutex and
-current->signal->unsafe_execve_in_progress.
+Hello,
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+syzbot found the following crash on:
+
+HEAD commit:    cd607737 Merge tag '5.6-rc6-smb3-fixes' of git://git.samba..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1730c023e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9f894bd92023de02
+dashboard link: https://syzkaller.appspot.com/bug?extid=538d1957ce178382a394
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108ebbe3e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139fb973e00000
+
+The bug was bisected to:
+
+commit 05f3fb3c5397524feae2e73ee8e150a9090a7da2
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Mon Dec 9 18:22:50 2019 +0000
+
+    io_uring: avoid ring quiesce for fixed file set unregister and update
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1237ad73e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=1137ad73e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1637ad73e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+538d1957ce178382a394@syzkaller.appspotmail.com
+Fixes: 05f3fb3c5397 ("io_uring: avoid ring quiesce for fixed file set unregister and update")
+
+INFO: task syz-executor975:9880 blocked for more than 143 seconds.
+      Not tainted 5.6.0-rc6-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor975 D27576  9880   9878 0x80004000
+Call Trace:
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4154
+ schedule_timeout+0x6db/0xba0 kernel/time/timer.c:1871
+ do_wait_for_common kernel/sched/completion.c:83 [inline]
+ __wait_for_common kernel/sched/completion.c:104 [inline]
+ wait_for_common kernel/sched/completion.c:115 [inline]
+ wait_for_completion+0x26a/0x3c0 kernel/sched/completion.c:136
+ io_queue_file_removal+0x1af/0x1e0 fs/io_uring.c:5826
+ __io_sqe_files_update.isra.0+0x3a1/0xb00 fs/io_uring.c:5867
+ io_sqe_files_update fs/io_uring.c:5918 [inline]
+ __io_uring_register+0x377/0x2c00 fs/io_uring.c:7131
+ __do_sys_io_uring_register fs/io_uring.c:7202 [inline]
+ __se_sys_io_uring_register fs/io_uring.c:7184 [inline]
+ __x64_sys_io_uring_register+0x192/0x560 fs/io_uring.c:7184
+ do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440659
+Code: Bad RIP value.
+RSP: 002b:00007ffc4689a358 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00007ffc4689a360 RCX: 0000000000440659
+RDX: 0000000020000300 RSI: 0000000000000006 RDI: 0000000000000003
+RBP: 0000000000000005 R08: 0000000000000001 R09: 00007ffc46890031
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401f40
+R13: 0000000000401fd0 R14: 0000000000000000 R15: 0000000000000000
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1137:
+ #0: ffffffff897accc0 (rcu_read_lock){....}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5331
+1 lock held by rsyslogd/9761:
+ #0: ffff8880a8f3ada0 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xe3/0x100 fs/file.c:821
+2 locks held by getty/9850:
+ #0: ffff88809fad3090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc900017bb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9851:
+ #0: ffff8880a7b96090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc900017cb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9852:
+ #0: ffff88809e41c090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc900017eb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9853:
+ #0: ffff888090392090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc900017ab2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9854:
+ #0: ffff88809fb1b090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc900017db2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9855:
+ #0: ffff88809a302090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc9000178b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+2 locks held by getty/9856:
+ #0: ffff88809d9dc090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
+ #1: ffffc9000172b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
+1 lock held by syz-executor975/9880:
+ #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __do_sys_io_uring_register fs/io_uring.c:7201 [inline]
+ #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __se_sys_io_uring_register fs/io_uring.c:7184 [inline]
+ #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __x64_sys_io_uring_register+0x181/0x560 fs/io_uring.c:7184
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1137 Comm: khungtaskd Not tainted 5.6.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
+ watchdog+0xa8c/0x1010 kernel/hung_task.c:289
+ kthread+0x357/0x430 kernel/kthread.c:255
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:60
+
+
 ---
- Documentation/security/credentials.rst | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
-index 282e79f..fe4cd76 100644
---- a/Documentation/security/credentials.rst
-+++ b/Documentation/security/credentials.rst
-@@ -437,15 +437,30 @@ new set of credentials by calling::
- 
- 	struct cred *prepare_creds(void);
- 
--this locks current->cred_replace_mutex and then allocates and constructs a
--duplicate of the current process's credentials, returning with the mutex still
--held if successful.  It returns NULL if not successful (out of memory).
-+this allocates and constructs a duplicate of the current process's credentials.
-+It returns NULL if not successful (out of memory).
-+
-+If called from __do_execve_file, the mutex current->signal->exec_guard_mutex
-+is acquired before this function gets called, and usually released after
-+the new process mmap and credentials are installed.  However if one of the
-+sibling threads are being traced when the execve is invoked, there is no
-+guarantee how long it takes to terminate all sibling threads, and therefore
-+the variable current->signal->unsafe_execve_in_progress is set, and the
-+exec_guard_mutex is released immediately.  Functions that may have effect
-+on the credentials of a different thread need to lock the exec_guard_mutex
-+and additionally check the unsafe_execve_in_progress status, and fail with
-+-EAGAIN if that variable is set.
- 
- The mutex prevents ``ptrace()`` from altering the ptrace state of a process
- while security checks on credentials construction and changing is taking place
- as the ptrace state may alter the outcome, particularly in the case of
- ``execve()``.
- 
-+The mutex current->signal->exec_update_mutex is acquired when only a single
-+thread is remaining, and the credentials and the process mmap are actually
-+changed.  Functions that only need to access to a consistent state of the
-+credentials and the process mmap do only need to aquire this mutex.
-+
- The new credentials set should be altered appropriately, and any security
- checks and hooks done.  Both the current and the proposed sets of credentials
- are available for this purpose as current_cred() will return the current set
-@@ -466,9 +481,8 @@ by calling::
- 
- This will alter various aspects of the credentials and the process, giving the
- LSM a chance to do likewise, then it will use ``rcu_assign_pointer()`` to
--actually commit the new credentials to ``current->cred``, it will release
--``current->cred_replace_mutex`` to allow ``ptrace()`` to take place, and it
--will notify the scheduler and others of the changes.
-+actually commit the new credentials to ``current->cred``, and it will notify
-+the scheduler and others of the changes.
- 
- This function is guaranteed to return 0, so that it can be tail-called at the
- end of such functions as ``sys_setresuid()``.
-@@ -486,8 +500,7 @@ invoked::
- 
- 	void abort_creds(struct cred *new);
- 
--This releases the lock on ``current->cred_replace_mutex`` that
--``prepare_creds()`` got and then releases the new credentials.
-+This releases the new credentials.
- 
- 
- A typical credentials alteration function would look something like this::
--- 
-1.9.1
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
