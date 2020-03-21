@@ -2,164 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C4718DE39
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 06:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D9E18DF5F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Mar 2020 11:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbgCUFuO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Mar 2020 01:50:14 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38043 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbgCUFuN (ORCPT
+        id S1727369AbgCUKSF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Mar 2020 06:18:05 -0400
+Received: from forwardcorp1o.mail.yandex.net ([95.108.205.193]:36876 "EHLO
+        forwardcorp1o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727052AbgCUKSF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Mar 2020 01:50:13 -0400
-Received: by mail-io1-f70.google.com with SMTP id x20so5920873iox.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Mar 2020 22:50:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Ro/B9jenTZO+tdDGyTIWCstmRnpqPpcDs+7mvrNB3nY=;
-        b=IhOgRNQsxKCnReOJoB///5/riOnTPRsBkO8dbnNUcDKnHey9fvEslQyWsfgBR6s6cT
-         /8A8+oml22GCSgc/6olGyVZJZ7XKhpczIW+7bSqBJ4BWpFnA5RScoHijHIE9UXiYKql+
-         cC6cQLniEMgTjt0i0ZZMI/aZl+K//dFG9eV0GhOmWoTSVZzP5OOZb8aJoiQDc6iXkpPV
-         4owZ2OBVel2UwxwaaQGSjkg7AWxtGEl9UbvqlJlctRe6wyQKTJM/4N36aiJkTt5SA8Hd
-         VErTcN0rBDVtiaH+qvqYh6jzYezhS+y4FAoVftBwI+VuwGWrVyYriTmemKwhctOYy8iq
-         cHbg==
-X-Gm-Message-State: ANhLgQ39ycZgadn8wpxNukZZ4y56i9nHI5twyB3hxIAty3OeExornT8Q
-        XRK9CDN9RH9p+gF8bikNt1zhztOV0YF8IapZWiHu+aqeC2b4
-X-Google-Smtp-Source: ADFU+vuLFUrKMFhhz0YD9MWpxOqaiweOznxlVJRJ09oE1bGKoGNbIeFDq0OV7pNU426bT0/FcqjdiecKf+U6IThLJwjvV/oVq75E
+        Sat, 21 Mar 2020 06:18:05 -0400
+Received: from mxbackcorp1o.mail.yandex.net (mxbackcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::301])
+        by forwardcorp1o.mail.yandex.net (Yandex) with ESMTP id A1CE02E1471;
+        Sat, 21 Mar 2020 13:18:00 +0300 (MSK)
+Received: from iva4-7c3d9abce76c.qloud-c.yandex.net (iva4-7c3d9abce76c.qloud-c.yandex.net [2a02:6b8:c0c:4e8e:0:640:7c3d:9abc])
+        by mxbackcorp1o.mail.yandex.net (mxbackcorp/Yandex) with ESMTP id YtLecgDI86-HxAehnBO;
+        Sat, 21 Mar 2020 13:18:00 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1584785880; bh=qBScgYCZjZTlIpm/AdZDrRFl7YnlFGv41LveLZYaOxs=;
+        h=In-Reply-To:Message-ID:From:Date:References:To:Subject:Cc;
+        b=Na2YlNyAY45EcKPYHXLhelGXdR0Fx1EPBQijjQr63f3fU7LBbX6C5VBbZyS7VLaU7
+         xzomeNK71b4GO0HSSn8ADmiIhRSMWJEHrK1Nj2YhC08JSCEe1k0w4c/cAa9n8t2gt/
+         sCkxKxbmtqIBQ2YKg4Xz6m2GGCw8HVaa5PKo5x68=
+Authentication-Results: mxbackcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from unknown (unknown [2a02:6b8:b081:918::1:1])
+        by iva4-7c3d9abce76c.qloud-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 8ruPl76BlO-HxceQfsw;
+        Sat, 21 Mar 2020 13:17:59 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH 00/11] fs/dcache: Limit # of negative dentries
+To:     Matthew Wilcox <willy@infradead.org>,
+        Waiman Long <longman@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Eric Sandeen <sandeen@redhat.com>
+References: <20200226161404.14136-1-longman@redhat.com>
+ <20200315034640.GV22433@bombadil.infradead.org>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <6fcf86e9-8555-b86b-17f0-cc15217d834e@yandex-team.ru>
+Date:   Sat, 21 Mar 2020 13:17:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-Received: by 2002:a92:5ccd:: with SMTP id d74mr11187208ilg.59.1584769812467;
- Fri, 20 Mar 2020 22:50:12 -0700 (PDT)
-Date:   Fri, 20 Mar 2020 22:50:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b9175f05a156f991@google.com>
-Subject: INFO: task hung in io_queue_file_removal
-From:   syzbot <syzbot+538d1957ce178382a394@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200315034640.GV22433@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 15/03/2020 06.46, Matthew Wilcox wrote:
+> On Wed, Feb 26, 2020 at 11:13:53AM -0500, Waiman Long wrote:
+>> As there is no limit for negative dentries, it is possible that a sizeable
+>> portion of system memory can be tied up in dentry cache slabs. Dentry slabs
+>> are generally recalimable if the dentries are in the LRUs. Still having
+>> too much memory used up by dentries can be problematic:
+>>
+>>   1) When a filesystem with too many negative dentries is being unmounted,
+>>      the process of draining the dentries associated with the filesystem
+>>      can take some time. To users, the system may seem to hang for
+>>      a while.  The long wait may also cause unexpected timeout error or
+>>      other warnings.  This can happen when a long running container with
+>>      many negative dentries is being destroyed, for instance.
+>>
+>>   2) Tying up too much memory in unused negative dentries means there
+>>      are less memory available for other use. Even though the kernel is
+>>      able to reclaim unused dentries when running out of free memory,
+>>      it will still introduce additional latency to the application
+>>      reducing its performance.
+> 
+> There's a third problem, which is that having a lot of negative dentries
+> can clog the hash chains.  I tried to quantify this, and found a weird result:
 
-syzbot found the following crash on:
+Yep. I've seen this in the wild. Server hard too much unused memory.
 
-HEAD commit:    cd607737 Merge tag '5.6-rc6-smb3-fixes' of git://git.samba..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1730c023e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f894bd92023de02
-dashboard link: https://syzkaller.appspot.com/bug?extid=538d1957ce178382a394
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108ebbe3e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139fb973e00000
+https://lore.kernel.org/lkml/ff0993a2-9825-304c-6a5b-2e9d4b940032@yandex-team.ru/T/#u
 
-The bug was bisected to:
+---quote---
 
-commit 05f3fb3c5397524feae2e73ee8e150a9090a7da2
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon Dec 9 18:22:50 2019 +0000
+I've seen problem on large server where horde of negative dentries
+slowed down all lookups significantly:
 
-    io_uring: avoid ring quiesce for fixed file set unregister and update
+watchdog: BUG: soft lockup - CPU#25 stuck for 22s! [atop:968884] at __d_lookup_rcu+0x6f/0x190
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1237ad73e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1137ad73e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1637ad73e00000
+slabtop:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+538d1957ce178382a394@syzkaller.appspotmail.com
-Fixes: 05f3fb3c5397 ("io_uring: avoid ring quiesce for fixed file set unregister and update")
+    OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+85118166 85116916   0%    0.19K 2026623       42  16212984K dentry
+16577106 16371723   0%    0.10K 425054       39   1700216K buffer_head
+935850 934379   0%    1.05K  31195       30    998240K ext4_inode_cache
+663740 654967   0%    0.57K  23705       28    379280K radix_tree_node
+399987 380055   0%    0.65K   8163       49    261216K proc_inode_cache
+226380 168813   0%    0.19K   5390       42     43120K cred_jar
+   70345  65721   0%    0.58K   1279       55     40928K inode_cache
+105927  43314   0%    0.31K   2077       51     33232K filp
+630972 601503   0%    0.04K   6186      102     24744K ext4_extent_status
+    5848   4269   0%    3.56K    731        8     23392K task_struct
+   16224  11531   0%    1.00K    507       32     16224K kmalloc-1024
+    6752   5833   0%    2.00K    422       16     13504K kmalloc-2048
+199680 158086   0%    0.06K   3120       64     12480K anon_vma_chain
+156128 154751   0%    0.07K   2788       56     11152K Acpi-Operand
 
-INFO: task syz-executor975:9880 blocked for more than 143 seconds.
-      Not tainted 5.6.0-rc6-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor975 D27576  9880   9878 0x80004000
-Call Trace:
- schedule+0xd0/0x2a0 kernel/sched/core.c:4154
- schedule_timeout+0x6db/0xba0 kernel/time/timer.c:1871
- do_wait_for_common kernel/sched/completion.c:83 [inline]
- __wait_for_common kernel/sched/completion.c:104 [inline]
- wait_for_common kernel/sched/completion.c:115 [inline]
- wait_for_completion+0x26a/0x3c0 kernel/sched/completion.c:136
- io_queue_file_removal+0x1af/0x1e0 fs/io_uring.c:5826
- __io_sqe_files_update.isra.0+0x3a1/0xb00 fs/io_uring.c:5867
- io_sqe_files_update fs/io_uring.c:5918 [inline]
- __io_uring_register+0x377/0x2c00 fs/io_uring.c:7131
- __do_sys_io_uring_register fs/io_uring.c:7202 [inline]
- __se_sys_io_uring_register fs/io_uring.c:7184 [inline]
- __x64_sys_io_uring_register+0x192/0x560 fs/io_uring.c:7184
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440659
-Code: Bad RIP value.
-RSP: 002b:00007ffc4689a358 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00007ffc4689a360 RCX: 0000000000440659
-RDX: 0000000020000300 RSI: 0000000000000006 RDI: 0000000000000003
-RBP: 0000000000000005 R08: 0000000000000001 R09: 00007ffc46890031
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000401f40
-R13: 0000000000401fd0 R14: 0000000000000000 R15: 0000000000000000
+Total RAM is 256 GB
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/1137:
- #0: ffffffff897accc0 (rcu_read_lock){....}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5331
-1 lock held by rsyslogd/9761:
- #0: ffff8880a8f3ada0 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xe3/0x100 fs/file.c:821
-2 locks held by getty/9850:
- #0: ffff88809fad3090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc900017bb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9851:
- #0: ffff8880a7b96090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc900017cb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9852:
- #0: ffff88809e41c090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc900017eb2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9853:
- #0: ffff888090392090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc900017ab2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9854:
- #0: ffff88809fb1b090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc900017db2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9855:
- #0: ffff88809a302090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc9000178b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-2 locks held by getty/9856:
- #0: ffff88809d9dc090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:267
- #1: ffffc9000172b2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x21d/0x1b30 drivers/tty/n_tty.c:2156
-1 lock held by syz-executor975/9880:
- #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __do_sys_io_uring_register fs/io_uring.c:7201 [inline]
- #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __se_sys_io_uring_register fs/io_uring.c:7184 [inline]
- #0: ffff88808f392320 (&ctx->uring_lock){+.+.}, at: __x64_sys_io_uring_register+0x181/0x560 fs/io_uring.c:7184
+These dentries came from temporary files created and deleted by postgres.
+But this could be easily reproduced by lookup of non-existent files.
 
-=============================================
+Of course, memory pressure easily washes them away.
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 1137 Comm: khungtaskd Not tainted 5.6.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x188/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
- nmi_trigger_cpumask_backtrace+0x231/0x27e lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
- watchdog+0xa8c/0x1010 kernel/hung_task.c:289
- kthread+0x357/0x430 kernel/kthread.c:255
- ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:60
+Similar problem happened before around proc sysctl entries:
+https://lkml.org/lkml/2017/2/10/47
 
+This one does not concentrate in one bucket and needs much more memory.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Looks like dcache needs some kind of background shrinker started
+when dcache size or fraction of negative dentries exceeds some threshold.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+---end---
+
+> > root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.402s
+> user	0m4.361s
+> sys	0m1.230s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.572s
+> user	0m4.337s
+> sys	0m1.407s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.607s
+> user	0m4.522s
+> sys	0m1.342s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.599s
+> user	0m4.472s
+> sys	0m1.369s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.574s
+> user	0m4.498s
+> sys	0m1.300s
+> 
+> Pretty consistent system time, between about 1.3 and 1.4 seconds.
+> 
+> root@bobo-kvm:~# grep dentry /proc/slabinfo
+> dentry             20394  21735    192   21    1 : tunables    0    0    0 : slabdata   1035   1035      0
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m5.515s
+> user	0m4.353s
+> sys	0m1.359s
+> 
+> At this point, we have 20k dentries allocated.
+> 
+> Now, pollute the dcache with names that don't exist:
+> 
+> root@bobo-kvm:~# for i in `seq 1 100000`; do cat /dev/null$i >/dev/zero; done 2>/dev/null
+> root@bobo-kvm:~# grep dentry /proc/slabinfo
+> dentry             20605  21735    192   21    1 : tunables    0    0    0 : slabdata   1035   1035      0
+> 
+> Huh.  We've kept the number of dentries pretty constant.  Still, maybe the
+> bad dentries have pushed out the good ones.
+> 
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m6.644s
+> user	0m4.921s
+> sys	0m1.946s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m6.676s
+> user	0m5.004s
+> sys	0m1.909s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m6.662s
+> user	0m4.980s
+> sys	0m1.916s
+> root@bobo-kvm:~# time for i in `seq 1 10000`; do cat /dev/null >/dev/zero; done
+> real	0m6.714s
+> user	0m4.973s
+> sys	0m1.986s
+> 
+> Well, we certainly made it suck.  Up to a pretty consistent 1.9-2.0 seconds
+> of kernel time, or 50% worse.  We've also made user time worse, somehow.
+> 
+> Anyhow, I should write a proper C program to measure this.  But I thought
+> I'd share this raw data with you now to demonstrate that dcache pollution
+> is a real problem today, even on a machine with 2GB.
+> 
+
