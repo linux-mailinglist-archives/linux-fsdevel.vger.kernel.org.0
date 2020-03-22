@@ -2,137 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F58618E658
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 04:56:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 277C818E74F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 08:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbgCVD4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Mar 2020 23:56:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727916AbgCVD4W (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Mar 2020 23:56:22 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99DBC206F9;
-        Sun, 22 Mar 2020 03:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584849381;
-        bh=gEc6ll7k79SRCcvS6bS5pbS5Jt64kHUc3E7gUSK61Ho=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EN2BNrlCb/Q42OYuKnxqahlx5WoCaHSKqlejwHpr/DZeD9Q2d298cKCbT0A9tRZ1p
-         ZTdg3+7c+9amjHC+3wshxvi/KuFZhG8YZp7gJJ0lXMs5zdZy4xT//gCqPOp9wK7yuj
-         CToyyyZtMKnvxs5Zo3cikHjwQ8F05T2LUZOWLc+s=
-Date:   Sat, 21 Mar 2020 20:56:20 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, rafael@kernel.org,
-        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
-Message-ID: <20200322035620.GB111151@sol.localdomain>
-References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
- <20200308023849.988264-1-ebiggers@kernel.org>
- <20200313164511.GB907@sol.localdomain>
- <20200318163940.GB2334@sol.localdomain>
+        id S1725971AbgCVHOY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Mar 2020 03:14:24 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56774 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbgCVHOY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 22 Mar 2020 03:14:24 -0400
+Received: from 185.80.35.16 (185.80.35.16) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.341)
+ id 9dd6359b34936204; Sun, 22 Mar 2020 08:14:22 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Domenico Andreoli <domenico.andreoli@linux.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] hibernate: Allow uswsusp to write to swap
+Date:   Sun, 22 Mar 2020 08:14:21 +0100
+Message-ID: <5202091.FuziMeULnI@kreacher>
+In-Reply-To: <20200304170646.GA31552@dumbo>
+References: <20200304170646.GA31552@dumbo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200318163940.GB2334@sol.localdomain>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 09:39:40AM -0700, Eric Biggers wrote:
-> On Fri, Mar 13, 2020 at 09:45:11AM -0700, Eric Biggers wrote:
-> > On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Reading from a debugfs file at a nonzero position, without first reading
-> > > at position 0, leaks uninitialized memory to userspace.
-> > > 
-> > > It's a bit tricky to do this, since lseek() and pread() aren't allowed
-> > > on these files, and write() doesn't update the position on them.  But
-> > > writing to them with splice() *does* update the position:
-> > > 
-> > > 	#define _GNU_SOURCE 1
-> > > 	#include <fcntl.h>
-> > > 	#include <stdio.h>
-> > > 	#include <unistd.h>
-> > > 	int main()
-> > > 	{
-> > > 		int pipes[2], fd, n, i;
-> > > 		char buf[32];
-> > > 
-> > > 		pipe(pipes);
-> > > 		write(pipes[1], "0", 1);
-> > > 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
-> > > 		splice(pipes[0], NULL, fd, NULL, 1, 0);
-> > > 		n = read(fd, buf, sizeof(buf));
-> > > 		for (i = 0; i < n; i++)
-> > > 			printf("%02x", buf[i]);
-> > > 		printf("\n");
-> > > 	}
-> > > 
-> > > Output:
-> > > 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
-> > > 
-> > > Fix the infoleak by making simple_attr_read() always fill
-> > > simple_attr::get_buf if it hasn't been filled yet.
-> > > 
-> > > Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
-> > > Reported-by: Alexander Potapenko <glider@google.com>
-> > > Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > ---
-> > >  fs/libfs.c | 8 +++++---
-> > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/libfs.c b/fs/libfs.c
-> > > index c686bd9caac6..3759fbacf522 100644
-> > > --- a/fs/libfs.c
-> > > +++ b/fs/libfs.c
-> > > @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
-> > >  {
-> > >  	struct simple_attr *attr;
-> > >  
-> > > -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
-> > > +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
-> > >  	if (!attr)
-> > >  		return -ENOMEM;
-> > >  
-> > > @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
-> > >  	if (ret)
-> > >  		return ret;
-> > >  
-> > > -	if (*ppos) {		/* continued read */
-> > > +	if (*ppos && attr->get_buf[0]) {
-> > > +		/* continued read */
-> > >  		size = strlen(attr->get_buf);
-> > > -	} else {		/* first read */
-> > > +	} else {
-> > > +		/* first read */
-> > >  		u64 val;
-> > >  		ret = attr->get(attr->data, &val);
-> > >  		if (ret)
-> > > -- 
-> > > 2.25.1
-> > 
-> > Any comments on this?  Al, seems this is something you should pick up?
-> > 
-> > - Eric
+On Wednesday, March 4, 2020 6:06:46 PM CET Domenico Andreoli wrote:
+> From: Domenico Andreoli <domenico.andreoli@linux.com>
 > 
-> Ping.
+> It turns out that there is one use case for programs being able to
+> write to swap devices, and that is the userspace hibernation code.
+> 
+> Quick fix: disable the S_SWAPFILE check if hibernation is configured.
+> 
+> Fixes: dc617f29dbe5 ("vfs: don't allow writes to swap files")
+> Reported-by: Domenico Andreoli <domenico.andreoli@linux.com>
+> Reported-by: Marian Klein <mkleinsoft@gmail.com>
+> Signed-off-by: Domenico Andreoli <domenico.andreoli@linux.com>
+> 
+> v2:
+>  - use hibernation_available() instead of IS_ENABLED(CONFIG_HIBERNATE)
+>  - make Fixes: point to the right commit
+
+This looks OK to me.
+
+Has it been taken care of already, or am I expected to apply it?
+
+> ---
+>  fs/block_dev.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> Index: b/fs/block_dev.c
+> ===================================================================
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -34,6 +34,7 @@
+>  #include <linux/task_io_accounting_ops.h>
+>  #include <linux/falloc.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/suspend.h>
+>  #include "internal.h"
+>  
+>  struct bdev_inode {
+> @@ -2001,7 +2002,8 @@ ssize_t blkdev_write_iter(struct kiocb *
+>  	if (bdev_read_only(I_BDEV(bd_inode)))
+>  		return -EPERM;
+>  
+> -	if (IS_SWAPFILE(bd_inode))
+> +	/* uswsusp needs write permission to the swap */
+> +	if (IS_SWAPFILE(bd_inode) && !hibernation_available())
+>  		return -ETXTBSY;
+>  
+>  	if (!iov_iter_count(from))
 > 
 
-Andrew, can you consider taking this patch?  Al has been ignoring it, and this
-seems like a fairly important fix.  This bug affects many (most?) debugfs files,
-and it affects years old kernels too not just recent ones.
 
-Thanks,
 
-- Eric
+
