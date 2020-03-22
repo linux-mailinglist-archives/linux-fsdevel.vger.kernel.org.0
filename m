@@ -2,119 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69AC18EA52
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 17:28:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C0618EA9A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 17:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgCVQ2U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Mar 2020 12:28:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58018 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbgCVQ2U (ORCPT
+        id S1725972AbgCVQ5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Mar 2020 12:57:07 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37370 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCVQ5H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Mar 2020 12:28:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+q5SE8PabkJ4E2ARJpyvT2voAuJ2mKWWauYSLk4KvP8=; b=DMIkZSYbAXVYZnU8ct+6eTALIM
-        IIwMq32XvglVnA0tcHkjB7yxlMiata26hBz45kwB5a05tIb02c9RE5ySYhs3Ho1G+lFVSgzlzVVDc
-        DUMiK8p2sT6gtwlUuoh5Nc7LPQ6R2kVmwSly/JqhfRE2B1JKygrsPQSdgxP2bs4+VdMciVAE86kHt
-        faPtljJno8DX46yFjGcZZwU56Jt23D6buy8qiu9daFTCr8dE5hV5cU6dlBPdz0Fx7mooeF/M7/3E9
-        cV1R/zopL7FbuerKPz2Tn81i5E79BF6SUI1praSaJFyVmD8DjvZ9DxsxJvgden2Wq6jHCv3KoNE8F
-        cMFMFWAw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jG3SU-0000CF-PX; Sun, 22 Mar 2020 16:28:18 +0000
-Date:   Sun, 22 Mar 2020 09:28:18 -0700
-From:   Matthew Wilcox <willy@infradead.org>
+        Sun, 22 Mar 2020 12:57:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id a32so5898930pga.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Mar 2020 09:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dc2ft7jmj6hxFB83CfxE8r8hUsUgGlvpHZTaLQ9Mj8c=;
+        b=abYLlraReyPJ1+n1SLVb1EZKISahqek0PA2wFE0h+NbfYdSVu980mfLzvdGwJk6IXS
+         HHscNptr41y2v29Wj1Dj8cKpGcarslk7RotihDl0CGHLtiS+wbNaep63ZXK+f9s/ioiC
+         KVNkSPc2TmLWA/o9l6AnHdlXQPiaJ0npLgEw4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dc2ft7jmj6hxFB83CfxE8r8hUsUgGlvpHZTaLQ9Mj8c=;
+        b=LPzB5GW17TDNQkeaQDUsqBFUqrJw2XahfRJex+3sgKrrHRxhPhqFeRvI00MWZRDkFa
+         OO2RCc8ATaiyScuhMi2HNviPfcNFQY4o5H2213y+VLn41OLFHd8GpnvQDQ/t8/J4/H6z
+         4V2He1EyLddUUFqOOs2DT+yKJMPWVoqpvIDO+69r2nk9kFZ42oNtmQwUe2+JxFizkEN9
+         KTMI+HOGYTZPUWbq67Ywd4bzexLkO3ewnPqijJ1DuT7V/9foWDSw4J5Rdkx5R0SctnGS
+         84BTG+6CLoOyjex8iXLZ//4yU6cBOXu1+SZm2tjPh+DNAl3Z9mKt27xs0XL5UlfAP9PW
+         ZpqA==
+X-Gm-Message-State: ANhLgQ1SBurhLnXEjaHOd6BE4bJVJXLvC6HxK5Ma8sWHXiyQL/yBa7vS
+        jIBCBBfE27vKIC387ZWJON78RQ==
+X-Google-Smtp-Source: ADFU+vuvlYyKKsqi5xEyU7cb8qW3ImSL8Yy96K5kakEKiPLla3VrlEvzBr6kjH1Lyejqj8NIlEZceg==
+X-Received: by 2002:a63:2323:: with SMTP id j35mr17960882pgj.440.1584896225995;
+        Sun, 22 Mar 2020 09:57:05 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x24sm2124386pfn.140.2020.03.22.09.57.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Mar 2020 09:57:04 -0700 (PDT)
+Date:   Sun, 22 Mar 2020 09:57:03 -0700
+From:   Kees Cook <keescook@chromium.org>
 To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v9 12/25] mm: Move end_index check out of readahead loop
-Message-ID: <20200322162818.GG4971@bombadil.infradead.org>
-References: <20200320142231.2402-1-willy@infradead.org>
- <20200320142231.2402-13-willy@infradead.org>
- <20200320165828.GB851@sol.localdomain>
- <20200320173040.GB4971@bombadil.infradead.org>
- <20200320180017.GE851@sol.localdomain>
- <20200320181132.GD4971@bombadil.infradead.org>
- <20200320182452.GF851@sol.localdomain>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        glider@google.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, rafael@kernel.org,
+        syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] libfs: fix infoleak in simple_attr_read()
+Message-ID: <202003220954.24E1E2EB5E@keescook>
+References: <CAG_fn=WvVp7Nxm5E+1dYs4guMYUV8D1XZEt_AZFF6rAQEbbAeg@mail.gmail.com>
+ <20200308023849.988264-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200320182452.GF851@sol.localdomain>
+In-Reply-To: <20200308023849.988264-1-ebiggers@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 11:24:52AM -0700, Eric Biggers wrote:
-> On Fri, Mar 20, 2020 at 11:11:32AM -0700, Matthew Wilcox wrote:
-> > On Fri, Mar 20, 2020 at 11:00:17AM -0700, Eric Biggers wrote:
-> > > But then if someone passes index=0 and nr_to_read=0, this underflows and the
-> > > entire file gets read.
-> > 
-> > nr_to_read == 0 doesn't make sense ... I thought we filtered that out
-> > earlier, but I can't find anywhere that does that right now.  I'd
-> > rather return early from __do_page_cache_readahead() to fix that.
-> > 
-> > > The page cache isn't actually supposed to contain a page at index ULONG_MAX,
-> > > since MAX_LFS_FILESIZE is at most ((loff_t)ULONG_MAX << PAGE_SHIFT), right?  So
-> > > I don't think we need to worry about reading the page with index ULONG_MAX.
-> > > I.e. I think it's fine to limit nr_to_read to 'ULONG_MAX - index', if that makes
-> > > it easier to avoid an overflow or underflow in the next check.
-> > 
-> > I think we can get a page at ULONG_MAX on 32-bit systems?  I mean, we can buy
-> > hard drives which are larger than 16TiB these days:
-> > https://www.pcmag.com/news/seagate-will-ship-18tb-and-20tb-hard-drives-in-2020
-> > (even ignoring RAID devices)
+On Sat, Mar 07, 2020 at 06:38:49PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> The max file size is ((loff_t)ULONG_MAX << PAGE_SHIFT) which means the maximum
-> page *index* is ULONG_MAX - 1, not ULONG_MAX.
-
-I see where we set that for _files_ ... I can't find anywhere that we prevent
-i_size getting that big for block devices.  Maybe I'm missing something.
-
-> Anyway, I think we may be making this much too complicated.  How about just:
+> Reading from a debugfs file at a nonzero position, without first reading
+> at position 0, leaks uninitialized memory to userspace.
 > 
-> 	pgoff_t i_nrpages = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> It's a bit tricky to do this, since lseek() and pread() aren't allowed
+> on these files, and write() doesn't update the position on them.  But
+> writing to them with splice() *does* update the position:
 > 
-> 	if (index >= i_nrpages)
-> 		return;
-> 	/* Don't read past the end of the file */
-> 	nr_to_read = min(nr_to_read, i_nrpages - index);
+> 	#define _GNU_SOURCE 1
+> 	#include <fcntl.h>
+> 	#include <stdio.h>
+> 	#include <unistd.h>
+> 	int main()
+> 	{
+> 		int pipes[2], fd, n, i;
+> 		char buf[32];
 > 
-> That's 2 branches instead of 4.  (Note that assigning to i_nrpages can't
-> overflow, since the max number of pages is ULONG_MAX not ULONG_MAX + 1.)
+> 		pipe(pipes);
+> 		write(pipes[1], "0", 1);
+> 		fd = open("/sys/kernel/debug/fault_around_bytes", O_RDWR);
+> 		splice(pipes[0], NULL, fd, NULL, 1, 0);
+> 		n = read(fd, buf, sizeof(buf));
+> 		for (i = 0; i < n; i++)
+> 			printf("%02x", buf[i]);
+> 		printf("\n");
+> 	}
+> 
+> Output:
+> 	5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a30
+> 
+> Fix the infoleak by making simple_attr_read() always fill
+> simple_attr::get_buf if it hasn't been filled yet.
+> 
+> Reported-by: syzbot+fcab69d1ada3e8d6f06b@syzkaller.appspotmail.com
+> Reported-by: Alexander Potapenko <glider@google.com>
+> Fixes: acaefc25d21f ("[PATCH] libfs: add simple attribute files")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-I like where you're going with this.  Just to be on the safe side, I'd
-prefer to do this:
+Yikes, that's an important fix!
 
-@@ -266,11 +266,8 @@ void __do_page_cache_readahead(struct address_space *mapping,
-        end_index = (isize - 1) >> PAGE_SHIFT;
-        if (index > end_index)
-                return;
--       /* Avoid wrapping to the beginning of the file */
--       if (index + nr_to_read < index)
--               nr_to_read = ULONG_MAX - index + 1;
-        /* Don't read past the page containing the last byte of the file */
--       if (index + nr_to_read >= end_index)
-+       if (nr_to_read > end_index - index)
-                nr_to_read = end_index - index + 1;
- 
-        page_cache_readahead_unbounded(mapping, file, index, nr_to_read,
+Acked-by: Kees Cook <keescook@chromium.org>
 
-end_index - index + 1 could only overflow if end_index is ULONG_MAX
-and index is 0.  But if end_index is ULONG_MAX and index is 0, then
-nr_to_read is necessarily <= ULONG_MAX, so the condition is false.
-And if nr_to_read is 0, then the condition is also false, so it won't
-increase nr_to_read from 0 to 1.  It might assign x to nr_to_read when
-nr_to_read is already x, but that's harmless.
+Luckily (as Alexander mentioned too), most distros make debugfs
+non-accessible by non-root (I hope):
 
-Thanks!
+$ ls -lda /sys/kernel/debug
+drwx------ 39 root root 0 Jan  8 09:10 /sys/kernel/debug/
+
+That function is also exposed via DEFINE_SIMPLE_ATTRIBUTE(), but those
+users appear to also be mostly (all?) debugfs too.
+
+And, just to note, for v5.3 and later, this would be fully mitigated by
+booting with "init_on_alloc=1".
+
+-Kees
+
+> ---
+>  fs/libfs.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index c686bd9caac6..3759fbacf522 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -891,7 +891,7 @@ int simple_attr_open(struct inode *inode, struct file *file,
+>  {
+>  	struct simple_attr *attr;
+>  
+> -	attr = kmalloc(sizeof(*attr), GFP_KERNEL);
+> +	attr = kzalloc(sizeof(*attr), GFP_KERNEL);
+>  	if (!attr)
+>  		return -ENOMEM;
+>  
+> @@ -931,9 +931,11 @@ ssize_t simple_attr_read(struct file *file, char __user *buf,
+>  	if (ret)
+>  		return ret;
+>  
+> -	if (*ppos) {		/* continued read */
+> +	if (*ppos && attr->get_buf[0]) {
+> +		/* continued read */
+>  		size = strlen(attr->get_buf);
+> -	} else {		/* first read */
+> +	} else {
+> +		/* first read */
+>  		u64 val;
+>  		ret = attr->get(attr->data, &val);
+>  		if (ret)
+> -- 
+> 2.25.1
+> 
+
+-- 
+Kees Cook
