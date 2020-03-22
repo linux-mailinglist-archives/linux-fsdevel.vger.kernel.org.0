@@ -2,72 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A5718E93E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 14:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A69AC18EA52
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Mar 2020 17:28:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgCVN5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Mar 2020 09:57:12 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38703 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCVN5M (ORCPT
+        id S1726666AbgCVQ2U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Mar 2020 12:28:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58018 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgCVQ2U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Mar 2020 09:57:12 -0400
-Received: by mail-ot1-f67.google.com with SMTP id t28so10742612ott.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Mar 2020 06:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=17OzSEk/pop55JnY4tDrZuyqHvN0HTfEH+5cXxKJWqo=;
-        b=Rid2Xo28k1TySgr09csr8KPRKafTxwt72qKX7fh73Brj0suwblpvFMcC2NagqB4E8G
-         Lb5ki0SbKnlJ+1T+dXymHNMYnuiLQn2j91Rdk36AwrbTWXgzeV5mocG/rfKdXU4vvbNk
-         loFsYdJFDp79n2C5YZwH04JyT5Fw/cG0voOSpcDd6KOtxmHXNJO5pfDwmlJXC7ZfDKA6
-         iQLJ2U2I1u38YbyTUZExbgfWD0rpztdqGu7l/3buiT1Ic0PMXNVj5jvNdzHI1IHo5clu
-         PN4xnjt98ImlQXuTyTNInT7i2ytUMMoFka2PniW3mNp0ZQxYupQGrKvTIskRNt8mn22r
-         Sqdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=17OzSEk/pop55JnY4tDrZuyqHvN0HTfEH+5cXxKJWqo=;
-        b=uNiYNBQypE22/u5d/fpjXmfKe5TGl0Eg0JwFFgWfF8IpMGXVE3doTXndnaRXKSGsox
-         1QyZ3gYUUVsHD94q0Xd8/Sa0ySQ5tEOuUK8FF/j1FtOn+SXMIUY8WurjZpV5nPZB+gsc
-         /6y/IEF5Wc8N8TYhNNnk5yEtbBTXHxZ3meCg4+ZYlnAMh3S5583I6GhQTl94bKdgFMp2
-         U4Y/eTTVACofcGm0Ll/HQuj3NopDVItr1naZb2rZ/l5hpiSaKoSQaABI8+7/Jy+NX/xg
-         zqYgA89IcgwA4yDYNzrcEJGtlbQ9j7JBmrx4CjUYoz27u3jEmr7pDPtQgVPQil3gs3zv
-         Ssjg==
-X-Gm-Message-State: ANhLgQ2w34y4Jf3T3rxVR4S5hr+Hwf+avW/3L74sHYNNrokC7aXgsyF3
-        IABC0JA8Ev8dnc6fX4nUSNgJVY/OUXs7tagMiXo=
-X-Google-Smtp-Source: ADFU+vv8rYduHltKmF4P2aUzpAQg3Xqg6B8RYFCt2Vir5MI9KOqjYN7tcojhw9toJ2An//xbtv4yg0SK6gMLkTioHQ0=
-X-Received: by 2002:a9d:82a:: with SMTP id 39mr14191025oty.82.1584885431882;
- Sun, 22 Mar 2020 06:57:11 -0700 (PDT)
+        Sun, 22 Mar 2020 12:28:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=+q5SE8PabkJ4E2ARJpyvT2voAuJ2mKWWauYSLk4KvP8=; b=DMIkZSYbAXVYZnU8ct+6eTALIM
+        IIwMq32XvglVnA0tcHkjB7yxlMiata26hBz45kwB5a05tIb02c9RE5ySYhs3Ho1G+lFVSgzlzVVDc
+        DUMiK8p2sT6gtwlUuoh5Nc7LPQ6R2kVmwSly/JqhfRE2B1JKygrsPQSdgxP2bs4+VdMciVAE86kHt
+        faPtljJno8DX46yFjGcZZwU56Jt23D6buy8qiu9daFTCr8dE5hV5cU6dlBPdz0Fx7mooeF/M7/3E9
+        cV1R/zopL7FbuerKPz2Tn81i5E79BF6SUI1praSaJFyVmD8DjvZ9DxsxJvgden2Wq6jHCv3KoNE8F
+        cMFMFWAw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jG3SU-0000CF-PX; Sun, 22 Mar 2020 16:28:18 +0000
+Date:   Sun, 22 Mar 2020 09:28:18 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-xfs@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v9 12/25] mm: Move end_index check out of readahead loop
+Message-ID: <20200322162818.GG4971@bombadil.infradead.org>
+References: <20200320142231.2402-1-willy@infradead.org>
+ <20200320142231.2402-13-willy@infradead.org>
+ <20200320165828.GB851@sol.localdomain>
+ <20200320173040.GB4971@bombadil.infradead.org>
+ <20200320180017.GE851@sol.localdomain>
+ <20200320181132.GD4971@bombadil.infradead.org>
+ <20200320182452.GF851@sol.localdomain>
 MIME-Version: 1.0
-Reply-To: ibrahmusa11@gmail.com
-Received: by 2002:a4a:5181:0:0:0:0:0 with HTTP; Sun, 22 Mar 2020 06:57:11
- -0700 (PDT)
-From:   ibrahim musa <ibrahmusa11@gmail.com>
-Date:   Sun, 22 Mar 2020 14:57:11 +0100
-X-Google-Sender-Auth: xHYSEvfYkPr8vS2nTP61iuK48HI
-Message-ID: <CAAFjF=Mkd_0MZuRzZW41Xm4RoY+GxYX7CoRe2aJKHifX8Bmq9Q@mail.gmail.com>
-Subject: URGENT RESPONSE NEEDED.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320182452.GF851@sol.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear friend, i am contacting you independently of my investigation in
-my bank and no one is informed of this communication. I need your
-urgent assistance in transferring the sum of $5.3million dollars to
-your private account,that belongs to one of our foreign customer who
-died a longtime with his supposed NEXT OF KIN since July 22, 2003. The
-money has been here in our Bank lying dormant for years now without
-anybody coming for the claim of it.
+On Fri, Mar 20, 2020 at 11:24:52AM -0700, Eric Biggers wrote:
+> On Fri, Mar 20, 2020 at 11:11:32AM -0700, Matthew Wilcox wrote:
+> > On Fri, Mar 20, 2020 at 11:00:17AM -0700, Eric Biggers wrote:
+> > > But then if someone passes index=0 and nr_to_read=0, this underflows and the
+> > > entire file gets read.
+> > 
+> > nr_to_read == 0 doesn't make sense ... I thought we filtered that out
+> > earlier, but I can't find anywhere that does that right now.  I'd
+> > rather return early from __do_page_cache_readahead() to fix that.
+> > 
+> > > The page cache isn't actually supposed to contain a page at index ULONG_MAX,
+> > > since MAX_LFS_FILESIZE is at most ((loff_t)ULONG_MAX << PAGE_SHIFT), right?  So
+> > > I don't think we need to worry about reading the page with index ULONG_MAX.
+> > > I.e. I think it's fine to limit nr_to_read to 'ULONG_MAX - index', if that makes
+> > > it easier to avoid an overflow or underflow in the next check.
+> > 
+> > I think we can get a page at ULONG_MAX on 32-bit systems?  I mean, we can buy
+> > hard drives which are larger than 16TiB these days:
+> > https://www.pcmag.com/news/seagate-will-ship-18tb-and-20tb-hard-drives-in-2020
+> > (even ignoring RAID devices)
+> 
+> The max file size is ((loff_t)ULONG_MAX << PAGE_SHIFT) which means the maximum
+> page *index* is ULONG_MAX - 1, not ULONG_MAX.
 
-I want to release the money to you as the relative to our deceased
-customer , the Banking laws here does not allow such money to stay
-more than 18years, because the money will be recalled to the Bank
-treasury account as unclaimed fund. I am ready to share with you 40%
-for you and 60% will be kept for me, by indicating your interest i
-will send you the full details on how the business will be executed, i
-will be waiting for your urgent response.
+I see where we set that for _files_ ... I can't find anywhere that we prevent
+i_size getting that big for block devices.  Maybe I'm missing something.
+
+> Anyway, I think we may be making this much too complicated.  How about just:
+> 
+> 	pgoff_t i_nrpages = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+> 
+> 	if (index >= i_nrpages)
+> 		return;
+> 	/* Don't read past the end of the file */
+> 	nr_to_read = min(nr_to_read, i_nrpages - index);
+> 
+> That's 2 branches instead of 4.  (Note that assigning to i_nrpages can't
+> overflow, since the max number of pages is ULONG_MAX not ULONG_MAX + 1.)
+
+I like where you're going with this.  Just to be on the safe side, I'd
+prefer to do this:
+
+@@ -266,11 +266,8 @@ void __do_page_cache_readahead(struct address_space *mapping,
+        end_index = (isize - 1) >> PAGE_SHIFT;
+        if (index > end_index)
+                return;
+-       /* Avoid wrapping to the beginning of the file */
+-       if (index + nr_to_read < index)
+-               nr_to_read = ULONG_MAX - index + 1;
+        /* Don't read past the page containing the last byte of the file */
+-       if (index + nr_to_read >= end_index)
++       if (nr_to_read > end_index - index)
+                nr_to_read = end_index - index + 1;
+ 
+        page_cache_readahead_unbounded(mapping, file, index, nr_to_read,
+
+end_index - index + 1 could only overflow if end_index is ULONG_MAX
+and index is 0.  But if end_index is ULONG_MAX and index is 0, then
+nr_to_read is necessarily <= ULONG_MAX, so the condition is false.
+And if nr_to_read is 0, then the condition is also false, so it won't
+increase nr_to_read from 0 to 1.  It might assign x to nr_to_read when
+nr_to_read is already x, but that's harmless.
+
+Thanks!
