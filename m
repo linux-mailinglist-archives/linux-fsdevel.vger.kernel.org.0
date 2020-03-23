@@ -2,64 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB30918FB11
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 18:12:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B81118FD77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 20:18:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgCWRMy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 13:12:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbgCWRMy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 13:12:54 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8A132074D;
-        Mon, 23 Mar 2020 17:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584983574;
-        bh=zYY36C+NQw3BWMNbsipgSyupsxr4ozIcZV8x8cgMdVg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xop59apFoDrcZyizFT0955ozbcj/3keVwGNoZtLePDK2SGtIx1HaFk8VL6SIEcz8I
-         2k6RzoP5xe46UnHeGYqWDMVpmhZbBgTtgmAyYAk0dDSw2WZzD5lAUP9UzK4z4OoSb1
-         Puo+jZAZVR7guAK40Rm/crdzrbKVaSQB63ZKZIL0=
-Date:   Mon, 23 Mar 2020 10:12:52 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH v4 0/5] module autoloading fixes and cleanups
-Message-ID: <20200323171252.GA61708@gmail.com>
-References: <20200318230515.171692-1-ebiggers@kernel.org>
- <20200320052819.GB1315@sol.localdomain>
- <20200320192718.6d90a5a10476626f0e39b166@linux-foundation.org>
+        id S1727815AbgCWTSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 15:18:31 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:32822 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbgCWTSb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Mar 2020 15:18:31 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r7so16030547oij.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Mar 2020 12:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SZKG7fTNBsJ3BzEdzcdQdFxvXUKeTmJw8ex6iL6EOq4=;
+        b=qREfsk+dXDKglyer4a2qeACjwrid7zU0l/gOaRByTH9Ll2wZjiqzwJ6cbpU5YIjJt/
+         TD3Na1To9Dp/0jC9Nwn1Z36a41fldefYxufKaHR5nj+haoYtUv/oTgk6/FXVTEF8SSQH
+         xlcCupPEeBXWhFTEUDFdXuU1yHTnF3y4mOvUTnYzGp1A99sbPLA8b6lCLmIrV1fxCTWg
+         9uOBIHhMe0B0DIJ7AMYdxhnmOrNcIiBk9iTQVgXpNhohhg1nxXrKKoID9jHaM2g9v0/R
+         JUdKFHBPydw5lYwSIparAdsWVMpNSPx65T/dtks/uSBjLqIwV5Xc6L6a72AvpbKr92Sb
+         gsBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SZKG7fTNBsJ3BzEdzcdQdFxvXUKeTmJw8ex6iL6EOq4=;
+        b=fqHNdR5jD3nP9PfZfnStd8RmZ3e9N9Wh3k+aRW/Qdhrvt0mI+3dfyMBsqIg230fNr6
+         mkHQgRnVla1SvkmSsKcHZrfn5E2s3EiGljhmbhhGB9IxffaI+DbQ3igMpTzB+8bz4K0x
+         xuJ3dXKZl92eAX20vgdTwFqvA3HaE4Qh3iHZ2mNgYRd9LPNiXe2aVneGLfJD7binpvRO
+         5SmnPycpgz0sKbsFVI2XSTpHu5iIk/GC0rLYM01udxJwd+mu+/2TZKz1v2hBqPxFrSKx
+         q2DMpBfPPGkgBbnxdMetS74Z7AmBPYCLSKhG/3Ay9Dfd8JnWj22KX1e0yEL8Rr2nvCIF
+         sgFg==
+X-Gm-Message-State: ANhLgQ20qpF1ZOvafXQLCTh8WEm0ejxLnNliNZvnbQs67bh2QY2L5Ofi
+        b13n4BJRGJ+zPPuUeJU7XljjDVhD2hZNCiKCv9d0FQ==
+X-Google-Smtp-Source: ADFU+vvtp101BmSbeYLakx7Wvp+wzVb723oqWR/Id6j79lBhJDMmBLI8QD1mYj4E7HSrHOtRmJDVPLQ/QzaoSrn5hUI=
+X-Received: by 2002:a05:6808:8db:: with SMTP id k27mr675696oij.175.1584991110176;
+ Mon, 23 Mar 2020 12:18:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200320192718.6d90a5a10476626f0e39b166@linux-foundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20200318205337.16279-1-sashal@kernel.org> <20200318205337.16279-30-sashal@kernel.org>
+In-Reply-To: <20200318205337.16279-30-sashal@kernel.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 23 Mar 2020 20:18:04 +0100
+Message-ID: <CAG48ez1pzF76DpPWoAwDkXLJ01w8Swe=obBrNoBWr=iGTbH7-g@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.4 30/73] futex: Fix inode life-time issue
+To:     Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 07:27:18PM -0700, Andrew Morton wrote:
-> On Thu, 19 Mar 2020 22:28:19 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > It seems that people are relatively happy with this patch series now.
-> > Andrew, will you be taking it through -mm?  I don't see any better place.
-> 
-> Yup.
+On Wed, Mar 18, 2020 at 9:54 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Peter Zijlstra <peterz@infradead.org>
+>
+> [ Upstream commit 8019ad13ef7f64be44d4f892af9c840179009254 ]
+>
+> As reported by Jann, ihold() does not in fact guarantee inode
+> persistence. And instead of making it so, replace the usage of inode
+> pointers with a per boot, machine wide, unique inode identifier.
+>
+> This sequence number is global, but shared (file backed) futexes are
+> rare enough that this should not become a performance issue.
 
-Andrew, can you update -mm to v4 of this patchset?  Right now it contains a mix
-of v2 and v3.  In particular the diff for "docs: admin-guide: document the
-kernel.modprobe sysctl" is different, and I made some small updates to commit
-messages.
-
-- Eric
+Please also take this patch, together with
+8d67743653dce5a0e7aa500fcccb237cde7ad88e "futex: Unbreak futex
+hashing", into the older stable branches. This has to go all the way
+back; as far as I can tell, the bug already existed at the beginning
+of git history.
