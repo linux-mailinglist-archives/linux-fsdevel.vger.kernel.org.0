@@ -2,117 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD15418F5A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 14:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34C1618F5DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 14:37:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbgCWNYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 09:24:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:48924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728344AbgCWNYP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 09:24:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD6651FB;
-        Mon, 23 Mar 2020 06:24:14 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 403A23F52E;
-        Mon, 23 Mar 2020 06:24:14 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 13:24:12 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nd@arm.com
-Subject: Re: [PATCH v10 00/13] arm64: Branch Target Identification support
-Message-ID: <20200323132412.GD4948@sirena.org.uk>
-References: <20200316165055.31179-1-broonie@kernel.org>
- <20200320173945.GC27072@arm.com>
- <20200323122143.GB4892@mbp>
+        id S1728413AbgCWNhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 09:37:45 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:59810 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728229AbgCWNhp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Mar 2020 09:37:45 -0400
+X-Greylist: delayed 440 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Mar 2020 09:37:44 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 8A3273F571;
+        Mon, 23 Mar 2020 14:30:22 +0100 (CET)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=rW9Z8fL1;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id jYeB1Hkf84eV; Mon, 23 Mar 2020 14:30:18 +0100 (CET)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 24C7D3F44A;
+        Mon, 23 Mar 2020 14:30:17 +0100 (CET)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 5CF2636019D;
+        Mon, 23 Mar 2020 14:30:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1584970217; bh=o74YyBwiZy95kxk4hXa0iDzbeSVNayzuvbQ1L06JVbc=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=rW9Z8fL1az+mx6uWgRduFzR6TBjcsdAMKq/Iq7w9t3SguJbC4fgRHqXfw6dXqnOrM
+         eAS7pHPMo7G4CBHLZs+7hVv9fTV2nmC7f9zyS2K9vJ/IYWhH8O1HVAyPGbHzlwKPwA
+         uT9DOohKtTQnFITtAQktqCiWQYUriRYZpN5ezs+E=
+Subject: Re: Ack to merge through DRM? WAS [PATCH v5 1/9] fs: Constify vma
+ argument to vma_is_dax
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20200303102247.4635-1-thomas_os@shipmail.org>
+ <4a49f27b-71a6-0e61-70d9-5fcb6cd58c3f@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <0b19b68b-0bbd-f51c-67da-bd6983ae45b2@shipmail.org>
+Date:   Mon, 23 Mar 2020 14:30:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n2Pv11Ogg/Ox8ay5"
-Content-Disposition: inline
-In-Reply-To: <20200323122143.GB4892@mbp>
-X-Cookie: Stay on the trail.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4a49f27b-71a6-0e61-70d9-5fcb6cd58c3f@shipmail.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Ping?
 
---n2Pv11Ogg/Ox8ay5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Mar 23, 2020 at 12:21:44PM +0000, Catalin Marinas wrote:
-> On Fri, Mar 20, 2020 at 05:39:46PM +0000, Szabolcs Nagy wrote:
+On 3/3/20 11:28 AM, Thomas Hellström (VMware) wrote:
+> Alexander,
+>
+> Could you ack merging the below patch through a DRM tree?
+>
+> Thanks,
+>
+> Thomas Hellstrom
+>
+>
+> From: Thomas Hellstrom <thellstrom@vmware.com>
+>
+>
+> The function is used by upcoming vma_is_special_huge() with which we want
+> to use a const vma argument. Since for vma_is_dax() the vma argument is
+> only dereferenced for reading, constify it.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Reviewed-by: Roland Scheidegger <sroland@vmware.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
+> ---
+> include/linux/fs.h | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3cd4fe6b845e..2b38ce5b73ad 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3391,7 +3391,7 @@ static inline bool io_is_direct(struct file *filp)
+> return (filp->f_flags & O_DIRECT) || IS_DAX(filp->f_mapping->host);
+> }
+> -static inline bool vma_is_dax(struct vm_area_struct *vma)
+> +static inline bool vma_is_dax(const struct vm_area_struct *vma)
+> {
+> return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
+> }
+>
 
-> +int arch_elf_adjust_prot(int prot, const struct arch_elf_state *state,
-> +                        bool has_interp, bool is_interp)
-> +{
-> +       if (is_interp != has_interp)
-> +               return prot;
-> +
-> +       if (!(state->flags & ARM64_ELF_BTI))
-> +               return prot;
-> +
-> +       if (prot & PROT_EXEC)
-> +               prot |= PROT_BTI;
-> +
-> +       return prot;
-> +}
-
-> At a quick look, for dynamic binaries we have has_interp == true and
-> is_interp == false. I don't know why but, either way, the above code
-> needs a comment with some justification.
-
-I don't really know for certain either, I inherited this code as is with
-the understanding that this was all agreed with the toolchain and libc
-people - the actual discussion that lead to the decisions being made
-happened before I was involved.  My understanding is that the idea was
-that the dynamic linker would be responsible for mapping everything in
-dynamic applications other than itself but other than consistency I
-don't know why.  I guess it defers more decision making to userspace but
-I'm having a hard time thinking of sensible cases where one might wish
-to make a decision other than enabling PROT_BTI.
-
-I'd be perfectly happy to drop the check if that makes more sense to
-people, otherwise I can send a patch adding a comment explaining the
-situation.
-
---n2Pv11Ogg/Ox8ay5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl54uHwACgkQJNaLcl1U
-h9DAYQf+PC+yaMtvYW9mN4nKAz7ncHVrReSbAGM8vzqPWdFAlq9YUOWrM19ZtwX3
-Reos273yUIeierbiwvJMNq+eDPFo9bF3mqTxkQr5uA4+RDAqXedTNeS637lX1tG3
-/uzSb0uqwvff1A9+IZsavz2GuhK8WNmybN7xbOPD1SLHZd4ouEiMlBoE3Ze+nMqm
-gClUEz9TTAmK6m9sL7rchJgnSFoG5OU4F/6sWpCoip4mFa5QnBAkeWh6RssDImFg
-hIm9njv6a9aeNHTw1YnM1heqRe86GkmGk3LsgGrHETzDNFOwlBNek95tXIVl7W7I
-f99IlRUisKUN9wu9VYAtNzRSGiDGLQ==
-=70MP
------END PGP SIGNATURE-----
-
---n2Pv11Ogg/Ox8ay5--
