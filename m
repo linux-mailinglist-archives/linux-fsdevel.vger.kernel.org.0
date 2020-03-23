@@ -2,109 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B54BA18F8A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 16:32:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FCA18F8C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 16:38:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbgCWPcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 11:32:31 -0400
-Received: from foss.arm.com ([217.140.110.172]:51124 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727137AbgCWPcb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 11:32:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 640121FB;
-        Mon, 23 Mar 2020 08:32:30 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B83F23F7C3;
-        Mon, 23 Mar 2020 08:32:29 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 15:32:28 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Elliott <paul.elliott@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H . J . Lu " <hjl.tools@gmail.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Sudakshina Das <sudi.das@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nd@arm.com
-Subject: Re: [PATCH v10 00/13] arm64: Branch Target Identification support
-Message-ID: <20200323153228.GE4948@sirena.org.uk>
-References: <20200316165055.31179-1-broonie@kernel.org>
- <20200320173945.GC27072@arm.com>
- <20200323122143.GB4892@mbp>
- <20200323132412.GD4948@sirena.org.uk>
- <20200323135722.GA3959@C02TD0UTHF1T.local>
- <20200323143954.GC4892@mbp>
- <20200323145546.GB3959@C02TD0UTHF1T.local>
+        id S1727230AbgCWPip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 11:38:45 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58572 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727119AbgCWPio (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:38:44 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NF9Gg2117920;
+        Mon, 23 Mar 2020 15:38:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=ake1KhpAPmsn5p7jqVXe/DTEcbRtVp39Y2OhCygO4kc=;
+ b=GBtJG5U0/XqUq1pNp6B0Z+wHwwYyk7EJqwWDTO7Rxe2o+nvcP7bGf+pf/l8TJ4N5D3Qv
+ LXrAttGzogKrFYPdtjfShUGYNfKhwpk/scNaJOYAYFzrJ7q+oa9fq3kHesGwOCNfMgXR
+ zYQZjjbjt0WRWNwIlKK7xlz/fJe+YPPOriGMNj+Mrmi63S1O5hQ3KUecG8Z18HCPpAhy
+ FuBM2EMsASRZciClFUtoDUxzcZVTW7/sMSl9fm5NgA3e4og0Moyk3e7Cs0cZgJh26SPT
+ O3Yo1olr9Nju7zzwt/oufMKgcTNJ1CK2lrLsWLiqY/Db4unWhhujnIMHy4KVkhZEcVt4 VQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2ywavkyas2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Mar 2020 15:38:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02NFbYZM027488;
+        Mon, 23 Mar 2020 15:38:28 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2yxw6jsku2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Mar 2020 15:38:28 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 02NFcRvC027472;
+        Mon, 23 Mar 2020 15:38:27 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Mar 2020 08:38:27 -0700
+Date:   Mon, 23 Mar 2020 08:38:26 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] iomap: Do not use GFP_NORETRY to allocate BIOs
+Message-ID: <20200323153825.GC29339@magnolia>
+References: <20200323131244.29435-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323145546.GB3959@C02TD0UTHF1T.local>
-X-Cookie: Stay on the trail.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200323131244.29435-1-willy@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2003230087
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9569 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003230086
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Mar 23, 2020 at 06:12:44AM -0700, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> If we use GFP_NORETRY, we have to be able to handle failures, and it's
+> tricky to handle failure here.  Other implementations of ->readpages
+> do not attempt to handle BIO allocation failures, so this is no worse.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
---2hMgfIw2X+zgXrFs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This fixes the regression I saw, though I see what looks like a new
+patch forming further down in this thread, so please let me know if
+you'd prefer I take this change, the other one, or both.
 
-On Mon, Mar 23, 2020 at 02:55:46PM +0000, Mark Rutland wrote:
-> On Mon, Mar 23, 2020 at 02:39:55PM +0000, Catalin Marinas wrote:
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-> > So this means that the interpreter will have to mprotect(PROT_BTI) the
-> > text section of the primary executable.
+--D
 
-> Yes, but after fixing up any relocations in that section it's going to
-> have to call mprotect() on it anyhow (e.g. in order to make it
-> read-only), and in doing so would throw away BTI unless it was BTI
-> aware.
-
-Ah, of course - I forgot that's not a read/modify/write cycle.  I'll
-send the comment version.
-
-> > That's a valid point. If we have an old dynamic linker and the kernel
-> > enabled BTI automatically for the main executable, could things go wrong
-> > (e.g. does the PLT need to be BTI-aware)?
-
-> I believe that a PLT in an unguarded page needs no special treatment. A
-> PLT within a guarded page needs to be built specially for BTI.
-
-Unguarded stuff is unaffected.
-
---2hMgfIw2X+zgXrFs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl541osACgkQJNaLcl1U
-h9A4pAf+IvJV9iWwP6vJKgT868+5ZjhSjiVsOKwt0PqgVzwOcV5HIX7k7mlf91GM
-k1Fn/ZsPWecmng93bj0iUlMtnBCoxTyE4F20odXx1vgUhscr6RjCvtPkGlLEgYEz
-0Cs6mB6NDjJxcTJDxB54HIXhlP4lL3Jo++u+yRS2/0lLHba08FUu7/gJYjh7TTCV
-n9kw50W8boGR1DgRe51u0Yn08RqNt2Boe/tauY2huT9H5zgbM2d40jv7qVcdTffJ
-PWeuF23KN9w9E/burfR4MrA8JtLgZHrnjt5cuSXuogtP28D1UcfgaKfr8JSDPT6P
-VjN8hBGRZhte6hqR58+ZsNUrKDDLIw==
-=1CsH
------END PGP SIGNATURE-----
-
---2hMgfIw2X+zgXrFs--
+> ---
+>  fs/iomap/buffered-io.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 417115bfaf6b..2336642d7390 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -307,8 +307,6 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		if (ctx->bio)
+>  			submit_bio(ctx->bio);
+>  
+> -		if (ctx->is_readahead) /* same as readahead_gfp_mask */
+> -			gfp |= __GFP_NORETRY | __GFP_NOWARN;
+>  		ctx->bio = bio_alloc(gfp, min(BIO_MAX_PAGES, nr_vecs));
+>  		ctx->bio->bi_opf = REQ_OP_READ;
+>  		if (ctx->is_readahead)
+> -- 
+> 2.25.1
+> 
