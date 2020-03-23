@@ -2,86 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FE1418EE0F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 03:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE5518EEA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 04:53:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgCWCpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Mar 2020 22:45:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48110 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbgCWCpo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Mar 2020 22:45:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=W4bXDYwfS3EN8dSOa7pgo/9N3vt3vB1jLkTpJl8qckM=; b=hK1p55WFdhHlWdxSHa/nwMk5sc
-        MQxfVM/ZOAWIdHd6F2KBDW9IJUXoB54xqrl82x9BUStrqqVx5XLd6egoKVoMfXVhRM1QFEldpFd91
-        2/+P8Uth8iOxwMUKiYS989y1+uCPs+Ifi5hCEfMJTW8NZXHCNl8YWCNy7cjKC60gP8NJaYmN3aBTy
-        iPNmGuJ1sXGGCLL21SwRlnlqs/FZP5G+IAyKD1RJGTid3QSpseR0oUgKNkd4B2mjrhkIMx8JHWpUX
-        c0kSQmHF9omrCPUJm63Gr2rEVsAMBgKSOO81Lruk4Yzrcvces2j8l8Hw/KERw7IZ0IFZr1mUROWpn
-        N7kySDmg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGD5z-0001Eu-3O; Mon, 23 Mar 2020 02:45:43 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] ext2: fix empty body warnings when -Wextra is used
-Message-ID: <e18a7395-61fb-2093-18e8-ed4f8cf56248@infradead.org>
-Date:   Sun, 22 Mar 2020 19:45:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727213AbgCWDxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Mar 2020 23:53:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726983AbgCWDxr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 22 Mar 2020 23:53:47 -0400
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C9F32070A;
+        Mon, 23 Mar 2020 03:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584935626;
+        bh=JZ9FfTQC5hyfKYp2Fe1Ul7ymAHFUkesL0z+aqbPk+0k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wuviUgzOZ9I/ZxR0Qe6UoYpguDtb5vojJwuqb15B1ybVXKf98oY0z1TX6lmXfukQO
+         GrFi7ly/HkosHLTiJjGp0HGiSSzpm7VLLduKNUyObGN0l5d1IvMgJGRKB9ZIFBs6l4
+         K/+ERiSC/J11ea857uMzNfIHBmBogvwEAROQ2s+8=
+Date:   Sun, 22 Mar 2020 20:53:46 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-xfs@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH v9 23/25] f2fs: Pass the inode to
+ f2fs_mpage_readpages
+Message-ID: <20200323035346.GA147648@google.com>
+References: <20200320142231.2402-1-willy@infradead.org>
+ <20200320142231.2402-24-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200320142231.2402-24-willy@infradead.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On 03/20, Matthew Wilcox wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> 
+> This function now only uses the mapping argument to look up the inode,
+> and both callers already have the inode, so just pass the inode instead
+> of the mapping.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-When EXT2_ATTR_DEBUG is not defined, modify the 2 debug macros
-to use the no_printk() macro instead of <nothing>.
-This fixes gcc warnings when -Wextra is used:
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-../fs/ext2/xattr.c:252:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../fs/ext2/xattr.c:258:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../fs/ext2/xattr.c:330:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-../fs/ext2/xattr.c:872:45: warning: suggest braces around empty body in an ‘else’ statement [-Wempty-body]
-
-I have verified that the only object code change (with gcc 7.5.0) is
-the reversal of some instructions from 'cmp a,b' to 'cmp b,a'.
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jan Kara <jack@suse.com>
-Cc: linux-ext4@vger.kernel.org
----
- fs/ext2/xattr.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- linux-next-20200320.orig/fs/ext2/xattr.c
-+++ linux-next-20200320/fs/ext2/xattr.c
-@@ -56,6 +56,7 @@
- 
- #include <linux/buffer_head.h>
- #include <linux/init.h>
-+#include <linux/printk.h>
- #include <linux/slab.h>
- #include <linux/mbcache.h>
- #include <linux/quotaops.h>
-@@ -84,8 +85,8 @@
- 		printk("\n"); \
- 	} while (0)
- #else
--# define ea_idebug(f...)
--# define ea_bdebug(f...)
-+# define ea_idebug(inode, f...)	no_printk(f)
-+# define ea_bdebug(bh, f...)	no_printk(f)
- #endif
- 
- static int ext2_xattr_set2(struct inode *, struct buffer_head *,
-
+> ---
+>  fs/f2fs/data.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 237dff36fe73..c8b042979fc4 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2159,12 +2159,11 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>   * use ->readpage() or do the necessary surgery to decouple ->readpages()
+>   * from read-ahead.
+>   */
+> -static int f2fs_mpage_readpages(struct address_space *mapping,
+> +static int f2fs_mpage_readpages(struct inode *inode,
+>  		struct readahead_control *rac, struct page *page)
+>  {
+>  	struct bio *bio = NULL;
+>  	sector_t last_block_in_bio = 0;
+> -	struct inode *inode = mapping->host;
+>  	struct f2fs_map_blocks map;
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  	struct compress_ctx cc = {
+> @@ -2276,7 +2275,7 @@ static int f2fs_read_data_page(struct file *file, struct page *page)
+>  	if (f2fs_has_inline_data(inode))
+>  		ret = f2fs_read_inline_data(inode, page);
+>  	if (ret == -EAGAIN)
+> -		ret = f2fs_mpage_readpages(page_file_mapping(page), NULL, page);
+> +		ret = f2fs_mpage_readpages(inode, NULL, page);
+>  	return ret;
+>  }
+>  
+> @@ -2293,7 +2292,7 @@ static void f2fs_readahead(struct readahead_control *rac)
+>  	if (f2fs_has_inline_data(inode))
+>  		return;
+>  
+> -	f2fs_mpage_readpages(rac->mapping, rac, NULL);
+> +	f2fs_mpage_readpages(inode, rac, NULL);
+>  }
+>  
+>  int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+> -- 
+> 2.25.1
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
