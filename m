@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2BD418F7C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 15:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E0C18F80E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Mar 2020 16:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbgCWOzz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 10:55:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:50640 "EHLO foss.arm.com"
+        id S1727234AbgCWPCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 11:02:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:50762 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727149AbgCWOzy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 10:55:54 -0400
+        id S1726962AbgCWPCQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Mar 2020 11:02:16 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F4851FB;
-        Mon, 23 Mar 2020 07:55:54 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35DAA1FB;
+        Mon, 23 Mar 2020 08:02:16 -0700 (PDT)
 Received: from C02TD0UTHF1T.local (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51F243F7C3;
-        Mon, 23 Mar 2020 07:55:49 -0700 (PDT)
-Date:   Mon, 23 Mar 2020 14:55:46 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 460B13F7C3;
+        Mon, 23 Mar 2020 08:02:12 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 15:02:09 +0000
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -44,7 +44,7 @@ Cc:     Mark Brown <broonie@kernel.org>,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         nd@arm.com
 Subject: Re: [PATCH v10 00/13] arm64: Branch Target Identification support
-Message-ID: <20200323145546.GB3959@C02TD0UTHF1T.local>
+Message-ID: <20200323150209.GC3959@C02TD0UTHF1T.local>
 References: <20200316165055.31179-1-broonie@kernel.org>
  <20200320173945.GC27072@arm.com>
  <20200323122143.GB4892@mbp>
@@ -80,36 +80,6 @@ On Mon, Mar 23, 2020 at 02:39:55PM +0000, Catalin Marinas wrote:
 > > > > +
 > > > > +       return prot;
 > > > > +}
-> > > 
-> > > > At a quick look, for dynamic binaries we have has_interp == true and
-> > > > is_interp == false. I don't know why but, either way, the above code
-> > > > needs a comment with some justification.
-> > > 
-> > > I don't really know for certain either, I inherited this code as is with
-> > > the understanding that this was all agreed with the toolchain and libc
-> > > people - the actual discussion that lead to the decisions being made
-> > > happened before I was involved.  My understanding is that the idea was
-> > > that the dynamic linker would be responsible for mapping everything in
-> > > dynamic applications other than itself but other than consistency I
-> > > don't know why.  I guess it defers more decision making to userspace but
-> > > I'm having a hard time thinking of sensible cases where one might wish
-> > > to make a decision other than enabling PROT_BTI.
-> > 
-> > My understanding was this had been agreed with the toolchain folk a
-> > while back -- anything static loaded by the kernel (i.e. a static
-> > executable or the dynamic linker) would get GP set. In other cases the
-> > linker will mess with the permissions on the pages anyhow, and needs to
-> > be aware of BTI in order to do the right thing, so it was better to
-> > leave it to userspace consistently (e.g. as that had the least risk of
-> > subtle changes in behaviour leading to ABI difficulties).
-> 
-> So this means that the interpreter will have to mprotect(PROT_BTI) the
-> text section of the primary executable.
-
-Yes, but after fixing up any relocations in that section it's going to
-have to call mprotect() on it anyhow (e.g. in order to make it
-read-only), and in doing so would throw away BTI unless it was BTI
-aware.
 
 > > I think it would be best to document the current behaviour, as it's a
 > > simple ABI that we can guarantee, and the dynamic linker will have to be
@@ -119,8 +89,7 @@ aware.
 > enabled BTI automatically for the main executable, could things go wrong
 > (e.g. does the PLT need to be BTI-aware)?
 
-I believe that a PLT in an unguarded page needs no special treatment. A
-PLT within a guarded page needs to be built specially for BTI.
+Also worth noting that an old dynamic linker won't have ARM64_ELF_BTI
+set, so the kernel will not enable BTI for this.
 
-Thanks,
 Mark.
