@@ -2,127 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D4EA190200
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 00:39:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A73B1902B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 01:17:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbgCWXjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 19:39:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbgCWXjc (ORCPT
+        id S1727691AbgCXAQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 20:16:54 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43616 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727439AbgCXAQw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 19:39:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=TEUZhCjfShs/MS4UZq1VHSw7JcuxY18OqcwtWtp0bLM=; b=IBayBFhlOFrtLI4GQitRSAxT4p
-        YfYtYcm3rr9WoyfzPh1kErg35kzKMlOOaFuqQKuo2SC7JafYpPtats4RcJywhuZWw2mO0W20BIvYG
-        iKBysCDo6RipS4Bxof13jZY9nZBTiCQ5LHNmE3MGBkoX9x79lnr8rJ2X+qMmNqrb82YvFHouNVpAA
-        cNs8ZA/K/OV5+MileG370xj+Z2EJ990t/uP7EcykvTcmLVhFILIVRUfmBnM/1ed+6HoTqYNqfOhpv
-        1njFpvw5nt5FvWpMhLAlD/nz6o64Pgy31Mab9MJZXlUW4WHIBpvd+I768Z8Izmfql6fB+1ujFMsqH
-        kIkgiB/g==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGWfJ-0008ER-S0; Mon, 23 Mar 2020 23:39:29 +0000
-Subject: Re: [PATCH V2] kernel/hung_task.c: Introduce sysctl to print all
- traces when a hung task is detected
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
-        penguin-kernel@I-love.SAKURA.ne.jp, akpm@linux-foundation.org,
-        cocci@systeme.lip6.fr, linux-api@vger.kernel.org,
-        kernel@gpiccoli.net
-References: <20200323214618.28429-1-gpiccoli@canonical.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a64729ec-9027-a386-58c6-7dc9fe9a4730@infradead.org>
-Date:   Mon, 23 Mar 2020 16:39:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 23 Mar 2020 20:16:52 -0400
+Received: by mail-ed1-f67.google.com with SMTP id bd14so4774152edb.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Mar 2020 17:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d/2Y64PABVXdc9ONlMpskyvi+SAnumMA7Crj5Bt/DBQ=;
+        b=Pw/jLYEtjS/ATrpjcImP2D5HPDWiFMBcBAxJVSOwIOaspT/epTOM9IydWFzxho9yua
+         oazmW6QWguLgtIbfTk74PkycIDjFDPzKqyzaoh+DhJAVrmkuDU/uAM53LPP8DVs9E40Q
+         tUZMoTzJY+STJT3ur0XbLBaDl6VIvIN8N0+HMJRRBPnxJx3Fysg9dQsHduc19AT8XqUR
+         Z+R5dqyHsad39E8wBrmCN6RWKFaLpPh9SfxtI2Y1DRQLG2Yf+1AwZidHAvD5ViWXYqSy
+         a907RgFuMp40UgoEATMPqB/Btt7FRTYbwdl5UG8XBt+aLoRiYnvjPwNK2Qw9OiPVrwLO
+         +WDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d/2Y64PABVXdc9ONlMpskyvi+SAnumMA7Crj5Bt/DBQ=;
+        b=hCSxWyDs4lNTBvfbxawuBb3GyJG1vxh+2+BV5NukSBB+GFou3P4w81xclKE5A8Gn9J
+         UojhW/6twzhD10TsSNBOPpnY8HxDCRx+jspuG9rb+nlV8PzvL8xnpofaSRMia9T2/Fbm
+         Lq18OujzNUAx8xaD+Lsl2s6Vf3gW5oZFbkyweImz24Uv8JyvxMIUdWg1SrnVJGHqUEoo
+         8RMizqoetTsS9NPvdKCoB+hO/fyUa5qIlnI9UdQzhUYGBHXMWq+spE6MAxZ6sYmWmnbj
+         8LRTCPZNCZYlrvqPRRjuQuJP6f4iWP0pzFZx9aguT/Voh6njfJuZr4rw9GypZ24qrmAI
+         1zwQ==
+X-Gm-Message-State: ANhLgQ3OH25hnGJGnwTHiQ8geSCg3c7642MCVdoADTbkZIDXKOWsBOQ7
+        sukcUjhwBjHOXVQ+PIOtso9mGnKw6YlObGCCDCDL
+X-Google-Smtp-Source: ADFU+vsjQok/w3GcfT1LJO6k41X3syl3c/RCvqnEbN1LGDpZdSJHQ9PBkLkvozzz1CLw+59ARBWSon4cJDwpW8rrY9U=
+X-Received: by 2002:a17:906:4b52:: with SMTP id j18mr13098102ejv.272.1585009010419;
+ Mon, 23 Mar 2020 17:16:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200323214618.28429-1-gpiccoli@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <CAHC9VhS09b_fM19tn7pHZzxfyxcHnK+PJx80Z9Z1hn8-==4oLA@mail.gmail.com>
+ <20200312193037.2tb5f53yeisfq4ta@madcap2.tricolour.ca> <CAHC9VhQoVOzy_b9W6h+kmizKr1rPkC4cy5aYoKT2i0ZgsceNDg@mail.gmail.com>
+ <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca> <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
+ <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca> <CAHC9VhRYvGAru3aOMwWKCCWDktS+2pGr+=vV4SjHW_0yewD98A@mail.gmail.com>
+ <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca> <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
+ <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca>
+In-Reply-To: <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 23 Mar 2020 20:16:38 -0400
+Message-ID: <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-18 18:06, Paul Moore wrote:
 
-On 3/23/20 2:46 PM, Guilherme G. Piccoli wrote:
+...
 
-> 
->  .../admin-guide/kernel-parameters.txt         |  6 ++++
->  Documentation/admin-guide/sysctl/kernel.rst   | 15 ++++++++++
->  include/linux/sched/sysctl.h                  |  7 +++++
->  kernel/hung_task.c                            | 30 +++++++++++++++++--
->  kernel/sysctl.c                               | 11 +++++++
->  5 files changed, 67 insertions(+), 2 deletions(-)
-> 
+> > I hope we can do better than string manipulations in the kernel.  I'd
+> > much rather defer generating the ACID list (if possible), than
+> > generating a list only to keep copying and editing it as the record is
+> > sent.
+>
+> At the moment we are stuck with a string-only format.
 
-admin-guide/kernel-parameters.txt predominantly uses "CPUs" for plural CPUs
-when not part of a cmdline keyword etc., so please adjust below:
+Yes, we are.  That is another topic, and another set of changes I've
+been deferring so as to not disrupt the audit container ID work.
 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index c07815d230bc..7a14caac6c94 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1453,6 +1453,12 @@
->  			x86-64 are 2M (when the CPU supports "pse") and 1G
->  			(when the CPU supports the "pdpe1gb" cpuinfo flag).
->  
-> +	hung_task_all_cpu_backtrace=
-> +			[KNL] Should kernel generate backtraces on all cpus
-
-			                                               CPUs
-
-> +			when a hung task is detected. Defaults to 0 and can
-> +			be controlled by hung_task_all_cpu_backtrace sysctl.
-> +			Format: <integer>
-> +
->  	hung_task_panic=
->  			[KNL] Should the hung task detector generate panics.
->  			Format: <integer>
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index def074807cee..8b4ff69d2348 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -40,6 +40,7 @@ show up in /proc/sys/kernel:
->  - hotplug
->  - hardlockup_all_cpu_backtrace
->  - hardlockup_panic
-> +- hung_task_all_cpu_backtrace
->  - hung_task_panic
->  - hung_task_check_count
->  - hung_task_timeout_secs
-> @@ -338,6 +339,20 @@ Path for the hotplug policy agent.
->  Default value is "/sbin/hotplug".
->  
->  
-> +hung_task_all_cpu_backtrace:
-> +================
-> +
-> +If this option is set, the kernel will send an NMI to all CPUs to dump
-> +their backtraces when a hung task is detected. This file shows up if
-> +CONFIG_DETECT_HUNG_TASK and CONFIG_SMP are enabled.
-> +
-> +0: Won't show all CPUs backtraces when a hung task is detected.
-> +This is the default behavior.
-> +
-> +1: Will non-maskably interrupt all CPUs and dump their backtraces when
-> +a hung task is detected.
-> +
-> +
->  hung_task_panic:
->  ================
->  
-
-
-thanks.
+I was thinking of what we do inside the kernel between when the record
+triggering event happens and when we actually emit the record to
+userspace.  Perhaps we collect the ACID information while the event is
+occurring, but we defer generating the record until later when we have
+a better understanding of what should be included in the ACID list.
+It is somewhat similar (but obviously different) to what we do for
+PATH records (we collect the pathname info when the path is being
+resolved).
 
 -- 
-~Randy
-
+paul moore
+www.paul-moore.com
