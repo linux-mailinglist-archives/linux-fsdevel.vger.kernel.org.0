@@ -2,129 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 087D8191C3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 22:50:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 946B6191C38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 22:50:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbgCXVsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 17:48:52 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38056 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728277AbgCXVsw (ORCPT
+        id S1728291AbgCXVss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Mar 2020 17:48:48 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44585 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728094AbgCXVsr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:48:52 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGrNd-001z3G-WE; Tue, 24 Mar 2020 21:46:38 +0000
-Date:   Tue, 24 Mar 2020 21:46:37 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-Message-ID: <20200324214637.GI23230@ZenIV.linux.org.uk>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
+        Tue, 24 Mar 2020 17:48:47 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 142so93079pgf.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 14:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DsvR+TcwmI4jVJzuydsxBMDLVq1XTHOSTRk3ilTd2M8=;
+        b=AnRH8geSYlcU2enKayiCXSAWBghoMs55YsWkfBp+R9HE3GPrNP9BFUgaw3qS3gdH+K
+         ZkSGwpXzzU20JbA/DvnYdeqevg9YGr2QofJvky1HTIStAjLmX+Cc7NhUgYoUAooveuG2
+         sgr+DfmyNURrvjjgktbXgASyYM7ekCHEJJxNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DsvR+TcwmI4jVJzuydsxBMDLVq1XTHOSTRk3ilTd2M8=;
+        b=tcBFPhRCs7negw5IuH1veA85naRZhzHfdZqkgIJBJWttodnsLTc68DO57GmUlm1HmW
+         YDo/jRYNQQlHMMRmT7A5zp7DiCLVZxYnPg3oOfH+1aePmGUonJAwtrfn8YHPe07z9drN
+         GyufqW11Vz++W8FscVpVJQD9w+pSwnFgLjhqkc3uvT2TARs+jaeqWISzzNbFsIfbze3u
+         NyOBz2W7mIiQbLSEidQ6gonR73YF9Nw/yW/OurRFIFD6njnH6GrLrWfPfpOyZvaga1vc
+         wV/zdE8DgyOqoUhNM9iQ1f5Q5i6d68pOVLINChNilCPUc4lwD94Gmbo+MT4/4GDJkpOD
+         4oXA==
+X-Gm-Message-State: ANhLgQ1mK4lhVxpLOMpxX1spxR1bpJhGDbxGcAqXOjpn0qbAc6DLcjDR
+        SQTMkBKvRxl6PegQvXqU2IuO6w==
+X-Google-Smtp-Source: ADFU+vtQ3zmuuk6S7MV6yqPmtIItc12Pcv44PxtKGobUKPTjqQaUljsbCnX/DNGWIEQnxG1Z5CiMWw==
+X-Received: by 2002:aa7:999e:: with SMTP id k30mr30994163pfh.235.1585086526229;
+        Tue, 24 Mar 2020 14:48:46 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id l62sm15578328pgd.82.2020.03.24.14.48.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 14:48:45 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Salman Qazi <sqazi@google.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] bdev: Reduce time holding bd_mutex in sync in blkdev_close()
+Date:   Tue, 24 Mar 2020 14:48:27 -0700
+Message-Id: <20200324144754.v2.1.I9df0264e151a740be292ad3ee3825f31b5997776@changeid>
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 05:06:03PM -0400, Qian Cai wrote:
-> Reverted the series on the top of today's linux-next fixed boot crashes.
+While trying to "dd" to the block device for a USB stick, I
+encountered a hung task warning (blocked for > 120 seconds).  I
+managed to come up with an easy way to reproduce this on my system
+(where /dev/sdb is the block device for my USB stick) with:
 
-Umm...  How about a reproducer (or bisect of vfs.git#work.dotdot, assuming
-it reproduces there)?
+  while true; do dd if=/dev/zero of=/dev/sdb bs=4M; done
 
-> [   53.027443][ T3519] BUG: Kernel NULL pointer dereference on read at 0x00000000
-> [   53.027480][ T3519] Faulting instruction address: 0xc0000000004dbfa4
-> [   53.027498][ T3519] Oops: Kernel access of bad area, sig: 11 [#1]
-> [   53.027521][ T3519] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=256 DEBUG_PAGEALLOC NUMA PowerNV
-> [   53.027538][ T3519] Modules linked in: kvm_hv kvm ip_tables x_tables xfs sd_mod bnx2x ahci libahci mdio libata tg3 libphy firmware_class dm_mirror dm_region_hash dm_log dm_mod
-> [   53.027594][ T3519] CPU: 36 PID: 3519 Comm: polkitd Not tainted 5.6.0-rc7-next-20200324 #1
-> [   53.027618][ T3519] NIP:  c0000000004dbfa4 LR: c0000000004dc040 CTR: 0000000000000000
-> [   53.027634][ T3519] REGS: c0002013879af810 TRAP: 0300   Not tainted  (5.6.0-rc7-next-20200324)
-> [   53.027668][ T3519] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24004422  XER: 20040000
-> [   53.027708][ T3519] CFAR: c0000000004dc044 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0 
-> [   53.027708][ T3519] GPR00: c0000000004dc040 c0002013879afaa0 c00000000165a500 0000000000000000 
-> [   53.027708][ T3519] GPR04: c000000001511408 0000000000000000 c0002013879af834 0000000000000002 
-> [   53.027708][ T3519] GPR08: 0000000000000001 0000000000000000 0000000000000000 0000000000000001 
-> [   53.027708][ T3519] GPR12: 0000000000004000 c000001ffffe1e00 0000000000000000 0000000000000000 
-> [   53.027708][ T3519] GPR16: 0000000000000000 0000000000000001 0000000000000000 0000000000000000 
-> [   53.027708][ T3519] GPR20: c000200ea1eacf38 c000201c8102f043 2f2f2f2f2f2f2f2f 0000000000000003 
-> [   53.027708][ T3519] GPR24: 0000000000000000 c0002013879afbc8 fffffffffffff000 0000000000200000 
-> [   53.027708][ T3519] GPR28: ffffffffffffffff 61c8864680b583eb 0000000000000000 0000000000002e2e 
-> [   53.027931][ T3519] NIP [c0000000004dbfa4] link_path_walk+0x284/0x4c0
-> __d_entry_type at include/linux/dcache.h:389
-> (inlined by) d_can_lookup at include/linux/dcache.h:404
-> (inlined by) link_path_walk at fs/namei.c:2178
+With my reproduction here are the relevant bits from the hung task
+detector:
 
-... and apparently NULL nd->path.dentry there.  After walk_component()
-having returned NULL.  Which means either handle_dots() returning NULL
-or step_into() doing the same.  The former means either (for "..")
-step_into() having returned NULL, or nd->path.dentry left unchanged.
+ INFO: task udevd:294 blocked for more than 122 seconds.
+ ...
+ udevd           D    0   294      1 0x00400008
+ Call trace:
+  ...
+  mutex_lock_nested+0x40/0x50
+  __blkdev_get+0x7c/0x3d4
+  blkdev_get+0x118/0x138
+  blkdev_open+0x94/0xa8
+  do_dentry_open+0x268/0x3a0
+  vfs_open+0x34/0x40
+  path_openat+0x39c/0xdf4
+  do_filp_open+0x90/0x10c
+  do_sys_open+0x150/0x3c8
+  ...
 
-So we either have step_into() returning NULL with nd->path.dentry ending up
-NULL, or we'd entered link_path_walk() with nd->path.dentry being NULL (it
-must have been that way on the entry, or we would've barfed on the previous
-iteration).
+ ...
+ Showing all locks held in the system:
+ ...
+ 1 lock held by dd/2798:
+  #0: ffffff814ac1a3b8 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x50/0x204
+ ...
+ dd              D    0  2798   2764 0x00400208
+ Call trace:
+  ...
+  schedule+0x8c/0xbc
+  io_schedule+0x1c/0x40
+  wait_on_page_bit_common+0x238/0x338
+  __lock_page+0x5c/0x68
+  write_cache_pages+0x194/0x500
+  generic_writepages+0x64/0xa4
+  blkdev_writepages+0x24/0x30
+  do_writepages+0x48/0xa8
+  __filemap_fdatawrite_range+0xac/0xd8
+  filemap_write_and_wait+0x30/0x84
+  __blkdev_put+0x88/0x204
+  blkdev_put+0xc4/0xe4
+  blkdev_close+0x28/0x38
+  __fput+0xe0/0x238
+  ____fput+0x1c/0x28
+  task_work_run+0xb0/0xe4
+  do_notify_resume+0xfc0/0x14bc
+  work_pending+0x8/0x14
 
-1) step_into() returns NULL either after
-        if (likely(!d_is_symlink(path.dentry)) ||
-           ((flags & WALK_TRAILING) && !(nd->flags & LOOKUP_FOLLOW)) ||
-           (flags & WALK_NOFOLLOW)) {
-                /* not a symlink or should not follow */
-                if (!(nd->flags & LOOKUP_RCU)) {
-                        dput(nd->path.dentry);
-                        if (nd->path.mnt != path.mnt)
-                                mntput(nd->path.mnt);
-                }  
-                nd->path = path;
-                nd->inode = inode;
-                nd->seq = seq;
-                return NULL;
-in which case nd->path.dentry is left equal to path.dentry, which can't be
-NULL (we would've oopsed on d_is_symlink() if it had been) or it's
-pick_link() returning NULL and leaving NULL nd->path.dentry.
+The problem appears related to the fact that my USB disk is terribly
+slow and that I have a lot of RAM in my system to cache things.
+Specifically my writes seem to be happening at ~15 MB/s and I've got
+~4 GB of RAM in my system that can be used for buffering.  To write 4
+GB of buffer to disk thus takes ~4000 MB / ~15 MB/s = ~267 seconds.
 
-pick_link() either leaves nd->path unchanged (in which case we are back to
-the "had NULL nd->path.dentry on entry into link_path_walk()") or does
-nd_jump_root() (absolute symlinks) or has ->get_link() call nd_jump_link().
-nd_jump_root() cannot survive leaving NULL in ->path.dentry - it hits
-either
-                d = nd->path.dentry;
-                nd->inode = d->d_inode;
-or
-                nd->inode = nd->path.dentry->d_inode;
-and either would've ooped right there.
-nd_jump_link() hits
-        nd->inode = nd->path.dentry->d_inode;
-on the way out, which also should be impossible to survive.
+The 267 second number is a problem because in __blkdev_put() we call
+sync_blockdev() while holding the bd_mutex.  Any other callers who
+want the bd_mutex will be blocked for the whole time.
 
-So we appear to have hit link_path_walk() with NULL nd->path.dentry.  And
-it's path_lookupat() from vfs_statx(), so we don't have LOOKUP_DOWN there.
-Which means either path_init() leaving NULL nd->path.dentry or lookup_last()
-returning NULL and leaving NULL nd->path.dentry...  The latter is basically
-walk_component(), so we would've had left link_path_walk() without an
-error, with symlink picked and with NULL nd->path.dentry.  Which means
-having the previous call of link_path_walk() also entered with NULL
-nd->path.dentry...
+The problem is made worse because I believe blkdev_put() specifically
+tells other tasks (namely udev) to go try to access the device at right
+around the same time we're going to hold the mutex for a long time.
 
-OK, so it looks like path_init() returning a string and leaving that...
-And I don't see any way for that to happen...
+Putting some traces around this (after disabling the hung task detector),
+I could confirm:
+ dd:    437.608600: __blkdev_put() right before sync_blockdev() for sdb
+ udevd: 437.623901: blkdev_open() right before blkdev_get() for sdb
+ dd:    661.468451: __blkdev_put() right after sync_blockdev() for sdb
+ udevd: 663.820426: blkdev_open() right after blkdev_get() for sdb
 
+A simple fix for this is to realize that sync_blockdev() works fine if
+you're not holding the mutex.  Also, it's not the end of the world if
+you sync a little early (though it can have performance impacts).
+Thus we can make a guess that we're going to need to do the sync and
+then do it without holding the mutex.  We still do one last sync with
+the mutex but it should be much, much faster.
 
-Right, so...  Could you slap the following
-	if (WARN_ON(!nd->path.dentry))
-		printk(KERN_ERR "pathname = %s\n", nd->name->name);
-1) into beginning of link_path_walk(), right before
-        while (*name=='/')
-                name++;
-        if (!*name)
-                return 0;
-in there.
-2) into pick_link(), right after
-all_done: // pure jump
+With this, my hung task warnings for my test case are gone.
 
-and see what your reproducer catches?
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I didn't put a "Fixes" annotation here because, as far as I can tell,
+this issue has been here "forever" unless someone knows of something
+else that changed that made this possible to hit.  This could probably
+get picked back to any stable tree that anyone is still maintaining.
+
+Changes in v2:
+- Don't bother holding the mutex when checking "bd_openers".
+
+ fs/block_dev.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 9501880dff5e..40c57a9cc91a 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1892,6 +1892,16 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
+ 	struct gendisk *disk = bdev->bd_disk;
+ 	struct block_device *victim = NULL;
+ 
++	/*
++	 * Sync early if it looks like we're the last one.  If someone else
++	 * opens the block device between now and the decrement of bd_openers
++	 * then we did a sync that we didn't need to, but that's not the end
++	 * of the world and we want to avoid long (could be several minute)
++	 * syncs while holding the mutex.
++	 */
++	if (bdev->bd_openers == 1)
++		sync_blockdev(bdev);
++
+ 	mutex_lock_nested(&bdev->bd_mutex, for_part);
+ 	if (for_part)
+ 		bdev->bd_part_count--;
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
