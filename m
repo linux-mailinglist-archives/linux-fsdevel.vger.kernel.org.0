@@ -2,107 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34C041908CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 10:14:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A6EB19098A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 10:30:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbgCXJOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 05:14:49 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:43118 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726413AbgCXJOs (ORCPT
+        id S1727092AbgCXJaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Mar 2020 05:30:10 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40252 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgCXJaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 05:14:48 -0400
-Received: by mail-il1-f193.google.com with SMTP id g15so6901326ilj.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 02:14:47 -0700 (PDT)
+        Tue, 24 Mar 2020 05:30:10 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e19so16367558otj.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 02:30:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=idRBFZHevxncnQX6Z0RjeW2nH+FIN4Tl94zjLZQFZrk=;
-        b=mawpFpcXkLQaAgJmcSHYiaUUaN/PAdffqBO4dJiT8nAxzFbDbDXk3TDb8xCX9tWZKz
-         z+PHUwNPLt9qXYrkRBZjErlGk8KKSSRx7y52Oi5nolOZptX/2lwvsDFU6KSPr8m/YJvf
-         t/kWo/O/F6xhlHhkW1q7KcerhtMh3QBgQKAqE=
+        bh=UzTnB3iS1qilKNurvByNSklxmCSliWtJkL6J5/1oEN0=;
+        b=dT+SeYyH1BkKkZWUaBk5uj0MEH4L6HjmlSYG1+nPnGCG3gAENzp0qjsWHAigkjMhtR
+         ljAI1uUGzbpci1deREeZbmrQws6bf2gHk+9gusG81aJYoCIN4nyvPaaP6ug29PD+78AD
+         pBmUMig88uOYaX5iSgRyVzEwUEzyGAd5Yu8cNqY1KACcX65WNHrT7gMMS3T4RjMXKiRj
+         9kQwaauv82/bqrFcDf7AtzgFGJe0b9boON8gM98zVPL6FMxsx9RRo+vJqhikkynkr4WI
+         +/oWFfjdmud6SHbfCHGyb5rghdGaq7+cR5SuHhjkz0L5/L+PbiIqnNVLVHCPGSKi0cpY
+         kOVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=idRBFZHevxncnQX6Z0RjeW2nH+FIN4Tl94zjLZQFZrk=;
-        b=GrlWrX4uwMNv6B0Xb/G6Uhh2CKeXOrUeqSZHpICUNIhDRoOZ9amD1N21vLp0asZCtO
-         8SmA+n+0fm4uUGOEG6eGaVHxrlVjr13mwAyL702gDOSGdVIRcIUbY1DBf29JAA0dIbsB
-         Vb2FG5eUzbXAg/gxebY7ICDnFKoaTADI7z/HWIScoc3ZXbxJXXNhFccpN2EUpymmpicx
-         ZlHMv2CMwc9asfl6U4Kd+OfJWSMFjcT3uQe/e2Yhmno657hMDdXLenLnO4OOVol+zwTq
-         kJ4ug5pe1OjUZIw2Ux2OV9msM1WDRPZ/NGhb1YH0rtzGm0TSTzd+QA2y0res26tygwBm
-         2Nog==
-X-Gm-Message-State: ANhLgQ1SCmcPjzQc/2KhseQ627c42PhFoW3YodHttDYNrksQZxSC3cQS
-        PWQD4gS4RFXpW/1SyEHpjb9/HftAWpKrsZmKd2Zqhg==
-X-Google-Smtp-Source: ADFU+vv/EtqL1xia+pVcJK+M1JWBTeuYDj7tqnHlidtENeeEMrC1eM8+C/FvCnEi+Ji50mb/A4rgY0zFHyU7tOxKawQ=
-X-Received: by 2002:a92:9fd0:: with SMTP id z77mr25847759ilk.257.1585041287116;
- Tue, 24 Mar 2020 02:14:47 -0700 (PDT)
+        bh=UzTnB3iS1qilKNurvByNSklxmCSliWtJkL6J5/1oEN0=;
+        b=peVdHn3KRn56/B72iJKYUOODGvby0p5ERL3HfCnpmPUCmIjTPya+GduhIcJmcc+rZ2
+         /ahImHDPL+sn5FEzMRsaFEWIZfKlFNsHJzc2iPskPiMhhEDtCl1MiIWgSuoD1gNGwxgz
+         7sB/jI9vIVAxAUjVkj8ZsEuRXvkHxh/BM7S33f/jervR1PWThKCnUfiiGMUaQglb4BwE
+         z9Km9QFWv8wpNUWL0det62IaBsH4Br8tMp3ZUC4HNKWv+4U7REQNxEja9KUSFVBh8k/u
+         33QCWaKWTFDvM84leUVywA/nTD0T7VrZ91fJ8Dyzl81dJNATtNGw3AADMi4wCmfPYo2A
+         C8Pw==
+X-Gm-Message-State: ANhLgQ1awNfNqz7rMHHS7qAKf2chxoRHdjeSfYXXe9RNeoXUBhSGlJBu
+        R9wsQ6PO9GmcyTKGLq64Mjq31ejy5aT/Lf5MRPd5eQ==
+X-Google-Smtp-Source: ADFU+vsVpjNMAvc6231UF5jnLInFznAbjT7PjgwTqzNrcYLn3q1rK1MSp0eBo3cutIGiQ6yNzxYDBwJUhUQYQLc0WIo=
+X-Received: by 2002:a4a:d1a5:: with SMTP id z5mr1673767oor.63.1585042209973;
+ Tue, 24 Mar 2020 02:30:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200324075017.545209-1-hch@lst.de>
-In-Reply-To: <20200324075017.545209-1-hch@lst.de>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 24 Mar 2020 10:14:36 +0100
-Message-ID: <CAJfpegvt=BSHg1ZYeqzpToqbvuo1RrK5o0Gnxq-dzwM6XZ9drA@mail.gmail.com>
-Subject: Re: [PATCH] fs: move the posix_acl_fix_xattr_{to_from}_user out of
- xattr code
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-fsdevel@vger.kernel.org
+References: <20200317113153.7945-1-linus.walleij@linaro.org>
+ <CAFEAcA9mXE+gPnvM6HZ-w0+BhbpeuH=osFH-9NUzCLv=w-c7HQ@mail.gmail.com>
+ <CACRpkdZtLNUwiZEMiJEoB0ojOBckyGcZeyFkR6MC69qv-ry9EA@mail.gmail.com>
+ <CAFEAcA-gdwi=KSW6LqVdEJWSo9VEL5abYQs9LoHd4mKE_-h=Aw@mail.gmail.com>
+ <CACRpkdYuZgZUznVxt1AHCSJa_GAXy8N0SduE5OrjDnE1s_L7Zg@mail.gmail.com> <20200324023431.GD53396@mit.edu>
+In-Reply-To: <20200324023431.GD53396@mit.edu>
+From:   Peter Maydell <peter.maydell@linaro.org>
+Date:   Tue, 24 Mar 2020 09:29:58 +0000
+Message-ID: <CAFEAcA_6RY1XFVNJCo5=tTkv2GQpXZRqh_Zz4dYadq-8MJZgTQ@mail.gmail.com>
+Subject: Re: [PATCH] ext4: Give 32bit personalities 32bit hashes
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 8:50 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> There is no excuse to ever perform actions related to a specific handler
-> directly from the generic xattr code as we have handler that understand
-> the specific data in given attrs.  As a nice sideeffect this removes
-> tons of pointless boilerplate code.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->
-> Changes since v1:
->  - fix up file systems that have their own ACL xattr handlers
->
->  fs/9p/acl.c                     |  4 +--
->  fs/overlayfs/dir.c              |  2 +-
->  fs/overlayfs/super.c            |  2 +-
->  fs/posix_acl.c                  | 62 ++-------------------------------
->  fs/xattr.c                      |  8 +----
->  include/linux/posix_acl_xattr.h | 12 -------
->  6 files changed, 7 insertions(+), 83 deletions(-)
->
-> diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-> index 6261719f6f2a..f3455ba2a84d 100644
-> --- a/fs/9p/acl.c
-> +++ b/fs/9p/acl.c
-> @@ -232,7 +232,7 @@ static int v9fs_xattr_get_acl(const struct xattr_handler *handler,
->                 return PTR_ERR(acl);
->         if (acl == NULL)
->                 return -ENODATA;
-> -       error = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
-> +       error = posix_acl_to_xattr(current_user_ns(), acl, buffer, size);
+On Tue, 24 Mar 2020 at 02:34, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> Another possibility, which would be messier for qemu, would be use a
+> flag set via fcntl.  That would require qemu from noticing when the
+> guest is calling open, openat, or openat2, and then inserting a fcntl
+> system call to set the 32-bit readdir mode.  That's cleaner from the
+> kernel interface complexity perspective, but it's messier for qemu.
 
-Okay, but the uncached cache is still broken.  It needs the xattr to
-be converted to acl (posix_acl_to_xattr(&init_user_ns, ...)) then back
-to xattr here.
+On the contrary, that would be a much better interface for QEMU.
+We always know when we're doing an open-syscall on behalf
+of the guest, and it would be trivial to make the fcntl() call then.
+That would ensure that we don't accidentally get the
+'32-bit semantics' on file descriptors QEMU opens for its own
+purposes, and wouldn't leave us open to the risk in future that
+setting the PER_LINUX32 flag for all of QEMU causes
+unexpected extra behaviour in future kernels that would be correct
+for the guest binary but wrong/broken for QEMU's own internals.
 
->         posix_acl_release(acl);
->
->         return error;
-> @@ -262,7 +262,7 @@ static int v9fs_xattr_set_acl(const struct xattr_handler *handler,
->                 return -EPERM;
->         if (value) {
->                 /* update the cached acl value */
-> -               acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> +               acl = posix_acl_from_xattr(current_user_ns(), value, size);
-
-Same in this function.
-
-Thanks,
-Miklos
+thanks
+-- PMM
