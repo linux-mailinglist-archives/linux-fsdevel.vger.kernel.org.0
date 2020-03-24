@@ -2,86 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBA6B19036E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 02:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9EED190386
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 03:19:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbgCXBxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Mar 2020 21:53:01 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56818 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727102AbgCXBxB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Mar 2020 21:53:01 -0400
-Received: from callcc.thunk.org (pool-72-93-95-157.bstnma.fios.verizon.net [72.93.95.157])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 02O1qrU9018924
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Mar 2020 21:52:54 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B5817420EBA; Mon, 23 Mar 2020 21:52:53 -0400 (EDT)
-Date:   Mon, 23 Mar 2020 21:52:53 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, adilger.kernel@dilger.ca,
-        linux-fsdevel@vger.kernel.org, Harish Sriram <harish@linux.ibm.com>
-Subject: Re: [PATCH] ext4: Check for non-zero journal inum in
- ext4_calculate_overhead
-Message-ID: <20200324015253.GC53396@mit.edu>
-References: <20200316093038.25485-1-riteshh@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200316093038.25485-1-riteshh@linux.ibm.com>
+        id S1727053AbgCXCTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Mar 2020 22:19:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59906 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727036AbgCXCTw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Mar 2020 22:19:52 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D87B2073E;
+        Tue, 24 Mar 2020 02:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585016391;
+        bh=vduWTFksrOFfgwb0iKF5e7S99WEgL6/xYx3L1moJ7rI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=qRCD/epJxQ5bcFip17CPuH933GL/jn46/df+04SKi60FJLpe/R8lmVTvbV7Gtcw5D
+         Qvk3cR5tt2ozpLCNCAAMi2W+FTpMFZUnM+etJHOyyJxzS2kX9ZKWhVS//zN2hX0oor
+         eHwxCJI7b+IkUV7RgxqFreyplLXZ4gU7RNFmeqRs=
+Date:   Mon, 23 Mar 2020 19:19:50 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Domenico Andreoli <domenico.andreoli@linux.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org, mkleinsoft@gmail.com,
+        Christoph Hellwig <hch@lst.de>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v2] hibernate: Allow uswsusp to write to swap
+Message-Id: <20200323191950.7aae4e0135da7f9419d993bb@linux-foundation.org>
+In-Reply-To: <20200323152105.GB29351@magnolia>
+References: <20200304170646.GA31552@dumbo>
+        <5202091.FuziMeULnI@kreacher>
+        <20200322112314.GA22738@dumbo>
+        <20200323152105.GB29351@magnolia>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 03:00:38PM +0530, Ritesh Harjani wrote:
-> While calculating overhead for internal journal, also check
-> that j_inum shouldn't be 0. Otherwise we get below error with
-> xfstests generic/050 with external journal (XXX_LOGDEV config) enabled.
-> 
-> It could be simply reproduced with loop device with an external journal
-> and marking blockdev as RO before mounting.
-> 
-> [ 3337.146838] EXT4-fs error (device pmem1p2): ext4_get_journal_inode:4634: comm mount: inode #0: comm mount: iget: illegal inode #
-> ------------[ cut here ]------------
-> generic_make_request: Trying to write to read-only block-device pmem1p2 (partno 2)
-> WARNING: CPU: 107 PID: 115347 at block/blk-core.c:788 generic_make_request_checks+0x6b4/0x7d0
-> CPU: 107 PID: 115347 Comm: mount Tainted: G             L   --------- -t - 4.18.0-167.el8.ppc64le #1
-> NIP:  c0000000006f6d44 LR: c0000000006f6d40 CTR: 0000000030041dd4
-> <...>
-> NIP [c0000000006f6d44] generic_make_request_checks+0x6b4/0x7d0
-> LR [c0000000006f6d40] generic_make_request_checks+0x6b0/0x7d0
-> <...>
-> Call Trace:
-> generic_make_request_checks+0x6b0/0x7d0 (unreliable)
-> generic_make_request+0x3c/0x420
-> submit_bio+0xd8/0x200
-> submit_bh_wbc+0x1e8/0x250
-> __sync_dirty_buffer+0xd0/0x210
-> ext4_commit_super+0x310/0x420 [ext4]
-> __ext4_error+0xa4/0x1e0 [ext4]
-> __ext4_iget+0x388/0xe10 [ext4]
-> ext4_get_journal_inode+0x40/0x150 [ext4]
-> ext4_calculate_overhead+0x5a8/0x610 [ext4]
-> ext4_fill_super+0x3188/0x3260 [ext4]
-> mount_bdev+0x778/0x8f0
-> ext4_mount+0x28/0x50 [ext4]
-> mount_fs+0x74/0x230
-> vfs_kern_mount.part.6+0x6c/0x250
-> do_mount+0x2fc/0x1280
-> sys_mount+0x158/0x180
-> system_call+0x5c/0x70
-> EXT4-fs (pmem1p2): no journal found
-> EXT4-fs (pmem1p2): can't get journal size
-> EXT4-fs (pmem1p2): mounted filesystem without journal. Opts: dax,norecovery
-> 
-> Reported-by: Harish Sriram <harish@linux.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+On Mon, 23 Mar 2020 08:21:05 -0700 "Darrick J. Wong" <darrick.wong@oracle.com> wrote:
 
-Applied, thanks.
+> > > Has it been taken care of already, or am I expected to apply it?
+> > 
+> > I don't know who is supposed to take it, I did not receive any notification.
+> 
+> Hmmm.  I thought it had been picked up by akpm (see "[alternative-merged]
+> vfs-partially-revert-dont-allow-writes-to-swap-files.patch removed from
+> -mm tree" from 5 March), but it's not in mmotm now,
 
-					- Ted
+oop.  Things which are advertised as "hibernate: ..." tend not to
+survive my morning email triage :(
+
+> so I'll put this in my
+> vfs tree for 5.7.
+
+Thanks.  But I assume that "it turns out that userspace hibernation
+requires the ability to write the hibernation image to a swap device"
+means we've regressed userspace hibernation.
+
+So I'd say either "5.6 with a cc:stable" or "5.7-rc1 with a cc:stable"
+if we're being more cautious.
+
