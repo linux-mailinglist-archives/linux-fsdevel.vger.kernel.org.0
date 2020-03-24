@@ -2,123 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF313191BE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 22:22:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 087D8191C3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Mar 2020 22:50:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbgCXVWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 17:22:21 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46344 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbgCXVWU (ORCPT
+        id S1728322AbgCXVsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Mar 2020 17:48:52 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38056 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728277AbgCXVsw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 17:22:20 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v16so213245ljk.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 14:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=TU+v6vgTqqL8DSRyHNIS3zPA2Au3s8bOdz4RjYVrI59y/xJG37DuCzUkFedo8prEM1
-         kEhbDC8RUbuZ44J4woqibSX2DnsCF77IrNvFFBgUdsgFnP87BEfOj65kKyLU5UPa/XiH
-         yLDUovevdVM9pFj6antE7mF1/9gnUPays5DSg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K0AQOrscsNAyPOgnjIz1wdZ8BwbWscK7BvSW7dZFNMU=;
-        b=W/ItHOoNYnen73W4VDmwnigh4JDIbv4YoEB7/ICm+gq+BTy8nk9L+tAuG92tiQkftb
-         B4tTLp08rJtfp4Ru/CyqotmQ2T/7w45FkGw8HggKPd+ZNnLBgBv627tnGI/EMX0uZLv7
-         bl3kYAUBvhaJTUdq0j8HRoJo9gxVPDHjL3CG5iqNtF0qxywDTV8+nuhfUUM7FDKfwzRR
-         OfuGBzyA+F5+Wm7XSiiRkkOhT+JhCGhwBvFiRxzgZei22ML0qSr0O3JSLyUmh/lrAQ9G
-         pwBdp7aI1j7oSZdkvu6n5ELZGOVIAnFao68l47p8PWBX0Plj6ObxeDpKRUP6kxheGOJ8
-         h4kg==
-X-Gm-Message-State: ANhLgQ1oDdvKaHRpEDYxYN2QMvo4xgynRL/LuW7VQfHIKpx2KOBF1z7r
-        78xslclgMV5KQ/KGrb6rlRJaukq6Bko=
-X-Google-Smtp-Source: ADFU+vv3CZ806Ccmm+5xlweKDXFW/yghqgQ5+YsxEwW0hNnGS+9iC8/+gUkPBRuMQVLmITXvhln/1Q==
-X-Received: by 2002:a2e:92d6:: with SMTP id k22mr18564110ljh.18.1585084936720;
-        Tue, 24 Mar 2020 14:22:16 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id t13sm10400413lfc.68.2020.03.24.14.22.15
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id m15so55156lfp.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 14:22:15 -0700 (PDT)
-X-Received: by 2002:a19:f015:: with SMTP id p21mr60990lfc.10.1585084934903;
- Tue, 24 Mar 2020 14:22:14 -0700 (PDT)
+        Tue, 24 Mar 2020 17:48:52 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGrNd-001z3G-WE; Tue, 24 Mar 2020 21:46:38 +0000
+Date:   Tue, 24 Mar 2020 21:46:37 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
+Message-ID: <20200324214637.GI23230@ZenIV.linux.org.uk>
+References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
 MIME-Version: 1.0
-References: <20200324204449.7263-1-gladkov.alexey@gmail.com> <20200324204449.7263-4-gladkov.alexey@gmail.com>
-In-Reply-To: <20200324204449.7263-4-gladkov.alexey@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Mar 2020 14:21:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Message-ID: <CAHk-=whXbgW7-FYL4Rkaoh8qX+CkS5saVGP2hsJPV0c+EZ6K7A@mail.gmail.com>
-Subject: Re: [PATCH RESEND v9 3/8] proc: move hide_pid, pid_gid from
- pid_namespace to proc_fs_info
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 1:46 PM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
-> +/* definitions for hide_pid field */
-> +enum {
-> +       HIDEPID_OFF       = 0,
-> +       HIDEPID_NO_ACCESS = 1,
-> +       HIDEPID_INVISIBLE = 2,
-> +};
+On Tue, Mar 24, 2020 at 05:06:03PM -0400, Qian Cai wrote:
+> Reverted the series on the top of today's linux-next fixed boot crashes.
 
-Should this enum be named...
+Umm...  How about a reproducer (or bisect of vfs.git#work.dotdot, assuming
+it reproduces there)?
 
->  struct proc_fs_info {
->         struct pid_namespace *pid_ns;
->         struct dentry *proc_self;        /* For /proc/self */
->         struct dentry *proc_thread_self; /* For /proc/thread-self */
-> +       kgid_t pid_gid;
-> +       int hide_pid;
->  };
+> [   53.027443][ T3519] BUG: Kernel NULL pointer dereference on read at 0x00000000
+> [   53.027480][ T3519] Faulting instruction address: 0xc0000000004dbfa4
+> [   53.027498][ T3519] Oops: Kernel access of bad area, sig: 11 [#1]
+> [   53.027521][ T3519] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=256 DEBUG_PAGEALLOC NUMA PowerNV
+> [   53.027538][ T3519] Modules linked in: kvm_hv kvm ip_tables x_tables xfs sd_mod bnx2x ahci libahci mdio libata tg3 libphy firmware_class dm_mirror dm_region_hash dm_log dm_mod
+> [   53.027594][ T3519] CPU: 36 PID: 3519 Comm: polkitd Not tainted 5.6.0-rc7-next-20200324 #1
+> [   53.027618][ T3519] NIP:  c0000000004dbfa4 LR: c0000000004dc040 CTR: 0000000000000000
+> [   53.027634][ T3519] REGS: c0002013879af810 TRAP: 0300   Not tainted  (5.6.0-rc7-next-20200324)
+> [   53.027668][ T3519] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 24004422  XER: 20040000
+> [   53.027708][ T3519] CFAR: c0000000004dc044 DAR: 0000000000000000 DSISR: 40000000 IRQMASK: 0 
+> [   53.027708][ T3519] GPR00: c0000000004dc040 c0002013879afaa0 c00000000165a500 0000000000000000 
+> [   53.027708][ T3519] GPR04: c000000001511408 0000000000000000 c0002013879af834 0000000000000002 
+> [   53.027708][ T3519] GPR08: 0000000000000001 0000000000000000 0000000000000000 0000000000000001 
+> [   53.027708][ T3519] GPR12: 0000000000004000 c000001ffffe1e00 0000000000000000 0000000000000000 
+> [   53.027708][ T3519] GPR16: 0000000000000000 0000000000000001 0000000000000000 0000000000000000 
+> [   53.027708][ T3519] GPR20: c000200ea1eacf38 c000201c8102f043 2f2f2f2f2f2f2f2f 0000000000000003 
+> [   53.027708][ T3519] GPR24: 0000000000000000 c0002013879afbc8 fffffffffffff000 0000000000200000 
+> [   53.027708][ T3519] GPR28: ffffffffffffffff 61c8864680b583eb 0000000000000000 0000000000002e2e 
+> [   53.027931][ T3519] NIP [c0000000004dbfa4] link_path_walk+0x284/0x4c0
+> __d_entry_type at include/linux/dcache.h:389
+> (inlined by) d_can_lookup at include/linux/dcache.h:404
+> (inlined by) link_path_walk at fs/namei.c:2178
 
-.. and then used here instead of "int"?
+... and apparently NULL nd->path.dentry there.  After walk_component()
+having returned NULL.  Which means either handle_dots() returning NULL
+or step_into() doing the same.  The former means either (for "..")
+step_into() having returned NULL, or nd->path.dentry left unchanged.
 
-Same goes for 'struct proc_fs_context' too, for that matter?
+So we either have step_into() returning NULL with nd->path.dentry ending up
+NULL, or we'd entered link_path_walk() with nd->path.dentry being NULL (it
+must have been that way on the entry, or we would've barfed on the previous
+iteration).
 
-And maybe in the function declarations and definitions too? In things
-like 'has_pid_permissions()' (the series adds some other cases later,
-like hidepid2str() etc)
+1) step_into() returns NULL either after
+        if (likely(!d_is_symlink(path.dentry)) ||
+           ((flags & WALK_TRAILING) && !(nd->flags & LOOKUP_FOLLOW)) ||
+           (flags & WALK_NOFOLLOW)) {
+                /* not a symlink or should not follow */
+                if (!(nd->flags & LOOKUP_RCU)) {
+                        dput(nd->path.dentry);
+                        if (nd->path.mnt != path.mnt)
+                                mntput(nd->path.mnt);
+                }  
+                nd->path = path;
+                nd->inode = inode;
+                nd->seq = seq;
+                return NULL;
+in which case nd->path.dentry is left equal to path.dentry, which can't be
+NULL (we would've oopsed on d_is_symlink() if it had been) or it's
+pick_link() returning NULL and leaving NULL nd->path.dentry.
 
-Yeah, enums and ints are kind of interchangeable in C, but even if it
-wouldn't give us any more typechecking (except perhaps with sparse if
-you mark it so), it would be documenting the use.
+pick_link() either leaves nd->path unchanged (in which case we are back to
+the "had NULL nd->path.dentry on entry into link_path_walk()") or does
+nd_jump_root() (absolute symlinks) or has ->get_link() call nd_jump_link().
+nd_jump_root() cannot survive leaving NULL in ->path.dentry - it hits
+either
+                d = nd->path.dentry;
+                nd->inode = d->d_inode;
+or
+                nd->inode = nd->path.dentry->d_inode;
+and either would've ooped right there.
+nd_jump_link() hits
+        nd->inode = nd->path.dentry->d_inode;
+on the way out, which also should be impossible to survive.
 
-Or am I missing something?
+So we appear to have hit link_path_walk() with NULL nd->path.dentry.  And
+it's path_lookupat() from vfs_statx(), so we don't have LOOKUP_DOWN there.
+Which means either path_init() leaving NULL nd->path.dentry or lookup_last()
+returning NULL and leaving NULL nd->path.dentry...  The latter is basically
+walk_component(), so we would've had left link_path_walk() without an
+error, with symlink picked and with NULL nd->path.dentry.  Which means
+having the previous call of link_path_walk() also entered with NULL
+nd->path.dentry...
 
-Anyway, I continue to think the series looks fine, bnut would love to
-see it in -next and perhaps comments from Al and Alexey Dobriyan..
+OK, so it looks like path_init() returning a string and leaving that...
+And I don't see any way for that to happen...
 
-            Linus
+
+Right, so...  Could you slap the following
+	if (WARN_ON(!nd->path.dentry))
+		printk(KERN_ERR "pathname = %s\n", nd->name->name);
+1) into beginning of link_path_walk(), right before
+        while (*name=='/')
+                name++;
+        if (!*name)
+                return 0;
+in there.
+2) into pick_link(), right after
+all_done: // pure jump
+
+and see what your reproducer catches?
