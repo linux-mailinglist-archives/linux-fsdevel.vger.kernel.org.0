@@ -2,85 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA86191FD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 04:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 731FE19200B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 05:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgCYDsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 23:48:31 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38474 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbgCYDsb (ORCPT
+        id S1725907AbgCYEEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 00:04:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41842 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCYEEG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 23:48:31 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w3so287860plz.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 20:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CWdyd6j2r7FGt8O9BrZXJ57QRfz1CXItxfCIuK+HcGQ=;
-        b=q/LyPn1AoWnQFxjXkHL+8Jyn2wCJxi2NRICYkLYc9ppR+AjmgKVExL4QA7TUmZODx8
-         HIg28z2seGLZE4B+yDZ/zWX8HZo82n7SzoPW+4QT8ZPsvZqN4FvOzxJpiiEsZSVlRFMN
-         7PrJKFb3ZC/5HNSlcSojWFdcxzA1fAzi60UodxOOu1EwiNub38j47zQ7v6sb6Z8DfNEI
-         wv4wZVSh2v9Q8TTjh/7v6v8RDdipvTklOqiadmpFVUAATd0UilLg/AhHoqeIk3B4JFYL
-         okDUpFtPz+PCuGXcUYDl+74zzrNcj5Y5AKMiFRLD0vDOJ5/fGsOB70msOG2NoHRMbtN2
-         abZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CWdyd6j2r7FGt8O9BrZXJ57QRfz1CXItxfCIuK+HcGQ=;
-        b=Aa+UAmLoCskHtbEkGnq0+cNYgXvZP2emmmkG2etDBXf/CEA4JHiWEy/TfVhkClcbCN
-         feXQZne0MCqWicJ4lbvTAbm5pSIZ4yuneAkiDSNteFhAKQ01SPRdIq1j8gRSR31r9jft
-         lvWNW/+1H0xq0+xSeD9pxsd1VoID+sZIMXNQfyt9qhYUfaozs9fFSeUzTOM+xdlMw6We
-         Z51N+eTp9NKhCLG1eZK752VsPjJaM0X+umxlVNoAxaHQg2q3KNuP4s85D0BNQT8WKaHz
-         e6jMRywHDckbS9/572N93+QGADSJCJhLz7Dd7zRgI6Sx9bNjRrrFsDouGvcVMgux0aYm
-         pj4A==
-X-Gm-Message-State: ANhLgQ3YfXMwOR/pR8Lf3m8MXp4smG6W3u7FNkzpyIp9WPE47hkUD3GK
-        5PfE4y39k7GXBserip9myQ2a4Q==
-X-Google-Smtp-Source: ADFU+vsSQEGJ0EO67Ye7iI8H6ByQmJxZoMFVSEIK9Q4us7O5lWZbGu9+Au+xo0Oc5BoN11s990R5Vg==
-X-Received: by 2002:a17:902:7886:: with SMTP id q6mr1281983pll.237.1585108108106;
-        Tue, 24 Mar 2020 20:48:28 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.145])
-        by smtp.gmail.com with ESMTPSA id i17sm38674pfo.103.2020.03.24.20.48.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Mar 2020 20:48:27 -0700 (PDT)
-Subject: Re: [PATCH] io_uring:fix missing 'return' in comment
-To:     Chucheng Luo <luochucheng@vivo.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     kernel@vivo.com
-References: <20200325033138.21488-1-luochucheng@vivo.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ee9047e5-c18e-4f41-e45a-0c5e963787f8@kernel.dk>
-Date:   Tue, 24 Mar 2020 21:48:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Wed, 25 Mar 2020 00:04:06 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGxGp-002Aql-K1; Wed, 25 Mar 2020 04:03:59 +0000
+Date:   Wed, 25 Mar 2020 04:03:59 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
+Message-ID: <20200325040359.GK23230@ZenIV.linux.org.uk>
+References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
+ <20200324214637.GI23230@ZenIV.linux.org.uk>
+ <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
+ <20200325021327.GJ23230@ZenIV.linux.org.uk>
+ <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <20200325033138.21488-1-luochucheng@vivo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/24/20 9:31 PM, Chucheng Luo wrote:
-> the missing 'return' work may make it hard
-> for other developers to understand it.
+On Tue, Mar 24, 2020 at 11:24:01PM -0400, Qian Cai wrote:
 
-Thanks, that does read better. Notes for future patches:
+> > On Mar 24, 2020, at 10:13 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > 
+> > On Tue, Mar 24, 2020 at 09:49:48PM -0400, Qian Cai wrote:
+> > 
+> >> It does not catch anything at all with the patch,
+> > 
+> > You mean, oops happens, but neither WARN_ON() is triggered?
+> > Lovely...  Just to make sure: could you slap the same couple
+> > of lines just before
+> >                if (unlikely(!d_can_lookup(nd->path.dentry))) {
+> > in link_path_walk(), just to check if I have misread the trace
+> > you've got?
+> > 
+> > Does that (+ other two inserts) end up with
+> > 	1) some of these WARN_ON() triggered when oops happens or
+> > 	2) oops is happening, but neither WARN_ON() triggers or
+> > 	3) oops not happening / becoming harder to hit?
+> 
+> Only the one just before
+>  if (unlikely(!d_can_lookup(nd->path.dentry))) {
+> In link_path_walk() will trigger.
 
-- You should capitalize the first letter in the commit message,
-  any sentence really.
-- Commit messages should use 72-74 chars of line width
-- Add a space after 'io_uring:' and title description
+> [  245.767202][ T5020] pathname = /var/run/nscd/socket
 
-I fixed these up and hand applied to for-5.7/io_uring.
+Lovely.  So
+	* we really do get NULL nd->path.dentry there; I've not misread the
+trace.
+	* on the entry into link_path_walk() nd->path.dentry is non-NULL.
+	* *ALL* components should've been LAST_NORM ones
+	* not a single symlink in sight, unless the setup is rather unusual
+	* possibly not even a single mountpoint along the way (depending
+upon the userland used)
 
--- 
-Jens Axboe
+And in the same loop we have
+                if (likely(type == LAST_NORM)) {
+                        struct dentry *parent = nd->path.dentry;
+                        nd->flags &= ~LOOKUP_JUMPED;
+                        if (unlikely(parent->d_flags & DCACHE_OP_HASH)) {
+                                struct qstr this = { { .hash_len = hash_len }, .name = name };
+                                err = parent->d_op->d_hash(parent, &this);
+                                if (err < 0)
+                                        return err;
+                                hash_len = this.hash_len;
+                                name = this.name;
+                        }
+                }
+upstream of that thing.  So NULL nd->path.dentry *there* would've oopsed.
+IOW, what we are hitting is walk_component() with non-NULL nd->path.dentry
+when we enter it, NULL being returned and nd->path.dentry becoming NULL
+by the time we return from walk_component().
 
+Could you post the results of
+	stat / /var /var/run /var/run/nscd /var/run/nscd/socket
+after the boot with working kernel?  Also, is that "hit on every boot" or
+stochastic?  If it's the latter, I'd like to see the output of the same
+thing on a successful boot of the same kernel, if possible...
+
+Also, is the pathname always the same and if not, what other variants have
+been observed?
