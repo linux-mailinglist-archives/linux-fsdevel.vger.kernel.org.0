@@ -2,84 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1162C192854
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 13:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 691B6192863
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 13:30:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbgCYM2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 08:28:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55496 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727319AbgCYM2q (ORCPT
+        id S1727438AbgCYM3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 08:29:23 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:60335 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727177AbgCYM3X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 08:28:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=bOpFqUPJ9bS+4ZDNHjIcr3PqAyINL9efeQnE7Z928sM=; b=kNWzkfmPTk9pYHmfxP86DPRPIq
-        M/Ipv+fQiCkDkwXVpxqu3vzY7CjHK4yUGuRcjtkjXDrmI5QP67iBFuZ7wmzjWBRflzTR4Oc10Y3Tw
-        TxZGNoKsEh6OdYFpqm6hndtv7nBc0nbnSt/wF5ed6xS4syPSNC5uKBNw5gu3GTreDVpUkm2vzqIHs
-        2+NSFdsEglJWkR3iq/8Z4aBgwd4eOWC15tQTykGwIj32DdexPLlCe17ITG83vlBMg3Y7I0hu0ytef
-        96sPrnpgCWNGDBo9diiyYhgbp2R0CAcMwkft9oMIFOoTsjaSOofASaFSKdfAc4+7LfRhpUx2citl6
-        pM8QRVRA==;
-Received: from [2001:4bb8:18c:2a9e:999c:283e:b14a:9189] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jH59C-0003No-4o; Wed, 25 Mar 2020 12:28:38 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Chao Yu <chao@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>, linux-xfs@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] fs: clean up generic_update_time a bit
-Date:   Wed, 25 Mar 2020 13:28:25 +0100
-Message-Id: <20200325122825.1086872-5-hch@lst.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200325122825.1086872-1-hch@lst.de>
-References: <20200325122825.1086872-1-hch@lst.de>
+        Wed, 25 Mar 2020 08:29:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585139362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=900raWR46tgHDOfPc5pVs6kpLXnkZj9aN4sQMIHjlas=;
+        b=NkOXrs/gxEoOqq/B5ffwpfC3Mes+7UNj4VkPtaOpbP1LXBw/Kym2XXuRxblqhnIA91zDR0
+        IMswW6BH62UOdFiannZQlWU7Lo66SpuWiC4dU2poPkLz3UAcdTKyAZ/kTFhB8gHdME8iWV
+        gGcmG69VsO4VM3O59s2bx0KYk83Z1Xo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-298-3SWSe-XBO72xPJI1ZEIDOA-1; Wed, 25 Mar 2020 08:29:20 -0400
+X-MC-Unique: 3SWSe-XBO72xPJI1ZEIDOA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 607A7149C0;
+        Wed, 25 Mar 2020 12:29:18 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 189C192F80;
+        Wed, 25 Mar 2020 12:29:05 +0000 (UTC)
+Date:   Wed, 25 Mar 2020 08:29:03 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Steve Grubb <sgrubb@redhat.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+Message-ID: <20200325122903.obkpyog7fjabzrpf@madcap2.tricolour.ca>
+References: <3142237.YMNxv0uec1@x2>
+ <CAHC9VhTiCHQbp2SwK0Xb1QgpUZxOQ26JKKPsVGT0ZvMqx28oPQ@mail.gmail.com>
+ <20200312202733.7kli64zsnqc4mrd2@madcap2.tricolour.ca>
+ <CAHC9VhS9DtxJ4gvOfMRnzoo6ccGJVKL+uZYe6qqH+SPqD8r01Q@mail.gmail.com>
+ <20200313192306.wxey3wn2h4htpccm@madcap2.tricolour.ca>
+ <CAHC9VhQKOpVWxDg-tWuCWV22QRu8P_NpFKme==0Ot1RQKa_DWA@mail.gmail.com>
+ <20200318214154.ycxy5dl4pxno6fvi@madcap2.tricolour.ca>
+ <CAHC9VhSuMnd3-ci2Bx-xJ0yscQ=X8ZqFAcNPKpbh_ZWN3FJcuQ@mail.gmail.com>
+ <20200319214759.qgxt2sfkmd6srdol@madcap2.tricolour.ca>
+ <CAHC9VhTp25OAaTO5UMft0OzUZ=oQpZFjebkjjQP0-NrPp0bNAg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTp25OAaTO5UMft0OzUZ=oQpZFjebkjjQP0-NrPp0bNAg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no need both the sync and iflag variables - just use dirty as
-the indicator for which flag to pass to __mark_inode_dirty, as there
-is no point in passing both flags - __mark_inode_dirty will immediately
-clear I_DIRTY_TIME if I_DIRTY_SYNC is set.
+On 2020-03-20 17:56, Paul Moore wrote:
+> On Thu, Mar 19, 2020 at 5:48 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-03-18 17:47, Paul Moore wrote:
+> > > On Wed, Mar 18, 2020 at 5:42 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2020-03-18 17:01, Paul Moore wrote:
+> > > > > On Fri, Mar 13, 2020 at 3:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > On 2020-03-13 12:42, Paul Moore wrote:
+> > > > >
+> > > > > ...
+> > > > >
+> > > > > > > The thread has had a lot of starts/stops, so I may be repeating a
+> > > > > > > previous suggestion, but one idea would be to still emit a "death
+> > > > > > > record" when the final task in the audit container ID does die, but
+> > > > > > > block the particular audit container ID from reuse until it the
+> > > > > > > SIGNAL2 info has been reported.  This gives us the timely ACID death
+> > > > > > > notification while still preventing confusion and ambiguity caused by
+> > > > > > > potentially reusing the ACID before the SIGNAL2 record has been sent;
+> > > > > > > there is a small nit about the ACID being present in the SIGNAL2
+> > > > > > > *after* its death, but I think that can be easily explained and
+> > > > > > > understood by admins.
+> > > > > >
+> > > > > > Thinking quickly about possible technical solutions to this, maybe it
+> > > > > > makes sense to have two counters on a contobj so that we know when the
+> > > > > > last process in that container exits and can issue the death
+> > > > > > certificate, but we still block reuse of it until all further references
+> > > > > > to it have been resolved.  This will likely also make it possible to
+> > > > > > report the full contid chain in SIGNAL2 records.  This will eliminate
+> > > > > > some of the issues we are discussing with regards to passing a contobj
+> > > > > > vs a contid to the audit_log_contid function, but won't eliminate them
+> > > > > > all because there are still some contids that won't have an object
+> > > > > > associated with them to make it impossible to look them up in the
+> > > > > > contobj lists.
+> > > > >
+> > > > > I'm not sure you need a full second counter, I imagine a simple flag
+> > > > > would be okay.  I think you just something to indicate that this ACID
+> > > > > object is marked as "dead" but it still being held for sanity reasons
+> > > > > and should not be reused.
+> > > >
+> > > > Ok, I see your point.  This refcount can be changed to a flag easily
+> > > > enough without change to the api if we can be sure that more than one
+> > > > signal can't be delivered to the audit daemon *and* collected by sig2.
+> > > > I'll have a more careful look at the audit daemon code to see if I can
+> > > > determine this.
+> > >
+> > > Maybe I'm not understanding your concern, but this isn't really
+> > > different than any of the other things we track for the auditd signal
+> > > sender, right?  If we are worried about multiple signals being sent
+> > > then it applies to everything, not just the audit container ID.
+> >
+> > Yes, you are right.  In all other cases the information is simply
+> > overwritten.  In the case of the audit container identifier any
+> > previous value is put before a new one is referenced, so only the last
+> > signal is kept.  So, we only need a flag.  Does a flag implemented with
+> > a rcu-protected refcount sound reasonable to you?
+> 
+> Well, if I recall correctly you still need to fix the locking in this
+> patchset so until we see what that looks like it is hard to say for
+> certain.  Just make sure that the flag is somehow protected from
+> races; it is probably a lot like the "valid" flags you sometimes see
+> with RCU protected lists.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/inode.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+This is like looking for a needle in a haystack.  Can you point me to
+some code that does "valid" flags with RCU protected lists.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 96cf26ed4c7b..a7d19b1b15ac 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1662,7 +1662,6 @@ static int relatime_need_update(struct vfsmount *mnt, struct inode *inode,
- 
- int generic_update_time(struct inode *inode, struct timespec64 *time, int flags)
- {
--	int iflags = I_DIRTY_TIME;
- 	bool dirty = false;
- 
- 	if (flags & S_ATIME)
-@@ -1678,9 +1677,7 @@ int generic_update_time(struct inode *inode, struct timespec64 *time, int flags)
- 	     !(inode->i_sb->s_flags & SB_LAZYTIME)))
- 		dirty = true;
- 
--	if (dirty)
--		iflags |= I_DIRTY_SYNC;
--	__mark_inode_dirty(inode, iflags);
-+	__mark_inode_dirty(inode, dirty ? I_DIRTY_SYNC : I_DIRTY_TIME);
- 	return 0;
- }
- EXPORT_SYMBOL(generic_update_time);
--- 
-2.25.1
+> > > > Another question occurs to me is that what if the audit daemon is sent a
+> > > > signal and it cannot or will not collect the sig2 information from the
+> > > > kernel (SIGKILL?)?  Does that audit container identifier remain dead
+> > > > until reboot, or do we institute some other form of reaping, possibly
+> > > > time-based?
+> > >
+> > > In order to preserve the integrity of the audit log that ACID value
+> > > would need to remain unavailable until the ACID which contains the
+> > > associated auditd is "dead" (no one can request the signal sender's
+> > > info if that container is dead).
+> >
+> > I don't understand why it would be associated with the contid of the
+> > audit daemon process rather than with the audit daemon process itself.
+> > How does the signal collection somehow get transferred or delegated to
+> > another member of that audit daemon's container?
+> 
+> Presumably once we support multiple audit daemons we will need a
+> struct to contain the associated connection state, with at most one
+> struct (and one auditd) allowed for a given ACID.  I would expect that
+> the signal sender info would be part of that state included in that
+> struct.  If a task sent a signal to it's associated auditd, and no one
+> ever queried the signal information stored in the per-ACID state
+> struct, I would expect that the refcount/flag/whatever would remain
+> held for the signal sender's ACID until the auditd state's ACID died
+> (the struct would be reaped as part of the ACID death).  In cases
+> where the container orchestrator blocks sending signals across ACID
+> boundaries this really isn't an issue as it will all be the same ACID,
+> but since we don't want to impose any restrictions on what a container
+> *could* be it is important to make sure we handle the case where the
+> signal sender's ACID may be different from the associated auditd's
+> ACID.
+> 
+> > Thinking aloud here, the audit daemon's exit when it calls audit_free()
+> > needs to ..._put_sig and cancel that audit_sig_cid (which in the future
+> > will be allocated per auditd rather than the global it is now since
+> > there is only one audit daemon).
+> >
+> > > paul moore
+> >
+> > - RGB
+> 
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
