@@ -2,65 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 948B21920DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 07:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2BE19210F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 07:25:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbgCYGAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 02:00:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43040 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbgCYGAn (ORCPT
+        id S1726017AbgCYGZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 02:25:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48490 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCYGZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 02:00:43 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGz3e-002EkU-4i; Wed, 25 Mar 2020 05:58:30 +0000
-Date:   Wed, 25 Mar 2020 05:58:30 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-Message-ID: <20200325055830.GL23230@ZenIV.linux.org.uk>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
- <20200324214637.GI23230@ZenIV.linux.org.uk>
- <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
- <20200325021327.GJ23230@ZenIV.linux.org.uk>
- <5281297D-B66E-4A4C-9B41-D2242F6B7AE7@lca.pw>
- <20200325040359.GK23230@ZenIV.linux.org.uk>
+        Wed, 25 Mar 2020 02:25:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FRmSjeMLSWSTRYKWYZzCKuHL+R1jHOVgBVASwqCudQ0=; b=oMZmPDS83lP70QCyMHIjR4+gju
+        vilzU8xBJPREmv8lDqaOEsANBSnoivWvqxBIdQYs81DwcwdnPVOSwrjTyJ535WActZj0nlbJ/TYZM
+        xnHdxoOD5xZUfDFB48HC60u8cqu+KYg+fbzFVvK92TQdNyRt/S7j+58UP470m476KQgF7gm1QCBGy
+        BIx17f3eXb+3UTfN0d5yZFzxCpwha28JVjTvTFx+oYqhBWW+h/d5LZ/Mu02E56eQxSm3sFEdxteFC
+        c9RZnKxkdEOlBkuH7B5TvDuKGTWyPrzJidDYY4itD/br1CRR2wDj+YMvM1TR0qPd9GtP2RDtgW4k3
+        gqdneoTg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jGzU6-0007zq-4P; Wed, 25 Mar 2020 06:25:50 +0000
+Date:   Tue, 24 Mar 2020 23:25:50 -0700
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v2 10/11] iomap: Add support for zone append writes
+Message-ID: <20200325062550.GA19666@infradead.org>
+References: <20200324152454.4954-1-johannes.thumshirn@wdc.com>
+ <20200324152454.4954-11-johannes.thumshirn@wdc.com>
+ <20200324154131.GA32087@infradead.org>
+ <CO2PR04MB2343309246F0D413F5C1691CE7CE0@CO2PR04MB2343.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200325040359.GK23230@ZenIV.linux.org.uk>
+In-Reply-To: <CO2PR04MB2343309246F0D413F5C1691CE7CE0@CO2PR04MB2343.namprd04.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 04:03:59AM +0000, Al Viro wrote:
+On Wed, Mar 25, 2020 at 05:27:38AM +0000, Damien Le Moal wrote:
+> > At least for a normal file system that is absolutely not true.  If
+> > zonefs is so special it might be better of just using a slightly tweaked
+> > copy of blkdev_direct_IO rather than using iomap.
+> 
+> It would be very nice to not have to add this direct BIO use case in zonefs
+> since that would be only for writes to sequential zones while all other
+> operations use iomap. So instead of this, what about using a flag as Dave
+> suggested (see below comment too) ?
 
-> Lovely.  So
-> 	* we really do get NULL nd->path.dentry there; I've not misread the
-> trace.
-> 	* on the entry into link_path_walk() nd->path.dentry is non-NULL.
-> 	* *ALL* components should've been LAST_NORM ones
-> 	* not a single symlink in sight, unless the setup is rather unusual
-> 	* possibly not even a single mountpoint along the way (depending
-> upon the userland used)
+Given how special the use case is I'm not sure overloading iomap
+is a good idea.  Think of how a "normal" zone aware file system would
+use iomap and not of this will apply.  OTOH the "simple" single bio
+code in __blkdev_direct_IO_simple is less than 100 lines of code.  I
+think having a specialized code base for a specialized use case
+might be better than overloading generic code with tons of flags.
 
-OK, I see one place where that could occur, but I really don't see how that
-could be triggered on this pathname, short of very odd symlink layout in
-the filesystem on the testbox.  Does the following fix your reproducer?
+> > I don't think the iocb is the right interface for passing this
+> > kind of information.  We currently pass a bool wait to iomap_dio_rw
+> > which really should be flags.  I have a pending patch for that.
+> 
+> Is that patch queued in iomap or xfs tree ? Could you point us to it please ?
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 311e33dbac63..4082b70f32ff 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1805,6 +1805,8 @@ static const char *handle_dots(struct nameidata *nd, int type)
- 			error = step_into(nd, WALK_NOFOLLOW,
- 					 parent, inode, seq);
- 		}
-+		if (unlikely(error))
-+			return ERR_PTR(error);
- 
- 		if (unlikely(nd->flags & LOOKUP_IS_SCOPED)) {
- 			/*
+It isn't queued up anywhere yet.
