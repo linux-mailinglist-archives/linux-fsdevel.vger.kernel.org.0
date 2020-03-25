@@ -2,101 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49CB5191F62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 03:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1480F191F91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 04:11:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbgCYCm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 22:42:28 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:51932 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgCYCm1 (ORCPT
+        id S1727279AbgCYDLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Mar 2020 23:11:48 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:27927 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgCYDLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 22:42:27 -0400
-Received: by mail-pj1-f68.google.com with SMTP id w9so404838pjh.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 19:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=tJVGZmmA1bFjoevn7/qDYyyvIJ/eyc0u4ubgnC7ziTY=;
-        b=H4706YZqf8/zScGoFg12vybnR9M2VsIQVJgSz3rS1dHY9dQHDGFEdxDFbUd7d1zTgX
-         a1SAGpNqJGQq66/k++qcyoET2sxmyH3emD3uXnYHai1yW2TdH35PONdQL7aDm0PfPzyp
-         tYlxhgWpkpR2jgcSCMS6Pg5GkhF65IhQxffKc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=tJVGZmmA1bFjoevn7/qDYyyvIJ/eyc0u4ubgnC7ziTY=;
-        b=sKa9hGRzLZ606ZyH9anlD+tT6G3psvsMk+JbxBvQfxPQL0A2xMP1IFgXEYUAJly8Lb
-         NjCbm9/7fk9OAs2yJy8a65ZxHIydhK8fjjAbvCAy4+K2CQJ21iEj/0BrZKGvYpDGDyhS
-         2ghN6dCILh3KxSe/KCEmpio1rIpkFaGQ1NrFipOov8ew1RO4FrGZ2NRpkGT+mLSiQqK3
-         bInQ37lcM8lWbLpmpyrX4r3CGetUMWLHGnOjffCX2GmKKt9Nr3U6JzA2O1Yjunn0Jd+I
-         2RMrIPN1yBi9uMUvVbUR/mxXN0UkNNkZUWama9mKPedCxV0jcVOeO2LZ8xdwR85vi29r
-         zzKg==
-X-Gm-Message-State: ANhLgQ1juJcyErYPeKeqNl04dJfKgsGzY+gspUzTy11qoubo8AwU/+AA
-        CMlAcf7tHQ3pBN86GWzh/CN3dQ==
-X-Google-Smtp-Source: ADFU+vtS5LbLrzS1jhzDwYVrTj6A9lZWX06g/Mga4Nlp7aFIrRyOCBB7aq2FIo/kyw4uUBQ1+JG/MQ==
-X-Received: by 2002:a17:90a:33d1:: with SMTP id n75mr1033588pjb.167.1585104145832;
-        Tue, 24 Mar 2020 19:42:25 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x4sm858194pgr.9.2020.03.24.19.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2020 19:42:25 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 24 Mar 2020 23:11:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1585105908; x=1616641908;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qM3lSY4QNqQvT1Jbi+Tz3leooBMmTUQVq1mj6DxU704=;
+  b=DOZtcAzmq/2KNlkl+bVJ9aY9UW6VSYx+hdRp327WvTn2SamWweU2dzt/
+   qFtWr0WGA+PIuhCtQNlRUmOR1YbC8EZwPaW7MF6yeSbJ8nLhq6ArDHIVR
+   r/CFU+io4+v3u1b/tOle25sGlKNPeSbGeCf8ISQl327a0gwjD/uGHrwyY
+   GRYkcotwO42uGqhQl0HcsdEOC2NS8fAWa4JIXr8QJeyghmIQjhl5XLhkM
+   wh8p7BFRcWhWlobqIJ2fapdVAuGMOhdt42N7/J7ck/aNS4pYKZElNiA3d
+   B5bxoe3Hvned1rU4k/gsPtGUQFlhBdrvpEUfkWxqpA6/O8Auy8vQ9yCHm
+   w==;
+IronPort-SDR: 6rh8lF7ugcPR65pPq9IE9bSgrNuFSXRmGAdx6MzXS2xPdfTMfzBA6wJpDOlgMouzo0AvevWUuu
+ 0jJygbzMripaJSQ2h/P/j3YR5lG7jzXqKuBmEG0ATCA0ZtqRqCZ91tqPOXHVBKfI/rV0EGnuw8
+ 9RggfGKg+/Mx7Y9dPeg6XK+Q1nZKUUgEN0DwFJBur0Ejym+lpaCAcP49tQmT5JmnckmjbJcbXz
+ Iz3GtAiLpqX9b/Ak1zcEPivvCt/xFHZTrpk6obP1XcmLCQEHCOTxcLJuGwkx7N0Bf0ggl1Ici8
+ Ju8=
+X-IronPort-AV: E=Sophos;i="5.72,302,1580745600"; 
+   d="scan'208";a="133861392"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Mar 2020 11:11:48 +0800
+IronPort-SDR: wnK6H27IlocAAgW0PxS3Fu6F2R5LLT2LVFSj5Ux/xACgU2YgNvlJUqmcA4gft+pufdAay9Les0
+ D/al64rf6nepymi3vg1HIstbEiHLqC7TJNyd9dK0JJ+z7q4NUQLBSJGEInypohtdVtzSEws8pE
+ zInnvKVm/Qk87vS8oWYe9FeqScDU5MsthrZ7/JByDVuA1bGXkSaU4mx5kaxTYhnG8k+fxqckLZ
+ sEdnSuoAxL2BuIba8EoUK2i1uKTkwrl430d0UTIL59K7a7DpvO0Sivy8OD0hMdvz//AVL3rxdb
+ qrVVja+2BQaY9AWVfw8+2Jnf
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 20:03:26 -0700
+IronPort-SDR: f7zISp+bQbxJ0mhqNAk+9A1vk4QVX9rATRTRb2TK3mQc5b49TqCKhZRKOQ4lHbyn4bD+jJWUld
+ 7UKmvZj13HPkoBOTOQ28cNl+TnCdPIeKLqBuuU/6jWhJxhzrLr3LX4eVVuv48Nnr2gwJwIUJQG
+ KQs+8iUkSKoPwWUJBzdfDxksg5bJJJz1ekJePdZLeieyER6kZhDEjYbYbDDQ9nIgP/69jVxXyq
+ 2f0v/zDttZXwSf6iELOuroaeUWQCax5QDU93UR+qYqVJCQgmX0ekueopWau0YqhT2uygUrcj76
+ BbE=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 24 Mar 2020 20:11:46 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] zonefs fixes for 5.6-final
+Date:   Wed, 25 Mar 2020 12:11:46 +0900
+Message-Id: <20200325031146.289311-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5cfeed6df208b74913312a1c97235ee615180f91.1582361737.git.mchehab+huawei@kernel.org>
-References: <cover.1582361737.git.mchehab+huawei@kernel.org> <5cfeed6df208b74913312a1c97235ee615180f91.1582361737.git.mchehab+huawei@kernel.org>
-Subject: Re: [PATCH 3/7] docs: fix broken references to text files
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-arch@vger.kernel.org, linux-nfs@vger.kernel.org,
-        kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        netdev@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org, linux-rdma@vger.kernel.org
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Date:   Tue, 24 Mar 2020 19:42:24 -0700
-Message-ID: <158510414428.125146.17397141028775937874@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quoting Mauro Carvalho Chehab (2020-02-22 01:00:03)
-> Several references got broken due to txt to ReST conversion.
->=20
-> Several of them can be automatically fixed with:
->=20
->         scripts/documentation-file-ref-check --fix
->=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  drivers/hwtracing/coresight/Kconfig                  |  2 +-
->=20
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/core=
-sight/Kconfig
-> index 6ff30e25af55..6d42a6d3766f 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -107,7 +107,7 @@ config CORESIGHT_CPU_DEBUG
->           can quickly get to know program counter (PC), secure state,
->           exception level, etc. Before use debugging functionality, platf=
-orm
->           needs to ensure the clock domain and power domain are enabled
-> -         properly, please refer Documentation/trace/coresight-cpu-debug.=
-rst
-> +         properly, please refer Documentation/trace/coresight/coresight-=
-cpu-debug.rst
->           for detailed description and the example for usage.
-> =20
->  endif
+Linus,
 
-I ran into this today and almost sent a patch. Can you split this patch
-up into more pieces and send it off to the respective subsystem
-maintainers?
+The following changes since commit 0dda2ddb7ded1395189e95d43106469687c07795:
+
+  zonefs: select FS_IOMAP (2020-02-26 16:58:15 +0900)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.6-rc7
+
+for you to fetch changes up to ccf4ad7da0d9c30a962a116cb55bcd7d8c44b0fe:
+
+  zonfs: Fix handling of read-only zones (2020-03-25 11:28:26 +0900)
+
+----------------------------------------------------------------
+zonefs fixes for 5.6 final
+
+A single fix in this pull request to correctly handle the size of
+read-only zone files (from me).
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+
+----------------------------------------------------------------
+Damien Le Moal (1):
+      zonfs: Fix handling of read-only zones
+
+ Documentation/filesystems/zonefs.txt | 18 +++++++++++++-----
+ fs/zonefs/super.c                    | 28 +++++++++++++++++++++-------
+ 2 files changed, 34 insertions(+), 12 deletions(-)
