@@ -2,129 +2,330 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C13192539
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 11:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F3A192559
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 11:21:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgCYKPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 06:15:13 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:63118 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbgCYKPN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:15:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1585131313; x=1616667313;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=AZVqA6RmlTg8Fq053QJQD9wiWZN6+XZK9agyYCYrqjE=;
-  b=I6LLN6sC29tLCjZkQpKoPT61xrb7qzoA1pKSJ64sEULMjL22w0IWpaSz
-   btE2v/anLBD2Aw6fgHZrO8mzFsWansTobA80QWNohKpvdq9CCyA/bzySN
-   mQSDWDsiWO2yY0TgzQZYw7efbQMv5eLvTWHhDaRHkhwD+TQ2TB/ncTgfd
-   T5G2k83oRPdyOsLr8wmQt/DhEMw5IcYbGo9Egec38mWk1iB03ny+yle+h
-   HdGAQokJ04Cgu9EgtQ2rNPKEnaNrVw3nXTGaOTB/p7AJYR+UcUGrMZEzg
-   G131RwQ6YJpW6482HlalMSDNsJtJ2duCbsbZJwFqVIO4rF+tk/JUJc6LE
-   g==;
-IronPort-SDR: 3dqIsgURmklZxdm1wu69zRK7yLX6gMT77Z5BQcERpKdHuVtpL0wQn+roS0ZMEC6v/yipGMMvmm
- ftxzOra9lREhfTQ0LAmNPVqkoDgWsOnbqgtTd/b6UvfyccZDaWt+dGsB/flmXWHvEpHphYa0Vy
- ZTOdlsVpK3Cy7AoJYoCs/iaOsgZVRuk0FUEk68pRDKk0IEC7x6e56+BqGzDoF3rNFWnZKvlG98
- l6nbs7yUOBt/z8jwr+BaJcNxuSwOadv5bjJtqfquAu7tyApGaW0LkUS9vPABIwWPYzln6VLVQw
- eJI=
-X-IronPort-AV: E=Sophos;i="5.72,304,1580745600"; 
-   d="scan'208";a="133896589"
-Received: from mail-co1nam11lp2175.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.175])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Mar 2020 18:15:12 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OBiOfCDcO+GlXnesfGI9F426jZ3Me3sAx7COwLtewYmk2S4VOcsF68Hs38z5zIHUv42zpLLJ/Co8JRn+9QqW6N890dIpKpoGN4l0m3lWx5t5XuVUdUCTlVq8KlBkq5ADMaX8ui6zsIwJSmh8CAbUyqhwZHvxlZ3RuulqBYz4kZbQEzr67Ey1kylqOYjV6lQQakM+BC3Q09TITub4kyTwDLeWb7qBF5B3knv/AdDMlVDDuwX5hxuyYtyk93M70X/Vfa71af867LQqYCGgGNc5AkeKb5efO0xSEjIhA0IHITqNKN8FKMwROSstiJYjccrukb0IP2oNBWS9+RuDKFuXFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1mDcCA00tr31iefPVRzt+aXfb3TdrXs1MIdi7VDKWwM=;
- b=SuG/UdlaTeEzYcQ8Z5wQOxurmZ8S6/F2KnEDI7EyaHbA0+WEJgIe02PsBPBKcbj81PMDBGWJ+9QB0Gu31smDY1RnVQvJZiMYxKFh1ioVeU7zTDRJ6onrN6Jwx3ZLmiMejnFv4sJQTK/InmBR1HYiDK8+lnLC3dtIyoW/B/G4mnYOt2aZqpZtmIiJGgzkav3N7sGaOHqdVwO64xNxjmWbnrPtWNDQbANy0bDgrLUyKekGyco/OrKasbg15VsG0aUBGHLJckw10hdugC1EovVFAJTv1fvgk5FHFWdo08XWbCtte1fiu/2XUvZySMz1pO102iGaG3HNuJ/s1DrsPnNywA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1mDcCA00tr31iefPVRzt+aXfb3TdrXs1MIdi7VDKWwM=;
- b=byMlhMvMukLdqhWhLJqRqwvMpDejTyra9D9f+63gtTgd6Fb6NVaMGzSDAZnk3F+wyViJVMmk21KFFcAP55A9um+2hPSNNyvw/Z/hBVLJMnTNBiDUlL5aAnw7IWacVFhmempTp/RMQY4XZHR+h3HRUb2fELwUF2IUCAybzvs5DqY=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3712.namprd04.prod.outlook.com
- (2603:10b6:803:49::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.22; Wed, 25 Mar
- 2020 10:15:10 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2835.017; Wed, 25 Mar 2020
- 10:15:10 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v2 10/11] iomap: Add support for zone append writes
-Thread-Topic: [PATCH v2 10/11] iomap: Add support for zone append writes
-Thread-Index: AQHWAfBwrmUQROWSvUa2jUG+SCcnLQ==
-Date:   Wed, 25 Mar 2020 10:15:10 +0000
-Message-ID: <SN4PR0401MB3598C48C5748081BF26AF98F9BCE0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200324152454.4954-1-johannes.thumshirn@wdc.com>
- <20200324152454.4954-11-johannes.thumshirn@wdc.com>
- <20200324154131.GA32087@infradead.org>
- <SN4PR0401MB35980056EFCD6D0003463F939BCE0@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <20200325094828.GA20415@infradead.org>
- <CO2PR04MB2343F14FFF07D76BF7CE9D10E7CE0@CO2PR04MB2343.namprd04.prod.outlook.com>
- <20200325100145.GB20415@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 99e04e9b-8a6f-4486-ada4-08d7d0a566c2
-x-ms-traffictypediagnostic: SN4PR0401MB3712:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB3712725010ED58BA0D845C1C9BCE0@SN4PR0401MB3712.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 0353563E2B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(39860400002)(346002)(376002)(136003)(396003)(4744005)(5660300002)(110136005)(54906003)(6636002)(76116006)(52536014)(316002)(9686003)(91956017)(8676002)(55016002)(8936002)(33656002)(81156014)(66556008)(81166006)(64756008)(66476007)(66946007)(4326008)(66446008)(53546011)(186003)(478600001)(71200400001)(7696005)(86362001)(26005)(2906002)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR0401MB3712;H:SN4PR0401MB3598.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5qd7C9EZkgDxJ8A0ZCyf0eOKbxJyonnDlBUheNe+mGd+FLt7/mmFWq2DwSbEWaWa8MjM6yvLGs6TUUeyiE9B9MSVfXe+FcIe+/MMcy3pKGjblIHjQ1TYEQHuABGQ8pnrsWI9KcWVDGEyAbv4c0AjRIDqVx1N5GL2mM497X7ns4xtpoCrtE9nKAjh5ghtK5rFrW5nQ0lq/CyfHOzq7jS6BA4U4dZIETpyw/ywzcPpXoRhwOFlD+m3Ay6Ujl6xhhErt4GjMQoJLGwsdFBw3y4o9YRuoW3UZaEbBtYaXm9S5Mgk9lp8Jd3TvdAbY6ov2Irx8BYmb0IEF0UmF9A9jR3KNupn2dJnjTKhJ/3oSMzsEiFCwoWv9rfNfxGgIDujWFCa0pvdtoGZHIlV0zqfWmnL6Bff7QfoY01pwRwfCoNgARvdvtjO1+5jZuCRAKfvdXk/
-x-ms-exchange-antispam-messagedata: e2U+e3HW3kmT6crS68pIItkIlkpfoim4am5i2csqjdMlEz4VMM3j7lwLsoaEjcq+tZB6k4P+pcyz5ALziWW5HNwmEGGEq8eM58tWAbmMt+RWlFcPuzbU46GhnqDzPFo+1j5kHpBo/CvMy3q0W1805g==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726276AbgCYKVx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 06:21:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54788 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727158AbgCYKVx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Mar 2020 06:21:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DDB26ABEA;
+        Wed, 25 Mar 2020 10:21:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 883861E10FB; Wed, 25 Mar 2020 11:21:50 +0100 (CET)
+Date:   Wed, 25 Mar 2020 11:21:50 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 14/14] fanotify: report name info for FAN_DIR_MODIFY
+ event
+Message-ID: <20200325102150.GG28951@quack2.suse.cz>
+References: <20200319151022.31456-1-amir73il@gmail.com>
+ <20200319151022.31456-15-amir73il@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99e04e9b-8a6f-4486-ada4-08d7d0a566c2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Mar 2020 10:15:10.5541
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3rqkf5/aXW1clqRIfY+fMcY9XQdMRasVL1giJf1rSqykawSk5IHQnADNWrCDUwiOUQIYyJS+XqJFviDzSeEeV5AgJtqdEWsa9rsN8G22URg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3712
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319151022.31456-15-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25/03/2020 11:01, hch@infradead.org wrote:=0A=
-> I thought of recording the location in ->iomap_end (and in fact=0A=
-> had a prototype for that), but that is not going to work for AIO of=0A=
-> course.  So yes, we'll need some way to have per-extent completion=0A=
-> callbacks.=0A=
-=0A=
-OK let's postpone iomap then and handle zone-append directly in zonefs =0A=
-for now.=0A=
-=0A=
+On Thu 19-03-20 17:10:22, Amir Goldstein wrote:
+> Report event FAN_DIR_MODIFY with name in a variable length record similar
+> to how fid's are reported.  With name info reporting implemented, setting
+> FAN_DIR_MODIFY in mark mask is now allowed.
+> 
+> When events are reported with name, the reported fid identifies the
+> directory and the name follows the fid. The info record type for this
+> event info is FAN_EVENT_INFO_TYPE_DFID_NAME.
+> 
+> For now, all reported events have at most one info record which is
+> either FAN_EVENT_INFO_TYPE_FID or FAN_EVENT_INFO_TYPE_DFID_NAME (for
+> FAN_DIR_MODIFY).  Later on, events "on child" will report both records.
+
+When looking at this, I keep wondering: Shouldn't we just have
+FAN_EVENT_INFO_TYPE_DFID which would contain FID of the directory and then
+FAN_EVENT_INFO_TYPE_NAME which would contain the name? It seems more
+modular and following the rule "one thing per info record". Also having two
+variable length entries in one info record is a bit strange although it
+works fine because the handle has its length stored in it (but the name
+does not so further extension is not possible).  Finally it is a bit
+confusing that fanotify_event_info_fid would sometimes contain a name in it
+and sometimes not.
+
+OTOH I understand that directory FID without a name is not very useful so
+it could be viewed as an unnecessary event stream bloat. I'm currently
+leaning more towards doing the split but I'd like to hear your opinion...
+
+								Honza
+
+> 
+> There are several ways that an application can use this information:
+> 
+> 1. When watching a single directory, the name is always relative to
+> the watched directory, so application need to fstatat(2) the name
+> relative to the watched directory.
+> 
+> 2. When watching a set of directories, the application could keep a map
+> of dirfd for all watched directories and hash the map by fid obtained
+> with name_to_handle_at(2).  When getting a name event, the fid in the
+> event info could be used to lookup the base dirfd in the map and then
+> call fstatat(2) with that dirfd.
+> 
+> 3. When watching a filesystem (FAN_MARK_FILESYSTEM) or a large set of
+> directories, the application could use open_by_handle_at(2) with the fid
+> in event info to obtain dirfd for the directory where event happened and
+> call fstatat(2) with this dirfd.
+> 
+> The last option scales better for a large number of watched directories.
+> The first two options may be available in the future also for non
+> privileged fanotify watchers, because open_by_handle_at(2) requires
+> the CAP_DAC_READ_SEARCH capability.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/notify/fanotify/fanotify.c      |   2 +-
+>  fs/notify/fanotify/fanotify_user.c | 109 +++++++++++++++++++++++------
+>  include/linux/fanotify.h           |   3 +-
+>  include/uapi/linux/fanotify.h      |   1 +
+>  4 files changed, 90 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 22e198ab2687..c07b1891a720 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -526,7 +526,7 @@ static int fanotify_handle_event(struct fsnotify_group *group,
+>  	BUILD_BUG_ON(FAN_OPEN_EXEC != FS_OPEN_EXEC);
+>  	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
+> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
+>  
+>  	mask = fanotify_group_event_mask(group, iter_info, mask, data,
+>  					 data_type);
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 2eff2cfa88ce..95256baeb808 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -51,22 +51,35 @@ struct kmem_cache *fanotify_path_event_cachep __read_mostly;
+>  struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
+>  
+>  #define FANOTIFY_EVENT_ALIGN 4
+> +#define FANOTIFY_INFO_HDR_LEN \
+> +	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
+>  
+> -static int fanotify_fid_info_len(int fh_len)
+> +static int fanotify_fid_info_len(int fh_len, int name_len)
+>  {
+> -	return roundup(sizeof(struct fanotify_event_info_fid) +
+> -		       sizeof(struct file_handle) + fh_len,
+> -		       FANOTIFY_EVENT_ALIGN);
+> +	int info_len = fh_len;
+> +
+> +	if (name_len)
+> +		info_len += name_len + 1;
+> +
+> +	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
+>  }
+>  
+>  static int fanotify_event_info_len(struct fanotify_event *event)
+>  {
+> +	int info_len = 0;
+>  	int fh_len = fanotify_event_object_fh_len(event);
+>  
+> -	if (!fh_len)
+> -		return 0;
+> +	if (fh_len)
+> +		info_len += fanotify_fid_info_len(fh_len, 0);
+>  
+> -	return fanotify_fid_info_len(fh_len);
+> +	if (fanotify_event_name_len(event)) {
+> +		struct fanotify_name_event *fne = FANOTIFY_NE(event);
+> +
+> +		info_len += fanotify_fid_info_len(fne->dir_fh.len,
+> +						  fne->name_len);
+> +	}
+> +
+> +	return info_len;
+>  }
+>  
+>  /*
+> @@ -206,23 +219,32 @@ static int process_access_response(struct fsnotify_group *group,
+>  	return -ENOENT;
+>  }
+>  
+> -static int copy_fid_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+> -			    char __user *buf)
+> +static int copy_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+> +			     const char *name, size_t name_len,
+> +			     char __user *buf, size_t count)
+>  {
+>  	struct fanotify_event_info_fid info = { };
+>  	struct file_handle handle = { };
+>  	unsigned char bounce[FANOTIFY_INLINE_FH_LEN], *fh_buf;
+>  	size_t fh_len = fh ? fh->len : 0;
+> -	size_t len = fanotify_fid_info_len(fh_len);
+> +	size_t info_len = fanotify_fid_info_len(fh_len, name_len);
+> +	size_t len = info_len;
+> +
+> +	pr_debug("%s: fh_len=%zu name_len=%zu, info_len=%zu, count=%zu\n",
+> +		 __func__, fh_len, name_len, info_len, count);
+>  
+> -	if (!len)
+> +	if (!fh_len || (name && !name_len))
+>  		return 0;
+>  
+> -	if (WARN_ON_ONCE(len < sizeof(info) + sizeof(handle) + fh_len))
+> +	if (WARN_ON_ONCE(len < sizeof(info) || len > count))
+>  		return -EFAULT;
+>  
+> -	/* Copy event info fid header followed by vaiable sized file handle */
+> -	info.hdr.info_type = FAN_EVENT_INFO_TYPE_FID;
+> +	/*
+> +	 * Copy event info fid header followed by variable sized file handle
+> +	 * and optionally followed by variable sized filename.
+> +	 */
+> +	info.hdr.info_type = name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+> +					FAN_EVENT_INFO_TYPE_FID;
+>  	info.hdr.len = len;
+>  	info.fsid = *fsid;
+>  	if (copy_to_user(buf, &info, sizeof(info)))
+> @@ -230,6 +252,9 @@ static int copy_fid_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+>  
+>  	buf += sizeof(info);
+>  	len -= sizeof(info);
+> +	if (WARN_ON_ONCE(len < sizeof(handle)))
+> +		return -EFAULT;
+> +
+>  	handle.handle_type = fh->type;
+>  	handle.handle_bytes = fh_len;
+>  	if (copy_to_user(buf, &handle, sizeof(handle)))
+> @@ -237,9 +262,12 @@ static int copy_fid_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+>  
+>  	buf += sizeof(handle);
+>  	len -= sizeof(handle);
+> +	if (WARN_ON_ONCE(len < fh_len))
+> +		return -EFAULT;
+> +
+>  	/*
+> -	 * For an inline fh, copy through stack to exclude the copy from
+> -	 * usercopy hardening protections.
+> +	 * For an inline fh and inline file name, copy through stack to exclude
+> +	 * the copy from usercopy hardening protections.
+>  	 */
+>  	fh_buf = fanotify_fh_buf(fh);
+>  	if (fh_len <= FANOTIFY_INLINE_FH_LEN) {
+> @@ -249,14 +277,28 @@ static int copy_fid_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
+>  	if (copy_to_user(buf, fh_buf, fh_len))
+>  		return -EFAULT;
+>  
+> -	/* Pad with 0's */
+>  	buf += fh_len;
+>  	len -= fh_len;
+> +
+> +	if (name_len) {
+> +		/* Copy the filename with terminating null */
+> +		name_len++;
+> +		if (WARN_ON_ONCE(len < name_len))
+> +			return -EFAULT;
+> +
+> +		if (copy_to_user(buf, name, name_len))
+> +			return -EFAULT;
+> +
+> +		buf += name_len;
+> +		len -= name_len;
+> +	}
+> +
+> +	/* Pad with 0's */
+>  	WARN_ON_ONCE(len < 0 || len >= FANOTIFY_EVENT_ALIGN);
+>  	if (len > 0 && clear_user(buf, len))
+>  		return -EFAULT;
+>  
+> -	return 0;
+> +	return info_len;
+>  }
+>  
+>  static ssize_t copy_event_to_user(struct fsnotify_group *group,
+> @@ -298,17 +340,38 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
+>  	if (copy_to_user(buf, &metadata, FAN_EVENT_METADATA_LEN))
+>  		goto out_close_fd;
+>  
+> +	buf += FAN_EVENT_METADATA_LEN;
+> +	count -= FAN_EVENT_METADATA_LEN;
+> +
+>  	if (fanotify_is_perm_event(event->mask))
+>  		FANOTIFY_PERM(fsn_event)->fd = fd;
+>  
+> -	if (f) {
+> +	if (f)
+>  		fd_install(fd, f);
+> -	} else if (fanotify_event_has_fid(event)) {
+> -		ret = copy_fid_to_user(fanotify_event_fsid(event),
+> -				       fanotify_event_object_fh(event),
+> -				       buf + FAN_EVENT_METADATA_LEN);
+> +
+> +	/* Event info records order is: dir fid + name, child fid */
+> +	if (fanotify_event_name_len(event)) {
+> +		struct fanotify_name_event *fne = FANOTIFY_NE(event);
+> +
+> +		ret = copy_info_to_user(fanotify_event_fsid(event),
+> +					&fne->dir_fh, fne->name, fne->name_len,
+> +					buf, count);
+>  		if (ret < 0)
+>  			return ret;
+> +
+> +		buf += ret;
+> +		count -= ret;
+> +	}
+> +
+> +	if (fanotify_event_object_fh_len(event)) {
+> +		ret = copy_info_to_user(fanotify_event_fsid(event),
+> +					fanotify_event_object_fh(event),
+> +					NULL, 0, buf, count);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		buf += ret;
+> +		count -= ret;
+>  	}
+>  
+>  	return metadata.event_len;
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index b79fa9bb7359..3049a6c06d9e 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -47,7 +47,8 @@
+>   * Directory entry modification events - reported only to directory
+>   * where entry is modified and not to a watching parent.
+>   */
+> -#define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE)
+> +#define FANOTIFY_DIRENT_EVENTS	(FAN_MOVE | FAN_CREATE | FAN_DELETE | \
+> +				 FAN_DIR_MODIFY)
+>  
+>  /* Events that can only be reported with data type FSNOTIFY_EVENT_INODE */
+>  #define FANOTIFY_INODE_EVENTS	(FANOTIFY_DIRENT_EVENTS | \
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index 615fa2c87179..2b56e194b858 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -117,6 +117,7 @@ struct fanotify_event_metadata {
+>  };
+>  
+>  #define FAN_EVENT_INFO_TYPE_FID		1
+> +#define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+>  
+>  /* Variable length info record following event metadata */
+>  struct fanotify_event_info_header {
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
