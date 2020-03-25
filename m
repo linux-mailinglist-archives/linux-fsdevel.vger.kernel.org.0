@@ -2,85 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24EC41926F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 12:20:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ED041927A6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 13:03:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbgCYLUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 07:20:14 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:42052 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbgCYLUO (ORCPT
+        id S1727290AbgCYMC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 08:02:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43092 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCYMCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 07:20:14 -0400
-Received: by mail-il1-f195.google.com with SMTP id f16so1446293ilj.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Mar 2020 04:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rR4xNt2k6k2Y4W/2DM6BrcOKVsemPNYbjCMjGKwzivs=;
-        b=tmunX6WRa/ZsWAgH+2rSKmdMIlzD6UES7xgWs3A4Q12lBr8KfXxrBWPIwMMsPlEnT6
-         W5fJTrCMHgBmdjdJ9gVyiP4L9wasPMM8VLOXZaW0ABe+GU7iCBdr3S+84At/5jvRXNe0
-         qjDyC5zaLk+1HaBQbYFD/mUmOwODloEQmG1xcdfBv691DCOgRDydG+pdLqTERidXvyDY
-         Z/XlTNucW9VxUm1w6VmcDzBesitkNes8bOFoJeJeJeoRhp4AK3AIhi/gXRlBsA2JBaCd
-         +kPAJGTcHlCK4fl5XWikE7aokzkJ4dIBp0QPQ6dR48GlmgbQp/JhtVT9MawWytBMm3oN
-         +GFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rR4xNt2k6k2Y4W/2DM6BrcOKVsemPNYbjCMjGKwzivs=;
-        b=QM0X8RJ15ukXoxVYfCXRBsf1JOGZRvm0uDKdJ9xWzs96tHsF8JQCP6wUoEy7rhJCMP
-         P+8N6O6wtriCOf/zpreYCC8JIylvq7l/HB/7lPSeF+n6R2hXZSm9CgSOXEH1DEQGb8O+
-         0RJLlgvChitBFsllPx3rAa8XVb9SjFjSetDrBNaC8AYgmwbqCytH5YVHvZMc7kanPR3q
-         yQs5bynNQw+ode0Do4C2mBBotbfFA3ZrRlIx7dEocFiyMAxNkFfEkocxF33FExGeHXae
-         Fah/Hj+lbiI3iRrV7c5u4iZ/Qtpxa9cXoWrKZW8kS7GJB3TN7Fj6iWp3nExFyFLXZ3tn
-         Nn4w==
-X-Gm-Message-State: ANhLgQ06t4uI3ie2A9nPp9gORub+4upvNm2hh5bNMuPmWNJkkwNDBbB6
-        m+xV+IsdsKWOVFT+PixtpS25BYxS6tE1BTzcvPw=
-X-Google-Smtp-Source: ADFU+vscNFSZEziZHyLbUkl6kaoTpobcSoE0/mDIYB67trUXE0oVRxO6UCIc3G2jEEx93IRHXwKnJXQJqKvyoEEbD7Q=
-X-Received: by 2002:a05:6e02:68a:: with SMTP id o10mr1850939ils.72.1585135213385;
- Wed, 25 Mar 2020 04:20:13 -0700 (PDT)
+        Wed, 25 Mar 2020 08:02:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=547A7ZAoUu2JDJ2ptSJ8vxecAwOtjI/NDzIFsvFTzXo=; b=QvbtCWiIh5Xi5+8xr7F3LHchs/
+        /enb5Ja0xjCQg6d/l+MMlIiwXqB1vmDvW34OsfyaSVHmfQx5kxyhZIn0FH5/13KsLe0hUWrGWbB2g
+        sxNran2m7QzQfFcu/qurUajS+kK4kEiY6Nojd22Yoyfhsr09GRoJw/fKvlcE/cgG6L+etNC0U3vkq
+        0DIgu/p6cickFzYi2VQqX4rMn0g6k0JEQQFCQ8RoqdCtQshCfS8K0j4G2044VrBkohrju2ToJ8dze
+        6LtjdH/dgtWCSE8hybN/l8eLj9N52oB+rKd+z7jbkSCM2Y9hSv9O3RaK4nV1mItf8R8C4rGnL9moV
+        mHDZZ7Cg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jH4kI-0002HH-Er; Wed, 25 Mar 2020 12:02:54 +0000
+Date:   Wed, 25 Mar 2020 05:02:54 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
+Message-ID: <20200325120254.GA22483@bombadil.infradead.org>
+References: <20200323202259.13363-1-willy@infradead.org>
+ <20200323202259.13363-25-willy@infradead.org>
+ <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200319151022.31456-1-amir73il@gmail.com> <20200319151022.31456-7-amir73il@gmail.com>
- <20200325102257.GH28951@quack2.suse.cz>
-In-Reply-To: <20200325102257.GH28951@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 25 Mar 2020 13:20:02 +0200
-Message-ID: <CAOQ4uxg9bEX_2wOVJ10TxuorQJdj_YFj+bsSf3c84rTFJ2jdBw@mail.gmail.com>
-Subject: Re: [PATCH v3 06/14] fsnotify: pass dentry instead of inode for
- events possible on child
-To:     Jan Kara <jack@suse.cz>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 12:22 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 19-03-20 17:10:14, Amir Goldstein wrote:
-> > Most events that can be reported to watching parent pass
-> > FSNOTIFY_EVENT_PATH as event data, except for FS_ARRTIB and FS_MODIFY
-> > as a result of truncate.
-> >
-> > Define a new data type to pass for event - FSNOTIFY_EVENT_DENTRY
-> > and use it to pass the dentry instead of it's ->d_inode for those events.
-> >
-> > Soon, we are going to use the dentry data type to report events
-> > with name info in fanotify backend.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> I've skipped this patch because FSNOTIFY_EVENT_DENTRY is not used by
-> anything in this series... Just that you don't wonder when rebasing later.
->
+On Wed, Mar 25, 2020 at 10:42:56AM +0100, Miklos Szeredi wrote:
+> > +       while ((page = readahead_page(rac))) {
+> > +               if (fuse_readpages_fill(&data, page) != 0)
+> 
+> Shouldn't this unlock + put page on error?
 
-No problem.
-I had my series ordered fsnotify then fanotify, that's why it was there.
-It really belongs to the FAN_REPORT_NAME patches.
+We're certainly inconsistent between the two error exits from
+fuse_readpages_fill().  But I think we can simplify the whole thing
+... how does this look to you?
 
-Thanks,
-Amir.
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5749505bcff6..57ea9a364e62 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -915,76 +915,32 @@ static void fuse_send_readpages(struct fuse_io_args *ia, struct file *file)
+ 	fuse_readpages_end(fc, &ap->args, err);
+ }
+ 
+-struct fuse_fill_data {
+-	struct fuse_io_args *ia;
+-	struct file *file;
+-	struct inode *inode;
+-	unsigned int nr_pages;
+-	unsigned int max_pages;
+-};
+-
+-static int fuse_readpages_fill(struct fuse_fill_data *data, struct page *page)
+-{
+-	struct fuse_io_args *ia = data->ia;
+-	struct fuse_args_pages *ap = &ia->ap;
+-	struct inode *inode = data->inode;
+-	struct fuse_conn *fc = get_fuse_conn(inode);
+-
+-	fuse_wait_on_page_writeback(inode, page->index);
+-
+-	if (ap->num_pages &&
+-	    (ap->num_pages == fc->max_pages ||
+-	     (ap->num_pages + 1) * PAGE_SIZE > fc->max_read ||
+-	     ap->pages[ap->num_pages - 1]->index + 1 != page->index)) {
+-		data->max_pages = min_t(unsigned int, data->nr_pages,
+-					fc->max_pages);
+-		fuse_send_readpages(ia, data->file);
+-		data->ia = ia = fuse_io_alloc(NULL, data->max_pages);
+-		if (!ia)
+-			return -ENOMEM;
+-		ap = &ia->ap;
+-	}
+-
+-	if (WARN_ON(ap->num_pages >= data->max_pages)) {
+-		unlock_page(page);
+-		fuse_io_free(ia);
+-		return -EIO;
+-	}
+-
+-	ap->pages[ap->num_pages] = page;
+-	ap->descs[ap->num_pages].length = PAGE_SIZE;
+-	ap->num_pages++;
+-	data->nr_pages--;
+-	return 0;
+-}
+-
+ static void fuse_readahead(struct readahead_control *rac)
+ {
+ 	struct inode *inode = rac->mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	struct fuse_fill_data data;
+-	struct page *page;
+ 
+ 	if (is_bad_inode(inode))
+ 		return;
+ 
+-	data.file = rac->file;
+-	data.inode = inode;
+-	data.nr_pages = readahead_count(rac);
+-	data.max_pages = min_t(unsigned int, data.nr_pages, fc->max_pages);
+-	data.ia = fuse_io_alloc(NULL, data.max_pages);
+-	if (!data.ia)
+-		return;
++	while (readahead_count(rac)) {
++		struct fuse_io_args *ia;
++		struct fuse_args_pages *ap;
++		unsigned int i, nr_pages;
+ 
+-	while ((page = readahead_page(rac))) {
+-		if (fuse_readpages_fill(&data, page) != 0)
++		nr_pages = min(readahead_count(rac), fc->max_pages);
++		ia = fuse_io_alloc(NULL, nr_pages);
++		if (!ia)
+ 			return;
++		ap = &ia->ap;
++		__readahead_batch(rac, ap->pages, nr_pages);
++		for (i = 0; i < nr_pages; i++) {
++			fuse_wait_on_page_writeback(inode, ap->pages[i]->index);
++			ap->descs[i].length = PAGE_SIZE;
++		}
++		ap->num_pages = nr_pages;
++		fuse_send_readpages(ia, rac->file);
+ 	}
+-
+-	if (data.ia->ap.num_pages)
+-		fuse_send_readpages(data.ia, rac->file);
+-	else
+-		fuse_io_free(data.ia);
+ }
+ 
+ static ssize_t fuse_cache_read_iter(struct kiocb *iocb, struct iov_iter *to)
