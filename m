@@ -2,49 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F13191EE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 03:15:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49CB5191F62
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 03:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727272AbgCYCPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Mar 2020 22:15:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40688 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727253AbgCYCPn (ORCPT
+        id S1727356AbgCYCm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Mar 2020 22:42:28 -0400
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:51932 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbgCYCm1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Mar 2020 22:15:43 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jGvXr-0027FJ-Tn; Wed, 25 Mar 2020 02:13:28 +0000
-Date:   Wed, 25 Mar 2020 02:13:27 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Null-ptr-deref due to "sanitized pathwalk machinery (v4)"
-Message-ID: <20200325021327.GJ23230@ZenIV.linux.org.uk>
-References: <4CBDE0F3-FB73-43F3-8535-6C75BA004233@lca.pw>
- <20200324214637.GI23230@ZenIV.linux.org.uk>
- <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
+        Tue, 24 Mar 2020 22:42:27 -0400
+Received: by mail-pj1-f68.google.com with SMTP id w9so404838pjh.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Mar 2020 19:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:references
+         :subject:from:cc:to:date:message-id:user-agent;
+        bh=tJVGZmmA1bFjoevn7/qDYyyvIJ/eyc0u4ubgnC7ziTY=;
+        b=H4706YZqf8/zScGoFg12vybnR9M2VsIQVJgSz3rS1dHY9dQHDGFEdxDFbUd7d1zTgX
+         a1SAGpNqJGQq66/k++qcyoET2sxmyH3emD3uXnYHai1yW2TdH35PONdQL7aDm0PfPzyp
+         tYlxhgWpkpR2jgcSCMS6Pg5GkhF65IhQxffKc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:references:subject:from:cc:to:date:message-id
+         :user-agent;
+        bh=tJVGZmmA1bFjoevn7/qDYyyvIJ/eyc0u4ubgnC7ziTY=;
+        b=sKa9hGRzLZ606ZyH9anlD+tT6G3psvsMk+JbxBvQfxPQL0A2xMP1IFgXEYUAJly8Lb
+         NjCbm9/7fk9OAs2yJy8a65ZxHIydhK8fjjAbvCAy4+K2CQJ21iEj/0BrZKGvYpDGDyhS
+         2ghN6dCILh3KxSe/KCEmpio1rIpkFaGQ1NrFipOov8ew1RO4FrGZ2NRpkGT+mLSiQqK3
+         bInQ37lcM8lWbLpmpyrX4r3CGetUMWLHGnOjffCX2GmKKt9Nr3U6JzA2O1Yjunn0Jd+I
+         2RMrIPN1yBi9uMUvVbUR/mxXN0UkNNkZUWama9mKPedCxV0jcVOeO2LZ8xdwR85vi29r
+         zzKg==
+X-Gm-Message-State: ANhLgQ1juJcyErYPeKeqNl04dJfKgsGzY+gspUzTy11qoubo8AwU/+AA
+        CMlAcf7tHQ3pBN86GWzh/CN3dQ==
+X-Google-Smtp-Source: ADFU+vtS5LbLrzS1jhzDwYVrTj6A9lZWX06g/Mga4Nlp7aFIrRyOCBB7aq2FIo/kyw4uUBQ1+JG/MQ==
+X-Received: by 2002:a17:90a:33d1:: with SMTP id n75mr1033588pjb.167.1585104145832;
+        Tue, 24 Mar 2020 19:42:25 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id x4sm858194pgr.9.2020.03.24.19.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2020 19:42:25 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A32DAE66-ADBA-46C7-BD26-F9BA8F12BC18@lca.pw>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5cfeed6df208b74913312a1c97235ee615180f91.1582361737.git.mchehab+huawei@kernel.org>
+References: <cover.1582361737.git.mchehab+huawei@kernel.org> <5cfeed6df208b74913312a1c97235ee615180f91.1582361737.git.mchehab+huawei@kernel.org>
+Subject: Re: [PATCH 3/7] docs: fix broken references to text files
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-arch@vger.kernel.org, linux-nfs@vger.kernel.org,
+        kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        netdev@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, linux-rdma@vger.kernel.org
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Date:   Tue, 24 Mar 2020 19:42:24 -0700
+Message-ID: <158510414428.125146.17397141028775937874@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 09:49:48PM -0400, Qian Cai wrote:
+Quoting Mauro Carvalho Chehab (2020-02-22 01:00:03)
+> Several references got broken due to txt to ReST conversion.
+>=20
+> Several of them can be automatically fixed with:
+>=20
+>         scripts/documentation-file-ref-check --fix
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  drivers/hwtracing/coresight/Kconfig                  |  2 +-
+>=20
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/core=
+sight/Kconfig
+> index 6ff30e25af55..6d42a6d3766f 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -107,7 +107,7 @@ config CORESIGHT_CPU_DEBUG
+>           can quickly get to know program counter (PC), secure state,
+>           exception level, etc. Before use debugging functionality, platf=
+orm
+>           needs to ensure the clock domain and power domain are enabled
+> -         properly, please refer Documentation/trace/coresight-cpu-debug.=
+rst
+> +         properly, please refer Documentation/trace/coresight/coresight-=
+cpu-debug.rst
+>           for detailed description and the example for usage.
+> =20
+>  endif
 
-> It does not catch anything at all with the patch,
-
-You mean, oops happens, but neither WARN_ON() is triggered?
-Lovely...  Just to make sure: could you slap the same couple
-of lines just before
-                if (unlikely(!d_can_lookup(nd->path.dentry))) {
-in link_path_walk(), just to check if I have misread the trace
-you've got?
-
-Does that (+ other two inserts) end up with
-	1) some of these WARN_ON() triggered when oops happens or
-	2) oops is happening, but neither WARN_ON() triggers or
-	3) oops not happening / becoming harder to hit?
+I ran into this today and almost sent a patch. Can you split this patch
+up into more pieces and send it off to the respective subsystem
+maintainers?
