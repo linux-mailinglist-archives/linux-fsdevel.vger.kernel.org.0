@@ -2,103 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6027C192D7C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 16:54:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C75192D83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 16:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbgCYPyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 11:54:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49204 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726264AbgCYPyi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:54:38 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 83F0AAC65;
-        Wed, 25 Mar 2020 15:54:36 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 545C21E1108; Wed, 25 Mar 2020 16:54:36 +0100 (CET)
-Date:   Wed, 25 Mar 2020 16:54:36 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 00/14] fanotify directory modify event
-Message-ID: <20200325155436.GL28951@quack2.suse.cz>
-References: <20200319151022.31456-1-amir73il@gmail.com>
+        id S1726264AbgCYPy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 11:54:56 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34474 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727174AbgCYPyz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:54:55 -0400
+Received: by mail-io1-f65.google.com with SMTP id h131so2758575iof.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Mar 2020 08:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WUvTsX9+jdPoLTOSHShSbaoohqGvLnmJWJx3goFYuLM=;
+        b=PotvV1Ev6OzVSaF6m2X5tC6JwxVWHxAGf6FLW8AjKTGJyK/QJ8dyn6xJiqfkSFaAqz
+         OCdtBX9daql7+1gX8+5dT3S5uMqemNZ36FP4ZPoQpwuOHn42a4uh+PVPR7d5d59NuA3a
+         t2/cRclIFAps/zNhsd7jyIV2vHIEY2rkQ4dM0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WUvTsX9+jdPoLTOSHShSbaoohqGvLnmJWJx3goFYuLM=;
+        b=KxmkaF21mxNYljSmcCOIMkF0tTLkfqee3+/CliwZCQy4oF2Ggnj9ykA+hJo/5dvXp0
+         dsxvC/ekkbMNB4Zlnj8e1echr68bev6I20IHSpiYfh7wGQkxzmxxiR2FH4B5gBvUcQxZ
+         nHuwNmh5dt+zwgOmC0tOIk6D4JIPbKkedlZJLESwnIwib38+Q6gDSvs5Q6d/E+E3owzH
+         uSb5Iuq9RzU6n2kV1oqdTZYUHBksS699mDWfyMY1qOPBlsDOx1QiQ9BG9KiVPFCyBww4
+         QsbbRJ5GAJIRnYyVeR0St7OAtc1ol3PsdAXghd+Tr7U9wqubEnRX7DPtVAQ4kfR7Hin9
+         G3vg==
+X-Gm-Message-State: ANhLgQ2SOyXl7LP3iHRL6YFqe3yfTUY1tG/6w6UReDONus3KfxgDNI+p
+        ExkUzOuVusoECIXMic8iJrSwunWWAe0ILgL1JdBfeA==
+X-Google-Smtp-Source: ADFU+vtWPrSX9gO9pLLxpavehCkl/CaKr8w3OI8WID1sZHiGcDBmq2nlMdLwxJGUo5kQXivDvVBrGhSFup9s33zQy+o=
+X-Received: by 2002:a5d:9142:: with SMTP id y2mr3418704ioq.185.1585151694868;
+ Wed, 25 Mar 2020 08:54:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200319151022.31456-1-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200323202259.13363-1-willy@infradead.org> <20200323202259.13363-25-willy@infradead.org>
+ <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
+ <20200325120254.GA22483@bombadil.infradead.org> <CAJfpegshssCJiA8PBcq2XvBj3mR8dufHb0zWRFvvKKv82VQYsw@mail.gmail.com>
+ <20200325153228.GB22483@bombadil.infradead.org>
+In-Reply-To: <20200325153228.GB22483@bombadil.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 25 Mar 2020 16:54:43 +0100
+Message-ID: <CAJfpegtrhGamoSqD-3Svfj3-iTdAbfD8TP44H_o+HE+g+CAnCA@mail.gmail.com>
+Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Mar 25, 2020 at 4:32 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Mar 25, 2020 at 03:43:02PM +0100, Miklos Szeredi wrote:
+> > >
+> > > -       while ((page = readahead_page(rac))) {
+> > > -               if (fuse_readpages_fill(&data, page) != 0)
+> > > +               nr_pages = min(readahead_count(rac), fc->max_pages);
+> >
+> > Missing fc->max_read clamp.
+>
+> Yeah, I realised that.  I ended up doing ...
+>
+> +       unsigned int i, max_pages, nr_pages = 0;
+> ...
+> +       max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
+>
+> > > +               ia = fuse_io_alloc(NULL, nr_pages);
+> > > +               if (!ia)
+> > >                         return;
+> > > +               ap = &ia->ap;
+> > > +               __readahead_batch(rac, ap->pages, nr_pages);
+> >
+> > nr_pages = __readahead_batch(...)?
+>
+> That's the other bug ... this was designed for btrfs which has a fixed-size
+> buffer.  But you want to dynamically allocate fuse_io_args(), so we need to
+> figure out the number of pages beforehand, which is a little awkward.  I've
+> settled on this for the moment:
+>
+>         for (;;) {
+>                struct fuse_io_args *ia;
+>                 struct fuse_args_pages *ap;
+>
+>                 nr_pages = readahead_count(rac) - nr_pages;
+>                 if (nr_pages > max_pages)
+>                         nr_pages = max_pages;
+>                 if (nr_pages == 0)
+>                         break;
+>                 ia = fuse_io_alloc(NULL, nr_pages);
+>                 if (!ia)
+>                         return;
+>                 ap = &ia->ap;
+>                 __readahead_batch(rac, ap->pages, nr_pages);
+>                 for (i = 0; i < nr_pages; i++) {
+>                         fuse_wait_on_page_writeback(inode,
+>                                                     readahead_index(rac) + i);
+>                         ap->descs[i].length = PAGE_SIZE;
+>                 }
+>                 ap->num_pages = nr_pages;
+>                 fuse_send_readpages(ia, rac->file);
+>         }
+>
+> but I'm not entirely happy with that either.  Pondering better options.
 
-On Thu 19-03-20 17:10:08, Amir Goldstein wrote:
-> Jan,
-> 
-> This v3 posting is a trimmed down version of v2 name info patches [1].
-> It includes the prep/fix patches and the patches to add support for
-> the new FAN_DIR_MODIFY event, but leaves out the FAN_REPORT_NAME
-> patches. I will re-post those as a later time.
-> 
-> The v3 patches are available on my github branch fanotify_dir_modify [2].
-> Same branch names for LTP tests [3], man page draft [6] and a demo [7].
-> The fanotify_name branches in those github trees include the additional
-> FAN_REPORT_NAME related changes.
-> 
-> Main changes since v2:
-> - Split fanotify_path_event fanotify_fid_event and fanotify_name_event
-> - Drop the FAN_REPORT_NAME patches
+I think that's fine.   Note how the original code possibly
+over-allocates the the page array, because it doesn't know the batch
+size beforehand.  So this is already better.
 
-So I have pushed out the result to my tree (fsnotify branch and also pulled
-it to for_next branch).
+>
+> > This will give consecutive pages, right?
+>
+> readpages() was already being called with consecutive pages.  Several
+> filesystems had code to cope with the pages being non-consecutive, but
+> that wasn't how the core code worked; if there was a discontiguity it
+> would send off the pages that were consecutive and start a new batch.
+>
+> __readahead_batch() can't return fewer than nr_pages, so you don't need
+> to check for that.
 
-								Honza
+That's far from obvious.
 
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20200217131455.31107-1-amir73il@gmail.com/
-> [2] https://github.com/amir73il/linux/commits/fanotify_dir_modify
-> [3] https://github.com/amir73il/ltp/commits/fanotify_dir_modify
-> [4] https://github.com/amir73il/man-pages/commits/fanotify_dir_modify
-> [5] https://github.com/amir73il/inotify-tools/commits/fanotify_dir_modify
-> 
-> Amir Goldstein (14):
->   fsnotify: tidy up FS_ and FAN_ constants
->   fsnotify: factor helpers fsnotify_dentry() and fsnotify_file()
->   fsnotify: funnel all dirent events through fsnotify_name()
->   fsnotify: use helpers to access data by data_type
->   fsnotify: simplify arguments passing to fsnotify_parent()
->   fsnotify: pass dentry instead of inode for events possible on child
->   fsnotify: replace inode pointer with an object id
->   fanotify: merge duplicate events on parent and child
->   fanotify: fix merging marks masks with FAN_ONDIR
->   fanotify: divorce fanotify_path_event and fanotify_fid_event
->   fanotify: send FAN_DIR_MODIFY event flavor with dir inode and name
->   fanotify: prepare to report both parent and child fid's
->   fanotify: record name info for FAN_DIR_MODIFY event
->   fanotify: report name info for FAN_DIR_MODIFY event
-> 
->  fs/notify/fanotify/fanotify.c        | 304 ++++++++++++++++++++-------
->  fs/notify/fanotify/fanotify.h        | 172 +++++++++------
->  fs/notify/fanotify/fanotify_user.c   | 171 ++++++++++-----
->  fs/notify/fsnotify.c                 |  22 +-
->  fs/notify/inotify/inotify_fsnotify.c |  12 +-
->  fs/notify/inotify/inotify_user.c     |   2 +-
->  include/linux/fanotify.h             |   3 +-
->  include/linux/fsnotify.h             | 138 +++++-------
->  include/linux/fsnotify_backend.h     |  87 ++++++--
->  include/uapi/linux/fanotify.h        |   6 +-
->  kernel/audit_fsnotify.c              |  13 +-
->  kernel/audit_watch.c                 |  16 +-
->  12 files changed, 610 insertions(+), 336 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'd put a WARN_ON at least to make document the fact.
+
+Thanks,
+Miklos
