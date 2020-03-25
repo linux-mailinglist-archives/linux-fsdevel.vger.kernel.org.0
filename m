@@ -2,138 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C856192BFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 16:13:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA4A1192C94
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Mar 2020 16:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbgCYPNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 11:13:39 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:15838 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727319AbgCYPNj (ORCPT
+        id S1727775AbgCYPcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 11:32:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53644 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbgCYPca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 11:13:39 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e7b74f50001>; Wed, 25 Mar 2020 08:12:53 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 25 Mar 2020 08:13:38 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Mar 2020 08:13:38 -0700
-Received: from [10.25.72.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Mar
- 2020 15:13:35 +0000
-Subject: Re: mmotm 2020-03-23-21-29 uploaded
- (pci/controller/dwc/pcie-tegra194.c)
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <lorenzo.pieralisi@arm.com>
-CC:     <akpm@linux-foundation.org>, <broonie@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
-        <mhocko@suse.cz>, <mm-commits@vger.kernel.org>,
-        <sfr@canb.auug.org.au>, linux-pci <linux-pci@vger.kernel.org>
-References: <20200324161851.GA2300@google.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <eb101f02-c893-e16e-0f3f-151aac223205@nvidia.com>
-Date:   Wed, 25 Mar 2020 20:43:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Wed, 25 Mar 2020 11:32:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=L8UzQwxATOZdjWZ+3tNM04b2mH/5tj4IRSDfIFAnCq4=; b=nwr8fvcCAKrcOHuwe8r/p16lMc
+        bZh3DEdAU9aGBWN3F5ynv1Ne93Ij03ZhftdP2p/j/SwKFdDbTLj5/ZaltpVeKwhDVOtZpmt6dBgOM
+        Y5kNAkTDyJM9LmxIOgZivD4BtHVK41PC4z2UtEwA8qUzMYjVHQwzjfESuvsJdyTL91AdLqA/lHmDm
+        b4ONx8n6tUgKbzMesC9PHNx/tJe345Szba01BQVbNkeQ4aBKyS9/rqkTgJMFlzt5JsbGeTzjBPG19
+        tW79XBGQHh8i08Okr8byBxVFG1QH7u5q9rAcay5PaTaRDoWupoIchhUNkRzhk4f/AQVLTP2rNvR7K
+        5pnTChzQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jH816-0004oZ-U3; Wed, 25 Mar 2020 15:32:28 +0000
+Date:   Wed, 25 Mar 2020 08:32:28 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v10 24/25] fuse: Convert from readpages to readahead
+Message-ID: <20200325153228.GB22483@bombadil.infradead.org>
+References: <20200323202259.13363-1-willy@infradead.org>
+ <20200323202259.13363-25-willy@infradead.org>
+ <CAJfpegu7EFcWrg3bP+-2BX_kb52RrzBCo_U3QKYzUkZfe4EjDA@mail.gmail.com>
+ <20200325120254.GA22483@bombadil.infradead.org>
+ <CAJfpegshssCJiA8PBcq2XvBj3mR8dufHb0zWRFvvKKv82VQYsw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200324161851.GA2300@google.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585149173; bh=FZyl6tl5d7IEm26Ng+7VPnCh/JccA87CapxQqKQR9tc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=fXyrjsGyuSQ1tWKq9YQIqmt3R467Bj3K8rop3N18qliTqERdmmEOnNPiZBglPolG2
-         VFNLTI3mKMoAKLF2Bx/dXoELB+hPV4guoy0pNa5O6HnJcWp2ngixLC9iKryoLBl2uy
-         48Ql3FZHcNcbj3Qc8hD/tNnVNlZw1rCGuOEYOItXISRWle7+DPSeEP2iQuHJwMkuVU
-         ywvOeQY306cgHCqnUoh+UvcuwY8GPs88vyGMxL+EmSxm/+Dzs2Q+xVmyUBM2PAQYed
-         CEtljRX1vRmytGIV4ulziisdkzVXXFYMphmpsWY1oTPJe+lMnW08SrcIIlwjC9HIBO
-         EknC0nM8GyVpA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegshssCJiA8PBcq2XvBj3mR8dufHb0zWRFvvKKv82VQYsw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Mar 25, 2020 at 03:43:02PM +0100, Miklos Szeredi wrote:
+> >
+> > -       while ((page = readahead_page(rac))) {
+> > -               if (fuse_readpages_fill(&data, page) != 0)
+> > +               nr_pages = min(readahead_count(rac), fc->max_pages);
+> 
+> Missing fc->max_read clamp.
 
+Yeah, I realised that.  I ended up doing ...
 
-On 3/24/2020 9:48 PM, Bjorn Helgaas wrote:
-> External email: Use caution opening links or attachments
->=20
->=20
-> On Tue, Mar 24, 2020 at 08:16:34AM -0700, Randy Dunlap wrote:
->> On 3/23/20 9:30 PM, akpm@linux-foundation.org wrote:
->>> The mm-of-the-moment snapshot 2020-03-23-21-29 has been uploaded to
->>>
->>>     http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> mmotm-readme.txt says
->>>
->>> README for mm-of-the-moment:
->>>
->>> http://www.ozlabs.org/~akpm/mmotm/
->>>
->>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>> more than once a week.
->>>
->>> You will need quilt to apply these patches to the latest Linus release =
-(5.x
->>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
- in
->>> http://ozlabs.org/~akpm/mmotm/series
->>
->>
->> on x86_64:
->>
->> ../drivers/pci/controller/dwc/pcie-tegra194.c: In function =E2=80=98tegr=
-a_pcie_dw_parse_dt=E2=80=99:
->> ../drivers/pci/controller/dwc/pcie-tegra194.c:1160:24: error: implicit d=
-eclaration of function =E2=80=98devm_gpiod_get=E2=80=99; did you mean =E2=
-=80=98devm_phy_get=E2=80=99? [-Werror=3Dimplicit-function-declaration]
->>    pcie->pex_rst_gpiod =3D devm_gpiod_get(pcie->dev, "reset", GPIOD_IN);
->>                          ^~~~~~~~~~~~~~
->>                          devm_phy_get
->=20
-> Thanks a lot for the report!
->=20
-> This was found on mmotm, but I updated my -next branch with Lorenzo's
-> latest pci/endpoint branch (current head 775d9e68f470) and reproduced
-> this build failure with the .config you attached.
->=20
-> I dropped that branch from my -next branch for now and pushed it.
-I found that one header file inclusion is missing.
-The following patch fixes it.
-Also, I wanted to know how can I catch this locally? i.e. How can I=20
-generate the config file attached by Randy locally so that I can get the=20
-source ready without these kind of issues?
++       unsigned int i, max_pages, nr_pages = 0;
+...
++       max_pages = min(fc->max_pages, fc->max_read / PAGE_SIZE);
 
-Bjorn/Lorenzo, would you be able to apply below change in your trees or=20
-do I need to send a patch for this?
+> > +               ia = fuse_io_alloc(NULL, nr_pages);
+> > +               if (!ia)
+> >                         return;
+> > +               ap = &ia->ap;
+> > +               __readahead_batch(rac, ap->pages, nr_pages);
+> 
+> nr_pages = __readahead_batch(...)?
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c=20
-b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 97d3f3db1020..eeeca18892c6 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -11,6 +11,7 @@
-  #include <linux/debugfs.h>
-  #include <linux/delay.h>
-  #include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
-  #include <linux/interrupt.h>
-  #include <linux/iopoll.h>
-  #include <linux/kernel.h>
+That's the other bug ... this was designed for btrfs which has a fixed-size
+buffer.  But you want to dynamically allocate fuse_io_args(), so we need to
+figure out the number of pages beforehand, which is a little awkward.  I've
+settled on this for the moment:
 
+        for (;;) {
+               struct fuse_io_args *ia;
+                struct fuse_args_pages *ap;
 
->=20
-> Bjorn
->=20
+                nr_pages = readahead_count(rac) - nr_pages;
+                if (nr_pages > max_pages)
+                        nr_pages = max_pages;
+                if (nr_pages == 0)
+                        break;
+                ia = fuse_io_alloc(NULL, nr_pages);
+                if (!ia)
+                        return;
+                ap = &ia->ap;
+                __readahead_batch(rac, ap->pages, nr_pages);
+                for (i = 0; i < nr_pages; i++) {
+                        fuse_wait_on_page_writeback(inode,
+                                                    readahead_index(rac) + i);
+                        ap->descs[i].length = PAGE_SIZE;
+                }
+                ap->num_pages = nr_pages;
+                fuse_send_readpages(ia, rac->file);
+        }
+
+but I'm not entirely happy with that either.  Pondering better options.
+
+> This will give consecutive pages, right?
+
+readpages() was already being called with consecutive pages.  Several
+filesystems had code to cope with the pages being non-consecutive, but
+that wasn't how the core code worked; if there was a discontiguity it
+would send off the pages that were consecutive and start a new batch.
+
+__readahead_batch() can't return fewer than nr_pages, so you don't need
+to check for that.
