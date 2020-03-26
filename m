@@ -2,770 +2,326 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 551881934E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 01:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1407193649
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 04:08:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbgCZAJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Mar 2020 20:09:16 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:37323 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727525AbgCZAJQ (ORCPT
+        id S1727674AbgCZDIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Mar 2020 23:08:11 -0400
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:41397 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbgCZDIL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Mar 2020 20:09:16 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TtdZ8JW_1585181345;
-Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TtdZ8JW_1585181345)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 26 Mar 2020 08:09:10 +0800
-Date:   Thu, 26 Mar 2020 08:09:05 +0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 20/20] fuse,virtiofs: Add logic to free up a memory range
-Message-ID: <20200326000904.GA34937@rsjd01523.et2sqa>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-21-vgoyal@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304165845.3081-21-vgoyal@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 25 Mar 2020 23:08:11 -0400
+Received: by mail-vs1-f73.google.com with SMTP id 66so741616vsl.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Mar 2020 20:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=w8DLJscJ/jn1U0/abNods4jHFwsI3lgyNRrAVQNvovs=;
+        b=QPWLoNuFvjiPgoMacetfzl6s0fmRlAvtQf81RcsEWAChVGPM5frc9irm2NQ/fNtfzu
+         i2Dutqk/aWIqsFy+/YrKabqVGjwcCdJCsPzKQvDfW3uM7zZ7HctP74ys4U/bTGe8EOCK
+         giIP/X3M/2gpYOUADl7ltdGxRMKRsYNGG5GG9HrkX4zkht1bMQ6ZjpFKEknAhDDNHEaE
+         jqgGNZ1Bqjz/roXhe+3yZsXvIP+eEIKdnjPYGVrDY1YGy4q1hyEC+8N06HzdWgjNy4tH
+         qnamc99aT6xIEfBXAYr1rgM/fZM44YPmdI8pmaOw7dPtJ4nvDOw98+O3g5+zMdXh4flT
+         on/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=w8DLJscJ/jn1U0/abNods4jHFwsI3lgyNRrAVQNvovs=;
+        b=nu9rN4BsGmXukXv84LyDGs8iyYWrX0jn8Ex5kbLxNV2KeQaeGkQV/yKg5BGD9lApIy
+         42rgisYaMHO2AcnMAO71oER6E50alotYh7rqcdwG24oFsuOmlwmXiB0EAnp0Q4xoMRRA
+         Y+gBsWPMKYiN5g1KpFPVNBmIl2tt6MsbdrFOUD7gje6bXnjn5op2qnQot3YZe94qYBAo
+         ZX6OatMeECQd8N/I8hDGBoEW0MaXVqsbmKLYS2Axb5pwmpv/0a3Ywq9vZSBiQNEnKtzr
+         TVrFcGADUK9+A+8pTHrNu/XxzvSskYHyu6rtf2Wg8nkdsUtxzzR4old+asMqcYlDs7Q0
+         O9EA==
+X-Gm-Message-State: ANhLgQ3/xMPXhoRvHlJW7qALbQcC4/R6U/bLYLssgT3RmJnKiU0ydyjJ
+        x/MKjOQYKPbb7MZN7GHCwTdq2ZmZDXA=
+X-Google-Smtp-Source: ADFU+vtoMWjTFrEWgWNwbV9tAUwpNJ5O9gWATdhShKa8nJCf9wifAMwhmcIHQBWsDRvKXjtOjlWH3+dN1jw=
+X-Received: by 2002:a67:eb12:: with SMTP id a18mr5042631vso.58.1585192088788;
+ Wed, 25 Mar 2020 20:08:08 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 20:06:51 -0700
+Message-Id: <20200326030702.223233-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
+Subject: [PATCH v9 00/11] Inline Encryption Support
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Cc:     Barani Muthukumaran <bmuthuku@qti.qualcomm.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        Kim Boojin <boojin.kim@samsung.com>,
+        Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 11:58:45AM -0500, Vivek Goyal wrote:
-> Add logic to free up a busy memory range. Freed memory range will be
-> returned to free pool. Add a worker which can be started to select
-> and free some busy memory ranges.
-> 
-> Process can also steal one of its busy dax ranges if free range is not
-> available. I will refer it to as direct reclaim.
-> 
-> If free range is not available and nothing can't be stolen from same
-> inode, caller waits on a waitq for free range to become available.
-> 
-> For reclaiming a range, as of now we need to hold following locks in
-> specified order.
-> 
-> 	down_write(&fi->i_mmap_sem);
-> 	down_write(&fi->i_dmap_sem);
-> 
-> We look for a free range in following order.
-> 
-> A. Try to get a free range.
-> B. If not, try direct reclaim.
-> C. If not, wait for a memory range to become free
-> 
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-> ---
->  fs/fuse/file.c   | 450 ++++++++++++++++++++++++++++++++++++++++++++++-
->  fs/fuse/fuse_i.h |  25 +++
->  fs/fuse/inode.c  |   5 +
->  3 files changed, 473 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 8b264fcb9b3c..61ae2ddeef55 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -8,6 +8,7 @@
->  
->  #include "fuse_i.h"
->  
-> +#include <linux/delay.h>
->  #include <linux/pagemap.h>
->  #include <linux/slab.h>
->  #include <linux/kernel.h>
-> @@ -37,6 +38,8 @@ static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
->  	return pages;
->  }
->  
-> +static struct fuse_dax_mapping *alloc_dax_mapping_reclaim(struct fuse_conn *fc,
-> +				struct inode *inode, bool fault);
->  static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
->  			  int opcode, struct fuse_open_out *outargp)
->  {
-> @@ -193,6 +196,28 @@ static void fuse_link_write_file(struct file *file)
->  	spin_unlock(&fi->lock);
->  }
->  
-> +static void
-> +__kick_dmap_free_worker(struct fuse_conn *fc, unsigned long delay_ms)
-> +{
-> +	unsigned long free_threshold;
-> +
-> +	/* If number of free ranges are below threshold, start reclaim */
-> +	free_threshold = max((fc->nr_ranges * FUSE_DAX_RECLAIM_THRESHOLD)/100,
-> +				(unsigned long)1);
-> +	if (fc->nr_free_ranges < free_threshold) {
-> +		pr_debug("fuse: Kicking dax memory reclaim worker. nr_free_ranges=0x%ld nr_total_ranges=%ld\n", fc->nr_free_ranges, fc->nr_ranges);
-> +		queue_delayed_work(system_long_wq, &fc->dax_free_work,
-> +				   msecs_to_jiffies(delay_ms));
-> +	}
-> +}
-> +
-> +static void kick_dmap_free_worker(struct fuse_conn *fc, unsigned long delay_ms)
-> +{
-> +	spin_lock(&fc->lock);
-> +	__kick_dmap_free_worker(fc, delay_ms);
-> +	spin_unlock(&fc->lock);
-> +}
-> +
->  static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
->  {
->  	struct fuse_dax_mapping *dmap = NULL;
-> @@ -201,7 +226,7 @@ static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
->  
->  	if (fc->nr_free_ranges <= 0) {
->  		spin_unlock(&fc->lock);
-> -		return NULL;
-> +		goto out_kick;
->  	}
->  
->  	WARN_ON(list_empty(&fc->free_ranges));
-> @@ -212,6 +237,9 @@ static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
->  	list_del_init(&dmap->list);
->  	fc->nr_free_ranges--;
->  	spin_unlock(&fc->lock);
-> +
-> +out_kick:
-> +	kick_dmap_free_worker(fc, 0);
->  	return dmap;
->  }
->  
-> @@ -238,6 +266,7 @@ static void __dmap_add_to_free_pool(struct fuse_conn *fc,
->  {
->  	list_add_tail(&dmap->list, &fc->free_ranges);
->  	fc->nr_free_ranges++;
-> +	wake_up(&fc->dax_range_waitq);
->  }
->  
->  static void dmap_add_to_free_pool(struct fuse_conn *fc,
-> @@ -289,6 +318,12 @@ static int fuse_setup_one_mapping(struct inode *inode, loff_t offset,
->  
->  	dmap->writable = writable;
->  	if (!upgrade) {
-> +		/*
-> +		 * We don't take a refernce on inode. inode is valid right now
-> +		 * and when inode is going away, cleanup logic should first
-> +		 * cleanup dmap entries.
-> +		 */
-> +		dmap->inode = inode;
->  		dmap->start = offset;
->  		dmap->end = offset + FUSE_DAX_MEM_RANGE_SZ - 1;
->  		/* Protected by fi->i_dmap_sem */
-> @@ -368,6 +403,7 @@ static void dmap_reinit_add_to_free_pool(struct fuse_conn *fc,
->  		 "window_offset=0x%llx length=0x%llx\n", dmap->start,
->  		 dmap->end, dmap->window_offset, dmap->length);
->  	__dmap_remove_busy_list(fc, dmap);
-> +	dmap->inode = NULL;
->  	dmap->start = dmap->end = 0;
->  	__dmap_add_to_free_pool(fc, dmap);
->  }
-> @@ -386,7 +422,8 @@ static void inode_reclaim_dmap_range(struct fuse_conn *fc, struct inode *inode,
->  	int err, num = 0;
->  	LIST_HEAD(to_remove);
->  
-> -	pr_debug("fuse: %s: start=0x%llx, end=0x%llx\n", __func__, start, end);
-> +	pr_debug("fuse: %s: inode=0x%px start=0x%llx, end=0x%llx\n", __func__,
-> +		 inode, start, end);
->  
->  	/*
->  	 * Interval tree search matches intersecting entries. Adjust the range
-> @@ -400,6 +437,8 @@ static void inode_reclaim_dmap_range(struct fuse_conn *fc, struct inode *inode,
->  							 end);
->  		if (!dmap)
->  			break;
-> +		/* inode is going away. There should not be any users of dmap */
-> +		WARN_ON(refcount_read(&dmap->refcnt) > 1);
->  		fuse_dax_interval_tree_remove(dmap, &fi->dmap_tree);
->  		num++;
->  		list_add(&dmap->list, &to_remove);
-> @@ -434,6 +473,21 @@ static void inode_reclaim_dmap_range(struct fuse_conn *fc, struct inode *inode,
->  	spin_unlock(&fc->lock);
->  }
->  
-> +static int dmap_removemapping_one(struct inode *inode,
-> +				  struct fuse_dax_mapping *dmap)
-> +{
-> +	struct fuse_removemapping_one forget_one;
-> +	struct fuse_removemapping_in inarg;
-> +
-> +	memset(&inarg, 0, sizeof(inarg));
-> +	inarg.count = 1;
-> +	memset(&forget_one, 0, sizeof(forget_one));
-> +	forget_one.moffset = dmap->window_offset;
-> +	forget_one.len = dmap->length;
-> +
-> +	return fuse_send_removemapping(inode, &inarg, &forget_one);
-> +}
-> +
->  /*
->   * It is called from evict_inode() and by that time inode is going away. So
->   * this function does not take any locks like fi->i_dmap_sem for traversing
-> @@ -1903,6 +1957,17 @@ static void fuse_fill_iomap(struct inode *inode, loff_t pos, loff_t length,
->  		if (flags & IOMAP_FAULT)
->  			iomap->length = ALIGN(len, PAGE_SIZE);
->  		iomap->type = IOMAP_MAPPED;
-> +		/*
-> +		 * increace refcnt so that reclaim code knows this dmap is in
-> +		 * use. This assumes i_dmap_sem mutex is held either
-> +		 * shared/exclusive.
-> +		 */
-> +		refcount_inc(&dmap->refcnt);
-> +
-> +		/* iomap->private should be NULL */
-> +		WARN_ON_ONCE(iomap->private);
-> +		iomap->private = dmap;
-> +
->  		pr_debug("%s: returns iomap: addr 0x%llx offset 0x%llx"
->  				" length 0x%llx\n", __func__, iomap->addr,
->  				iomap->offset, iomap->length);
-> @@ -1925,8 +1990,12 @@ static int iomap_begin_setup_new_mapping(struct inode *inode, loff_t pos,
->  	int ret;
->  	bool writable = flags & IOMAP_WRITE;
->  
-> -	alloc_dmap = alloc_dax_mapping(fc);
-> -	if (!alloc_dmap)
-> +	alloc_dmap = alloc_dax_mapping_reclaim(fc, inode, flags & IOMAP_FAULT);
-> +	if (IS_ERR(alloc_dmap))
-> +		return PTR_ERR(alloc_dmap);
-> +
-> +	/* If we are here, we should have memory allocated */
-> +	if (WARN_ON(!alloc_dmap))
->  		return -EBUSY;
->  
->  	/*
-> @@ -1979,14 +2048,25 @@ static int iomap_begin_upgrade_mapping(struct inode *inode, loff_t pos,
->  	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos, pos);
->  
->  	/* We are holding either inode lock or i_mmap_sem, and that should
-> -	 * ensure that dmap can't reclaimed or truncated and it should still
-> -	 * be there in tree despite the fact we dropped and re-acquired the
-> -	 * lock.
-> +	 * ensure that dmap can't be truncated. We are holding a reference
-> +	 * on dmap and that should make sure it can't be reclaimed. So dmap
-> +	 * should still be there in tree despite the fact we dropped and
-> +	 * re-acquired the i_dmap_sem lock.
->  	 */
->  	ret = -EIO;
->  	if (WARN_ON(!dmap))
->  		goto out_err;
->  
-> +	/* We took an extra reference on dmap to make sure its not reclaimd.
-> +	 * Now we hold i_dmap_sem lock and that reference is not needed
-> +	 * anymore. Drop it.
-> +	 */
-> +	if (refcount_dec_and_test(&dmap->refcnt)) {
-> +		/* refcount should not hit 0. This object only goes
-> +		 * away when fuse connection goes away */
-> +		WARN_ON_ONCE(1);
-> +	}
-> +
->  	/* Maybe another thread already upgraded mapping while we were not
->  	 * holding lock.
->  	 */
-> @@ -2056,7 +2136,11 @@ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
->  			 * two threads to be trying to this simultaneously
->  			 * for same dmap. So drop shared lock and acquire
->  			 * exclusive lock.
-> +			 *
-> +			 * Before dropping i_dmap_sem lock, take reference
-> +			 * on dmap so that its not freed by range reclaim.
->  			 */
-> +			refcount_inc(&dmap->refcnt);
->  			up_read(&fi->i_dmap_sem);
->  			pr_debug("%s: Upgrading mapping at offset 0x%llx"
->  				 " length 0x%llx\n", __func__, pos, length);
-> @@ -2092,6 +2176,16 @@ static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t length,
->  			  ssize_t written, unsigned flags,
->  			  struct iomap *iomap)
->  {
-> +	struct fuse_dax_mapping *dmap = iomap->private;
-> +
-> +	if (dmap) {
-> +		if (refcount_dec_and_test(&dmap->refcnt)) {
-> +			/* refcount should not hit 0. This object only goes
-> +			 * away when fuse connection goes away */
-> +			WARN_ON_ONCE(1);
-> +		}
-> +	}
-> +
->  	/* DAX writes beyond end-of-file aren't handled using iomap, so the
->  	 * file size is unchanged and there is nothing to do here.
->  	 */
-> @@ -4103,3 +4197,345 @@ void fuse_init_file_inode(struct inode *inode)
->  		inode->i_data.a_ops = &fuse_dax_file_aops;
->  	}
->  }
-> +
-> +static int dmap_writeback_invalidate(struct inode *inode,
-> +				     struct fuse_dax_mapping *dmap)
-> +{
-> +	int ret;
-> +
-> +	ret = filemap_fdatawrite_range(inode->i_mapping, dmap->start,
-> +				       dmap->end);
-> +	if (ret) {
-> +		printk("filemap_fdatawrite_range() failed. err=%d start=0x%llx,"
-> +			" end=0x%llx\n", ret, dmap->start, dmap->end);
-> +		return ret;
-> +	}
-> +
-> +	ret = invalidate_inode_pages2_range(inode->i_mapping,
-> +					    dmap->start >> PAGE_SHIFT,
-> +					    dmap->end >> PAGE_SHIFT);
-> +	if (ret)
-> +		printk("invalidate_inode_pages2_range() failed err=%d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int reclaim_one_dmap_locked(struct fuse_conn *fc, struct inode *inode,
-> +				   struct fuse_dax_mapping *dmap)
-> +{
-> +	int ret;
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +
-> +	/*
-> +	 * igrab() was done to make sure inode won't go under us, and this
-> +	 * further avoids the race with evict().
-> +	 */
-> +	ret = dmap_writeback_invalidate(inode, dmap);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Remove dax mapping from inode interval tree now */
-> +	fuse_dax_interval_tree_remove(dmap, &fi->dmap_tree);
-> +	fi->nr_dmaps--;
-> +
-> +	/* It is possible that umount/shutodwn has killed the fuse connection
-> +	 * and worker thread is trying to reclaim memory in parallel. So check
-> +	 * if connection is still up or not otherwise don't send removemapping
-> +	 * message.
-> +	 */
-> +	if (fc->connected) {
-> +		ret = dmap_removemapping_one(inode, dmap);
-> +		if (ret) {
-> +			pr_warn("Failed to remove mapping. offset=0x%llx"
-> +				" len=0x%llx ret=%d\n", dmap->window_offset,
-> +				dmap->length, ret);
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void fuse_wait_dax_page(struct inode *inode)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +
-> +        up_write(&fi->i_mmap_sem);
-> +        schedule();
-> +        down_write(&fi->i_mmap_sem);
-> +}
-> +
-> +/* Should be called with fi->i_mmap_sem lock held exclusively */
-> +static int __fuse_break_dax_layouts(struct inode *inode, bool *retry,
-> +				    loff_t start, loff_t end)
-> +{
-> +	struct page *page;
-> +
-> +	page = dax_layout_busy_page_range(inode->i_mapping, start, end);
-> +	if (!page)
-> +		return 0;
-> +
-> +	*retry = true;
-> +	return ___wait_var_event(&page->_refcount,
-> +			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
-> +			0, 0, fuse_wait_dax_page(inode));
-> +}
-> +
-> +/* dmap_end == 0 leads to unmapping of whole file */
-> +static int fuse_break_dax_layouts(struct inode *inode, u64 dmap_start,
-> +				  u64 dmap_end)
-> +{
-> +	bool	retry;
-> +	int	ret;
-> +
-> +	do {
-> +		retry = false;
-> +		ret = __fuse_break_dax_layouts(inode, &retry, dmap_start,
-> +					       dmap_end);
-> +        } while (ret == 0 && retry);
-> +
-> +        return ret;
-> +}
-> +
-> +/* Find first mapping in the tree and free it. */
-> +static struct fuse_dax_mapping *
-> +inode_reclaim_one_dmap_locked(struct fuse_conn *fc, struct inode *inode)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_dax_mapping *dmap;
-> +	int ret;
-> +
-> +	for (dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, 0, -1);
-> +	     dmap;
-> +	     dmap = fuse_dax_interval_tree_iter_next(dmap, 0, -1)) {
-> +		/* still in use. */
-> +		if (refcount_read(&dmap->refcnt) > 1)
-> +			continue;
-> +
-> +		ret = reclaim_one_dmap_locked(fc, inode, dmap);
-> +		if (ret < 0)
-> +			return ERR_PTR(ret);
-> +
-> +		/* Clean up dmap. Do not add back to free list */
-> +		dmap_remove_busy_list(fc, dmap);
-> +		dmap->inode = NULL;
-> +		dmap->start = dmap->end = 0;
-> +
-> +		pr_debug("fuse: %s: reclaimed memory range. inode=%px,"
-> +			 " window_offset=0x%llx, length=0x%llx\n", __func__,
-> +			 inode, dmap->window_offset, dmap->length);
-> +		return dmap;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +/*
-> + * Find first mapping in the tree and free it and return it. Do not add
-> + * it back to free pool. If fault == true, this function should be called
-> + * with fi->i_mmap_sem held.
-> + */
-> +static struct fuse_dax_mapping *inode_reclaim_one_dmap(struct fuse_conn *fc,
-> +							 struct inode *inode,
-> +							 bool fault)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_dax_mapping *dmap;
-> +	int ret;
-> +
-> +	if (!fault)
-> +		down_write(&fi->i_mmap_sem);
-> +
-> +	/*
-> +	 * Make sure there are no references to inode pages using
-> +	 * get_user_pages()
-> +	 */
-> +	ret = fuse_break_dax_layouts(inode, 0, 0);
+This patch series adds support for Inline Encryption to the block layer,
+UFS, fscrypt, f2fs and ext4.
 
-Hi Vivek,
+Note that the patches in this series for the block layer (i.e. patches 1, 2,
+3 and 4) can be applied independently of the subsequent patches in this
+series.
 
-This patch is enabling inline reclaim for fault path, but fault path
-has already holds a locked exceptional entry which I believe the above
-fuse_break_dax_layouts() needs to wait for, can you please elaborate
-on how this can be avoided?
+Inline Encryption hardware allows software to specify an encryption context
+(an encryption key, crypto algorithm, data unit num, data unit size, etc.)
+along with a data transfer request to a storage device, and the inline
+encryption hardware will use that context to en/decrypt the data. The
+inline encryption hardware is part of the storage device, and it
+conceptually sits on the data path between system memory and the storage
+device. Inline Encryption hardware has become increasingly common, and we
+want to support it in the kernel.
 
-thanks,
-liubo
+Inline Encryption hardware implementations often function around the
+concept of a limited number of "keyslots", which can hold an encryption
+context each. The storage device can be directed to en/decrypt any
+particular request with the encryption context stored in any particular
+keyslot.
+
+Patch 1 introduces a Keyslot Manager to efficiently manage keyslots.
+The keyslot manager also functions as the interface that blk-crypto
+(introduced in Patch 2), will use to program keys into inline encryption
+hardware. For more information on the Keyslot Manager, refer to
+documentation found in block/keyslot-manager.c and linux/keyslot-manager.h.
+
+Patch 2 adds the block layer changes for inline encryption support. It
+introduces struct bio_crypt_ctx, and a ptr to one in struct bio, which
+allows struct bio to represent an encryption context that can be passed
+down the storage stack from the filesystem layer to the storage driver.
+
+Patch 3 precludes inline encryption support in a device whenever it
+supports blk-integrity, because there is currently no known hardware that
+supports both features, and it is not completely straightfoward to support
+both of them properly, and doing it improperly might result in leaks of
+information about the plaintext.
+
+Patch 4 introduces blk-crypto-fallback - a kernel crypto API fallback for
+blk-crypto to use when inline encryption hardware isn't present. This
+allows filesystems to specify encryption contexts for bios without
+having to worry about whether the underlying hardware has inline
+encryption support, and allows for testing without real hardware inline
+encryption support. This fallback is separately configurable from
+blk-crypto, and can be disabled if desired while keeping inline
+encryption support. It may also be possible to remove file content
+en/decryption from fscrypt and simply use blk-crypto-fallback in a future
+patch. For more details on blk-crypto and the fallback, refer to
+Documentation/block/inline-encryption.rst.
+
+Patches 5-7 add support for inline encryption into the UFS driver according
+to the JEDEC UFS HCI v2.1 specification. Inline encryption support for
+other drivers (like eMMC) may be added in the same way - the device driver
+should set up a Keyslot Manager in the device's request_queue (refer to
+the UFS crypto additions in ufshcd-crypto.c and ufshcd.c for an example).
+
+Patch 8 adds the SB_INLINECRYPT mount flag to the fs layer, which filesystems
+must set to indicate that they want to use blk-crypto for en/decryption of
+file contents.
+
+Patch 9 adds support to fscrypt - to use inline encryption with fscrypt,
+the filesystem must be mounted with '-o inlinecrypt' - when this option is
+specified, the contents of any AES-256-XTS encrypted file will be
+encrypted using blk-crypto.
+
+Patches 10 and 11 add support to f2fs and ext4 respectively, so that we have
+a complete stack that can make use of inline encryption.
+
+The patches were tested running kvm-xfstests, by specifying the introduced
+"inlinecrypt" mount option, so that en/decryption happens with the
+blk-crypto fallback. The patches were also tested on a Pixel 4 with UFS
+hardware that has support for inline encryption.
+
+There have been a few patch sets addressing Inline Encryption Support in
+the past. Briefly, this patch set differs from those as follows:
+
+1) "crypto: qce: ice: Add support for Inline Crypto Engine"
+is specific to certain hardware, while our patch set's Inline
+Encryption support for UFS is implemented according to the JEDEC UFS
+specification.
+
+2) "scsi: ufs: UFS Host Controller crypto changes" registers inline
+encryption support as a kernel crypto algorithm. Our patch views inline
+encryption as being fundamentally different from a generic crypto
+provider (in that inline encryption is tied to a device), and so does
+not use the kernel crypto API to represent inline encryption hardware.
+
+3) "scsi: ufs: add real time/inline crypto support to UFS HCD" requires
+the device mapper to work - our patch does not.
+
+Changes v8 => v9:
+ - Don't open code bio_has_crypt_ctx into callers of blk-crypto functions.
+ - Lots of cleanups
+
+Changes v7 => v8:
+ - Pass a struct blk_ksm_keyslot * around instead of slot numbers which
+   simplifies some functions and passes around arguments with better types
+ - Make bios with no encryption context avoid making calls into blk-crypto
+   by checking for the presence of bi_crypt_context before making the call
+ - Make blk-integrity preclude inline encryption support at probe time
+ - Many many cleanups
+
+Changes v6 => v7:
+ - Keyslot management is now done on a per-request basis rather than a
+   per-bio basis.
+ - Storage drivers can now specify the maximum number of bytes they
+   can accept for the data unit number (DUN) for each crypto algorithm,
+   and upper layers can specify the minimum number of bytes of DUN they
+   want with the blk_crypto_key they send with the bio - a driver is
+   only considered to support a blk_crypto_key if the driver supports at
+   least as many DUN bytes as the upper layer wants. This is necessary
+   because storage drivers may not support as many bytes as the
+   algorithm specification dictates (for e.g. UFS only supports 8 byte
+   DUNs for AES-256-XTS, even though the algorithm specification
+   says DUNs are 16 bytes long).
+ - Introduce SB_INLINECRYPT to keep track of whether inline encryption
+   is enabled for a filesystem (instead of using an fscrypt_operation).
+ - Expose keyslot manager declaration and embed it within ufs_hba to
+   clean up code.
+ - Make blk-crypto preclude blk-integrity.
+ - Some bug fixes
+ - Introduce UFSHCD_QUIRK_BROKEN_CRYPTO for UFS drivers that don't
+   support inline encryption (yet)
+
+Changes v5 => v6:
+ - Blk-crypto's kernel crypto API fallback is no longer restricted to
+   8-byte DUNs. It's also now separately configurable from blk-crypto, and
+   can be disabled entirely, while still allowing the kernel to use inline
+   encryption hardware. Further, struct bio_crypt_ctx takes up less space,
+   and no longer contains the information needed by the crypto API
+   fallback - the fallback allocates the required memory when necessary.
+ - Blk-crypto now supports all file content encryption modes supported by
+   fscrypt.
+ - Fixed bio merging logic in blk-merge.c
+ - Fscrypt now supports inline encryption with the direct key policy, since
+   blk-crypto now has support for larger DUNs.
+ - Keyslot manager now uses a hashtable to lookup which keyslot contains
+   any particular key (thanks Eric!)
+ - Fscrypt support for inline encryption now handles filesystems with
+   multiple underlying block devices (thanks Eric!)
+ - Numerous cleanups
+
+Changes v4 => v5:
+ - The fscrypt patch has been separated into 2. The first adds support
+   for the IV_INO_LBLK_64 policy (which was called INLINE_CRYPT_OPTIMIZED
+   in past versions of this series). This policy is now purely an on disk
+   format, and doesn't dictate whether blk-crypto is used for file content
+   encryption or not. Instead, this is now decided based on the
+   "inlinecrypt" mount option.
+ - Inline crypto key eviction is now handled by blk-crypto instead of
+   fscrypt.
+ - More refactoring.
+
+Changes v3 => v4:
+ - Fixed the issue with allocating crypto_skcipher in
+   blk_crypto_keyslot_program.
+ - bio_crypto_alloc_ctx is now mempool backed.
+ - In f2fs, a bio's bi_crypt_context is now set up when the
+   bio is allocated, rather than just before the bio is
+   submitted - this fixes bugs in certain cases, like when an
+   encrypted block is being moved without decryption.
+ - Lots of refactoring and cleanup of blk-crypto - thanks Eric!
+
+Changes v2 => v3:
+ - Overhauled keyslot manager's get keyslot logic and optimized LRU.
+ - Block crypto en/decryption fallback now supports data unit sizes
+   that divide the bvec length (instead of requiring each bvec's length
+   to be the same as the data unit size).
+ - fscrypt master key is now keyed additionally by super_block and
+   ci_ctfm != NULL.
+ - all references of "hw encryption" are replaced by inline encryption.
+ - address various other review comments from Eric.
+
+Changes v1 => v2:
+ - Block layer and UFS changes are split into 3 patches each.
+ - We now only have a ptr to a struct bio_crypt_ctx in struct bio, instead
+   of the struct itself.
+ - struct bio_crypt_ctx no longer has flags.
+ - blk-crypto now correctly handles the case when it fails to init
+   (because of insufficient memory), but kernel continues to boot.
+ - ufshcd-crypto now works on big endian cpus.
+ - Many cleanups.
 
 
-> +	if (ret) {
-> +		printk("virtio_fs: fuse_break_dax_layouts() failed. err=%d\n",
-> +		       ret);
-> +		dmap = ERR_PTR(ret);
-> +		goto out_mmap_sem;
-> +	}
-> +	down_write(&fi->i_dmap_sem);
-> +	dmap = inode_reclaim_one_dmap_locked(fc, inode);
-> +	up_write(&fi->i_dmap_sem);
-> +out_mmap_sem:
-> +	if (!fault)
-> +		up_write(&fi->i_mmap_sem);
-> +	return dmap;
-> +}
-> +
-> +/* If fault == true, it should be called with fi->i_mmap_sem locked */
-> +static struct fuse_dax_mapping *alloc_dax_mapping_reclaim(struct fuse_conn *fc,
-> +					struct inode *inode, bool fault)
-> +{
-> +	struct fuse_dax_mapping *dmap;
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +
-> +	while(1) {
-> +		dmap = alloc_dax_mapping(fc);
-> +		if (dmap)
-> +			return dmap;
-> +
-> +		if (fi->nr_dmaps) {
-> +			dmap = inode_reclaim_one_dmap(fc, inode, fault);
-> +			if (dmap)
-> +				return dmap;
-> +			/* If we could not reclaim a mapping because it
-> +			 * had a reference, that should be a temporary
-> +			 * situation. Try again.
-> +			 */
-> +			msleep(1);
-> +			continue;
-> +		}
-> +		/*
-> +		 * There are no mappings which can be reclaimed.
-> +		 * Wait for one.
-> +		 */
-> +		if (!(fc->nr_free_ranges > 0)) {
-> +			if (wait_event_killable_exclusive(fc->dax_range_waitq,
-> +					(fc->nr_free_ranges > 0)))
-> +				return ERR_PTR(-EINTR);
-> +		}
-> +	}
-> +}
-> +
-> +static int lookup_and_reclaim_dmap_locked(struct fuse_conn *fc,
-> +					  struct inode *inode, u64 dmap_start)
-> +{
-> +	int ret;
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_dax_mapping *dmap;
-> +
-> +	/* Find fuse dax mapping at file offset inode. */
-> +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, dmap_start,
-> +						 dmap_start);
-> +
-> +	/* Range already got cleaned up by somebody else */
-> +	if (!dmap)
-> +		return 0;
-> +
-> +	/* still in use. */
-> +	if (refcount_read(&dmap->refcnt) > 1)
-> +		return 0;
-> +
-> +	ret = reclaim_one_dmap_locked(fc, inode, dmap);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Cleanup dmap entry and add back to free list */
-> +	spin_lock(&fc->lock);
-> +	dmap_reinit_add_to_free_pool(fc, dmap);
-> +	spin_unlock(&fc->lock);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Free a range of memory.
-> + * Locking.
-> + * 1. Take fuse_inode->i_mmap_sem to block dax faults.
-> + * 2. Take fuse_inode->i_dmap_sem to protect interval tree and also to make
-> + *    sure read/write can not reuse a dmap which we might be freeing.
-> + */
-> +static int lookup_and_reclaim_dmap(struct fuse_conn *fc, struct inode *inode,
-> +				   u64 dmap_start, u64 dmap_end)
-> +{
-> +	int ret;
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +
-> +	down_write(&fi->i_mmap_sem);
-> +	ret = fuse_break_dax_layouts(inode, dmap_start, dmap_end);
-> +	if (ret) {
-> +		printk("virtio_fs: fuse_break_dax_layouts() failed. err=%d\n",
-> +		       ret);
-> +		goto out_mmap_sem;
-> +	}
-> +
-> +	down_write(&fi->i_dmap_sem);
-> +	ret = lookup_and_reclaim_dmap_locked(fc, inode, dmap_start);
-> +	up_write(&fi->i_dmap_sem);
-> +out_mmap_sem:
-> +	up_write(&fi->i_mmap_sem);
-> +	return ret;
-> +}
-> +
-> +static int try_to_free_dmap_chunks(struct fuse_conn *fc,
-> +				   unsigned long nr_to_free)
-> +{
-> +	struct fuse_dax_mapping *dmap, *pos, *temp;
-> +	int ret, nr_freed = 0;
-> +	u64 dmap_start = 0, window_offset = 0, dmap_end = 0;
-> +	struct inode *inode = NULL;
-> +
-> +	/* Pick first busy range and free it for now*/
-> +	while(1) {
-> +		if (nr_freed >= nr_to_free)
-> +			break;
-> +
-> +		dmap = NULL;
-> +		spin_lock(&fc->lock);
-> +
-> +		if (!fc->nr_busy_ranges) {
-> +			spin_unlock(&fc->lock);
-> +			return 0;
-> +		}
-> +
-> +		list_for_each_entry_safe(pos, temp, &fc->busy_ranges,
-> +						busy_list) {
-> +			/* skip this range if it's in use. */
-> +			if (refcount_read(&pos->refcnt) > 1)
-> +				continue;
-> +
-> +			inode = igrab(pos->inode);
-> +			/*
-> +			 * This inode is going away. That will free
-> +			 * up all the ranges anyway, continue to
-> +			 * next range.
-> +			 */
-> +			if (!inode)
-> +				continue;
-> +			/*
-> +			 * Take this element off list and add it tail. If
-> +			 * this element can't be freed, it will help with
-> +			 * selecting new element in next iteration of loop.
-> +			 */
-> +			dmap = pos;
-> +			list_move_tail(&dmap->busy_list, &fc->busy_ranges);
-> +			dmap_start = dmap->start;
-> +			dmap_end = dmap->end;
-> +			window_offset = dmap->window_offset;
-> +			break;
-> +		}
-> +		spin_unlock(&fc->lock);
-> +		if (!dmap)
-> +			return 0;
-> +
-> +		ret = lookup_and_reclaim_dmap(fc, inode, dmap_start, dmap_end);
-> +		iput(inode);
-> +		if (ret) {
-> +			printk("%s(window_offset=0x%llx) failed. err=%d\n",
-> +				__func__, window_offset, ret);
-> +			return ret;
-> +		}
-> +		nr_freed++;
-> +	}
-> +	return 0;
-> +}
-> +
-> +void fuse_dax_free_mem_worker(struct work_struct *work)
-> +{
-> +	int ret;
-> +	struct fuse_conn *fc = container_of(work, struct fuse_conn,
-> +						dax_free_work.work);
-> +	pr_debug("fuse: Worker to free memory called. nr_free_ranges=%lu"
-> +		 " nr_busy_ranges=%lu\n", fc->nr_free_ranges,
-> +		 fc->nr_busy_ranges);
-> +
-> +	ret = try_to_free_dmap_chunks(fc, FUSE_DAX_RECLAIM_CHUNK);
-> +	if (ret) {
-> +		pr_debug("fuse: try_to_free_dmap_chunks() failed with err=%d\n",
-> +			 ret);
-> +	}
-> +
-> +	/* If number of free ranges are still below threhold, requeue */
-> +	kick_dmap_free_worker(fc, 1);
-> +}
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index de213a7e1b0e..41c2fbff0d37 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -54,6 +54,16 @@
->  #define FUSE_DAX_MEM_RANGE_SZ	(2*1024*1024)
->  #define FUSE_DAX_MEM_RANGE_PAGES	(FUSE_DAX_MEM_RANGE_SZ/PAGE_SIZE)
->  
-> +/* Number of ranges reclaimer will try to free in one invocation */
-> +#define FUSE_DAX_RECLAIM_CHUNK		(10)
-> +
-> +/*
-> + * Dax memory reclaim threshold in percetage of total ranges. When free
-> + * number of free ranges drops below this threshold, reclaim can trigger
-> + * Default is 20%
-> + * */
-> +#define FUSE_DAX_RECLAIM_THRESHOLD	(20)
-> +
->  /** List of active connections */
->  extern struct list_head fuse_conn_list;
->  
-> @@ -75,6 +85,9 @@ struct fuse_forget_link {
->  
->  /** Translation information for file offsets to DAX window offsets */
->  struct fuse_dax_mapping {
-> +	/* Pointer to inode where this memory range is mapped */
-> +	struct inode *inode;
-> +
->  	/* Will connect in fc->free_ranges to keep track of free memory */
->  	struct list_head list;
->  
-> @@ -97,6 +110,9 @@ struct fuse_dax_mapping {
->  
->  	/* Is this mapping read-only or read-write */
->  	bool writable;
-> +
-> +	/* reference count when the mapping is used by dax iomap. */
-> +	refcount_t refcnt;
->  };
->  
->  /** FUSE inode */
-> @@ -822,11 +838,19 @@ struct fuse_conn {
->  	unsigned long nr_busy_ranges;
->  	struct list_head busy_ranges;
->  
-> +	/* Worker to free up memory ranges */
-> +	struct delayed_work dax_free_work;
-> +
-> +	/* Wait queue for a dax range to become free */
-> +	wait_queue_head_t dax_range_waitq;
-> +
->  	/*
->  	 * DAX Window Free Ranges
->  	 */
->  	long nr_free_ranges;
->  	struct list_head free_ranges;
-> +
-> +	unsigned long nr_ranges;
->  };
->  
->  static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
-> @@ -1164,6 +1188,7 @@ unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args);
->   */
->  u64 fuse_get_unique(struct fuse_iqueue *fiq);
->  void fuse_free_conn(struct fuse_conn *fc);
-> +void fuse_dax_free_mem_worker(struct work_struct *work);
->  void fuse_cleanup_inode_mappings(struct inode *inode);
->  
->  #endif /* _FS_FUSE_I_H */
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index d4770e7fb7eb..3560b62077a7 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -663,11 +663,13 @@ static int fuse_dax_mem_range_init(struct fuse_conn *fc,
->  		range->window_offset = i * FUSE_DAX_MEM_RANGE_SZ;
->  		range->length = FUSE_DAX_MEM_RANGE_SZ;
->  		INIT_LIST_HEAD(&range->busy_list);
-> +		refcount_set(&range->refcnt, 1);
->  		list_add_tail(&range->list, &mem_ranges);
->  	}
->  
->  	list_replace_init(&mem_ranges, &fc->free_ranges);
->  	fc->nr_free_ranges = nr_ranges;
-> +	fc->nr_ranges = nr_ranges;
->  	return 0;
->  out_err:
->  	/* Free All allocated elements */
-> @@ -692,6 +694,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
->  	refcount_set(&fc->count, 1);
->  	atomic_set(&fc->dev_count, 1);
->  	init_waitqueue_head(&fc->blocked_waitq);
-> +	init_waitqueue_head(&fc->dax_range_waitq);
->  	fuse_iqueue_init(&fc->iq, fiq_ops, fiq_priv);
->  	INIT_LIST_HEAD(&fc->bg_queue);
->  	INIT_LIST_HEAD(&fc->entry);
-> @@ -711,6 +714,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
->  	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
->  	INIT_LIST_HEAD(&fc->free_ranges);
->  	INIT_LIST_HEAD(&fc->busy_ranges);
-> +	INIT_DELAYED_WORK(&fc->dax_free_work, fuse_dax_free_mem_worker);
->  }
->  EXPORT_SYMBOL_GPL(fuse_conn_init);
->  
-> @@ -719,6 +723,7 @@ void fuse_conn_put(struct fuse_conn *fc)
->  	if (refcount_dec_and_test(&fc->count)) {
->  		struct fuse_iqueue *fiq = &fc->iq;
->  
-> +		flush_delayed_work(&fc->dax_free_work);
->  		if (fc->dax_dev)
->  			fuse_free_dax_mem_ranges(&fc->free_ranges);
->  		if (fiq->ops->release)
-> -- 
-> 2.20.1
+Eric Biggers (1):
+  ext4: add inline encryption support
+
+Satya Tangirala (10):
+  block: Keyslot Manager for Inline Encryption
+  block: Inline encryption support for blk-mq
+  block: Make blk-integrity preclude hardware inline encryption
+  block: blk-crypto-fallback for Inline Encryption
+  scsi: ufs: UFS driver v2.1 spec crypto additions
+  scsi: ufs: UFS crypto API
+  scsi: ufs: Add inline encryption support to UFS
+  fs: introduce SB_INLINECRYPT
+  fscrypt: add inline encryption support
+  f2fs: add inline encryption support
+
+ Documentation/admin-guide/ext4.rst        |   6 +
+ Documentation/block/index.rst             |   1 +
+ Documentation/block/inline-encryption.rst | 195 +++++++
+ Documentation/filesystems/f2fs.txt        |   6 +
+ block/Kconfig                             |  17 +
+ block/Makefile                            |   2 +
+ block/bio-integrity.c                     |   3 +
+ block/bio.c                               |   6 +
+ block/blk-core.c                          |  20 +-
+ block/blk-crypto-fallback.c               | 666 ++++++++++++++++++++++
+ block/blk-crypto-internal.h               | 197 +++++++
+ block/blk-crypto.c                        | 408 +++++++++++++
+ block/blk-integrity.c                     |   7 +
+ block/blk-map.c                           |   1 +
+ block/blk-merge.c                         |  11 +
+ block/blk-mq.c                            |  12 +
+ block/blk.h                               |   4 +
+ block/bounce.c                            |   2 +
+ block/keyslot-manager.c                   | 396 +++++++++++++
+ drivers/md/dm.c                           |   3 +
+ drivers/scsi/ufs/Kconfig                  |   9 +
+ drivers/scsi/ufs/Makefile                 |   1 +
+ drivers/scsi/ufs/ufshcd-crypto.c          | 226 ++++++++
+ drivers/scsi/ufs/ufshcd-crypto.h          |  62 ++
+ drivers/scsi/ufs/ufshcd.c                 |  46 +-
+ drivers/scsi/ufs/ufshcd.h                 |  23 +
+ drivers/scsi/ufs/ufshci.h                 |  67 ++-
+ fs/buffer.c                               |   7 +-
+ fs/crypto/Kconfig                         |   6 +
+ fs/crypto/Makefile                        |   1 +
+ fs/crypto/bio.c                           |  51 ++
+ fs/crypto/crypto.c                        |   2 +-
+ fs/crypto/fname.c                         |   4 +-
+ fs/crypto/fscrypt_private.h               | 120 +++-
+ fs/crypto/inline_crypt.c                  | 328 +++++++++++
+ fs/crypto/keyring.c                       |   4 +-
+ fs/crypto/keysetup.c                      |  92 ++-
+ fs/crypto/keysetup_v1.c                   |  16 +-
+ fs/ext4/inode.c                           |   4 +-
+ fs/ext4/page-io.c                         |   6 +-
+ fs/ext4/readpage.c                        |  11 +-
+ fs/ext4/super.c                           |   9 +
+ fs/f2fs/compress.c                        |   2 +-
+ fs/f2fs/data.c                            |  68 ++-
+ fs/f2fs/super.c                           |  32 ++
+ fs/proc_namespace.c                       |   1 +
+ include/linux/blk-crypto.h                | 129 +++++
+ include/linux/blk_types.h                 |   6 +
+ include/linux/blkdev.h                    |  41 ++
+ include/linux/fs.h                        |   1 +
+ include/linux/fscrypt.h                   |  57 ++
+ include/linux/keyslot-manager.h           | 107 ++++
+ 52 files changed, 3413 insertions(+), 89 deletions(-)
+ create mode 100644 Documentation/block/inline-encryption.rst
+ create mode 100644 block/blk-crypto-fallback.c
+ create mode 100644 block/blk-crypto-internal.h
+ create mode 100644 block/blk-crypto.c
+ create mode 100644 block/keyslot-manager.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
+ create mode 100644 fs/crypto/inline_crypt.c
+ create mode 100644 include/linux/blk-crypto.h
+ create mode 100644 include/linux/keyslot-manager.h
+
+-- 
+2.25.1.696.g5e7596f4ac-goog
+
