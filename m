@@ -2,89 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388AF1946E3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 19:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5377919471C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 20:08:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbgCZS7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Mar 2020 14:59:22 -0400
-Received: from UHIL19PA38.eemsg.mail.mil ([214.24.21.197]:35101 "EHLO
-        UHIL19PA38.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbgCZS7V (ORCPT
+        id S1727879AbgCZTIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Mar 2020 15:08:25 -0400
+Received: from UPDC19PA19.eemsg.mail.mil ([214.24.27.194]:20848 "EHLO
+        UPDC19PA19.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbgCZTIZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Mar 2020 14:59:21 -0400
-X-EEMSG-check-017: 89972741|UHIL19PA38_ESA_OUT04.csd.disa.mil
+        Thu, 26 Mar 2020 15:08:25 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Mar 2020 15:08:22 EDT
+X-EEMSG-check-017: 70905491|UPDC19PA19_ESA_OUT01.csd.disa.mil
 X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
-   d="scan'208";a="89972741"
+   d="scan'208";a="70905491"
 Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by UHIL19PA38.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Mar 2020 18:59:02 +0000
+  by UPDC19PA19.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 26 Mar 2020 19:01:04 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1585249142; x=1616785142;
+  s=tycho.nsa.gov; t=1585249265; x=1616785265;
   h=subject:to:references:from:message-id:date:mime-version:
    in-reply-to:content-transfer-encoding;
-  bh=qjWe73fUO1P3gDxEnQaP/rsr4TUjg4noRpCSQYDVYj4=;
-  b=fh07z+yEZuTX8hmHlp6yG+5F18N9aMa+iYnzBexOzigTP6A6xxV/p6k5
-   KxDoxRrc5ej5JhQZqT2p3VGHJd8+EBeQod4IMc1CcaMlvaBACKsNtgu/o
-   /telDPGZ9nuKhQ4CDja+K92tMmkOreKBLCSZcXq/EFDHzr4Zxk6Sf0ysl
-   H1AxPAXRMuXIp+CHZKDlaTcoDlj+Yya/F4MdFKo1tbmFa7lXBVDvzddnZ
-   ii41mo0VlK7r53+cmwd7s7Hzqik7xAu55BN0eq5RcVTUeFDqdZXRhkFMV
-   qzmU6dMWjq60YqUtVnVXuE3xXZM1Q0yuy/kqRuCMYv4WUfil89/21VlBy
-   Q==;
+  bh=vtF6BtykO350/rMpFc78UUGhjIlgmvfhIHBzW2CVU3c=;
+  b=L44oCrB+bgn0NlYS3csYW0C2wPwLH3OjJsdw8u3g/DVwlJXjAbOiCtfu
+   ZuPxp5JmrrbgElzBGRWsS6F2879jsRJiQtwHYuSdbUp/Qg4IAclsOcTT0
+   K3m3NfeAFH2j3OGW+aLfddtNyajN4IJ4/vN+hiRPmmRuAR19SNHz5n1Vp
+   8D2es0MV2RKZbafIb340cBzZd7JdP3F5CDYNwtwCnJKQfsLIUsUXg81W8
+   XI4pRLPgRLl94l+/5oPG0wrlO+gnp5tCKs0jPhJc7aRT6mcFtaGLkuczM
+   1AeLgHCuCk6ZdCz5Pth3Xs2U4vXg8UudT5JaSRQqeZNUISmW5An2Zs7OE
+   A==;
 X-IronPort-AV: E=Sophos;i="5.72,309,1580774400"; 
-   d="scan'208";a="34650212"
-IronPort-PHdr: =?us-ascii?q?9a23=3A+vu0FxPof3AcsOPt1LYl6mtUPXoX/o7sNwtQ0K?=
- =?us-ascii?q?IMzox0K/v+r8bcNUDSrc9gkEXOFd2Cra4d16yP7v+rBDBIyK3CmU5BWaQEbw?=
- =?us-ascii?q?UCh8QSkl5oK+++Imq/EsTXaTcnFt9JTl5v8iLzG0FUHMHjew+a+SXqvnYdFR?=
- =?us-ascii?q?rlKAV6OPn+FJLMgMSrzeCy/IDYbxlViDanbr5+MRq7oR/MusQWg4ZuJaY8xx?=
- =?us-ascii?q?TUqXZUZupawn9lKl2Ukxvg/Mm74YRt8z5Xu/Iv9s5AVbv1cqElRrFGDzooLn?=
- =?us-ascii?q?446tTzuRbMUQWA6H0cUn4LkhVTGAjK8Av6XpbqvSTksOd2xTSXMtf3TbAwXj?=
- =?us-ascii?q?Si8rtrRRr1gyoJKzI17GfagdFrgalFvByuuQBww4/MYIGUKvV+eL/dfcgHTm?=
- =?us-ascii?q?ZFR8pdSjBNDp+5Y4YJAeUBJ+JYpJTjqVUIoxW1GA2gCPrhxzJMg3P727Ax3e?=
- =?us-ascii?q?Y8HgHcxAEuAswAsHrUotv2OqkdX++6w6vUwjvMdP5WxTXw5ZLUfhw9r/yBX7?=
- =?us-ascii?q?R9etfRx0k1EAPFi02dp5H5PzyLzuQNs3aU7+x9Xuyyjm4osQVxojyxycYsl4?=
- =?us-ascii?q?LEgZkVxU3f9Shi3IY0JcG3SE58YdK+FptQrDuVO5F5QsMlXWFloSA3waAFt5?=
- =?us-ascii?q?6jZCUG1ZsqyhHFZ/GHboSE+AzvWemPLTtimX5ofq+0iQyo/ki60OL8U9G50F?=
- =?us-ascii?q?NNriVYjNbBrmsN1xnP6sifTft941uh1S6P1w/N7uFEJlg5lbbBJJ47w74wi4?=
- =?us-ascii?q?ETvV7fHi72hEr2jKiWel8i+ue08OTofq/qppqdN49wkg3+M6IuldKjAekgLw?=
- =?us-ascii?q?QDUGeW9f682bH+50H1XrpHguMsnqXEqJzaIN4Upq+9Aw9byIYj7BO/Ai+90N?=
- =?us-ascii?q?sFhnkKN05FeRKbgIjpPFHCOvb4DeyljFi2nzdrwO7GMqX7AprRNnjDjKvhfb?=
- =?us-ascii?q?Fl5kFB0gUzy8xQ55VQCrwaL/LzXUjxtNPcDhAnKQC73+HnCNBl3IMERW2PGr?=
- =?us-ascii?q?OZML/VsVKQ+uIvIuyMZIoIuDbnMfgq/f7vgGQ2mV8aeqmp0p8XZ26iEvt6JE?=
- =?us-ascii?q?WZZGLmgs0dHmcSogo+UOvqhUWZUTFNY3ayXqQ85iw0CY+9E4fDSZ6igKab0C?=
- =?us-ascii?q?e4AJJWfGZGBU6IEXvycIWEQfgMYjqIIsB9ijwESaShS4g52BGqtQ/6zadnL+?=
- =?us-ascii?q?XN9i0Dq53syMV15/fSlREu9T14FsGd02aQQGFpmmMHWSQ73L5woUNj0FePy6?=
- =?us-ascii?q?t4jOJCFdxV+fxJVh02NZnGz+x1E9ryQB7Ofs+VSFa6RdWrGTUxTtM3w98TbE?=
- =?us-ascii?q?dxAtuijgve0CW0Hb8aibiLCYcq8qLTwXfxPdxxy3XY26k7iVkpXM9POXehhq?=
- =?us-ascii?q?5l+AjZH5TJnFmBl6a2aaQc2zbA9GOCzWqIoUFZXxd8UabbUnAFYEvZs9D561?=
- =?us-ascii?q?jcT7+hF7snKBFNyc2cJatQbN3mk1FGSO3kONTEbGK7g32wCgqQxrOQcIrqfH?=
- =?us-ascii?q?0Q3CbDCEgBiA0T43mGOhYkBiu7oGLREiZuFVTxbEPo6+V+r2m7TkAsxQGQc0?=
- =?us-ascii?q?Jhz6a1+gIShfGEVfMT36gEuCA6pjR1Alm92dPWC8SaqwplfaVcZ8494Vhd2W?=
- =?us-ascii?q?LerQx9MYasL71hhlQGaQR4o1vu1wlrCoVHicUqtGklzBd2Ka+DyFNObS6Y3Z?=
- =?us-ascii?q?TpNr3SLWny+wqvZLDM1l7C19aW/78F6O4kpFX7oAGpCk0i/m1h09lT0HuR/Z?=
- =?us-ascii?q?rKDA0VUZL+VkY46QJ2qK3dYik4/4nUz2FjMbGosj/e3NIkHO8lyhGjf9hBK6?=
- =?us-ascii?q?OEFADyE8wHCMi0MuMngFepbhUDPOBd8K47IdmqeOeB2K6uJOxghi6pjXxb4I?=
- =?us-ascii?q?Bh1UKB7yh8SuvP35Yf2fGY3xCHWiz6jFi7t8D4h4FEaSsVHmqlxii3TLJWM4?=
- =?us-ascii?q?F7e4cGDS+FJMm+3d5/gJjgEypU/VioAFcu18iudh6fKVf62FsUnVgWpHm6gz?=
- =?us-ascii?q?Gx3hR7lDYmqqfZ1yvLh6z5eR4GPHNbbHdtgE2qIoWuid0eGk+yYExhkBqj+F?=
- =?us-ascii?q?a/3KVQub5+M3iWREBEYiz7B39tX7H2tbeYZcNLrpQyvmEfVOW6fEDfRKXxrg?=
- =?us-ascii?q?UX1wv9EGZEgjM2bTenvtP+hRM+wGacKmtj6XnUY8d9wT/B69HGA/1cxDwLQG?=
- =?us-ascii?q?9/kzaTTluiOvG38tiO0ZTOqOazUySmTJIXOTfq14Sopia95HMsBRy5guD1nc?=
- =?us-ascii?q?foVxU5lWfj3sRufT3BsRK5Z47szan8OuViOgFuAlzU5M19FYVz1IA3gdVY3X?=
- =?us-ascii?q?8Zi46V8nsLi27bPtJc1qbzKnEKQHpDwdvS+hLkw2VlJ3eExsT+THrO7NFmYo?=
- =?us-ascii?q?yBfm4O2i87p/tPAaOQ4a0MyTB5uXKkvAnRZr57hT5bxvwwvi1Jy9oVsRYgm3?=
- =?us-ascii?q?3OSosZGlNVaGm1zEWF?=
-X-IPAS-Result: =?us-ascii?q?A2BhBwCg+nxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgXsCg?=
- =?us-ascii?q?XssgUEyKoQajnxUBoESJYl6kHYDVAoBAQEBAQEBAQE0AQIEAQGERAKCLyQ4E?=
- =?us-ascii?q?wIQAQEBBQEBAQEBBQMBAWyFYkIWAYFiKQGCfgEBAQECASMEEUYLCw4KAgImA?=
- =?us-ascii?q?gJXBgEMBgIBAYJjP4JYBSCtJXV/M4NMgX+DX4E+gQ4qAYwuGnmBB4E4DAOCK?=
- =?us-ascii?q?QcuPodcgl4Elw9xmFWCRoJWilyJUQYdm1+PEZ4GIjeBISsIAhgIIQ+DJ1AYD?=
- =?us-ascii?q?Y4pF41sVSUDMIEGAQGKTINRAQE?=
+   d="scan'208";a="34650377"
+IronPort-PHdr: =?us-ascii?q?9a23=3AFf07fxbyn8jIu0nIUdFW5h3/LSx+4OfEezUN45?=
+ =?us-ascii?q?9isYplN5qZpsu/bB7h7PlgxGXEQZ/co6odzbaP7+a5BDNLvMrJmUtBWaIPfi?=
+ =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
+ =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sArcutMLjYZiKKs9xR?=
+ =?us-ascii?q?vEr3RVcOlK2G1kIk6ekBn76sqs5pBo7j5eu+gm985OUKX6e7o3QLlFBzk4MG?=
+ =?us-ascii?q?47+dPmuwDbQQSA+nUTXGMWkgFVAwfe9xH1Qo3xsirhueVj3iSRIND7Qqo1WT?=
+ =?us-ascii?q?Sm6KdrVQPohSIaPDM37G3blsp9h79ArRm/uxJw3ZLbYICNNPp/YKzde88aRX?=
+ =?us-ascii?q?FcVcpVTiBNH5+wY5cKA+cHM+lYtY39rEYQoxW4CwenGefjxiZGi3Ly2KE31f?=
+ =?us-ascii?q?kqHwPb0ww6B98ArWrarNv1OqkRX+66wqbHwjffYP1Zwjr99IrFfwo9rf2QU7?=
+ =?us-ascii?q?99c8zcwlQvGQPfiVWQrJToMS6J1usTq2ib7/RvVeSygGA6rgF+uDyvxsMyhY?=
+ =?us-ascii?q?jJm4kYzUvE+jhiwIsuOd25SFJ0Yd6jEJdKsSGaLJF5TtktQ2FvpiY307sLso?=
+ =?us-ascii?q?O4cigS0Jkr2hHSZvOdf4WI/x7vTvidLDhmiH5/Zb6ygQu5/1K6xe3mTMa01U?=
+ =?us-ascii?q?5Hri9CktbRqH8AzwfT6s2bSvtl+UehxCqP2xjT6u5aJUA0krLWK4I7zb4ql5?=
+ =?us-ascii?q?oTrF/DEjXqmET2kKCWdkIk9vKu6+v7ebXpuoWQN4p1igH6Kqgum8q/DvokMg?=
+ =?us-ascii?q?UWQmSW9uux2Kfj8EHkWrlGkPI7nrfDvJzHPcgbo7S2Aw5R0oYt8Ra/CDKm3c?=
+ =?us-ascii?q?wDnXYaN1JIYw6Hjoj1NFHOJ/D0F/G/g0+2nztxyPDGOaPhDo3XLnffiLfhYa?=
+ =?us-ascii?q?p960lExQUu199f4Y5bCrYFIP/oVU/xs9vYDhA9MwOq2eroFNJ91oYGU2KVHq?=
+ =?us-ascii?q?CZKL/SsUOP5u83P+mMZYoVuDPgK/g//f7hl384lEQSfamu2psXZ3S4Eep8L0?=
+ =?us-ascii?q?qFZnrsh88LEX0WsQomUOzqlFqCXCZIZ3msW6I85zc7CJ+pDIrYWICtj6KO3D?=
+ =?us-ascii?q?2hEp1VeG9GEFaMHmnsd4meXPcMci2SKNd7kjMYTbihV5Mh1Ra2uQ/+yrpnKP?=
+ =?us-ascii?q?fU+yIBuZL4ytd6+/DTlQsz9TxoD8WRymSNT2ZpkWMVQz85wrtyoVJyylidy6?=
+ =?us-ascii?q?h0mf9YGsJJ5/NPTAg6MYTQz+tgC9D9QgjBZMuGSE66QtW6BjE8VtYxw94IY0?=
+ =?us-ascii?q?ZgFNSulx7D3zG3DLALibyEGpg0/7nC33j+Ocl90WzK1Ko/gFk8RMtAK2mmir?=
+ =?us-ascii?q?R49wjJCI7Di1+ZmLqydaQAwC7N83+OzW6PvEFeTQ5xXrzJXXMBaUvMq9T2+E?=
+ =?us-ascii?q?fCQqSwCbQoLARB09SOKqhUZd3zi1VJWvPjNM7ZY2KrlGe6HQyIya+UbIr2Z2?=
+ =?us-ascii?q?Ud2z3QCEsakwAW5nuGKwc+CTm7o27EDzxhC0jvY0Xy/ul6sn+7SVU0zw6SZU?=
+ =?us-ascii?q?17y7W14gIVheCbS/4LwLIEuT0hqzJvEVe8wd3WDduApxR7cKVYYNM95kpH1G?=
+ =?us-ascii?q?3Duwx6JJygILpuhkMdcw5vpUPhyw13CplckcgttH4q1BB9Kb+c0F5abzOXx4?=
+ =?us-ascii?q?3wOrnOJmn3+xCvbLTW1U/E3NmK/acP7ewyq0//swGxCkoi73Jn3sFT03ua5Z?=
+ =?us-ascii?q?XHFwUSUZX2UkY48xh1uavWbTU654PRzXdsK7W7sife29I1A+so0hKgf9BcMK?=
+ =?us-ascii?q?yaDw/yE8IaB8mzJ+wwgVekdR0EPOdV9K47O8OpaeGK17KsPOZlhDiml3hI4J?=
+ =?us-ascii?q?hh0kKQ8CpxUuzI35MCw/GCxAuHViz8gUynss/tnIBLezASEnC4ySj+C44CLp?=
+ =?us-ascii?q?F1KKoCD2ajJ4WcwdF3nJXsXHhVvAqvDlUN38uBdh2VYFjwmwZX0BJT6WCmnC?=
+ =?us-ascii?q?6l1SZ9ghkmqa2Q2CGIyOPnMFIcN2pKQnRypUnjLJLyjN0AWkWsKQ8zm1/t4U?=
+ =?us-ascii?q?f82rgev6l0MnPSXVYNei/6MmVverW/u6DEYMNV7p4s9yJNX6D0ZVGcV664rQ?=
+ =?us-ascii?q?AW3j3uG0NAyz0hMTKnoJP0m1p9km3ZZHJyqmfJPMJ93xHS4PTCSvNLmDkLXi?=
+ =?us-ascii?q?91jX/QHFf4d9q3+P2KmJrZ9OOzTWSsUttUayavhZ2BriyT92BsAAP5m/G1h8?=
+ =?us-ascii?q?2hFhI1lzL4k5FyXDjMhA71f42u0qO9K+8hdU5tQBf67clSFYZ5nY89wpoX3D?=
+ =?us-ascii?q?xSgpKW8GEHnmb/K9xz1qX5Y34AAzUMxpqd4g3iwldiNVqPzof0VzOa2MQySc?=
+ =?us-ascii?q?O9ZzYtxi8l781MQJyR5bhAkDo99kG0tirNcPN9mXEb0vJo53kE1bJa8DExxz?=
+ =?us-ascii?q?mQV+hBVXJTOjbhwlHRtIGz?=
+X-IPAS-Result: =?us-ascii?q?A2DvAACg+nxe/wHyM5BmHAEBAQEBBwEBEQEEBAEBgWoEA?=
+ =?us-ascii?q?QELAYF8LIFBMiqEGo58VAaBEiWJepB2A1QKAQEBAQEBAQEBNAECBAEBhEQCg?=
+ =?us-ascii?q?i8kNwYOAhABAQEFAQEBAQEFAwEBbIVigjspAYJ/AQUjBBFRCw4KAgImAgJXB?=
+ =?us-ascii?q?gEMBgIBAYJjP4JYJa4afzOFS4NfgT6BDioBjC4aeYEHgTgMA4JePoRLgxGCX?=
+ =?us-ascii?q?gSXD3GYVYJGglaULQYdm1+PEZ4FIzeBISsIAhgIIQ+DJ1AYDY4pF41sVSUDM?=
+ =?us-ascii?q?IEGAQGOHQEB?=
 Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 26 Mar 2020 18:59:01 +0000
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 26 Mar 2020 19:01:03 +0000
 Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 02QIxJ5X196479;
-        Thu, 26 Mar 2020 14:59:20 -0400
-Subject: Re: [PATCH v3 1/3] Add a new LSM-supporting anonymous inode interface
+        by tarius.tycho.ncsc.mil (8.14.7/8.14.4) with ESMTP id 02QJ1OMB196557;
+        Thu, 26 Mar 2020 15:01:24 -0400
+Subject: Re: [PATCH v3 2/3] Teach SELinux about anonymous inodes
 To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -92,14 +93,14 @@ To:     Daniel Colascione <dancol@google.com>, timmurray@google.com,
         nnk@google.com, lokeshgidra@google.com, jmorris@namei.org
 References: <20200214032635.75434-1-dancol@google.com>
  <20200326181456.132742-1-dancol@google.com>
- <20200326181456.132742-2-dancol@google.com>
+ <20200326181456.132742-3-dancol@google.com>
 From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <d2d79bba-2401-9c09-ef4d-4dae667ea730@tycho.nsa.gov>
-Date:   Thu, 26 Mar 2020 15:00:12 -0400
+Message-ID: <8478b39c-5ddd-6495-1f32-d973a5ee9edd@tycho.nsa.gov>
+Date:   Thu, 26 Mar 2020 15:02:16 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20200326181456.132742-2-dancol@google.com>
+In-Reply-To: <20200326181456.132742-3-dancol@google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,96 +110,74 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 3/26/20 2:14 PM, Daniel Colascione wrote:
-> This change adds two new functions, anon_inode_getfile_secure and
-> anon_inode_getfd_secure, that create anonymous-node files with
-> individual non-S_PRIVATE inodes to which security modules can apply
-> policy. Existing callers continue using the original singleton-inode
-> kind of anonymous-inode file. We can transition anonymous inode users
-> to the new kind of anonymous inode in individual patches for the sake
-> of bisection and review.
+> This change uses the anon_inodes and LSM infrastructure introduced in
+> the previous patch to give SELinux the ability to control
+> anonymous-inode files that are created using the new _secure()
+> anon_inodes functions.
 > 
-> The new functions accept an optional context_inode parameter that
-> callers can use to provide additional contextual information to
-> security modules, e.g., indicating that one anonymous struct file is a
-> logical child of another, allowing a security model to propagate
-> security information from one to the other.
+> A SELinux policy author detects and controls these anonymous inodes by
+> adding a name-based type_transition rule that assigns a new security
+> type to anonymous-inode files created in some domain. The name used
+> for the name-based transition is the name associated with the
+> anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> "[perf_event]".
+> 
+> Example:
+> 
+> type uffd_t;
+> type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> allow sysadm_t uffd_t:anon_inode { create };
+> 
+> (The next patch in this series is necessary for making userfaultfd
+> support this new interface.  The example above is just
+> for exposition.)
 > 
 > Signed-off-by: Daniel Colascione <dancol@google.com>
 > ---
-
-Repeating verbatim what I said on v2 of patch 1/3.
-
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index 89714308c25b..114a04fc1db4 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -55,75 +55,135 @@ static struct file_system_type anon_inode_fs_type = {
->   	.kill_sb	= kill_anon_super,
->   };
+>   security/selinux/hooks.c            | 54 +++++++++++++++++++++++++++++
+>   security/selinux/include/classmap.h |  2 ++
+>   2 files changed, 56 insertions(+)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 1659b59fb5d7..b9eb45c2e4e5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2915,6 +2915,59 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+>   	return 0;
+>   }
 >   
-> -/**
-> - * anon_inode_getfile - creates a new file instance by hooking it up to an
-> - *                      anonymous inode, and a dentry that describe the "class"
-> - *                      of the file
-> - *
-> - * @name:    [in]    name of the "class" of the new file
-> - * @fops:    [in]    file operations for the new file
-> - * @priv:    [in]    private data for the new file (will be file's private_data)
-> - * @flags:   [in]    flags
-> - *
-> - * Creates a new file by hooking it on a single inode. This is useful for files
-> - * that do not need to have a full-fledged inode in order to operate correctly.
-> - * All the files created with anon_inode_getfile() will share a single inode,
-> - * hence saving memory and avoiding code duplication for the file/inode/dentry
-> - * setup.  Returns the newly created file* or an error pointer.
-> - */
-> -struct file *anon_inode_getfile(const char *name,
-> -				const struct file_operations *fops,
-> -				void *priv, int flags)
-> +static struct inode *anon_inode_make_secure_inode(
-> +	const char *name,
-> +	const struct inode *context_inode,
-> +	const struct file_operations *fops)
+> +static int selinux_inode_init_security_anon(struct inode *inode,
+> +					    const struct qstr *name,
+> +					    const struct file_operations *fops,
+> +					    const struct inode *context_inode)
 > +{
-> +	struct inode *inode;
-> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
-> +	int error;
+> +	const struct task_security_struct *tsec = selinux_cred(current_cred());
+> +	struct common_audit_data ad;
+> +	struct inode_security_struct *isec;
+> +	int rc;
 > +
-> +	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> +	if (IS_ERR(inode))
-> +		return ERR_PTR(PTR_ERR(inode));
+> +	if (unlikely(!selinux_state.initialized))
+> +		return 0;
+> +
+> +	isec = selinux_inode(inode);
+> +
+> +	/*
+> +	 * We only get here once per ephemeral inode.  The inode has
+> +	 * been initialized via inode_alloc_security but is otherwise
+> +	 * untouched.
+> +	 */
+> +
+> +	if (context_inode) {
+> +		struct inode_security_struct *context_isec =
+> +			selinux_inode(context_inode);
+> +		isec->sclass = context_isec->sclass;
+> +		isec->sid = context_isec->sid;
+> +	} else {
+> +		isec->sclass = SECCLASS_ANON_INODE;
+> +		rc = security_transition_sid(
+> +			&selinux_state, tsec->sid, tsec->sid,
+> +			SECCLASS_FILE, name, &isec->sid);
 
-Just return inode here ?
-
-> +	inode->i_flags &= ~S_PRIVATE;
-> +	error =	security_inode_init_security_anon(
-> +		inode, &qname, fops, context_inode);
-
-Would drop fops argument until we have a real user for it; we can always 
-add it later.
-
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 37df7c9eedb1..07b0f6e03849 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1014,8 +1014,6 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
->   	}
->   }
->   
-> -static const struct file_operations userfaultfd_fops;
-> -
->   static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
->   				  struct userfaultfd_ctx *new,
->   				  struct uffd_msg *msg)
-> @@ -1920,7 +1918,7 @@ static void userfaultfd_show_fdinfo(struct seq_file *m, struct file *f)
->   }
->   #endif
->   
-> -static const struct file_operations userfaultfd_fops = {
-> +const struct file_operations userfaultfd_fops = {
->   #ifdef CONFIG_PROC_FS
->   	.show_fdinfo	= userfaultfd_show_fdinfo,
->   #endif
-
-These changes are unnecessary for this patch and reverted by patch 3, so 
-drop them here.
+I guess you missed the 2nd comment in my reply to v2 of this patch:
+You should use isec->sclass aka SECCLASS_ANON_INODE instead of 
+SECCLASS_FILE here.
