@@ -2,136 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8FD19485B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 21:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C5A19491F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 21:28:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbgCZUG6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Mar 2020 16:06:58 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:44936 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728718AbgCZUGy (ORCPT
+        id S1728680AbgCZU1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Mar 2020 16:27:43 -0400
+Received: from smtp-8faf.mail.infomaniak.ch ([83.166.143.175]:45297 "EHLO
+        smtp-8faf.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727851AbgCZU1m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Mar 2020 16:06:54 -0400
-Received: by mail-vk1-f202.google.com with SMTP id k67so2092600vka.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Mar 2020 13:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Y8Q8F3IH8c2hotjV+QMJ3kSw7Jeojd38t24yU7GezVM=;
-        b=lPpmx9yPrL/MYyExIQJGT42ZfXmoCaxGEUrGYFUYgtzqZErnqz25tEHuBVs6UbKG03
-         cbq05kXjAStd0QUwzzsPx/m4hLKByFqoRBu0ZMko8DOGfpMbfqphPTAc1n4aoSx+jUiD
-         GUkRqspDcIHkNyB21E+AmXM76aByOoFTLmj5Z68AhLoDMFd2yhNWF9wo2X0u1uuBOqyP
-         yWaZ/1SYoC2exZSC6kN0hyxiU7LLLW36qCYgUEFeqhpAMNQye8oOAMZk5AE/478eAua1
-         38w9tfa8n6lzqlf4LQ8lmPqLhDyBDGb2agpgeh/LtUoaVTpE4nt/fnX+IkzbBesH8+78
-         Azyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Y8Q8F3IH8c2hotjV+QMJ3kSw7Jeojd38t24yU7GezVM=;
-        b=pVQoFbGJr1t2uEZAk0w9POFIUbVSzFgF9DCo+C1zz8uwrhCa8vlcPRf5+ObylCKSN6
-         Kz0LngcRYV7fQlyOxmma2xSn7EBTpHbwsh2ZSFlnuhPXj6deI4lzNSYJwTdXYEgI8plq
-         ZJW08PzFbcNA9oLkYAAJR+SufeP1o0LvxcyL5HvST7CGpzSuDMPM0+ZHHqiL7fZh3hg0
-         dvmLEgYhsmOiJRAyp0xdV7Lfh/Ru7W7QecA8FW9WbEGtqkElwLZs61NPLUiGJB177OU9
-         mJrC6IghnkQhw6nKTbR8Pq+gE6G6aTnViPGeplqmfIG3Im/rLkhVri10ZIk35osSGdaJ
-         WUPg==
-X-Gm-Message-State: ANhLgQ2quqVuYndeo3WPoCrv7ImF4psbPDQyrq8SS5kz83UZNlfNHc7W
-        E7NsBziLSXAgVoqakSSccMu4lNGnRo4=
-X-Google-Smtp-Source: ADFU+vusyX36d2CY3Mx/oaqEexC02/Z3H/IlNDB9bKUbWp7T4L1OJf34Zf2nIPvcXbTAxx7+cBlBgkr2U4g=
-X-Received: by 2002:ab0:424:: with SMTP id 33mr8765913uav.143.1585253213293;
- Thu, 26 Mar 2020 13:06:53 -0700 (PDT)
-Date:   Thu, 26 Mar 2020 13:06:34 -0700
-In-Reply-To: <20200326200634.222009-1-dancol@google.com>
-Message-Id: <20200326200634.222009-4-dancol@google.com>
-Mime-Version: 1.0
-References: <20200326181456.132742-1-dancol@google.com> <20200326200634.222009-1-dancol@google.com>
-X-Mailer: git-send-email 2.25.1.696.g5e7596f4ac-goog
-Subject: [PATCH v4 3/3] Wire UFFD up to SELinux
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Cc:     Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 26 Mar 2020 16:27:42 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48pGkh05xGzlh9HG;
+        Thu, 26 Mar 2020 21:27:40 +0100 (CET)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48pGkf3VgqzlkXXh;
+        Thu, 26 Mar 2020 21:27:38 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v15 00/10] Landlock LSM
+Date:   Thu, 26 Mar 2020 21:27:21 +0100
+Message-Id: <20200326202731.693608-1-mic@digikod.net>
+X-Mailer: git-send-email 2.26.0.rc2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+Hi,
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- fs/userfaultfd.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+This new patch series brings improvements, fix some bugs but mainly
+simplify the code.
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 37df7c9eedb1..78ff5d898733 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -76,6 +76,8 @@ struct userfaultfd_ctx {
- 	bool mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
- 	struct mm_struct *mm;
-+	/* The inode that owns this context --- not a strong reference.  */
-+	const struct inode *owner;
- };
- 
- struct userfaultfd_fork_ctx {
-@@ -1022,8 +1024,10 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure(
-+		"[userfaultfd]", &userfaultfd_fops, new,
-+		O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS),
-+		ctx->owner);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -1945,6 +1949,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 
- SYSCALL_DEFINE1(userfaultfd, int, flags)
- {
-+	struct file *file;
- 	struct userfaultfd_ctx *ctx;
- 	int fd;
- 
-@@ -1974,8 +1979,25 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	file = anon_inode_getfile_secure(
-+		"[userfaultfd]", &userfaultfd_fops, ctx,
-+		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
-+		NULL);
-+	if (IS_ERR(file)) {
-+		fd = PTR_ERR(file);
-+		goto out;
-+	}
-+
-+	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-+	if (fd < 0) {
-+		fput(file);
-+		goto out;
-+	}
-+
-+	ctx->owner = file_inode(file);
-+	fd_install(fd, file);
-+
-+out:
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+The object, rule and ruleset management are simplified at the expense of
+a less aggressive memory freeing (contributed by Jann Horn [1]).  There
+is now less use of RCU for an improved readability.  Access checks that
+can be reached by file-descriptor-based syscalls are removed for now
+(truncate, getattr, lock, chmod, chown, chgrp, ioctl).  This will be
+handle in a future evolution of Landlock, but right now the goal is to
+lighten the code to ease review.  The SLOC count for security/landlock/
+was 1542 with the previous patch series while the current series shrinks
+it to 1273.
+
+The other main improvement is the addition of rule layer levels to
+ensure that a nested sandbox cannot bypass the access restrictions set
+by its parents.
+
+The syscall is now wired for all architectures and the tests passed for
+x86_32 and x86_64.
+
+The compiled documentation is available here:
+https://landlock.io/linux-doc/landlock-v15/security/landlock/index.html
+
+This series can be applied on top of v5.6-rc7.  This can be tested with
+CONFIG_SECURITY_LANDLOCK and CONFIG_SAMPLE_LANDLOCK.  This patch series
+can be found in a Git repository here:
+https://github.com/landlock-lsm/linux/commits/landlock-v15
+I would really appreciate constructive comments on the design and the code.
+
+
+# Landlock LSM
+
+The goal of Landlock is to enable to restrict ambient rights (e.g.
+global filesystem access) for a set of processes.  Because Landlock is a
+stackable LSM [2], it makes possible to create safe security sandboxes
+as new security layers in addition to the existing system-wide
+access-controls. This kind of sandbox is expected to help mitigate the
+security impact of bugs or unexpected/malicious behaviors in user-space
+applications. Landlock empowers any process, including unprivileged
+ones, to securely restrict themselves.
+
+Landlock is inspired by seccomp-bpf but instead of filtering syscalls
+and their raw arguments, a Landlock rule can restrict the use of kernel
+objects like file hierarchies, according to the kernel semantic.
+Landlock also takes inspiration from other OS sandbox mechanisms: XNU
+Sandbox, FreeBSD Capsicum or OpenBSD Pledge/Unveil.
+
+
+# Current limitations
+
+## Path walk
+
+Landlock need to use dentries to identify a file hierarchy, which is
+needed for composable and unprivileged access-controls. This means that
+path resolution/walking (handled with inode_permission()) is not
+supported, yet. The same limitation also apply to readlink(2). This
+could be filled with a future extension first of the LSM framework. The
+Landlock userspace ABI can handle such change with new options (e.g. to
+the struct landlock_ruleset).
+
+## UnionFS
+
+An UnionFS super-block use a set of upper and lower directories.  Access
+request to a file in one of these hierarchy trigger a call to
+ovl_path_real() which generate another access request according to the
+matching hierarchy. Because such super-block is not aware of its current
+mount point, OverlayFS can't create a dedicated mnt_parent for each of
+the upper and lower directories mount clones. It is then not currently
+possible to track the source of such indirect access-request, and then
+not possible to identify a unified OverlayFS hierarchy.
+
+
+## Memory limits
+
+There is currently no limit on the memory usage.  Any idea to leverage
+an existing mechanism (e.g. rlimit)?
+
+
+# Changes since v14
+
+* Simplify the object, rule and ruleset management at the expense of a
+  less aggressive memory freeing.
+* Remove access checks that may be required for FD-only requests:
+  truncate, getattr, lock, chmod, chown, chgrp, ioctl.
+* Add the notion of rule layer level to ensure that a nested sandbox
+  cannot bypass the access restrictions set by its parent.
+* Wire up the syscall for all architectures.
+* Clean up the code and add more documentation.
+* Some improvements and bug fixes.
+
+
+# Changes since v13
+
+* Revamp of the LSM: remove the need for eBPF and seccomp(2).
+* Implement a full filesystem access-control.
+* Take care of the backward compatibility issues, especially for
+  security features, following a best-effort approach.
+
+Previous version:
+https://lore.kernel.org/lkml/20200224160215.4136-1-mic@digikod.net/
+
+
+[1] https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
+[2] https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
+
+Regards,
+
+Mickaël Salaün (10):
+  landlock: Add object management
+  landlock: Add ruleset and domain management
+  landlock: Set up the security framework and manage credentials
+  landlock: Add ptrace restrictions
+  fs,landlock: Support filesystem access-control
+  landlock: Add syscall implementation
+  arch: Wire up landlock() syscall
+  selftests/landlock: Add initial tests
+  samples/landlock: Add a sandbox manager example
+  landlock: Add user and kernel documentation
+
+ Documentation/security/index.rst              |    1 +
+ Documentation/security/landlock/index.rst     |   18 +
+ Documentation/security/landlock/kernel.rst    |   69 +
+ Documentation/security/landlock/user.rst      |  227 +++
+ MAINTAINERS                                   |   12 +
+ arch/alpha/kernel/syscalls/syscall.tbl        |    1 +
+ arch/arm/tools/syscall.tbl                    |    1 +
+ arch/arm64/include/asm/unistd.h               |    2 +-
+ arch/arm64/include/asm/unistd32.h             |    2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |    1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |    1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |    1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |    1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |    1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |    1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |    1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |    1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |    1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |    1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |    1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |    1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |    1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |    1 +
+ fs/super.c                                    |    2 +
+ include/linux/fs.h                            |    5 +
+ include/linux/landlock.h                      |   22 +
+ include/linux/syscalls.h                      |    3 +
+ include/uapi/asm-generic/unistd.h             |    4 +-
+ include/uapi/linux/landlock.h                 |  311 ++++
+ kernel/sys_ni.c                               |    3 +
+ samples/Kconfig                               |    7 +
+ samples/Makefile                              |    1 +
+ samples/landlock/.gitignore                   |    1 +
+ samples/landlock/Makefile                     |   15 +
+ samples/landlock/sandboxer.c                  |  217 +++
+ security/Kconfig                              |   11 +-
+ security/Makefile                             |    2 +
+ security/landlock/Kconfig                     |   18 +
+ security/landlock/Makefile                    |    4 +
+ security/landlock/common.h                    |   20 +
+ security/landlock/cred.c                      |   46 +
+ security/landlock/cred.h                      |   55 +
+ security/landlock/fs.c                        |  561 ++++++++
+ security/landlock/fs.h                        |   42 +
+ security/landlock/object.c                    |   66 +
+ security/landlock/object.h                    |   92 ++
+ security/landlock/ptrace.c                    |  120 ++
+ security/landlock/ptrace.h                    |   14 +
+ security/landlock/ruleset.c                   |  352 +++++
+ security/landlock/ruleset.h                   |  182 +++
+ security/landlock/setup.c                     |   39 +
+ security/landlock/setup.h                     |   18 +
+ security/landlock/syscall.c                   |  521 +++++++
+ tools/testing/selftests/Makefile              |    1 +
+ tools/testing/selftests/landlock/.gitignore   |    4 +
+ tools/testing/selftests/landlock/Makefile     |   26 +
+ tools/testing/selftests/landlock/common.h     |   42 +
+ tools/testing/selftests/landlock/config       |    5 +
+ tools/testing/selftests/landlock/test_base.c  |  113 ++
+ tools/testing/selftests/landlock/test_fs.c    | 1249 +++++++++++++++++
+ .../testing/selftests/landlock/test_ptrace.c  |  294 ++++
+ tools/testing/selftests/landlock/true.c       |    5 +
+ 62 files changed, 4833 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/security/landlock/index.rst
+ create mode 100644 Documentation/security/landlock/kernel.rst
+ create mode 100644 Documentation/security/landlock/user.rst
+ create mode 100644 include/linux/landlock.h
+ create mode 100644 include/uapi/linux/landlock.h
+ create mode 100644 samples/landlock/.gitignore
+ create mode 100644 samples/landlock/Makefile
+ create mode 100644 samples/landlock/sandboxer.c
+ create mode 100644 security/landlock/Kconfig
+ create mode 100644 security/landlock/Makefile
+ create mode 100644 security/landlock/common.h
+ create mode 100644 security/landlock/cred.c
+ create mode 100644 security/landlock/cred.h
+ create mode 100644 security/landlock/fs.c
+ create mode 100644 security/landlock/fs.h
+ create mode 100644 security/landlock/object.c
+ create mode 100644 security/landlock/object.h
+ create mode 100644 security/landlock/ptrace.c
+ create mode 100644 security/landlock/ptrace.h
+ create mode 100644 security/landlock/ruleset.c
+ create mode 100644 security/landlock/ruleset.h
+ create mode 100644 security/landlock/setup.c
+ create mode 100644 security/landlock/setup.h
+ create mode 100644 security/landlock/syscall.c
+ create mode 100644 tools/testing/selftests/landlock/.gitignore
+ create mode 100644 tools/testing/selftests/landlock/Makefile
+ create mode 100644 tools/testing/selftests/landlock/common.h
+ create mode 100644 tools/testing/selftests/landlock/config
+ create mode 100644 tools/testing/selftests/landlock/test_base.c
+ create mode 100644 tools/testing/selftests/landlock/test_fs.c
+ create mode 100644 tools/testing/selftests/landlock/test_ptrace.c
+ create mode 100644 tools/testing/selftests/landlock/true.c
+
 -- 
-2.25.1.696.g5e7596f4ac-goog
+2.26.0.rc2
 
