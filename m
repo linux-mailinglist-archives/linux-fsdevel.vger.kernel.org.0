@@ -2,70 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDDD1944E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 18:02:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1792D19450B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Mar 2020 18:07:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbgCZRBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Mar 2020 13:01:49 -0400
-Received: from verein.lst.de ([213.95.11.211]:46717 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726971AbgCZRBt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Mar 2020 13:01:49 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 45C90227A81; Thu, 26 Mar 2020 18:01:45 +0100 (CET)
-Date:   Thu, 26 Mar 2020 18:01:45 +0100
+        id S1727541AbgCZRHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Mar 2020 13:07:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57184 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgCZRHQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Mar 2020 13:07:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=5peKgPAOIgDsB7OdsjooA9F7ULofAH7Tv5lWvuuxPdQ=; b=cAA+jDacoun0eJYipzHcWd5pyi
+        CeCvQKVZZaeDAd3DehDrp3XdPLx98uLvmAFouTNSkkIwYK/l/TYt9D5ZR0SUhvIVerpjgBYj1oYme
+        e54EomVm7TYA2mfsoTTXSzm/6ckQokCLtK0oXzHXAhTjitR180tn4FnE89UQl8vMpgWy86iQi+fkv
+        /kQ+SB0Ix8fZ7t//sGrTrvr+AMmN9D7AGleXNBTPP270KGew+b8b/sFaROci2WbEYN2CsI06laE+T
+        mUI84OykN5NEAN3Kgby9tytE4IuFOCDsq5aNL75X4Kj4IX/Fmy55sZJkvHPml6buoZm4soKZIYcA0
+        GsszmeIg==;
+Received: from [2001:4bb8:18c:2a9e:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHVyG-00018n-9d; Thu, 26 Mar 2020 17:07:09 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>, linux-xfs@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] fs: avoid double-writing the inode on a lazytime
- expiration
-Message-ID: <20200326170145.GA6387@lst.de>
-References: <20200325122825.1086872-1-hch@lst.de> <20200325122825.1086872-3-hch@lst.de> <20200326032212.GN10776@dread.disaster.area>
+To:     Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>
+Cc:     devel@lists.orangefs.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: orangefs fixes
+Date:   Thu, 26 Mar 2020 18:07:03 +0100
+Message-Id: <20200326170705.1552562-1-hch@lst.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326032212.GN10776@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 02:22:12PM +1100, Dave Chinner wrote:
-> On Wed, Mar 25, 2020 at 01:28:23PM +0100, Christoph Hellwig wrote:
-> > In the case that an inode has dirty timestamp for longer than the
-> > lazytime expiration timeout (or if all such inodes are being flushed
-> > out due to a sync or syncfs system call), we need to inform the file
-> > system that the inode is dirty so that the inode's timestamps can be
-> > copied out to the on-disk data structures.  That's because if the file
-> > system supports lazytime, it will have ignored the dirty_inode(inode,
-> > I_DIRTY_TIME) notification when the timestamp was modified in memory.q
-> > Previously, this was accomplished by calling mark_inode_dirty_sync(),
-> > but that has the unfortunate side effect of also putting the inode the
-> > writeback list, and that's not necessary in this case, since we will
-> > immediately call write_inode() afterwards.  Replace the call to
-> > mark_inode_dirty_sync() with a new lazytime_expired method to clearly
-> > separate out this case.
-> 
-> 
-> hmmm. Doesn't this cause issues with both iput() and
-> vfs_fsync_range() because they call mark_inode_dirty_sync() on
-> I_DIRTY_TIME inodes to move them onto the writeback list so they are
-> appropriately expired when the inode is written back.
+Hi Mike and Martin,
 
-True, we'd need to call ->lazytime_expired in the fsync path as well.
-While looking into this I've also noticed that lazytime is "enabled"
-unconditionally without a file system opt-in.  That means for file systems
-that don't rely on ->dirty_inode it kinda "just works" except that both
-Teds original fix and this one break that in one way or another.  This
-series just cleanly disables it, but Ted's two patches would fail to
-pass I_DIRTY_SYNC to ->write_inode.
-
-This whole area is such a mess..
+this fixes a pretty grave bug in the ->read_iter and ->flush interaction,
+and also removes some copy and pasted code that isn't needed (and out of
+date already)
