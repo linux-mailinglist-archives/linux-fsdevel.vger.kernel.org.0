@@ -2,99 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FAC3195876
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 15:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B60D9195965
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 15:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbgC0OB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 10:01:28 -0400
-Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:56612 "EHLO
-        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726900AbgC0OB2 (ORCPT
+        id S1727549AbgC0O7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 10:59:18 -0400
+Received: from smtp-42a8.mail.infomaniak.ch ([84.16.66.168]:34621 "EHLO
+        smtp-42a8.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727263AbgC0O7S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 10:01:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585317687;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nmGn2iu/6hb//kS/DiygB1sR/c0YTQN3IceTCMDHJQI=;
-        b=P7hqw9fYxamwMPG7PmB/s2DWPm0P50WwyyUZY0L7xjgKwHGn5ukU1Fv+l6/5wVtf1vuUHW
-        W8AnMjkKwScpxTWOkZQ6b+fqMU+xSnQi/Sy+n4gzkxvL8pczu+Xy+1y8T3sOH/yt4lnakA
-        sn7OvQJq3UI6YeQludZAq2f5bzgAmRg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-30-IhFdegswPqOnvQl_xs_QBQ-1; Fri, 27 Mar 2020 10:01:25 -0400
-X-MC-Unique: IhFdegswPqOnvQl_xs_QBQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 331DC8018AB;
-        Fri, 27 Mar 2020 14:01:24 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-117-99.rdu2.redhat.com [10.10.117.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 05F425DA81;
-        Fri, 27 Mar 2020 14:01:14 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3255B222D9D; Fri, 27 Mar 2020 10:01:14 -0400 (EDT)
-Date:   Fri, 27 Mar 2020 10:01:14 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Liu Bo <bo.liu@linux.alibaba.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 20/20] fuse,virtiofs: Add logic to free up a memory range
-Message-ID: <20200327140114.GB32717@redhat.com>
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-21-vgoyal@redhat.com>
- <20200326000904.GA34937@rsjd01523.et2sqa>
+        Fri, 27 Mar 2020 10:59:18 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 48plPH759QzljC1w;
+        Fri, 27 Mar 2020 15:59:15 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 48plPD42s4zln3X2;
+        Fri, 27 Mar 2020 15:59:12 +0100 (CET)
+Subject: Re: [PATCH v15 09/10] samples/landlock: Add a sandbox manager example
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200326202731.693608-1-mic@digikod.net>
+ <20200326202731.693608-10-mic@digikod.net>
+ <11634607-2fdb-1868-03d0-94096763766f@infradead.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <4285db52-e7ce-6a0f-3791-fd39c892489e@digikod.net>
+Date:   Fri, 27 Mar 2020 15:59:00 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200326000904.GA34937@rsjd01523.et2sqa>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <11634607-2fdb-1868-03d0-94096763766f@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 08:09:05AM +0800, Liu Bo wrote:
 
-[..]
-> > +/*
-> > + * Find first mapping in the tree and free it and return it. Do not add
-> > + * it back to free pool. If fault == true, this function should be called
-> > + * with fi->i_mmap_sem held.
-> > + */
-> > +static struct fuse_dax_mapping *inode_reclaim_one_dmap(struct fuse_conn *fc,
-> > +							 struct inode *inode,
-> > +							 bool fault)
-> > +{
-> > +	struct fuse_inode *fi = get_fuse_inode(inode);
-> > +	struct fuse_dax_mapping *dmap;
-> > +	int ret;
-> > +
-> > +	if (!fault)
-> > +		down_write(&fi->i_mmap_sem);
-> > +
-> > +	/*
-> > +	 * Make sure there are no references to inode pages using
-> > +	 * get_user_pages()
-> > +	 */
-> > +	ret = fuse_break_dax_layouts(inode, 0, 0);
+On 27/03/2020 00:54, Randy Dunlap wrote:
+> Hi,
 > 
-> Hi Vivek,
+> On 3/26/20 1:27 PM, Mickaël Salaün wrote:
+>> diff --git a/samples/Kconfig b/samples/Kconfig
+>> index 9d236c346de5..b54408c5bd86 100644
+>> --- a/samples/Kconfig
+>> +++ b/samples/Kconfig
+>> @@ -120,6 +120,13 @@ config SAMPLE_HIDRAW
+>>  	bool "hidraw sample"
+>>  	depends on HEADERS_INSTALL
+>>  
+>> +config SAMPLE_LANDLOCK
+>> +	bool "Build Landlock sample code"
+>> +	select HEADERS_INSTALL
 > 
-> This patch is enabling inline reclaim for fault path, but fault path
-> has already holds a locked exceptional entry which I believe the above
-> fuse_break_dax_layouts() needs to wait for, can you please elaborate
-> on how this can be avoided?
+> I think that this should be like all of the other users of HEADERS_INSTALL
+> and depend on that instead of select-ing it.
+
+Ok, I though it made sense to select it automatically, but I'll get back
+the "depends on".
+
+Thanks.
+
 > 
-
-Hi Liubo,
-
-Can you please point to the exact lock you are referring to. I will
-check it out. Once we got rid of needing to take inode lock in
-reclaim path, that opended the door to do inline reclaim in fault
-path as well. But I was not aware of this exceptional entry lock.
-
-Vivek
-
+>> +	help
+>> +	  Build a simple Landlock sandbox manager able to launch a process
+>> +	  restricted by a user-defined filesystem access-control security policy.
+>> +
+>>  config SAMPLE_PIDFD
+>>  	bool "pidfd sample"
+>>  	depends on HEADERS_INSTALL
+> 
+> thanks.
+> 
