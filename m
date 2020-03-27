@@ -2,127 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE51195596
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 11:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B97195667
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 12:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbgC0KrC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 06:47:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43248 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727443AbgC0KrB (ORCPT
+        id S1727548AbgC0LbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 07:31:20 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:54533 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726165AbgC0LbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 06:47:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02RAipEu110793;
-        Fri, 27 Mar 2020 10:46:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=wCNEdmm970c9ohe5wSF1kEgXI3G+JCq5rKsy4xABqeI=;
- b=ez6hm1hBU7A7HPlFjWuFzeOjehM/4JmeSn98TLQ+ro/+EaWhU2WZUAxWMsdqFwVGZ2HX
- dWPGHWZqus7ybjxL0N72DWEQtxZ3dSR/UpaLLAKmqA8YF5BLuzphDOtgm+uhKZhaBxu/
- N6R+Wo+EONNzysgbMef7w9cg3XQu9pmxujpzc9FUivX32r0CpMVKVq/aYdv3di9Q02Wi
- YxvyvPjBc0Xw0tl4HvADF9u39TXs4fPHe0x/rQ1/EtOn1cY8jnvBkYzbOGBwQHqPmasT
- aeev5zT9S6Bci/q1Nf5oM9mF+GW/+cSYZuVBXyOJ2zSsYhiNUtSi6I4K2iZ2TEYYP+Dx tg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2ywavmmqa5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Mar 2020 10:46:46 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 02RAfi89004657;
-        Fri, 27 Mar 2020 10:46:46 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 3003gnqhqb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Mar 2020 10:46:46 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 02RAkh3F026047;
-        Fri, 27 Mar 2020 10:46:43 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 27 Mar 2020 03:46:43 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [PATCH 2/2] mm: Use clear_bit_unlock_is_negative_byte for
- PageWriteback
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20200326124443.GG22483@bombadil.infradead.org>
-Date:   Fri, 27 Mar 2020 04:46:42 -0600
-Cc:     Jan Kara <jack@suse.cz>, linux-mm <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org
+        Fri, 27 Mar 2020 07:31:20 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id E3AE174B;
+        Fri, 27 Mar 2020 07:31:18 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 27 Mar 2020 07:31:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        1hM4zaFUD+y1ZvA24pWmEadgMLWG+fEgskEHsYlDjG4=; b=nExtzLP+eBMKhYvD
+        3snftiXF2+WMahRNtTlswZM28OcKrUix3DiQNE91fcR5Dc1rxBN97GKZWc5KDeVw
+        WZA3MuDOKNgHNgR3NbKuPKPRIjnb1srfHKE9wuLY5UWeueeYCU7iPKO52osa/GJn
+        9adalpwkJnFaKtq4d+ECCcfr3IXHQSqyX8nW3nEqlN/MY7/AjAUgSEQ9McwU7azr
+        bFQMZgRxE4xGhzHZTjWp404JmwLn56R0rfxRksApo9mQ0KbVyq4lciWlrbfi1RkM
+        rU3jKzTWaHPVO1rwoJH2VszYmI9Ynd7SL5TFMHXMnzcJyubKkaO5cTfP8oS04hKV
+        PlgWvA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=1hM4zaFUD+y1ZvA24pWmEadgMLWG+fEgskEHsYlDj
+        G4=; b=LrFD9aRoEVLCdt520lqRCVXJLZtFfvVxOi080/v2fMUTEWG+4KkOtazab
+        aeh/TrrGlhJAuCpIEt3QZphmQpLPjSMueHbaHtVgNFh7Msr3zGvQf59iI1FcdwPR
+        RA3lQ22im+s8vEP8PtYyTyC+dsriNTGe4kItnUyVWjNFS1g+6SUQbRHZtHTTQN/+
+        hkguH00UyWKbd5ZrepcQxTYSzwdlAkMebXXzgJAwNV86mvNWHVDHhF4RHsa7zIPq
+        gbcqLcBjKTPpjndtiRIdyMlI5HmjntBf0hA7cYt0du8B2JxbjSjdI5CuMirKHVbn
+        sytlSfvXsQIUTPCSHMqCD3mMH5LnA==
+X-ME-Sender: <xms:BeR9Xrkt2I6rmJ5_G0Td_hL7_VHqPX100tWOMbNT1i9d4LJQv-xfQQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehledgvdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
+    drudeitddrvddtleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:BeR9Xlj-K08RI3Va5smOx1x5nGTE8ExvxRvB2lclpaC_LwnaSHM6_w>
+    <xmx:BeR9Xr0pKodIXYtDICBS5IcuAdcPm5FSB7ED6B4FJndVM9AOLOkKdw>
+    <xmx:BeR9XkOxtOVNV83X02AXvv1305D4miHR0MBf-6ejOEHDFy5Iu82mUQ>
+    <xmx:BuR9Xg2UuYnPduTieok5nCnKmiDNdC428c4Qtv4U3K_88KymSZphtw>
+Received: from mickey.themaw.net (unknown [118.209.160.209])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 92703306C1C8;
+        Fri, 27 Mar 2020 07:31:15 -0400 (EDT)
+Message-ID: <68080a34970fe41182494a85bcf6d53e75be6d89.camel@themaw.net>
+Subject: Re: [PATCH 3/4] vfs: check for autofs expiring dentry in
+ follow_automount()
+From:   Ian Kent <raven@themaw.net>
+To:     "McIntyre, Vincent (CASS, Marsfield)" <Vincent.Mcintyre@csiro.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Fri, 27 Mar 2020 19:31:11 +0800
+In-Reply-To: <20200327051855.6o6y6l6b3gamlkji@mayhem.atnf.CSIRO.AU>
+References: <158520019862.5325.7856909810909592388.stgit@mickey.themaw.net>
+         <158520020932.5325.1998880625163566595.stgit@mickey.themaw.net>
+         <20200327051855.6o6y6l6b3gamlkji@mayhem.atnf.CSIRO.AU>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <CF691FE6-389A-44D5-ABD7-6D8F1E6D9C83@oracle.com>
-References: <20200326122429.20710-1-willy@infradead.org>
- <20200326122429.20710-3-willy@infradead.org>
- <20200326124047.GA13756@quack2.suse.cz>
- <20200326124443.GG22483@bombadil.infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=769 bulkscore=0
- phishscore=0 adultscore=0 spamscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003270098
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9572 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 clxscore=1011 impostorscore=0
- phishscore=0 suspectscore=0 mlxlogscore=823 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
- definitions=main-2003270098
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I like it explicit in the code before __clear_page_writeback() is called,
-and given it's the only caller I think it adds clarity to have it in
-end_page_writeback() - but either approach is fine with me.
+On Fri, 2020-03-27 at 05:18 +0000, McIntyre, Vincent (CASS, Marsfield)
+wrote:
+> On Thu, Mar 26, 2020 at 01:23:29PM +0800, Ian Kent wrote:
+> > follow_automount() checks if a stat family system call path walk is
+> > being done on a positive dentry and and returns -EISDIR to indicate
+> > the dentry should be used as is without attempting an automount.
+> > 
+> > But if autofs is expiring the dentry at the time it should be
+> > remounted following the expire.
+> > 
+> > There are two cases, in the case of a "nobrowse" indirect autofs
+> > mount it would have been mounted on lookup anyway. In the case of
+> > a "browse" indirect or direct autofs mount re-mounting it will
+> > maintain the mount which is what user space would be expected.
+> > 
+> > This will defer expiration of the mount which might lead to mounts
+> > unexpectedly remaining mounted under heavy stat activity but
+> > there's
+> > no other choice in order to maintain consistency for user space.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> > fs/autofs/root.c |   10 +++++++++-
+> > fs/namei.c       |   13 +++++++++++--
+> > 2 files changed, 20 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+> > index a1c9c32e104f..308cc49aca1d 100644
+> > --- a/fs/autofs/root.c
+> > +++ b/fs/autofs/root.c
+> > @@ -406,9 +406,17 @@ static int autofs_d_manage(const struct path
+> > *path, bool rcu_walk)
+> > 
+> > 	/* Check for (possible) pending expire */
+> > 	if (ino->flags & AUTOFS_INF_WANT_EXPIRE) {
+> > +		/* dentry possibly going to be picked for expire,
+> > +		 * proceed to ref-walk mode.
+> > +		 */
+> > 		if (rcu_walk)
+> > 			return -ECHILD;
+> > -		return 0;
+> > +
+> > +		/* ref-walk mode, return 1 so follow_automount()
+> > +		 * can to wait on the expire outcome and possibly
+> 
+> 'can to wait' ?
+> Do you mean: "can wait", "will wait", "knows to wait",
+> or something else?
 
-For the series:
+Oops, yes, "can wait" is what that needs to be.
 
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> 
+> > +		 * attempt a re-mount.
+> > +		 */
+> > +		return 1;
+> > 	}
+> > 
+> > 	/*
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index db6565c99825..34a03928d32d 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1227,11 +1227,20 @@ static int follow_automount(struct path
+> > *path, struct nameidata *nd,
+> > 	 * mounted directory.  Also, autofs may mark negative dentries
+> > 	 * as being automount points.  These will need the attentions
+> > 	 * of the daemon to instantiate them before they can be used.
+> > +	 *
+> > +	 * Also if ->d_manage() returns 1 the dentry transit needs
+> > +	 * managing, for autofs it tells us the dentry might be
+> > expired,
+> > +	 * so proceed to ->d_automount().
+> 
+> I'm wondering if this should be two sentences.
+> Does this version reflect reality?
+> 
+> +	 * Also if ->d_manage() returns 1 the dentry transit needs
+> +	 * to be managed. For autofs, a return of 1 tells us the
+> +	 * dentry might be expired, so proceed to ->d_automount().
 
-> On Mar 26, 2020, at 6:44 AM, Matthew Wilcox <willy@infradead.org> wrote:
+It does, I'll update that comment too.
+
+Even mentioning the dentry needs to be managed is purely because
+that's what its been called, aka. ->d_manage().
+
+Just for info. this is meant to fix a case were a stat() family
+system call is being done at the same time the dentry is being
+expired (although statfs() is a bit different).
+
+This results in a ping/pong of returning the stat() of the
+mounted file system and stat of the autofs file system.
+
+What I'm trying to do is ensure a consistent stat() return
+based on the state of the mount at the time, at least to the
+extent that I can anyway.
+
+There are actually a number of cases and, unavoidably, there
+remains inconsistency because stat family system calls are not
+meant to trigger mounts to avoid mount storms. So they will still
+return the stat of the autofs file system if not mounted at the
+time of the call and the stat of the mounted file system if they
+do have an mount on them at the time.
+
+Thanks
+Ian
+
 > 
-> On Thu, Mar 26, 2020 at 01:40:47PM +0100, Jan Kara wrote:
->> On Thu 26-03-20 05:24:29, Matthew Wilcox wrote:
->>> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->>> 
->>> By moving PG_writeback down into the low bits of the page flags, we can
->>> use clear_bit_unlock_is_negative_byte() for writeback as well as the
->>> lock bit.  wake_up_page() then has no more callers.  Given the other
->>> code being executed between the clear and the test, this is not going
->>> to be as dramatic a win as it was for PageLocked, but symmetry between
->>> the two is nice and lets us remove some code.
->>> 
->>> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->> 
->> The patch looks good to me. Just one nit:
->> 
->>> +	VM_BUG_ON_PAGE(!PageWriteback(page), page);
->>> +	if (__clear_page_writeback(page))
->>> +		wake_up_page_bit(page, PG_writeback);
->> 
->> Since __clear_page_writeback() isn't really prepared for PageWriteback()
->> not being set, can we move the VM_BUG_ON_PAGE() there? Otherwise feel free
->> to add:
->> 
->> Reviewed-by: Jan Kara <jack@suse.cz>
+> Kind regards
+> Vince
+> > 	 */
+> > 	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+> > 			   LOOKUP_OPEN | LOOKUP_CREATE |
+> > LOOKUP_AUTOMOUNT)) &&
+> > -	    path->dentry->d_inode)
+> > -		return -EISDIR;
+> > +	    path->dentry->d_inode) {
+> > +		if (path->dentry->d_flags & DCACHE_MANAGE_TRANSIT) {
+> > +			if (!path->dentry->d_op->d_manage(path, false))
+> > +				return -EISDIR;
+> > +		} else
+> > +			return -EISDIR;
+> > +	}
+> > 
+> > 	nd->total_link_count++;
+> > 	if (nd->total_link_count >= 40)
+> > 
 > 
-> Thanks!  I put it there to be parallel to the PageLocked equivalent:
-> 
-> void unlock_page(struct page *page)
-> {
->        BUILD_BUG_ON(PG_waiters != 7);
->        BUILD_BUG_ON(PG_locked > 7);
->        page = compound_head(page);
->        VM_BUG_ON_PAGE(!PageLocked(page), page);
->        if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
->                wake_up_page_bit(page, PG_locked);
-> }
-> 
-> but one could equally well argue it should be in __clear_page_writeback
-> instead.
-> 
+> -- 
 
