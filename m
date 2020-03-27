@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D73A195B93
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 17:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE3B9195B77
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 17:50:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgC0QuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 12:50:18 -0400
+        id S1727834AbgC0QuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 12:50:21 -0400
 Received: from esa1.hgst.iphmx.com ([68.232.141.245]:2564 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727666AbgC0QuS (ORCPT
+        with ESMTP id S1727829AbgC0QuU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 12:50:18 -0400
+        Fri, 27 Mar 2020 12:50:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1585327818; x=1616863818;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oVftKbwfnWY4xe1eo0bpwRwBmp1J09p+gkHG1l+XKYA=;
-  b=ErzSBswDNKkrxoO4iecb1mRMP6fKV/FyElh63sCNWcc2AJG7P09as45x
-   TV8TsAs9+yOmpng3w/yCRY44lHyNQdV8HZmnB/gKxPOYuZMpXFEDZZIXQ
-   n4AWY4xxKnSNPvQMW1PgXqKpKMXQs+hIJOtIyvUo4Zk9mhK+TC+IqQ/BZ
-   ZxxflytPIIlIxFhd+wfM68CFbTxTc6TxhUKjojGNJM4aevXoOo4dgnWz2
-   I8ujQq16UfKUgvhVAE332IguOD9OudChcUsS613IfDxWYfEt6FQ1mC670
-   Uw6A9KKAmMJ1+oiJ8M9+2Kv/iC5kDBoE05BTwJS8oukdQuId0GIrxI8TA
-   A==;
-IronPort-SDR: iLrtkVQphOYLb/b4mySNdoqgKC1d8dRLRKoXcPK0LAqt1m9U26VBKv7cXVdJARaeBsRfURjoxu
- AvLLD0naEeRAle6eNj1Xtl5UZ4BcqlWGeSfCAesr8khSP/OwEmDm3aLFL0ofRRwoy8aS+L2TiH
- clq4CfoIz0CpxbsblSCb7yeXegdJJFvkDBqsPihqhnryDMOWUKUmAmHU8NDGpthq0qPO35uvK8
- wYQBToai8hefpXm1Fwp7VF4O1AU0jam8x1Uuy1y8btTv3+ptdj8Prcob35DSYUypDrTmhC1Vi9
- KA4=
+  t=1585327819; x=1616863819;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=NchUkm7LiVI+SxmCSpPmzzlAW5apjiaxdbNPeI6W/yk=;
+  b=JH5HDC7QNjRMpmS/YNJ+ZVxbyTW8B+1+RCxjyKzP4Df4Tv9pTFxvxge4
+   5rb+EzQ6neuGT1Gm4nQuA6t0wZ2x3cmQeKKbk0LtCErq4qpgKLB+wgXYL
+   CPuf05+O4/o8OctUwrBteUEqdVE87uYiGRQCPkJ7tlIi3oH7cWyGMqYiM
+   tLg2sTZKC3LCT2iGQ6aGnkJYdB/AWGD+zfPl/5klcMfDPx45ga8h4EvGD
+   dEcn3P9neOVv2IQO0brT+mw3JSQw/Ge3Rdf38/1xLFXPietrRseJ4V85/
+   4okMPi/Ik48AdqAH1QQN0D09yhpTWE/zg9OQGuC4r9XDhxh7XmBHtsjf3
+   g==;
+IronPort-SDR: LBBNERc2MlTMeWR2ZNIjeZRckooVuFFKp/KQZ7FykBaPWs+JX2nlrWkcQtT0HkVH0ak3KHNRHr
+ 3l+otFF1jQth1/qRmy9yUkbc3L8wfgl9TsRSIAnZNI4WO7I3TWu/iUcqiBbh1S+Rb4L1EXV9uh
+ XQNZPpnWbucvIiPOCZPnOZXwz2pUyyXDhPNFBcFm0+tGdIxNYvicTEEvw1134YY2z6klFSnH1J
+ 8QazSp1QHMEJ6h3rulqtQ+PzHOSeshlbAvPb51ZpNaa8Uj1kGvLT8o6TkrBjzRkJlfbmgFtT16
+ Hu0=
 X-IronPort-AV: E=Sophos;i="5.72,313,1580745600"; 
-   d="scan'208";a="242210429"
+   d="scan'208";a="242210437"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Mar 2020 00:50:17 +0800
-IronPort-SDR: pHMRElGYoE+EyGfEl1NKDyzsPWRwPB9M4NP/VR9m2ZAQFwYRBGa55PT+xSGgP8kwMlLItPzeLX
- dOSbjTKYRJuqk89F7TjZAOGIdEI1P7koYHlVJ+NqWrv9vDEaHz+d/3A676DksI778lqQP9/r/j
- OupQMbYjD6B2fFMQoEj7mRXRokgiXIpPdrGTRx7azchfJVxxq8HQiSPh1C1t7DDFGm459ktFim
- A0UNxvDhUGiUkFen5HzA3rEQ46WOyrVVbUA+Z9fCKUo+/ek4R14OuAMAXGfVZLmuHh0DBvt/XO
- 4gHmZp+R0pBfLSC58CdwkP/q
+  by ob1.hgst.iphmx.com with ESMTP; 28 Mar 2020 00:50:18 +0800
+IronPort-SDR: wMWQfbTSmK5BRnEDqTrOuSo+nXMAkvH6Neyg8Oxqw87NaT0Ejv1w/tFcpN+XjTLG97oEC9hm9Q
+ queMeLLpwJvYNR/TrRXIE05tPoJgmXLr0YY9uuYeBx48IX+Wbz+R7XapOF2qCJtF0M/sISHUkH
+ KLdXzAFCSp23SFzzsTk78OeDcQ1Q5B0MS/YaHdk/1hwKHeQsAIi1XLzpfjfiUVpleSn2gExnSu
+ I7EhBp6xcZt/SVD8Hk9MZFROUg/pqcHRggA9PTtQZTotDWm4sHjTZVDI+61uiAu4mAa9mTK/f+
+ cpW3Y7L5qr+zSVINoIaX8cSw
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 09:41:51 -0700
-IronPort-SDR: UNR1/lS7I37Z4IVey3UuPUL58K4ZEXjy+aXG+HsnSoPLpVzB2HinMLDFDHofH9xyxeTjRDK1i4
- Aw+G7rol0KyTVgW5VjrYiUwdFgi+8QctcXlWPb9JkjhIsa9xysavsRxNZO8Zh5HMsRS0TqWQPT
- 6YNwkbaFRM57z+fuZP/yyHD6KlGf2BlZRVoaIhCI8jkqCllH1DOgXjR4BE1of7aEw2tVaGHCK1
- yT3SyI513XnHjPHFOA8TSep1WMyeF0sK1SkWB6naroYkrmRjvMeTI9gBnibJ5X+S6YlbKFSejL
- 8Mo=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Mar 2020 09:41:53 -0700
+IronPort-SDR: PbzSbmgRNHkbiNSMXWYrU8ZaSXH3+bIIJzS9zjQ4OqoLxv0H99t95QttXTeA0hRa3bTmiJjlNH
+ nCXmDQ0EUm/TehQhbyh61EzYd7rWbhLhPxJ+D5JrTj1GMG0r1djgbj/GwMCI1CF9Z8lRpVgfvM
+ iEXNCS6bPK+q+YuwND8+rl3W4c5snEZKg9U4urEW+zWbuF0OcyGW+DBHylRaoTvr4gVwLzm/6Z
+ zh/vQ3/mvNheNB5cngxEgRqkxPa6Bjx/gtUh+XzlbdmfJdIpHPzD6CQnIYzALMfCkQpceSSPKV
+ 4nQ=
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 27 Mar 2020 09:50:16 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 27 Mar 2020 09:50:17 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -59,10 +59,12 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v3 00/10] Introduce Zone Append for writing to zoned block devices
-Date:   Sat, 28 Mar 2020 01:50:02 +0900
-Message-Id: <20200327165012.34443-1-johannes.thumshirn@wdc.com>
+Subject: [PATCH v3 01/10] block: provide fallbacks for blk_queue_zone_is_seq and blk_queue_zone_no
+Date:   Sat, 28 Mar 2020 01:50:03 +0900
+Message-Id: <20200327165012.34443-2-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200327165012.34443-1-johannes.thumshirn@wdc.com>
+References: <20200327165012.34443-1-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -70,99 +72,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The upcoming NVMe ZNS Specification will define a new type of write
-command for zoned block devices, zone append.
+blk_queue_zone_is_seq() and blk_queue_zone_no() have not been called with
+CONFIG_BLK_DEV_ZONED disabled until now.
 
-When when writing to a zoned block device using zone append, the start
-sector of the write is pointing at the start LBA of the zone to write to.
-Upon completion the block device will respond with the position the data
-has been placed in the zone. This from a high level perspective can be
-seen like a file system's block allocator, where the user writes to a
-file and the file-system takes care of the data placement on the device.
+The introduction of REQ_OP_ZONE_APPEND will change this, so we need to
+provide noop fallbacks for the !CONFIG_BLK_DEV_ZONED case.
 
-In order to fully exploit the new zone append command in file-systems and
-other interfaces above the block layer, we choose to emulate zone append
-in SCSI and null_blk. This way we can have a single write path for both
-file-systems and other interfaces above the block-layer, like io_uring on
-zoned block devices, without having to care too much about the underlying
-characteristics of the device itself.
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ include/linux/blkdev.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-The emulation works by providing a cache of each zone's write pointer, so
-zone append issued to the disk can be translated to a write with a
-starting LBA of the write pointer. This LBA is used as input zone number
-for the write pointer lookup in the zone write pointer offset cache and
-the cached offset is then added to the LBA to get the actual position to
-write the data. In SCSI we then turn the REQ_OP_ZONE_APPEND request into a
-WRITE(16) command. Upon successful completion of the WRITE(16), the cache
-will be updated to the new write pointer location and the written sector
-will be noted in the request. On error the cache entry will be marked as
-invalid and on the next write an update of the write pointer will be
-scheduled, before issuing the actual write.
-
-In order to reduce memory consumption, the only cached item is the offset
-of the write pointer from the start of the zone, everything else can be
-calculated. On an example drive with 52156 zones, the additional memory
-consumption of the cache is thus 52156 * 4 = 208624 Bytes or 51 4k Byte
-pages. The performance impact is neglectable for a spinning drive.
-
-For null_blk the emulation is way simpler, as null_blk's zoned block
-device emulation support already caches the write pointer position, so we
-only need to report the position back to the upper layers. Additional
-caching is not needed here.
-
-Furthermore we have converted zonefs to run use ZONE_APPEND for synchronous
-direct I/Os.
-
-The series is based on Jens' for-next branch, with HEAD == 1385d15e8a0d
-("libata: remove references to ATA_DEBUG")
-
-Changes since v2:
-- Remove iomap implementation and directly issue zone-appends from within
-  zonefs (Christoph)
-- Drop already merged patch
-- Rebase onto new for-next branch
-
-Changes since v1:
-- Too much to mention, treat as a completely new series.
-
-Damien Le Moal (3):
-  block: Introduce zone write pointer offset caching
-  null_blk: Cleanup zoned device initialization
-  null_blk: Support REQ_OP_ZONE_APPEND
-
-Johannes Thumshirn (6):
-  block: provide fallbacks for blk_queue_zone_is_seq and
-    blk_queue_zone_no
-  block: introduce blk_req_zone_write_trylock
-  scsi: sd_zbc: factor out sanity checks for zoned commands
-  scsi: sd_zbc: emulate ZONE_APPEND commands
-  block: export bio_release_pages and bio_iov_iter_get_pages
-  zonefs: use REQ_OP_ZONE_APPEND for sync DIO
-
-Keith Busch (1):
-  block: Introduce REQ_OP_ZONE_APPEND
-
- block/bio.c                    |  74 ++++++-
- block/blk-core.c               |  52 +++++
- block/blk-map.c                |   2 +-
- block/blk-mq.c                 |  27 +++
- block/blk-settings.c           |  19 ++
- block/blk-sysfs.c              |  15 +-
- block/blk-zoned.c              |  93 ++++++++-
- block/blk.h                    |   4 +-
- drivers/block/null_blk.h       |  14 +-
- drivers/block/null_blk_main.c  |  35 ++--
- drivers/block/null_blk_zoned.c |  51 ++++-
- drivers/scsi/scsi_lib.c        |   1 +
- drivers/scsi/sd.c              |  28 ++-
- drivers/scsi/sd.h              |  36 +++-
- drivers/scsi/sd_zbc.c          | 352 +++++++++++++++++++++++++++++++--
- fs/zonefs/super.c              |  92 ++++++++-
- include/linux/bio.h            |  22 +--
- include/linux/blk_types.h      |  14 ++
- include/linux/blkdev.h         |  42 +++-
- 19 files changed, 877 insertions(+), 96 deletions(-)
-
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 53a1325efbc3..cda34e0f94d3 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -729,6 +729,16 @@ static inline unsigned int blk_queue_nr_zones(struct request_queue *q)
+ {
+ 	return 0;
+ }
++static inline bool blk_queue_zone_is_seq(struct request_queue *q,
++					 sector_t sector)
++{
++	return false;
++}
++static inline unsigned int blk_queue_zone_no(struct request_queue *q,
++					     sector_t sector)
++{
++	return 0;
++}
+ #endif /* CONFIG_BLK_DEV_ZONED */
+ 
+ static inline bool rq_is_sync(struct request *rq)
 -- 
 2.24.1
 
