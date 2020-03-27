@@ -2,144 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C1B195C19
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD95195C61
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:19:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbgC0RN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 13:13:58 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:4843 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgC0RN6 (ORCPT
+        id S1726900AbgC0RTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 13:19:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42232 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbgC0RTG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:13:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1585329237; x=1616865237;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=2aW2Jvn/aHbWpbHtvfFNSSzRSsATzWVSffSB9vGDcw4=;
-  b=c6dI0zM6Y3m4rT4hVJDgNScdYnIST09K+OLHXC5/j4ymIgxGig6jovPB
-   JDlUsnvW4fnUnjRE4/7ANFSXQ62AsQldn0SmiI1rhAcMlZTZoy9jWL0nI
-   gpes3WsCLnGYHVAFRUPmDqJFi6XEvm+GqIlUL+VrSVFiod6msPRuEQg2Z
-   tCHgCnhdQZo6TaatK+ip7r6Fec1hr2XHyA0dPPKR5C0NhfuiPiYboSfIS
-   w2oQEvrmPLA8UgpOtfWI9ChBW8gzq4AcIBZfE5rUBSPrtYC/YUA/yVO5b
-   YsHErIMpOLl/A88pd7fhJvWIpdo7PcQa29JqcwIewv7GKrBAfXSgsCHyH
-   A==;
-IronPort-SDR: T3jkIWjrjKOumaQfcsFgWXJr1K1R964ra91in0HwJp+mU8lMfhVuqZYuGbyo89tiBQz3MeQgBY
- zJaGeL3lGXaHo7BI2KG7X416uVhCeGv5xcwaQEUaeoziqtV098LC+r213I63mYIo1DA2i3RNmF
- sUdXByhMwCH4ivvVLxUdk9jjlZt5YviZ2VrmpHcUBi4YxlnDOu59S1dp1HFc/V4mDX/d9okwCP
- ZQi2ufqVpVsrblpOydedhqcpPlqepJngwJ/gvgdwOUWMQYUbQ7q8UuONoBp8QKLAo8KiGBYaHz
- mIk=
-X-IronPort-AV: E=Sophos;i="5.72,313,1580745600"; 
-   d="scan'208";a="242212168"
-Received: from mail-dm6nam11lp2169.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.169])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Mar 2020 01:13:56 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WkhvAcL6JsbZtbVS4f5fIPwUgZBl7ZlbJJ0jlB2zGTiU4gR64TqC1E1dmiqlq5lBx0f+ePG2voMkIZ1zbUWsBFr5XrEoQNSBpzl2tg0gT0ZnLEYbHApuphnDnUZT59xV8MTozm89bSyq9E5itxbz21fCkILfnpNKAH491s1+SktyeIMnGfQkQ17tiB0xi8cHm3GR79XnJs0Iw+ARe/x5WM1sKrng/UmewUrrWXUXASGOJpvP5Sl8wRBpi8eZiHQF/M0X0jCajod5hpJJd5P1GmkBxErF/LLrJJP0Wf3/08fTi+3yxAt1dgqacZIC4zutnH2iRVL5q/Otr6ZCJzrRMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SriTB4QRIQ1/f1BA3a7yWcxMUk1Q4WOMjrJFKFXJnOw=;
- b=Ff3uPVA7bHkVAtnVKBURI/wh590OXXMZFeoPPOy6ggWweEHUPfVcTuCCSt3JamO1QHhgnNGwaS1BIkMd7+9ihKIvW+NBqYCgfP8OQ+wD9QqGRZIhkDe45UtFBu9fdc2sP08o+pHGyQ7dzrRQ9SzaZCQmJEd5c42d084FL2AaI4gYaEcLIwOn2yMNmz6x1bty56SrqoSfoCHGHVjaUxwp5+5RfpUwSi13QFeU/IVATwRH2kXa+iYVooMI2imF0MXjrMk5f8e0M4kCzUwO/CinVQSL3M3he3J/70vYUNsaslMb/VkaQHbHbhiaOQAeCe6BVXYxwvVpcmB8KQ1wU1krHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SriTB4QRIQ1/f1BA3a7yWcxMUk1Q4WOMjrJFKFXJnOw=;
- b=Th4GkxY634abie7Qfjk6q6R5/jC6uPvy29E+IWeVa2bpg48rd8g/2AbIsslqKi3d0yuwmDTdkxoY5E6JMcI6OsysvSkOGX/X+TXtjzNzRyL76WTBU2AlvsZAfBD+PpEnyp1L9RFUr3F+cexPxYm5rrT36rl10Nryt6bccRw3Z5A=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN4PR0401MB3581.namprd04.prod.outlook.com
- (2603:10b6:803:46::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.19; Fri, 27 Mar
- 2020 17:13:55 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::9854:2bc6:1ad2:f655%4]) with mapi id 15.20.2856.019; Fri, 27 Mar 2020
- 17:13:55 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>
-CC:     Jens Axboe <axboe@kernel.dk>,
+        Fri, 27 Mar 2020 13:19:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pmoPc0t0rO7dKiZX8bkxD81FxQnQZxtzBtxiWnWoIco=; b=KfSj33LLKULI6TqjSZXIDA4xpZ
+        aKDU1684S2fu+GP3SHEY5FbSWhwRyOwWYql/bw+OCgfJMRq/UrAZ/FHjAQJHtagnlbrnjCT7qUqZI
+        7MklHb6bqLvl57nDGRaxWhS7i33YQgGyLPx+Bj9LL3G5naaB4AKlfI/M4MnqBE2BIXcKydPU2qbS5
+        p6PPPPXSvjHSFShFmHuUvv9782ASi1bkHwaWw/tNfwayL/iiuo1dvK/tyqprYuYg0iAifkiHdKETE
+        REv7RVRCChXPByCWtab2MmFqxneYCRMM34m+WETr4Qh/oLpC/Ey0LwGvHnzAlm4XVRX0iWC2BEh46
+        xCgB++ow==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHsdM-000286-Lz; Fri, 27 Mar 2020 17:19:04 +0000
+Date:   Fri, 27 Mar 2020 10:19:04 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
         linux-block <linux-block@vger.kernel.org>,
         Damien Le Moal <Damien.LeMoal@wdc.com>,
         Keith Busch <kbusch@kernel.org>,
         "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/10] block: export bio_release_pages and
- bio_iov_iter_get_pages
-Thread-Topic: [PATCH v3 09/10] block: export bio_release_pages and
- bio_iov_iter_get_pages
-Thread-Index: AQHWBFfaQ4zF+g4aQ0WlR0YuAT3fbg==
-Date:   Fri, 27 Mar 2020 17:13:55 +0000
-Message-ID: <SN4PR0401MB35981511B1C7A22E055F80F29BCC0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+Subject: Re: [PATCH v3 02/10] block: Introduce REQ_OP_ZONE_APPEND
+Message-ID: <20200327171904.GD11524@infradead.org>
 References: <20200327165012.34443-1-johannes.thumshirn@wdc.com>
- <20200327165012.34443-10-johannes.thumshirn@wdc.com>
- <20200327170716.GA11524@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Johannes.Thumshirn@wdc.com; 
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: c2ab24f9-9170-4937-51ea-08d7d2723af7
-x-ms-traffictypediagnostic: SN4PR0401MB3581:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN4PR0401MB358199002FF19DA81DB224899BCC0@SN4PR0401MB3581.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:1107;
-x-forefront-prvs: 0355F3A3AE
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10019020)(4636009)(39860400002)(346002)(366004)(396003)(376002)(136003)(53546011)(6506007)(71200400001)(66946007)(66556008)(64756008)(7696005)(478600001)(66446008)(86362001)(316002)(66476007)(76116006)(52536014)(5660300002)(54906003)(91956017)(2906002)(4744005)(9686003)(33656002)(81156014)(8676002)(186003)(81166006)(55016002)(6916009)(8936002)(26005)(4326008);DIR:OUT;SFP:1102;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oWuT4nsxLKq0gT+viAJmIFlW1Pm2gXoVyhtDA6rVuFjiENYqvOSb1L8TBFdTv5XJkhYR5SIN8+9SdJy97miNnYEjvB3lcArzb3F0Zd3w353nxPRR6Q9QTXMED+Kbb1objCrnpyg82IkPEIJdWBcHbhCCtyMIbreaxgLSE2IWqTEYTgzgMHWIFntESdnrVk6Dtmg6IRWJe0OeVWzRLEFdH3nwbRVnGQMR5da09L6CXrewqQStWhhbYIeI+TDZNIzo2uWyvlf/curSfTR6xuipx4bMzC9SkfZBY6NXkGIZynjjKATVyfYEAiljtJY6FwbKbgzdkVg1DezUbuFph/h0GzUWxZVzZyJQSNk8PmBy8Ns6laWZlzZGQ0Z/tBGnU6mlUZL8sls3G8Kr395DyTIl2tIoWz7Y0Y48sJi23ly9e/EOLinoXc0VtrtIsc4WIRR/
-x-ms-exchange-antispam-messagedata: YwE0axh84Cehu2obYq+taYrzWtrgzRdsVSvXebNyTkbrppDVK/F+8rv6Ze54fTzsz2W1Bz2hENKvoJNqEvba3VVS/fbyfEiwagOQVsaPr4W7puQ7PB/b+flWoyGbxJx6HJfPWrQ8U+sniR+hZl4pNA==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ <20200327165012.34443-3-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2ab24f9-9170-4937-51ea-08d7d2723af7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Mar 2020 17:13:55.2766
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sytMe2mgxt6gczC8T9czE78BEShI9r5+uhzC8ZZyMDgHXYEJoj4IWqfIjAv78c99C17gL/266w9+1vbFGH7NZv5tEFtfJ+PPFVEcvEo4BTo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3581
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327165012.34443-3-johannes.thumshirn@wdc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 27/03/2020 18:07, Christoph Hellwig wrote:=0A=
-> On Sat, Mar 28, 2020 at 01:50:11AM +0900, Johannes Thumshirn wrote:=0A=
->> +EXPORT_SYMBOL(bio_release_pages);=0A=
->>   =0A=
->>   static int __bio_iov_bvec_add_pages(struct bio *bio, struct iov_iter *=
-iter)=0A=
->>   {=0A=
->> @@ -1111,6 +1112,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct=
- iov_iter *iter)=0A=
->>   		bio_set_flag(bio, BIO_NO_PAGE_REF);=0A=
->>   	return bio->bi_vcnt ? 0 : ret;=0A=
->>   }=0A=
->> +EXPORT_SYMBOL(bio_iov_iter_get_pages);=0A=
-> =0A=
-> EXPORT_SYMBOL_GPL, please.=0A=
-> =0A=
-=0A=
-Sure, only for bio_iov_iter_get_pages or bio_release_pages as well?=0A=
-=0A=
-I couldn't find a clear pattern in block/bio.c, it's _GPL 7 times vs 28 =0A=
-times without _GPL.=0A=
-=0A=
--- =0A=
-Johannes Thumshirn=0A=
-System Software Group=0A=
-=0A=
-Western Digital=AE=0A=
+> +/**
+> + * bio_full - check if the bio is full
+> + * @bio:	bio to check
+> + * @len:	length of one segment to be added
+> + *
+> + * Return true if @bio is full and one segment with @len bytes can't be
+> + * added to the bio, otherwise return false
+> + */
+> +bool bio_full(struct bio *bio, unsigned len)
+> +{
+> +	if (bio->bi_vcnt >= bio->bi_max_vecs)
+> +		return true;
+> +
+> +	if (bio->bi_iter.bi_size > UINT_MAX - len)
+> +		return true;
+> +
+> +	if (bio_op(bio) == REQ_OP_ZONE_APPEND)
+> +		return bio_can_zone_append(bio, len);
+> +
+> +	return false;
+> +}
+
+If you need to move bio_full out of line that should be a separate
+prep patch.  But I'd rather unshare a little more code rather than
+spreading zone append conditionals over lots of fast path functions.
+
+> +static bool bio_try_merge_zone_append_page(struct bio *bio, struct page *page,
+> +					   unsigned int len, unsigned int off)
+> +{
+> +	struct request_queue *q = bio->bi_disk->queue;
+> +	struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+> +	unsigned long mask = queue_segment_boundary(q);
+> +	phys_addr_t addr1 = page_to_phys(bv->bv_page) + bv->bv_offset;
+> +	phys_addr_t addr2 = page_to_phys(page) + off + len - 1;
+> +
+> +	if ((addr1 | mask) != (addr2 | mask))
+> +		return false;
+> +	if (bv->bv_len + len > queue_max_segment_size(q))
+> +		return false;
+> +	return true;
+> +}
+
+This seems to be identical to bio_try_merge_pc_page, except for not
+passing an explicit queue argument, and for not calling
+__bio_try_merge_page.  I'd rather factor out a new
+__bio_can_merge_pc_page or similar helper in a prep patch and use
+that in both functions.
+
+>  /**
+>   * __bio_try_merge_page - try appending data to an existing bvec.
+>   * @bio: destination bio
+> @@ -856,6 +911,12 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+>  	if (bio->bi_vcnt > 0) {
+>  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+>  
+> +		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+> +			if (!bio_try_merge_zone_append_page(bio, page, len,
+> +							    off))
+> +				return false;
+> +		}
+> +
+>  		if (page_is_mergeable(bv, page, len, off, same_page)) {
+>  			if (bio->bi_iter.bi_size > UINT_MAX - len)
+>  				return false;
+
+I'd rather have a separare __bio_try_merge_append_page helper to avoid
+the conditional in __bio_try_merge_page.
+
+> @@ -916,6 +977,7 @@ int bio_add_page(struct bio *bio, struct page *page,
+>  	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+>  		if (bio_full(bio, len))
+>  			return 0;
+> +
+>  		__bio_add_page(bio, page, len, offset);
+>  	}
+>  	return len;
+> @@ -948,7 +1010,7 @@ static int __bio_iov_bvec_add_pages(struct bio *bio, struct iov_iter *iter)
+>  
+>  	len = min_t(size_t, bv->bv_len - iter->iov_offset, iter->count);
+>  	size = bio_add_page(bio, bv->bv_page, len,
+> -				bv->bv_offset + iter->iov_offset);
+> +			    bv->bv_offset + iter->iov_offset);
+
+Spurious whitespace changes.
+
+>  	if (unlikely(size != len))
+>  		return -EINVAL;
+>  	iov_iter_advance(iter, size);
+> @@ -1448,7 +1510,7 @@ struct bio *bio_copy_user_iov(struct request_queue *q,
+>   */
+>  struct bio *bio_map_user_iov(struct request_queue *q,
+>  			     struct iov_iter *iter,
+> -			     gfp_t gfp_mask)
+> +			     gfp_t gfp_mask, unsigned int op)
+
+Why do we need to pass the op here? bio_map_user_iov is only used
+for SG_IO passthrough.
+
+>  				if (!__bio_add_pc_page(q, bio, page, n, offs,
+> -						&same_page)) {
+> +						       &same_page)) {
+
+Spurious whitespace change.
+
+>  extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+>  			   unsigned int, unsigned int);
+> +
+
+Spurious whitespace change.
+
+> +static inline unsigned int queue_max_zone_append_sectors(const struct request_queue *q)
+
+This adds an overly long line.
