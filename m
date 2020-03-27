@@ -2,109 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8AC195CA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E61195CAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbgC0R0r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 13:26:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45684 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbgC0R0r (ORCPT
+        id S1727423AbgC0R05 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 13:26:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55348 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbgC0R05 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:26:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id o26so4872219pgc.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Mar 2020 10:26:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X8ps1N/pYBA7KlC6SJyDXK1HkCeJUluIuEnwRO89GEU=;
-        b=hmBCjbTgMqFJZImRqjN4cWi+1oiD8+HAEmEByq7V4Xj+pZ40AbphunjFgtdfMF2Y5E
-         aiAZ5kx5UWMqooP0//e5S8mGaI8Ns8HwOdDgx7LqV3ixxxKvsuEm2O643LkB5cvQwDNs
-         DdPViDg7+o6QLCWbOcgeV5do6umR9em7CJt/8/ncZqGRxQ4GfFy4VTfIRpnRiN0WL3MI
-         1LKO95FrPge2Dn8K07Pn/PuHLqlM1eb7ATRyMzvf6cj6cqpbFw8fcGumYtlQRXfSx33h
-         G3sfCxaRgBHOnZjHw7bj37vBur+WP4wkmVKnUdPEnQ1j9TvHSPLXH+WUDWzuUQp5s5SP
-         JniA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X8ps1N/pYBA7KlC6SJyDXK1HkCeJUluIuEnwRO89GEU=;
-        b=Y3kULJpVBnAh1SE/J1Kz+sTCUYSPZMBOImMpmSTtCR7Kjm+m7/33sJLJCvcwLhHZmc
-         9wC3oZZlTRWicYyz53Nch4LsgCnVYk3YqfApq+0fCnfy0AATqK7VW28obKN3xX95h8BC
-         u7pgZVCR7+ZOn89f14hA+kht0CYvpAr8wWaFbcG/8gkl9dRv04uSqEHdgORxpgUZgakw
-         rM6Yny1ilqef3JCbCFjamsUQb1vatrg0k4yUg8J6s+29BNrc6drV9HAjQWbAF/X6xB3p
-         AVCA7pyEi8dSUgUR2xuadds4o+nu1sR9cvjpbG2tZ0keeOfzTn+IBEb0zlWGFgU2KZMW
-         cbFQ==
-X-Gm-Message-State: ANhLgQ2GKSDe5kHk2AEF+TszIItFgPMVtHs9HeKSKNPRkDS/yHldt28r
-        hNhTtLSBLxdFgp3LGFLb8Nk8KDPRN1s2MXJPPIT7AeZn
-X-Google-Smtp-Source: ADFU+vskNw4rx9J8k/JB6zNGDuE+XATYo7xfLE+NCQ/VTYSZNrt8mav9Wo2CNYj9Y/bYulHHAACI97tU0sg7i+3mX0I=
-X-Received: by 2002:a63:4e22:: with SMTP id c34mr335809pgb.263.1585330005540;
- Fri, 27 Mar 2020 10:26:45 -0700 (PDT)
+        Fri, 27 Mar 2020 13:26:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=CjcexspCrEuAGvO/hySleT/JU2sq71KS3q2QXnc5p8k=; b=s0MISWrHoKtRwUiDDKoOpy+cBM
+        UI66O9jDN+K1Pjn0DCksBQSOtqomHyRVCS4z1M4GoTjuP7l9SSs88IP+HV4F+q0LQu7DsLr8gJyIH
+        smKoZNCOufJJX6TiPiEU2TiN4R5gJ7aO4j5itcb7oh+1H25wTEBI+pr8pNYVmRuRLvtLhIr+1eqCd
+        D9+3om3smbm6qf20LF6u+slEbXBq5v4S+3MqG3NX98olku3ePe/JPlhQl+5PH1bdm+r5zmZh4nA7d
+        TmXkZv+j9L5vxXXPcJpv1gAklEedGOLWfyZX17KjF60m0W8/gCqd9KPHIDRNfzBYsL1aCnQajVRX+
+        4zWWVuFg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jHsky-0007P2-H7; Fri, 27 Mar 2020 17:26:56 +0000
+Date:   Fri, 27 Mar 2020 10:26:56 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 08/10] null_blk: Support REQ_OP_ZONE_APPEND
+Message-ID: <20200327172656.GB21347@infradead.org>
+References: <20200327165012.34443-1-johannes.thumshirn@wdc.com>
+ <20200327165012.34443-9-johannes.thumshirn@wdc.com>
 MIME-Version: 1.0
-References: <20200327171030.30625-1-natechancellor@gmail.com>
-In-Reply-To: <20200327171030.30625-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 27 Mar 2020 10:26:34 -0700
-Message-ID: <CAKwvOdkHSRZy_BjyWx2sdZ89CwmMaHAJrNf_xmiGQDphrqjEiA@mail.gmail.com>
-Subject: Re: [PATCH -next] fanotify: Fix the checks in fanotify_fsid_equal
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200327165012.34443-9-johannes.thumshirn@wdc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 10:10 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> fs/notify/fanotify/fanotify.c:28:23: warning: self-comparison always
-> evaluates to true [-Wtautological-compare]
->         return fsid1->val[0] == fsid1->val[0] && fsid2->val[1] == fsid2->val[1];
->                              ^
-> fs/notify/fanotify/fanotify.c:28:57: warning: self-comparison always
-> evaluates to true [-Wtautological-compare]
->         return fsid1->val[0] == fsid1->val[0] && fsid2->val[1] == fsid2->val[1];
->                                                                ^
-> 2 warnings generated.
->
-> The intention was clearly to compare val[0] and val[1] in the two
-> different fsid structs. Fix it otherwise this function always returns
-> true.
->
-> Fixes: afc894c784c8 ("fanotify: Store fanotify handles differently")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/952
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Sat, Mar 28, 2020 at 01:50:10AM +0900, Johannes Thumshirn wrote:
+> From: Damien Le Moal <damien.lemoal@wdc.com>
+> 
+> Support REQ_OP_ZONE_APPEND requests for zone mode null_blk devices.
+> Use the internally tracked zone write pointer position as the actual
+> write position, which is returned using the command request __sector
+> field in the case of an mq device and using the command BIO sector in
+> the case of a BIO device. Since the write position is used for data copy
+> in the case of a memory backed device, reverse the order in which
+> null_handle_zoned() and null_handle_memory_backed() are called to ensure
+> that null_handle_memory_backed() sees the correct write position for
+> REQ_OP_ZONE_APPEND operations.
 
-Thanks for the patch. Subtle bugs that are off by one character have
-always been hard for me to spot!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+I think moving null_zone_write earlier actually is a bug-fixd as is
+as we should not touch memory if the zone condition or write pointer
+isn't valid for a write.  I'd suggest splitting that out as a bug fix
+and move it to the start of the series so that Jens can pick it up
+ASAP.
 
-> ---
->  fs/notify/fanotify/fanotify.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 7a889da1ee12..cb54ecdb3fb9 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -25,7 +25,7 @@ static bool fanotify_path_equal(struct path *p1, struct path *p2)
->  static inline bool fanotify_fsid_equal(__kernel_fsid_t *fsid1,
->                                        __kernel_fsid_t *fsid2)
->  {
-> -       return fsid1->val[0] == fsid1->val[0] && fsid2->val[1] == fsid2->val[1];
-> +       return fsid1->val[0] == fsid2->val[0] && fsid1->val[1] == fsid2->val[1];
->  }
->
->  static bool fanotify_fh_equal(struct fanotify_fh *fh1,
-> --
+Otherwise this looks good:
 
--- 
-Thanks,
-~Nick Desaulniers
+Reviewed-by: Christoph Hellwig <hch@lst.de>
