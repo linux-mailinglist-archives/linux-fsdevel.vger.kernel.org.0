@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E27C195CD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B58195CE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Mar 2020 18:32:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbgC0RcJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Mar 2020 13:32:09 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:38848 "EHLO raptor.unsafe.ru"
+        id S1727719AbgC0Rbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Mar 2020 13:31:44 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:38826 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbgC0Rbr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Mar 2020 13:31:47 -0400
+        id S1727509AbgC0Rbn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Mar 2020 13:31:43 -0400
 Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id A141C20AAC;
-        Fri, 27 Mar 2020 17:23:57 +0000 (UTC)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 60FDC20AAE;
+        Fri, 27 Mar 2020 17:23:58 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
@@ -40,192 +40,113 @@ Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v10 3/9] proc: move hide_pid, pid_gid from pid_namespace to proc_fs_info
-Date:   Fri, 27 Mar 2020 18:23:25 +0100
-Message-Id: <20200327172331.418878-4-gladkov.alexey@gmail.com>
+Subject: [PATCH v10 4/9] proc: instantiate only pids that we can ptrace on 'hidepid=4' mount option
+Date:   Fri, 27 Mar 2020 18:23:26 +0100
+Message-Id: <20200327172331.418878-5-gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.25.2
 In-Reply-To: <20200327172331.418878-1-gladkov.alexey@gmail.com>
 References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 27 Mar 2020 17:23:58 +0000 (UTC)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Fri, 27 Mar 2020 17:23:59 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move hide_pid and pid_gid parameters inside procfs fs_info struct
-instead of making them per pid namespace. Since we have a multiple
-procfs instances per pid namespace we need to make sure that all
-proc-specific parameters are also per-superblock.
+If "hidepid=4" mount option is set then do not instantiate pids that
+we can not ptrace. "hidepid=4" means that procfs should only contain
+pids that the caller can ptrace.
 
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/proc/base.c                | 18 +++++++++---------
- fs/proc/inode.c               |  9 ++++-----
- fs/proc/root.c                |  4 ++--
- include/linux/pid_namespace.h |  8 --------
- include/linux/proc_fs.h       |  9 +++++++++
- 5 files changed, 24 insertions(+), 24 deletions(-)
+ fs/proc/base.c          | 15 +++++++++++++++
+ fs/proc/root.c          | 13 ++++++++++---
+ include/linux/proc_fs.h |  1 +
+ 3 files changed, 26 insertions(+), 3 deletions(-)
 
 diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 3b9155a69ade..43a28907baf9 100644
+index 43a28907baf9..1ebe9eba48ea 100644
 --- a/fs/proc/base.c
 +++ b/fs/proc/base.c
-@@ -697,13 +697,13 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
-  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
-  * or euid/egid (for hide_pid_min=2)?
-  */
--static bool has_pid_permissions(struct pid_namespace *pid,
-+static bool has_pid_permissions(struct proc_fs_info *fs_info,
+@@ -701,6 +701,14 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
  				 struct task_struct *task,
  				 int hide_pid_min)
  {
--	if (pid->hide_pid < hide_pid_min)
-+	if (fs_info->hide_pid < hide_pid_min)
++	/*
++	 * If 'hidpid' mount option is set force a ptrace check,
++	 * we indicate that we are using a filesystem syscall
++	 * by passing PTRACE_MODE_READ_FSCREDS
++	 */
++	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
++		return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
++
+ 	if (fs_info->hide_pid < hide_pid_min)
  		return true;
--	if (in_group_p(pid->pid_gid))
-+	if (in_group_p(fs_info->pid_gid))
- 		return true;
- 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
- }
-@@ -711,18 +711,18 @@ static bool has_pid_permissions(struct pid_namespace *pid,
- 
- static int proc_pid_permission(struct inode *inode, int mask)
- {
--	struct pid_namespace *pid = proc_pid_ns(inode);
-+	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
- 	struct task_struct *task;
- 	bool has_perms;
- 
- 	task = get_proc_task(inode);
+ 	if (in_group_p(fs_info->pid_gid))
+@@ -3319,7 +3327,14 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
  	if (!task)
- 		return -ESRCH;
--	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
-+	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
+ 		goto out;
+ 
++	/* Limit procfs to only ptraceable tasks */
++	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE) {
++		if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
++			goto out_put_task;
++	}
++
+ 	result = proc_pid_instantiate(dentry, task, NULL);
++out_put_task:
  	put_task_struct(task);
- 
- 	if (!has_perms) {
--		if (pid->hide_pid == HIDEPID_INVISIBLE) {
-+		if (fs_info->hide_pid == HIDEPID_INVISIBLE) {
- 			/*
- 			 * Let's make getdents(), stat(), and open()
- 			 * consistent with each other.  If a process
-@@ -1897,7 +1897,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
- 		u32 request_mask, unsigned int query_flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	struct pid_namespace *pid = proc_pid_ns(inode);
-+	struct proc_fs_info *fs_info = proc_sb_info(inode->i_sb);
- 	struct task_struct *task;
- 
- 	generic_fillattr(inode, stat);
-@@ -1907,7 +1907,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
- 	rcu_read_lock();
- 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
- 	if (task) {
--		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
-+		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
- 			rcu_read_unlock();
- 			/*
- 			 * This doesn't prevent learning whether PID exists,
-@@ -3402,7 +3402,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 		unsigned int len;
- 
- 		cond_resched();
--		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
-+		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
- 			continue;
- 
- 		len = snprintf(name, sizeof(name), "%u", iter.tgid);
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 6e4c6728338b..91fe4896fa85 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -168,12 +168,11 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
- static int proc_show_options(struct seq_file *seq, struct dentry *root)
- {
- 	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
--	struct pid_namespace *pid = fs_info->pid_ns;
- 
--	if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
--		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, pid->pid_gid));
--	if (pid->hide_pid != HIDEPID_OFF)
--		seq_printf(seq, ",hidepid=%u", pid->hide_pid);
-+	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
-+		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
-+	if (fs_info->hide_pid != HIDEPID_OFF)
-+		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
- 
- 	return 0;
- }
+ out:
+ 	return result;
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index b28adbb0b937..616e8976185c 100644
+index 616e8976185c..62eae22403d2 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -85,9 +85,9 @@ static void proc_apply_options(struct super_block *s,
+@@ -47,6 +47,14 @@ static const struct fs_parameter_spec proc_fs_parameters[] = {
+ 	{}
+ };
+ 
++static inline int valid_hidepid(unsigned int value)
++{
++	return (value == HIDEPID_OFF ||
++		value == HIDEPID_NO_ACCESS ||
++		value == HIDEPID_INVISIBLE ||
++		value == HIDEPID_NOT_PTRACEABLE);
++}
++
+ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ {
  	struct proc_fs_context *ctx = fc->fs_private;
+@@ -63,10 +71,9 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		break;
  
- 	if (ctx->mask & (1 << Opt_gid))
--		pid_ns->pid_gid = make_kgid(user_ns, ctx->gid);
-+		ctx->fs_info->pid_gid = make_kgid(user_ns, ctx->gid);
- 	if (ctx->mask & (1 << Opt_hidepid))
--		pid_ns->hide_pid = ctx->hidepid;
-+		ctx->fs_info->hide_pid = ctx->hidepid;
- }
+ 	case Opt_hidepid:
++		if (!valid_hidepid(result.uint_32))
++			return invalf(fc, "proc: unknown value of hidepid.\n");
+ 		ctx->hidepid = result.uint_32;
+-		if (ctx->hidepid < HIDEPID_OFF ||
+-		    ctx->hidepid > HIDEPID_INVISIBLE)
+-			return invalfc(fc, "hidepid value must be between 0 and 2.\n");
+ 		break;
  
- static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-index 4956e362e55e..028d7ba242c6 100644
---- a/include/linux/pid_namespace.h
-+++ b/include/linux/pid_namespace.h
-@@ -17,12 +17,6 @@
- 
- struct fs_pin;
- 
--enum { /* definitions for pid_namespace's hide_pid field */
--	HIDEPID_OFF	  = 0,
--	HIDEPID_NO_ACCESS = 1,
--	HIDEPID_INVISIBLE = 2,
--};
--
- struct pid_namespace {
- 	struct kref kref;
- 	struct idr idr;
-@@ -41,8 +35,6 @@ struct pid_namespace {
- #endif
- 	struct user_namespace *user_ns;
- 	struct ucounts *ucounts;
--	kgid_t pid_gid;
--	int hide_pid;
- 	int reboot;	/* group exit code if this pidns was rebooted */
- 	struct ns_common ns;
- } __randomize_layout;
+ 	default:
 diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 5920a4ecd71b..7d852dbca253 100644
+index 7d852dbca253..21d19353fdc7 100644
 --- a/include/linux/proc_fs.h
 +++ b/include/linux/proc_fs.h
-@@ -27,10 +27,19 @@ struct proc_ops {
- 	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+@@ -32,6 +32,7 @@ enum {
+ 	HIDEPID_OFF	  = 0,
+ 	HIDEPID_NO_ACCESS = 1,
+ 	HIDEPID_INVISIBLE = 2,
++	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
  };
  
-+/* definitions for hide_pid field */
-+enum {
-+	HIDEPID_OFF	  = 0,
-+	HIDEPID_NO_ACCESS = 1,
-+	HIDEPID_INVISIBLE = 2,
-+};
-+
  struct proc_fs_info {
- 	struct pid_namespace *pid_ns;
- 	struct dentry *proc_self;        /* For /proc/self */
- 	struct dentry *proc_thread_self; /* For /proc/thread-self */
-+	kgid_t pid_gid;
-+	int hide_pid;
- };
- 
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 -- 
 2.25.2
 
