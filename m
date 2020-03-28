@@ -2,49 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FF619694F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Mar 2020 21:41:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EE8E196967
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Mar 2020 22:15:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbgC1UlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Mar 2020 16:41:06 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37522 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727591AbgC1UlG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Mar 2020 16:41:06 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x1so4979401plm.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Mar 2020 13:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=3af4XQiObUNSlXzIpOluwclJ5Se37O3IqIxw7xF6Wfg=;
-        b=IV5SgG1z6PHJS4slCqg3DwNNnmqSzIJL6lLp1fwgyLEJHHaJ6fFezzh2xoXOGxJwLX
-         u1uxgsPMEvfXPUcQsdZOXFVXGdVOzEb6PYiQY7d+mwL+SpkgBSbR2QlSCupn/XvORASl
-         wudH09K3inIipQyjqcchSB9CuWVOfYplGOnIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3af4XQiObUNSlXzIpOluwclJ5Se37O3IqIxw7xF6Wfg=;
-        b=Ysiw9jnLVXDhj9daFGaV3zJzRB9zsaia8WwZP6GPPJK5cvbXXRDovqFXj4WAuBhG0p
-         G8rhHSTaG4Cxoue10CCo0hz3Gl4IhwHuKDKzJijVz1FAod1CMPDbdE6PlzQ/cXgxcoTp
-         /fufzSWT28SWBrOgWlly6Wy4sb+rn3uLUrU3BkGG2HL5C0x4hLN0j9oigwOF4MGcOmwP
-         2FhVPMlDF5GnYVo1riBlkR3IrOJpNQhGUDxagYSQbpSukMAoh8bVTiuhlOHsuHZlGtLZ
-         NNhezgf2hTGMGtt7nEIScomNkuH/e0XA26PuLSqiy/oIJvykSzZo9M2Qlvol599+Hkjz
-         k7iQ==
-X-Gm-Message-State: ANhLgQ22YxyVT2mflD451uVvOWV5zR43R0Is/C5pbBuZYlAWHJ07zPOD
-        eEGek9nDPP8iaIdzcHGpEJHtTQ==
-X-Google-Smtp-Source: ADFU+vtOdbkebW3RaZlpqXPeyjJPDfKZqqHvYrxqlogFKpu84+eIxERui1kCOdYg26q2QUxE07C9+Q==
-X-Received: by 2002:a17:90a:240a:: with SMTP id h10mr6679023pje.123.1585428064347;
-        Sat, 28 Mar 2020 13:41:04 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l190sm6769009pfl.212.2020.03.28.13.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 13:41:03 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 13:41:02 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
+        id S1727491AbgC1VPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Mar 2020 17:15:05 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:55574 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727115AbgC1VPE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 28 Mar 2020 17:15:04 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 56D65209BD;
+        Sat, 28 Mar 2020 21:14:58 +0000 (UTC)
+Date:   Sat, 28 Mar 2020 22:14:53 +0100
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Linux API <linux-api@vger.kernel.org>,
@@ -53,7 +27,6 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Akinobu Mita <akinobu.mita@gmail.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@kernel.org>,
         Daniel Micay <danielmicay@gmail.com>,
@@ -67,81 +40,229 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
- user interface to mount
-Message-ID: <202003281340.B73225DCC9@keescook>
+Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
+Message-ID: <20200328211453.w44fvkwleltnc2m7@comp-core-i7-2640m-0182e6>
 References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-8-gladkov.alexey@gmail.com>
+ <20200327172331.418878-9-gladkov.alexey@gmail.com>
+ <202003281321.A69D9DE45@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200327172331.418878-8-gladkov.alexey@gmail.com>
+In-Reply-To: <202003281321.A69D9DE45@keescook>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Sat, 28 Mar 2020 21:15:00 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 06:23:29PM +0100, Alexey Gladkov wrote:
-> Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
-> Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-> Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
-> ---
->  include/linux/proc_fs.h      |  9 +--------
->  include/uapi/linux/proc_fs.h | 13 +++++++++++++
->  2 files changed, 14 insertions(+), 8 deletions(-)
->  create mode 100644 include/uapi/linux/proc_fs.h
+On Sat, Mar 28, 2020 at 01:28:28PM -0700, Kees Cook wrote:
+> On Fri, Mar 27, 2020 at 06:23:30PM +0100, Alexey Gladkov wrote:
+> > The hidepid parameter values are becoming more and more and it becomes
+> > difficult to remember what each new magic number means.
+> > 
+> > Suggested-by: Andy Lutomirski <luto@kernel.org>
+> > Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+> > ---
+> >  Documentation/filesystems/proc.txt | 52 +++++++++++++++---------------
+> >  fs/proc/inode.c                    | 13 +++++++-
+> >  fs/proc/root.c                     | 36 +++++++++++++++++++--
+> >  3 files changed, 71 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> > index bd0e0ab85048..af47672cb2cb 100644
+> > --- a/Documentation/filesystems/proc.txt
+> > +++ b/Documentation/filesystems/proc.txt
+> > @@ -2025,28 +2025,28 @@ The following mount options are supported:
+> >  	gid=		Set the group authorized to learn processes information.
+> >  	subset=		Show only the specified subset of procfs.
+> >  
+> > -hidepid=0 means classic mode - everybody may access all /proc/<pid>/ directories
+> > -(default).
+> > -
+> > -hidepid=1 means users may not access any /proc/<pid>/ directories but their
+> > -own.  Sensitive files like cmdline, sched*, status are now protected against
+> > -other users.  This makes it impossible to learn whether any user runs
+> > -specific program (given the program doesn't reveal itself by its behaviour).
+> > -As an additional bonus, as /proc/<pid>/cmdline is unaccessible for other users,
+> > -poorly written programs passing sensitive information via program arguments are
+> > -now protected against local eavesdroppers.
+> > -
+> > -hidepid=2 means hidepid=1 plus all /proc/<pid>/ will be fully invisible to other
+> > -users.  It doesn't mean that it hides a fact whether a process with a specific
+> > -pid value exists (it can be learned by other means, e.g. by "kill -0 $PID"),
+> > -but it hides process' uid and gid, which may be learned by stat()'ing
+> > -/proc/<pid>/ otherwise.  It greatly complicates an intruder's task of gathering
+> > -information about running processes, whether some daemon runs with elevated
+> > -privileges, whether other user runs some sensitive program, whether other users
+> > -run any program at all, etc.
+> > -
+> > -hidepid=4 means that procfs should only contain /proc/<pid>/ directories
+> > -that the caller can ptrace.
+> > +hidepid=off or hidepid=0 means classic mode - everybody may access all
+> > +/proc/<pid>/ directories (default).
+> > +
+> > +hidepid=noaccess or hidepid=1 means users may not access any /proc/<pid>/
+> > +directories but their own.  Sensitive files like cmdline, sched*, status are now
+> > +protected against other users.  This makes it impossible to learn whether any
+> > +user runs specific program (given the program doesn't reveal itself by its
+> > +behaviour).  As an additional bonus, as /proc/<pid>/cmdline is unaccessible for
+> > +other users, poorly written programs passing sensitive information via program
+> > +arguments are now protected against local eavesdroppers.
+> > +
+> > +hidepid=invisible or hidepid=2 means hidepid=noaccess plus all /proc/<pid>/ will
+> > +be fully invisible to other users.  It doesn't mean that it hides a fact whether
+> > +a process with a specific pid value exists (it can be learned by other means,
+> > +e.g. by "kill -0 $PID"), but it hides process' uid and gid, which may be learned
+> > +by stat()'ing /proc/<pid>/ otherwise.  It greatly complicates an intruder's task
+> > +of gathering information about running processes, whether some daemon runs with
+> > +elevated privileges, whether other user runs some sensitive program, whether
+> > +other users run any program at all, etc.
+> > +
+> > +hidepid=ptraceable or hidepid=4 means that procfs should only contain
+> > +/proc/<pid>/ directories that the caller can ptrace.
+> >  
+> >  gid= defines a group authorized to learn processes information otherwise
+> >  prohibited by hidepid=.  If you use some daemon like identd which needs to learn
+> > @@ -2093,8 +2093,8 @@ creates a new procfs instance. Mount options affect own procfs instance.
+> >  It means that it became possible to have several procfs instances
+> >  displaying tasks with different filtering options in one pid namespace.
+> >  
+> > -# mount -o hidepid=2 -t proc proc /proc
+> > -# mount -o hidepid=1 -t proc proc /tmp/proc
+> > +# mount -o hidepid=invisible -t proc proc /proc
+> > +# mount -o hidepid=noaccess -t proc proc /tmp/proc
+> >  # grep ^proc /proc/mounts
+> > -proc /proc proc rw,relatime,hidepid=2 0 0
+> > -proc /tmp/proc proc rw,relatime,hidepid=1 0 0
+> > +proc /proc proc rw,relatime,hidepid=invisible 0 0
+> > +proc /tmp/proc proc rw,relatime,hidepid=noaccess 0 0
+> > diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> > index e6577ce6027b..f01fb4bed75c 100644
+> > --- a/fs/proc/inode.c
+> > +++ b/fs/proc/inode.c
+> > @@ -165,6 +165,17 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
+> >  		deactivate_super(old_sb);
+> >  }
+> >  
+> > +static inline const char *hidepid2str(int v)
+> > +{
+> > +	switch (v) {
+> > +		case HIDEPID_OFF: return "off";
+> > +		case HIDEPID_NO_ACCESS: return "noaccess";
+> > +		case HIDEPID_INVISIBLE: return "invisible";
+> > +		case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
+> > +	}
+> > +	BUG();
 > 
-> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> index afd38cae2339..d259817ec913 100644
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@ -7,6 +7,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/fs.h>
-> +#include <uapi/linux/proc_fs.h>
->  
->  struct proc_dir_entry;
->  struct seq_file;
-> @@ -27,14 +28,6 @@ struct proc_ops {
->  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
->  };
->  
-> -/* definitions for hide_pid field */
-> -enum {
-> -	HIDEPID_OFF	  = 0,
-> -	HIDEPID_NO_ACCESS = 1,
-> -	HIDEPID_INVISIBLE = 2,
-> -	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
-> -};
-> -
->  /* definitions for proc mount option pidonly */
->  enum {
->  	PROC_PIDONLY_OFF = 0,
-> diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
-> new file mode 100644
-> index 000000000000..dc6d717aa6ec
-> --- /dev/null
-> +++ b/include/uapi/linux/proc_fs.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_PROC_FS_H
-> +#define _UAPI_PROC_FS_H
-> +
-> +/* definitions for hide_pid field */
-> +enum {
-> +	HIDEPID_OFF            = 0,
-> +	HIDEPID_NO_ACCESS      = 1,
-> +	HIDEPID_INVISIBLE      = 2,
-> +	HIDEPID_NOT_PTRACEABLE = 4,
-> +};
-> +
-> +#endif
-> -- 
-> 2.25.2
+> Please don't use BUG()[1]. Add a default case with a warn and return
+> "unknown":
 > 
+> 	switch (v) {
+> 	case HIDEPID_OFF: return "off";
+> 	case HIDEPID_NO_ACCESS: return "noaccess";
+> 	case HIDEPID_INVISIBLE: return "invisible";
+> 	case HIDEPID_NOT_PTRACEABLE: return "ptraceable";
+> 	default:
+> 		WARN_ON_ONCE("bad hide_pid value: %d\n", v);
+> 		return "unknown";
+> 	}
+> 
+> [1] https://lore.kernel.org/lkml/202003141524.59C619B51A@keescook/
 
-Should the numeric values still be UAPI if there is string parsing now?
+Make sense. I will change it.
+
+> > +}
+> > +
+> >  static int proc_show_options(struct seq_file *seq, struct dentry *root)
+> >  {
+> >  	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
+> > @@ -172,7 +183,7 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+> >  	if (!gid_eq(fs_info->pid_gid, GLOBAL_ROOT_GID))
+> >  		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, fs_info->pid_gid));
+> >  	if (fs_info->hide_pid != HIDEPID_OFF)
+> > -		seq_printf(seq, ",hidepid=%u", fs_info->hide_pid);
+> > +		seq_printf(seq, ",hidepid=%s", hidepid2str(fs_info->hide_pid));
+> >  	if (fs_info->pidonly != PROC_PIDONLY_OFF)
+> >  		seq_printf(seq, ",subset=pid");
+> >  
+> > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > index dbcd96f07c7a..ba782d6e6197 100644
+> > --- a/fs/proc/root.c
+> > +++ b/fs/proc/root.c
+> > @@ -45,7 +45,7 @@ enum proc_param {
+> >  
+> >  static const struct fs_parameter_spec proc_fs_parameters[] = {
+> >  	fsparam_u32("gid",	Opt_gid),
+> > -	fsparam_u32("hidepid",	Opt_hidepid),
+> > +	fsparam_string("hidepid",	Opt_hidepid),
+> >  	fsparam_string("subset",	Opt_subset),
+> >  	{}
+> >  };
+> > @@ -58,6 +58,35 @@ static inline int valid_hidepid(unsigned int value)
+> >  		value == HIDEPID_NOT_PTRACEABLE);
+> >  }
+> >  
+> > +static int proc_parse_hidepid_param(struct fs_context *fc, struct fs_parameter *param)
+> > +{
+> > +	struct proc_fs_context *ctx = fc->fs_private;
+> > +	struct fs_parameter_spec hidepid_u32_spec = fsparam_u32("hidepid", Opt_hidepid);
+> > +	struct fs_parse_result result;
+> > +	int base = (unsigned long)hidepid_u32_spec.data;
+> > +
+> > +	if (param->type != fs_value_is_string)
+> > +		return invalf(fc, "proc: unexpected type of hidepid value\n");
+> > +
+> > +	if (!kstrtouint(param->string, base, &result.uint_32)) {
+> > +		ctx->hidepid = result.uint_32;
+> 
+> This need to bounds-check the value with a call to valid_hidepid(), yes?
+
+The kstrtouint returns 0 on success and -ERANGE on overflow [1].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/kstrtox.c#n217
+
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (!strcmp(param->string, "off"))
+> > +		ctx->hidepid = HIDEPID_OFF;
+> > +	else if (!strcmp(param->string, "noaccess"))
+> > +		ctx->hidepid = HIDEPID_NO_ACCESS;
+> > +	else if (!strcmp(param->string, "invisible"))
+> > +		ctx->hidepid = HIDEPID_INVISIBLE;
+> > +	else if (!strcmp(param->string, "ptraceable"))
+> > +		ctx->hidepid = HIDEPID_NOT_PTRACEABLE;
+> > +	else
+> > +		return invalf(fc, "proc: unknown value of hidepid - %s\n", param->string);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int proc_parse_subset_param(struct fs_context *fc, char *value)
+> >  {
+> >  	struct proc_fs_context *ctx = fc->fs_private;
+> > @@ -97,9 +126,10 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> >  		break;
+> >  
+> >  	case Opt_hidepid:
+> > -		if (!valid_hidepid(result.uint_32))
+> > +		if (proc_parse_hidepid_param(fc, param))
+> > +			return -EINVAL;
+> > +		if (!valid_hidepid(ctx->hidepid))
+> >  			return invalf(fc, "proc: unknown value of hidepid.\n");
+> > -		ctx->hidepid = result.uint_32;
+> >  		break;
+> >  
+> >  	case Opt_subset:
+> > -- 
+> > 2.25.2
+> > 
+> 
+> -- 
+> Kees Cook
+> 
 
 -- 
-Kees Cook
+Rgrds, legion
+
