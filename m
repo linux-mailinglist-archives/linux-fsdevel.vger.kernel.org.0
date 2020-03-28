@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE7F196946
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Mar 2020 21:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FF619694F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Mar 2020 21:41:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbgC1UkJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Mar 2020 16:40:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42133 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727167AbgC1UkI (ORCPT
+        id S1727696AbgC1UlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Mar 2020 16:41:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37522 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727591AbgC1UlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Mar 2020 16:40:08 -0400
-Received: by mail-pg1-f193.google.com with SMTP id h8so6561294pgs.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Mar 2020 13:40:06 -0700 (PDT)
+        Sat, 28 Mar 2020 16:41:06 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x1so4979401plm.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Mar 2020 13:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=j/EFDB2Q5SPOwwmNnuRi1C0YdHPQQMO4+uXHwaQqTxw=;
-        b=dhUsz2w4MYgWNyj6hE0ZxIborPPRKatAyXIJTKPJASqYLflpcsqRqPljXfYVH69gv5
-         nnJW6IxDRIPKIyNzwlx+CweVYdI11EHzTdgUHboAK33tWNrpDyi4uVGp2X6inCFH/tiC
-         z+C9sh8/fYNrrLzd9ef8KuywghePkxJQCkmqM=
+        bh=3af4XQiObUNSlXzIpOluwclJ5Se37O3IqIxw7xF6Wfg=;
+        b=IV5SgG1z6PHJS4slCqg3DwNNnmqSzIJL6lLp1fwgyLEJHHaJ6fFezzh2xoXOGxJwLX
+         u1uxgsPMEvfXPUcQsdZOXFVXGdVOzEb6PYiQY7d+mwL+SpkgBSbR2QlSCupn/XvORASl
+         wudH09K3inIipQyjqcchSB9CuWVOfYplGOnIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=j/EFDB2Q5SPOwwmNnuRi1C0YdHPQQMO4+uXHwaQqTxw=;
-        b=OBwzwK0TlPJT7T3OGHKLntmVtbORgq6yUKQcQt72ZO+6Tf+AqGxVnQVr6D8fIOKQdr
-         6EAscip/xharTJLTqS4el6PB2DZMLepc5xIjpzt9iubG1J1MRXycw5j9B9FeVcE40wxz
-         8kg46W375c8NtNwdf0KEu9WemjGCwkaEDw0+0LMNUzD986JdnK7AfkFZgh9rzwy+kgpu
-         q6UBNvphOCFx0TB0LDifa1A6Jxw5YcMk5UYCvOZMRMgl+/0w+pl7zCFzLLIx8S13Cjd7
-         kUSooQOBjQNj3Q/Sk0bIDmEtcup9JnEFAAVQZb1ALCWqxYH01DVbwx+Fyu8py7olFm2f
-         gP+g==
-X-Gm-Message-State: ANhLgQ3btyGVGgFWSNNs4IqbyZodJZMkPIn/0rJkxde+RME1UyFLtX2S
-        1vOPNmQgeYHhyPRm+GO4xXzmxA==
-X-Google-Smtp-Source: ADFU+vs6+/SpRmPEoOYQ3qzPgEH3AqddrEIOW9lIgqivUrhiB+kQch1HS6U8Q/6IiCIGdFtx3L4pZQ==
-X-Received: by 2002:a63:be49:: with SMTP id g9mr5799185pgo.30.1585428005574;
-        Sat, 28 Mar 2020 13:40:05 -0700 (PDT)
+        bh=3af4XQiObUNSlXzIpOluwclJ5Se37O3IqIxw7xF6Wfg=;
+        b=Ysiw9jnLVXDhj9daFGaV3zJzRB9zsaia8WwZP6GPPJK5cvbXXRDovqFXj4WAuBhG0p
+         G8rhHSTaG4Cxoue10CCo0hz3Gl4IhwHuKDKzJijVz1FAod1CMPDbdE6PlzQ/cXgxcoTp
+         /fufzSWT28SWBrOgWlly6Wy4sb+rn3uLUrU3BkGG2HL5C0x4hLN0j9oigwOF4MGcOmwP
+         2FhVPMlDF5GnYVo1riBlkR3IrOJpNQhGUDxagYSQbpSukMAoh8bVTiuhlOHsuHZlGtLZ
+         NNhezgf2hTGMGtt7nEIScomNkuH/e0XA26PuLSqiy/oIJvykSzZo9M2Qlvol599+Hkjz
+         k7iQ==
+X-Gm-Message-State: ANhLgQ22YxyVT2mflD451uVvOWV5zR43R0Is/C5pbBuZYlAWHJ07zPOD
+        eEGek9nDPP8iaIdzcHGpEJHtTQ==
+X-Google-Smtp-Source: ADFU+vtOdbkebW3RaZlpqXPeyjJPDfKZqqHvYrxqlogFKpu84+eIxERui1kCOdYg26q2QUxE07C9+Q==
+X-Received: by 2002:a17:90a:240a:: with SMTP id h10mr6679023pje.123.1585428064347;
+        Sat, 28 Mar 2020 13:41:04 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r29sm6413311pgm.17.2020.03.28.13.40.04
+        by smtp.gmail.com with ESMTPSA id l190sm6769009pfl.212.2020.03.28.13.41.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Mar 2020 13:40:04 -0700 (PDT)
-Date:   Sat, 28 Mar 2020 13:40:03 -0700
+        Sat, 28 Mar 2020 13:41:03 -0700 (PDT)
+Date:   Sat, 28 Mar 2020 13:41:02 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Alexey Gladkov <gladkov.alexey@gmail.com>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -67,131 +67,81 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v10 4/9] proc: instantiate only pids that we can ptrace
- on 'hidepid=4' mount option
-Message-ID: <202003281336.8354DB74@keescook>
+Subject: Re: [PATCH v10 7/9] proc: move hidepid values to uapi as they are
+ user interface to mount
+Message-ID: <202003281340.B73225DCC9@keescook>
 References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
- <20200327172331.418878-5-gladkov.alexey@gmail.com>
+ <20200327172331.418878-8-gladkov.alexey@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200327172331.418878-5-gladkov.alexey@gmail.com>
+In-Reply-To: <20200327172331.418878-8-gladkov.alexey@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 06:23:26PM +0100, Alexey Gladkov wrote:
-> If "hidepid=4" mount option is set then do not instantiate pids that
-> we can not ptrace. "hidepid=4" means that procfs should only contain
-> pids that the caller can ptrace.
-> 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+On Fri, Mar 27, 2020 at 06:23:29PM +0100, Alexey Gladkov wrote:
+> Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
 > Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
 > Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 > ---
->  fs/proc/base.c          | 15 +++++++++++++++
->  fs/proc/root.c          | 13 ++++++++++---
->  include/linux/proc_fs.h |  1 +
->  3 files changed, 26 insertions(+), 3 deletions(-)
+>  include/linux/proc_fs.h      |  9 +--------
+>  include/uapi/linux/proc_fs.h | 13 +++++++++++++
+>  2 files changed, 14 insertions(+), 8 deletions(-)
+>  create mode 100644 include/uapi/linux/proc_fs.h
 > 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 43a28907baf9..1ebe9eba48ea 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -701,6 +701,14 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
->  				 struct task_struct *task,
->  				 int hide_pid_min)
->  {
-> +	/*
-> +	 * If 'hidpid' mount option is set force a ptrace check,
-> +	 * we indicate that we are using a filesystem syscall
-> +	 * by passing PTRACE_MODE_READ_FSCREDS
-> +	 */
-> +	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE)
-> +		return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
-> +
->  	if (fs_info->hide_pid < hide_pid_min)
->  		return true;
->  	if (in_group_p(fs_info->pid_gid))
-> @@ -3319,7 +3327,14 @@ struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
->  	if (!task)
->  		goto out;
->  
-> +	/* Limit procfs to only ptraceable tasks */
-> +	if (fs_info->hide_pid == HIDEPID_NOT_PTRACEABLE) {
-> +		if (!has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS))
-> +			goto out_put_task;
-> +	}
-> +
->  	result = proc_pid_instantiate(dentry, task, NULL);
-> +out_put_task:
->  	put_task_struct(task);
->  out:
->  	return result;
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index 616e8976185c..62eae22403d2 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -47,6 +47,14 @@ static const struct fs_parameter_spec proc_fs_parameters[] = {
->  	{}
->  };
->  
-> +static inline int valid_hidepid(unsigned int value)
-> +{
-> +	return (value == HIDEPID_OFF ||
-> +		value == HIDEPID_NO_ACCESS ||
-> +		value == HIDEPID_INVISIBLE ||
-> +		value == HIDEPID_NOT_PTRACEABLE);
-
-This likely easier to do with a ...MAX value? i.e.
-
-	return (value < HIDEPID_OFF || value >= HIDEPID_MAX);
-
-> +}
-> +
->  static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  {
->  	struct proc_fs_context *ctx = fc->fs_private;
-> @@ -63,10 +71,9 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  		break;
->  
->  	case Opt_hidepid:
-> +		if (!valid_hidepid(result.uint_32))
-> +			return invalf(fc, "proc: unknown value of hidepid.\n");
->  		ctx->hidepid = result.uint_32;
-> -		if (ctx->hidepid < HIDEPID_OFF ||
-> -		    ctx->hidepid > HIDEPID_INVISIBLE)
-> -			return invalfc(fc, "hidepid value must be between 0 and 2.\n");
->  		break;
->  
->  	default:
 > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-> index 7d852dbca253..21d19353fdc7 100644
+> index afd38cae2339..d259817ec913 100644
 > --- a/include/linux/proc_fs.h
 > +++ b/include/linux/proc_fs.h
-> @@ -32,6 +32,7 @@ enum {
->  	HIDEPID_OFF	  = 0,
->  	HIDEPID_NO_ACCESS = 1,
->  	HIDEPID_INVISIBLE = 2,
-> +	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
-
-This isn't a bit field -- shouldn't this be "3"?
-
-	...
-	HIDEPID_NOT_PTRACEABLE = 3,
-	HIDEPID_MAX
-
-etc?
-
+> @@ -7,6 +7,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/fs.h>
+> +#include <uapi/linux/proc_fs.h>
+>  
+>  struct proc_dir_entry;
+>  struct seq_file;
+> @@ -27,14 +28,6 @@ struct proc_ops {
+>  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
 >  };
 >  
->  struct proc_fs_info {
+> -/* definitions for hide_pid field */
+> -enum {
+> -	HIDEPID_OFF	  = 0,
+> -	HIDEPID_NO_ACCESS = 1,
+> -	HIDEPID_INVISIBLE = 2,
+> -	HIDEPID_NOT_PTRACEABLE = 4, /* Limit pids to only ptraceable pids */
+> -};
+> -
+>  /* definitions for proc mount option pidonly */
+>  enum {
+>  	PROC_PIDONLY_OFF = 0,
+> diff --git a/include/uapi/linux/proc_fs.h b/include/uapi/linux/proc_fs.h
+> new file mode 100644
+> index 000000000000..dc6d717aa6ec
+> --- /dev/null
+> +++ b/include/uapi/linux/proc_fs.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI_PROC_FS_H
+> +#define _UAPI_PROC_FS_H
+> +
+> +/* definitions for hide_pid field */
+> +enum {
+> +	HIDEPID_OFF            = 0,
+> +	HIDEPID_NO_ACCESS      = 1,
+> +	HIDEPID_INVISIBLE      = 2,
+> +	HIDEPID_NOT_PTRACEABLE = 4,
+> +};
+> +
+> +#endif
 > -- 
 > 2.25.2
 > 
+
+Should the numeric values still be UAPI if there is string parsing now?
 
 -- 
 Kees Cook
