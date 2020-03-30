@@ -2,139 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A85E1984FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 21:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD79198523
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 22:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbgC3Tzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 15:55:49 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45666 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbgC3Tzt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 15:55:49 -0400
-Received: by mail-ed1-f68.google.com with SMTP id u59so22251932edc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 12:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dh9JcSi6kj0UWIbirpsquHk1PO2ZTJ6f6wAxTa4W5Zs=;
-        b=DZk2EcadSRy+jmjLIyyvOwCfhNdDlY3wMU3gTOTK1MOXJ9bZhFpym+h6ycl+idnIWn
-         SsmZQJKtl9iTffn/DdsGsPysGCoyWM9UFc0uMIYHqOT2z5sBnbcDqL176yFWOcNWpk/v
-         SL53a/gXGohE1DQca/J8rKY+wKFfgrlpBcJTWgpRRmqX4D4/lPWy9aotUaYsxCYmYiYK
-         OtSNHNlZDTpDF0dFONn3fKYVj/3RoQP8vPxJqI1/s4VGJN+h5iwuRg6I0xGMy9Xnyver
-         +2Vt0W54SbaK/bs9jzOVTjHv/eCoKKiYgbHkxhUe93AIoeTE2uwNruCrN5QeGM0qgjOo
-         zdAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dh9JcSi6kj0UWIbirpsquHk1PO2ZTJ6f6wAxTa4W5Zs=;
-        b=XHOWLjMsronOhGzPx9hyAGdJ0zhce2RF0abdR9IDoOaTJHd1jbkN6LSlI06lTEALjF
-         iOnUsqerMoJByoXPpfUY8J2fjJirwiX/Kd9MgPNgzg2FTbwovA3ZouK42FegUx1DAQNP
-         Eua4uJFbML3P9nh9+F70ffMumBrFxt5LRQlwSblKRY8f3BBB8w9+9AYzXeic2DicZZEe
-         XPL11PuCXNVX4s2EgtihiKb1C+L/H16l280KhTHW63kHz3X/WFP4WxDeQ9vik0OJBRRu
-         EyB4Z9WStmfgYXVa3Fwbc4RPbxKSMAfjAWXt0iEH1R5s7247+07gIOWxkwL2B/1vGT26
-         ixPA==
-X-Gm-Message-State: ANhLgQ1O3fvgYhzqYxCI+pheoBdOFqOBBJb8+35srfQVJ9R32iYAWr2B
-        f7OyLfh5dTfXEr6RYPb+I8I2Kd98YJz9SeOoD2op
-X-Google-Smtp-Source: ADFU+vul3dd78FpyQ/P1xT0CAzUKDA49PHsMIvhi1CMzemU48YH7Min2sbynkoDLmBburfXlTyDJdiTLpwO7v8ADPZw=
-X-Received: by 2002:a50:f152:: with SMTP id z18mr12867397edl.31.1585598145722;
- Mon, 30 Mar 2020 12:55:45 -0700 (PDT)
+        id S1728096AbgC3UMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 16:12:16 -0400
+Received: from mail-oln040092066093.outbound.protection.outlook.com ([40.92.66.93]:20814
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727936AbgC3UMQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Mar 2020 16:12:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oOeH6q9Pw4UfUolU3FG8E+DTYTwCs6cks2euWeVeEjImp043+97vWCRrz3Vu7+GwV+dMiTjn+6+ZQ+mYxBEtC/rFuALxzcqkdYq799uKO5yuRyf2w/fr9wJrFeNRbkzyCK8qD+V4uXGhCDy12THm/f5FW4Xwx1XrPbK3MkKXbzxXfmNQ36mmw0s3JRuEpCjhOM/q3SD8vrIkwrZJyZ7o71LjDZj5H+i0mRUsPcT+EAEIc6KG3+fgHdWrQCjk75E2YN949TgrZNx9b6bB5xPQ2W1cdyAQrovIoWMgkvx0UsM4IjYaKQkrXWMBFLYUXDKastWAan1EcttdceV1OQ935Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QY20wkbTECKknCtHuEVYYjfKaKwEgR2syI5IO9o9Wis=;
+ b=T1dJk9wRgXRrQzWyjtTbov6TY9wZI6/bIPHLtyHh5tc1M97XYgqLtzYZC5zY1xr8sWlLYjhvzf8LhDpYZO76jHSs2xuxrQ2LNPCMtJ537doy1wPoUqrHCHXryH+YisGLxHWE8rOexMpHPGNVjG48rcPTyJnlq8VSIFrV8DLJA9lg0nv26f/QGVP4NwkEBrhz3YfUdhNr+49lLu0zKX2AfEmjEDoHbfbGImcI+P5NHErPRjl+2ZpxAWbojRrdZ5oabeOoaaBSIOWE4S9iaD5XLPkgfMqnj9ODFeZH/uXbAArmffaTjnJEWsoBcYtIh41NYinNkwBZDHoC8INkLoOOXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hotmail.de; dmarc=pass action=none header.from=hotmail.de;
+ dkim=pass header.d=hotmail.de; arc=none
+Received: from HE1EUR01FT041.eop-EUR01.prod.protection.outlook.com
+ (2a01:111:e400:7e18::42) by
+ HE1EUR01HT210.eop-EUR01.prod.protection.outlook.com (2a01:111:e400:7e18::404)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2856.17; Mon, 30 Mar
+ 2020 20:12:10 +0000
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com (10.152.0.59) by
+ HE1EUR01FT041.mail.protection.outlook.com (10.152.1.3) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2856.17 via Frontend Transport; Mon, 30 Mar 2020 20:12:10 +0000
+X-IncomingTopHeaderMarker: OriginalChecksum:5C10619DE06FB18EBA2A572034494D5D28086595289E9E30D5A0689264668C15;UpperCasedChecksum:75776C321DD5D218A6B3AD95947316D47F2B43C8009A66B758981C9B6703D265;SizeAsReceived:9584;Count:50
+Received: from AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::d57:5853:a396:969d]) by AM6PR03MB5170.eurprd03.prod.outlook.com
+ ([fe80::d57:5853:a396:969d%7]) with mapi id 15.20.2856.019; Mon, 30 Mar 2020
+ 20:12:10 +0000
+Subject: Re: [PATCH v6 00/16] Infrastructure to allow fixing exec deadlocks
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rpg8o7v.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170938306F22C3CF61CC573E4CD0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003282041.A2639091@keescook>
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+Message-ID: <AM6PR03MB5170E0E722ED0B05B149C135E4CB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+Date:   Mon, 30 Mar 2020 22:12:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+In-Reply-To: <202003282041.A2639091@keescook>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM3PR07CA0128.eurprd07.prod.outlook.com
+ (2603:10a6:207:8::14) To AM6PR03MB5170.eurprd03.prod.outlook.com
+ (2603:10a6:20b:ca::23)
+X-Microsoft-Original-Message-ID: <72b14e08-e50b-3075-1047-0a6510d57c50@hotmail.de>
 MIME-Version: 1.0
-References: <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca>
- <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
- <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca> <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
- <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca> <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
- <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca> <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
- <20200330162156.mzh2tsnovngudlx2@madcap2.tricolour.ca> <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
- <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca>
-In-Reply-To: <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 30 Mar 2020 15:55:36 -0400
-Message-ID: <CAHC9VhR_bKSHDn2WAUgkquu+COwZUanc0RV3GRjMDvpoJ5krjQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [192.168.1.101] (92.77.140.102) by AM3PR07CA0128.eurprd07.prod.outlook.com (2603:10a6:207:8::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2878.12 via Frontend Transport; Mon, 30 Mar 2020 20:12:05 +0000
+X-Microsoft-Original-Message-ID: <72b14e08-e50b-3075-1047-0a6510d57c50@hotmail.de>
+X-TMN:  [+IieYLSn8lVXV0cd97FHsOILQoLiJBTR]
+X-MS-PublicTrafficType: Email
+X-IncomingHeaderCount: 50
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-Correlation-Id: 17d40dfb-0e09-4ce3-f2b2-08d7d4e6a0a3
+X-MS-TrafficTypeDiagnostic: HE1EUR01HT210:
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LxuY+xxE9tv/Zd9FzAmKlqdyk3piy55dJunAxgRuNp7kqP+zqWXi2D5dkUwabu58STdmilbi81urjc4zGlTBZB9SvIY81DKkwH0B3W3Mvd9t6uvutOZKdvYD5nEmhGxM/T9BTDbpEkktPbTyeRWvY7nHHu6roxfDOzyN3+lGtR/KJDxB0MnwP/BybIpKdEaP
+X-MS-Exchange-AntiSpam-MessageData: h/kaRwQy6v3PPoT/8zXLpPysB4kIPtakBqEuZDwlGZRFHCg/LdOfhCaP293jwFcom8kK5GWlfLhVHtHsxl65sLqKxiwkjPb1mVmUcBF9s/AO+JUt84a5c5mu43EbUry3emf2igtL112TCAZ/N+EJDA==
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17d40dfb-0e09-4ce3-f2b2-08d7d4e6a0a3
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2020 20:12:10.5846
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-FromEntityHeader: Internet
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT210
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 1:49 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-30 13:34, Paul Moore wrote:
-> > On Mon, Mar 30, 2020 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-03-30 10:26, Paul Moore wrote:
-> > > > On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2020-03-28 23:11, Paul Moore wrote:
-> > > > > > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > > On 2020-03-23 20:16, Paul Moore wrote:
-> > > > > > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > > > > On 2020-03-18 18:06, Paul Moore wrote:
+On 3/29/20 5:44 AM, Kees Cook wrote:
+> On Sat, Mar 28, 2020 at 11:32:35PM +0100, Bernd Edlinger wrote:
+>> Oh, do I understand you right, that I can add a From: in the
+>> *body* of the mail, and then the From: in the MIME header part
+>> which I cannot change is ignored, so I can make you the author?
+> 
+> Correct. (If you use "git send-email" it'll do this automatically.)
+> 
+> e.g., trimmed from my workflow:
+> 
+> git format-patch -n --to "$to" --cover-letter -o outgoing/ \
+> 	--subject-prefix "PATCH v$version" "$SHA"
+> edit outgoing/0000-*
+> git send-email --transfer-encoding=8bit --8bit-encoding=UTF-8 \
+> 	--from="$ME" --to="$to" --cc="$ME" --cc="...more..." outgoing/*
+> 
+> 
 
-...
+Okay, thanks, I see that is very helpful information for me, and in
+this case I had also fixed a small bug in one of Eric's patches, which
+was initially overlooked (aquiring mutexes in wrong order,
+releasing an unlocked mutex in some error paths).
+I am completely unexperienced, and something that complex was not
+expected to happen :-) so this is just to make sure I can handle it
+correctly if something like this happens again.
 
-> > > Well, every time a record gets generated, *any* record gets generated,
-> > > we'll need to check for which audit daemons this record is in scope and
-> > > generate a different one for each depending on the content and whether
-> > > or not the content is influenced by the scope.
-> >
-> > That's the problem right there - we don't want to have to generate a
-> > unique record for *each* auditd on *every* record.  That is a recipe
-> > for disaster.
->
-> I don't see how we can get around this.
->
-> We will already have that problem for PIDs in different PID namespaces.
+In the case of PATCH v6 05/16 I removed the Reviewd-by: Bernd Edlinger
+since it is now somehow two authors and reviewing own code is obviously
+not ok, instead I added a Signed-off-by: Bernd Edlinger (and posted the
+whole series on Eric's behalf (after asking Eric's permissing per off-list
+e-mail, which probably ended in his spam folder)
 
-As I said below, let's not worry about this for all of the
-known/current audit records, lets just think about how we solve this
-for the ACID related information.
-
-One of the bigger problems with translating namespace info (e.g. PIDs)
-across ACIDs is that an ACID - by definition - has no understanding of
-namespaces (both the concept as well as any given instance).
-
-> We already need to use a different serial number in each auditd/queue,
-> or else we serialize *all* audit events on the machine and either leak
-> information to the nested daemons that there are other events happenning
-> on the machine, or confuse the host daemon because it now thinks that we
-> are losing events due to serial numbers missing because some nested
-> daemon issued an event that was not relevant to the host daemon,
-> consuming a globally serial audit message sequence number.
-
-This isn't really relevant to the ACID lists, but sure.
-
-> > Solving this for all of the known audit records is not something we
-> > need to worry about in depth at the moment (although giving it some
-> > casual thought is not a bad thing), but solving this for the audit
-> > container ID information *is* something we need to worry about right
-> > now.
->
-> If you think that a different nested contid value string per daemon is
-> not acceptable, then we are back to issuing a record that has only *one*
-> contid listed without any nesting information.  This brings us back to
-> the original problem of keeping *all* audit log history since the boot
-> of the machine to be able to track the nesting of any particular contid.
-
-I'm not ruling anything out, except for the "let's just completely
-regenerate every record for each auditd instance".
-
-> What am I missing?  What do you suggest?
-
-I'm missing a solution in this thread, since you are the person
-driving this effort I'm asking you to get creative and present us with
-some solutions. :)
+Is this having two Signed-off-by: for mutliple authors the
+correct way to handle a shared authorship?
 
 
--- 
-paul moore
-www.paul-moore.com
+Thanks
+Bernd.
