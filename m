@@ -2,77 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CD3197972
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 12:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA0021979B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 12:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbgC3KmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 06:42:15 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44057 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729012AbgC3KmP (ORCPT
+        id S1729544AbgC3Kwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 06:52:30 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39857 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729438AbgC3Kw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 06:42:15 -0400
-Received: by mail-il1-f194.google.com with SMTP id j69so15231711ila.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 03:42:14 -0700 (PDT)
+        Mon, 30 Mar 2020 06:52:26 -0400
+Received: by mail-vk1-f193.google.com with SMTP id r129so4527319vkr.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 03:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kJuuvPfcofORz5IwiTa+dZhDbd/mN53TYOe69bGhZJ8=;
-        b=tjvPVwPEqlQQRR6RU7mOI79fROX9QPmSrOL5C5CZSGkJ+uHB67QPUZjnLHSEj2Tka/
-         89V1gAL5pXTlUvgaSEYtrY6PzrRUYLDlWOja61Uc+i+OurQ1Fsp6Sy9WyCmAj2OS8uoi
-         pv1ZL8v/YKJ/cciy3aDnhIO8MEK22QrhTHv+wfZXgc68zqPy425WWpD/UymSkxp6XpsQ
-         M+yXnm4kNo5fZlzDOCMxyyP/4B0JzLS6Oe50VcGE6zc1HsnwNJulUKCdtYvqlvYAzW2P
-         BLcru3vwCUOl8kn/4Tq1gVOiZgTmRpxCmN5i1lfmOaqYkWWTsrHDJwMqoJlpd3zlY7SI
-         D8TQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=82B0OONv9gwbZlPp43NzThDz2fRV+KRFwafOQ16joDw=;
+        b=W/pqz5d7jRz2XhuR0NPXi/HrPrA1EYS2PHHQ1FpsLUolfOVyK7H009Wnc0lrOJx6Hi
+         8vUUF/pk3PeclHcAYXDWVsOIJGvMQpXmWA9vT3q5H+Fq3bPr7slBRNCq5ggPLqTXWSUN
+         WeDqQdBB3Fj9UYma7K77X5d+kEKTp6fOD5VReaWt0mRVZHR6HEobypypOg452dQIxRuj
+         xU65Ut9jAR+y63swe5g9KvSFt96uljniqy4kiAqd2Y/ynJzIziUhlZ91pwoD0sDfF2kV
+         2p+fbv2x6QZq8+EhnWOm9VRs7gRyumQNwl/HLY+Ct1f3AZKCEqIBhRL3NUkC6PiM1Er/
+         am5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kJuuvPfcofORz5IwiTa+dZhDbd/mN53TYOe69bGhZJ8=;
-        b=W6odgokhGO2yIWJion3+1Wd9qdRXCCOqaHgoyYWcqUXluf2fKrLX4dLMzgqVkIbMwj
-         r/adezjQYEnnMJLq/FI0bTFZTfE/u+jzkbA5qwQNmb0P4JyXH1N4qV6CvcQ0vOZQBsre
-         QBXI4Kt8Pb+KrbQ89vNar1qOvv3cTBvWSUZkM5uygELNawBLkfsWQm5HAks8m+vQ0J3S
-         2ccdfQ4K1Xt5D5OuJhQkr0dMV/j6zsBZ+5uXW9QN9qpknzF5kB7o+5w9BCYDUseszubK
-         5RFytDwquq0fhx8L6SLhig04k6chJC8lSvs38SBk2G7ofyWWPpS17DnKgK3AzqPgzybZ
-         cuYQ==
-X-Gm-Message-State: ANhLgQ0uvby0JMG96+lelxA24wCrI5FvhQX/aGKYKhIT+xslxzy/7d5s
-        f1v/Zz9B0+fJu/oQqAMKU9N62q5LZpKGk2c7sjdOqg==
-X-Google-Smtp-Source: ADFU+vuuXHiDkSU6yhUWgNTZaL4hYcZWjoHNuABTDylnuAZ1MFW4bkkKn9RA/+RlskrMSQhwhcABUU3GA5W0iq75DnI=
-X-Received: by 2002:a05:6e02:68a:: with SMTP id o10mr10879050ils.72.1585564934270;
- Mon, 30 Mar 2020 03:42:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=82B0OONv9gwbZlPp43NzThDz2fRV+KRFwafOQ16joDw=;
+        b=lfq4AZJKolBvVJ/aMVv83Y1LfeFCkRpCeNhoShCAxEcauY6FGvqX/C/wEAsk0+GaGy
+         QKH+HhKHsmZI+T/bvPz3HntA6zYIirPSXnvBFHcj6NgFJBes303Shihi0vfa1dkl6W6T
+         uKInfBSW8+bxuNo6EjdeB5z6cTYUeWtfFbfpg97weBb/YlsUM5DCKfNEHWagxXivBADz
+         MqmhNR5LDLgobIR7wJznyIIh52uYbt7nB+J0OsTwKAYLQld0ItBWhTSW33wnw6/kjlTl
+         u3hxnSmUneC3NkWJ2Efo4XxDrxSr9qAVOBOBIe/pJm/PwKer0+sTwWVtORgWUME5vJbG
+         /ipw==
+X-Gm-Message-State: AGi0PuaelZbgqeX3MFvvHgZfT04bCEmvcZOBPB5epTn1iYGWgU74bqIJ
+        wy2H7EjB3b0wRe8J8fDwQWdJ0dQ027uqq/Xkfro=
+X-Google-Smtp-Source: APiQypKDRP4A2GOOhX29xPbS6X6J2bOe+cEnGPGhkRlrf/LV9QYV7GSVV1iViigrqjvUPzJfpKV+0f/QlvWFf/q+m5k=
+X-Received: by 2002:a1f:2c4b:: with SMTP id s72mr7433998vks.93.1585565545391;
+ Mon, 30 Mar 2020 03:52:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200319151022.31456-1-amir73il@gmail.com> <20200319151022.31456-11-amir73il@gmail.com>
- <20200324175029.GD28951@quack2.suse.cz> <CAOQ4uxhh8DJC+5xPjGaph8yKXa_hSxi7ua0s3wUDaV7MPcaStw@mail.gmail.com>
- <20200325092707.GF28951@quack2.suse.cz>
-In-Reply-To: <20200325092707.GF28951@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 30 Mar 2020 13:42:03 +0300
-Message-ID: <CAOQ4uxi8idvhgs0Uu96t=h5B=K71-79mnOGEGuaifitvvpo_2g@mail.gmail.com>
-Subject: Re: [PATCH v3 10/14] fanotify: divorce fanotify_path_event and fanotify_fid_event
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Received: by 2002:a67:c005:0:0:0:0:0 with HTTP; Mon, 30 Mar 2020 03:52:24
+ -0700 (PDT)
+Reply-To: maryalice00.12@postribe.com
+From:   Maryalice Williams <maryalicewilliams730@gmail.com>
+Date:   Mon, 30 Mar 2020 08:52:24 -0200
+Message-ID: <CAKwdjspKQpXNN-muj712Ym+s=yC75k8CUdb6ULnvzKHxbYXvwA@mail.gmail.com>
+Subject: Reply For More Details.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->
-> Ah, right. Thanks for clarification. Actually, I think now that we have
-> fanotify event 'type' notion, I'd like to make overflow event a separate
-> type which will likely simplify a bunch of code (e.g. we get rid of a
-> strange corner case of 'path' being included in the event but being
-> actually invalid). Not sure whether I'll do it for this merge window,
-> probably not since we're in a bit of a hurry.
->
+-- 
+My dear,
 
-Jan,
+I am Mrs Maryalice Williams, I want to send you donation of two
+million seven hundred thousand Dollars ($2.7M) for volunteer projects
+in your country due to my ill health that could not permit me. Kindly
+reply for more details, and also send me the following details, as per
+below, your full Name ..........,  Address...........,
+Age...............,  Occupation ...............
 
-I went a head and did those 2 cleanups you suggested to
-fanotify_alloc_event(). pushed result to fsnotify-fixes branch.
-Probably no rush to get those into this merge window.
-For your consideration.
-
-Thanks,
-Amir.
+Remain blessed,
+Mrs. Maryalice Williams.
