@@ -2,78 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B45C81970F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 00:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B6941973BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 07:14:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbgC2W5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Mar 2020 18:57:11 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:55786 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728619AbgC2W5L (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Mar 2020 18:57:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1585522631; x=1617058631;
-  h=date:from:to:cc:message-id:references:mime-version:
-   in-reply-to:subject;
-  bh=eO8/lmtA1ESg7YIFIcXZ+YqLFipul2JN4z7U2vqwfjc=;
-  b=sHt246iKPIbw7nH/4oKwT8nAvR5QtUYYtvdXlPQwiL3kjQdpqbflIfQA
-   msGvlfW1MhQPOceOywh1PZmqdY2EKAA/SIyuFoaJDZVJIFlw6mR/MROaH
-   ZkcC1847IwGlTCPGuDh69BmYg0c140XacTIllnC7cXJiGVoGr5Z6zBp7v
-   k=;
-IronPort-SDR: C+IU9xBelEhvQFcu1GQuCw616HTMTlFKmv2EafDWJ/a6TjtFVj0e80uwNe/QYPiTR+l8381rnb
- Y6r+sU/dl9xg==
-X-IronPort-AV: E=Sophos;i="5.72,322,1580774400"; 
-   d="scan'208";a="25727200"
-Subject: Re: vfs_listxattr and the NFS server: namespaces
-Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.47.23.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 29 Mar 2020 22:57:09 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (Postfix) with ESMTPS id A1EAEA20D1;
-        Sun, 29 Mar 2020 22:57:07 +0000 (UTC)
-Received: from EX13D24UWA002.ant.amazon.com (10.43.160.200) by
- EX13MTAUWA001.ant.amazon.com (10.43.160.118) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Sun, 29 Mar 2020 22:57:06 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D24UWA002.ant.amazon.com (10.43.160.200) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Sun, 29 Mar 2020 22:57:07 +0000
-Received: from dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
- (172.23.141.97) by mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP
- Server id 15.0.1367.3 via Frontend Transport; Sun, 29 Mar 2020 22:57:06 +0000
-Received: by dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com (Postfix, from userid 6262777)
-        id 1043DC13B5; Sun, 29 Mar 2020 22:57:07 +0000 (UTC)
-Date:   Sun, 29 Mar 2020 22:57:07 +0000
-From:   Frank van der Linden <fllinden@amazon.com>
-To:     Chuck Lever <chuck.lever@oracle.com>
-CC:     Bruce Fields <bfields@fieldses.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Message-ID: <20200329225706.GA20307@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
-References: <20200327232717.15331-1-fllinden@amazon.com>
- <20200327232717.15331-11-fllinden@amazon.com>
- <20200329202546.GA31026@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <EBEE9C01-03A2-4269-A17F-5E391844AC3F@oracle.com>
+        id S1728433AbgC3FOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 01:14:42 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:60375 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727706AbgC3FOm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Mar 2020 01:14:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48rLHF3cWmz9sPk;
+        Mon, 30 Mar 2020 16:14:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1585545278;
+        bh=4EEf/PratAIAfdAIaqM7alme3AOiAhBmkDtUjgsO4co=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CP1Jse+MjIlJ6kW2s16fFcqC9sGpVidN9OEUbqfSM04WWsQ778wBmbXaogWxxubh0
+         UllTMMGMi+68jyx7lRR/yg3cEHA/28YA1+cCXz6qoRMBlg6kqneL4rmdNOWCGwQ56o
+         7UVP8kJ/L+Pm5mUsAm2ldMtXZmjmW6lobBKWWUFBn5KKDozZ6kVWCgVIA3xM7RfHei
+         skV4FVyhyt8kaq5eKXO3GoLYRkxbph8ar0lIKsi65qbb5tZmSKQ0UwBENRJqmbz2p8
+         VaI9dlWnN3OSNsB3SZTOCenqfSC2RctljWUe3L0UyCndRtXuppKMQx9uN/COXA3Fty
+         grCwLo8a1lKzA==
+Date:   Mon, 30 Mar 2020 16:14:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>
+Subject: Re: mmotm 2020-03-28-22-17 uploaded (staging/octeon/)
+Message-ID: <20200330161431.60a37031@canb.auug.org.au>
+In-Reply-To: <873495e9-d254-cb66-7a83-2517505a2b9b@infradead.org>
+References: <20200329051805.kfaUSHrn4%akpm@linux-foundation.org>
+        <873495e9-d254-cb66-7a83-2517505a2b9b@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <EBEE9C01-03A2-4269-A17F-5E391844AC3F@oracle.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: multipart/signed; boundary="Sig_/i7ee/j5=LxPeGDwdPn/49OA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 29, 2020 at 05:54:38PM -0400, Chuck Lever wrote:
-> > Alternatively, we could decide that the temporarily allocation of 64k
-> > is no big deal.
-> 
-> An order-4 allocation is not something that can be relied upon. I would
-> rather find a way to avoid the need for it if at all possible.
+--Sig_/i7ee/j5=LxPeGDwdPn/49OA
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-It's not strictly an order-4 allocation anymore, as I changed
-svcxdr_tmpalloc to use kvmalloc.
+Hi Randy,
 
-But sure, it's best to avoid it, it's a waste.
+On Sun, 29 Mar 2020 09:12:31 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> On 3/28/20 10:18 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-03-28-22-17 has been uploaded to
+> >=20
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > mmotm-readme.txt says
+> >=20
+> > README for mm-of-the-moment:
+> >=20
+> > http://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >=20
+> > You will need quilt to apply these patches to the latest Linus release =
+(5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
+ in
+> > http://ozlabs.org/~akpm/mmotm/series =20
+>=20
+>=20
+> on i386 or x86_64:
+>=20
+> ../drivers/staging/octeon/ethernet-tx.c: In function =E2=80=98cvm_oct_xmi=
+t=E2=80=99:
+> ../drivers/staging/octeon/ethernet-tx.c:358:2: error: implicit declaratio=
+n of function =E2=80=98skb_reset_tc=E2=80=99; did you mean =E2=80=98skb_res=
+erve=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>   skb_reset_tc(skb);
+>   ^~~~~~~~~~~~
+>=20
+> It looks like this inline function has been removed from
+> <net/sch_generic.h>.
+>=20
+>=20
+> Looks like it should be this change:
+>=20
+> -	skb_reset_tc(skb);
+> +	skb_reset_redirect(skb);
 
-- Frank
+I applied the above as a merge resolution patch for the staging tree
+merge today, as the inline removal was a late change to Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/i7ee/j5=LxPeGDwdPn/49OA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6BgDcACgkQAVBC80lX
+0GyDuwgAhoSNIFnw3fBCuchmr1Y0lz9RtRLsQHPXWRBjpJbAmISNeVn4z3PgahRw
+vdfhy0CWnykQStM1VTseZYIaU1g4+rWSSr++AMZMgOuXPk1W8a/TJtf7JsKL4694
+UmigTCUgalnT/VpfHbLDf4M0PNC268KIJ6qVwCmxJ8/NIZmpVmzZj36C4icWJXC6
+JrDh69whM4yqAoXBbNWh2u2vNNk5rUVk0OP6DiGpv0UTtzOH/lGr8lhTXyOATLZz
++cLG7vrdNZvqgBO3NLAVDj5fBxnJXUtoeuhnQNWL9ksprctNHcGR+/7HPK3QjJyr
+KjR5AQiB+bZb51oYChE+4t9q0qPw7Q==
+=aiv9
+-----END PGP SIGNATURE-----
+
+--Sig_/i7ee/j5=LxPeGDwdPn/49OA--
