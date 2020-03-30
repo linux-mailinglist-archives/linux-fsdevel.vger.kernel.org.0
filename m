@@ -2,85 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C163197CC0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 15:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FB9A197D34
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 15:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730324AbgC3NU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 09:20:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48126 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730304AbgC3NU2 (ORCPT
+        id S1728207AbgC3Nmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 09:42:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36968 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgC3Nmr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 09:20:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MJCgOUEW8BzVvh8w7blL/dFDhkt5EMD9LfcMnUWKMzU=; b=qK3lRE+KkWFZl8d23RcdBm6dPk
-        N9/utmsRdB0KHKhtqHKigBTfrq2eYhoQgE6+S4QYXcTiGb3QJkHaJbioVMyPfKLUCCa+hlbASrkbH
-        x9eDboHIyCbKPJq/njxYG5XStVBvPPlUMjLkHKXLrsGhdA8xOAoYs7DcoQ5dkGW6xbbtUJ6BPwjSw
-        Px3WKjlYdSQ/+otL63yaS00J9KNcmU2oglHRZhjNVHUZrl10TarvH68UBSLlTWtKUCUPrQH8MTIfO
-        auK+z1ot+e5setANEGV8A+iJH74+T/osThh0OBdxpUIqKiKif4L5zWgjzBtGZbd/dR+cO9kPi0EOS
-        IRNaHGnw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jIuL6-0007Bd-5i; Mon, 30 Mar 2020 13:20:28 +0000
-Date:   Mon, 30 Mar 2020 06:20:28 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/9] XArray: simplify the calculation of shift
-Message-ID: <20200330132028.GA22483@bombadil.infradead.org>
+        Mon, 30 Mar 2020 09:42:47 -0400
+Received: by mail-wm1-f65.google.com with SMTP id j19so3155678wmi.2;
+        Mon, 30 Mar 2020 06:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+4dtqpZ9E/y+Y2Xp7JjUzAS5gfte9TfEmTWLiGOPgKw=;
+        b=E1+bh/LWhrzjVhduFXMI2gFY9kcTEVMbO91wXz4zHbXOHLoagnHrn4VIRUbfTf5LAY
+         y5Ptr96MjvyaYpyw/++AwonBrKS5/uy53eg0RcuWiHaY9+Gsf/8uueM39YlOGcMDdNcg
+         N4rtWeuMhYDgoNfp2+HtHoyf+891JZZO+ovabQVhoF1IkTyYAz5tjK8V9CokFu9IFoEG
+         juwhY6pIt5fclKGaLlF9mZz+FJDIJo6PPF7F6dtuFq07PbsPcTleAl9MX/QuGh9nuHi4
+         3nRDOgvm6wN6BlED/wKS0l7I50QFIEx4P0PTDg/oVThEwBPxlqU2UorjtyCvW95Twg9U
+         vt7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+4dtqpZ9E/y+Y2Xp7JjUzAS5gfte9TfEmTWLiGOPgKw=;
+        b=ukbG+q0qxatRIBHoexKeD1dDELaJFNHlr15HYj4KndZaHRqRs42e75jBR6Zuwbkywb
+         BMsyhtBVkp5yHdWMmyIF5ir/4+jES+lrKdTz0Kp1gp9EXePShLKJPYSwmSnQsrW9gzJr
+         /IbJvQbCM7yBuverxxGQpMTbaIfhUzeK4XU4ELnYHI29hHzbEwSwv/OSttLOsisD9sYq
+         Wq8LqfgypBiQembm/6fkwt6iY8NtjPRrAfnrWG9iz6gzlX0Dqi379rAUFbeYnqGlb9Eq
+         u2tc6RE2sBwSHRXfI+M5Y6LPTr7oMubDv7v9klrJ+Ss9awMmSrqFQWZlOQXA6MobJR/K
+         Dk2w==
+X-Gm-Message-State: ANhLgQ2GCXKto+FTZ1HQpimqBI0Ad3UWe7S1PzRcB990c8c5RvvwFP6n
+        2JBNsK56xdof3CVglDn1ibM=
+X-Google-Smtp-Source: ADFU+vtPO9ITAfnWp23rut5FwstAuP7n2/LQ+EyO1woR1b4thPW8IRUNOiIPVaMsuSz41RpqQbv2DA==
+X-Received: by 2002:a1c:4e0d:: with SMTP id g13mr7695203wmh.156.1585575764591;
+        Mon, 30 Mar 2020 06:42:44 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a186sm20920344wmh.33.2020.03.30.06.42.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Mar 2020 06:42:43 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 13:42:42 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] XArray: fix comment on Zero/Retry entry
+Message-ID: <20200330134242.prxgqezb2gsadinp@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
 References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-3-richard.weiyang@gmail.com>
+ <20200330123643.17120-2-richard.weiyang@gmail.com>
+ <20200330124613.GX22483@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330123643.17120-3-richard.weiyang@gmail.com>
+In-Reply-To: <20200330124613.GX22483@bombadil.infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 12:36:36PM +0000, Wei Yang wrote:
-> When head is NULL, shift is calculated from max. Currently we use a loop
-> to detect how many XA_CHUNK_SHIFT is need to cover max.
-> 
-> To achieve this, we can get number of bits max expands and round it up
-> to XA_CHUNK_SHIFT.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> ---
->  lib/xarray.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 1d9fab7db8da..6454cf3f5b4c 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -560,11 +560,7 @@ static int xas_expand(struct xa_state *xas, void *head)
->  	unsigned long max = xas_max(xas);
->  
->  	if (!head) {
-> -		if (max == 0)
-> -			return 0;
-> -		while ((max >> shift) >= XA_CHUNK_SIZE)
-> -			shift += XA_CHUNK_SHIFT;
-> -		return shift + XA_CHUNK_SHIFT;
-> +		return roundup(fls_long(max), XA_CHUNK_SHIFT);
+On Mon, Mar 30, 2020 at 05:46:13AM -0700, Matthew Wilcox wrote:
+>On Mon, Mar 30, 2020 at 12:36:35PM +0000, Wei Yang wrote:
+>> Correct the comment according to definition.
+>
+>You should work off linux-next; it's already fixed in commit
+>24a448b165253b6f2ab1e0bcdba9a733007681d6
 
-This doesn't give the same number.  Did you test this?
+Oh, thanks
 
-Consider max = 64.  The current code does:
-
-shift = 0;
-64 >> 0 >= 64 (true)
-shift += 6;
-64 >> 6 < 64
-return 12
-
-Your replacement does:
-
-fls_long(64) = 6
-roundup(6, 6) is 6.
-
-Please be more careful.
+-- 
+Wei Yang
+Help you, Help me
