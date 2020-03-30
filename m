@@ -2,103 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713BB19846E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 21:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A85E1984FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 21:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgC3T3a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 15:29:30 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34735 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbgC3T33 (ORCPT
+        id S1728972AbgC3Tzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 15:55:49 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45666 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbgC3Tzt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 15:29:29 -0400
-Received: by mail-io1-f65.google.com with SMTP id h131so19100702iof.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 12:29:29 -0700 (PDT)
+        Mon, 30 Mar 2020 15:55:49 -0400
+Received: by mail-ed1-f68.google.com with SMTP id u59so22251932edc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 12:55:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ypuhrRM8vdQuOVvAVGS42Y7Ui55RAVx891wwhREVaoo=;
-        b=R/4VZvJH1LKxdxmcIF9afm1MXMxPjyKTerAXVhHWe77aTuKiOUQigGxi2/fDmpDkJ/
-         Zz+2dzt0qL+6SyxxUiNBO72/gNd8I3ErfxlLd/Lmo8bNfjTCo2wlNIrYQWUt4ZgoiKmk
-         WzW32bZ2ubD+d7tXLfSNTcbvmT83Zn2G2F9kCumrTDddcYNbUqTfk0fIRUEVkm8eEcIo
-         93t5rInOSheMseT0/HHM30PeBsnGQAs/DLJy5gBPMD9SwKde77cEIqcmLW6tIFawoO8I
-         J4C8qNlHdBMOPJVnjBxzDgDsLpDLzAMN762T2fHmQxwfCz2OPDXlamcCftOd8/5FHQEa
-         cjPw==
+        bh=dh9JcSi6kj0UWIbirpsquHk1PO2ZTJ6f6wAxTa4W5Zs=;
+        b=DZk2EcadSRy+jmjLIyyvOwCfhNdDlY3wMU3gTOTK1MOXJ9bZhFpym+h6ycl+idnIWn
+         SsmZQJKtl9iTffn/DdsGsPysGCoyWM9UFc0uMIYHqOT2z5sBnbcDqL176yFWOcNWpk/v
+         SL53a/gXGohE1DQca/J8rKY+wKFfgrlpBcJTWgpRRmqX4D4/lPWy9aotUaYsxCYmYiYK
+         OtSNHNlZDTpDF0dFONn3fKYVj/3RoQP8vPxJqI1/s4VGJN+h5iwuRg6I0xGMy9Xnyver
+         +2Vt0W54SbaK/bs9jzOVTjHv/eCoKKiYgbHkxhUe93AIoeTE2uwNruCrN5QeGM0qgjOo
+         zdAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ypuhrRM8vdQuOVvAVGS42Y7Ui55RAVx891wwhREVaoo=;
-        b=mrvITWOC9Plqie+4Gn2yRSeXlnGxdCbj3fy/1/pXLsUpxVjcb40IyBC4AIj9LBHfj7
-         nLlsuu7GBTJexKw9mv2tvziJnNjnevUeCdiDc5B6V/H6g/7jctzzNVRna4SrIsFY+TVh
-         X/p3S+GOXNfENMC1YQ94XIGwo+eovzSmgJgC66vil/Umw9UwM85ImjMT3M1rY/B5r1nW
-         ZebGqMY0gFgYqnGSsPRFNkV+oYqKL03w9RoR4oEenRM6WCbiUmUmZCWTt1YyDxyuc3fV
-         HiK9SrzUe8wl4JRyPlLIzKwvin3M+6FADDi3qRDoRirV3MxGJbWkjF7dmAr36gnD8x53
-         POJA==
-X-Gm-Message-State: ANhLgQ1E/n8PxQ+4Qrt6oBrg4aJgTPtNYfT7jBdx8gd2ElU67WIQZxcu
-        VshW7YIkZmuCo23k0/X7rl8FBRXChcShl5Z0iDwO2m3t
-X-Google-Smtp-Source: ADFU+vt0BrGLhIgF3pD8Gotcw5d9fzPvpKK8WjSEJ4JJXEMd4JRxqaUH8lKNdhPLYIHo/s7bhbu2N7SVD5nTLxA4CuQ=
-X-Received: by 2002:a02:cc4e:: with SMTP id i14mr11831675jaq.93.1585596568795;
- Mon, 30 Mar 2020 12:29:28 -0700 (PDT)
+        bh=dh9JcSi6kj0UWIbirpsquHk1PO2ZTJ6f6wAxTa4W5Zs=;
+        b=XHOWLjMsronOhGzPx9hyAGdJ0zhce2RF0abdR9IDoOaTJHd1jbkN6LSlI06lTEALjF
+         iOnUsqerMoJByoXPpfUY8J2fjJirwiX/Kd9MgPNgzg2FTbwovA3ZouK42FegUx1DAQNP
+         Eua4uJFbML3P9nh9+F70ffMumBrFxt5LRQlwSblKRY8f3BBB8w9+9AYzXeic2DicZZEe
+         XPL11PuCXNVX4s2EgtihiKb1C+L/H16l280KhTHW63kHz3X/WFP4WxDeQ9vik0OJBRRu
+         EyB4Z9WStmfgYXVa3Fwbc4RPbxKSMAfjAWXt0iEH1R5s7247+07gIOWxkwL2B/1vGT26
+         ixPA==
+X-Gm-Message-State: ANhLgQ1O3fvgYhzqYxCI+pheoBdOFqOBBJb8+35srfQVJ9R32iYAWr2B
+        f7OyLfh5dTfXEr6RYPb+I8I2Kd98YJz9SeOoD2op
+X-Google-Smtp-Source: ADFU+vul3dd78FpyQ/P1xT0CAzUKDA49PHsMIvhi1CMzemU48YH7Min2sbynkoDLmBburfXlTyDJdiTLpwO7v8ADPZw=
+X-Received: by 2002:a50:f152:: with SMTP id z18mr12867397edl.31.1585598145722;
+ Mon, 30 Mar 2020 12:55:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOQ4uxgW9Jcj_hG639nw=j0rFQ1fGxBHJJz=nHKTPBat=L+mXg@mail.gmail.com>
- <CAOQ4uxih7zhAj6qUp39B_a_On5gv80SKm-VsC4D8ayCrC6oSRw@mail.gmail.com>
- <20200227112755.GZ10728@quack2.suse.cz> <CAOQ4uxgavT6e97dYEOLV9BUOXQzMw2ADjMoZHTT0euERoZFoJg@mail.gmail.com>
- <20200227133016.GD10728@quack2.suse.cz> <CAOQ4uxghKxf4Gfw9GX1QZ_ju3RhZcOLxtYnhAn9A3MJtt3PMCQ@mail.gmail.com>
- <CAOQ4uxiHA5fM9SjA+XXcGQOg2u4UPvs_-nm+sKXcNXoGKxVgTg@mail.gmail.com>
- <20200305154908.GK21048@quack2.suse.cz> <CAOQ4uxgJPkYOL5-jj=b+z5dG5DK8spzYUD7_OfMdBwh4gnTUYg@mail.gmail.com>
- <CAOQ4uxg4tRCALm+JaAQt9eWuU_23c55eaPivdRbb3yH=kcey8Q@mail.gmail.com>
- <20200318175131.GK22684@quack2.suse.cz> <CAOQ4uxj7Q8wMWzhgvTt1YkZUuWn55U6aWPvtGv7PmknHBApONQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj7Q8wMWzhgvTt1YkZUuWn55U6aWPvtGv7PmknHBApONQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 30 Mar 2020 22:29:17 +0300
-Message-ID: <CAOQ4uxitb7dP+8MQvCcNqEWQ5qBaGmPvEeDh1P+Hvs_jn_k82w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/16] fanotify: prepare to encode both parent and
- child fid's
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca>
+ <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
+ <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca> <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
+ <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca> <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
+ <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca> <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
+ <20200330162156.mzh2tsnovngudlx2@madcap2.tricolour.ca> <CAHC9VhTRzZXJ6yUFL+xZWHNWZFTyiizBK12ntrcSwmgmySbkWw@mail.gmail.com>
+ <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca>
+In-Reply-To: <20200330174937.xalrsiev7q3yxsx2@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 30 Mar 2020 15:55:36 -0400
+Message-ID: <CAHC9VhR_bKSHDn2WAUgkquu+COwZUanc0RV3GRjMDvpoJ5krjQ@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
+ the audit daemon
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
+        ebiederm@xmission.com, simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 18, 2020 at 8:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > > Pushed the work to fanotify_name branch.
-> > > Let me know if you want me to post v3.
+On Mon, Mar 30, 2020 at 1:49 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-03-30 13:34, Paul Moore wrote:
+> > On Mon, Mar 30, 2020 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2020-03-30 10:26, Paul Moore wrote:
+> > > > On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2020-03-28 23:11, Paul Moore wrote:
+> > > > > > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > On 2020-03-23 20:16, Paul Moore wrote:
+> > > > > > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > > > On 2020-03-18 18:06, Paul Moore wrote:
+
+...
+
+> > > Well, every time a record gets generated, *any* record gets generated,
+> > > we'll need to check for which audit daemons this record is in scope and
+> > > generate a different one for each depending on the content and whether
+> > > or not the content is influenced by the scope.
 > >
-> > So I went through the patches - had only minor comments for most of them.
-> > Can you post the next revision by email and I'll pickup at least the
-> > obvious preparatory patches to my tree. Thanks!
-> >
+> > That's the problem right there - we don't want to have to generate a
+> > unique record for *each* auditd on *every* record.  That is a recipe
+> > for disaster.
 >
-> Will do.
-> Most of your comments were minor, but the last comments on
-> FAN_REPORT_NAME patch send me to do some homework.
+> I don't see how we can get around this.
 >
+> We will already have that problem for PIDs in different PID namespaces.
 
-I know this patch is for next next release, but I was just investigating
-so wanted to publish the results.
-For the records, your question about the FAN_REPORT_NAME
-patch was: "... this seems to be somewhat duplicating the functionality
-of __fsnotify_parent(). Can't we somehow join these paths?"
+As I said below, let's not worry about this for all of the
+known/current audit records, lets just think about how we solve this
+for the ACID related information.
 
-I remembered that I started with this approach and moved to
-taking name snapshots inside fanotify event handler for a reason,
-but did not remember what it was. So I went digging back and
-found that I wanted to avoid the situation where in mount/sb
-marks events are reported in two flavors, one with name and
-one without name. I ended up with something that works, but the
-logic is quite hard to follow and to document.
+One of the bigger problems with translating namespace info (e.g. PIDs)
+across ACIDs is that an ACID - by definition - has no understanding of
+namespaces (both the concept as well as any given instance).
 
-So decided it is best to go back to fsnotify_parent() approach and
-let the two flavors of events be reported for sb/mount marks.
-I pushed the end result to branch fanotify_name and adjusted the
-LTP test to expect the extra events.
+> We already need to use a different serial number in each auditd/queue,
+> or else we serialize *all* audit events on the machine and either leak
+> information to the nested daemons that there are other events happenning
+> on the machine, or confuse the host daemon because it now thinks that we
+> are losing events due to serial numbers missing because some nested
+> daemon issued an event that was not relevant to the host daemon,
+> consuming a globally serial audit message sequence number.
 
-I will see how that ends up looking in the man page.
+This isn't really relevant to the ACID lists, but sure.
 
-Thanks,
-Amir.
+> > Solving this for all of the known audit records is not something we
+> > need to worry about in depth at the moment (although giving it some
+> > casual thought is not a bad thing), but solving this for the audit
+> > container ID information *is* something we need to worry about right
+> > now.
+>
+> If you think that a different nested contid value string per daemon is
+> not acceptable, then we are back to issuing a record that has only *one*
+> contid listed without any nesting information.  This brings us back to
+> the original problem of keeping *all* audit log history since the boot
+> of the machine to be able to track the nesting of any particular contid.
+
+I'm not ruling anything out, except for the "let's just completely
+regenerate every record for each auditd instance".
+
+> What am I missing?  What do you suggest?
+
+I'm missing a solution in this thread, since you are the person
+driving this effort I'm asking you to get creative and present us with
+some solutions. :)
+
+
+-- 
+paul moore
+www.paul-moore.com
