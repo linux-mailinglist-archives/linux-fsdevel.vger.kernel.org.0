@@ -2,80 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DEF6197C12
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 14:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD0C197BFE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 14:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbgC3MhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 08:37:12 -0400
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:54278 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730113AbgC3MhM (ORCPT
+        id S1730231AbgC3MhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 08:37:15 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39022 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730206AbgC3MhM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 30 Mar 2020 08:37:12 -0400
-Received: by mail-wm1-f53.google.com with SMTP id c81so19748755wmd.4;
-        Mon, 30 Mar 2020 05:37:10 -0700 (PDT)
+Received: by mail-wr1-f65.google.com with SMTP id p10so21412052wrt.6;
+        Mon, 30 Mar 2020 05:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/7higiBp8m8zEWus6g7LwOrycKN3KCg2+w1BuqcejLM=;
-        b=RGI56L5YiZA4CQQFn1Qym7Jhzs4NviUr7qD9Z2wFzQvFV+d0yl9lSv5M1ek3x+PGU/
-         oKflYlGfeLuv4qvBLVysI1IF1Kko7avAEL7RsQOto4VAUnytlVy8EAfspqUVEIPk0Na1
-         /+ZxFP5ORNwP1FTrtCv98mB23qQQyUvg4Y7zfwPfyg4dE0JpacIZOF+E+L9WTJ7GaSSt
-         pDN+ne6lf3oTmh+n/pTj1no/RFwEhkCXxSOj4fIhs/KB7e43AafgfxZpMPSvsk/6OlUm
-         NdFM1c4U0COF0RLTSUkPCMoPTUXSDqWtxHZaFFAUp2fZ37NN57wy0qc6Q8VDlLXUm6uD
-         50hA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=6yL3vQimJJlRACDKO70C6ge2VfoDCDzeccNUoYIrLu0=;
+        b=UIGyUMWOfWopGHtMiHUHoRXwEvshaVH/qh34Q0W2SGjJxEiKNzmxA6lzyrhW6jxGLd
+         oAcKTOyac8S0fySwFnS/RPa6VS8TrgmuWECrAvooklYMMGc2GZKZrRP/7MR9bICyk3D9
+         Z/w6BTplG6cUskv/VVwp3fFD2WZ+M+2hz+TlpkBW1QB+AC9M1rqJS3TYggnyg6TqIT9N
+         C7DXv+4RoT6rHP9cQlVrI3tfdAs2po/gdq7G9Fh5dBoOspJMJuTWL3hkPKVX4udOxc7q
+         NgYv7CGwpUxmdX5420J/J4PzPha4bBrtvzUOO+4qdiBNnB9dAV85vpSwLtWbL8QCuKLr
+         8U9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/7higiBp8m8zEWus6g7LwOrycKN3KCg2+w1BuqcejLM=;
-        b=go+1o7RTyaEoZdNaUhQRYxAHMlHC3QEQsEEzCUWRdgnxThcZBxnVw5JBKdb5X4eZxi
-         SUEmtvcM2urCw9PYRdnhDSQ82/nwFI5bh1I4sw6odufdRtqJKPSQmxdJTbuHO4MD/SDe
-         4ZZ9MAZ2l4PJjAgyskQQnPbMId0eUD69x5v3P02iy5TDr/N8nAhuXWtR0kgrio95dAMe
-         F3C6fIBMqtD6mmCW83RYWGOEOOZ2t6RNW6SDfOCVi7fF9UR05cg1DXyyJkjFRBctz7Sa
-         AtIVSEwRSJiqCTPYesgtB2Qyakgo0eV3ysVJ79yxjtl0KtY54cxaVOmKqt/+JKcYuxhI
-         6Q9A==
-X-Gm-Message-State: ANhLgQ0psUjvsN5Li22RTfkFX5x+WwQRMaZxxUXKNf0PHnNdrtsZh1UO
-        EpPiedlvnN1bIKI3cfZ0fAw=
-X-Google-Smtp-Source: ADFU+vuNF1yH3slMRPssR7hBdoYw6J2VdCQ6D+ACSFa5Qw4S1cGd17eKLSF8L5XGdFYvus6EM02iPA==
-X-Received: by 2002:a7b:c39a:: with SMTP id s26mr1929612wmj.167.1585571829783;
-        Mon, 30 Mar 2020 05:37:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=6yL3vQimJJlRACDKO70C6ge2VfoDCDzeccNUoYIrLu0=;
+        b=E/lUITvdxFCI/AnpA/7bEuX86cip6YqnaS5GmZg5lsFpF0IUZ7LF6VHDQaCVeCs4x/
+         CFHP1gTsZNooEMFnnRQvOOB7eb69asJJe+i4LxdSeSJIGPSlXAjtJLKleXmibjsTzKuc
+         Ct+dmtbNm8kZMyYl38vDSrBA4eyQHw7VQoAj0TBl5MrAD2caBfTDRbVzbr4SEZbaG3gI
+         q5T3/54cdmOsfvzz0+SvS0tGwe1jPshjKAvKQRWzWG7wT6wscJ1bM1/Mi8y1CerPwtfv
+         zdTBAF8kxi9zhd36s61+IclCXEwDNgDfRKL5P6q1HFgJzfonF3KDzkHBIIqjedll/jrj
+         R2uw==
+X-Gm-Message-State: ANhLgQ0i+HB8W7lkMojpq18qc0/ocjZQShHJ+LBsW7lZnUMv0CfXXxR9
+        FS2vAEy2nIB0CU3/XhwPzm9pgXwu
+X-Google-Smtp-Source: ADFU+vsLDG1FmwEn4kf00O4g/ZdbCw9zoYcKXCKl7/7U/6Tb/oeo9vgw7OPLjyFV37KcSszQW/fzfg==
+X-Received: by 2002:adf:e584:: with SMTP id l4mr13461215wrm.388.1585571830633;
+        Mon, 30 Mar 2020 05:37:10 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id z1sm10091858wrp.90.2020.03.30.05.37.09
+        by smtp.gmail.com with ESMTPSA id u16sm22574806wro.23.2020.03.30.05.37.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Mar 2020 05:37:09 -0700 (PDT)
+        Mon, 30 Mar 2020 05:37:10 -0700 (PDT)
 From:   Wei Yang <richard.weiyang@gmail.com>
 To:     willy@infradead.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH 0/9] XArray: several cleanups
-Date:   Mon, 30 Mar 2020 12:36:34 +0000
-Message-Id: <20200330123643.17120-1-richard.weiyang@gmail.com>
+Subject: [PATCH 1/9] XArray: fix comment on Zero/Retry entry
+Date:   Mon, 30 Mar 2020 12:36:35 +0000
+Message-Id: <20200330123643.17120-2-richard.weiyang@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200330123643.17120-1-richard.weiyang@gmail.com>
+References: <20200330123643.17120-1-richard.weiyang@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Trivial cleanup for XArray.
+Correct the comment according to definition.
 
-No functional change.
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+---
+ include/linux/xarray.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Wei Yang (9):
-  XArray: fix comment on Zero/Retry entry
-  XArray: simplify the calculation of shift
-  XArray: handle a NULL head by itself
-  XArray: don't expect to have more nr_values than count
-  XArray: entry in last level is not expected to be a node
-  XArray: internal node is a xa_node when it is bigger than
-    XA_ZERO_ENTRY
-  XArray: the NULL xa_node condition is handled in xas_top
-  XArray: take xas_error() handling for clearer logic
-  XArray: adjust xa_offset till it gets the correct node
-
- include/linux/xarray.h |  6 +++---
- lib/xarray.c           | 31 ++++++++++++-------------------
- 2 files changed, 15 insertions(+), 22 deletions(-)
-
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index f73e1775ded0..a491653d8882 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -32,8 +32,8 @@
+  * The following internal entries have a special meaning:
+  *
+  * 0-62: Sibling entries
+- * 256: Zero entry
+- * 257: Retry entry
++ * 256: Retry entry
++ * 257: Zero entry
+  *
+  * Errors are also represented as internal entries, but use the negative
+  * space (-4094 to -2).  They're never stored in the slots array; only
 -- 
 2.23.0
 
