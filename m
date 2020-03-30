@@ -2,135 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB845197E52
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 16:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF52197E57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Mar 2020 16:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbgC3O0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 10:26:46 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41767 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727982AbgC3O0p (ORCPT
+        id S1728167AbgC3O1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 10:27:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbgC3O1I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 10:26:45 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v1so20801385edq.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Mar 2020 07:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nIwHXYaHc6+JACA+fBj9Ng03i5CGrWKmbD2K5DI9CIE=;
-        b=ajvRh38GUf77mUItDVx5WbVN3YYFvjpLhHpwTv84kBQrU1zHTfXiaouPYDLxmTBG45
-         8MfOdRSj5sryUlWJASFBkFehPbzj8g+e0VLiclXWIZ4G7TNuAWnOLRZsHy5ZILaeErIk
-         LqDtUQMsHOq4lmfzrcPHMubNv/dsDfNl88x3vGdvlTcKgkieRjEG7LJI1fd9nz6RqZu5
-         BOFFrhLvSD3REAwMRyI7d5+5fdIIBNKMwpnUqrTKVhUtpQqIoLekud+8zPPbmsCM+lt0
-         dRMyhqGXKHl96BJACIDgeCHLcpYrgLmsx7K26Jot1RzI/1+tsWiYSF1NdBH7pmfmhUq/
-         WEgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nIwHXYaHc6+JACA+fBj9Ng03i5CGrWKmbD2K5DI9CIE=;
-        b=CCkfMq9md7zGK/ypvNoNAaLEOP4m0Lx5HYDpEwoWxUICsnpTAGiMYzE9zU8rujbGCW
-         +81x4OMJwzHVa/uPHUFfCSn2bodHxnUADnoGr4cP/1GU2lYZbv2UnrPGNZeMm+5mxQht
-         xsar2nLJhjM7+EWlR7UQNaTr1YecRciwXunWKdI7Gzig97xQCArKTPCZFJPVr5ju8TQq
-         hCUIc2JIbKAPJKpHAI0ejvLp1rWdtl+erR55AvPdFzBAlG/32/gqjhGKJmqT2++BNKHn
-         mskL27K/zoxbSkYWuYeZLopDUXaCQuYKlhDXRHVuf/qhqCUlf7F1Ob7bsQcjhHqFyUFk
-         9zYg==
-X-Gm-Message-State: ANhLgQ0/UTHbMtb01Hi6g0gXRFlclmCDgohbmEuLvOwBdvPeZr4SCudm
-        UQYnQkwQ7lICCu1K1acQMneEFyiPnxa4RCIKJDbv
-X-Google-Smtp-Source: ADFU+vvlCnwKHdKl+nxVyk3rZYlrc9sBCQh+XYbClaJVIEpd7a51sng79ner8qjsey4+ghjyaCmOteBvcjGEv+YeeMA=
-X-Received: by 2002:aa7:c48f:: with SMTP id m15mr9786550edq.164.1585578403828;
- Mon, 30 Mar 2020 07:26:43 -0700 (PDT)
+        Mon, 30 Mar 2020 10:27:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=G9G7LXUIUcwm5Tey2Anco7zNrOhYjJba/HCYfMtgmfc=; b=EEG+NCB9bf6g+bxztsQWuzwanK
+        xx5hayOTfnSr5WqzSxaQyPxs5W6FIzqAaRqjU2qY1MX0nxl0uITm3idHvPctjkq5bjdF0EAUSg3y+
+        aUHdvE6Jvx3kN06bElUl0+Epxb9EMVeWDg2+lcBo+r6BbkFJbOra3KwuOgocEhCvTT9FTO6WoT2r7
+        UzPEDpRgL/Ky1MqpLl/IaIacTzisCgr7XDGU7XtFho1uKIWB1Sn5a2pyLvXmC2DIo5K6pOKh7YsUt
+        +F74TXPhii9BUVEaJLFudRo0MGXUfVCdUns3dtK0epemyBVjW+WXn9t9f+5yQVpIgz462gQ3DcoxS
+        sZ3k16Tg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jIvNc-0003i0-5J; Mon, 30 Mar 2020 14:27:08 +0000
+Date:   Mon, 30 Mar 2020 07:27:08 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Wei Yang <richard.weiyang@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] XArray: internal node is a xa_node when it is bigger
+ than XA_ZERO_ENTRY
+Message-ID: <20200330142708.GC22483@bombadil.infradead.org>
+References: <20200330123643.17120-1-richard.weiyang@gmail.com>
+ <20200330123643.17120-7-richard.weiyang@gmail.com>
+ <20200330125006.GZ22483@bombadil.infradead.org>
+ <20200330134519.ykdtqwqxjazqy3jm@master>
+ <20200330134903.GB22483@bombadil.infradead.org>
+ <20200330141350.ey77odenrbvixotb@master>
 MIME-Version: 1.0
-References: <20200313185900.y44yvrfm4zxa5lfk@madcap2.tricolour.ca>
- <CAHC9VhR2zCCE5bjH75rSwfLC7TJGFj4RBnrtcOoUiqVp9q5TaA@mail.gmail.com>
- <20200318212630.mw2geg4ykhnbtr3k@madcap2.tricolour.ca> <CAHC9VhRYvGAru3aOMwWKCCWDktS+2pGr+=vV4SjHW_0yewD98A@mail.gmail.com>
- <20200318215550.es4stkjwnefrfen2@madcap2.tricolour.ca> <CAHC9VhSdDDP7Ec-w61NhGxZG5ZiekmrBCAg=Y=VJvEZcgQh46g@mail.gmail.com>
- <20200319220249.jyr6xmwvflya5mks@madcap2.tricolour.ca> <CAHC9VhR84aN72yNB_j61zZgrQV1y6yvrBLNY7jp7BqQiEDL+cw@mail.gmail.com>
- <20200324210152.5uydf3zqi3dwshfu@madcap2.tricolour.ca> <CAHC9VhTQUnVhoN3JXTAQ7ti+nNLfGNVXhT6D-GYJRSpJHCwDRg@mail.gmail.com>
- <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca>
-In-Reply-To: <20200330134705.jlrkoiqpgjh3rvoh@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 30 Mar 2020 10:26:34 -0400
-Message-ID: <CAHC9VhQTsEMcYAF1CSHrrVn07DR450W9j6sFVfKAQZ0VpheOfw@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V8 07/16] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330141350.ey77odenrbvixotb@master>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 9:47 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-03-28 23:11, Paul Moore wrote:
-> > On Tue, Mar 24, 2020 at 5:02 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2020-03-23 20:16, Paul Moore wrote:
-> > > > On Thu, Mar 19, 2020 at 6:03 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2020-03-18 18:06, Paul Moore wrote:
-> > > >
-> > > > ...
-> > > >
-> > > > > > I hope we can do better than string manipulations in the kernel.  I'd
-> > > > > > much rather defer generating the ACID list (if possible), than
-> > > > > > generating a list only to keep copying and editing it as the record is
-> > > > > > sent.
-> > > > >
-> > > > > At the moment we are stuck with a string-only format.
-> > > >
-> > > > Yes, we are.  That is another topic, and another set of changes I've
-> > > > been deferring so as to not disrupt the audit container ID work.
-> > > >
-> > > > I was thinking of what we do inside the kernel between when the record
-> > > > triggering event happens and when we actually emit the record to
-> > > > userspace.  Perhaps we collect the ACID information while the event is
-> > > > occurring, but we defer generating the record until later when we have
-> > > > a better understanding of what should be included in the ACID list.
-> > > > It is somewhat similar (but obviously different) to what we do for
-> > > > PATH records (we collect the pathname info when the path is being
-> > > > resolved).
-> > >
-> > > Ok, now I understand your concern.
-> > >
-> > > In the case of NETFILTER_PKT records, the CONTAINER_ID record is the
-> > > only other possible record and they are generated at the same time with
-> > > a local context.
-> > >
-> > > In the case of any event involving a syscall, that CONTAINER_ID record
-> > > is generated at the time of the rest of the event record generation at
-> > > syscall exit.
-> > >
-> > > The others are only generated when needed, such as the sig2 reply.
-> > >
-> > > We generally just store the contobj pointer until we actually generate
-> > > the CONTAINER_ID (or CONTAINER_OP) record.
+On Mon, Mar 30, 2020 at 02:13:50PM +0000, Wei Yang wrote:
+> On Mon, Mar 30, 2020 at 06:49:03AM -0700, Matthew Wilcox wrote:
+> >On Mon, Mar 30, 2020 at 01:45:19PM +0000, Wei Yang wrote:
+> >> On Mon, Mar 30, 2020 at 05:50:06AM -0700, Matthew Wilcox wrote:
+> >> >On Mon, Mar 30, 2020 at 12:36:40PM +0000, Wei Yang wrote:
+> >> >> As the comment mentioned, we reserved several ranges of internal node
+> >> >> for tree maintenance, 0-62, 256, 257. This means a node bigger than
+> >> >> XA_ZERO_ENTRY is a normal node.
+> >> >> 
+> >> >> The checked on XA_ZERO_ENTRY seems to be more meaningful.
+> >> >
+> >> >257-1023 are also reserved, they just aren't used yet.  XA_ZERO_ENTRY
+> >> >is not guaranteed to be the largest reserved entry.
+> >> 
+> >> Then why we choose 4096?
 > >
-> > Perhaps I'm remembering your latest spin of these patches incorrectly,
-> > but there is still a big gap between when the record is generated and
-> > when it is sent up to the audit daemon.  Most importantly in that gap
-> > is the whole big queue/multicast/unicast mess.
->
-> So you suggest generating that record on the fly once it reaches the end
-> of the audit_queue just before being sent?  That sounds...  disruptive.
-> Each audit daemon is going to have its own queues, so by the time it
-> ends up in a particular queue, we'll already know its scope and would
-> have the right list of contids to print in that record.
+> >Because 4096 is the smallest page size supported by Linux, so we're
+> >guaranteed that anything less than 4096 is not a valid pointer.
+> 
+> I found this in xarray.rst:
+> 
+>   Normal pointers may be stored in the XArray directly.  They must be 4-byte
+>   aligned, which is true for any pointer returned from kmalloc() and
+>   alloc_page().  It isn't true for arbitrary user-space pointers,
+>   nor for function pointers.  You can store pointers to statically allocated
+>   objects, as long as those objects have an alignment of at least 4.
+> 
+> So the document here is not correct?
 
-I'm not suggesting any particular solution, I'm just pointing out a
-potential problem.  It isn't clear to me that you've thought about how
-we generate a multiple records, each with the correct ACID list
-intended for a specific audit daemon, based on a single audit event.
-Explain to me how you intend that to work and we are good.  Be
-specific because I'm not convinced we are talking on the same plane
-here.
+Why do you say that?
 
--- 
-paul moore
-www.paul-moore.com
+(it is slightly out of date; the XArray actually supports storing unaligned
+pointers now, but that's not relevant to this discussion)
