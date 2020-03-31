@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99460199E6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 20:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D549F199E72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 20:57:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgCaSzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 14:55:50 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53115 "EHLO
+        id S1727726AbgCaS5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 14:57:51 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47790 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726295AbgCaSzt (ORCPT
+        with ESMTP id S1727020AbgCaS5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 14:55:49 -0400
+        Tue, 31 Mar 2020 14:57:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585680948;
+        s=mimecast20190719; t=1585681070;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9N83ulIWUt944dVDEJ06AJzgWaetQqP5tl+Ibkm3ba4=;
-        b=QAAKQtjvDh3RTnZKIPN02GKooMfetfZjO9Qa/Qbv6585QDsT2hNPch28vQn7t1DpeV5sz7
-        Ws/T2i9shB983RK9ItLlSL6YeGsQXkVEtSUO5ezqhRiT1EHYXKPUEnNQlDG+rvQyr01bZJ
-        0kWOWf2+1lKVd/4Fy/H0N97Nx6nG9PY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-200-mgEXyhULNBOiuEt3Twmoog-1; Tue, 31 Mar 2020 14:55:46 -0400
-X-MC-Unique: mgEXyhULNBOiuEt3Twmoog-1
-Received: by mail-wr1-f69.google.com with SMTP id m15so13428496wrb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 11:55:46 -0700 (PDT)
+        bh=bjuPWfP4XM6yz96SvNfUrwVZXF7xkmhK3kaB303goaM=;
+        b=Xz2IgbEeXhSId1NulgD4VHEdab+EjMgB9W/XiJ7ezJEkU/P2BdWlKgDHxWNxCcFc0mCWiI
+        PMJIKKjdEx8bL4lKmvb9v+ymYVdWkX4GtklSbgywPGu3gdxMWGcoqV0ioFeFq616CKnZXB
+        Zhfo2WjmA8Zq+5AA7IY/Bdz21awJql8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-280-A2gqZWWiMDm7BGkwzbK0Bg-1; Tue, 31 Mar 2020 14:57:49 -0400
+X-MC-Unique: A2gqZWWiMDm7BGkwzbK0Bg-1
+Received: by mail-wm1-f70.google.com with SMTP id w9so1059143wmi.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 11:57:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9N83ulIWUt944dVDEJ06AJzgWaetQqP5tl+Ibkm3ba4=;
-        b=EDQmxuhFNKaCNs4TfjQdDOnLG7PIOhYVBPCxBHoj/VUxEKtsFTesGCfC51nr8KvvAm
-         sC2VyrU+Vn49Icbd9aMBEEGy8rLw8elAV9RL5xmSXEUv6slvX9W+Eqb0FDX0d9zphqqx
-         4aArrQ1vF9alQlJx5bPtfyJKgeRgS1UaG7pifz3VVilZO5GZSnMhjmUjPeM/ed4JuH61
-         fdu2C6hkPwnkjOj89hrJqx+NanD8T6IIh2a7JkkhDtSa7xowoJHJe8Cehq5Bo37SQ6c0
-         kLf7nTxYAn1gxmIA1LLejo6qaXy9L/bib7C3m0agvcDrIkd8hvlcAcEm/HoSsnaN4rBS
-         YRjA==
-X-Gm-Message-State: AGi0PuYM/xeNgBoA4bVqDglX5pfljBmS0zKifNNtYkWI5i4e1HRRJEnB
-        2k9RRFWwOKP3UCX4WOjgxjqxLzoNrbHMiAfkCszdnPqHBbZCZbTBEqmY7fLsaQ+bN9q5nI9r9dS
-        tIdByiyfHLxnUIcJKZZxgqBDm0w==
-X-Received: by 2002:a1c:82:: with SMTP id 124mr257864wma.63.1585680945320;
-        Tue, 31 Mar 2020 11:55:45 -0700 (PDT)
-X-Google-Smtp-Source: APiQypIItSTAIpN2eJyUg/bKQdlRjERgE+twajxI2WUL+EtqTwGmwdqtCNM2ixY8sVPtXuyHJWpU4g==
-X-Received: by 2002:a1c:82:: with SMTP id 124mr257825wma.63.1585680944950;
-        Tue, 31 Mar 2020 11:55:44 -0700 (PDT)
+        bh=bjuPWfP4XM6yz96SvNfUrwVZXF7xkmhK3kaB303goaM=;
+        b=ngegEEJvO0/VfS9iUYVNpK9hpRQRBstSuVGzzsOAtg/+AZnpWPfEki8+8+/oBX3PzY
+         VFpCdDRM3tmnS4Ao12YV2ERxNXy7YhQfj8K9h9GCPHCHtqQmBxNuKKZ3G8o+vft/syaF
+         efAH8+WX2DpMJ26RYRLhbKc2V9pE5FdsHULiDbK7ZPUSTYDlpQbGQmX3Xvqk51xHXD+t
+         brQAW0qjkt9I9R/gtrGe8SXKHozH/LvXTUz675K/NAsG2hPPg9Ym7ZkhHraAklOR8ZfA
+         2GkjvuWPUy56Z5Qa8Lal1Y2q5YftbPLChgcVPxUyQZX0fHy4kEuEV4dnZHnHCOnPiCFK
+         +aDA==
+X-Gm-Message-State: ANhLgQ3DDOAiqvxbgoPkD2SjvD3Vfkpr3QejTk4d0vQP+0lm0rjPkv0+
+        AjkhHt2Ver6RVUZIsLT0ynh3hEWjfSfsQST8GfdwsbHi99hfgTGNYoEmaAS8BKzrgbu2dTCts1s
+        sfqNXU77Pnvm7aFO9N33Y2Y4bqw==
+X-Received: by 2002:adf:a549:: with SMTP id j9mr20849172wrb.183.1585681067705;
+        Tue, 31 Mar 2020 11:57:47 -0700 (PDT)
+X-Google-Smtp-Source: ADFU+vumkiVUnoTFzxgxNV8v2tnIE0AdT7rk4DqQxWt81v0qN5/05onGh4L9duOpOsKKqaOy2HvO9w==
+X-Received: by 2002:adf:a549:: with SMTP id j9mr20849150wrb.183.1585681067499;
+        Tue, 31 Mar 2020 11:57:47 -0700 (PDT)
 Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
-        by smtp.gmail.com with ESMTPSA id y7sm30626556wrq.54.2020.03.31.11.55.43
+        by smtp.gmail.com with ESMTPSA id f13sm586160wrx.56.2020.03.31.11.57.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 11:55:44 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 14:55:41 -0400
+        Tue, 31 Mar 2020 11:57:46 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 14:57:43 -0400
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     akpm@linux-foundation.org, broonie@kernel.org,
@@ -61,7 +61,7 @@ Cc:     akpm@linux-foundation.org, broonie@kernel.org,
         virtualization@lists.linux-foundation.org,
         Jason Wang <jasowang@redhat.com>
 Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
-Message-ID: <20200331144650-mutt-send-email-mst@kernel.org>
+Message-ID: <20200331145630-mutt-send-email-mst@kernel.org>
 References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
  <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
  <20200331143437-mutt-send-email-mst@kernel.org>
@@ -137,7 +137,14 @@ On Tue, Mar 31, 2020 at 11:42:47AM -0700, Randy Dunlap wrote:
 > Ack.  Hopefully Yamada-san can tell us what is happening here.
 
 
-I reproduced this without difficulty btw, thanks for the report!
+Oh wait a second:
+
+obj-$(CONFIG_VIRTIO)            += virtio/
+
+So CONFIG_VIRTIO=m and build does not even interate into drivers/virtio.
+
+
+
 
 
 > > 
