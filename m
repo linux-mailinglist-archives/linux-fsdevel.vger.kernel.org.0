@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7174198913
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 02:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB30198915
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 02:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbgCaAy1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 20:54:27 -0400
+        id S1729712AbgCaAya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 20:54:30 -0400
 Received: from icp-osb-irony-out4.external.iinet.net.au ([203.59.1.220]:54738
         "EHLO icp-osb-irony-out4.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729636AbgCaAy0 (ORCPT
+        by vger.kernel.org with ESMTP id S1729672AbgCaAy3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:54:26 -0400
+        Mon, 30 Mar 2020 20:54:29 -0400
 X-SMTP-MATCH: 0
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2C6BQA4lIJe/+im0XZmHgELHIQkgUA?=
- =?us-ascii?q?hEiqEGo9OAQEBAwaBEooghRSFFYU9gWcKAQEBAQEBAQEBGxkBAgQBAYREAoI?=
- =?us-ascii?q?yJDgTAhABAQEFAQEBAQEFAwFthQpYhXEGIwRSEBgNAhgOAgJHEAYThX4krXh?=
- =?us-ascii?q?/MxoCiimBDiqMMRp5gQeBETMDgTaBZoQ0gyyCXgSNcwyCd4cPRYEAlxuCRpc?=
- =?us-ascii?q?VHY9CA4wnLa0AIoFYTS4KgydQGI42F44yNzCBBgEBjSZfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2C6BQA4lIJe/+im0XZmHgELHIQkgUAhEiqEGo9OAQEBA?=
- =?us-ascii?q?waBEooghRSFFYU9gWcKAQEBAQEBAQEBGxkBAgQBAYREAoIyJDgTAhABAQEFA?=
- =?us-ascii?q?QEBAQEFAwFthQpYhXEGIwRSEBgNAhgOAgJHEAYThX4krXh/MxoCiimBDiqMM?=
- =?us-ascii?q?Rp5gQeBETMDgTaBZoQ0gyyCXgSNcwyCd4cPRYEAlxuCRpcVHY9CA4wnLa0AI?=
- =?us-ascii?q?oFYTS4KgydQGI42F44yNzCBBgEBjSZfAQE?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2BiAAA4lIJe/+im0XZmHQEBAQkBEQU?=
+ =?us-ascii?q?FAYFoBwELAYF3MYFAIRIqhBqPTgEBAQmBEooghRSFFYUpgXsKAQEBAQEBAQE?=
+ =?us-ascii?q?BGxkBAgQBAYREAoIyJDUIDgIQAQEBBQEBAQEBBQMBbYUKWIVxBiMEUhAYDQI?=
+ =?us-ascii?q?YDgICRxAGE4V+JK14fzMaAoopgQ4qAYwwGnmBB4FEA4E2c3OBBAGGW4JeBI1?=
+ =?us-ascii?q?zgwOHD0WBAJcbgkaNO4laHY9CA4wnLaZxhXoCNYFYTS4KgydQGI5Cjj03MIE?=
+ =?us-ascii?q?GAQGNJl8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2BiAAA4lIJe/+im0XZmHQEBAQkBEQUFAYFoBwELAYF3M?=
+ =?us-ascii?q?YFAIRIqhBqPTgEBAQmBEooghRSFFYUpgXsKAQEBAQEBAQEBGxkBAgQBAYREA?=
+ =?us-ascii?q?oIyJDUIDgIQAQEBBQEBAQEBBQMBbYUKWIVxBiMEUhAYDQIYDgICRxAGE4V+J?=
+ =?us-ascii?q?K14fzMaAoopgQ4qAYwwGnmBB4FEA4E2c3OBBAGGW4JeBI1zgwOHD0WBAJcbg?=
+ =?us-ascii?q?kaNO4laHY9CA4wnLaZxhXoCNYFYTS4KgydQGI5Cjj03MIEGAQGNJl8BAQ?=
 X-IronPort-AV: E=Sophos;i="5.72,326,1580745600"; 
-   d="scan'208";a="238809201"
+   d="scan'208";a="238809223"
 Received: from unknown (HELO mickey.themaw.net) ([118.209.166.232])
-  by icp-osb-irony-out4.iinet.net.au with ESMTP; 31 Mar 2020 08:54:20 +0800
-Subject: [PATCH v2 2/4] autofs: remove rcu_walk parameter from
- autofs_expire_wait()
+  by icp-osb-irony-out4.iinet.net.au with ESMTP; 31 Mar 2020 08:54:26 +0800
+Subject: [PATCH v2 3/4] vfs: check for autofs expiring dentry in
+ follow_automount()
 From:   Ian Kent <raven@themaw.net>
 To:     Al Viro <viro@ZenIV.linux.org.uk>
 Cc:     autofs mailing list <autofs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 31 Mar 2020 08:54:18 +0800
-Message-ID: <158561605892.23197.7870115837303946608.stgit@mickey.themaw.net>
+Date:   Tue, 31 Mar 2020 08:54:26 +0800
+Message-ID: <158561606601.23197.9330916868830786372.stgit@mickey.themaw.net>
 In-Reply-To: <158561511964.23197.716188410829525903.stgit@mickey.themaw.net>
 References: <158561511964.23197.716188410829525903.stgit@mickey.themaw.net>
 User-Agent: StGit/unknown-version
@@ -48,130 +49,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that do_expire_wait() isn't called from autofs_d_manage() the
-rcu_walk boolean parameter can be removed. Now autofs_expire_wait()
-and autofs_lookup_expiring() are no longer called from rcu-walk
-context either so remove the extra parameter from them too.
+follow_automount() checks if a stat family system call path walk is
+being done on a positive dentry and and returns -EISDIR to indicate
+the dentry should be used as is without attempting an automount.
+
+But if autofs is expiring the dentry at the time it should be
+remounted following the expire.
+
+There are two cases, in the case of a "nobrowse" indirect autofs
+mount it would have been mounted on lookup anyway. In the case of
+a "browse" indirect or direct autofs mount re-mounting it will
+maintain the mount which is what user space would be expected.
+
+This will defer expiration of the mount which might lead to mounts
+unexpectedly remaining mounted under heavy stat activity but there's
+no other choice in order to maintain consistency for user space.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/autofs/autofs_i.h  |    2 +-
- fs/autofs/dev-ioctl.c |    2 +-
- fs/autofs/expire.c    |    5 +----
- fs/autofs/root.c      |   18 ++++++------------
- 4 files changed, 9 insertions(+), 18 deletions(-)
+ fs/autofs/root.c |   10 +++++++++-
+ fs/namei.c       |   13 +++++++++++--
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/fs/autofs/autofs_i.h b/fs/autofs/autofs_i.h
-index 054f97b07754..5fc0c31b1fd5 100644
---- a/fs/autofs/autofs_i.h
-+++ b/fs/autofs/autofs_i.h
-@@ -152,7 +152,7 @@ void autofs_free_ino(struct autofs_info *);
- 
- /* Expiration */
- int is_autofs_dentry(struct dentry *);
--int autofs_expire_wait(const struct path *path, int rcu_walk);
-+int autofs_expire_wait(const struct path *path);
- int autofs_expire_run(struct super_block *, struct vfsmount *,
- 		      struct autofs_sb_info *,
- 		      struct autofs_packet_expire __user *);
-diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-index a3cdb0036c5d..a892a517c695 100644
---- a/fs/autofs/dev-ioctl.c
-+++ b/fs/autofs/dev-ioctl.c
-@@ -437,7 +437,7 @@ static int autofs_dev_ioctl_requester(struct file *fp,
- 	ino = autofs_dentry_ino(path.dentry);
- 	if (ino) {
- 		err = 0;
--		autofs_expire_wait(&path, 0);
-+		autofs_expire_wait(&path);
- 		spin_lock(&sbi->fs_lock);
- 		param->requester.uid =
- 			from_kuid_munged(current_user_ns(), ino->uid);
-diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
-index a1c7701007e7..f67da46f6992 100644
---- a/fs/autofs/expire.c
-+++ b/fs/autofs/expire.c
-@@ -486,7 +486,7 @@ static struct dentry *autofs_expire_indirect(struct super_block *sb,
- 	return expired;
- }
- 
--int autofs_expire_wait(const struct path *path, int rcu_walk)
-+int autofs_expire_wait(const struct path *path)
- {
- 	struct dentry *dentry = path->dentry;
- 	struct autofs_sb_info *sbi = autofs_sbi(dentry->d_sb);
-@@ -497,9 +497,6 @@ int autofs_expire_wait(const struct path *path, int rcu_walk)
- 	/* Block on any pending expire */
- 	if (!(ino->flags & AUTOFS_INF_WANT_EXPIRE))
- 		return 0;
--	if (rcu_walk)
--		return -ECHILD;
--
- retry:
- 	spin_lock(&sbi->fs_lock);
- 	state = ino->flags & (AUTOFS_INF_WANT_EXPIRE | AUTOFS_INF_EXPIRING);
 diff --git a/fs/autofs/root.c b/fs/autofs/root.c
-index a3b7c72a298d..a1c9c32e104f 100644
+index a1c9c32e104f..b3f748e4df08 100644
 --- a/fs/autofs/root.c
 +++ b/fs/autofs/root.c
-@@ -177,8 +177,7 @@ static struct dentry *autofs_lookup_active(struct dentry *dentry)
- 	return NULL;
- }
+@@ -406,9 +406,17 @@ static int autofs_d_manage(const struct path *path, bool rcu_walk)
  
--static struct dentry *autofs_lookup_expiring(struct dentry *dentry,
--					     bool rcu_walk)
-+static struct dentry *autofs_lookup_expiring(struct dentry *dentry)
- {
- 	struct autofs_sb_info *sbi = autofs_sbi(dentry->d_sb);
- 	struct dentry *parent = dentry->d_parent;
-@@ -197,11 +196,6 @@ static struct dentry *autofs_lookup_expiring(struct dentry *dentry,
- 		struct dentry *expiring;
- 		const struct qstr *qstr;
- 
--		if (rcu_walk) {
--			spin_unlock(&sbi->lookup_lock);
--			return ERR_PTR(-ECHILD);
--		}
--
- 		ino = list_entry(p, struct autofs_info, expiring);
- 		expiring = ino->dentry;
- 
-@@ -257,16 +251,16 @@ static int autofs_mount_wait(const struct path *path, bool rcu_walk)
- 	return status;
- }
- 
--static int do_expire_wait(const struct path *path, bool rcu_walk)
-+static int do_expire_wait(const struct path *path)
- {
- 	struct dentry *dentry = path->dentry;
- 	struct dentry *expiring;
- 
--	expiring = autofs_lookup_expiring(dentry, rcu_walk);
-+	expiring = autofs_lookup_expiring(dentry);
- 	if (IS_ERR(expiring))
- 		return PTR_ERR(expiring);
- 	if (!expiring)
--		return autofs_expire_wait(path, rcu_walk);
-+		return autofs_expire_wait(path);
- 	else {
- 		const struct path this = { .mnt = path->mnt, .dentry = expiring };
- 		/*
-@@ -274,7 +268,7 @@ static int do_expire_wait(const struct path *path, bool rcu_walk)
- 		 * be quite complete, but the directory has been removed
- 		 * so it must have been successful, just wait for it.
- 		 */
--		autofs_expire_wait(&this, 0);
-+		autofs_expire_wait(&this);
- 		autofs_del_expiring(expiring);
- 		dput(expiring);
+ 	/* Check for (possible) pending expire */
+ 	if (ino->flags & AUTOFS_INF_WANT_EXPIRE) {
++		/* dentry possibly going to be picked for expire,
++		 * proceed to ref-walk mode.
++		 */
+ 		if (rcu_walk)
+ 			return -ECHILD;
+-		return 0;
++
++		/* ref-walk mode, return 1 so follow_automount()
++		 * can wait on the expire outcome and possibly
++		 * attempt a re-mount.
++		 */
++		return 1;
  	}
-@@ -327,7 +321,7 @@ static struct vfsmount *autofs_d_automount(struct path *path)
- 	 * and the directory was removed, so just go ahead and try
- 	 * the mount.
- 	 */
--	status = do_expire_wait(path, 0);
-+	status = do_expire_wait(path);
- 	if (status && status != -EAGAIN)
- 		return NULL;
  
+ 	/*
+diff --git a/fs/namei.c b/fs/namei.c
+index db6565c99825..a9c909251b2c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1227,11 +1227,20 @@ static int follow_automount(struct path *path, struct nameidata *nd,
+ 	 * mounted directory.  Also, autofs may mark negative dentries
+ 	 * as being automount points.  These will need the attentions
+ 	 * of the daemon to instantiate them before they can be used.
++	 *
++	 * Also if ->d_manage() returns 1 the dentry transit needs
++	 * to be managed. For autofs, a return of 1 it tells us the
++	 * dentry might be expired, so proceed to ->d_automount().
+ 	 */
+ 	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+ 			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
+-	    path->dentry->d_inode)
+-		return -EISDIR;
++	    path->dentry->d_inode) {
++		if (path->dentry->d_flags & DCACHE_MANAGE_TRANSIT) {
++			if (!path->dentry->d_op->d_manage(path, false))
++				return -EISDIR;
++		} else
++			return -EISDIR;
++	}
+ 
+ 	nd->total_link_count++;
+ 	if (nd->total_link_count >= 40)
 
