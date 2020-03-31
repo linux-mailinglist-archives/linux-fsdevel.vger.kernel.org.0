@@ -2,74 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44E64199706
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 15:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68105199794
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 15:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730703AbgCaNLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 09:11:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730543AbgCaNLS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:11:18 -0400
-Received: from localhost (unknown [137.135.114.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B436206F5;
-        Tue, 31 Mar 2020 13:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585660277;
-        bh=+WakbIJ2tDYa4ngFBTKurNcfOdvNQ+Z6MF01/GY6uKQ=;
-        h=Date:From:To:To:To:CC:Cc:Cc:Cc:Cc:Subject:In-Reply-To:References:
-         From;
-        b=UzPfEtZZ811macz6dqKYTg4bVvvedvR1e56Fi1LDuhlvfmKPVoHgFgr4yWu/yAXmR
-         cx584V9/jXBJ/b+5SHxstXeCG+fYTI65LFNSAOyHbufD3BB8Z634oaVXgklZquQQz3
-         xhMNnE8LCe1RmuWq2glyPiMKU0hX7phHx0V2gqqw=
-Date:   Tue, 31 Mar 2020 13:11:16 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     Frank van der Linden <fllinden@amazon.com>
-To:     <bfields@fieldses.org>, <chuck.lever@oracle.com>
-CC:     Frank van der Linden <fllinden@amazon.com>
-Cc:     stable@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v2 01/11] xattr: break delegations in {set,remove}xattr and add _locked versions
-In-Reply-To: <20200327232717.15331-2-fllinden@amazon.com>
-References: <20200327232717.15331-2-fllinden@amazon.com>
-Message-Id: <20200331131117.7B436206F5@mail.kernel.org>
+        id S1731029AbgCaNej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 09:34:39 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41394 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730811AbgCaNej (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:34:39 -0400
+Received: by mail-qt1-f195.google.com with SMTP id i3so18233530qtv.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 06:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
+        b=JSLXv2GsMl24k0EipG86fel3qIxrznqKCbWUISfyREeUxRtG8dcuHyRcIQfgiVh/XR
+         vw4t5DfPeQ1L3LW0EcUykGzi2Wp4bu68RjhmLvhMsR41TFlDi9t8kesfnUu5CTKNNwJP
+         vFBhTS5afyuY6Cv6HP9u4KaXcUkzT/Rghk88lc6+MQylxn8drFFzL1mX4eStYOBq1XX5
+         qO2WvCiTKHxZXgjS9eunHwCnNdqJ+5vHrBiV3ZlP5XwAuX21T/7LSKVw4ntABTWhh/SI
+         Z4bYjRTOHuQIsXD4GSWmQiDFoqQzTHeGFU8stiDQe9YK27oclNz/1sx/5VPgUHEhes+T
+         ctEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
+        b=mCCGabZQw89s+poaAuMPxYRUKen66m+LSbcanF4jo0aWUjMuqMQ7cm+Pxe1C/6KsdR
+         AuENf0au0GD1MQVFeI5GcUsGW02RBzrJX8/q4BQJzs5QchXPL2wrYiNBf+ys5OBUFaBA
+         73waMaoh6a2VORreyklEiUWqmAKITIjmiBho6cLEZGiXE+rQLJNCiH/FGFOevBKaZPww
+         iDkQE6Zhsw8YRnIBz3FewYjLq7V3q89fTQKSFPde90Son0nnTKJcpdDWYSeck8Twf4PT
+         W35HLzg9fdz1sE2+NEskwsJw+0xnSLwEWjQV4I4467r7DuPZuFcJlmJjHVvKdtWjQ5ap
+         cE4w==
+X-Gm-Message-State: ANhLgQ0UDEEeuzEx32IoB8VK9XvzXvmDqyDJaB9ZPYXVxHkcO/TSDDyp
+        CvkhI+BMXCxeWKynPQslFGldJQGYL7ayp9A/Flc27vLFIaVlMQ==
+X-Google-Smtp-Source: ADFU+vtUeEOZn0rGavrGQ77YK5I181F1/PrUa9BYa0b8C78Gwj1gAK2n5Cl9kEZmCorTDalXgX+CB9VDENu7bBoYtus=
+X-Received: by 2002:ac8:719a:: with SMTP id w26mr4993271qto.257.1585661678287;
+ Tue, 31 Mar 2020 06:34:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <00000000000016bac605a2268a08@google.com>
+In-Reply-To: <00000000000016bac605a2268a08@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 31 Mar 2020 15:34:26 +0200
+Message-ID: <CACT4Y+Zk60ETzYdpSepkR+YqNvzkbEhjdDUy+bY7r=XWxoVYaA@mail.gmail.com>
+Subject: Re: WARNING in percpu_ref_switch_to_atomic_rcu
+To:     syzbot <syzbot+0076781e1606f479425e@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi
+On Tue, Mar 31, 2020 at 3:28 PM syzbot
+<syzbot+0076781e1606f479425e@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    770fbb32 Add linux-next specific files for 20200228
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1414f7ade00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=576314276bce4ad5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0076781e1606f479425e
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+0076781e1606f479425e@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> percpu ref (io_file_data_ref_zero) <= 0 (0) after switching to atomic
 
-[This is an automated email]
+Looking at this io_file_data_ref_zero, this seems to be io_uring
+related. +io_uring maintainers
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
-
-The bot has tested the following trees: v5.5.13, v5.4.28, v4.19.113, v4.14.174, v4.9.217, v4.4.217.
-
-v5.5.13: Build OK!
-v5.4.28: Build OK!
-v4.19.113: Build OK!
-v4.14.174: Build OK!
-v4.9.217: Build OK!
-v4.4.217: Failed to apply! Possible dependencies:
-    5d6c31910bc0 ("xattr: Add __vfs_{get,set,remove}xattr helpers")
-    6b2553918d8b ("replace ->follow_link() with new method that could stay in RCU mode")
-    aa80deab33a8 ("namei: page_getlink() and page_follow_link_light() are the same thing")
-    cd3417c8fc95 ("kill free_page_put_link()")
-    ce23e6401334 ("->getxattr(): pass dentry and inode as separate arguments")
-    fceef393a538 ("switch ->get_link() to delayed_call, kill ->put_link()")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
--- 
-Thanks
-Sasha
+> WARNING: CPU: 0 PID: 0 at lib/percpu-refcount.c:160 percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc3-next-20200228-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x188/0x20d lib/dump_stack.c:118
+>  panic+0x2e3/0x75c kernel/panic.c:221
+>  __warn.cold+0x2f/0x35 kernel/panic.c:582
+>  report_bug+0x27b/0x2f0 lib/bug.c:195
+>  fixup_bug arch/x86/kernel/traps.c:175 [inline]
+>  fixup_bug arch/x86/kernel/traps.c:170 [inline]
+>  do_error_trap+0x12b/0x220 arch/x86/kernel/traps.c:267
+>  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
+>  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
+> RIP: 0010:percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
+> Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 f7 00 00 00 49 8b 75 e8 4c 89 e2 48 c7 c7 e0 d1 71 88 e8 02 36 b5 fd <0f> 0b e9 2b fd ff ff e8 7e 6a e3 fd be 08 00 00 00 48 89 ef e8 51
+> RSP: 0018:ffffc90000007df0 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000100 RSI: ffffffff815c4e91 RDI: fffff52000000fb0
+> RBP: ffff88808c4b2810 R08: ffffffff8987a480 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+> R13: ffff88808c4b2838 R14: 0000000000000002 R15: 0000000000000007
+>  rcu_do_batch kernel/rcu/tree.c:2218 [inline]
+>  rcu_core+0x59f/0x1370 kernel/rcu/tree.c:2445
+>  __do_softirq+0x26c/0x99d kernel/softirq.c:292
+>  invoke_softirq kernel/softirq.c:373 [inline]
+>  irq_exit+0x192/0x1d0 kernel/softirq.c:413
+>  exiting_irq arch/x86/include/asm/apic.h:546 [inline]
+>  smp_apic_timer_interrupt+0x19e/0x600 arch/x86/kernel/apic/apic.c:1146
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+>  </IRQ>
+> RIP: 0010:native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:61
+> Code: cc cc cc cc cc cc cc cc cc cc cc cc e9 07 00 00 00 0f 00 2d e4 35 65 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d d4 35 65 00 fb f4 <c3> cc 41 56 41 55 41 54 55 53 e8 f3 25 9d f9 e8 8e f7 cf fb 0f 1f
+> RSP: 0018:ffffffff89807d98 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+> RAX: 1ffffffff132790a RBX: ffffffff8987a480 RCX: 0000000000000000
+> RDX: dffffc0000000000 RSI: 0000000000000006 RDI: ffffffff8987ad1c
+> RBP: dffffc0000000000 R08: ffffffff8987a480 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff130f490
+> R13: 0000000000000000 R14: ffffffff8a862140 R15: 0000000000000000
+>  arch_safe_halt arch/x86/include/asm/paravirt.h:144 [inline]
+>  default_idle+0x49/0x350 arch/x86/kernel/process.c:698
+>  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+>  do_idle+0x393/0x690 kernel/sched/idle.c:269
+>  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:361
+>  start_kernel+0x867/0x8a1 init/main.c:1001
+>  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000016bac605a2268a08%40google.com.
