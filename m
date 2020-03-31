@@ -2,82 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D46199A60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 17:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E64199706
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 15:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730589AbgCaPxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 11:53:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36218 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730528AbgCaPxp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 11:53:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OFqOc+bJyrugjvE3pryu+rtDGYa5Qg3q/CyA2OqbQJA=; b=pfvOxZeY2utKj3hO3eTL30CYn5
-        skremNMpqHNKXILWV0VBJsYJdTjU1V1dvasr5eOUbn1JV/xK9sUjglwhQnAzcNweAeolxPdK5cTDL
-        EItpcfcOe/AkrCQVHevtWZZJ1DQ+ZvXpyjMcZHaGHTn12omjP5lPm0/R/KmscoWcsmIv3jubehmDx
-        c/iEGFwgVgG+l7HAbREa7uVMBSiXjAW712crz8RKhs5AnU/Uea+9v0CdzlxKizF8jFBwfRDt6MJed
-        uG2U9gr2QL1Ge+UTir6jPHggK0p6WNLHqX9z6F9pWovxEzmC60Cvcj0F2dUCH3HPdoLjKAFedZsqC
-        4yN+ukAQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJGXc-0004FX-KP; Tue, 31 Mar 2020 13:02:52 +0000
-Date:   Tue, 31 Mar 2020 06:02:52 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
+        id S1730703AbgCaNLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 09:11:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39548 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730543AbgCaNLS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Mar 2020 09:11:18 -0400
+Received: from localhost (unknown [137.135.114.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B436206F5;
+        Tue, 31 Mar 2020 13:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585660277;
+        bh=+WakbIJ2tDYa4ngFBTKurNcfOdvNQ+Z6MF01/GY6uKQ=;
+        h=Date:From:To:To:To:CC:Cc:Cc:Cc:Cc:Subject:In-Reply-To:References:
+         From;
+        b=UzPfEtZZ811macz6dqKYTg4bVvvedvR1e56Fi1LDuhlvfmKPVoHgFgr4yWu/yAXmR
+         cx584V9/jXBJ/b+5SHxstXeCG+fYTI65LFNSAOyHbufD3BB8Z634oaVXgklZquQQz3
+         xhMNnE8LCe1RmuWq2glyPiMKU0hX7phHx0V2gqqw=
+Date:   Tue, 31 Mar 2020 13:11:16 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Frank van der Linden <fllinden@amazon.com>
+To:     <bfields@fieldses.org>, <chuck.lever@oracle.com>
+CC:     Frank van der Linden <fllinden@amazon.com>
+Cc:     stable@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] iomap: Remove indirect function call
-Message-ID: <20200331130252.GA21484@bombadil.infradead.org>
-References: <20200328155156.GS22483@bombadil.infradead.org>
- <20200331074628.GA9872@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200331074628.GA9872@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH v2 01/11] xattr: break delegations in {set,remove}xattr and add _locked versions
+In-Reply-To: <20200327232717.15331-2-fllinden@amazon.com>
+References: <20200327232717.15331-2-fllinden@amazon.com>
+Message-Id: <20200331131117.7B436206F5@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 12:46:28AM -0700, Christoph Hellwig wrote:
-> On Sat, Mar 28, 2020 at 08:51:56AM -0700, Matthew Wilcox wrote:
-> > By splitting iomap_apply into __iomap_apply and an inline iomap_apply,
-> > we convert the call to 'actor' into a direct function call.  I haven't
-> > done any performance measurements, but given the current costs of indirect
-> > function calls, this would seem worthwhile to me?
-> 
-> Hmm.  Given that emount of compiler stupidity we are dealing with did
-> you at least look at the assembly output to see if this actually removes
-> the indirect call?  I wouldn't be quite sure.
+Hi
 
-If it does get inlined, then the compiler does it:
+[This is an automated email]
 
-     b9d:       e8 ae fe ff ff          callq  a50 <iomap_page_mkwrite_actor>
+This commit has been processed because it contains a -stable tag.
+The stable tag indicates that it's relevant for the following trees: all
 
-If not, then the compiler emits a function in each file called iomap_apply
-which makes an indirect call.  So s/inline/__always_inline/ in the original
-patch.
+The bot has tested the following trees: v5.5.13, v5.4.28, v4.19.113, v4.14.174, v4.9.217, v4.4.217.
 
-before:
-   text	   data	    bss	    dec	    hex	filename
-   5314	   4648	      0	   9962	   26ea	fs/iomap/trace.o
-   1050	     72	      0	   1122	    462	fs/iomap/apply.o
-  17316	    636	    224	  18176	   4700	fs/iomap/buffered-io.o
-   4773	     76	      0	   4849	   12f1	fs/iomap/direct-io.o
-   1335	     28	      0	   1363	    553	fs/iomap/fiemap.o
-   1928	     28	      0	   1956	    7a4	fs/iomap/seek.o
-   1394	      8	      0	   1402	    57a	fs/iomap/swapfile.o
+v5.5.13: Build OK!
+v5.4.28: Build OK!
+v4.19.113: Build OK!
+v4.14.174: Build OK!
+v4.9.217: Build OK!
+v4.4.217: Failed to apply! Possible dependencies:
+    5d6c31910bc0 ("xattr: Add __vfs_{get,set,remove}xattr helpers")
+    6b2553918d8b ("replace ->follow_link() with new method that could stay in RCU mode")
+    aa80deab33a8 ("namei: page_getlink() and page_follow_link_light() are the same thing")
+    cd3417c8fc95 ("kill free_page_put_link()")
+    ce23e6401334 ("->getxattr(): pass dentry and inode as separate arguments")
+    fceef393a538 ("switch ->get_link() to delayed_call, kill ->put_link()")
 
-after:
-   text	   data	    bss	    dec	    hex	filename
-   5314	   4648	      0	   9962	   26ea	fs/iomap/trace.o
-    722	     72	      0	    794	    31a	fs/iomap/apply.o
-  18784	    636	    224	  19644	   4cbc	fs/iomap/buffered-io.o
-   5169	     76	      0	   5245	   147d	fs/iomap/direct-io.o
-   2093	     28	      0	   2121	    849	fs/iomap/fiemap.o
-   2467	     28	      0	   2495	    9bf	fs/iomap/seek.o
-   1664	      8	      0	   1672	    688	fs/iomap/swapfile.o
 
-33110 to 36213 bytes of text.  So not free.  Worthwhile?
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
+
+-- 
+Thanks
+Sasha
