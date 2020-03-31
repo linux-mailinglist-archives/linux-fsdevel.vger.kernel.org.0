@@ -2,44 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4893198E9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 10:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC51B198E9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 10:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbgCaIep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 04:34:45 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34382 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729819AbgCaIep (ORCPT
+        id S1730203AbgCaIfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 04:35:10 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37546 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgCaIfK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:34:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585643684;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=d3uoqh9h+iojx/+Rg3U0VTN2ulL9+wr9bMc1wrNA4m0=;
-        b=ZW8Mu3deDP5e5GVq6IzQwBVRZSWhVnbJd8AoBCvhrBFiHceHSXPYCqyNtEA+W3mLWkpkag
-        wi+jHJPfT6yJ+cHD6BncDH76PsK5tY3cd3Y2WjCXletUOvOk6ozu3Tu6/PsGNlwyynmAuc
-        LYDj3pDJYNRpCFi8HHEBWdPqip3TgvE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-101-XwWS4oBAN9KvwkitkcQc6A-1; Tue, 31 Mar 2020 04:34:41 -0400
-X-MC-Unique: XwWS4oBAN9KvwkitkcQc6A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54B2B149C5;
-        Tue, 31 Mar 2020 08:34:38 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.194.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1866096B80;
-        Tue, 31 Mar 2020 08:34:33 +0000 (UTC)
-Date:   Tue, 31 Mar 2020 10:34:30 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        David Howells <dhowells@redhat.com>,
+        Tue, 31 Mar 2020 04:35:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id de14so24085046edb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 01:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2rLFubCEpgldKurlG4URIBkpTK5CEAUrKTvEkFewMCc=;
+        b=Pl6wunnFAOyFrLjRF4MLa/729tmRbfvLqvNbOMvx8XQPOctWtryQtH04K/E5S2+qBC
+         ePAeM6bPzByKY90dlYOUaqZEo+JcCIjCXbWPFBl4qB4tZM4goBwE/hSdS3js5G4lNwXl
+         urTXdaybd2HhJ+bGwiYNbcuzzErWv5XyrqZ9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2rLFubCEpgldKurlG4URIBkpTK5CEAUrKTvEkFewMCc=;
+        b=EUlke68MIn4LooVWM3ohtn3Sj/Xdtr3QDsO/Jb/P1j9A+mcd8ePdxUTDysmZ4qHAi/
+         tKXQCiLILFlYZWbsizEriti7tsKdnaTuvZl1G5q5K+nlf48PbO86yljoFYfOrei6mGOc
+         bZFtP7Lap1cBFwt7u0JYDXb7+vg4+SwUpCgW6IXtNhcSQQVuH6Ut0123DDiGWepYRYTg
+         pRYhBZeC71nFDyNDmRuRofRFhMqMGOmqCuNR2B8VN1PGf3MyWw8QD9vemduwrgB8e4T/
+         WcmRZ2ZBWaiCBRZLfsgseBSvY9UKeuoJOxCiP2NfgbOm/ny39FLv8vFjReOjq2HLGz59
+         H/Hw==
+X-Gm-Message-State: ANhLgQ2pl7kx7x5vOza0plbgBp1IsdbG817BDJgmz1nY0htEAJskKd/8
+        AZWfRPsMfI/mjanqiQxz4wJY53ynISEp0K2wn8/8NA==
+X-Google-Smtp-Source: ADFU+vtv+tXPNHXP7ARcHQpTkYalP7cBmBf5/XjaaCBBR2f6V6HnH9gs6cBg/IlbBfMiOag3DlBSeZGOqpzpLteyY6k=
+X-Received: by 2002:a17:906:6545:: with SMTP id u5mr5686172ejn.27.1585643707995;
+ Tue, 31 Mar 2020 01:35:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <1445647.1585576702@warthog.procyon.org.uk> <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com> <20200331081507.f6an4x32cxwpxdpd@wittgenstein>
+In-Reply-To: <20200331081507.f6an4x32cxwpxdpd@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 31 Mar 2020 10:34:56 +0200
+Message-ID: <CAJfpegsR7Vx1F0DNzoR0=SdNyuT02SWwO5wQRJtiKq_SOv71kw@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Steven Whitehouse <swhiteho@redhat.com>,
         Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
@@ -47,46 +58,76 @@ Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lennart Poettering <lennart@poettering.net>,
         Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200331083430.kserp35qabnxvths@ws.net.home>
-References: <1445647.1585576702@warthog.procyon.org.uk>
- <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
- <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
-> On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> 
-> > Fwiw, putting down my kernel hat and speaking as someone who maintains
-> > two container runtimes and various other low-level bits and pieces in
-> > userspace who'd make heavy use of this stuff I would prefer the fd-based
-> > fsinfo() approach especially in the light of across namespace
-> > operations, querying all properties of a mount atomically all-at-once,
-> 
-> fsinfo(2) doesn't meet the atomically all-at-once requirement.
+On Tue, Mar 31, 2020 at 10:15 AM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
+> > On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
+> > <christian.brauner@ubuntu.com> wrote:
+> >
+> > > Fwiw, putting down my kernel hat and speaking as someone who maintains
+> > > two container runtimes and various other low-level bits and pieces in
+> > > userspace who'd make heavy use of this stuff I would prefer the fd-based
+> > > fsinfo() approach especially in the light of across namespace
+> > > operations, querying all properties of a mount atomically all-at-once,
+> >
+> > fsinfo(2) doesn't meet the atomically all-at-once requirement.  Sure,
+> > it's possible to check the various change counters before and after a
+> > batch of calls to check that the result is consistent.  Still, that's
+> > not an atomic all-at-once query, if you'd really require that, than
+> > fsinfo(2) as it currently stands would be inadequate.
+>
+> It at all that's only true for batch requests.
 
-I guess your /proc based idea have exactly the same problem... 
+For example, there's no way to atomically query mount flags, parent,
+and list of children with a single fsinfo() call, you actually need
+three calls and they can reflect different states of the same mount.
+Not saying this is a problem, just that there's no list of
+requirements on what is needed and why.
 
-I see two possible ways:
+> > > and safe delegation through fds. Another heavy user of this would be
+> > > systemd (Cced Lennart who I've discussed this with) which would prefer
+> > > the fd-based approach as well. I think pulling this into a filesystem
+> > > and making userspace parse around in a filesystem tree to query mount
+> > > information is the wrong approach and will get messy pretty quickly
+> > > especially in the face of mount and user namespace interactions and
+> > > various other pitfalls.
+> >
+> > Have you actually looked at my proposed patch?   Do you have concrete
+>
+> Yes. So have others, Al actively disliked and nacked it and no-one got
+> excited about it.
 
-- after open("/mnt", O_PATH) create copy-on-write object in kernel to
-  represent mount node -- kernel will able to modify it, but userspace
-  will get unchanged data from the FD until to close()
+Al, as far as I remember, nacked several things the patch was doing.
+I fixed those.
 
-- improve fsinfo() to provide set (list) of the attributes by one call
+> > issues or just vague bad feelings?
+>
+> We have had that discussion on-list where I made my "vague bad feelings"
+> clear where you responded with the same dismissive style so I don't see
+> the point in repeating this experience.
+>
+> Again, I want to make it clear that here I'm stating my preference as a
+> user of this api and as such I don't want to have to parse through a
+> filesystem to get complex information about filesystems. We've had
+> fruitful discussions [1] around how fsinfo() ties in with supervised
+> mounts and the rest of the mount api and its clear and simple especially
+> in the face of namespaces and implements a nice delegation model. So +1
+> from me.
 
-    Karel
+And you keep ignoring the fact that my patch implements that exact
+same delegation model.  That's why I'm asking if you have looked at it
+or not.
 
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+The "I don't want to have to parse through a filesystem to get complex
+information about filesystems" is not a set of requirements that an
+API can be designed from.
 
+Thanks,
+Miklos
