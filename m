@@ -2,150 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEB71998C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 16:39:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7DC1998FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 16:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbgCaOj1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 10:39:27 -0400
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:19264 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgCaOj0 (ORCPT
+        id S1730286AbgCaOxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 10:53:47 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:46494 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730149AbgCaOxr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:39:26 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 48sBmX0b2jzQlF1;
-        Tue, 31 Mar 2020 16:39:24 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id FoOKAboSO1mL; Tue, 31 Mar 2020 16:39:20 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 01:39:11 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2)
- syscall
-Message-ID: <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
-References: <20200202151907.23587-1-cyphar@cyphar.com>
- <20200202151907.23587-3-cyphar@cyphar.com>
- <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com>
+        Tue, 31 Mar 2020 10:53:47 -0400
+Received: by mail-il1-f195.google.com with SMTP id i75so12385009ild.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 07:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0eOtXIqj2oDuIMpA9Wt18PpHJkAZb38WQ9zSO73WLSY=;
+        b=DCEsyy1sudgvuAcOwREzLD03ObZfHEsvNPRdxZgk+VfQ2Imj8oLebFJpuxIXDQ2IDy
+         hihYJujg7pgKegXN4t/7wCE2CIcECI3go7/7QtLEa4SypgnwKguW9fvs+NmJ9KP4GrXg
+         VAnkmg4ISVqeWV60nOQv33NwY3FugQzEvLWsk6mYuqTH0eBx8o1p32pVgWIukOUYGPtm
+         +iBoxa9Z7NWrYbMJ9Qv2FZ0SxThA6vjB8jInBe+D5gr7TC5cJjnjRlAsAt8ddIU4B86n
+         1CHjlcuQgngL94VNXDNy7CHnE6v+5ucr+lPy8oSvze0v5rTvLFuY+Q23aMixyI5EHMGq
+         Vngw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0eOtXIqj2oDuIMpA9Wt18PpHJkAZb38WQ9zSO73WLSY=;
+        b=j16DJuLCsvBaqZk3a1AU6epLuIiq2xh2uVkwKZuFXrOFLegITXIihAMaUAstVmu647
+         zWT1oYyHUzJmkBk23qtbQpcqcGJoI4f6Ec0tH0MQo8+G1iS9XCyxd6c/4cuRBKur8c8D
+         GwpANtXVv/LMtBSslnvG2FDk2MTeLeKk4oHnjc7guXm9COWFh0Ye+YpRRldk71LIbHu/
+         95Ul8W0KqWRxDYPrXoTH6RhxAGEgR+oXk7TkD09oFLX8lbClZzVcnRehbDmzqxuTUNtm
+         3+ElEyxf16wAgBH8pj7c3do8aoweLx18wm2yFdhRXHLaknnjzgDiL2SNGAyAYDcE40CG
+         fk4Q==
+X-Gm-Message-State: ANhLgQ0zUH1SZjwJamlhLtWqkoljBPwaHtxWCjOErBt9A1EqEBnwEReu
+        wsY4H5JxhXi56Qd/s1mykDLeQw==
+X-Google-Smtp-Source: ADFU+vtMg5iIxOv3TcW+zVaA43LrZFv03GGnEKvbbhsJWQMg6rZLgR2wheAMS9gYsskhrwLwwr/zUg==
+X-Received: by 2002:a92:3b11:: with SMTP id i17mr17172566ila.161.1585666425632;
+        Tue, 31 Mar 2020 07:53:45 -0700 (PDT)
+Received: from [192.168.1.159] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id d70sm5985217ill.57.2020.03.31.07.53.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 07:53:44 -0700 (PDT)
+Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
+ (2)
+To:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <20200331114459.17184-1-hdanton@sina.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <5a9c10c6-30b7-4177-146c-c2da2585ce5d@kernel.dk>
+Date:   Tue, 31 Mar 2020 08:53:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l2lpn76pgjx5xchv"
-Content-Disposition: inline
-In-Reply-To: <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com>
-X-Rspamd-Queue-Id: CF12A1743
-X-Rspamd-Score: -2.96 / 15.00 / 200.00
+In-Reply-To: <20200331114459.17184-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 3/31/20 5:44 AM, Hillf Danton wrote:
+> 
+> On Tue, 31 Mar 2020 04:14:03 -0700
+>>
+>> syzbot has bisected this bug to:
+>>
+>> commit b41e98524e424d104aa7851d54fd65820759875a
+>> Author: Jens Axboe <axboe@kernel.dk>
+>> Date:   Mon Feb 17 16:52:41 2020 +0000
+>>
+>>     io_uring: add per-task callback handler
+>>
+>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115adadbe00000
+>> start commit:   673b41e0 staging/octeon: fix up merge error
+>> git tree:       upstream
+>> final crash:    https://syzkaller.appspot.com/x/report.txt?x=135adadbe00000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=155adadbe00000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=acf766c0e3d3f8c6
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=0c3370f235b74b3cfd97
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ac1b9de00000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10449493e00000
+>>
+>> Reported-by: syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com
+>> Fixes: b41e98524e42 ("io_uring: add per-task callback handler")
+>>
+>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> Looks like another line is missed in that work.
+> 
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5962,6 +5962,7 @@ static int io_sq_thread(void *data)
+>  				}
+>  				if (current->task_works) {
+>  					task_work_run();
+> +					finish_wait(&ctx->sqo_wait, &wait);
+>  					continue;
+>  				}
+>  				if (signal_pending(current))
 
---l2lpn76pgjx5xchv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can you send this as a properly formatted patch? That indeed looks like
+the issue.
 
-On 2020-03-30, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> Hello Aleksa,
->=20
-> On 2/2/20 4:19 PM, Aleksa Sarai wrote:
-> > Rather than trying to merge the new syscall documentation into open.2
-> > (which would probably result in the man-page being incomprehensible),
-> > instead the new syscall gets its own dedicated page with links between
-> > open(2) and openat2(2) to avoid duplicating information such as the list
-> > of O_* flags or common errors.
-> >=20
-> > In addition to describing all of the key flags, information about the
-> > extensibility design is provided so that users can better understand why
-> > they need to pass sizeof(struct open_how) and how their programs will
-> > work across kernels. After some discussions with David Laight, I also
-> > included explicit instructions to zero the structure to avoid issues
-> > when recompiling with new headers.
-> >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
->=20
-> Thanks. I've applied this patch, but also done quite a lot of
-> editing of the page. The current draft is below (and also pushed=20
-> to Git). Could I ask you to review the page, to see if I injected
-> any error during my edits.
+-- 
+Jens Axboe
 
-Looks good to me.
-
-> In addition, I've added a number of FIXMEs in comments
-> in the page source. Can you please check these, and let me
-> know your thoughts.
-
-Will do, see below.
-
-> .\" FIXME I find the "previously-functional systems" in the previous
-> .\" sentence a little odd (since openat2() ia new sysycall), so I would
-> .\" like to clarify a little...
-> .\" Are you referring to the scenario where someone might take an
-> .\" existing application that uses openat() and replaces the uses
-> .\" of openat() with openat2()? In which case, is it correct to
-> .\" understand that you mean that one should not just indiscriminately
-> .\" add the RESOLVE_NO_XDEV flag to all of the openat2() calls?
-> .\" If I'm not on the right track, could you point me in the right
-> .\" direction please.
-
-This is mostly meant as a warning to hopefully avoid applications
-because the developer didn't realise that system paths may contain
-symlinks or bind-mounts. For an application which has switched to
-openat2() and then uses RESOLVE_NO_SYMLINKS for a non-security reason,
-it's possible that on some distributions (or future versions of a
-distribution) that their application will stop working because a system
-path suddenly contains a symlink or is a bind-mount.
-
-This was a concern which was brought up on LWN some time ago. If you can
-think of a phrasing that makes this more clear, I'd appreciate it.
-
-> .\" FIXME: what specific details in symlink(7) are being referred
-> .\" by the following sentence? It's not clear.
-
-The section on magic-links, but you're right that the sentence ordering
-is a bit odd. It should probably go after the first sentence.
-
-> .\" FIXME I found the following hard to understand (in particular, the
-> .\" meaning of "scoped" is unclear) , and reworded as below. Is it okay?
-> .\"     Absolute symbolic links and ".." path components will be scoped to
-> .\"     .IR dirfd .
-
-Scoped does broadly mean "interpreted relative to", though the
-difference is mainly that when I said scoped it's meant to be more of an
-assertive claim ("the kernel promises to always treat this path inside
-dirfd"). But "interpreted relative to" is a clearer way of phrasing the
-semantics, so I'm okay with this change.
-
-> .\" FIXME The next piece is unclear (to me). What kind of ".." escape
-> .\" attempts does chroot() not detect that RESOLVE_IN_ROOT does?
-
-If the root is moved, you can escape from a chroot(2). But this sentence
-might not really belong in a man-page since it's describing (important)
-aspects of the implementation and not the semantics.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---l2lpn76pgjx5xchv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXoNWDAAKCRCdlLljIbnQ
-EuhhAQDrGJcSC2tvaVHSZirH1uENpWOgqxV1HHQaNXnurRE1MwD/eS7jz/feBrZa
-HAM6s15BEz8f1DvF4UAf0nb8LHajngw=
-=O1HR
------END PGP SIGNATURE-----
-
---l2lpn76pgjx5xchv--
