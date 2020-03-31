@@ -2,155 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68105199794
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 15:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 419261997A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 15:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731029AbgCaNej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 09:34:39 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41394 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730811AbgCaNej (ORCPT
+        id S1730954AbgCaNhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 09:37:50 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44637 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730895AbgCaNhu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 09:34:39 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i3so18233530qtv.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 06:34:39 -0700 (PDT)
+        Tue, 31 Mar 2020 09:37:50 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j188so17339885lfj.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 06:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
-        b=JSLXv2GsMl24k0EipG86fel3qIxrznqKCbWUISfyREeUxRtG8dcuHyRcIQfgiVh/XR
-         vw4t5DfPeQ1L3LW0EcUykGzi2Wp4bu68RjhmLvhMsR41TFlDi9t8kesfnUu5CTKNNwJP
-         vFBhTS5afyuY6Cv6HP9u4KaXcUkzT/Rghk88lc6+MQylxn8drFFzL1mX4eStYOBq1XX5
-         qO2WvCiTKHxZXgjS9eunHwCnNdqJ+5vHrBiV3ZlP5XwAuX21T/7LSKVw4ntABTWhh/SI
-         Z4bYjRTOHuQIsXD4GSWmQiDFoqQzTHeGFU8stiDQe9YK27oclNz/1sx/5VPgUHEhes+T
-         ctEw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aU5iLCuWaH4zxyOLw8e9l2ANSFZT9vUFLRpaEbsCIeI=;
+        b=M2bf+eVpkauwEFyb4CxmjaPvpl1N7Yad7zfCQI7ftWmBLkeJPC0XXouWV2QI8hxZp0
+         SWvodVcZIL6Bb/b/rJIkQwkInHpjgZ5o+LFL4a9Pq3M4CqV+zv5VdnUEa/Y9J4upA+Im
+         9Jw34jRSN6kWPZ+k5VsdGo8jY+lJaogNfFrBKMbUo/M+wp9QThZUUdUXu+DGnXp8u5k2
+         KPhTqiN5HAQpCWvh1il9cj1mhxWhSyWq/d4wVo+nmE3Zy9I/KddzW5kBlWk/4bQIKCOR
+         Av5ZU2ntiH08RXx7Vy7fMOQlQY1fz06o4VosndadGp4GHJG5h/oOYOtMMvQhx/Kp3hXh
+         clpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FC6FIie4dB6bMk3AEouOio/5I8/SxWgVUF3EHcYeGKk=;
-        b=mCCGabZQw89s+poaAuMPxYRUKen66m+LSbcanF4jo0aWUjMuqMQ7cm+Pxe1C/6KsdR
-         AuENf0au0GD1MQVFeI5GcUsGW02RBzrJX8/q4BQJzs5QchXPL2wrYiNBf+ys5OBUFaBA
-         73waMaoh6a2VORreyklEiUWqmAKITIjmiBho6cLEZGiXE+rQLJNCiH/FGFOevBKaZPww
-         iDkQE6Zhsw8YRnIBz3FewYjLq7V3q89fTQKSFPde90Son0nnTKJcpdDWYSeck8Twf4PT
-         W35HLzg9fdz1sE2+NEskwsJw+0xnSLwEWjQV4I4467r7DuPZuFcJlmJjHVvKdtWjQ5ap
-         cE4w==
-X-Gm-Message-State: ANhLgQ0UDEEeuzEx32IoB8VK9XvzXvmDqyDJaB9ZPYXVxHkcO/TSDDyp
-        CvkhI+BMXCxeWKynPQslFGldJQGYL7ayp9A/Flc27vLFIaVlMQ==
-X-Google-Smtp-Source: ADFU+vtUeEOZn0rGavrGQ77YK5I181F1/PrUa9BYa0b8C78Gwj1gAK2n5Cl9kEZmCorTDalXgX+CB9VDENu7bBoYtus=
-X-Received: by 2002:ac8:719a:: with SMTP id w26mr4993271qto.257.1585661678287;
- Tue, 31 Mar 2020 06:34:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aU5iLCuWaH4zxyOLw8e9l2ANSFZT9vUFLRpaEbsCIeI=;
+        b=k5Ga3ik2KqsLFHxIiB7oaXNetcduNJmZ8RBg25WA+VheAiIMhYuNPmQx5HQfzhaD5T
+         FN2t+3/sio5y0ZZPt3fUiyy3VGp/e1F479yXdY7vU4EA5FpkdXwwAMegSKI/IBrAIiIb
+         rdiJM+8bb2B2k4iCJpD40gP2cYivKL7XMl6AG8wE6ay+4dIG+2hs2f39DOh5j/QSK4jH
+         bmxXLBYttSca7Gzw5gD2TyQO35GLkVqtPn33cB6JG8eWDdABoJCKHWwY8hfNJsfbPkUI
+         w5P1mPW5YHFyF9Kn9DHGYLhgal+fqcyX4aL8ThAbwr13KytJRqAUJJqc1UxmGEusL/5J
+         MADQ==
+X-Gm-Message-State: AGi0PubOzU1PR3nxq3V0U4Y4olsvlnOZCHpH35BTaMjCyx1eT+/QzhOt
+        mCd2eTQwre2jCL5ytb4m9CV9LA==
+X-Google-Smtp-Source: APiQypKT2+uqdUkMNinUZ7US4h3EuWA+Qnq8u+r/x9eYKAF8W37lj90IU1/6iLzyAQ3J8dNMc7hMJw==
+X-Received: by 2002:a19:ad43:: with SMTP id s3mr11555874lfd.63.1585661866597;
+        Tue, 31 Mar 2020 06:37:46 -0700 (PDT)
+Received: from localhost.localdomain (c-f3d7225c.014-348-6c756e10.bbcust.telenor.se. [92.34.215.243])
+        by smtp.gmail.com with ESMTPSA id x128sm9837994lff.67.2020.03.31.06.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Mar 2020 06:37:45 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] fcntl: Add 32bit filesystem mode
+Date:   Tue, 31 Mar 2020 15:35:36 +0200
+Message-Id: <20200331133536.3328-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <00000000000016bac605a2268a08@google.com>
-In-Reply-To: <00000000000016bac605a2268a08@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 31 Mar 2020 15:34:26 +0200
-Message-ID: <CACT4Y+Zk60ETzYdpSepkR+YqNvzkbEhjdDUy+bY7r=XWxoVYaA@mail.gmail.com>
-Subject: Re: WARNING in percpu_ref_switch_to_atomic_rcu
-To:     syzbot <syzbot+0076781e1606f479425e@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 3:28 PM syzbot
-<syzbot+0076781e1606f479425e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    770fbb32 Add linux-next specific files for 20200228
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1414f7ade00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=576314276bce4ad5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0076781e1606f479425e
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+0076781e1606f479425e@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> percpu ref (io_file_data_ref_zero) <= 0 (0) after switching to atomic
+It was brought to my attention that this bug from 2018 was
+still unresolved: 32 bit emulators like QEMU were given
+64 bit hashes when running 32 bit emulation on 64 bit systems.
 
-Looking at this io_file_data_ref_zero, this seems to be io_uring
-related. +io_uring maintainers
+This adds a fcntl() operation to set the underlying filesystem
+into 32bit mode even if the file hanle was opened using 64bit
+mode without the compat syscalls.
 
-> WARNING: CPU: 0 PID: 0 at lib/percpu-refcount.c:160 percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.6.0-rc3-next-20200228-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x188/0x20d lib/dump_stack.c:118
->  panic+0x2e3/0x75c kernel/panic.c:221
->  __warn.cold+0x2f/0x35 kernel/panic.c:582
->  report_bug+0x27b/0x2f0 lib/bug.c:195
->  fixup_bug arch/x86/kernel/traps.c:175 [inline]
->  fixup_bug arch/x86/kernel/traps.c:170 [inline]
->  do_error_trap+0x12b/0x220 arch/x86/kernel/traps.c:267
->  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:286
->  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-> RIP: 0010:percpu_ref_switch_to_atomic_rcu+0x436/0x540 lib/percpu-refcount.c:160
-> Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 f7 00 00 00 49 8b 75 e8 4c 89 e2 48 c7 c7 e0 d1 71 88 e8 02 36 b5 fd <0f> 0b e9 2b fd ff ff e8 7e 6a e3 fd be 08 00 00 00 48 89 ef e8 51
-> RSP: 0018:ffffc90000007df0 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 0000000000000100 RSI: ffffffff815c4e91 RDI: fffff52000000fb0
-> RBP: ffff88808c4b2810 R08: ffffffff8987a480 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: ffff88808c4b2838 R14: 0000000000000002 R15: 0000000000000007
->  rcu_do_batch kernel/rcu/tree.c:2218 [inline]
->  rcu_core+0x59f/0x1370 kernel/rcu/tree.c:2445
->  __do_softirq+0x26c/0x99d kernel/softirq.c:292
->  invoke_softirq kernel/softirq.c:373 [inline]
->  irq_exit+0x192/0x1d0 kernel/softirq.c:413
->  exiting_irq arch/x86/include/asm/apic.h:546 [inline]
->  smp_apic_timer_interrupt+0x19e/0x600 arch/x86/kernel/apic/apic.c:1146
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
->  </IRQ>
-> RIP: 0010:native_safe_halt+0xe/0x10 arch/x86/include/asm/irqflags.h:61
-> Code: cc cc cc cc cc cc cc cc cc cc cc cc e9 07 00 00 00 0f 00 2d e4 35 65 00 f4 c3 66 90 e9 07 00 00 00 0f 00 2d d4 35 65 00 fb f4 <c3> cc 41 56 41 55 41 54 55 53 e8 f3 25 9d f9 e8 8e f7 cf fb 0f 1f
-> RSP: 0018:ffffffff89807d98 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-> RAX: 1ffffffff132790a RBX: ffffffff8987a480 RCX: 0000000000000000
-> RDX: dffffc0000000000 RSI: 0000000000000006 RDI: ffffffff8987ad1c
-> RBP: dffffc0000000000 R08: ffffffff8987a480 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff130f490
-> R13: 0000000000000000 R14: ffffffff8a862140 R15: 0000000000000000
->  arch_safe_halt arch/x86/include/asm/paravirt.h:144 [inline]
->  default_idle+0x49/0x350 arch/x86/kernel/process.c:698
->  cpuidle_idle_call kernel/sched/idle.c:154 [inline]
->  do_idle+0x393/0x690 kernel/sched/idle.c:269
->  cpu_startup_entry+0x14/0x20 kernel/sched/idle.c:361
->  start_kernel+0x867/0x8a1 init/main.c:1001
->  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000016bac605a2268a08%40google.com.
+Programs that need the 32 bit file system behavior need to
+issue a fcntl() system call such as in this example:
+
+  #define F_SET_FILE_32BIT_FS (1024 + 15)
+
+  int main(int argc, char** argv) {
+    DIR* dir;
+    int err;
+    int fd;
+
+    dir = opendir("/boot");
+    fd = dirfd(dir);
+    err = fcntl(fd, F_SET_FILE_32BIT_FS);
+    if (err) {
+      printf("fcntl() failed! err=%d\n", err);
+      return 1;
+    }
+    printf("dir=%p\n", dir);
+    printf("readdir(dir)=%p\n", readdir(dir));
+    printf("errno=%d: %s\n", errno, strerror(errno));
+    return 0;
+  }
+
+This can be pretty hard to test since C libraries and linux
+userspace security extensions aggressively filter the parameters
+that are passed down and allowed to commit into actual system
+calls.
+
+Cc: Florian Weimer <fw@deneb.enyo.de>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Theodore Ts'o <tytso@mit.edu>
+Link: https://bugs.launchpad.net/qemu/+bug/1805913
+Link: https://lore.kernel.org/lkml/87bm56vqg4.fsf@mid.deneb.enyo.de/
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205957
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ fs/fcntl.c                       | 4 ++++
+ include/uapi/linux/fcntl.h       | 9 +++++++++
+ tools/include/uapi/linux/fcntl.h | 9 +++++++++
+ tools/perf/trace/beauty/fcntl.c  | 3 ++-
+ 4 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 2e4c0fa2074b..d194b1265bd4 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -426,6 +426,10 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 	case F_SET_FILE_RW_HINT:
+ 		err = fcntl_rw_hint(filp, cmd, arg);
+ 		break;
++	case F_SET_FILE_32BIT_FS:
++		filp->f_mode |= FMODE_32BITHASH;
++		err = 0;
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index ca88b7bce553..b9ad934147e8 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -73,6 +73,15 @@
+  */
+ #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
+ 
++/*
++ * This instructs the kernel to provide 32bit semantics (such as hashes) from
++ * the file system layer, when running a userland that depend on 32bit
++ * semantics on a kernel that supports 64bit userland, but does not use the
++ * compat ioctl() for e.g. open(), so that the kernel would otherwise assume
++ * that the userland process is capable of dealing with 64bit semantics.
++ */
++#define F_SET_FILE_32BIT_FS	(F_LINUX_SPECIFIC_BASE + 15)
++
+ /*
+  * Types of directory notifications that may be requested.
+  */
+diff --git a/tools/include/uapi/linux/fcntl.h b/tools/include/uapi/linux/fcntl.h
+index ca88b7bce553..b9ad934147e8 100644
+--- a/tools/include/uapi/linux/fcntl.h
++++ b/tools/include/uapi/linux/fcntl.h
+@@ -73,6 +73,15 @@
+  */
+ #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
+ 
++/*
++ * This instructs the kernel to provide 32bit semantics (such as hashes) from
++ * the file system layer, when running a userland that depend on 32bit
++ * semantics on a kernel that supports 64bit userland, but does not use the
++ * compat ioctl() for e.g. open(), so that the kernel would otherwise assume
++ * that the userland process is capable of dealing with 64bit semantics.
++ */
++#define F_SET_FILE_32BIT_FS	(F_LINUX_SPECIFIC_BASE + 15)
++
+ /*
+  * Types of directory notifications that may be requested.
+  */
+diff --git a/tools/perf/trace/beauty/fcntl.c b/tools/perf/trace/beauty/fcntl.c
+index 56ef83b3d130..da80264678cb 100644
+--- a/tools/perf/trace/beauty/fcntl.c
++++ b/tools/perf/trace/beauty/fcntl.c
+@@ -94,7 +94,8 @@ size_t syscall_arg__scnprintf_fcntl_arg(char *bf, size_t size, struct syscall_ar
+ 	    cmd == F_OFD_SETLK || cmd == F_OFD_SETLKW || cmd == F_OFD_GETLK ||
+ 	    cmd == F_GETOWN_EX || cmd == F_SETOWN_EX ||
+ 	    cmd == F_GET_RW_HINT || cmd == F_SET_RW_HINT ||
+-	    cmd == F_GET_FILE_RW_HINT || cmd == F_SET_FILE_RW_HINT)
++	    cmd == F_GET_FILE_RW_HINT || cmd == F_SET_FILE_RW_HINT ||
++	    cmd == F_SET_FILE_32BIT_FS)
+ 		return syscall_arg__scnprintf_hex(bf, size, arg);
+ 
+ 	return syscall_arg__scnprintf_long(bf, size, arg);
+-- 
+2.25.1
+
