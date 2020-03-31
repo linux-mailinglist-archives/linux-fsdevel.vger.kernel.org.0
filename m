@@ -2,95 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB1519A01B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 22:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A69F19A073
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 23:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbgCaUrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 16:47:17 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34818 "EHLO
+        id S1728840AbgCaVJK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 17:09:10 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35424 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730829AbgCaUrR (ORCPT
+        with ESMTP id S1727937AbgCaVJK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 16:47:17 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d5so27885773wrn.2;
-        Tue, 31 Mar 2020 13:47:15 -0700 (PDT)
+        Tue, 31 Mar 2020 17:09:10 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d5so27978681wrn.2;
+        Tue, 31 Mar 2020 14:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4AdEViMXBRjDxwOLzH210LJAZ7Il4kdlQLv6bFidnE8=;
-        b=E1B9naPE51Rj83Qxr+cgWNDj6fpddYFOWLp5D8koXxFkaUSk2bhToLFxd21a1Ba6az
-         VrcwzvoRuKk2EYnYfF1vEbrAOQzKCKQyBOiuXLb3u/Mv7vglD04NHhxpMJP8RdPWEoFH
-         bvXNazG1v+mpHjB+Pdqs65M91FT8Lo88jeK/wwgOa9ASQx/iViOd9jX2NrNedyIwajKz
-         Rr5NINH8nnmiQ26uwXG2UWz/NDBlpg3h10jjWWBJSyCrnPo0cPw+tRL9DMNWslBuqbyB
-         lIS5l3s4jX5iK75m6J1LZyMssO7COL4Htr4+kHngklccNH3wc3DliVF8nmCs1L9knxTr
-         +dIw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=B6tP3lr4dsdouoEScHUU6AoHIj/KnpsdHoiuwt2FQlI=;
+        b=QBEAqflkVr4c7Z+EqdZW6V8ozD9wyuQSrtALIOiej8I/g6IzRuBffynog5nlY1htxa
+         uBDowuGrSKGLl001UxXtdVoPzAXK2nu2RdMK35lHBPOMyMXWmCrD7ZL4zgmvgMhPWwdR
+         rEJQwYoci9SL6uCt5aHO7XhhJggFHAaGjP3ReLmQ4o7MXpbbV436n3kFaK+VbGCHMpLt
+         1mcGnGxWGSPn7zqFE2zCivkvXRj6QyeMEMJ9A6UJw4fVAoyny6pZ7ZH49wVlDj1HVLXp
+         HzwNv356YsGxiljki9Pi+k5sATTWWJkfi67qWd1IUG54lJbv8VL/2lujr/WlTi0clv3A
+         gzGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4AdEViMXBRjDxwOLzH210LJAZ7Il4kdlQLv6bFidnE8=;
-        b=RWk1xdbHrsvhU0GgattA0tHWcaYW/Zk9rJMQQlXl8dGJkmFVJBiuSvttvRQn11N27Y
-         WzWcwu7Yai+b/C82oEBhh9Eg2H76Km/v7S+4TTxVlfEBO2Yk9x5+1xl1IBiuz7ltA5Jg
-         2wPlHCxTS3HWdglw8UgTB4JwlzrPV17EsIOxRxsl0XZgHlpeTbMwDSQXFWv594YxzjOh
-         qG1GXYQrrgOEYTKzYVVKBgRdsMysk4pJKrV0ZxroX6oSiCn9Ex0qn+j4mwQZU41IAuWx
-         TDMHavzAUtECjEnQBozaf+IXGETmBwlOdYxfZ6eKaELPr+9IRvLY717jK2YokYMhl1Aq
-         Nwqg==
-X-Gm-Message-State: AGi0PubyuRQqWyg9eZT+oQQduDGnA8MY5rnO4S8ohCdAFylTO7cwVZ2J
-        QzbHFyZcdVs7K/e5jdyi+xn/PRCqjA==
-X-Google-Smtp-Source: APiQypJJ8slhMDWYWjJBrx+erJOUIfKMzZFXp90keTB4tBk6rVakx4kL5Rfgj/8CcUhW5drk/hSJ4w==
-X-Received: by 2002:adf:f0d0:: with SMTP id x16mr595410wro.246.1585687634658;
-        Tue, 31 Mar 2020 13:47:14 -0700 (PDT)
-Received: from ninjahost.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
-        by smtp.gmail.com with ESMTPSA id o9sm28335491wrx.48.2020.03.31.13.47.13
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=B6tP3lr4dsdouoEScHUU6AoHIj/KnpsdHoiuwt2FQlI=;
+        b=Mm7OAPtx61ClhUT4e9XA+xfTHvaZXTGEKe93A4qCmtMl1SRaKJiAcmRfr7+w5WsKkW
+         zwZxrCY9cCdJADp7PJoZgFAzzXmss+5dZhu8aaAnOrM1IM/CWDvUrUySJc/ZsX70G4+u
+         74HHB+g9yYsGf36nRxb6OxxvqWhS5tZET0/3Zh93K4KvJTrg6Y1An/3+h3p5m7YmjGJ/
+         E3NDt5pcGs5YPlwkYURGvloEf13XXPt07/nde2RHDUOdTAQazem0aOLAhEVXOFVLHgsq
+         PVd7H8XeqYcd5Eyf/VPpmdRaEjlNCWZ8Qv8A8/R4JCIAegW915CRvpIkQrFsNf5wdOwN
+         omGw==
+X-Gm-Message-State: ANhLgQ359Zmhk5sB/rptHeghlgIyvogeFphp6epvNHaU9Saqznpj/PEn
+        ZEh5ysl2AoXfdDI52AwJcaYzihI=
+X-Google-Smtp-Source: ADFU+vtnP7LYldKA1MpO9AVOo9mamivHtPoJiIQxvAeFNqobXfHXYKShtCmojhQAloJDSOy9tDZBcA==
+X-Received: by 2002:a5d:5045:: with SMTP id h5mr21391859wrt.86.1585688948272;
+        Tue, 31 Mar 2020 14:09:08 -0700 (PDT)
+Received: from avx2 ([46.53.248.81])
+        by smtp.gmail.com with ESMTPSA id g3sm29352194wrm.66.2020.03.31.14.09.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 13:47:14 -0700 (PDT)
-From:   Jules Irenge <jbi.octave@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     boqun.feng@gmail.com, Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org (open list:PROC SYSCTL)
-Subject: [PATCH 4/7] sysctl: Add missing annotation for start_unregistering()
-Date:   Tue, 31 Mar 2020 21:46:40 +0100
-Message-Id: <20200331204643.11262-5-jbi.octave@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200331204643.11262-1-jbi.octave@gmail.com>
-References: <0/7>
- <20200331204643.11262-1-jbi.octave@gmail.com>
+        Tue, 31 Mar 2020 14:09:07 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 00:09:05 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: rename "catch" function argument
+Message-ID: <20200331210905.GA31680@avx2>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sparse reports a warning at start_unregistering()
+"catch" is reserved keyword in C++, rename it to something
+both gcc and g++ accept.
 
-warning: context imbalance in start_unregistering()
-	- unexpected unlock
+Rename "ign" for symmetry.
 
-The root cause is the missing annotation at start_unregistering()
-Add the missing __must_hold(&sysctl_lock) annotation.
-
-Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+Signed-off-by: _Z6Alexeyv <adobriyan@gmail.com>
 ---
- fs/proc/proc_sysctl.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index c75bb4632ed1..d1b5e2b35564 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -307,6 +307,7 @@ static void proc_sys_prune_dcache(struct ctl_table_header *head)
+ fs/proc/array.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -248,8 +248,8 @@ void render_sigset_t(struct seq_file *m, const char *header,
+ 	seq_putc(m, '\n');
+ }
  
- /* called under sysctl_lock, will reacquire if has to wait */
- static void start_unregistering(struct ctl_table_header *p)
-+	__must_hold(&sysctl_lock)
+-static void collect_sigign_sigcatch(struct task_struct *p, sigset_t *ign,
+-				    sigset_t *catch)
++static void collect_sigign_sigcatch(struct task_struct *p, sigset_t *sigign,
++				    sigset_t *sigcatch)
  {
- 	/*
- 	 * if p->used is 0, nobody will ever touch that entry again;
--- 
-2.24.1
-
+ 	struct k_sigaction *k;
+ 	int i;
+@@ -257,9 +257,9 @@ static void collect_sigign_sigcatch(struct task_struct *p, sigset_t *ign,
+ 	k = p->sighand->action;
+ 	for (i = 1; i <= _NSIG; ++i, ++k) {
+ 		if (k->sa.sa_handler == SIG_IGN)
+-			sigaddset(ign, i);
++			sigaddset(sigign, i);
+ 		else if (k->sa.sa_handler != SIG_DFL)
+-			sigaddset(catch, i);
++			sigaddset(sigcatch, i);
+ 	}
+ }
+ 
