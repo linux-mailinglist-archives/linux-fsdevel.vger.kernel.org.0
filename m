@@ -2,91 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72884198CED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 09:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D774198D30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 09:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgCaH2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 03:28:55 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:48338 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbgCaH2z (ORCPT
+        id S1729958AbgCaHjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 03:39:43 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43378 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbgCaHjm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:28:55 -0400
-X-Greylist: delayed 387 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 03:28:55 EDT
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by gardel.0pointer.net (Postfix) with ESMTP id B5053E814E3;
-        Tue, 31 Mar 2020 09:22:25 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id D3507160704; Tue, 31 Mar 2020 09:22:24 +0200 (CEST)
-Date:   Tue, 31 Mar 2020 09:22:24 +0200
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, dray@redhat.com, kzak@redhat.com,
-        mszeredi@redhat.com, swhiteho@redhat.com, jlayton@redhat.com,
-        raven@themaw.net, andres@anarazel.de, keyrings@vger.kernel.org,
+        Tue, 31 Mar 2020 03:39:42 -0400
+Received: by mail-oi1-f196.google.com with SMTP id k5so8471545oiw.10;
+        Tue, 31 Mar 2020 00:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mAUnvEZguD6CfDl4gHndNC/T8IwUXTZiBxjH+at4TTc=;
+        b=BAOCWSpovHS0fIzkHaAGLyJ47omoO1No0w6POuhEJhxM3BQxFtCIbzRCWf0zPfRKRj
+         6OfEIHVk/j/rjUqoxjuMMF52nXczqJ10r9iCobz3HDYqDefLXsR0OmFWRzwCSJ92irbY
+         wgfj+acI9+lHCdVUNqwdpXeAUGiRBMHhzj2UQzE8JNtJ0zXrUJfAailu6TWp0wVENI62
+         4wKj0ufFmyVbBDCHUuOkoFg5ldXn9aCiJmKw/oYb1eX8X+1itIRLQ4F0BdeQxwI0zyDD
+         g3hzQ1XGclY9h+WnU1WHf5w3/COjdbxDJ5A3J/bdu+sVRswlryTgdni4TcbkplX+tEop
+         RGkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mAUnvEZguD6CfDl4gHndNC/T8IwUXTZiBxjH+at4TTc=;
+        b=jNB7VHJAAmtfAWuD5t8iA+VIXhP1lWhBkF8hFiHjKU1OX6Zh1KuNL4S8bDxr0HWZY+
+         BZHJYY22pk7VRGbmPoHMfEq18UlfCjXMz8C1BRlvaCDcnB+G56iJL435ZATsNUvbETJu
+         fimBL9DG88PKXAlvYlJObgd9Vr6+i780lOizWAKjM3dneNYGsgQHadqA5ec8O77mT83g
+         1K2ivMaC2AbnaueUqrG3f1F9awlTpqncFE3+W30Cl1/j8jxZmnVFCooxbQzC/+h76ezQ
+         kI2RtCJkcdSN437uE7akTg3o6qVzynTn6bVoShfoXEfSO67VsrTjbPEp4NwTUWUpO3aL
+         cvPg==
+X-Gm-Message-State: ANhLgQ0rIrFRmrOMJP6bF4iQnVk9u3Y5IhLCIKthv2BxbOJRku7fehMR
+        xvvgOLRmi4cR070RWrjX4po=
+X-Google-Smtp-Source: ADFU+vtnEAPociO8YfQmbNs0FQoZh40NVXPYe+BT18z9nE1Y7XHAgXGynisBg3O1sZtZwTgULToJvQ==
+X-Received: by 2002:aca:c3c1:: with SMTP id t184mr1222939oif.113.1585640381659;
+        Tue, 31 Mar 2020 00:39:41 -0700 (PDT)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id g39sm5084010otb.26.2020.03.31.00.39.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Mar 2020 00:39:40 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 00:39:38 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cyphar@cyphar.com
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200331072224.GA27062@gardel-login>
-References: <1445647.1585576702@warthog.procyon.org.uk>
- <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+Subject: Re: mmotm 2020-03-30-18-46 uploaded (freesync)
+Message-ID: <20200331073938.GA54733@ubuntu-m2-xlarge-x86>
+References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
+ <a266d6a4-6d48-aadc-afd7-af0eb7c2d9db@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+In-Reply-To: <a266d6a4-6d48-aadc-afd7-af0eb7c2d9db@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mo, 30.03.20 23:17, Christian Brauner (christian.brauner@ubuntu.com) wrote:
+On Mon, Mar 30, 2020 at 11:18:26PM -0700, Randy Dunlap wrote:
+> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
+> 
+> on i386:
+> 
+> ld: drivers/gpu/drm/amd/display/modules/freesync/freesync.o: in function `mod_freesync_build_vrr_params':
+> freesync.c:(.text+0x790): undefined reference to `__udivdi3'
+> 
+> 
+> Full randconfig file is attached.
+> 
+> -- 
+> ~Randy
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
-> Fwiw, putting down my kernel hat and speaking as someone who maintains
-> two container runtimes and various other low-level bits and pieces in
-> userspace who'd make heavy use of this stuff I would prefer the fd-based
-> fsinfo() approach especially in the light of across namespace
-> operations, querying all properties of a mount atomically all-at-once,
-> and safe delegation through fds. Another heavy user of this would be
-> systemd (Cced Lennart who I've discussed this with) which would prefer
-> the fd-based approach as well. I think pulling this into a filesystem
-> and making userspace parse around in a filesystem tree to query mount
-> information is the wrong approach and will get messy pretty quickly
-> especially in the face of mount and user namespace interactions and
-> various other pitfalls. fsinfo() fits quite nicely with the all-fd-based
-> approach of the whole mount api. So yes, definitely preferred from my
-> end.
+Hi Randy,
 
-Christian is right. I think it's very important to have an API that
-allows to query the state of fs attributes in a consistent state,
-i.e. so that the attributes userspace is interested in can be queried
-in a single call, so they all describe the very same point in
-time. Distributing attributes onto multiple individual files just
-sucks, because it's then guaranteed that you never can read them in a
-way they actually fit together, some attributes you read will be
-older, others newer. It's a big design flaw of sysfs (which is
-structured like this) if you ask me.
+I am guessing this should fix it since I ran into this on arm
+allyesconfig:
 
-I don't really care if the kernel API for this is binary or
-textual. Slight preference for binary, but I don't care too much.
+https://lore.kernel.org/lkml/20200330221614.7661-1-natechancellor@gmail.com/
 
-I think it would be wise to bind such APIs to fds, simply because it
-always works. Doing path based stuff sucks, because you always need to
-mount stuff and have a path tree set up, which is less ideal in a
-world where namespacing is common, and namespaces are a shared concept
-(at least with your other threads, if not with other processes). As a
-maintainer of an init system I really dislike APIs that I can only use
-after a mount structure has been set up, too often we want to do stuff
-before that. Moreover, philosophically I find it questionnable to use
-path based APIs to interface with the path object hierarchy itself. it
-feels "too recursive". Just keep this separate: build stuff on top of
-the fs that fits on top of the fs, but don't build fs APIs on top of
-fs APIs that stem from the same layer.
+FWIW, not an mmotm issue since the patch comes from the AMD tree.
 
-Summary: atomic APIs rock, fd-based APIs rock. APIs built on
-individual files one can only read individually suck. APIs of the path
-layer exposed in the path layer suck.
-
-Hope this makes some sense?
-
-Lennart
+Cheers,
+Nathan
