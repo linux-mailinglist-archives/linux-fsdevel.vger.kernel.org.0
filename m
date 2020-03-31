@@ -2,116 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE7DC1998FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 16:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3014199944
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 17:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730286AbgCaOxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 10:53:47 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:46494 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730149AbgCaOxr (ORCPT
+        id S1730638AbgCaPKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 11:10:48 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39875 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730556AbgCaPKs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:53:47 -0400
-Received: by mail-il1-f195.google.com with SMTP id i75so12385009ild.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 07:53:46 -0700 (PDT)
+        Tue, 31 Mar 2020 11:10:48 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a43so25542472edf.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 08:10:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0eOtXIqj2oDuIMpA9Wt18PpHJkAZb38WQ9zSO73WLSY=;
-        b=DCEsyy1sudgvuAcOwREzLD03ObZfHEsvNPRdxZgk+VfQ2Imj8oLebFJpuxIXDQ2IDy
-         hihYJujg7pgKegXN4t/7wCE2CIcECI3go7/7QtLEa4SypgnwKguW9fvs+NmJ9KP4GrXg
-         VAnkmg4ISVqeWV60nOQv33NwY3FugQzEvLWsk6mYuqTH0eBx8o1p32pVgWIukOUYGPtm
-         +iBoxa9Z7NWrYbMJ9Qv2FZ0SxThA6vjB8jInBe+D5gr7TC5cJjnjRlAsAt8ddIU4B86n
-         1CHjlcuQgngL94VNXDNy7CHnE6v+5ucr+lPy8oSvze0v5rTvLFuY+Q23aMixyI5EHMGq
-         Vngw==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x7MnP0ziMJ05b/KxlP+M8bkph/ifpBLqQViGWOB4DEo=;
+        b=SSt1VrIVX/Tjp7n2tm5hZ28Rimha6AkiiRqswnMUOZrX6u8JAvs7EpidlIibrDgWn6
+         8f3oR+MSicBlmRwxRGlRmocZLP58QcOxLLy/3P8XMGN78DlSS3Yc9BcLygTC477mg5aR
+         2bw79UepxHWGRmpmqa2topzKhKBf6CZHFQB5A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0eOtXIqj2oDuIMpA9Wt18PpHJkAZb38WQ9zSO73WLSY=;
-        b=j16DJuLCsvBaqZk3a1AU6epLuIiq2xh2uVkwKZuFXrOFLegITXIihAMaUAstVmu647
-         zWT1oYyHUzJmkBk23qtbQpcqcGJoI4f6Ec0tH0MQo8+G1iS9XCyxd6c/4cuRBKur8c8D
-         GwpANtXVv/LMtBSslnvG2FDk2MTeLeKk4oHnjc7guXm9COWFh0Ye+YpRRldk71LIbHu/
-         95Ul8W0KqWRxDYPrXoTH6RhxAGEgR+oXk7TkD09oFLX8lbClZzVcnRehbDmzqxuTUNtm
-         3+ElEyxf16wAgBH8pj7c3do8aoweLx18wm2yFdhRXHLaknnjzgDiL2SNGAyAYDcE40CG
-         fk4Q==
-X-Gm-Message-State: ANhLgQ0zUH1SZjwJamlhLtWqkoljBPwaHtxWCjOErBt9A1EqEBnwEReu
-        wsY4H5JxhXi56Qd/s1mykDLeQw==
-X-Google-Smtp-Source: ADFU+vtMg5iIxOv3TcW+zVaA43LrZFv03GGnEKvbbhsJWQMg6rZLgR2wheAMS9gYsskhrwLwwr/zUg==
-X-Received: by 2002:a92:3b11:: with SMTP id i17mr17172566ila.161.1585666425632;
-        Tue, 31 Mar 2020 07:53:45 -0700 (PDT)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id d70sm5985217ill.57.2020.03.31.07.53.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Mar 2020 07:53:44 -0700 (PDT)
-Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted
- (2)
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <20200331114459.17184-1-hdanton@sina.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5a9c10c6-30b7-4177-146c-c2da2585ce5d@kernel.dk>
-Date:   Tue, 31 Mar 2020 08:53:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x7MnP0ziMJ05b/KxlP+M8bkph/ifpBLqQViGWOB4DEo=;
+        b=pjSLllZUIM3AKuxdqzIovy1zSsOpjqZYNtaov4fJ5w2x/or5+Qp5cHbyWclfZOOnHA
+         mEEUtuh+gnLTcsQYY4ug+afk8q12jzfUel1jWmnCL+LVWUlFNePeNc+fW2Xzd0KNTQvC
+         FB/XJXY8DmekSinSH06PaljojfVdRmklP/vLgauEDi1+TZ6Od0I+t0kCRQTKCycUkmpH
+         B6gjLD2U5CmpHp/T1B7FOtnYo9X5AYGSeyFzj1+E19wzovTur+8Me6oy5dx157FDDUGQ
+         Q8LeAXGhLjU9P4GLjnY4AamOh9jGZ1QiZ2/VnguZieR83rTDP/FSS2ShWvY1zgiacXzK
+         hwrg==
+X-Gm-Message-State: ANhLgQ37A7P8d+d5qiRZ1kUmkkGxyvc+MZhdbzSai59CAyx9SW8+kM7z
+        lYg9puSUC+gcvGjKYp0OVR27kvBFcuRgygqSKX44XA==
+X-Google-Smtp-Source: ADFU+vv3Rldz1B2TlCvia6yybcz1TZKY48JT2JSMOypFogu2KyaS+8B9LeWuNNEUuazthmsFwiMPNgKhW+h/eb48onU=
+X-Received: by 2002:a17:906:6545:: with SMTP id u5mr7087508ejn.27.1585667445614;
+ Tue, 31 Mar 2020 08:10:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200331114459.17184-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1445647.1585576702@warthog.procyon.org.uk> <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+ <20200331083430.kserp35qabnxvths@ws.net.home> <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
+ <20200331122554.GA27469@gardel-login>
+In-Reply-To: <20200331122554.GA27469@gardel-login>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 31 Mar 2020 17:10:34 +0200
+Message-ID: <CAJfpegvo=T0VuXsPnvo83H3RqwHLE-9Q=dTZKWxnBKMykfJcNA@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     Lennart Poettering <mzxreary@0pointer.de>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/31/20 5:44 AM, Hillf Danton wrote:
-> 
-> On Tue, 31 Mar 2020 04:14:03 -0700
->>
->> syzbot has bisected this bug to:
->>
->> commit b41e98524e424d104aa7851d54fd65820759875a
->> Author: Jens Axboe <axboe@kernel.dk>
->> Date:   Mon Feb 17 16:52:41 2020 +0000
->>
->>     io_uring: add per-task callback handler
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115adadbe00000
->> start commit:   673b41e0 staging/octeon: fix up merge error
->> git tree:       upstream
->> final crash:    https://syzkaller.appspot.com/x/report.txt?x=135adadbe00000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=155adadbe00000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=acf766c0e3d3f8c6
->> dashboard link: https://syzkaller.appspot.com/bug?extid=0c3370f235b74b3cfd97
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ac1b9de00000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10449493e00000
->>
->> Reported-by: syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com
->> Fixes: b41e98524e42 ("io_uring: add per-task callback handler")
->>
->> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> Looks like another line is missed in that work.
-> 
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -5962,6 +5962,7 @@ static int io_sq_thread(void *data)
->  				}
->  				if (current->task_works) {
->  					task_work_run();
-> +					finish_wait(&ctx->sqo_wait, &wait);
->  					continue;
->  				}
->  				if (signal_pending(current))
+On Tue, Mar 31, 2020 at 2:25 PM Lennart Poettering <mzxreary@0pointer.de> wrote:
+>
+> On Di, 31.03.20 10:56, Miklos Szeredi (miklos@szeredi.hu) wrote:
+>
+> > On Tue, Mar 31, 2020 at 10:34 AM Karel Zak <kzak@redhat.com> wrote:
+> > >
+> > > On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
+> > > > On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
+> > > > <christian.brauner@ubuntu.com> wrote:
+> > > >
+> > > > > Fwiw, putting down my kernel hat and speaking as someone who maintains
+> > > > > two container runtimes and various other low-level bits and pieces in
+> > > > > userspace who'd make heavy use of this stuff I would prefer the fd-based
+> > > > > fsinfo() approach especially in the light of across namespace
+> > > > > operations, querying all properties of a mount atomically all-at-once,
+> > > >
+> > > > fsinfo(2) doesn't meet the atomically all-at-once requirement.
+> > >
+> > > I guess your /proc based idea have exactly the same problem...
+> >
+> > Yes, that's exactly what I wanted to demonstrate: there's no
+> > fundamental difference between the two API's in this respect.
+> >
+> > > I see two possible ways:
+> > >
+> > > - after open("/mnt", O_PATH) create copy-on-write object in kernel to
+> > >   represent mount node -- kernel will able to modify it, but userspace
+> > >   will get unchanged data from the FD until to close()
+> > >
+> > > - improve fsinfo() to provide set (list) of the attributes by one call
+> >
+> > I think we are approaching this from the wrong end.   Let's just
+> > ignore all of the proposed interfaces for now and only concentrate on
+> > what this will be used for.
+> >
+> > Start with a set of use cases by all interested parties.  E.g.
+> >
+> >  - systemd wants to keep track attached mounts in a namespace, as well
+> > as new detached mounts created by fsmount()
+> >
+> >  - systemd need to keep information (such as parent, children, mount
+> > flags, fs options, etc) up to date on any change of topology or
+> > attributes.
+>
+> - We also have code that recursively remounts r/o or unmounts some
+>   directory tree (with filters),
 
-Can you send this as a properly formatted patch? That indeed looks like
-the issue.
+Recursive remount-ro is clear.  What is not clear is whether you need
+to do this for hidden mounts (not possible from userspace without a
+way to disable mount following on path lookup).  Would it make sense
+to add a kernel API for recursive setting of mount flags?
 
--- 
-Jens Axboe
+What exactly is this unmount with filters?  Can you give examples?
 
+> - We also have code that needs to check if /dev/ is plain tmpfs or
+>   devtmpfs. We cannot use statfs for that, since in both cases
+>   TMPFS_MAGIC is reported, hence we currently parse
+>   /proc/self/mountinfo for that to find the fstype string there, which
+>   is different for both cases.
+
+Okay.
+
+Thanks,
+Miklos
