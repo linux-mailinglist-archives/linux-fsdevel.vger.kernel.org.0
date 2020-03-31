@@ -2,62 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2B51991B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 11:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5949C1992AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 11:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbgCaJVM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 05:21:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60482 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731305AbgCaJVK (ORCPT
+        id S1730106AbgCaJtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 05:49:42 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24550 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729425AbgCaJtm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 05:21:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=yqNlown0MzgWJHh7vQQU8YQxRZVzreHtSlK6DAEVltU=; b=dZM+SjPDyPx2aDRbdMAcvY6BM4
-        bYgSP7hH5mr+/1aMS6aiCd5ttX76Qx8kdNvJr+dgPxck7c1oSTDQG/JHoHhCGKzwqq0bUacWI9XH+
-        YVtcF4LUB8jcxOoFoHjwP6s3ubbLWvLSJGjQo7ANjT97ZB4HELHYf9/4FiLxxLiVocluxsLNPYRno
-        AHR9TUi9rLge2FbDKrRVH240Uo5T8EjVY2l2c6v1lrmtDu0bdi+prc6D0AQEi3+d8tmS2C9W4d2Xt
-        rKu1PDCzjmbP3XkeDzRkA1KaX9YwzkXK5FukAoZed4GcVZg/c/xBKmpllatHpsoc2xRCUBgX3VV5H
-        +XPv4lqg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJD54-0006ai-Lk; Tue, 31 Mar 2020 09:21:10 +0000
-Date:   Tue, 31 Mar 2020 02:21:10 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Do not use GFP_NORETRY to allocate BIOs
-Message-ID: <20200331092110.GA24694@infradead.org>
-References: <20200323131244.29435-1-willy@infradead.org>
- <20200323132052.GA7683@infradead.org>
- <20200323134032.GH4971@bombadil.infradead.org>
- <20200323135500.GA14335@infradead.org>
- <20200323151054.GI4971@bombadil.infradead.org>
- <20200323165154.GB30433@infradead.org>
+        Tue, 31 Mar 2020 05:49:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585648180;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Z4v/YtSm7khSMtma48XmYXMI66/O3qRGCFmAxLMn+2U=;
+        b=Smmq116QZwu0eJs42b0svhzutApWf3xK/lXdubTmIZmITRlndkWn2S4m3oHw/6Mb857gZZ
+        cFv6lxWec24nhwzSRAjG+P9Ao9QPQfg7M7fPf54Hbk9yNd7sjkDsfHu9TemFL+UOZeKUg+
+        8us+zBC5RNRHkWNqPnPKI+dpJeCorRc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-479-wsmh7QxlMIexmPjb_Lr0Pw-1; Tue, 31 Mar 2020 05:49:38 -0400
+X-MC-Unique: wsmh7QxlMIexmPjb_Lr0Pw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F5621005509;
+        Tue, 31 Mar 2020 09:49:36 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BB62598A21;
+        Tue, 31 Mar 2020 09:49:32 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 11:49:30 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331094930.3aipm3zrydpqqhms@ws.net.home>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+ <20200331083430.kserp35qabnxvths@ws.net.home>
+ <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200323165154.GB30433@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 09:51:54AM -0700, Christoph Hellwig wrote:
-> On Mon, Mar 23, 2020 at 08:10:54AM -0700, Matthew Wilcox wrote:
-> > > That looks silly to me.  This just means we'll keep iterating over
-> > > small bios for readahead..  Either we just ignore the different gfp
-> > > mask, or we need to go all the way and handle errors, although that
-> > > doesn't really look nice.
-> > 
-> > I'm not sure it's silly,
+On Tue, Mar 31, 2020 at 10:56:35AM +0200, Miklos Szeredi wrote:
+> I think we are approaching this from the wrong end.   Let's just
+> ignore all of the proposed interfaces for now and only concentrate on
+> what this will be used for.
 > 
-> Oh well, I'm not going to be in the way of fixing a bug I added.  So
-> feel free to go ahead with this and mention it matches mpage_readpages.
+> Start with a set of use cases by all interested parties.  E.g.
+> 
+>  - systemd wants to keep track attached mounts in a namespace, as well
+> as new detached mounts created by fsmount()
+> 
+>  - systemd need to keep information (such as parent, children, mount
+> flags, fs options, etc) up to date on any change of topology or
+> attributes.
+> 
+>  - util linux needs to display the topology and state of mounts in the
+> system that corresponds to a consistent state that set of mounts
 
-Are you going to submit this as a formal patch?
+  - like systemd we also need in mount/umount to query one mountpoint
+  rather than parse all /proc/self/mountinfo
+
+ Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
