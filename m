@@ -2,70 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D720199529
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 13:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19A1819966C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 14:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730442AbgCaLOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 07:14:04 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:33859 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729483AbgCaLOE (ORCPT
+        id S1730742AbgCaMZ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 08:25:58 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:48496 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730343AbgCaMZ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:14:04 -0400
-Received: by mail-il1-f197.google.com with SMTP id b14so19452525ilb.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 04:14:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=VDzK7SMPTn5+1NJ0X+ZSAYeFxCx7H6x/5RbxADZ4d6E=;
-        b=ijxEwnqpxxg/VV/Wb1hVBrroYvBg8hiii61cl4oIPmNVXPUOVsP6tq9Jxp09VMkQd+
-         Y+1eFmN/OwXKpid3g4dFxsWrKi/fxjrTD04K9KF4NX2zqQgCxZMi3LCqkQukCwF7Ykun
-         DcoGeRtGuJlrCRMNym9Q2I1xMh8N04Gt+kY2SIQktxda0pMdL+MdzPxe7TcuAr6GuByS
-         QRnTkSFEoznidZ8Km3Au4JexJivJoWXnnMQa56VXD5wEA4MugnozuWShvpsrUOnL3lDT
-         SCEtP7d7vmKUsNFTo7iIp27LWlS6WU0HOMy0hBCGGIZY7Qcm4cHR7R9Xrp/+zgxSXGKT
-         XWIg==
-X-Gm-Message-State: ANhLgQ2oqH+1tv41YJhLbbe3uoI/HS/ufTEJSzP6rY9XZINmKsUawMdO
-        m2K6hK5sN2hNg2qDAQKGkeescJ4BMxZrMPga+3R5x9sFL6mz
-X-Google-Smtp-Source: ADFU+vvsMmk+9AB6KhfsUlDFCpZCCk2oL4klTi/WKgJzTCgTsfyMEXJagR3lLTbUr0mSEfKTgEbpdznTLp2fsXhW7dvop7Eq42Q3
-MIME-Version: 1.0
-X-Received: by 2002:a5d:950e:: with SMTP id d14mr14672462iom.77.1585653243655;
- Tue, 31 Mar 2020 04:14:03 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 04:14:03 -0700
-In-Reply-To: <0000000000002efe6505a221d5be@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000533b4505a224aa8b@google.com>
-Subject: Re: INFO: trying to register non-static key in io_cqring_ev_posted (2)
-From:   syzbot <syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, hdanton@sina.com, io-uring@vger.kernel.org,
+        Tue, 31 Mar 2020 08:25:57 -0400
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
+        by gardel.0pointer.net (Postfix) with ESMTP id 4402FE814E3;
+        Tue, 31 Mar 2020 14:25:55 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id CBD63160704; Tue, 31 Mar 2020 14:25:54 +0200 (CEST)
+Date:   Tue, 31 Mar 2020 14:25:54 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331122554.GA27469@gardel-login>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+ <20200331083430.kserp35qabnxvths@ws.net.home>
+ <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Di, 31.03.20 10:56, Miklos Szeredi (miklos@szeredi.hu) wrote:
 
-commit b41e98524e424d104aa7851d54fd65820759875a
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon Feb 17 16:52:41 2020 +0000
+> On Tue, Mar 31, 2020 at 10:34 AM Karel Zak <kzak@redhat.com> wrote:
+> >
+> > On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
+> > > On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
+> > > <christian.brauner@ubuntu.com> wrote:
+> > >
+> > > > Fwiw, putting down my kernel hat and speaking as someone who maintains
+> > > > two container runtimes and various other low-level bits and pieces in
+> > > > userspace who'd make heavy use of this stuff I would prefer the fd-based
+> > > > fsinfo() approach especially in the light of across namespace
+> > > > operations, querying all properties of a mount atomically all-at-once,
+> > >
+> > > fsinfo(2) doesn't meet the atomically all-at-once requirement.
+> >
+> > I guess your /proc based idea have exactly the same problem...
+>
+> Yes, that's exactly what I wanted to demonstrate: there's no
+> fundamental difference between the two API's in this respect.
+>
+> > I see two possible ways:
+> >
+> > - after open("/mnt", O_PATH) create copy-on-write object in kernel to
+> >   represent mount node -- kernel will able to modify it, but userspace
+> >   will get unchanged data from the FD until to close()
+> >
+> > - improve fsinfo() to provide set (list) of the attributes by one call
+>
+> I think we are approaching this from the wrong end.   Let's just
+> ignore all of the proposed interfaces for now and only concentrate on
+> what this will be used for.
+>
+> Start with a set of use cases by all interested parties.  E.g.
+>
+>  - systemd wants to keep track attached mounts in a namespace, as well
+> as new detached mounts created by fsmount()
+>
+>  - systemd need to keep information (such as parent, children, mount
+> flags, fs options, etc) up to date on any change of topology or
+> attributes.
 
-    io_uring: add per-task callback handler
+- We also have code that recursively remounts r/o or unmounts some
+  directory tree (with filters), which is currently nasty to do since
+  the relationships between dirs are not always clear from
+  /proc/self/mountinfo alone, in particular not in an even remotely
+  atomic fashion, or when stuff is overmounted.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115adadbe00000
-start commit:   673b41e0 staging/octeon: fix up merge error
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=135adadbe00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=155adadbe00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acf766c0e3d3f8c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c3370f235b74b3cfd97
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ac1b9de00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10449493e00000
+- We also have code that needs to check if /dev/ is plain tmpfs or
+  devtmpfs. We cannot use statfs for that, since in both cases
+  TMPFS_MAGIC is reported, hence we currently parse
+  /proc/self/mountinfo for that to find the fstype string there, which
+  is different for both cases.
 
-Reported-by: syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com
-Fixes: b41e98524e42 ("io_uring: add per-task callback handler")
+Lennart
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+--
+Lennart Poettering, Berlin
