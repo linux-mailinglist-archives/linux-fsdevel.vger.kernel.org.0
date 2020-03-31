@@ -2,92 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B23D1988AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 02:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE0E1988D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 02:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbgCaAGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Mar 2020 20:06:50 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47438 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbgCaAGu (ORCPT
+        id S1729455AbgCaAW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Mar 2020 20:22:27 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:53331 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729019AbgCaAW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Mar 2020 20:06:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VV89E7/0ITfr47FqhbuzNIICqyct8AhRAZZh1V1ewNo=; b=CWOYYkMN6YxBiPtv3S5YzHn5ld
-        hLNYvpbJBQUngQwAPYD4s2QHupCqMSm+dVq6HNhcMG4eVRibSXgDRSS0u0PhAWyZ4kE9sAx0I2GCl
-        q/6vwf9dZkFEwIHHsEiTehoHe+xHFmI7H2LY8bwoLjA/Y3EQB0fzOuXu5nbrQMtx2+Q3YGP+x29fQ
-        yU0r62kHalK9xz9UcZzNVmG0tcwNfvyImddvgQ4sRbKKOoJTGgmBF7DircAYuDCPlJFFtNi8yVtut
-        /Om7vcvM5DgEgOfXIildUIX2xwBa3U7k0zRFlNJko28n20u0Rb5hZzC9xqNPt5vLsXMNHp1eUTjMH
-        Xe3iBOdw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJ4Qb-0004SG-Lo; Tue, 31 Mar 2020 00:06:49 +0000
-Date:   Mon, 30 Mar 2020 17:06:49 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/9] XArray: internal node is a xa_node when it is bigger
- than XA_ZERO_ENTRY
-Message-ID: <20200331000649.GG22483@bombadil.infradead.org>
-References: <20200330123643.17120-1-richard.weiyang@gmail.com>
- <20200330123643.17120-7-richard.weiyang@gmail.com>
- <20200330125006.GZ22483@bombadil.infradead.org>
- <20200330134519.ykdtqwqxjazqy3jm@master>
- <20200330134903.GB22483@bombadil.infradead.org>
- <20200330141350.ey77odenrbvixotb@master>
- <20200330142708.GC22483@bombadil.infradead.org>
- <20200330222013.34nkqen2agujhd6j@master>
+        Mon, 30 Mar 2020 20:22:26 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id A14415C021F;
+        Mon, 30 Mar 2020 20:22:25 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 30 Mar 2020 20:22:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        fG/iCWf7UOZXnfH+ATlLs3rRuyP99c7ldOnVHq3HQvQ=; b=Gbl5FLoB0ersamj6
+        fTWJ7s9t7yQC5c1vvNjDiIy1Rh7nO8/6axGqJqMVCIcQIQqBJTYdtS1r8hXs70Em
+        aMCyv/N2OGY1Z/JusrXwcuBuPmNZvq68RcHMORIUBDLTtqMK6DaMazXauziQuexb
+        RSxTPqQzezDUcSlt4OeBSa+XwM+oqLYtLL8rsskbEB30tTAzgT/PLDFwpskxORTa
+        TPkdL+O1FRXnLFU8hkTHzhMjjTys4eznggOqTCbA85lvgeSXclFAjv1VPlqm05P2
+        ca9J8+j7nUx07RcUh8jlihGWfhRkaOX1NfFyGbz+azj2N/Ml8zy+VaxtCKL8x930
+        exro3Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=fG/iCWf7UOZXnfH+ATlLs3rRuyP99c7ldOnVHq3HQ
+        vQ=; b=EaAKaR6r50iNcZLC3ZEQ265a4xQfByjdSv8ReRzb2yykuXxDhdFBzl+Vl
+        eGhEhTic9dHaB+j7PVNUxMKHT+flWvkL5Xtxgd5iADwRwNoKILjXnLrXTbKtjbAm
+        40g3NbDTXVOU/Ltf3vr6PeEU025bv0ToIXPMqYhK0aiSMGEMN3tqySTfqc1qTs7r
+        xuY63tgUYoVOCk5ToG8lVUl45LFa6zJCOjVvYPwgp8G3PS8W3mXZlG5vcVnpVfDN
+        dDtut9dDU2gB4k31nLbrtwqot4Hr2lbBFH1ip1v62NwvHlkalnI6urFOYlmh6XFA
+        KMmhLSzb2lVwKwb3Hp5jBLTUbdWlA==
+X-ME-Sender: <xms:QY2CXrV4Gs3wkmjFbC3E_zal9NJJ20ReO6wYS6TUYpQd5QKgZiEzlw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudeiiedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtle
+    drudeiiedrvdefvdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:QY2CXt21U2Z3VhyhAnlOI5oQZQittKa9j8Q7Q9SPtuS8zT3iw4N5Ew>
+    <xmx:QY2CXs2Y7bHVkIJISgSBqxNEv9LDi-Uv3n-GUaoFreerddcOz9dDHQ>
+    <xmx:QY2CXslcDSe2NL0_auwBIrJtSOZc3Blvr8BiBaYen2EmQGeSgTYnRQ>
+    <xmx:QY2CXkCNYZttNKPVSd9_zia5Sbp9DhapUljw6EFzYTT48SgdGS3_zA>
+Received: from mickey.themaw.net (unknown [118.209.166.232])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C26EC3280064;
+        Mon, 30 Mar 2020 20:22:22 -0400 (EDT)
+Message-ID: <546b7365be9c6315d93464af10fc97d453f39784.camel@themaw.net>
+Subject: Re: [PATCH 3/4] vfs: check for autofs expiring dentry in
+ follow_automount()
+From:   Ian Kent <raven@themaw.net>
+To:     "McIntyre, Vincent (CASS, Marsfield)" <Vincent.Mcintyre@csiro.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 31 Mar 2020 08:22:19 +0800
+In-Reply-To: <20200330232032.vmlt3glzqdkgijhy@mayhem.atnf.CSIRO.AU>
+References: <158560961146.14841.14430383874338917674.stgit@mickey.themaw.net>
+         <158560962258.14841.1166162348928695084.stgit@mickey.themaw.net>
+         <20200330232032.vmlt3glzqdkgijhy@mayhem.atnf.CSIRO.AU>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200330222013.34nkqen2agujhd6j@master>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 30, 2020 at 10:20:13PM +0000, Wei Yang wrote:
-> On Mon, Mar 30, 2020 at 07:27:08AM -0700, Matthew Wilcox wrote:
-> >On Mon, Mar 30, 2020 at 02:13:50PM +0000, Wei Yang wrote:
-> >> On Mon, Mar 30, 2020 at 06:49:03AM -0700, Matthew Wilcox wrote:
-> >> >On Mon, Mar 30, 2020 at 01:45:19PM +0000, Wei Yang wrote:
-> >> >> On Mon, Mar 30, 2020 at 05:50:06AM -0700, Matthew Wilcox wrote:
-> >> >> >On Mon, Mar 30, 2020 at 12:36:40PM +0000, Wei Yang wrote:
-> >> >> >> As the comment mentioned, we reserved several ranges of internal node
-> >> >> >> for tree maintenance, 0-62, 256, 257. This means a node bigger than
-> >> >> >> XA_ZERO_ENTRY is a normal node.
-> >> >> >> 
-> >> >> >> The checked on XA_ZERO_ENTRY seems to be more meaningful.
-> >> >> >
-> >> >> >257-1023 are also reserved, they just aren't used yet.  XA_ZERO_ENTRY
-> >> >> >is not guaranteed to be the largest reserved entry.
-> >> >> 
-> >> >> Then why we choose 4096?
-> >> >
-> >> >Because 4096 is the smallest page size supported by Linux, so we're
-> >> >guaranteed that anything less than 4096 is not a valid pointer.
-> >> 
+On Mon, 2020-03-30 at 23:20 +0000, McIntyre, Vincent (CASS, Marsfield)
+wrote:
+> On Tue, Mar 31, 2020 at 07:07:02AM +0800, Ian Kent wrote:
+> > follow_automount() checks if a stat family system call path walk is
+> > being done on a positive dentry and and returns -EISDIR to indicate
+> > the dentry should be used as is without attempting an automount.
+> > 
+> > But if autofs is expiring the dentry at the time it should be
+> > remounted following the expire.
+> > 
+> > There are two cases, in the case of a "nobrowse" indirect autofs
+> > mount it would have been mounted on lookup anyway. In the case of
+> > a "browse" indirect or direct autofs mount re-mounting it will
+> > maintain the mount which is what user space would be expected.
+> > 
+> > This will defer expiration of the mount which might lead to mounts
+> > unexpectedly remaining mounted under heavy stat activity but
+> > there's
+> > no other choice in order to maintain consistency for user space.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> > fs/autofs/root.c |   10 +++++++++-
+> > fs/namei.c       |   13 +++++++++++--
+> > 2 files changed, 20 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/autofs/root.c b/fs/autofs/root.c
+> > index a1c9c32e104f..b3f748e4df08 100644
+> > --- a/fs/autofs/root.c
+> > +++ b/fs/autofs/root.c
+> > @@ -406,9 +406,17 @@ static int autofs_d_manage(const struct path
+> > *path, bool rcu_walk)
+> > 
+> > 	/* Check for (possible) pending expire */
+> > 	if (ino->flags & AUTOFS_INF_WANT_EXPIRE) {
+> > +		/* dentry possibly going to be picked for expire,
+> > +		 * proceed to ref-walk mode.
+> > +		 */
+> > 		if (rcu_walk)
+> > 			return -ECHILD;
+> > -		return 0;
+> > +
+> > +		/* ref-walk mode, return 1 so follow_automount()
+> > +		 * can wait on the expire outcome and possibly
+> > +		 * attempt a re-mount.
+> > +		 */
+> > +		return 1;
+> > 	}
+> > 
+> > 	/*
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index db6565c99825..869e0d4bb4d9 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -1227,11 +1227,20 @@ static int follow_automount(struct path
+> > *path, struct nameidata *nd,
+> > 	 * mounted directory.  Also, autofs may mark negative dentries
+> > 	 * as being automount points.  These will need the attentions
+> > 	 * of the daemon to instantiate them before they can be used.
+> > +	 *
+> > +	 * Also if ->d_manage() returns 1 the dentry transit needs
+> > +	 * to be managing. For autofs, a return of 1 it tells us the
 > 
-> So you want to say, the 4096 makes sure XArray will not store an address in
-> first page? If this is the case, I have two suggestions:
+> Unclear. Do you mean "to be managed." ? Or "managing." ?
+
+Right, and I didn't label these v2 either, bit stressed at the
+moment I guess.
+
+Ian
 > 
->   * use PAGE_SIZE would be more verbose?
-
-But also incorrect, because it'll be different on different architectures.
-It's 4096.  That's all.
-
->   * a node is an internal entry, do we need to compare with xa_mk_internal()
->     instead?
-
-No.  4096 is better because it's a number which is easily expressible in
-many CPU instruction sets.  4094 is much less likely to be an easy number
-to encode.
-
-> >(it is slightly out of date; the XArray actually supports storing unaligned
-> >pointers now, but that's not relevant to this discussion)
+> Cheers
+> Vince
 > 
-> Ok, maybe this document need to update.
+> > +	 * dentry might be expired, so proceed to ->d_automount().
+> > 	 */
+> > 	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
+> > 			   LOOKUP_OPEN | LOOKUP_CREATE |
+> > LOOKUP_AUTOMOUNT)) &&
+> > -	    path->dentry->d_inode)
+> > -		return -EISDIR;
+> > +	    path->dentry->d_inode) {
+> > +		if (path->dentry->d_flags & DCACHE_MANAGE_TRANSIT) {
+> > +			if (!path->dentry->d_op->d_manage(path, false))
+> > +				return -EISDIR;
+> > +		} else
+> > +			return -EISDIR;
+> > +	}
+> > 
+> > 	nd->total_link_count++;
+> > 	if (nd->total_link_count >= 40)
+> > 
+> 
+> -- 
 
-Did you want to send a patch?
