@@ -2,145 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10655198C88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 08:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72884198CED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 09:28:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgCaGvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 02:51:14 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:36277 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbgCaGvO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 02:51:14 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 48s0NF5DDKz9sPg;
-        Tue, 31 Mar 2020 17:51:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1585637472;
-        bh=bGCLt/u6mOmUcDFcwsOBrb7E8bHaVai/HaineZ9vnQI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RFTXfi3a/QD4BHKbMQz1QjLLSFQLtuPI1Jvrlq//aBBWgGkgNa4bAgt3b0DVzBVCE
-         JnS7hmzcQMlxRmbfH2udYJ/ecshDMElI2LZ1XHWd1TlVw6A46EXof95e3seIjRG92B
-         BtY+PbdrN6X8y5jMu7KsnmDJtKSDOz/Q31s/FD9pqIw72njcBSQQ8EdDRXeQuIiAXn
-         ZE2In8clMaU+8P0vLcAFpqOpvsR3kDgy8sstS7ftm4C2jsISPcaS/QvBNmS9MWEL59
-         b+18qS4cctQ6K+Xfwa10d+hgaI0HdxAlzlFWSSOVTobbArpLoAhW1ZF98fvLTmBUFV
-         0+gt9CjUNhnqQ==
-Date:   Tue, 31 Mar 2020 17:51:08 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        dray@redhat.com, kzak@redhat.com, mszeredi@redhat.com,
-        swhiteho@redhat.com, jlayton@redhat.com, raven@themaw.net,
-        andres@anarazel.de, christian.brauner@ubuntu.com,
-        jarkko.sakkinen@linux.intel.com, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] General notification queue and key notifications
-Message-ID: <20200331175108.588b80c0@canb.auug.org.au>
-In-Reply-To: <1449138.1585578664@warthog.procyon.org.uk>
+        id S1726622AbgCaH2z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 03:28:55 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:48338 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbgCaH2z (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Mar 2020 03:28:55 -0400
+X-Greylist: delayed 387 seconds by postgrey-1.27 at vger.kernel.org; Tue, 31 Mar 2020 03:28:55 EDT
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
+        by gardel.0pointer.net (Postfix) with ESMTP id B5053E814E3;
+        Tue, 31 Mar 2020 09:22:25 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id D3507160704; Tue, 31 Mar 2020 09:22:24 +0200 (CEST)
+Date:   Tue, 31 Mar 2020 09:22:24 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, dray@redhat.com, kzak@redhat.com,
+        mszeredi@redhat.com, swhiteho@redhat.com, jlayton@redhat.com,
+        raven@themaw.net, andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cyphar@cyphar.com
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331072224.GA27062@gardel-login>
 References: <1445647.1585576702@warthog.procyon.org.uk>
-        <1449138.1585578664@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ADYCqD70cxQvyKWhrdsW12R";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/ADYCqD70cxQvyKWhrdsW12R
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mo, 30.03.20 23:17, Christian Brauner (christian.brauner@ubuntu.com) wrote:
 
-Hi David,
+> Fwiw, putting down my kernel hat and speaking as someone who maintains
+> two container runtimes and various other low-level bits and pieces in
+> userspace who'd make heavy use of this stuff I would prefer the fd-based
+> fsinfo() approach especially in the light of across namespace
+> operations, querying all properties of a mount atomically all-at-once,
+> and safe delegation through fds. Another heavy user of this would be
+> systemd (Cced Lennart who I've discussed this with) which would prefer
+> the fd-based approach as well. I think pulling this into a filesystem
+> and making userspace parse around in a filesystem tree to query mount
+> information is the wrong approach and will get messy pretty quickly
+> especially in the face of mount and user namespace interactions and
+> various other pitfalls. fsinfo() fits quite nicely with the all-fd-based
+> approach of the whole mount api. So yes, definitely preferred from my
+> end.
 
-On Mon, 30 Mar 2020 15:31:04 +0100 David Howells <dhowells@redhat.com> wrot=
-e:
->
->       pipe: Add general notification queue support
+Christian is right. I think it's very important to have an API that
+allows to query the state of fs attributes in a consistent state,
+i.e. so that the attributes userspace is interested in can be queried
+in a single call, so they all describe the very same point in
+time. Distributing attributes onto multiple individual files just
+sucks, because it's then guaranteed that you never can read them in a
+way they actually fit together, some attributes you read will be
+older, others newer. It's a big design flaw of sysfs (which is
+structured like this) if you ask me.
 
-This commit has a (reasonably simple) conflict against commit
+I don't really care if the kernel API for this is binary or
+textual. Slight preference for binary, but I don't care too much.
 
-  6551d5c56eb0 ("pipe: make sure to wake up everybody when the last reader/=
-writer closes")
+I think it would be wise to bind such APIs to fds, simply because it
+always works. Doing path based stuff sucks, because you always need to
+mount stuff and have a path tree set up, which is less ideal in a
+world where namespacing is common, and namespaces are a shared concept
+(at least with your other threads, if not with other processes). As a
+maintainer of an init system I really dislike APIs that I can only use
+after a mount structure has been set up, too often we want to do stuff
+before that. Moreover, philosophically I find it questionnable to use
+path based APIs to interface with the path object hierarchy itself. it
+feels "too recursive". Just keep this separate: build stuff on top of
+the fs that fits on top of the fs, but don't build fs APIs on top of
+fs APIs that stem from the same layer.
 
-from Linus' tree.
+Summary: atomic APIs rock, fd-based APIs rock. APIs built on
+individual files one can only read individually suck. APIs of the path
+layer exposed in the path layer suck.
 
-Also a semantic conflict against commit
+Hope this makes some sense?
 
-  52b31bc9aabc ("io_uring: add splice(2) support")
-
-from the block tree needing this fix up (white space damaged)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fb8fe0bd5e18..8cdd3870cd4e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2470,7 +2470,7 @@ static int io_splice_prep(struct io_kiocb *req, const=
- struct io_uring_sqe *sqe)
-=20
- static bool io_splice_punt(struct file *file)
- {
--	if (get_pipe_info(file))
-+	if (get_pipe_info(file, true))
- 		return false;
- 	if (!io_file_supports_async(file))
- 		return true;
->	security: Add hooks to rule on setting a watch
->	security: Add a hook for the point of notification insertion
-
-And these have a conflict against commitinclude/linux/lsm_hooks.h
-
-  98e828a0650f ("security: Refactor declaration of LSM hooks")
-
-from the bpf-next tree (will be in the net-next tree pull).  That
-requires taking the net-next version of include/linux/lsm_hooks.h and
-then applying the following patch:
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 9cd4455528e5..4f8d63fd1327 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -252,6 +252,16 @@ LSM_HOOK(int, 0, inode_notifysecctx, struct inode *ino=
-de, void *ctx, u32 ctxlen)
- LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ct=
-xlen)
- LSM_HOOK(int, 0, inode_getsecctx, struct inode *inode, void **ctx,
- 	 u32 *ctxlen)
-+#ifdef CONFIG_KEY_NOTIFICATIONS
-+LSM_HOOK(int, 0, watch_key, struct key *key)
-+#endif
-+#ifdef CONFIG_DEVICE_NOTIFICATIONS
-+LSM_HOOK(int, 0, watch_devices, void)
-+#endif
-+#ifdef CONFIG_WATCH_QUEUE
-+LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
-+	 const struct cred *cred, struct watch_notification *n)
-+#endif
-=20
- #ifdef CONFIG_SECURITY_NETWORK
- LSM_HOOK(int, 0, unix_stream_connect, struct sock *sock, struct sock *othe=
-r,
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ADYCqD70cxQvyKWhrdsW12R
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl6C6FwACgkQAVBC80lX
-0Gzu0wf+LiRwTbiERIhH0CCtMDGKGwnN9AytVinsNAuHxXdlMgmLpMKKkO6Y45CJ
-xJtvK/JAkBX1Hmt21jmbuWIMKpQQ+Egz/9J1ZrivaOLsPcFo6nXAuMHXQD/6g4/y
-7Knm4iGOMAAOG5fgI/vujVmgFCABaH4V5qOYAnS5iZhV91JtQlnIsHpUe9gFzCMb
-JdoOaQHIJqSYZUnDxgRZ9w3qXtnor2dBLZUrD2xtGp6XmHj/1aOv42cP47VyC4P9
-yiXHpoGyQ/w6b2fqmvUHd0AY1ThM/4EL1fgS6DWeoXAQPzLa4ppj3i2R+354fjO1
-EwHWYnPAMmDpWOO0BPFiW3yA9R10mQ==
-=EyQE
------END PGP SIGNATURE-----
-
---Sig_/ADYCqD70cxQvyKWhrdsW12R--
+Lennart
