@@ -2,78 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF6C19A167
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 23:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE70219A193
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 00:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbgCaV4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 17:56:34 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22719 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727955AbgCaV4e (ORCPT
+        id S1731327AbgCaWEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 18:04:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44637 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728493AbgCaWEo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 17:56:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585691793;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JBMA6jXiru2mPeg8fq1WPRUiBwr+Arv7dJnUuWmimoc=;
-        b=CHR44EVn6mBMQiyrVJHWg51D7cvsI3NW9vmRNo3ETb92lIDRkocf30C/9zb5HO8egjQSUM
-        OWDy8aG8lboMCu2D6k6rZ4ngsN6GvDqtvSkxeyICK5cZTg3bjP7gl2ycEJYwDbIY0swI8T
-        22JGMHaqj3DkEfHs0Kd5Jo/eMh34beI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-162-MUdl86boN4K15gh8KATflA-1; Tue, 31 Mar 2020 17:56:32 -0400
-X-MC-Unique: MUdl86boN4K15gh8KATflA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F7A78017CE;
-        Tue, 31 Mar 2020 21:56:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21B941A269;
-        Tue, 31 Mar 2020 21:56:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200331122554.GA27469@gardel-login>
-References: <20200331122554.GA27469@gardel-login> <1445647.1585576702@warthog.procyon.org.uk> <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com> <20200331083430.kserp35qabnxvths@ws.net.home> <CAJfpegsNpabFwoLL8HffNbi_4DuGMn4eYpFc6n7223UFnEPAbA@mail.gmail.com>
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Karel Zak <kzak@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+        Tue, 31 Mar 2020 18:04:44 -0400
+Received: by mail-wr1-f65.google.com with SMTP id m17so28058079wrw.11;
+        Tue, 31 Mar 2020 15:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K04d4E619JqJooDocmXBidoUR3eMnXv/Sjm/pn+vcqc=;
+        b=P/hQhjn1cnbdOGryaLUrCZZRN/ePZIqY64iDBgsud7Go8Uf3j2zSAaUIYjGq89cAzF
+         k8GsKu+tfPbeAVHD+FXCiuFkrHeL+RYrC747Y4TFO0jdVN2sBt5vUNSK6Xuag194imU5
+         cDoAjRkVH1KKJtU9OrBsGnm3yRSQ6+SvSNYt/yh91Yi0JxXU6G5oY5t05VaY9+/keaWZ
+         q//AfMFQKrY2DCzi7M2KeWPAdBethaKmJZv7XFzYAOvEI1dZx+UyGagUjwN9yktpr7aX
+         RJhH0lndhRlKQ/3a8nAHhqXn5aeN7xzvAYRhnkTBLH2po8ncuWdFkglSnJrDbV/Khlj2
+         fQcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K04d4E619JqJooDocmXBidoUR3eMnXv/Sjm/pn+vcqc=;
+        b=UXqz8KsF5jeufvv83MF/VQxP6Lo4s1/35tS+Q/Vis/gLlr6u++a5JVnN+ltxrBfKfS
+         yZetg2I+iBpzpEeUBahRkxUQo/bRDXu6lsG/jvuX3xdqr1oymecB1jcRZbWckzM9U6hx
+         lsEQRwwj2Nx+k1qj7TffSSrzsdtZ/njBlA11gL3Q68nZupfEtjephCtFQqADefLtSM7d
+         Bmsq8FMz3eLdoa15OW8GYuXxGZF/DCTvm8v6ArCuFQmqv7wOEu7HOXVAoiH4x9AOT9/V
+         HJ+3uvo2gC2ClVcV9rZgE2YI9ynzMryNerolEmJA2zmZCagZCrhdQeM+ithmxHSpAGvd
+         71Pw==
+X-Gm-Message-State: ANhLgQ17yr8884QuubdyCEy1MO/Ve03NMlOgRhcDO2Gw5P/3nNqt5xB/
+        WnI6COTNXvjM19f0WpclLqQ=
+X-Google-Smtp-Source: ADFU+vsvWZJ8fIiCmHp3Zp0k7J6xxXy43eev5tOznFF7bpC0JTGNOryX5j+MM6Ajs8csBzLFpUOuDQ==
+X-Received: by 2002:a05:6000:51:: with SMTP id k17mr19168527wrx.148.1585692282256;
+        Tue, 31 Mar 2020 15:04:42 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id b187sm5918614wmc.14.2020.03.31.15.04.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Mar 2020 15:04:41 -0700 (PDT)
+Date:   Tue, 31 Mar 2020 22:04:40 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] XArray: entry in last level is not expected to be a
+ node
+Message-ID: <20200331220440.roq4pv6wk7tq23gx@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20200330123643.17120-1-richard.weiyang@gmail.com>
+ <20200330123643.17120-6-richard.weiyang@gmail.com>
+ <20200330124842.GY22483@bombadil.infradead.org>
+ <20200330141558.soeqhstone2liqud@master>
+ <20200330142821.GD22483@bombadil.infradead.org>
+ <20200331134208.gfkyym6n3gpgk3x3@master>
+ <20200331164212.GC21484@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2418580.1585691786.1@warthog.procyon.org.uk>
-Date:   Tue, 31 Mar 2020 22:56:26 +0100
-Message-ID: <2418581.1585691786@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331164212.GC21484@bombadil.infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lennart Poettering <mzxreary@0pointer.de> wrote:
+On Tue, Mar 31, 2020 at 09:42:12AM -0700, Matthew Wilcox wrote:
+>On Tue, Mar 31, 2020 at 01:42:08PM +0000, Wei Yang wrote:
+>> On Mon, Mar 30, 2020 at 07:28:21AM -0700, Matthew Wilcox wrote:
+>> >On Mon, Mar 30, 2020 at 02:15:58PM +0000, Wei Yang wrote:
+>> >> On Mon, Mar 30, 2020 at 05:48:42AM -0700, Matthew Wilcox wrote:
+>> >> >On Mon, Mar 30, 2020 at 12:36:39PM +0000, Wei Yang wrote:
+>> >> >> If an entry is at the last level, whose parent's shift is 0, it is not
+>> >> >> expected to be a node. We can just leverage the xa_is_node() check to
+>> >> >> break the loop instead of check shift additionally.
+>> >> >
+>> >> >I know you didn't run the test suite after making this change.
+>> >> 
+>> >> I did kernel build test, but not the test suite as you mentioned.
+>> >> 
+>> >> Would you mind sharing some steps on using the test suite? And which case you
+>> >> think would trigger the problem?
+>> >
+>> >cd tools/testing/radix-tree/; make; ./main
+>> >
+>> 
+>> Hmm... I did a make on top of 5.6-rc6, it failed. Would you mind taking a look
+>> into this?
+>
+>It works for me.  I run it almost every day.  What error did you see?
 
-> - We also have code that needs to check if /dev/ is plain tmpfs or
->   devtmpfs. We cannot use statfs for that, since in both cases
->   TMPFS_MAGIC is reported, hence we currently parse
->   /proc/self/mountinfo for that to find the fstype string there, which
->   is different for both cases.
 
-btw, fsinfo(FSINFO_ATTR_IDS) gets you the name of the filesystem type in
-addition to the magic number.
+The error message:
 
-David
+cc -I. -I../../include -g -Og -Wall -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined   -c -o main.o main.c
+In file included from ./linux/../../../../include/linux/radix-tree.h:15,
+                 from ./linux/radix-tree.h:5,
+                 from main.c:10:
+./linux/rcupdate.h:5:10: fatal error: urcu.h: No such file or directory
+    5 | #include <urcu.h>
+      |          ^~~~~~~~
+compilation terminated.
+make: *** [<builtin>: main.o] Error 1
 
+
+I didn't touch any code in testing directory.
+
+-- 
+Wei Yang
+Help you, Help me
