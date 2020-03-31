@@ -2,163 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40973198D74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 09:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F228198E16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 10:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729955AbgCaHvU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 03:51:20 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:41835 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbgCaHvU (ORCPT
+        id S1730095AbgCaIPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 04:15:19 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36301 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbgCaIPS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 03:51:20 -0400
-Received: by mail-il1-f198.google.com with SMTP id f19so19219491ill.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 00:51:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ImrKMa3+NOdhC7TK5w/1EhNipc5Vv/NoOaS4eKx7PoU=;
-        b=V/wiXoNCOcbjnhewXuggOUPrZT+0AxLPhw1mC+3gE2DbaKcbUYNyGxMeOO3uqMnkCS
-         FE6BvX4ebA20HIQtNDFR1h+aAkYpFiDjPM2YcVeeHhXwPOt0SfZrsomdX36jiXSAVuNN
-         QNhNAFoTtf6OKr30QcrC8OAwcAhBDdvM+yKnCz1ykoM33rR7a3v5vZwUiQpAJiIYLKFV
-         yc087EJcPB6w3pBt9+lir75++5Hv49JrVDcbgsap/lV26nN0w95hDwBT0gqMFghlomWH
-         X6tu9+1d0YTpv8TSvKXD8ldbM8hiodm/69q2oHHS1UY+CtHwd3M6oNkb2X2wJWqZ6c/R
-         AfZQ==
-X-Gm-Message-State: ANhLgQ3KkUFDp6QU0oBt2spq28F+O0HYJgnyrDNGAvb98sJHFQj+moC6
-        H2V/8xZBpt3Uf+IA0AmoelrvdCX8+RhMRkCroJr2HpbQx3VA
-X-Google-Smtp-Source: ADFU+vvSDT0ILN24GEzPtyM3+wsLzeItjGvFwelbv5/AdND2JEv8lFrsU+N9RQv0L4v+PyZn7ej/Cgfo89SqFlT06BoHIzbac+0G
-MIME-Version: 1.0
-X-Received: by 2002:a5d:9648:: with SMTP id d8mr5608670ios.115.1585641077799;
- Tue, 31 Mar 2020 00:51:17 -0700 (PDT)
-Date:   Tue, 31 Mar 2020 00:51:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002efe6505a221d5be@google.com>
-Subject: INFO: trying to register non-static key in io_cqring_ev_posted (2)
-From:   syzbot <syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        Tue, 31 Mar 2020 04:15:18 -0400
+Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jJC3B-0000Od-Ku; Tue, 31 Mar 2020 08:15:09 +0000
+Date:   Tue, 31 Mar 2020 10:15:07 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200331081507.f6an4x32cxwpxdpd@wittgenstein>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
+> On Mon, Mar 30, 2020 at 11:17 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> 
+> > Fwiw, putting down my kernel hat and speaking as someone who maintains
+> > two container runtimes and various other low-level bits and pieces in
+> > userspace who'd make heavy use of this stuff I would prefer the fd-based
+> > fsinfo() approach especially in the light of across namespace
+> > operations, querying all properties of a mount atomically all-at-once,
+> 
+> fsinfo(2) doesn't meet the atomically all-at-once requirement.  Sure,
+> it's possible to check the various change counters before and after a
+> batch of calls to check that the result is consistent.  Still, that's
+> not an atomic all-at-once query, if you'd really require that, than
+> fsinfo(2) as it currently stands would be inadequate.
 
-syzbot found the following crash on:
+It at all that's only true for batch requests.
 
-HEAD commit:    673b41e0 staging/octeon: fix up merge error
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=141bd4b7e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acf766c0e3d3f8c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c3370f235b74b3cfd97
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ac1b9de00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10449493e00000
+> 
+> > and safe delegation through fds. Another heavy user of this would be
+> > systemd (Cced Lennart who I've discussed this with) which would prefer
+> > the fd-based approach as well. I think pulling this into a filesystem
+> > and making userspace parse around in a filesystem tree to query mount
+> > information is the wrong approach and will get messy pretty quickly
+> > especially in the face of mount and user namespace interactions and
+> > various other pitfalls.
+> 
+> Have you actually looked at my proposed patch?   Do you have concrete
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0c3370f235b74b3cfd97@syzkaller.appspotmail.com
+Yes. So have others, Al actively disliked and nacked it and no-one got
+excited about it.
 
-RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
-RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
-RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
-R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 1 PID: 7017 Comm: syz-executor095 Not tainted 5.6.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1e9/0x30e lib/dump_stack.c:118
- register_lock_class+0x76a/0x1000 kernel/locking/lockdep.c:472
- __lock_acquire+0x102/0x2b90 kernel/locking/lockdep.c:4223
- lock_acquire+0x169/0x480 kernel/locking/lockdep.c:4923
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x9e/0xc0 kernel/locking/spinlock.c:159
- __wake_up_common_lock kernel/sched/wait.c:122 [inline]
- __wake_up+0xb8/0x150 kernel/sched/wait.c:142
- io_cqring_ev_posted+0x9f/0x1c0 fs/io_uring.c:1150
- io_poll_remove_all fs/io_uring.c:4343 [inline]
- io_ring_ctx_wait_and_kill+0x537/0xfd0 fs/io_uring.c:7223
- io_uring_create fs/io_uring.c:7761 [inline]
- io_uring_setup fs/io_uring.c:7788 [inline]
- __do_sys_io_uring_setup fs/io_uring.c:7801 [inline]
- __se_sys_io_uring_setup+0x1e49/0x2650 fs/io_uring.c:7798
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4412a9
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
-RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
-RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
-R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 7017 Comm: syz-executor095 Not tainted 5.6.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__wake_up_common+0x297/0x4d0 kernel/sched/wait.c:86
-Code: fb 01 00 00 45 31 f6 eb 13 66 2e 0f 1f 84 00 00 00 00 00 4d 39 fc 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 6b b5 59 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc900043e7c00 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffff8880a6860120
-RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc900043e7c68
-R10: fffff5200087cf80 R11: 0000000000000000 R12: ffff8880a6860160
-R13: 1ffff9200087cf8d R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000afd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000000a6821000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __wake_up_common_lock kernel/sched/wait.c:123 [inline]
- __wake_up+0xd4/0x150 kernel/sched/wait.c:142
- io_cqring_ev_posted+0x9f/0x1c0 fs/io_uring.c:1150
- io_poll_remove_all fs/io_uring.c:4343 [inline]
- io_ring_ctx_wait_and_kill+0x537/0xfd0 fs/io_uring.c:7223
- io_uring_create fs/io_uring.c:7761 [inline]
- io_uring_setup fs/io_uring.c:7788 [inline]
- __do_sys_io_uring_setup fs/io_uring.c:7801 [inline]
- __se_sys_io_uring_setup+0x1e49/0x2650 fs/io_uring.c:7798
- do_syscall_64+0xf3/0x1b0 arch/x86/entry/common.c:294
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4412a9
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe08a3a528 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004412a9
-RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000910
-RBP: 000000000000acfd R08: 0000000000000001 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004021f0
-R13: 0000000000402280 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace c289123c7e157e7b ]---
-RIP: 0010:__wake_up_common+0x297/0x4d0 kernel/sched/wait.c:86
-Code: fb 01 00 00 45 31 f6 eb 13 66 2e 0f 1f 84 00 00 00 00 00 4d 39 fc 0f 84 e3 01 00 00 4c 89 fb 49 8d 6f e8 4c 89 f8 48 c1 e8 03 <80> 3c 10 00 74 12 48 89 df e8 6b b5 59 00 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffffc900043e7c00 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000003 RDI: ffff8880a6860120
-RBP: ffffffffffffffe8 R08: 0000000000000000 R09: ffffc900043e7c68
-R10: fffff5200087cf80 R11: 0000000000000000 R12: ffff8880a6860160
-R13: 1ffff9200087cf8d R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000afd880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 00000000a6821000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> issues or just vague bad feelings?
 
+We have had that discussion on-list where I made my "vague bad feelings"
+clear where you responded with the same dismissive style so I don't see
+the point in repeating this experience.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Again, I want to make it clear that here I'm stating my preference as a
+user of this api and as such I don't want to have to parse through a
+filesystem to get complex information about filesystems. We've had
+fruitful discussions [1] around how fsinfo() ties in with supervised
+mounts and the rest of the mount api and its clear and simple especially
+in the face of namespaces and implements a nice delegation model. So +1
+from me.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Christian
+
+[1]: https://youtu.be/LN2CUgp8deo?t=6840
