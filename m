@@ -2,198 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49BF41996B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 14:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D46199A60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 17:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbgCaMkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 08:40:37 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39229 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730436AbgCaMkg (ORCPT
+        id S1730589AbgCaPxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 11:53:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36218 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730528AbgCaPxp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 08:40:36 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p10so25733578wrt.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Mar 2020 05:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rrYU4pdXtjoqLSCi1+BzGz0FwfrcT1JORFV6pfBLh/Q=;
-        b=ury2i0drH9nc44Mz1FbJHJodHBl7BjEBB+TfLm2H0shisGyjSIgoLGejyEwJte99RI
-         mE+AoFJg7DBjBoDsecrIrnzm0bYqbbaCoSEAPt2QLYdt4fJ5HJvuQDf05IhmRoiyi550
-         l8S/9wzk5DVeVbqFqnpF7gbL3ebyjMuPG6MHY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rrYU4pdXtjoqLSCi1+BzGz0FwfrcT1JORFV6pfBLh/Q=;
-        b=QUxXTos03/uM2ZeuFkSNFX2DAUoWjIw5z6Q+xIVSKeVtqJoctQYF42TLnByaZC2TBJ
-         jzKP8XVXrNyll02QZwoeNFQZAuKdrLgeGi4WxC3GQM47Qmm2Jb59cW3VGC4hRMLXYMKx
-         ehhK6XGRWjbCYg2//kgHGN9bHOmqZOoMTSxvahvsuZnNA3lHVK3GadDVst4B+LVj7Id7
-         RICZPt7Dz6/kdD4ALMaNS5IWcX7AsiKTAQOMXr7Toz/CUB9ogzxStOe5pOQyNyCt+mkz
-         U4l6IJBTt6uGrlvhFMhhP/Zn5Z+S7Moeso+M7RHrWWrIBnhymK/tEd7LxsZkpdLe6oJW
-         mkRg==
-X-Gm-Message-State: ANhLgQ1Iv0HvN/k4rBH60AbctWb6/gpCcetbhxoGMA2djxORTnVkixZ9
-        o6R24ttCBWS2g7bDI6/ETPcmPw==
-X-Google-Smtp-Source: ADFU+vu8AJDlsBQPYOHqtbggoLh4K9dPV196dmXMNIJ1cefjnuTxTqIgu8wxKorMC2XSWfQm7c5ITQ==
-X-Received: by 2002:adf:e6c8:: with SMTP id y8mr19484696wrm.279.1585658434518;
-        Tue, 31 Mar 2020 05:40:34 -0700 (PDT)
-Received: from localhost.localdomain ([88.144.89.159])
-        by smtp.gmail.com with ESMTPSA id w66sm3819159wma.38.2020.03.31.05.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 05:40:33 -0700 (PDT)
-From:   Ignat Korchagin <ignat@cloudflare.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ignat Korchagin <ignat@cloudflare.com>, kernel-team@cloudflare.com
-Subject: [PATCH v2 1/1] mnt: add support for non-rootfs initramfs
-Date:   Tue, 31 Mar 2020 13:40:17 +0100
-Message-Id: <20200331124017.2252-2-ignat@cloudflare.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200331124017.2252-1-ignat@cloudflare.com>
-References: <20200331124017.2252-1-ignat@cloudflare.com>
+        Tue, 31 Mar 2020 11:53:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=OFqOc+bJyrugjvE3pryu+rtDGYa5Qg3q/CyA2OqbQJA=; b=pfvOxZeY2utKj3hO3eTL30CYn5
+        skremNMpqHNKXILWV0VBJsYJdTjU1V1dvasr5eOUbn1JV/xK9sUjglwhQnAzcNweAeolxPdK5cTDL
+        EItpcfcOe/AkrCQVHevtWZZJ1DQ+ZvXpyjMcZHaGHTn12omjP5lPm0/R/KmscoWcsmIv3jubehmDx
+        c/iEGFwgVgG+l7HAbREa7uVMBSiXjAW712crz8RKhs5AnU/Uea+9v0CdzlxKizF8jFBwfRDt6MJed
+        uG2U9gr2QL1Ge+UTir6jPHggK0p6WNLHqX9z6F9pWovxEzmC60Cvcj0F2dUCH3HPdoLjKAFedZsqC
+        4yN+ukAQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJGXc-0004FX-KP; Tue, 31 Mar 2020 13:02:52 +0000
+Date:   Tue, 31 Mar 2020 06:02:52 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] iomap: Remove indirect function call
+Message-ID: <20200331130252.GA21484@bombadil.infradead.org>
+References: <20200328155156.GS22483@bombadil.infradead.org>
+ <20200331074628.GA9872@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331074628.GA9872@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The main need for this is to support container runtimes on stateless Linux
-system (pivot_root system call from initramfs).
+On Tue, Mar 31, 2020 at 12:46:28AM -0700, Christoph Hellwig wrote:
+> On Sat, Mar 28, 2020 at 08:51:56AM -0700, Matthew Wilcox wrote:
+> > By splitting iomap_apply into __iomap_apply and an inline iomap_apply,
+> > we convert the call to 'actor' into a direct function call.  I haven't
+> > done any performance measurements, but given the current costs of indirect
+> > function calls, this would seem worthwhile to me?
+> 
+> Hmm.  Given that emount of compiler stupidity we are dealing with did
+> you at least look at the assembly output to see if this actually removes
+> the indirect call?  I wouldn't be quite sure.
 
-Normally, the task of initramfs is to mount and switch to a "real" root
-filesystem. However, on stateless systems (booting over the network) it is just
-convenient to have your "real" filesystem as initramfs from the start.
+If it does get inlined, then the compiler does it:
 
-This, however, breaks different container runtimes, because they usually use
-pivot_root system call after creating their mount namespace. But pivot_root does
-not work from initramfs, because initramfs runs form rootfs, which is the root
-of the mount tree and can't be unmounted.
+     b9d:       e8 ae fe ff ff          callq  a50 <iomap_page_mkwrite_actor>
 
-One workaround is to do:
+If not, then the compiler emits a function in each file called iomap_apply
+which makes an indirect call.  So s/inline/__always_inline/ in the original
+patch.
 
-  mount --bind / /
+before:
+   text	   data	    bss	    dec	    hex	filename
+   5314	   4648	      0	   9962	   26ea	fs/iomap/trace.o
+   1050	     72	      0	   1122	    462	fs/iomap/apply.o
+  17316	    636	    224	  18176	   4700	fs/iomap/buffered-io.o
+   4773	     76	      0	   4849	   12f1	fs/iomap/direct-io.o
+   1335	     28	      0	   1363	    553	fs/iomap/fiemap.o
+   1928	     28	      0	   1956	    7a4	fs/iomap/seek.o
+   1394	      8	      0	   1402	    57a	fs/iomap/swapfile.o
 
-However, that defeats one of the purposes of using pivot_root in the cloned
-containers: get rid of host root filesystem, should the code somehow escapes the
-chroot.
+after:
+   text	   data	    bss	    dec	    hex	filename
+   5314	   4648	      0	   9962	   26ea	fs/iomap/trace.o
+    722	     72	      0	    794	    31a	fs/iomap/apply.o
+  18784	    636	    224	  19644	   4cbc	fs/iomap/buffered-io.o
+   5169	     76	      0	   5245	   147d	fs/iomap/direct-io.o
+   2093	     28	      0	   2121	    849	fs/iomap/fiemap.o
+   2467	     28	      0	   2495	    9bf	fs/iomap/seek.o
+   1664	      8	      0	   1672	    688	fs/iomap/swapfile.o
 
-There is a way to solve this problem from userspace, but it is much more
-cumbersome:
-  * either have to create a multilayered archive for initramfs, where the outer
-    layer creates a tmpfs filesystem and unpacks the inner layer, switches root
-    and does not forget to properly cleanup the old rootfs
-  * or we need to use keepinitrd kernel cmdline option, unpack initramfs to
-    rootfs, run a script to create our target tmpfs root, unpack the same
-    initramfs there, switch root to it and again properly cleanup the old root,
-    thus unpacking the same archive twice and also wasting memory, because
-    the kernel stores compressed initramfs image indefinitely.
-
-With this change we can ask the kernel (by specifying nonroot_initramfs kernel
-cmdline option) to create a "leaf" tmpfs mount for us and switch root to it
-before the initramfs handling code, so initramfs gets unpacked directly into
-the "leaf" tmpfs with rootfs being empty and no need to clean up anything.
-
-This also bring the behaviour in line with the older style initrd, where the
-initrd is located on some leaf filesystem in the mount tree and rootfs remaining
-empty.
-
-Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
----
- .../admin-guide/kernel-parameters.txt         |  9 +++-
- fs/namespace.c                                | 47 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c07815d230bc..720fd3ee9f8a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3192,11 +3192,18 @@
- 	nomfgpt		[X86-32] Disable Multi-Function General Purpose
- 			Timer usage (for AMD Geode machines).
- 
-+	nomodule        Disable module load
-+
- 	nonmi_ipi	[X86] Disable using NMI IPIs during panic/reboot to
- 			shutdown the other cpus.  Instead use the REBOOT_VECTOR
- 			irq.
- 
--	nomodule	Disable module load
-+	nonroot_initramfs
-+			[KNL] Create an additional tmpfs filesystem under rootfs
-+			and unpack initramfs there instead of the rootfs itself.
-+			This is useful for stateless systems, which run directly
-+			from initramfs, create mount namespaces and use
-+			"pivot_root" system call.
- 
- 	nopat		[X86] Disable PAT (page attribute table extension of
- 			pagetables) support.
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 85b5f7bea82e..a1ec862e8146 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3701,6 +3701,49 @@ static void __init init_mount_tree(void)
- 	set_fs_root(current->fs, &root);
- }
- 
-+#if IS_ENABLED(CONFIG_TMPFS)
-+static int __initdata nonroot_initramfs;
-+
-+static int __init nonroot_initramfs_param(char *str)
-+{
-+	if (*str)
-+		return 0;
-+	nonroot_initramfs = 1;
-+	return 1;
-+}
-+__setup("nonroot_initramfs", nonroot_initramfs_param);
-+
-+static void __init init_nonroot_initramfs(void)
-+{
-+	int err;
-+
-+	if (!nonroot_initramfs)
-+		return;
-+
-+	err = ksys_mkdir("/root", 0700);
-+	if (err < 0)
-+		goto out;
-+
-+	err = do_mount("tmpfs", "/root", "tmpfs", 0, NULL);
-+	if (err)
-+		goto out;
-+
-+	err = ksys_chdir("/root");
-+	if (err)
-+		goto out;
-+
-+	err = do_mount(".", "/", NULL, MS_MOVE, NULL);
-+	if (err)
-+		goto out;
-+
-+	err = ksys_chroot(".");
-+	if (!err)
-+		return;
-+out:
-+	printk(KERN_WARNING "Failed to create a non-root filesystem for initramfs\n");
-+}
-+#endif /* IS_ENABLED(CONFIG_TMPFS) */
-+
- void __init mnt_init(void)
- {
- 	int err;
-@@ -3734,6 +3777,10 @@ void __init mnt_init(void)
- 	shmem_init();
- 	init_rootfs();
- 	init_mount_tree();
-+
-+#if IS_ENABLED(CONFIG_TMPFS)
-+	init_nonroot_initramfs();
-+#endif
- }
- 
- void put_mnt_ns(struct mnt_namespace *ns)
--- 
-2.20.1
-
+33110 to 36213 bytes of text.  So not free.  Worthwhile?
