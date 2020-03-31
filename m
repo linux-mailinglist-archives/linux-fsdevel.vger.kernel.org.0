@@ -2,28 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F228198E16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 10:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4893198E9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Mar 2020 10:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbgCaIPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Mar 2020 04:15:19 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36301 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbgCaIPS (ORCPT
+        id S1730034AbgCaIep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Mar 2020 04:34:45 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:34382 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729819AbgCaIep (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Mar 2020 04:15:18 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jJC3B-0000Od-Ku; Tue, 31 Mar 2020 08:15:09 +0000
-Date:   Tue, 31 Mar 2020 10:15:07 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
+        Tue, 31 Mar 2020 04:34:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585643684;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=d3uoqh9h+iojx/+Rg3U0VTN2ulL9+wr9bMc1wrNA4m0=;
+        b=ZW8Mu3deDP5e5GVq6IzQwBVRZSWhVnbJd8AoBCvhrBFiHceHSXPYCqyNtEA+W3mLWkpkag
+        wi+jHJPfT6yJ+cHD6BncDH76PsK5tY3cd3Y2WjCXletUOvOk6ozu3Tu6/PsGNlwyynmAuc
+        LYDj3pDJYNRpCFi8HHEBWdPqip3TgvE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-XwWS4oBAN9KvwkitkcQc6A-1; Tue, 31 Mar 2020 04:34:41 -0400
+X-MC-Unique: XwWS4oBAN9KvwkitkcQc6A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 54B2B149C5;
+        Tue, 31 Mar 2020 08:34:38 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1866096B80;
+        Tue, 31 Mar 2020 08:34:33 +0000 (UTC)
+Date:   Tue, 31 Mar 2020 10:34:30 +0200
+From:   Karel Zak <kzak@redhat.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Steven Whitehouse <swhiteho@redhat.com>,
         Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
@@ -32,14 +48,15 @@ Cc:     David Howells <dhowells@redhat.com>,
         Lennart Poettering <lennart@poettering.net>,
         Aleksa Sarai <cyphar@cyphar.com>
 Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200331081507.f6an4x32cxwpxdpd@wittgenstein>
+Message-ID: <20200331083430.kserp35qabnxvths@ws.net.home>
 References: <1445647.1585576702@warthog.procyon.org.uk>
  <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
  <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -55,42 +72,21 @@ On Tue, Mar 31, 2020 at 07:11:11AM +0200, Miklos Szeredi wrote:
 > > fsinfo() approach especially in the light of across namespace
 > > operations, querying all properties of a mount atomically all-at-once,
 > 
-> fsinfo(2) doesn't meet the atomically all-at-once requirement.  Sure,
-> it's possible to check the various change counters before and after a
-> batch of calls to check that the result is consistent.  Still, that's
-> not an atomic all-at-once query, if you'd really require that, than
-> fsinfo(2) as it currently stands would be inadequate.
+> fsinfo(2) doesn't meet the atomically all-at-once requirement.
 
-It at all that's only true for batch requests.
+I guess your /proc based idea have exactly the same problem... 
 
-> 
-> > and safe delegation through fds. Another heavy user of this would be
-> > systemd (Cced Lennart who I've discussed this with) which would prefer
-> > the fd-based approach as well. I think pulling this into a filesystem
-> > and making userspace parse around in a filesystem tree to query mount
-> > information is the wrong approach and will get messy pretty quickly
-> > especially in the face of mount and user namespace interactions and
-> > various other pitfalls.
-> 
-> Have you actually looked at my proposed patch?   Do you have concrete
+I see two possible ways:
 
-Yes. So have others, Al actively disliked and nacked it and no-one got
-excited about it.
+- after open("/mnt", O_PATH) create copy-on-write object in kernel to
+  represent mount node -- kernel will able to modify it, but userspace
+  will get unchanged data from the FD until to close()
 
-> issues or just vague bad feelings?
+- improve fsinfo() to provide set (list) of the attributes by one call
 
-We have had that discussion on-list where I made my "vague bad feelings"
-clear where you responded with the same dismissive style so I don't see
-the point in repeating this experience.
+    Karel
 
-Again, I want to make it clear that here I'm stating my preference as a
-user of this api and as such I don't want to have to parse through a
-filesystem to get complex information about filesystems. We've had
-fruitful discussions [1] around how fsinfo() ties in with supervised
-mounts and the rest of the mount api and its clear and simple especially
-in the face of namespaces and implements a nice delegation model. So +1
-from me.
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-Christian
-
-[1]: https://youtu.be/LN2CUgp8deo?t=6840
