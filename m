@@ -2,117 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D96C619AF7F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACADF19B3D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbgDAQO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 12:14:28 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53004 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726205AbgDAQO2 (ORCPT
+        id S2388049AbgDAQx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 12:53:59 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34680 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388276AbgDAQbM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:14:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585757667;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BwLjwW0ZN4RV6KPYUWCSZF/c2rPm1lXXgz0HJ8FZAPg=;
-        b=RD/aCu6neMpZtcQUXW1Qh5RYZ43gD8istHRRHz5uMfLID8hjlD/gxBRKcRBpNd5j+JeM+K
-        yOCiEmVAA8qLsTPA7YT/KZ3mtHz3x3yMZDXS5eImH9hCj4KhtaqK1Tu0RCo43a/XiqMU7O
-        nYPhVSBU97aK3xyuKBzRsH9p9Kbm+sY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-245-sfcpXAfHOpSdjLB9aQjdBg-1; Wed, 01 Apr 2020 12:14:21 -0400
-X-MC-Unique: sfcpXAfHOpSdjLB9aQjdBg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5328B1902EA1;
-        Wed,  1 Apr 2020 16:14:20 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-83.rdu2.redhat.com [10.10.115.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B84419C70;
-        Wed,  1 Apr 2020 16:14:17 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9613D220005; Wed,  1 Apr 2020 12:14:16 -0400 (EDT)
-Date:   Wed, 1 Apr 2020 12:14:16 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 4/8] dax, pmem: Add a dax operation zero_page_range
-Message-ID: <20200401161416.GC9398@redhat.com>
-References: <20200218214841.10076-1-vgoyal@redhat.com>
- <20200218214841.10076-5-vgoyal@redhat.com>
- <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
+        Wed, 1 Apr 2020 12:31:12 -0400
+Received: by mail-ed1-f65.google.com with SMTP id o1so683214edv.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 09:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
+        b=lgNDPXVyyGlYNRnOPf26yaHitf7+pqDoEBpBKrgXIVk39xhYHvjpaLoeMlCbYOOH35
+         gqP+GsjwCSbvRLr0P1EYmVavLSzF91XZxVs0nTVil4/5vneArq4Br9GvtOwNnp+K84fp
+         eeYPrrVySgZo3U4828x7nVKYv0l3frhycdpMM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z5x/eD97YYe+UtsUcQWgKp4y9byY3ksGQkwZWyGAQus=;
+        b=FEMgu98h01Uk+4/Yd8L6/tSqijY3Oc5jVj4CsAnsp5R5DBjBd5VAMMGnvBsJ/wASgz
+         rUtVB6iGfbB8HGL95a0YaGJGdHtOlQcxI/AMqvgU+YY5pigxYQU/WiTC343vwb4+EIya
+         J1zvH2n2E+2TYeF4vv4/zJq/ggehtDxrhx+R5mtcxoTJJj5LQWLjAWuamcQquzhPCvtE
+         duvxGhROSKW4ifHNy1FmDMgmkgdfYz5moUwHJEHt/xDoq8BMM5Je+M4WaYh1gthFU/+s
+         USvzPj62VfGh/qi5F2ZmeK2HdehNpvCgS7RzWDo0k9hqwqOtU7nYnQ98LQ3BwOaZiSqz
+         8bHw==
+X-Gm-Message-State: ANhLgQ0pltzt2wUwPyk+f7nl3JaiWeO6akk1JTrD7d/T5ErqOwdAf0fm
+        fLO1pvfZRockCSqGBMcAe5Gk9z+3jFTi+jZKZBNIcA==
+X-Google-Smtp-Source: ADFU+vuXSy+WOIY1LRGVIsjX6cs7PxeglKy6P6ZhdJuuMLQsyJawyKskAGhJxAk2Obp0S8U3eefwNGGiUrNlnslw5RY=
+X-Received: by 2002:a50:c341:: with SMTP id q1mr22249117edb.247.1585758670968;
+ Wed, 01 Apr 2020 09:31:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
+ <2488530.1585749351@warthog.procyon.org.uk> <2488734.1585749502@warthog.procyon.org.uk>
+ <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com> <2590276.1585756914@warthog.procyon.org.uk>
+In-Reply-To: <2590276.1585756914@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 18:30:59 +0200
+Message-ID: <CAJfpeguxDiq3BW94AVFhgY75P+jy_+jk3pdyNZ5z-aJPXNvvGA@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     David Howells <dhowells@redhat.com>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 12:38:16PM -0700, Dan Williams wrote:
-> On Tue, Feb 18, 2020 at 1:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Wed, Apr 1, 2020 at 6:02 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > > > But doesn't actually do what Karel asked for.  show_mountinfo() itself does
+> > > > not give you what Karel asked for.
 > >
-> > Add a dax operation zero_page_range, to zero a range of memory. This will
-> > also clear any poison in the range being zeroed.
-> >
-> > As of now, zeroing of up to one page is allowed in a single call. There
-> > are no callers which are trying to zero more than a page in a single call.
-> > Once we grow the callers which zero more than a page in single call, we
-> > can add that support. Primary reason for not doing that yet is that this
-> > will add little complexity in dm implementation where a range might be
-> > spanning multiple underlying targets and one will have to split the range
-> > into multiple sub ranges and call zero_page_range() on individual targets.
-> >
-> > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  drivers/dax/super.c   | 19 +++++++++++++++++++
-> >  drivers/nvdimm/pmem.c | 10 ++++++++++
-> >  include/linux/dax.h   |  3 +++
-> >  3 files changed, 32 insertions(+)
-> >
-> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > index 0aa4b6bc5101..c912808bc886 100644
-> > --- a/drivers/dax/super.c
-> > +++ b/drivers/dax/super.c
-> > @@ -344,6 +344,25 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dax_copy_to_iter);
-> >
-> > +int dax_zero_page_range(struct dax_device *dax_dev, u64 offset, size_t len)
-> > +{
-> > +       if (!dax_alive(dax_dev))
-> > +               return -ENXIO;
-> > +
-> > +       if (!dax_dev->ops->zero_page_range)
-> > +               return -EOPNOTSUPP;
-> 
-> This seems too late to be doing the validation. It would be odd for
-> random filesystem operations to see this error. I would move the check
-> to alloc_dax() and fail that if the caller fails to implement the
-> operation.
-> 
-> An incremental patch on top to fix this up would be ok. Something like
-> "Now that all dax_operations providers implement zero_page_range()
-> mandate it at alloc_dax time".
+> > Not sure what you mean.  I think it shows precisely the information
+> > Karel asked for.
+>
+> It's not atomic.
 
-Hi Dan,
+Yes it is.
 
-Posted an extra patch in same patch series for this.
-
-https://lore.kernel.org/linux-fsdevel/20200228163456.1587-1-vgoyal@redhat.com/T/#m624680cbb5e714266d4b34ade2d6c390dae69598
-
-Vivek
-> 
-
+Thanks,
+Miklos
