@@ -2,116 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D90219B467
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 19:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E2219B492
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 19:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732511AbgDAQ6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 12:58:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32860 "EHLO
+        id S1732727AbgDARNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 13:13:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40874 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732304AbgDAQ6H (ORCPT
+        with ESMTP id S1732137AbgDARNR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:58:07 -0400
+        Wed, 1 Apr 2020 13:13:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QHR0nBP7pmtZR6yYdoPDKX6MpzAdmD8Z8uVqLNvp6WE=; b=HSpRWlbpDXSHKtu0uqdgYyS5Jy
-        itVeV0nwFq2Zqe96fLQHOwjimg38b3f6iACBH6zjoh0HNf/NYojYLBxZ6sSydlFC9PwV1x9+QNOS3
-        KptknCBl+eoBFsg9W/OGOmUJAMel/f/BZE97Lh0aPds9af28vuR1Nzjf2ZMv/g14bhtauPcnjaOl3
-        QAHjCa9YsKYH463citp9XtEt40PPCoX5tqnuqKN0BOEJcAAD7CJRiuVpreqTQk3sEs9nXCymEBN6R
-        nOXAwrduxHzmKLfE1srQrtHGBdeOu3Tgh8ftvzCaJVjMRsnib5ll57QfawbcUHdlqKo+rXSd84KOF
-        R8Zlt5Xg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJggp-0006zl-Ff; Wed, 01 Apr 2020 16:58:07 +0000
-Date:   Wed, 1 Apr 2020 09:58:07 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Handle memory allocation failure in readahead
-Message-ID: <20200401165807.GH21484@bombadil.infradead.org>
-References: <20200401030421.17195-1-willy@infradead.org>
- <20200401043125.GD56958@magnolia>
- <20200401112321.GF21484@bombadil.infradead.org>
- <20200401164825.GC80283@magnolia>
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=wdgTSKNxkD1QrwAjRgDdie5nQ4gbwZFe8HVIvvfYi0s=; b=KJntRMJ8Qks9UoOE0UgBNQ4Dyr
+        oTcjRKMZ6Jf3Gk/IJlNgmVLKtTXcnPwXUsOSjEOz5uphzyUiBLQJo5o7PNsl5LrPcwVNnSiAKVvsb
+        EyuIe9gLPIJpM69FvjZNpfYVsJZoOmOs+Ik5+N0tX3FfjD3I1dSBXGZWHv9ASkPKrJValKJth9X0/
+        6qWTivVQG1Q4mPA/b4MTBvIzD3/W8/Z5t1IHR66LpXrQnSzPUGwU9UDR5BWrWiQvR8AWjNiN+T4wg
+        qrl22e1u2+csSEP8rhDaM5Xz9aNdmcjZXcpO4P4n77fobZ+0b07wCIh/WYLt/XTgeqmcKmYcvVp2R
+        +8bmJBbA==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jJgvR-0000rx-7y; Wed, 01 Apr 2020 17:13:13 +0000
+Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>
+References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
+ <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
+ <20200331143437-mutt-send-email-mst@kernel.org>
+ <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
+ <20200331152106-mutt-send-email-mst@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cd94bd62-57c4-b82e-0434-8a470a9ea613@infradead.org>
+Date:   Wed, 1 Apr 2020 10:13:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401164825.GC80283@magnolia>
+In-Reply-To: <20200331152106-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 01, 2020 at 09:48:25AM -0700, Darrick J. Wong wrote:
-> On Wed, Apr 01, 2020 at 04:23:21AM -0700, Matthew Wilcox wrote:
-> > On Tue, Mar 31, 2020 at 09:31:25PM -0700, Darrick J. Wong wrote:
-> > > On Tue, Mar 31, 2020 at 08:04:21PM -0700, Matthew Wilcox wrote:
-> > > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > > > 
-> > > > bio_alloc() can fail when we use GFP_NORETRY.  If it does, allocate
-> > > > a bio large enough for a single page like mpage_readpages() does.
-> > > 
-> > > Why does mpage_readpages() do that?
-> > > 
-> > > Is this a means to guarantee some kind of forward (readahead?) progress?
-> > > Forgive my ignorance, but if memory is so tight we can't allocate a bio
-> > > for readahead then why not exit having accomplished nothing?
-> > 
-> > As far as I can tell, it's just a general fallback in mpage_readpages().
-> > 
-> >  * If anything unusual happens, such as:
-> >  *
-> >  * - encountering a page which has buffers
-> >  * - encountering a page which has a non-hole after a hole
-> >  * - encountering a page with non-contiguous blocks
-> >  *
-> >  * then this code just gives up and calls the buffer_head-based read function.
-> > 
-> > The actual code for that is:
-> > 
-> >                 args->bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
-> >                                         min_t(int, args->nr_pages,
-> >                                               BIO_MAX_PAGES),
-> >                                         gfp);
-> >                 if (args->bio == NULL)
-> >                         goto confused;
-> > ...
-> > confused:
-> >         if (args->bio)
-> >                 args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
-> >         if (!PageUptodate(page))
-> >                 block_read_full_page(page, args->get_block);
-> >         else
-> >                 unlock_page(page);
-> > 
-> > As the comment implies, there are a lot of 'goto confused' cases in
-> > do_mpage_readpage().
-> > 
-> > Ideally, yes, we'd just give up on reading this page because it's
-> > only readahead, and we shouldn't stall actual work in order to reclaim
-> > memory so we can finish doing readahead.  However, handling a partial
-> > page read is painful.  Allocating a bio big enough for a single page is
-> > much easier on the mm than allocating a larger bio (for a start, it's a
-> > single allocation, not a pair of allocations), so this is a reasonable
-> > compromise between simplicity of code and quality of implementation.
+On 3/31/20 12:22 PM, Michael S. Tsirkin wrote:
+> On Tue, Mar 31, 2020 at 11:42:47AM -0700, Randy Dunlap wrote:
+>> On 3/31/20 11:37 AM, Michael S. Tsirkin wrote:
+>>> On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
+>>>> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
+>>>>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
+>>>>>
+>>>>>    http://www.ozlabs.org/~akpm/mmotm/
+>>>>>
+>>>>> mmotm-readme.txt says
+>>>>>
+>>>>> README for mm-of-the-moment:
+>>>>>
+>>>>> http://www.ozlabs.org/~akpm/mmotm/
+>>>>>
+>>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+>>>>> more than once a week.
+>>>>>
+>>>>> You will need quilt to apply these patches to the latest Linus release (5.x
+>>>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+>>>>> http://ozlabs.org/~akpm/mmotm/series
+>>>>>
+>>>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
+>>>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+>>>>> followed by the base kernel version against which this patch series is to
+>>>>> be applied.
+>>>>>
+>>>>> This tree is partially included in linux-next.  To see which patches are
+>>>>> included in linux-next, consult the `series' file.  Only the patches
+>>>>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+>>>>> linux-next.
+>>>>>
+>>>>>
+>>>>> A full copy of the full kernel tree with the linux-next and mmotm patches
+>>>>> already applied is available through git within an hour of the mmotm
+>>>>> release.  Individual mmotm releases are tagged.  The master branch always
+>>>>> points to the latest release, so it's constantly rebasing.
+>>>>>
+>>>>> 	https://github.com/hnaz/linux-mm
+>>>>
+>>>> on i386:
+>>>>
+>>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
+>>>> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
+>>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
+>>>> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
+>>>>
+>>>>
+>>>>
+>>>> drivers/virtio/vdpa/ is not being built. (confusing!)
+>>>>
+>>>> CONFIG_VIRTIO=m
+>>>> # CONFIG_VIRTIO_MENU is not set
+>>>> CONFIG_VDPA=y
+>>>
+>>> Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
+>>> drivers/virtio/vdpa/ built?
+>>> we have:
+>>>
+>>
+>> Ack.  Hopefully Yamada-san can tell us what is happening here.
 > 
-> Hmm, ok.  I'll add a comment about that:
-> 
-> 		/*
-> 		 * If the bio_alloc fails, try it again for a single page to
-> 		 * avoid having to deal with partial page reads.  This emulates
-> 		 * what do_mpage_readpage does.
-> 		 */
-> 		if (!ctx->bio)
-> 			ctx->bio = bio_alloc(orig_gfp, 1);
-> 
-> ...in the hopes that if anyone ever makes partial page reads less
-> painful, they'll hopefully find this breadcrumb and clean up iomap too.
-> 
-> If that's ok,
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> OK I pushed a fix (moving the vdpa subsystem up a level) and pushed into
+> my tree, refs/heads/next .  Seems to build fine now, but I'd appreciate
+> it if you can give it a spin.
 
-That makes perfect sense; thank you.  Assuming you'll just apply it with
-that change.
+This now builds successfully on linux-next of 20200401.
+
+Thanks.
+
+-- 
+~Randy
+
