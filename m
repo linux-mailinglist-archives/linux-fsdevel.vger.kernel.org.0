@@ -2,111 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B90B519A76A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 10:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 239DA19A7A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 10:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbgDAIhf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 04:37:35 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38704 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgDAIhf (ORCPT
+        id S1731608AbgDAIn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 04:43:58 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:41809 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731343AbgDAIn6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 04:37:35 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e5so28653133edq.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 01:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
-        b=DCWoZP8f/dOkjW5uYoUFpfMxBGbKeZuXpLeJJK8mTpafT0iBm07aAautrwxGNxNPuH
-         kwa+oyklRAFDRmQ9G/64ndypZ3iC1AQSMWoHkTRNK/CJ98o+a+FWbDoEu0LWLRzfWA12
-         BQCicYA5Tma7uC+qkVwM5zNRNQOh9LLVhWIgE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Pb5WxXo01OUrPYKfuGBoAi7COZxVQpsVUvg17nkA6w=;
-        b=GSfHVBHvQgJb/6bvJu70RjLLfl7uAitjCPSQMQu8+DjJK+c4Yrph+/OlG6xB2JCMuF
-         jlyFUVXqn0S8h+mHpfJOzAO2hMaMnngjFYQEPDziNNoyhOGC/W32PfXoJqHcC1LVhdne
-         0hWRSy1jYNk6bg5z2oBQWfOS+o1GvODaPXzgVpc/X9o7+Senwq86heejqw4WQc8IN58Q
-         wHha4sif2PutdapPSMtNeppt1uHW65KnSHrmZKHdj2DL8hE5dX0fRSObhsmcnwdXYrKF
-         M913/cVLa0t7+9jOa2r3mNGAuDJozKH3CKEWvSLNcTeyuAgMPJ81hDORqz4d/mDx0VW3
-         Ljng==
-X-Gm-Message-State: ANhLgQ1NFM/lXs9xRfNcIhEoCoch92yT8m56L+/V3T/S74DSGjzXBvmS
-        OggsfbANkBX3TJkYXnbr9ECfkmBIoMbkuHDwAbDFWQ==
-X-Google-Smtp-Source: ADFU+vv25aObxVqudxs/b4t6TUDhdA8HhF0PuGfXX6HSZBIvhctUM+bsT6LQzuUGvDuTHabWaoYU8+dr8sw8QJ3EQ4c=
-X-Received: by 2002:a50:8326:: with SMTP id 35mr19766368edh.134.1585730253359;
- Wed, 01 Apr 2020 01:37:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
- <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
- <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
- <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com> <2465266.1585729649@warthog.procyon.org.uk>
-In-Reply-To: <2465266.1585729649@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 1 Apr 2020 10:37:22 +0200
-Message-ID: <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+        Wed, 1 Apr 2020 04:43:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585730637;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ghf5BEjuQ0VVHQ+GDvKrov7j0WF8psl/+NBJNRKsHsA=;
+        b=V1Qe5HQtjm2dq4zWCUTLur75dkJKgPKJj7hSi/Dza5pcA56TEcss2vDrM/hp4pA9ajtV31
+        94/xtex4jqPFHEwooiR5o8BObk/5jKljfEmxqrCo8eu1mRfdgnTRXQ9zZjDY81OcVEgBkr
+        EOMk8odtPs3HiSaxD1Z0FPk+LeEb9f8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-313-1z9lJwfaMpqepY7Q8IadMQ-1; Wed, 01 Apr 2020 04:43:55 -0400
+X-MC-Unique: 1z9lJwfaMpqepY7Q8IadMQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86CCF800D53;
+        Wed,  1 Apr 2020 08:43:53 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 989B819C6A;
+        Wed,  1 Apr 2020 08:43:49 +0000 (UTC)
+Date:   Wed, 1 Apr 2020 10:43:46 +0200
+From:   Karel Zak <kzak@redhat.com>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
         Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200401084346.kety7m2dwo7okeuk@ws.net.home>
+References: <20200331083430.kserp35qabnxvths@ws.net.home>
+ <1445647.1585576702@warthog.procyon.org.uk>
+ <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <CAJfpegtjmkJUSqORFv6jw-sYbqEMh9vJz64+dmzWhATYiBmzVQ@mail.gmail.com>
+ <2418416.1585691663@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2418416.1585691663@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 10:27 AM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > According to dhowell's measurements processing 100k mounts would take
-> > about a few seconds of system time (that's the time spent by the
-> > kernel to retrieve the data,
->
-> But the inefficiency of mountfs - at least as currently implemented - scales
-> up with the number of individual values you want to retrieve, both in terms of
-> memory usage and time taken.
+On Tue, Mar 31, 2020 at 10:54:23PM +0100, David Howells wrote:
+> Karel Zak <kzak@redhat.com> wrote:
+> 
+> > - improve fsinfo() to provide set (list) of the attributes by one call
+> 
+> That would be my preferred way.  I wouldn't want to let the user pin copies of
+> state, and I wouldn't want to make open(O_PATH) do it automatically.
 
-I've taken that into account when guesstimating a "few seconds per
-100k entries".  My guess is that there's probably an order of
-magnitude difference between the performance of a fs based interface
-and a binary syscall based interface.  That could be reduced somewhat
-with a readfile(2) type API.
+You can create cow object on first fsinfo() call, ideally add some
+flags to control this behavior -- but you're right, this way is
+complicated to implement and possibly dangerous.
 
-But the point is: this does not matter.  Whether it's .5s or 5s is
-completely irrelevant, as neither is going to take down the system,
-and userspace processing is probably going to take as much, if not
-more time.  And remember, we are talking about stopping and starting
-the automount daemon, which is something that happens, but it should
-not happen often by any measure.
+I guess return some vector of attributes in one fsinfo() will be good
+enough.
 
-> With fsinfo(), I've tried to batch values together where it makes sense - and
-> there's no lingering memory overhead - no extra inodes, dentries and files
-> required.
+    Karel
 
-The dentries, inodes and files in your test are single use (except the
-root dentry) and can be made ephemeral if that turns out to be better.
-My guess is that dentries belonging to individual attributes should be
-deleted on final put, while the dentries belonging to the mount
-directory can be reclaimed normally.
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-Thanks,
-Miklos
