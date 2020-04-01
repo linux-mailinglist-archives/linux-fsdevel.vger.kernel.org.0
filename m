@@ -2,128 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77E2219B492
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 19:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C509E19B7C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 23:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732727AbgDARNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 13:13:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40874 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732137AbgDARNR (ORCPT
+        id S1733035AbgDAVjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 17:39:13 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:42567 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732441AbgDAVjM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 13:13:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=wdgTSKNxkD1QrwAjRgDdie5nQ4gbwZFe8HVIvvfYi0s=; b=KJntRMJ8Qks9UoOE0UgBNQ4Dyr
-        oTcjRKMZ6Jf3Gk/IJlNgmVLKtTXcnPwXUsOSjEOz5uphzyUiBLQJo5o7PNsl5LrPcwVNnSiAKVvsb
-        EyuIe9gLPIJpM69FvjZNpfYVsJZoOmOs+Ik5+N0tX3FfjD3I1dSBXGZWHv9ASkPKrJValKJth9X0/
-        6qWTivVQG1Q4mPA/b4MTBvIzD3/W8/Z5t1IHR66LpXrQnSzPUGwU9UDR5BWrWiQvR8AWjNiN+T4wg
-        qrl22e1u2+csSEP8rhDaM5Xz9aNdmcjZXcpO4P4n77fobZ+0b07wCIh/WYLt/XTgeqmcKmYcvVp2R
-        +8bmJBbA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJgvR-0000rx-7y; Wed, 01 Apr 2020 17:13:13 +0000
-Subject: Re: mmotm 2020-03-30-18-46 uploaded (VDPA + vhost)
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        Wed, 1 Apr 2020 17:39:12 -0400
+Received: by mail-pg1-f202.google.com with SMTP id g10so1184486pgg.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 14:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=HAGgUYyHHln+iAOn6yXYvlgWPJe/4zWvRIw0PRHR3XY=;
+        b=HtoDxjxyzs5b33ZeGM32Er5kRybPkg8YGOpir27RQ+bUpw6BX/dsJ2vwWdB3AAxCmG
+         bjMfAIMdlb4UR1AIOIFCN+uc1kmAxsGNUeUv/O7Of7mXZUnwD7KGKYartbCqcARuZu5S
+         pfkX1UGvumlx5lTd6PNZtdcgvvGSJ7bd4ydHOqBQDCYH8LMYmqHxRXGVp/ZzYI03Cvnf
+         V4GJQtkEQ2I/BOGpkkbnC2McxJw07GBcQ5N+j9kMTmPQ3mXOmGip3EI4TVF0z+UmDcdV
+         yHb87MmDuy1wgu53qGGYxbpjE5SRwjOxs4/Vz56t9Aqd6UVnoio9UyUMS51Lxck57Al/
+         2iVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=HAGgUYyHHln+iAOn6yXYvlgWPJe/4zWvRIw0PRHR3XY=;
+        b=U0GZOCnW2Ksq8xGbUoP7NoTLsDR984U2QuQ+6sUYFyB5PcVfG8QZoUSLazkgHrh8jw
+         prcYOKbk4oY8AYvV3KDZcUzK3ckEDrmojQlt/fIx12vwKQ5t1drQpluT8bidewhlQxFF
+         PwnTyL5NV7gOevLS6C/WmAGCXYHA2O6tw8TE0Z08a+DDQBvdZ/roNH4UsF8BuhRO+pYv
+         U1OL4Tgo8CQf3G/9e+NGO9cZwAhzKQN2z2lIdIPZnXsh13Ep202XvCQiAdKoc4ci75mU
+         6OdMdoEkrVGLKrLilBRZ2dJ87Hc5sUFo/Ufi0GUxdGhF3OGw0NTkGOz1OP+cksTJP/bn
+         qXog==
+X-Gm-Message-State: AGi0Pub7TTMFBWk8SH0PC23eb0VRiqwhBwT/y/JPh9vDA4sDMx6WyxYT
+        1EtmMnnqpLUa5Vy6k43laZ4MOlPXx9s=
+X-Google-Smtp-Source: APiQypJ3mXXgEz84cKvOfB4JITXTTQgCH9bS0I77D6jC/rreVESODIDpq8LIxGqLwRsYwdoGgUvE2wVKYE8=
+X-Received: by 2002:a17:90b:3583:: with SMTP id mm3mr13268pjb.123.1585777151523;
+ Wed, 01 Apr 2020 14:39:11 -0700 (PDT)
+Date:   Wed,  1 Apr 2020 14:39:00 -0700
+In-Reply-To: <20200326200634.222009-1-dancol@google.com>
+Message-Id: <20200401213903.182112-1-dancol@google.com>
+Mime-Version: 1.0
+References: <20200326200634.222009-1-dancol@google.com>
+X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
+Subject: [PATCH v5 0/3] SELinux support for anonymous inodes and UFFD
+From:   Daniel Colascione <dancol@google.com>
+To:     timmurray@google.com, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>
-References: <20200331014748.ajL0G62jF%akpm@linux-foundation.org>
- <969cacf1-d420-223d-7cc7-5b1b2405ec2a@infradead.org>
- <20200331143437-mutt-send-email-mst@kernel.org>
- <9c03fee8-af1a-2035-b903-611a631094b0@infradead.org>
- <20200331152106-mutt-send-email-mst@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <cd94bd62-57c4-b82e-0434-8a470a9ea613@infradead.org>
-Date:   Wed, 1 Apr 2020 10:13:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <20200331152106-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
+        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
+        jmorris@namei.org
+Cc:     Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/31/20 12:22 PM, Michael S. Tsirkin wrote:
-> On Tue, Mar 31, 2020 at 11:42:47AM -0700, Randy Dunlap wrote:
->> On 3/31/20 11:37 AM, Michael S. Tsirkin wrote:
->>> On Tue, Mar 31, 2020 at 11:27:54AM -0700, Randy Dunlap wrote:
->>>> On 3/30/20 6:47 PM, akpm@linux-foundation.org wrote:
->>>>> The mm-of-the-moment snapshot 2020-03-30-18-46 has been uploaded to
->>>>>
->>>>>    http://www.ozlabs.org/~akpm/mmotm/
->>>>>
->>>>> mmotm-readme.txt says
->>>>>
->>>>> README for mm-of-the-moment:
->>>>>
->>>>> http://www.ozlabs.org/~akpm/mmotm/
->>>>>
->>>>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->>>>> more than once a week.
->>>>>
->>>>> You will need quilt to apply these patches to the latest Linus release (5.x
->>>>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->>>>> http://ozlabs.org/~akpm/mmotm/series
->>>>>
->>>>> The file broken-out.tar.gz contains two datestamp files: .DATE and
->>>>> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->>>>> followed by the base kernel version against which this patch series is to
->>>>> be applied.
->>>>>
->>>>> This tree is partially included in linux-next.  To see which patches are
->>>>> included in linux-next, consult the `series' file.  Only the patches
->>>>> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->>>>> linux-next.
->>>>>
->>>>>
->>>>> A full copy of the full kernel tree with the linux-next and mmotm patches
->>>>> already applied is available through git within an hour of the mmotm
->>>>> release.  Individual mmotm releases are tagged.  The master branch always
->>>>> points to the latest release, so it's constantly rebasing.
->>>>>
->>>>> 	https://github.com/hnaz/linux-mm
->>>>
->>>> on i386:
->>>>
->>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_init':
->>>> vdpa.c:(.init.text+0x52): undefined reference to `__vdpa_register_driver'
->>>> ld: drivers/vhost/vdpa.o: in function `vhost_vdpa_exit':
->>>> vdpa.c:(.exit.text+0x14): undefined reference to `vdpa_unregister_driver'
->>>>
->>>>
->>>>
->>>> drivers/virtio/vdpa/ is not being built. (confusing!)
->>>>
->>>> CONFIG_VIRTIO=m
->>>> # CONFIG_VIRTIO_MENU is not set
->>>> CONFIG_VDPA=y
->>>
->>> Hmm. OK. Can't figure it out. CONFIG_VDPA is set why isn't
->>> drivers/virtio/vdpa/ built?
->>> we have:
->>>
->>
->> Ack.  Hopefully Yamada-san can tell us what is happening here.
-> 
-> OK I pushed a fix (moving the vdpa subsystem up a level) and pushed into
-> my tree, refs/heads/next .  Seems to build fine now, but I'd appreciate
-> it if you can give it a spin.
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-This now builds successfully on linux-next of 20200401.
+Inside the kernel, a pair of new anon_inodes interface,
+anon_inode_getfile_secure and anon_inode_getfd_secure, allow callers
+to opt into this SELinux management. In this new "secure" mode,
+anon_inodes creates new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-Thanks.
+This patch series is one of two fork of [1] and is an
+alternative to [2].
+
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 191 ++++++++++++++++++++++------
+ fs/userfaultfd.c                    |  30 ++++-
+ include/linux/anon_inodes.h         |  13 ++
+ include/linux/lsm_hooks.h           |  11 ++
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++
+ security/selinux/include/classmap.h |   2 +
+ 8 files changed, 267 insertions(+), 45 deletions(-)
 
 -- 
-~Randy
+2.26.0.rc2.310.g2932bb562d-goog
 
