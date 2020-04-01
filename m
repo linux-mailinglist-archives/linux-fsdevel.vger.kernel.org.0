@@ -2,69 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A15219AB40
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 14:05:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6604C19AB95
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 14:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732253AbgDAMFo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 08:05:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20142 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732246AbgDAMFo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 08:05:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585742743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+GR7MHEG6xiBbbkMGHrCHUiX06iUrxcdELI0CxLfVTo=;
-        b=f7sqGqZI0rvD8I7UrwxvZ+ovZwX7m9q8g8gr03tQAZUuoRTz1NcZsf5asJT3GE6rkb8pDI
-        eaD2IR2NEP3gY3CGG3Ky3ZkpEO/DQd9tk/aDtOgxjCC4IikkT9K5qXHmqKu6xaHmLq6jXz
-        yU6vQm31w+NKYljCb8CqiRXC9mlZ7rc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-370-XALTqPojP4mFhLhFshbhmQ-1; Wed, 01 Apr 2020 08:05:41 -0400
-X-MC-Unique: XALTqPojP4mFhLhFshbhmQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732326AbgDAMWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 08:22:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:50333 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726804AbgDAMWn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Apr 2020 08:22:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D128BDB60;
-        Wed,  1 Apr 2020 12:05:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CBC999DFD;
-        Wed,  1 Apr 2020 12:05:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegvv3-oh6iPNXa8bjXmjhkR8KzQPWN4tAH18_tM5wFkQ9A@mail.gmail.com>
-References: <CAJfpegvv3-oh6iPNXa8bjXmjhkR8KzQPWN4tAH18_tM5wFkQ9A@mail.gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org
-Subject: Re: Why does test-fsinfo require static libraries?
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 48slhJ058Dz9sSM;
+        Wed,  1 Apr 2020 23:22:39 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1585743760;
+        bh=C2bThPqw3VWzR5WgmrlUX730CfrtDYdrXujURU2m0n4=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=LwmS95WSCrsWDudiX7CVG/u/OJu8Q1uGGKglglo0+ApYIqMrsYVdDQWwNE71xe4rf
+         vEKAISM6Mhlcms+SUBjjFrCHgToh1ua3ambtH9VzL41fRZCu/CTWQxJKsCNr2cHc6M
+         CKsQcfV7HTwfIMHZoABfvk6wSXpFWFpZRbL7/VcfdgmBtK21kP+F46t5zsNa68HDhr
+         sp7mcIsZhCOfKnvZAAIzPc/Modb516+EgNLGm7uriuLKeYNJyttYhv8LmsLgQlTUWo
+         nBZbbaGA8XtTxJKVczUiy/koKXLWwqSfu/vQvdjihP93AddKXzSqoTNSGY5n9lSCrD
+         BKdLODrxVoAPw==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Jiri Slaby <jslaby@suse.com>, Joe Perches <joe@perches.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vasiliy Khoruzhick <vasilykh@arista.com>,
+        linux-serial@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] sysctl/sysrq: Remove __sysrq_enabled copy
+In-Reply-To: <20200302175135.269397-2-dima@arista.com>
+References: <20200302175135.269397-1-dima@arista.com> <20200302175135.269397-2-dima@arista.com>
+Date:   Wed, 01 Apr 2020 23:22:46 +1100
+Message-ID: <87tv23tmy1.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2479848.1585742738.1@warthog.procyon.org.uk>
-Date:   Wed, 01 Apr 2020 13:05:38 +0100
-Message-ID: <2479849.1585742738@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+Dmitry Safonov <dima@arista.com> writes:
+> Many embedded boards have a disconnected TTL level serial which can
+> generate some garbage that can lead to spurious false sysrq detects.
+>
+> Currently, sysrq can be either completely disabled for serial console
+> or always disabled (with CONFIG_MAGIC_SYSRQ_SERIAL), since
+> commit 732dbf3a6104 ("serial: do not accept sysrq characters via serial port")
+>
+> At Arista, we have such boards that can generate BREAK and random
+> garbage. While disabling sysrq for serial console would solve
+> the problem with spurious false sysrq triggers, it's also desirable
+> to have a way to enable sysrq back.
+>
+> Having the way to enable sysrq was beneficial to debug lockups with
+> a manual investigation in field and on the other side preventing false
+> sysrq detections.
+>
+> As a preparation to add sysrq_toggle_support() call into uart,
+> remove a private copy of sysrq_enabled from sysctl - it should reflect
+> the actual status of sysrq.
+>
+> Furthermore, the private copy isn't correct already in case
+> sysrq_always_enabled is true. So, remove __sysrq_enabled and use a
+> getter-helper sysrq_mask() to check sysrq_key_op enabled status.
+>
+> Cc: Iurii Zaikin <yzaikin@google.com>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  drivers/tty/sysrq.c   | 12 ++++++++++++
+>  include/linux/sysrq.h |  7 +++++++
+>  kernel/sysctl.c       | 41 ++++++++++++++++++++++-------------------
+>  3 files changed, 41 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> index f724962a5906..5e0d0813da55 100644
+> --- a/drivers/tty/sysrq.c
+> +++ b/drivers/tty/sysrq.c
+> @@ -63,6 +63,18 @@ static bool sysrq_on(void)
+>  	return sysrq_enabled || sysrq_always_enabled;
+>  }
+>  
+> +/**
+> + * sysrq_mask - Getter for sysrq_enabled mask.
+> + *
+> + * Return: 1 if sysrq is always enabled, enabled sysrq_key_op mask otherwise.
+> + */
+> +int sysrq_mask(void)
+> +{
+> +	if (sysrq_always_enabled)
+> +		return 1;
+> +	return sysrq_enabled;
+> +}
 
-> This is annoying:
-> 
->   HOSTCC  samples/vfs/test-fsinfo
-> /usr/bin/ld: cannot find -lm
-> /usr/bin/ld: cannot find -lc
-> collect2: error: ld returned 1 exit status
+This seems to have broken several configs, when serial_core is modular, with:
 
-Sorry, yes.  I've been building on one system and running on an older one and
-the libraries are incompatible.  I need to undo that bit.
+  ERROR: modpost: "sysrq_mask" [drivers/tty/serial/serial_core.ko] undefined!
 
-David
+See:
 
+  http://kisskb.ellerman.id.au/kisskb/buildresult/14169386/
+
+It's also being reported by the kernelci bot:
+
+  https://lore.kernel.org/linux-next/5e677bd0.1c69fb81.c43fe.7f7d@mx.google.com/
+
+
+cheers
