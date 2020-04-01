@@ -2,93 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE3C19AEC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 17:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6847B19AECD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 17:34:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732917AbgDAPeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 11:34:10 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44428 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732789AbgDAPeK (ORCPT
+        id S1732918AbgDAPeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 11:34:12 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37839 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732789AbgDAPeL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 11:34:10 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i16so369459edy.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 08:34:09 -0700 (PDT)
+        Wed, 1 Apr 2020 11:34:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w10so587890wrm.4;
+        Wed, 01 Apr 2020 08:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PknMOjO0aVK6+Mbr46jA4uNoXU0DCDMitbN9TCuKpYU=;
-        b=p5QzZMqB/vMQwg0fm6pTCPUxV1A84gb+EbDz8bFwLIYFbNP9FnvyYhjSFYadmD92gb
-         mRFyGUNcatWLbDeKB3pVtLlqOSoBYBt/rdV98tORxMQw0g+6QIHkhXIzbYrVkopEy81C
-         VW95LobYq1gT/TNOY+qN/8qCYjeVcjpE8eBU8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v2xmqhIkgms3NDdu1qlsVKf+BkC4V+OOS1HRZtVEAu4=;
+        b=dXfEz2tqSq0A0uKS8WMMW3fcexD5Eam5TUcjz0Wa4rgsfIwZqgRp3/POPt7VOsMRoV
+         y6RE57GEWJkU5Y08tV4U0WTaKM6hGIJhvF8fv9n9GHZMSBojXiXiMPxasEQJ8zGPe3Nb
+         +tQ8mPIIYrGiDwYv0hgswsMZ1niRU1p3XVMZ6gnsxz1K0Vux2/lRKQWNlGel1e7V2ASn
+         atlYAjBhIkOtsdMzhAFmD0zbuk0jw8PV+XGuPwgoCKm55Lxg1g80sHWuPAygpPrY7MQQ
+         A9jpIDPB9/+q8WWNCB28P2Icb3nHTIwTWJDA2X4iUJDxOemtre54/wcYPVYj6LNscNsG
+         Xiuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PknMOjO0aVK6+Mbr46jA4uNoXU0DCDMitbN9TCuKpYU=;
-        b=IuYs/HJYZHer5lCDYBfl2FMjV4qNiKhflGMw3wXe2Nu2AdHtwG9bHkK1DGHXAv5T7C
-         1Ibz3vUMRJFK7WNtCyc+CI3E+uGeIC8oLGnP4sZevnK8/YDKYy5C8TNlAWS2M37z+2Fl
-         4nQkP49uggTSmeP0jcZLs/hgi0U6eDhZgo8SeY8ySYaLTUxb/ey9BrMn0KQXbP9trrVm
-         hquwldycTsjGE6ZEzeLANevMQ+jzSvCfciT+Iwu6k5UxDhAPTFn8a2l1YdU3w9wLmb82
-         4nh/VQIuM55YVyzK+lmKzTteTivttP8BtZvpKAVyWCjAU+jguuj/japqQOnKRvyQWCZe
-         asrA==
-X-Gm-Message-State: ANhLgQ2YCY976Pj4kxDxtrBZHZHxosAP6ZybLeC8ERRSihhIvs+DDjBs
-        DBFxyDhG1bolhrFKvHw8+JTsTaXw2fBqD9/pN0PdaQ==
-X-Google-Smtp-Source: ADFU+vs4NvhCMrvCrJhNiFJktWHH/mqCFDfkFAflywuZUDLeQconO4+bbarWMrnDJQm+JW/SHBg/UTtmPThSySe23DY=
-X-Received: by 2002:a05:6402:44e:: with SMTP id p14mr21764199edw.356.1585755249047;
- Wed, 01 Apr 2020 08:34:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v2xmqhIkgms3NDdu1qlsVKf+BkC4V+OOS1HRZtVEAu4=;
+        b=YvVGMGFGmuEiPL0YoOeKbRfbp2kubodVCCDnsQmjXQROPUEyV9uuRsUExndNl/xZvA
+         KQ2cSL+7MuswN3NteYUXcwmbHPwyczDRjXetHnqe36yaF5MQI3i1xCr6I8bDbVxxi6cG
+         zRNp6zcyt6raIoMW1v+h1qIuzYNxbcYhSqyZ+2qNWaxRmIHw88AiKaf9wdLpPXZMwWiP
+         /pbLrmJJChpLhF7VomcXXHoQF6wmwxEepZxRLfslX1zc4n7Z86gG5G/p/P4FncKIxOUl
+         vwkraVaH9ToJ8kaSsz36/zaDOJYhTM789OALw9h4JwtREdVNq3pt2DhIbKuRlbFUz2dz
+         IRpw==
+X-Gm-Message-State: ANhLgQ0BxjnxXKedlHBFugzF4OPIfnBsAdQM8FCyj3s76ZZmj/MS4ieb
+        4gCGajIm4vqDFMydyCgzAKyrZfHs93cp
+X-Google-Smtp-Source: ADFU+vuoH/j7UWYyGvcYZzuuMhyJjjfDWZOAJY2ULBtVPmlcQjeVjkbPb7b6pQfmfMvPOyTvWKbzGA==
+X-Received: by 2002:adf:9022:: with SMTP id h31mr26058270wrh.223.1585755250075;
+        Wed, 01 Apr 2020 08:34:10 -0700 (PDT)
+Received: from earth.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
+        by smtp.gmail.com with ESMTPSA id d7sm3275741wrr.77.2020.04.01.08.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 08:34:09 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jules Irenge <jbi.octave@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org (open list:FILESYSTEM DIRECT ACCESS (DAX)),
+        linux-nvdimm@lists.01.org (open list:FILESYSTEM DIRECT ACCESS (DAX))
+Subject: [PATCH v2] dax: Add missing annotation for wait_entry_unlocked()
+Date:   Wed,  1 Apr 2020 16:33:59 +0100
+Message-Id: <20200401153400.23610-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
- <2418286.1585691572@warthog.procyon.org.uk> <20200401144109.GA29945@gardel-login>
-In-Reply-To: <20200401144109.GA29945@gardel-login>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 1 Apr 2020 17:33:57 +0200
-Message-ID: <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 1, 2020 at 4:41 PM Lennart Poettering <mzxreary@0pointer.de> wrote:
->
-> On Di, 31.03.20 22:52, David Howells (dhowells@redhat.com) wrote:
->
-> > Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> >
-> > > querying all properties of a mount atomically all-at-once,
-> >
-> > I don't actually offer that, per se.
-> >
-> > Having an atomic all-at-once query for a single mount is actually quite a
-> > burden on the system.  There's potentially a lot of state involved, much of
-> > which you don't necessarily need.
->
-> Hmm, do it like with statx() and specify a mask for the fields userspace
-> wants? Then it would be as lightweight as it possibly could be?
+Sparse reports a warning at wait_entry_unlocked()
 
-Yes, however binary structures mixed with variable length fields are
-not going to be pretty.
+warning: context imbalance in wait_entry_unlocked() - unexpected unlock
 
-Again, if we want something even halfway sane for a syscall interface,
-go with a string key/value vector.
+The root cause is the missing annotation at wait_entry_unlocked()
+Add the missing __releases(xas->xa->xa_lock) annotation
 
-If that's really needed.  I've still not heard a convincing argument
-in favor of a syscall.
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ fs/dax.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Miklos
+diff --git a/fs/dax.c b/fs/dax.c
+index 35da144375a0..ee0468af4d81 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -244,6 +244,7 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+  * After we call xas_unlock_irq(), we cannot touch xas->xa.
+  */
+ static void wait_entry_unlocked(struct xa_state *xas, void *entry)
++	__releases(xas->xa->xa_lock)
+ {
+ 	struct wait_exceptional_entry_queue ewait;
+ 	wait_queue_head_t *wq;
+-- 
+Change since v2
+- gives more accurate lock variable name
+2.25.1
+
