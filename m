@@ -2,177 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D36419AF76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D96C619AF7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbgDAQLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 12:11:36 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:38798 "EHLO
+        id S1727421AbgDAQO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 12:14:28 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53004 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726205AbgDAQLg (ORCPT
+        by vger.kernel.org with ESMTP id S1726205AbgDAQO2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:11:36 -0400
+        Wed, 1 Apr 2020 12:14:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585757494;
+        s=mimecast20190719; t=1585757667;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KCQVduOzYqeO0UI7AC7TozjgQwEuu7aRADaqvSOaujc=;
-        b=iQuztXXfwNuOoeUwAFn/sCkbWztg0roK4BgSkaOfqA2gDYBonT8jACQ9FhgrF4QK7aojQS
-        E5DlhLRPsKTvkMDntE6E/afiLiXFrG1p374M4276UOiaYdfGQAWHuw5jR8C0+QCSa06p5M
-        cAJz5Nc4DQdapNGphHus/atw9NbtwmQ=
+        bh=BwLjwW0ZN4RV6KPYUWCSZF/c2rPm1lXXgz0HJ8FZAPg=;
+        b=RD/aCu6neMpZtcQUXW1Qh5RYZ43gD8istHRRHz5uMfLID8hjlD/gxBRKcRBpNd5j+JeM+K
+        yOCiEmVAA8qLsTPA7YT/KZ3mtHz3x3yMZDXS5eImH9hCj4KhtaqK1Tu0RCo43a/XiqMU7O
+        nYPhVSBU97aK3xyuKBzRsH9p9Kbm+sY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-54-yTPcPYSwN9K5iE6YgFMaDA-1; Wed, 01 Apr 2020 12:11:30 -0400
-X-MC-Unique: yTPcPYSwN9K5iE6YgFMaDA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-245-sfcpXAfHOpSdjLB9aQjdBg-1; Wed, 01 Apr 2020 12:14:21 -0400
+X-MC-Unique: sfcpXAfHOpSdjLB9aQjdBg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7FF931005509;
-        Wed,  1 Apr 2020 16:11:29 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5328B1902EA1;
+        Wed,  1 Apr 2020 16:14:20 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-115-83.rdu2.redhat.com [10.10.115.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 833BE5C1A2;
-        Wed,  1 Apr 2020 16:11:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B84419C70;
+        Wed,  1 Apr 2020 16:14:17 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id F1704220005; Wed,  1 Apr 2020 12:11:25 -0400 (EDT)
-Date:   Wed, 1 Apr 2020 12:11:25 -0400
+        id 9613D220005; Wed,  1 Apr 2020 12:14:16 -0400 (EDT)
+Date:   Wed, 1 Apr 2020 12:14:16 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        hch@infradead.org, dan.j.williams@intel.com
-Cc:     david@fromorbit.com, jmoyer@redhat.com, dm-devel@redhat.com,
-        gerald.schaefer@de.ibm.com
-Subject: [PATCH v6 7/6] dax: Move mandatory ->zero_page_range() check in
- alloc_dax()
-Message-ID: <20200401161125.GB9398@redhat.com>
-References: <20200228163456.1587-1-vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 4/8] dax, pmem: Add a dax operation zero_page_range
+Message-ID: <20200401161416.GC9398@redhat.com>
+References: <20200218214841.10076-1-vgoyal@redhat.com>
+ <20200218214841.10076-5-vgoyal@redhat.com>
+ <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200228163456.1587-1-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-zero_page_range() dax operation is mandatory for dax devices. Right now
-that check happens in dax_zero_page_range() function. Dan thinks that's
-too late and its better to do the check earlier in alloc_dax().
+On Tue, Mar 31, 2020 at 12:38:16PM -0700, Dan Williams wrote:
+> On Tue, Feb 18, 2020 at 1:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > Add a dax operation zero_page_range, to zero a range of memory. This will
+> > also clear any poison in the range being zeroed.
+> >
+> > As of now, zeroing of up to one page is allowed in a single call. There
+> > are no callers which are trying to zero more than a page in a single call.
+> > Once we grow the callers which zero more than a page in single call, we
+> > can add that support. Primary reason for not doing that yet is that this
+> > will add little complexity in dm implementation where a range might be
+> > spanning multiple underlying targets and one will have to split the range
+> > into multiple sub ranges and call zero_page_range() on individual targets.
+> >
+> > Suggested-by: Christoph Hellwig <hch@infradead.org>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> > ---
+> >  drivers/dax/super.c   | 19 +++++++++++++++++++
+> >  drivers/nvdimm/pmem.c | 10 ++++++++++
+> >  include/linux/dax.h   |  3 +++
+> >  3 files changed, 32 insertions(+)
+> >
+> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> > index 0aa4b6bc5101..c912808bc886 100644
+> > --- a/drivers/dax/super.c
+> > +++ b/drivers/dax/super.c
+> > @@ -344,6 +344,25 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+> >  }
+> >  EXPORT_SYMBOL_GPL(dax_copy_to_iter);
+> >
+> > +int dax_zero_page_range(struct dax_device *dax_dev, u64 offset, size_t len)
+> > +{
+> > +       if (!dax_alive(dax_dev))
+> > +               return -ENXIO;
+> > +
+> > +       if (!dax_dev->ops->zero_page_range)
+> > +               return -EOPNOTSUPP;
+> 
+> This seems too late to be doing the validation. It would be odd for
+> random filesystem operations to see this error. I would move the check
+> to alloc_dax() and fail that if the caller fails to implement the
+> operation.
+> 
+> An incremental patch on top to fix this up would be ok. Something like
+> "Now that all dax_operations providers implement zero_page_range()
+> mandate it at alloc_dax time".
 
-I also modified alloc_dax() to return pointer with error code in it in
-case of failure. Right now it returns NULL and caller assumes failure
-happened due to -ENOMEM. But with this ->zero_page_range() check, I
-need to return -EINVAL instead.
+Hi Dan,
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- drivers/dax/bus.c            |    4 +++-
- drivers/dax/super.c          |   14 +++++++++-----
- drivers/md/dm.c              |    2 +-
- drivers/nvdimm/pmem.c        |    4 ++--
- drivers/s390/block/dcssblk.c |    5 +++--
- 5 files changed, 18 insertions(+), 11 deletions(-)
+Posted an extra patch in same patch series for this.
 
-Index: redhat-linux/drivers/dax/super.c
-===================================================================
---- redhat-linux.orig/drivers/dax/super.c	2020-04-01 12:03:39.911439769 -0400
-+++ redhat-linux/drivers/dax/super.c	2020-04-01 12:05:31.727439769 -0400
-@@ -349,9 +349,6 @@ int dax_zero_page_range(struct dax_devic
- {
- 	if (!dax_alive(dax_dev))
- 		return -ENXIO;
--
--	if (!dax_dev->ops->zero_page_range)
--		return -EOPNOTSUPP;
- 	/*
- 	 * There are no callers that want to zero more than one page as of now.
- 	 * Once users are there, this check can be removed after the
-@@ -571,9 +568,16 @@ struct dax_device *alloc_dax(void *priva
- 	dev_t devt;
- 	int minor;
- 
-+	if (ops && !ops->zero_page_range) {
-+		pr_debug("%s: error: device does not provide dax"
-+			 " operation zero_page_range()\n",
-+			 __host ? __host : "Unknown");
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	host = kstrdup(__host, GFP_KERNEL);
- 	if (__host && !host)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	minor = ida_simple_get(&dax_minor_ida, 0, MINORMASK+1, GFP_KERNEL);
- 	if (minor < 0)
-@@ -596,7 +600,7 @@ struct dax_device *alloc_dax(void *priva
- 	ida_simple_remove(&dax_minor_ida, minor);
-  err_minor:
- 	kfree(host);
--	return NULL;
-+	return ERR_PTR(-ENOMEM);
- }
- EXPORT_SYMBOL_GPL(alloc_dax);
- 
-Index: redhat-linux/drivers/nvdimm/pmem.c
-===================================================================
---- redhat-linux.orig/drivers/nvdimm/pmem.c	2020-04-01 12:03:39.911439769 -0400
-+++ redhat-linux/drivers/nvdimm/pmem.c	2020-04-01 12:05:31.729439769 -0400
-@@ -487,9 +487,9 @@ static int pmem_attach_disk(struct devic
- 	if (is_nvdimm_sync(nd_region))
- 		flags = DAXDEV_F_SYNC;
- 	dax_dev = alloc_dax(pmem, disk->disk_name, &pmem_dax_ops, flags);
--	if (!dax_dev) {
-+	if (IS_ERR(dax_dev)) {
- 		put_disk(disk);
--		return -ENOMEM;
-+		return PTR_ERR(dax_dev);
- 	}
- 	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
- 	pmem->dax_dev = dax_dev;
-Index: redhat-linux/drivers/dax/bus.c
-===================================================================
---- redhat-linux.orig/drivers/dax/bus.c	2020-04-01 12:03:39.911439769 -0400
-+++ redhat-linux/drivers/dax/bus.c	2020-04-01 12:05:31.729439769 -0400
-@@ -421,8 +421,10 @@ struct dev_dax *__devm_create_dev_dax(st
- 	 * device outside of mmap of the resulting character device.
- 	 */
- 	dax_dev = alloc_dax(dev_dax, NULL, NULL, DAXDEV_F_SYNC);
--	if (!dax_dev)
-+	if (IS_ERR(dax_dev)) {
-+		rc = PTR_ERR(dax_dev);
- 		goto err;
-+	}
- 
- 	/* a device_dax instance is dead while the driver is not attached */
- 	kill_dax(dax_dev);
-Index: redhat-linux/drivers/s390/block/dcssblk.c
-===================================================================
---- redhat-linux.orig/drivers/s390/block/dcssblk.c	2020-04-01 12:03:39.911439769 -0400
-+++ redhat-linux/drivers/s390/block/dcssblk.c	2020-04-01 12:05:31.730439769 -0400
-@@ -695,8 +695,9 @@ dcssblk_add_store(struct device *dev, st
- 
- 	dev_info->dax_dev = alloc_dax(dev_info, dev_info->gd->disk_name,
- 			&dcssblk_dax_ops, DAXDEV_F_SYNC);
--	if (!dev_info->dax_dev) {
--		rc = -ENOMEM;
-+	if (IS_ERR(dev_info->dax_dev)) {
-+		rc = PTR_ERR(dev_info->dax_dev);
-+		dev_info->dax_dev = NULL;
- 		goto put_dev;
- 	}
- 
-Index: redhat-linux/drivers/md/dm.c
-===================================================================
---- redhat-linux.orig/drivers/md/dm.c	2020-04-01 12:03:39.911439769 -0400
-+++ redhat-linux/drivers/md/dm.c	2020-04-01 12:05:31.732439769 -0400
-@@ -2005,7 +2005,7 @@ static struct mapped_device *alloc_dev(i
- 	if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
- 		md->dax_dev = alloc_dax(md, md->disk->disk_name,
- 					&dm_dax_ops, 0);
--		if (!md->dax_dev)
-+		if (IS_ERR(md->dax_dev))
- 			goto bad;
- 	}
- 
+https://lore.kernel.org/linux-fsdevel/20200228163456.1587-1-vgoyal@redhat.com/T/#m624680cbb5e714266d4b34ade2d6c390dae69598
+
+Vivek
+> 
 
