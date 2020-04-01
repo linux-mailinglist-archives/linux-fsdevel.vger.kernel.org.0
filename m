@@ -2,119 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CBA519AC76
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 15:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F8119ACF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 15:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732652AbgDANPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 09:15:18 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:45431 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732252AbgDANPR (ORCPT
+        id S1732677AbgDANer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 09:34:47 -0400
+Received: from mail-ed1-f48.google.com ([209.85.208.48]:34306 "EHLO
+        mail-ed1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732605AbgDANer (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 09:15:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585746916;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=uDWi3WDn1B2QwOc9496H7TM03TtVTOftspl14cHOSNA=;
-        b=fnAWd0nZ5JhFxvGEfPidinIhR8Boee2TcBLJCMGVOa1f3kQSnCWGqWH+11XHC3F1OdBx5o
-        wy7Pg9ThR65K2mRctPrjtokZyTfuSHQnQNG5GMLFOt99V08F7CpkXJJmhI+iz082Buit8B
-        DJCDJHOfvxiMGfw6SfHb/3O/iT0AWBk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-337-C-GpJADTMS21MbxEZWGp5g-1; Wed, 01 Apr 2020 09:15:13 -0400
-X-MC-Unique: C-GpJADTMS21MbxEZWGp5g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8799D100DFC1;
-        Wed,  1 Apr 2020 13:15:11 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-83.rdu2.redhat.com [10.10.115.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF9985C1D5;
-        Wed,  1 Apr 2020 13:15:08 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 269EF220005; Wed,  1 Apr 2020 09:15:08 -0400 (EDT)
-Date:   Wed, 1 Apr 2020 09:15:08 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 4/8] dax, pmem: Add a dax operation zero_page_range
-Message-ID: <20200401131508.GA3434@redhat.com>
-References: <20200218214841.10076-1-vgoyal@redhat.com>
- <20200218214841.10076-5-vgoyal@redhat.com>
- <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
+        Wed, 1 Apr 2020 09:34:47 -0400
+Received: by mail-ed1-f48.google.com with SMTP id o1so11369076edv.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 06:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vvMhsyalHgLR7BhFwzAsPtNqVbCXBf3wROS4TZNwS2o=;
+        b=dJzquYYlrEleQ255CNcwNKohJNgWkZ0preJPVYpCjZ+FTERm/igjSD889iQgLotvB1
+         JQTsU14tWQbRa+xx5icx3fWophVuRCJKg4X4IpINCAHbIH15Qx5oUFEtINoXlKljmYRt
+         8kD7k4R6FT5gPp47zwJs/pvfUjM25V9X6ksiw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vvMhsyalHgLR7BhFwzAsPtNqVbCXBf3wROS4TZNwS2o=;
+        b=oF7t5nIAjf9q0tyFfYlFtcMVBkolkhKhdw49jfNfTriIUrzDHtVOOaqGQixxSAUEPY
+         v83rhVoz1zJ8cMG/vC/uhX2Ir8t2koMhWMQ5dLl0K0pNJLaLdvuh0WnfwKXPrKJdk9Pi
+         8tfkClj+L/tqRTnHvxZOetD1Y1cQaAarGjYFdQBCzMIZCerG+VgaIX+rsphuTfOO4dzS
+         avyWPNhmY9rEt4CGN80hNeRaWzvxV3bDxD0ha7/K5Z2302LhoMJIqQJdcC62JFcs5Zfx
+         XXM8P+vYGZpA/87u5L6QcIC5KN6wIz5tXMNdTQTlSWVe39KFNRlkVXsZAqquyg7teZse
+         r4UQ==
+X-Gm-Message-State: ANhLgQ3EB1PdEwtDcuUsWvH9k4sq/Xv4/m2jfD7Z2ejXmNXlnJHHr/sE
+        FcxuWww/ByZelFQp8iTN+kbZS4DXYgBQ24UO8YxVug==
+X-Google-Smtp-Source: ADFU+vtrF9QMVj3daT1dm0uQWwcAkf/pmHNzlVbS9TuTi0vF12GbPKTIN11J7V3H+UIvcSUdkirmtjYjIySZ1J7mpqg=
+X-Received: by 2002:a17:906:6545:: with SMTP id u5mr11392194ejn.27.1585748082818;
+ Wed, 01 Apr 2020 06:34:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jKHxy5c8BZodePeCu5+Z=cwhtEfw3RnOD1ZDNob382bQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
+In-Reply-To: <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 1 Apr 2020 15:34:31 +0200
+Message-ID: <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     Karel Zak <kzak@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
+        andres@anarazel.de, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: multipart/mixed; boundary="0000000000002e407205a23abf26"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 12:38:16PM -0700, Dan Williams wrote:
-> On Tue, Feb 18, 2020 at 1:49 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+--0000000000002e407205a23abf26
+Content-Type: text/plain; charset="UTF-8"
+
+On Wed, Apr 1, 2020 at 11:05 AM Karel Zak <kzak@redhat.com> wrote:
+>
+> On Tue, Mar 31, 2020 at 10:52:52PM +0100, David Howells wrote:
+> > Christian Brauner <christian.brauner@ubuntu.com> wrote:
 > >
-> > Add a dax operation zero_page_range, to zero a range of memory. This will
-> > also clear any poison in the range being zeroed.
+> > > querying all properties of a mount atomically all-at-once,
 > >
-> > As of now, zeroing of up to one page is allowed in a single call. There
-> > are no callers which are trying to zero more than a page in a single call.
-> > Once we grow the callers which zero more than a page in single call, we
-> > can add that support. Primary reason for not doing that yet is that this
-> > will add little complexity in dm implementation where a range might be
-> > spanning multiple underlying targets and one will have to split the range
-> > into multiple sub ranges and call zero_page_range() on individual targets.
+> > I don't actually offer that, per se.
 > >
-> > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  drivers/dax/super.c   | 19 +++++++++++++++++++
-> >  drivers/nvdimm/pmem.c | 10 ++++++++++
-> >  include/linux/dax.h   |  3 +++
-> >  3 files changed, 32 insertions(+)
-> >
-> > diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> > index 0aa4b6bc5101..c912808bc886 100644
-> > --- a/drivers/dax/super.c
-> > +++ b/drivers/dax/super.c
-> > @@ -344,6 +344,25 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
-> >  }
-> >  EXPORT_SYMBOL_GPL(dax_copy_to_iter);
-> >
-> > +int dax_zero_page_range(struct dax_device *dax_dev, u64 offset, size_t len)
-> > +{
-> > +       if (!dax_alive(dax_dev))
-> > +               return -ENXIO;
-> > +
-> > +       if (!dax_dev->ops->zero_page_range)
-> > +               return -EOPNOTSUPP;
-> 
-> This seems too late to be doing the validation. It would be odd for
-> random filesystem operations to see this error. I would move the check
-> to alloc_dax() and fail that if the caller fails to implement the
-> operation.
-> 
-> An incremental patch on top to fix this up would be ok. Something like
-> "Now that all dax_operations providers implement zero_page_range()
-> mandate it at alloc_dax time".
+> > Having an atomic all-at-once query for a single mount is actually quite a
+> > burden on the system.  There's potentially a lot of state involved, much of
+> > which you don't necessarily need.
+>
+> If all means "all possible attributes" than it is unnecessary, for
+> example ext4 timestamps or volume uuid/label are rarely necessary.
+> We usually need together (as consistent set):
+>
+>     source
+>     mountpoint
+>     FS type
+>     FS root (FSINFO_ATTR_MOUNT_PATH)
+>     FS options (FSINFO_ATTR_CONFIGURATION)
+>     VFS attributes
+>     VFS propagation flags
+>     mount ID
+>     parent ID
+>     devno (or maj:min)
 
-Hi Dan,
+This is trivial with mountfs (reuse format of /proc/PID/mountinfo):
 
-Ok, I will send an incremental patch for this.
+# cat /mnt/30/info
+30 20 0:14 / /mnt rw,relatime - mountfs none rw
 
-BTW, I have posted V6 of this patch series and you might want to look
-at that instead of V5.
+Attached patch applies against readfile patch.
 
-https://lore.kernel.org/linux-fsdevel/20200228163456.1587-1-vgoyal@redhat.com/
+We might want something more generic, and it won't get any simpler:
 
-Vivek
+ mount.h          |    1 +
+ mountfs/super.c  |   12 +++++++++++-
+ proc_namespace.c |    2 +-
+ 3 files changed, 13 insertions(+), 2 deletions(-)
 
+Thanks,
+Miklos
+
+--0000000000002e407205a23abf26
+Content-Type: text/x-patch; charset="US-ASCII"; name="mountfs-info.patch"
+Content-Disposition: attachment; filename="mountfs-info.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_k8hdan1o0>
+X-Attachment-Id: f_k8hdan1o0
+
+LS0tCiBmcy9tb3VudC5oICAgICAgICAgIHwgICAgMSArCiBmcy9tb3VudGZzL3N1cGVyLmMgIHwg
+ICAxMiArKysrKysrKysrKy0KIGZzL3Byb2NfbmFtZXNwYWNlLmMgfCAgICAyICstCiAzIGZpbGVz
+IGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgotLS0gYS9mcy9tb3Vu
+dC5oCisrKyBiL2ZzL21vdW50LmgKQEAgLTE4NiwzICsxODYsNCBAQCB2b2lkIG1vdW50ZnNfY3Jl
+YXRlKHN0cnVjdCBtb3VudCAqbW50KTsKIGV4dGVybiB2b2lkIG1vdW50ZnNfcmVtb3ZlKHN0cnVj
+dCBtb3VudCAqbW50KTsKIGludCBtb3VudGZzX2xvb2t1cF9pbnRlcm5hbChzdHJ1Y3QgdmZzbW91
+bnQgKm0sIHN0cnVjdCBwYXRoICpwYXRoKTsKIAoraW50IHNob3dfbW91bnRpbmZvKHN0cnVjdCBz
+ZXFfZmlsZSAqbSwgc3RydWN0IHZmc21vdW50ICptbnQpOwotLS0gYS9mcy9tb3VudGZzL3N1cGVy
+LmMKKysrIGIvZnMvbW91bnRmcy9zdXBlci5jCkBAIC0yMiw3ICsyMiw3IEBAIHN0cnVjdCBtb3Vu
+dGZzX2VudHJ5IHsKIAogc3RhdGljIGNvbnN0IGNoYXIgKm1vdW50ZnNfYXR0cnNbXSA9IHsKIAki
+cm9vdCIsICJtb3VudHBvaW50IiwgImlkIiwgInBhcmVudCIsICJvcHRpb25zIiwgImNoaWxkcmVu
+IiwKLQkiZ3JvdXAiLCAibWFzdGVyIiwgInByb3BhZ2F0ZV9mcm9tIiwgImNvdW50ZXIiCisJImdy
+b3VwIiwgIm1hc3RlciIsICJwcm9wYWdhdGVfZnJvbSIsICJjb3VudGVyIiwgImluZm8iCiB9Owog
+CiAjZGVmaW5lIE1PVU5URlNfSU5PKGlkKSAoKCh1bnNpZ25lZCBsb25nKSBpZCArIDEpICogXApA
+QCAtMTI2LDExICsxMjYsMjEgQEAgc3RhdGljIGludCBtb3VudGZzX2F0dHJfc2hvdyhzdHJ1Y3Qg
+c2VxXwogCQlpZiAoSVNfTU5UX1NMQVZFKG1udCkpIHsKIAkJCWdldF9mc19yb290KGN1cnJlbnQt
+PmZzLCAmcm9vdCk7CiAJCQl0bXAgPSBnZXRfZG9taW5hdGluZ19pZChtbnQsICZyb290KTsKKwkJ
+CXBhdGhfcHV0KCZyb290KTsKIAkJCWlmICh0bXApCiAJCQkJc2VxX3ByaW50ZihzZiwgIiVpXG4i
+LCB0bXApOwogCQl9CiAJfSBlbHNlIGlmIChzdHJjbXAobmFtZSwgImNvdW50ZXIiKSA9PSAwKSB7
+CiAJCXNlcV9wcmludGYoc2YsICIldVxuIiwgYXRvbWljX3JlYWQoJm1udC0+bW50X3RvcG9sb2d5
+X2NoYW5nZXMpKTsKKwl9IGVsc2UgaWYgKHN0cmNtcChuYW1lLCAiaW5mbyIpID09IDApIHsKKwkJ
+c3RydWN0IHByb2NfbW91bnRzIHAgPSB7fTsKKworCQlXQVJOX09OKHNmLT5wcml2YXRlKTsKKwkJ
+c2YtPnByaXZhdGUgPSAmcDsKKwkJZ2V0X2ZzX3Jvb3QoY3VycmVudC0+ZnMsICZwLnJvb3QpOwor
+CQllcnIgPSBzaG93X21vdW50aW5mbyhzZiwgbSk7CisJCXBhdGhfcHV0KCZwLnJvb3QpOworCQlz
+Zi0+cHJpdmF0ZSA9IE5VTEw7CiAJfSBlbHNlIHsKIAkJV0FSTl9PTigxKTsKIAkJZXJyID0gLUVJ
+TzsKLS0tIGEvZnMvcHJvY19uYW1lc3BhY2UuYworKysgYi9mcy9wcm9jX25hbWVzcGFjZS5jCkBA
+IC0xMTAsNyArMTEwLDcgQEAgc3RhdGljIGludCBzaG93X3Zmc21udChzdHJ1Y3Qgc2VxX2ZpbGUg
+KgogCXJldHVybiBlcnI7CiB9CiAKLXN0YXRpYyBpbnQgc2hvd19tb3VudGluZm8oc3RydWN0IHNl
+cV9maWxlICptLCBzdHJ1Y3QgdmZzbW91bnQgKm1udCkKK2ludCBzaG93X21vdW50aW5mbyhzdHJ1
+Y3Qgc2VxX2ZpbGUgKm0sIHN0cnVjdCB2ZnNtb3VudCAqbW50KQogewogCXN0cnVjdCBwcm9jX21v
+dW50cyAqcCA9IG0tPnByaXZhdGU7CiAJc3RydWN0IG1vdW50ICpyID0gcmVhbF9tb3VudChtbnQp
+Owo=
+--0000000000002e407205a23abf26--
