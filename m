@@ -2,81 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF61F19A932
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 12:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C42A919A983
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 12:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbgDAKJ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 06:09:28 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44259 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgDAKJ2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 06:09:28 -0400
-Received: by mail-qk1-f195.google.com with SMTP id j4so26336716qkc.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 03:09:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/JUjrVIAN05JaqOZ81e9IeMVI4IIpPJGuXB/jnNFM7c=;
-        b=FzxJt0Nt0NgAOpqNI+AdrmKN0ewi+HoB2BYl1EDjlDDlCJbGfSSc3nt2OmQM8v08KX
-         iSUuKe/+Ujy5NZxR2ldOqTxUSAp4hWsKkaxOTuxqLDX7dgCLt9yBU0Lpf/xKG8I/gBrp
-         PHaK3fs5zyk12tmLZEuCpGQmwJ75uxSLvB8L8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/JUjrVIAN05JaqOZ81e9IeMVI4IIpPJGuXB/jnNFM7c=;
-        b=kVVr5roSYGJqfLATe/Q2eFTzX0F7LMj6jw+Nam57k9vtgv77ptRNVOwJLkpOb16g6s
-         vOHDicXVSw7zo3xI/MG5U+vQcJ443axfnSdHIwhjV1rBeDnONK8HUIXbfJkxx9bOiNn8
-         8Bsu9XlubGy/BH578fSumkbpPgKN4snZZrpwCNkQ//1GOexgpHVsmE+qxAHe5nKZYB2b
-         /FpzosT8ItBF6Nh5Q2pqp/FlJWLaWF94MIQvlwwoUslTWAe8Fl7xnFOJnckzHFujrIdx
-         JnjAG16kkC375aRuVhpvDzpV960C8rrVmjkv7o5TIsGf3iJQg/6Y2C3KzdA3gPQJnCbI
-         Rt6w==
-X-Gm-Message-State: ANhLgQ0CikWdhz3fN3FwwPln2f9rR+RX+Z1hxKOmd1nx1ZcSUd7FJcw7
-        QHIGAU1D6Wd6HaXwUj7sdZWAJwfCOj8IJlGOkn1ldg==
-X-Google-Smtp-Source: ADFU+vtPd4E+NnE4TazTxijuOX3MAT9DQTdGDWseHds1p8VHfgot0c3aogWL65bsNKSGf7OpXSolx0nI1ArWW2w+E6o=
-X-Received: by 2002:a37:6cb:: with SMTP id 194mr9284729qkg.235.1585735765690;
- Wed, 01 Apr 2020 03:09:25 -0700 (PDT)
+        id S1732170AbgDAKZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 06:25:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46580 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726785AbgDAKZP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Apr 2020 06:25:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 36C6DAD39;
+        Wed,  1 Apr 2020 10:25:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 387F51E11F4; Wed,  1 Apr 2020 12:25:11 +0200 (CEST)
+Date:   Wed, 1 Apr 2020 12:25:11 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH V5 00/12] Enable per-file/per-directory DAX operations V5
+Message-ID: <20200401102511.GC19466@quack2.suse.cz>
+References: <20200227052442.22524-1-ira.weiny@intel.com>
+ <20200305155144.GA5598@lst.de>
+ <20200309170437.GA271052@iweiny-DESK2.sc.intel.com>
+ <20200311033614.GQ1752567@magnolia>
+ <20200311062952.GA11519@lst.de>
+ <CAPcyv4h9Xg61jk=Uq17xC6AGj9yOSAJnCaTzHcfBZwOVdRF9dw@mail.gmail.com>
+ <20200316095224.GF12783@quack2.suse.cz>
+ <20200316095509.GA13788@lst.de>
+ <20200401040021.GC56958@magnolia>
 MIME-Version: 1.0
-References: <20200331124017.2252-1-ignat@cloudflare.com> <20200331124017.2252-2-ignat@cloudflare.com>
- <20200401063620.catm73fbp5n4wv5r@yavin.dot.cyphar.com> <20200401063806.5crx6pnm6vzuc3la@yavin.dot.cyphar.com>
- <CALrw=nFmi_f-c3fbU5ZizP228y4R2LxHdN8eQ1ht3YVBW0CWjA@mail.gmail.com>
-In-Reply-To: <CALrw=nFmi_f-c3fbU5ZizP228y4R2LxHdN8eQ1ht3YVBW0CWjA@mail.gmail.com>
-From:   Marek Majkowski <marek@cloudflare.com>
-Date:   Wed, 1 Apr 2020 11:09:14 +0100
-Message-ID: <CAJPywT+WHZadscThYD2Y=K3q5DUUyHp1UFMtoCyXMU_+AbvDoA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mnt: add support for non-rootfs initramfs
-To:     Ignat Korchagin <ignat@cloudflare.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>,
-        containers@lists.linux-foundation.org, christian.brauner@ubuntu.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200401040021.GC56958@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> However now we see more and more cases needing this and the
-> boilerplate code and the additional memory copying (and sometimes
-> security issues like you mentioned), which can handle this from the
-> userspace becomes too much. I understand the simplicity reasons
-> described in [1] ("You can't unmount rootfs for approximately the same
-> reason you can't kill the init process..."), but to support this
-> simplicity as well as the new containerised Linux world the kernel
-> should give us a hand.
+On Wed 01-04-20 04:00:21, Darrick J. Wong wrote:
+> On Mon, Mar 16, 2020 at 10:55:09AM +0100, Christoph Hellwig wrote:
+> > On Mon, Mar 16, 2020 at 10:52:24AM +0100, Jan Kara wrote:
+> > > > This sounds reasonable to me.
+> > > > 
+> > > > As for deprecating the mount option, I think at a minimum it needs to
+> > > > continue be accepted as an option even if it is ignored to not break
+> > > > existing setups.
+> > > 
+> > > Agreed. But that's how we usually deprecate mount options. Also I'd say
+> > > that statx() support for reporting DAX state and some education of
+> > > programmers using DAX is required before we deprecate the mount option
+> > > since currently applications check 'dax' mount option to determine how much
+> > > memory they need to set aside for page cache before they consume everything
+> > > else on the machine...
+> > 
+> > I don't even think we should deprecate it.  It isn't painful to maintain
+> > and actually useful for testing.  Instead we should expand it into a
+> > tristate:
+> > 
+> >   dax=off
+> >   dax=flag
+> >   dax=always
+> > 
+> > where the existing "dax" option maps to "dax=always" and nodax maps
+> > to "dax=off". and dax=flag becomes the default for DAX capable devices.
+> 
+> That works for me.  In summary:
+> 
+>  - Applications must call statx to discover the current S_DAX state.
+> 
+>  - There exists an advisory file inode flag FS_XFLAG_DAX that can be
+>    changed on files that have no blocks allocated to them.  Changing
+>    this flag does not necessarily change the S_DAX state immediately
+>    but programs can query the S_DAX state via statx.
 
-"You can't unmount rootfs for approximately the same reason you can't
-kill the init process"
+I generally like the proposal but I think the fact that toggling
+FS_XFLAG_DAX will not have immediate effect on S_DAX will cause quite some
+confusion and ultimately bug reports. I'm thinking whether we could somehow
+improve this... For example an ioctl that would try to make set inode flags
+effective by evicting the inode (and returning EBUSY if the eviction is
+impossible for some reason)?
 
-Pardon my ignorance but this explanation in docs never made any sense
-to me. Rootfs is pretty much the same as tmpfs. I don't understand why
-we can't do pivot_root on it and why, we can't unmount it later. I
-must be missing some context. Can someone explain what is the reason
-for rootfs to be restricted like that? Perhaps we could just relax
-rootfs limits....
+								Honza
 
-Marek
+> 
+>    If FS_XFLAG_DAX is set and the fs is on pmem then it will always
+>    enable S_DAX at inode load time; if FS_XFLAG_DAX is not set, it will
+>    never enable S_DAX.  Unless overridden...
+> 
+>  - There exists a dax= mount option.  dax=off means "never set S_DAX,
+>    ignore FS_XFLAG_DAX"; dax=always means "always set S_DAX (at least on
+>    pmem), ignore FS_XFLAG_DAX"; and dax=iflag means "follow FS_XFLAG_DAX"
+>    and is the default.  "dax" by itself means "dax=always".  "nodax"
+>    means "dax=off".
+> 
+>  - There exists an advisory directory inode flag FS_XFLAG_DAX that can
+>    be changed at any time.  The flag state is copied into any files or
+>    subdirectories created within that directory.  If programs require
+>    that file access runs in S_DAX mode, they'll have to create those
+>    files themselves inside a directory with FS_XFLAG_DAX set, or mount
+>    the fs with dax=always.
+> 
+> Ok?  Let's please get this part finished for 5.8, then we can get back
+> to arguing about fs-rmap and reflink and dax and whatnot.
+> 
+> --D
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
