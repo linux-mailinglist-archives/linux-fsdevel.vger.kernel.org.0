@@ -2,81 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F22F19AF42
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9175F19AF4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 18:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733117AbgDAQCE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 12:02:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20544 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1732886AbgDAQCE (ORCPT
+        id S1727421AbgDAQFL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 12:05:11 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44722 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbgDAQFL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:02:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585756923;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3IEKCG99baNCbafEulLN6+2Rt6IoYWudMh1yldt5er4=;
-        b=KZlZh+R/FsRvVyTZHDdTMVFkNdqFVLcS3BhQF0etkASKB0T1UKkTKOeJYeBqGHL3bAPlNS
-        +U4JYC3CfZmLdzyeexb3YZCm+gefCqUjt6KzJLnmDTtpWILYOFTjehHmr4ys3QSdb4pUpH
-        I/beFHLxv+zbmyULCxnu0l6bJaMfHAI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-75-VLCnjMyyPRqhR4Fz7w4wig-1; Wed, 01 Apr 2020 12:02:01 -0400
-X-MC-Unique: VLCnjMyyPRqhR4Fz7w4wig-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C005D100551A;
-        Wed,  1 Apr 2020 16:01:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D0CC5C3F8;
-        Wed,  1 Apr 2020 16:01:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com>
-References: <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com> <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com> <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk> <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home> <2488530.1585749351@warthog.procyon.org.uk> <2488734.1585749502@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Karel Zak <kzak@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+        Wed, 1 Apr 2020 12:05:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id m17so659593wrw.11;
+        Wed, 01 Apr 2020 09:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=x0iGf5X4LVYTv3/i+3RQO+ppyXBQZXoUL8LL0fm5I0w=;
+        b=EXpjA8rTQUsKE+qdZqP/OdGd6eCxiipdusbCGRdMgrzSFDoTFfrG8GcWy5dSL+FGAu
+         ZmAiMwADAOV9LvQ0JMLfaxNcfPTrWpQPuPaPxkK5bZQwQt4WNNGxNy2baRVZYXVIP5rT
+         6UR1mJoZ5uwMwQR09xEaxeei29Umc1sb9HHkqSPRgThc+AkTmVWz8YPHKtYWLcItT0IF
+         rv4j9Om54xQbV/ZQtczS930PXJ/ze/EcF3UEvLj0otsGO+DW7cena5EZ7doG/84pnfO+
+         CO4Dlu39M6co2U7plhwPYNFD+2FDjGLuLuk7vU057+iIupH64dmPnABgUU6YlwoYav9W
+         x7hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=x0iGf5X4LVYTv3/i+3RQO+ppyXBQZXoUL8LL0fm5I0w=;
+        b=E2ezo9q0H6eKqlm34YpZYkwP88sl6PEfMO0c1MDcgSvVlcldNCMdpuBnL+s7w26HeA
+         UxGNvQ0qXX68JjEKzaQaSUP8VkNlW2WNUKxz70Su6OfSw3D2E2QfZqs5gqNngNGFmkgl
+         OOC5kz6SZnhXjyac9RxhQf2/Obtp/b+ClVMoamJHAQaSe7CjPcYvXomzimI7AiCE+bM3
+         ZZbFx+wcjzVmbjb+KSgfcQzjS79LrLIPw+j342ZtvjrmtqHT/5KoQNB134fRnJB7epYv
+         Zhtnohvrv9YxQckEJw+OrJyPFoC6tpuevOCm/XvKnL7CBc82q+48pKgNVyWb2xRgC11e
+         OSjA==
+X-Gm-Message-State: ANhLgQ0DfYFa5NRUQsHf2vRZTs9zFQbab2IZB+GLvU7luYpynSYA3Z7p
+        1o27bHZNXvo7fuG/17JHGg==
+X-Google-Smtp-Source: ADFU+vsGgsO5O4k/Oz4y3nId5ruptaNQ0NK34qLOhjZcXf6pDS0gcYHgxF/Tk6yhVtQY7TgTs81tYg==
+X-Received: by 2002:a5d:460f:: with SMTP id t15mr26748856wrq.413.1585757108643;
+        Wed, 01 Apr 2020 09:05:08 -0700 (PDT)
+Received: from earth.lan (host-92-23-85-227.as13285.net. [92.23.85.227])
+        by smtp.gmail.com with ESMTPSA id i21sm3321949wmb.23.2020.04.01.09.05.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Apr 2020 09:05:08 -0700 (PDT)
+From:   Jules Irenge <jbi.octave@gmail.com>
+X-Google-Original-From: Jules Irenge <djed@earth.lan>
+Date:   Wed, 1 Apr 2020 17:04:54 +0100 (BST)
+To:     Jan Kara <jack@suse.cz>
+cc:     Jules Irenge <jbi.octave@gmail.com>, linux-kernel@vger.kernel.org,
+        boqun.feng@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        "open list:FILESYSTEM DIRECT ACCESS (DAX)" 
+        <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 3/7] dax: Add missing annotation for
+ wait_entry_unlocked()
+In-Reply-To: <20200401100125.GB19466@quack2.suse.cz>
+Message-ID: <alpine.LFD.2.21.2004011702002.25676@earth.lan>
+References: <0/7> <20200331204643.11262-1-jbi.octave@gmail.com> <20200331204643.11262-4-jbi.octave@gmail.com> <20200401100125.GB19466@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2590275.1585756914.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 01 Apr 2020 17:01:54 +0100
-Message-ID: <2590276.1585756914@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> > > But doesn't actually do what Karel asked for.  show_mountinfo() itse=
-lf does
-> > > not give you what Karel asked for.
-> =
 
-> Not sure what you mean.  I think it shows precisely the information
-> Karel asked for.
+On Wed, 1 Apr 2020, Jan Kara wrote:
 
-It's not atomic.
-
-David
-
+> On Tue 31-03-20 21:46:39, Jules Irenge wrote:
+>> Sparse reports a warning at wait_entry_unlocked()
+>>
+>> warning: context imbalance in wait_entry_unlocked()
+>> 	- unexpected unlock
+>>
+>> The root cause is the missing annotation at wait_entry_unlocked()
+>> Add the missing __releases(xa) annotation.
+>>
+>> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+>> ---
+>>  fs/dax.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/dax.c b/fs/dax.c
+>> index 1f1f0201cad1..adcd2a57fbad 100644
+>> --- a/fs/dax.c
+>> +++ b/fs/dax.c
+>> @@ -244,6 +244,7 @@ static void *get_unlocked_entry(struct xa_state *xas, unsigned int order)
+>>   * After we call xas_unlock_irq(), we cannot touch xas->xa.
+>>   */
+>>  static void wait_entry_unlocked(struct xa_state *xas, void *entry)
+>> +	__releases(xa)
+>
+> Thanks for the patch but is this a proper sparse annotation? I'd rather
+> expect something like __releases(xas->xa->xa_lock) here...
+>
+> 								Honza
+>
+>>  {
+>>  	struct wait_exceptional_entry_queue ewait;
+>>  	wait_queue_head_t *wq;
+>> --
+>> 2.24.1
+>>
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+>
+Thanks for the kind reply. I learned and changed. If there is a further 
+issue, please do not hesitate to contact me.
+Thanks,
+Jules
