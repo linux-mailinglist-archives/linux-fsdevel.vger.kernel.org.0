@@ -2,136 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBD2C19B7CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 23:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D004A19B828
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 00:10:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733287AbgDAVj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 17:39:26 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:44877 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733252AbgDAVjX (ORCPT
+        id S1732864AbgDAWK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 18:10:26 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50998 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732687AbgDAWK0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 17:39:23 -0400
-Received: by mail-pf1-f202.google.com with SMTP id b204so896146pfb.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Apr 2020 14:39:21 -0700 (PDT)
+        Wed, 1 Apr 2020 18:10:26 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t128so1410926wma.0;
+        Wed, 01 Apr 2020 15:10:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=FeWGGGhwmXwPYJI7fgk1nXVyU38RCP6BF6eOwbkfauA5Lh/S0K7Nc0SIi0FDfzLZf/
-         bBZtA01Z+mycAmiPQF6sdgjk5IWYb+EIHKaBqeFr9fpHlHKvNDviHMxgwnRIyxJ2QR+m
-         FhGsIQS2Qu6FM71Bw7dEx5OsIbtQDambyY4fI9IepQU+Cs0Psa6YkBsLcX8FD8WIcBtp
-         vBLKQP3cpYILo3x9L44bcB2+wn09ds8LLHXl7JYuY3kZHmAMRAlkc7Jl2jKOzPh1N4mo
-         qnZvGI1i19BxSMYD89r0zKAZ5tBFZPiVCrcqrSEvreR+Eu5kKl7jbxfQkEj6DqoueZO0
-         AaSw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/KipLt+yI4hk4j/cdZ9DjitutZWqDp00pMlHvjB1TpM=;
+        b=HPq/FWj3IdXUZh3MzvrXtferZKJdvTA+AuOD60PC+xEQ9NoDRmW6Ftyx8Ie3v2kFON
+         uSAuACjwsUnL1Csmg25SsZZRzOIxs0JomyoYfebnXkSscZ5or3o5BH3K3P9yD5uTfBqj
+         qpf13Wg+RZ1/jZgIRgd/RIf25eJtxefwO7kLYq55mejjaTMXO6D0ekPxAwrrGp7f8YmQ
+         OiPILd4+Ty3hto7SRanL4SJho8EXi2tPqDMefOOCulXKfac4JEFf8ABNp6XbEFYWSa/5
+         gSLenMqtaj+FUSWuIYEUsgOOvf+tQhzGtbp5N04M60UsrREjSeARTZl0OWvrYNVLBSRg
+         UF0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=DdrdrRerOMvkv7vzgvI3ttukeUZ2OpdhnLu+un2eV2s=;
-        b=KL1xDtLdowroOfPFCz2PSbg0tJkGL1ahnLS1Eh7NZa2oamm/D0DmUinjzJRG8ZS2fn
-         Wzprjvg4pG2brzYSvTcCDL3GNOCBpG98xlJkXRP6bjy9e8GnCS1PjJ635RFdfRphokNw
-         LC9TbpHCV3k108sC5Jv4FG+So6PntdO0NHdZL2gR9x05HF5zLZaW6Bwaz7us5y7KH6YM
-         0Pz6Gs07cBHWJoc2RBvrlsaWYgmNeAZRNVAunUk4Yz51sY53bNv9aLKIBcqdQM1y75W4
-         osLpI4NJcuWy3NHAeW9WrVZAOnhznr2q3u0xLJnOPCYrhs5Xozc4A3UkcjEK8FVoyKnz
-         gfuQ==
-X-Gm-Message-State: AGi0PuY52kYdIP0xUF7Y276L8PYOtdnf5WTe8CIeZ2I4aVUHPi16xjVU
-        HKti9lrY9Mj1bqsBzokp+LravSXvS/8=
-X-Google-Smtp-Source: APiQypJjIzb/5kmrh3RqCS3HOgTi/GT8cY+ji3kV8XKRQ+4eFtBDnifNrAYKZFtkDdm/KNfMZ+0y3mX+CAA=
-X-Received: by 2002:a17:90a:2147:: with SMTP id a65mr41318pje.176.1585777160964;
- Wed, 01 Apr 2020 14:39:20 -0700 (PDT)
-Date:   Wed,  1 Apr 2020 14:39:03 -0700
-In-Reply-To: <20200401213903.182112-1-dancol@google.com>
-Message-Id: <20200401213903.182112-4-dancol@google.com>
-Mime-Version: 1.0
-References: <20200326200634.222009-1-dancol@google.com> <20200401213903.182112-1-dancol@google.com>
-X-Mailer: git-send-email 2.26.0.rc2.310.g2932bb562d-goog
-Subject: [PATCH v5 3/3] Wire UFFD up to SELinux
-From:   Daniel Colascione <dancol@google.com>
-To:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Cc:     Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/KipLt+yI4hk4j/cdZ9DjitutZWqDp00pMlHvjB1TpM=;
+        b=HL7NVGH8vaCoLOT2zw0uRO9Tm8y5BbnLOdHaYi5Swp2YdGeySgD5hWN7D4fneqRmRj
+         i7v7LZh/9T+0F7I6KQ2GF19AcNFaEzI9HxfqT3GleXhqe8EmwaewyyKaSECUj5aEBmml
+         ZXhFaO8X5RHOu6KUPE1mUgbS3wlnEod6FQ7EIpOdrPOK++TXYElwlEKrcZc7Mm3UK1Ni
+         4Ws+o4dyn1zfDDvBft7zhfcdfTZebArdEAnVZN1zA/CwsMqzBxwYQJY7Q3LcLxLn9Ix9
+         5ErBDH9sdaLV1/koXc+Ze7vQSlx2Ycm+oa1Hl1pSG820QxYGnmQ9Q+vQ0tjr71mmg1/B
+         NF2w==
+X-Gm-Message-State: AGi0PuatdTY8OYNkiZWwmoLoPMKLv1GYkp/kBIanrEkZBT64Lr0Z04KN
+        1xUL/c4W7/9f4+qcBQGj/oxJAmJp
+X-Google-Smtp-Source: APiQypLaU4z3yEt8m02m4ZBvHwDsHPORzy2HQwNxRVQLk7wEkQF2kmj0g7SHTTuKTOuRn7VFQ+oDhA==
+X-Received: by 2002:a1c:2007:: with SMTP id g7mr161947wmg.70.1585779022908;
+        Wed, 01 Apr 2020 15:10:22 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 71sm4922515wrc.53.2020.04.01.15.10.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Apr 2020 15:10:21 -0700 (PDT)
+Date:   Wed, 1 Apr 2020 22:10:21 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/9] XArray: entry in last level is not expected to be a
+ node
+Message-ID: <20200401221021.v6igvcpqyeuo2cws@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20200330123643.17120-1-richard.weiyang@gmail.com>
+ <20200330123643.17120-6-richard.weiyang@gmail.com>
+ <20200330124842.GY22483@bombadil.infradead.org>
+ <20200330141558.soeqhstone2liqud@master>
+ <20200330142821.GD22483@bombadil.infradead.org>
+ <20200331134208.gfkyym6n3gpgk3x3@master>
+ <20200331164212.GC21484@bombadil.infradead.org>
+ <20200331220440.roq4pv6wk7tq23gx@master>
+ <20200331235912.GD21484@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331235912.GD21484@bombadil.infradead.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+On Tue, Mar 31, 2020 at 04:59:12PM -0700, Matthew Wilcox wrote:
+>On Tue, Mar 31, 2020 at 10:04:40PM +0000, Wei Yang wrote:
+>> cc -I. -I../../include -g -Og -Wall -D_LGPL_SOURCE -fsanitize=address -fsanitize=undefined   -c -o main.o main.c
+>> In file included from ./linux/../../../../include/linux/radix-tree.h:15,
+>>                  from ./linux/radix-tree.h:5,
+>>                  from main.c:10:
+>> ./linux/rcupdate.h:5:10: fatal error: urcu.h: No such file or directory
+>>     5 | #include <urcu.h>
+>>       |          ^~~~~~~~
+>> compilation terminated.
+>> make: *** [<builtin>: main.o] Error 1
+>
+>Oh, you need liburcu installed.  On Debian, that's liburcu-dev ... probably
+>liburcu-devel on Red Hat style distros.
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- fs/userfaultfd.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+The bad news is I didn't find the package on Fedora.
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 37df7c9eedb1..78ff5d898733 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -76,6 +76,8 @@ struct userfaultfd_ctx {
- 	bool mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
- 	struct mm_struct *mm;
-+	/* The inode that owns this context --- not a strong reference.  */
-+	const struct inode *owner;
- };
- 
- struct userfaultfd_fork_ctx {
-@@ -1022,8 +1024,10 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure(
-+		"[userfaultfd]", &userfaultfd_fops, new,
-+		O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS),
-+		ctx->owner);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -1945,6 +1949,7 @@ static void init_once_userfaultfd_ctx(void *mem)
- 
- SYSCALL_DEFINE1(userfaultfd, int, flags)
- {
-+	struct file *file;
- 	struct userfaultfd_ctx *ctx;
- 	int fd;
- 
-@@ -1974,8 +1979,25 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	file = anon_inode_getfile_secure(
-+		"[userfaultfd]", &userfaultfd_fops, ctx,
-+		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
-+		NULL);
-+	if (IS_ERR(file)) {
-+		fd = PTR_ERR(file);
-+		goto out;
-+	}
-+
-+	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-+	if (fd < 0) {
-+		fput(file);
-+		goto out;
-+	}
-+
-+	ctx->owner = file_inode(file);
-+	fd_install(fd, file);
-+
-+out:
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+I am trying to build it from source. Is this git repo the correct one?
+
+git clone git://git.liburcu.org/userspace-rcu.git
+
 -- 
-2.26.0.rc2.310.g2932bb562d-goog
-
+Wei Yang
+Help you, Help me
