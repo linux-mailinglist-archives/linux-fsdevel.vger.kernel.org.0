@@ -2,93 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 619BF19AAB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 13:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A15219AB40
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 14:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbgDALXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 07:23:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58294 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732121AbgDALXV (ORCPT
+        id S1732253AbgDAMFo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 08:05:44 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20142 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1732246AbgDAMFo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 07:23:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cPYHA5h55sUofdLyOc+e5uMRth/wMXd5HGy9c8ItIRM=; b=keVMiPYBTfEx+ZcmKlCwq1sq0l
-        rNBQL7NCGJazCRXmSZHSnxddJzUtqbhY2tm+LkFzILeSkLoSr5Or8iR9/wx+nReA1qZG3aYwTb+3B
-        zyLbKF9aRIfJfPzKU7MjhMa1CUaUgzb6JKR3S+NRYpx3SwLIz0kLp6lK6CxwPkmlJBkww0Pe9RCNh
-        FLF50hH9kcdKMFX4SXu48CAosCQEkzoS9m0ah0ZDUQxXXICpFVkFzZQLIXiXIQCDJSNsA5jhSH0fI
-        Xf9SBnkkC9m3ZBs7EjUDIL59+5Ar+7q3Evlr0v0kzBsMiKsNWGqizsK4gWO6+kdAaH1IIXShcOnvO
-        QdZIHQCw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJbSr-0004oA-D8; Wed, 01 Apr 2020 11:23:21 +0000
-Date:   Wed, 1 Apr 2020 04:23:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Handle memory allocation failure in readahead
-Message-ID: <20200401112321.GF21484@bombadil.infradead.org>
-References: <20200401030421.17195-1-willy@infradead.org>
- <20200401043125.GD56958@magnolia>
+        Wed, 1 Apr 2020 08:05:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585742743;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+GR7MHEG6xiBbbkMGHrCHUiX06iUrxcdELI0CxLfVTo=;
+        b=f7sqGqZI0rvD8I7UrwxvZ+ovZwX7m9q8g8gr03tQAZUuoRTz1NcZsf5asJT3GE6rkb8pDI
+        eaD2IR2NEP3gY3CGG3Ky3ZkpEO/DQd9tk/aDtOgxjCC4IikkT9K5qXHmqKu6xaHmLq6jXz
+        yU6vQm31w+NKYljCb8CqiRXC9mlZ7rc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-370-XALTqPojP4mFhLhFshbhmQ-1; Wed, 01 Apr 2020 08:05:41 -0400
+X-MC-Unique: XALTqPojP4mFhLhFshbhmQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D128BDB60;
+        Wed,  1 Apr 2020 12:05:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-114-243.ams2.redhat.com [10.36.114.243])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CBC999DFD;
+        Wed,  1 Apr 2020 12:05:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegvv3-oh6iPNXa8bjXmjhkR8KzQPWN4tAH18_tM5wFkQ9A@mail.gmail.com>
+References: <CAJfpegvv3-oh6iPNXa8bjXmjhkR8KzQPWN4tAH18_tM5wFkQ9A@mail.gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org
+Subject: Re: Why does test-fsinfo require static libraries?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200401043125.GD56958@magnolia>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2479848.1585742738.1@warthog.procyon.org.uk>
+Date:   Wed, 01 Apr 2020 13:05:38 +0100
+Message-ID: <2479849.1585742738@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 09:31:25PM -0700, Darrick J. Wong wrote:
-> On Tue, Mar 31, 2020 at 08:04:21PM -0700, Matthew Wilcox wrote:
-> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> > 
-> > bio_alloc() can fail when we use GFP_NORETRY.  If it does, allocate
-> > a bio large enough for a single page like mpage_readpages() does.
+Miklos Szeredi <miklos@szeredi.hu> wrote:
+
+> This is annoying:
 > 
-> Why does mpage_readpages() do that?
-> 
-> Is this a means to guarantee some kind of forward (readahead?) progress?
-> Forgive my ignorance, but if memory is so tight we can't allocate a bio
-> for readahead then why not exit having accomplished nothing?
+>   HOSTCC  samples/vfs/test-fsinfo
+> /usr/bin/ld: cannot find -lm
+> /usr/bin/ld: cannot find -lc
+> collect2: error: ld returned 1 exit status
 
-As far as I can tell, it's just a general fallback in mpage_readpages().
+Sorry, yes.  I've been building on one system and running on an older one and
+the libraries are incompatible.  I need to undo that bit.
 
- * If anything unusual happens, such as:
- *
- * - encountering a page which has buffers
- * - encountering a page which has a non-hole after a hole
- * - encountering a page with non-contiguous blocks
- *
- * then this code just gives up and calls the buffer_head-based read function.
+David
 
-The actual code for that is:
-
-                args->bio = mpage_alloc(bdev, blocks[0] << (blkbits - 9),
-                                        min_t(int, args->nr_pages,
-                                              BIO_MAX_PAGES),
-                                        gfp);
-                if (args->bio == NULL)
-                        goto confused;
-...
-confused:
-        if (args->bio)
-                args->bio = mpage_bio_submit(REQ_OP_READ, op_flags, args->bio);
-        if (!PageUptodate(page))
-                block_read_full_page(page, args->get_block);
-        else
-                unlock_page(page);
-
-As the comment implies, there are a lot of 'goto confused' cases in
-do_mpage_readpage().
-
-Ideally, yes, we'd just give up on reading this page because it's
-only readahead, and we shouldn't stall actual work in order to reclaim
-memory so we can finish doing readahead.  However, handling a partial
-page read is painful.  Allocating a bio big enough for a single page is
-much easier on the mm than allocating a larger bio (for a start, it's a
-single allocation, not a pair of allocations), so this is a reasonable
-compromise between simplicity of code and quality of implementation.
