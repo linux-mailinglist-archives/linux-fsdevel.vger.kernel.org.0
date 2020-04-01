@@ -2,155 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176B219A572
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 08:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BFC19A579
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Apr 2020 08:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbgDAGiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 02:38:23 -0400
-Received: from mout-p-103.mailbox.org ([80.241.56.161]:36526 "EHLO
-        mout-p-103.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731735AbgDAGiW (ORCPT
+        id S1731918AbgDAGif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 02:38:35 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42295 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731908AbgDAGif (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 02:38:22 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 48sc301bJ3zKmWQ;
-        Wed,  1 Apr 2020 08:38:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id QA8DmzSK7YH6; Wed,  1 Apr 2020 08:38:13 +0200 (CEST)
-Date:   Wed, 1 Apr 2020 17:38:06 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Ignat Korchagin <ignat@cloudflare.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
-        containers@lists.linux-foundation.org, christian.brauner@ubuntu.com
-Subject: Re: [PATCH v2 1/1] mnt: add support for non-rootfs initramfs
-Message-ID: <20200401063806.5crx6pnm6vzuc3la@yavin.dot.cyphar.com>
-References: <20200331124017.2252-1-ignat@cloudflare.com>
- <20200331124017.2252-2-ignat@cloudflare.com>
- <20200401063620.catm73fbp5n4wv5r@yavin.dot.cyphar.com>
+        Wed, 1 Apr 2020 02:38:35 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h15so29084188wrx.9;
+        Tue, 31 Mar 2020 23:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u7qzTLhWhtQ+4ksRWWT0iCnZlieYp50htwnA74AfNuM=;
+        b=OdpjtdE14ZEsiCtuHCsfDHAkoRhqvtvfrGsCgG++nLESkSz0pcq2UBrEBNvCDzprCW
+         dmlM5gX1y8Tm6so4QYNvJmgQxl3z7RiT4ERWXhbMt46VZ0HaDP5zjTWSlThjaN3AVYJD
+         DLNDK0Edvewv5ebCdiVAjZw1ss/EuqaraqE+NxMTHj1yT9MX+1Tj4ohJJka60rVTXzT+
+         2LKRvDXPbAIVQXIBNLIot8sUyFkzLN/ftPkCQmqB2+BrX0gStl/vL0RHYiSa0cqybaTD
+         AfcJbgvKu+q5FcuzK/5JwW49GG2okf3SrMEAtUdlqE9EdRPsKvUt9/mhLJeNRbgpHyKu
+         U8Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u7qzTLhWhtQ+4ksRWWT0iCnZlieYp50htwnA74AfNuM=;
+        b=Y9PheYqlpUj93vrIU9jnEq68nozznGYvvMJxFQ9oJmdXl/5Ki3gbaUYBCql8uKQtfo
+         /x8J1MYVsAow56tWFTiHusVkMPPIqYzSzJvsxAmAnNNganoVE98ICYDSWXrS4/945Tp7
+         i0kyw39q5pvbi6feISYRQeIILZmsagC9/YLNMb38z65VJapBz/0UznxNRnzV5rq6VmBL
+         0Glsy94TwWbrwfCIrqRNd+O7IvHB5Tix5GtXE5JWvkNHRLbS1uifwzlu9+CC4p2gxXm7
+         gIRi2aJzuYom2BeguzvucOHiB1vNiQ3Y4Lzn9B6no7Gn3CVa4Ti5I5iCJOu/Plwzwevc
+         am4w==
+X-Gm-Message-State: ANhLgQ0A8tqn6p/isqLipPfRDzyx7b0/ClMfqhb5UB5dHqQxQ8RjweLq
+        KcEcBHGcYLYy4LBDEAkE50DikcRd
+X-Google-Smtp-Source: ADFU+vsGt7fHvFHWI6/jEJLu+44G71UgYE2sbgFQAduQzIv8MVFyAupGe9DXvtjw75oECDTe2yQIrg==
+X-Received: by 2002:adf:e44a:: with SMTP id t10mr24060598wrm.322.1585723113198;
+        Tue, 31 Mar 2020 23:38:33 -0700 (PDT)
+Received: from ?IPv6:2001:a61:2482:101:3351:6160:8173:cc31? ([2001:a61:2482:101:3351:6160:8173:cc31])
+        by smtp.gmail.com with ESMTPSA id b67sm1346031wmh.29.2020.03.31.23.38.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 23:38:32 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH man-pages v2 2/2] openat2.2: document new openat2(2)
+ syscall
+To:     Aleksa Sarai <cyphar@cyphar.com>
+References: <20200202151907.23587-1-cyphar@cyphar.com>
+ <20200202151907.23587-3-cyphar@cyphar.com>
+ <1567baea-5476-6d21-4f03-142def0f62e3@gmail.com>
+ <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <cd3a6aad-b906-ee57-1b5b-5939b9602ad0@gmail.com>
+Date:   Wed, 1 Apr 2020 08:38:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4oc4mgugrbek3hvd"
-Content-Disposition: inline
-In-Reply-To: <20200401063620.catm73fbp5n4wv5r@yavin.dot.cyphar.com>
-X-Rspamd-Queue-Id: ABF571754
-X-Rspamd-Score: -4.40 / 15.00 / 200.00
+In-Reply-To: <20200331143911.lokfoq3lqfri2mgy@yavin.dot.cyphar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello Aleksa,
 
---4oc4mgugrbek3hvd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 3/31/20 4:39 PM, Aleksa Sarai wrote:
+> On 2020-03-30, Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+>> Hello Aleksa,
+>>
+>> On 2/2/20 4:19 PM, Aleksa Sarai wrote:
+>>> Rather than trying to merge the new syscall documentation into open.2
+>>> (which would probably result in the man-page being incomprehensible),
+>>> instead the new syscall gets its own dedicated page with links between
+>>> open(2) and openat2(2) to avoid duplicating information such as the list
+>>> of O_* flags or common errors.
+>>>
+>>> In addition to describing all of the key flags, information about the
+>>> extensibility design is provided so that users can better understand why
+>>> they need to pass sizeof(struct open_how) and how their programs will
+>>> work across kernels. After some discussions with David Laight, I also
+>>> included explicit instructions to zero the structure to avoid issues
+>>> when recompiling with new headers.
+>>>
+>>> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>>
+>> Thanks. I've applied this patch, but also done quite a lot of
+>> editing of the page. The current draft is below (and also pushed 
+>> to Git). Could I ask you to review the page, to see if I injected
+>> any error during my edits.
+> 
+> Looks good to me.
+> 
+>> In addition, I've added a number of FIXMEs in comments
+>> in the page source. Can you please check these, and let me
+>> know your thoughts.
+> 
+> Will do, see below.
+> 
+>> .\" FIXME I find the "previously-functional systems" in the previous
+>> .\" sentence a little odd (since openat2() ia new sysycall), so I would
+>> .\" like to clarify a little...
+>> .\" Are you referring to the scenario where someone might take an
+>> .\" existing application that uses openat() and replaces the uses
+>> .\" of openat() with openat2()? In which case, is it correct to
+>> .\" understand that you mean that one should not just indiscriminately
+>> .\" add the RESOLVE_NO_XDEV flag to all of the openat2() calls?
+>> .\" If I'm not on the right track, could you point me in the right
+>> .\" direction please.
+> 
+> This is mostly meant as a warning to hopefully avoid applications
+> because the developer didn't realise that system paths may contain
+> symlinks or bind-mounts. For an application which has switched to
+> openat2() and then uses RESOLVE_NO_SYMLINKS for a non-security reason,
+> it's possible that on some distributions (or future versions of a
+> distribution) that their application will stop working because a system
+> path suddenly contains a symlink or is a bind-mount.
+> 
+> This was a concern which was brought up on LWN some time ago. If you can
+> think of a phrasing that makes this more clear, I'd appreciate it.
 
-On 2020-04-01, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2020-03-31, Ignat Korchagin <ignat@cloudflare.com> wrote:
-> > The main need for this is to support container runtimes on stateless Li=
-nux
-> > system (pivot_root system call from initramfs).
-> >=20
-> > Normally, the task of initramfs is to mount and switch to a "real" root
-> > filesystem. However, on stateless systems (booting over the network) it=
- is just
-> > convenient to have your "real" filesystem as initramfs from the start.
-> >=20
-> > This, however, breaks different container runtimes, because they usuall=
-y use
-> > pivot_root system call after creating their mount namespace. But pivot_=
-root does
-> > not work from initramfs, because initramfs runs form rootfs, which is t=
-he root
-> > of the mount tree and can't be unmounted.
-> >=20
-> > One workaround is to do:
-> >=20
-> >   mount --bind / /
-> >=20
-> > However, that defeats one of the purposes of using pivot_root in the cl=
-oned
-> > containers: get rid of host root filesystem, should the code somehow es=
-capes the
-> > chroot.
-> >=20
-> > There is a way to solve this problem from userspace, but it is much more
-> > cumbersome:
-> >   * either have to create a multilayered archive for initramfs, where t=
-he outer
-> >     layer creates a tmpfs filesystem and unpacks the inner layer, switc=
-hes root
-> >     and does not forget to properly cleanup the old rootfs
-> >   * or we need to use keepinitrd kernel cmdline option, unpack initramf=
-s to
-> >     rootfs, run a script to create our target tmpfs root, unpack the sa=
-me
-> >     initramfs there, switch root to it and again properly cleanup the o=
-ld root,
-> >     thus unpacking the same archive twice and also wasting memory, beca=
-use
-> >     the kernel stores compressed initramfs image indefinitely.
-> >=20
-> > With this change we can ask the kernel (by specifying nonroot_initramfs=
- kernel
-> > cmdline option) to create a "leaf" tmpfs mount for us and switch root t=
-o it
-> > before the initramfs handling code, so initramfs gets unpacked directly=
- into
-> > the "leaf" tmpfs with rootfs being empty and no need to clean up anythi=
-ng.
-> >=20
-> > This also bring the behaviour in line with the older style initrd, wher=
-e the
-> > initrd is located on some leaf filesystem in the mount tree and rootfs =
-remaining
-> > empty.
-> >=20
-> > Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
->=20
-> I know this is a bit of a stretch, but I thought I'd ask -- is it
-> possible to solve the problem with pivot_root(2) without requiring this
-> workaround (and an additional cmdline option)?
->=20
-> From the container runtime side of things, most runtimes do support
-> working on initramfs but it requires disabling pivot_root(2) support (in
-> the runc world this is --no-pivot-root). We would love to be able to
-> remove support for disabling pivot_root(2) because lots of projects have
-> been shipping with pivot_root(2) disabled (such as minikube until
-> recently[1]) -- which opens such systems to quite a few breakout and
-> other troubling exploits (obviously they also ship without using user
-> namespaces *sigh*).
->=20
-> But requiring a new cmdline option might dissuade people from switching.
-> If there was a way to fix the underlying restriction on pivot_root(2),
-> I'd be much happier with that as a solution.
->=20
-> Thanks.
->=20
-> [1]: https://github.com/kubernetes/minikube/issues/3512
+Thanks. I've made the text:
 
-(I forgot to add the kernel containers ML to Cc.)
+                     Applications  that  employ  the RESOLVE_NO_XDEV flag
+                     are encouraged to make its use configurable  (unless
+                     it is used for a specific security purpose), as bind
+                     mounts are widely used by end-users.   Setting  this
+                     flag indiscriminately—i.e., for purposes not specif‐
+                     ically related to security—for all uses of openat2()
+                     may  result  in  spurious errors on previously-func‐
+                     tional systems.  This may occur if, for  example,  a
+                     system  pathname  that  is used by an application is
+                     modified (e.g., in a new  distribution  release)  so
+                     that  a  pathname  component  (now)  contains a bind
+                     mount.
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Okay?
 
---4oc4mgugrbek3hvd
-Content-Type: application/pgp-signature; name="signature.asc"
+>> .\" FIXME: what specific details in symlink(7) are being referred
+>> .\" by the following sentence? It's not clear.
+> 
+> The section on magic-links, but you're right that the sentence ordering
+> is a bit odd. It should probably go after the first sentence.
 
------BEGIN PGP SIGNATURE-----
+I must admit that I'm still confused. There's only the briefest of 
+mentions of magic links in symlink(7). Perhaps that needs to be fixed?
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXoQ2ywAKCRCdlLljIbnQ
-Egi+AQDfp2eihiP/85XxCAvh92c9bn1z/Oe0QolgDlMTkH2+YwD+NjJtM8Z1xCZm
-0UJ6F0fERbVGWMYTkjHKzQPNyY4mSw4=
-=PrTF
------END PGP SIGNATURE-----
+And, while I think of it, the text just preceding that FIXME says:
 
---4oc4mgugrbek3hvd--
+    Due to the potential danger of unknowingly opening 
+    these magic links, it may be preferable for users to 
+    disable their resolution entirely.
+
+This sentence reads a little strangely. Could you please give me some
+concrete examples, and I will try rewording that sentence a bit.
+
+>> .\" FIXME I found the following hard to understand (in particular, the
+>> .\" meaning of "scoped" is unclear) , and reworded as below. Is it okay?
+>> .\"     Absolute symbolic links and ".." path components will be scoped to
+>> .\"     .IR dirfd .
+> 
+> Scoped does broadly mean "interpreted relative to", though the
+> difference is mainly that when I said scoped it's meant to be more of an
+> assertive claim ("the kernel promises to always treat this path inside
+> dirfd"). But "interpreted relative to" is a clearer way of phrasing the
+> semantics, so I'm okay with this change.
+
+Okay.
+
+>> .\" FIXME The next piece is unclear (to me). What kind of ".." escape
+>> .\" attempts does chroot() not detect that RESOLVE_IN_ROOT does?
+> 
+> If the root is moved, you can escape from a chroot(2). But this sentence
+> might not really belong in a man-page since it's describing (important)
+> aspects of the implementation and not the semantics.
+
+So, should I just remove the sentence?
+
+Thanks,
+
+Michael
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
