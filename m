@@ -2,167 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA0219B9FD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 03:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D67319BA0F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 03:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732667AbgDBBie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 21:38:34 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46223 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726319AbgDBBid (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 21:38:33 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3ABD45801C4;
-        Wed,  1 Apr 2020 21:38:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 01 Apr 2020 21:38:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        65E0cCQjZaasR2Q4SReMT3up4B2vZTD5YrrV+eEQPzU=; b=EhjE5WUllq7utAsj
-        QGotnYbb9Kw8jZCsD7odmyKl1n5mYNo16UGKeB+MA/N8pXr1cwCWa1jb2Qz6NnFR
-        OmkHYTPm3ClH8nYV38aHOd8+YkGAGNacEUH924J1y6HJ80OvGw1vOk420eaVRmr1
-        Wqv16Qg6Prbwz52FOwUoa9pw7JtngLbVwCiM9SbAOY4/IxfKTbu2Bj+zofmYQPAZ
-        3DbFdozqMh3qo9qJ646FaGfljfvPwyXGuJkQfmzNQxDFzQLOA6lcR1LS1OAtdFYu
-        R1qMp7IVbQ+56/KqtUyLLkVzOUUUIIJ+umm4GYxaZV/Wirk+sjBmfMOp/5UCTFtr
-        +kr2LQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=65E0cCQjZaasR2Q4SReMT3up4B2vZTD5YrrV+eEQP
-        zU=; b=ZVR+2Un1ogFAbTykJdID1KGQHIQCJlxQdHSQLt4iyc695rALIxGzJ/tZx
-        8ttNUhd77g0OaBXN5/v5Q61v4ileqM3MNUllXQT/wmZHyyTxCGxukO3drlUximUQ
-        Yn0lLHQQ4deECa6MIpgb5BJCB4VMr8RT3NfjFcB+xwsNz55sEXdbwq6kd1MQnzlK
-        Mta2qB0IOK7uVSe1r+MH6dKM/Ym1LVOlW+qAmnUOMTA0qqlWFDEPpyRtftHWjREV
-        czKId4Nepql7rXMwphjcl51Mlljv3xaYYmB6qAyPcxod1+UpKfKizo5hobnmT3m2
-        byqO5tanFiUouyIa6j4md5wueG0Pg==
-X-ME-Sender: <xms:F0KFXnxfg-I39THCyxl8TBBO4WHZ_l_tGpGYiNs6KqDi_2mdnroUvg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrtdefgdehtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecukfhppeduudekrddvtdelrd
-    duieeirddvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:F0KFXjgFLqkZZSXP7k-wS0dX0TesDJcOZg4BLckP6jqvx7AMc3i6yw>
-    <xmx:F0KFXsV1k4K3Nk4yTG1Kpiu9GOkeb9fya0zvYG0XJ_h-ikBRchiVTg>
-    <xmx:F0KFXl0sM4s2FZ5lq6RtbJIVXDAH4v1HQranqyejd-iKBEZ1hzssSA>
-    <xmx:GEKFXpBmaOPBnPhHnGLHAp7bVvRp7u-xAXONrNwu4w2Gmy4Elbu9bg>
-Received: from mickey.themaw.net (unknown [118.209.166.232])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 69846306CD83;
-        Wed,  1 Apr 2020 21:38:24 -0400 (EDT)
-Message-ID: <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 02 Apr 2020 09:38:20 +0800
-In-Reply-To: <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
-         <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
-         <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
-         <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com>
-         <2465266.1585729649@warthog.procyon.org.uk>
-         <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1733251AbgDBB5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 21:57:46 -0400
+Received: from sandeen.net ([63.231.237.45]:50490 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733073AbgDBB5p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Apr 2020 21:57:45 -0400
+Received: from Liberator.local (liberator [10.0.0.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by sandeen.net (Postfix) with ESMTPSA id B842E116F4;
+        Wed,  1 Apr 2020 20:57:35 -0500 (CDT)
+Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
+To:     Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de
+Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+References: <20200402000002.7442-1-mcgrof@kernel.org>
+ <20200402000002.7442-3-mcgrof@kernel.org>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <9a6576cf-b89d-d1af-2d74-652878cb78c8@sandeen.net>
+Date:   Wed, 1 Apr 2020 20:57:42 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200402000002.7442-3-mcgrof@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-04-01 at 10:37 +0200, Miklos Szeredi wrote:
-> On Wed, Apr 1, 2020 at 10:27 AM David Howells <dhowells@redhat.com>
-> wrote:
-> > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > 
-> > > According to dhowell's measurements processing 100k mounts would
-> > > take
-> > > about a few seconds of system time (that's the time spent by the
-> > > kernel to retrieve the data,
-> > 
-> > But the inefficiency of mountfs - at least as currently implemented
-> > - scales
-> > up with the number of individual values you want to retrieve, both
-> > in terms of
-> > memory usage and time taken.
+On 4/1/20 7:00 PM, Luis Chamberlain wrote:
+> On commit 6ac93117ab00 ("blktrace: use existing disk debugfs directory")
+> Omar fixed the original blktrace code for multiqueue use. This however
+> left in place a possible crash, if you happen to abuse blktrace in a way
+> it was not intended.
 > 
-> I've taken that into account when guesstimating a "few seconds per
-> 100k entries".  My guess is that there's probably an order of
-> magnitude difference between the performance of a fs based interface
-> and a binary syscall based interface.  That could be reduced somewhat
-> with a readfile(2) type API.
+> Namely, if you loop adding a device, setup the blktrace with BLKTRACESETUP,
+> forget to BLKTRACETEARDOWN, and then just remove the device you end up
+> with a panic:
+
+Weird, I swear I tested that and didn't hit it, but ...
+ 
+
+> This issue can be reproduced with break-blktrace [2] using:
 > 
-> But the point is: this does not matter.  Whether it's .5s or 5s is
-> completely irrelevant, as neither is going to take down the system,
-> and userspace processing is probably going to take as much, if not
-> more time.  And remember, we are talking about stopping and starting
-> the automount daemon, which is something that happens, but it should
-> not happen often by any measure.
+>   break-blktrace -c 10 -d
 
-Yes, but don't forget, I'm reporting what I saw when testing during
-development.
-
-From previous discussion we know systemd (and probably the other apps
-like udisks2, et. al.) gets notified on mount and umount activity so
-its not going to be just starting and stopping autofs that's a problem
-with very large mount tables.
-
-To get a feel for the real difference we'd need to make the libmount
-changes for both and then check between the two and check behaviour.
-The mount and umount lookup case that Karel (and I) talked about
-should be sufficient.
-
-The biggest problem I had with fsinfo() when I was working with
-earlier series was getting fs specific options, in particular the
-need to use sb op ->fsinfo(). With this latest series David has made
-that part of the generic code and your patch also cover it.
-
-So the thing that was holding me up is done so we should be getting
-on with libmount improvements, we need to settle this.
-
-I prefer the system call interface and I'm not offering justification
-for that other than a general dislike (and on occasion outright
-frustration) of pretty much every proc implementation I have had to
-look at.
-
++ -s, right?
+ 
+> This patch fixes this issue. Note that there is also another
+> respective UAF but from the ioctl path [3], this should also fix
+> that issue.
 > 
-> > With fsinfo(), I've tried to batch values together where it makes
-> > sense - and
-> > there's no lingering memory overhead - no extra inodes, dentries
-> > and files
-> > required.
+> This patch then also contends the severity of CVE-2019-19770 as
+> this issue is only possible using root to shoot yourself in the
+> foot by also misuing blktrace.
 > 
-> The dentries, inodes and files in your test are single use (except
-> the
-> root dentry) and can be made ephemeral if that turns out to be
-> better.
-> My guess is that dentries belonging to individual attributes should
-> be
-> deleted on final put, while the dentries belonging to the mount
-> directory can be reclaimed normally.
-> 
-> Thanks,
-> Miklos
+> [0] https://bugzilla.kernel.org/show_bug.cgi?id=205713
+> [1] https://nvd.nist.gov/vuln/detail/CVE-2019-19770
+> [2] https://github.com/mcgrof/break-blktrace
 
+I verified that this does reproduce the exact same KASAN splat on
+kernel 4.19.83 as reported in the original bug, thanks!
+
+-Eric
