@@ -2,91 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B10219C5C9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 17:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81D019C5E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 17:28:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389279AbgDBPYu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 11:24:50 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35436 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388234AbgDBPYr (ORCPT
+        id S2389231AbgDBP2d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 11:28:33 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:51106 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbgDBP2d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 11:24:47 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a20so4704136edj.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Apr 2020 08:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4F5ZdY7baHRX9p1mTWpG9zxWusymLcEOqLCXOssAIBU=;
-        b=g5rhf8VkZbZjmtrRA9uLq+eA6cn4w30V1Ydtp66keVrraQ5KdoMysqFdqvimk1mNmg
-         BBluexcPEK9BqCC/QnMInSRmAeekeaRQk3fsGNB15QPtBRvrJixiWXRDlXjAAx9dX4VF
-         hYKeF2UPxxfG/Z8TROG7OTJWLZk7IvAaYBicE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4F5ZdY7baHRX9p1mTWpG9zxWusymLcEOqLCXOssAIBU=;
-        b=T/MqUUvsEWy3f6KVMKF/WCdI825AqBGbdOSfNNiz/2zx7jmsM5rR3kZZ8sVgvsIcOg
-         sZ3vW4COQRL8hz0S1w05fv9ofmEd3C7OprA4VQCIHoIIpSTtsGwcIRzm6NQQS2eVXehd
-         oZVYO7JXvC4E0fpz0mNbLLxpBVmnbfmRvCH97rrOwP5Z7+8gXwQn2uvKKFn6w2ek53u/
-         +Ppl53axwlOl7rUwrT1iXaw+iilHHl29XzCiouwU3JDZqjZycsRjreC9h56v7fTFSi3R
-         wuaGdgHR5yFlxERbopGA8zVP9zqYym5E0rspSa1b5+u0pUNPBDrqnIEkkLb5LN60ZOil
-         vVOg==
-X-Gm-Message-State: AGi0Pub83OxfC8Pj9kNQAdU6HLrPMfRcLqXsokS2zm7RXkgXDNj6ZBNU
-        e7Ge88vYF17CEHDZtBR/VUwJgb25UeMaTKF069qAZA==
-X-Google-Smtp-Source: APiQypKALy3IUYlnKiBfpTwp+9vi6ZR4LdZdo5HC7HfpoPYCDQL8peS420WXQe1UMt0CcEPpeyGkmutc90yHAqvyJdE=
-X-Received: by 2002:a50:8326:: with SMTP id 35mr3485075edh.134.1585841083892;
- Thu, 02 Apr 2020 08:24:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJfpeguu52VuLAzjFH4rJJ7WYLB5ag8y+r3VMb-0bqH8c-uJUg@mail.gmail.com>
- <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
- <2418286.1585691572@warthog.procyon.org.uk> <20200401090445.6t73dt7gz36bv4rh@ws.net.home>
- <2488530.1585749351@warthog.procyon.org.uk> <2488734.1585749502@warthog.procyon.org.uk>
- <CAJfpeguLJcAEgx2JWRNcKMkyFTWB0r4wS6F4fJHK3VHtY=EjXQ@mail.gmail.com>
- <2590276.1585756914@warthog.procyon.org.uk> <CAJfpeguxDiq3BW94AVFhgY75P+jy_+jk3pdyNZ5z-aJPXNvvGA@mail.gmail.com>
- <3070724.1585840971@warthog.procyon.org.uk>
-In-Reply-To: <3070724.1585840971@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 2 Apr 2020 17:24:32 +0200
-Message-ID: <CAJfpegv4=wAi+mH32pHM9g8gk+JGESWa25n04BwfnkhVBf=3rA@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Karel Zak <kzak@redhat.com>,
+        Thu, 2 Apr 2020 11:28:33 -0400
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
+        by gardel.0pointer.net (Postfix) with ESMTP id 7A8EDE80A73;
+        Thu,  2 Apr 2020 17:28:31 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id 1F7B3160337; Thu,  2 Apr 2020 17:28:31 +0200 (CEST)
+Date:   Thu, 2 Apr 2020 17:28:31 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, Ian Kent <raven@themaw.net>,
-        andres@anarazel.de, keyrings@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lennart Poettering <lennart@poettering.net>,
-        Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200402152831.GA31612@gardel-login>
+References: <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk>
+ <20200401144109.GA29945@gardel-login>
+ <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
+ <2590640.1585757211@warthog.procyon.org.uk>
+ <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+ <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+ <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
+ <20200402143623.GB31529@gardel-login>
+ <CAJfpegtRi9epdxAeoVbm+7UxkZfzC6XmD4K_5dg=RKADxy_TVA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtRi9epdxAeoVbm+7UxkZfzC6XmD4K_5dg=RKADxy_TVA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 2, 2020 at 5:23 PM David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > > > Not sure what you mean.  I think it shows precisely the information
-> > > > Karel asked for.
-> > >
-> > > It's not atomic.
-> >
-> > Yes it is.
->
-> No, it really isn't - though it could be made so.
->
-> ext4_show_mount(), for example, doesn't lock against "mount -o remount", so
-> the configuration can be changing whilst it's being rendered to text.
+On Do, 02.04.20 17:22, Miklos Szeredi (miklos@szeredi.hu) wrote:
 
-Does s_umount nest inside namespace_sem?  I really don't see the
-relation of those locks.
+> On Thu, Apr 2, 2020 at 4:36 PM Lennart Poettering <mzxreary@0pointer.de> wrote:
+>
+> > You appear to be thinking about the "udisks" project or so?
+>
+> Probably.
+>
+> The real question is: is there a sane way to filter mount
+> notifications so that systemd receives only those which it is
+> interested in, rather than the tens of thousands that for example
+> autofs is managing and has nothing to do with systemd?
 
-Thanks,
-Miklos
+systemd cares about all mount points in PID1's mount namespace.
+
+The fact that mount tables can grow large is why we want something
+better than constantly reparsing the whole /proc/self/mountinfo. But
+filtering subsets of that is something we don't really care about.
+
+Lennart
+
+--
+Lennart Poettering, Berlin
