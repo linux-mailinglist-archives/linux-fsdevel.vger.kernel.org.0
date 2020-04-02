@@ -2,134 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99BE19C6C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 18:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99F2519C6B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 18:07:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389725AbgDBQIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 12:08:23 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:35208 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389392AbgDBQIW (ORCPT
+        id S2389734AbgDBQGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 12:06:43 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40500 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388972AbgDBQGm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 12:08:22 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jK2OD-0007Me-0v; Thu, 02 Apr 2020 10:08:21 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jK2Nx-00044C-IX; Thu, 02 Apr 2020 10:08:20 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Thu, 2 Apr 2020 12:06:42 -0400
+Received: by mail-pj1-f66.google.com with SMTP id kx8so1673020pjb.5;
+        Thu, 02 Apr 2020 09:06:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r75wMwNGptMAzk8X/bJWo9FUoo8EnDcMGX++kdUmEis=;
+        b=YX4MPT62Mf/TmR53AjPvdSQKGOFKIgERLOg0ABQgFewgnlRpT1GFi2HPlqaj1cPN3P
+         e8aVdu2txq19LPpBC7+fp95+rOS2vvK6NakWlnPOTeo/Hp6D7r+X2DTL/uhX5O33uJg1
+         HEC+3zD8wTkA4J0jJcNQ5Kw8GspgSjRUam8nkWZpBzhbX8nxaRcrx/vf+8PNXRGYxMYT
+         q5/UIxp6JD+HWk91p6ZgFl+p+2604d129pR0OhDeERzRBqDPsuufORiZs+nn1UA7aQ6a
+         Mi5ifs86YqKvoOenFsfrXg088AUZJ18855vKaufRolt5HEsRfUltXPxbsJoO0DlQdc8b
+         NKBA==
+X-Gm-Message-State: AGi0PubyNUXVTLjVhAQy6qAYLIqIw8xe26tbfipP9jG3sUsFH1QdJg0W
+        s0iXelZ2EEBRbhScoqD93ug=
+X-Google-Smtp-Source: APiQypLleY/jOTwizAE6QGIXoXkF/cCKIUqYh6iyvYNrdfBff+zV58SaRx5SkGnHL0N2WUnE9lSJ+w==
+X-Received: by 2002:a17:90a:b282:: with SMTP id c2mr4676001pjr.6.1585843601072;
+        Thu, 02 Apr 2020 09:06:41 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id 185sm3983235pfz.119.2020.04.02.09.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Apr 2020 09:06:39 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 90DAF40254; Thu,  2 Apr 2020 16:06:38 +0000 (UTC)
+Date:   Thu, 2 Apr 2020 16:06:38 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Jules Irenge <jbi.octave@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
         Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        David Howells <dhowells@redhat.com>
-References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
-        <20200327172331.418878-9-gladkov.alexey@gmail.com>
-Date:   Thu, 02 Apr 2020 11:05:21 -0500
-In-Reply-To: <20200327172331.418878-9-gladkov.alexey@gmail.com> (Alexey
-        Gladkov's message of "Fri, 27 Mar 2020 18:23:30 +0100")
-Message-ID: <87d08pkh4u.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Iurii Zaikin <yzaikin@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "open list:PROC SYSCTL" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 4/7] sysctl: Add missing annotation for
+ start_unregistering()
+Message-ID: <20200402160638.GB11244@42.do-not-panic.com>
+References: <0/7>
+ <20200331204643.11262-1-jbi.octave@gmail.com>
+ <20200331204643.11262-5-jbi.octave@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jK2Nx-00044C-IX;;;mid=<87d08pkh4u.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Wu6fmQHfDofF39L0DBA9uLm55GXDDZi0=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=8.0 tests=ALL_TRUSTED,BAYES_20,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-        *      [score: 0.1157]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Alexey Gladkov <gladkov.alexey@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 9459 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 4.0 (0.0%), b_tie_ro: 2.8 (0.0%), parse: 0.72
-        (0.0%), extract_message_metadata: 2.3 (0.0%), get_uri_detail_list:
-        0.77 (0.0%), tests_pri_-1000: 3.3 (0.0%), tests_pri_-950: 0.94 (0.0%),
-        tests_pri_-900: 0.83 (0.0%), tests_pri_-90: 108 (1.1%), check_bayes:
-        105 (1.1%), b_tokenize: 6 (0.1%), b_tok_get_all: 5 (0.1%),
-        b_comp_prob: 1.34 (0.0%), b_tok_touch_all: 89 (0.9%), b_finish: 0.85
-        (0.0%), tests_pri_0: 220 (2.3%), check_dkim_signature: 0.64 (0.0%),
-        check_dkim_adsp: 2.3 (0.0%), poll_dns_idle: 9101 (96.2%),
-        tests_pri_10: 1.72 (0.0%), tests_pri_500: 9111 (96.3%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH v10 8/9] proc: use human-readable values for hidehid
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200331204643.11262-5-jbi.octave@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexey Gladkov <gladkov.alexey@gmail.com> writes:
+On Tue, Mar 31, 2020 at 09:46:40PM +0100, Jules Irenge wrote:
+> Sparse reports a warning at start_unregistering()
+> 
+> warning: context imbalance in start_unregistering()
+> 	- unexpected unlock
+> 
+> The root cause is the missing annotation at start_unregistering()
+> Add the missing __must_hold(&sysctl_lock) annotation.
+> 
+> Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
 
-> The hidepid parameter values are becoming more and more and it becomes
-> difficult to remember what each new magic number means.
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
 
-In principle I like this change.  In practice I think you have just
-broken ABI compatiblity with the new mount ABI.
-
-In particular the following line seems broken.
-
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index dbcd96f07c7a..ba782d6e6197 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -45,7 +45,7 @@ enum proc_param {
+  Luis
+> ---
+>  fs/proc/proc_sysctl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index c75bb4632ed1..d1b5e2b35564 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -307,6 +307,7 @@ static void proc_sys_prune_dcache(struct ctl_table_header *head)
 >  
->  static const struct fs_parameter_spec proc_fs_parameters[] = {
->  	fsparam_u32("gid",	Opt_gid),
-> -	fsparam_u32("hidepid",	Opt_hidepid),
-> +	fsparam_string("hidepid",	Opt_hidepid),
->  	fsparam_string("subset",	Opt_subset),
->  	{}
->  };
-
-As I read fs_parser.c fs_param_is_u32 handles string inputs and turns them
-into numbers, and it handles binary numbers.  However fs_param_is_string
-appears to only handle strings.  It appears to have not capacity to turn
-raw binary numbers into strings.
-
-So I think we probably need to fix fs_param_is_string to raw binary
-numbers before we can safely make this change to fs/proc/root.c
-
-David am I reading the fs_parser.c code correctly?  If I am are you ok
-with a change like the above?
-
-Eric
+>  /* called under sysctl_lock, will reacquire if has to wait */
+>  static void start_unregistering(struct ctl_table_header *p)
+> +	__must_hold(&sysctl_lock)
+>  {
+>  	/*
+>  	 * if p->used is 0, nobody will ever touch that entry again;
+> -- 
+> 2.24.1
+> 
