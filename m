@@ -2,75 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B02E19C6DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 18:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3E319C721
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 18:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389729AbgDBQQC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 12:16:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57414 "EHLO mail.kernel.org"
+        id S2388484AbgDBQd0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 12:33:26 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:43112 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389294AbgDBQQC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 12:16:02 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732412AbgDBQd0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Apr 2020 12:33:26 -0400
+Received: from comp-core-i7-2640m-0182e6 (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A046206F6;
-        Thu,  2 Apr 2020 16:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585844161;
-        bh=5sJ1neYRlFfnjmBdPQnALhSYTIW7R6idfr1HV3eUbLU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YuhxEisGg+czlF11Le0CA11rrUCK7T8ASCuF1CFQHyBEUJrvTq/rCB1UujzNyDe1X
-         VjK4w+H39cMykLfIt/aFcG9POPQyRHDTTx/mRNNjdzufzincHrkhof11UNEtV2F9Om
-         HASncbRRl6laAeF0bd5jKvhXhvlj30rEOQLT8gBM=
-Date:   Thu, 2 Apr 2020 09:16:00 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, domenico.andreoli@linux.com
-Subject: [GIT PULL] vfs: bug fix for 5.7
-Message-ID: <20200402161600.GI80283@magnolia>
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 19CEB2052E;
+        Thu,  2 Apr 2020 16:32:51 +0000 (UTC)
+Date:   Thu, 2 Apr 2020 18:32:46 +0200
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Security Module <linux-security-module@vger.kernel.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Daniel Micay <danielmicay@gmail.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@poochiereds.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v10 2/9] proc: allow to mount many instances of proc in
+ one pid namespace
+Message-ID: <20200402163246.7kfzujkku65belrw@comp-core-i7-2640m-0182e6>
+References: <20200327172331.418878-1-gladkov.alexey@gmail.com>
+ <20200327172331.418878-3-gladkov.alexey@gmail.com>
+ <87eet5lx97.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <87eet5lx97.fsf@x220.int.ebiederm.org>
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 02 Apr 2020 16:33:23 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Thu, Apr 02, 2020 at 10:31:48AM -0500, Eric W. Biederman wrote:
+> 
+> > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> > index 40a7982b7285..5920a4ecd71b 100644
+> > --- a/include/linux/proc_fs.h
+> > +++ b/include/linux/proc_fs.h
+> > @@ -27,6 +27,17 @@ struct proc_ops {
+> >  	unsigned long (*proc_get_unmapped_area)(struct file *, unsigned long, unsigned long, unsigned long, unsigned long);
+> >  };
+> >  
+> > +struct proc_fs_info {
+> > +	struct pid_namespace *pid_ns;
+> > +	struct dentry *proc_self;        /* For /proc/self */
+> > +	struct dentry *proc_thread_self; /* For /proc/thread-self */
+> > +};
+> 
+> Minor nit.
+> 
+> I have not seen a patch where you remove proc_self and proc_thread_self
+> from struct pid_namepace.
+> 
+> Ideally it would have been in this patch.  But as it won't break
+> anyone's bisection can you please have a follow up patch that removes
+> those fields?
 
-Please pull this single vfs bug fix into 5.7 to fix a regression in
-userspace hibernation now that the vfs doesn't really allow userspace to
-write to active swap devices anymore.
+Yep. I miss that. I will make v11 to address this and other nits.
 
---D
+-- 
+Rgrds, legion
 
-The following changes since commit 98d54f81e36ba3bf92172791eba5ca5bd813989b:
-
-  Linux 5.6-rc4 (2020-03-01 16:38:46 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.7-merge-1
-
-for you to fetch changes up to 56939e014a6c212b317414faa307029e2e80c3b9:
-
-  hibernate: Allow uswsusp to write to swap (2020-03-23 08:22:15 -0700)
-
-----------------------------------------------------------------
-New code for 5.7:
- - Fix a regression where we broke the userspace hibernation driver by
-   disallowing writes to the swap device.
-
-----------------------------------------------------------------
-Domenico Andreoli (1):
-      hibernate: Allow uswsusp to write to swap
-
- fs/block_dev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
