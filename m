@@ -2,134 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAADB19BB48
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 07:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D5819BCE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 09:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbgDBFYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 01:24:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39762 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbgDBFYQ (ORCPT
+        id S2387635AbgDBHkx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 03:40:53 -0400
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:37792 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbgDBHkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 01:24:16 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jJsKs-008Qfb-6k; Thu, 02 Apr 2020 05:24:14 +0000
-Date:   Thu, 2 Apr 2020 06:24:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git pathwalk sanitizing
-Message-ID: <20200402052414.GE23230@ZenIV.linux.org.uk>
+        Thu, 2 Apr 2020 03:40:53 -0400
+Received: by mail-pj1-f66.google.com with SMTP id k3so1187371pjj.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Apr 2020 00:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rRniYv7RPwWHFWrPJUZ8iMNVA0tUTHJrCguWpqpN+6k=;
+        b=ZgYWh0h+a5Hg2gYuDaf7bAJw/KFnrjKUiEuvbptyyu8Ds6OObwEJ9RIl0P+Ognz7ON
+         aVcJvZkmoY5pTE9Oigwg6Rz73WgiRqYNakHvrmSrDodIpjaHrTg1KZr/8/65eN0WM5/I
+         HNXT2GWnBGZf3TIUSbj5+3eAx6Fzc29HW0q/8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rRniYv7RPwWHFWrPJUZ8iMNVA0tUTHJrCguWpqpN+6k=;
+        b=CnQ2K0W6x78aVPJy73fZ0v7gF2v3jrz+ki0AbA7pYETciTndvgOmCaLPZMfORHEfAk
+         rCEtpP7kcVAc7gPtJv9DcJoh9/o5TEBaW12ZyHp+8B5M/lVtyWqQ2uunAh5a4mwCFQ/G
+         DlPPsz5J62s7qs/X7J30KMQUOY310ngXklh9rJWUGrYTW17OnJJcCeR77zjqufAfOkVx
+         /g/0A/RPT8f5YIUFadPEaGUazhW0Df+WjP9nIKzogxQdGJulNHRr2xVZRA+QqCqubgv/
+         KCxaVRXqfDqUOpNw3XlVPui9tUjWNNd7IUQYbMFRMoo8S8BKOGO2vK75G2nDkEM7JECr
+         uF4w==
+X-Gm-Message-State: AGi0PuZxvhnP4mobEyuztZqD/6wIOle6f5aqu52ze9hxYgopvVYeTphG
+        9Uy1ZdYbD+OxceEkvsUPDDjMjQ==
+X-Google-Smtp-Source: APiQypI2cYt4enOL7sTbasi+WDYQtLGOhHbbnJYUSxIit5amZbHaBwsNKTd/VramUXhMpxHV80lNww==
+X-Received: by 2002:a17:902:a706:: with SMTP id w6mr1769890plq.79.1585813251785;
+        Thu, 02 Apr 2020 00:40:51 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 8sm3137514pfy.130.2020.04.02.00.40.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Apr 2020 00:40:50 -0700 (PDT)
+Date:   Thu, 2 Apr 2020 00:40:09 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yuyang Du <duyuyang@gmail.com>,
+        David Hildenbrand <david@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christian Kellner <christian@kellner.me>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v6 00/16] Infrastructure to allow fixing exec deadlocks
+Message-ID: <202004020037.67ED66C8B6@keescook>
+References: <AM6PR03MB5170B2F5BE24A28980D05780E4F50@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <871rpg8o7v.fsf@x220.int.ebiederm.org>
+ <AM6PR03MB5170938306F22C3CF61CC573E4CD0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <202003282041.A2639091@keescook>
+ <AM6PR03MB5170E0E722ED0B05B149C135E4CB0@AM6PR03MB5170.eurprd03.prod.outlook.com>
+ <20200330201459.GF22483@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200330201459.GF22483@bombadil.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Massive pathwalk rewrite and cleanups.  Several iterations had
-been posted; hopefully the damn thing is getting readable and understandable
-now.  Pretty much all parts of pathname resolutions are affected...
+On Mon, Mar 30, 2020 at 01:14:59PM -0700, Matthew Wilcox wrote:
+> On Mon, Mar 30, 2020 at 10:12:02PM +0200, Bernd Edlinger wrote:
+> > On 3/29/20 5:44 AM, Kees Cook wrote:
+> > > On Sat, Mar 28, 2020 at 11:32:35PM +0100, Bernd Edlinger wrote:
+> > >> Oh, do I understand you right, that I can add a From: in the
+> > >> *body* of the mail, and then the From: in the MIME header part
+> > >> which I cannot change is ignored, so I can make you the author?
+> > > 
+> > > Correct. (If you use "git send-email" it'll do this automatically.)
+> > > 
+> > > e.g., trimmed from my workflow:
+> > > 
+> > > git format-patch -n --to "$to" --cover-letter -o outgoing/ \
+> > > 	--subject-prefix "PATCH v$version" "$SHA"
+> > > edit outgoing/0000-*
+> > > git send-email --transfer-encoding=8bit --8bit-encoding=UTF-8 \
+> > > 	--from="$ME" --to="$to" --cc="$ME" --cc="...more..." outgoing/*
+> > > 
+> > > 
+> > 
+> > Okay, thanks, I see that is very helpful information for me, and in
+> > this case I had also fixed a small bug in one of Eric's patches, which
+> > was initially overlooked (aquiring mutexes in wrong order,
+> > releasing an unlocked mutex in some error paths).
+> > I am completely unexperienced, and something that complex was not
+> > expected to happen :-) so this is just to make sure I can handle it
+> > correctly if something like this happens again.
+> > 
+> > In the case of PATCH v6 05/16 I removed the Reviewd-by: Bernd Edlinger
+> > since it is now somehow two authors and reviewing own code is obviously
+> > not ok, instead I added a Signed-off-by: Bernd Edlinger (and posted the
+> > whole series on Eric's behalf (after asking Eric's permissing per off-list
+> > e-mail, which probably ended in his spam folder)
+> > 
+> > Is this having two Signed-off-by: for mutliple authors the
+> > correct way to handle a shared authorship?
+> 
+> If the patch comes through you, then Reviewed-by: is inappropriate.
+> Instead, you should use Signed-off-by: in the second sense of
+> Documentation/process/submitting-patches.rst
+> 
+> This also documents how to handle "minor changes" that you make.
 
-The branch is identical to what has sat in -next, except for commit message in
-"lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu",
-crediting Qian Cai for reporting the bug; only commit message changed there.
- I'd folded the fix back in Mar 25, and it had been present in -next since then
-(see #work.dotdot).  I asked Qian Cai whether he wanted his tested-by on that
-thing, got no reply...
-	Anyway, all diffs in that branch are identical to the ones in
-#work.dotdot, which is what has sat in linux-next for the last week.
+And in the true case of multiple authors, have both SoBs, but also add a
+Co-developed-by: for the non-"git author" author. Specific details:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.dotdot1
-
-for you to fetch changes up to 99a4a90c8e9337e364136393286544e3753673c3:
-
-  lookup_open(): don't bother with fallbacks to lookup+create (2020-04-02 01:09:31 -0400)
-
-----------------------------------------------------------------
-Al Viro (69):
-      do_add_mount(): lift lock_mount/unlock_mount into callers
-      fix automount/automount race properly
-      follow_automount(): get rid of dead^Wstillborn code
-      follow_automount() doesn't need the entire nameidata
-      make build_open_flags() treat O_CREAT | O_EXCL as implying O_NOFOLLOW
-      handle_mounts(): start building a sane wrapper for follow_managed()
-      atomic_open(): saner calling conventions (return dentry on success)
-      lookup_open(): saner calling conventions (return dentry on success)
-      do_last(): collapse the call of path_to_nameidata()
-      handle_mounts(): pass dentry in, turn path into a pure out argument
-      lookup_fast(): consolidate the RCU success case
-      teach handle_mounts() to handle RCU mode
-      lookup_fast(): take mount traversal into callers
-      step_into() callers: dismiss the symlink earlier
-      new step_into() flag: WALK_NOFOLLOW
-      fold handle_mounts() into step_into()
-      LOOKUP_MOUNTPOINT: fold path_mountpointat() into path_lookupat()
-      expand the only remaining call of path_lookup_conditional()
-      merging pick_link() with get_link(), part 1
-      merging pick_link() with get_link(), part 2
-      merging pick_link() with get_link(), part 3
-      merging pick_link() with get_link(), part 4
-      merging pick_link() with get_link(), part 5
-      merging pick_link() with get_link(), part 6
-      finally fold get_link() into pick_link()
-      sanitize handling of nd->last_type, kill LAST_BIND
-      namei: invert the meaning of WALK_FOLLOW
-      pick_link(): check for WALK_TRAILING, not LOOKUP_PARENT
-      link_path_walk(): simplify stack handling
-      namei: have link_path_walk() maintain LOOKUP_PARENT
-      massage __follow_mount_rcu() a bit
-      new helper: traverse_mounts()
-      atomic_open(): return the right dentry in FMODE_OPENED case
-      atomic_open(): lift the call of may_open() into do_last()
-      do_last(): merge the may_open() calls
-      do_last(): don't bother with keeping got_write in FMODE_OPENED case
-      do_last(): rejoing the common path earlier in FMODE_{OPENED,CREATED} case
-      do_last(): simplify the liveness analysis past finish_open_created
-      do_last(): rejoin the common path even earlier in FMODE_{OPENED,CREATED} case
-      split the lookup-related parts of do_last() into a separate helper
-      path_connected(): pass mount and dentry separately
-      path_parent_directory(): leave changing path->dentry to callers
-      expand path_parent_directory() in its callers
-      follow_dotdot{,_rcu}(): lift switching nd->path to parent out of loop
-      follow_dotdot{,_rcu}(): lift LOOKUP_BENEATH checks out of loop
-      move handle_dots(), follow_dotdot() and follow_dotdot_rcu() past step_into()
-      handle_dots(), follow_dotdot{,_rcu}(): preparation to switch to step_into()
-      follow_dotdot{,_rcu}(): switch to use of step_into()
-      lift all calls of step_into() out of follow_dotdot/follow_dotdot_rcu
-      follow_dotdot{,_rcu}(): massage loops
-      follow_dotdot_rcu(): be lazy about changing nd->path
-      follow_dotdot(): be lazy about changing nd->path
-      helper for mount rootwards traversal
-      non-RCU analogue of the previous commit
-      fs/namei.c: kill follow_mount()
-      pick_link(): pass it struct path already with normal refcounting rules
-      fold path_to_nameidata() into its only remaining caller
-      pick_link(): more straightforward handling of allocation failures
-      pick_link(): take reserving space on stack into a new helper
-      reserve_stack(): switch to __nd_alloc_stack()
-      __nd_alloc_stack(): make it return bool
-      link_path_walk(): sample parent's i_uid and i_mode for the last component
-      take post-lookup part of do_last() out of loop
-      open_last_lookups(): consolidate fsnotify_create() calls
-      open_last_lookups(): don't abuse complete_walk() when all we want is unlazy
-      open_last_lookups(): lift O_EXCL|O_CREAT handling into do_open()
-      open_last_lookups(): move complete_walk() into do_open()
-      atomic_open(): no need to pass struct open_flags anymore
-      lookup_open(): don't bother with fallbacks to lookup+create
-
- Documentation/filesystems/path-lookup.rst |    7 +-
- fs/autofs/dev-ioctl.c                     |    6 +-
- fs/internal.h                             |    1 -
- fs/namei.c                                | 1488 ++++++++++++-----------------
- fs/namespace.c                            |   96 +-
- fs/open.c                                 |    4 +-
- include/linux/namei.h                     |    4 +-
- 7 files changed, 687 insertions(+), 919 deletions(-)
+-- 
+Kees Cook
