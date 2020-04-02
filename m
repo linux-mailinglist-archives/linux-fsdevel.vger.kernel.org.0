@@ -2,230 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47BA119C2A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 15:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A88319C331
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 15:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388594AbgDBNaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 09:30:10 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:45466 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388274AbgDBNaK (ORCPT
+        id S2387695AbgDBNwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 09:52:31 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33522 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387652AbgDBNwa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 09:30:10 -0400
-X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Apr 2020 09:30:09 EDT
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0D5B312F211;
-        Thu,  2 Apr 2020 22:21:45 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-18) with ESMTPS id 032DLh4e005613
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Thu, 2 Apr 2020 22:21:44 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-18) with ESMTPS id 032DLh7I041706
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Thu, 2 Apr 2020 22:21:43 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id 032DLhlQ041705;
-        Thu, 2 Apr 2020 22:21:43 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     hyeongseok.kim@lge.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: fat: Improve the readahead for FAT entries
-Date:   Thu, 02 Apr 2020 22:21:43 +0900
-Message-ID: <87eet6rpjs.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
+        Thu, 2 Apr 2020 09:52:30 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z65so4237467ede.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Apr 2020 06:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=38tDIv0KNYRGjWQpLV5pSNvP7JpdlyIKdGeo6UD55p0=;
+        b=mHf1i89rxwD/U2z1mjMQcSxAomeWc1se7NI0BXPkvalHMI/UmRHR8zxEzBwhHrRpie
+         lfZPvoKsJex5e+99/6K6TY/U0Oi1q15Kr12GW6oIbLommTSuH7t+hSeQWFea4nTjlB3V
+         95kmrieGk5HvIN6/0NbisdyXcDbd6kLMkqZLw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=38tDIv0KNYRGjWQpLV5pSNvP7JpdlyIKdGeo6UD55p0=;
+        b=ghpd08Sl5fYuJsFkvGFQWTrjuNB9r4RhGRVcpxUNhkeM6fElamBKv0rSf0yryodhqZ
+         L86awMWXQcfpcbbAkAbsWAYQuPjQppUzDZg6fPvc+4eG45NzeHxabjuLjHgB+OWYQL+X
+         7vP3AxaDR4Yaj1uWKCD8iGQXC+DyEvVloH5h8WTC9EtWd03YfArEVjLAb4pjSSLPTMIK
+         Rkr/4tKx8dju2eQn4b2WOJUVCqCAtKSCE3gfz+Sg03woHrt9TtQr0aw5cHKRp4QYBO3E
+         gEY4O8XJBvlOES78Vra3IkA/VNMw42z9QXk+N5ZMYB7VNoBg77fhlbKIWZZbr1qpnxsj
+         kpOg==
+X-Gm-Message-State: AGi0PuYGKaIiCSK3RpBs9Ag3tLB/zo/17VBO6D+i+AJDUogmwoJlr58M
+        s3TgSfRpBxOrbihD4e+O0uHcLE7TuKQUWfP9d3zLcmKp
+X-Google-Smtp-Source: APiQypKo8OvyZ+/BkGsIAPV2v3O2scZTxPKXxe0JzG0Tp6kSAFDmG+B5Al7t8aLcLk3Z9HYXKLOkQwoo6oYOkZibBjQ=
+X-Received: by 2002:a17:906:b351:: with SMTP id cd17mr3373636ejb.351.1585835548323;
+ Thu, 02 Apr 2020 06:52:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk> <20200401144109.GA29945@gardel-login>
+ <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
+ <2590640.1585757211@warthog.procyon.org.uk> <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+ <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+In-Reply-To: <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 2 Apr 2020 15:52:16 +0200
+Message-ID: <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Current readahead for FAT entries is very simple but is having some
-flaws, so it is not working well for some environments. This patch
-improves the readahead more or less.
+On Thu, Apr 2, 2020 at 4:52 AM Ian Kent <raven@themaw.net> wrote:
+>
+> On Wed, 2020-04-01 at 18:40 +0200, Miklos Szeredi wrote:
+> > On Wed, Apr 1, 2020 at 6:07 PM David Howells <dhowells@redhat.com>
+> > wrote:
+> > > Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > > I've still not heard a convincing argument in favor of a syscall.
+> > >
+> > > From your own results, scanning 10000 mounts through mountfs and
+> > > reading just
+> > > two values from each is an order of magnitude slower without the
+> > > effect of the
+> > > dentry/inode caches.  It gets faster on the second run because the
+> > > mountfs
+> > > dentries and inodes are cached - but at a cost of >205MiB of
+> > > RAM.  And it's
+> > > *still* slower than fsinfo().
+> >
+> > Already told you that we can just delete the dentry on dput_final, so
+> > the memory argument is immaterial.
+> >
+> > And the speed argument also, because there's no use case where that
+> > would make a difference.  You keep bringing up the notification queue
+> > overrun when watching a subtree, but that's going to be painful with
+> > fsinfo(2) as well.   If that's a relevant use case (not saying it's
+> > true), might as well add a /mnt/MNT_ID/subtree_info (trivial again)
+> > that contains all information for the subtree.  Have fun implementing
+> > that with fsinfo(2).
+>
+> Forgive me for not trawling through your patch to work this out
+> but how does a poll on a path get what's needed to get mount info.
+>
+> Or, more specifically, how does one get what's needed to go directly
+> to the place to get mount info. when something in the tree under the
+> polled path changes (mount/umount). IIUC poll alone won't do subtree
+> change monitoring?
 
-The key points of modification are,
+The mechanisms are basically the same as with fsinfo(2).   You can get
+to the mountfs entry through the mount ID or through a proc/fd/ type
+symlink.  So if you have a path, there are two options:
 
-  - make the readahead size tunable by using bdi->ra_pages
-  - care the bdi->io_pages to avoid the small size I/O request
-  - update readahead window before fully exhausting
+ - find out the mount ID belonging to that path and go to /mountfs/$mntid/
+ - open the path with fd = open(path, O_PATH) and the go to
+/proc/self/fdmount/$fd/
 
-With this patch, on slow USB connected 2TB hdd:
+Currently the only way to find the mount id from a path is by parsing
+/proc/self/fdinfo/$fd.  It is trivial, however, to extend statx(2) to
+return it directly from a path.   Also the mount notification queue
+that David implemented contains the mount ID of the changed mount.
 
-[before]
-383.18sec
+> Don't get me wrong, neither the proc nor the fsinfo implementations
+> deal with the notification storms that cause much of the problem we
+> see now.
+>
+> IMHO that's a separate and very difficult problem in itself that
+> can't even be considered until getting the information efficiently
+> is resolved.
 
-[after]
-51.03sec
+This mount notification storm issue got me thinking.   If I understand
+correctly, systemd wants mount notifications so that it can do the
+desktop pop-up thing.   Is that correct?
 
-Tested-by: hyeongseok.kim <hyeongseok.kim@lge.com>
-Reviewed-by: hyeongseok.kim <hyeongseok.kim@lge.com>
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
----
- fs/fat/fatent.c |  103 ++++++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 75 insertions(+), 28 deletions(-)
+But that doesn't apply to automounts at all.  A new mount performed by
+automount is uninteresting to to desktops, since it's triggered by
+crossing the automount point (i.e. a normal path lookup), not an
+external event like inserting a usb stick, etc...
 
-diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-index 3647c65..bbfe18c 100644
---- a/fs/fat/fatent.c	2020-04-01 23:57:18.572871992 +0900
-+++ b/fs/fat/fatent.c	2020-04-01 23:57:35.256611854 +0900
-@@ -632,20 +632,80 @@ error:
- }
- EXPORT_SYMBOL_GPL(fat_free_clusters);
- 
--/* 128kb is the whole sectors for FAT12 and FAT16 */
--#define FAT_READA_SIZE		(128 * 1024)
-+struct fatent_ra {
-+	sector_t cur;
-+	sector_t limit;
-+
-+	unsigned int ra_blocks;
-+	sector_t ra_advance;
-+	sector_t ra_next;
-+	sector_t ra_limit;
-+};
- 
--static void fat_ent_reada(struct super_block *sb, struct fat_entry *fatent,
--			  unsigned long reada_blocks)
-+static void fat_ra_init(struct super_block *sb, struct fatent_ra *ra,
-+			struct fat_entry *fatent, int ent_limit)
- {
--	const struct fatent_operations *ops = MSDOS_SB(sb)->fatent_ops;
--	sector_t blocknr;
--	int i, offset;
-+	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	const struct fatent_operations *ops = sbi->fatent_ops;
-+	sector_t blocknr, block_end;
-+	int offset;
-+	/*
-+	 * This is the sequential read, so ra_pages * 2 (but try to
-+	 * align the optimal hardware IO size).
-+	 * [BTW, 128kb covers the whole sectors for FAT12 and FAT16]
-+	 */
-+	unsigned long ra_pages = sb->s_bdi->ra_pages;
-+	unsigned int reada_blocks;
-+
-+	if (ra_pages > sb->s_bdi->io_pages)
-+		ra_pages = rounddown(ra_pages, sb->s_bdi->io_pages);
-+	reada_blocks = ra_pages << (PAGE_SHIFT - sb->s_blocksize_bits + 1);
- 
-+	/* Initialize the range for sequential read */
- 	ops->ent_blocknr(sb, fatent->entry, &offset, &blocknr);
-+	ops->ent_blocknr(sb, ent_limit - 1, &offset, &block_end);
-+	ra->cur = 0;
-+	ra->limit = (block_end + 1) - blocknr;
-+
-+	/* Advancing the window at half size */
-+	ra->ra_blocks = reada_blocks >> 1;
-+	ra->ra_advance = ra->cur;
-+	ra->ra_next = ra->cur;
-+	ra->ra_limit = ra->cur + min_t(sector_t, reada_blocks, ra->limit);
-+}
- 
--	for (i = 0; i < reada_blocks; i++)
--		sb_breadahead(sb, blocknr + i);
-+/* Assuming to be called before reading a new block (increments ->cur). */
-+static void fat_ent_reada(struct super_block *sb, struct fatent_ra *ra,
-+			  struct fat_entry *fatent)
-+{
-+	if (ra->ra_next >= ra->ra_limit)
-+		return;
-+
-+	if (ra->cur >= ra->ra_advance) {
-+		struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+		const struct fatent_operations *ops = sbi->fatent_ops;
-+		struct blk_plug plug;
-+		sector_t blocknr, diff;
-+		int offset;
-+
-+		ops->ent_blocknr(sb, fatent->entry, &offset, &blocknr);
-+
-+		diff = blocknr - ra->cur;
-+		blk_start_plug(&plug);
-+		/*
-+		 * FIXME: we would want to directly use the bio with
-+		 * pages to reduce the number of segments.
-+		 */
-+		for (; ra->ra_next < ra->ra_limit; ra->ra_next++)
-+			sb_breadahead(sb, ra->ra_next + diff);
-+		blk_finish_plug(&plug);
-+
-+		/* Advance the readahead window */
-+		ra->ra_advance += ra->ra_blocks;
-+		ra->ra_limit += min_t(sector_t,
-+				      ra->ra_blocks, ra->limit - ra->ra_limit);
-+	}
-+	ra->cur++;
- }
- 
- int fat_count_free_clusters(struct super_block *sb)
-@@ -653,27 +713,20 @@ int fat_count_free_clusters(struct super
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	const struct fatent_operations *ops = sbi->fatent_ops;
- 	struct fat_entry fatent;
--	unsigned long reada_blocks, reada_mask, cur_block;
-+	struct fatent_ra fatent_ra;
- 	int err = 0, free;
- 
- 	lock_fat(sbi);
- 	if (sbi->free_clusters != -1 && sbi->free_clus_valid)
- 		goto out;
- 
--	reada_blocks = FAT_READA_SIZE >> sb->s_blocksize_bits;
--	reada_mask = reada_blocks - 1;
--	cur_block = 0;
--
- 	free = 0;
- 	fatent_init(&fatent);
- 	fatent_set_entry(&fatent, FAT_START_ENT);
-+	fat_ra_init(sb, &fatent_ra, &fatent, sbi->max_cluster);
- 	while (fatent.entry < sbi->max_cluster) {
- 		/* readahead of fat blocks */
--		if ((cur_block & reada_mask) == 0) {
--			unsigned long rest = sbi->fat_length - cur_block;
--			fat_ent_reada(sb, &fatent, min(reada_blocks, rest));
--		}
--		cur_block++;
-+		fat_ent_reada(sb, &fatent_ra, &fatent);
- 
- 		err = fat_ent_read_block(sb, &fatent);
- 		if (err)
-@@ -707,9 +760,9 @@ int fat_trim_fs(struct inode *inode, str
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	const struct fatent_operations *ops = sbi->fatent_ops;
- 	struct fat_entry fatent;
-+	struct fatent_ra fatent_ra;
- 	u64 ent_start, ent_end, minlen, trimmed = 0;
- 	u32 free = 0;
--	unsigned long reada_blocks, reada_mask, cur_block = 0;
- 	int err = 0;
- 
- 	/*
-@@ -727,19 +780,13 @@ int fat_trim_fs(struct inode *inode, str
- 	if (ent_end >= sbi->max_cluster)
- 		ent_end = sbi->max_cluster - 1;
- 
--	reada_blocks = FAT_READA_SIZE >> sb->s_blocksize_bits;
--	reada_mask = reada_blocks - 1;
--
- 	fatent_init(&fatent);
- 	lock_fat(sbi);
- 	fatent_set_entry(&fatent, ent_start);
-+	fat_ra_init(sb, &fatent_ra, &fatent, ent_end + 1);
- 	while (fatent.entry <= ent_end) {
- 		/* readahead of fat blocks */
--		if ((cur_block & reada_mask) == 0) {
--			unsigned long rest = sbi->fat_length - cur_block;
--			fat_ent_reada(sb, &fatent, min(reada_blocks, rest));
--		}
--		cur_block++;
-+		fat_ent_reada(sb, &fatent_ra, &fatent);
- 
- 		err = fat_ent_read_block(sb, &fatent);
- 		if (err)
-_
+Am I missing something?
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Maybe the solution is to just allow filtering out such notifications
+at the source, so automount triggers don't generate events for
+systemd.
+
+Thanks,
+Miklos
