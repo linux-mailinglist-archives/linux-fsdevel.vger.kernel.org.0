@@ -2,144 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A88319C331
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 15:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C5319C3BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 16:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387695AbgDBNwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 09:52:31 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33522 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387652AbgDBNwa (ORCPT
+        id S2388264AbgDBOOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 10:14:44 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35384 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732687AbgDBOOo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 09:52:30 -0400
-Received: by mail-ed1-f66.google.com with SMTP id z65so4237467ede.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Apr 2020 06:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=38tDIv0KNYRGjWQpLV5pSNvP7JpdlyIKdGeo6UD55p0=;
-        b=mHf1i89rxwD/U2z1mjMQcSxAomeWc1se7NI0BXPkvalHMI/UmRHR8zxEzBwhHrRpie
-         lfZPvoKsJex5e+99/6K6TY/U0Oi1q15Kr12GW6oIbLommTSuH7t+hSeQWFea4nTjlB3V
-         95kmrieGk5HvIN6/0NbisdyXcDbd6kLMkqZLw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=38tDIv0KNYRGjWQpLV5pSNvP7JpdlyIKdGeo6UD55p0=;
-        b=ghpd08Sl5fYuJsFkvGFQWTrjuNB9r4RhGRVcpxUNhkeM6fElamBKv0rSf0yryodhqZ
-         L86awMWXQcfpcbbAkAbsWAYQuPjQppUzDZg6fPvc+4eG45NzeHxabjuLjHgB+OWYQL+X
-         7vP3AxaDR4Yaj1uWKCD8iGQXC+DyEvVloH5h8WTC9EtWd03YfArEVjLAb4pjSSLPTMIK
-         Rkr/4tKx8dju2eQn4b2WOJUVCqCAtKSCE3gfz+Sg03woHrt9TtQr0aw5cHKRp4QYBO3E
-         gEY4O8XJBvlOES78Vra3IkA/VNMw42z9QXk+N5ZMYB7VNoBg77fhlbKIWZZbr1qpnxsj
-         kpOg==
-X-Gm-Message-State: AGi0PuYGKaIiCSK3RpBs9Ag3tLB/zo/17VBO6D+i+AJDUogmwoJlr58M
-        s3TgSfRpBxOrbihD4e+O0uHcLE7TuKQUWfP9d3zLcmKp
-X-Google-Smtp-Source: APiQypKo8OvyZ+/BkGsIAPV2v3O2scZTxPKXxe0JzG0Tp6kSAFDmG+B5Al7t8aLcLk3Z9HYXKLOkQwoo6oYOkZibBjQ=
-X-Received: by 2002:a17:906:b351:: with SMTP id cd17mr3373636ejb.351.1585835548323;
- Thu, 02 Apr 2020 06:52:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein> <1445647.1585576702@warthog.procyon.org.uk>
- <2418286.1585691572@warthog.procyon.org.uk> <20200401144109.GA29945@gardel-login>
- <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
- <2590640.1585757211@warthog.procyon.org.uk> <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
- <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
-In-Reply-To: <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 2 Apr 2020 15:52:16 +0200
-Message-ID: <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+        Thu, 2 Apr 2020 10:14:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1585836882;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jHomtIlfVWCjz0uqN5tmjf5fA1sQAGrA5th4ZK/FkAU=;
+        b=cuX86C/a120lvfm63jNnZRIB4mcW1LHqbj7OC1tbBMk6dxVYNYzk4jsONk97naTx363Wxh
+        XGKQnK7c090YpVWMi5wNXLerWGfPOQ2aIU5fKg76MPrKjNvsD6UbQCq051pHKP3j6JmIMo
+        E2+iyNeUCgMaqIWSA/3J7pcnIFqX/LQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-263-1BusTZ8oOt2-QFfQoMK6lw-1; Thu, 02 Apr 2020 10:14:38 -0400
+X-MC-Unique: 1BusTZ8oOt2-QFfQoMK6lw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AFCDC800D50;
+        Thu,  2 Apr 2020 14:14:34 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.194.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39C1899E16;
+        Thu,  2 Apr 2020 14:14:27 +0000 (UTC)
+Date:   Thu, 2 Apr 2020 16:14:24 +0200
+From:   Karel Zak <kzak@redhat.com>
 To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
+Message-ID: <20200402141424.3zyphot2kjf5vaoo@ws.net.home>
+References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
+ <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
+ <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
+ <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com>
+ <2465266.1585729649@warthog.procyon.org.uk>
+ <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
+ <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 2, 2020 at 4:52 AM Ian Kent <raven@themaw.net> wrote:
->
-> On Wed, 2020-04-01 at 18:40 +0200, Miklos Szeredi wrote:
-> > On Wed, Apr 1, 2020 at 6:07 PM David Howells <dhowells@redhat.com>
-> > wrote:
-> > > Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > > I've still not heard a convincing argument in favor of a syscall.
-> > >
-> > > From your own results, scanning 10000 mounts through mountfs and
-> > > reading just
-> > > two values from each is an order of magnitude slower without the
-> > > effect of the
-> > > dentry/inode caches.  It gets faster on the second run because the
-> > > mountfs
-> > > dentries and inodes are cached - but at a cost of >205MiB of
-> > > RAM.  And it's
-> > > *still* slower than fsinfo().
-> >
-> > Already told you that we can just delete the dentry on dput_final, so
-> > the memory argument is immaterial.
-> >
-> > And the speed argument also, because there's no use case where that
-> > would make a difference.  You keep bringing up the notification queue
-> > overrun when watching a subtree, but that's going to be painful with
-> > fsinfo(2) as well.   If that's a relevant use case (not saying it's
-> > true), might as well add a /mnt/MNT_ID/subtree_info (trivial again)
-> > that contains all information for the subtree.  Have fun implementing
-> > that with fsinfo(2).
->
-> Forgive me for not trawling through your patch to work this out
-> but how does a poll on a path get what's needed to get mount info.
->
-> Or, more specifically, how does one get what's needed to go directly
-> to the place to get mount info. when something in the tree under the
-> polled path changes (mount/umount). IIUC poll alone won't do subtree
-> change monitoring?
+On Thu, Apr 02, 2020 at 09:38:20AM +0800, Ian Kent wrote:
+> I prefer the system call interface and I'm not offering justification
+> for that other than a general dislike (and on occasion outright
+> frustration) of pretty much every proc implementation I have had to
+> look at.
 
-The mechanisms are basically the same as with fsinfo(2).   You can get
-to the mountfs entry through the mount ID or through a proc/fd/ type
-symlink.  So if you have a path, there are two options:
+Frankly, I'm modest, what about to have both interfaces in kernel --
+fsinfo() as well mountfs? It's nothing unusual for example for block
+devices to have attribute accessible by /sys as well as by ioctl().
 
- - find out the mount ID belonging to that path and go to /mountfs/$mntid/
- - open the path with fd = open(path, O_PATH) and the go to
-/proc/self/fdmount/$fd/
+I can imagine that for complex task or performance sensitive tasks
+it's better to use fsinfo(), but in another simple use-cases (for
+example to convert mountpoint to device name in shell) is better to
+read /proc/.../<atrtr>.
 
-Currently the only way to find the mount id from a path is by parsing
-/proc/self/fdinfo/$fd.  It is trivial, however, to extend statx(2) to
-return it directly from a path.   Also the mount notification queue
-that David implemented contains the mount ID of the changed mount.
+    Karel
 
-> Don't get me wrong, neither the proc nor the fsinfo implementations
-> deal with the notification storms that cause much of the problem we
-> see now.
->
-> IMHO that's a separate and very difficult problem in itself that
-> can't even be considered until getting the information efficiently
-> is resolved.
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-This mount notification storm issue got me thinking.   If I understand
-correctly, systemd wants mount notifications so that it can do the
-desktop pop-up thing.   Is that correct?
-
-But that doesn't apply to automounts at all.  A new mount performed by
-automount is uninteresting to to desktops, since it's triggered by
-crossing the automount point (i.e. a normal path lookup), not an
-external event like inserting a usb stick, etc...
-
-Am I missing something?
-
-Maybe the solution is to just allow filtering out such notifications
-at the source, so automount triggers don't generate events for
-systemd.
-
-Thanks,
-Miklos
