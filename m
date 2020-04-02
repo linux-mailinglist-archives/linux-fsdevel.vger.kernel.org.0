@@ -2,78 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DBA119C16A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 14:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BA119C2A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 15:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbgDBMs6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 08:48:58 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36185 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbgDBMs6 (ORCPT
+        id S2388594AbgDBNaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 09:30:10 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:45466 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388274AbgDBNaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 08:48:58 -0400
-Received: by mail-lj1-f194.google.com with SMTP id b1so3108173ljp.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Apr 2020 05:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lYeihsyD1fgtsaaviUySdwiJfpdDCETrX8ZlRRWpccU=;
-        b=Abg7GjJoYnAraCf6aOfosb6FqG+eTOdeNrL3mrDUdjLkPCzuwCC0hPu9eq3CalyDF/
-         3ZiKdr5g5TqX0rMe7iojDUEzNW3864dXxaekOrcZyBwRMBfafEgVVDZt20YBe6aVjxmB
-         pH2URGJFaflrntTX+zCKhiK9vcUn2suRm7cWh9FNvScdn0zD3MiU9UdSOHKhobT47fq5
-         HAYbqPz/VzSKkmmyB4nbT8qCKbeq7cdyek2zZNL7c7GVLGHlsef7pSLwQCJ8OPROi9/+
-         kM5FTn7oTnigbKDXP1A6wYIFP36+ZZlP3k1yDmfPjq5nIqgHI6lTZGBOCKJf/dDeS96O
-         ZFpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lYeihsyD1fgtsaaviUySdwiJfpdDCETrX8ZlRRWpccU=;
-        b=QzQWpeCm2ZKHdB1KnNTG+RAwRM03hIpYFNA7g6BF2Po/H2tCWs8aDQsQmG2H0ktNdK
-         rbC8HBooWPeZOY2qfGJ6e/zEpO22qdi6egw8L/v+ZwHax2f2PBwenAGMcttsTCgCWfOI
-         eiThrP48h92mnTEA6zYBA82vqPnLwM45s/3iHWqy4ns1t2KxXdGFFS+oIvYqPYikr1iT
-         Vg1IGEXZ5Y4JxtolbITDC78yzYehbAu15PHBQg/EfgQvSj7f95bs/w6+P/IXzPR/aEyF
-         Pl8FLarHFsEdfr0qWRutpgl5e3jbcxIEMdDr4HwQUR/Pl5oA2HW0iChP4gxN5cumle8N
-         vQPQ==
-X-Gm-Message-State: AGi0PuY9D78X1CZevkJAIyjmmrAqvJp2rGxQzl2OZFKK5w6fb13+iRX/
-        2wrNYvhvZ5E8ighJqcpkaetgBg==
-X-Google-Smtp-Source: APiQypKp1RSSi+KJ9nyHwlVlnanUdnQdtiTt1QU8FU/HfLDSUahcRJzq4dyXY4ovVbElFTtpO/nXLg==
-X-Received: by 2002:a2e:9912:: with SMTP id v18mr1818390lji.199.1585831735731;
-        Thu, 02 Apr 2020 05:48:55 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id m11sm4164861lfj.90.2020.04.02.05.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2020 05:48:54 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 0B0711020A6; Thu,  2 Apr 2020 15:48:54 +0300 (+03)
-Date:   Thu, 2 Apr 2020 15:48:54 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Samuel Williams <samuel.williams@oriontransfer.co.nz>
-Cc:     adobriyan@gmail.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix alignment of value in /proc/$pid/smaps
-Message-ID: <20200402124854.n3wteh22uputorz3@box>
-References: <20191230084125.267040-1-samuel.williams@oriontransfer.co.nz>
+        Thu, 2 Apr 2020 09:30:10 -0400
+X-Greylist: delayed 504 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Apr 2020 09:30:09 EDT
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 0D5B312F211;
+        Thu,  2 Apr 2020 22:21:45 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-18) with ESMTPS id 032DLh4e005613
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Thu, 2 Apr 2020 22:21:44 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-18) with ESMTPS id 032DLh7I041706
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Thu, 2 Apr 2020 22:21:43 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id 032DLhlQ041705;
+        Thu, 2 Apr 2020 22:21:43 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     hyeongseok.kim@lge.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: fat: Improve the readahead for FAT entries
+Date:   Thu, 02 Apr 2020 22:21:43 +0900
+Message-ID: <87eet6rpjs.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230084125.267040-1-samuel.williams@oriontransfer.co.nz>
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 09:41:25PM +1300, Samuel Williams wrote:
-> The /proc/$pid/smaps output has an alignment issue for the field
-> FilePmdMapped and THPeligible.
-> 
-> Increases the alignment of FilePmdMapped by 1 space, and converts the
-> alignment of THPeligible to use spaces instead of tabs, to be consistent
-> with the other fields.
-> 
-> Signed-off-by: Samuel Williams <samuel.williams@oriontransfer.co.nz>
+Current readahead for FAT entries is very simple but is having some
+flaws, so it is not working well for some environments. This patch
+improves the readahead more or less.
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+The key points of modification are,
+
+  - make the readahead size tunable by using bdi->ra_pages
+  - care the bdi->io_pages to avoid the small size I/O request
+  - update readahead window before fully exhausting
+
+With this patch, on slow USB connected 2TB hdd:
+
+[before]
+383.18sec
+
+[after]
+51.03sec
+
+Tested-by: hyeongseok.kim <hyeongseok.kim@lge.com>
+Reviewed-by: hyeongseok.kim <hyeongseok.kim@lge.com>
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+ fs/fat/fatent.c |  103 ++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 75 insertions(+), 28 deletions(-)
+
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index 3647c65..bbfe18c 100644
+--- a/fs/fat/fatent.c	2020-04-01 23:57:18.572871992 +0900
++++ b/fs/fat/fatent.c	2020-04-01 23:57:35.256611854 +0900
+@@ -632,20 +632,80 @@ error:
+ }
+ EXPORT_SYMBOL_GPL(fat_free_clusters);
+ 
+-/* 128kb is the whole sectors for FAT12 and FAT16 */
+-#define FAT_READA_SIZE		(128 * 1024)
++struct fatent_ra {
++	sector_t cur;
++	sector_t limit;
++
++	unsigned int ra_blocks;
++	sector_t ra_advance;
++	sector_t ra_next;
++	sector_t ra_limit;
++};
+ 
+-static void fat_ent_reada(struct super_block *sb, struct fat_entry *fatent,
+-			  unsigned long reada_blocks)
++static void fat_ra_init(struct super_block *sb, struct fatent_ra *ra,
++			struct fat_entry *fatent, int ent_limit)
+ {
+-	const struct fatent_operations *ops = MSDOS_SB(sb)->fatent_ops;
+-	sector_t blocknr;
+-	int i, offset;
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	const struct fatent_operations *ops = sbi->fatent_ops;
++	sector_t blocknr, block_end;
++	int offset;
++	/*
++	 * This is the sequential read, so ra_pages * 2 (but try to
++	 * align the optimal hardware IO size).
++	 * [BTW, 128kb covers the whole sectors for FAT12 and FAT16]
++	 */
++	unsigned long ra_pages = sb->s_bdi->ra_pages;
++	unsigned int reada_blocks;
++
++	if (ra_pages > sb->s_bdi->io_pages)
++		ra_pages = rounddown(ra_pages, sb->s_bdi->io_pages);
++	reada_blocks = ra_pages << (PAGE_SHIFT - sb->s_blocksize_bits + 1);
+ 
++	/* Initialize the range for sequential read */
+ 	ops->ent_blocknr(sb, fatent->entry, &offset, &blocknr);
++	ops->ent_blocknr(sb, ent_limit - 1, &offset, &block_end);
++	ra->cur = 0;
++	ra->limit = (block_end + 1) - blocknr;
++
++	/* Advancing the window at half size */
++	ra->ra_blocks = reada_blocks >> 1;
++	ra->ra_advance = ra->cur;
++	ra->ra_next = ra->cur;
++	ra->ra_limit = ra->cur + min_t(sector_t, reada_blocks, ra->limit);
++}
+ 
+-	for (i = 0; i < reada_blocks; i++)
+-		sb_breadahead(sb, blocknr + i);
++/* Assuming to be called before reading a new block (increments ->cur). */
++static void fat_ent_reada(struct super_block *sb, struct fatent_ra *ra,
++			  struct fat_entry *fatent)
++{
++	if (ra->ra_next >= ra->ra_limit)
++		return;
++
++	if (ra->cur >= ra->ra_advance) {
++		struct msdos_sb_info *sbi = MSDOS_SB(sb);
++		const struct fatent_operations *ops = sbi->fatent_ops;
++		struct blk_plug plug;
++		sector_t blocknr, diff;
++		int offset;
++
++		ops->ent_blocknr(sb, fatent->entry, &offset, &blocknr);
++
++		diff = blocknr - ra->cur;
++		blk_start_plug(&plug);
++		/*
++		 * FIXME: we would want to directly use the bio with
++		 * pages to reduce the number of segments.
++		 */
++		for (; ra->ra_next < ra->ra_limit; ra->ra_next++)
++			sb_breadahead(sb, ra->ra_next + diff);
++		blk_finish_plug(&plug);
++
++		/* Advance the readahead window */
++		ra->ra_advance += ra->ra_blocks;
++		ra->ra_limit += min_t(sector_t,
++				      ra->ra_blocks, ra->limit - ra->ra_limit);
++	}
++	ra->cur++;
+ }
+ 
+ int fat_count_free_clusters(struct super_block *sb)
+@@ -653,27 +713,20 @@ int fat_count_free_clusters(struct super
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+ 	const struct fatent_operations *ops = sbi->fatent_ops;
+ 	struct fat_entry fatent;
+-	unsigned long reada_blocks, reada_mask, cur_block;
++	struct fatent_ra fatent_ra;
+ 	int err = 0, free;
+ 
+ 	lock_fat(sbi);
+ 	if (sbi->free_clusters != -1 && sbi->free_clus_valid)
+ 		goto out;
+ 
+-	reada_blocks = FAT_READA_SIZE >> sb->s_blocksize_bits;
+-	reada_mask = reada_blocks - 1;
+-	cur_block = 0;
+-
+ 	free = 0;
+ 	fatent_init(&fatent);
+ 	fatent_set_entry(&fatent, FAT_START_ENT);
++	fat_ra_init(sb, &fatent_ra, &fatent, sbi->max_cluster);
+ 	while (fatent.entry < sbi->max_cluster) {
+ 		/* readahead of fat blocks */
+-		if ((cur_block & reada_mask) == 0) {
+-			unsigned long rest = sbi->fat_length - cur_block;
+-			fat_ent_reada(sb, &fatent, min(reada_blocks, rest));
+-		}
+-		cur_block++;
++		fat_ent_reada(sb, &fatent_ra, &fatent);
+ 
+ 		err = fat_ent_read_block(sb, &fatent);
+ 		if (err)
+@@ -707,9 +760,9 @@ int fat_trim_fs(struct inode *inode, str
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+ 	const struct fatent_operations *ops = sbi->fatent_ops;
+ 	struct fat_entry fatent;
++	struct fatent_ra fatent_ra;
+ 	u64 ent_start, ent_end, minlen, trimmed = 0;
+ 	u32 free = 0;
+-	unsigned long reada_blocks, reada_mask, cur_block = 0;
+ 	int err = 0;
+ 
+ 	/*
+@@ -727,19 +780,13 @@ int fat_trim_fs(struct inode *inode, str
+ 	if (ent_end >= sbi->max_cluster)
+ 		ent_end = sbi->max_cluster - 1;
+ 
+-	reada_blocks = FAT_READA_SIZE >> sb->s_blocksize_bits;
+-	reada_mask = reada_blocks - 1;
+-
+ 	fatent_init(&fatent);
+ 	lock_fat(sbi);
+ 	fatent_set_entry(&fatent, ent_start);
++	fat_ra_init(sb, &fatent_ra, &fatent, ent_end + 1);
+ 	while (fatent.entry <= ent_end) {
+ 		/* readahead of fat blocks */
+-		if ((cur_block & reada_mask) == 0) {
+-			unsigned long rest = sbi->fat_length - cur_block;
+-			fat_ent_reada(sb, &fatent, min(reada_blocks, rest));
+-		}
+-		cur_block++;
++		fat_ent_reada(sb, &fatent_ra, &fatent);
+ 
+ 		err = fat_ent_read_block(sb, &fatent);
+ 		if (err)
+_
 
 -- 
- Kirill A. Shutemov
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
