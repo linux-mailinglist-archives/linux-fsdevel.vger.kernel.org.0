@@ -2,96 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C5319C3BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 16:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A43B19C45F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 16:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388264AbgDBOOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Apr 2020 10:14:44 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:35384 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732687AbgDBOOo (ORCPT
+        id S2388381AbgDBOg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Apr 2020 10:36:26 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:51066 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbgDBOg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Apr 2020 10:14:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1585836882;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jHomtIlfVWCjz0uqN5tmjf5fA1sQAGrA5th4ZK/FkAU=;
-        b=cuX86C/a120lvfm63jNnZRIB4mcW1LHqbj7OC1tbBMk6dxVYNYzk4jsONk97naTx363Wxh
-        XGKQnK7c090YpVWMi5wNXLerWGfPOQ2aIU5fKg76MPrKjNvsD6UbQCq051pHKP3j6JmIMo
-        E2+iyNeUCgMaqIWSA/3J7pcnIFqX/LQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-1BusTZ8oOt2-QFfQoMK6lw-1; Thu, 02 Apr 2020 10:14:38 -0400
-X-MC-Unique: 1BusTZ8oOt2-QFfQoMK6lw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AFCDC800D50;
-        Thu,  2 Apr 2020 14:14:34 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.194.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39C1899E16;
-        Thu,  2 Apr 2020 14:14:27 +0000 (UTC)
-Date:   Thu, 2 Apr 2020 16:14:24 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
+        Thu, 2 Apr 2020 10:36:26 -0400
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
+        by gardel.0pointer.net (Postfix) with ESMTP id 7AF41E80A73;
+        Thu,  2 Apr 2020 16:36:24 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id 13E16160337; Thu,  2 Apr 2020 16:36:24 +0200 (CEST)
+Date:   Thu, 2 Apr 2020 16:36:23 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS list <linux-nfs@vger.kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] VFS: Filesystem information [ver #19]
-Message-ID: <20200402141424.3zyphot2kjf5vaoo@ws.net.home>
-References: <158454408854.2864823.5910520544515668590.stgit@warthog.procyon.org.uk>
- <CAJfpeguaiicjS2StY5m=8H7BCjq6PLxMsWE3Mx_jYR1foDWVTg@mail.gmail.com>
- <50caf93782ba1d66bd6acf098fb8dcb0ecc98610.camel@themaw.net>
- <CAJfpegvvMVoNp1QeXEZiNucCeuUeDP4tKqVfq2F4koQKzjKmvw@mail.gmail.com>
- <2465266.1585729649@warthog.procyon.org.uk>
- <CAJfpegsyeJmH3zJuseaAAY06fzgavSzpOtYr-1Mw8GR0cLcQbA@mail.gmail.com>
- <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200402143623.GB31529@gardel-login>
+References: <20200330211700.g7evnuvvjenq3fzm@wittgenstein>
+ <1445647.1585576702@warthog.procyon.org.uk>
+ <2418286.1585691572@warthog.procyon.org.uk>
+ <20200401144109.GA29945@gardel-login>
+ <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
+ <2590640.1585757211@warthog.procyon.org.uk>
+ <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+ <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+ <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <459876eceda4bc68212faf4ed3d4bcb8570aa105.camel@themaw.net>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 02, 2020 at 09:38:20AM +0800, Ian Kent wrote:
-> I prefer the system call interface and I'm not offering justification
-> for that other than a general dislike (and on occasion outright
-> frustration) of pretty much every proc implementation I have had to
-> look at.
+On Do, 02.04.20 15:52, Miklos Szeredi (miklos@szeredi.hu) wrote:
 
-Frankly, I'm modest, what about to have both interfaces in kernel --
-fsinfo() as well mountfs? It's nothing unusual for example for block
-devices to have attribute accessible by /sys as well as by ioctl().
+> > Don't get me wrong, neither the proc nor the fsinfo implementations
+> > deal with the notification storms that cause much of the problem we
+> > see now.
+> >
+> > IMHO that's a separate and very difficult problem in itself that
+> > can't even be considered until getting the information efficiently
+> > is resolved.
+>
+> This mount notification storm issue got me thinking.   If I understand
+> correctly, systemd wants mount notifications so that it can do the
+> desktop pop-up thing.   Is that correct?
 
-I can imagine that for complex task or performance sensitive tasks
-it's better to use fsinfo(), but in another simple use-cases (for
-example to convert mountpoint to device name in shell) is better to
-read /proc/.../<atrtr>.
+This has little to do with the desktop. Startup scheduling is
+mostly about figuring out when we can do the next step of startup, and
+to a big amount this means issuing a mount command of some form, then
+waiting until it is established, then invoking the next and so on, and
+when the right mounts are established start the right services that
+require them and so on. And with today's system complexity with
+storage daemons and so on this all becomes a complex network of
+concurrent dependencies.
 
-    Karel
+Most mounts are established on behalf of pid 1 itself, for those we
+could just wait until the mount syscall/command completes (and we
+do). But there's plenty cases where that's not the case, hence we need
+to make sure we follow system mount table state as a whole, regardless
+if its systemd itself that triggers some mount or something else (for
+example some shell script, udisks, …).
 
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+> But that doesn't apply to automounts at all.  A new mount performed by
+> automount is uninteresting to to desktops, since it's triggered by
+> crossing the automount point (i.e. a normal path lookup), not an
+> external event like inserting a usb stick, etc...
 
+systemd does not propagate mount events to desktops.
+
+You appear to be thinking about the "udisks" project or so?
+
+Lennart
+
+--
+Lennart Poettering, Berlin
