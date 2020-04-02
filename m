@@ -2,51 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DB0A19B935
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 02:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1468919B93C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Apr 2020 02:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733311AbgDBAAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Apr 2020 20:00:16 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39374 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733287AbgDBAAP (ORCPT
+        id S1733239AbgDBAAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Apr 2020 20:00:14 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44805 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732560AbgDBAAN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Apr 2020 20:00:15 -0400
-Received: by mail-pj1-f68.google.com with SMTP id z3so767812pjr.4;
-        Wed, 01 Apr 2020 17:00:14 -0700 (PDT)
+        Wed, 1 Apr 2020 20:00:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b72so825671pfb.11;
+        Wed, 01 Apr 2020 17:00:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=w+waUt4y2u1TasC9CABKLSfdzELViZORJkYCPcxWv6M=;
-        b=ej3LnOrYDOrRWYN6TKpdtX+/Dq+4mU5e6hZi0eunaCl/vB763WNsB4Bu+/cyCelTax
-         edgTOXJDn5Ke4GIER6o5U1xZVFtz3NwI9VQ//xdxiudPzGcenYocd3bON8qJsnAYK7s7
-         OJXt8m7wQuoc7qSafNkThe/LhVRuXTV0gl33kkcqHddWcGOzEZv8MQ6vtd2O0mMo7El7
-         3FkpvgB0pgGShAjDNK2gFpPkwYC0aNrNYmkB7vPekrmlFOpzoNwy4xld74fjj7hoHgcS
-         Kw8YtNfF9/cPo4LPgyL7QKAXz7QuUnwGKY0x3jn2t4sF0QJWO/kr1/J7Nh7LULfPLgKj
-         8pgg==
-X-Gm-Message-State: AGi0PuY59gEpYwM/cGmzz31kmiAAFSmiMclJhEETgmTjV8ilSoZThqKH
-        17WaDMWz/t1tWeDzeiAbv3GSxTte4SA=
-X-Google-Smtp-Source: APiQypIwnylEuaIJuJLNziJlvP3IeVk11ni6vNFos9tjKBVX1i0Hvbdh/7hbCeL6EDwv9wdD48HMZw==
-X-Received: by 2002:a17:902:b692:: with SMTP id c18mr384318pls.7.1585785613452;
-        Wed, 01 Apr 2020 17:00:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=IFwcC/w73MX4o2yQ8rfJAUpy9x+uzW31JyxuFegsf5o=;
+        b=M8tdxnMMrHpie5+x79htSm+WQsCttcDD3joPI9Yunrl74BPFoKg8XBH61EK0dgVgUB
+         Og8ssomY+8D0goIgxxP3Utw9dqC5pG0tlg4cRDQx6LbvNbOdnpkhiYOniuWfLMX6ThGZ
+         w2yiZsMLco988eX1jgtyzBEIg64wWFoRV+sFOm3VXaqa1DqEJo46L3T8lFiTd6tRd4j5
+         FrHHm4fjVUlbYaPJhiX/cQC5/u61jh8MYVkt+Ck7YR7zGfIJbNzh4gYu68Pr8f8QcwvH
+         CWpVQLkWuRcfVlUlhOk4SAEZoZ3shOtraShEmrdZuvGYolGS8aFkYBoJTtZISPKxS/Mh
+         w9ng==
+X-Gm-Message-State: AGi0PubcEu/hPz/cts6mY95+nVwv5fjRtqxuEl6y1gY0ce4gL8/dLyYd
+        yt91ir/RjP1LolplbiE2JGU=
+X-Google-Smtp-Source: APiQypKeCcDQDiyCN2rdAtJfDymVmvOrZ70v+7dz07bMma08br8CelIedf6QzSZmqp2A/+DOlwQxTQ==
+X-Received: by 2002:a63:78e:: with SMTP id 136mr691233pgh.181.1585785612494;
+        Wed, 01 Apr 2020 17:00:12 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id k24sm2282227pfi.196.2020.04.01.17.00.11
+        by smtp.gmail.com with ESMTPSA id y13sm2388379pfp.88.2020.04.01.17.00.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 01 Apr 2020 17:00:11 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 8808D40254; Thu,  2 Apr 2020 00:00:10 +0000 (UTC)
+        id 8FA2C4018C; Thu,  2 Apr 2020 00:00:10 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
         gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
         jack@suse.cz, ming.lei@redhat.com, nstange@suse.de
 Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC 0/3] block: address blktrace use-after-free
-Date:   Wed,  1 Apr 2020 23:59:59 +0000
-Message-Id: <20200402000002.7442-1-mcgrof@kernel.org>
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [RFC 1/3] block: move main block debugfs initialization to its own file
+Date:   Thu,  2 Apr 2020 00:00:00 +0000
+Message-Id: <20200402000002.7442-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <20200402000002.7442-1-mcgrof@kernel.org>
+References: <20200402000002.7442-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -54,46 +60,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Upstream kernel.org korg#205713 contends that there is a UAF in
-the core debugfs debugfs_remove() function, and has gone through
-pushing for a CVE for this, CVE-2019-19770.
+Single and multiqeueue block devices share some debugfs code. By
+moving this into its own file it makes it easier to expand and audit
+this shared code.
 
-If correct then parent dentries are not positive, and this would
-have implications far beyond this bug report. Thankfully, upon review
-with Nicolai, he wasn't buying it. His suspicions that this was just
-a blktrace issue were spot on, and this patch series demonstrates
-that, provides a reproducer, and provides a solution to the issue.
+This patch contains no functional changes.
 
-We there would like to contend CVE-2019-19770 as invalid. The
-implications suggested are not correct, and this issue is only
-triggerable with root, by shooting yourself on the foot by misuing
-blktrace.
-
-If you want this on a git tree, you can get it from linux-next
-20200401-blktrace-fix-uaf branch [2].
-
-Wider review, testing, and rants are appreciated.
-
-[0] https://bugzilla.kernel.org/show_bug.cgi?id=205713
-[1] https://nvd.nist.gov/vuln/detail/CVE-2019-19770
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20200401-blktrace-fix-uaf
-
-Luis Chamberlain (3):
-  block: move main block debugfs initialization to its own file
-  blktrace: fix debugfs use after free
-  block: avoid deferral of blk_release_queue() work
-
- block/Makefile               |  1 +
- block/blk-core.c             |  9 +--------
- block/blk-debugfs.c          | 27 +++++++++++++++++++++++++++
- block/blk-mq-debugfs.c       |  5 -----
- block/blk-sysfs.c            | 21 ++++++++-------------
- block/blk.h                  | 17 +++++++++++++++++
- include/linux/blktrace_api.h |  1 -
- kernel/trace/blktrace.c      | 19 ++++++++-----------
- 8 files changed, 62 insertions(+), 38 deletions(-)
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Omar Sandoval <osandov@fb.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ block/Makefile      |  1 +
+ block/blk-core.c    |  9 +--------
+ block/blk-debugfs.c | 15 +++++++++++++++
+ block/blk.h         |  7 +++++++
+ 4 files changed, 24 insertions(+), 8 deletions(-)
  create mode 100644 block/blk-debugfs.c
 
+diff --git a/block/Makefile b/block/Makefile
+index 206b96e9387f..1d3ab20505d8 100644
+--- a/block/Makefile
++++ b/block/Makefile
+@@ -10,6 +10,7 @@ obj-$(CONFIG_BLOCK) := bio.o elevator.o blk-core.o blk-sysfs.o \
+ 			blk-mq-sysfs.o blk-mq-cpumap.o blk-mq-sched.o ioctl.o \
+ 			genhd.o ioprio.o badblocks.o partitions/ blk-rq-qos.o
+ 
++obj-$(CONFIG_DEBUG_FS)		+= blk-debugfs.o
+ obj-$(CONFIG_BOUNCE)		+= bounce.o
+ obj-$(CONFIG_BLK_SCSI_REQUEST)	+= scsi_ioctl.o
+ obj-$(CONFIG_BLK_DEV_BSG)	+= bsg.o
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 7e4a1da0715e..5aaae7a1b338 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -48,10 +48,6 @@
+ #include "blk-pm.h"
+ #include "blk-rq-qos.h"
+ 
+-#ifdef CONFIG_DEBUG_FS
+-struct dentry *blk_debugfs_root;
+-#endif
+-
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_remap);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_rq_remap);
+ EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_complete);
+@@ -1796,10 +1792,7 @@ int __init blk_dev_init(void)
+ 
+ 	blk_requestq_cachep = kmem_cache_create("request_queue",
+ 			sizeof(struct request_queue), 0, SLAB_PANIC, NULL);
+-
+-#ifdef CONFIG_DEBUG_FS
+-	blk_debugfs_root = debugfs_create_dir("block", NULL);
+-#endif
++	blk_debugfs_register();
+ 
+ 	return 0;
+ }
+diff --git a/block/blk-debugfs.c b/block/blk-debugfs.c
+new file mode 100644
+index 000000000000..634dea4b1507
+--- /dev/null
++++ b/block/blk-debugfs.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Shared debugfs mq / non-mq functionality
++ */
++#include <linux/kernel.h>
++#include <linux/blkdev.h>
++#include <linux/debugfs.h>
++
++struct dentry *blk_debugfs_root;
++
++void blk_debugfs_register(void)
++{
++	blk_debugfs_root = debugfs_create_dir("block", NULL);
++}
+diff --git a/block/blk.h b/block/blk.h
+index 0a94ec68af32..86a66b614f08 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -487,5 +487,12 @@ struct request_queue *__blk_alloc_queue(int node_id);
+ int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ 		struct page *page, unsigned int len, unsigned int offset,
+ 		bool *same_page);
++#ifdef CONFIG_DEBUG_FS
++void blk_debugfs_register(void);
++#else
++static inline void blk_debugfs_register(void)
++{
++}
++#endif /* CONFIG_DEBUG_FS */
+ 
+ #endif /* BLK_INTERNAL_H */
 -- 
 2.25.1
 
