@@ -2,114 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BF6119D3D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 11:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1BF19D430
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 11:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbgDCJhF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 05:37:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47143 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbgDCJhF (ORCPT
+        id S2390695AbgDCJnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 05:43:24 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40978 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbgDCJnY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 05:37:05 -0400
-Received: from ip5f5bf7ec.dynamic.kabel-deutschland.de ([95.91.247.236] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jKIkI-0000BB-CT; Fri, 03 Apr 2020 09:36:14 +0000
-Date:   Fri, 3 Apr 2020 11:36:12 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     syzbot <syzbot+f675f964019f884dbd0f@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        allison@lohutok.net, areber@redhat.com, aubrey.li@linux.intel.com,
-        avagin@gmail.com, bfields@fieldses.org, christian@brauner.io,
-        cyphar@cyphar.com, ebiederm@xmission.com,
-        gregkh@linuxfoundation.org, guro@fb.com, jlayton@kernel.org,
-        joel@joelfernandes.org, keescook@chromium.org,
-        linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mhocko@suse.com, mingo@kernel.org,
-        peterz@infradead.org, sargun@sargun.me,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk
-Subject: Re: possible deadlock in send_sigurg
-Message-ID: <20200403093612.mtd7edubsng24uuh@wittgenstein>
-References: <00000000000011d66805a25cd73f@google.com>
- <20200403091135.GA3645@redhat.com>
+        Fri, 3 Apr 2020 05:43:24 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d24so2496130pll.8;
+        Fri, 03 Apr 2020 02:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=V/K/TopxgY/8Pfa0UGk/d52N4S8WjM3ZtpLq5otXWDg=;
+        b=nLRJFbXvcnX9KjvdLeliIAClVlFBtpYf8dR/MOzxugDqqjEXaG3M2s3fBH0MUS9vNl
+         d5byJptunL4LzCTFbC9z/84HwBQ1XTwCd7b9+4Dx/pkLAD5W7BqzYV9C6f9W9hyDuDI3
+         wkGbtWVXIOj7PO/cvaGLBfMEGyzAJJuFPZZgGGpVy8UancS6V/Vjke33v7+8zZyV6ggx
+         o4gkQGK7Z3zyxFFUHfOyX2crEth42imqyskO6rQ5RoklbXr6KsoCUwC9cXbEAxE4w47A
+         AMrpHAzlMfhfcer8ERrz9Vt6D0iZ2jLL6pk6QBj5Ttb49GrYdTTPH4r3xloaJ/Zaq+RK
+         qjjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=V/K/TopxgY/8Pfa0UGk/d52N4S8WjM3ZtpLq5otXWDg=;
+        b=Oguy+rJgRdnbqgcEE/7uf8sEv1NxSS7SpurxxoVXLCZGTzj94Sx90xXdCxEdv6b7Xg
+         nc6+2LjwS6CCrH9VonRWyUWlrOn6nZK/CQYWgkscYNO6Ee5gMOHBLJVyJd/qARXYncei
+         r731WY3tR2EuBVIMOtb7pbhysVDGkEjENtt85wVffFfrhFg+IQBXsKNaVGJYP4fXQwfg
+         gPhsUF7bJPLbu2jx5qImb+Xaf7ZvyhvAlUjP+H7Zg98C/HYdWJcTr9i4/vT3eBqyyPd0
+         e3xgG/z4+gqgWoJhet8H0sncHYIZCWsDN6Y6TncO3YE5s9qxP8yGGiiuJX3I6MLNXG16
+         7g6Q==
+X-Gm-Message-State: AGi0PuY1BGeao5nwBu1FYSscT/Wn/tR8S5cwrxAkXdqL5WpT1SlHFQpa
+        4nnZvvsGxd6QeuM1dWVDSfE=
+X-Google-Smtp-Source: APiQypKgzaEPql2QfLHfMCXRc3y1MZ8BdRgQhdTYpTU2xjaKbIbFQwq80Rz6RMeOZ9XNFArJ+MVGPA==
+X-Received: by 2002:a17:902:9f84:: with SMTP id g4mr7276136plq.2.1585907002336;
+        Fri, 03 Apr 2020 02:43:22 -0700 (PDT)
+Received: from localhost (60-241-117-97.tpgi.com.au. [60.241.117.97])
+        by smtp.gmail.com with ESMTPSA id w205sm5432553pfc.75.2020.04.03.02.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2020 02:43:21 -0700 (PDT)
+Date:   Fri, 03 Apr 2020 19:43:14 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v11 0/8] Disable compat cruft on ppc64le v11
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        linuxppc-dev@lists.ozlabs.org, Michal Suchanek <msuchanek@suse.de>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+        <cover.1584620202.git.msuchanek@suse.de>
+        <1585898335.tckaz04a6x.astroid@bobo.none>
+        <1e00a725-9710-2b80-4aff-2f284b31d2e5@c-s.fr>
+In-Reply-To: <1e00a725-9710-2b80-4aff-2f284b31d2e5@c-s.fr>
 MIME-Version: 1.0
+User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1585906885.3dbukubyr8.astroid@bobo.none>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200403091135.GA3645@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 03, 2020 at 11:11:35AM +0200, Oleg Nesterov wrote:
-> On 04/02, syzbot wrote:
-> >
-> >                       lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
-> >                       __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-> >                       _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
-> >                       spin_lock include/linux/spinlock.h:353 [inline]
-> >                       proc_pid_make_inode+0x1f9/0x3c0 fs/proc/base.c:1880
-> 
-> Yes, spin_lock(wait_pidfd.lock) is not safe...
-> 
-> Eric, at first glance the fix is simple.
-> 
-> Oleg.
-> 
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
+Christophe Leroy's on April 3, 2020 5:26 pm:
+>=20
+>=20
+> Le 03/04/2020 =C3=A0 09:25, Nicholas Piggin a =C3=A9crit=C2=A0:
+>> Michal Suchanek's on March 19, 2020 10:19 pm:
+>>> Less code means less bugs so add a knob to skip the compat stuff.
+>>>
+>>> Changes in v2: saner CONFIG_COMPAT ifdefs
+>>> Changes in v3:
+>>>   - change llseek to 32bit instead of builing it unconditionally in fs
+>>>   - clanup the makefile conditionals
+>>>   - remove some ifdefs or convert to IS_DEFINED where possible
+>>> Changes in v4:
+>>>   - cleanup is_32bit_task and current_is_64bit
+>>>   - more makefile cleanup
+>>> Changes in v5:
+>>>   - more current_is_64bit cleanup
+>>>   - split off callchain.c 32bit and 64bit parts
+>>> Changes in v6:
+>>>   - cleanup makefile after split
+>>>   - consolidate read_user_stack_32
+>>>   - fix some checkpatch warnings
+>>> Changes in v7:
+>>>   - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+>>>   - remove leftover hunk
+>>>   - add review tags
+>>> Changes in v8:
+>>>   - consolidate valid_user_sp to fix it in the split callchain.c
+>>>   - fix build errors/warnings with PPC64 !COMPAT and PPC32
+>>> Changes in v9:
+>>>   - remove current_is_64bit()
+>>> Chanegs in v10:
+>>>   - rebase, sent together with the syscall cleanup
+>>> Changes in v11:
+>>>   - rebase
+>>>   - add MAINTAINERS pattern for ppc perf
+>>=20
+>> These all look good to me. I had some minor comment about one patch but
+>> not really a big deal and there were more cleanups on top of it, so I
+>> don't mind if it's merged as is.
+>>=20
+>> Actually I think we have a bit of stack reading fixes for 64s radix now
+>> (not a bug fix as such, but we don't need the hash fault logic in radix)=
+,
+>> so if I get around to that I can propose the changes in that series.
+>>=20
+>=20
+> As far as I can see, there is a v12
 
-Um, when did this lock get added to proc/base.c in the first place and
-why has it been abused for this?
-People just recently complained loudly about this in the
-cred_guard_mutex thread that abusing locks for things they weren't
-intended for is a bad idea...
+For the most part I was looking at the patches in mpe's next-test
+tree on github, if that's the v12 series, same comment applies but
+it's a pretty small nitpick.
 
-> index 74f948a6b621..9ec8c114aa60 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1839,9 +1839,9 @@ void proc_pid_evict_inode(struct proc_inode *ei)
->  	struct pid *pid = ei->pid;
->  
->  	if (S_ISDIR(ei->vfs_inode.i_mode)) {
-> -		spin_lock(&pid->wait_pidfd.lock);
-> +		spin_lock_irq(&pid->wait_pidfd.lock);
->  		hlist_del_init_rcu(&ei->sibling_inodes);
-> -		spin_unlock(&pid->wait_pidfd.lock);
-> +		spin_unlock_irq(&pid->wait_pidfd.lock);
->  	}
->  
->  	put_pid(pid);
-> @@ -1877,9 +1877,9 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
->  	/* Let the pid remember us for quick removal */
->  	ei->pid = pid;
->  	if (S_ISDIR(mode)) {
-> -		spin_lock(&pid->wait_pidfd.lock);
-> +		spin_lock_irq(&pid->wait_pidfd.lock);
->  		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-> -		spin_unlock(&pid->wait_pidfd.lock);
-> +		spin_unlock_irq(&pid->wait_pidfd.lock);
->  	}
->  
->  	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 1e730ea1dcd6..6b7ee76e1b36 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -123,9 +123,9 @@ void proc_invalidate_siblings_dcache(struct hlist_head *inodes, spinlock_t *lock
->  		if (!node)
->  			break;
->  		ei = hlist_entry(node, struct proc_inode, sibling_inodes);
-> -		spin_lock(lock);
-> +		spin_lock_irq(lock);
->  		hlist_del_init_rcu(&ei->sibling_inodes);
-> -		spin_unlock(lock);
-> +		spin_unlock_irq(lock);
->  
->  		inode = &ei->vfs_inode;
->  		sb = inode->i_sb;
-> 
+Thanks,
+Nick
+=
