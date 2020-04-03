@@ -2,53 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A129519D128
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 09:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F0819D12E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 09:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389510AbgDCHZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 03:25:20 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38965 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730889AbgDCHZU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 03:25:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k18so2379385pll.6;
-        Fri, 03 Apr 2020 00:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=gWN2/l3Nk/lqsKPF1eViKQ9o9AZt+XSnO9fYcexJ5do=;
-        b=i3oPTvsH5TefcZSZ/s6cffxKNlmPapTR0Q18gP6u0mf/PMRHwDbL2wMinlbhvtjzE9
-         KMyVIR96vM2c4ZYzaRNYjWN2UL+Dd+CnEUla7XPaBIMJ/hslJUXLoqHnMKXgJfJC9IAp
-         OWDPIN7DJ5qcvEKf2xLRfjwt1xPzCT3PfRjdbUbFXzbRM2Lb4wXi9irkzkWffxvnc5/F
-         KB8eJVttUWM3vacwK3+R777MHdc+WXvEqYKX1ZvYy5AL6Y45SbW/W9WZN1ICx/edWvmk
-         cLVPOd0BXu7Au8JXVDcwD5lTyHkgsWxs4z96cAVY0rv4QN5ptCxTRrZQkCNYJSUEJyyn
-         L6ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=gWN2/l3Nk/lqsKPF1eViKQ9o9AZt+XSnO9fYcexJ5do=;
-        b=KI7zYHQF47F20DM41plCmPVjO8jw6hFthvmD303ZRILTfDxKiCBi39fFxogdqYESO0
-         2vZP5GdTnegMRSCV+mdDwm9yY3zu5i2rZj2HphOdLRsPpArkflURmZIiuevoq4LyLQGq
-         pGGb1OVqwu0G75xaPpkDK7eRbF3nxVdaXNfTOOhMKmiIqxy8+EOIlEu/E1W7v/V5JpwQ
-         xE4TA4nRzn2BqHFqIeB3fBHR2FfRRV1ENnhfYyc9VrGze+rbqO8wl7VkfmEFpk3lRNL4
-         c6dzljWUhrzfs1E3uLpAeMzZBmeLNZFDHAZNfMMlm0m6wBaAklMXhX7XsL1xNv1xhVhh
-         jRdA==
-X-Gm-Message-State: AGi0PuaSITHjAdJU8n9VkyTRkM5WbjzbdSfcHa/PzvtdEU8DE9VNpeT+
-        JVvhK6Piq9ASihBlJCs89Q0=
-X-Google-Smtp-Source: APiQypLvOn0Dugjcw4rcQbIFXLiJdhks1PnmfqUpwNAhu3DD4RMhhi5GkyAqP+L0q44XeXBvYh6XbQ==
-X-Received: by 2002:a17:90a:35ce:: with SMTP id r72mr8190743pjb.126.1585898719557;
-        Fri, 03 Apr 2020 00:25:19 -0700 (PDT)
-Received: from localhost (60-241-117-97.tpgi.com.au. [60.241.117.97])
-        by smtp.gmail.com with ESMTPSA id l190sm5103624pfl.212.2020.04.03.00.25.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2020 00:25:18 -0700 (PDT)
-Date:   Fri, 03 Apr 2020 17:25:13 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
+        id S2387677AbgDCH07 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 03:26:59 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:15717 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730889AbgDCH07 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Apr 2020 03:26:59 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 48ts282dk9z9vBLM;
+        Fri,  3 Apr 2020 09:26:56 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=ptRdg/eo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id q7_0R8FodDcJ; Fri,  3 Apr 2020 09:26:56 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 48ts281Ly7z9vBLL;
+        Fri,  3 Apr 2020 09:26:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1585898816; bh=G/gE+3SR1+TZN2RTMUhJh+L+wYW4d0v6JEe81BP7dDo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ptRdg/eo9tW40fi+LHGtu5aDnwLwI2aX5PP7bewfPrpMSzpgGlJvE1yeNnHxxyqSR
+         2tQhGDeucgvb4b2+NyrAETGvtbXpRvazSbkKpkouiR7rDWL6307CWs+C8BTSEh2dHv
+         exsrh+i4rtv0rLsI/kvEbENe44ABNAZpCM/aIT3M=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 064FF8B943;
+        Fri,  3 Apr 2020 09:26:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id wpdS4NRykvtP; Fri,  3 Apr 2020 09:26:56 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BABD88B75B;
+        Fri,  3 Apr 2020 09:26:54 +0200 (CEST)
 Subject: Re: [PATCH v11 0/8] Disable compat cruft on ppc64le v11
-To:     linuxppc-dev@lists.ozlabs.org, Michal Suchanek <msuchanek@suse.de>
+To:     Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org,
+        Michal Suchanek <msuchanek@suse.de>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Allison Randal <allison@lohutok.net>,
@@ -58,7 +53,6 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
         "David S. Miller" <davem@davemloft.net>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Richter <erichte@linux.ibm.com>,
@@ -84,59 +78,68 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 References: <20200225173541.1549955-1-npiggin@gmail.com>
-        <cover.1584620202.git.msuchanek@suse.de>
-In-Reply-To: <cover.1584620202.git.msuchanek@suse.de>
+ <cover.1584620202.git.msuchanek@suse.de>
+ <1585898335.tckaz04a6x.astroid@bobo.none>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <1e00a725-9710-2b80-4aff-2f284b31d2e5@c-s.fr>
+Date:   Fri, 3 Apr 2020 09:26:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1585898335.tckaz04a6x.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1585898335.tckaz04a6x.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Michal Suchanek's on March 19, 2020 10:19 pm:
-> Less code means less bugs so add a knob to skip the compat stuff.
->=20
-> Changes in v2: saner CONFIG_COMPAT ifdefs
-> Changes in v3:
->  - change llseek to 32bit instead of builing it unconditionally in fs
->  - clanup the makefile conditionals
->  - remove some ifdefs or convert to IS_DEFINED where possible
-> Changes in v4:
->  - cleanup is_32bit_task and current_is_64bit
->  - more makefile cleanup
-> Changes in v5:
->  - more current_is_64bit cleanup
->  - split off callchain.c 32bit and 64bit parts
-> Changes in v6:
->  - cleanup makefile after split
->  - consolidate read_user_stack_32
->  - fix some checkpatch warnings
-> Changes in v7:
->  - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
->  - remove leftover hunk
->  - add review tags
-> Changes in v8:
->  - consolidate valid_user_sp to fix it in the split callchain.c
->  - fix build errors/warnings with PPC64 !COMPAT and PPC32
-> Changes in v9:
->  - remove current_is_64bit()
-> Chanegs in v10:
->  - rebase, sent together with the syscall cleanup
-> Changes in v11:
->  - rebase
->  - add MAINTAINERS pattern for ppc perf
 
-These all look good to me. I had some minor comment about one patch but=20
-not really a big deal and there were more cleanups on top of it, so I=20
-don't mind if it's merged as is.
 
-Actually I think we have a bit of stack reading fixes for 64s radix now
-(not a bug fix as such, but we don't need the hash fault logic in radix),
-so if I get around to that I can propose the changes in that series.
+Le 03/04/2020 à 09:25, Nicholas Piggin a écrit :
+> Michal Suchanek's on March 19, 2020 10:19 pm:
+>> Less code means less bugs so add a knob to skip the compat stuff.
+>>
+>> Changes in v2: saner CONFIG_COMPAT ifdefs
+>> Changes in v3:
+>>   - change llseek to 32bit instead of builing it unconditionally in fs
+>>   - clanup the makefile conditionals
+>>   - remove some ifdefs or convert to IS_DEFINED where possible
+>> Changes in v4:
+>>   - cleanup is_32bit_task and current_is_64bit
+>>   - more makefile cleanup
+>> Changes in v5:
+>>   - more current_is_64bit cleanup
+>>   - split off callchain.c 32bit and 64bit parts
+>> Changes in v6:
+>>   - cleanup makefile after split
+>>   - consolidate read_user_stack_32
+>>   - fix some checkpatch warnings
+>> Changes in v7:
+>>   - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
+>>   - remove leftover hunk
+>>   - add review tags
+>> Changes in v8:
+>>   - consolidate valid_user_sp to fix it in the split callchain.c
+>>   - fix build errors/warnings with PPC64 !COMPAT and PPC32
+>> Changes in v9:
+>>   - remove current_is_64bit()
+>> Chanegs in v10:
+>>   - rebase, sent together with the syscall cleanup
+>> Changes in v11:
+>>   - rebase
+>>   - add MAINTAINERS pattern for ppc perf
+> 
+> These all look good to me. I had some minor comment about one patch but
+> not really a big deal and there were more cleanups on top of it, so I
+> don't mind if it's merged as is.
+> 
+> Actually I think we have a bit of stack reading fixes for 64s radix now
+> (not a bug fix as such, but we don't need the hash fault logic in radix),
+> so if I get around to that I can propose the changes in that series.
+> 
 
-Thanks,
-Nick
-=
+As far as I can see, there is a v12
+
+Christophe
