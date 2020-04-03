@@ -2,155 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1BF19D430
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 11:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4BE19D4BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 12:13:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390695AbgDCJnY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 05:43:24 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40978 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727792AbgDCJnY (ORCPT
+        id S1727928AbgDCKM6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 06:12:58 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:56713 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbgDCKM6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 05:43:24 -0400
-Received: by mail-pl1-f195.google.com with SMTP id d24so2496130pll.8;
-        Fri, 03 Apr 2020 02:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=V/K/TopxgY/8Pfa0UGk/d52N4S8WjM3ZtpLq5otXWDg=;
-        b=nLRJFbXvcnX9KjvdLeliIAClVlFBtpYf8dR/MOzxugDqqjEXaG3M2s3fBH0MUS9vNl
-         d5byJptunL4LzCTFbC9z/84HwBQ1XTwCd7b9+4Dx/pkLAD5W7BqzYV9C6f9W9hyDuDI3
-         wkGbtWVXIOj7PO/cvaGLBfMEGyzAJJuFPZZgGGpVy8UancS6V/Vjke33v7+8zZyV6ggx
-         o4gkQGK7Z3zyxFFUHfOyX2crEth42imqyskO6rQ5RoklbXr6KsoCUwC9cXbEAxE4w47A
-         AMrpHAzlMfhfcer8ERrz9Vt6D0iZ2jLL6pk6QBj5Ttb49GrYdTTPH4r3xloaJ/Zaq+RK
-         qjjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=V/K/TopxgY/8Pfa0UGk/d52N4S8WjM3ZtpLq5otXWDg=;
-        b=Oguy+rJgRdnbqgcEE/7uf8sEv1NxSS7SpurxxoVXLCZGTzj94Sx90xXdCxEdv6b7Xg
-         nc6+2LjwS6CCrH9VonRWyUWlrOn6nZK/CQYWgkscYNO6Ee5gMOHBLJVyJd/qARXYncei
-         r731WY3tR2EuBVIMOtb7pbhysVDGkEjENtt85wVffFfrhFg+IQBXsKNaVGJYP4fXQwfg
-         gPhsUF7bJPLbu2jx5qImb+Xaf7ZvyhvAlUjP+H7Zg98C/HYdWJcTr9i4/vT3eBqyyPd0
-         e3xgG/z4+gqgWoJhet8H0sncHYIZCWsDN6Y6TncO3YE5s9qxP8yGGiiuJX3I6MLNXG16
-         7g6Q==
-X-Gm-Message-State: AGi0PuY1BGeao5nwBu1FYSscT/Wn/tR8S5cwrxAkXdqL5WpT1SlHFQpa
-        4nnZvvsGxd6QeuM1dWVDSfE=
-X-Google-Smtp-Source: APiQypKgzaEPql2QfLHfMCXRc3y1MZ8BdRgQhdTYpTU2xjaKbIbFQwq80Rz6RMeOZ9XNFArJ+MVGPA==
-X-Received: by 2002:a17:902:9f84:: with SMTP id g4mr7276136plq.2.1585907002336;
-        Fri, 03 Apr 2020 02:43:22 -0700 (PDT)
-Received: from localhost (60-241-117-97.tpgi.com.au. [60.241.117.97])
-        by smtp.gmail.com with ESMTPSA id w205sm5432553pfc.75.2020.04.03.02.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2020 02:43:21 -0700 (PDT)
-Date:   Fri, 03 Apr 2020 19:43:14 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH v11 0/8] Disable compat cruft on ppc64le v11
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        linuxppc-dev@lists.ozlabs.org, Michal Suchanek <msuchanek@suse.de>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20200225173541.1549955-1-npiggin@gmail.com>
-        <cover.1584620202.git.msuchanek@suse.de>
-        <1585898335.tckaz04a6x.astroid@bobo.none>
-        <1e00a725-9710-2b80-4aff-2f284b31d2e5@c-s.fr>
-In-Reply-To: <1e00a725-9710-2b80-4aff-2f284b31d2e5@c-s.fr>
+        Fri, 3 Apr 2020 06:12:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1585908778; x=1617444778;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5B7jfCFPvDXPf+LfQjYPXOsdoLoYkoGO0uh33NtAmwo=;
+  b=N0Erfb1rwaWqWRsmOEDjQkFERw87i0+7nlRvviV2+2Y9+OofAqMxwWcU
+   FH1V5o6sWCSlchzh84ALUSYNZbkgDnt1MGjNrF8Pbwxc+FRG4a7OyBbej
+   QbX5FtQG+MdGTzTGf5E7f2wGfAp8hBuKf1lfbgH7AqniKifvRh8v4l5v9
+   bBTXNSK2OG5n9rLXB8PgQ/OeBd7yI9Ky5yv+ZEP4igcZZkxQ91qelNFrX
+   Nbg8ZO1CNkI9tbdCH9jKV3XsC/fT08KGOiGxC+fP6NnN6CgLxiQCWMLBb
+   Pz72HQRJDFos8xuWXxYBOt6ttOS4cgU8rd/rdEN0Q6wWYMrUkRAcMvn7s
+   g==;
+IronPort-SDR: MmcKRb3yB3LFHAsNzC/eYLNi3Q0KikBKBDC9IvGMr/2FBV8TGUgk2IL46TEjVJWPOzn1Z0N5VW
+ t3Wv9R29xaeaQnybaemneoEwGBGCUHFKdQlwoikyOACwPCzblusDNiKputYfMKMC1jwrfsAfQm
+ ASGBK1Wn5TzM4o0U8MuJaqAE5yKYB/B0qFjF1VLwkoGBphgZyiEBo8BlpFuyjM/ik11lug3v5t
+ veyw0hM2XQjRi39g9BMFl0ChycFbSanuD95IeljumBxGpe/lEre2iMWhuCfWpoFg0gpCs1Vsf6
+ CJY=
+X-IronPort-AV: E=Sophos;i="5.72,339,1580745600"; 
+   d="scan'208";a="135955981"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Apr 2020 18:12:58 +0800
+IronPort-SDR: DyJ+tVstZnZl1wJjVnJTzSobQBP1ToOq75QKJXdetwBXvBvl9TI9Fw7iNhCMDTCki0+++K9Gc9
+ BFUBBu7du8VDIj4QlWV7Qhm+iBQOl2Rb9uJhC3Lku23wrXoe7Z4OX2fuq851y+YDj7If9YZ8Gx
+ fAUcvhVJKbLLw5EG8DTLIA1xSbN323kTt0Wv3d+rtN4gl6iA56fk5Rym7xsegj9gUnpIm+tLDD
+ I5GKNrvldQZGl+FEDQ6Qd4CDeyc9P7nhYRq4ICqkASibgEd2JCr1uYK8mXEj5qOJUKlQhi41i/
+ M1h5pFcfzGKVo/7i8y5nz1gD
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2020 03:03:47 -0700
+IronPort-SDR: yTmEhCR+KpXfEUKVLJEJWrVNAmiKzQT7DYsysW31rLlvTvirQhQxKrc1zVZ94zEf0vNfpWGn8+
+ bugjiCIVT5ECb74jx/Xld0pF9PSf6O8X43fD89CKjLwR06XNbSJM7uAup/onpdbj4MNa22ZgO8
+ jDOdLaDBl7lLu1lYNFXZ6NK0w7E7uzkE570G5w3QJGV+8HZqIHVFMJLfhg5qR6WzMHb+uYNknj
+ 0/G1VdH3yI8LJCLvtpjuYy2tTa+wVjxb96kHazlfe6be7LnhnRLBQoYu+Ykuh2zT4366cMvwG7
+ /2o=
+WDCIronportException: Internal
+Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
+  by uls-op-cesaip02.wdc.com with ESMTP; 03 Apr 2020 03:12:55 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v4 00/10] Introduce Zone Append for writing to zoned block devices
+Date:   Fri,  3 Apr 2020 19:12:40 +0900
+Message-Id: <20200403101250.33245-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1585906885.3dbukubyr8.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christophe Leroy's on April 3, 2020 5:26 pm:
->=20
->=20
-> Le 03/04/2020 =C3=A0 09:25, Nicholas Piggin a =C3=A9crit=C2=A0:
->> Michal Suchanek's on March 19, 2020 10:19 pm:
->>> Less code means less bugs so add a knob to skip the compat stuff.
->>>
->>> Changes in v2: saner CONFIG_COMPAT ifdefs
->>> Changes in v3:
->>>   - change llseek to 32bit instead of builing it unconditionally in fs
->>>   - clanup the makefile conditionals
->>>   - remove some ifdefs or convert to IS_DEFINED where possible
->>> Changes in v4:
->>>   - cleanup is_32bit_task and current_is_64bit
->>>   - more makefile cleanup
->>> Changes in v5:
->>>   - more current_is_64bit cleanup
->>>   - split off callchain.c 32bit and 64bit parts
->>> Changes in v6:
->>>   - cleanup makefile after split
->>>   - consolidate read_user_stack_32
->>>   - fix some checkpatch warnings
->>> Changes in v7:
->>>   - add back __ARCH_WANT_SYS_LLSEEK to fix build with llseek
->>>   - remove leftover hunk
->>>   - add review tags
->>> Changes in v8:
->>>   - consolidate valid_user_sp to fix it in the split callchain.c
->>>   - fix build errors/warnings with PPC64 !COMPAT and PPC32
->>> Changes in v9:
->>>   - remove current_is_64bit()
->>> Chanegs in v10:
->>>   - rebase, sent together with the syscall cleanup
->>> Changes in v11:
->>>   - rebase
->>>   - add MAINTAINERS pattern for ppc perf
->>=20
->> These all look good to me. I had some minor comment about one patch but
->> not really a big deal and there were more cleanups on top of it, so I
->> don't mind if it's merged as is.
->>=20
->> Actually I think we have a bit of stack reading fixes for 64s radix now
->> (not a bug fix as such, but we don't need the hash fault logic in radix)=
-,
->> so if I get around to that I can propose the changes in that series.
->>=20
->=20
-> As far as I can see, there is a v12
+The upcoming NVMe ZNS Specification will define a new type of write
+command for zoned block devices, zone append.
 
-For the most part I was looking at the patches in mpe's next-test
-tree on github, if that's the v12 series, same comment applies but
-it's a pretty small nitpick.
+When when writing to a zoned block device using zone append, the start
+sector of the write is pointing at the start LBA of the zone to write to.
+Upon completion the block device will respond with the position the data
+has been placed in the zone. This from a high level perspective can be
+seen like a file system's block allocator, where the user writes to a
+file and the file-system takes care of the data placement on the device.
 
-Thanks,
-Nick
-=
+In order to fully exploit the new zone append command in file-systems and
+other interfaces above the block layer, we choose to emulate zone append
+in SCSI and null_blk. This way we can have a single write path for both
+file-systems and other interfaces above the block-layer, like io_uring on
+zoned block devices, without having to care too much about the underlying
+characteristics of the device itself.
+
+The emulation works by providing a cache of each zone's write pointer, so
+zone append issued to the disk can be translated to a write with a
+starting LBA of the write pointer. This LBA is used as input zone number
+for the write pointer lookup in the zone write pointer offset cache and
+the cached offset is then added to the LBA to get the actual position to
+write the data. In SCSI we then turn the REQ_OP_ZONE_APPEND request into a
+WRITE(16) command. Upon successful completion of the WRITE(16), the cache
+will be updated to the new write pointer location and the written sector
+will be noted in the request. On error the cache entry will be marked as
+invalid and on the next write an update of the write pointer will be
+scheduled, before issuing the actual write.
+
+In order to reduce memory consumption, the only cached item is the offset
+of the write pointer from the start of the zone, everything else can be
+calculated. On an example drive with 52156 zones, the additional memory
+consumption of the cache is thus 52156 * 4 = 208624 Bytes or 51 4k Byte
+pages. The performance impact is neglectable for a spinning drive.
+
+For null_blk the emulation is way simpler, as null_blk's zoned block
+device emulation support already caches the write pointer position, so we
+only need to report the position back to the upper layers. Additional
+caching is not needed here.
+
+Furthermore we have converted zonefs to run use ZONE_APPEND for synchronous
+direct I/Os. Asynchronous I/O still uses the normal path via iomap.
+
+The series is based on v5.6 final, but it should be trivial to re-base onto
+Jens' for-next branch once it re-opened.
+
+Changes since v3:
+- Remove impact of zone-append from bio_full() and bio_add_page()
+  fast-path (Christoph)
+- All of the zone write pointer offset caching is handled in SCSI now
+  (Christoph) 
+- Drop null_blk pathces that damien sent separately (Christoph)
+- Use EXPORT_SYMBOL_GPL for new exports (Christoph)	
+
+Changes since v2:
+- Remove iomap implementation and directly issue zone-appends from within
+  zonefs (Christoph)
+- Drop already merged patch
+- Rebase onto new for-next branch
+
+Changes since v1:
+- Too much to mention, treat as a completely new series.
+
+Damien Le Moal (2):
+  block: Modify revalidate zones
+  null_blk: Support REQ_OP_ZONE_APPEND
+
+Johannes Thumshirn (7):
+  block: provide fallbacks for blk_queue_zone_is_seq and
+    blk_queue_zone_no
+  block: introduce blk_req_zone_write_trylock
+  scsi: sd_zbc: factor out sanity checks for zoned commands
+  scsi: export scsi_mq_uninit_cmnd
+  scsi: sd_zbc: emulate ZONE_APPEND commands
+  block: export bio_release_pages and bio_iov_iter_get_pages
+  zonefs: use REQ_OP_ZONE_APPEND for sync DIO
+
+Keith Busch (1):
+  block: Introduce REQ_OP_ZONE_APPEND
+
+ block/bio.c                    |  59 ++++-
+ block/blk-core.c               |  52 +++++
+ block/blk-mq.c                 |  27 +++
+ block/blk-settings.c           |  23 ++
+ block/blk-sysfs.c              |  13 ++
+ block/blk-zoned.c              |  52 ++++-
+ drivers/block/null_blk_zoned.c |  39 +++-
+ drivers/scsi/scsi_lib.c        |  10 +-
+ drivers/scsi/sd.c              |  26 ++-
+ drivers/scsi/sd.h              |  38 +++-
+ drivers/scsi/sd_zbc.c          | 403 +++++++++++++++++++++++++++++++--
+ fs/zonefs/super.c              |  80 ++++++-
+ include/linux/blk_types.h      |  14 ++
+ include/linux/blkdev.h         |  33 ++-
+ include/scsi/scsi_cmnd.h       |   1 +
+ 15 files changed, 809 insertions(+), 61 deletions(-)
+
+-- 
+2.24.1
+
