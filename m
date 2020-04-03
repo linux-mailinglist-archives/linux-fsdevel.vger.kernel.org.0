@@ -2,85 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A78C19D9D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 17:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E5519DA39
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 17:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404081AbgDCPMZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 11:12:25 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:52008 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728213AbgDCPMZ (ORCPT
+        id S2404111AbgDCPdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 11:33:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41044 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728154AbgDCPdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 11:12:25 -0400
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
-        by gardel.0pointer.net (Postfix) with ESMTP id C2DCCE807B5;
-        Fri,  3 Apr 2020 17:12:23 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id 6B84C1614E3; Fri,  3 Apr 2020 17:12:23 +0200 (CEST)
-Date:   Fri, 3 Apr 2020 17:12:23 +0200
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200403151223.GB34800@gardel-login>
-References: <2418286.1585691572@warthog.procyon.org.uk>
- <20200401144109.GA29945@gardel-login>
- <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
- <2590640.1585757211@warthog.procyon.org.uk>
- <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
- <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
- <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
- <27994c53034c8f769ea063a54169317c3ee62c04.camel@themaw.net>
- <20200403111144.GB34663@gardel-login>
- <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
+        Fri, 3 Apr 2020 11:33:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=/wD04Zs0Zu+DHCnPzKAb1MTMrDvxIvKHCbvtzes7Nlg=; b=sd3J6BhipqPEkgeH3vUec5+hY6
+        lZe3nQRUBNwd7i8CKYaBRfH9iWfoUhvKNcNeyJW1lXCFO0Vl7XOiJILg5YqVYC4UR6MkM4Pe1ocK8
+        t7inLox5cC6ZbAyk+Y/KNTZ8nl/ZhPsle9ypxkEEr/6LFYQy7ZrkdXay0xQ7ZHqgQN7ITJTicWsPL
+        f245p73cUomzZsHavbJe9JvVmyuFSa3ZXape7loSS1WEZ/8WOZNw0lJzWt/0h/itkVfdbShhDV3Yb
+        fS9wk18ySsvl0VeaA6ReT7f9MDMeuKzorCBeW75H+d5hoJzxhAZou1Em4lcHMBqrU0lmL/Nr+LaOz
+        MBdPiPPg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jKOJv-0001kw-Iz; Fri, 03 Apr 2020 15:33:23 +0000
+Date:   Fri, 3 Apr 2020 08:33:23 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [RFC] Renaming page_offset() to page_pos()
+Message-ID: <20200403153323.GQ21484@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fr, 03.04.20 13:38, Miklos Szeredi (miklos@szeredi.hu) wrote:
+Without looking at the source, can you tell me what page_offset() does?
 
-> On Fri, Apr 3, 2020 at 1:11 PM Lennart Poettering <mzxreary@0pointer.de> wrote:
-> >
-> > On Fr, 03.04.20 09:44, Ian Kent (raven@themaw.net) wrote:
-> >
-> > > > Currently the only way to find the mount id from a path is by parsing
-> > > > /proc/self/fdinfo/$fd.  It is trivial, however, to extend statx(2) to
-> > > > return it directly from a path.   Also the mount notification queue
-> > > > that David implemented contains the mount ID of the changed mount.
-> >
-> > I would love to have the mount ID exposed via statx().
->
-> Here's a patch.
+At least one regular contributor thought it meant the pgoff_t of this
+page within the file.  It's actually the byte offset of this page into
+the file.
 
-Oh, this is excellent. I love it, thanks!
+We have a perfectly good name for byte offset into the file --
+file->f_pos.  So I propose renaming it to page_pos().  To minimise
+disruption to other development, I'm going to send Linus a pull request
+at the end of the merge window with the results of this coccinelle script:
 
-BTW, while we are at it: one more thing I'd love to see exposed by
-statx() is a simple flag whether the inode is a mount point. There's
-plenty code that implements a test like this all over the place, and
-it usually isn't very safe. There's one implementation in util-linux
-for example (in the /usr/bin/mountpoint binary), and another one in
-systemd. Would be awesome to just have a statx() return flag for that,
-that would make things *so* much easier and more robust. because in
-fact most code isn't very good that implements this, as much of it
-just compares st_dev of the specified file and its parent. Better code
-compares the mount ID, but as mentioned that's not as pretty as it
-could be so far...
+@@ expression a; @@
+-       page_offset(a)
++       page_pos(a)
 
-Lennart
+I've reviewed the output and the only slight weirdness is an extra space
+in casts:
 
---
-Lennart Poettering, Berlin
+                btrfs_warn(BTRFS_I(page->mapping->host)->root->fs_info,
+                           "page private not zero on page %llu",
+-                          (unsigned long long)page_offset(page));
++                          (unsigned long long) page_pos(page));
+
+Sometimes Coccinelle fixes the surrounding whitespace to be better
+than it currently is:
+
+-               ow->bv[i].bv_len = min(page_offset(ow->pages[i]) + PAGE_SIZE,
+-                   ow->off + ow->len) -
+-                   max(ow->off, page_offset(ow->pages[i]));
++               ow->bv[i].bv_len = min(page_pos(ow->pages[i]) + PAGE_SIZE,
++                                      ow->off + ow->len) -
++                   max(ow->off, page_pos(ow->pages[i]));
+
+(it's still bad, but it's an improvement)
+
+Any objections?  Anyone got a better name than page_pos()?
