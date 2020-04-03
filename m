@@ -2,76 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195AA19DEBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 21:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC5D619DF62
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 22:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbgDCTtg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 15:49:36 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:35801 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbgDCTtf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 15:49:35 -0400
-Received: by mail-pj1-f65.google.com with SMTP id g9so3430516pjp.0;
-        Fri, 03 Apr 2020 12:49:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x2pc80oThxV6qNBWGlmeKcETWFQG6BcGqDuUp7g6seI=;
-        b=C2saI+xzCvwnV/1XYD57j0sd03Kn0Pxvtx0U7LSuL39D94znfofRiE65lLXz2BjhDb
-         ppwov8P+H4mup/f1IOY+nD9v+F17EJzl9xLqq/eGvKuvujph/qcIYeg8LTDu+KCdkK15
-         PnMP8bBvdBv4a6Wd/x8C0yiTlqYURftz+qC+MHHF1x7YoiqE6186o3w6xegfGc1ljRP1
-         3WxAjnRE+eXoIS6mUAek9fyadSb8Je0j8NK2o2SWOBHwkOmB8AT0TmmSKtN7ASvrImlY
-         edqvZv62PWOKZpAaYEo+MeYxPzi0phmf+VV61WROu3c6+WzcSmqINOCh68rxWSZOv85i
-         sGGw==
-X-Gm-Message-State: AGi0PuaMllxoXgSxG/EOMODA2oIhpN248rPMCnnRqhDLfocpVsbw7iR8
-        qy8+bBoGOQf8F/tRtI8Wa0c=
-X-Google-Smtp-Source: APiQypJ+IXj4OXk7K8o38nrR2hClG27wXJLbJPmZCN3t6HqOTaFX1aLIqDevdMmiOCGfeqtU7eugyg==
-X-Received: by 2002:a17:902:8b82:: with SMTP id ay2mr9227374plb.221.1585943372496;
-        Fri, 03 Apr 2020 12:49:32 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id ml17sm6443717pjb.13.2020.04.03.12.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2020 12:49:30 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 7938E40297; Fri,  3 Apr 2020 19:49:29 +0000 (UTC)
-Date:   Fri, 3 Apr 2020 19:49:29 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        nstange@suse.de, mhocko@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com
-Subject: Re: [RFC 0/3] block: address blktrace use-after-free
-Message-ID: <20200403194929.GZ11244@42.do-not-panic.com>
-References: <20200402000002.7442-1-mcgrof@kernel.org>
- <20200403081929.GC6887@ming.t460p>
- <15236c59-6b48-2fcf-1a84-f98cb8b339ab@acm.org>
+        id S1727907AbgDCUaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 16:30:24 -0400
+Received: from fieldses.org ([173.255.197.46]:46832 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbgDCUaY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Apr 2020 16:30:24 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 25E693B9; Fri,  3 Apr 2020 16:30:24 -0400 (EDT)
+Date:   Fri, 3 Apr 2020 16:30:24 -0400
+To:     Lennart Poettering <mzxreary@0pointer.de>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200403203024.GB27105@fieldses.org>
+References: <20200401144109.GA29945@gardel-login>
+ <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
+ <2590640.1585757211@warthog.procyon.org.uk>
+ <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+ <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+ <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
+ <27994c53034c8f769ea063a54169317c3ee62c04.camel@themaw.net>
+ <20200403111144.GB34663@gardel-login>
+ <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
+ <20200403151223.GB34800@gardel-login>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <15236c59-6b48-2fcf-1a84-f98cb8b339ab@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200403151223.GB34800@gardel-login>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 03, 2020 at 07:13:47AM -0700, Bart Van Assche wrote:
-> On 2020-04-03 01:19, Ming Lei wrote:
-> > BTW, Yu Kuai posted one patch for this issue, looks that approach
-> > is simpler:
-> > 
-> > https://lore.kernel.org/linux-block/20200324132315.22133-1-yukuai3@huawei.com/
-> 
-> That approach is indeed simpler but at the expense of performing dynamic
-> memory allocation in a cleanup path, something I'm not enthusiast about.
+On Fri, Apr 03, 2020 at 05:12:23PM +0200, Lennart Poettering wrote:
+> BTW, while we are at it: one more thing I'd love to see exposed by
+> statx() is a simple flag whether the inode is a mount point. There's
+> plenty code that implements a test like this all over the place, and
+> it usually isn't very safe. There's one implementation in util-linux
+> for example (in the /usr/bin/mountpoint binary), and another one in
+> systemd. Would be awesome to just have a statx() return flag for that,
+> that would make things *so* much easier and more robust. because in
+> fact most code isn't very good that implements this, as much of it
+> just compares st_dev of the specified file and its parent. Better code
+> compares the mount ID, but as mentioned that's not as pretty as it
+> could be so far...
 
-I also think that its important to annotate that there are actually two
-issues here. Not one. One is the misuse of debugfs, the other is how
-the deferral exposed the misuse and complications of its misuse.
+nfs-utils/support/misc/mountpoint.c:check_is_mountpoint() stats the file
+and ".." and returns true if they have different st_dev or the same
+st_ino.  Comparing mount ids sounds better.
 
-  Luis
+So anyway, yes, everybody reinvents the wheel here, and this would be
+useful.  (And, yes, we want to know for the vfsmount, we don't care
+whether the same inode is used as a mountpoint someplace else.)
+
+--b.
