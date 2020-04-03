@@ -2,212 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8CA19D4D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 12:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BE019D548
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 12:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390651AbgDCKNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 06:13:20 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:56752 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390633AbgDCKNP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 06:13:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1585908795; x=1617444795;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DntH3FOL+F2qJ4JB8bNfeHvJeRnIrbJq4X8RpN63JaA=;
-  b=GErCpaeNP5ToG5PipM0I25323UAz4kYbZ2cFenjZp6viuNtQY/d2ZOHn
-   DjEW/Dly4/PyF5RMxxx8A5+u7ynzitYdDPW99Es2ujwAUqKxugwmWMgkY
-   Rw8JnUOPU2IMKDM9SrKl2iBi9nrVIV1RCQSvppdZFOYhU0c0zSGhjHvjQ
-   KXUEKSLz16T9iZntk7bl4S8S16Jqe3rGcUmeup6ARXSOlwavUa/lY5OFH
-   OLB0nF6WXSQIv+Klgc9IokLtySy7DA81J7kqeVPSRbMYSl+QXbH+fkXH6
-   M2cL3vkGJP2qP+UhbAkh62Bi82JfgFY/VNRQP/5CpSGLfXwFbSg1eqaXN
-   A==;
-IronPort-SDR: ge2drv3IAlwPOj6qIlYPp/t3OqdS3OoqKIndlWR5ZzBapR9sZ3F2Pi/lvKSWWHIyxJEsNtdHlT
- OCqw3Fh/Q44zPQLS6eThXe3YBLG7PhgTwkRMB4P90K2/+tup8i1AilBLx9njlcwaxPLJoh4NRP
- G1PzRzheuzWbHi05V5ffRiPzWlCuz8w1/4ksr6rA0MA5omJNrYTU1dBjDOvQW449mZMF5cef0S
- N5HQjkQKgWAa3w/WkQ8oowyrM07LUGRw/TCx4iDSdWIO/FtpMMCjxCPWieTqZvIReT6cVVs0ds
- 4Vc=
-X-IronPort-AV: E=Sophos;i="5.72,339,1580745600"; 
-   d="scan'208";a="135956057"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Apr 2020 18:13:15 +0800
-IronPort-SDR: 9GGFY5qNc8Q3jtHjZu838vi+eKJ9Eh004g/yPnqsrJXt5g3i+Gnj05IFlss5qAZ6zvyXxbBbCd
- 27yK1EiYHJ0rbKkVVA4v28RNwqxu+W5GE7RgWZHdaZtCxypuehzc6DcAKYAIDDAhnnbD97lkL9
- x4OvBRIX2mHnnpK1kn3YNV19iCepLrgIsN5LGaZjwoaHTCVTsXrzPhTXen7n14Ojo2Eai+h1UY
- 4evk54c2zKCG/N6QWvXOuL2YkEVxr9ZHZ9M9z96OlOwoqBsAibDwr2+tcKpb8iA3e0EsAMtQBY
- W0AsKD6WCNQMqXBSkqU5+bzB
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2020 03:04:04 -0700
-IronPort-SDR: nV9xeSC198WDQDPHiej2oAz+ea5egwfJmMSL3FUrsJsDBqhCg1ysRo+BxrcCkKj45k6YVzU4xb
- DZqUfXLnrMe+zdL/pKVdiXE6EkwvqkBC3NKyjod/E8IAH5v++gpadmiB5kg+tgtG02GQuQwQMK
- r5Lkiiixyvz83+VusZ+uca/vvGb520q6V68TaFeRlACAG3vimPaxuyK+HrI508xOSHbJdXEbP9
- AjbibnZyomsxUji2EIzyIIFLEOGEzZeHyNzsKjY4xw4KkWoU/nNnEefSPBGaIRJTYnlGfQb874
- eSk=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 03 Apr 2020 03:13:12 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "linux-scsi @ vger . kernel . org" <linux-scsi@vger.kernel.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-fsdevel @ vger . kernel . org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v4 10/10] zonefs: use REQ_OP_ZONE_APPEND for sync DIO
-Date:   Fri,  3 Apr 2020 19:12:50 +0900
-Message-Id: <20200403101250.33245-11-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200403101250.33245-1-johannes.thumshirn@wdc.com>
-References: <20200403101250.33245-1-johannes.thumshirn@wdc.com>
+        id S1727860AbgDCKwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 06:52:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40390 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727792AbgDCKwl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Apr 2020 06:52:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 69219AC92;
+        Fri,  3 Apr 2020 10:52:37 +0000 (UTC)
+Date:   Fri, 3 Apr 2020 12:52:34 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v11 3/8] powerpc/perf: consolidate read_user_stack_32
+Message-ID: <20200403105234.GX25468@kitsune.suse.cz>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584620202.git.msuchanek@suse.de>
+ <184347595442b4ca664613008a09e8cea7188c36.1584620202.git.msuchanek@suse.de>
+ <1585039473.da4762n2s0.astroid@bobo.none>
+ <20200324193833.GH25468@kitsune.suse.cz>
+ <1585896170.ohti800w9v.astroid@bobo.none>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1585896170.ohti800w9v.astroid@bobo.none>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Synchronous direct I/O to a sequential write only zone can be issued using
-the new REQ_OP_ZONE_APPEND request operation. As dispatching multiple
-BIOs can potentially result in reordering, we cannot support asynchronous
-IO via this interface.
+Hello,
 
-We also can only dispatch up to queue_max_zone_append_sectors() via the
-new zone-append method and have to return a short write back to user-space
-in case an IO larger than queue_max_zone_append_sectors() has been issued.
+there are 3 variants of the function
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/zonefs/super.c | 80 ++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 72 insertions(+), 8 deletions(-)
+read_user_stack_64
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 3ce9829a6936..0bf7009f50a2 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -20,6 +20,7 @@
- #include <linux/mman.h>
- #include <linux/sched/mm.h>
- #include <linux/crc32.h>
-+#include <linux/task_io_accounting_ops.h>
- 
- #include "zonefs.h"
- 
-@@ -596,6 +597,61 @@ static const struct iomap_dio_ops zonefs_write_dio_ops = {
- 	.end_io			= zonefs_file_write_dio_end_io,
- };
- 
-+static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct zonefs_inode_info *zi = ZONEFS_I(inode);
-+	struct block_device *bdev = inode->i_sb->s_bdev;
-+	unsigned int max;
-+	struct bio *bio;
-+	ssize_t size;
-+	int nr_pages;
-+	ssize_t ret;
-+
-+	nr_pages = iov_iter_npages(from, BIO_MAX_PAGES);
-+	if (!nr_pages)
-+		return 0;
-+
-+	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
-+	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
-+	iov_iter_truncate(from, max);
-+
-+	bio = bio_alloc_bioset(GFP_NOFS, nr_pages, &fs_bio_set);
-+	if (!bio)
-+		return -ENOMEM;
-+
-+	bio_set_dev(bio, bdev);
-+	bio->bi_iter.bi_sector = zi->i_zsector;
-+	bio->bi_write_hint = iocb->ki_hint;
-+	bio->bi_ioprio = iocb->ki_ioprio;
-+	bio->bi_opf = REQ_OP_ZONE_APPEND | REQ_SYNC | REQ_IDLE;
-+	if (iocb->ki_flags & IOCB_DSYNC)
-+		bio->bi_opf |= REQ_FUA;
-+
-+	ret = bio_iov_iter_get_pages(bio, from);
-+	if (unlikely(ret)) {
-+		bio_io_error(bio);
-+		return ret;
-+	}
-+	size = bio->bi_iter.bi_size;
-+	task_io_account_write(ret);
-+
-+	if (iocb->ki_flags & IOCB_HIPRI)
-+		bio_set_polled(bio, iocb);
-+
-+	ret = submit_bio_wait(bio);
-+
-+	bio_put(bio);
-+
-+	zonefs_file_write_dio_end_io(iocb, size, ret, 0);
-+	if (ret >= 0) {
-+		iocb->ki_pos += size;
-+		return size;
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * Handle direct writes. For sequential zone files, this is the only possible
-  * write path. For these files, check that the user is issuing writes
-@@ -611,6 +667,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
- 	struct super_block *sb = inode->i_sb;
-+	bool sync = is_sync_kiocb(iocb);
-+	bool append = false;
- 	size_t count;
- 	ssize_t ret;
- 
-@@ -619,7 +677,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * as this can cause write reordering (e.g. the first aio gets EAGAIN
- 	 * on the inode lock but the second goes through but is now unaligned).
- 	 */
--	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !is_sync_kiocb(iocb) &&
-+	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && !sync &&
- 	    (iocb->ki_flags & IOCB_NOWAIT))
- 		return -EOPNOTSUPP;
- 
-@@ -643,16 +701,22 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
- 	}
- 
- 	/* Enforce sequential writes (append only) in sequential zones */
--	mutex_lock(&zi->i_truncate_mutex);
--	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ && iocb->ki_pos != zi->i_wpoffset) {
-+	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ) {
-+		mutex_lock(&zi->i_truncate_mutex);
-+		if (iocb->ki_pos != zi->i_wpoffset) {
-+			mutex_unlock(&zi->i_truncate_mutex);
-+			ret = -EINVAL;
-+			goto inode_unlock;
-+		}
- 		mutex_unlock(&zi->i_truncate_mutex);
--		ret = -EINVAL;
--		goto inode_unlock;
-+		append = sync;
- 	}
--	mutex_unlock(&zi->i_truncate_mutex);
- 
--	ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
--			   &zonefs_write_dio_ops, is_sync_kiocb(iocb));
-+	if (append)
-+		ret = zonefs_file_dio_append(iocb, from);
-+	else
-+		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
-+				   &zonefs_write_dio_ops, sync);
- 	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
- 	    (ret > 0 || ret == -EIOCBQUEUED)) {
- 		if (ret > 0)
--- 
-2.24.1
+32bit read_user_stack_32
+64bit read_user_Stack_32
 
+On Fri, Apr 03, 2020 at 05:13:25PM +1000, Nicholas Piggin wrote:
+> Michal Suchánek's on March 25, 2020 5:38 am:
+> > On Tue, Mar 24, 2020 at 06:48:20PM +1000, Nicholas Piggin wrote:
+> >> Michal Suchanek's on March 19, 2020 10:19 pm:
+> >> > There are two almost identical copies for 32bit and 64bit.
+> >> > 
+> >> > The function is used only in 32bit code which will be split out in next
+> >> > patch so consolidate to one function.
+> >> > 
+> >> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> >> > Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> >> > ---
+> >> > v6:  new patch
+> >> > v8:  move the consolidated function out of the ifdef block.
+> >> > v11: rebase on top of def0bfdbd603
+> >> > ---
+> >> >  arch/powerpc/perf/callchain.c | 48 +++++++++++++++++------------------
+> >> >  1 file changed, 24 insertions(+), 24 deletions(-)
+> >> > 
+> >> > diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+> >> > index cbc251981209..c9a78c6e4361 100644
+> >> > --- a/arch/powerpc/perf/callchain.c
+> >> > +++ b/arch/powerpc/perf/callchain.c
+> >> > @@ -161,18 +161,6 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+> >> >  	return read_user_stack_slow(ptr, ret, 8);
+> >> >  }
+> >> >  
+> >> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> >> > -{
+> >> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> >> > -	    ((unsigned long)ptr & 3))
+> >> > -		return -EFAULT;
+> >> > -
+> >> > -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+> >> > -		return 0;
+> >> > -
+> >> > -	return read_user_stack_slow(ptr, ret, 4);
+> >> > -}
+> >> > -
+> >> >  static inline int valid_user_sp(unsigned long sp, int is_64)
+> >> >  {
+> >> >  	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
+> >> > @@ -277,19 +265,9 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+> >> >  }
+> >> >  
+> >> >  #else  /* CONFIG_PPC64 */
+> >> > -/*
+> >> > - * On 32-bit we just access the address and let hash_page create a
+> >> > - * HPTE if necessary, so there is no need to fall back to reading
+> >> > - * the page tables.  Since this is called at interrupt level,
+> >> > - * do_page_fault() won't treat a DSI as a page fault.
+> >> > - */
+> >> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> >> > +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+> >> >  {
+> >> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> >> > -	    ((unsigned long)ptr & 3))
+> >> > -		return -EFAULT;
+> >> > -
+> >> > -	return probe_user_read(ret, ptr, sizeof(*ret));
+> >> > +	return 0;
+> >> >  }
+> >> >  
+> >> >  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+> >> > @@ -312,6 +290,28 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+> >> >  
+> >> >  #endif /* CONFIG_PPC64 */
+> >> >  
+> >> > +/*
+> >> > + * On 32-bit we just access the address and let hash_page create a
+> >> > + * HPTE if necessary, so there is no need to fall back to reading
+> >> > + * the page tables.  Since this is called at interrupt level,
+> >> > + * do_page_fault() won't treat a DSI as a page fault.
+> >> > + */
+> >> 
+> >> The comment is actually probably better to stay in the 32-bit
+> >> read_user_stack_slow implementation. Is that function defined
+> >> on 32-bit purely so that you can use IS_ENABLED()? In that case
+> > It documents the IS_ENABLED() and that's where it is. The 32bit
+> > definition is only a technical detail.
+> 
+> Sorry for the late reply, busy trying to fix bugs in the C rewrite
+> series. I don't think it is the right place, it should be in the
+> ppc32 implementation detail. ppc64 has an equivalent comment at the
+> top of its read_user_stack functions.
+> 
+> >> I would prefer to put a BUG() there which makes it self documenting.
+> > Which will cause checkpatch complaints about introducing new BUG() which
+> > is frowned on.
+> 
+> It's fine in this case, that warning is about not introducing
+> runtime bugs, but this wouldn't be.
+> 
+> But... I actually don't like adding read_user_stack_slow on 32-bit
+> and especially not just to make IS_ENABLED work.
+> 
+> IMO this would be better if you really want to consolidate it
+> 
+> ---
+> 
+> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+> index cbc251981209..ca3a599b3f54 100644
+> --- a/arch/powerpc/perf/callchain.c
+> +++ b/arch/powerpc/perf/callchain.c
+> @@ -108,7 +108,7 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+>   * interrupt context, so if the access faults, we read the page tables
+>   * to find which page (if any) is mapped and access it directly.
+>   */
+> -static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+> +static int read_user_stack_slow(const void __user *ptr, void *buf, int nb)
+>  {
+>  	int ret = -EFAULT;
+>  	pgd_t *pgdir;
+> @@ -149,28 +149,21 @@ static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
+>  	return ret;
+>  }
+>  
+> -static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+> +static int __read_user_stack(const void __user *ptr, void *ret, size_t size)
+>  {
+> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned long) ||
+> -	    ((unsigned long)ptr & 7))
+> +	if ((unsigned long)ptr > TASK_SIZE - size ||
+> +	    ((unsigned long)ptr & (size - 1)))
+>  		return -EFAULT;
+>  
+> -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+> +	if (!probe_user_read(ret, ptr, size))
+>  		return 0;
+>  
+> -	return read_user_stack_slow(ptr, ret, 8);
+> +	return read_user_stack_slow(ptr, ret, size);
+>  }
+>  
+> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> +static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+>  {
+> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> -	    ((unsigned long)ptr & 3))
+> -		return -EFAULT;
+> -
+> -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+> -		return 0;
+> -
+> -	return read_user_stack_slow(ptr, ret, 4);
+> +	return __read_user_stack(ptr, ret, sizeof(*ret));
+>  }
+>  
+>  static inline int valid_user_sp(unsigned long sp, int is_64)
+> @@ -283,13 +276,13 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+>   * the page tables.  Since this is called at interrupt level,
+>   * do_page_fault() won't treat a DSI as a page fault.
+>   */
+> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> +static int __read_user_stack(const void __user *ptr, void *ret, size_t size)
+>  {
+> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+> -	    ((unsigned long)ptr & 3))
+> +	if ((unsigned long)ptr > TASK_SIZE - size ||
+> +	    ((unsigned long)ptr & (size - 1)))
+>  		return -EFAULT;
+>  
+> -	return probe_user_read(ret, ptr, sizeof(*ret));
+> +	return probe_user_read(ret, ptr, size);
+>  }
+>  
+>  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+> @@ -312,6 +305,11 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+>  
+>  #endif /* CONFIG_PPC64 */
+>  
+> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> +{
+> +	return __read_user_stack(ptr, ret, sizeof(*ret));
+Does not work for 64bit read_user_stack_32 ^ this should be 4.
+
+Other than that it should preserve the existing logic just fine.
+
+Thanks
+
+Michal
