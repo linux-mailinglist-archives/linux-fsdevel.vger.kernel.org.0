@@ -2,131 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDED319D609
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 13:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F4E19D611
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Apr 2020 13:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403778AbgDCLtF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 07:49:05 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38480 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390784AbgDCLtF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 07:49:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e5so8934141edq.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Apr 2020 04:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hVNwPy+gt0SiBgbKa4Ts7rYRXhcnznGYRRNUIY7t1Y0=;
-        b=VIIzrxvQDZ7sEKA4V9ATLkkGs8/+gHlbWBKNW4Rd9I1h90LdQgpTL351PKl5//Brw9
-         Z4DPvYmA0xQ4Pz45YWBOT39ph5ofudPgDnCyMBzS/nygSltVynGbd0xsaf1++4p6dAnG
-         pAJ6fupWjxZ3nh1sBkYj4X8ZY0ChUzUkvCGVA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hVNwPy+gt0SiBgbKa4Ts7rYRXhcnznGYRRNUIY7t1Y0=;
-        b=BNyc7E/YanL53PBsNxbBfu2hB/mwULn7gqzK1KuCGFMmpO60phbk3ZbKPiuvfVlUuY
-         3Li39vEuhKi9W23AkoJtxklcSkBL9BcdvD6TcgcZLfYrsR7RlXtjnIpPFHIX9FVsoA6R
-         SZFwX2wMUlmXcWz10Rr/y/jsysFCrzwefiFKvA+EAbSduII9uIleT+XTRMN87xgaDtYk
-         JWeOgPaVlKhwzm0ESUdD5yv6l+cvJKUc6jrMjxEeLS3ZTJn0ITq/N1NGVKqMtO0LDtvU
-         hL/VS3DbfFqnIGbFmf9kT2xTLOr8B5Yb4C8Y+Dk6DlaMStvLE3VBzSCEoDi88yzF37rM
-         Tczw==
-X-Gm-Message-State: AGi0PuaKmQvAE9eBWByQ65XyWRql2C/QP/8mdK9ll5McIA5d0BXTD93l
-        mWO4gyoaIlJ1wu/eTGVSf0KiJFuHebaCBEAYQ4cYtg==
-X-Google-Smtp-Source: APiQypI1AuUmWagqGCK3prLz7095VZ+oDaQPI6yUMfzrksdJydfjbCc/ykWeXRA+KV9F6pNuN3rsaoMlYdWz84YjIOU=
-X-Received: by 2002:a17:907:271a:: with SMTP id w26mr8098956ejk.195.1585914542881;
- Fri, 03 Apr 2020 04:49:02 -0700 (PDT)
+        id S2390632AbgDCLve (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Apr 2020 07:51:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37400 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbgDCLve (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Apr 2020 07:51:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D2341AC50;
+        Fri,  3 Apr 2020 11:51:29 +0000 (UTC)
+Date:   Fri, 3 Apr 2020 13:51:27 +0200
+From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Richter <erichte@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Jordan Niethe <jniethe5@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v11 3/8] powerpc/perf: consolidate read_user_stack_32
+Message-ID: <20200403115127.GY25468@kitsune.suse.cz>
+References: <20200225173541.1549955-1-npiggin@gmail.com>
+ <cover.1584620202.git.msuchanek@suse.de>
+ <184347595442b4ca664613008a09e8cea7188c36.1584620202.git.msuchanek@suse.de>
+ <1585039473.da4762n2s0.astroid@bobo.none>
+ <20200324193833.GH25468@kitsune.suse.cz>
+ <1585896170.ohti800w9v.astroid@bobo.none>
+ <20200403105234.GX25468@kitsune.suse.cz>
+ <1585913065.zoacp2kzsv.astroid@bobo.none>
 MIME-Version: 1.0
-References: <2590640.1585757211@warthog.procyon.org.uk> <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
- <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
- <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
- <20200402143623.GB31529@gardel-login> <CAJfpegtRi9epdxAeoVbm+7UxkZfzC6XmD4K_5dg=RKADxy_TVA@mail.gmail.com>
- <20200402152831.GA31612@gardel-login> <CAJfpegum_PsCfnar8+V2f_VO3k8CJN1LOFJV5OkHRDbQKR=EHg@mail.gmail.com>
- <20200402155020.GA31715@gardel-login> <CAJfpeguM__+S6DiD4MWFv5GCf_EUWvGFT0mzuUCCrfQwggqtDQ@mail.gmail.com>
- <20200403110842.GA34663@gardel-login>
-In-Reply-To: <20200403110842.GA34663@gardel-login>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 3 Apr 2020 13:48:51 +0200
-Message-ID: <CAJfpegtYKhXB-HNddUeEMKupR5L=RRuydULrvm39eTung0=yRg@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1585913065.zoacp2kzsv.astroid@bobo.none>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 3, 2020 at 1:08 PM Lennart Poettering <mzxreary@0pointer.de> wr=
-ote:
->
-> On Do, 02.04.20 19:20, Miklos Szeredi (miklos@szeredi.hu) wrote:
->
-> > On Thu, Apr 2, 2020 at 5:50 PM Lennart Poettering <mzxreary@0pointer.de=
-> wrote:
-> > >
-> > > On Do, 02.04.20 17:35, Miklos Szeredi (miklos@szeredi.hu) wrote:
-> > >
-> > > > > systemd cares about all mount points in PID1's mount namespace.
-> > > > >
-> > > > > The fact that mount tables can grow large is why we want somethin=
-g
-> > > > > better than constantly reparsing the whole /proc/self/mountinfo. =
-But
-> > > > > filtering subsets of that is something we don't really care about=
-.
-> > > >
-> > > > I can accept that, but you haven't given a reason why that's so.
-> > > >
-> > > > What does it do with the fact that an automount point was crossed, =
-for
-> > > > example?  How does that affect the operation of systemd?
-> > >
-> > > We don't care how a mount point came to be. If it's autofs or
-> > > something else, we don't care. We don't access these mount points
-> > > ourselves ever, we just watch their existance.
-> > >
-> > > I mean, it's not just about startup it's also about shutdown. At
-> > > shutdown we need to unmount everything from the leaves towards the
-> > > root so that all file systems are in a clean state.
-> >
-> > Unfortunately that's not guaranteed by umounting all filesystems from
-> > the init namespace.  A filesystem is shut down when all references to
-> > it are gone.  Perhaps you instead want to lazy unmount root (yeah,
-> > that may not actually be allowed, but anyway, lazy unmounting the top
-> > level ones should do) and watch for super block shutdown events
-> > instead.
-> >
-> > Does that make any sense?
->
-> When all mounts in the init mount namespace are unmounted and all
-> remaining processes killed we switch root back to the initrd, so that
-> even the root fs can be unmounted, and then we disassemble any backing
-> complex storage if there is, i.e. lvm, luks, raid, =E2=80=A6
+On Fri, Apr 03, 2020 at 09:26:27PM +1000, Nicholas Piggin wrote:
+> Michal Suchánek's on April 3, 2020 8:52 pm:
+> > Hello,
+> > 
+> > there are 3 variants of the function
+> > 
+> > read_user_stack_64
+> > 
+> > 32bit read_user_stack_32
+> > 64bit read_user_Stack_32
+> 
+> Right.
+> 
+> > On Fri, Apr 03, 2020 at 05:13:25PM +1000, Nicholas Piggin wrote:
+> [...]
+> >>  #endif /* CONFIG_PPC64 */
+> >>  
+> >> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+> >> +{
+> >> +	return __read_user_stack(ptr, ret, sizeof(*ret));
+> > Does not work for 64bit read_user_stack_32 ^ this should be 4.
+> > 
+> > Other than that it should preserve the existing logic just fine.
+> 
+> sizeof(int) == 4 on 64bit so it should work.
+> 
+Right, the type is different for the 32bit and 64bit version.
 
-I think it could be done the other way round, much simpler:
+Thanks
 
- - switch back to initrd
- - umount root, keeping the tree intact (UMOUNT_DETACHED)
- - kill all remaining processes, wait for all to exit
-
-I think that should guarantee that all super blocks have been shut down.  A=
-l?
-
-The advantage would be that there's no need to walk the mount tree
-unmounting individual leafs, since it's all done automagically.
-
-Thanks,
-Miklos
+Michal
