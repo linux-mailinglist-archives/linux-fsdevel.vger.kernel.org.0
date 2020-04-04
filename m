@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC5B19E735
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 20:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7002D19E797
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 22:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgDDSzE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Apr 2020 14:55:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbgDDSzD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Apr 2020 14:55:03 -0400
-Subject: Re: [git pull] exfat
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586026503;
-        bh=co6S5nqk9pXW3GBobrf6g6ZQMvkXKDKPOJe2G/9W3Js=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=IPrwhwMAXEDEUDILHSKQp5KMKBKHu9YNGKk10p7aZgjSBPbx+U49aCWxSASyJxWbA
-         gORGgtfyGbZMS2y1MMggzKXTqVd34CfFW2DfH7XCqqZRTjWCR6OGJYL6URppLPNKbW
-         3FN3Tzc66le5Hb/W9CDW0ycUCVsjYr7by5gu9QHE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200404183528.GO23230@ZenIV.linux.org.uk>
-References: <20200404183528.GO23230@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200404183528.GO23230@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.exfat
-X-PR-Tracked-Commit-Id: 9acd0d53800c55c6e2186e29b6433daf24617451
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 83eb69f3b80f7cf2ca6357fb9c23adc48632a0e3
-Message-Id: <158602650335.4238.17886859766655851150.pr-tracker-bot@kernel.org>
-Date:   Sat, 04 Apr 2020 18:55:03 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+        id S1726328AbgDDUpR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Apr 2020 16:45:17 -0400
+Received: from mx1.yrkesakademin.fi ([85.134.45.194]:28814 "EHLO
+        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbgDDUpR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 4 Apr 2020 16:45:17 -0400
+From:   Thomas Backlund <tmb@mageia.org>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Thomas Backlund <tmb@mageia.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Subject: [PATCH] exfat: add missing MODULE_ALIAS_FS()
+Date:   Sat, 4 Apr 2020 23:29:43 +0300
+Message-ID: <20200404202943.367023-1-tmb@mageia.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Sat, 4 Apr 2020 19:35:28 +0100:
+Signed-off-by: Thomas Backlund <tmb@mageia.org>
+Cc: Namjae Jeon <namjae.jeon@samsung.com>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.exfat
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/83eb69f3b80f7cf2ca6357fb9c23adc48632a0e3
-
-Thank you!
-
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 16ed202ef527..b4a4063a0272 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -717,6 +717,7 @@ static void __exit exit_exfat_fs(void)
+ module_init(init_exfat_fs);
+ module_exit(exit_exfat_fs);
+ 
++MODULE_ALIAS_FS("exfat");
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("exFAT filesystem support");
+ MODULE_AUTHOR("Samsung Electronics Co., Ltd.");
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.26.0
+
