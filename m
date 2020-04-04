@@ -2,827 +2,377 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF3D19E1EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 02:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B59419E30D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 07:55:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgDDAZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Apr 2020 20:25:50 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:54817 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbgDDAZu (ORCPT
+        id S1726039AbgDDFzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Apr 2020 01:55:15 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:40299 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbgDDFzP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Apr 2020 20:25:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TuXvZ6z_1585959921;
-Received: from rsjd01523.et2sqa(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TuXvZ6z_1585959921)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 04 Apr 2020 08:25:25 +0800
-Date:   Sat, 4 Apr 2020 08:25:21 +0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, virtio-fs@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com, mst@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>
-Subject: Re: [PATCH 13/20] fuse, dax: Implement dax read/write operations
-Message-ID: <20200404002521.GA125697@rsjd01523.et2sqa>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20200304165845.3081-1-vgoyal@redhat.com>
- <20200304165845.3081-14-vgoyal@redhat.com>
+        Sat, 4 Apr 2020 01:55:15 -0400
+Received: by mail-il1-f200.google.com with SMTP id g79so9337997ild.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Apr 2020 22:55:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9AMQArMuO93J/CpN0Qc3E0byB9kG+Ic8o1NP1LGYUQw=;
+        b=hg8Hbl03cMCBVeC1T2/u6q5oZRQ5+31/+msWVt/x9Wg8OvB/K4f1tUVXUXIVDC/G1K
+         Un96WHklOZ2+bgx30vCGwYZ69+5VJ1FBKEcXO9SfTXZScC3yBbIMkzW/Gy9IZXjUkODU
+         leYO4r7CuKyrRO96z0vXKBpJzvU01ySiZR0toHgaTZWelm7x98ESfKERUt7TGqDhjUGG
+         HkX7Wqc/NPxzJy5a0KzBnC8eLP6o3TbpxmjC13CX4SDZPDtGAuwILO46UesxE6Q9bget
+         5QvuPHAzZrvKOSlmqV08TS2CS/hJ1WK5cVd5kGCi+sCZV2il/VhbP5Ng66qUvUba/WBq
+         msng==
+X-Gm-Message-State: AGi0PuZJvs49XQTMh4pRxZjb5o1Rk4lYeJKZps6tFj61/fW7Q7E1mMn7
+        xHdQhPst0puElVOfr7eIwf2QQKNqZqzpKtT4COsrj27x24Jf
+X-Google-Smtp-Source: APiQypJ3zVy2n6UjAJUoBMWPPx4h13PWSTKaTDLsZYs9bjfa0f4ELC/F5D/hidjVTeMq0QTtYxvSKKTaxvdNv55+JU6idVqNJdMQ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200304165845.3081-14-vgoyal@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a02:7688:: with SMTP id z130mr11279368jab.108.1585979713773;
+ Fri, 03 Apr 2020 22:55:13 -0700 (PDT)
+Date:   Fri, 03 Apr 2020 22:55:13 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000760d0705a270ad0c@google.com>
+Subject: possible deadlock in send_sigio
+From:   syzbot <syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com>
+To:     adobriyan@gmail.com, akpm@linux-foundation.org,
+        allison@lohutok.net, areber@redhat.com, aubrey.li@linux.intel.com,
+        avagin@gmail.com, bfields@fieldses.org, christian@brauner.io,
+        cyphar@cyphar.com, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, guro@fb.com, jlayton@kernel.org,
+        joel@joelfernandes.org, keescook@chromium.org,
+        linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mhocko@suse.com, mingo@kernel.org,
+        oleg@redhat.com, peterz@infradead.org, sargun@sargun.me,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 11:58:38AM -0500, Vivek Goyal wrote:
-> This patch implements basic DAX support. mmap() is not implemented
-> yet and will come in later patches. This patch looks into implemeting
-> read/write.
-> 
-> We make use of interval tree to keep track of per inode dax mappings.
-> 
-> Do not use dax for file extending writes, instead just send WRITE message
-> to daemon (like we do for direct I/O path). This will keep write and
-> i_size change atomic w.r.t crash.
-> 
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-> Signed-off-by: Peng Tao <tao.peng@linux.alibaba.com>
-> ---
->  fs/fuse/file.c            | 597 +++++++++++++++++++++++++++++++++++++-
->  fs/fuse/fuse_i.h          |  23 ++
->  fs/fuse/inode.c           |   6 +
->  include/uapi/linux/fuse.h |   1 +
->  4 files changed, 621 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 9d67b830fb7a..9effdd3dc6d6 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -18,6 +18,12 @@
->  #include <linux/swap.h>
->  #include <linux/falloc.h>
->  #include <linux/uio.h>
-> +#include <linux/dax.h>
-> +#include <linux/iomap.h>
-> +#include <linux/interval_tree_generic.h>
-> +
-> +INTERVAL_TREE_DEFINE(struct fuse_dax_mapping, rb, __u64, __subtree_last,
-> +                     START, LAST, static inline, fuse_dax_interval_tree);
->  
->  static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
->  				      struct fuse_page_desc **desc)
-> @@ -187,6 +193,242 @@ static void fuse_link_write_file(struct file *file)
->  	spin_unlock(&fi->lock);
->  }
->  
-> +static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
-> +{
-> +	struct fuse_dax_mapping *dmap = NULL;
-> +
-> +	spin_lock(&fc->lock);
-> +
-> +	if (fc->nr_free_ranges <= 0) {
-> +		spin_unlock(&fc->lock);
-> +		return NULL;
-> +	}
-> +
-> +	WARN_ON(list_empty(&fc->free_ranges));
-> +
-> +	/* Take a free range */
-> +	dmap = list_first_entry(&fc->free_ranges, struct fuse_dax_mapping,
-> +					list);
-> +	list_del_init(&dmap->list);
-> +	fc->nr_free_ranges--;
-> +	spin_unlock(&fc->lock);
-> +	return dmap;
-> +}
-> +
-> +/* This assumes fc->lock is held */
-> +static void __dmap_add_to_free_pool(struct fuse_conn *fc,
-> +				struct fuse_dax_mapping *dmap)
-> +{
-> +	list_add_tail(&dmap->list, &fc->free_ranges);
-> +	fc->nr_free_ranges++;
-> +}
-> +
-> +static void dmap_add_to_free_pool(struct fuse_conn *fc,
-> +				struct fuse_dax_mapping *dmap)
-> +{
-> +	/* Return fuse_dax_mapping to free list */
-> +	spin_lock(&fc->lock);
-> +	__dmap_add_to_free_pool(fc, dmap);
-> +	spin_unlock(&fc->lock);
-> +}
-> +
-> +/* offset passed in should be aligned to FUSE_DAX_MEM_RANGE_SZ */
-> +static int fuse_setup_one_mapping(struct inode *inode, loff_t offset,
-> +				  struct fuse_dax_mapping *dmap, bool writable,
-> +				  bool upgrade)
-> +{
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_setupmapping_in inarg;
-> +	FUSE_ARGS(args);
-> +	ssize_t err;
-> +
-> +	WARN_ON(offset % FUSE_DAX_MEM_RANGE_SZ);
-> +	WARN_ON(fc->nr_free_ranges < 0);
-> +
-> +	/* Ask fuse daemon to setup mapping */
-> +	memset(&inarg, 0, sizeof(inarg));
-> +	inarg.foffset = offset;
-> +	inarg.fh = -1;
-> +	inarg.moffset = dmap->window_offset;
-> +	inarg.len = FUSE_DAX_MEM_RANGE_SZ;
-> +	inarg.flags |= FUSE_SETUPMAPPING_FLAG_READ;
-> +	if (writable)
-> +		inarg.flags |= FUSE_SETUPMAPPING_FLAG_WRITE;
-> +	args.opcode = FUSE_SETUPMAPPING;
-> +	args.nodeid = fi->nodeid;
-> +	args.in_numargs = 1;
-> +	args.in_args[0].size = sizeof(inarg);
-> +	args.in_args[0].value = &inarg;
-> +	err = fuse_simple_request(fc, &args);
-> +	if (err < 0) {
-> +		printk(KERN_ERR "%s request failed at mem_offset=0x%llx %zd\n",
-> +				 __func__, dmap->window_offset, err);
-> +		return err;
-> +	}
-> +
-> +	pr_debug("fuse_setup_one_mapping() succeeded. offset=0x%llx writable=%d"
-> +		 " err=%zd\n", offset, writable, err);
-> +
-> +	dmap->writable = writable;
-> +	if (!upgrade) {
-> +		dmap->start = offset;
-> +		dmap->end = offset + FUSE_DAX_MEM_RANGE_SZ - 1;
-> +		/* Protected by fi->i_dmap_sem */
-> +		fuse_dax_interval_tree_insert(dmap, &fi->dmap_tree);
-> +		fi->nr_dmaps++;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int
-> +fuse_send_removemapping(struct inode *inode,
-> +			struct fuse_removemapping_in *inargp,
-> +			struct fuse_removemapping_one *remove_one)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	FUSE_ARGS(args);
-> +
-> +	args.opcode = FUSE_REMOVEMAPPING;
-> +	args.nodeid = fi->nodeid;
-> +	args.in_numargs = 2;
-> +	args.in_args[0].size = sizeof(*inargp);
-> +	args.in_args[0].value = inargp;
-> +	args.in_args[1].size = inargp->count * sizeof(*remove_one);
-> +	args.in_args[1].value = remove_one;
-> +	return fuse_simple_request(fc, &args);
-> +}
-> +
-> +static int dmap_removemapping_list(struct inode *inode, unsigned num,
-> +				   struct list_head *to_remove)
-> +{
-> +	struct fuse_removemapping_one *remove_one, *ptr;
-> +	struct fuse_removemapping_in inarg;
-> +	struct fuse_dax_mapping *dmap;
-> +	int ret, i = 0, nr_alloc;
-> +
-> +	nr_alloc = min_t(unsigned int, num, FUSE_REMOVEMAPPING_MAX_ENTRY);
-> +	remove_one = kmalloc_array(nr_alloc, sizeof(*remove_one), GFP_NOFS);
-> +	if (!remove_one)
-> +		return -ENOMEM;
-> +
-> +	ptr = remove_one;
-> +	list_for_each_entry(dmap, to_remove, list) {
-> +		ptr->moffset = dmap->window_offset;
-> +		ptr->len = dmap->length;
-> +		ptr++;
-> +		i++;
-> +		num--;
-> +		if (i >= nr_alloc || num == 0) {
-> +			memset(&inarg, 0, sizeof(inarg));
-> +			inarg.count = i;
-> +			ret = fuse_send_removemapping(inode, &inarg,
-> +						      remove_one);
-> +			if (ret)
-> +				goto out;
-> +			ptr = remove_one;
-> +			i = 0;
-> +		}
-> +	}
-> +out:
-> +	kfree(remove_one);
-> +	return ret;
-> +}
-> +
-> +/*
-> + * Cleanup dmap entry and add back to free list. This should be called with
-> + * fc->lock held.
-> + */
-> +static void dmap_reinit_add_to_free_pool(struct fuse_conn *fc,
-> +					    struct fuse_dax_mapping *dmap)
-> +{
-> +	pr_debug("fuse: freeing memory range start=0x%llx end=0x%llx "
-> +		 "window_offset=0x%llx length=0x%llx\n", dmap->start,
-> +		 dmap->end, dmap->window_offset, dmap->length);
-> +	dmap->start = dmap->end = 0;
-> +	__dmap_add_to_free_pool(fc, dmap);
-> +}
-> +
-> +/*
-> + * Free inode dmap entries whose range falls entirely inside [start, end].
-> + * Does not take any locks. At this point of time it should only be
-> + * called from evict_inode() path where we know all dmap entries can be
-> + * reclaimed.
-> + */
-> +static void inode_reclaim_dmap_range(struct fuse_conn *fc, struct inode *inode,
-> +				      loff_t start, loff_t end)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_dax_mapping *dmap, *n;
-> +	int err, num = 0;
-> +	LIST_HEAD(to_remove);
-> +
-> +	pr_debug("fuse: %s: start=0x%llx, end=0x%llx\n", __func__, start, end);
-> +
-> +	/*
-> +	 * Interval tree search matches intersecting entries. Adjust the range
-> +	 * to avoid dropping partial valid entries.
-> +	 */
-> +	start = ALIGN(start, FUSE_DAX_MEM_RANGE_SZ);
-> +	end = ALIGN_DOWN(end, FUSE_DAX_MEM_RANGE_SZ);
-> +
-> +	while (1) {
-> +		dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, start,
-> +							 end);
-> +		if (!dmap)
-> +			break;
-> +		fuse_dax_interval_tree_remove(dmap, &fi->dmap_tree);
-> +		num++;
-> +		list_add(&dmap->list, &to_remove);
-> +	}
-> +
-> +	/* Nothing to remove */
-> +	if (list_empty(&to_remove))
-> +		return;
-> +
-> +	WARN_ON(fi->nr_dmaps < num);
-> +	fi->nr_dmaps -= num;
-> +	/*
-> +	 * During umount/shutdown, fuse connection is dropped first
-> +	 * and evict_inode() is called later. That means any
-> +	 * removemapping messages are going to fail. Send messages
-> +	 * only if connection is up. Otherwise fuse daemon is
-> +	 * responsible for cleaning up any leftover references and
-> +	 * mappings.
-> +	 */
-> +	if (fc->connected) {
-> +		err = dmap_removemapping_list(inode, num, &to_remove);
-> +		if (err) {
-> +			pr_warn("Failed to removemappings. start=0x%llx"
-> +				" end=0x%llx\n", start, end);
-> +		}
-> +	}
-> +	spin_lock(&fc->lock);
-> +	list_for_each_entry_safe(dmap, n, &to_remove, list) {
-> +		list_del_init(&dmap->list);
-> +		dmap_reinit_add_to_free_pool(fc, dmap);
-> +	}
-> +	spin_unlock(&fc->lock);
-> +}
-> +
-> +/*
-> + * It is called from evict_inode() and by that time inode is going away. So
-> + * this function does not take any locks like fi->i_dmap_sem for traversing
-> + * that fuse inode interval tree. If that lock is taken then lock validator
-> + * complains of deadlock situation w.r.t fs_reclaim lock.
-> + */
-> +void fuse_cleanup_inode_mappings(struct inode *inode)
-> +{
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	/*
-> +	 * fuse_evict_inode() has alredy called truncate_inode_pages_final()
-> +	 * before we arrive here. So we should not have to worry about
-> +	 * any pages/exception entries still associated with inode.
-> +	 */
-> +	inode_reclaim_dmap_range(fc, inode, 0, -1);
-> +}
-> +
->  void fuse_finish_open(struct inode *inode, struct file *file)
->  {
->  	struct fuse_file *ff = file->private_data;
-> @@ -1562,32 +1804,364 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	return res;
->  }
->  
-> +static ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
->  static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct fuse_file *ff = file->private_data;
-> +	struct inode *inode = file->f_mapping->host;
->  
->  	if (is_bad_inode(file_inode(file)))
->  		return -EIO;
->  
-> -	if (!(ff->open_flags & FOPEN_DIRECT_IO))
-> -		return fuse_cache_read_iter(iocb, to);
-> -	else
-> +	if (IS_DAX(inode))
-> +		return fuse_dax_read_iter(iocb, to);
-> +
-> +	if (ff->open_flags & FOPEN_DIRECT_IO)
->  		return fuse_direct_read_iter(iocb, to);
-> +
-> +	return fuse_cache_read_iter(iocb, to);
->  }
->  
-> +static ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
->  static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  {
->  	struct file *file = iocb->ki_filp;
->  	struct fuse_file *ff = file->private_data;
-> +	struct inode *inode = file->f_mapping->host;
->  
->  	if (is_bad_inode(file_inode(file)))
->  		return -EIO;
->  
-> -	if (!(ff->open_flags & FOPEN_DIRECT_IO))
-> -		return fuse_cache_write_iter(iocb, from);
-> -	else
-> +	if (IS_DAX(inode))
-> +		return fuse_dax_write_iter(iocb, from);
-> +
-> +	if (ff->open_flags & FOPEN_DIRECT_IO)
->  		return fuse_direct_write_iter(iocb, from);
-> +
-> +	return fuse_cache_write_iter(iocb, from);
-> +}
-> +
-> +static void fuse_fill_iomap_hole(struct iomap *iomap, loff_t length)
-> +{
-> +	iomap->addr = IOMAP_NULL_ADDR;
-> +	iomap->length = length;
-> +	iomap->type = IOMAP_HOLE;
-> +}
-> +
-> +static void fuse_fill_iomap(struct inode *inode, loff_t pos, loff_t length,
-> +			struct iomap *iomap, struct fuse_dax_mapping *dmap,
-> +			unsigned flags)
-> +{
-> +	loff_t offset, len;
-> +	loff_t i_size = i_size_read(inode);
-> +
-> +	offset = pos - dmap->start;
-> +	len = min(length, dmap->length - offset);
-> +
-> +	/* If length is beyond end of file, truncate further */
-> +	if (pos + len > i_size)
-> +		len = i_size - pos;
-> +
-> +	if (len > 0) {
-> +		iomap->addr = dmap->window_offset + offset;
-> +		iomap->length = len;
-> +		if (flags & IOMAP_FAULT)
-> +			iomap->length = ALIGN(len, PAGE_SIZE);
-> +		iomap->type = IOMAP_MAPPED;
-> +		pr_debug("%s: returns iomap: addr 0x%llx offset 0x%llx"
-> +				" length 0x%llx\n", __func__, iomap->addr,
-> +				iomap->offset, iomap->length);
-> +	} else {
-> +		/* Mapping beyond end of file is hole */
-> +		fuse_fill_iomap_hole(iomap, length);
-> +		pr_debug("%s: returns iomap: addr 0x%llx offset 0x%llx"
-> +				"length 0x%llx\n", __func__, iomap->addr,
-> +				iomap->offset, iomap->length);
-> +	}
-> +}
-> +
-> +static int iomap_begin_setup_new_mapping(struct inode *inode, loff_t pos,
-> +					 loff_t length, unsigned flags,
-> +					 struct iomap *iomap)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	struct fuse_dax_mapping *dmap, *alloc_dmap = NULL;
-> +	int ret;
-> +	bool writable = flags & IOMAP_WRITE;
-> +
-> +	alloc_dmap = alloc_dax_mapping(fc);
-> +	if (!alloc_dmap)
-> +		return -EBUSY;
-> +
-> +	/*
-> +	 * Take write lock so that only one caller can try to setup mapping
-> +	 * and other waits.
-> +	 */
-> +	down_write(&fi->i_dmap_sem);
-> +	/*
-> +	 * We dropped lock. Check again if somebody else setup
-> +	 * mapping already.
-> +	 */
-> +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos,
-> +						pos);
-> +	if (dmap) {
-> +		fuse_fill_iomap(inode, pos, length, iomap, dmap, flags);
-> +		dmap_add_to_free_pool(fc, alloc_dmap);
-> +		up_write(&fi->i_dmap_sem);
-> +		return 0;
-> +	}
-> +
-> +	/* Setup one mapping */
-> +	ret = fuse_setup_one_mapping(inode,
-> +				     ALIGN_DOWN(pos, FUSE_DAX_MEM_RANGE_SZ),
-> +				     alloc_dmap, writable, false);
-> +	if (ret < 0) {
-> +		printk("fuse_setup_one_mapping() failed. err=%d"
-> +			" pos=0x%llx, writable=%d\n", ret, pos, writable);
-> +		dmap_add_to_free_pool(fc, alloc_dmap);
-> +		up_write(&fi->i_dmap_sem);
-> +		return ret;
-> +	}
-> +	fuse_fill_iomap(inode, pos, length, iomap, alloc_dmap, flags);
-> +	up_write(&fi->i_dmap_sem);
-> +	return 0;
-> +}
-> +
-> +static int iomap_begin_upgrade_mapping(struct inode *inode, loff_t pos,
-> +					 loff_t length, unsigned flags,
-> +					 struct iomap *iomap)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_dax_mapping *dmap;
-> +	int ret;
-> +
-> +	/*
-> +	 * Take exclusive lock so that only one caller can try to setup
-> +	 * mapping and others wait.
-> +	 */
-> +	down_write(&fi->i_dmap_sem);
-> +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos, pos);
-> +
-> +	/* We are holding either inode lock or i_mmap_sem, and that should
-> +	 * ensure that dmap can't reclaimed or truncated and it should still
-> +	 * be there in tree despite the fact we dropped and re-acquired the
-> +	 * lock.
-> +	 */
-> +	ret = -EIO;
-> +	if (WARN_ON(!dmap))
-> +		goto out_err;
-> +
-> +	/* Maybe another thread already upgraded mapping while we were not
-> +	 * holding lock.
-> +	 */
-> +	if (dmap->writable)
+Hello,
 
-oops, looks like it's still returning -EIO here, %ret should be zero.
+syzbot found the following crash on:
 
-thanks,
-liubo
+HEAD commit:    bef7b2a7 Merge tag 'devicetree-for-5.7' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15f39c5de00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=91b674b8f0368e69
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9fb1457d720a55d6dc5
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1454c3b7e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a22ac7e00000
 
-> +		goto out_fill_iomap;
-> +
-> +	ret = fuse_setup_one_mapping(inode,
-> +				     ALIGN_DOWN(pos, FUSE_DAX_MEM_RANGE_SZ),
-> +				     dmap, true, true);
-> +	if (ret < 0) {
-> +		printk("fuse_setup_one_mapping() failed. err=%d pos=0x%llx\n",
-> +		       ret, pos);
-> +		goto out_err;
-> +	}
-> +
-> +out_fill_iomap:
-> +	fuse_fill_iomap(inode, pos, length, iomap, dmap, flags);
-> +out_err:
-> +	up_write(&fi->i_dmap_sem);
-> +	return ret;
-> +}
-> +
-> +/* This is just for DAX and the mapping is ephemeral, do not use it for other
-> + * purposes since there is no block device with a permanent mapping.
-> + */
-> +static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t length,
-> +			    unsigned flags, struct iomap *iomap,
-> +			    struct iomap *srcmap)
-> +{
-> +	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	struct fuse_dax_mapping *dmap;
-> +	bool writable = flags & IOMAP_WRITE;
-> +
-> +	/* We don't support FIEMAP */
-> +	BUG_ON(flags & IOMAP_REPORT);
-> +
-> +	pr_debug("fuse_iomap_begin() called. pos=0x%llx length=0x%llx\n",
-> +			pos, length);
-> +
-> +	/*
-> +	 * Writes beyond end of file are not handled using dax path. Instead
-> +	 * a fuse write message is sent to daemon
-> +	 */
-> +	if (flags & IOMAP_WRITE && pos >= i_size_read(inode))
-> +		return -EIO;
-> +
-> +	iomap->offset = pos;
-> +	iomap->flags = 0;
-> +	iomap->bdev = NULL;
-> +	iomap->dax_dev = fc->dax_dev;
-> +
-> +	/*
-> +	 * Both read/write and mmap path can race here. So we need something
-> +	 * to make sure if we are setting up mapping, then other path waits
-> +	 *
-> +	 * For now, use a semaphore for this. It probably needs to be
-> +	 * optimized later.
-> +	 */
-> +	down_read(&fi->i_dmap_sem);
-> +	dmap = fuse_dax_interval_tree_iter_first(&fi->dmap_tree, pos, pos);
-> +
-> +	if (dmap) {
-> +		if (writable && !dmap->writable) {
-> +			/* Upgrade read-only mapping to read-write. This will
-> +			 * require exclusive i_dmap_sem lock as we don't want
-> +			 * two threads to be trying to this simultaneously
-> +			 * for same dmap. So drop shared lock and acquire
-> +			 * exclusive lock.
-> +			 */
-> +			up_read(&fi->i_dmap_sem);
-> +			pr_debug("%s: Upgrading mapping at offset 0x%llx"
-> +				 " length 0x%llx\n", __func__, pos, length);
-> +			return iomap_begin_upgrade_mapping(inode, pos, length,
-> +							   flags, iomap);
-> +		} else {
-> +			fuse_fill_iomap(inode, pos, length, iomap, dmap, flags);
-> +			up_read(&fi->i_dmap_sem);
-> +			return 0;
-> +		}
-> +	} else {
-> +		up_read(&fi->i_dmap_sem);
-> +		pr_debug("%s: no mapping at offset 0x%llx length 0x%llx\n",
-> +				__func__, pos, length);
-> +		if (pos >= i_size_read(inode))
-> +			goto iomap_hole;
-> +
-> +		return iomap_begin_setup_new_mapping(inode, pos, length, flags,
-> +						     iomap);
-> +	}
-> +
-> +	/*
-> +	 * If read beyond end of file happnes, fs code seems to return
-> +	 * it as hole
-> +	 */
-> +iomap_hole:
-> +	fuse_fill_iomap_hole(iomap, length);
-> +	pr_debug("fuse_iomap_begin() returning hole mapping. pos=0x%llx length_asked=0x%llx length_returned=0x%llx\n", pos, length, iomap->length);
-> +	return 0;
-> +}
-> +
-> +static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t length,
-> +			  ssize_t written, unsigned flags,
-> +			  struct iomap *iomap)
-> +{
-> +	/* DAX writes beyond end-of-file aren't handled using iomap, so the
-> +	 * file size is unchanged and there is nothing to do here.
-> +	 */
-> +	return 0;
-> +}
-> +
-> +static const struct iomap_ops fuse_iomap_ops = {
-> +	.iomap_begin = fuse_iomap_begin,
-> +	.iomap_end = fuse_iomap_end,
-> +};
-> +
-> +static ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	ssize_t ret;
-> +
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock_shared(inode))
-> +			return -EAGAIN;
-> +	} else {
-> +		inode_lock_shared(inode);
-> +	}
-> +
-> +	ret = dax_iomap_rw(iocb, to, &fuse_iomap_ops);
-> +	inode_unlock_shared(inode);
-> +
-> +	/* TODO file_accessed(iocb->f_filp) */
-> +	return ret;
-> +}
-> +
-> +static bool file_extending_write(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +
-> +	return (iov_iter_rw(from) == WRITE &&
-> +		((iocb->ki_pos) >= i_size_read(inode)));
-> +}
-> +
-> +static ssize_t fuse_dax_direct_write(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
-> +	ssize_t ret;
-> +
-> +	ret = fuse_direct_io(&io, from, &iocb->ki_pos, FUSE_DIO_WRITE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	fuse_invalidate_attr(inode);
-> +	fuse_write_update_size(inode, iocb->ki_pos);
-> +	return ret;
-> +}
-> +
-> +static ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct inode *inode = file_inode(iocb->ki_filp);
-> +	ssize_t ret, count;
-> +
-> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> +		if (!inode_trylock(inode))
-> +			return -EAGAIN;
-> +	} else {
-> +		inode_lock(inode);
-> +	}
-> +
-> +	ret = generic_write_checks(iocb, from);
-> +	if (ret <= 0)
-> +		goto out;
-> +
-> +	ret = file_remove_privs(iocb->ki_filp);
-> +	if (ret)
-> +		goto out;
-> +	/* TODO file_update_time() but we don't want metadata I/O */
-> +
-> +	/* Do not use dax for file extending writes as its an mmap and
-> +	 * trying to write beyong end of existing page will generate
-> +	 * SIGBUS.
-> +	 */
-> +	if (file_extending_write(iocb, from)) {
-> +		ret = fuse_dax_direct_write(iocb, from);
-> +		goto out;
-> +	}
-> +
-> +	ret = dax_iomap_rw(iocb, from, &fuse_iomap_ops);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	/*
-> +	 * If part of the write was file extending, fuse dax path will not
-> +	 * take care of that. Do direct write instead.
-> +	 */
-> +	if (iov_iter_count(from) && file_extending_write(iocb, from)) {
-> +		count = fuse_dax_direct_write(iocb, from);
-> +		if (count < 0)
-> +			goto out;
-> +		ret += count;
-> +	}
-> +
-> +out:
-> +	inode_unlock(inode);
-> +
-> +	if (ret > 0)
-> +		ret = generic_write_sync(iocb, ret);
-> +	return ret;
->  }
->  
->  static void fuse_writepage_free(struct fuse_writepage_args *wpa)
-> @@ -2318,6 +2892,11 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
->  	return 0;
->  }
->  
-> +static int fuse_dax_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	return -EINVAL; /* TODO */
-> +}
-> +
->  static int convert_fuse_file_lock(struct fuse_conn *fc,
->  				  const struct fuse_file_lock *ffl,
->  				  struct file_lock *fl)
-> @@ -3387,6 +3966,7 @@ static const struct address_space_operations fuse_file_aops  = {
->  void fuse_init_file_inode(struct inode *inode)
->  {
->  	struct fuse_inode *fi = get_fuse_inode(inode);
-> +	struct fuse_conn *fc = get_fuse_conn(inode);
->  
->  	inode->i_fop = &fuse_file_operations;
->  	inode->i_data.a_ops = &fuse_file_aops;
-> @@ -3396,4 +3976,9 @@ void fuse_init_file_inode(struct inode *inode)
->  	fi->writectr = 0;
->  	init_waitqueue_head(&fi->page_waitq);
->  	INIT_LIST_HEAD(&fi->writepages);
-> +	fi->dmap_tree = RB_ROOT_CACHED;
-> +
-> +	if (fc->dax_dev) {
-> +		inode->i_flags |= S_DAX;
-> +	}
->  }
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index b41275f73e4c..490549862bda 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -70,16 +70,29 @@ struct fuse_forget_link {
->  	struct fuse_forget_link *next;
->  };
->  
-> +#define START(node) ((node)->start)
-> +#define LAST(node) ((node)->end)
-> +
->  /** Translation information for file offsets to DAX window offsets */
->  struct fuse_dax_mapping {
->  	/* Will connect in fc->free_ranges to keep track of free memory */
->  	struct list_head list;
->  
-> +	/* For interval tree in file/inode */
-> +	struct rb_node rb;
-> +	/** Start Position in file */
-> +	__u64 start;
-> +	/** End Position in file */
-> +	__u64 end;
-> +	__u64 __subtree_last;
->  	/** Position in DAX window */
->  	u64 window_offset;
->  
->  	/** Length of mapping, in bytes */
->  	loff_t length;
-> +
-> +	/* Is this mapping read-only or read-write */
-> +	bool writable;
->  };
->  
->  /** FUSE inode */
-> @@ -167,6 +180,15 @@ struct fuse_inode {
->  
->  	/** Lock to protect write related fields */
->  	spinlock_t lock;
-> +
-> +	/*
-> +	 * Semaphore to protect modifications to dmap_tree
-> +	 */
-> +	struct rw_semaphore i_dmap_sem;
-> +
-> +	/** Sorted rb tree of struct fuse_dax_mapping elements */
-> +	struct rb_root_cached dmap_tree;
-> +	unsigned long nr_dmaps;
->  };
->  
->  /** FUSE inode state bits */
-> @@ -1127,5 +1149,6 @@ unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args);
->   */
->  u64 fuse_get_unique(struct fuse_iqueue *fiq);
->  void fuse_free_conn(struct fuse_conn *fc);
-> +void fuse_cleanup_inode_mappings(struct inode *inode);
->  
->  #endif /* _FS_FUSE_I_H */
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 36cb9c00bbe5..93bc65607a15 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -86,7 +86,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
->  	fi->attr_version = 0;
->  	fi->orig_ino = 0;
->  	fi->state = 0;
-> +	fi->nr_dmaps = 0;
->  	mutex_init(&fi->mutex);
-> +	init_rwsem(&fi->i_dmap_sem);
->  	spin_lock_init(&fi->lock);
->  	fi->forget = fuse_alloc_forget();
->  	if (!fi->forget) {
-> @@ -114,6 +116,10 @@ static void fuse_evict_inode(struct inode *inode)
->  	clear_inode(inode);
->  	if (inode->i_sb->s_flags & SB_ACTIVE) {
->  		struct fuse_conn *fc = get_fuse_conn(inode);
-> +		if (IS_DAX(inode)) {
-> +			fuse_cleanup_inode_mappings(inode);
-> +			WARN_ON(fi->nr_dmaps);
-> +		}
->  		fuse_queue_forget(fc, fi->forget, fi->nodeid, fi->nlookup);
->  		fi->forget = NULL;
->  	}
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 62633555d547..36d824b82ebc 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -896,6 +896,7 @@ struct fuse_copy_file_range_in {
->  
->  #define FUSE_SETUPMAPPING_ENTRIES 8
->  #define FUSE_SETUPMAPPING_FLAG_WRITE (1ull << 0)
-> +#define FUSE_SETUPMAPPING_FLAG_READ (1ull << 1)
->  struct fuse_setupmapping_in {
->  	/* An already open handle */
->  	uint64_t	fh;
-> -- 
-> 2.20.1
+The bug was bisected to:
+
+commit 7bc3e6e55acf065500a24621f3b313e7e5998acf
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu Feb 20 00:22:26 2020 +0000
+
+    proc: Use a list of inodes to flush from proc
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=165c4acde00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=155c4acde00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=115c4acde00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a9fb1457d720a55d6dc5@syzkaller.appspotmail.com
+Fixes: 7bc3e6e55acf ("proc: Use a list of inodes to flush from proc")
+
+========================================================
+WARNING: possible irq lock inversion dependency detected
+5.6.0-syzkaller #0 Not tainted
+--------------------------------------------------------
+ksoftirqd/0/9 just changed the state of lock:
+ffffffff898090d8 (tasklist_lock){.+.?}-{2:2}, at: send_sigio+0xa9/0x340 fs/fcntl.c:800
+but this lock took another, SOFTIRQ-unsafe lock in the past:
+ (&pid->wait_pidfd){+.+.}-{2:2}
+
+
+and interrupts could create inverse lock ordering between them.
+
+
+other info that might help us debug this:
+ Possible interrupt unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&pid->wait_pidfd);
+                               local_irq_disable();
+                               lock(tasklist_lock);
+                               lock(&pid->wait_pidfd);
+  <Interrupt>
+    lock(tasklist_lock);
+
+ *** DEADLOCK ***
+
+8 locks held by ksoftirqd/0/9:
+ #0: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: __write_once_size include/linux/compiler.h:226 [inline]
+ #0: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: __skb_unlink include/linux/skbuff.h:2078 [inline]
+ #0: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: __skb_dequeue include/linux/skbuff.h:2093 [inline]
+ #0: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: process_backlog+0x1ad/0x7a0 net/core/dev.c:6131
+ #1: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: __skb_pull include/linux/skbuff.h:2309 [inline]
+ #1: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: ip_local_deliver_finish+0x124/0x360 net/ipv4/ip_input.c:228
+ #2: ffff88808e1750e0 (slock-AF_INET/1){+.-.}-{2:2}, at: tcp_v4_rcv+0x2d09/0x39c0 net/ipv4/tcp_ipv4.c:1997
+ #3: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: sock_def_error_report+0x0/0x4d0 include/linux/compiler.h:199
+ #4: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: rcu_lock_release include/linux/rcupdate.h:213 [inline]
+ #4: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: rcu_read_unlock include/linux/rcupdate.h:655 [inline]
+ #4: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: sock_def_error_report+0x1d6/0x4d0 net/core/sock.c:2809
+ #5: ffffffff899bb200 (rcu_read_lock){....}-{1:2}, at: kill_fasync+0x3d/0x470 fs/fcntl.c:1021
+ #6: ffff8880a41312b8 (&new->fa_lock){.+.?}-{2:2}, at: kill_fasync_rcu fs/fcntl.c:1002 [inline]
+ #6: ffff8880a41312b8 (&new->fa_lock){.+.?}-{2:2}, at: kill_fasync fs/fcntl.c:1023 [inline]
+ #6: ffff8880a41312b8 (&new->fa_lock){.+.?}-{2:2}, at: kill_fasync+0x162/0x470 fs/fcntl.c:1016
+ #7: ffff8880a5d263f8 (&f->f_owner.lock){.+.?}-{2:2}, at: send_sigio+0x24/0x340 fs/fcntl.c:786
+
+the shortest dependencies between 2nd lock and 1st lock:
+ -> (&pid->wait_pidfd){+.+.}-{2:2} {
+    HARDIRQ-ON-W at:
+                      lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                      __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+                      _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+                      spin_lock include/linux/spinlock.h:353 [inline]
+                      proc_pid_make_inode+0x1f9/0x3c0 fs/proc/base.c:1880
+                      proc_pid_instantiate+0x51/0x150 fs/proc/base.c:3285
+                      proc_pid_lookup+0x1da/0x340 fs/proc/base.c:3320
+                      proc_root_lookup+0x20/0x60 fs/proc/root.c:243
+                      __lookup_slow+0x256/0x490 fs/namei.c:1530
+                      lookup_slow fs/namei.c:1547 [inline]
+                      walk_component+0x418/0x6a0 fs/namei.c:1846
+                      link_path_walk.part.0+0x4f1/0xb50 fs/namei.c:2166
+                      link_path_walk fs/namei.c:2098 [inline]
+                      path_openat+0x25a/0x27b0 fs/namei.c:3342
+                      do_filp_open+0x203/0x260 fs/namei.c:3375
+                      do_sys_openat2+0x585/0x770 fs/open.c:1148
+                      do_sys_open+0xc3/0x140 fs/open.c:1164
+                      do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+                      entry_SYSCALL_64_after_hwframe+0x49/0xb3
+    SOFTIRQ-ON-W at:
+                      lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                      __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+                      _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+                      spin_lock include/linux/spinlock.h:353 [inline]
+                      proc_pid_make_inode+0x1f9/0x3c0 fs/proc/base.c:1880
+                      proc_pid_instantiate+0x51/0x150 fs/proc/base.c:3285
+                      proc_pid_lookup+0x1da/0x340 fs/proc/base.c:3320
+                      proc_root_lookup+0x20/0x60 fs/proc/root.c:243
+                      __lookup_slow+0x256/0x490 fs/namei.c:1530
+                      lookup_slow fs/namei.c:1547 [inline]
+                      walk_component+0x418/0x6a0 fs/namei.c:1846
+                      link_path_walk.part.0+0x4f1/0xb50 fs/namei.c:2166
+                      link_path_walk fs/namei.c:2098 [inline]
+                      path_openat+0x25a/0x27b0 fs/namei.c:3342
+                      do_filp_open+0x203/0x260 fs/namei.c:3375
+                      do_sys_openat2+0x585/0x770 fs/open.c:1148
+                      do_sys_open+0xc3/0x140 fs/open.c:1164
+                      do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+                      entry_SYSCALL_64_after_hwframe+0x49/0xb3
+    INITIAL USE at:
+                     lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                     __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+                     _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
+                     __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:122
+                     do_notify_pidfd kernel/signal.c:1900 [inline]
+                     do_notify_parent+0x19e/0xe60 kernel/signal.c:1927
+                     exit_notify kernel/exit.c:660 [inline]
+                     do_exit+0x238f/0x2dd0 kernel/exit.c:816
+                     call_usermodehelper_exec_async+0x507/0x710 kernel/umh.c:125
+                     ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+  }
+  ... key      at: [<ffffffff8bbaf680>] __key.53746+0x0/0x40
+  ... acquired at:
+   __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+   _raw_spin_lock_irqsave+0x8c/0xbf kernel/locking/spinlock.c:159
+   __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:122
+   do_notify_pidfd kernel/signal.c:1900 [inline]
+   do_notify_parent+0x19e/0xe60 kernel/signal.c:1927
+   exit_notify kernel/exit.c:660 [inline]
+   do_exit+0x238f/0x2dd0 kernel/exit.c:816
+   call_usermodehelper_exec_async+0x507/0x710 kernel/umh.c:125
+   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+-> (tasklist_lock){.+.?}-{2:2} {
+   HARDIRQ-ON-R at:
+                    lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                    __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
+                    _raw_read_lock+0x2d/0x40 kernel/locking/spinlock.c:223
+                    do_wait+0x3b9/0xa00 kernel/exit.c:1436
+                    kernel_wait4+0x14c/0x260 kernel/exit.c:1611
+                    call_usermodehelper_exec_sync kernel/umh.c:150 [inline]
+                    call_usermodehelper_exec_work+0x172/0x260 kernel/umh.c:187
+                    process_one_work+0x965/0x16a0 kernel/workqueue.c:2266
+                    worker_thread+0x96/0xe20 kernel/workqueue.c:2412
+                    kthread+0x388/0x470 kernel/kthread.c:268
+                    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+   IN-SOFTIRQ-R at:
+                    lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                    __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
+                    _raw_read_lock+0x2d/0x40 kernel/locking/spinlock.c:223
+                    send_sigio+0xa9/0x340 fs/fcntl.c:800
+                    kill_fasync_rcu fs/fcntl.c:1009 [inline]
+                    kill_fasync fs/fcntl.c:1023 [inline]
+                    kill_fasync+0x21c/0x470 fs/fcntl.c:1016
+                    sock_wake_async+0xd2/0x160 net/socket.c:1337
+                    sk_wake_async include/net/sock.h:2259 [inline]
+                    sk_wake_async include/net/sock.h:2255 [inline]
+                    sock_def_error_report+0x2d7/0x4d0 net/core/sock.c:2808
+                    tcp_reset net/ipv4/tcp_input.c:4138 [inline]
+                    tcp_reset+0x195/0x4e0 net/ipv4/tcp_input.c:4114
+                    tcp_rcv_synsent_state_process net/ipv4/tcp_input.c:5937 [inline]
+                    tcp_rcv_state_process+0x2ead/0x4c80 net/ipv4/tcp_input.c:6204
+                    tcp_v4_do_rcv+0x34c/0x8b0 net/ipv4/tcp_ipv4.c:1643
+                    tcp_v4_rcv+0x2f60/0x39c0 net/ipv4/tcp_ipv4.c:2003
+                    ip_protocol_deliver_rcu+0x57/0x880 net/ipv4/ip_input.c:204
+                    ip_local_deliver_finish+0x220/0x360 net/ipv4/ip_input.c:231
+                    NF_HOOK include/linux/netfilter.h:307 [inline]
+                    NF_HOOK include/linux/netfilter.h:301 [inline]
+                    ip_local_deliver+0x1c8/0x4e0 net/ipv4/ip_input.c:252
+                    dst_input include/net/dst.h:441 [inline]
+                    ip_rcv_finish+0x1da/0x2f0 net/ipv4/ip_input.c:428
+                    NF_HOOK include/linux/netfilter.h:307 [inline]
+                    NF_HOOK include/linux/netfilter.h:301 [inline]
+                    ip_rcv+0xd0/0x3c0 net/ipv4/ip_input.c:539
+                    __netif_receive_skb_one_core+0xf5/0x160 net/core/dev.c:5187
+                    __netif_receive_skb+0x27/0x1c0 net/core/dev.c:5301
+                    process_backlog+0x21e/0x7a0 net/core/dev.c:6133
+                    napi_poll net/core/dev.c:6571 [inline]
+                    net_rx_action+0x4c2/0x1070 net/core/dev.c:6639
+                    __do_softirq+0x26c/0x9f7 kernel/softirq.c:292
+                    run_ksoftirqd kernel/softirq.c:604 [inline]
+                    run_ksoftirqd+0x89/0x100 kernel/softirq.c:596
+                    smpboot_thread_fn+0x653/0x9e0 kernel/smpboot.c:165
+                    kthread+0x388/0x470 kernel/kthread.c:268
+                    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+   SOFTIRQ-ON-R at:
+                    lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                    __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
+                    _raw_read_lock+0x2d/0x40 kernel/locking/spinlock.c:223
+                    do_wait+0x3b9/0xa00 kernel/exit.c:1436
+                    kernel_wait4+0x14c/0x260 kernel/exit.c:1611
+                    call_usermodehelper_exec_sync kernel/umh.c:150 [inline]
+                    call_usermodehelper_exec_work+0x172/0x260 kernel/umh.c:187
+                    process_one_work+0x965/0x16a0 kernel/workqueue.c:2266
+                    worker_thread+0x96/0xe20 kernel/workqueue.c:2412
+                    kthread+0x388/0x470 kernel/kthread.c:268
+                    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+   INITIAL USE at:
+                   lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+                   __raw_write_lock_irq include/linux/rwlock_api_smp.h:196 [inline]
+                   _raw_write_lock_irq+0x5b/0x80 kernel/locking/spinlock.c:311
+                   copy_process+0x3430/0x72c0 kernel/fork.c:2205
+                   _do_fork+0x12d/0x1010 kernel/fork.c:2432
+                   kernel_thread+0xb1/0xf0 kernel/fork.c:2519
+                   rest_init+0x23/0x365 init/main.c:626
+                   start_kernel+0x867/0x8a1 init/main.c:998
+                   secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+ }
+ ... key      at: [<ffffffff898090d8>] tasklist_lock+0x18/0x40
+ ... acquired at:
+   mark_lock_irq kernel/locking/lockdep.c:3585 [inline]
+   mark_lock+0x624/0xf10 kernel/locking/lockdep.c:3935
+   mark_usage kernel/locking/lockdep.c:3826 [inline]
+   __lock_acquire+0x1ed9/0x4e00 kernel/locking/lockdep.c:4298
+   lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+   __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
+   _raw_read_lock+0x2d/0x40 kernel/locking/spinlock.c:223
+   send_sigio+0xa9/0x340 fs/fcntl.c:800
+   kill_fasync_rcu fs/fcntl.c:1009 [inline]
+   kill_fasync fs/fcntl.c:1023 [inline]
+   kill_fasync+0x21c/0x470 fs/fcntl.c:1016
+   sock_wake_async+0xd2/0x160 net/socket.c:1337
+   sk_wake_async include/net/sock.h:2259 [inline]
+   sk_wake_async include/net/sock.h:2255 [inline]
+   sock_def_error_report+0x2d7/0x4d0 net/core/sock.c:2808
+   tcp_reset net/ipv4/tcp_input.c:4138 [inline]
+   tcp_reset+0x195/0x4e0 net/ipv4/tcp_input.c:4114
+   tcp_rcv_synsent_state_process net/ipv4/tcp_input.c:5937 [inline]
+   tcp_rcv_state_process+0x2ead/0x4c80 net/ipv4/tcp_input.c:6204
+   tcp_v4_do_rcv+0x34c/0x8b0 net/ipv4/tcp_ipv4.c:1643
+   tcp_v4_rcv+0x2f60/0x39c0 net/ipv4/tcp_ipv4.c:2003
+   ip_protocol_deliver_rcu+0x57/0x880 net/ipv4/ip_input.c:204
+   ip_local_deliver_finish+0x220/0x360 net/ipv4/ip_input.c:231
+   NF_HOOK include/linux/netfilter.h:307 [inline]
+   NF_HOOK include/linux/netfilter.h:301 [inline]
+   ip_local_deliver+0x1c8/0x4e0 net/ipv4/ip_input.c:252
+   dst_input include/net/dst.h:441 [inline]
+   ip_rcv_finish+0x1da/0x2f0 net/ipv4/ip_input.c:428
+   NF_HOOK include/linux/netfilter.h:307 [inline]
+   NF_HOOK include/linux/netfilter.h:301 [inline]
+   ip_rcv+0xd0/0x3c0 net/ipv4/ip_input.c:539
+   __netif_receive_skb_one_core+0xf5/0x160 net/core/dev.c:5187
+   __netif_receive_skb+0x27/0x1c0 net/core/dev.c:5301
+   process_backlog+0x21e/0x7a0 net/core/dev.c:6133
+   napi_poll net/core/dev.c:6571 [inline]
+   net_rx_action+0x4c2/0x1070 net/core/dev.c:6639
+   __do_softirq+0x26c/0x9f7 kernel/softirq.c:292
+   run_ksoftirqd kernel/softirq.c:604 [inline]
+   run_ksoftirqd+0x89/0x100 kernel/softirq.c:596
+   smpboot_thread_fn+0x653/0x9e0 kernel/smpboot.c:165
+   kthread+0x388/0x470 kernel/kthread.c:268
+   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+stack backtrace:
+CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 5.6.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x188/0x20d lib/dump_stack.c:118
+ print_irq_inversion_bug kernel/locking/lockdep.c:3448 [inline]
+ check_usage_forwards.cold+0x20/0x29 kernel/locking/lockdep.c:3472
+ mark_lock_irq kernel/locking/lockdep.c:3585 [inline]
+ mark_lock+0x624/0xf10 kernel/locking/lockdep.c:3935
+ mark_usage kernel/locking/lockdep.c:3826 [inline]
+ __lock_acquire+0x1ed9/0x4e00 kernel/locking/lockdep.c:4298
+ lock_acquire+0x1f2/0x8f0 kernel/locking/lockdep.c:4923
+ __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
+ _raw_read_lock+0x2d/0x40 kernel/locking/spinlock.c:223
+ send_sigio+0xa9/0x340 fs/fcntl.c:800
+ kill_fasync_rcu fs/fcntl.c:1009 [inline]
+ kill_fasync fs/fcntl.c:1023 [inline]
+ kill_fasync+0x21c/0x470 fs/fcntl.c:1016
+ sock_wake_async+0xd2/0x160 net/socket.c:1337
+ sk_wake_async include/net/sock.h:2259 [inline]
+ sk_wake_async include/net/sock.h:2255 [inline]
+ sock_def_error_report+0x2d7/0x4d0 net/core/sock.c:2808
+ tcp_reset net/ipv4/tcp_input.c:4138 [inline]
+ tcp_reset+0x195/0x4e0 net/ipv4/tcp_input.c:4114
+ tcp_rcv_synsent_state_process net/ipv4/tcp_input.c:5937 [inline]
+ tcp_rcv_state_process+0x2ead/0x4c80 net/ipv4/tcp_input.c:6204
+ tcp_v4_do_rcv+0x34c/0x8b0 net/ipv4/tcp_ipv4.c:1643
+ tcp_v4_rcv+0x2f60/0x39c0 net/ipv4/tcp_ipv4.c:2003
+ ip_protocol_deliver_rcu+0x57/0x880 net/ipv4/ip_input.c:204
+ ip_local_deliver_finish+0x220/0x360 net/ipv4/ip_input.c:231
+ NF_HOOK include/linux/netfilter.h:307 [inline]
+ NF_HOOK include/linux/netfilter.h:301 [inline]
+ ip_local_deliver+0x1c8/0x4e0 net/ipv4/ip_input.c:252
+ dst_input include/net/dst.h:441 [inline]
+ ip_rcv_finish+0x1da/0x2f0 net/ipv4/ip_input.c:428
+ NF_HOOK include/linux/netfilter.h:307 [inline]
+ NF_HOOK include/linux/netfilter.h:301 [inline]
+ ip_rcv+0xd0/0x3c0 net/ipv4/ip_input.c:539
+ __netif_receive_skb_one_core+0xf5/0x160 net/core/dev.c:5187
+ __netif_receive_skb+0x27/0x1c0 net/core/dev.c:5301
+ process_backlog+0x21e/0x7a0 net/core/dev.c:6133
+ napi_poll net/core/dev.c:6571 [inline]
+ net_rx_action+0x4c2/0x1070 net/core/dev.c:6639
+ __do_softirq+0x26c/0x9f7 kernel/softirq.c:292
+ run_ksoftirqd kernel/softirq.c:604 [inline]
+ run_ksoftirqd+0x89/0x100 kernel/softirq.c:596
+ smpboot_thread_fn+0x653/0x9e0 kernel/smpboot.c:165
+ kthread+0x388/0x470 kernel/kthread.c:268
+ ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
