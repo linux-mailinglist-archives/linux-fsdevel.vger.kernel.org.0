@@ -2,186 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895DB19E510
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 15:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1009319E51B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 15:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbgDDNAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Apr 2020 09:00:47 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52364 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbgDDNAq (ORCPT
+        id S1726329AbgDDNIh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Apr 2020 09:08:37 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36608 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgDDNIh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Apr 2020 09:00:46 -0400
-Received: by mail-wm1-f66.google.com with SMTP id t203so1444821wmt.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Apr 2020 06:00:43 -0700 (PDT)
+        Sat, 4 Apr 2020 09:08:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id d202so10861012wmd.1;
+        Sat, 04 Apr 2020 06:08:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WRUK9Ms0WeS5OK2iO/4vjHdnRSnaNQskl7BP9q0uE6I=;
-        b=VxLdtqtEso8z+nbdFzeBHULpwTxfHFk2lHLH3sGQXdnWdQR9GBV6evBqa4v/Hd67id
-         Ppnt+JRvh3n5cph+hdz2Je5ZLrISsbuFaMru8mZHNZ0kwSu71Rhntw8kg252fp8U3GZM
-         hcQo6t16ejHZ6TTIBsxxZnH1H0NUye7dtkxN4=
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g0lhfmepuqxhkSzHeSEIiTb4vyevQh1xR17a67PwJQQ=;
+        b=dri6mJYtciFG4/ZrwuqQCU7c4IS9vONkv8q4vmhBQEpUdqKGcpRPW/npcbLU1edukx
+         yiBxoc3c+BjEFjYpu5MBAEWNGYlm96JrWvx7bgShueCqpuG/I22f565wbJO+P+em0K3W
+         6hqruMAWMS6niWUvgYJ1F9Rs6PGC2wzAauiMSE8+L7CHoh9OjsESG7lEhCvEjdZwopB0
+         qwRveLIJ9agq47IsCnLHWAoyuREzPAwbygJyAFKVbrZwc+eXe9dnQhIFRUTFJFA2QOYE
+         EEk25wlmEpjI7NCUggZJgRo3e8iFbc0QZJDlmNsGXUdAQjzLhLGUQUaQ9fhGkDsweY1/
+         oxOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WRUK9Ms0WeS5OK2iO/4vjHdnRSnaNQskl7BP9q0uE6I=;
-        b=nGs/pDPKgFTSHA4AMODAjO/SnRUFqh8CS5yN6rN6PaXzGxSEE1/dkuv3sec0GET+Ck
-         oGgCEtb9ZcphFQ3xCAwOgtJF29LwICQeuaMgwTp2dfbfqZdtSXXFamMpCNhnSA8FZckR
-         aAyjgcU/CooX5ZTbst+Bb1NZctgO+L8MTW+IAXAvdVxfsDhULzTgBaLtcAo6MksjB0AL
-         rUXWhoDBeSLwZOwuMObax+X2EQbA50eKGX+XWl8e9cOpRSWuP1bpjOj9Em+LTyUWJ0/V
-         FylzWLOXILI8KAtzH6GE2n1KPJfN6ZtQYIF0rk9zM0CU6E8/uKIujOG76on9vbsGLLJ0
-         s9ag==
-X-Gm-Message-State: AGi0PubX1N08jwMC5YC0n2PVxTY17MckiatuSk+LFXm/YscmRvEYLCDq
-        LnH44trALuBt0Nb9A/SwwjaLNPkO0ucS8ZwtcDI1Mw==
-X-Google-Smtp-Source: APiQypLI7YvZQkb0mLx8qp8JXyMLlLFqQ8w/4kT24eFi/Y15UdOQb13Elit3vs6Eg9CD9fZPxSvRVVYGtLm+ZdVxhCw=
-X-Received: by 2002:a7b:cd8c:: with SMTP id y12mr5425396wmj.106.1586005242282;
- Sat, 04 Apr 2020 06:00:42 -0700 (PDT)
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=g0lhfmepuqxhkSzHeSEIiTb4vyevQh1xR17a67PwJQQ=;
+        b=JwMQ6FSEGHhMHECHT/cib1Uxp1iW+ZaELGsvdVfTtRcq2HkTKeoESu1cSbOg81tNNp
+         5Nm0sAkNU5Yj0V97N61MwznFYHSFAGWzuaKagCzw0UiRZpIBi+blOAeq8HBX++bcUCBX
+         vSeLfhv0HV9jbuzkw/5/jDLYhxTJDVtyudGXhLM1TUYa5dRD/yW4E4o8TaayWrRa7kOD
+         B90mGzSaHnqxidSZEJKnQQ7r+Z+moSaVEtKrKAIc8i1Wp32WLTH2Ho3KgP4gj93JsY2n
+         M7rOmF4HTSzukfDp+T+exeZSxeoaT3l+2PX+gb83cH3d/8pDq4tEbbbRaX7UCD3OHxUB
+         39mw==
+X-Gm-Message-State: AGi0PuaX7OBZFLYyF607iv8U/F0bO77fqWO8NwMmWCxRsUq5JIqbnDRh
+        xS+b+chdKLjkYP8dXnA6dAlN1Dl2Wj0=
+X-Google-Smtp-Source: APiQypI6hvMZkNwvsVxpYR5i02eTANSRy4tAI7LcYtYqoPJlBQhAQ1XfVNnuj0VEh0Xt5PF6ZJvYNw==
+X-Received: by 2002:a1c:9c15:: with SMTP id f21mr13348654wme.18.1586005714207;
+        Sat, 04 Apr 2020 06:08:34 -0700 (PDT)
+Received: from [192.168.43.88] ([109.126.129.227])
+        by smtp.gmail.com with ESMTPSA id w81sm16009467wmg.19.2020.04.04.06.08.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Apr 2020 06:08:33 -0700 (PDT)
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Felipe Balbi <balbi@kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        linux-usb@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        intel-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        intel-gvt-dev@lists.freedesktop.org,
+        Jason Wang <jasowang@redhat.com>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-6-hch@lst.de>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [Intel-gfx] [PATCH 5/6] kernel: better document the
+ use_mm/unuse_mm API contract
+Message-ID: <8c1e6600-bee3-d074-28e6-813a6dbf5fd0@gmail.com>
+Date:   Sat, 4 Apr 2020 16:07:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20200330131439.2405-1-ignat@cloudflare.com> <20200330131439.2405-2-ignat@cloudflare.com>
- <f96ad8b8-0a26-448a-4a27-8712a82001c4@infradead.org>
-In-Reply-To: <f96ad8b8-0a26-448a-4a27-8712a82001c4@infradead.org>
-From:   Ignat Korchagin <ignat@cloudflare.com>
-Date:   Sat, 4 Apr 2020 14:00:31 +0100
-Message-ID: <CALrw=nH=Stp9RMCrZveASdp=bf_t8-pSRnXv7E7pC8+aGHsj4w@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mnt: add support for non-rootfs initramfs
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200404094101.672954-6-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry, forgot to follow up in this thread. I've reposted v2 patches
-with documentation.
+On 04/04/2020 12:41, Christoph Hellwig wrote:
+> Switch the function documentation to kerneldoc comments, and add
+> WARN_ON_ONCE asserts that the calling thread is a kernel thread and
+> does not have ->mm set (or has ->mm set in the case of unuse_mm).
+> 
+> Also give the functions a kthread_ prefix to better document the
+> use case.
+> 
 
-Regards,
-Ignat
+io_uring and io-wq bits LGTM.
 
-On Mon, Mar 30, 2020 at 8:03 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 3/30/20 6:14 AM, Ignat Korchagin wrote:
-> > The main need for this is to support container runtimes on stateless Linux
-> > system (pivot_root system call from initramfs).
-> >
-> > Normally, the task of initramfs is to mount and switch to a "real" root
-> > filesystem. However, on stateless systems (booting over the network) it is just
-> > convenient to have your "real" filesystem as initramfs from the start.
-> >
-> > This, however, breaks different container runtimes, because they usually use
-> > pivot_root system call after creating their mount namespace. But pivot_root does
-> > not work from initramfs, because initramfs runs form rootfs, which is the root
-> > of the mount tree and can't be unmounted.
-> >
-> > One workaround is to do:
-> >
-> >   mount --bind / /
-> >
-> > However, that defeats one of the purposes of using pivot_root in the cloned
-> > containers: get rid of host root filesystem, should the code somehow escapes the
-> > chroot.
-> >
-> > There is a way to solve this problem from userspace, but it is much more
-> > cumbersome:
-> >   * either have to create a multilayered archive for initramfs, where the outer
-> >     layer creates a tmpfs filesystem and unpacks the inner layer, switches root
-> >     and does not forget to properly cleanup the old rootfs
-> >   * or we need to use keepinitrd kernel cmdline option, unpack initramfs to
-> >     rootfs, run a script to create our target tmpfs root, unpack the same
-> >     initramfs there, switch root to it and again properly cleanup the old root,
-> >     thus unpacking the same archive twice and also wasting memory, because
-> >     the kernel stores compressed initramfs image indefinitely.
-> >
-> > With this change we can ask the kernel (by specifying nonroot_initramfs kernel
-> > cmdline option) to create a "leaf" tmpfs mount for us and switch root to it
-> > before the initramfs handling code, so initramfs gets unpacked directly into
-> > the "leaf" tmpfs with rootfs being empty and no need to clean up anything.
-> >
-> > This also bring the behaviour in line with the older style initrd, where the
-> > initrd is located on some leaf filesystem in the mount tree and rootfs remaining
-> > empty.
-> >
-> > Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-> > ---
-> >  fs/namespace.c | 47 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
->
-> Hi,
-> Please document "nonroot_initramfs" in
-> Documentation/admin-guide/kernel-parameters.txt.
->
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 85b5f7bea82e..a1ec862e8146 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -3701,6 +3701,49 @@ static void __init init_mount_tree(void)
-> >       set_fs_root(current->fs, &root);
-> >  }
-> >
-> > +#if IS_ENABLED(CONFIG_TMPFS)
-> > +static int __initdata nonroot_initramfs;
-> > +
-> > +static int __init nonroot_initramfs_param(char *str)
-> > +{
-> > +     if (*str)
-> > +             return 0;
-> > +     nonroot_initramfs = 1;
-> > +     return 1;
-> > +}
-> > +__setup("nonroot_initramfs", nonroot_initramfs_param);
-> > +
-> > +static void __init init_nonroot_initramfs(void)
-> > +{
-> > +     int err;
-> > +
-> > +     if (!nonroot_initramfs)
-> > +             return;
-> > +
-> > +     err = ksys_mkdir("/root", 0700);
-> > +     if (err < 0)
-> > +             goto out;
-> > +
-> > +     err = do_mount("tmpfs", "/root", "tmpfs", 0, NULL);
-> > +     if (err)
-> > +             goto out;
-> > +
-> > +     err = ksys_chdir("/root");
-> > +     if (err)
-> > +             goto out;
-> > +
-> > +     err = do_mount(".", "/", NULL, MS_MOVE, NULL);
-> > +     if (err)
-> > +             goto out;
-> > +
-> > +     err = ksys_chroot(".");
-> > +     if (!err)
-> > +             return;
-> > +out:
-> > +     printk(KERN_WARNING "Failed to create a non-root filesystem for initramfs\n");
-> > +}
-> > +#endif /* IS_ENABLED(CONFIG_TMPFS) */
-> > +
-> >  void __init mnt_init(void)
-> >  {
-> >       int err;
-> > @@ -3734,6 +3777,10 @@ void __init mnt_init(void)
-> >       shmem_init();
-> >       init_rootfs();
-> >       init_mount_tree();
-> > +
-> > +#if IS_ENABLED(CONFIG_TMPFS)
-> > +     init_nonroot_initramfs();
-> > +#endif
-> >  }
-> >
-> >  void put_mnt_ns(struct mnt_namespace *ns)
-> >
->
-> thanks.
-> --
-> ~Randy
->
+> --- a/include/linux/kthread.h
+> +++ b/include/linux/kthread.h
+...
+> -/*
+> - * unuse_mm
+> - *	Reverses the effect of use_mm, i.e. releases the
+> - *	specified mm context which was earlier taken on
+> - *	by the calling kernel thread
+> - *	(Note: this routine is intended to be called only
+> - *	from a kernel thread context)
+> +/**
+> + * kthread_use_mm - reverse the effect of kthread_use_mm()
+
+s/kthread_use_mm/kthread_unuse_mm/
+for the first one
+
+> + * @mm: address space to operate on
+>   */
+> -void unuse_mm(struct mm_struct *mm)
+> +void kthread_unuse_mm(struct mm_struct *mm)
+>  {
+
+-- 
+Pavel Begunkov
