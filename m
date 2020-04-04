@@ -2,99 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120C019E7A9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 22:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB99E19E7B6
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Apr 2020 23:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbgDDU5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Apr 2020 16:57:38 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42378 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbgDDU5h (ORCPT
+        id S1726393AbgDDVTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Apr 2020 17:19:15 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40793 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbgDDVTP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Apr 2020 16:57:37 -0400
-Received: by mail-vs1-f65.google.com with SMTP id s10so7258497vsi.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Apr 2020 13:57:36 -0700 (PDT)
+        Sat, 4 Apr 2020 17:19:15 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w26so13898812edu.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Apr 2020 14:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2x0AYyTRYtjT/SYXHm491NxzEChiRCQRcx9Z4KQvNzM=;
-        b=ej6WMCwTFQHydwUw6G9KDNeQDdC/rj6vgjWFms54iDg1013xe9eqy6DrcQP5pszcji
-         GnVFhEip7i+yTACoFhEqXPLV0MH50kK2C5IW2L3ZlpwFJg8p9CPq9AYci1IlVpVQzxAJ
-         LGcr/ujlyBVvNeV/37rxZGR15+y2WXfZIj5GcNARTZoNAskehPNFoW3nV7f0TJZ1FmSj
-         V8BZ/NS/WTBKEkdj02J8wiT5m5g3h0gyX6vPc/BLhTJGMI7nGa0bbSTqEVymhLFET42p
-         YYm4a4T8YLMQBsRMTKJ30beRQ2gxhQJCKVQZxM5xRuKBwKY01JgL1CotVW4uYo/869dJ
-         8qwA==
+        bh=whlD+FJJxUSsYgQJmOoyKhMr6jBMYuvqobVL83EC0Y8=;
+        b=WRre38NwVB2LmEnC98i41YGU/UMX2qymyekgtMqnchU1KqX89ceYbyw3xRKr1XhGy4
+         6HgJuVbiSVOqVXwon/QrA0T4sEgUgGPNmPqffIx0/mv+mHKaU0PjbaaEewmpvuro9DfU
+         JDnC7tAkfLyumK5mtIm39aTZYSgWEHmXopyGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2x0AYyTRYtjT/SYXHm491NxzEChiRCQRcx9Z4KQvNzM=;
-        b=O6Ss9rXySTt947DC1rf+X96pJc/6aFZluFXEfqUSq4KtRvOcQk/VZq7gmui+wuXOyn
-         oTYh52kzI3OTtQKGsDt0WYya0R8n6oSeWgzcXQqqk4X16gjAbrzGIlm1sx5y0Bn8uyts
-         RkYLGTvfB/0dOZkpXljKYHYLWnTZhqa7Uo9yzcvSYbX34DtTJsGpRsQ4fSFMi2ehBLnx
-         zmYF36kikG0YmtM4+3QJF91wIEZPSv8d+G3fQFZi9tRfXQ6FgQw+YsYSyBlA5MR1oEAE
-         IHyBNI5jDfIPt+9Oo1iaYS5WMLejZ7xDDC+KGxg9Kb2AbwBBHhX+Qb1YBNhgX3ImstbL
-         F9PQ==
-X-Gm-Message-State: AGi0PuaIUoNdrmeidTWYTXBElvbceWCuMHqEY8vVA/IPXTTSbUTT81pV
-        SJqADiyGF1ouAgNaos1uAhi3qP/tBOg469j0ZyOw7sMq9Ls=
-X-Google-Smtp-Source: APiQypKxSTctjde1rLaR9pQPNwTSYPcH+H8+UEHrzbwI5KHm9VdOy5JtmGnRHHKU00mqqR//qEfeFV/mIpHn6qqq14M=
-X-Received: by 2002:a67:33cb:: with SMTP id z194mr11260819vsz.155.1586033856230;
- Sat, 04 Apr 2020 13:57:36 -0700 (PDT)
+        bh=whlD+FJJxUSsYgQJmOoyKhMr6jBMYuvqobVL83EC0Y8=;
+        b=dTHMzhftEdD1P78wcdGOukapNlb81s2nRtIjhmLLZlBb2xqAF4ycIvq76GDHsvzMTz
+         +T/UsDkJV+Wc5R+54C+k2CrSTx2kpq+5M55Jlg1TPxDeHfDof8VGzuHmkkXc0emPL7nL
+         Rl/pt9XhvJvjwdZDe6USSjD18n2fXgu1a3HzLfbGOnm6xGhLMsf61UWlIcRWE+URUKq5
+         HLCFQUz/3O1A71x9daNtKfeMxnmWQT3mHRHs3w5R8GJpAPNH8bajWtvSQvQ9+NmM6J/Z
+         eFAaH1q/GVoGdyo7PSVUDM9+nmpFueXLEVhN/0L304MkL5COpZJlphq0dwQsEXj9XPGB
+         oRQQ==
+X-Gm-Message-State: AGi0PuaFHa9SJFYDqjX8qP2vafXlXxBmDBVel+9+p7SBNdOmnZSBEFtL
+        8ri0MAa1nykJxDeTFdse+Oj/wfrLqnY=
+X-Google-Smtp-Source: APiQypJRxjh+qxrKRIBpBcm/MIPV/6eiTwGtUW4JnesKIDarIy2oK4RmKaLaFPbLbUZEDSoI8fhDcg==
+X-Received: by 2002:a17:906:6050:: with SMTP id p16mr15191268ejj.179.1586035151251;
+        Sat, 04 Apr 2020 14:19:11 -0700 (PDT)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id dc25sm2382941ejb.59.2020.04.04.14.19.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 04 Apr 2020 14:19:11 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id h15so12815261wrx.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Apr 2020 14:19:10 -0700 (PDT)
+X-Received: by 2002:a2e:9b8e:: with SMTP id z14mr8233548lji.150.1586034799883;
+ Sat, 04 Apr 2020 14:13:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200326170705.1552562-2-hch@lst.de> <20200404162826.181808-1-hubcap@kernel.org>
- <20200404174346.GU21484@bombadil.infradead.org>
-In-Reply-To: <20200404174346.GU21484@bombadil.infradead.org>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Sat, 4 Apr 2020 16:57:24 -0400
-Message-ID: <CAOg9mSSrJp2dqQTNDgucLoeQcE_E_aYPxnRe5xphhdSPYw7QtQ@mail.gmail.com>
-Subject: Re: [PATCH] orangefs: complete Christoph's "remember count" reversion.
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     hubcap@kernel.org, Christoph Hellwig <hch@lst.de>,
-        devel@lists.orangefs.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <1445647.1585576702@warthog.procyon.org.uk> <1449543.1585579014@warthog.procyon.org.uk>
+In-Reply-To: <1449543.1585579014@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 4 Apr 2020 14:13:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wghjTM+z_oAATqWOvPa8Lh6BKRtTVMi7hLxo6pbqc+kVg@mail.gmail.com>
+Message-ID: <CAHk-=wghjTM+z_oAATqWOvPa8Lh6BKRtTVMi7hLxo6pbqc+kVg@mail.gmail.com>
+Subject: Re: [GIT PULL] Mount and superblock notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>, jlayton@redhat.com,
+        Ian Kent <raven@themaw.net>, andres@anarazel.de,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        keyrings@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew>  So yes, I think within the next year, you should be
-Matthew>  able to tell the page cache to allocate 4MB pages.
+On Mon, Mar 30, 2020 at 7:37 AM David Howells <dhowells@redhat.com> wrote:
+>
+> If you could consider pulling this - or would you prefer it to go through
+> Al?  It adds a couple of VFS-related event sources for the general
+> notification mechanism:
 
-I can't find the ascii thumbs up emoji :-) ...
+<y issue with these remains the same it was last time, so I'll just
+quote what I said back then:
 
--Mike
+ "So I no longer hate the implementation, but I do want to see the
+  actual user space users come out of the woodwork and try this out for
+  their use cases.
 
-On Sat, Apr 4, 2020 at 1:43 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Sat, Apr 04, 2020 at 12:28:26PM -0400, hubcap@kernel.org wrote:
-> > As an aside, the page cache has been a blessing and a curse
-> > for us. Since we started using it, small IO has improved
-> > incredibly, but our max speed hits a plateau before it otherwise
-> > would have. I think because of all the page size copies we have
-> > to do to fill our 4 meg native buffers. I try to read about all
-> > the new work going into the page cache in lwn, and make some
-> > sense of the new code :-). One thing I remember is when
-> > Christoph Lameter said "the page cache does not scale", but
-> > I know the new work is focused on that. If anyone has any
-> > thoughts about how we could make improvments on filling our
-> > native buffers from the page cache (larger page sizes?),
-> > feel free to offer any help...
->
-> Umm, 4MB native buffers are ... really big ;-)  I wasn't planning on
-> going past PMD_SIZE (ie 2MB on x86) for the readahead large pages,
-> but if a filesystem wants that, then I should change that plan.
->
-> What I was planning for, but don't quite have an implementation nailed
-> down for yet, is allowing filesystems to grow the readahead beyond that
-> wanted by the generic code.  Filesystems which implement compression
-> frequently want blocks in the 256kB size range.  It seems like OrangeFS
-> would fit with that scheme, as long as I don't put a limit on what the
-> filesystem asks for.
->
-> So yes, I think within the next year, you should be able to tell the
-> page cache to allocate 4MB pages.  You will still need a fallback path
-> for when memory is too fragmented to allocate new pages, but if you're
-> using 4MB pages, then hopefully we'll be able to reclaim a clean 4MB
-> pages from elsewhere in the page cache and supply you with a new one.
+  I'd hate to see a new event queue interface that people then can't
+  really use due to it not fulfilling their needs, or can't use for some
+  other reason."
+
+I want to see somebody step up enough to say "yes, I actually use
+this, and have the patches for the user space side, and it helps my
+load by 3000%, and here are the numbers, and the event overflow case
+isn't an issue because Y"
+
+Or whatever. It doesn't have to be performance, but the separate
+discussion I've seen has been about that being the reason for it.
+
+I just don't want it to be a _hypothetical_ reason. I want it to be a
+tested reason where people said "yeah, this is easy to use and
+actually fixes the problems".
+
+Because if what happens is that when the events overflow, and maybe
+people fall back on the old model (or whatever) then that probably
+just means that you do better up until a point where you start doing
+_worse_ than we used to.
+
+Or people find out that they needed more information anyway, and the
+event model doesn't work when you restart your special server because
+you've lost the original state. Or any other number of "cool feature,
+but I can't really use it".
+
+IOW, I really want to know that yes, the design is what people will
+then use and it actually fixes real-world issues.
+
+And it needs to be interesting and pressing enough that those people
+actually at least do a working prototype on top of a patch-set that
+hasn't made it into the kernel yet.
+
+Now, I realize that other projects won't _upstream_ their support
+before the kernel has the infrastructure, so I'm not looking for
+_that_ kind of "yeah, look, project XYZ already does this and Red Hat
+ships it". No, I'm looking for those outside developers who say more
+than "this is a pet peeve of mine with the existing interface". I want
+to see some actual use - even if it's just in a development
+environment - that shows that it's (a) sufficient and (b) actually
+fixes problems.
+
+             Linus
