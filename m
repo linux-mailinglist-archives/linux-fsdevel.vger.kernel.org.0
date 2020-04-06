@@ -2,78 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D21119F437
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 13:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F54A19F4B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 13:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbgDFLOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 07:14:02 -0400
-Received: from nautica.notk.org ([91.121.71.147]:36170 "EHLO nautica.notk.org"
+        id S1727329AbgDFLhF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 07:37:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54706 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbgDFLOB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 07:14:01 -0400
-X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Apr 2020 07:14:00 EDT
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 9C620C009; Mon,  6 Apr 2020 13:07:17 +0200 (CEST)
-Date:   Mon, 6 Apr 2020 13:07:02 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
+        id S1727192AbgDFLhF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 07:37:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 47DD0AE2D;
+        Mon,  6 Apr 2020 11:37:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 445371E1244; Mon,  6 Apr 2020 13:37:03 +0200 (CEST)
+Date:   Mon, 6 Apr 2020 13:37:03 +0200
+From:   Jan Kara <jack@suse.cz>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net
-Subject: [GIT PULL] 9p update for 5.7
-Message-ID: <20200406110702.GA13469@nautica>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [GIT PULL] ext2 and udf cleanups and fixes for v5.7-rc1
+Message-ID: <20200406113703.GE1143@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+  Hello Linus,
 
-Not much new, but a few patches for this cycle.
+  could you please pull from
 
-Thanks,
-Dominique
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v5.7-rc1
 
+to get a new cleanups and fixes for ext2 and one cleanup for udf.
 
-The following changes since commit 16fbf79b0f83bc752cee8589279f1ebfe57b3b6e:
+Top of the tree is 44a52022e7f1. The full shortlog is:
 
-  Linux 5.6-rc7 (2020-03-22 18:31:56 -0700)
+Gustavo A. R. Silva (2):
+      ext2: xattr.h: Replace zero-length array with flexible-array member
+      udf: udf_sb.h: Replace zero-length array with flexible-array member
 
-are available in the Git repository at:
+Jan Kara (2):
+      ext2: Silence lockdep warning about reclaim under xattr_sem
+      ext2: fix debug reference to ext2_xattr_cache
 
-  https://github.com/martinetd/linux tags/9p-for-5.7
+Randy Dunlap (1):
+      ext2: fix empty body warnings when -Wextra is used
 
-for you to fetch changes up to 43657496e46672fe63bccc1fcfb5b68de6e1e2f4:
+The diffstat is
 
-  net/9p: remove unused p9_req_t aux field (2020-03-27 09:29:57 +0000)
+ fs/ext2/xattr.c | 18 +++++++++++++-----
+ fs/ext2/xattr.h |  2 +-
+ fs/udf/udf_sb.h |  2 +-
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
-----------------------------------------------------------------
-9p pull request for inclusion in 5.7
+							Thanks
+								Honza
 
-- Fix read with O_NONBLOCK to allow incomplete read and return
-immediately
-- Rest is just cleanup (indent, unused field in struct, extra semicolon)
-
-----------------------------------------------------------------
-Dominique Martinet (1):
-      net/9p: remove unused p9_req_t aux field
-
-Krzysztof Kozlowski (1):
-      9p: Fix Kconfig indentation
-
-Sergey Alirzaev (2):
-      9pnet: allow making incomplete read requests
-      9p: read only once on O_NONBLOCK
-
-zhengbin (1):
-      9p: Remove unneeded semicolon
-
- fs/9p/Kconfig           |  18 +++++++++---------
- fs/9p/vfs_file.c        |   5 ++++-
- fs/9p/vfs_inode.c       |   2 +-
- include/net/9p/client.h |   4 ++--
- net/9p/client.c         | 144 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------------
- 5 files changed, 94 insertions(+), 79 deletions(-)
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
