@@ -2,183 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7168119EF1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 03:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25ED119EF72
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 05:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgDFB1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Apr 2020 21:27:39 -0400
-Received: from sandeen.net ([63.231.237.45]:56456 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbgDFB1i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Apr 2020 21:27:38 -0400
-Received: from [10.0.0.4] (liberator [10.0.0.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 86E7F11664;
-        Sun,  5 Apr 2020 20:27:32 -0500 (CDT)
-Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
-To:     Bart Van Assche <bvanassche@acm.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, nstange@suse.de
-Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-References: <20200402000002.7442-1-mcgrof@kernel.org>
- <20200402000002.7442-3-mcgrof@kernel.org>
- <3640b16b-abda-5160-301a-6a0ee67365b4@acm.org>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <b827d03c-e097-06c3-02ab-00df42b5fc0e@sandeen.net>
-Date:   Sun, 5 Apr 2020 20:27:35 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.6.0
+        id S1726455AbgDFDGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Apr 2020 23:06:14 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:38429 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbgDFDGO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 Apr 2020 23:06:14 -0400
+Received: by mail-il1-f197.google.com with SMTP id b6so13874993iln.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Apr 2020 20:06:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VMyBQZO3MBfpsL5ANLi1r3ItqnA3iEERo2V/J0TmPfY=;
+        b=dzVj0Qx8hEzpDDz4rSq/3d9g8q3Wxg8iKbTvXflue9ORtfRIsl6Mh3hz3fupkOAcEm
+         97qMxOm3f+Ea71LOeyQtrKkj6zo5OQxuNWZdmN7uTVfDrvBytto3UAoMj97pCLuVF+0w
+         +h8WA0ELJqvatR7JhvOJ00HM3MREz/feIFM3AWdMHL7hLmciguA+4Ysob4RDAUviZBAF
+         INHjkxHFuA6nQiQGEZctm+EhgKVPf/koCxg8ifIcrWJVTayNNX1as1LQxlh1FNccfoC9
+         QFrJCzeyGW+uzvRkOwGA9RovZAYoRsob3raVJ4dR6jGs5qFkIOUpnDqL6Vcwv5oDnSz2
+         Ax/w==
+X-Gm-Message-State: AGi0PuYlmhiSysblIVDoIYTx3FSrj04yWfwgv0QUkguvx9Su76LMmgFp
+        ZqJecnfqTWrcjmGsC7+vOI+gKeOc+EBwwzlY87MpAxVDtavk
+X-Google-Smtp-Source: APiQypIjLBv995v9Q6nngDvUzGI4SQF2mUpR1Cp8F7w6q8j5tX2m6Fy9bWbm94gXVesQIxpb3IH/1k2OJDuVocLSsrgxKtYxahfV
 MIME-Version: 1.0
-In-Reply-To: <3640b16b-abda-5160-301a-6a0ee67365b4@acm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:d6:: with SMTP id w22mr13033959jao.72.1586142372978;
+ Sun, 05 Apr 2020 20:06:12 -0700 (PDT)
+Date:   Sun, 05 Apr 2020 20:06:12 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b4684e05a2968ca6@google.com>
+Subject: kernel BUG at mm/hugetlb.c:LINE!
+From:   syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mike.kravetz@oracle.com, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/4/20 10:39 PM, Bart Van Assche wrote:
-> On 2020-04-01 17:00, Luis Chamberlain wrote:
->> korg#205713 then was used to create CVE-2019-19770 and claims that
->> the bug is in a use-after-free in the debugfs core code. The
->> implications of this being a generic UAF on debugfs would be
->> much more severe, as it would imply parent dentries can sometimes
->> not be possitive, which is something claim is not possible.
->          ^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->          positive?  is there perhaps a word missing here?
-> 
->> It turns out that the issue actually is a mis-use of debugfs for
->> the multiqueue case, and the fragile nature of how we free the
->> directory used to keep track of blktrace debugfs files. Omar's
->> commit assumed the parent directory would be kept with
->> debugfs_lookup() but this is not the case, only the dentry is
->> kept around. We also special-case a solution for multiqueue
->> given that for multiqueue code we always instantiate the debugfs
->> directory for the request queue. We were leaving it only to chance,
->> if someone happens to use blktrace, on single queue block devices
->> for the respective debugfs directory be created.
-> 
-> Since the legacy block layer is gone, the above explanation may have to
-> be rephrased.
-> 
->> We can fix the UAF by simply using a debugfs directory which is
->> always created for singlequeue and multiqueue block devices. This
->> simplifies the code considerably, with the only penalty now being
->> that we're always creating the request queue directory debugfs
->> directory for the block device on singlequeue block devices.
-> 
-> Same comment here - the legacy block layer is gone. I think that today
-> all block drivers are either request-based and multiqueue or so-called
-> make_request drivers. See also the output of git grep -nHw
-> blk_alloc_queue for examples of the latter category.
-> 
->> This patch then also contends the severity of CVE-2019-19770 as
->> this issue is only possible using root to shoot yourself in the
->> foot by also misuing blktrace.
->                ^^^^^^^
->                misusing?
+Hello,
 
-Honestly I think the whole "misusing blktrace" narrative is not relevant
-here; the kernel has to deal with whatever ioctls it receives, right.
+syzbot found the following crash on:
 
-The thing I can't figure out from reading the change log is
+HEAD commit:    1a323ea5 x86: get rid of 'errret' argument to __get_user_x..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=132e940be00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c1e98458335a7d1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6ec23007e951dadf3de
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12921933e00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172e940be00000
 
-1) what the root cause of the problem is, and
-2) how this patch fixes it?
+The bug was bisected to:
 
->> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
->> index b3f2ba483992..bda9378eab90 100644
->> --- a/block/blk-mq-debugfs.c
->> +++ b/block/blk-mq-debugfs.c
->> @@ -823,9 +823,6 @@ void blk_mq_debugfs_register(struct request_queue *q)
->>  	struct blk_mq_hw_ctx *hctx;
->>  	int i;
->>  
->> -	q->debugfs_dir = debugfs_create_dir(kobject_name(q->kobj.parent),
->> -					    blk_debugfs_root);
->> -
->>  	debugfs_create_files(q->debugfs_dir, q, blk_mq_debugfs_queue_attrs);
->>  
->>  	/*
-> 
-> [ ... ]
-> 
->>  static void blk_mq_debugfs_register_ctx(struct blk_mq_hw_ctx *hctx,
->> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
->> index fca9b158f4a0..20f20b0fa0b9 100644
->> --- a/block/blk-sysfs.c
->> +++ b/block/blk-sysfs.c
->> @@ -895,6 +895,7 @@ static void __blk_release_queue(struct work_struct *work)
->>  
->>  	blk_trace_shutdown(q);
->>  
->> +	blk_q_debugfs_unregister(q);
->>  	if (queue_is_mq(q))
->>  		blk_mq_debugfs_unregister(q);
-> 
-> Does this patch change the behavior of the block layer from only
-> registering a debugfs directory for request-based block devices to
-> registering a debugfs directory for request-based and make_request based
-> block devices? Is that behavior change an intended behavior change?
+commit e950564b97fd0f541b02eb207685d0746f5ecf29
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Tue Jul 24 13:01:55 2018 +0000
 
-Seems to be:
+    vfs: don't evict uninitialized inode
 
-"This simplifies the code considerably, with the only penalty now being
-that we're always creating the request queue directory debugfs
-directory for the block device on singlequeue block devices."
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115cad33e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=135cad33e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=155cad33e00000
 
-?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com
+Fixes: e950564b97fd ("vfs: don't evict uninitialized inode")
 
--Eric
+overlayfs: upper fs does not support xattr, falling back to index=off and metacopy=off.
+------------[ cut here ]------------
+kernel BUG at mm/hugetlb.c:3416!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 7036 Comm: syz-executor110 Not tainted 5.6.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
+Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6 ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
+RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
+RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
+RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
+RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
+R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
+R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
+FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 0000000093554000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __unmap_hugepage_range_final+0x30/0x70 mm/hugetlb.c:3507
+ unmap_single_vma+0x238/0x300 mm/memory.c:1296
+ unmap_vmas+0x16f/0x2f0 mm/memory.c:1332
+ exit_mmap+0x2aa/0x510 mm/mmap.c:3126
+ __mmput kernel/fork.c:1082 [inline]
+ mmput+0x168/0x4b0 kernel/fork.c:1103
+ exit_mm kernel/exit.c:477 [inline]
+ do_exit+0xa51/0x2dd0 kernel/exit.c:780
+ do_group_exit+0x125/0x340 kernel/exit.c:891
+ __do_sys_exit_group kernel/exit.c:902 [inline]
+ __se_sys_exit_group kernel/exit.c:900 [inline]
+ __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:900
+ do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+ entry_SYSCALL_64_after_hwframe+0x49/0xb3
+RIP: 0033:0x43efe8
+Code: Bad RIP value.
+RSP: 002b:00007ffdfe6c00f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043efe8
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004be7e8 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000040000000011 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 2d36245d65cb52f7 ]---
+RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
+Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6 ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
+RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
+RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
+RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
+RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
+R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
+R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
+FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8cc24dd000 CR3: 0000000093554000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
