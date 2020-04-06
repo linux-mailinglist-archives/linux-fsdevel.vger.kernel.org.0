@@ -2,87 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB94C19F8B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 17:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE5B19F91E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 17:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbgDFPTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 11:19:11 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:33274 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728843AbgDFPTL (ORCPT
+        id S1728971AbgDFPqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 11:46:01 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33768 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728736AbgDFPqB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 11:19:11 -0400
-Received: by mail-pj1-f68.google.com with SMTP id cp9so99239pjb.0;
-        Mon, 06 Apr 2020 08:19:10 -0700 (PDT)
+        Mon, 6 Apr 2020 11:46:01 -0400
+Received: by mail-lf1-f65.google.com with SMTP id h6so7742845lfc.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 08:46:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LM6NO7u4VQbW1lu00t+WWOxSqJndpnDnuJ4jQghzPUE=;
+        b=ATtWeB7TwKV6tUS3q6yFJi1J5lOkwm97vHKEGbXjnLuGfMid4PPhCTZgQ2vsCOmNGU
+         RiYbV8tKrIQdoH02NJrHKlPaJ1z+Gg/umexn+w7pNGlqbGfueHwbmEnhwW50uiV+P6Xe
+         tzqpk2+YAxnZ96b7z/etLmw36EArLqaTVor5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aBfDok83UFCkn0X8D+fWJrmNHdBWoIO84bdn980eTHw=;
-        b=AB40wVEXYr//GaCjwVMa2IClSM1o1poqpwK+v4mxFG7Ux4ujrsTd4ztwlz5uiRewpX
-         jOH0owTymoAqjGpJZeuiOUdFWtuRbAPcdkUX2Y7YzNJzMdl0TO1M0PUh9Xe8MFeIgrfU
-         JXu94cqw2SiWcGsH1as6gM06jyjUdNofD89SuqVjBZG73tGFZNO2CnqH23F+cc71bGCf
-         gA99oAF/gV62AtnQsq9Y+73GxuowAOvHwO0A5GTqvNNYhCyHFwdTlXeyGYU48/SYuyIv
-         r6MfPiViRLH04Fvz8cwpq4pVNXc7A/2NIq+hOduRpFQR9SRj2MKWGs9i1Kc2361fJg7m
-         baAg==
-X-Gm-Message-State: AGi0PuajSse0wwTcEJvkGfqTjtYYAliJWMcwlBiY8Jk+MgkZXJEYHxCK
-        PkeQVixmT+AaZjrI0AhH3hI=
-X-Google-Smtp-Source: APiQypLohMHAjT+WYyd+ePgRHomKWtNjTSamyDoO53eqDsQlYbPSAxuCfWqY8eGCTaUyBSoLzgc/CQ==
-X-Received: by 2002:a17:902:b187:: with SMTP id s7mr21513465plr.84.1586186349722;
-        Mon, 06 Apr 2020 08:19:09 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id h10sm11187936pgf.23.2020.04.06.08.19.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 08:19:08 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id B104940246; Mon,  6 Apr 2020 15:19:07 +0000 (UTC)
-Date:   Mon, 6 Apr 2020 15:19:07 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Nicolai Stange <nstange@suse.de>
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Eric Sandeen <sandeen@sandeen.net>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
-        ming.lei@redhat.com, mhocko@suse.com, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
-Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
-Message-ID: <20200406151907.GD11244@42.do-not-panic.com>
-References: <20200402000002.7442-1-mcgrof@kernel.org>
- <20200402000002.7442-3-mcgrof@kernel.org>
- <3640b16b-abda-5160-301a-6a0ee67365b4@acm.org>
- <b827d03c-e097-06c3-02ab-00df42b5fc0e@sandeen.net>
- <75aa4cff-1b90-ebd4-17a4-c1cb6d390b30@acm.org>
- <87d08lj7l6.fsf@suse.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LM6NO7u4VQbW1lu00t+WWOxSqJndpnDnuJ4jQghzPUE=;
+        b=Ezq9W3Eyg4BI9Q7xDasxkEgIwr59X0G74/XyEG3AQD/gGny4w44JmfvGUQ1DZ4oTzH
+         84jY3SfLk6ifYita1OV5g1LAotYBvhz7Hu9/W4YATe4mt0zymJ6P8tcgn7X+F/fu/JRQ
+         su4HB2eYH3uF41C3Kw0EB3n5X4DxsQO9mfTGpAQriRaOtFxGJS+crX8Ho0jWshqfoXIb
+         8WpalTvxYHLEF9591pGiRMDExNcXodMt+iemRfOZUqJkipglQ2xgT/+VMayMG50cZTx6
+         aoVgaSFyUR72qAinB8WToKrbRT7AqLv3PImMrSM0VZohorQ618CoUCKe6PtPbqBjUHxz
+         w+dw==
+X-Gm-Message-State: AGi0PuagNOrlzCiMlA0H9rz3D9TNLYUkE0KHoy+TxzP16A13yC938yzu
+        xSVpjpJXFQKSjac64kOSxKjSyak5TFY=
+X-Google-Smtp-Source: APiQypIqd5+RUKTqDHGadlaI8FKZtq9gCfaSHsrBuYXlgTvIY1Bft8NEf0vYVnT5bYRaSg5ySZeS3g==
+X-Received: by 2002:a19:5f45:: with SMTP id a5mr13397217lfj.18.1586187958932;
+        Mon, 06 Apr 2020 08:45:58 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id c2sm12254885lfb.43.2020.04.06.08.45.58
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Apr 2020 08:45:58 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id i20so169035ljn.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 08:45:58 -0700 (PDT)
+X-Received: by 2002:a2e:8911:: with SMTP id d17mr12856259lji.16.1586187957613;
+ Mon, 06 Apr 2020 08:45:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87d08lj7l6.fsf@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200406144032.GU23230@ZenIV.linux.org.uk>
+In-Reply-To: <20200406144032.GU23230@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 6 Apr 2020 08:45:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj2UALsz8=R54WLGzhz8mGqzMnKqV1E=SaFOETYhrjYYg@mail.gmail.com>
+Message-ID: <CAHk-=wj2UALsz8=R54WLGzhz8mGqzMnKqV1E=SaFOETYhrjYYg@mail.gmail.com>
+Subject: Re: [git pull] regression fix in namei
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 06, 2020 at 11:18:13AM +0200, Nicolai Stange wrote:
-> Bart Van Assche <bvanassche@acm.org> writes:
+On Mon, Apr 6, 2020 at 7:40 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         Dumb braino in legitimize_path()...
 
-> So I'd suggest to drop patch [3/3] from this series and modify this
-> patch [2/3] here to move the blk_q_debugfs_unregister(q) invocation from
-> __blk_release_queue() to blk_unregister_queue() instead.
+Well, the type system can't help us because the types are the same,
+but I do wonder if at least the naming couldn't have been slightly
+more explicit. "mseq" vs "seq" is a bit subtle.
 
-I'll take a stab.
+I guess this is mostly a one-time conversion issue, so not worth
+trying to worry about any more, but that internal interface does look
+like it's ripe for mistakes.
 
-> > Additionally, I think the following changes fix that problem by using
-> > q->debugfs_dir in the blktrace code instead of debugfs_lookup():
-> 
-> That would fix the UAF, but !queue_is_mq() queues wouldn't get a debugfs
-> directory created for them by blktrace anymore?
-
-It would, it would just be done early on init as well, and it would now be
-shared with the queue_is_mq() case.
-
-  Luis
+              Linus
