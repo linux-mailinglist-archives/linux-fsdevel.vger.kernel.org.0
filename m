@@ -2,253 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F6E19FF7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 22:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 641641A0071
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 23:49:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgDFUw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 16:52:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39868 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725957AbgDFUwz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 16:52:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3D3FEAA55;
-        Mon,  6 Apr 2020 20:52:51 +0000 (UTC)
-Date:   Mon, 6 Apr 2020 22:52:47 +0200
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eric Richter <erichte@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Luiz Duarte <gustavold@linux.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Jordan Niethe <jniethe5@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v11 3/8] powerpc/perf: consolidate read_user_stack_32
-Message-ID: <20200406205247.GE25468@kitsune.suse.cz>
-References: <20200225173541.1549955-1-npiggin@gmail.com>
- <cover.1584620202.git.msuchanek@suse.de>
- <184347595442b4ca664613008a09e8cea7188c36.1584620202.git.msuchanek@suse.de>
- <1585039473.da4762n2s0.astroid@bobo.none>
- <20200324193833.GH25468@kitsune.suse.cz>
- <1585896170.ohti800w9v.astroid@bobo.none>
+        id S1726365AbgDFVtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 17:49:43 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57214 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725933AbgDFVtn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 17:49:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1586209782;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
+        b=G03to6zMu4TUsnLfHbUIWkeCIpfrl+oI/yvXLzi5Nzy5o5c+gDpowE6KOla1oKxlDuIP8w
+        UHw6/gSZfDpvqwMAU+5AN+Qm94CeQHHj1xWk4jiNh6xVIDWj164K9xxrjhUOj4mTrXOTlr
+        JAvQ1neZL0M2w5Wm0Tc2Pv+NBvkFtQo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-333-cYM8fEPaNJGeDAT4CfLmyw-1; Mon, 06 Apr 2020 17:49:40 -0400
+X-MC-Unique: cYM8fEPaNJGeDAT4CfLmyw-1
+Received: by mail-wr1-f70.google.com with SMTP id g6so598321wru.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 14:49:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
+        b=C0zFfwYcMpelKdpNxN/j91QaBJiHNwv7yflZfA++NrYBp3MoMCCeHSIl8Yk21NnDIj
+         cEJ2e1PcIgkEpNe3PO9ir2OEiccl21uKe2ch8RGZlEw3EJcN/vlTWNT/vAeBFKbrEqmY
+         5WcLULYYK2Jd4DsowceQz71NASdQqGp+Y7faUdsRpADY+jl5KmgE3eMQURzHVOXoi4CU
+         Lt4q6RXQhAj1bixFLrJK2J+WmvWnHlHRpAtmCRN9XlbVpCwiaHHGoFXVvas/pWzOOpSC
+         E9Y+sn/il+hpLtvsDx0uP4oxnHAXmorDdhWwdLIoCwhNtQeAKLhNwA7b0Z2m97Lq5EBa
+         Nj+w==
+X-Gm-Message-State: AGi0PuZKGVDFJLAMO/co9WJHsGMb69/eRIpewJAp4rdfjHnUJsLkPwNr
+        wP6XitozmGd/6bVm/p55jN8XHdubnVOJ+y6ceajrdKWKfVqrEi1xAN4NRlBPe66G/NuGc/Tdt6u
+        sR21X/8Uv3O++BE3awhWyCHqJzA==
+X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340791wra.15.1586209779343;
+        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJNgJ7eiNVOi5WqhYdhc42FjdejCWO6/Y8fkLNs2CGrGBsCWnbC9H2zd2UGSvXrNhDXRVbxFQ==
+X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340765wra.15.1586209779132;
+        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
+Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
+        by smtp.gmail.com with ESMTPSA id n6sm1057944wmc.28.2020.04.06.14.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2020 14:49:38 -0700 (PDT)
+Date:   Mon, 6 Apr 2020 17:49:34 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Zhi Wang <zhi.a.wang@intel.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 6/6] kernel: set USER_DS in kthread_use_mm
+Message-ID: <20200406174917-mutt-send-email-mst@kernel.org>
+References: <20200404094101.672954-1-hch@lst.de>
+ <20200404094101.672954-7-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1585896170.ohti800w9v.astroid@bobo.none>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200404094101.672954-7-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 03, 2020 at 05:13:25PM +1000, Nicholas Piggin wrote:
-> Michal Suchánek's on March 25, 2020 5:38 am:
-> > On Tue, Mar 24, 2020 at 06:48:20PM +1000, Nicholas Piggin wrote:
-> >> Michal Suchanek's on March 19, 2020 10:19 pm:
-> >> > There are two almost identical copies for 32bit and 64bit.
-> >> > 
-> >> > The function is used only in 32bit code which will be split out in next
-> >> > patch so consolidate to one function.
-> >> > 
-> >> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> >> > Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> >> > ---
-> >> > v6:  new patch
-> >> > v8:  move the consolidated function out of the ifdef block.
-> >> > v11: rebase on top of def0bfdbd603
-> >> > ---
-> >> >  arch/powerpc/perf/callchain.c | 48 +++++++++++++++++------------------
-> >> >  1 file changed, 24 insertions(+), 24 deletions(-)
-> >> > 
-> >> > diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-> >> > index cbc251981209..c9a78c6e4361 100644
-> >> > --- a/arch/powerpc/perf/callchain.c
-> >> > +++ b/arch/powerpc/perf/callchain.c
-> >> > @@ -161,18 +161,6 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
-> >> >  	return read_user_stack_slow(ptr, ret, 8);
-> >> >  }
-> >> >  
-> >> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> >> > -{
-> >> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> >> > -	    ((unsigned long)ptr & 3))
-> >> > -		return -EFAULT;
-> >> > -
-> >> > -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
-> >> > -		return 0;
-> >> > -
-> >> > -	return read_user_stack_slow(ptr, ret, 4);
-> >> > -}
-> >> > -
-> >> >  static inline int valid_user_sp(unsigned long sp, int is_64)
-> >> >  {
-> >> >  	if (!sp || (sp & 7) || sp > (is_64 ? TASK_SIZE : 0x100000000UL) - 32)
-> >> > @@ -277,19 +265,9 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> >> >  }
-> >> >  
-> >> >  #else  /* CONFIG_PPC64 */
-> >> > -/*
-> >> > - * On 32-bit we just access the address and let hash_page create a
-> >> > - * HPTE if necessary, so there is no need to fall back to reading
-> >> > - * the page tables.  Since this is called at interrupt level,
-> >> > - * do_page_fault() won't treat a DSI as a page fault.
-> >> > - */
-> >> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> >> > +static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
-> >> >  {
-> >> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> >> > -	    ((unsigned long)ptr & 3))
-> >> > -		return -EFAULT;
-> >> > -
-> >> > -	return probe_user_read(ret, ptr, sizeof(*ret));
-> >> > +	return 0;
-> >> >  }
-> >> >  
-> >> >  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> >> > @@ -312,6 +290,28 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
-> >> >  
-> >> >  #endif /* CONFIG_PPC64 */
-> >> >  
-> >> > +/*
-> >> > + * On 32-bit we just access the address and let hash_page create a
-> >> > + * HPTE if necessary, so there is no need to fall back to reading
-> >> > + * the page tables.  Since this is called at interrupt level,
-> >> > + * do_page_fault() won't treat a DSI as a page fault.
-> >> > + */
-> >> 
-> >> The comment is actually probably better to stay in the 32-bit
-> >> read_user_stack_slow implementation. Is that function defined
-> >> on 32-bit purely so that you can use IS_ENABLED()? In that case
-> > It documents the IS_ENABLED() and that's where it is. The 32bit
-> > definition is only a technical detail.
+On Sat, Apr 04, 2020 at 11:41:01AM +0200, Christoph Hellwig wrote:
+> Some architectures like arm64 and s390 require USER_DS to be set for
+> kernel threads to access user address space, which is the whole purpose
+> of kthread_use_mm, but other like x86 don't.  That has lead to a huge
+> mess where some callers are fixed up once they are tested on said
+> architectures, while others linger around and yet other like io_uring
+> try to do "clever" optimizations for what usually is just a trivial
+> asignment to a member in the thread_struct for most architectures.
 > 
-> Sorry for the late reply, busy trying to fix bugs in the C rewrite
-> series. I don't think it is the right place, it should be in the
-> ppc32 implementation detail.
-Which does not exist anymore after the 32bit and 64bit part is split.
-> ppc64 has an equivalent comment at the top of its read_user_stack functions.
+> Make kthread_use_mm set USER_DS, and kthread_unuse_mm restore to the
+> previous value instead.
 > 
-> >> I would prefer to put a BUG() there which makes it self documenting.
-> > Which will cause checkpatch complaints about introducing new BUG() which
-> > is frowned on.
-> 
-> It's fine in this case, that warning is about not introducing
-> runtime bugs, but this wouldn't be.
-> 
-> But... I actually don't like adding read_user_stack_slow on 32-bit
-> and especially not just to make IS_ENABLED work.
-That's to not break build at this point. Later the function is removed.
-> 
-> IMO this would be better if you really want to consolidate it
-> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+I'm ok with vhost bits:
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
 > ---
+>  drivers/usb/gadget/function/f_fs.c | 4 ----
+>  drivers/vhost/vhost.c              | 3 ---
+>  fs/io-wq.c                         | 8 ++------
+>  fs/io_uring.c                      | 4 ----
+>  kernel/kthread.c                   | 6 ++++++
+>  5 files changed, 8 insertions(+), 17 deletions(-)
 > 
-> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-> index cbc251981209..ca3a599b3f54 100644
-> --- a/arch/powerpc/perf/callchain.c
-> +++ b/arch/powerpc/perf/callchain.c
-> @@ -108,7 +108,7 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
->   * interrupt context, so if the access faults, we read the page tables
->   * to find which page (if any) is mapped and access it directly.
->   */
-> -static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
-> +static int read_user_stack_slow(const void __user *ptr, void *buf, int nb)
->  {
->  	int ret = -EFAULT;
->  	pgd_t *pgdir;
-> @@ -149,28 +149,21 @@ static int read_user_stack_slow(void __user *ptr, void *buf, int nb)
->  	return ret;
->  }
+> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+> index d9e48bd7c692..a1198f4c527c 100644
+> --- a/drivers/usb/gadget/function/f_fs.c
+> +++ b/drivers/usb/gadget/function/f_fs.c
+> @@ -824,13 +824,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
+>  	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
 >  
-> -static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
-> +static int __read_user_stack(const void __user *ptr, void *ret, size_t size)
->  {
-> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned long) ||
-> -	    ((unsigned long)ptr & 7))
-> +	if ((unsigned long)ptr > TASK_SIZE - size ||
-> +	    ((unsigned long)ptr & (size - 1)))
->  		return -EFAULT;
->  
-> -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
-> +	if (!probe_user_read(ret, ptr, size))
->  		return 0;
->  
-> -	return read_user_stack_slow(ptr, ret, 8);
-> +	return read_user_stack_slow(ptr, ret, size);
->  }
->  
-> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> +static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
->  {
-> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> -	    ((unsigned long)ptr & 3))
-> -		return -EFAULT;
+>  	if (io_data->read && ret > 0) {
+> -		mm_segment_t oldfs = get_fs();
 > -
-> -	if (!probe_user_read(ret, ptr, sizeof(*ret)))
-> -		return 0;
-> -
-> -	return read_user_stack_slow(ptr, ret, 4);
-> +	return __read_user_stack(ptr, ret, sizeof(*ret));
+> -		set_fs(USER_DS);
+>  		kthread_use_mm(io_data->mm);
+>  		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
+>  		kthread_unuse_mm(io_data->mm);
+> -		set_fs(oldfs);
+>  	}
+>  
+>  	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 1787d426a956..b5229ae01d3b 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -333,9 +333,7 @@ static int vhost_worker(void *data)
+>  	struct vhost_dev *dev = data;
+>  	struct vhost_work *work, *work_next;
+>  	struct llist_node *node;
+> -	mm_segment_t oldfs = get_fs();
+>  
+> -	set_fs(USER_DS);
+>  	kthread_use_mm(dev->mm);
+>  
+>  	for (;;) {
+> @@ -365,7 +363,6 @@ static int vhost_worker(void *data)
+>  		}
+>  	}
+>  	kthread_unuse_mm(dev->mm);
+> -	set_fs(oldfs);
+>  	return 0;
 >  }
 >  
->  static inline int valid_user_sp(unsigned long sp, int is_64)
-> @@ -283,13 +276,13 @@ static void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
->   * the page tables.  Since this is called at interrupt level,
->   * do_page_fault() won't treat a DSI as a page fault.
->   */
-> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> +static int __read_user_stack(const void __user *ptr, void *ret, size_t size)
->  {
-> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> -	    ((unsigned long)ptr & 3))
-> +	if ((unsigned long)ptr > TASK_SIZE - size ||
-> +	    ((unsigned long)ptr & (size - 1)))
->  		return -EFAULT;
->  
-> -	return probe_user_read(ret, ptr, sizeof(*ret));
-> +	return probe_user_read(ret, ptr, size);
->  }
->  
->  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> @@ -312,6 +305,11 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
->  
->  #endif /* CONFIG_PPC64 */
->  
-> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> +{
-> +	return __read_user_stack(ptr, ret, sizeof(*ret));
-> +}
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index 83c2868eff2a..75cc2f31816d 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -168,7 +168,6 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
+>  			dropped_lock = true;
+>  		}
+>  		__set_current_state(TASK_RUNNING);
+> -		set_fs(KERNEL_DS);
+>  		kthread_unuse_mm(worker->mm);
+>  		mmput(worker->mm);
+>  		worker->mm = NULL;
+> @@ -420,14 +419,11 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
+>  		mmput(worker->mm);
+>  		worker->mm = NULL;
+>  	}
+> -	if (!work->mm) {
+> -		set_fs(KERNEL_DS);
+> +	if (!work->mm)
+>  		return;
+> -	}
 > +
->  /*
->   * Layout for non-RT signal frames
->   */
+>  	if (mmget_not_zero(work->mm)) {
+>  		kthread_use_mm(work->mm);
+> -		if (!worker->mm)
+> -			set_fs(USER_DS);
+>  		worker->mm = work->mm;
+>  		/* hang on to this mm */
+>  		work->mm = NULL;
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 367406381044..c332a34e8b34 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -5871,15 +5871,12 @@ static int io_sq_thread(void *data)
+>  	struct io_ring_ctx *ctx = data;
+>  	struct mm_struct *cur_mm = NULL;
+>  	const struct cred *old_cred;
+> -	mm_segment_t old_fs;
+>  	DEFINE_WAIT(wait);
+>  	unsigned long timeout;
+>  	int ret = 0;
+>  
+>  	complete(&ctx->completions[1]);
+>  
+> -	old_fs = get_fs();
+> -	set_fs(USER_DS);
+>  	old_cred = override_creds(ctx->creds);
+>  
+>  	timeout = jiffies + ctx->sq_thread_idle;
+> @@ -5985,7 +5982,6 @@ static int io_sq_thread(void *data)
+>  	if (current->task_works)
+>  		task_work_run();
+>  
+> -	set_fs(old_fs);
+>  	if (cur_mm) {
+>  		kthread_unuse_mm(cur_mm);
+>  		mmput(cur_mm);
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index 316db17f6b4f..9e27d01b6d78 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -52,6 +52,7 @@ struct kthread {
+>  	unsigned long flags;
+>  	unsigned int cpu;
+>  	void *data;
+> +	mm_segment_t oldfs;
+>  	struct completion parked;
+>  	struct completion exited;
+>  #ifdef CONFIG_BLK_CGROUP
+> @@ -1235,6 +1236,9 @@ void kthread_use_mm(struct mm_struct *mm)
+>  
+>  	if (active_mm != mm)
+>  		mmdrop(active_mm);
+> +
+> +	to_kthread(tsk)->oldfs = get_fs();
+> +	set_fs(USER_DS);
+>  }
+>  EXPORT_SYMBOL_GPL(kthread_use_mm);
+>  
+> @@ -1249,6 +1253,8 @@ void kthread_unuse_mm(struct mm_struct *mm)
+>  	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
+>  	WARN_ON_ONCE(!tsk->mm);
+>  
+> +	set_fs(to_kthread(tsk)->oldfs);
+> +
+>  	task_lock(tsk);
+>  	sync_mm_rss(mm);
+>  	tsk->mm = NULL;
+> -- 
+> 2.25.1
+
