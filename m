@@ -2,145 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25ED119EF72
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 05:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A87919EFD5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 06:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbgDFDGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Apr 2020 23:06:14 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:38429 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbgDFDGO (ORCPT
+        id S1725895AbgDFEZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 00:25:46 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35844 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbgDFEZq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Apr 2020 23:06:14 -0400
-Received: by mail-il1-f197.google.com with SMTP id b6so13874993iln.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Apr 2020 20:06:13 -0700 (PDT)
+        Mon, 6 Apr 2020 00:25:46 -0400
+Received: by mail-pf1-f196.google.com with SMTP id n10so6949767pff.3;
+        Sun, 05 Apr 2020 21:25:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VMyBQZO3MBfpsL5ANLi1r3ItqnA3iEERo2V/J0TmPfY=;
-        b=dzVj0Qx8hEzpDDz4rSq/3d9g8q3Wxg8iKbTvXflue9ORtfRIsl6Mh3hz3fupkOAcEm
-         97qMxOm3f+Ea71LOeyQtrKkj6zo5OQxuNWZdmN7uTVfDrvBytto3UAoMj97pCLuVF+0w
-         +h8WA0ELJqvatR7JhvOJ00HM3MREz/feIFM3AWdMHL7hLmciguA+4Ysob4RDAUviZBAF
-         INHjkxHFuA6nQiQGEZctm+EhgKVPf/koCxg8ifIcrWJVTayNNX1as1LQxlh1FNccfoC9
-         QFrJCzeyGW+uzvRkOwGA9RovZAYoRsob3raVJ4dR6jGs5qFkIOUpnDqL6Vcwv5oDnSz2
-         Ax/w==
-X-Gm-Message-State: AGi0PuYlmhiSysblIVDoIYTx3FSrj04yWfwgv0QUkguvx9Su76LMmgFp
-        ZqJecnfqTWrcjmGsC7+vOI+gKeOc+EBwwzlY87MpAxVDtavk
-X-Google-Smtp-Source: APiQypIjLBv995v9Q6nngDvUzGI4SQF2mUpR1Cp8F7w6q8j5tX2m6Fy9bWbm94gXVesQIxpb3IH/1k2OJDuVocLSsrgxKtYxahfV
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=c8wPbad/8W9/8b6vePf+GYvbUSqgcxrAZ3yGLbYkRIg=;
+        b=nNy1VitUHs4ZrHyV0qTotIiwPFPn26bHsJz/tDwyEl78xPQZv7H9P05l5s5+IIKo7/
+         9HKLR5ocx1coV44gUU9SZQ/S/LEp5p1DrKfc1T8bVsVntf0uC55kpOTSOYGd7uB0P/On
+         LAST/j2IzNsQsHj/ISazT4GOK7vlkjQqA1AIHN6KU2OvCoE61FUN9sqJc8fxc2bzHaLW
+         F0JKW2GEJ14ODUwRFfzKeQdx89JX2hL9PjnJ6YRvKykU2uhKW5xX7LxkzcAqoDzI+a1N
+         VSkZmQOxvuUh5jqvXUUF3J9Ym7pFRmuSIbBrOxC5oQ86Uwx+qL2qJvnyUxDQDWESWHNe
+         n1hA==
+X-Gm-Message-State: AGi0Pub8urHfmDuTS2LK9o/fiu2wz3LsZJA/OfjjeFPlLmSAQFa71XyD
+        5D3HxUuLOFiZ/Dix/SB9rEUpkXDJJ2o=
+X-Google-Smtp-Source: APiQypKEoPMxKPEw1lvcr+pVTnkijH/ndCn7BCmmULSLJlYTk+1hOrYPoUZBL8ZSN5GPm4bYSgO3WA==
+X-Received: by 2002:a63:8dc7:: with SMTP id z190mr19591971pgd.39.1586147144839;
+        Sun, 05 Apr 2020 21:25:44 -0700 (PDT)
+Received: from ?IPv6:2601:647:4000:d7:7d7b:4f16:40c2:d1f9? ([2601:647:4000:d7:7d7b:4f16:40c2:d1f9])
+        by smtp.gmail.com with ESMTPSA id e184sm10462077pfh.219.2020.04.05.21.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Apr 2020 21:25:43 -0700 (PDT)
+Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
+To:     Eric Sandeen <sandeen@sandeen.net>,
+        Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de
+Cc:     mhocko@suse.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+References: <20200402000002.7442-1-mcgrof@kernel.org>
+ <20200402000002.7442-3-mcgrof@kernel.org>
+ <3640b16b-abda-5160-301a-6a0ee67365b4@acm.org>
+ <b827d03c-e097-06c3-02ab-00df42b5fc0e@sandeen.net>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <75aa4cff-1b90-ebd4-17a4-c1cb6d390b30@acm.org>
+Date:   Sun, 5 Apr 2020 21:25:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:d6:: with SMTP id w22mr13033959jao.72.1586142372978;
- Sun, 05 Apr 2020 20:06:12 -0700 (PDT)
-Date:   Sun, 05 Apr 2020 20:06:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4684e05a2968ca6@google.com>
-Subject: kernel BUG at mm/hugetlb.c:LINE!
-From:   syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mike.kravetz@oracle.com, mszeredi@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b827d03c-e097-06c3-02ab-00df42b5fc0e@sandeen.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 2020-04-05 18:27, Eric Sandeen wrote:
+> The thing I can't figure out from reading the change log is
+> 
+> 1) what the root cause of the problem is, and
+> 2) how this patch fixes it?
 
-syzbot found the following crash on:
+I think that the root cause is that do_blk_trace_setup() uses
+debugfs_lookup() and that debugfs_lookup() may return a pointer
+associated with a previous incarnation of the block device.
+Additionally, I think the following changes fix that problem by using
+q->debugfs_dir in the blktrace code instead of debugfs_lookup():
 
-HEAD commit:    1a323ea5 x86: get rid of 'errret' argument to __get_user_x..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=132e940be00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c1e98458335a7d1
-dashboard link: https://syzkaller.appspot.com/bug?extid=d6ec23007e951dadf3de
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12921933e00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172e940be00000
+[ ... ]
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -311,7 +311,6 @@ static void blk_trace_free(struct blk_trace *bt)
+ 	debugfs_remove(bt->msg_file);
+ 	debugfs_remove(bt->dropped_file);
+ 	relay_close(bt->rchan);
+-	debugfs_remove(bt->dir);
+ 	free_percpu(bt->sequence);
+ 	free_percpu(bt->msg_data);
+ 	kfree(bt);
+[ ... ]
+@@ -509,21 +510,19 @@ static int do_blk_trace_setup(struct request_queue
+*q, char *name, dev_t dev,
 
-The bug was bisected to:
+ 	ret = -ENOENT;
 
-commit e950564b97fd0f541b02eb207685d0746f5ecf29
-Author: Miklos Szeredi <mszeredi@redhat.com>
-Date:   Tue Jul 24 13:01:55 2018 +0000
+-	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+-	if (!dir)
+-		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+-
+ 	bt->dev = dev;
+ 	atomic_set(&bt->dropped, 0);
+ 	INIT_LIST_HEAD(&bt->running_list);
 
-    vfs: don't evict uninitialized inode
+ 	ret = -EIO;
+-	bt->dropped_file = debugfs_create_file("dropped", 0444, dir, bt,
++	bt->dropped_file = debugfs_create_file("dropped", 0444,
++					       q->debugfs_dir, bt,
+ 					       &blk_dropped_fops);
+[ ... ]
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115cad33e00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=135cad33e00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=155cad33e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com
-Fixes: e950564b97fd ("vfs: don't evict uninitialized inode")
-
-overlayfs: upper fs does not support xattr, falling back to index=off and metacopy=off.
-------------[ cut here ]------------
-kernel BUG at mm/hugetlb.c:3416!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 7036 Comm: syz-executor110 Not tainted 5.6.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
-Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6 ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
-RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
-RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
-RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
-RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
-R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
-R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
-FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 0000000093554000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __unmap_hugepage_range_final+0x30/0x70 mm/hugetlb.c:3507
- unmap_single_vma+0x238/0x300 mm/memory.c:1296
- unmap_vmas+0x16f/0x2f0 mm/memory.c:1332
- exit_mmap+0x2aa/0x510 mm/mmap.c:3126
- __mmput kernel/fork.c:1082 [inline]
- mmput+0x168/0x4b0 kernel/fork.c:1103
- exit_mm kernel/exit.c:477 [inline]
- do_exit+0xa51/0x2dd0 kernel/exit.c:780
- do_group_exit+0x125/0x340 kernel/exit.c:891
- __do_sys_exit_group kernel/exit.c:902 [inline]
- __se_sys_exit_group kernel/exit.c:900 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:900
- do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
- entry_SYSCALL_64_after_hwframe+0x49/0xb3
-RIP: 0033:0x43efe8
-Code: Bad RIP value.
-RSP: 002b:00007ffdfe6c00f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043efe8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004be7e8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000040000000011 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 2d36245d65cb52f7 ]---
-RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
-Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6 ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
-RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
-RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
-RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
-RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
-R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
-R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
-FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8cc24dd000 CR3: 0000000093554000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Bart.
