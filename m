@@ -2,154 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A814E19F1AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 10:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5D0519F21E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 11:11:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgDFIgK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 04:36:10 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37884 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbgDFIgK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 04:36:10 -0400
-Received: by mail-ed1-f67.google.com with SMTP id de14so18195794edb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 01:36:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rpWT0MDD1UpkdCBjt4GwmUUuDmZT2CiV8oFjv2FSbJc=;
-        b=FIQ2U20CLFrpOgJbE6xj4ai+Rnc4E5kQ/LBDi4blhwf+5onbkwT/M+Gd5RPhR9tnuv
-         zaaYj6J4xLttvLdfS72P9zuIAxhckvPYgRuzZ8VPVpsP7V/K+suG3F4D0oaBg313A6jW
-         uq/Nox6b6glJaYpZBI+S86tXlw5VzZk0oNqH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rpWT0MDD1UpkdCBjt4GwmUUuDmZT2CiV8oFjv2FSbJc=;
-        b=f4LeNH267AzzE0PXtfYGlNH1dZNGpJumARPcwKOEgFKEsU/3j/FrObpQadh/TNxJV6
-         acNzUfPnhCsl3hQvrrfvSt/DO2jMbUAv418Op8xSP+vdEUKtJ2tCFtDPcvwjC+MdhCOf
-         RhFl4HTxWIpj9oJb8qROkIhuV4LbMAEIxPDq0dz+y8uqGFATjoZePd5mzL8uGoxf4eeZ
-         ShOQxxDJQAVPCv2f1Ldnq3GyI2tah85VSDjHpXml0o1r8rO3Og/DdVCSUIOfz5v51Cii
-         yYJtsyvB4l3PP5o+ziD9fCMM/uF/0mdDk3srdA9UVEq7zz1RppSVZg+CuI0RAfs3vtQW
-         xMHw==
-X-Gm-Message-State: AGi0PuYGeJjdu/+qXeTeey1oa+81p7qMYCWSe5K0Bs70lxkw5kS4Vt/g
-        lwMWzwxfJh0jdbzgwIWze6B0SmzuTnfGkiUXwN155w==
-X-Google-Smtp-Source: APiQypJ0bW8RYsjPXbL9qEMFPDykIG2LZMaBEua5O/565lR8NmnrhrWeVSiFufYz/Cw5fwNDYVzxnpNff+6Uaebhdd0=
-X-Received: by 2002:a05:6402:160e:: with SMTP id f14mr18573307edv.301.1586162167356;
- Mon, 06 Apr 2020 01:36:07 -0700 (PDT)
+        id S1726890AbgDFJLH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 6 Apr 2020 05:11:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36872 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726689AbgDFJLH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 05:11:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id B8358AC40;
+        Mon,  6 Apr 2020 09:11:03 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, mhocko@suse.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC 3/3] block: avoid deferral of blk_release_queue() work
+References: <20200402000002.7442-1-mcgrof@kernel.org>
+        <20200402000002.7442-4-mcgrof@kernel.org>
+        <774a33e8-43ba-143f-f6fd-9cb0ae0862ac@acm.org>
+        <87o8saj62m.fsf@suse.de>
+Date:   Mon, 06 Apr 2020 11:11:01 +0200
+In-Reply-To: <87o8saj62m.fsf@suse.de> (Nicolai Stange's message of "Thu, 02
+        Apr 2020 16:49:37 +0200")
+Message-ID: <87eet1j7x6.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-References: <20200401144109.GA29945@gardel-login> <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
- <2590640.1585757211@warthog.procyon.org.uk> <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
- <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
- <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
- <27994c53034c8f769ea063a54169317c3ee62c04.camel@themaw.net>
- <20200403111144.GB34663@gardel-login> <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
- <20200403151223.GB34800@gardel-login> <20200403203024.GB27105@fieldses.org>
-In-Reply-To: <20200403203024.GB27105@fieldses.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 6 Apr 2020 10:35:55 +0200
-Message-ID: <CAJfpegvxnp8N-o-iTXzj0UnYZbDPfms1zpwcHf1tdhRJ4au3Og@mail.gmail.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Lennart Poettering <mzxreary@0pointer.de>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Content-Type: multipart/mixed; boundary="0000000000008acd9805a29b28ff"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000008acd9805a29b28ff
-Content-Type: text/plain; charset="UTF-8"
+Nicolai Stange <nstange@suse.de> writes:
 
-On Fri, Apr 3, 2020 at 10:30 PM J. Bruce Fields <bfields@fieldses.org> wrote:
+> Bart Van Assche <bvanassche@acm.org> writes:
 >
-> On Fri, Apr 03, 2020 at 05:12:23PM +0200, Lennart Poettering wrote:
-> > BTW, while we are at it: one more thing I'd love to see exposed by
-> > statx() is a simple flag whether the inode is a mount point. There's
-> > plenty code that implements a test like this all over the place, and
-> > it usually isn't very safe. There's one implementation in util-linux
-> > for example (in the /usr/bin/mountpoint binary), and another one in
-> > systemd. Would be awesome to just have a statx() return flag for that,
-> > that would make things *so* much easier and more robust. because in
-> > fact most code isn't very good that implements this, as much of it
-> > just compares st_dev of the specified file and its parent. Better code
-> > compares the mount ID, but as mentioned that's not as pretty as it
-> > could be so far...
+>> The description of this patch mentions a single blk_release_queue() call
+>> that happened in the past from a context from which sleeping is not
+>> allowed and from which sleeping is allowed today. Have all other
+>> blk_release_queue() / blk_put_queue() calls been verified to see whether
+>> none of these happens from a context from which sleeping is not allowed?
 >
-> nfs-utils/support/misc/mountpoint.c:check_is_mountpoint() stats the file
-> and ".." and returns true if they have different st_dev or the same
-> st_ino.  Comparing mount ids sounds better.
+> I've just done this today and found the following potentially
+> problematic call paths to blk_put_queue().
 >
-> So anyway, yes, everybody reinvents the wheel here, and this would be
-> useful.  (And, yes, we want to know for the vfsmount, we don't care
-> whether the same inode is used as a mountpoint someplace else.)
+> 1.) mem_cgroup_throttle_swaprate() takes a spinlock and
+>     calls blkcg_schedule_throttle()->blk_put_queue().
+>
+>     Also note that AFAICS mem_cgroup_try_charge_delay() can be called
+>     with GFP_ATOMIC.
+>
+> 2.) scsi_unblock_requests() gets called from a lot of drivers and
+>     invoke blk_put_queue() through
+>     scsi_unblock_requests() -> scsi_run_host_queues() ->
+>     scsi_starved_list_run() -> blk_put_queue().
+>
+>     Most call sites are fine, the ones which are not are:
+>     a.) pmcraid_complete_ioa_reset(). This gets assigned
+>         to struct pmcraid_cmd's ->cmd_done and later invoked
+>         under a spinlock.
+>
+>     b.) qla82xx_fw_dump() and qla8044_fw_dump().
+>         These can potentially block w/o this patch already,
+>         because both invoke qla2x00_wait_for_chip_reset().
+>
+> 	However, they can get called from IRQ context. For example,
+>         qla82xx_intr_handler(), qla82xx_msix_default() and
+>         qla82xx_poll() call qla2x00_async_event(), which calls
+>         ->fw_dump().
+>
+> 	The aforementioned functions can also reach ->fw_dump() through
+>         qla24xx_process_response_queue()->qlt_handle_abts_recv()->qlt_response_pkt_all_vps()
+>         ->qlt_response_pkt()->qlt_handle_abts_completion()->qlt_chk_unresolv_exchg()
+>         -> ->fw_dump().
+>
+> 	But I'd consider this a problem with the driver -- either
+> 	->fw_dump() can sleep and must not be called from IRQ context
+>         or they must not invoke qla2x00_wait_for_hba_ready().
+>
+>
+> (I can share the full analysis, but it's lengthy and contains nothing
+>  interesting except for what is listed above).
+>
+>
+> One final note though: If I'm not mistaken, then the final
+> blk_put_queue() can in principle block even today, simply by virtue of
+> the kernfs operations invoked through
+> kobject_put()->kobject_release()->kobject_cleanup()->kobject_del()
+> ->sysfs_remove_dir()->kernfs_remove()->mutex_lock()?\
 
-Attaching a patch.
-
-There's some ambiguity about what is a "mountpoint" and what these
-tools are interested in.  My guess is that they are not interested in
-an object being a mount point (something where another object is
-mounted) but being a mount root (this is the object mounted at the
-mount point).  I.e
-
-fd = open("/mnt", O_PATH);
-mount("/bin", "/mnt", NULL, MS_BIND, NULL);
-statx(AT_FDCWD, "/mnt", 0, 0, &stx1);
-statx(fd, "", AT_EMPTY_PATH, 0, &stx2);
-printf("mount_root(/mnt) = %c, mount_root(fd) = %c\n",
-    stx1.stx_attributes & STATX_ATTR_MOUNT_ROOT ? 'y' : 'n',
-    stx2.stx_attributes & STATX_ATTR_MOUNT_ROOT ? 'y' : 'n');
-
-Would print:
-mount_root(/mnt) = y, mount_root(fd) = n
+That's wrong, I missed kobject_del() invocation issued from
+blk_unregister_queue(). Thus, blk_put_queue() in its current
+implementation won't ever block.
 
 Thanks,
-Miklos
 
---0000000000008acd9805a29b28ff
-Content-Type: text/x-patch; charset="US-ASCII"; name="statx-add-mount_root.patch"
-Content-Disposition: attachment; filename="statx-add-mount_root.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k8o7ysgp0>
-X-Attachment-Id: f_k8o7ysgp0
+Nicolai
 
-RnJvbTogTWlrbG9zIFN6ZXJlZGkgPG1zemVyZWRpQHJlZGhhdC5jb20+ClN1YmplY3Q6IHN0YXR4
-OiBhZGQgbW91bnRfcm9vdAoKRGV0ZXJtaW5pbmcgd2hldGhlciBhIHBhdGggb3IgZmlsZSBkZXNj
-cmlwdG9yIHJlZmVycyB0byBhIG1vdW50cG9pbnQgKG9yCm1vcmUgcHJlY2lzZWx5IGEgbW91bnQg
-cm9vdCkgaXMgbm90IHRyaXZpYWwgdXNpbmcgY3VycmVudCB0b29scy4KCkFkZCBhIGZsYWcgdG8g
-c3RhdHggdGhhdCBpbmRpY2F0ZXMgd2hldGhlciB0aGUgcGF0aCBvciBmZCByZWZlcnMgdG8gdGhl
-CnJvb3Qgb2YgYSBtb3VudCBvciBub3QuCgpSZXBvcnRlZC1ieTogTGVubmFydCBQb2V0dGVyaW5n
-IDxtenhyZWFyeUAwcG9pbnRlci5kZT4KUmVwb3J0ZWQtYnk6IEouIEJydWNlIEZpZWxkcyA8YmZp
-ZWxkc0BmaWVsZHNlcy5vcmc+ClNpZ25lZC1vZmYtYnk6IE1pa2xvcyBTemVyZWRpIDxtc3plcmVk
-aUByZWRoYXQuY29tPgotLS0KIGZzL3N0YXQuYyAgICAgICAgICAgICAgICAgfCAgICAzICsrKwog
-aW5jbHVkZS91YXBpL2xpbnV4L3N0YXQuaCB8ICAgIDEgKwogMiBmaWxlcyBjaGFuZ2VkLCA0IGlu
-c2VydGlvbnMoKykKCi0tLSBhL2luY2x1ZGUvdWFwaS9saW51eC9zdGF0LmgKKysrIGIvaW5jbHVk
-ZS91YXBpL2xpbnV4L3N0YXQuaApAQCAtMTcyLDYgKzE3Miw3IEBAIHN0cnVjdCBzdGF0eCB7CiAj
-ZGVmaW5lIFNUQVRYX0FUVFJfTk9EVU1QCQkweDAwMDAwMDQwIC8qIFtJXSBGaWxlIGlzIG5vdCB0
-byBiZSBkdW1wZWQgKi8KICNkZWZpbmUgU1RBVFhfQVRUUl9FTkNSWVBURUQJCTB4MDAwMDA4MDAg
-LyogW0ldIEZpbGUgcmVxdWlyZXMga2V5IHRvIGRlY3J5cHQgaW4gZnMgKi8KICNkZWZpbmUgU1RB
-VFhfQVRUUl9BVVRPTU9VTlQJCTB4MDAwMDEwMDAgLyogRGlyOiBBdXRvbW91bnQgdHJpZ2dlciAq
-LworI2RlZmluZSBTVEFUWF9BVFRSX01PVU5UX1JPT1QJCTB4MDAwMDIwMDAgLyogUm9vdCBvZiBh
-IG1vdW50ICovCiAjZGVmaW5lIFNUQVRYX0FUVFJfVkVSSVRZCQkweDAwMTAwMDAwIC8qIFtJXSBW
-ZXJpdHkgcHJvdGVjdGVkIGZpbGUgKi8KIAogCi0tLSBhL2ZzL3N0YXQuYworKysgYi9mcy9zdGF0
-LmMKQEAgLTIwMiw2ICsyMDIsOSBAQCBpbnQgdmZzX3N0YXR4KGludCBkZmQsIGNvbnN0IGNoYXIg
-X191c2VyCiAJZXJyb3IgPSB2ZnNfZ2V0YXR0cigmcGF0aCwgc3RhdCwgcmVxdWVzdF9tYXNrLCBm
-bGFncyk7CiAJc3RhdC0+bW50X2lkID0gcmVhbF9tb3VudChwYXRoLm1udCktPm1udF9pZDsKIAlz
-dGF0LT5yZXN1bHRfbWFzayB8PSBTVEFUWF9NTlRfSUQ7CisJaWYgKHBhdGgubW50LT5tbnRfcm9v
-dCA9PSBwYXRoLmRlbnRyeSkKKwkJc3RhdC0+YXR0cmlidXRlcyB8PSBTVEFUWF9BVFRSX01PVU5U
-X1JPT1Q7CisJc3RhdC0+YXR0cmlidXRlc19tYXNrIHw9IFNUQVRYX0FUVFJfTU9VTlRfUk9PVDsK
-IAlwYXRoX3B1dCgmcGF0aCk7CiAJaWYgKHJldHJ5X2VzdGFsZShlcnJvciwgbG9va3VwX2ZsYWdz
-KSkgewogCQlsb29rdXBfZmxhZ3MgfD0gTE9PS1VQX1JFVkFMOwo=
---0000000000008acd9805a29b28ff--
+-- 
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+(HRB 36809, AG Nürnberg), GF: Felix Imendörffer
