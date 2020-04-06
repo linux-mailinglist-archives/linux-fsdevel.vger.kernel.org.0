@@ -2,239 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 641641A0071
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 23:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C66601A008F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Apr 2020 00:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbgDFVtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 17:49:43 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:57214 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725933AbgDFVtn (ORCPT
+        id S1726197AbgDFWGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 18:06:12 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56138 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbgDFWGM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 17:49:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586209782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
-        b=G03to6zMu4TUsnLfHbUIWkeCIpfrl+oI/yvXLzi5Nzy5o5c+gDpowE6KOla1oKxlDuIP8w
-        UHw6/gSZfDpvqwMAU+5AN+Qm94CeQHHj1xWk4jiNh6xVIDWj164K9xxrjhUOj4mTrXOTlr
-        JAvQ1neZL0M2w5Wm0Tc2Pv+NBvkFtQo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-333-cYM8fEPaNJGeDAT4CfLmyw-1; Mon, 06 Apr 2020 17:49:40 -0400
-X-MC-Unique: cYM8fEPaNJGeDAT4CfLmyw-1
-Received: by mail-wr1-f70.google.com with SMTP id g6so598321wru.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 14:49:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kIXDxUjS2HMskB+mPSwuv3yFtOM4CbvksE2h37nZI78=;
-        b=C0zFfwYcMpelKdpNxN/j91QaBJiHNwv7yflZfA++NrYBp3MoMCCeHSIl8Yk21NnDIj
-         cEJ2e1PcIgkEpNe3PO9ir2OEiccl21uKe2ch8RGZlEw3EJcN/vlTWNT/vAeBFKbrEqmY
-         5WcLULYYK2Jd4DsowceQz71NASdQqGp+Y7faUdsRpADY+jl5KmgE3eMQURzHVOXoi4CU
-         Lt4q6RXQhAj1bixFLrJK2J+WmvWnHlHRpAtmCRN9XlbVpCwiaHHGoFXVvas/pWzOOpSC
-         E9Y+sn/il+hpLtvsDx0uP4oxnHAXmorDdhWwdLIoCwhNtQeAKLhNwA7b0Z2m97Lq5EBa
-         Nj+w==
-X-Gm-Message-State: AGi0PuZKGVDFJLAMO/co9WJHsGMb69/eRIpewJAp4rdfjHnUJsLkPwNr
-        wP6XitozmGd/6bVm/p55jN8XHdubnVOJ+y6ceajrdKWKfVqrEi1xAN4NRlBPe66G/NuGc/Tdt6u
-        sR21X/8Uv3O++BE3awhWyCHqJzA==
-X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340791wra.15.1586209779343;
-        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
-X-Google-Smtp-Source: APiQypJNgJ7eiNVOi5WqhYdhc42FjdejCWO6/Y8fkLNs2CGrGBsCWnbC9H2zd2UGSvXrNhDXRVbxFQ==
-X-Received: by 2002:a5d:5230:: with SMTP id i16mr1340765wra.15.1586209779132;
-        Mon, 06 Apr 2020 14:49:39 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-51-222.red.bezeqint.net. [79.176.51.222])
-        by smtp.gmail.com with ESMTPSA id n6sm1057944wmc.28.2020.04.06.14.49.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 14:49:38 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 17:49:34 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 6/6] kernel: set USER_DS in kthread_use_mm
-Message-ID: <20200406174917-mutt-send-email-mst@kernel.org>
-References: <20200404094101.672954-1-hch@lst.de>
- <20200404094101.672954-7-hch@lst.de>
+        Mon, 6 Apr 2020 18:06:12 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 036M3wxJ128123;
+        Mon, 6 Apr 2020 22:06:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=xDN8q8wp40bDgTqf0pLYF/OA1LPeCmVrjLg2TCugABo=;
+ b=gIVZW/f3ye+9prRMQ28G4Jz1SRi66O6BfFdAavnHUyvXNS4khDtL3m5Ku7Od/AmSg1lx
+ ZfFfLY5C7EJntaRRsruMGMA6peZ0aEyUBXqcSpVgWl97fUmO9t0nFs16sYfV5mS/CQ3e
+ P5gebWHLleWdbnrA8tFYky1sT54xj9lTEJwp3s+UQTPRen4sVp+cpRmi1fEvVbNDwBxn
+ zfBeUss9uzFFzchBGshvDnQQYKIWy7zM2IPYVWDCQ7KKIigJF9PyEu2lgETzTgcuVDPW
+ VhomLopiEVItw4PfJxPWTlI7VxOCAm1eX9ztz2Mgtzeqdpi45iBkfaoCf7rlsKka85xz ZA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 306hnr1jkv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Apr 2020 22:06:01 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 036M2QnL116473;
+        Mon, 6 Apr 2020 22:06:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 30839r9ky5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Apr 2020 22:06:01 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 036M5xwS029765;
+        Mon, 6 Apr 2020 22:05:59 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 Apr 2020 15:05:59 -0700
+Subject: Re: kernel BUG at mm/hugetlb.c:LINE!
+To:     syzbot <syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mszeredi@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000b4684e05a2968ca6@google.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <aa7812b8-60ae-8578-40db-e71ad766b4d3@oracle.com>
+Date:   Mon, 6 Apr 2020 15:05:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200404094101.672954-7-hch@lst.de>
+In-Reply-To: <000000000000b4684e05a2968ca6@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9583 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2004060166
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9583 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004060166
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 04, 2020 at 11:41:01AM +0200, Christoph Hellwig wrote:
-> Some architectures like arm64 and s390 require USER_DS to be set for
-> kernel threads to access user address space, which is the whole purpose
-> of kthread_use_mm, but other like x86 don't.  That has lead to a huge
-> mess where some callers are fixed up once they are tested on said
-> architectures, while others linger around and yet other like io_uring
-> try to do "clever" optimizations for what usually is just a trivial
-> asignment to a member in the thread_struct for most architectures.
+On 4/5/20 8:06 PM, syzbot wrote:
+> Hello,
 > 
-> Make kthread_use_mm set USER_DS, and kthread_unuse_mm restore to the
-> previous value instead.
+> syzbot found the following crash on:
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-I'm ok with vhost bits:
-
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
-> ---
->  drivers/usb/gadget/function/f_fs.c | 4 ----
->  drivers/vhost/vhost.c              | 3 ---
->  fs/io-wq.c                         | 8 ++------
->  fs/io_uring.c                      | 4 ----
->  kernel/kthread.c                   | 6 ++++++
->  5 files changed, 8 insertions(+), 17 deletions(-)
+> HEAD commit:    1a323ea5 x86: get rid of 'errret' argument to __get_user_x..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=132e940be00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8c1e98458335a7d1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d6ec23007e951dadf3de
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12921933e00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172e940be00000
 > 
-> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> index d9e48bd7c692..a1198f4c527c 100644
-> --- a/drivers/usb/gadget/function/f_fs.c
-> +++ b/drivers/usb/gadget/function/f_fs.c
-> @@ -824,13 +824,9 @@ static void ffs_user_copy_worker(struct work_struct *work)
->  	bool kiocb_has_eventfd = io_data->kiocb->ki_flags & IOCB_EVENTFD;
->  
->  	if (io_data->read && ret > 0) {
-> -		mm_segment_t oldfs = get_fs();
-> -
-> -		set_fs(USER_DS);
->  		kthread_use_mm(io_data->mm);
->  		ret = ffs_copy_to_iter(io_data->buf, ret, &io_data->data);
->  		kthread_unuse_mm(io_data->mm);
-> -		set_fs(oldfs);
->  	}
->  
->  	io_data->kiocb->ki_complete(io_data->kiocb, ret, ret);
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 1787d426a956..b5229ae01d3b 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -333,9 +333,7 @@ static int vhost_worker(void *data)
->  	struct vhost_dev *dev = data;
->  	struct vhost_work *work, *work_next;
->  	struct llist_node *node;
-> -	mm_segment_t oldfs = get_fs();
->  
-> -	set_fs(USER_DS);
->  	kthread_use_mm(dev->mm);
->  
->  	for (;;) {
-> @@ -365,7 +363,6 @@ static int vhost_worker(void *data)
->  		}
->  	}
->  	kthread_unuse_mm(dev->mm);
-> -	set_fs(oldfs);
->  	return 0;
->  }
->  
-> diff --git a/fs/io-wq.c b/fs/io-wq.c
-> index 83c2868eff2a..75cc2f31816d 100644
-> --- a/fs/io-wq.c
-> +++ b/fs/io-wq.c
-> @@ -168,7 +168,6 @@ static bool __io_worker_unuse(struct io_wqe *wqe, struct io_worker *worker)
->  			dropped_lock = true;
->  		}
->  		__set_current_state(TASK_RUNNING);
-> -		set_fs(KERNEL_DS);
->  		kthread_unuse_mm(worker->mm);
->  		mmput(worker->mm);
->  		worker->mm = NULL;
-> @@ -420,14 +419,11 @@ static void io_wq_switch_mm(struct io_worker *worker, struct io_wq_work *work)
->  		mmput(worker->mm);
->  		worker->mm = NULL;
->  	}
-> -	if (!work->mm) {
-> -		set_fs(KERNEL_DS);
-> +	if (!work->mm)
->  		return;
-> -	}
-> +
->  	if (mmget_not_zero(work->mm)) {
->  		kthread_use_mm(work->mm);
-> -		if (!worker->mm)
-> -			set_fs(USER_DS);
->  		worker->mm = work->mm;
->  		/* hang on to this mm */
->  		work->mm = NULL;
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index 367406381044..c332a34e8b34 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -5871,15 +5871,12 @@ static int io_sq_thread(void *data)
->  	struct io_ring_ctx *ctx = data;
->  	struct mm_struct *cur_mm = NULL;
->  	const struct cred *old_cred;
-> -	mm_segment_t old_fs;
->  	DEFINE_WAIT(wait);
->  	unsigned long timeout;
->  	int ret = 0;
->  
->  	complete(&ctx->completions[1]);
->  
-> -	old_fs = get_fs();
-> -	set_fs(USER_DS);
->  	old_cred = override_creds(ctx->creds);
->  
->  	timeout = jiffies + ctx->sq_thread_idle;
-> @@ -5985,7 +5982,6 @@ static int io_sq_thread(void *data)
->  	if (current->task_works)
->  		task_work_run();
->  
-> -	set_fs(old_fs);
->  	if (cur_mm) {
->  		kthread_unuse_mm(cur_mm);
->  		mmput(cur_mm);
-> diff --git a/kernel/kthread.c b/kernel/kthread.c
-> index 316db17f6b4f..9e27d01b6d78 100644
-> --- a/kernel/kthread.c
-> +++ b/kernel/kthread.c
-> @@ -52,6 +52,7 @@ struct kthread {
->  	unsigned long flags;
->  	unsigned int cpu;
->  	void *data;
-> +	mm_segment_t oldfs;
->  	struct completion parked;
->  	struct completion exited;
->  #ifdef CONFIG_BLK_CGROUP
-> @@ -1235,6 +1236,9 @@ void kthread_use_mm(struct mm_struct *mm)
->  
->  	if (active_mm != mm)
->  		mmdrop(active_mm);
-> +
-> +	to_kthread(tsk)->oldfs = get_fs();
-> +	set_fs(USER_DS);
->  }
->  EXPORT_SYMBOL_GPL(kthread_use_mm);
->  
-> @@ -1249,6 +1253,8 @@ void kthread_unuse_mm(struct mm_struct *mm)
->  	WARN_ON_ONCE(!(tsk->flags & PF_KTHREAD));
->  	WARN_ON_ONCE(!tsk->mm);
->  
-> +	set_fs(to_kthread(tsk)->oldfs);
-> +
->  	task_lock(tsk);
->  	sync_mm_rss(mm);
->  	tsk->mm = NULL;
-> -- 
-> 2.25.1
+> The bug was bisected to:
+> 
+> commit e950564b97fd0f541b02eb207685d0746f5ecf29
+> Author: Miklos Szeredi <mszeredi@redhat.com>
+> Date:   Tue Jul 24 13:01:55 2018 +0000
+> 
+>     vfs: don't evict uninitialized inode
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=115cad33e00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=135cad33e00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=155cad33e00000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d6ec23007e951dadf3de@syzkaller.appspotmail.com
+> Fixes: e950564b97fd ("vfs: don't evict uninitialized inode")
+> 
+> overlayfs: upper fs does not support xattr, falling back to index=off and metacopy=off.
+> ------------[ cut here ]------------
+> kernel BUG at mm/hugetlb.c:3416!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 7036 Comm: syz-executor110 Not tainted 5.6.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:__unmap_hugepage_range+0xa26/0xbc0 mm/hugetlb.c:3416
+> Code: 00 48 c7 c7 60 37 35 88 e8 57 b4 a2 ff e9 b3 fd ff ff e8 cd 90 c6 ff 0f 0b e9 c4 f7 ff ff e8 c1 90 c6 ff 0f 0b e8 ba 90 c6 ff <0f> 0b e8 b3 90 c6 ff 83 8c 24 c0 00 00 00 01 48 8d bc 24 a0 00 00
+> RSP: 0018:ffffc900017779b0 EFLAGS: 00010293
+> RAX: ffff88808cf5c2c0 RBX: ffffffff8c641c08 RCX: ffffffff81ac50b4
+> RDX: 0000000000000000 RSI: ffffffff81ac58a6 RDI: 0000000000000007
+> RBP: 0000000020000000 R08: ffff88808cf5c2c0 R09: ffffed10129d8111
+> R10: ffffed10129d8110 R11: ffff888094ec0887 R12: 0000000000003000
+> R13: 0000000000000000 R14: 0000000020003000 R15: 0000000000200000
+> FS:  00000000013c0880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000140 CR3: 0000000093554000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __unmap_hugepage_range_final+0x30/0x70 mm/hugetlb.c:3507
+>  unmap_single_vma+0x238/0x300 mm/memory.c:1296
+>  unmap_vmas+0x16f/0x2f0 mm/memory.c:1332
+>  exit_mmap+0x2aa/0x510 mm/mmap.c:3126
+>  __mmput kernel/fork.c:1082 [inline]
+>  mmput+0x168/0x4b0 kernel/fork.c:1103
+>  exit_mm kernel/exit.c:477 [inline]
+>  do_exit+0xa51/0x2dd0 kernel/exit.c:780
+>  do_group_exit+0x125/0x340 kernel/exit.c:891
+>  __do_sys_exit_group kernel/exit.c:902 [inline]
+>  __se_sys_exit_group kernel/exit.c:900 [inline]
+>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:900
+>  do_syscall_64+0xf6/0x7d0 arch/x86/entry/common.c:295
+>  entry_SYSCALL_64_after_hwframe+0x49/0xb3
 
+This is not new and certainly not caused by commit e950564b97fd.
+
+hugetlbf only operates on huge page aligned and sized files/mappings.
+To make sure this happens, the mmap code contians the following to 'round
+up' length to huge page size:
+
+	if (!(flags & MAP_ANONYMOUS)) {
+		audit_mmap_fd(fd, flags);
+		file = fget(fd);
+		if (!file)
+			return -EBADF;
+		if (is_file_hugepages(file))
+			len = ALIGN(len, huge_page_size(hstate_file(file)));
+		retval = -EINVAL;
+		if (unlikely(flags & MAP_HUGETLB && !is_file_hugepages(file)))
+			goto out_fput;
+	} else if (flags & MAP_HUGETLB) {
+		struct user_struct *user = NULL;
+		struct hstate *hs;
+
+		hs = hstate_sizelog((flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
+		if (!hs)
+			return -EINVAL;
+
+		len = ALIGN(len, huge_page_size(hs));
+
+However, in this syzbot test case the 'file' is in an overlayfs filesystem
+created as follows:
+
+mkdir("./file0", 000)                   = 0
+mount(NULL, "./file0", "hugetlbfs", MS_MANDLOCK|MS_POSIXACL, NULL) = 0
+chdir("./file0")                        = 0
+mkdir("./file1", 000)                   = 0
+mkdir("./bus", 000)                     = 0
+mkdir("./file0", 000)                   = 0
+mount("\177ELF\2\1\1", "./bus", "overlay", 0, "lowerdir=./bus,workdir=./file1,u"...) = 0
+
+The routine is_file_hugepages() is just comparing the file ops to huegtlbfs:
+
+	if (file->f_op == &hugetlbfs_file_operations)
+		return true;
+
+Since the file is in an overlayfs, file->f_op == ovl_file_operations.
+Therefore, length will not be rounded up to huge page size and we create a
+mapping with incorrect size which leads to the BUG.
+
+Because of the code in mmap, the hugetlbfs mmap() routine assumes length is
+rounded to a huge page size.  I can easily add a check to hugetlbfs mmap
+to validate length and return -EINVAL.  However, I think we really want to
+do the 'round up' earlier in mmap.  This is because the man page says:
+
+   Huge page (Huge TLB) mappings
+       For mappings that employ huge pages, the requirements for the arguments
+       of  mmap()  and munmap() differ somewhat from the requirements for map‐
+       pings that use the native system page size.
+
+       For mmap(), offset must be a multiple of the underlying huge page size.
+       The system automatically aligns length to be a multiple of the underly‐
+       ing huge page size.
+
+Since the location for the mapping is chosen BEFORE getting to the hugetlbfs
+mmap routine, we can not wait until then to round up the length.  Is there a
+defined way to go from a struct file * to the underlying filesystem so we
+can continue to do the 'round up' in early mmap code?
+
+One other thing I noticed with overlayfs is that it does not contain a
+specific get_unmapped_area file_operations routine.  I would expect it to at
+least check for and use the get_unmapped_area of the underlying filesystem?
+Can someone comment if this is by design?
+In the case of hugetlbfs, get_unmapped_area is even provided by most
+architectures.  So, it seems like we would like/need to be calling the correct
+routine.
+-- 
+Mike Kravetz
