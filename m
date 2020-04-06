@@ -2,103 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22EE919F24B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 11:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 231F419F251
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 11:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbgDFJRR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 05:17:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39103 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726819AbgDFJRP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 05:17:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1586164634;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NEV7TR1aEEGU9BOd+7WjT2xwDzuljghXSkqCe1NlNsM=;
-        b=MJGgjZJiaQkT0qeqAk6ss3RwPbkBCsHnSkwU+iHBsy8OH/I2VlwMdyJesKn2Xe1vlVaL3/
-        SGwc1lu/w9GqicMeQuMLPwHPi/WnCjkwrDdU5ABXd7XXVbNT1IYx8GKnTDuo3cZTPyMDRe
-        JDAmwo5gT9Hoh9AjDZka+hffmpHXYe0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-330-mxPGqf0zPReDwLyoyVPcDA-1; Mon, 06 Apr 2020 05:17:10 -0400
-X-MC-Unique: mxPGqf0zPReDwLyoyVPcDA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04F15100551A;
-        Mon,  6 Apr 2020 09:17:08 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.194.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1334A60BFB;
-        Mon,  6 Apr 2020 09:17:03 +0000 (UTC)
-Date:   Mon, 6 Apr 2020 11:17:01 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     Lennart Poettering <mzxreary@0pointer.de>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200406091701.q7ctdek2grzryiu3@ws.net.home>
-References: <CAJfpegs3uDzFTE4PCjZ7aZsEh8b=iy_LqO1DBJoQzkP+i4aBmw@mail.gmail.com>
- <2590640.1585757211@warthog.procyon.org.uk>
- <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
- <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
- <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
- <27994c53034c8f769ea063a54169317c3ee62c04.camel@themaw.net>
- <20200403111144.GB34663@gardel-login>
- <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
- <20200403151223.GB34800@gardel-login>
- <20200403203024.GB27105@fieldses.org>
+        id S1727081AbgDFJSR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Mon, 6 Apr 2020 05:18:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40378 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726723AbgDFJSR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 05:18:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2B854AC19;
+        Mon,  6 Apr 2020 09:18:14 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Eric Sandeen <sandeen@sandeen.net>,
+        Luis Chamberlain <mcgrof@kernel.org>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        rostedt@goodmis.org, mingo@redhat.com, jack@suse.cz,
+        ming.lei@redhat.com, nstange@suse.de, mhocko@suse.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        syzbot+603294af2d01acfdd6da@syzkaller.appspotmail.com
+Subject: Re: [RFC 2/3] blktrace: fix debugfs use after free
+References: <20200402000002.7442-1-mcgrof@kernel.org>
+        <20200402000002.7442-3-mcgrof@kernel.org>
+        <3640b16b-abda-5160-301a-6a0ee67365b4@acm.org>
+        <b827d03c-e097-06c3-02ab-00df42b5fc0e@sandeen.net>
+        <75aa4cff-1b90-ebd4-17a4-c1cb6d390b30@acm.org>
+Date:   Mon, 06 Apr 2020 11:18:13 +0200
+In-Reply-To: <75aa4cff-1b90-ebd4-17a4-c1cb6d390b30@acm.org> (Bart Van Assche's
+        message of "Sun, 5 Apr 2020 21:25:41 -0700")
+Message-ID: <87d08lj7l6.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200403203024.GB27105@fieldses.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 03, 2020 at 04:30:24PM -0400, J. Bruce Fields wrote:
-> On Fri, Apr 03, 2020 at 05:12:23PM +0200, Lennart Poettering wrote:
-> > BTW, while we are at it: one more thing I'd love to see exposed by
-> > statx() is a simple flag whether the inode is a mount point. There's
-> > plenty code that implements a test like this all over the place, and
-> > it usually isn't very safe. There's one implementation in util-linux
-> > for example (in the /usr/bin/mountpoint binary), and another one in
-> > systemd. Would be awesome to just have a statx() return flag for that,
-> > that would make things *so* much easier and more robust. because in
-> > fact most code isn't very good that implements this, as much of it
-> > just compares st_dev of the specified file and its parent. Better code
-> > compares the mount ID, but as mentioned that's not as pretty as it
-> > could be so far...
-> 
-> nfs-utils/support/misc/mountpoint.c:check_is_mountpoint() stats the file
-> and ".." and returns true if they have different st_dev or the same
-> st_ino.  Comparing mount ids sounds better.
+Bart Van Assche <bvanassche@acm.org> writes:
 
-BTW, this traditional st_dev+st_ino way is not reliable for bind mounts.
-For mountpoint(1) we search the directory in /proc/self/mountinfo.
+> On 2020-04-05 18:27, Eric Sandeen wrote:
+>> The thing I can't figure out from reading the change log is
+>> 
+>> 1) what the root cause of the problem is, and
+>> 2) how this patch fixes it?
+>
+> I think that the root cause is that do_blk_trace_setup() uses
+> debugfs_lookup() and that debugfs_lookup() may return a pointer
+> associated with a previous incarnation of the block device.
 
-> So anyway, yes, everybody reinvents the wheel here, and this would be
-> useful.
+That's correct, the debugfs_lookup() can find a previous incarnation's
+dir of the same name which is about to get removed from a not yet
+schedule work.
 
- +1
+I.e. something like the following is possible:
 
-    Karel
+  LOOP_CTL_DEL(loop0) /* schedule __blk_release_queue() work_struct */
+  LOOP_CTL_ADD(loop0) /* debugfs_create_dir() from
+		       * blk_mq_debugfs_register() fails with EEXIST
+                       */
+  BLKTRACE_SETUP(loop0) /* debugfs_lookup() finds the directory about to
+			 * get deleted and blktrace files will be created
+			 * thereunder.
+			 */
+
+  The work_struct gets scheduled and the debugfs dir debugfs_remove()ed
+  recursively, which includes the blktrace files just created. blktrace's
+  dentry pointers are now dangling and there will be a UAF when it
+  attempts to delete those again.
+
+Luis' patch [2/3] fixes the issue of the debugfs_lookup() from
+blk_mq_debugfs_register() potentially returning an existing directory
+associated with a previous block device incarnation of the same name and
+thus, fixes the UAF.
+
+
+However, the problem that the debugfs_create_dir() from
+blk_mq_debugfs_register() in a sequence of
+  LOOP_CTL_DEL(loop0)
+  LOOP_CTL_ADD(loop0)
+could silently fail still remains. The RFC patch [3/3] from Luis
+attempts to address this issue by folding the delayed
+__blk_release_queue() work back into blk_release_queue(), the release
+handler associated with the queue kobject and executed from the final
+blk_queue_put(). However, that's still no full solution, because the
+kobject release handler can run asynchronously, long after
+blk_unregister_queue() has returned (c.f. also
+CONFIG_DEBUG_KOBJECT_RELEASE).
+
+Note that I proposed this change here (internally) as a potential
+cleanup, because I missed the kobject_del() from blk_unregister_queue()
+and *wrongly* concluded that blk_queue_put() must be allowed to sleep
+nowadays. However, that kobject_del() is in place and moreover, the
+analysis requested by Bart (c.f. [1] in this thread) revealed that there
+are indeed a couple of sites calling blk_queue_put() from atomic
+context.
+
+So I'd suggest to drop patch [3/3] from this series and modify this
+patch [2/3] here to move the blk_q_debugfs_unregister(q) invocation from
+__blk_release_queue() to blk_unregister_queue() instead.
+
+
+> Additionally, I think the following changes fix that problem by using
+> q->debugfs_dir in the blktrace code instead of debugfs_lookup():
+
+That would fix the UAF, but !queue_is_mq() queues wouldn't get a debugfs
+directory created for them by blktrace anymore?
+
+
+Thanks,
+
+Nicolai
+
+[1] https://lkml.kernel.org/r/87o8saj62m.fsf@suse.de
+
+
+> [ ... ]
+> --- a/kernel/trace/blktrace.c
+> +++ b/kernel/trace/blktrace.c
+> @@ -311,7 +311,6 @@ static void blk_trace_free(struct blk_trace *bt)
+>  	debugfs_remove(bt->msg_file);
+>  	debugfs_remove(bt->dropped_file);
+>  	relay_close(bt->rchan);
+> -	debugfs_remove(bt->dir);
+>  	free_percpu(bt->sequence);
+>  	free_percpu(bt->msg_data);
+>  	kfree(bt);
+> [ ... ]
+> @@ -509,21 +510,19 @@ static int do_blk_trace_setup(struct request_queue
+> *q, char *name, dev_t dev,
+>
+>  	ret = -ENOENT;
+>
+> -	dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> -	if (!dir)
+> -		bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> -
+>  	bt->dev = dev;
+>  	atomic_set(&bt->dropped, 0);
+>  	INIT_LIST_HEAD(&bt->running_list);
+>
+>  	ret = -EIO;
+> -	bt->dropped_file = debugfs_create_file("dropped", 0444, dir, bt,
+> +	bt->dropped_file = debugfs_create_file("dropped", 0444,
+> +					       q->debugfs_dir, bt,
+>  					       &blk_dropped_fops);
+> [ ... ]
+>
+> Bart.
 
 -- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
-
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+(HRB 36809, AG Nürnberg), GF: Felix Imendörffer
