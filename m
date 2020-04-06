@@ -2,96 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F3B319FAF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 19:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5FF19FB37
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 19:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbgDFREc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 13:04:32 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34716 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728902AbgDFREb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 13:04:31 -0400
-Received: by mail-lj1-f193.google.com with SMTP id p10so512480ljn.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 10:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ar7jflrkNXaeWaLLNE+J/V0wCb3y07I41Vn1cDNa1H0=;
-        b=iAyiGuOhg1NBw6xntWOjfjlwN9HPSP5nDSdo7Jp3I/fwBUQ0KJFRRQOcR/HKfmVC7o
-         qnHtvHaPJgAGeNdQfEkNAtbjCg1eAhwAJJRKbDQ3v/rLuR8aMVuXHQIiAZrb4at4+sBj
-         MTvWffSqk+SyA3JRUrj2Z2o42xS9DNGcGc5MY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ar7jflrkNXaeWaLLNE+J/V0wCb3y07I41Vn1cDNa1H0=;
-        b=RGQwDq5hFDeomsSJyo/UuA5A7HVHOtEBUNjvyLjFac33eLMZVC1h2lKRHR8MzzfTpW
-         SphW+GScFIkBhIoXk3YORk40J9yPMYqtlhqfSjZ/qEUIAIf2vPxtGdoEZ9aUn++5fBrN
-         GIviKc/seM67Xf8O8a99+KJ3Mo/WWNgsbyIGJeeliMZTtBLTU0xm7fbMX6anayLSCpF0
-         uXatYicfEJ66U9t0Hs1pPdy7azIPK2NTErQ3PgE3tfGi1xhyLme3yuBDaDDV9U7HVN+q
-         0TUXDVHspbEmjYRw7DZ3D2F8xoZ/lMJuDVBK7fOejpplNau3rE4uMWXtJI+qG9k5E//o
-         fTOA==
-X-Gm-Message-State: AGi0PuaUnpwLoYHsCmyJXWO0Ifyo5PjZU81c5Upv2jDnsVbN5yJd2sp2
-        sbeAtBJBCB7VjKwLSllh4mRwi3BR9KA=
-X-Google-Smtp-Source: APiQypLOXOBsrKF/1kumu5TpAclSWsdW41JnZj484LUDIuPW4aq+BJtSZwX+fJt3brrEX//Y5XSrqg==
-X-Received: by 2002:a2e:9681:: with SMTP id q1mr130194lji.179.1586192669209;
-        Mon, 06 Apr 2020 10:04:29 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 64sm10198321ljj.41.2020.04.06.10.04.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Apr 2020 10:04:28 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id r17so98110lff.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 10:04:28 -0700 (PDT)
-X-Received: by 2002:a05:6512:14a:: with SMTP id m10mr9430308lfo.152.1586192667631;
- Mon, 06 Apr 2020 10:04:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200406110702.GA13469@nautica> <CAHk-=whVEPEsKhU4w9y_sjbg=4yYHKDfgzrpFdy=-f9j+jTO3w@mail.gmail.com>
- <20200406164057.GA18312@nautica> <20200406164641.GF21484@bombadil.infradead.org>
-In-Reply-To: <20200406164641.GF21484@bombadil.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 Apr 2020 10:04:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiAiGMH=bw5N1nOVWYkE9=Pcx+mxyMwjYfGEt+14hFOVQ@mail.gmail.com>
-Message-ID: <CAHk-=wiAiGMH=bw5N1nOVWYkE9=Pcx+mxyMwjYfGEt+14hFOVQ@mail.gmail.com>
-Subject: Re: [GIT PULL] 9p update for 5.7
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        Sergey Alirzaev <l29ah@cock.li>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726898AbgDFRTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 13:19:49 -0400
+Received: from nautica.notk.org ([91.121.71.147]:42588 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726837AbgDFRTt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 13:19:49 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 9E6C7C01D; Mon,  6 Apr 2020 19:19:47 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     v9fs-developer@lists.sourceforge.net,
+        Sergey Alirzaev <l29ah@cock.li>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Dominique Martinet <dominique.martinet@cea.fr>
+Subject: [PATCH] 9p: document short read behaviour with O_NONBLOCK
+Date:   Mon,  6 Apr 2020 19:19:32 +0200
+Message-Id: <1586193572-1375-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 6, 2020 at 9:46 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> POSIX may well "allow" short reads, but userspace programmers basically
-> never check the return value from read().  Short reads aren't actually
-> allowed.  That's why signals are only allowed to interrupt syscalls if
-> they're fatal (and the application will never see the returned value
-> because it's already dead).
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-Well, that's true for some applications.
+Regular files opened with O_NONBLOCK allow read to return after a single
+round-trip with the server instead of trying to fill buffer.
+Add a few lines in 9p documentation to describe that.
 
-But look at anybody who ever worked more with NFS mounts, and they got
-used to having the 'intr' mount flag set and incomplete reads and
--EAGAIN as a result.
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+---
+ Documentation/filesystems/9p.txt | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-So a lot of normal applications are actually used to partial reads
-even from file reads.
+diff --git a/Documentation/filesystems/9p.txt b/Documentation/filesystems/9p.txt
+index fec7144e817c..3fb780ffdf23 100644
+--- a/Documentation/filesystems/9p.txt
++++ b/Documentation/filesystems/9p.txt
+@@ -133,6 +133,16 @@ OPTIONS
+ 		cache tags for existing cache sessions can be listed at
+ 		/sys/fs/9p/caches. (applies only to cache=fscache)
+ 
++BEHAVIOR
++========
++
++This section aims at describing 9p 'quirks' that can be different
++from a local filesystem behaviors.
++
++ - Setting O_NONBLOCK on a file will make client reads return as early
++   as the server returns some data instead of trying to fill the read
++   buffer with the requested amount of bytes or end of file is reached.
++
+ RESOURCES
+ =========
+ 
+-- 
+2.26.0
 
-Are there apps that react badly? I'm sure - but they also wouldn't
-have O_NONBLOCK set on a regular file. The only reason to set
-O_NONBLOCK is because you think the fd might be a pipe or something,
-and you _are_ ready to get partial reads.
-
-So the 9p behavior certainly isn't outrageously out of line for a
-network filesystem. In fact, because of O_NONBLOCK rather than a mount
-option, I think it's a lot safer than a fairly standard NFS option.
-
-               Linus
