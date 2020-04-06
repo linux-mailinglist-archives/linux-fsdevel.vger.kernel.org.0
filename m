@@ -2,91 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45DAA19F4F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 13:44:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D37C19F576
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 14:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbgDFLoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 07:44:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57634 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727447AbgDFLod (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 07:44:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6D67BAEA6;
-        Mon,  6 Apr 2020 11:44:31 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7D9F61E1244; Mon,  6 Apr 2020 13:44:31 +0200 (CEST)
-Date:   Mon, 6 Apr 2020 13:44:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] Fsnotify patches for v5.7-rc1
-Message-ID: <20200406114431.GF1143@quack2.suse.cz>
+        id S1727794AbgDFMDW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 08:03:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44214 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbgDFMDW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 08:03:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=M3PudfTDfMbp/kyNfADOICHhe3xiV05PupFz4zJKaGo=; b=Z3LfP/8tdTqyZ1tf4vGA2UZVTm
+        T+V+JRjTgn8R2yztuK/gSGSNmlfMRk2U6xJTog/RRxYAJ0wsq2hYTXjwqXN+swW1ykR7Nc80++ZzP
+        UTnkhAr+rivlk1bW1WqNpoalE1es8EdQQ1Sfh/zQKliNjkTmsBFzdf2LZn4XH9+F2o1/ffwTo4YFk
+        LV6p3LUF+9TFaK8yhfTK8xLp6peJQ+QaH+PtVTk8rs+Dv9EKdad4OuNOtegec0fIwsrTTYtp0gi42
+        BS4wWWRV9xOBBaG/ZlJTC5Iv65EBLi8C9oTBcQ5loGeVJRZ6Evb8gGIAxjV9JKTLTGh3XE0217U+E
+        2pdCuCtw==;
+Received: from [2001:4bb8:180:5765:7ca0:239a:fe26:fec2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jLQTC-0003JP-17; Mon, 06 Apr 2020 12:03:14 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: remove set_fs calls from the exec and coredump code
+Date:   Mon,  6 Apr 2020 14:03:06 +0200
+Message-Id: <20200406120312.1150405-1-hch@lst.de>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+Hi all,
 
-  could you please pull from
-
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.7-rc1
-
-This pull contains patches implementing fanotify FAN_DIR_MODIFY event. This
-event reports name in a directory under which change happened and together
-with directory filehandle and fstatat() allows reliable and efficient
-implementation of directory synchronization.
-
-Top of the tree is 6def1a1d2d58. The full shortlog is:
-
-Amir Goldstein (12):
-      fsnotify: tidy up FS_ and FAN_ constants
-      fsnotify: factor helpers fsnotify_dentry() and fsnotify_file()
-      fsnotify: funnel all dirent events through fsnotify_name()
-      fsnotify: use helpers to access data by data_type
-      fsnotify: simplify arguments passing to fsnotify_parent()
-      fsnotify: replace inode pointer with an object id
-      fanotify: merge duplicate events on parent and child
-      fanotify: fix merging marks masks with FAN_ONDIR
-      fanotify: send FAN_DIR_MODIFY event flavor with dir inode and name
-      fanotify: prepare to report both parent and child fid's
-      fanotify: record name info for FAN_DIR_MODIFY event
-      fanotify: report name info for FAN_DIR_MODIFY event
-
-Jan Kara (4):
-      fanotify: Simplify create_fd()
-      fanotify: Store fanotify handles differently
-      fanotify: divorce fanotify_path_event and fanotify_fid_event
-      fanotify: Drop fanotify_event_has_fid()
-
-Nathan Chancellor (1):
-      fanotify: Fix the checks in fanotify_fsid_equal
-
-The diffstat is
-
- fs/notify/fanotify/fanotify.c        | 302 ++++++++++++++++++++++++++---------
- fs/notify/fanotify/fanotify.h        | 189 +++++++++++++++-------
- fs/notify/fanotify/fanotify_user.c   | 220 ++++++++++++++++---------
- fs/notify/fsnotify.c                 |  22 +--
- fs/notify/inotify/inotify_fsnotify.c |  12 +-
- fs/notify/inotify/inotify_user.c     |   2 +-
- include/linux/fanotify.h             |   3 +-
- include/linux/fsnotify.h             | 138 +++++++---------
- include/linux/fsnotify_backend.h     |  70 +++++---
- include/uapi/linux/fanotify.h        |  13 +-
- kernel/audit_fsnotify.c              |  13 +-
- kernel/audit_watch.c                 |  16 +-
- 12 files changed, 637 insertions(+), 363 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+this series gets rid of playing with the address limit in the exec and
+coredump code.  Most of this was fairly trivial, the biggest changes are
+those to the spufs coredump code.
