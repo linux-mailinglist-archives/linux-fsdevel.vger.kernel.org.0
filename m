@@ -2,74 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BA819F67F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 15:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F37D19F7D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 16:24:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbgDFNNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 09:13:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:33949 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbgDFNNE (ORCPT
+        id S1728611AbgDFOXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 10:23:51 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35298 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728539AbgDFOXv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 09:13:04 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mr9OA-1j07J23ARS-00oEbm; Mon, 06 Apr 2020 15:13:02 +0200
-Received: by mail-qk1-f174.google.com with SMTP id 130so885179qke.4;
-        Mon, 06 Apr 2020 06:13:02 -0700 (PDT)
-X-Gm-Message-State: AGi0PubPIKvOp7wEV94JFy/6Yi+xh/HWiNI99awjCqQ098tIJ/hITfpK
-        VbYzbcZnY3fmrl4nK+Lrb9IjaFUfEe2ySIwTeT4=
-X-Google-Smtp-Source: APiQypK8zqZk5uLnoIubAdQeJgGTiVyPkpSzxxqDGQ7EZ4yy/nSPnZICKVDeK2bBxoQfBZJEyLjW+qUVp5bYDvV/ciM=
-X-Received: by 2002:a37:2714:: with SMTP id n20mr6302088qkn.138.1586178781557;
- Mon, 06 Apr 2020 06:13:01 -0700 (PDT)
+        Mon, 6 Apr 2020 10:23:51 -0400
+Received: by mail-pg1-f194.google.com with SMTP id k5so7648793pga.2;
+        Mon, 06 Apr 2020 07:23:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l4jUivbNeT/tXISEa3mLl14aIqDVskamynqyyyoeohY=;
+        b=YsU9jbSzp8588IOyvGG+4YHrxffe3iPQeAwpZRZh4dJI6hn59XpIB0vFzvHRetcMWa
+         qH1JDaLYqlmIqMWRsgk60Rlr1+Bfs1EMQshyB7bOcWb4iU9plUGV1kElXNJXVwamhVeF
+         6vFKchI2tetJNWTUzBVreFKGSkuJ/zhf/7bFzP4iQfFdpGbrAvC4Sm0T28thh+UgGMP3
+         2GfqKFhBrqz74NoGL6SNMm57MzprEBmuXxTKKUOu3v/6NzPZhLFK1OoHl0J6wHOGWao2
+         k5If+SIeZfF9N9VpYD+4RIj7yYON8hrFO+aUP5jr0jQLn7fgJCZdzTMVWAp1id+C+q2v
+         Y1vQ==
+X-Gm-Message-State: AGi0PuZlcIPRY0x1C7Kaw87JZ+5MbvMZPnswBrkBmlEe1q1fn/bwVgmk
+        eyTo/sJuFSBaerqSkuMIjCw=
+X-Google-Smtp-Source: APiQypIOvcLGL/Zcaffq3CvgymvIweGawVr0JJIIPq4D6r0SEbYJXtqbU0CFu7sYyeuNreyhJjYWYw==
+X-Received: by 2002:a63:eb15:: with SMTP id t21mr5705274pgh.279.1586183029353;
+        Mon, 06 Apr 2020 07:23:49 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id q71sm11874573pfc.92.2020.04.06.07.23.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Apr 2020 07:23:48 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8D41C40246; Mon,  6 Apr 2020 14:23:47 +0000 (UTC)
+Date:   Mon, 6 Apr 2020 14:23:47 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        mhocko@suse.com, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Omar Sandoval <osandov@fb.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC 1/3] block: move main block debugfs initialization to its
+ own file
+Message-ID: <20200406142347.GB11244@42.do-not-panic.com>
+References: <20200402000002.7442-1-mcgrof@kernel.org>
+ <20200402000002.7442-2-mcgrof@kernel.org>
+ <cef15625-3814-aec2-d10c-1344a6f063a9@acm.org>
 MIME-Version: 1.0
-References: <20200406120312.1150405-1-hch@lst.de> <20200406120312.1150405-2-hch@lst.de>
-In-Reply-To: <20200406120312.1150405-2-hch@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 6 Apr 2020 15:12:45 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1YdCuChb0mOU1+27PHK9qK6NGkuKfrHQa4LC=1LZmPTw@mail.gmail.com>
-Message-ID: <CAK8P3a1YdCuChb0mOU1+27PHK9qK6NGkuKfrHQa4LC=1LZmPTw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] powerpc/spufs: simplify spufs core dumping
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:6XdMQ65OOioIRuqHqq3+7QMYDDx6jRkjOZCrP8n45lczowS/cdI
- B09il7WTGW1J7FQ/gHbXqtzafbYmmYNYaomppPgH11VXbffng5qbvuD+UhX4/vU2P1TU0lY
- lMkrPkxerZ8IGSKk6vOR6emstBbqPTE+sVGNmBoqKOVUbniYJoEs5i/FncKhF0vhNN/W2zu
- MAqzmzusyaJSaZ46ZL5iQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:La6cY6+qeSw=:gCyGgPoDKIxSW2RoC1zxtL
- 6CI+6gRoK0r9H6g9tsBuJo0U2E/jUrgmNY52jOf9aS9UW8i0jZcx3f4QTjgtO+S1/KVyjeAm3
- mssvbM3r+xDMVJZJh270i1KcYZruzHgiamQ/hidXxsQ5Zu6qirr6UecqZToG7GS2wUMg/CIz2
- GsI9LIWyp/Momo0L1H/RVGpYPOZzyaTuXwgrQzfdmaFw/cuAENqGcrCTEQxD9RPQ910jm5IHd
- mI8SwbS64bZ9uJ2o8pCU5y6AlPvC+ARTIkEeTp4WQo53oRZyxmBBmJjnJawz8vpvGicqFpgq8
- pEP2LgLKnGoKHsWoL0OsQw/eztuvonX/UWdes0iN6x497eFxzNjiW6zKa4SNBfKPBavh9DB+E
- YzTHuDnc/BYNIqt3Eb0efTyoC/A/ZwWyxTWq833pkTYBl/z/hdpn+ObU9M/sgOKutzCCMsiyX
- Z64EGfiZjAVgE5QNjlaXCxNcZRoGEqA9ke/9lRHWgaoeWLbQYoeAGZ9zAYn6h9lzqIKdyFZmo
- lak4KPm/iM+qdZSUOAgFf7+Z0Ah19Nf5BWFI3c3cSbtpF1szQTeOoOGhHehJ1bbUC5xwU2li1
- UuZ7suVrUqUNQsIithlFEambJDiVOumynNAih5YD5dbcHJeedQATZVKwx/w61zSvFi9C5hMt1
- Y9YF/DLapn1wK+pnYqbl8Fx7YLXG6nKIiL0KTLglnvUMZbONp/1pRqK0MuIjSVLSHFb94MYJr
- 8t6lQfvy+Sut/QCbfjqaNF7TPU9RcLOLaZ7o1DB1IkJW2MrCOC8sfob4LWtr7UbdHZtxN4GLK
- RS2wZhNLV0VISp6O+J7nEjzYgA2j093Wn0EH079f1GLN0S5eIM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cef15625-3814-aec2-d10c-1344a6f063a9@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 6, 2020 at 2:03 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Replace the coredump ->read method with a ->dump method that must call
-> dump_emit itself.  That way we avoid a buffer allocation an messing with
-> set_fs() to call into code that is intended to deal with user buffers.
-> For the ->get case we can now use a small on-stack buffer and avoid
-> memory allocations as well.
+On Sat, Apr 04, 2020 at 08:12:53PM -0700, Bart Van Assche wrote:
+> On 2020-04-01 17:00, Luis Chamberlain wrote:
+> > Single and multiqeueue block devices share some debugfs code. By
+>              ^^^^^^^^^^^
+>              multiqueue?
+> > moving this into its own file it makes it easier to expand and audit
+> > this shared code.
+> 
+> [ ... ]
+> 
+> > diff --git a/block/blk-debugfs.c b/block/blk-debugfs.c
+> > new file mode 100644
+> > index 000000000000..634dea4b1507
+> > --- /dev/null
+> > +++ b/block/blk-debugfs.c
+> > @@ -0,0 +1,15 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Shared debugfs mq / non-mq functionality
+> > + */
+> 
+> The legacy block layer is gone, so not sure why the above comment refers
+> to non-mq?
 
-I had no memory of this code at all, but your change looks fine to me.
-Amazingly you even managed to even make it smaller and more readable
+Will adjust the language, thanks.
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> > diff --git a/block/blk.h b/block/blk.h
+> > index 0a94ec68af32..86a66b614f08 100644
+> > --- a/block/blk.h
+> > +++ b/block/blk.h
+> > @@ -487,5 +487,12 @@ struct request_queue *__blk_alloc_queue(int node_id);
+> >  int __bio_add_pc_page(struct request_queue *q, struct bio *bio,
+> >  		struct page *page, unsigned int len, unsigned int offset,
+> >  		bool *same_page);
+> > +#ifdef CONFIG_DEBUG_FS
+> > +void blk_debugfs_register(void);
+> > +#else
+> > +static inline void blk_debugfs_register(void)
+> > +{
+> > +}
+> > +#endif /* CONFIG_DEBUG_FS */
+> 
+> Do we really need a new header file that only declares a single
+> function? How about adding the above into block/blk-mq-debugfs.h?
+
+Moving forward rq->debugfs_dir will created when CONFIG_DEBUG_FS is
+enabled to enable blktrace to use it. This creation won't depend on
+CONFIG_BLK_DEBUG_FS, so we can definitely sprinkly the #ifdef
+CONFIG_DEBUG_FS stuff in block/blk-mq-debugfs.h but it just didn't
+seem the best place. Let me know.
+
+  Luis
