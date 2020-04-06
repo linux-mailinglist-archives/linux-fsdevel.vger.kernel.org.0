@@ -2,132 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F08F19FB88
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 19:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6916419FBC5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 19:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbgDFR3U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 13:29:20 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:60764 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbgDFR3U (ORCPT
+        id S1726574AbgDFRj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 13:39:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46898 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbgDFRj7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 13:29:20 -0400
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
-        by gardel.0pointer.net (Postfix) with ESMTP id 28E37E8017E;
-        Mon,  6 Apr 2020 19:29:18 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id 9177C161537; Mon,  6 Apr 2020 19:29:17 +0200 (CEST)
-Date:   Mon, 6 Apr 2020 19:29:17 +0200
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
-        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
-Message-ID: <20200406172917.GA37692@gardel-login>
-References: <20200402143623.GB31529@gardel-login>
- <CAJfpegtRi9epdxAeoVbm+7UxkZfzC6XmD4K_5dg=RKADxy_TVA@mail.gmail.com>
- <20200402152831.GA31612@gardel-login>
- <CAJfpegum_PsCfnar8+V2f_VO3k8CJN1LOFJV5OkHRDbQKR=EHg@mail.gmail.com>
- <20200402155020.GA31715@gardel-login>
- <CAJfpeguM__+S6DiD4MWFv5GCf_EUWvGFT0mzuUCCrfQwggqtDQ@mail.gmail.com>
- <20200403110842.GA34663@gardel-login>
- <CAJfpegtYKhXB-HNddUeEMKupR5L=RRuydULrvm39eTung0=yRg@mail.gmail.com>
- <20200403150143.GA34800@gardel-login>
- <CAJfpegudLD8F-25k-k=9G96JKB+5Y=xFT=ZMwiBkNTwkjMDumA@mail.gmail.com>
+        Mon, 6 Apr 2020 13:39:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Ighi/oMVp9tFTOBbBxmTii0DJ49JmSpk0alZtgjwyEE=; b=A14JlXhDhbCpugXDKFmJjxkAR1
+        3FxwFK0ASLf1JXMVK3NNyPLaPDT/3cSBQAbIvS9KC/HcKlUt0tR9PJd0dduozFawoDCEsaiog7woQ
+        MVk6pjT8OFvdUKVaP5Pa0RUm0nQ9vgnr0R+2HwysLODLyNYep2w2v55KnJ7jUHnz311KCyPZ2wdv/
+        xu5Dw5wZewwIBA3kerLLfXnC0y8tVljROTKczdG1OIHFpmgYzbJ4EE1Xh4gmfaIf8zVwsucwE4q7H
+        GfUL7yOaJr/KNw0T91jZm7VyqfkznbFBJZXE3XaNyKpAE3YSBxo4B8J6XIoRH1txvvJOkCeN0IfvZ
+        +DPzvOJg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jLVj3-0006Ck-Jn; Mon, 06 Apr 2020 17:39:57 +0000
+Date:   Mon, 6 Apr 2020 10:39:57 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Sergey Alirzaev <l29ah@cock.li>
+Subject: Re: [GIT PULL] 9p update for 5.7
+Message-ID: <20200406173957.GI21484@bombadil.infradead.org>
+References: <20200406110702.GA13469@nautica>
+ <CAHk-=whVEPEsKhU4w9y_sjbg=4yYHKDfgzrpFdy=-f9j+jTO3w@mail.gmail.com>
+ <20200406164057.GA18312@nautica>
+ <20200406164641.GF21484@bombadil.infradead.org>
+ <CAHk-=wiAiGMH=bw5N1nOVWYkE9=Pcx+mxyMwjYfGEt+14hFOVQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJfpegudLD8F-25k-k=9G96JKB+5Y=xFT=ZMwiBkNTwkjMDumA@mail.gmail.com>
+In-Reply-To: <CAHk-=wiAiGMH=bw5N1nOVWYkE9=Pcx+mxyMwjYfGEt+14hFOVQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mo, 06.04.20 11:22, Miklos Szeredi (miklos@szeredi.hu) wrote:
+On Mon, Apr 06, 2020 at 10:04:11AM -0700, Linus Torvalds wrote:
+> On Mon, Apr 6, 2020 at 9:46 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > POSIX may well "allow" short reads, but userspace programmers basically
+> > never check the return value from read().  Short reads aren't actually
+> > allowed.  That's why signals are only allowed to interrupt syscalls if
+> > they're fatal (and the application will never see the returned value
+> > because it's already dead).
+> 
+> Well, that's true for some applications.
+> 
+> But look at anybody who ever worked more with NFS mounts, and they got
+> used to having the 'intr' mount flag set and incomplete reads and
+> -EAGAIN as a result.
 
-> > Nah. What I wrote above is drastically simplified. It's IRL more
-> > complex. Specific services need to be killed between certain mounts
-> > are unmounted, since they are a backend for another mount. NFS, or
-> > FUSE or stuff like that usually has some processes backing them
-> > around, and we need to stop the mounts they provide before these
-> > services, and then the mounts these services reside on after that, and
-> > so on. It's a complex dependency tree of stuff that needs to be done
-> > in order, so that we can deal with arbitrarily nested mounts, storage
-> > subsystems, and backing services.
->
-> That still doesn't explain why you need to keep track of all mounts in
-> the system.
->
-> If you are aware of the dependency, then you need to keep track of
-> that particular mount. If not, then why?
+That's why you had me implement TASK_KILLABLE ;-)
 
-it works the other way round in systemd: something happens, i.e. a
-device pops up or a mount is established and systemd figures our if
-there's something to do. i.e. whether services shall be pulled in or
-so.
+> Are there apps that react badly? I'm sure - but they also wouldn't
+> have O_NONBLOCK set on a regular file. The only reason to set
+> O_NONBLOCK is because you think the fd might be a pipe or something,
+> and you _are_ ready to get partial reads.
+> 
+> So the 9p behavior certainly isn't outrageously out of line for a
+> network filesystem. In fact, because of O_NONBLOCK rather than a mount
+> option, I think it's a lot safer than a fairly standard NFS option.
 
-It's that way for a reason: there are plenty services that want to
-instantiated once for each object of a certain kind to pop up (this
-happens very often for devices, but could also happen for any other
-kind of "unit" systemd manages, and one of those kinds are mount
-units). For those we don't know the unit to pull in yet (because it's
-not going to be a well-named singleton, but an instance incorporating
-some identifier from the source unit) when the unit that pops up does
-so, thus we can only wait for the the latter to determine what to pull
-in.
-
-> What I'm starting to see is that there's a fundamental conflict
-> between how systemd people want to deal with new mounts and how some
-> other people want to use mounts (i.e. tens of thousands of mounts in
-> an automount map).
-
-Well, I am not sure what automount has to do with anything. You can
-have 10K mounts with or without automount, it's orthogonal to that. In
-fact, I assumed the point of automount was to pretend there are 10K
-mounts but not actually have them most of the time, no?
-
-I mean, whether there's room to optimize D-Bus IPC or not is entirely
-orthogonal to anything discussed here regarding fsinfo(). Don't make
-this about systemd sending messages over D-Bus, that's a very
-different story, and a non-issue if you ask me:
-
-Right now, when you have n mounts, and any mount changes, or one is
-added or removed then we have to parse the whole mount table again,
-asynchronously, processing all n entries again, every frickin
-time. This means the work to process n mounts popping up at boot is
-O(n²). That sucks, it should be obvious to anyone. Now if we get that
-fixed, by some mount API that can send us minimal notifications about
-what happened and where, then this becomes O(n), which is totally OK.
-
-You keep talking about filtering, which will just lower the "n" a bit
-in particular cases to some value "m" maybe (with m < n), it does not
-address the fact that O(m²) is still a big problem.
-
-hence, filtering is great, no problem, add it if you want it. I
-personally don't care about filtering though, and I doubt we'd use it
-in systemd, I just care about the O(n²) issue.
-
-If you ask me if D-Bus can handle 10K messages sent over the bus
-during boot, then yes, it totally can handle that. Can systemd nicely
-process O(n²) mounts internally though equally well? No, obviously not,
-if n grows too large. Anyone computer scientist should understand that..
-
-Anyway, I have the suspicion this discussion has stopped being
-useful. I think you are trying to fix problems that userspce actually
-doesn't have. I can just tell you what we understand the problems are,
-but if you are out trying to fix other percieved ones, then great, but
-I mostly lost interest.
-
-Lennart
-
---
-Lennart Poettering, Berlin
+The NFS option has been a no-op for over a decade ;-)  I agree with you
+that O_NONBLOCK is a good indicator the application is willing to handle
+short reads (or indeed writes).
