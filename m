@@ -2,77 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44D1619F961
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 17:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A539F19F9B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Apr 2020 18:07:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbgDFPzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Apr 2020 11:55:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37059 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728976AbgDFPzc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Apr 2020 11:55:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x1so6080870plm.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Apr 2020 08:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gSjkzhFEiFJjyufT8+HraUsb7czl0gNB79kUOtKiYko=;
-        b=UBwbD9Fh2afx2lBbBBT4XMur9J9n4jUPu1rc4OUDGxMx+Ajc2wvGaAdQnMQlBkzsnr
-         +8h6sXlemiz/8/52IJN8D40WBcKL/y010DcYxll1huL1G53cvuCJrvKJKdU1bhRZN5nY
-         mW08EAE7q6lAjTkd4M3LAdvYDNmIr4f3nSivA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gSjkzhFEiFJjyufT8+HraUsb7czl0gNB79kUOtKiYko=;
-        b=fxHqNxIiPy+uysZ6Y7MMKmswV8AZfQG2c0HZyCE7QIOUYyX9DeEULpA+/FVEBbilID
-         0nzyX5PADmQnVSopoWCUkenoVmSuJc+ul/7oGDsiSBTYtmpWACZ5O9u6TWHqxuF+P10D
-         QouTbggkTT0+f8FPGnk/8T5x1etu+nkuBzLSYtnR6q4JglWxvhMhfa7bkW2VyXE4GLRE
-         I6c8iXvh0+v6buV1S3RO8sYO6TqWpoDVcDp22LGOUSegA01Qod9WZwb502/kC7JizGhS
-         dS3BotGMV3X6h0IqD6QiagQIAGxtzJ/0DhTM2z78ThAizU+DgrldO6CoWI4px5/vfMZU
-         Qlgw==
-X-Gm-Message-State: AGi0PubDBC2Bd46yGgEd9UuIYWgfnWmys/kEo3h6568jH+RWV2yfGJ4p
-        HREi8LBBCOyv6nkVXVceynIbzw==
-X-Google-Smtp-Source: APiQypJq6G4sfj4F480buN+2USewCEdxsSs+iaxAsio9clFT3schIx04v6ekH8nGfBzDTwyT28JlCQ==
-X-Received: by 2002:a17:902:6ac3:: with SMTP id i3mr20706329plt.111.1586188529962;
-        Mon, 06 Apr 2020 08:55:29 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t1sm14581pjf.26.2020.04.06.08.55.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Apr 2020 08:55:29 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 08:55:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, mcgrof@kernel.org, yzaikin@google.com,
-        tglx@linutronix.de, penguin-kernel@I-love.SAKURA.ne.jp,
-        vbabka@suse.cz, rdunlap@infradead.org, willy@infradead.org,
-        kernel@gpiccoli.net, dvyukov@google.com
-Subject: Re: [PATCH V3] kernel/hung_task.c: Introduce sysctl to print all
- traces when a hung task is detected
-Message-ID: <202004060854.22F15BDBF1@keescook>
-References: <20200327223646.20779-1-gpiccoli@canonical.com>
- <d4888de4-5748-a1d0-4a45-d1ecebe6f2a9@canonical.com>
+        id S1729395AbgDFQHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Apr 2020 12:07:07 -0400
+Received: from fieldses.org ([173.255.197.46]:51964 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729180AbgDFQHH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Apr 2020 12:07:07 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id E97F01513; Mon,  6 Apr 2020 12:07:06 -0400 (EDT)
+Date:   Mon, 6 Apr 2020 12:07:06 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Lennart Poettering <mzxreary@0pointer.de>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>, andres@anarazel.de,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>
+Subject: Re: Upcoming: Notifications, FS notifications and fsinfo()
+Message-ID: <20200406160706.GC2147@fieldses.org>
+References: <2590640.1585757211@warthog.procyon.org.uk>
+ <CAJfpegsXqxizOGwa045jfT6YdUpMxpXET-yJ4T8qudyQbCGkHQ@mail.gmail.com>
+ <36e45eae8ad78f7b8889d9d03b8846e78d735d28.camel@themaw.net>
+ <CAJfpegsCDWehsTRQ9UJYuQnghnE=M8L0_bJBTTPA+Upu87t90w@mail.gmail.com>
+ <27994c53034c8f769ea063a54169317c3ee62c04.camel@themaw.net>
+ <20200403111144.GB34663@gardel-login>
+ <CAJfpeguQAw+Mgc8QBNd+h3KV8=Y-SOGT7TB_N_54wa8MCoOSzg@mail.gmail.com>
+ <20200403151223.GB34800@gardel-login>
+ <20200403203024.GB27105@fieldses.org>
+ <CAJfpegvxnp8N-o-iTXzj0UnYZbDPfms1zpwcHf1tdhRJ4au3Og@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d4888de4-5748-a1d0-4a45-d1ecebe6f2a9@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJfpegvxnp8N-o-iTXzj0UnYZbDPfms1zpwcHf1tdhRJ4au3Og@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 06, 2020 at 09:28:41AM -0300, Guilherme G. Piccoli wrote:
-> Hi Andrew / Kees, sorry for the ping.
-> Is there anything else missing in this patch? What are the necessary
-> steps to get it merged?
+The patch makes sense to me, thanks!
 
-I'm expecting Andrew to pick it up, but it's the middle of the merge
-window right now, so there is likely to be a couple weeks delay before
-this will appear in -mm.
+In the NFS case it's implementing the "mountpoint" export option:
 
--- 
-Kees Cook
+       mountpoint=path
+
+       mp     This option makes it possible to only export a directory  if  it
+              has  successfully  been  mounted.   If  no  path  is given (e.g.
+              mountpoint or mp) then the export point must  also  be  a  mount
+              point.  If it isn't then the export point is not exported.  This
+              allows you to be sure that the directory underneath a mountpoint
+              will never be exported by accident if, for example, the filesys‐
+              tem failed to mount due to a disc error.
+
+              If a path is given (e.g.  mountpoint=/path or mp=/path) then the
+              nominated  path  must  be a mountpoint for the exportpoint to be
+              exported.
+
+--b.
+
+On Mon, Apr 06, 2020 at 10:35:55AM +0200, Miklos Szeredi wrote:
+> From: Miklos Szeredi <mszeredi@redhat.com>
+> Subject: statx: add mount_root
+> 
+> Determining whether a path or file descriptor refers to a mountpoint (or
+> more precisely a mount root) is not trivial using current tools.
+> 
+> Add a flag to statx that indicates whether the path or fd refers to the
+> root of a mount or not.
+> 
+> Reported-by: Lennart Poettering <mzxreary@0pointer.de>
+> Reported-by: J. Bruce Fields <bfields@fieldses.org>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/stat.c                 |    3 +++
+>  include/uapi/linux/stat.h |    1 +
+>  2 files changed, 4 insertions(+)
+> 
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -172,6 +172,7 @@ struct statx {
+>  #define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to be dumped */
+>  #define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+>  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+> +#define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
+>  #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
+>  
+>  
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -202,6 +202,9 @@ int vfs_statx(int dfd, const char __user
+>  	error = vfs_getattr(&path, stat, request_mask, flags);
+>  	stat->mnt_id = real_mount(path.mnt)->mnt_id;
+>  	stat->result_mask |= STATX_MNT_ID;
+> +	if (path.mnt->mnt_root == path.dentry)
+> +		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+> +	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+>  	path_put(&path);
+>  	if (retry_estale(error, lookup_flags)) {
+>  		lookup_flags |= LOOKUP_REVAL;
+
